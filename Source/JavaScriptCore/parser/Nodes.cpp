@@ -129,6 +129,15 @@ void ProgramNode::setClosedVariables(Vector<RefPtr<UniquedStringImpl>>&& closedV
     m_closedVariables = WTF::move(closedVariables);
 }
 
+// ------------------------------ ModuleProgramNode -----------------------------
+
+ModuleProgramNode::ModuleProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack& funcStack, VariableEnvironment& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, int numConstants)
+    : ScopeNode(parserArena, startLocation, endLocation, source, children, varEnvironment, funcStack, lexicalVariables, features, numConstants)
+    , m_startColumn(startColumn)
+    , m_endColumn(endColumn)
+{
+}
+
 // ------------------------------ EvalNode -----------------------------
 
 EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VariableEnvironment& varEnvironment, FunctionStack& funcStack, VariableEnvironment& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, int numConstants)

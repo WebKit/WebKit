@@ -33,7 +33,7 @@ namespace JSC {
 
 enum class JSParserStrictMode { NotStrict, Strict };
 enum class JSParserBuiltinMode { NotBuiltin, Builtin };
-enum class JSParserCodeType { Program, Function };
+enum class JSParserCodeType { Program, Function, Module };
 
 enum class ConstructorKind { None, Base, Derived };
 enum class SuperBinding { Needed, NotNeeded };

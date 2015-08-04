@@ -1622,6 +1622,143 @@ namespace JSC {
         unsigned m_endColumn;
     };
 
+    class ModuleProgramNode : public ScopeNode {
+    public:
+        ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, int numConstants);
+
+        unsigned startColumn() const { return m_startColumn; }
+        unsigned endColumn() const { return m_endColumn; }
+
+        static const bool scopeIsFunction = false;
+
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        unsigned m_startColumn;
+        unsigned m_endColumn;
+    };
+
+    class ModuleSpecifierNode : public Node {
+    public:
+        ModuleSpecifierNode(const JSTokenLocation&, const Identifier& moduleName);
+
+        const Identifier& moduleName() { return m_moduleName; }
+
+    private:
+        const Identifier& m_moduleName;
+    };
+
+    class ImportSpecifierNode : public Node {
+    public:
+        ImportSpecifierNode(const JSTokenLocation&, const Identifier& importedName, const Identifier& localName);
+
+        const Identifier& importedName() { return m_importedName; }
+        const Identifier& localName() { return m_localName; }
+
+    private:
+        const Identifier& m_importedName;
+        const Identifier& m_localName;
+    };
+
+    class ImportSpecifierListNode : public ParserArenaDeletable {
+    public:
+        typedef Vector<ImportSpecifierNode*, 3> Specifiers;
+
+        const Specifiers& specifiers() const { return m_specifiers; }
+        void append(ImportSpecifierNode* specifier)
+        {
+            m_specifiers.append(specifier);
+        }
+
+    private:
+        Specifiers m_specifiers;
+    };
+
+    class ImportDeclarationNode : public StatementNode {
+    public:
+        ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleSpecifierNode*);
+
+        ImportSpecifierListNode* specifierList() const { return m_specifierList; }
+        ModuleSpecifierNode* moduleSpecifier() const { return m_moduleSpecifier; }
+
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ImportSpecifierListNode* m_specifierList;
+        ModuleSpecifierNode* m_moduleSpecifier;
+    };
+
+    class ExportAllDeclarationNode : public StatementNode {
+    public:
+        ExportAllDeclarationNode(const JSTokenLocation&, ModuleSpecifierNode*);
+
+        ModuleSpecifierNode* moduleSpecifier() const { return m_moduleSpecifier; }
+
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        ModuleSpecifierNode* m_moduleSpecifier;
+    };
+
+    class ExportDefaultDeclarationNode : public StatementNode {
+    public:
+        ExportDefaultDeclarationNode(const JSTokenLocation&, StatementNode*);
+
+        const StatementNode& declaration() const { return *m_declaration; }
+
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        StatementNode* m_declaration;
+    };
+
+    class ExportLocalDeclarationNode : public StatementNode {
+    public:
+        ExportLocalDeclarationNode(const JSTokenLocation&, StatementNode*);
+
+        const StatementNode& declaration() const { return *m_declaration; }
+
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        StatementNode* m_declaration;
+    };
+
+    class ExportSpecifierNode : public Node {
+    public:
+        ExportSpecifierNode(const JSTokenLocation&, const Identifier& localName, const Identifier& exportedName);
+
+        const Identifier& exportedName() { return m_exportedName; }
+        const Identifier& localName() { return m_localName; }
+
+    private:
+        const Identifier& m_localName;
+        const Identifier& m_exportedName;
+    };
+
+    class ExportSpecifierListNode : public ParserArenaDeletable {
+    public:
+        typedef Vector<ExportSpecifierNode*, 3> Specifiers;
+
+        const Specifiers& specifiers() const { return m_specifiers; }
+        void append(ExportSpecifierNode* specifier)
+        {
+            m_specifiers.append(specifier);
+        }
+
+    private:
+        Specifiers m_specifiers;
+    };
+
+    class ExportNamedDeclarationNode : public StatementNode {
+    public:
+        ExportNamedDeclarationNode(const JSTokenLocation&, ExportSpecifierListNode*, ModuleSpecifierNode*);
+
+        ExportSpecifierListNode* specifierList() const { return m_specifierList; }
+        ModuleSpecifierNode* moduleSpecifier() const { return m_moduleSpecifier; }
+
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        ExportSpecifierListNode* m_specifierList;
+        ModuleSpecifierNode* m_moduleSpecifier { nullptr };
+    };
+
     class FunctionParameters : public ParserArenaDeletable {
     public:
         FunctionParameters();

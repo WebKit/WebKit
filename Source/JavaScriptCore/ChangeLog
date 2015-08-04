@@ -1,3 +1,151 @@
+2015-08-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Support Module Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=147422
+
+        Reviewed by Saam Barati.
+
+        This patch introduces ES6 Modules syntax parsing part.
+        In this patch, ASTBuilder just produces the corresponding nodes to the ES6 Modules syntax,
+        and this patch does not include the code generator part.
+
+        Modules require 2 phase parsing. In the first pass, we just analyze the dependent modules
+        and do not execute the body or construct the AST. And after analyzing all the dependent
+        modules, we will parse the dependent modules next.
+        After all analyzing part is done, we will start the second pass. In the second pass, we
+        will parse the module, produce the AST, and execute the body.
+        If we don't do so, we need to create all the ASTs in the module's dependent graph at first
+        because the given module can be executed after the all dependent modules are executed. It
+        means that we need to hold so many parser arenas. To avoid this, the first pass only extracts
+        the dependent modules' information.
+
+        In this patch, we don't add this analyzing part yet. This patch only implements the second pass.
+        This patch aims at just implementing the syntax parsing functionality correctly.
+        After this patch is landed, we will create the ModuleDependencyAnalyzer that inherits SyntaxChecker
+        to collect the dependent modules fast[1].
+
+        To test the parsing, we added the "checkModuleSyntax" function into jsc shell.
+        By using this, we can parse the given string as the module.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=147353
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ModuleProgramNode::emitBytecode):
+        (JSC::ImportDeclarationNode::emitBytecode):
+        (JSC::ExportAllDeclarationNode::emitBytecode):
+        (JSC::ExportDefaultDeclarationNode::emitBytecode):
+        (JSC::ExportLocalDeclarationNode::emitBytecode):
+        (JSC::ExportNamedDeclarationNode::emitBytecode):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionCheckModuleSyntax):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createModuleSpecifier):
+        (JSC::ASTBuilder::createImportSpecifier):
+        (JSC::ASTBuilder::createImportSpecifierList):
+        (JSC::ASTBuilder::appendImportSpecifier):
+        (JSC::ASTBuilder::createImportDeclaration):
+        (JSC::ASTBuilder::createExportAllDeclaration):
+        (JSC::ASTBuilder::createExportDefaultDeclaration):
+        (JSC::ASTBuilder::createExportLocalDeclaration):
+        (JSC::ASTBuilder::createExportNamedDeclaration):
+        (JSC::ASTBuilder::createExportSpecifier):
+        (JSC::ASTBuilder::createExportSpecifierList):
+        (JSC::ASTBuilder::appendExportSpecifier):
+        * parser/Keywords.table:
+        * parser/NodeConstructors.h:
+        (JSC::ModuleSpecifierNode::ModuleSpecifierNode):
+        (JSC::ImportSpecifierNode::ImportSpecifierNode):
+        (JSC::ImportDeclarationNode::ImportDeclarationNode):
+        (JSC::ExportAllDeclarationNode::ExportAllDeclarationNode):
+        (JSC::ExportDefaultDeclarationNode::ExportDefaultDeclarationNode):
+        (JSC::ExportLocalDeclarationNode::ExportLocalDeclarationNode):
+        (JSC::ExportNamedDeclarationNode::ExportNamedDeclarationNode):
+        (JSC::ExportSpecifierNode::ExportSpecifierNode):
+        * parser/Nodes.cpp:
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        * parser/Nodes.h:
+        (JSC::ModuleProgramNode::startColumn):
+        (JSC::ModuleProgramNode::endColumn):
+        (JSC::ModuleSpecifierNode::moduleName):
+        (JSC::ImportSpecifierNode::importedName):
+        (JSC::ImportSpecifierNode::localName):
+        (JSC::ImportSpecifierListNode::specifiers):
+        (JSC::ImportSpecifierListNode::append):
+        (JSC::ImportDeclarationNode::specifierList):
+        (JSC::ImportDeclarationNode::moduleSpecifier):
+        (JSC::ExportAllDeclarationNode::moduleSpecifier):
+        (JSC::ExportDefaultDeclarationNode::declaration):
+        (JSC::ExportLocalDeclarationNode::declaration):
+        (JSC::ExportSpecifierNode::exportedName):
+        (JSC::ExportSpecifierNode::localName):
+        (JSC::ExportSpecifierListNode::specifiers):
+        (JSC::ExportSpecifierListNode::append):
+        (JSC::ExportNamedDeclarationNode::specifierList):
+        (JSC::ExportNamedDeclarationNode::moduleSpecifier):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseVariableDeclaration):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::tryParseDestructuringPatternExpression):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClassDeclaration):
+        (JSC::Parser<LexerType>::parseModuleSpecifier):
+        (JSC::Parser<LexerType>::parseImportClauseItem):
+        (JSC::Parser<LexerType>::parseImportDeclaration):
+        (JSC::Parser<LexerType>::parseExportSpecifier):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::isIdentifierOrKeyword):
+        (JSC::ModuleScopeData::create):
+        (JSC::ModuleScopeData::exportedBindings):
+        (JSC::ModuleScopeData::exportName):
+        (JSC::ModuleScopeData::exportBinding):
+        (JSC::Scope::Scope):
+        (JSC::Scope::setIsModule):
+        (JSC::Scope::moduleScopeData):
+        (JSC::Parser::matchContextualKeyword):
+        (JSC::Parser::matchIdentifierOrKeyword):
+        (JSC::Parser::isofToken): Deleted.
+        * parser/ParserModes.h:
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createModuleSpecifier):
+        (JSC::SyntaxChecker::createImportSpecifier):
+        (JSC::SyntaxChecker::createImportSpecifierList):
+        (JSC::SyntaxChecker::appendImportSpecifier):
+        (JSC::SyntaxChecker::createImportDeclaration):
+        (JSC::SyntaxChecker::createExportAllDeclaration):
+        (JSC::SyntaxChecker::createExportDefaultDeclaration):
+        (JSC::SyntaxChecker::createExportLocalDeclaration):
+        (JSC::SyntaxChecker::createExportNamedDeclaration):
+        (JSC::SyntaxChecker::createExportSpecifier):
+        (JSC::SyntaxChecker::createExportSpecifierList):
+        (JSC::SyntaxChecker::appendExportSpecifier):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Completion.cpp:
+        (JSC::checkModuleSyntax):
+        * runtime/Completion.h:
+        * tests/stress/modules-syntax-error-with-names.js: Added.
+        (shouldThrow):
+        * tests/stress/modules-syntax-error.js: Added.
+        (shouldThrow):
+        (checkModuleSyntaxError.checkModuleSyntaxError.checkModuleSyntaxError):
+        * tests/stress/modules-syntax.js: Added.
+        (prototype.checkModuleSyntax):
+        (checkModuleSyntax):
+        * tests/stress/tagged-templates-syntax.js:
+
 2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Introduce COMPILER(GCC_OR_CLANG) guard and make COMPILER(GCC) true only for GCC

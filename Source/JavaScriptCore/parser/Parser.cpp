@@ -209,6 +209,7 @@ Parser<LexerType>::Parser(
     , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
     , m_defaultConstructorKind(defaultConstructorKind)
     , m_thisTDZMode(thisTDZMode)
+    , m_codeType(codeType)
 {
     m_lexer = std::make_unique<LexerType>(vm, builtinMode);
     m_lexer->setCode(source, &m_parserArena);
@@ -220,6 +221,8 @@ Parser<LexerType>::Parser(
     ScopeRef scope = pushScope();
     if (codeType == JSParserCodeType::Function)
         scope->setIsFunction();
+    if (codeType == JSParserCodeType::Module)
+        scope->setIsModule();
     if (strictMode == JSParserStrictMode::Strict)
         scope->setStrictMode();
 
@@ -267,6 +270,10 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, FunctionParse
     if (!hasError()) {
         if (isArrowFunctionBodyExpression)
             sourceElements = parseArrowFunctionSingleExpressionBodySourceElements(context);
+#if ENABLE(ES6_MODULES)
+        else if (m_codeType == JSParserCodeType::Module)
+            sourceElements = parseModuleSourceElements(context);
+#endif
         else
             sourceElements = parseSourceElements(context, CheckForStrictMode);
     }
@@ -403,6 +410,45 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
     propagateError();
     return sourceElements;
 }
+
+template <typename LexerType>
+template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSourceElements(TreeBuilder& context)
+{
+    TreeSourceElements sourceElements = context.createSourceElements();
+
+    // FIXME: When some sort of ModuleAnalyzer TreeBuilder is landed,
+    // this SyntaxChecker will be replaced with typedef under the TreeBuilder,
+    // like TreeBuilder::ModuleStatementItemBuilder.
+    // https://bugs.webkit.org/show_bug.cgi?id=147353
+    SyntaxChecker moduleStatementItemBuilder(const_cast<VM*>(m_vm), m_lexer.get());
+
+    while (true) {
+        if (match(IMPORT) || match(EXPORT)) {
+            TreeStatement statement = 0;
+            if (match(IMPORT))
+                statement = parseImportDeclaration(context);
+            else
+                statement = parseExportDeclaration(context);
+
+            if (!statement)
+                break;
+            context.appendStatement(sourceElements, statement);
+        } else {
+            const Identifier* directive = 0;
+            unsigned directiveLiteralLength = 0;
+            if (!parseStatementListItem(moduleStatementItemBuilder, directive, &directiveLiteralLength))
+                break;
+        }
+    }
+
+    propagateError();
+
+    for (const auto& uid : currentScope()->moduleScopeData().exportedBindings())
+        semanticFailIfFalse(currentScope()->hasDeclaredVariable(uid) || currentScope()->hasLexicallyDeclaredVariable(uid), "Exported binding '", uid.get(), "' needs to refer to a top-level declared variable");
+
+    return sourceElements;
+}
+
 template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementListItem(TreeBuilder& context, const Identifier*& directive, unsigned* directiveLiteralLength)
 {
@@ -451,7 +497,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVariableDeclaration(TreeBuilder& context, DeclarationType declarationType)
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVariableDeclaration(TreeBuilder& context, DeclarationType declarationType, ExportType exportType)
 {
     ASSERT(match(VAR) || match(LET) || match(CONSTTOKEN));
     JSTokenLocation location(tokenLocation());
@@ -462,7 +508,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVariableDecla
     TreeExpression scratch2 = 0;
     JSTextPosition scratch3;
     bool scratchBool;
-    TreeExpression variableDecls = parseVariableDeclarationList(context, scratch, scratch1, scratch2, scratch3, scratch3, scratch3, VarDeclarationContext, declarationType, scratchBool);
+    TreeExpression variableDecls = parseVariableDeclarationList(context, scratch, scratch1, scratch2, scratch3, scratch3, scratch3, VarDeclarationContext, declarationType, exportType, scratchBool);
     propagateError();
     failIfFalse(autoSemiColon(), "Expected ';' after variable declaration");
     
@@ -517,7 +563,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDeclarationList(TreeBuilder& context, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext declarationListContext, DeclarationType declarationType, bool& forLoopConstDoesNotHaveInitializer)
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDeclarationList(TreeBuilder& context, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext declarationListContext, DeclarationType declarationType, ExportType exportType, bool& forLoopConstDoesNotHaveInitializer)
 {
     ASSERT(declarationType == DeclarationType::LetDeclaration || declarationType == DeclarationType::VarDeclaration || declarationType == DeclarationType::ConstDeclaration);
     TreeExpression head = 0;
@@ -555,6 +601,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
                     RELEASE_ASSERT_NOT_REACHED();
                 }
             }
+            semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(*name), "Cannot export a duplicate name '", name->impl(), "'");
+
             if (hasInitializer) {
                 JSTextPosition varDivot = tokenStartPosition() + 1;
                 initStart = tokenStartPosition();
@@ -576,7 +624,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
             }
         } else {
             lastIdent = 0;
-            auto pattern = parseDestructuringPattern(context, destructuringKindFromDeclarationType(declarationType), nullptr, nullptr, assignmentContext);
+            auto pattern = parseDestructuringPattern(context, destructuringKindFromDeclarationType(declarationType), exportType, nullptr, nullptr, assignmentContext);
             failIfFalse(pattern, "Cannot parse this destructuring pattern");
             hasInitializer = match(EQUAL);
             failIfTrue(declarationListContext == VarDeclarationContext && !hasInitializer, "Expected an initializer in destructuring variable declaration");
@@ -604,7 +652,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DestructuringKind kind, const Identifier& name, int depth, JSToken token, AssignmentContext bindingContext, const Identifier** duplicateIdentifier)
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier& name, int depth, JSToken token, AssignmentContext bindingContext, const Identifier** duplicateIdentifier)
 {
     ASSERT(!name.isNull());
     
@@ -656,6 +704,8 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
             }
         }
     }
+
+    semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(name), "Cannot export a duplicate name '", name.impl(), "'");
     return context.createBindingLocation(token.m_location, name, token.m_startPosition, token.m_endPosition, bindingContext);
 }
 
@@ -691,11 +741,11 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseArrowFun
 template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::tryParseDestructuringPatternExpression(TreeBuilder& context, AssignmentContext bindingContext)
 {
-    return parseDestructuringPattern(context, DestructureToExpressions, nullptr, nullptr, bindingContext);
+    return parseDestructuringPattern(context, DestructureToExpressions, ExportType::NotExported, nullptr, nullptr, bindingContext);
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDestructuringPattern(TreeBuilder& context, DestructuringKind kind, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDestructuringPattern(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
 {
     failIfStackOverflow();
     int nonLHSCount = m_nonLHSCount;
@@ -724,7 +774,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             if (UNLIKELY(match(DOTDOTDOT))) {
                 JSTokenLocation location = m_token.m_location;
                 next();
-                auto innerPattern = parseDestructuringPattern(context, kind, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+                auto innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 if (kind == DestructureToExpressions && !innerPattern)
                     return 0;
                 failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
@@ -737,7 +787,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             }
 
             JSTokenLocation location = m_token.m_location;
-            auto innerPattern = parseDestructuringPattern(context, kind, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+            auto innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
             if (kind == DestructureToExpressions && !innerPattern)
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
@@ -774,9 +824,9 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 JSToken identifierToken = m_token;
                 next();
                 if (consume(COLON))
-                    innerPattern = parseDestructuringPattern(context, kind, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+                    innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 else
-                    innerPattern = createBindingPattern(context, kind, *propertyName, depth + 1, identifierToken, bindingContext, duplicateIdentifier);
+                    innerPattern = createBindingPattern(context, kind, exportType, *propertyName, depth + 1, identifierToken, bindingContext, duplicateIdentifier);
             } else {
                 JSTokenType tokenType = m_token.m_type;
                 switch (m_token.m_type) {
@@ -807,7 +857,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                     
                     failWithMessage("Expected a ':' prior to a named destructuring property");
                 }
-                innerPattern = parseDestructuringPattern(context, kind, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+                innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
             }
             if (kind == DestructureToExpressions && !innerPattern)
                 return 0;
@@ -832,7 +882,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             failWithMessage("Expected a parameter pattern or a ')' in parameter list");
         }
         failIfTrue(match(LET) && (kind == DestructureToLet || kind == DestructureToConst), "Can't use 'let' as an identifier name for a LexicalDeclaration");
-        pattern = createBindingPattern(context, kind, *m_token.m_data.ident, depth, m_token, bindingContext, duplicateIdentifier);
+        pattern = createBindingPattern(context, kind, exportType, *m_token.m_data.ident, depth, m_token, bindingContext, duplicateIdentifier);
         next();
         break;
     }
@@ -913,7 +963,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
             declarationType = DeclarationType::ConstDeclaration;
         else
             RELEASE_ASSERT_NOT_REACHED();
-        decls = parseVariableDeclarationList(context, declarations, forInTarget, forInInitializer, declsStart, initStart, initEnd, ForLoopContext, declarationType, forLoopConstDoesNotHaveInitializer);
+        decls = parseVariableDeclarationList(context, declarations, forInTarget, forInInitializer, declsStart, initStart, initEnd, ForLoopContext, declarationType, ExportType::NotExported, forLoopConstDoesNotHaveInitializer);
         m_allowsIn = true;
         propagateError();
 
@@ -1457,7 +1507,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
 
     const Identifier* duplicateParameter = nullptr;
     bool hasDestructuringPattern = false;
-    auto parameter = parseDestructuringPattern(context, DestructureToParameters, &duplicateParameter, &hasDestructuringPattern);
+    auto parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
     failIfFalse(parameter, "Cannot parse parameter pattern");
     auto defaultValue = parseDefaultValueForDestructuringPattern(context);
     propagateError();
@@ -1465,7 +1515,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
     context.appendParameter(list, parameter, defaultValue);
     parameterCount++;
     while (consume(COMMA)) {
-        parameter = parseDestructuringPattern(context, DestructureToParameters, &duplicateParameter, &hasDestructuringPattern);
+        parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
         failIfFalse(parameter, "Cannot parse parameter pattern");
         defaultValue = parseDefaultValueForDestructuringPattern(context);
         propagateError();
@@ -1546,7 +1596,7 @@ template <typename LexerType> template <class TreeBuilder> int Parser<LexerType>
                 consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
             } else {
                 functionInfo.parameterCount = 1;
-                auto parameter = parseDestructuringPattern(context, DestructureToParameters);
+                auto parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported);
                 failIfFalse(parameter, "Cannot parse parameter pattern");
                 context.appendParameter(parameterList, parameter, 0);
             }
@@ -1566,7 +1616,7 @@ template <typename LexerType> template <class TreeBuilder> int Parser<LexerType>
     } else if (mode == SetterMode) {
         failIfTrue(match(CLOSEPAREN), "setter functions must have one parameter");
         const Identifier* duplicateParameter = nullptr;
-        auto parameter = parseDestructuringPattern(context, DestructureToParameters, &duplicateParameter);
+        auto parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter);
         failIfFalse(parameter, "setter functions must have one parameter");
         auto defaultValue = parseDefaultValueForDestructuringPattern(context);
         propagateError();
@@ -1795,7 +1845,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclaration(TreeBuilder& context)
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclaration(TreeBuilder& context, ExportType exportType)
 {
     ASSERT(match(FUNCTION));
     JSTokenLocation location(tokenLocation());
@@ -1806,12 +1856,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
         functionKeywordStart, functionInfo, StandardFunctionParseType)), "Cannot parse this function");
     failIfFalse(functionInfo.name, "Function statements must have a name");
     failIfTrueIfStrict(declareVariable(functionInfo.name) & DeclarationResult::InvalidStrictMode, "Cannot declare a function named '", functionInfo.name->impl(), "' in strict mode");
+    semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(*functionInfo.name), "Cannot export a duplicate function name: '", functionInfo.name->impl(), "'");
     return context.createFuncDeclStatement(location, functionInfo);
 }
 
 #if ENABLE(ES6_CLASS_SYNTAX)
 template <typename LexerType>
-template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclaration(TreeBuilder& context)
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclaration(TreeBuilder& context, ExportType exportType)
 {
     ASSERT(match(CLASSTOKEN));
     JSTokenLocation location(tokenLocation());
@@ -1825,6 +1876,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclarat
     DeclarationResultMask declarationResult = declareVariable(info.className, DeclarationType::LetDeclaration);
     if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
         internalFailWithMessage(false, "Cannot declare a class twice: '", info.className->impl(), "'");
+    semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(*info.className), "Cannot export a duplicate class name: '", info.className->impl(), "'");
 
     JSTextPosition classEnd = lastTokenEndPosition();
     unsigned classEndLine = tokenLine();
@@ -2146,6 +2198,357 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     }
 
     return context.createIfStatement(ifLocation, condition, trueBlock, statementStack.last(), start, end);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> typename TreeBuilder::ModuleSpecifier Parser<LexerType>::parseModuleSpecifier(TreeBuilder& context)
+{
+    // ModuleSpecifier represents the module name imported by the script.
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-imports
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-exports
+    JSTokenLocation specifierLocation(tokenLocation());
+    failIfFalse(match(STRING), "Imported modules names must be string literals");
+    const Identifier* moduleName = m_token.m_data.ident;
+    next();
+    return context.createModuleSpecifier(specifierLocation, *moduleName);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerType>::parseImportClauseItem(TreeBuilder& context, ImportSpecifierType specifierType)
+{
+    // Produced node is the item of the ImportClause.
+    // That is the ImportSpecifier, ImportedDefaultBinding or NameSpaceImport.
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-imports
+    JSTokenLocation specifierLocation(tokenLocation());
+    JSToken localNameToken;
+    const Identifier* importedName = nullptr;
+    const Identifier* localName = nullptr;
+
+    switch (specifierType) {
+    case ImportSpecifierType::NamespaceImport: {
+        // NameSpaceImport :
+        // * as ImportedBinding
+        // e.g.
+        //     * as namespace
+        ASSERT(match(TIMES));
+        importedName = &m_vm->propertyNames->timesIdentifier;
+        next();
+
+        failIfFalse(matchContextualKeyword(m_vm->propertyNames->as), "Expected 'as' before imported binding name");
+        next();
+
+        matchOrFail(IDENT, "Expected a variable name for the import declaration");
+        localNameToken = m_token;
+        localName = m_token.m_data.ident;
+        next();
+        break;
+    }
+
+    case ImportSpecifierType::NamedImport: {
+        // ImportSpecifier :
+        // ImportedBinding
+        // IdentifierName as ImportedBinding
+        // e.g.
+        //     A
+        //     A as B
+        ASSERT(matchIdentifierOrKeyword());
+        localNameToken = m_token;
+        localName = m_token.m_data.ident;
+        importedName = localName;
+        next();
+
+        if (matchContextualKeyword(m_vm->propertyNames->as)) {
+            next();
+            matchOrFail(IDENT, "Expected a variable name for the import declaration");
+            localNameToken = m_token;
+            localName = m_token.m_data.ident;
+            next();
+        }
+        break;
+    }
+
+    case ImportSpecifierType::DefaultImport: {
+        // ImportedDefaultBinding :
+        // ImportedBinding
+        ASSERT(match(IDENT));
+        localNameToken = m_token;
+        localName = m_token.m_data.ident;
+        importedName = &m_vm->propertyNames->defaultKeyword;
+        next();
+        break;
+    }
+    }
+
+    semanticFailIfTrue(localNameToken.m_type & KeywordTokenFlag, "Cannot use keyword as imported binding name");
+    DeclarationResultMask declarationResult = declareVariable(localName, DeclarationType::ConstDeclaration);
+    if (declarationResult != DeclarationResult::Valid) {
+        failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot declare an imported binding named ", localName->impl(), " in strict mode");
+        if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
+            internalFailWithMessage(false, "Cannot declare an imported binding name twice: '", localName->impl(), "'");
+    }
+
+    return context.createImportSpecifier(specifierLocation, *importedName, *localName);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclaration(TreeBuilder& context)
+{
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-imports
+    ASSERT(match(IMPORT));
+    JSTokenLocation importLocation(tokenLocation());
+    next();
+
+    auto specifierList = context.createImportSpecifierList();
+
+    if (match(STRING)) {
+        // import ModuleSpecifier ;
+        auto moduleSpecifier = parseModuleSpecifier(context);
+        failIfFalse(moduleSpecifier, "Cannot parse the module name");
+        failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
+        return context.createImportDeclaration(importLocation, specifierList, moduleSpecifier);
+    }
+
+    bool isFinishedParsingImport = false;
+    if (match(IDENT)) {
+        // ImportedDefaultBinding :
+        // ImportedBinding
+        auto specifier = parseImportClauseItem(context, ImportSpecifierType::DefaultImport);
+        failIfFalse(specifier, "Cannot parse the default import");
+        context.appendImportSpecifier(specifierList, specifier);
+        if (match(COMMA))
+            next();
+        else
+            isFinishedParsingImport = true;
+    }
+
+    if (!isFinishedParsingImport) {
+        if (match(TIMES)) {
+            // import NameSpaceImport FromClause ;
+            auto specifier = parseImportClauseItem(context, ImportSpecifierType::NamespaceImport);
+            failIfFalse(specifier, "Cannot parse the namespace import");
+            context.appendImportSpecifier(specifierList, specifier);
+        } else if (match(OPENBRACE)) {
+            // NamedImports :
+            // { }
+            // { ImportsList }
+            // { ImportsList , }
+            next();
+
+            while (!match(CLOSEBRACE)) {
+                failIfFalse(matchIdentifierOrKeyword(), "Expected an imported name for the import declaration");
+                auto specifier = parseImportClauseItem(context, ImportSpecifierType::NamedImport);
+                failIfFalse(specifier, "Cannot parse the named import");
+                context.appendImportSpecifier(specifierList, specifier);
+                if (!consume(COMMA))
+                    break;
+            }
+            handleProductionOrFail(CLOSEBRACE, "}", "end", "import list");
+        } else
+            failWithMessage("Expected namespace import or import list");
+    }
+
+    // FromClause :
+    // from ModuleSpecifier
+
+    failIfFalse(matchContextualKeyword(m_vm->propertyNames->from), "Expected 'from' before imported module name");
+    next();
+
+    auto moduleSpecifier = parseModuleSpecifier(context);
+    failIfFalse(moduleSpecifier, "Cannot parse the module name");
+    failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
+
+    return context.createImportDeclaration(importLocation, specifierList, moduleSpecifier);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> typename TreeBuilder::ExportSpecifier Parser<LexerType>::parseExportSpecifier(TreeBuilder& context, Vector<const Identifier*>& maybeLocalNames, bool& hasKeywordForLocalBindings)
+{
+    // ExportSpecifier :
+    // IdentifierName
+    // IdentifierName as IdentifierName
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-exports
+    ASSERT(matchIdentifierOrKeyword());
+    JSTokenLocation specifierLocation(tokenLocation());
+    if (m_token.m_type & KeywordTokenFlag)
+        hasKeywordForLocalBindings = true;
+    const Identifier* localName = m_token.m_data.ident;
+    const Identifier* exportedName = localName;
+    next();
+
+    if (matchContextualKeyword(m_vm->propertyNames->as)) {
+        next();
+        failIfFalse(matchIdentifierOrKeyword(), "Expected an exported name for the export declaration");
+        exportedName = m_token.m_data.ident;
+        next();
+    }
+
+    semanticFailIfFalse(currentScope()->moduleScopeData().exportName(*exportedName), "Cannot export a duplicate name '", exportedName->impl(), "'");
+    maybeLocalNames.append(localName);
+    return context.createExportSpecifier(specifierLocation, *localName, *exportedName);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclaration(TreeBuilder& context)
+{
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-exports
+    ASSERT(match(EXPORT));
+    JSTokenLocation exportLocation(tokenLocation());
+    next();
+
+    switch (m_token.m_type) {
+    case TIMES: {
+        // export * FromClause ;
+        next();
+
+        failIfFalse(matchContextualKeyword(m_vm->propertyNames->from), "Expected 'from' before exported module name");
+        next();
+        auto moduleSpecifier = parseModuleSpecifier(context);
+        failIfFalse(moduleSpecifier, "Cannot parse the 'from' clause");
+        failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
+        return context.createExportAllDeclaration(exportLocation, moduleSpecifier);
+    }
+
+    case DEFAULT: {
+        // export default HoistableDeclaration[Default]
+        // export default ClassDeclaration[Default]
+        // export default [lookahead not-in {function, class}] AssignmentExpression[In] ;
+
+        next();
+
+        TreeStatement result = 0;
+        bool hasName = false;
+        bool isFunctionOrClassDeclaration = false;
+        SavePoint savePoint = createSavePoint();
+        if (match(FUNCTION)
+#if ENABLE(ES6_CLASS_SYNTAX)
+                || match(CLASSTOKEN)
+#endif
+                ) {
+            isFunctionOrClassDeclaration = true;
+            next();
+            // FIXME: When landing ES6 generators, we need to take care of that '*' comes.
+            hasName = match(IDENT);
+            restoreSavePoint(savePoint);
+        }
+
+        if (hasName) {
+            if (match(FUNCTION))
+                result = parseFunctionDeclaration(context);
+#if ENABLE(ES6_CLASS_SYNTAX)
+            else {
+                ASSERT(match(CLASSTOKEN));
+                result = parseClassDeclaration(context);
+            }
+#endif
+        } else {
+            JSTokenLocation location(tokenLocation());
+            JSTextPosition start = tokenStartPosition();
+            TreeExpression expression = parseAssignmentExpression(context);
+            failIfFalse(expression, "Cannot parse expression");
+            result = context.createExprStatement(location, expression, start, tokenEndPosition());
+            if (!isFunctionOrClassDeclaration)
+                failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
+        }
+        failIfFalse(result, "Cannot parse the declaration");
+        semanticFailIfFalse(currentScope()->moduleScopeData().exportName(m_vm->propertyNames->defaultKeyword), "Cannot export 'default' name twice.");
+
+        return context.createExportDefaultDeclaration(exportLocation, result);
+    }
+
+    case OPENBRACE: {
+        // export ExportClause FromClause ;
+        // export ExportClause ;
+        //
+        // ExportClause :
+        // { }
+        // { ExportsList }
+        // { ExportsList , }
+        //
+        // ExportsList :
+        // ExportSpecifier
+        // ExportsList , ExportSpecifier
+
+        next();
+
+        auto specifierList = context.createExportSpecifierList();
+        Vector<const Identifier*> maybeLocalNames;
+
+        bool hasKeywordForLocalBindings = false;
+        while (!match(CLOSEBRACE)) {
+            failIfFalse(matchIdentifierOrKeyword(), "Expected a variable name for the export declaration");
+            auto specifier = parseExportSpecifier(context, maybeLocalNames, hasKeywordForLocalBindings);
+            failIfFalse(specifier, "Cannot parse the named export");
+            context.appendExportSpecifier(specifierList, specifier);
+            if (!consume(COMMA))
+                break;
+        }
+        handleProductionOrFail(CLOSEBRACE, "}", "end", "export list");
+
+        typename TreeBuilder::ModuleSpecifier moduleSpecifier = 0;
+        if (matchContextualKeyword(m_vm->propertyNames->from)) {
+            next();
+            moduleSpecifier = parseModuleSpecifier(context);
+            failIfFalse(moduleSpecifier, "Cannot parse the 'from' clause");
+        }
+        failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
+
+        if (!moduleSpecifier) {
+            semanticFailIfTrue(hasKeywordForLocalBindings, "Cannot use keyword as exported variable name");
+            // Since this export declaration does not have module specifier part, it exports the local bindings.
+            // While the export declaration with module specifier does not have any effect on the current module's scope,
+            // the export named declaration without module specifier references the the local binding names.
+            // For example,
+            //   export { A, B, C as D } from "mod"
+            // does not have effect on the current module's scope. But,
+            //   export { A, B, C as D }
+            // will reference the current module's bindings.
+            for (const Identifier* localName : maybeLocalNames) {
+                currentScope()->useVariable(localName, m_vm->propertyNames->eval == *localName);
+                currentScope()->moduleScopeData().exportBinding(*localName);
+            }
+        }
+
+        return context.createExportNamedDeclaration(exportLocation, specifierList, moduleSpecifier);
+    }
+
+    default: {
+        // export VariableStatement
+        // export Declaration
+        TreeStatement result = 0;
+        switch (m_token.m_type) {
+        case VAR:
+            result = parseVariableDeclaration(context, DeclarationType::VarDeclaration, ExportType::Exported);
+            break;
+
+        case CONSTTOKEN:
+            result = parseVariableDeclaration(context, DeclarationType::ConstDeclaration, ExportType::Exported);
+            break;
+
+        case LET:
+            result = parseVariableDeclaration(context, DeclarationType::LetDeclaration, ExportType::Exported);
+            break;
+
+        case FUNCTION:
+            result = parseFunctionDeclaration(context, ExportType::Exported);
+            break;
+
+#if ENABLE(ES6_CLASS_SYNTAX)
+        case CLASSTOKEN:
+            result = parseClassDeclaration(context, ExportType::Exported);
+            break;
+#endif
+
+        default:
+            failWithMessage("Expected either a declaration or a variable statement");
+            break;
+        }
+        failIfFalse(result, "Cannot parse the declaration");
+        return context.createExportLocalDeclaration(exportLocation, result);
+    }
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 template <typename LexerType>
@@ -2926,6 +3329,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     }
 
     if (baseIsSuper) {
+        semanticFailIfFalse(currentScope()->isFunction(), "super is only valid inside functions");
         base = context.createSuperExpr(location);
         next();
         currentScope()->setNeedsSuperBinding();

@@ -127,6 +127,31 @@ ALWAYS_INLINE static bool isEvalOrArgumentsIdentifier(const VM* vm, const Identi
 {
     return isEval(vm, ident) || isArguments(vm, ident);
 }
+ALWAYS_INLINE static bool isIdentifierOrKeyword(const JSToken& token)
+{
+    return token.m_type == IDENT || token.m_type & KeywordTokenFlag;
+}
+
+class ModuleScopeData : public RefCounted<ModuleScopeData> {
+public:
+    static Ref<ModuleScopeData> create() { return adoptRef(*new ModuleScopeData); }
+
+    const IdentifierSet& exportedBindings() const { return m_exportedBindings; }
+
+    bool exportName(const Identifier& exportedName)
+    {
+        return m_exportedNames.add(exportedName.impl()).isNewEntry;
+    }
+
+    void exportBinding(const Identifier& localName)
+    {
+        m_exportedBindings.add(localName.impl());
+    }
+
+private:
+    IdentifierSet m_exportedNames { };
+    IdentifierSet m_exportedBindings { };
+};
 
 struct Scope {
     Scope(const VM* vm, bool isFunction, bool strictMode)
@@ -164,6 +189,7 @@ struct Scope {
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
         , m_loopDepth(rhs.m_loopDepth)
         , m_switchDepth(rhs.m_switchDepth)
+        , m_moduleScopeData(rhs.m_moduleScopeData)
     {
         if (rhs.m_labels) {
             m_labels = std::make_unique<LabelStack>();
@@ -215,6 +241,11 @@ struct Scope {
         setIsLexicalScope();
     }
 
+    void setIsModule()
+    {
+        m_moduleScopeData = ModuleScopeData::create();
+    }
+
     bool isFunction() const { return m_isFunction; }
     bool isFunctionBoundary() const { return m_isFunctionBoundary; }
 
@@ -234,6 +265,12 @@ struct Scope {
             computeLexicallyCapturedVariablesAndPurgeCandidates();
 
         return m_lexicalVariables;
+    }
+
+    ModuleScopeData& moduleScopeData() const
+    {
+        ASSERT(m_moduleScopeData);
+        return *m_moduleScopeData;
     }
 
     void computeLexicallyCapturedVariablesAndPurgeCandidates()
@@ -532,6 +569,7 @@ private:
     IdentifierSet m_usedVariables;
     IdentifierSet m_closedVariableCandidates;
     IdentifierSet m_writtenVariables;
+    RefPtr<ModuleScopeData> m_moduleScopeData { };
 };
 
 typedef Vector<Scope, 10> ScopeStack;
@@ -847,9 +885,14 @@ private:
         return m_token.m_type == expected;
     }
     
-    ALWAYS_INLINE bool isofToken()
+    ALWAYS_INLINE bool matchContextualKeyword(const Identifier& identifier)
     {
-        return m_token.m_type == IDENT && *m_token.m_data.ident == m_vm->propertyNames->of;
+        return m_token.m_type == IDENT && *m_token.m_data.ident == identifier;
+    }
+
+    ALWAYS_INLINE bool matchIdentifierOrKeyword()
+    {
+        return isIdentifierOrKeyword(m_token);
     }
     
     ALWAYS_INLINE bool isEndOfArrowFunction()
@@ -1007,11 +1050,12 @@ private:
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
+    enum class ExportType { Exported, NotExported };
 #if ENABLE(ES6_CLASS_SYNTAX)
-    template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&);
+    template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&, ExportType = ExportType::NotExported);
 #endif
-    template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&);
-    template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType);
+    template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported);
+    template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType, ExportType = ExportType::NotExported);
     template <class TreeBuilder> TreeStatement parseDoWhileStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseWhileStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseForStatement(TreeBuilder&);
@@ -1047,13 +1091,20 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionBodyType, unsigned, FunctionParseMode);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, unsigned&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
-    template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, bool& forLoopConstDoesNotHaveInitializer);
+    template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, ExportType, bool& forLoopConstDoesNotHaveInitializer);
     template <class TreeBuilder> TreeSourceElements parseArrowFunctionSingleExpressionBodySourceElements(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, const Identifier&, int depth, JSToken, AssignmentContext, const Identifier** duplicateIdentifier);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, const Identifier** duplicateIdentifier = nullptr, bool* hasDestructuringPattern = nullptr, AssignmentContext = AssignmentContext::DeclarationStatement, int depth = 0);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier&, int depth, JSToken, AssignmentContext, const Identifier** duplicateIdentifier);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier** duplicateIdentifier = nullptr, bool* hasDestructuringPattern = nullptr, AssignmentContext = AssignmentContext::DeclarationStatement, int depth = 0);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern tryParseDestructuringPatternExpression(TreeBuilder&, AssignmentContext);
     template <class TreeBuilder> NEVER_INLINE TreeExpression parseDefaultValueForDestructuringPattern(TreeBuilder&);
+    template <class TreeBuilder> TreeSourceElements parseModuleSourceElements(TreeBuilder&);
+    enum class ImportSpecifierType { NamespaceImport, NamedImport, DefaultImport };
+    template <class TreeBuilder> typename TreeBuilder::ImportSpecifier parseImportClauseItem(TreeBuilder&, ImportSpecifierType);
+    template <class TreeBuilder> typename TreeBuilder::ModuleSpecifier parseModuleSpecifier(TreeBuilder&);
+    template <class TreeBuilder> TreeStatement parseImportDeclaration(TreeBuilder&);
+    template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<const Identifier*>& maybeLocalNames, bool& hasKeywordForLocalBindings);
+    template <class TreeBuilder> TreeStatement parseExportDeclaration(TreeBuilder&);
 
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionParseType);
     
@@ -1181,6 +1232,7 @@ private:
     Vector<RefPtr<UniquedStringImpl>> m_closedVariables;
     CodeFeatures m_features;
     int m_numConstants;
+    JSParserCodeType m_codeType;
     
     struct DepthManager {
         DepthManager(int* depth)

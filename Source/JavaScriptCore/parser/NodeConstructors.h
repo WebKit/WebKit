@@ -733,6 +733,58 @@ namespace JSC {
     {
     }
 
+    inline ModuleSpecifierNode::ModuleSpecifierNode(const JSTokenLocation& location, const Identifier& moduleName)
+        : Node(location)
+        , m_moduleName(moduleName)
+    {
+    }
+
+    inline ImportSpecifierNode::ImportSpecifierNode(const JSTokenLocation& location, const Identifier& importedName, const Identifier& localName)
+        : Node(location)
+        , m_importedName(importedName)
+        , m_localName(localName)
+    {
+    }
+
+    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+        : StatementNode(location)
+        , m_specifierList(importSpecifierList)
+        , m_moduleSpecifier(moduleSpecifier)
+    {
+    }
+
+    inline ExportAllDeclarationNode::ExportAllDeclarationNode(const JSTokenLocation& location, ModuleSpecifierNode* moduleSpecifier)
+        : StatementNode(location)
+        , m_moduleSpecifier(moduleSpecifier)
+    {
+    }
+
+    inline ExportDefaultDeclarationNode::ExportDefaultDeclarationNode(const JSTokenLocation& location, StatementNode* declaration)
+        : StatementNode(location)
+        , m_declaration(declaration)
+    {
+    }
+
+    inline ExportLocalDeclarationNode::ExportLocalDeclarationNode(const JSTokenLocation& location, StatementNode* declaration)
+        : StatementNode(location)
+        , m_declaration(declaration)
+    {
+    }
+
+    inline ExportNamedDeclarationNode::ExportNamedDeclarationNode(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+        : StatementNode(location)
+        , m_specifierList(exportSpecifierList)
+        , m_moduleSpecifier(moduleSpecifier)
+    {
+    }
+
+    inline ExportSpecifierNode::ExportSpecifierNode(const JSTokenLocation& location, const Identifier& localName, const Identifier& exportedName)
+        : Node(location)
+        , m_localName(localName)
+        , m_exportedName(exportedName)
+    {
+    }
+
     inline EmptyVarExpression::EmptyVarExpression(const JSTokenLocation& location, const Identifier& ident)
         : ExpressionNode(location)
         , m_ident(ident)

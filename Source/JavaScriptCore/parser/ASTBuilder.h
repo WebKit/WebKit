@@ -113,6 +113,11 @@ public:
 #if ENABLE(ES6_CLASS_SYNTAX)
     typedef ClassExprNode* ClassExpression;
 #endif
+    typedef ModuleSpecifierNode* ModuleSpecifier;
+    typedef ImportSpecifierNode* ImportSpecifier;
+    typedef ImportSpecifierListNode* ImportSpecifierList;
+    typedef ExportSpecifierNode* ExportSpecifier;
+    typedef ExportSpecifierListNode* ExportSpecifierList;
     typedef StatementNode* Statement;
     typedef ClauseListNode* ClauseList;
     typedef CaseClauseNode* Clause;
@@ -614,7 +619,67 @@ public:
         result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
         return result;
     }
-    
+
+    ModuleSpecifierNode* createModuleSpecifier(const JSTokenLocation& location, const Identifier& moduleName)
+    {
+        return new (m_parserArena) ModuleSpecifierNode(location, moduleName);
+    }
+
+    ImportSpecifierNode* createImportSpecifier(const JSTokenLocation& location, const Identifier& importedName, const Identifier& localName)
+    {
+        return new (m_parserArena) ImportSpecifierNode(location, importedName, localName);
+    }
+
+    ImportSpecifierListNode* createImportSpecifierList()
+    {
+        return new (m_parserArena) ImportSpecifierListNode();
+    }
+
+    void appendImportSpecifier(ImportSpecifierListNode* specifierList, ImportSpecifierNode* specifier)
+    {
+        specifierList->append(specifier);
+    }
+
+    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+    {
+        return new (m_parserArena) ImportDeclarationNode(location, importSpecifierList, moduleSpecifier);
+    }
+
+    StatementNode* createExportAllDeclaration(const JSTokenLocation& location, ModuleSpecifierNode* moduleSpecifier)
+    {
+        return new (m_parserArena) ExportAllDeclarationNode(location, moduleSpecifier);
+    }
+
+    StatementNode* createExportDefaultDeclaration(const JSTokenLocation& location, StatementNode* declaration)
+    {
+        return new (m_parserArena) ExportDefaultDeclarationNode(location, declaration);
+    }
+
+    StatementNode* createExportLocalDeclaration(const JSTokenLocation& location, StatementNode* declaration)
+    {
+        return new (m_parserArena) ExportLocalDeclarationNode(location, declaration);
+    }
+
+    StatementNode* createExportNamedDeclaration(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+    {
+        return new (m_parserArena) ExportNamedDeclarationNode(location, exportSpecifierList, moduleSpecifier);
+    }
+
+    ExportSpecifierNode* createExportSpecifier(const JSTokenLocation& location, const Identifier& localName, const Identifier& exportedName)
+    {
+        return new (m_parserArena) ExportSpecifierNode(location, localName, exportedName);
+    }
+
+    ExportSpecifierListNode* createExportSpecifierList()
+    {
+        return new (m_parserArena) ExportSpecifierListNode();
+    }
+
+    void appendExportSpecifier(ExportSpecifierListNode* specifierList, ExportSpecifierNode* specifier)
+    {
+        specifierList->append(specifier);
+    }
+
     void appendStatement(JSC::SourceElements* elements, JSC::StatementNode* statement)
     {
         elements->append(statement);

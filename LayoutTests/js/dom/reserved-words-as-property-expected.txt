@@ -1155,36 +1155,36 @@ PASS "use strict";({ enum: 42 }.enum === 42) is true
 PASS (function(){"use strict";({ enum: 42 }.enum === 42)}); true is true
 PASS "use strict";({ get enum(){}, set enum(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){"use strict";({ get enum(){}, set enum(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS var export; true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){var export; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS var export = 42; export === 42 threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){var export = 42; export === 42}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS function g(export){  }; true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){function g(export){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS /export/.test(function g(export){  }) threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){/export/.test(function g(export){  })}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS try{}catch(export){}; true threw exception SyntaxError: Cannot use the reserved word 'export' as a catch variable name..
-PASS (function(){try{}catch(export){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a catch variable name..
-PASS function export(){  }; true threw exception SyntaxError: Cannot use the reserved word 'export' as a function name..
-PASS (function(){function export(){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a function name..
+PASS var export; true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){var export; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS var export = 42; export === 42 threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){var export = 42; export === 42}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS function g(export){  }; true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){function g(export){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS /export/.test(function g(export){  }) threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){/export/.test(function g(export){  })}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS try{}catch(export){}; true threw exception SyntaxError: Cannot use the keyword 'export' as a catch variable name..
+PASS (function(){try{}catch(export){}; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a catch variable name..
+PASS function export(){  }; true threw exception SyntaxError: Cannot use the keyword 'export' as a function name..
+PASS (function(){function export(){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a function name..
 PASS ({ "export": 42 }.export === 42) is true
 PASS (function(){({ "export": 42 }.export === 42)}); true is true
 PASS ({ export: 42 }.export === 42) is true
 PASS (function(){({ export: 42 }.export === 42)}); true is true
 PASS ({ get export(){}, set export(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){({ get export(){}, set export(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var export; true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){"use strict";var export; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS "use strict";var export = 42; export === 42 threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){"use strict";var export = 42; export === 42}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS "use strict";function g(export){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){"use strict";function g(export){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS "use strict";/export/.test(function g(export){ "use strict"; }) threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS (function(){"use strict";/export/.test(function g(export){ "use strict"; })}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a variable name..
-PASS "use strict";try{}catch(export){}; true threw exception SyntaxError: Cannot use the reserved word 'export' as a catch variable name..
-PASS (function(){"use strict";try{}catch(export){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a catch variable name..
-PASS "use strict";function export(){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'export' as a function name..
-PASS (function(){"use strict";function export(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'export' as a function name..
+PASS "use strict";var export; true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){"use strict";var export; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS "use strict";var export = 42; export === 42 threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){"use strict";var export = 42; export === 42}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS "use strict";function g(export){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){"use strict";function g(export){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS "use strict";/export/.test(function g(export){ "use strict"; }) threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS (function(){"use strict";/export/.test(function g(export){ "use strict"; })}); true threw exception SyntaxError: Cannot use the keyword 'export' as a variable name..
+PASS "use strict";try{}catch(export){}; true threw exception SyntaxError: Cannot use the keyword 'export' as a catch variable name..
+PASS (function(){"use strict";try{}catch(export){}; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a catch variable name..
+PASS "use strict";function export(){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'export' as a function name..
+PASS (function(){"use strict";function export(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'export' as a function name..
 PASS "use strict";({ "export": 42 }.export === 42) is true
 PASS (function(){"use strict";({ "export": 42 }.export === 42)}); true is true
 PASS "use strict";({ export: 42 }.export === 42) is true
@@ -1227,36 +1227,36 @@ PASS "use strict";({ extends: 42 }.extends === 42) is true
 PASS (function(){"use strict";({ extends: 42 }.extends === 42)}); true is true
 PASS "use strict";({ get extends(){}, set extends(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){"use strict";({ get extends(){}, set extends(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS var import; true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){var import; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS var import = 42; import === 42 threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){var import = 42; import === 42}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS function g(import){  }; true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){function g(import){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS /import/.test(function g(import){  }) threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){/import/.test(function g(import){  })}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS try{}catch(import){}; true threw exception SyntaxError: Cannot use the reserved word 'import' as a catch variable name..
-PASS (function(){try{}catch(import){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a catch variable name..
-PASS function import(){  }; true threw exception SyntaxError: Cannot use the reserved word 'import' as a function name..
-PASS (function(){function import(){  }; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a function name..
+PASS var import; true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){var import; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS var import = 42; import === 42 threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){var import = 42; import === 42}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS function g(import){  }; true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){function g(import){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS /import/.test(function g(import){  }) threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){/import/.test(function g(import){  })}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS try{}catch(import){}; true threw exception SyntaxError: Cannot use the keyword 'import' as a catch variable name..
+PASS (function(){try{}catch(import){}; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a catch variable name..
+PASS function import(){  }; true threw exception SyntaxError: Cannot use the keyword 'import' as a function name..
+PASS (function(){function import(){  }; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a function name..
 PASS ({ "import": 42 }.import === 42) is true
 PASS (function(){({ "import": 42 }.import === 42)}); true is true
 PASS ({ import: 42 }.import === 42) is true
 PASS (function(){({ import: 42 }.import === 42)}); true is true
 PASS ({ get import(){}, set import(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){({ get import(){}, set import(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var import; true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){"use strict";var import; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS "use strict";var import = 42; import === 42 threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){"use strict";var import = 42; import === 42}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS "use strict";function g(import){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){"use strict";function g(import){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS "use strict";/import/.test(function g(import){ "use strict"; }) threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS (function(){"use strict";/import/.test(function g(import){ "use strict"; })}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a variable name..
-PASS "use strict";try{}catch(import){}; true threw exception SyntaxError: Cannot use the reserved word 'import' as a catch variable name..
-PASS (function(){"use strict";try{}catch(import){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a catch variable name..
-PASS "use strict";function import(){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'import' as a function name..
-PASS (function(){"use strict";function import(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'import' as a function name..
+PASS "use strict";var import; true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){"use strict";var import; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS "use strict";var import = 42; import === 42 threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){"use strict";var import = 42; import === 42}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS "use strict";function g(import){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){"use strict";function g(import){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS "use strict";/import/.test(function g(import){ "use strict"; }) threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS (function(){"use strict";/import/.test(function g(import){ "use strict"; })}); true threw exception SyntaxError: Cannot use the keyword 'import' as a variable name..
+PASS "use strict";try{}catch(import){}; true threw exception SyntaxError: Cannot use the keyword 'import' as a catch variable name..
+PASS (function(){"use strict";try{}catch(import){}; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a catch variable name..
+PASS "use strict";function import(){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'import' as a function name..
+PASS (function(){"use strict";function import(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'import' as a function name..
 PASS "use strict";({ "import": 42 }.import === 42) is true
 PASS (function(){"use strict";({ "import": 42 }.import === 42)}); true is true
 PASS "use strict";({ import: 42 }.import === 42) is true

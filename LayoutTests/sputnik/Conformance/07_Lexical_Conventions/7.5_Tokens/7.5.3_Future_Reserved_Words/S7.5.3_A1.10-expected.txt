@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected use of reserved word 'export'
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'export'
 S7.5.3_A1.10
 
 PASS Expected parsing failure

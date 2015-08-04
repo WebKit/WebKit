@@ -1,3 +1,19 @@
+2015-08-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Support Module Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=147422
+
+        Reviewed by Saam Barati.
+
+        'export' and 'import' are changed from FutureReservedWord to Keyword in ES6.
+        http://www.ecma-international.org/ecma-262/6.0/#sec-keywords
+        And restrict 'super' use under the Script / Module contexts.
+
+        * js/dom/reserved-words-as-property-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.10-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.16-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.27-expected.txt:
+
 2015-08-04  Alexey Proskuryakov  <ap@apple.com>
 
         Implement NPAPI redirect handling

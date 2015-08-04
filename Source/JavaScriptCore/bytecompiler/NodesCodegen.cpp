@@ -2888,6 +2888,12 @@ void ProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     generator.emitEnd(dstRegister.get());
 }
 
+// ------------------------------ ModuleProgramNode --------------------
+
+void ModuleProgramNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+{
+}
+
 // ------------------------------ EvalNode -----------------------------
 
 void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
@@ -3038,7 +3044,37 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     return generator.moveToDestinationIfNeeded(dst, constructor.get());
 }
 #endif
-    
+
+// ------------------------------ ImportDeclarationNode -----------------------
+
+void ImportDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+{
+}
+
+// ------------------------------ ExportAllDeclarationNode --------------------
+
+void ExportAllDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+{
+}
+
+// ------------------------------ ExportDefaultDeclarationNode ----------------
+
+void ExportDefaultDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+{
+}
+
+// ------------------------------ ExportLocalDeclarationNode ------------------
+
+void ExportLocalDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+{
+}
+
+// ------------------------------ ExportNamedDeclarationNode ------------------
+
+void ExportNamedDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+{
+}
+
 // ------------------------------ DestructuringAssignmentNode -----------------
 RegisterID* DestructuringAssignmentNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {

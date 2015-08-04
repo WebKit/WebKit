@@ -497,6 +497,9 @@ static EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*);
 #if ENABLE(WEBASSEMBLY)
 static EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState*);
 #endif
+#if ENABLE(ES6_MODULES)
+static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState*);
+#endif
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -662,6 +665,9 @@ protected:
         
 #if ENABLE(WEBASSEMBLY)
         addFunction(vm, "loadWebAssembly", functionLoadWebAssembly, 1);
+#endif
+#if ENABLE(ES6_MODULES)
+        addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
 #endif
 
         JSArray* array = constructEmptyArray(globalExec(), 0);
@@ -1206,6 +1212,24 @@ EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
     if (!module)
         return JSValue::encode(exec->vm().throwException(exec, createSyntaxError(exec, errorMessage)));
     return JSValue::encode(module);
+}
+#endif
+
+#if ENABLE(ES6_MODULES)
+EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
+{
+    String source = exec->argument(0).toString(exec)->value(exec);
+
+    StopWatch stopWatch;
+    stopWatch.start();
+
+    ParserError error;
+    bool validSyntax = checkModuleSyntax(exec->vm(), makeSource(source), error);
+    stopWatch.stop();
+
+    if (!validSyntax)
+        exec->vm().throwException(exec, jsNontrivialString(exec, toString("SyntaxError: ", error.message(), ":", error.line())));
+    return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 #endif
 
