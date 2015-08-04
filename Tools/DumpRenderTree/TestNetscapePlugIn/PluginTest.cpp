@@ -136,6 +136,11 @@ bool PluginTest::NPP_URLNotify(const char* url, NPReason, void* notifyData)
     return false;
 }
 
+void PluginTest::NPP_URLRedirectNotify(const char*, int32_t, void* notifyData)
+{
+    NPN_URLRedirectResponse(notifyData, true);
+}
+
 NPError PluginTest::NPP_GetValue(NPPVariable variable, void *value)
 {
     // We don't know anything about plug-in values so just return NPERR_GENERIC_ERROR.
@@ -157,6 +162,11 @@ NPError PluginTest::NPN_GetURL(const char* url, const char* target)
 NPError PluginTest::NPN_GetURLNotify(const char *url, const char *target, void *notifyData)
 {
     return browser->geturlnotify(m_npp, url, target, notifyData);
+}
+
+NPError PluginTest::NPN_PostURLNotify(const char *url, const char *target, uint32_t len, const char* buf, NPBool file, void *notifyData)
+{
+    return browser->posturlnotify(m_npp, url, target, len, buf, file, notifyData);
 }
 
 NPError PluginTest::NPN_GetValue(NPNVariable variable, void* value)
@@ -229,6 +239,11 @@ bool PluginTest::NPN_RemoveProperty(NPObject* npObject, NPIdentifier propertyNam
 void PluginTest::NPN_ReleaseVariantValue(NPVariant* variant)
 {
     browser->releasevariantvalue(variant);
+}
+
+void PluginTest::NPN_URLRedirectResponse(void* notifyData, NPBool allow)
+{
+    browser->urlredirectresponse(m_npp, notifyData, allow);
 }
 
 #ifdef XP_MACOSX

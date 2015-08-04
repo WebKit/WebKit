@@ -38,6 +38,9 @@ messages -> PluginControllerProxy LegacyReceiver {
     # Sent when JavaScript that the plug-in asked to be evaluated has been evaluated.
     DidEvaluateJavaScript(uint64_t requestID, String result)
 
+    # Sent when the plug-in receives will send a request for a stream.
+    StreamWillSendRequest(uint64_t streamID, String requestURLString, String redirectResponseURLString, uint32_t redirectResponseStatusCode)
+
     # Sent when the plug-in receives a response for a stream.
     StreamDidReceiveResponse(uint64_t streamID, String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, String mimeType, String headers)
 

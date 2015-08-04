@@ -68,12 +68,14 @@ public:
     
     virtual int16_t NPP_HandleEvent(void* event);
     virtual bool NPP_URLNotify(const char* url, NPReason, void* notifyData);
+    virtual void NPP_URLRedirectNotify(const char* url, int32_t status, void* notifyData);
     virtual NPError NPP_GetValue(NPPVariable, void* value);
     virtual NPError NPP_SetValue(NPNVariable, void *value);
 
     // NPN functions.
     NPError NPN_GetURL(const char* url, const char* target);
     NPError NPN_GetURLNotify(const char* url, const char* target, void* notifyData);
+    NPError NPN_PostURLNotify(const char *url, const char *target, uint32_t len, const char* buf, NPBool file, void *notifyData);
     NPError NPN_GetValue(NPNVariable, void* value);
     void NPN_InvalidateRect(NPRect* invalidRect);
     bool NPN_Invoke(NPObject *, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result);
@@ -91,6 +93,7 @@ public:
     void NPN_ReleaseObject(NPObject*);
     bool NPN_RemoveProperty(NPObject*, NPIdentifier propertyName);
     void NPN_ReleaseVariantValue(NPVariant*);
+    void NPN_URLRedirectResponse(void* notifyData, NPBool allow);
 
 #ifdef XP_MACOSX
     bool NPN_ConvertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);

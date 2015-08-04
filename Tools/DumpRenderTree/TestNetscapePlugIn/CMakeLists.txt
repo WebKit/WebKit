@@ -26,6 +26,7 @@ set(WebKitTestNetscapePlugin_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/PluginScriptableObjectOverridesAllProperties.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/PrivateBrowsing.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/ToStringAndValueOfObject.cpp
+    ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/URLRedirect.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/x11/CallInvalidateRectWithNullNPPArgument.cpp
 )
 

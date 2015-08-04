@@ -1,3 +1,77 @@
+2015-08-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement NPAPI redirect handling
+        https://bugs.webkit.org/show_bug.cgi?id=138675
+        rdar://problem/15779101
+
+        Patch by Jeffrey Pfau, updated and tweaked by me.
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::loadURL):
+        (WebKit::PluginControllerProxy::continueStreamLoad):
+        (WebKit::PluginControllerProxy::cancelStreamLoad):
+        (WebKit::PluginControllerProxy::didEvaluateJavaScript):
+        (WebKit::PluginControllerProxy::streamWillSendRequest):
+        (WebKit::PluginControllerProxy::streamDidReceiveResponse):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_ConvertPoint):
+        (WebKit::NPN_URLRedirectResponse):
+        (WebKit::initializeBrowserFuncs):
+        (WebKit::netscapeBrowserFuncs):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::getAuthenticationInfo):
+        (WebKit::NetscapePlugin::registerRedirect):
+        (WebKit::NetscapePlugin::urlRedirectResponse):
+        (WebKit::NetscapePlugin::setIsPlayingAudio):
+        (WebKit::NetscapePlugin::NPP_URLNotify):
+        (WebKit::NetscapePlugin::NPP_URLRedirectNotify):
+        (WebKit::NetscapePlugin::NPP_GetValue):
+        (WebKit::NetscapePlugin::didEvaluateJavaScript):
+        (WebKit::NetscapePlugin::streamWillSendRequest):
+        (WebKit::NetscapePlugin::streamDidReceiveResponse):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::~NetscapePluginStream):
+        (WebKit::NetscapePluginStream::willSendRequest):
+        (WebKit::NetscapePluginStream::didReceiveResponse):
+        (WebKit::NetscapePluginStream::stop):
+        (WebKit::NetscapePluginStream::setURL):
+        (WebKit::NetscapePluginStream::cancel):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        (WebKit::NetscapePluginStream::streamID):
+        (WebKit::NetscapePluginStream::npStream):
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::didEvaluateJavaScript):
+        (WebKit::PluginProxy::streamWillSendRequest):
+        (WebKit::PluginProxy::streamDidReceiveResponse):
+        (WebKit::PluginProxy::setPluginIsPlayingAudio):
+        (WebKit::PluginProxy::continueStreamLoad):
+        (WebKit::PluginProxy::cancelStreamLoad):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::streamID):
+        (WebKit::PluginView::Stream::Stream):
+        (WebKit::PluginView::Stream::cancel):
+        (WebKit::PluginView::Stream::continueLoad):
+        (WebKit::buildHTTPHeaders):
+        (WebKit::lastModifiedDateMS):
+        (WebKit::PluginView::Stream::willSendRequest):
+        (WebKit::PluginView::Stream::didReceiveResponse):
+        (WebKit::PluginView::cancelStreamLoad):
+        (WebKit::PluginView::continueStreamLoad):
+        (WebKit::PluginView::cancelManualStreamLoad):
+        * WebProcess/Plugins/PluginView.h:
+
 2015-08-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r187812.

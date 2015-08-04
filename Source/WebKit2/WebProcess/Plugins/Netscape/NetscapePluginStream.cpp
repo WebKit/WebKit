@@ -62,6 +62,14 @@ NetscapePluginStream::~NetscapePluginStream()
     ASSERT(m_fileHandle == invalidPlatformFileHandle);
 }
 
+void NetscapePluginStream::willSendRequest(const URL& requestURL, const URL& redirectResponseURL, int redirectResponseStatus)
+{
+    Ref<NetscapePluginStream> protect(*this);
+
+    if (redirectResponseStatus >= 300 && redirectResponseStatus < 400)
+        m_plugin->registerRedirect(this, requestURL, redirectResponseStatus, m_notificationData);
+}
+
 void NetscapePluginStream::didReceiveResponse(const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
     // Starting the stream could cause the plug-in stream to go away so we keep a reference to it here.
@@ -336,6 +344,11 @@ void NetscapePluginStream::stop(NPReason reason)
     m_plugin->NPP_DestroyStream(&m_npStream, reason);
 
     notifyAndDestroyStream(reason);
+}
+
+void NetscapePluginStream::setURL(const String& newURLString)
+{
+    m_requestURLString = newURLString;
 }
 
 void NetscapePluginStream::cancel()

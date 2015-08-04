@@ -1,3 +1,18 @@
+2015-08-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement NPAPI redirect handling
+        https://bugs.webkit.org/show_bug.cgi?id=138675
+        rdar://problem/15779101
+
+        Patch by Jeffrey Pfau, updated and tweaked by me.
+
+        Reviewed by Anders Carlsson.
+
+        * http/tests/plugins/get-url-redirect-notify-expected.txt: Added.
+        * http/tests/plugins/get-url-redirect-notify.html: Added.
+        * platform/wk2/http/tests/plugins: Added.
+        * platform/wk2/http/tests/plugins/get-url-redirect-notify-expected.txt: Added.
+
 2015-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         Layout Test http/tests/security/contentSecurityPolicy/source-list-parsing-10.html is failing

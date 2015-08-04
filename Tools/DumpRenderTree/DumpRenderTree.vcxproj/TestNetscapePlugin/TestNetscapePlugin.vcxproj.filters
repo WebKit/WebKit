@@ -71,6 +71,9 @@
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\ToStringAndValueOfObject.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\URLRedirect.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\CallJSThatDestroysPlugin.cpp">
       <Filter>Tests\win</Filter>
     </ClCompile>

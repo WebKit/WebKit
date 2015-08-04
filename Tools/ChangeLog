@@ -1,3 +1,43 @@
+2015-08-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement NPAPI redirect handling
+        https://bugs.webkit.org/show_bug.cgi?id=138675
+        rdar://problem/15779101
+
+        Patch by Jeffrey Pfau, updated and tweaked by me.
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj.filters:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPP_URLNotify):
+        (PluginTest::NPP_URLRedirectNotify):
+        (PluginTest::NPP_GetValue):
+        (PluginTest::NPN_GetURLNotify):
+        (PluginTest::NPN_PostURLNotify):
+        (PluginTest::NPN_GetValue):
+        (PluginTest::NPN_ReleaseVariantValue):
+        (PluginTest::NPN_URLRedirectResponse):
+        (PluginTest::NPN_ConvertPoint):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/URLRedirect.cpp: Added.
+        (URLRedirect::URLRedirect):
+        (URLRedirect::ScriptableObject::hasMethod):
+        (URLRedirect::ScriptableObject::get):
+        (URLRedirect::ScriptableObject::serviceAsync):
+        (URLRedirect::ScriptableObject::invoke):
+        (URLRedirect::NPP_GetValue):
+        (URLRedirect::NPP_URLNotify):
+        (URLRedirect::NPP_URLRedirectNotify):
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_GetEntryPoints):
+        (NPP_URLNotify):
+        (NPP_URLRedirectNotify):
+        (NPP_GetValue):
+
 2015-08-04  Tim Horton  <timothy_horton@apple.com>
 
         Move Matt Daiter to committers.

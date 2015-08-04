@@ -63,7 +63,7 @@ private:
 
     virtual bool init(const ResourceRequest&) override;
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse) override;
+    virtual void willSendRequestInternal(ResourceRequest&, const ResourceResponse& redirectResponse) override;
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     virtual void didReceiveResponse(const ResourceResponse&) override;
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;

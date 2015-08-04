@@ -74,19 +74,20 @@ namespace WebCore {
 
         static NPP ownerForStream(NPStream*);
 
-        // NetscapePlugInStreamLoaderClient
-        virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&);
-        virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int);
-        virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&);
-        virtual void didFinishLoading(NetscapePlugInStreamLoader*);
-        virtual bool wantsAllStreams() const;
-
     private:
         PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
 
         void deliverData();
         void destroyStream(NPReason);
         void destroyStream();
+
+        // NetscapePlugInStreamLoaderClient
+        void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void (ResourceRequest&&)>&&) override;
+        void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) override;
+        void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) override;
+        void didFail(NetscapePlugInStreamLoader*, const ResourceError&) override;
+        void didFinishLoading(NetscapePlugInStreamLoader*) override;
+        bool wantsAllStreams() const override;
 
         ResourceRequest m_resourceRequest;
         ResourceResponse m_resourceResponse;

@@ -321,6 +321,11 @@ void PluginProxy::didEvaluateJavaScript(uint64_t requestID, const WTF::String& r
     m_connection->connection()->send(Messages::PluginControllerProxy::DidEvaluateJavaScript(requestID, result), m_pluginInstanceID);
 }
 
+void PluginProxy::streamWillSendRequest(uint64_t streamID, const URL& requestURL, const URL& responseURL, int responseStatus)
+{
+    m_connection->connection()->send(Messages::PluginControllerProxy::StreamWillSendRequest(streamID, requestURL.string(), responseURL.string(), responseStatus), m_pluginInstanceID);
+}
+
 void PluginProxy::streamDidReceiveResponse(uint64_t streamID, const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& /* suggestedFileName */)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::StreamDidReceiveResponse(streamID, responseURL.string(), streamLength, lastModifiedTime, mimeType, headers), m_pluginInstanceID);
@@ -656,6 +661,11 @@ void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const Str
 void PluginProxy::setPluginIsPlayingAudio(bool pluginIsPlayingAudio)
 {
     controller()->setPluginIsPlayingAudio(pluginIsPlayingAudio);
+}
+
+void PluginProxy::continueStreamLoad(uint64_t streamID)
+{
+    controller()->continueStreamLoad(streamID);
 }
 
 void PluginProxy::cancelStreamLoad(uint64_t streamID)

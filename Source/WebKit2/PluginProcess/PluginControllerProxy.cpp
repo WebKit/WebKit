@@ -241,6 +241,11 @@ void PluginControllerProxy::loadURL(uint64_t requestID, const String& method, co
     m_connection->connection()->send(Messages::PluginProxy::LoadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups), m_pluginInstanceID);
 }
 
+void PluginControllerProxy::continueStreamLoad(uint64_t streamID)
+{
+    m_connection->connection()->send(Messages::PluginProxy::ContinueStreamLoad(streamID), m_pluginInstanceID);
+}
+
 void PluginControllerProxy::cancelStreamLoad(uint64_t streamID)
 {
     m_connection->connection()->send(Messages::PluginProxy::CancelStreamLoad(streamID), m_pluginInstanceID);
@@ -461,6 +466,11 @@ void PluginControllerProxy::updateVisibilityActivity()
 void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& result)
 {
     m_plugin->didEvaluateJavaScript(requestID, result);
+}
+
+void PluginControllerProxy::streamWillSendRequest(uint64_t streamID, const String& requestURLString, const String& redirectResponseURLString, uint32_t redirectResponseStatusCode)
+{
+    m_plugin->streamWillSendRequest(streamID, URL(ParsedURLString, requestURLString), URL(ParsedURLString, redirectResponseURLString), redirectResponseStatusCode);
 }
 
 void PluginControllerProxy::streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)

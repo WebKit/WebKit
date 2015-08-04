@@ -75,6 +75,7 @@
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PluginScriptableObjectOverridesAllProperties.cpp" />
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PrivateBrowsing.cpp" />
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\ToStringAndValueOfObject.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\URLRedirect.cpp" />
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\CallJSThatDestroysPlugin.cpp" />
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\DrawsGradient.cpp" />
     <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\DumpWindowRect.cpp" />

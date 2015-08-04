@@ -396,7 +396,40 @@ void NetscapePlugin::setCookiesForURL(const String& urlString, const String& coo
 bool NetscapePlugin::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
 {
     return controller()->getAuthenticationInfo(protectionSpace, username, password);
-}    
+}
+
+void NetscapePlugin::registerRedirect(NetscapePluginStream* stream, const URL& requestURL, int redirectResponseStatus, void* notificationData)
+{
+#if ENABLE(NETWORK_PROCESS)
+    // NPP_URLRedirectNotify may synchronously request this stream back out, so set it first
+    m_redirects.set(notificationData, std::make_pair(stream, requestURL.string()));
+    if (!NPP_URLRedirectNotify(requestURL.string().utf8().data(), redirectResponseStatus, notificationData)) {
+        m_redirects.take(notificationData);
+        controller()->continueStreamLoad(stream->streamID());
+    }
+#else
+    controller()->continueStreamLoad(stream->streamID());
+#endif
+}
+
+void NetscapePlugin::urlRedirectResponse(void* notifyData, bool allow)
+{
+    if (!m_redirects.contains(notifyData))
+        return;
+
+    auto redirect = m_redirects.take(notifyData);
+    if (!redirect.first)
+        return;
+
+    RefPtr<NetscapePluginStream> stream = redirect.first;
+    if (!allow) {
+        controller()->cancelStreamLoad(stream->streamID());
+        stream->stop(NPRES_USER_BREAK);
+    } else {
+        stream->setURL(redirect.second);
+        controller()->continueStreamLoad(stream->streamID());
+    }
+}
 
 void NetscapePlugin::setIsPlayingAudio(bool isPlayingAudio)
 {
@@ -451,6 +484,15 @@ int16_t NetscapePlugin::NPP_HandleEvent(void* event)
 void NetscapePlugin::NPP_URLNotify(const char* url, NPReason reason, void* notifyData)
 {
     m_pluginModule->pluginFuncs().urlnotify(&m_npp, url, reason, notifyData);
+}
+
+bool NetscapePlugin::NPP_URLRedirectNotify(const char* url, int32_t status, void* notifyData)
+{
+    if (!m_pluginModule->pluginFuncs().urlredirectnotify)
+        return false;
+
+    m_pluginModule->pluginFuncs().urlredirectnotify(&m_npp, url, status, notifyData);
+    return true;
 }
 
 NPError NetscapePlugin::NPP_GetValue(NPPVariable variable, void *value)
@@ -812,6 +854,14 @@ void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& res
     
     if (NetscapePluginStream* pluginStream = streamFromID(requestID))
         pluginStream->sendJavaScriptStream(result);
+}
+
+void NetscapePlugin::streamWillSendRequest(uint64_t streamID, const URL& requestURL, const URL& redirectResponseURL, int redirectResponseStatus)
+{
+    ASSERT(m_isStarted);
+
+    if (NetscapePluginStream* pluginStream = streamFromID(streamID))
+        pluginStream->willSendRequest(requestURL, redirectResponseURL, redirectResponseStatus);
 }
 
 void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const URL& responseURL, uint32_t streamLength, 

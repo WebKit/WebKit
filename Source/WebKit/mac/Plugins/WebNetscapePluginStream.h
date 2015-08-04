@@ -79,9 +79,11 @@ public:
     
     void startStreamWithResponse(NSURLResponse *response);
     
-    void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length);
     void destroyStreamWithError(NSError *);
-    void didFinishLoading(WebCore::NetscapePlugInStreamLoader*);
+
+    // FIXME: Can these be made private?
+    void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length) override;
+    void didFinishLoading(WebCore::NetscapePlugInStreamLoader*) override;
 
 private:
     void destroyStream();
@@ -95,6 +97,7 @@ private:
     NSError *pluginCancelledConnectionError() const;
 
     // NetscapePlugInStreamLoaderClient methods.
+    void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, std::function<void (WebCore::ResourceRequest&&)>&&) override;
     void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&);
     void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&);
     bool wantsAllStreams() const;

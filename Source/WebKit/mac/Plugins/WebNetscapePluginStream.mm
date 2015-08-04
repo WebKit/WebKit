@@ -297,6 +297,12 @@ void WebNetscapePluginStream::stop()
         cancelLoadAndDestroyStreamWithError(m_loader->cancelledError());
 }
 
+void WebNetscapePluginStream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse&, std::function<void (WebCore::ResourceRequest&&)>&& callback)
+{
+    // FIXME: We should notify the plug-in with NPP_URLRedirectNotify here.
+    callback(WTF::move(request));
+}
+
 void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
 {
     NSURLResponse *r = response.nsURLResponse();

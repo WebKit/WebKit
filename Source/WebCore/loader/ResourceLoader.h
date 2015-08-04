@@ -99,8 +99,7 @@ public:
     
     virtual bool isSubresourceLoader();
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
-    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&)> callback);
+    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType);
@@ -169,6 +168,8 @@ protected:
 #if PLATFORM(COCOA) && USE(CFNETWORK)
     virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
+
+    virtual void willSendRequestInternal(ResourceRequest&, const ResourceResponse& redirectResponse);
 
     RefPtr<ResourceHandle> m_handle;
     RefPtr<Frame> m_frame;

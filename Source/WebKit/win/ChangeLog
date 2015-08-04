@@ -1,3 +1,19 @@
+2015-08-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement NPAPI redirect handling
+        https://bugs.webkit.org/show_bug.cgi?id=138675
+        rdar://problem/15779101
+
+        Patch by Jeffrey Pfau, updated and tweaked by me.
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/PluginStream.cpp:
+        (WebCore::PluginStream::sendJavaScriptStream):
+        (WebCore::PluginStream::willSendRequest):
+        (WebCore::PluginStream::didReceiveResponse):
+        * Plugins/PluginStream.h:
+
 2015-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix compile errors with VS2015

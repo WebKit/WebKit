@@ -147,7 +147,7 @@ bool ResourceLoader::init(const ResourceRequest& r)
             clientRequest.setFirstPartyForCookies(document->firstPartyForCookies());
     }
 
-    willSendRequest(clientRequest, ResourceResponse());
+    willSendRequestInternal(clientRequest, ResourceResponse());
 
 #if PLATFORM(IOS)
     // If this ResourceLoader was stopped as a result of willSendRequest, bail out.
@@ -286,7 +286,7 @@ bool ResourceLoader::isSubresourceLoader()
     return false;
 }
 
-void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
+void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
@@ -344,10 +344,10 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
         frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
 }
 
-void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&)> callback)
+void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback)
 {
-    willSendRequest(request, redirectResponse);
-    callback(request);
+    willSendRequestInternal(request, redirectResponse);
+    callback(WTF::move(request));
 }
 
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)
@@ -557,7 +557,7 @@ void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, 
 {
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(this, request, redirectResponse))
         return;
-    willSendRequest(request, redirectResponse);
+    willSendRequestInternal(request, redirectResponse);
 }
 
 void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

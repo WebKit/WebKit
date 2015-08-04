@@ -141,6 +141,9 @@ public:
 
     void setIsPlayingAudio(bool);
 
+    void registerRedirect(NetscapePluginStream*, const WebCore::URL& requestURL, int redirectResponseStatus, void* notificationData);
+    void urlRedirectResponse(void* notifyData, bool allow);
+
     // Member functions for calling into the plug-in.
     NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData*);
     NPError NPP_Destroy(NPSavedData**);
@@ -152,6 +155,7 @@ public:
     int32_t NPP_Write(NPStream*, int32_t offset, int32_t len, void* buffer);
     int16_t NPP_HandleEvent(void* event);
     void NPP_URLNotify(const char* url, NPReason, void* notifyData);
+    bool NPP_URLRedirectNotify(const char* url, int32_t status, void* notifyData);
     NPError NPP_GetValue(NPPVariable, void *value);
     NPError NPP_SetValue(NPNVariable, void *value);
 
@@ -199,7 +203,8 @@ private:
     virtual void frameDidFinishLoading(uint64_t requestID) override;
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled) override;
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) override;
-    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, 
+    virtual void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatus) override;
+    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength,
                                           uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) override;
     virtual void streamDidFinishLoading(uint64_t streamID) override;
@@ -288,6 +293,7 @@ private:
 
     typedef HashMap<uint64_t, RefPtr<NetscapePluginStream>> StreamsMap;
     StreamsMap m_streams;
+    HashMap<void*, std::pair<RefPtr<NetscapePluginStream>, String>> m_redirects;
 
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;
