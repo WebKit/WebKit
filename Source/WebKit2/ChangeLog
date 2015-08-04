@@ -1,3 +1,15 @@
+2015-08-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Reserve Vector capacity in VectorArgumentCoder<false, T, inlineCapacity>::decode()
+        https://bugs.webkit.org/show_bug.cgi?id=147619
+
+        Reviewed by Andreas Kling.
+
+        Reserve Vector capacity in VectorArgumentCoder<false, T, inlineCapacity>::decode()
+        as we know the size of the Vector in advance.
+
+        * Platform/IPC/ArgumentCoders.h:
+
 2015-08-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [CoordinatedGraphics] Rearrange uses of USE_COORDINATED_GRAPHICS_MULTIPROCESS

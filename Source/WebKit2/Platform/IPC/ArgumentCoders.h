@@ -164,15 +164,15 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T,
             return false;
 
         Vector<T, inlineCapacity> tmp;
+        tmp.reserveInitialCapacity(size);
         for (size_t i = 0; i < size; ++i) {
             T element;
             if (!decoder.decode(element))
                 return false;
             
-            tmp.append(WTF::move(element));
+            tmp.uncheckedAppend(WTF::move(element));
         }
 
-        tmp.shrinkToFit();
         vector.swap(tmp);
         return true;
     }
