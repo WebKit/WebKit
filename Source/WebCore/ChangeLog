@@ -1,3 +1,37 @@
+2015-07-10  Brady Eidson  <beidson@apple.com>
+
+        ASSERT restoring from page cache as DocumentLoader reattaches to its Frame.
+        <rdar://problem/21766282> and https://bugs.webkit.org/show_bug.cgi?id=146786
+
+        Reviewed by NOBODY (Fixing obvious boneheaded mistake in r186642)
+
+        No new tests (Covered by existing)
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::attachToFrame): Bail if reattaching to the current Frame,
+          which happens when restoring from the page cache.
+
+2015-07-09  Brady Eidson  <beidson@apple.com>
+
+        DocumentLoader::detachFromFrame() is being called with no current Frame set.
+        <rdar://problem/21293082> and https://bugs.webkit.org/show_bug.cgi?id=146786 
+
+        Reviewed by Sam Weinig.
+
+        No new tests (Unknown how to reproduce).
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::attachToFrame):
+        (WebCore::DocumentLoader::detachFromFrame): Null check m_frame before dereferencing it.
+        (WebCore::DocumentLoader::setFrame): Deleted, renamed to attachToFrame(), and take's
+          a Frame& instead of a Frame*.
+        * loader/DocumentLoader.h:
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::initForSynthesizedDocument): setFrame is now attachToFrame.
+        (WebCore::FrameLoader::setPolicyDocumentLoader): Ditto.
+        (WebCore::FrameLoader::transitionToCommitted): Ditto.
+
 2015-07-09  Darin Adler  <darin@apple.com>
 
         REGRESSION (r182866): repeated prompts for password on internal Apple website using workers
