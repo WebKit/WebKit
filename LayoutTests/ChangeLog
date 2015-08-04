@@ -1,5 +1,19 @@
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Move platform/gtk/editing/pasteboard tests into editing/pasteboard/gtk.
+
+        * TestExpectations:
+        * editing/pasteboard/gtk/middle-button-paste-expected.txt: Renamed from LayoutTests/platform/gtk/editing/pasteboard/middle-button-paste-expected.txt.
+        * editing/pasteboard/gtk/middle-button-paste.html: Renamed from LayoutTests/platform/gtk/editing/pasteboard/middle-button-paste.html.
+        * editing/pasteboard/gtk/middle-click-onpaste-expected.txt: Renamed from LayoutTests/platform/gtk/editing/pasteboard/middle-click-onpaste-expected.txt.
+        * editing/pasteboard/gtk/middle-click-onpaste.html: Renamed from LayoutTests/platform/gtk/editing/pasteboard/middle-click-onpaste.html.
+        * editing/pasteboard/gtk/script-tests/TEMPLATE.html: Renamed from LayoutTests/platform/gtk/editing/pasteboard/script-tests/TEMPLATE.html.
+        * editing/pasteboard/gtk/script-tests/middle-click-onpaste.js: Renamed from LayoutTests/platform/gtk/editing/pasteboard/script-tests/middle-click-onpaste.js.
+        (handlePaste):
+        * platform/gtk/TestExpectations:
+
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Move platform/win/accessibility tests to accessibility/win.
         
         Fix paths to script files in the tests. Fix TestExpectations. Remove an unused result.
