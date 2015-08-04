@@ -164,7 +164,8 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
     _treeElementSelected(treeElement, selectedByUser)
     {
         if (treeElement instanceof WebInspector.FolderTreeElement || treeElement instanceof WebInspector.DatabaseHostTreeElement ||
-            treeElement instanceof WebInspector.IndexedDatabaseHostTreeElement || treeElement instanceof WebInspector.IndexedDatabaseTreeElement)
+            treeElement instanceof WebInspector.IndexedDatabaseHostTreeElement || treeElement instanceof WebInspector.IndexedDatabaseTreeElement
+            || treeElement instanceof WebInspector.ApplicationCacheManifestTreeElement)
             return;
 
         if (treeElement instanceof WebInspector.StorageTreeElement || treeElement instanceof WebInspector.DatabaseTableTreeElement ||

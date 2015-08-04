@@ -1,3 +1,15 @@
+2015-08-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: console error when clicking AppCache folder tree element
+        https://bugs.webkit.org/show_bug.cgi?id=130042
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel._treeElementSelected): Don't try to
+        create a content view for ApplicationCacheManifestTreeElement. We can
+        only create a content view for AppCache frames.
+
 2015-08-04  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Add gtk icon to remove comma separated values from CSS properties
