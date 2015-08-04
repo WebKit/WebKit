@@ -1,5 +1,14 @@
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Make accessibility/media-emits-object-replacement.html not specific to EFL.
+
+        * accessibility/media-emits-object-replacement-expected.txt: Added.
+        * accessibility/media-emits-object-replacement.html: Renamed from LayoutTests/platform/efl/accessibility/media-emits-object-replacement.html.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Fix paths to js-test-pre.js and js-test-post.js after earlier file move.
         Move platform/gtk/resources/atk-helpers.js into accessibility/gtk since
         these are the only callers.
