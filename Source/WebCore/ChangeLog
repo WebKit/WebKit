@@ -1,3 +1,46 @@
+2015-07-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash when appending an SVG <use> element dynamically which has animated SVG <path> element
+        https://bugs.webkit.org/show_bug.cgi?id=146690
+        <rdar://problem/20790376>
+
+        Reviewed by Dean Jackson.
+
+        Test: svg/animations/insert-animate-use-path-while-animation.svg
+
+        The crashing call stack shows that
+        SVGAnimatedListPropertyTearOff<SVGPathSegList>::m_animVal is null when
+        trying to access it in synchronizeWrappersIfNeeded(). This happens because
+        animationStarted() was not called for this animatedType.
+        
+        SVGAnimateElementBase::resetAnimatedType() calls
+        SVGAnimatedPathAnimator::startAnimValAnimation() at the beginning of the
+        animation. For the target element and all its instances, this function calls
+        SVGAnimatedPathSegListPropertyTearOff::animationStarted() which calls
+        SVGAnimatedListPropertyTearOff<SVGPathSegList>::animationStarted(). This
+        last function allocates the member m_animVal when calling
+        SVGAnimatedListPropertyTearOff<SVGPathSegList>::animVal(). 
+        
+        When adding a new instance of the same animating target element, 
+        SVGAnimateElementBase::resetAnimatedType() just keeps calling
+        SVGAnimatedPathAnimator::animValDidChange() for all the instances of the
+        targetElement without ensuring that all of them have started their
+        animations.
+        
+        The fix is to make SVGAnimatedPathAnimator::resetAnimValToBaseVal() ensure
+        that animationStarted() is called for the targetElement and all its instances.
+
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::startAnimValAnimation): Move resetting
+        the animation value and starting the animatedTypes code to a new overriding
+        function which is named resetAnimValToBaseVal().
+        
+        (WebCore::SVGAnimatedPathAnimator::resetAnimValToBaseVal): Call the overriding
+        function which calls buildSVGPathByteStreamFromSVGPathSegList() as before
+        and ensure that all the animatedTypes have started their animations.
+        
+        * svg/SVGAnimatedPath.h:
+
 2015-07-07  Zalan Bujtas  <zalan@apple.com>
 
         Crash when parent iframe is set to display none and the child frame is mutated the same time.

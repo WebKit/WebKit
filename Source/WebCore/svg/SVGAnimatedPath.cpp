@@ -41,25 +41,10 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(co
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     ASSERT(animatedTypes.size() >= 1);
-    SVGAnimatedPathSegListPropertyTearOff* property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get());
-    const SVGPathSegList& baseValue = property->currentBaseValue();
 
     // Build initial path byte stream.
     auto byteStream = std::make_unique<SVGPathByteStream>();
-    buildSVGPathByteStreamFromSVGPathSegList(baseValue, byteStream.get(), UnalteredParsing);
-
-    Vector<RefPtr<SVGAnimatedPathSegListPropertyTearOff>> result;
-
-    SVGElementAnimatedPropertyList::const_iterator end = animatedTypes.end();
-    for (SVGElementAnimatedPropertyList::const_iterator it = animatedTypes.begin(); it != end; ++it)
-        result.append(castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(it->properties[0].get()));
-
-    SVGElement::InstanceUpdateBlocker blocker(*property->contextElement());
-
-    size_t resultSize = result.size();
-    for (size_t i = 0; i < resultSize; ++i)
-        result[i]->animationStarted(byteStream.get(), &baseValue);
-
+    resetAnimValToBaseVal(animatedTypes, byteStream.get());
     return SVGAnimatedType::createPath(WTF::move(byteStream));
 }
 
@@ -68,13 +53,35 @@ void SVGAnimatedPathAnimator::stopAnimValAnimation(const SVGElementAnimatedPrope
     stopAnimValAnimationForType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes);
 }
 
+void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGPathByteStream* byteStream)
+{
+    SVGAnimatedPathSegListPropertyTearOff* property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get());
+    const SVGPathSegList& baseValue = property->currentBaseValue();
+
+    buildSVGPathByteStreamFromSVGPathSegList(baseValue, byteStream, UnalteredParsing);
+
+    Vector<RefPtr<SVGAnimatedPathSegListPropertyTearOff>> result;
+
+    for (auto& type : animatedTypes) {
+        auto* segment = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(type.properties[0].get());
+        if (segment->isAnimating())
+            continue;
+        result.append(segment);
+    }
+
+    if (!result.isEmpty()) {
+        SVGElement::InstanceUpdateBlocker blocker(*property->contextElement());
+        for (auto& segment : result)
+            segment->animationStarted(byteStream, &baseValue);
+    }
+}
+
 void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
     ASSERT(animatedTypes.size() >= 1);
     ASSERT(type);
     ASSERT(type->type() == m_type);
-    const SVGPathSegList& baseValue = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get())->currentBaseValue();
-    buildSVGPathByteStreamFromSVGPathSegList(baseValue, type->path(), UnalteredParsing);
+    resetAnimValToBaseVal(animatedTypes, type->path());
 }
 
 void SVGAnimatedPathAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
