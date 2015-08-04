@@ -1,3 +1,20 @@
+2015-07-09  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r182866): repeated prompts for password on internal Apple website using workers
+        https://bugs.webkit.org/show_bug.cgi?id=146769
+
+        Reviewed by Sam Weinig.
+
+        Not sure how to make a regression test for this. Sure would be nice to have one though.
+
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions): Added. Calls through to the
+        base class copy constructor to copy data members of the base class (the lack of this was
+        the bug). Also initializes all the data members of this class.
+        (WebCore::ThreadableLoaderOptions::isolatedCopy): Changed to call the constructor above.
+
+        * loader/ThreadableLoader.h: Added new constructor.
+
 2015-07-08  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         [GTK] The "Missing Plug-in" buttons are not showing up on some flash contents.
