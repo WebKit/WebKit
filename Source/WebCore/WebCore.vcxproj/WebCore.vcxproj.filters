@@ -2232,9 +2232,6 @@
     <ClCompile Include="..\css\LengthFunctions.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\MediaAllInOne.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\MediaFeatureNames.cpp">
       <Filter>css</Filter>
     </ClCompile>
