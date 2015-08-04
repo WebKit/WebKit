@@ -1,3 +1,20 @@
+2015-08-03  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: let UI clients query whether a media element is paused
+        https://bugs.webkit.org/show_bug.cgi?id=147588
+
+        Reviewed by Tim Horton.
+
+        Added plumbing to determine if a page's media element is paused.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isMediaElementPaused):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::isMediaElementPaused):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-08-03  Chris Dumez  <cdumez@apple.com>
 
         Make sure error handling code APIUserContentExtensionStore closes open file descriptors

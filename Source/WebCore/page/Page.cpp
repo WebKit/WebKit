@@ -1224,6 +1224,15 @@ void Page::handleMediaEvent(MediaEventType eventType)
         break;
     }
 }
+
+bool Page::isMediaElementPaused(uint64_t elementID)
+{
+    if (HTMLMediaElement* element = HTMLMediaElement::elementWithID(elementID))
+        return element->paused();
+
+    ASSERT_NOT_REACHED();
+    return true;
+}
 #endif
 
 #if !ASSERT_DISABLED

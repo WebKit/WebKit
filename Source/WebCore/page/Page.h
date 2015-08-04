@@ -442,6 +442,7 @@ public:
 
 #if ENABLE(MEDIA_SESSION)
     WEBCORE_EXPORT void handleMediaEvent(MediaEventType);
+    WEBCORE_EXPORT bool isMediaElementPaused(uint64_t);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

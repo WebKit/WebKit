@@ -3885,6 +3885,14 @@ void WebPageProxy::handleMediaEvent(MediaEventType eventType)
     
     m_process->send(Messages::WebPage::HandleMediaEvent(eventType), m_pageID);
 }
+
+void WebPageProxy::isMediaElementPaused(uint64_t elementID, uint64_t callbackID)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::IsMediaElementPaused(elementID, callbackID), m_pageID);
+}
 #endif
 
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
