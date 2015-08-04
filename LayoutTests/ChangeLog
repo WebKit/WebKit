@@ -1,5 +1,12 @@
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Make LayoutTests/platform/gtk/fast/css/rect-shadow-tiled.html a cross-platform test.
+
+        * fast/css/rect-shadow-tiled-expected.txt: Renamed from LayoutTests/platform/gtk/fast/css/rect-shadow-tiled-expected.txt.
+        * fast/css/rect-shadow-tiled.html: Renamed from LayoutTests/platform/gtk/fast/css/rect-shadow-tiled.html.
+
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Make platform/gtk/editing/selection/caret-mode-document-begin-end.html into cross-platform test.
 
         * editing/selection/caret-mode-document-begin-end-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/caret-mode-document-begin-end-expected.txt.
