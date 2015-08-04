@@ -1,3 +1,9 @@
+2015-08-04  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed, updated Streams API watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist: Matched .*Readable.*Stream.* and .*QueuingStrategy.* in bindings/js.
+
 2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CMake] Add an option to build AllInOne files
