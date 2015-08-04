@@ -107,7 +107,6 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/TextCheckerClient.h>
@@ -161,6 +160,7 @@
 #endif
 
 #if ENABLE(MEDIA_SESSION)
+#include "WebMediaSessionFocusManager.h"
 #include "WebMediaSessionMetadata.h"
 #include <WebCore/MediaSessionMetadata.h>
 #endif
@@ -3883,10 +3883,15 @@ void WebPageProxy::handleMediaEvent(MediaEventType eventType)
     m_process->send(Messages::WebPage::HandleMediaEvent(eventType), m_pageID);
 }
 
-void WebPageProxy::isMediaElementPaused(uint64_t elementID, uint64_t callbackID)
+void WebPageProxy::isMediaElementPaused(uint64_t elementID, RefPtr<UnsignedCallback> callback)
 {
-    if (!isValid())
+    if (!isValid()) {
+        callback->invalidate();
         return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_callbacks.put(callback);
 
     m_process->send(Messages::WebPage::IsMediaElementPaused(elementID, callbackID), m_pageID);
 }
@@ -5973,7 +5978,9 @@ void WebPageProxy::mediaSessionMetadataDidChange(const WebCore::MediaSessionMeta
 
 void WebPageProxy::focusedContentMediaElementDidChange(uint64_t elementID)
 {
-    notImplemented();
+    WebMediaSessionFocusManager* focusManager = process().processPool().supplement<WebMediaSessionFocusManager>();
+    ASSERT(focusManager);
+    focusManager->setFocusedMediaElement(*this, elementID);
 }
 #endif
 

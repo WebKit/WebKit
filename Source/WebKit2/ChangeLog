@@ -1,3 +1,38 @@
+2015-08-04  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: add a focus manager that WebKit clients can use to access the focused media element
+        https://bugs.webkit.org/show_bug.cgi?id=147629
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/APIObject.h: Added a new type for the focus manager.
+        * Shared/API/c/WKBase.h: Added a new type for the focus manager.
+        * UIProcess/API/C/WKAPICast.h: Added a new type for the focus manager.
+        * UIProcess/API/C/WKContext.cpp: The "global" focus manager is accessed via WKContext.
+        (WKContextGetMediaSessionFocusManager):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKMediaSessionFocusManager.cpp: Added C wrapper for WebMediaSessionFocusManager.
+        (WKMediaSessionFocusManagerGetTypeID):
+        (WKMediaSessionFocusManagerIsFocusedContentMediaElementPaused):
+        * UIProcess/API/C/WKMediaSessionFocusManager.h: Added C wrapper for WebMediaSessionFocusManager.
+        * UIProcess/WebMediaSessionFocusManager.cpp: Added to keep track of the focused media element in the UI process and let clients query this state.
+        (WebKit::WebMediaSessionFocusManager::supplementName):
+        (WebKit::WebMediaSessionFocusManager::create):
+        (WebKit::WebMediaSessionFocusManager::WebMediaSessionFocusManager):
+        (WebKit::WebMediaSessionFocusManager::refWebContextSupplement):
+        (WebKit::WebMediaSessionFocusManager::derefWebContextSupplement):
+        (WebKit::WebMediaSessionFocusManager::isFocusedContentMediaElementPaused): Check if the media element on the focused page is paused.
+        (WebKit::WebMediaSessionFocusManager::setFocusedMediaElement): Keep track of the focused page / media element pair.
+        (WebKit::WebMediaSessionFocusManager::clearFocusedMediaElement): Reset the focused page / media element pair.
+        * UIProcess/WebMediaSessionFocusManager.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isMediaElementPaused): Updated to take a UnsignedCallback.
+        (WebKit::WebPageProxy::focusedContentMediaElementDidChange): Store the focused media element in the focus manager.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp: Added WebMediaSessionFocusManager as a supplement.
+        * UIProcess/WebProcessPool.h: WebMediaSessionFocusManager is a supplement, so include its header.
+        * WebKit2.xcodeproj/project.pbxproj: Added new sources and ran sort-xcode-project.
+
 2015-08-04  Anders Carlsson  <andersca@apple.com>
 
         Get rid of ReasonForCallingAllowPlugins since it's not used anywhere

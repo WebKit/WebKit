@@ -63,6 +63,10 @@
 #include "NetworkProcessProxy.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "WebMediaSessionFocusManager.h"
+#endif
+
 #if PLATFORM(COCOA)
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSObject;

@@ -192,6 +192,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManagerProxy>();
 #endif
+#if ENABLE(MEDIA_SESSION)
+    addSupplement<WebMediaSessionFocusManager>();
+#endif
 
     processPools().append(this);
 

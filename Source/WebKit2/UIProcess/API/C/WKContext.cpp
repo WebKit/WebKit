@@ -454,6 +454,16 @@ WKMediaCacheManagerRef WKContextGetMediaCacheManager(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->supplement<WebMediaCacheManagerProxy>());
 }
 
+WKMediaSessionFocusManagerRef WKContextGetMediaSessionFocusManager(WKContextRef context)
+{
+#if ENABLE(MEDIA_SESSION)
+    return toAPI(toImpl(context)->supplement<WebMediaSessionFocusManager>());
+#else
+    UNUSED_PARAM(context);
+    return nullptr;
+#endif
+}
+
 WKNotificationManagerRef WKContextGetNotificationManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->supplement<WebNotificationManagerProxy>());

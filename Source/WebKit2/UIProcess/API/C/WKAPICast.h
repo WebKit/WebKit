@@ -92,6 +92,7 @@ class WebHitTestResult;
 class WebIconDatabase;
 class WebInspectorProxy;
 class WebMediaCacheManagerProxy;
+class WebMediaSessionFocusManager;
 class WebMediaSessionMetadata;
 class WebNotification;
 class WebNotificationManagerProxy;
@@ -136,6 +137,7 @@ WK_ADD_API_MAPPING(WKHitTestResultRef, WebHitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
 WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)
+WK_ADD_API_MAPPING(WKMediaSessionFocusManagerRef, WebMediaSessionFocusManager)
 WK_ADD_API_MAPPING(WKMediaSessionMetadataRef, WebMediaSessionMetadata)
 WK_ADD_API_MAPPING(WKNavigationActionRef, API::NavigationAction)
 WK_ADD_API_MAPPING(WKNavigationDataRef, API::NavigationData)

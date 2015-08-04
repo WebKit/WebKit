@@ -943,7 +943,7 @@ public:
 #if ENABLE(MEDIA_SESSION)
     bool hasMediaSessionWithActiveMediaElements() const { return m_hasMediaSessionWithActiveMediaElements; }
     void handleMediaEvent(WebCore::MediaEventType);
-    void isMediaElementPaused(uint64_t, uint64_t);
+    void isMediaElementPaused(uint64_t, RefPtr<UnsignedCallback>);
 #endif
 
     // WebPopupMenuProxy::Client

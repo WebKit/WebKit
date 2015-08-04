@@ -150,6 +150,7 @@ public:
         WebsiteDataStore,
 
 #if ENABLE(MEDIA_SESSION)
+        MediaSessionFocusManager,
         MediaSessionMetadata,
 #endif
 
