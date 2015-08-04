@@ -150,7 +150,6 @@ public:
     WEBCORE_EXPORT size_t fontCount();
     WEBCORE_EXPORT size_t inactiveFontCount();
     WEBCORE_EXPORT void purgeInactiveFontData(unsigned count = UINT_MAX);
-    void platformPurgeInactiveFontData();
 
 #if PLATFORM(WIN)
     RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomicString& outFontFamilyName);
@@ -184,12 +183,6 @@ private:
 #endif
     friend class Font;
 };
-
-#if !PLATFORM(MAC)
-inline void FontCache::platformPurgeInactiveFontData()
-{
-}
-#endif
 
 }
 

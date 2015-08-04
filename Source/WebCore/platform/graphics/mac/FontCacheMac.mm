@@ -459,55 +459,21 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
     return knownFamilies.get().add(family).isNewEntry;
 }
 
-typedef HashSet<RetainPtr<CTFontRef>, WTF::RetainPtrObjectHash<CTFontRef>, WTF::RetainPtrObjectHashTraits<CTFontRef>> FallbackDedupSet;
-static FallbackDedupSet& fallbackDedupSet()
-{
-    static NeverDestroyed<FallbackDedupSet> dedupSet;
-    return dedupSet.get();
-}
-
-void FontCache::platformPurgeInactiveFontData()
-{
-    // This only has to be consistent throughout an individual layout or paint.
-    fallbackDedupSet().clear();
-}
-
-static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, const UChar* characters, unsigned length)
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED != 1090
-    UNUSED_PARAM(fontSize);
-#else
-    if (!font) {
-        font = reinterpret_cast<CTFontRef>([NSFont userFontOfSize:fontSize]);
-        bool acceptable = true;
-        
-        RetainPtr<CFCharacterSetRef> characterSet = adoptCF(CTFontCopyCharacterSet(font));
-        for (auto character : StringView(characters, length).codePoints()) {
-            if (!CFCharacterSetIsLongCharacterMember(characterSet.get(), character)) {
-                acceptable = false;
-                break;
-            }
-        }
-        if (acceptable)
-            return font;
-    }
-#endif
-    CFIndex coveredLength = 0;
-    return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, nullptr, &coveredLength));
-}
-
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length)
 {
+    UChar32 character;
+    U16_GET(characters, 0, 0, length, character);
     const FontPlatformData& platformData = originalFontData->platformData();
     NSFont *nsFont = platformData.nsFont();
-    RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), characters, length);
-    if (!result)
-        return nullptr;
 
-    // FontCascade::drawGlyphBuffer() requires that there are no duplicate Font objects which refer to the same thing. This is enforced in
-    // FontCache::fontForPlatformData(), where our equality check is based on hashing the FontPlatformData, whose hash includes the raw CoreText
-    // font pointer.
-    NSFont *substituteFont = reinterpret_cast<NSFont *>(const_cast<__CTFont*>(fallbackDedupSet().add(result).iterator->get()));
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters) length:length freeWhenDone:NO];
+    NSFont *substituteFont = [NSFont findFontLike:nsFont forString:string withRange:NSMakeRange(0, [string length]) inLanguage:nil];
+    [string release];
+
+    if (!substituteFont && length == 1)
+        substituteFont = [NSFont findFontLike:nsFont forCharacter:characters[0] inLanguage:nil];
+    if (!substituteFont)
+        return 0;
 
     // Use the family name from the AppKit-supplied substitute font, requesting the
     // traits, weight, and size we want. One way this does better than the original
@@ -542,8 +508,6 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
     if (traits != substituteFontTraits || weight != substituteFontWeight || !nsFont) {
         if (NSFont *bestVariation = [fontManager fontWithFamily:[substituteFont familyName] traits:traits weight:weight size:size]) {
-            UChar32 character;
-            U16_GET(characters, 0, 0, length, character);
             if (!nsFont || (([fontManager traitsOfFont:bestVariation] != substituteFontTraits || [fontManager weightOfFont:bestVariation] != substituteFontWeight)
                 && [[bestVariation coveredCharacterSet] longCharacterIsMember:character]))
                 substituteFont = bestVariation;
