@@ -1,5 +1,61 @@
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix paths to js-test-pre.js and js-test-post.js after earlier file move.
+        Move platform/gtk/resources/atk-helpers.js into accessibility/gtk since
+        these are the only callers.
+
+        * accessibility/gtk/aria-listbox-crash.html:
+        * accessibility/gtk/aria-options-and-menuitems-crash.html:
+        * accessibility/gtk/aria-roles-unignored.html:
+        * accessibility/gtk/aria-slider-required-attributes.html:
+        * accessibility/gtk/aria-toggle-button-role.html:
+        * accessibility/gtk/button-accessible-name.html:
+        * accessibility/gtk/caret-browsing-select-focus.html:
+        * accessibility/gtk/caret-browsing-text-focus.html:
+        * accessibility/gtk/caret-offsets-and-extraneous-white-spaces.html:
+        * accessibility/gtk/caret-offsets.html:
+        * accessibility/gtk/combobox-descendants-orientation-crash.html:
+        * accessibility/gtk/detached-object-role.html:
+        * accessibility/gtk/entry-and-password.html:
+        * accessibility/gtk/list-items-always-exposed.html:
+        * accessibility/gtk/media-controls-panel-title.html:
+        * accessibility/gtk/media-emits-object-replacement.html:
+        * accessibility/gtk/menu-list-unfocused-notifications.html:
+        * accessibility/gtk/name-from-label.html:
+        * accessibility/gtk/no-notification-for-unrendered-iframe-children.html:
+        * accessibility/gtk/object-attributes.html:
+        * accessibility/gtk/object-with-title.html:
+        * accessibility/gtk/remapped-aria-crash.html:
+        * accessibility/gtk/replaced-objects-in-anonymous-blocks.html:
+        * accessibility/gtk/resources/atk-helpers.js: Renamed from LayoutTests/platform/gtk/resources/atk-helpers.js.
+        (setCaretOffset):
+        * accessibility/gtk/spans-paragraphs-and-divs.html:
+        * accessibility/gtk/spans.html:
+        * accessibility/gtk/text-at-offset-embedded-objects.html:
+        * accessibility/gtk/text-at-offset-newlines.html:
+        * accessibility/gtk/text-at-offset-preformatted.html:
+        * accessibility/gtk/text-at-offset-simple.html:
+        * accessibility/gtk/text-at-offset-special-chars.html:
+        * accessibility/gtk/text-at-offset-textarea.html:
+        * accessibility/gtk/text-at-offset-textinput.html:
+        * accessibility/gtk/text-at-offset-wrapped-lines.html:
+        * accessibility/gtk/text-for-range-combo-box.html:
+        * accessibility/gtk/text-for-range-embedded-objects.html:
+        * accessibility/gtk/text-for-range-entry-and-password.html:
+        * accessibility/gtk/text-for-range-extraneous-whitespace.html:
+        * accessibility/gtk/text-for-range-formatted.html:
+        * accessibility/gtk/text-for-range-heading.html:
+        * accessibility/gtk/text-for-range-list-items.html:
+        * accessibility/gtk/text-for-range-simple.html:
+        * accessibility/gtk/text-for-range-table-cells.html:
+        * accessibility/gtk/text-for-range-with-link.html:
+        * accessibility/gtk/text-for-table.html:
+        * accessibility/gtk/text-in-span-block-in-a-block.html:
+        * accessibility/gtk/title-and-alt.html:
+        * accessibility/gtk/xml-roles-exposed.html:
+
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Move platform/gtk/editing/pasteboard tests into editing/pasteboard/gtk.
 
         * TestExpectations:
