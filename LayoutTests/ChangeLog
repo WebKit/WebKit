@@ -1,5 +1,12 @@
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Make platform/gtk/editing/selection/caret-mode-document-begin-end.html into cross-platform test.
+
+        * editing/selection/caret-mode-document-begin-end-expected.txt: Renamed from LayoutTests/platform/gtk/editing/selection/caret-mode-document-begin-end-expected.txt.
+        * editing/selection/caret-mode-document-begin-end.html: Renamed from LayoutTests/platform/gtk/editing/selection/caret-mode-document-begin-end.html.
+
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Make accessibility/media-emits-object-replacement.html not specific to EFL.
 
         * accessibility/media-emits-object-replacement-expected.txt: Added.
