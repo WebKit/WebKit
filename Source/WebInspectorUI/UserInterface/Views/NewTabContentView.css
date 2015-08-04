@@ -66,8 +66,12 @@
     display: block;
 }
 
-.new-tab.tab.content-view > .tab-item:not(.disabled):active > .box {
+.new-tab.tab.content-view > .tab-item:not(.disabled):hover > .box {
     -webkit-filter: brightness(90%);
+}
+
+.new-tab.tab.content-view > .tab-item:not(.disabled):active > .box {
+    -webkit-filter: brightness(75%);
 }
 
 .new-tab.tab.content-view > .tab-item > .box > img {
