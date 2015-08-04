@@ -94,8 +94,8 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 CTFontRef FontPlatformData::registeredFont() const
 {
     CTFontRef platformFont = font();
-    ASSERT(platformFont);
-    if (adoptCF(CTFontCopyAttribute(platformFont, kCTFontURLAttribute)))
+    ASSERT(!CORETEXT_WEB_FONTS || platformFont);
+    if (platformFont && adoptCF(CTFontCopyAttribute(platformFont, kCTFontURLAttribute)))
         return platformFont;
     return nullptr;
 }
