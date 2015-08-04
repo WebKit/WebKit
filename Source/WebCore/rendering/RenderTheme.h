@@ -79,7 +79,7 @@ public:
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
-    bool paint(const RenderObject&, ControlStates&, const PaintInfo&, const LayoutRect&);
+    bool paint(const RenderBox&, ControlStates&, const PaintInfo&, const LayoutRect&);
     bool paintBorderOnly(const RenderBox&, const PaintInfo&, const LayoutRect&);
     bool paintDecorations(const RenderBox&, const PaintInfo&, const LayoutRect&);
 
@@ -379,7 +379,7 @@ protected:
 #endif
 
 public:
-    void updateControlStatesForRenderer(const RenderObject&, ControlStates&) const;
+    void updateControlStatesForRenderer(const RenderBox&, ControlStates&) const;
     ControlStates::States extractControlStatesForRenderer(const RenderObject&) const;
     bool isActive(const RenderObject&) const;
     bool isChecked(const RenderObject&) const;

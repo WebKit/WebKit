@@ -262,26 +262,26 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     }
 }
 
-bool RenderTheme::paint(const RenderObject& o, ControlStates& controlStates, const PaintInfo& paintInfo, const LayoutRect& r)
+bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
     // for that control.
     if (paintInfo.context->updatingControlTints()) {
-        if (controlSupportsTints(o))
-            o.repaint();
+        if (controlSupportsTints(box))
+            box.repaint();
         return false;
     }
     if (paintInfo.context->paintingDisabled())
         return false;
 
-    ControlPart part = o.style().appearance();
-    IntRect integralSnappedRect = snappedIntRect(r);
-    float deviceScaleFactor = o.document().deviceScaleFactor();
-    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(r, deviceScaleFactor);
+    ControlPart part = box.style().appearance();
+    IntRect integralSnappedRect = snappedIntRect(rect);
+    float deviceScaleFactor = box.document().deviceScaleFactor();
+    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
 #if USE(NEW_THEME)
-    float pageScaleFactor = o.document().page() ? o.document().page()->pageScaleFactor() : 1.0f;
+    float pageScaleFactor = box.document().page() ? box.document().page()->pageScaleFactor() : 1.0f;
     
     switch (part) {
     case CheckboxPart:
@@ -291,8 +291,8 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates& controlStates, con
     case DefaultButtonPart:
     case ButtonPart:
     case InnerSpinButtonPart:
-        updateControlStatesForRenderer(o, controlStates);
-        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), devicePixelSnappedRect, o.style().effectiveZoom(), &o.view().frameView(), deviceScaleFactor, pageScaleFactor);
+        updateControlStatesForRenderer(box, controlStates);
+        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor);
         return false;
     default:
         break;
@@ -305,102 +305,102 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates& controlStates, con
     switch (part) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
-        return paintCheckbox(o, paintInfo, integralSnappedRect);
+        return paintCheckbox(box, paintInfo, integralSnappedRect);
     case RadioPart:
-        return paintRadio(o, paintInfo, integralSnappedRect);
+        return paintRadio(box, paintInfo, integralSnappedRect);
     case PushButtonPart:
     case SquareButtonPart:
     case DefaultButtonPart:
     case ButtonPart:
-        return paintButton(o, paintInfo, integralSnappedRect);
+        return paintButton(box, paintInfo, integralSnappedRect);
     case InnerSpinButtonPart:
-        return paintInnerSpinButton(o, paintInfo, integralSnappedRect);
+        return paintInnerSpinButton(box, paintInfo, integralSnappedRect);
 #endif
     case MenulistPart:
-        return paintMenuList(o, paintInfo, devicePixelSnappedRect);
+        return paintMenuList(box, paintInfo, devicePixelSnappedRect);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-        return paintMeter(o, paintInfo, integralSnappedRect);
+        return paintMeter(box, paintInfo, integralSnappedRect);
 #endif
     case ProgressBarPart:
-        return paintProgressBar(o, paintInfo, integralSnappedRect);
+        return paintProgressBar(box, paintInfo, integralSnappedRect);
     case SliderHorizontalPart:
     case SliderVerticalPart:
-        return paintSliderTrack(o, paintInfo, integralSnappedRect);
+        return paintSliderTrack(box, paintInfo, integralSnappedRect);
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
-        return paintSliderThumb(o, paintInfo, integralSnappedRect);
+        return paintSliderThumb(box, paintInfo, integralSnappedRect);
     case MediaEnterFullscreenButtonPart:
     case MediaExitFullscreenButtonPart:
-        return paintMediaFullscreenButton(o, paintInfo, integralSnappedRect);
+        return paintMediaFullscreenButton(box, paintInfo, integralSnappedRect);
     case MediaPlayButtonPart:
-        return paintMediaPlayButton(o, paintInfo, integralSnappedRect);
+        return paintMediaPlayButton(box, paintInfo, integralSnappedRect);
     case MediaOverlayPlayButtonPart:
-        return paintMediaOverlayPlayButton(o, paintInfo, integralSnappedRect);
+        return paintMediaOverlayPlayButton(box, paintInfo, integralSnappedRect);
     case MediaMuteButtonPart:
-        return paintMediaMuteButton(o, paintInfo, integralSnappedRect);
+        return paintMediaMuteButton(box, paintInfo, integralSnappedRect);
     case MediaSeekBackButtonPart:
-        return paintMediaSeekBackButton(o, paintInfo, integralSnappedRect);
+        return paintMediaSeekBackButton(box, paintInfo, integralSnappedRect);
     case MediaSeekForwardButtonPart:
-        return paintMediaSeekForwardButton(o, paintInfo, integralSnappedRect);
+        return paintMediaSeekForwardButton(box, paintInfo, integralSnappedRect);
     case MediaRewindButtonPart:
-        return paintMediaRewindButton(o, paintInfo, integralSnappedRect);
+        return paintMediaRewindButton(box, paintInfo, integralSnappedRect);
     case MediaReturnToRealtimeButtonPart:
-        return paintMediaReturnToRealtimeButton(o, paintInfo, integralSnappedRect);
+        return paintMediaReturnToRealtimeButton(box, paintInfo, integralSnappedRect);
     case MediaToggleClosedCaptionsButtonPart:
-        return paintMediaToggleClosedCaptionsButton(o, paintInfo, integralSnappedRect);
+        return paintMediaToggleClosedCaptionsButton(box, paintInfo, integralSnappedRect);
     case MediaSliderPart:
-        return paintMediaSliderTrack(o, paintInfo, integralSnappedRect);
+        return paintMediaSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaSliderThumbPart:
-        return paintMediaSliderThumb(o, paintInfo, integralSnappedRect);
+        return paintMediaSliderThumb(box, paintInfo, integralSnappedRect);
     case MediaVolumeSliderMuteButtonPart:
-        return paintMediaMuteButton(o, paintInfo, integralSnappedRect);
+        return paintMediaMuteButton(box, paintInfo, integralSnappedRect);
     case MediaVolumeSliderContainerPart:
-        return paintMediaVolumeSliderContainer(o, paintInfo, integralSnappedRect);
+        return paintMediaVolumeSliderContainer(box, paintInfo, integralSnappedRect);
     case MediaVolumeSliderPart:
-        return paintMediaVolumeSliderTrack(o, paintInfo, integralSnappedRect);
+        return paintMediaVolumeSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaVolumeSliderThumbPart:
-        return paintMediaVolumeSliderThumb(o, paintInfo, integralSnappedRect);
+        return paintMediaVolumeSliderThumb(box, paintInfo, integralSnappedRect);
     case MediaFullScreenVolumeSliderPart:
-        return paintMediaFullScreenVolumeSliderTrack(o, paintInfo, integralSnappedRect);
+        return paintMediaFullScreenVolumeSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaFullScreenVolumeSliderThumbPart:
-        return paintMediaFullScreenVolumeSliderThumb(o, paintInfo, integralSnappedRect);
+        return paintMediaFullScreenVolumeSliderThumb(box, paintInfo, integralSnappedRect);
     case MediaTimeRemainingPart:
-        return paintMediaTimeRemaining(o, paintInfo, integralSnappedRect);
+        return paintMediaTimeRemaining(box, paintInfo, integralSnappedRect);
     case MediaCurrentTimePart:
-        return paintMediaCurrentTime(o, paintInfo, integralSnappedRect);
+        return paintMediaCurrentTime(box, paintInfo, integralSnappedRect);
     case MediaControlsBackgroundPart:
-        return paintMediaControlsBackground(o, paintInfo, integralSnappedRect);
+        return paintMediaControlsBackground(box, paintInfo, integralSnappedRect);
     case MenulistButtonPart:
     case TextFieldPart:
     case TextAreaPart:
     case ListboxPart:
         return true;
     case SearchFieldPart:
-        return paintSearchField(o, paintInfo, integralSnappedRect);
+        return paintSearchField(box, paintInfo, integralSnappedRect);
     case SearchFieldCancelButtonPart:
-        return paintSearchFieldCancelButton(o, paintInfo, integralSnappedRect);
+        return paintSearchFieldCancelButton(box, paintInfo, integralSnappedRect);
     case SearchFieldDecorationPart:
-        return paintSearchFieldDecorationPart(o, paintInfo, integralSnappedRect);
+        return paintSearchFieldDecorationPart(box, paintInfo, integralSnappedRect);
     case SearchFieldResultsDecorationPart:
-        return paintSearchFieldResultsDecorationPart(o, paintInfo, integralSnappedRect);
+        return paintSearchFieldResultsDecorationPart(box, paintInfo, integralSnappedRect);
     case SearchFieldResultsButtonPart:
-        return paintSearchFieldResultsButton(o, paintInfo, integralSnappedRect);
+        return paintSearchFieldResultsButton(box, paintInfo, integralSnappedRect);
     case SnapshottedPluginOverlayPart:
-        return paintSnapshottedPluginOverlay(o, paintInfo, integralSnappedRect);
+        return paintSnapshottedPluginOverlay(box, paintInfo, integralSnappedRect);
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
-        return paintImageControlsButton(o, paintInfo, integralSnappedRect);
+        return paintImageControlsButton(box, paintInfo, integralSnappedRect);
 #endif
     case CapsLockIndicatorPart:
-        return paintCapsLockIndicator(o, paintInfo, integralSnappedRect);
+        return paintCapsLockIndicator(box, paintInfo, integralSnappedRect);
 #if ENABLE(ATTACHMENT_ELEMENT)
     case AttachmentPart:
-        return paintAttachment(o, paintInfo, integralSnappedRect);
+        return paintAttachment(box, paintInfo, integralSnappedRect);
 #endif
     default:
         break;
@@ -738,12 +738,12 @@ bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States stat
     return true;
 }
 
-void RenderTheme::updateControlStatesForRenderer(const RenderObject& o, ControlStates& controlStates) const
+void RenderTheme::updateControlStatesForRenderer(const RenderBox& box, ControlStates& controlStates) const
 {
-    ControlStates newStates = extractControlStatesForRenderer(o);
+    ControlStates newStates = extractControlStatesForRenderer(box);
     controlStates.setStates(newStates.states());
-    if (isFocused(o))
-        controlStates.setTimeSinceControlWasFocused(o.document().page()->focusController().timeSinceFocusWasSet());
+    if (isFocused(box))
+        controlStates.setTimeSinceControlWasFocused(box.document().page()->focusController().timeSinceFocusWasSet());
 }
 
 ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const
@@ -776,15 +776,7 @@ ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderO
 
 bool RenderTheme::isActive(const RenderObject& o) const
 {
-    Node* node = o.node();
-    if (!node)
-        return false;
-
-    Frame* frame = node->document().frame();
-    if (!frame)
-        return false;
-
-    Page* page = frame->page();
+    Page* page = o.document().page();
     if (!page)
         return false;
 
