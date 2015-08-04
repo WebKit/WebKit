@@ -1,3 +1,102 @@
+2015-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Move /platform/ios-simulator/accessibility tests to accessibility/ios-simulator/
+
+        * TestExpectations:
+        * accessibility/ios-simulator/accessibility-aria-table-children-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/accessibility-aria-table-children-expected.txt.
+        * accessibility/ios-simulator/accessibility-aria-table-children.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/accessibility-aria-table-children.html.
+        * accessibility/ios-simulator/accessibility-crash-in-axcontainer-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/accessibility-crash-in-axcontainer-expected.txt.
+        * accessibility/ios-simulator/accessibility-crash-in-axcontainer.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/accessibility-crash-in-axcontainer.html.
+        * accessibility/ios-simulator/accessibility-hint-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/accessibility-hint-expected.txt.
+        * accessibility/ios-simulator/accessibility-hint.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/accessibility-hint.html.
+        * accessibility/ios-simulator/aria-label-with-internal-text-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/aria-label-with-internal-text-expected.txt.
+        * accessibility/ios-simulator/aria-label-with-internal-text.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/aria-label-with-internal-text.html.
+        * accessibility/ios-simulator/aria-pressed-state-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/aria-pressed-state-expected.txt.
+        * accessibility/ios-simulator/aria-pressed-state.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/aria-pressed-state.html.
+        * accessibility/ios-simulator/centerpoint-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/centerpoint-expected.txt.
+        * accessibility/ios-simulator/centerpoint.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/centerpoint.html.
+        * accessibility/ios-simulator/disabled-states-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/disabled-states-expected.txt.
+        * accessibility/ios-simulator/disabled-states.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/disabled-states.html.
+        * accessibility/ios-simulator/dom-focus-fires-on-correct-element-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/dom-focus-fires-on-correct-element-expected.txt.
+        * accessibility/ios-simulator/dom-focus-fires-on-correct-element.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/dom-focus-fires-on-correct-element.html.
+        * accessibility/ios-simulator/element-paths-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/element-paths-expected.txt.
+        * accessibility/ios-simulator/element-paths.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/element-paths.html.
+        * accessibility/ios-simulator/file-upload-button-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/file-upload-button-expected.txt.
+        * accessibility/ios-simulator/file-upload-button.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/file-upload-button.html.
+        * accessibility/ios-simulator/focus-change-notifications-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/focus-change-notifications-expected.txt.
+        * accessibility/ios-simulator/focus-change-notifications.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/focus-change-notifications.html.
+        * accessibility/ios-simulator/header-elements-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/header-elements-expected.txt.
+        * accessibility/ios-simulator/header-elements.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/header-elements.html.
+        * accessibility/ios-simulator/identifier-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/identifier-expected.txt.
+        * accessibility/ios-simulator/identifier.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/identifier.html.
+        * accessibility/ios-simulator/iframe-access-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/iframe-access-expected.txt.
+        * accessibility/ios-simulator/iframe-access.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/iframe-access.html.
+        * accessibility/ios-simulator/internal-link-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/internal-link-expected.txt.
+        * accessibility/ios-simulator/internal-link.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/internal-link.html.
+        * accessibility/ios-simulator/landmark-type-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/landmark-type-expected.txt.
+        * accessibility/ios-simulator/landmark-type.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/landmark-type.html.
+        * accessibility/ios-simulator/link-with-images-text-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/link-with-images-text-expected.txt.
+        * accessibility/ios-simulator/link-with-images-text.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/link-with-images-text.html.
+        * accessibility/ios-simulator/link-with-only-image-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/link-with-only-image-expected.txt.
+        * accessibility/ios-simulator/link-with-only-image.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/link-with-only-image.html.
+        * accessibility/ios-simulator/math-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/math-expected.txt.
+        * accessibility/ios-simulator/math.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/math.html.
+        * accessibility/ios-simulator/mixed-checkboxes-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/mixed-checkboxes-expected.txt.
+        * accessibility/ios-simulator/mixed-checkboxes.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/mixed-checkboxes.html.
+        * accessibility/ios-simulator/no-child-link-header-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/no-child-link-header-expected.txt.
+        * accessibility/ios-simulator/no-child-link-header.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/no-child-link-header.html.
+        * accessibility/ios-simulator/non-contiguous-link-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/non-contiguous-link-expected.txt.
+        * accessibility/ios-simulator/non-contiguous-link.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/non-contiguous-link.html.
+        * accessibility/ios-simulator/out-of-bounds-child-access-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/out-of-bounds-child-access-expected.txt.
+        * accessibility/ios-simulator/out-of-bounds-child-access.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/out-of-bounds-child-access.html.
+        * accessibility/ios-simulator/password-value-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/password-value-expected.txt.
+        * accessibility/ios-simulator/password-value.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/password-value.html.
+        * accessibility/ios-simulator/placeholder-value-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/placeholder-value-expected.txt.
+        * accessibility/ios-simulator/placeholder-value.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/placeholder-value.html.
+        * accessibility/ios-simulator/popup-button-value-label-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/popup-button-value-label-expected.txt.
+        * accessibility/ios-simulator/popup-button-value-label.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/popup-button-value-label.html.
+        * accessibility/ios-simulator/progressbar-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/progressbar-expected.txt.
+        * accessibility/ios-simulator/progressbar.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/progressbar.html.
+        * accessibility/ios-simulator/radio-button-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/radio-button-expected.txt.
+        * accessibility/ios-simulator/radio-button.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/radio-button.html.
+        * accessibility/ios-simulator/scroll-in-overflow-div-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/scroll-in-overflow-div-expected.txt.
+        * accessibility/ios-simulator/scroll-in-overflow-div.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/scroll-in-overflow-div.html.
+        * accessibility/ios-simulator/secure-text-field-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/secure-text-field-expected.txt.
+        * accessibility/ios-simulator/secure-text-field.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/secure-text-field.html.
+        * accessibility/ios-simulator/selected-buttons-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/selected-buttons-expected.txt.
+        * accessibility/ios-simulator/selected-buttons.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/selected-buttons.html.
+        * accessibility/ios-simulator/selected-text-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/selected-text-expected.txt.
+        * accessibility/ios-simulator/selected-text.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/selected-text.html.
+        * accessibility/ios-simulator/spinbutton-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/spinbutton-expected.txt.
+        * accessibility/ios-simulator/spinbutton.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/spinbutton.html.
+        * accessibility/ios-simulator/svg-group-element-with-title-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/svg-group-element-with-title-expected.txt.
+        * accessibility/ios-simulator/svg-group-element-with-title.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/svg-group-element-with-title.html.
+        * accessibility/ios-simulator/svg-path-crash-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/svg-path-crash-expected.txt.
+        * accessibility/ios-simulator/svg-path-crash.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/svg-path-crash.html.
+        * accessibility/ios-simulator/tab-role-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/tab-role-expected.txt.
+        * accessibility/ios-simulator/tab-role.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/tab-role.html.
+        * accessibility/ios-simulator/table-cell-for-row-col-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/table-cell-for-row-col-expected.txt.
+        * accessibility/ios-simulator/table-cell-for-row-col.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/table-cell-for-row-col.html.
+        * accessibility/ios-simulator/table-cell-ranges-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/table-cell-ranges-expected.txt.
+        * accessibility/ios-simulator/table-cell-ranges.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/table-cell-ranges.html.
+        * accessibility/ios-simulator/tables-lists-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/tables-lists-expected.txt.
+        * accessibility/ios-simulator/tables-lists.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/tables-lists.html.
+        * accessibility/ios-simulator/text-line-no-ignored-elements-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-line-no-ignored-elements-expected.txt.
+        * accessibility/ios-simulator/text-line-no-ignored-elements.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-line-no-ignored-elements.html.
+        * accessibility/ios-simulator/text-marker-list-item-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-marker-list-item-expected.txt.
+        * accessibility/ios-simulator/text-marker-list-item.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-marker-list-item.html.
+        * accessibility/ios-simulator/text-marker-validation-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-marker-validation-expected.txt.
+        * accessibility/ios-simulator/text-marker-validation.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-marker-validation.html.
+        * accessibility/ios-simulator/text-role-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-role-expected.txt.
+        * accessibility/ios-simulator/text-role.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/text-role.html.
+        * accessibility/ios-simulator/textfield-in-axvalue-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/textfield-in-axvalue-expected.txt.
+        * accessibility/ios-simulator/textfield-in-axvalue.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/textfield-in-axvalue.html.
+        * accessibility/ios-simulator/toggle-button-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/toggle-button-expected.txt.
+        * accessibility/ios-simulator/toggle-button.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/toggle-button.html.
+        * accessibility/ios-simulator/url-test-expected.txt: Renamed from LayoutTests/platform/ios-simulator/accessibility/url-test-expected.txt.
+        * accessibility/ios-simulator/url-test.html: Renamed from LayoutTests/platform/ios-simulator/accessibility/url-test.html.
+        * platform/ios-simulator/TestExpectations:
+
 2015-08-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve some LayoutTests/inspector flakey output for tests with InspectorTest.reloadPage

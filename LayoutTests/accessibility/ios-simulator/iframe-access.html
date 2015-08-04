@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<div id="content">
+<iframe id="iframe" onload="startTest();" src="data:text/html,<body><button id='frame-button'>Click me</button><a href='#' id='frame-link'>a</a></body>"></iframe>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This makes sure that an iframe is accessible on iOS");
+
+    function dumpAccessibilityChildren(element, level) {
+        if (!element) {
+            return;
+        }
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        debug(indent + element.identifier);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            dumpAccessibilityChildren(element.childAtIndex(k), level+1);
+        }
+    }
+
+    window.jsTestIsAsync = true;
+    function startTest() {
+
+        if (window.accessibilityController) {
+            // Dump the tree to confirm that the items inside the frame can be accessed.    
+            var content = accessibilityController.accessibleElementById("content");
+            dumpAccessibilityChildren(content);
+            finishJSTest();
+        }
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+
