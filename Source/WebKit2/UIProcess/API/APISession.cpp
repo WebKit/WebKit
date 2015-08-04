@@ -28,6 +28,11 @@
 
 #include <wtf/RunLoop.h>
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessMessages.h"
+#include "WebProcessPool.h"
+#endif
+
 namespace API {
 
 static uint64_t generateID()
@@ -75,6 +80,12 @@ WebCore::SessionID Session::getID() const
 
 Session::~Session()
 {
+#if ENABLE(NETWORK_PROCESS)
+    if (m_sessionID.isEphemeral()) {
+        for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
+            processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroyPrivateBrowsingSession(m_sessionID));
+    }
+#endif
 }
 
 } // namespace API
