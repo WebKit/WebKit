@@ -1,5 +1,11 @@
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Add a result missed in earlier file moves.
+
+        * accessibility/mac/crash-invalid-text-marker-node-expected.txt: Added.
+
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Make LayoutTests/platform/gtk/fast/css/rect-shadow-tiled.html a cross-platform test.
 
         * fast/css/rect-shadow-tiled-expected.txt: Renamed from LayoutTests/platform/gtk/fast/css/rect-shadow-tiled-expected.txt.
