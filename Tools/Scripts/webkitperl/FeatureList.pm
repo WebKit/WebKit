@@ -44,6 +44,7 @@ BEGIN {
 my (
     $threeDTransformsSupport,
     $accelerated2DCanvasSupport,
+    $allInOneBuild,
     $arrowfunctionSyntax,
     $attachmentElementSupport,
     $batteryStatusSupport,
@@ -157,6 +158,9 @@ my @features = (
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => isGtk(), value => \$accelerated2DCanvasSupport },
+
+    { option => "allinone-build", desc => "Toggle all-in-one build",
+      define => "ENABLE_ALLINONE_BUILD", default => isWindows(), value => \$allInOneBuild },
 
     { option => "arrowfunction-syntax", desc => "Toggle ES6 arrow function syntax support",
       define => "ENABLE_ES6_ARROWFUNCTION_SYNTAX", default => 1, value => \$arrowfunctionSyntax },

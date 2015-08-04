@@ -1,3 +1,16 @@
+2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [CMake] Add an option to build AllInOne files
+        https://bugs.webkit.org/show_bug.cgi?id=102647
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsEfl.cmake: Disabled by default.
+        * Source/cmake/OptionsGTK.cmake: Disabled by default.
+        * Source/cmake/OptionsWindows.cmake: Enabled by default.
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+
 2015-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.5 release.

@@ -296,3 +296,25 @@ macro(GENERATE_WEBKIT2_MESSAGE_SOURCES _output_source _input_files)
         list(APPEND ${_output_source} ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp)
     endforeach ()
 endmacro()
+
+# Helper macro for using all-in-one builds
+# This macro removes the sources included in the _all_in_one_file from the input _file_list.
+# _file_list is a list of source files
+# _all_in_one_file is an all-in-one cpp file includes other cpp files
+# _result_file_list is the output file list
+macro(PROCESS_ALLINONE_FILE _file_list _all_in_one_file _result_file_list)
+    file(STRINGS ${_all_in_one_file} _all_in_one_file_content)
+    set(${_result_file_list} ${_file_list})
+    foreach (_line ${_all_in_one_file_content})
+        string(REGEX MATCH "^#include [\"<](.*)[\">]" _found ${_line})
+        if (_found)
+            list(APPEND _allins ${CMAKE_MATCH_1})
+        endif ()
+    endforeach ()
+
+    foreach (_allin ${_allins})
+        string(REGEX REPLACE ";[^;]*/${_allin};" ";" _new_result "${${_result_file_list}}")
+        set(${_result_file_list} ${_new_result})
+    endforeach ()
+
+endmacro()
