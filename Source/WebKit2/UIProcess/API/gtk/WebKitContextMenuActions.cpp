@@ -182,6 +182,8 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(ContextMenu
         return WEBKIT_CONTEXT_MENU_ACTION_UNICODE;
     case ContextMenuItemTagSpellingGuess:
         return WEBKIT_CONTEXT_MENU_ACTION_SPELLING_GUESS;
+    case ContextMenuItemTagNoGuessesFound:
+        return WEBKIT_CONTEXT_MENU_ACTION_NO_GUESSES_FOUND;
     case ContextMenuItemTagIgnoreSpelling:
         return WEBKIT_CONTEXT_MENU_ACTION_IGNORE_SPELLING;
     case ContextMenuItemTagLearnSpelling:
