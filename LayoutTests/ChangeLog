@@ -1,3 +1,9 @@
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Add WK1 Mac result for this test.
+
+        * platform/mac-wk1/editing/selection/caret-mode-document-begin-end-expected.txt: Added.
+
 2015-08-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Returns inconsistent types for el.style.property and el.style.getPropertyValue('color')
