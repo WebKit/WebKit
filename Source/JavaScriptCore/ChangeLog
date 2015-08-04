@@ -1,5 +1,12 @@
 2015-08-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix uninitialized property leading to an assert.
+
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+
+2015-08-03  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix Windows.
 
         * bytecode/ObjectPropertyConditionSet.h:

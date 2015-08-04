@@ -47,6 +47,7 @@ public:
         : m_type(Uncachable)
         , m_base(0)
         , m_thisValue(thisValue)
+        , m_offset(invalidOffset)
         , m_isStrictMode(isStrictMode)
         , m_context(context)
         , m_putFunction(nullptr)
