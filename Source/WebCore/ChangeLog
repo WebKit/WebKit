@@ -1,3 +1,25 @@
+2015-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Paste data is removed from clipboard when closing browser tab
+        https://bugs.webkit.org/show_bug.cgi?id=144549
+
+        Reviewed by Martin Robinson.
+
+        GTK+ stores all clipboards in gtk_main or gtk_application_shutdown
+        when the main loop finishes. We don't use gtk_main() in the web
+        process, so we need to do the same and store all clipboards on
+        process shutdown.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::Pasteboard): Register the GtkClipboard.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::singleton): Make it destructible.
+        (WebCore::PasteboardHelper::~PasteboardHelper): Call
+        gtk_clipboard_store for every registered GtkClipboard.
+        (WebCore::PasteboardHelper::registerClipboard): Save the given
+        GtkClipboard.
+        * platform/gtk/PasteboardHelper.h:
+
 2015-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Cleanup PasteboardHelper

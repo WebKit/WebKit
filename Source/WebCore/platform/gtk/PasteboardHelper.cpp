@@ -53,7 +53,7 @@ static void removeMarkupPrefix(String& markup)
 
 PasteboardHelper& PasteboardHelper::singleton()
 {
-    static NeverDestroyed<PasteboardHelper> helper;
+    static PasteboardHelper helper;
     return helper;
 }
 
@@ -73,6 +73,12 @@ PasteboardHelper::PasteboardHelper()
     gtk_target_list_add(m_targetList.get(), netscapeURLAtom, 0, PasteboardHelper::TargetTypeNetscapeURL);
     gtk_target_list_add_image_targets(m_targetList.get(), PasteboardHelper::TargetTypeImage, TRUE);
     gtk_target_list_add(m_targetList.get(), unknownAtom, 0, PasteboardHelper::TargetTypeUnknown);
+}
+
+PasteboardHelper::~PasteboardHelper()
+{
+    for (auto* clipboard : m_gtkClipboards)
+        gtk_clipboard_store(clipboard);
 }
 
 GtkTargetList* PasteboardHelper::targetList() const
@@ -314,6 +320,12 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, SmartPast
 bool PasteboardHelper::clipboardContentSupportsSmartReplace(GtkClipboard* clipboard)
 {
     return gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom);
+}
+
+void PasteboardHelper::registerClipboard(GtkClipboard* clipboard)
+{
+    ASSERT(clipboard);
+    m_gtkClipboards.add(clipboard);
 }
 
 }
