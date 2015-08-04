@@ -1022,7 +1022,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         }
 
         // Single breakpoint.
-        if (breakpoints.length === 1) {
+        if (breakpoints.length === 1 && !WebInspector.isShowingDebuggerTab()) {
             var breakpoint = breakpoints[0];
 
             breakpoint.appendContextMenuItems(contextMenu, event.target);

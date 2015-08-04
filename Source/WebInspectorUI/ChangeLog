@@ -1,3 +1,16 @@
+2015-08-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Don't show 'Reveal In Debugger Tab' menu item if already in Debugger tab
+        https://bugs.webkit.org/show_bug.cgi?id=147554
+
+        Reviewed by Timothy Hatcher.
+
+        Check current tab before appending context menu items.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.isShowingDebuggerTab):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+
 2015-08-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: buttons in new tab screen lack hover styles

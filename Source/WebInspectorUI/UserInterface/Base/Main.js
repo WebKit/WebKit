@@ -794,6 +794,11 @@ WebInspector.showDebuggerTab = function(breakpointToSelect, showScopeChainDetail
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
+WebInspector.isShowingDebuggerTab = function()
+{
+    return this.tabBrowser.selectedTabContentView instanceof WebInspector.DebuggerTabContentView;
+};
+
 WebInspector.showResourcesTab = function()
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.ResourcesTabContentView);
