@@ -223,10 +223,15 @@ InspectorTest.testPageDidLoad = function()
 
 InspectorTest.reloadPage = function(shouldIgnoreCache)
 {
+    console.assert(!this._testPageIsReloading);
+    console.assert(!this._testPageReloadedOnce);
+
+    this._testPageIsReloading = true;
+
     return PageAgent.reload.promise(!!shouldIgnoreCache)
         .then(function() {
             this._shouldResendResults = true;
-            this._testPageIsReloading = true;
+            this._testPageReloadedOnce = true;
 
             return Promise.resolve(null);
         }.bind(this));
