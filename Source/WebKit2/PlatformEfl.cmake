@@ -174,6 +174,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebUIPopupMenuClient.cpp
     UIProcess/efl/WebViewEfl.cpp
 
+    UIProcess/gstreamer/WebPageProxyGStreamer.cpp
+
     UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebProcessPoolSoup.cpp
 
@@ -205,6 +207,8 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebPage/efl/WebInspectorUIEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
+
+    WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
     WebProcess/efl/ExtensionManagerEfl.cpp
     WebProcess/efl/SeccompFiltersWebProcessEfl.cpp
@@ -269,6 +273,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${EO_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
+    ${GSTREAMER_INCLUDE_DIRS}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}

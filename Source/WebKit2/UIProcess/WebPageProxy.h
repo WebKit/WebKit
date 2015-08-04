@@ -1377,6 +1377,12 @@ private:
     void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, const UserData&);
 #endif
 
+#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
+    void requestInstallMissingMediaPlugins(const String& details);
+#endif
+#endif
+
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;

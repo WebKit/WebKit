@@ -84,6 +84,10 @@ class SecurityOrigin;
 class ViewportConstraints;
 class Widget;
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+class MediaPlayerRequestInstallMissingPluginsCallback;
+#endif
+
 struct DateTimeChooserParameters;
 struct FrameLoadRequest;
 struct GraphicsDeviceAdapter;
@@ -436,6 +440,12 @@ public:
 #endif
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
+
+#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
+    virtual void requestInstallMissingMediaPlugins(const String& /*details*/, MediaPlayerRequestInstallMissingPluginsCallback&) { };
+#endif
+#endif
 
 protected:
     virtual ~ChromeClient() { }

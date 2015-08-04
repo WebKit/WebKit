@@ -310,6 +310,12 @@ private:
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const override;
 
+#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
+    virtual void requestInstallMissingMediaPlugins(const String&, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&) override;
+#endif
+#endif
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;

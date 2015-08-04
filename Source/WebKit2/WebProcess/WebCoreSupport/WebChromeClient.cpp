@@ -1102,4 +1102,13 @@ bool WebChromeClient::shouldDispatchFakeMouseMoveEvents() const
     return m_page->shouldDispatchFakeMouseMoveEvents();
 }
 
+#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
+void WebChromeClient::requestInstallMissingMediaPlugins(const String& details, WebCore::MediaPlayerRequestInstallMissingPluginsCallback& callback)
+{
+    m_page->requestInstallMissingMediaPlugins(details, callback);
+}
+#endif
+#endif // ENABLE(VIDEO)
+
 } // namespace WebKit

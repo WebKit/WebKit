@@ -616,6 +616,11 @@ private:
     virtual double mediaPlayerRequestedPlaybackRate() const override final;
 
     void loadTimerFired();
+
+#if USE(GSTREAMER)
+    virtual void requestInstallMissingPlugins(const String&, MediaPlayerRequestInstallMissingPluginsCallback&) override final;
+#endif
+
     void progressEventTimerFired();
     void playbackProgressTimerFired();
     void scanTimerFired();

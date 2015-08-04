@@ -421,4 +421,8 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     DidPerformActionMenuHitTest(struct WebKit::ActionMenuHitTestResult result, bool forImmediateAction, WebKit::UserData userData)
 #endif
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    RequestInstallMissingMediaPlugins(String details)
+#endif
 }

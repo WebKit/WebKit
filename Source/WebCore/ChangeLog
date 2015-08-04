@@ -1,3 +1,33 @@
+2015-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Crashes during plugin installation
+        https://bugs.webkit.org/show_bug.cgi?id=144099
+
+        Reviewed by Philippe Normand.
+
+        Add new methods to MediaPlayerClient and ChromeClient to request
+        the API layer to start the installer when there are missing media
+        plugins.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::requestInstallMissingPlugins): Pass
+        the request to the ChromeClient.
+        * html/HTMLMediaElement.h:
+        * page/ChromeClient.h:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::requestInstallMissingPlugins):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        Invalidate any pending request to install missing media plugins.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): In case of
+        missing plugins message, start a request to install them if
+        supported by GST.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerRequestInstallMissingPluginsCallback::create):
+        (WebCore::MediaPlayerRequestInstallMissingPluginsCallback::MediaPlayerRequestInstallMissingPluginsCallback):
+        (WebCore::MediaPlayerRequestInstallMissingPluginsCallback::invalidate):
+        (WebCore::MediaPlayerRequestInstallMissingPluginsCallback::complete):
+
 2015-07-22  Jinyoung Hur  <hur.ims@navercorp.com>
 
         [WinCairo] SVG path not rendered with all-zero dasharray

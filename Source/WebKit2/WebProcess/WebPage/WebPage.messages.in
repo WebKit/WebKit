@@ -409,4 +409,8 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    DidEndRequestInstallMissingMediaPlugins(uint32_t result)
+#endif
 }

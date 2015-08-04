@@ -139,6 +139,10 @@ class VisibleSelection;
 struct Highlight;
 struct KeypressCommand;
 struct TextCheckingResult;
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+class MediaPlayerRequestInstallMissingPluginsCallback;
+#endif
 }
 
 namespace WebKit {
@@ -865,6 +869,12 @@ public:
 
     void setPageActivityState(WebCore::PageActivityState::Flags);
 
+#if ENABLE(VIDEO)
+#if USE(GSTREAMER)
+    void requestInstallMissingMediaPlugins(const String& details, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&);
+#endif
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1091,6 +1101,10 @@ private:
 #endif
 
     void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    void didEndRequestInstallMissingMediaPlugins(uint32_t result);
+#endif
 
     uint64_t m_pageID;
 
@@ -1337,6 +1351,10 @@ private:
 
     bool m_mainFrameProgressCompleted;
     bool m_shouldDispatchFakeMouseMoveEvents;
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    RefPtr<WebCore::MediaPlayerRequestInstallMissingPluginsCallback> m_installMediaPluginsCallback;
+#endif
 };
 
 } // namespace WebKit

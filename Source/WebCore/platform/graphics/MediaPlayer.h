@@ -139,6 +139,10 @@ struct MediaPlayerFactory;
 struct GraphicsDeviceAdapter;
 #endif
 
+#if USE(GSTREAMER)
+class MediaPlayerRequestInstallMissingPluginsCallback;
+#endif
+
 class MediaPlayerClient {
 public:
     virtual ~MediaPlayerClient() { }
@@ -267,6 +271,10 @@ public:
     virtual void mediaPlayerEngineFailedToLoad() const { }
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
+
+#if USE(GSTREAMER)
+    virtual void requestInstallMissingPlugins(const String&, MediaPlayerRequestInstallMissingPluginsCallback&) { };
+#endif
 };
 
 class MediaPlayerSupportsTypeClient {

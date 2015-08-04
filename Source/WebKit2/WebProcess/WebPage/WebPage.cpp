@@ -213,6 +213,10 @@
 #include "CoordinatedLayerTreeHostMessages.h"
 #endif
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+#include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
+#endif
+
 using namespace JSC;
 using namespace WebCore;
 
@@ -1010,6 +1014,13 @@ void WebPage::close()
     if (m_printOperation) {
         m_printOperation->disconnectFromPage();
         m_printOperation = nullptr;
+    }
+#endif
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    if (m_installMediaPluginsCallback) {
+        m_installMediaPluginsCallback->invalidate();
+        m_installMediaPluginsCallback = nullptr;
     }
 #endif
 
