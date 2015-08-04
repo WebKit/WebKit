@@ -1,3 +1,9 @@
+2015-08-04  Tim Horton  <timothy_horton@apple.com>
+
+        Move Matt Daiter to committers.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] build-webkit and MSBuild fight over BuildOutput.htm, causing build failures.
