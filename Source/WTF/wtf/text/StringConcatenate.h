@@ -27,6 +27,7 @@
 #define StringConcatenate_h
 
 #include <string.h>
+#include <tuple>
 
 #ifndef AtomicString_h
 #include <wtf/text/AtomicString.h>

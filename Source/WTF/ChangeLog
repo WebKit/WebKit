@@ -1,5 +1,12 @@
 2015-08-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed build fix.
+
+        * wtf/text/StringConcatenate.h: Include <tuple> to avoid missing
+        std::tuple<> class definitions.
+
+2015-08-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [WTF] Turn tryMakeString(), makeString() into variadic templates
         https://bugs.webkit.org/show_bug.cgi?id=147142
 
