@@ -3,7 +3,7 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
 #//////////////////////////////////////////////////////////////////////////////////////////
-# Platform-specific directories. Skipped here, then re-enabled on the appropriate platform.
+# Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 accessibility/mac [ Pass ]

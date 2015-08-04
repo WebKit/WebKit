@@ -11,6 +11,7 @@ accessibility/gtk [ Skip ]
 accessibility/mac [ Skip ]
 accessibility/win [ Skip ]
 editing/pasteboard/gtk [ Skip ]
+tiled-drawing [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
