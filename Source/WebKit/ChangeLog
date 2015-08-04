@@ -1,3 +1,13 @@
+2015-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Enable WebGL on Windows CMake build.
+        https://bugs.webkit.org/show_bug.cgi?id=143311
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PlatformWin.cmake:
+        Added some needed source files and include directories.
+
 2015-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix 64-bit CMake build on Windows.

@@ -12,6 +12,10 @@ add_subdirectory(JavaScriptCore)
 
 add_subdirectory(WebCore)
 
+if (WIN32 AND ENABLE_GRAPHICS_CONTEXT_3D)
+    add_subdirectory(ThirdParty/ANGLE)
+endif ()
+
 if (ENABLE_API_TESTS)
     add_subdirectory(ThirdParty/gtest)
 endif ()

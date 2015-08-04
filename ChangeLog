@@ -1,3 +1,13 @@
+2015-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Enable WebGL on Windows CMake build.
+        https://bugs.webkit.org/show_bug.cgi?id=143311
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/OptionsWindows.cmake:
+        Enable WebGL by default in CMake builds now that it works.
+
 2015-08-04  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] Accelerated 2D Canvas enabled when cairo-gl is not available

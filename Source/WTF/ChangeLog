@@ -1,3 +1,13 @@
+2015-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Enable WebGL on Windows CMake build.
+        https://bugs.webkit.org/show_bug.cgi?id=143311
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/FeatureDefines.h:
+        Made the CMake feature defines the same as the non-CMake feature defines.
+
 2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Introduce COMPILER(GCC_OR_CLANG) guard and make COMPILER(GCC) true only for GCC

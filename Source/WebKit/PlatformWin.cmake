@@ -52,6 +52,11 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/modules/websockets"
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
+    "${THIRDPARTY_DIR}"
+    "${THIRDPARTY_DIR}/ANGLE"
+    "${THIRDPARTY_DIR}/ANGLE/include"
+    "${THIRDPARTY_DIR}/ANGLE/include/egl"
+    "${THIRDPARTY_DIR}/ANGLE/include/khr"
 )
 
 list(APPEND WebKit_INCLUDES
@@ -219,6 +224,7 @@ list(APPEND WebKit_SOURCES_WebCoreSupport
     WebCoreSupport/WebViewGroup.cpp
     WebCoreSupport/WebViewGroup.h
 
+    win/WebCoreSupport/AcceleratedCompositingContext.cpp
     win/WebCoreSupport/EmbeddedWidget.cpp
     win/WebCoreSupport/EmbeddedWidget.h
     win/WebCoreSupport/WebChromeClient.cpp
@@ -421,6 +427,14 @@ list(APPEND WebKit_LIBRARIES
     Version
     WebKitGUID
 )
+
+if (ENABLE_GRAPHICS_CONTEXT_3D)
+    list(APPEND WebKit_LIBRARIES
+        libANGLE
+        libEGL
+        libGLESv2
+    )
+endif ()
 
 # We need the webkit libraries to come before the system default libraries to prevent symbol conflicts with uuid.lib.
 # To do this we add system default libs as webkit libs and zero out system default libs.
