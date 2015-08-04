@@ -24,20 +24,21 @@
 
 namespace WTF {
 
-template<typename T1, typename T2>
+template<typename StringType1, typename StringType2>
 class StringAppend {
 public:
-    StringAppend(const T1& string1, const T2& string2)
-        : m_tuple(std::make_tuple(AdapterType<T1>(string1), AdapterType<T2>(string2)))
+    StringAppend(StringType1 string1, StringType2 string2)
+        : m_string1(string1)
+        , m_string2(string2)
     {
     }
 
     operator String() const
     {
-        RefPtr<StringImpl> resultImpl = StringAdapterTuple<2, AdapterType<T1>, AdapterType<T2>>::createString(m_tuple);
+        RefPtr<StringImpl> resultImpl = tryMakeString(m_string1, m_string2);
         if (!resultImpl)
             CRASH();
-        return WTF::move(resultImpl);
+        return resultImpl.release();
     }
 
     operator AtomicString() const
@@ -45,52 +46,59 @@ public:
         return operator String();
     }
 
-    bool is8Bit() const
+    bool is8Bit()
     {
-        return string1().is8Bit() && string2().is8Bit();
+        StringTypeAdapter<StringType1> adapter1(m_string1);
+        StringTypeAdapter<StringType2> adapter2(m_string2);
+        return adapter1.is8Bit() && adapter2.is8Bit();
     }
 
-    void writeTo(LChar* destination) const
+    void writeTo(LChar* destination)
     {
         ASSERT(is8Bit());
-        string1().writeTo(destination);
-        string2().writeTo(destination + string1().length());
+        StringTypeAdapter<StringType1> adapter1(m_string1);
+        StringTypeAdapter<StringType2> adapter2(m_string2);
+        adapter1.writeTo(destination);
+        adapter2.writeTo(destination + adapter1.length());
     }
 
-    void writeTo(UChar* destination) const
+    void writeTo(UChar* destination)
     {
-        string1().writeTo(destination);
-        string2().writeTo(destination + string1().length());
+        StringTypeAdapter<StringType1> adapter1(m_string1);
+        StringTypeAdapter<StringType2> adapter2(m_string2);
+        adapter1.writeTo(destination);
+        adapter2.writeTo(destination + adapter1.length());
     }
 
-    unsigned length() const
+    unsigned length()
     {
-        return string1().length() + string2().length();
+        StringTypeAdapter<StringType1> adapter1(m_string1);
+        StringTypeAdapter<StringType2> adapter2(m_string2);
+        return adapter1.length() + adapter2.length();
     }    
 
 private:
-    std::tuple<AdapterType<T1>, AdapterType<T2>> m_tuple;
-    const AdapterType<T1>& string1() const { return std::get<0>(m_tuple); }
-    const AdapterType<T2>& string2() const { return std::get<1>(m_tuple); }
+    StringType1 m_string1;
+    StringType2 m_string2;
 };
 
 template<typename StringType1, typename StringType2>
 class StringTypeAdapter<StringAppend<StringType1, StringType2>> {
 public:
-    StringTypeAdapter<StringAppend<StringType1, StringType2>>(const StringAppend<StringType1, StringType2>& buffer)
+    StringTypeAdapter<StringAppend<StringType1, StringType2>>(StringAppend<StringType1, StringType2>& buffer)
         : m_buffer(buffer)
     {
     }
 
-    unsigned length() const { return m_buffer.length(); }
+    unsigned length() { return m_buffer.length(); }
 
-    bool is8Bit() const { return m_buffer.is8Bit(); }
+    bool is8Bit() { return m_buffer.is8Bit(); }
 
-    void writeTo(LChar* destination) const { m_buffer.writeTo(destination); }
-    void writeTo(UChar* destination) const { m_buffer.writeTo(destination); }
+    void writeTo(LChar* destination) { m_buffer.writeTo(destination); }
+    void writeTo(UChar* destination) { m_buffer.writeTo(destination); }
 
 private:
-    const StringAppend<StringType1, StringType2>& m_buffer;
+    StringAppend<StringType1, StringType2>& m_buffer;
 };
 
 inline StringAppend<const char*, String> operator+(const char* string1, const String& string2)
