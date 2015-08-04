@@ -1299,11 +1299,11 @@ void WebPage::sendViewportAttributesChanged()
     // This also takes care of the relayout.
     setFixedLayoutSize(roundedIntSize(attr.layoutSize));
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
-#else
+#if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_drawingArea->layerTreeHost())
         m_drawingArea->layerTreeHost()->didChangeViewportProperties(attr);
+#else
+    send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
 #endif
 }
 #endif
@@ -1851,10 +1851,10 @@ void WebPage::pageStoppedScrolling()
 #if USE(COORDINATED_GRAPHICS)
 void WebPage::pageDidRequestScroll(const IntPoint& point)
 {
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    send(Messages::WebPageProxy::PageDidRequestScroll(point));
-#elif USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS_THREADED)
     drawingArea()->scroll(IntRect(point, IntSize()), IntSize());
+#elif USE(COORDINATED_GRAPHICS_MULTIPROCESS)
+    send(Messages::WebPageProxy::PageDidRequestScroll(point));
 #endif
 }
 #endif

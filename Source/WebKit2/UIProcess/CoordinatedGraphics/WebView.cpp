@@ -519,6 +519,7 @@ void WebView::didChangeViewportProperties(const WebCore::ViewportAttributes& att
     m_client.didChangeViewportAttributes(this, attr);
 }
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void WebView::pageDidRequestScroll(const IntPoint& position)
 {
     FloatPoint uiPosition(position);
@@ -541,6 +542,7 @@ void WebView::findZoomableAreaForPoint(const IntPoint& point, const IntSize& siz
 {
     m_page->findZoomableAreaForPoint(transformFromScene().mapPoint(point), transformFromScene().mapSize(size));
 }
+#endif
 
 } // namespace WebKit
 

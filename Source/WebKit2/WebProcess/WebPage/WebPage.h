@@ -572,6 +572,10 @@ public:
     void sendViewportAttributesChanged();
 #endif
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
+    void commitPageTransitionViewport();
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu();
     WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
@@ -608,10 +612,6 @@ public:
 
 #if PLATFORM(EFL)
     void setThemePath(const String&);
-#endif
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void commitPageTransitionViewport();
 #endif
 
 #if PLATFORM(GTK)

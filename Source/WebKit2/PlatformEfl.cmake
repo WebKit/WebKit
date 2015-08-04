@@ -209,6 +209,8 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
+    WebProcess/WebPage/DrawingAreaImpl.cpp
+
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
     WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp

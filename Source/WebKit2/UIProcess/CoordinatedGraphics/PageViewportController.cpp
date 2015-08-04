@@ -215,11 +215,13 @@ void PageViewportController::pageTransitionViewportReady()
         applyScaleAfterRenderingContents(innerBoundedViewportScale(initialScale));
     }
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     // At this point we should already have received the first viewport arguments and the requested scroll
     // position for the newly loaded page and sent our reactions to the web process. It's now safe to tell
     // the web process to start rendering the new page contents and possibly re-use the current tiles.
     // This assumes that all messages have been handled in order and that nothing has been pushed back on the event loop.
     m_webPageProxy->commitPageTransitionViewport();
+#endif
 }
 
 void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)

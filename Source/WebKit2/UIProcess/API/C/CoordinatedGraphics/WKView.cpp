@@ -191,8 +191,13 @@ double WKViewOpacity(WKViewRef view)
 
 void WKViewFindZoomableAreaForRect(WKViewRef viewRef, WKRect wkRect)
 {
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     IntRect rect = toIntRect(wkRect);
     toImpl(viewRef)->findZoomableAreaForPoint(rect.center(), rect.size());
+#else
+    UNUSED_PARAM(viewRef);
+    UNUSED_PARAM(wkRect);
+#endif
 }
 
 WKSize WKViewGetContentsSize(WKViewRef viewRef)

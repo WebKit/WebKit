@@ -38,7 +38,7 @@ enum DrawingAreaType {
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     DrawingAreaTypeCoordinated
 #else
-    DrawingAreaTypeImpl,
+    DrawingAreaTypeImpl
 #endif
 #endif
 };

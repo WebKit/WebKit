@@ -1578,16 +1578,6 @@ void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 }
 #endif
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-void WebPageProxy::commitPageTransitionViewport()
-{
-    if (!isValid())
-        return;
-
-    process().send(Messages::WebPage::CommitPageTransitionViewport(), m_pageID);
-}
-#endif
-
 #if ENABLE(DRAG_SUPPORT)
 void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName)
 {
@@ -3798,6 +3788,13 @@ void WebPageProxy::didRenderFrame(const WebCore::IntSize& contentsSize, const We
     m_pageClient.didRenderFrame(contentsSize, coveredRect);
 }
 
+void WebPageProxy::commitPageTransitionViewport()
+{
+    if (!isValid())
+        return;
+
+    process().send(Messages::WebPage::CommitPageTransitionViewport(), m_pageID);
+}
 #endif
 
 void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)

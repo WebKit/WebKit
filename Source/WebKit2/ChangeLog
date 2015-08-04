@@ -1,3 +1,46 @@
+2015-08-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CoordinatedGraphics] Rearrange uses of USE_COORDINATED_GRAPHICS_MULTIPROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=147256
+
+        Reviewed by Benjamin Poulain.
+
+        Reduce uses of USE_COORDINATED_GRAPHICS_MULTIPROCESS guard in order to fix build
+        breaks when USE_COORDINATED_GRAPHICS_MULTIPROCESS is off. This is first step to switch
+        between multiprocess model to thread model.
+
+        * PlatformEfl.cmake:
+        * Shared/DrawingAreaInfo.h:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewFindZoomableAreaForRect):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        * UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitPageTransitionViewport):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::CoordinatedDrawingArea):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+        (WebKit::WebPage::pageDidRequestScroll):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-08-03  Matt Rajca  <mrajca@apple.com>
 
         Media Session: let UI clients query whether a media element is paused

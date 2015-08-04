@@ -56,7 +56,11 @@ CoordinatedDrawingArea::~CoordinatedDrawingArea()
 }
 
 CoordinatedDrawingArea::CoordinatedDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     : DrawingArea(DrawingAreaTypeCoordinated, webPage)
+#else
+    : DrawingArea(DrawingAreaTypeImpl, webPage)
+#endif
     , m_backingStoreStateID(0)
     , m_isPaintingEnabled(true)
     , m_inUpdateBackingStoreState(false)

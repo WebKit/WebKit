@@ -94,7 +94,9 @@ public:
     bool requestExitFullScreen();
 #endif
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
+#endif
 
     // View client.
     void initializeClient(const WKViewClientBase*);
@@ -147,9 +149,11 @@ protected:
 
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) override;
     virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) override;
     virtual void pageTransitionViewportReady() override;
+#endif
 
     virtual void setCursor(const WebCore::Cursor&) override;
     virtual void setCursorHiddenUntilMouseMoves(bool) override;

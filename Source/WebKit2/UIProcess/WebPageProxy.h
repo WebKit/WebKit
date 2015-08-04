@@ -529,6 +529,7 @@ public:
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
+    void commitPageTransitionViewport();
 #endif
 #if PLATFORM(EFL)
     void setThemePath(const String&);
@@ -608,10 +609,6 @@ public:
     PlatformWidget viewWidget();
     const WebCore::Color& backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(const WebCore::Color& color) { m_backgroundColor = color; }
-#endif
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void commitPageTransitionViewport();
 #endif
 
     void handleMouseEvent(const NativeWebMouseEvent&);
@@ -880,7 +877,7 @@ public:
 
     WebPageCreationParameters creationParameters();
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
 #endif
 

@@ -44,6 +44,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& area)
 {
     UNUSED_PARAM(area);
@@ -84,6 +85,7 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
 
     send(Messages::WebPageProxy::DidFindZoomableArea(point, zoomableArea));
 }
+#endif
 
 } // namespace WebKit
 
