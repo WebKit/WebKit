@@ -99,6 +99,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, PassRef
     request.setHTTPMethod("POST");
     request.setHTTPContentType("application/json");
     request.setHTTPBody(report);
+    request.setAllowCookies(frame.document()->securityOrigin()->isSameSchemeHostPort(SecurityOrigin::create(reportURL).ptr()));
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
     String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), reportURL, frame.loader().outgoingReferrer());
