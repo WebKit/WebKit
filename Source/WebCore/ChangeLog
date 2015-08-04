@@ -1,3 +1,15 @@
+2015-07-21  Tim Horton  <timothy_horton@apple.com>
+
+        Placing video in fullscreen caused WebKit crash at WebCore::Range::textQuads
+        https://bugs.webkit.org/show_bug.cgi?id=147166
+        <rdar://problem/21928558>
+
+        Reviewed by Simon Fraser.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::getClippedVisibleTextRectangles):
+        Check the Range, as always.
+
 2015-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Safari mis-applies "animation-fill-mode: forwards" when using fractional iteration count
