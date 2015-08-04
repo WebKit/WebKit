@@ -124,7 +124,7 @@ Analyzer.prototype = {
         if (i < iterations.length)
             result = i++;
         while (i < iterations.length) {
-            if (iterations[i].openSourceRevision > iterations[result].openSourceRevision)
+            if (iterations[i].revision[Dashboard.Repository.OpenSource.name] > iterations[result].revision[Dashboard.Repository.OpenSource.name])
                 result = i;
             ++i;
         }
@@ -213,7 +213,7 @@ Analyzer.prototype = {
                 this._updateStretchOfRedCounters(topIterationByQueue, currentTime, stretchOfRedCounters);
                 continue;
             }
-            if (iterations[i].openSourceRevision <= topIterationByQueue[iterations[i].queue.id].openSourceRevision)
+            if (iterations[i].revision[Dashboard.Repository.OpenSource.name] <= topIterationByQueue[iterations[i].queue.id].revision[Dashboard.Repository.OpenSource.name])
                 continue;
 
             var dashboardWasAllGreen = this._dashboardIsAllGreen(topIterationByQueue);
@@ -275,7 +275,7 @@ Analyzer.prototype = {
                     return;
                 for (var i = 0; i < relevantIterationsByQueue[queue.id].length; ++i) {
                     var iteration = relevantIterationsByQueue[queue.id][i];
-                    if (iteration.openSourceRevision >= revision.revisionNumber) {
+                    if (iteration.revision[Dashboard.Repository.OpenSource.name] >= revision.revisionNumber) {
                         endTime = Math.max(endTime, iteration.endTime);
                         ownTime = Math.max(ownTime, iteration.endTime - iteration.startTime);
                         break;

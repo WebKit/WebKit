@@ -82,6 +82,6 @@ WebKitBuildbot.prototype = {
 
     layoutTestResultsDirectoryURLForIteration: function(iteration)
     {
-        return this.baseURL + "results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent("r" + iteration.openSourceRevision + " (" + iteration.id + ")");
+        return this.baseURL + "results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent("r" + iteration.revision[Dashboard.Repository.OpenSource.name] + " (" + iteration.id + ")");
     }
 };

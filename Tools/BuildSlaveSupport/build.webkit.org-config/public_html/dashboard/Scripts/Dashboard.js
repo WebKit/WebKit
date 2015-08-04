@@ -35,5 +35,9 @@ Dashboard = {
         LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 90 },
         LinuxEFL: { name: "linux-efl", readableName: "Linux EFL", order : 100 }
     },
-    Branch: {}
+    Branch: {},
+    Repository: {
+        OpenSource: { name: "openSource", order: 0 },
+        Internal: { name: "internal", order: 1 },
+    }
 };

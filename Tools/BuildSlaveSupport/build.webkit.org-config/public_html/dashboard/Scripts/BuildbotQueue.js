@@ -268,11 +268,11 @@ BuildbotQueue.prototype = {
 
     compareIterations: function(a, b)
     {
-        var result = b.openSourceRevision - a.openSourceRevision;
+        var result = b.revision[Dashboard.Repository.OpenSource.name] - a.revision[Dashboard.Repository.OpenSource.name];
         if (result)
             return result;
 
-        result = b.internalRevision - a.internalRevision;
+        result = b.revision[Dashboard.Repository.Internal.name] - a.revision[Dashboard.Repository.Internal.name];
         if (result)
             return result;
 
@@ -286,11 +286,11 @@ BuildbotQueue.prototype = {
 
     compareIterationsByRevisions: function(a, b)
     {
-        var result = b.openSourceRevision - a.openSourceRevision;
+        var result = b.revision[Dashboard.Repository.OpenSource.name] - a.revision[Dashboard.Repository.OpenSource.name];
         if (result)
             return result;
 
-        result = b.internalRevision - a.internalRevision;
+        result = b.revision[Dashboard.Repository.Internal.name] - a.revision[Dashboard.Repository.Internal.name];
         if (result)
             return result;
 
