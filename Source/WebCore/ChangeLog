@@ -1,5 +1,17 @@
 2015-08-03  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187536. rdar://problem/21893047
+
+    2015-07-28  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix debug builds.
+
+            * platform/graphics/cg/ImageBufferDataCG.cpp:
+            (WebCore::premultiplyBufferData):
+            (WebCore::unpremultiplyBufferData):
+
+2015-08-03  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187534. rdar://problem/21893047
 
     2015-07-28  Dean Jackson  <dino@apple.com>
