@@ -8,6 +8,7 @@
 
 accessibility/gtk [ Skip ]
 accessibility/mac [ Skip ]
+accessibility/win [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

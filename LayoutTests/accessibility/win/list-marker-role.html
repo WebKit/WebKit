@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test-pre.js"></script>
 
         <script>
             if (window.testRunner)
@@ -9,10 +9,10 @@
     </head>
     <body id="body">
         <p>
-            This test verifies that, on Windows, list items return the
-            "list item" role.
+            This test verifies that, on Windows, list markers return the
+            non-editable "text" role.
             <br><br>
-            <a href="https://bugs.webkit.org/show_bug.cgi?id=32688">Bug 32688 - MSAA: Accessibility role of list items is wrong</a>
+            <a href="https://bugs.webkit.org/show_bug.cgi?id="></a>
         </p>
 
         <ul>
@@ -25,8 +25,8 @@
             if (window.accessibilityController) {
                 document.getElementById("listItem").focus();
 
-                var listItem = accessibilityController.focusedElement;
-                shouldBe('listItem.role', '"AXRole: AXTab"');
+                var listMarker = accessibilityController.focusedElement.childAtIndex(0);
+                shouldBe('listMarker.role', '"AXRole: AXStaticText"');
             }
         </script>
     </body>

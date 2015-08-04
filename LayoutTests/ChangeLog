@@ -1,5 +1,57 @@
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Move platform/win/accessibility tests to accessibility/win.
+        
+        Fix paths to script files in the tests. Fix TestExpectations. Remove an unused result.
+
+        * TestExpectations:
+        * accessibility/win/detached-object-notification-crash-expected.txt: Renamed from LayoutTests/platform/win/accessibility/detached-object-notification-crash-expected.txt.
+        * accessibility/win/detached-object-notification-crash.html: Renamed from LayoutTests/platform/win/accessibility/detached-object-notification-crash.html.
+        * accessibility/win/document-enabled-state-expected.txt: Renamed from LayoutTests/platform/win/accessibility/document-enabled-state-expected.txt.
+        * accessibility/win/document-enabled-state.html: Renamed from LayoutTests/platform/win/accessibility/document-enabled-state.html.
+        * accessibility/win/document-role-expected.txt: Renamed from LayoutTests/platform/win/accessibility/document-role-expected.txt.
+        * accessibility/win/document-role.html: Renamed from LayoutTests/platform/win/accessibility/document-role.html.
+        * accessibility/win/focus-events-expected.txt: Renamed from LayoutTests/platform/win/accessibility/focus-events-expected.txt.
+        * accessibility/win/focus-events.html: Renamed from LayoutTests/platform/win/accessibility/focus-events.html.
+        * accessibility/win/heading-elements-expected.txt: Renamed from LayoutTests/platform/win/accessibility/heading-elements-expected.txt.
+        * accessibility/win/heading-elements.html: Renamed from LayoutTests/platform/win/accessibility/heading-elements.html.
+        * accessibility/win/img-alt-attribute-expected.txt: Renamed from LayoutTests/platform/win/accessibility/img-alt-attribute-expected.txt.
+        * accessibility/win/img-alt-attribute.html: Renamed from LayoutTests/platform/win/accessibility/img-alt-attribute.html.
+        * accessibility/win/linked-elements-expected.txt: Renamed from LayoutTests/platform/win/accessibility/linked-elements-expected.txt.
+        * accessibility/win/linked-elements.html: Renamed from LayoutTests/platform/win/accessibility/linked-elements.html.
+        * accessibility/win/list-item-role-expected.txt: Renamed from LayoutTests/platform/win/accessibility/list-item-role-expected.txt.
+        * accessibility/win/list-item-role.html: Renamed from LayoutTests/platform/win/accessibility/list-item-role.html.
+        * accessibility/win/list-marker-role-expected.txt: Renamed from LayoutTests/platform/win/accessibility/list-marker-role-expected.txt.
+        * accessibility/win/list-marker-role.html: Renamed from LayoutTests/platform/win/accessibility/list-marker-role.html.
+        * accessibility/win/list-role-expected.txt: Renamed from LayoutTests/platform/win/accessibility/list-role-expected.txt.
+        * accessibility/win/list-role.html: Renamed from LayoutTests/platform/win/accessibility/list-role.html.
+        * accessibility/win/multiple-select-element-role-expected.txt: Renamed from LayoutTests/platform/win/accessibility/multiple-select-element-role-expected.txt.
+        * accessibility/win/multiple-select-element-role.html: Renamed from LayoutTests/platform/win/accessibility/multiple-select-element-role.html.
+        * accessibility/win/option-element-position-and-size-expected.txt: Renamed from LayoutTests/platform/win/platform/win/accessibility/option-element-position-and-size-expected.txt.
+        * accessibility/win/option-element-position-and-size.html: Renamed from LayoutTests/platform/win/accessibility/option-element-position-and-size.html.
+        * accessibility/win/option-element-selection-and-focus-events-expected.txt: Renamed from LayoutTests/platform/win/accessibility/option-element-selection-and-focus-events-expected.txt.
+        * accessibility/win/option-element-selection-and-focus-events.html: Renamed from LayoutTests/platform/win/accessibility/option-element-selection-and-focus-events.html.
+        * accessibility/win/parent-element-expected.txt: Renamed from LayoutTests/platform/win/accessibility/parent-element-expected.txt.
+        * accessibility/win/parent-element.html: Renamed from LayoutTests/platform/win/accessibility/parent-element.html.
+        * accessibility/win/scroll-to-anchor-expected.txt: Renamed from LayoutTests/platform/win/accessibility/scroll-to-anchor-expected.txt.
+        * accessibility/win/scroll-to-anchor.html: Renamed from LayoutTests/platform/win/accessibility/scroll-to-anchor.html.
+        * accessibility/win/select-element-role-expected.txt: Renamed from LayoutTests/platform/win/accessibility/select-element-role-expected.txt.
+        * accessibility/win/select-element-role.html: Renamed from LayoutTests/platform/win/accessibility/select-element-role.html.
+        * accessibility/win/select-element-valuechange-event-expected.txt: Renamed from LayoutTests/platform/win/accessibility/select-element-valuechange-event-expected.txt.
+        * accessibility/win/select-element-valuechange-event.html: Renamed from LayoutTests/platform/win/accessibility/select-element-valuechange-event.html.
+        * accessibility/win/selection-and-focus-expected.txt: Renamed from LayoutTests/platform/win/accessibility/selection-and-focus-expected.txt.
+        * accessibility/win/selection-and-focus.html: Renamed from LayoutTests/platform/win/accessibility/selection-and-focus.html.
+        * accessibility/win/single-select-children-changed-expected.txt: Renamed from LayoutTests/platform/win/accessibility/single-select-children-changed-expected.txt.
+        * accessibility/win/single-select-children-changed.html: Renamed from LayoutTests/platform/win/accessibility/single-select-children-changed.html.
+        * accessibility/win/single-select-children-expected.txt: Renamed from LayoutTests/platform/win/accessibility/single-select-children-expected.txt.
+        * accessibility/win/single-select-children.html: Renamed from LayoutTests/platform/win/accessibility/single-select-children.html.
+        * accessibility/win/text-role-expected.txt: Renamed from LayoutTests/platform/win/accessibility/text-role-expected.txt.
+        * accessibility/win/text-role.html: Renamed from LayoutTests/platform/win/accessibility/text-role.html.
+        * platform/win/TestExpectations:
+        * platform/win/accessibility/option-element-position-and-size-expected.txt: Removed.
+
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
         Move platform/mac/accessibility tests to accessibility/mac.
         
         Fix paths to script files in the tests. Fix TestExpectations. Remove an unused result.
