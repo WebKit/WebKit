@@ -153,7 +153,9 @@ video::-webkit-media-controls-panel {
 }
 
 video::-webkit-media-controls-panel .hidden,
-audio::-webkit-media-controls-panel .hidden {
+audio::-webkit-media-controls-panel .hidden,
+video::-webkit-media-controls-panel .dropped,
+audio::-webkit-media-controls-panel .dropped {
     display: none;
 }
 
