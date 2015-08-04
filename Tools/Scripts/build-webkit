@@ -273,13 +273,6 @@ for my $dir (@projects) {
             my $webkitSolutionPath = "Source/WebKit/WebKit.vcxproj/WebKit.sln";
             $result = buildVisualStudioProject($webkitSolutionPath, $clean);
         }
-        if (usingVisualStudioExpress()) {
-            # Visual Studio Express is so lame it can't stdout build failures.
-            # So we find its logs and dump them to the console ourselves.
-            my $vsConfiguration = configuration();
-            open(my $OUTPUT_HANDLE, '<', "$baseProductDir/$vsConfiguration/BuildOutput.htm") or die "Could not open build log file at $baseProductDir/$vsConfiguration/BuildOutput.htm";
-            print while (<$OUTPUT_HANDLE>);
-        }
     }
     # Various build* calls above may change the CWD.
     chdirWebKit();

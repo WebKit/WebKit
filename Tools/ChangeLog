@@ -1,3 +1,16 @@
+2015-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] build-webkit and MSBuild fight over BuildOutput.htm, causing build failures.
+        https://bugs.webkit.org/show_bug.cgi?id=147636
+
+        Reviewed by Alex Christensen.
+        
+        We no longer need build-webkit to manually troll the log data and pipe it to stdout; MSBuild is already doing this properly.
+        Stop the build-webkit script from interacting with BuildOutput.htm, thereby preventing a potential build failure (especially
+        on EWS machines)
+
+        * Scripts/build-webkit:
+
 2015-08-04  Jason Marcell  <jmarcell@apple.com>
 
         Refactor to convert openSourceRevision and internalRevision properties on BuildbotIteration into a more generic collection of revisions.
