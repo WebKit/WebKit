@@ -104,24 +104,16 @@ InspectorTest.dumpMessagesToConsole = false;
 
 // This is a workaround for the fact that it would be hard to set up a constructor,
 // prototype, and prototype chain for the singleton InspectorTest.
-InspectorTest.EventDispatcher = function()
+InspectorTest.EventDispatcher = class EventDispatcher extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+    dispatchEvent(event)
+    {
+        this.dispatchEventToListeners(event);
+    }
 };
 
 InspectorTest.EventDispatcher.Event = {
     TestPageDidLoad: "inspector-test-test-page-did-load"
-};
-
-InspectorTest.EventDispatcher.prototype = {
-    __proto__: WebInspector.Object.prototype,
-    constructor: InspectorTest.EventDispatcher,
-
-    dispatchEvent: function(event)
-    {
-        this.dispatchEventToListeners(event);
-    }
 };
 
 InspectorTest.eventDispatcher = new InspectorTest.EventDispatcher;

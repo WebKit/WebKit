@@ -1,5 +1,28 @@
 2015-08-05  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: Convert miscellaneous view widgets to use ES6 classes
+        https://bugs.webkit.org/show_bug.cgi?id=147658
+
+        Reviewed by Joseph Pecoraro.
+
+        Along the way, inline a few style class names.
+
+        Elided mechanical changes from the Changelog.
+
+        * UserInterface/Base/Test.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        * UserInterface/Views/ConsolePrompt.js:
+        * UserInterface/Views/ContentBrowser.js:
+        * UserInterface/Views/ContentViewContainer.js:
+        * UserInterface/Views/DOMTreeDataGridNode.js:
+        * UserInterface/Views/IndeterminateProgressSpinner.js:
+        * UserInterface/Views/NavigationBar.js:
+        * UserInterface/Views/ProbeSetDataGridNode.js:
+        * UserInterface/Views/QuickConsoleNavigationBar.js:
+        * UserInterface/Views/Toolbar.js:
+
+2015-08-05  Brian Burg  <bburg@apple.com>
+
         Web Inspector: Convert remaining ContentViews to use ES6 classes
         https://bugs.webkit.org/show_bug.cgi?id=147534
 

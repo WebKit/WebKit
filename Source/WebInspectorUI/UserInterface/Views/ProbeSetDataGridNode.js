@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,37 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeSetDataGridNode = function(dataGrid)
+WebInspector.ProbeSetDataGridNode = class ProbeSetDataGridNode extends WebInspector.DataGridNode
 {
-    console.assert(dataGrid instanceof WebInspector.ProbeSetDataGrid, "Invalid ProbeSetDataGrid argument:", dataGrid);
+    constructor(dataGrid)
+    {
+        console.assert(dataGrid instanceof WebInspector.ProbeSetDataGrid, "Invalid ProbeSetDataGrid argument:", dataGrid);
 
-    WebInspector.DataGridNode.call(this, this.data);
-    this.dataGrid = dataGrid; // This is set to null in DataGridNode's constructor.
-    this._data = {};
+        super();
+        this.dataGrid = dataGrid; // This is set to null in DataGridNode's constructor.
+        this._data = {};
 
-    this._element = document.createElement("tr");
-    this._element.dataGridNode = this;
-    this._element.classList.add("revealed");
-};
-
-WebInspector.ProbeSetDataGridNode.SeparatorStyleClassName = "separator";
-WebInspector.ProbeSetDataGridNode.UnknownValueStyleClassName = "unknown-value";
-
-WebInspector.ProbeSetDataGridNode.prototype = {
-    constructor: WebInspector.ProbeSetDataGridNode,
-    __proto__: WebInspector.DataGridNode.prototype,
+        this._element = document.createElement("tr");
+        this._element.dataGridNode = this;
+        this._element.classList.add("revealed");
+    }
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get data()
     {
         return this._data;
-    },
+    }
 
     set frame(value)
     {
@@ -70,18 +65,18 @@ WebInspector.ProbeSetDataGridNode.prototype = {
                 data[probe.id] = sample.object;
         }
         this._data = data;
-    },
+    }
 
     get frame()
     {
         return this._frame;
-    },
+    }
 
-    createCellContent: function(columnIdentifier, cell)
+    createCellContent(columnIdentifier, cell)
     {
         var sample = this.data[columnIdentifier];
         if (sample === WebInspector.ProbeSetDataFrame.MissingValue) {
-            cell.classList.add(WebInspector.ProbeSetDataGridNode.UnknownValueStyleClassName);
+            cell.classList.add("unknown-value");
             return sample;
         }
 
@@ -89,14 +84,14 @@ WebInspector.ProbeSetDataGridNode.prototype = {
             return WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(sample, null);
 
         return sample;
-    },
+    }
 
-    updateCellsFromFrame: function(frame, probeSet)
+    updateCellsFromFrame(frame, probeSet)
     {
-    },
+    }
 
-    updateCellsForSeparator: function(frame, probeSet)
+    updateCellsForSeparator(frame, probeSet)
     {
-        this._element.classList.add(WebInspector.ProbeSetDataGridNode.SeparatorStyleClassName);
+        this._element.classList.add("separator");
     }
 };
