@@ -1,3 +1,28 @@
+2015-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Move Mavericks and Yosemite editing/mac results into the right place.
+
+        * platform/mac-mavericks/editing/mac/attributed-string/anchor-element-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/anchor-element-expected.txt.
+        * platform/mac-mavericks/editing/mac/attributed-string/basic-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/basic-expected.txt.
+        * platform/mac-mavericks/editing/mac/attributed-string/font-size-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/font-size-expected.txt.
+        * platform/mac-mavericks/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-mavericks/editing/mac/attributed-string/font-weight-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/font-weight-expected.txt.
+        * platform/mac-mavericks/editing/mac/attributed-string/letter-spacing-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/letter-spacing-expected.txt.
+        * platform/mac-mavericks/editing/mac/attributed-string/text-decorations-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/text-decorations-expected.txt.
+        * platform/mac-mavericks/editing/mac/attributed-string/vertical-align-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/attributed-string/vertical-align-expected.txt.
+        * platform/mac-mavericks/editing/mac/input/devanagari-ligature-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/input/devanagari-ligature-expected.txt.
+        * platform/mac-mavericks/editing/mac/spelling/autocorrection-at-beginning-of-word-1-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1-expected.txt.
+        * platform/mac-mavericks/editing/mac/spelling/autocorrection-at-beginning-of-word-2-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2-expected.txt.
+        * platform/mac-mavericks/editing/mac/spelling/delete-autocorrected-word-2-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/platform/mac/editing/spelling/delete-autocorrected-word-2-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/anchor-element-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/anchor-element-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/basic-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/basic-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/font-size-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/font-size-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/font-style-variant-effect-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/font-weight-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/font-weight-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/letter-spacing-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/letter-spacing-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/text-decorations-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/text-decorations-expected.txt.
+        * platform/mac-yosemite/editing/mac/editing/attributed-string/vertical-align-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/platform/mac/editing/attributed-string/vertical-align-expected.txt.
+
 2015-08-04  Doug Russell  <d_russell@apple.com>
 
         AX: tree item children returned from ranged getter are different from full array of children
