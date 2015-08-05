@@ -1,3 +1,15 @@
+2015-08-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add a second font-fallback performance test
+        https://bugs.webkit.org/show_bug.cgi?id=147692
+
+        Reviewed by Ryosuke Niwa.
+
+        This test is smaller, but has more realistic content. Also, it uses the "lang" attribute.
+
+        * Layout/font-fallback-2.html: Added.
+        * Layout/resources/font-fallback-2.html: Added.
+
 2015-07-13  Filip Pizlo  <fpizlo@apple.com>
 
         Update JetStream version number to 1.1.
