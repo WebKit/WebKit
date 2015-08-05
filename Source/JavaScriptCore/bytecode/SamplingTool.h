@@ -338,7 +338,7 @@ namespace JSC {
         unsigned m_opcodeSamplesInCTIFunctions[numOpcodeIDs];
         
 #if ENABLE(CODEBLOCK_SAMPLING)
-        DeprecatedMutex m_scriptSampleMapMutex;
+        Mutex m_scriptSampleMapMutex;
         std::unique_ptr<ScriptSampleRecordMap> m_scopeSampleMap;
 #endif
     };

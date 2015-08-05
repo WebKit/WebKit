@@ -210,10 +210,10 @@ private:
     RefPtr<UniqueIDBDatabaseBackingStore> m_backingStore;
 
     Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
-    DeprecatedMutex m_databaseTaskMutex;
+    Mutex m_databaseTaskMutex;
 
     Deque<std::unique_ptr<AsyncTask>> m_mainThreadTasks;
-    DeprecatedMutex m_mainThreadTaskMutex;
+    Mutex m_mainThreadTaskMutex;
 };
 
 } // namespace WebKit

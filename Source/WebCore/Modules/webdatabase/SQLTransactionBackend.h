@@ -128,7 +128,7 @@ private:
     bool m_readOnly;
     bool m_hasVersionMismatch;
 
-    DeprecatedMutex m_statementMutex;
+    Mutex m_statementMutex;
     Deque<RefPtr<SQLStatementBackend>> m_statementQueue;
 
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;

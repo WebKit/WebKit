@@ -136,7 +136,7 @@ void UniqueIDBDatabase::shutdown(UniqueIDBDatabaseShutdownType type)
     ref();
 
     {
-        DeprecatedMutexLocker locker(m_databaseTaskMutex);
+        MutexLocker locker(m_databaseTaskMutex);
         m_databaseTasks.clear();
     }
 
@@ -1125,7 +1125,7 @@ void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, Data
     if (!m_acceptingNewRequests && taskType == DatabaseTaskType::Normal)
         return;
 
-    DeprecatedMutexLocker locker(m_mainThreadTaskMutex);
+    MutexLocker locker(m_mainThreadTaskMutex);
 
     m_mainThreadTasks.append(WTF::move(task));
 
@@ -1143,7 +1143,7 @@ bool UniqueIDBDatabase::performNextMainThreadTask()
 
     std::unique_ptr<AsyncTask> task;
     {
-        DeprecatedMutexLocker locker(m_mainThreadTaskMutex);
+        MutexLocker locker(m_mainThreadTaskMutex);
 
         // This database might be shutting down, in which case the task queue might be empty.
         if (m_mainThreadTasks.isEmpty())
@@ -1165,7 +1165,7 @@ void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, Databa
     if (!m_acceptingNewRequests && taskType == DatabaseTaskType::Normal)
         return;
 
-    DeprecatedMutexLocker locker(m_databaseTaskMutex);
+    MutexLocker locker(m_databaseTaskMutex);
 
     m_databaseTasks.append(WTF::move(task));
 
@@ -1186,7 +1186,7 @@ void UniqueIDBDatabase::performNextDatabaseTask()
 
     std::unique_ptr<AsyncTask> task;
     {
-        DeprecatedMutexLocker locker(m_databaseTaskMutex);
+        MutexLocker locker(m_databaseTaskMutex);
 
         // This database might be shutting down on the main thread, in which case the task queue might be empty.
         if (m_databaseTasks.isEmpty())

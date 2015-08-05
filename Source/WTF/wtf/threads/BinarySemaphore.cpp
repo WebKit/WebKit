@@ -39,7 +39,7 @@ BinarySemaphore::~BinarySemaphore()
 
 void BinarySemaphore::signal()
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
 
     m_isSet = true;
     m_condition.signal();
@@ -47,7 +47,7 @@ void BinarySemaphore::signal()
 
 bool BinarySemaphore::wait(double absoluteTime)
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
 
     bool timedOut = false;
     while (!m_isSet) {

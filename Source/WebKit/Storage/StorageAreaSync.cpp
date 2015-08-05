@@ -164,7 +164,7 @@ void StorageAreaSync::syncTimerFired()
 
     bool partialSync = false;
     {
-        DeprecatedMutexLocker locker(m_syncLock);
+        MutexLocker locker(m_syncLock);
 
         // Do not schedule another sync if we're still trying to complete the
         // previous one. But, if we're shutting down, schedule it anyway.
@@ -352,7 +352,7 @@ void StorageAreaSync::performImport()
 
 void StorageAreaSync::markImported()
 {
-    DeprecatedMutexLocker locker(m_importLock);
+    MutexLocker locker(m_importLock);
     m_importComplete = true;
     m_importCondition.signal();
 }
@@ -372,7 +372,7 @@ void StorageAreaSync::blockUntilImportComplete()
     if (!m_storageArea)
         return;
 
-    DeprecatedMutexLocker locker(m_importLock);
+    MutexLocker locker(m_importLock);
     while (!m_importComplete)
         m_importCondition.wait(m_importLock);
     m_storageArea = nullptr;
@@ -467,7 +467,7 @@ void StorageAreaSync::performSync()
     bool clearItems;
     HashMap<String, String> items;
     {
-        DeprecatedMutexLocker locker(m_syncLock);
+        MutexLocker locker(m_syncLock);
 
         ASSERT(m_syncScheduled);
 
@@ -482,7 +482,7 @@ void StorageAreaSync::performSync()
     sync(clearItems, items);
 
     {
-        DeprecatedMutexLocker locker(m_syncLock);
+        MutexLocker locker(m_syncLock);
         m_syncInProgress = false;
     }
 

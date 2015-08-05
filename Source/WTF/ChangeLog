@@ -1,5 +1,110 @@
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, roll out http://trac.webkit.org/changeset/187972.
+
+        * wtf/Atomics.cpp:
+        (WTF::getSwapLock):
+        (WTF::atomicStep):
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::infiniteTime):
+        (WTF::MessageQueue<DataType>::append):
+        (WTF::MessageQueue<DataType>::appendAndKill):
+        (WTF::MessageQueue<DataType>::appendAndCheckEmpty):
+        (WTF::MessageQueue<DataType>::prepend):
+        (WTF::MessageQueue<DataType>::removeIf):
+        (WTF::MessageQueue<DataType>::isEmpty):
+        (WTF::MessageQueue<DataType>::kill):
+        (WTF::MessageQueue<DataType>::killed):
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::ThreadPrivate::execute):
+        (WTF::ParallelEnvironment::ThreadPrivate::waitForFinish):
+        (WTF::ParallelEnvironment::ThreadPrivate::workerThread):
+        * wtf/ParallelJobsGeneric.h:
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::performWork):
+        (WTF::RunLoop::dispatch):
+        * wtf/RunLoop.h:
+        * wtf/ThreadSpecificWin.cpp:
+        (WTF::destructorsList):
+        (WTF::destructorsMutex):
+        (WTF::threadSpecificKeyCreate):
+        (WTF::threadSpecificKeyDelete):
+        (WTF::ThreadSpecificThreadExit):
+        * wtf/Threading.cpp:
+        (WTF::threadEntryPoint):
+        (WTF::createThread):
+        * wtf/ThreadingPrimitives.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        (WTF::identifierByPthreadHandle):
+        (WTF::establishIdentifierForPthreadHandle):
+        (WTF::changeThreadPriority):
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+        (WTF::threadDidExit):
+        (WTF::currentThread):
+        (WTF::Mutex::Mutex):
+        (WTF::Mutex::~Mutex):
+        (WTF::Mutex::lock):
+        (WTF::Mutex::tryLock):
+        (WTF::Mutex::unlock):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait):
+        (WTF::ThreadCondition::timedWait):
+        (WTF::DeprecatedMutex::DeprecatedMutex): Deleted.
+        (WTF::DeprecatedMutex::~DeprecatedMutex): Deleted.
+        (WTF::DeprecatedMutex::lock): Deleted.
+        (WTF::DeprecatedMutex::tryLock): Deleted.
+        (WTF::DeprecatedMutex::unlock): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeCurrentThreadInternal):
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        (WTF::storeThreadHandleByIdentifier):
+        (WTF::threadHandleForIdentifier):
+        (WTF::clearThreadHandleForIdentifier):
+        (WTF::currentThread):
+        (WTF::Mutex::Mutex):
+        (WTF::Mutex::~Mutex):
+        (WTF::Mutex::lock):
+        (WTF::Mutex::tryLock):
+        (WTF::Mutex::unlock):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait):
+        (WTF::ThreadCondition::timedWait):
+        (WTF::DeprecatedMutex::DeprecatedMutex): Deleted.
+        (WTF::DeprecatedMutex::~DeprecatedMutex): Deleted.
+        (WTF::DeprecatedMutex::lock): Deleted.
+        (WTF::DeprecatedMutex::tryLock): Deleted.
+        (WTF::DeprecatedMutex::unlock): Deleted.
+        * wtf/WorkQueue.h:
+        * wtf/dtoa.cpp:
+        * wtf/dtoa.h:
+        * wtf/efl/DispatchQueueEfl.cpp:
+        (DispatchQueue::dispatch):
+        (DispatchQueue::performWork):
+        (DispatchQueue::performTimerWork):
+        (DispatchQueue::insertTimerWorkItem):
+        (DispatchQueue::wakeUpThread):
+        (DispatchQueue::getNextTimeOut):
+        * wtf/efl/DispatchQueueEfl.h:
+        * wtf/efl/RunLoopEfl.cpp:
+        (WTF::RunLoop::wakeUpEvent):
+        (WTF::RunLoop::wakeUp):
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::signal):
+        (WTF::BinarySemaphore::wait):
+        * wtf/threads/BinarySemaphore.h:
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::handleCallback):
+        (WTF::WorkQueue::platformInvalidate):
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::timerCallback):
+        (WTF::WorkQueue::dispatchAfter):
+
+2015-08-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix Windows.
 
         * wtf/ThreadSpecificWin.cpp:

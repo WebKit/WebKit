@@ -73,7 +73,7 @@ private:
     GThreadSafeMainLoopSource m_activeTimerHandler;
     GThreadSafeMainLoopSource m_tagTimerHandler;
 
-    DeprecatedMutex m_tagMutex;
+    Mutex m_tagMutex;
     GRefPtr<GstTagList> m_tags;
 };
 

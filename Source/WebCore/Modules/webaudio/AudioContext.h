@@ -380,7 +380,7 @@ private:
     unsigned m_connectionCount { 0 };
 
     // Graph locking.
-    DeprecatedMutex m_contextGraphMutex;
+    Mutex m_contextGraphMutex;
     volatile ThreadIdentifier m_audioThread { 0 };
     volatile ThreadIdentifier m_graphOwnerThread; // if the lock is held then this is the thread which owns it, otherwise == UndefinedThreadIdentifier
 

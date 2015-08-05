@@ -141,7 +141,7 @@ private:
     bool m_isEnabled;
     bool m_privateBrowsingEnabled;
 
-    mutable DeprecatedMutex m_syncLock;
+    mutable Mutex m_syncLock;
     ThreadCondition m_syncCondition;
     String m_databaseDirectory;
     // Holding m_syncLock is required when accessing m_completeDatabasePath
@@ -153,24 +153,24 @@ private:
     bool m_syncThreadHasWorkToDo;
     std::unique_ptr<SuddenTerminationDisabler> m_disableSuddenTerminationWhileSyncThreadHasWorkToDo;
 
-    DeprecatedMutex m_urlAndIconLock;
+    Mutex m_urlAndIconLock;
     // Holding m_urlAndIconLock is required when accessing any of the following data structures or the objects they contain
     HashMap<String, IconRecord*> m_iconURLToRecordMap;
     HashMap<String, PageURLRecord*> m_pageURLToRecordMap;
     HashSet<String> m_retainedPageURLs;
 
-    DeprecatedMutex m_pendingSyncLock;
+    Mutex m_pendingSyncLock;
     // Holding m_pendingSyncLock is required when accessing any of the following data structures
     HashMap<String, PageURLSnapshot> m_pageURLsPendingSync;
     HashMap<String, IconSnapshot> m_iconsPendingSync;
     
-    DeprecatedMutex m_pendingReadingLock;    
+    Mutex m_pendingReadingLock;    
     // Holding m_pendingSyncLock is required when accessing any of the following data structures - when dealing with IconRecord*s, holding m_urlAndIconLock is also required
     HashSet<String> m_pageURLsPendingImport;
     HashSet<String> m_pageURLsInterestedInIcons;
     HashSet<IconRecord*> m_iconsPendingReading;
 
-    DeprecatedMutex m_urlsToRetainOrReleaseLock;
+    Mutex m_urlsToRetainOrReleaseLock;
     // Holding m_urlsToRetainOrReleaseLock is required when accessing any of the following data structures.
     HashCountedSet<String> m_urlsToRetain;
     HashCountedSet<String> m_urlsToRelease;

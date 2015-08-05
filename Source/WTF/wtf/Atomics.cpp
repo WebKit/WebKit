@@ -72,16 +72,16 @@
 namespace WTF {
 
 static const size_t kSwapLockCount = 32;
-static DeprecatedMutex s_swapLocks[kSwapLockCount];
+static Mutex s_swapLocks[kSwapLockCount];
 
-static inline DeprecatedMutex& getSwapLock(const volatile int64_t* addr)
+static inline Mutex& getSwapLock(const volatile int64_t* addr)
 {
     return s_swapLocks[(reinterpret_cast<intptr_t>(addr) >> 3U) % kSwapLockCount];
 }
 
 static int64_t atomicStep(int64_t volatile* addend, int64_t step)
 {
-    DeprecatedMutex& mutex = getSwapLock(addend);
+    Mutex& mutex = getSwapLock(addend);
 
     mutex.lock();
     int64_t value = *addend + step;

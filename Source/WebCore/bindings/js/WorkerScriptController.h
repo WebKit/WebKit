@@ -97,7 +97,7 @@ namespace WebCore {
         WorkerGlobalScope* m_workerGlobalScope;
         JSC::Strong<JSWorkerGlobalScope> m_workerGlobalScopeWrapper;
         bool m_executionForbidden;
-        mutable DeprecatedMutex m_scheduledTerminationMutex;
+        mutable Mutex m_scheduledTerminationMutex;
     };
 
 } // namespace WebCore

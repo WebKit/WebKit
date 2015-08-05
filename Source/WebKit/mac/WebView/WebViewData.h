@@ -249,7 +249,7 @@ private:
     CGSize fixedLayoutSize;
     BOOL mainViewIsScrollingOrZooming;
     int32_t didDrawTiles;
-    WTF::DeprecatedMutex pendingFixedPositionLayoutRectMutex;
+    WTF::Mutex pendingFixedPositionLayoutRectMutex;
     CGRect pendingFixedPositionLayoutRect;
 #endif
 

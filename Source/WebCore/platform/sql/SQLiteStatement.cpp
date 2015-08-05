@@ -59,7 +59,7 @@ int SQLiteStatement::prepare()
 {
     ASSERT(!m_isPrepared);
 
-    DeprecatedMutexLocker databaseLock(m_database.databaseMutex());
+    MutexLocker databaseLock(m_database.databaseMutex());
 
     CString query = m_query.stripWhiteSpace().utf8();
     
@@ -86,7 +86,7 @@ int SQLiteStatement::prepare()
 
 int SQLiteStatement::step()
 {
-    DeprecatedMutexLocker databaseLock(m_database.databaseMutex());
+    MutexLocker databaseLock(m_database.databaseMutex());
 
     if (!m_statement)
         return SQLITE_OK;

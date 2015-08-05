@@ -49,7 +49,7 @@ ScrollingTree::~ScrollingTree()
 bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent& wheelEvent)
 {
     // This method is invoked by the event handling thread
-    DeprecatedMutexLocker lock(m_mutex);
+    MutexLocker lock(m_mutex);
 
     bool shouldSetLatch = wheelEvent.shouldConsiderLatching();
     
@@ -115,7 +115,7 @@ void ScrollingTree::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrol
         && (rootStateNodeChanged
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::NonFastScrollableRegion)
             || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))) {
-        DeprecatedMutexLocker lock(m_mutex);
+        MutexLocker lock(m_mutex);
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
             m_mainFrameScrollPosition = FloatPoint();
@@ -208,7 +208,7 @@ ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const
 
 void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom)
 {
-    DeprecatedMutexLocker locker(m_swipeStateMutex);
+    MutexLocker locker(m_swipeStateMutex);
 
     m_mainFramePinnedToTheLeft = pinnedToTheLeft;
     m_mainFramePinnedToTheRight = pinnedToTheRight;
@@ -218,54 +218,54 @@ void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheR
 
 FloatPoint ScrollingTree::mainFrameScrollPosition()
 {
-    DeprecatedMutexLocker lock(m_mutex);
+    MutexLocker lock(m_mutex);
     return m_mainFrameScrollPosition;
 }
 
 void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
 {
-    DeprecatedMutexLocker lock(m_mutex);
+    MutexLocker lock(m_mutex);
     m_mainFrameScrollPosition = position;
 }
 
 bool ScrollingTree::isPointInNonFastScrollableRegion(IntPoint p)
 {
-    DeprecatedMutexLocker lock(m_mutex);
+    MutexLocker lock(m_mutex);
     
     return m_nonFastScrollableRegion.contains(p);
 }
 
 bool ScrollingTree::isRubberBandInProgress()
 {
-    DeprecatedMutexLocker lock(m_mutex);    
+    MutexLocker lock(m_mutex);    
 
     return m_mainFrameIsRubberBanding;
 }
 
 void ScrollingTree::setMainFrameIsRubberBanding(bool isRubberBanding)
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
 
     m_mainFrameIsRubberBanding = isRubberBanding;
 }
 
 bool ScrollingTree::isScrollSnapInProgress()
 {
-    DeprecatedMutexLocker lock(m_mutex);
+    MutexLocker lock(m_mutex);
     
     return m_mainFrameIsScrollSnapping;
 }
     
 void ScrollingTree::setMainFrameIsScrollSnapping(bool isScrollSnapping)
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
     
     m_mainFrameIsScrollSnapping = isScrollSnapping;
 }
 
 void ScrollingTree::setCanRubberBandState(bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 {
-    DeprecatedMutexLocker locker(m_swipeStateMutex);
+    MutexLocker locker(m_swipeStateMutex);
 
     m_rubberBandsAtLeft = canRubberBandAtLeft;
     m_rubberBandsAtRight = canRubberBandAtRight;
@@ -275,28 +275,28 @@ void ScrollingTree::setCanRubberBandState(bool canRubberBandAtLeft, bool canRubb
 
 bool ScrollingTree::rubberBandsAtLeft()
 {
-    DeprecatedMutexLocker lock(m_swipeStateMutex);
+    MutexLocker lock(m_swipeStateMutex);
 
     return m_rubberBandsAtLeft;
 }
 
 bool ScrollingTree::rubberBandsAtRight()
 {
-    DeprecatedMutexLocker lock(m_swipeStateMutex);
+    MutexLocker lock(m_swipeStateMutex);
 
     return m_rubberBandsAtRight;
 }
 
 bool ScrollingTree::rubberBandsAtBottom()
 {
-    DeprecatedMutexLocker lock(m_swipeStateMutex);
+    MutexLocker lock(m_swipeStateMutex);
 
     return m_rubberBandsAtBottom;
 }
 
 bool ScrollingTree::rubberBandsAtTop()
 {
-    DeprecatedMutexLocker lock(m_swipeStateMutex);
+    MutexLocker lock(m_swipeStateMutex);
 
     return m_rubberBandsAtTop;
 }
@@ -308,14 +308,14 @@ bool ScrollingTree::isHandlingProgrammaticScroll()
 
 void ScrollingTree::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
-    DeprecatedMutexLocker locker(m_swipeStateMutex);
+    MutexLocker locker(m_swipeStateMutex);
     
     m_scrollPinningBehavior = pinning;
 }
 
 ScrollPinningBehavior ScrollingTree::scrollPinningBehavior()
 {
-    DeprecatedMutexLocker lock(m_swipeStateMutex);
+    MutexLocker lock(m_swipeStateMutex);
     
     return m_scrollPinningBehavior;
 }
@@ -325,7 +325,7 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
     if (wheelEvent.phase() != PlatformWheelEventPhaseBegan)
         return false;
 
-    DeprecatedMutexLocker lock(m_swipeStateMutex);
+    MutexLocker lock(m_swipeStateMutex);
 
     if (wheelEvent.deltaX() > 0 && m_mainFramePinnedToTheLeft && !m_rubberBandsAtLeft)
         return true;
@@ -351,19 +351,19 @@ bool ScrollingTree::scrollingPerformanceLoggingEnabled()
 
 ScrollingNodeID ScrollingTree::latchedNode()
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
     return m_latchedNode;
 }
 
 void ScrollingTree::setLatchedNode(ScrollingNodeID node)
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
     m_latchedNode = node;
 }
 
 void ScrollingTree::clearLatchedNode()
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
     m_latchedNode = 0;
 }
 

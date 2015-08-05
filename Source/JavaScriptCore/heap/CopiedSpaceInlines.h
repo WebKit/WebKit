@@ -113,7 +113,7 @@ inline void CopiedSpace::recycleBorrowedBlock(CopiedBlock* block)
     CopiedBlock::destroy(block);
 
     {
-        DeprecatedMutexLocker locker(m_loanedBlocksLock);
+        MutexLocker locker(m_loanedBlocksLock);
         ASSERT(m_numberOfLoanedBlocks > 0);
         ASSERT(m_inCopyingPhase);
         m_numberOfLoanedBlocks--;
@@ -128,7 +128,7 @@ inline CopiedBlock* CopiedSpace::allocateBlockForCopyingPhase()
     CopiedBlock* block = CopiedBlock::createNoZeroFill();
 
     {
-        DeprecatedMutexLocker locker(m_loanedBlocksLock);
+        MutexLocker locker(m_loanedBlocksLock);
         m_numberOfLoanedBlocks++;
     }
 

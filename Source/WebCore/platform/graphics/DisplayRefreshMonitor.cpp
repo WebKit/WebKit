@@ -89,7 +89,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
     double monotonicAnimationStartTime;
 
     {
-        DeprecatedMutexLocker lock(m_mutex);
+        MutexLocker lock(m_mutex);
         if (!m_scheduled)
             ++m_unscheduledFireCount;
         else
@@ -121,7 +121,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
         m_clientsToBeNotified = nullptr;
 
     {
-        DeprecatedMutexLocker lock(m_mutex);
+        MutexLocker lock(m_mutex);
         m_previousFrameDone = true;
     }
     

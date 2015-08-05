@@ -130,7 +130,7 @@ private:
 
     void performWork();
 
-    DeprecatedMutex m_functionQueueLock;
+    Mutex m_functionQueueLock;
     Deque<std::function<void ()>> m_functionQueue;
 
 #if PLATFORM(WIN)
@@ -147,10 +147,10 @@ private:
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
     int m_nestingLevel;
 #elif PLATFORM(EFL)
-    DeprecatedMutex m_pipeLock;
+    Mutex m_pipeLock;
     EflUniquePtr<Ecore_Pipe> m_pipe;
 
-    DeprecatedMutex m_wakeUpEventRequestedLock;
+    Mutex m_wakeUpEventRequestedLock;
     bool m_wakeUpEventRequested;
 
     static void wakeUpEvent(void* data, void*, unsigned);

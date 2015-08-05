@@ -44,9 +44,9 @@ static const size_t javaScriptThreadsCount = 4;
 static bool javaScriptThreadsShouldTerminate;
 static JSContextGroupRef javaScriptThreadsGroup;
 
-static DeprecatedMutex& javaScriptThreadsMutex()
+static Mutex& javaScriptThreadsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(DeprecatedMutex, staticMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
     return staticMutex;
 }
 
@@ -70,26 +70,26 @@ void runJavaScriptThread(void*)
 
     JSGlobalContextRef ctx;
     {
-        DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+        MutexLocker locker(javaScriptThreadsMutex());
         ctx = JSGlobalContextCreateInGroup(javaScriptThreadsGroup, 0);
     }
 
     JSStringRef scriptRef;
     {
-        DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+        MutexLocker locker(javaScriptThreadsMutex());
         scriptRef = JSStringCreateWithUTF8CString(script);
     }
 
     while (true) {
         {
-            DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+            MutexLocker locker(javaScriptThreadsMutex());
             JSValueRef exception = 0;
             JSEvaluateScript(ctx, scriptRef, 0, 0, 1, &exception);
             ASSERT(!exception);
         }
 
         {
-            DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+            MutexLocker locker(javaScriptThreadsMutex());
             const size_t valuesCount = 1024;
             JSValueRef values[valuesCount];
             for (size_t i = 0; i < valuesCount; ++i)
@@ -97,7 +97,7 @@ void runJavaScriptThread(void*)
         }
 
         {
-            DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+            MutexLocker locker(javaScriptThreadsMutex());
             if (javaScriptThreadsShouldTerminate)
                 break;
         }
@@ -106,7 +106,7 @@ void runJavaScriptThread(void*)
         if (rand() % 5)
             continue;
 
-        DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+        MutexLocker locker(javaScriptThreadsMutex());
         ThreadIdentifier thread = currentThread();
         detachThread(thread);
         javaScriptThreads().remove(thread);
@@ -114,7 +114,7 @@ void runJavaScriptThread(void*)
         break;
     }
 
-    DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+    MutexLocker locker(javaScriptThreadsMutex());
     JSStringRelease(scriptRef);
     JSGarbageCollect(ctx);
     JSGlobalContextRelease(ctx);
@@ -124,7 +124,7 @@ void startJavaScriptThreads()
 {
     javaScriptThreadsGroup = JSContextGroupCreate();
 
-    DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+    MutexLocker locker(javaScriptThreadsMutex());
 
     for (size_t i = 0; i < javaScriptThreadsCount; ++i)
         javaScriptThreads().add(createThread(&runJavaScriptThread, 0, 0));
@@ -133,13 +133,13 @@ void startJavaScriptThreads()
 void stopJavaScriptThreads()
 {
     {
-        DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+        MutexLocker locker(javaScriptThreadsMutex());
         javaScriptThreadsShouldTerminate = true;
     }
 
     Vector<ThreadIdentifier, javaScriptThreadsCount> threads;
     {
-        DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+        MutexLocker locker(javaScriptThreadsMutex());
         copyToVector(javaScriptThreads(), threads);
         ASSERT(threads.size() == javaScriptThreadsCount);
     }
@@ -148,7 +148,7 @@ void stopJavaScriptThreads()
         waitForThreadCompletion(threads[i]);
 
     {
-        DeprecatedMutexLocker locker(javaScriptThreadsMutex());
+        MutexLocker locker(javaScriptThreadsMutex());
         javaScriptThreads().clear();
     }
 

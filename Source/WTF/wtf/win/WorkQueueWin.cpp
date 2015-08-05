@@ -41,7 +41,7 @@ void WorkQueue::handleCallback(void* context, BOOLEAN timerOrWaitFired)
     RefPtr<WorkQueue> queue = item->queue();
 
     {
-        DeprecatedMutexLocker lock(queue->m_workItemQueueLock);
+        MutexLocker lock(queue->m_workItemQueueLock);
         queue->m_workItemQueue.append(item);
 
         // If no other thread is performing work, we can do it on this thread.
@@ -120,7 +120,7 @@ void WorkQueue::unregisterAsWorkThread()
 void WorkQueue::platformInvalidate()
 {
 #if !ASSERT_DISABLED
-    DeprecatedMutexLocker lock(m_handlesLock);
+    MutexLocker lock(m_handlesLock);
     ASSERT(m_handles.isEmpty());
 #endif
 
@@ -131,7 +131,7 @@ void WorkQueue::platformInvalidate()
 
 void WorkQueue::dispatch(std::function<void()> function)
 {
-    DeprecatedMutexLocker locker(m_workItemQueueLock);
+    MutexLocker locker(m_workItemQueueLock);
     ref();
     m_workItemQueue.append(WorkItemWin::create(function, this));
 
@@ -150,7 +150,7 @@ struct TimerContext : public ThreadSafeRefCounted<TimerContext> {
 
     WorkQueue* queue;
     std::function<void()> function;
-    DeprecatedMutex timerMutex;
+    Mutex timerMutex;
     HANDLE timer;
 
 private:
@@ -171,7 +171,7 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
 
     timerContext->queue->dispatch(timerContext->function);
 
-    DeprecatedMutexLocker lock(timerContext->timerMutex);
+    MutexLocker lock(timerContext->timerMutex);
     ASSERT(timerContext->timer);
     ASSERT(timerContext->queue->m_timerQueue);
     if (!::DeleteTimerQueueTimer(timerContext->queue->m_timerQueue, timerContext->timer, 0)) {
@@ -193,7 +193,7 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<v
         // The timer callback could fire before ::CreateTimerQueueTimer even returns, so we protect
         // context->timer with a mutex to ensure the timer callback doesn't access it before the
         // timer handle has been stored in it.
-        DeprecatedMutexLocker lock(context->timerMutex);
+        MutexLocker lock(context->timerMutex);
 
         // Since our timer callback is quick, we can execute in the timer thread itself and avoid
         // an extra thread switch over to a worker thread.

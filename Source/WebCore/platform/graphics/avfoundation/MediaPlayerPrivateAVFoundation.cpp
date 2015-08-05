@@ -740,7 +740,7 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 
 void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay) const
 {
-    DeprecatedMutexLocker lock(m_queueMutex);
+    MutexLocker lock(m_queueMutex);
     if (delay)
         ++m_delayCallbacks;
     else {
@@ -759,7 +759,7 @@ void MediaPlayerPrivateAVFoundation::mainThreadCallback(void* context)
 
 void MediaPlayerPrivateAVFoundation::clearMainThreadPendingFlag()
 {
-    DeprecatedMutexLocker lock(m_queueMutex);
+    MutexLocker lock(m_queueMutex);
     m_mainThreadCallPending = false;
 }
 
@@ -825,7 +825,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
 
     Notification notification = Notification();
     {
-        DeprecatedMutexLocker lock(m_queueMutex);
+        MutexLocker lock(m_queueMutex);
         
         if (m_queuedNotifications.isEmpty())
             return;

@@ -75,7 +75,7 @@ private:
     Vector<IntSize> m_sizesInPruneOrder;
     unsigned m_totalBytes;
     unsigned m_capacity;
-    DeprecatedMutex m_layerPoolMutex;
+    Mutex m_layerPoolMutex;
 
     double m_lastAddTime;
     bool m_needsPrune;

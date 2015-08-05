@@ -165,28 +165,28 @@ void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& p
 void CustomProtocolManager::addCustomProtocol(WKCustomProtocol *customProtocol)
 {
     ASSERT(customProtocol);
-    DeprecatedMutexLocker locker(m_customProtocolMapMutex);
+    MutexLocker locker(m_customProtocolMapMutex);
     m_customProtocolMap.add(customProtocol.customProtocolID, customProtocol);
 }
 
 void CustomProtocolManager::removeCustomProtocol(WKCustomProtocol *customProtocol)
 {
     ASSERT(customProtocol);
-    DeprecatedMutexLocker locker(m_customProtocolMapMutex);
+    MutexLocker locker(m_customProtocolMapMutex);
     m_customProtocolMap.remove(customProtocol.customProtocolID);
 }
     
 void CustomProtocolManager::registerScheme(const String& scheme)
 {
     ASSERT(!scheme.isNull());
-    DeprecatedMutexLocker locker(m_registeredSchemesMutex);
+    MutexLocker locker(m_registeredSchemesMutex);
     m_registeredSchemes.add(scheme);
 }
     
 void CustomProtocolManager::unregisterScheme(const String& scheme)
 {
     ASSERT(!scheme.isNull());
-    DeprecatedMutexLocker locker(m_registeredSchemesMutex);
+    MutexLocker locker(m_registeredSchemesMutex);
     m_registeredSchemes.remove(scheme);
 }
 
@@ -195,7 +195,7 @@ bool CustomProtocolManager::supportsScheme(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    DeprecatedMutexLocker locker(m_registeredSchemesMutex);
+    MutexLocker locker(m_registeredSchemesMutex);
     return m_registeredSchemes.contains(scheme);
 }
 
@@ -261,7 +261,7 @@ void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
 
 RetainPtr<WKCustomProtocol> CustomProtocolManager::protocolForID(uint64_t customProtocolID)
 {
-    DeprecatedMutexLocker locker(m_customProtocolMapMutex);
+    MutexLocker locker(m_customProtocolMapMutex);
 
     CustomProtocolMap::const_iterator it = m_customProtocolMap.find(customProtocolID);
     if (it == m_customProtocolMap.end())

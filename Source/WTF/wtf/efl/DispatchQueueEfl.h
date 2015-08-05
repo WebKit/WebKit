@@ -63,7 +63,7 @@ private:
     int m_maxFileDescriptor;
     int m_readFromPipeDescriptor;
     int m_writeToPipeDescriptor;
-    DeprecatedMutex m_writeToPipeDescriptorLock;
+    Mutex m_writeToPipeDescriptorLock;
 
     bool m_isThreadRunning;
 
@@ -71,10 +71,10 @@ private:
     std::function<void ()> m_socketEventHandler;
 
     Vector<std::unique_ptr<WorkItem>> m_workItems;
-    DeprecatedMutex m_workItemsLock;
+    Mutex m_workItemsLock;
 
     Vector<std::unique_ptr<TimerWorkItem>> m_timerWorkItems;
-    mutable DeprecatedMutex m_timerWorkItemsLock;
+    mutable Mutex m_timerWorkItemsLock;
 };
 
 #endif // DispatchQueueEfl_h

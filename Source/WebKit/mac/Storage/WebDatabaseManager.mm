@@ -226,9 +226,9 @@ static bool isFileHidden(NSString *file)
 #if PLATFORM(IOS)
 @implementation WebDatabaseManager (WebDatabaseManagerInternal)
 
-static DeprecatedMutex& transactionBackgroundTaskIdentifierLock()
+static Mutex& transactionBackgroundTaskIdentifierLock()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(DeprecatedMutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
@@ -261,7 +261,7 @@ static WebBackgroundTaskIdentifier getTransactionBackgroundTaskIdentifier()
 
 + (void)startBackgroundTask
 {
-    DeprecatedMutexLocker lock(transactionBackgroundTaskIdentifierLock());
+    MutexLocker lock(transactionBackgroundTaskIdentifierLock());
 
     // If there's already an existing background task going on, there's no need to start a new one.
     if (getTransactionBackgroundTaskIdentifier() != invalidWebBackgroundTaskIdentifier())
@@ -275,7 +275,7 @@ static WebBackgroundTaskIdentifier getTransactionBackgroundTaskIdentifier()
 
 + (void)endBackgroundTask
 {
-    DeprecatedMutexLocker lock(transactionBackgroundTaskIdentifierLock());
+    MutexLocker lock(transactionBackgroundTaskIdentifierLock());
 
     // It is possible that we were unable to start the background task when the first transaction began.
     // Don't try to end the task in that case.

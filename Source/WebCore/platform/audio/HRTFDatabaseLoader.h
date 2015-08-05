@@ -76,7 +76,7 @@ private:
     std::unique_ptr<HRTFDatabase> m_hrtfDatabase;
 
     // Holding a m_threadLock is required when accessing m_databaseLoaderThread.
-    DeprecatedMutex m_threadLock;
+    Mutex m_threadLock;
     ThreadIdentifier m_databaseLoaderThread;
 
     float m_databaseSampleRate;

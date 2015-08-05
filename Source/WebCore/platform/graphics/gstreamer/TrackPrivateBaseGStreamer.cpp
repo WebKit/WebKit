@@ -102,7 +102,7 @@ void TrackPrivateBaseGStreamer::tagsChanged()
     GRefPtr<GstTagList> tags;
     g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
     {
-        DeprecatedMutexLocker lock(m_tagMutex);
+        MutexLocker lock(m_tagMutex);
         m_tags.swap(tags);
     }
 
@@ -158,7 +158,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 
     GRefPtr<GstTagList> tags;
     {
-        DeprecatedMutexLocker lock(m_tagMutex);
+        MutexLocker lock(m_tagMutex);
         tags.swap(m_tags);
     }
     if (!tags)

@@ -381,7 +381,7 @@ void SQLTransactionBackend::doCleanup()
 
     releaseOriginLockIfNeeded();
 
-    DeprecatedMutexLocker locker(m_statementMutex);
+    MutexLocker locker(m_statementMutex);
     m_statementQueue.clear();
 
     if (m_sqliteTransaction) {
@@ -465,7 +465,7 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
 
 void SQLTransactionBackend::enqueueStatementBackend(PassRefPtr<SQLStatementBackend> statementBackend)
 {
-    DeprecatedMutexLocker locker(m_statementMutex);
+    MutexLocker locker(m_statementMutex);
     m_statementQueue.append(statementBackend);
 }
 
@@ -665,7 +665,7 @@ void SQLTransactionBackend::getNextStatement()
 {
     m_currentStatementBackend = nullptr;
 
-    DeprecatedMutexLocker locker(m_statementMutex);
+    MutexLocker locker(m_statementMutex);
     if (!m_statementQueue.isEmpty())
         m_currentStatementBackend = m_statementQueue.takeFirst();
 }

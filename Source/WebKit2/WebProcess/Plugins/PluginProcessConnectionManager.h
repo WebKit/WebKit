@@ -64,7 +64,7 @@ private:
 
     Vector<RefPtr<PluginProcessConnection>> m_pluginProcessConnections;
 
-    DeprecatedMutex m_tokensAndConnectionsMutex;
+    Mutex m_tokensAndConnectionsMutex;
     HashMap<uint64_t, RefPtr<IPC::Connection>> m_tokensAndConnections;
 };
 

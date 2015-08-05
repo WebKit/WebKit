@@ -48,7 +48,7 @@ private:
     static String lockFileNameForPath(String originPath);
 
     String m_lockFileName;
-    DeprecatedMutex m_mutex;
+    Mutex m_mutex;
 #if USE(FILE_LOCK)
     PlatformFileHandle m_lockHandle;
 #endif

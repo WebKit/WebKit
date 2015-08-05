@@ -28,9 +28,9 @@
 
 namespace WTF {
 
-class DeprecatedMutex;
+class Mutex;
 
-extern DeprecatedMutex* s_dtoaP5Mutex;
+extern Mutex* s_dtoaP5Mutex;
 
 typedef char DtoaBuffer[80];
 

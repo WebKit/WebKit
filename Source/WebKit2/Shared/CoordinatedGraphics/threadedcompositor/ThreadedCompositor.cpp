@@ -295,7 +295,7 @@ void ThreadedCompositor::createCompositingThread()
     if (m_threadIdentifier)
         return;
 
-    DeprecatedMutexLocker locker(m_initializeRunLoopConditionMutex);
+    MutexLocker locker(m_initializeRunLoopConditionMutex);
     m_threadIdentifier = createThread(compositingThreadEntry, this, "WebCore: ThreadedCompositor");
 
     m_initializeRunLoopCondition.wait(m_initializeRunLoopConditionMutex);
@@ -304,7 +304,7 @@ void ThreadedCompositor::createCompositingThread()
 void ThreadedCompositor::runCompositingThread()
 {
     {
-        DeprecatedMutexLocker locker(m_initializeRunLoopConditionMutex);
+        MutexLocker locker(m_initializeRunLoopConditionMutex);
 
         m_compositingRunLoop = std::make_unique<CompositingRunLoop>([&] {
             renderLayerTree();
@@ -321,7 +321,7 @@ void ThreadedCompositor::runCompositingThread()
     m_scene->purgeGLResources();
 
     {
-        DeprecatedMutexLocker locker(m_terminateRunLoopConditionMutex);
+        MutexLocker locker(m_terminateRunLoopConditionMutex);
         m_compositingRunLoop = nullptr;
         m_context = nullptr;
         m_terminateRunLoopCondition.signal();
@@ -332,7 +332,7 @@ void ThreadedCompositor::runCompositingThread()
 
 void ThreadedCompositor::terminateCompositingThread()
 {
-    DeprecatedMutexLocker locker(m_terminateRunLoopConditionMutex);
+    MutexLocker locker(m_terminateRunLoopConditionMutex);
 
     m_scene->detach();
     m_compositingRunLoop->runLoop().stop();

@@ -1,3 +1,15 @@
+2015-08-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out http://trac.webkit.org/changeset/187972.
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (WebFixedPositionContentDataLock):
+        (-[WebFixedPositionContent scrollOrZoomChanged:]):
+        (-[WebFixedPositionContent overflowScrollPositionForLayer:changedTo:]):
+        (-[WebFixedPositionContent setViewportConstrainedLayers:stickyContainerMap:]):
+        (-[WebFixedPositionContent hasFixedOrStickyPositionLayers]):
+        (-[WebFixedPositionContent minimumOffsetFromFixedPositionLayersToAnchorEdge:ofRect:inLayer:]):
+
 2015-08-04  Filip Pizlo  <fpizlo@apple.com>
 
         Rename Mutex to DeprecatedMutex

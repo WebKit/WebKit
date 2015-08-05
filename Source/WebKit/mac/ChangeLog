@@ -1,3 +1,18 @@
+2015-08-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out http://trac.webkit.org/changeset/187972.
+
+        * Storage/WebDatabaseManager.mm:
+        (transactionBackgroundTaskIdentifierLock):
+        (+[WebDatabaseManager startBackgroundTask]):
+        (+[WebDatabaseManager endBackgroundTask]):
+        * WebView/WebView.mm:
+        (-[WebView _synchronizeCustomFixedPositionLayoutRect]):
+        (-[WebView _setCustomFixedPositionLayoutRectInWebThread:synchronize:]):
+        (-[WebView _setCustomFixedPositionLayoutRect:]):
+        (-[WebView _fetchCustomFixedPositionLayoutRect:]):
+        * WebView/WebViewData.h:
+
 2015-08-04  Filip Pizlo  <fpizlo@apple.com>
 
         Rename Mutex to DeprecatedMutex

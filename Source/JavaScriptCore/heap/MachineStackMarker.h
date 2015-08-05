@@ -52,14 +52,14 @@ namespace JSC {
         void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters);
 
         void tryCopyOtherThreadStack(Thread*, void*, size_t capacity, size_t*);
-        bool tryCopyOtherThreadStacks(DeprecatedMutexLocker&, void*, size_t capacity, size_t*);
+        bool tryCopyOtherThreadStacks(MutexLocker&, void*, size_t capacity, size_t*);
 
         static void removeThread(void*);
 
         template<typename PlatformThread>
         void removeThreadIfFound(PlatformThread);
 
-        DeprecatedMutex m_registeredThreadsMutex;
+        Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
         WTF::ThreadSpecificKey m_threadSpecific;
 #if !ASSERT_DISABLED

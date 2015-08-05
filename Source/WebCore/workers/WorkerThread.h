@@ -89,7 +89,7 @@ namespace WebCore {
         WorkerReportingProxy& m_workerReportingProxy;
 
         RefPtr<WorkerGlobalScope> m_workerGlobalScope;
-        DeprecatedMutex m_threadCreationMutex;
+        Mutex m_threadCreationMutex;
 
         std::unique_ptr<WorkerThreadStartupData> m_startupData;
 

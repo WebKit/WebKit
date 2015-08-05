@@ -67,7 +67,7 @@ private:
     gulong m_eventProbe;
     Vector<GRefPtr<GstSample> > m_pendingSamples;
     String m_streamId;
-    DeprecatedMutex m_sampleMutex;
+    Mutex m_sampleMutex;
 };
 
 } // namespace WebCore

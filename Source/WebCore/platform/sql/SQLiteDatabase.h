@@ -106,7 +106,7 @@ public:
     
     void setAuthorizer(PassRefPtr<DatabaseAuthorizer>);
 
-    DeprecatedMutex& databaseMutex() { return m_lockingMutex; }
+    Mutex& databaseMutex() { return m_lockingMutex; }
     bool isAutoCommitOn() const;
 
     // The SQLite AUTO_VACUUM pragma can be either NONE, FULL, or INCREMENTAL.
@@ -147,13 +147,13 @@ private:
     bool m_transactionInProgress;
     bool m_sharable;
     
-    DeprecatedMutex m_authorizerLock;
+    Mutex m_authorizerLock;
     RefPtr<DatabaseAuthorizer> m_authorizer;
 
-    DeprecatedMutex m_lockingMutex;
+    Mutex m_lockingMutex;
     ThreadIdentifier m_openingThread;
 
-    DeprecatedMutex m_databaseClosingMutex;
+    Mutex m_databaseClosingMutex;
 
     int m_openError;
     CString m_openErrorMessage;

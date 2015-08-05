@@ -95,7 +95,7 @@ DispatchQueue::~DispatchQueue()
 void DispatchQueue::dispatch(std::unique_ptr<WorkItem> item)
 {
     {
-        DeprecatedMutexLocker locker(m_workItemsLock);
+        MutexLocker locker(m_workItemsLock);
         m_workItems.append(WTF::move(item));
     }
 
@@ -146,7 +146,7 @@ void DispatchQueue::performWork()
         Vector<std::unique_ptr<WorkItem>> workItems;
 
         {
-            DeprecatedMutexLocker locker(m_workItemsLock);
+            MutexLocker locker(m_workItemsLock);
             if (m_workItems.isEmpty())
                 return;
 
@@ -164,7 +164,7 @@ void DispatchQueue::performTimerWork()
 
     {
         // Protects m_timerWorkItems.
-        DeprecatedMutexLocker locker(m_timerWorkItemsLock);
+        MutexLocker locker(m_timerWorkItemsLock);
         if (m_timerWorkItems.isEmpty())
             return;
 
@@ -209,7 +209,7 @@ void DispatchQueue::insertTimerWorkItem(std::unique_ptr<TimerWorkItem> item)
 
     size_t position = 0;
 
-    DeprecatedMutexLocker locker(m_timerWorkItemsLock);
+    MutexLocker locker(m_timerWorkItemsLock);
     // The items should be ordered by expire time.
     for (; position < m_timerWorkItems.size(); ++position)
         if (item->expirationTimeNanoSeconds() < m_timerWorkItems[position]->expirationTimeNanoSeconds())
@@ -229,14 +229,14 @@ void DispatchQueue::dispatchQueueThread()
 
 void DispatchQueue::wakeUpThread()
 {
-    DeprecatedMutexLocker locker(m_writeToPipeDescriptorLock);
+    MutexLocker locker(m_writeToPipeDescriptorLock);
     if (write(m_writeToPipeDescriptor, &wakeUpThreadMessage, sizeof(char)) == -1)
         LOG_ERROR("Failed to wake up DispatchQueue Thread");
 }
 
 timeval* DispatchQueue::getNextTimeOut() const
 {
-    DeprecatedMutexLocker locker(m_timerWorkItemsLock);
+    MutexLocker locker(m_timerWorkItemsLock);
     if (m_timerWorkItems.isEmpty())
         return 0;
 

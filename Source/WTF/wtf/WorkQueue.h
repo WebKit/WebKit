@@ -113,10 +113,10 @@ private:
 #elif OS(WINDOWS)
     volatile LONG m_isWorkThreadRegistered;
 
-    DeprecatedMutex m_workItemQueueLock;
+    Mutex m_workItemQueueLock;
     Vector<RefPtr<WorkItemWin>> m_workItemQueue;
 
-    DeprecatedMutex m_handlesLock;
+    Mutex m_handlesLock;
     HashMap<HANDLE, RefPtr<HandleWorkItem>> m_handles;
 
     HANDLE m_timerQueue;

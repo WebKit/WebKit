@@ -512,21 +512,21 @@ void MediaPlayerPrivateMediaFoundation::destroyVideoWindow()
 
 void MediaPlayerPrivateMediaFoundation::addListener(MediaPlayerListener* listener)
 {
-    DeprecatedMutexLocker locker(m_mutexListeners);
+    MutexLocker locker(m_mutexListeners);
 
     m_listeners.add(listener);
 }
 
 void MediaPlayerPrivateMediaFoundation::removeListener(MediaPlayerListener* listener)
 {
-    DeprecatedMutexLocker locker(m_mutexListeners);
+    MutexLocker locker(m_mutexListeners);
 
     m_listeners.remove(listener);
 }
 
 void MediaPlayerPrivateMediaFoundation::notifyDeleted()
 {
-    DeprecatedMutexLocker locker(m_mutexListeners);
+    MutexLocker locker(m_mutexListeners);
 
     for (HashSet<MediaPlayerListener*>::const_iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
         (*it)->onMediaPlayerDeleted();
@@ -704,7 +704,7 @@ HRESULT STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::GetP
 
 HRESULT STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult)
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
 
     if (!m_mediaPlayer)
         return S_OK;
@@ -719,7 +719,7 @@ HRESULT STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::Invo
 
 void MediaPlayerPrivateMediaFoundation::AsyncCallback::onMediaPlayerDeleted()
 {
-    DeprecatedMutexLocker locker(m_mutex);
+    MutexLocker locker(m_mutex);
 
     m_mediaPlayer = nullptr;
 }

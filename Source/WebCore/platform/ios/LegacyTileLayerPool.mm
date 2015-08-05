@@ -84,7 +84,7 @@ void LegacyTileLayerPool::addLayer(const RetainPtr<LegacyTileLayer>& layer)
         return;
     }
 
-    DeprecatedMutexLocker locker(m_layerPoolMutex);
+    MutexLocker locker(m_layerPoolMutex);
     listOfLayersWithSize(layerSize).prepend(layer);
     m_totalBytes += bytesBackingLayerWithPixelSize(layerSize);
 
@@ -96,7 +96,7 @@ RetainPtr<LegacyTileLayer> LegacyTileLayerPool::takeLayerWithSize(const IntSize&
 {
     if (!canReuseLayerWithSize(size))
         return nil;
-    DeprecatedMutexLocker locker(m_layerPoolMutex);
+    MutexLocker locker(m_layerPoolMutex);
     LayerList& reuseList = listOfLayersWithSize(size, MarkAsUsed);
     if (reuseList.isEmpty())
         return nil;
@@ -106,7 +106,7 @@ RetainPtr<LegacyTileLayer> LegacyTileLayerPool::takeLayerWithSize(const IntSize&
 
 void LegacyTileLayerPool::setCapacity(unsigned capacity)
 {
-    DeprecatedMutexLocker reuseLocker(m_layerPoolMutex);
+    MutexLocker reuseLocker(m_layerPoolMutex);
     if (capacity < m_capacity)
         schedulePrune();
     m_capacity = capacity;
@@ -136,7 +136,7 @@ void LegacyTileLayerPool::schedulePrune()
 
 void LegacyTileLayerPool::prune()
 {
-    DeprecatedMutexLocker locker(m_layerPoolMutex);
+    MutexLocker locker(m_layerPoolMutex);
     ASSERT(m_needsPrune);
     m_needsPrune = false;
     unsigned shrinkTo = decayedCapacity();
@@ -163,7 +163,7 @@ void LegacyTileLayerPool::prune()
 
 void LegacyTileLayerPool::drain()
 {
-    DeprecatedMutexLocker reuseLocker(m_layerPoolMutex);
+    MutexLocker reuseLocker(m_layerPoolMutex);
     m_reuseLists.clear();
     m_sizesInPruneOrder.clear();
     m_totalBytes = 0;

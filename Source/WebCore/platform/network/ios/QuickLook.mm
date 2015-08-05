@@ -85,9 +85,9 @@ NSDictionary *WebCore::QLDirectoryAttributes()
     return dictionary;
 }
 
-static DeprecatedMutex& qlPreviewConverterDictionaryMutex()
+static Mutex& qlPreviewConverterDictionaryMutex()
 {
-    static NeverDestroyed<DeprecatedMutex> mutex;
+    static NeverDestroyed<Mutex> mutex;
     return mutex;
 }
 
@@ -107,7 +107,7 @@ void WebCore::addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSSt
 {
     ASSERT(url);
     ASSERT(converter);
-    DeprecatedMutexLocker lock(qlPreviewConverterDictionaryMutex());
+    MutexLocker lock(qlPreviewConverterDictionaryMutex());
     [QLPreviewConverterDictionary() setObject:converter forKey:url];
     [QLContentDictionary() setObject:(fileName ? fileName : @"") forKey:url];
 }
@@ -121,7 +121,7 @@ NSString *WebCore::qlPreviewConverterUTIForURL(NSURL *url)
 {
     id converter = nil;
     {
-        DeprecatedMutexLocker lock(qlPreviewConverterDictionaryMutex());
+        MutexLocker lock(qlPreviewConverterDictionaryMutex());
         converter = [QLPreviewConverterDictionary() objectForKey:url];
     }
     if (!converter)
@@ -131,7 +131,7 @@ NSString *WebCore::qlPreviewConverterUTIForURL(NSURL *url)
 
 void WebCore::removeQLPreviewConverterForURL(NSURL *url)
 {
-    DeprecatedMutexLocker lock(qlPreviewConverterDictionaryMutex());
+    MutexLocker lock(qlPreviewConverterDictionaryMutex());
     [QLPreviewConverterDictionary() removeObjectForKey:url];
 
     // Delete the file when we remove the preview converter
@@ -166,7 +166,7 @@ const URL WebCore::safeQLURLForDocumentURLAndResourceURL(const URL& documentURL,
     id converter = nil;
     NSURL *nsDocumentURL = documentURL;
     {
-        DeprecatedMutexLocker lock(qlPreviewConverterDictionaryMutex());
+        MutexLocker lock(qlPreviewConverterDictionaryMutex());
         converter = [QLPreviewConverterDictionary() objectForKey:nsDocumentURL];
     }
 

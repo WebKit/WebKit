@@ -256,7 +256,7 @@ void MemoryPressureHandler::setReceivedMemoryPressure(MemoryPressureReason reaso
     m_underMemoryPressure = true;
 
     {
-        DeprecatedMutexLocker locker(m_observerMutex);
+        MutexLocker locker(m_observerMutex);
         if (!m_observer) {
             m_observer = CFRunLoopObserverCreate(NULL, kCFRunLoopBeforeWaiting | kCFRunLoopExit, NO /* don't repeat */,
                 0, WebCore::respondToMemoryPressureCallback, NULL);
@@ -272,14 +272,14 @@ void MemoryPressureHandler::clearMemoryPressure()
     m_underMemoryPressure = false;
 
     {
-        DeprecatedMutexLocker locker(m_observerMutex);
+        MutexLocker locker(m_observerMutex);
         m_memoryPressureReason = MemoryPressureReasonNone;
     }
 }
 
 bool MemoryPressureHandler::shouldWaitForMemoryClearMessage()
 {
-    DeprecatedMutexLocker locker(m_observerMutex);
+    MutexLocker locker(m_observerMutex);
     return m_memoryPressureReason & MemoryPressureReasonVMStatus;
 }
 
@@ -288,7 +288,7 @@ void MemoryPressureHandler::respondToMemoryPressureIfNeeded()
     ASSERT(WebThreadIsLockedOrDisabled());
 
     {
-        DeprecatedMutexLocker locker(m_observerMutex);
+        MutexLocker locker(m_observerMutex);
         m_observer = 0;
     }
 

@@ -58,7 +58,7 @@ public:
 
 private:
     bool m_taskCompleted;
-    DeprecatedMutex m_synchronousMutex;
+    Mutex m_synchronousMutex;
     ThreadCondition m_synchronousCondition;
 #ifndef NDEBUG
     bool m_hasCheckedForTermination;

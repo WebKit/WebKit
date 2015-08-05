@@ -137,7 +137,7 @@ private:
     bool m_clearPressureOnMemoryRelease;
     void (^m_releaseMemoryBlock)();
     CFRunLoopObserverRef m_observer;
-    DeprecatedMutex m_observerMutex;
+    Mutex m_observerMutex;
 #elif OS(LINUX)
     int m_eventFD;
     int m_pressureLevelFD;

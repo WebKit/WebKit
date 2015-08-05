@@ -61,7 +61,7 @@ DatabaseThread::~DatabaseThread()
 
 bool DatabaseThread::start()
 {
-    DeprecatedMutexLocker lock(m_threadCreationMutex);
+    MutexLocker lock(m_threadCreationMutex);
 
     if (m_threadID)
         return true;
@@ -100,7 +100,7 @@ void DatabaseThread::databaseThread()
 {
     {
         // Wait for DatabaseThread::start() to complete.
-        DeprecatedMutexLocker lock(m_threadCreationMutex);
+        MutexLocker lock(m_threadCreationMutex);
         LOG(StorageAPI, "Started DatabaseThread %p", this);
     }
 

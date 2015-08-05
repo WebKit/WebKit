@@ -122,7 +122,7 @@ WorkerThread::~WorkerThread()
 bool WorkerThread::start()
 {
     // Mutex protection is necessary to ensure that m_threadID is initialized when the thread starts.
-    DeprecatedMutexLocker lock(m_threadCreationMutex);
+    MutexLocker lock(m_threadCreationMutex);
 
     if (m_threadID)
         return true;
@@ -145,7 +145,7 @@ void WorkerThread::workerThread()
 #endif
 
     {
-        DeprecatedMutexLocker lock(m_threadCreationMutex);
+        MutexLocker lock(m_threadCreationMutex);
         m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType, m_startupData->m_topOrigin.release());
 
         if (m_runLoop.terminated()) {
@@ -189,7 +189,7 @@ void WorkerThread::runEventLoop()
 void WorkerThread::stop()
 {
     // Mutex protection is necessary because stop() can be called before the context is fully created.
-    DeprecatedMutexLocker lock(m_threadCreationMutex);
+    MutexLocker lock(m_threadCreationMutex);
 
     // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
     if (m_workerGlobalScope) {

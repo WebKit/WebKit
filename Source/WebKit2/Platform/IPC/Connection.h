@@ -298,7 +298,7 @@ private:
     class SyncMessageState;
     friend class SyncMessageState;
 
-    DeprecatedMutex m_syncReplyStateMutex;
+    Mutex m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 

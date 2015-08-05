@@ -38,9 +38,9 @@ static DoublyLinkedList<PlatformThreadSpecificKey>& destructorsList()
     return staticList;
 }
 
-static DeprecatedMutex& destructorsMutex()
+static Mutex& destructorsMutex()
 {
-    static DeprecatedMutex staticMutex;
+    static Mutex staticMutex;
     return staticMutex;
 }
 
@@ -95,13 +95,13 @@ void threadSpecificKeyCreate(ThreadSpecificKey* key, void (*destructor)(void *))
     *key = static_cast<PlatformThreadSpecificKey*>(::malloc(sizeof(PlatformThreadSpecificKey)));
     new (*key) PlatformThreadSpecificKey(destructor);
 
-    DeprecatedMutexLocker locker(destructorsMutex());
+    MutexLocker locker(destructorsMutex());
     destructorsList().push(*key);
 }
 
 void threadSpecificKeyDelete(ThreadSpecificKey key)
 {
-    DeprecatedMutexLocker locker(destructorsMutex());
+    MutexLocker locker(destructorsMutex());
     destructorsList().remove(key);
     key->~PlatformThreadSpecificKey();
     ::free(key);
@@ -126,7 +126,7 @@ void ThreadSpecificThreadExit()
             data->destructor(data);
     }
 
-    DeprecatedMutexLocker locker(destructorsMutex());
+    MutexLocker locker(destructorsMutex());
     PlatformThreadSpecificKey* key = destructorsList().head();
     while (key) {
         PlatformThreadSpecificKey* nextKey = key->next();

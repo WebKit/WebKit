@@ -198,7 +198,7 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block, CopiedBlock** exchange)
     }
 
     {
-        DeprecatedMutexLocker locker(m_loanedBlocksLock);
+        MutexLocker locker(m_loanedBlocksLock);
         ASSERT(m_numberOfLoanedBlocks > 0);
         ASSERT(m_inCopyingPhase);
         m_numberOfLoanedBlocks--;
@@ -231,7 +231,7 @@ void CopiedSpace::didStartFullCollection()
 void CopiedSpace::doneCopying()
 {
     {
-        DeprecatedMutexLocker locker(m_loanedBlocksLock);
+        MutexLocker locker(m_loanedBlocksLock);
         while (m_numberOfLoanedBlocks > 0)
             m_loanedBlocksCondition.wait(m_loanedBlocksLock);
     }

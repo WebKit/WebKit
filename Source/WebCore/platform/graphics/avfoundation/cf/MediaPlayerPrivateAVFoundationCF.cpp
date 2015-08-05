@@ -157,7 +157,7 @@ public:
 private:
     inline void* callbackContext() const { return reinterpret_cast<void*>(m_objectID); }
 
-    static DeprecatedMutex& mapLock();
+    static Mutex& mapLock();
     static HashMap<uintptr_t, AVFWrapper*>& map();
     static AVFWrapper* avfWrapperForCallbackContext(void*);
     void addToMap();
@@ -1403,9 +1403,9 @@ AVFWrapper::~AVFWrapper()
     m_avPlayer = 0;
 }
 
-DeprecatedMutex& AVFWrapper::mapLock()
+Mutex& AVFWrapper::mapLock()
 {
-    static DeprecatedMutex mapLock;
+    static Mutex mapLock;
     return mapLock;
 }
 
@@ -1417,7 +1417,7 @@ HashMap<uintptr_t, AVFWrapper*>& AVFWrapper::map()
 
 void AVFWrapper::addToMap()
 {
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     
     // HashMap doesn't like a key of 0, and also make sure we aren't
     // using an object ID that's already in use.
@@ -1433,7 +1433,7 @@ void AVFWrapper::removeFromMap() const
 {
     LOG(Media, "AVFWrapper::removeFromMap(%p %d)", this, m_objectID);
 
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     map().remove(m_objectID);
 }
 
@@ -1634,7 +1634,7 @@ void AVFWrapper::createPlayerItem()
 
 void AVFWrapper::periodicTimeObserverCallback(AVCFPlayerRef, CMTime cmTime, void* context)
 {
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(context);
     if (!self) {
         LOG(Media, "AVFWrapper::periodicTimeObserverCallback invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1665,7 +1665,7 @@ void AVFWrapper::processNotification(void* context)
 
     std::unique_ptr<NotificationCallbackData> notificationData { static_cast<NotificationCallbackData*>(context) };
 
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(notificationData->m_context);
     if (!self) {
         LOG(Media, "AVFWrapper::processNotification invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1720,7 +1720,7 @@ void AVFWrapper::notificationCallback(CFNotificationCenterRef, void* observer, C
 
 void AVFWrapper::loadPlayableCompletionCallback(AVCFAssetRef, void* context)
 {
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(context);
     if (!self) {
         LOG(Media, "AVFWrapper::loadPlayableCompletionCallback invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1748,7 +1748,7 @@ void AVFWrapper::checkPlayability()
 
 void AVFWrapper::loadMetadataCompletionCallback(AVCFAssetRef, void* context)
 {
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(context);
     if (!self) {
         LOG(Media, "AVFWrapper::loadMetadataCompletionCallback invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1768,7 +1768,7 @@ void AVFWrapper::beginLoadingMetadata()
 
 void AVFWrapper::seekCompletedCallback(AVCFPlayerItemRef, Boolean finished, void* context)
 {
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(context);
     if (!self) {
         LOG(Media, "AVFWrapper::seekCompletedCallback invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1811,7 +1811,7 @@ void AVFWrapper::processCue(void* context)
 
     std::unique_ptr<LegibleOutputData> legibleOutputData(reinterpret_cast<LegibleOutputData*>(context));
 
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(legibleOutputData->m_context);
     if (!self) {
         LOG(Media, "AVFWrapper::processCue invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1827,7 +1827,7 @@ void AVFWrapper::processCue(void* context)
 void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutputRef legibleOutput, CFArrayRef attributedStrings, CFArrayRef nativeSampleBuffers, CMTime itemTime)
 {
     ASSERT(!isMainThread());
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(context);
     if (!self) {
         LOG(Media, "AVFWrapper::legibleOutputCallback invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1865,7 +1865,7 @@ void AVFWrapper::processShouldWaitForLoadingOfResource(void* context)
 
     std::unique_ptr<LoadRequestData> loadRequestData(reinterpret_cast<LoadRequestData*>(context));
 
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(loadRequestData->m_context);
     if (!self) {
         LOG(Media, "AVFWrapper::processShouldWaitForLoadingOfResource invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
@@ -1921,7 +1921,7 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
 Boolean AVFWrapper::resourceLoaderShouldWaitForLoadingOfRequestedResource(AVCFAssetResourceLoaderRef resourceLoader, AVCFAssetResourceLoadingRequestRef loadingRequest, void *context)
 {
     ASSERT(dispatch_get_main_queue() != dispatch_get_current_queue());
-    DeprecatedMutexLocker locker(mapLock());
+    MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(context);
     if (!self) {
         LOG(Media, "AVFWrapper::resourceLoaderShouldWaitForLoadingOfRequestedResource invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));

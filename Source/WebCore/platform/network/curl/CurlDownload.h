@@ -73,7 +73,7 @@ private:
     Vector<CURL*> m_pendingHandleList;
     Vector<CURL*> m_activeHandleList;
     Vector<CURL*> m_removedHandleList;
-    mutable DeprecatedMutex m_mutex;
+    mutable Mutex m_mutex;
     bool m_runThread;
 };
 
@@ -140,7 +140,7 @@ private:
     WebCore::PlatformFileHandle m_tempHandle;
     WebCore::ResourceResponse m_response;
     bool m_deletesFileUponFailure;
-    mutable DeprecatedMutex m_mutex;
+    mutable Mutex m_mutex;
     CurlDownloadListener *m_listener;
 
     static CurlDownloadManager m_downloadManager;

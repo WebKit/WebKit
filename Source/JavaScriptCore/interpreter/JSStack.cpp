@@ -39,9 +39,9 @@ namespace JSC {
 #if !ENABLE(JIT)
 static size_t committedBytesCount = 0;
 
-static DeprecatedMutex& stackStatisticsMutex()
+static Mutex& stackStatisticsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(DeprecatedMutex, staticMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
     return staticMutex;
 }    
 #endif // !ENABLE(JIT)
@@ -146,7 +146,7 @@ void JSStack::initializeThreading()
 
 void JSStack::addToCommittedByteCount(long byteCount)
 {
-    DeprecatedMutexLocker locker(stackStatisticsMutex());
+    MutexLocker locker(stackStatisticsMutex());
     ASSERT(static_cast<long>(committedBytesCount) + byteCount > -1);
     committedBytesCount += byteCount;
 }
@@ -176,7 +176,7 @@ Register* JSStack::highAddress() const
 size_t JSStack::committedByteCount()
 {
 #if !ENABLE(JIT)
-    DeprecatedMutexLocker locker(stackStatisticsMutex());
+    MutexLocker locker(stackStatisticsMutex());
     return committedBytesCount;
 #else
     // When using the C stack, we don't know how many stack pages are actually

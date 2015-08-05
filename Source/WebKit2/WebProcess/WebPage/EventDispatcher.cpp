@@ -65,7 +65,7 @@ EventDispatcher::~EventDispatcher()
 #if ENABLE(ASYNC_SCROLLING)
 void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 {
-    DeprecatedMutexLocker locker(m_scrollingTreesMutex);
+    MutexLocker locker(m_scrollingTreesMutex);
 
     ASSERT(webPage->corePage()->scrollingCoordinator());
     ASSERT(!m_scrollingTrees.contains(webPage->pageID()));
@@ -76,7 +76,7 @@ void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 
 void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
 {
-    DeprecatedMutexLocker locker(m_scrollingTreesMutex);
+    MutexLocker locker(m_scrollingTreesMutex);
     ASSERT(m_scrollingTrees.contains(webPage->pageID()));
 
     m_scrollingTrees.remove(webPage->pageID());
@@ -132,7 +132,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
-    DeprecatedMutexLocker locker(m_scrollingTreesMutex);
+    MutexLocker locker(m_scrollingTreesMutex);
     if (RefPtr<ThreadedScrollingTree> scrollingTree = m_scrollingTrees.get(pageID)) {
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
         // WebCore should always know the current state and know when it changes so the

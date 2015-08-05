@@ -65,7 +65,7 @@ private:
     MediaStreamAudioSource();
 
     String m_deviceId;
-    DeprecatedMutex m_audioConsumersLock;
+    Mutex m_audioConsumersLock;
     Vector<RefPtr<AudioDestinationConsumer>> m_audioConsumers;
     RealtimeMediaSourceStates m_currentStates;
 };

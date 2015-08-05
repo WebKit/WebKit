@@ -64,8 +64,8 @@ public:
 
 private:
     // Main thread can hold this lock for a while, so use an adaptive mutex.
-    typedef DeprecatedMutex Lock;
-    typedef DeprecatedMutexLocker Locker;
+    typedef Mutex Lock;
+    typedef MutexLocker Locker;
 
     void finalize(Handle<Unknown>, void* context) override;
     

@@ -35,7 +35,7 @@ struct NewThreadContext {
 public:
     const char* name;
     std::function<void()> entryPoint;
-    DeprecatedMutex creationMutex;
+    Mutex creationMutex;
 };
 
 static void threadEntryPoint(void* contextData)
@@ -45,7 +45,7 @@ static void threadEntryPoint(void* contextData)
     // Block until our creating thread has completed any extra setup work, including
     // establishing ThreadIdentifier.
     {
-        DeprecatedMutexLocker locker(context->creationMutex);
+        MutexLocker locker(context->creationMutex);
     }
 
     initializeCurrentThreadInternal(context->name);
@@ -70,7 +70,7 @@ ThreadIdentifier createThread(const char* name, std::function<void()> entryPoint
     NewThreadContext* context = new NewThreadContext { name, WTF::move(entryPoint), { } };
 
     // Prevent the thread body from executing until we've established the thread identifier.
-    DeprecatedMutexLocker locker(context->creationMutex);
+    MutexLocker locker(context->creationMutex);
 
     return createThreadInternal(threadEntryPoint, context, name);
 }

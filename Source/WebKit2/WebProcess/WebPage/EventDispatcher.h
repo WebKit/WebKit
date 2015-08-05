@@ -92,7 +92,7 @@ private:
     Ref<WorkQueue> m_queue;
 
 #if ENABLE(ASYNC_SCROLLING)
-    DeprecatedMutex m_scrollingTreesMutex;
+    Mutex m_scrollingTreesMutex;
     HashMap<uint64_t, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees;
 #endif
     std::unique_ptr<WebCore::WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
