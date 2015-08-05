@@ -1,3 +1,25 @@
+2015-08-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Layout & Rendering timeline grid should show TimelineRecord parent/child relationships
+        https://bugs.webkit.org/show_bug.cgi?id=147468
+
+        Reviewed by Brian Burg.
+
+        Layout timeline data grid now shows record nesting for Layout and Composite events.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        * UserInterface/Models/TimelineRecord.js:
+        (WebInspector.TimelineRecord.prototype.get parent):
+        (WebInspector.TimelineRecord.prototype.set parent):
+        Preserve timeline record parent/child relationship.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        Style change for disclosure triangle support.
+        (WebInspector.LayoutTimelineView.prototype._layoutTimelineRecordAdded):
+        Only process immediate children of the rendering frame record.
+
 2015-08-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: "No Filter Results" overlaps other UI elements when docked Inspector is small
