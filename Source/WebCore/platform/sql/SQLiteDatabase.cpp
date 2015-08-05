@@ -53,7 +53,6 @@ SQLiteDatabase::SQLiteDatabase()
     , m_transactionInProgress(false)
     , m_sharable(false)
     , m_openingThread(0)
-    , m_interrupted(false)
     , m_openError(SQLITE_ERROR)
     , m_openErrorMessage()
     , m_lastChangesCount(0)
@@ -148,27 +147,7 @@ void SQLiteDatabase::overrideUnauthorizedFunctions()
         sqlite3_create_function(m_db, functionParameter.first, functionParameter.second, SQLITE_UTF8, const_cast<char*>(functionParameter.first), unauthorizedSQLFunction, 0, 0);
 }
 
-void SQLiteDatabase::interrupt()
-{
-    m_interrupted = true;
-    while (!m_lockingMutex.tryLock()) {
-        DeprecatedMutexLocker locker(m_databaseClosingMutex);
-        if (!m_db)
-            return;
-        sqlite3_interrupt(m_db);
-        std::this_thread::yield();
-    }
-
-    m_lockingMutex.unlock();
-}
-
-bool SQLiteDatabase::isInterrupted()
-{
-    ASSERT(!m_lockingMutex.tryLock());
-    return m_interrupted;
-}
-
-void SQLiteDatabase::setFullsync(bool fsync) 
+void SQLiteDatabase::setFullsync(bool fsync)
 {
     if (fsync) 
         executeCommand(ASCIILiteral("PRAGMA fullfsync = 1;"));

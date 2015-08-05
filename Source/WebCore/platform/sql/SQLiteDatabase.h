@@ -55,8 +55,6 @@ public:
     WEBCORE_EXPORT bool open(const String& filename, bool forWebSQLDatabase = false);
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
-    void interrupt();
-    bool isInterrupted();
 
     void updateLastChangesCount();
 
@@ -156,7 +154,6 @@ private:
     ThreadIdentifier m_openingThread;
 
     DeprecatedMutex m_databaseClosingMutex;
-    bool m_interrupted;
 
     int m_openError;
     CString m_openErrorMessage;

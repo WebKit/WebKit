@@ -65,8 +65,6 @@ public:
 
     unsigned long long maximumSize() const;
     void incrementalVacuumIfNeeded();
-    void interrupt();
-    bool isInterrupted();
 
     void disableAuthorizer();
     void enableAuthorizer();

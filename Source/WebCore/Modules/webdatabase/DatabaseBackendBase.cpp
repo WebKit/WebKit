@@ -586,15 +586,4 @@ void DatabaseBackendBase::incrementalVacuumIfNeeded()
     }
 }
 
-void DatabaseBackendBase::interrupt()
-{
-    m_sqliteDatabase.interrupt();
-}
-
-bool DatabaseBackendBase::isInterrupted()
-{
-    DeprecatedMutexLocker locker(m_sqliteDatabase.databaseMutex());
-    return m_sqliteDatabase.isInterrupted();
-}
-
 } // namespace WebCore
