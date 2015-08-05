@@ -168,7 +168,7 @@ void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask> task)
 class SameDatabasePredicate {
 public:
     SameDatabasePredicate(const Database* database) : m_database(database) { }
-    bool operator()(const DatabaseTask& task) const { return task.database() == m_database; }
+    bool operator()(const DatabaseTask& task) const { return &task.database() == m_database; }
 private:
     const Database* m_database;
 };

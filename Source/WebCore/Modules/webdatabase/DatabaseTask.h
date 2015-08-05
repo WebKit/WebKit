@@ -73,19 +73,19 @@ public:
 
     void performTask();
 
-    DatabaseBackend* database() const { return m_database; }
+    DatabaseBackend& database() const { return m_database; }
 #ifndef NDEBUG
     bool hasSynchronizer() const { return m_synchronizer; }
     bool hasCheckedForTermination() const { return m_synchronizer->hasCheckedForTermination(); }
 #endif
 
 protected:
-    DatabaseTask(DatabaseBackend*, DatabaseTaskSynchronizer*);
+    DatabaseTask(DatabaseBackend&, DatabaseTaskSynchronizer*);
 
 private:
     virtual void doPerformTask() = 0;
 
-    DatabaseBackend* m_database;
+    DatabaseBackend& m_database;
     DatabaseTaskSynchronizer* m_synchronizer;
 
 #if !LOG_DISABLED
@@ -96,7 +96,7 @@ private:
 
 class DatabaseBackend::DatabaseOpenTask : public DatabaseTask {
 public:
-    DatabaseOpenTask(DatabaseBackend*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, DatabaseError&, String& errorMessage, bool& success);
+    DatabaseOpenTask(DatabaseBackend&, bool setVersionInNewDatabase, DatabaseTaskSynchronizer&, DatabaseError&, String& errorMessage, bool& success);
 
 private:
     virtual void doPerformTask() override;
@@ -112,7 +112,7 @@ private:
 
 class DatabaseBackend::DatabaseCloseTask : public DatabaseTask {
 public:
-    DatabaseCloseTask(DatabaseBackend*, DatabaseTaskSynchronizer*);
+    DatabaseCloseTask(DatabaseBackend&, DatabaseTaskSynchronizer&);
 
 private:
     virtual void doPerformTask() override;
@@ -140,7 +140,7 @@ private:
 
 class DatabaseBackend::DatabaseTableNamesTask : public DatabaseTask {
 public:
-    DatabaseTableNamesTask(DatabaseBackend*, DatabaseTaskSynchronizer*, Vector<String>& names);
+    DatabaseTableNamesTask(DatabaseBackend&, DatabaseTaskSynchronizer&, Vector<String>& names);
 
 private:
     virtual void doPerformTask() override;

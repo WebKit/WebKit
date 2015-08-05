@@ -102,7 +102,7 @@ bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&
         return false;
 
     bool success = false;
-    auto task = std::make_unique<DatabaseOpenTask>(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
+    auto task = std::make_unique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, error, errorMessage, success);
     databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 
@@ -254,7 +254,7 @@ void Database::markAsDeletedAndClose()
         return;
     }
 
-    auto task = std::make_unique<DatabaseCloseTask>(this, &synchronizer);
+    auto task = std::make_unique<DatabaseCloseTask>(*this, synchronizer);
     databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 }
@@ -341,7 +341,7 @@ Vector<String> Database::tableNames()
     if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
         return result;
 
-    auto task = std::make_unique<DatabaseTableNamesTask>(this, &synchronizer, result);
+    auto task = std::make_unique<DatabaseTableNamesTask>(*this, synchronizer, result);
     databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 

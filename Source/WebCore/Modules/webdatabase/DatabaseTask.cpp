@@ -58,7 +58,7 @@ void DatabaseTaskSynchronizer::taskCompleted()
     m_synchronousMutex.unlock();
 }
 
-DatabaseTask::DatabaseTask(DatabaseBackend* database, DatabaseTaskSynchronizer* synchronizer)
+DatabaseTask::DatabaseTask(DatabaseBackend& database, DatabaseTaskSynchronizer* synchronizer)
     : m_database(database)
     , m_synchronizer(synchronizer)
 #if !LOG_DISABLED
@@ -83,12 +83,7 @@ void DatabaseTask::performTask()
 
     LOG(StorageAPI, "Performing %s %p\n", debugTaskName(), this);
 
-#if !PLATFORM(IOS)
-    m_database->resetAuthorizer();
-#else
-    if (m_database)
-        m_database->resetAuthorizer();
-#endif
+    m_database.resetAuthorizer();
 
     doPerformTask();
 
@@ -103,20 +98,19 @@ void DatabaseTask::performTask()
 // *** DatabaseOpenTask ***
 // Opens the database file and verifies the version matches the expected version.
 
-DatabaseBackend::DatabaseOpenTask::DatabaseOpenTask(DatabaseBackend* database, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, DatabaseError& error, String& errorMessage, bool& success)
-    : DatabaseTask(database, synchronizer)
+DatabaseBackend::DatabaseOpenTask::DatabaseOpenTask(DatabaseBackend& database, bool setVersionInNewDatabase, DatabaseTaskSynchronizer& synchronizer, DatabaseError& error, String& errorMessage, bool& success)
+    : DatabaseTask(database, &synchronizer)
     , m_setVersionInNewDatabase(setVersionInNewDatabase)
     , m_error(error)
     , m_errorMessage(errorMessage)
     , m_success(success)
 {
-    ASSERT(synchronizer); // A task with output parameters is supposed to be synchronous.
 }
 
 void DatabaseBackend::DatabaseOpenTask::doPerformTask()
 {
     String errorMessage;
-    m_success = database()->performOpenAndVerify(m_setVersionInNewDatabase, m_error, errorMessage);
+    m_success = database().performOpenAndVerify(m_setVersionInNewDatabase, m_error, errorMessage);
     if (!m_success)
         m_errorMessage = errorMessage.isolatedCopy();
 }
@@ -131,14 +125,14 @@ const char* DatabaseBackend::DatabaseOpenTask::debugTaskName() const
 // *** DatabaseCloseTask ***
 // Closes the database.
 
-DatabaseBackend::DatabaseCloseTask::DatabaseCloseTask(DatabaseBackend* database, DatabaseTaskSynchronizer* synchronizer)
-    : DatabaseTask(database, synchronizer)
+DatabaseBackend::DatabaseCloseTask::DatabaseCloseTask(DatabaseBackend& database, DatabaseTaskSynchronizer& synchronizer)
+    : DatabaseTask(database, &synchronizer)
 {
 }
 
 void DatabaseBackend::DatabaseCloseTask::doPerformTask()
 {
-    Database::from(database())->close();
+    Database::from(&database())->close();
 }
 
 #if !LOG_DISABLED
@@ -152,7 +146,7 @@ const char* DatabaseBackend::DatabaseCloseTask::debugTaskName() const
 // Starts a transaction that will report its results via a callback.
 
 DatabaseBackend::DatabaseTransactionTask::DatabaseTransactionTask(PassRefPtr<SQLTransactionBackend> transaction)
-    : DatabaseTask(Database::from(transaction->database()), 0)
+    : DatabaseTask(*Database::from(transaction->database()), 0)
     , m_transaction(transaction)
     , m_didPerformTask(false)
 {
@@ -188,16 +182,15 @@ const char* DatabaseBackend::DatabaseTransactionTask::debugTaskName() const
 // *** DatabaseTableNamesTask ***
 // Retrieves a list of all tables in the database - for WebInspector support.
 
-DatabaseBackend::DatabaseTableNamesTask::DatabaseTableNamesTask(DatabaseBackend* database, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
-    : DatabaseTask(database, synchronizer)
+DatabaseBackend::DatabaseTableNamesTask::DatabaseTableNamesTask(DatabaseBackend& database, DatabaseTaskSynchronizer& synchronizer, Vector<String>& names)
+    : DatabaseTask(database, &synchronizer)
     , m_tableNames(names)
 {
-    ASSERT(synchronizer); // A task with output parameters is supposed to be synchronous.
 }
 
 void DatabaseBackend::DatabaseTableNamesTask::doPerformTask()
 {
-    m_tableNames = Database::from(database())->performGetTableNames();
+    m_tableNames = Database::from(&database())->performGetTableNames();
 }
 
 #if !LOG_DISABLED
