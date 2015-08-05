@@ -1,5 +1,18 @@
 2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187807. rdar://problem/21838271
+
+    2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Fix crashing Mavericks test
+
+            Unreviewed.
+
+            * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+            (WebCore::FontPlatformData::registeredFont):
+
+2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187776. rdar://problem/21925990
 
     2015-08-03  Eric Carlson  <eric.carlson@apple.com>
