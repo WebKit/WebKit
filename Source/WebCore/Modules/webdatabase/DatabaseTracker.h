@@ -113,8 +113,6 @@ public:
     
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskWillBeScheduled();
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskDidFinish();
-    
-    WEBCORE_EXPORT void setDatabasesPaused(bool);
 #endif
     
     void setClient(DatabaseManagerClient*);

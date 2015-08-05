@@ -1,3 +1,14 @@
+2015-08-04  Anders Carlsson  <andersca@apple.com>
+
+        Remove database thread pause code
+        https://bugs.webkit.org/show_bug.cgi?id=147669
+
+        Reviewed by Daniel Bates.
+
+        * Storage/WebDatabaseManager.mm:
+        (WebKitSetWebDatabasePaused): Deleted.
+        * Storage/WebDatabaseManagerInternal.h:
+
 2015-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build.

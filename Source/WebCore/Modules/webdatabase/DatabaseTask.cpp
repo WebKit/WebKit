@@ -172,13 +172,6 @@ DatabaseBackend::DatabaseTransactionTask::~DatabaseTransactionTask()
         m_transaction->notifyDatabaseThreadIsShuttingDown();
 }
 
-#if PLATFORM(IOS)
-bool Database::DatabaseTransactionTask::shouldPerformWhilePaused() const
-{
-    return m_transaction->shouldPerformWhilePaused();
-}
-#endif
-
 void DatabaseBackend::DatabaseTransactionTask::doPerformTask()
 {
     m_transaction->performNextStep();

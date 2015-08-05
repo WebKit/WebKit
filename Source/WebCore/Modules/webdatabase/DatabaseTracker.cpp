@@ -1348,22 +1348,6 @@ void DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish()
     openDatabaseMutex().unlock();
 }
 
-void DatabaseTracker::setDatabasesPaused(bool paused)
-{
-    MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
-    if (!m_openDatabaseMap)
-        return;
-
-    // This walking is - sadly - the only reliable way to get at each open database thread.
-    // This will be cleaner once <rdar://problem/5680441> or some other DB thread consolidation takes place.
-    for (auto& databaseNameMap : m_openDatabaseMap->values()) {
-        for (auto& databaseSet : databaseNameMap->values()) {
-            for (auto& database : *databaseSet)
-                database->databaseContext()->setPaused(paused);
-        }
-    }
-}
-
 #endif
 
 void DatabaseTracker::setClient(DatabaseManagerClient* client)

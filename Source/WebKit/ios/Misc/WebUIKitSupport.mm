@@ -110,27 +110,9 @@ const char *WebKitPlatformSystemRootDirectory(void)
 #endif
 }
 
-static void applicationDidEnterBackground(CFNotificationCenterRef, void*, CFStringRef, const void *, CFDictionaryRef)
-{
-    WebKitSetWebDatabasePaused(true);
-}
-
-static void applicationWillEnterForeground(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
-{
-    WebKitSetWebDatabasePaused(false);
-}
-
 void WebKitSetBackgroundAndForegroundNotificationNames(NSString *didEnterBackgroundName, NSString *willEnterForegroundName)
 {
-    static bool initialized = false;
-    if (initialized)
-        return;
-    initialized = true;
-
-    CFNotificationCenterRef notificationCenter = CFNotificationCenterGetLocalCenter();
-    CFNotificationCenterAddObserver(notificationCenter, 0, applicationDidEnterBackground, (CFStringRef)didEnterBackgroundName, NULL, CFNotificationSuspensionBehaviorCoalesce);
-    CFNotificationCenterAddObserver(notificationCenter, 0, applicationWillEnterForeground, (CFStringRef)willEnterForegroundName, NULL, CFNotificationSuspensionBehaviorCoalesce);
-
+    // FIXME: Remove this function.
 }
 
 static WebBackgroundTaskIdentifier invalidTaskIdentifier = 0;

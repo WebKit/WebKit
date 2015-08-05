@@ -71,10 +71,6 @@ class DatabaseTask {
 public:
     virtual ~DatabaseTask();
 
-#if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const = 0;
-#endif
-
     void performTask();
 
     DatabaseBackend* database() const { return m_database; }
@@ -102,10 +98,6 @@ class DatabaseBackend::DatabaseOpenTask : public DatabaseTask {
 public:
     DatabaseOpenTask(DatabaseBackend*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, DatabaseError&, String& errorMessage, bool& success);
 
-#if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const override { return true; }
-#endif
-
 private:
     virtual void doPerformTask() override;
 #if !LOG_DISABLED
@@ -122,10 +114,6 @@ class DatabaseBackend::DatabaseCloseTask : public DatabaseTask {
 public:
     DatabaseCloseTask(DatabaseBackend*, DatabaseTaskSynchronizer*);
 
-#if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const override { return true; }
-#endif
-
 private:
     virtual void doPerformTask() override;
 #if !LOG_DISABLED
@@ -137,10 +125,6 @@ class DatabaseBackend::DatabaseTransactionTask : public DatabaseTask {
 public:
     explicit DatabaseTransactionTask(PassRefPtr<SQLTransactionBackend>);
     virtual ~DatabaseTransactionTask();
-
-#if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const override;
-#endif
 
     SQLTransactionBackend* transaction() const { return m_transaction.get(); }
 
@@ -157,10 +141,6 @@ private:
 class DatabaseBackend::DatabaseTableNamesTask : public DatabaseTask {
 public:
     DatabaseTableNamesTask(DatabaseBackend*, DatabaseTaskSynchronizer*, Vector<String>& names);
-
-#if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const override { return true; }
-#endif
 
 private:
     virtual void doPerformTask() override;

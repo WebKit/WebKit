@@ -291,10 +291,6 @@ static WebBackgroundTaskIdentifier getTransactionBackgroundTaskIdentifier()
 
 @end
 
-void WebKitSetWebDatabasePaused(bool paused)
-{
-    DatabaseTracker::tracker().setDatabasesPaused(paused);
-}
 #endif // PLATFORM(IOS)
 
 static NSString *databasesDirectoryPath()
