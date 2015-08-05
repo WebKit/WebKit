@@ -61,6 +61,7 @@ public:
     static RefPtr<MediaStreamPrivate> create(const Vector<RefPtr<MediaStreamTrackPrivate>>&);
     static RefPtr<MediaStreamPrivate> create();
 
+    MediaStreamPrivate() { }
     virtual ~MediaStreamPrivate() { }
 
     enum class NotifyClientOption { Notify, DontNotify };
@@ -79,7 +80,6 @@ public:
     void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption);
 
 private:
-    MediaStreamPrivate() { }
     MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>&);
 
     MediaStreamPrivateClient* m_client;

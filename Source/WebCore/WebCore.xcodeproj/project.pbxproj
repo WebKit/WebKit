@@ -633,6 +633,10 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
+		150524F41B712FF600696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 150524F01B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h */; };
+		150524F51B712FF900696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 150524F11B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm */; };
+		150524F61B712FFC00696AA9 /* MediaStreamPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 150524F21B712FF000696AA9 /* MediaStreamPrivateAVFObjC.h */; };
+		150524F71B712FFF00696AA9 /* MediaStreamPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */; };
 		15145B901B3A1CE000662BF7 /* MediaDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */; };
 		152A29B41B4EF5B700B52AE0 /* MediaDevicesPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152A29B21B4EF59600B52AE0 /* MediaDevicesPrivate.cpp */; };
 		152A29B51B4EF5BA00B52AE0 /* MediaDevicesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 152A29B31B4EF59600B52AE0 /* MediaDevicesPrivate.h */; };
@@ -7770,6 +7774,10 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
+		150524F01B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateMediaStreamAVFObjC.h; sourceTree = "<group>"; };
+		150524F11B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateMediaStreamAVFObjC.mm; sourceTree = "<group>"; };
+		150524F21B712FF000696AA9 /* MediaStreamPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamPrivateAVFObjC.h; sourceTree = "<group>"; };
+		150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaStreamPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaDeviceInfo.h; sourceTree = "<group>"; };
 		15145B911B3A1D4C00662BF7 /* MediaDeviceInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaDeviceInfo.idl; sourceTree = "<group>"; };
 		152A29B21B4EF59600B52AE0 /* MediaDevicesPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevicesPrivate.cpp; sourceTree = "<group>"; };
@@ -22217,6 +22225,10 @@
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				150524F01B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h */,
+				150524F11B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm */,
+				150524F21B712FF000696AA9 /* MediaStreamPrivateAVFObjC.h */,
+				150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */,
 				CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */,
 				CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */,
 				CD54A760180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp */,
@@ -25880,6 +25892,7 @@
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
 				E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */,
 				E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */,
+				150524F41B712FF600696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h in Headers */,
 				E1C36D350EB0A094007410BC /* JSWorkerGlobalScopeBase.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
@@ -27116,6 +27129,7 @@
 				9759E94014EF1CF80026A2DD /* TextTrack.h in Headers */,
 				9759E94314EF1CF80026A2DD /* TextTrackCue.h in Headers */,
 				071A9EC3168FBC55002629F9 /* TextTrackCueGeneric.h in Headers */,
+				150524F61B712FFC00696AA9 /* MediaStreamPrivateAVFObjC.h in Headers */,
 				9759E94614EF1CF80026A2DD /* TextTrackCueList.h in Headers */,
 				076970871463AD8700F502CF /* TextTrackList.h in Headers */,
 				B1AD4E7413A12A4600846B27 /* TextTrackLoader.h in Headers */,
@@ -30351,6 +30365,7 @@
 				B2227A230D00BF220071B782 /* SVGForeignObjectElement.cpp in Sources */,
 				B2227A260D00BF220071B782 /* SVGGElement.cpp in Sources */,
 				087E0AF613606D0B00FA4BA8 /* SVGGlyph.cpp in Sources */,
+				150524F51B712FF900696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm in Sources */,
 				B2A1F2AD0CEF0ABF00442F6A /* SVGGlyphElement.cpp in Sources */,
 				24D912BD13CA9A9700D21915 /* SVGGlyphRefElement.cpp in Sources */,
 				B2227A290D00BF220071B782 /* SVGGradientElement.cpp in Sources */,
@@ -30416,6 +30431,7 @@
 				B2227AC70D00BF220071B782 /* SVGTextContentElement.cpp in Sources */,
 				B2227ACA0D00BF220071B782 /* SVGTextElement.cpp in Sources */,
 				B2227ACD0D00BF220071B782 /* SVGTextPathElement.cpp in Sources */,
+				150524F71B712FFF00696AA9 /* MediaStreamPrivateAVFObjC.mm in Sources */,
 				B2227AD00D00BF220071B782 /* SVGTextPositioningElement.cpp in Sources */,
 				B2227AD30D00BF220071B782 /* SVGTitleElement.cpp in Sources */,
 				1CCDF5BD1990332400BCEBAD /* SVGToOTFFontConversion.cpp in Sources */,
