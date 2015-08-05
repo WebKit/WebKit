@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Remove a Touch Target</title>
+  <title>Removed Document Fragment Touch Target</title>
   <style>
   body {
       margin: 0;
@@ -28,10 +28,23 @@
     top: 100px;
   }
   </style>
-  <script src="misc-touch-helpers.js"></script>
+  <script src="resources/misc-touch-helpers.js"></script>
   <script>
 
     var seenTouch = false;
+
+    // While this isn't a particularly nice approach to the solution,
+    // it is a direct copy from the original bug report.
+    function createElementsFromString(input) {
+        var div = document.createElement("div");
+        div.innerHTML = input;
+        var children = div.children;
+        var fragment = document.createDocumentFragment();
+        for (var i = 0, length = children.length; i < length; i++) {
+            fragment.appendChild(children[0])
+        }
+        return fragment.firstChild;
+    }
 
     function targetTouched(event) {
         logTouch(event);
@@ -55,9 +68,11 @@
     }
 
     function init() {
-        var target = document.querySelector(".target");
+        var target = createElementsFromString("<div class='target'>This is the <strong>touch target</strong>.</div>");
         target.addEventListener("touchstart", targetTouched, false);
-        debug("Should see only one touch at 20,20");
+        var container = document.querySelector(".container");
+        container.appendChild(target);
+        debug("Should see a single touch at 20,20");
         tapSoon(20, 20);
     }
 
@@ -71,8 +86,6 @@
 </head>
 <body>
   <div class="container">
-    <div class="target">
-    </div>
   </div>
   <div id="results">
   </div>

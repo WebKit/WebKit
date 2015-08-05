@@ -63,7 +63,7 @@ fast/history/back-forward-reset-after-error-handling.html
 plugins/reloadplugins-and-pages.html
 
 # These tests require touch support
-fast/events/touch
+fast/events/touch [ Skip ]
 
 # No button tracked
 fast/events/mouseover-button.html

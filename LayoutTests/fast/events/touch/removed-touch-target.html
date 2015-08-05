@@ -1,29 +1,20 @@
 <!doctype html>
 <html>
 <head>
-  <title>Moved Touch Target</title>
+  <title>Remove a Touch Target</title>
   <style>
   body {
       margin: 0;
       padding: 0;
   }
 
-  .container1 {
+  .container {
       position: absolute;
       top: 10px;
       left: 10px;
       width: 50px;
       height: 50px;
       border: 1px solid green;
-  }
-
-  .container2 {
-      position: absolute;
-      top: 10px;
-      left: 100px;
-      width: 50px;
-      height: 50px;
-      border: 1px solid blue;
   }
 
   .target {
@@ -37,22 +28,27 @@
     top: 100px;
   }
   </style>
-  <script src="misc-touch-helpers.js"></script>
+  <script src="resources/misc-touch-helpers.js"></script>
   <script>
 
-    var expectedTouches = 2;
+    var seenTouch = false;
 
     function targetTouched(event) {
         logTouch(event);
-        expectedTouches--;
-        if (expectedTouches) {
-            debug("Now move the element from one parent to another. Second touch should be at 110,20");
+        if (!seenTouch) {
+            seenTouch = true;
+            debug("Now remove the element from its parent and attempt to touch it again. This touch should not register.");
             var target = document.querySelector(".target");
-            var container2 = document.querySelector(".container2");
-            container2.appendChild(target);
-            tapSoon(110, 20);
+            target.parentNode.removeChild(target);
+            tapSoon(20, 20);
+            // Wait 50ms to see if the touch was registered. If it was, then we'll be exiting below.
+            setTimeout(function () {
+                debug("PASSED. We did not see a second touch.");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 50);
         } else {
-            debug("PASSED");
+            debug("FAILED. We saw a second touch.");
             if (window.testRunner)
                 testRunner.notifyDone();
         }
@@ -61,7 +57,7 @@
     function init() {
         var target = document.querySelector(".target");
         target.addEventListener("touchstart", targetTouched, false);
-        debug("Should see two touches. The first should be at 20,20");
+        debug("Should see only one touch at 20,20");
         tapSoon(20, 20);
     }
 
@@ -74,11 +70,9 @@
 </script>
 </head>
 <body>
-  <div class="container1">
+  <div class="container">
     <div class="target">
     </div>
-  </div>
-  <div class="container2">
   </div>
   <div id="results">
   </div>

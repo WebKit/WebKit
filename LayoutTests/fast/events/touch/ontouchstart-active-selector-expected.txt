@@ -1,0 +1,12 @@
+This tests the :active selector on touchable elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(touchMe).backgroundColor is 'rgb(0, 0, 255)'
+PASS getComputedStyle(touchMe).backgroundColor is 'rgb(255, 0, 0)'
+PASS getComputedStyle(touchMe).backgroundColor is 'rgb(0, 0, 255)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

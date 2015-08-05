@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Removed Document Fragment Touch Target</title>
+  <title>Inserted Fragment Touch Target</title>
   <style>
   body {
       margin: 0;
@@ -28,10 +28,8 @@
     top: 100px;
   }
   </style>
-  <script src="misc-touch-helpers.js"></script>
+  <script src="resources/misc-touch-helpers.js"></script>
   <script>
-
-    var seenTouch = false;
 
     // While this isn't a particularly nice approach to the solution,
     // it is a direct copy from the original bug report.
@@ -48,23 +46,9 @@
 
     function targetTouched(event) {
         logTouch(event);
-        if (!seenTouch) {
-            seenTouch = true;
-            debug("Now remove the element from its parent and attempt to touch it again. This touch should not register.");
-            var target = document.querySelector(".target");
-            target.parentNode.removeChild(target);
-            tapSoon(20, 20);
-            // Wait 50ms to see if the touch was registered. If it was, then we'll be exiting below.
-            setTimeout(function () {
-                debug("PASSED. We did not see a second touch.");
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }, 50);
-        } else {
-            debug("FAILED. We saw a second touch.");
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }
+        debug("PASSED");
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     function init() {

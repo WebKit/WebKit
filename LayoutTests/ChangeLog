@@ -1,5 +1,48 @@
 2015-08-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Move platform/ios-simulator/ios/fast/events/touch tests to fast/events/touch
+
+        * fast/events/touch/document-create-touch-list-ios-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/document-create-touch-list-ios-expected.txt.
+        * fast/events/touch/document-create-touch-list-ios.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/document-create-touch-list-ios.html.
+        * fast/events/touch/gesture-event-basic-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/gesture-event-basic-expected.txt.
+        * fast/events/touch/gesture-event-basic.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/gesture-event-basic.html.
+        * fast/events/touch/input-touch-target.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/input-touch-target.html.
+        * fast/events/touch/inserted-fragment-touch-target-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/inserted-fragment-touch-target-expected.txt.
+        * fast/events/touch/inserted-fragment-touch-target.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/inserted-fragment-touch-target.html.
+        * fast/events/touch/moved-touch-target-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/moved-touch-target-expected.txt.
+        * fast/events/touch/moved-touch-target.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/moved-touch-target.html.
+        * fast/events/touch/multi-touch-some-without-handlers.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/multi-touch-some-without-handlers.html.
+        * fast/events/touch/ontouchstart-active-selector.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/ontouchstart-active-selector.html.
+        * fast/events/touch/removed-fragment-touch-target-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/removed-fragment-touch-target-expected.txt.
+        * fast/events/touch/removed-fragment-touch-target.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/removed-fragment-touch-target.html.
+        * fast/events/touch/removed-touch-target-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/removed-touch-target-expected.txt.
+        * fast/events/touch/removed-touch-target.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/removed-touch-target.html.
+        * fast/events/touch/resources/misc-touch-helpers.js: Renamed from LayoutTests/platform/ios-sim-deprecated/iphone/fast/events/touch/misc-touch-helpers.js.
+        * fast/events/touch/script-tests/document-create-touch-list-ios.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/document-create-touch-list-ios.js.
+        * fast/events/touch/script-tests/input-touch-target.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/input-touch-target.js.
+        * fast/events/touch/script-tests/multi-touch-some-without-handlers.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/multi-touch-some-without-handlers.js.
+        * fast/events/touch/script-tests/text-node-touch-target.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/text-node-touch-target.js.
+        * fast/events/touch/script-tests/textarea-touch-target.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/textarea-touch-target.js.
+        * fast/events/touch/script-tests/touch-event-frames.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/touch-event-frames.js.
+        * fast/events/touch/script-tests/touch-event-pageXY.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/touch-event-pageXY.js.
+        * fast/events/touch/script-tests/zoomed-touch-event-pageXY.js: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/script-tests/zoomed-touch-event-pageXY.js.
+        * fast/events/touch/text-node-touch-target.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/text-node-touch-target.html.
+        * fast/events/touch/textarea-touch-target.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/textarea-touch-target.html.
+        * fast/events/touch/touch-event-frames-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/touch-event-frames-expected.txt.
+        * fast/events/touch/touch-event-frames.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/touch-event-frames.html.
+        * fast/events/touch/touch-event-pageXY-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/touch-event-pageXY-expected.txt.
+        * fast/events/touch/touch-event-pageXY.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/touch-event-pageXY.html.
+        * fast/events/touch/touch-scaled-scrolled.html:
+        * fast/events/touch/zoomed-touch-event-pageXY-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/zoomed-touch-event-pageXY-expected.txt.
+        * fast/events/touch/zoomed-touch-event-pageXY.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/events/touch/zoomed-touch-event-pageXY.html.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/ios/fast/events/touch/script-tests/TEMPLATE.html: Removed.
+        * platform/mac/TestExpectations:
+
+2015-08-05  Simon Fraser  <simon.fraser@apple.com>
+
         Remove non-existant tests from iOS TestExpectations files.
 
         * platform/ios-simulator-wk2/TestExpectations:
