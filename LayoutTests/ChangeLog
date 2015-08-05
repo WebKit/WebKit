@@ -1,3 +1,13 @@
+2015-08-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test gardening.
+
+        Skip new latched scrolling test on WK1 due to timeout. Check in some minor clean-ups in
+        the test based on feedback from Antti and others:
+
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html:
+
 2015-08-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Support for PropertyName Iterator (Reflect.enumerate) in Inspector

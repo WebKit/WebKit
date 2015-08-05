@@ -1303,3 +1303,6 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 [ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html [ Pass Failure ]
 [ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.fill.source-out.html [ Pass Failure ]
 [ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.fill.source-in.html [ Pass Failure ]
+
+# WK1-only timeout.
+fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]

@@ -11,8 +11,6 @@ var divTarget;
 var pageScrollPositionBefore;
 var divScrollPositionBefore;
 
-var continueCount = 5;
-
 function locationInWindowCoordinates(element)
 {
     var position = {};
@@ -37,7 +35,8 @@ function finishTest()
     testRunner.notifyDone();            
 }
 
-function checkForScroll() {
+function checkForScroll()
+{
     var pageScrollPositionAfter = document.body.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
@@ -54,7 +53,8 @@ function checkForScroll() {
     finishTest();
 }
 
-function scrollTest() {
+function scrollTest()
+{
     pageScrollPositionBefore = document.body.scrollTop;
 
     divTarget = document.getElementById('scrollable_div');
@@ -66,8 +66,7 @@ function scrollTest() {
 
     divScrollPositionBefore = divTarget.scrollTop;
 
-    // Scroll the #source until we reach the #target.
-    eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+    eventSender.mouseMoveTo(startPosX, startPosY);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
@@ -81,9 +80,10 @@ function scrollTest() {
     eventSender.callAfterScrollingCompletes(checkForScroll);
 }
 
-function setupTopLevel() {
-
+function setupTopLevel()
+{
     if (window.eventSender) {
+        jsTestIsAsync = true;
         testRunner.waitUntilDone();
 
         eventSender.monitorWheelEvents();
