@@ -58,6 +58,7 @@ public:
     // FIXME: Once RenderThemeMac is converted over to use Theme then this can be internal to ThemeMac.
     static NSView* ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
     static void setFocusRingClipRect(const FloatRect&);
+    static bool drawCellOrFocusRingWithViewIntoContext(RetainPtr<NSCell>, GraphicsContext*, const FloatRect&, NSView*, bool /* drawButtonCell */, bool /* drawFocusRing */, bool /* useImageBuffer */, float /* deviceScaleFactor */);
 };
 
 } // namespace WebCore
