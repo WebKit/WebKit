@@ -76,8 +76,6 @@ public:
 
     WEBCORE_EXPORT void closeAllDatabases();
 
-    void interruptAllDatabasesForContext(const DatabaseContext*);
-
 private:
     explicit DatabaseTracker(const String& databasePath);
 

@@ -106,8 +106,6 @@ public:
     WEBCORE_EXPORT bool deleteOrigin(SecurityOrigin*);
     WEBCORE_EXPORT bool deleteDatabase(SecurityOrigin*, const String& name);
 
-    void interruptAllDatabasesForContext(ScriptExecutionContext*);
-
 private:
     class ProposedDatabase {
     public:

@@ -325,31 +325,6 @@ void DatabaseTracker::closeAllDatabases()
         database->close();
 }
 
-void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseContext* context)
-{
-    Vector<RefPtr<DatabaseBackendBase>> openDatabases;
-    {
-        MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
-
-        if (!m_openDatabaseMap)
-            return;
-
-        DatabaseNameMap* nameMap = m_openDatabaseMap->get(context->securityOrigin());
-        if (!nameMap)
-            return;
-
-        for (auto& databaseSet : nameMap->values()) {
-            for (auto& database : *databaseSet) {
-                if (database->databaseContext() == context)
-                    openDatabases.append(database);
-            }
-        }
-    }
-
-    for (auto& openDatabase : openDatabases)
-        openDatabase->interrupt();
-}
-
 String DatabaseTracker::originPath(SecurityOrigin* origin) const
 {
     return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), origin->databaseIdentifier());

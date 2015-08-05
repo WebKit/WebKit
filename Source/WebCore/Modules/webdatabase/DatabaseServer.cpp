@@ -113,11 +113,6 @@ void DatabaseServer::closeAllDatabases()
     DatabaseTracker::tracker().closeAllDatabases();
 }
 
-void DatabaseServer::interruptAllDatabasesForContext(const DatabaseContext* context)
-{
-    DatabaseTracker::tracker().interruptAllDatabasesForContext(context);
-}
-
 RefPtr<DatabaseBackendBase> DatabaseServer::openDatabase(RefPtr<DatabaseContext>& backendContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError &error, String& errorMessage,
     OpenAttempt attempt)
 {

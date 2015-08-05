@@ -62,8 +62,6 @@ public:
     bool deleteOrigin(SecurityOrigin*) override;
     bool deleteDatabase(SecurityOrigin*, const String& name) override;
 
-    void interruptAllDatabasesForContext(const DatabaseContext*) override;
-
 protected:
     virtual RefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 };

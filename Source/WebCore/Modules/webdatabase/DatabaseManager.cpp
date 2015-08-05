@@ -402,13 +402,6 @@ void DatabaseManager::closeAllDatabases()
     m_server->closeAllDatabases();
 }
 
-void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* context)
-{
-    RefPtr<DatabaseContext> databaseContext = existingDatabaseContextFor(context);
-    if (databaseContext)
-        m_server->interruptAllDatabasesForContext(databaseContext.get());
-}
-
 void DatabaseManager::logErrorMessage(ScriptExecutionContext* context, const String& message)
 {
     context->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);

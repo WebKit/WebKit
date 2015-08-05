@@ -73,8 +73,6 @@ public:
     virtual bool deleteOrigin(SecurityOrigin*) = 0;
     virtual bool deleteDatabase(SecurityOrigin*, const String& name) = 0;
 
-    virtual void interruptAllDatabasesForContext(const DatabaseContext*) = 0;
-
 protected:
     AbstractDatabaseServer() { }
     virtual ~AbstractDatabaseServer() { }
