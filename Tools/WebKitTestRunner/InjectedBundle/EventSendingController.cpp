@@ -475,7 +475,14 @@ JSValueRef EventSendingController::contextClick()
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 #if ENABLE(CONTEXT_MENUS)
+#if PLATFORM(GTK) || PLATFORM(EFL)
+    // Do mouse context click.
+    mouseDown(2, 0);
+    mouseUp(2, 0);
+    WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuItems(page));
+#else
     WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuAtPointInWindow(page, m_position));
+#endif
     JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
     JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     size_t entriesSize = WKArrayGetSize(menuEntries.get());
