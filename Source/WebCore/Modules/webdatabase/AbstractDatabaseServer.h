@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class DatabaseBackendBase;
+class Database;
 class DatabaseContext;
 class DatabaseManagerClient;
 class SecurityOrigin;
@@ -55,7 +55,7 @@ public:
         RetryOpenDatabase
     };
 
-    virtual RefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt = FirstTryToOpenDatabase) = 0;
+    virtual RefPtr<Database> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt = FirstTryToOpenDatabase) = 0;
 
     virtual void closeAllDatabases() = 0;
 

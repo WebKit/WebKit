@@ -202,13 +202,13 @@ static void logOpenDatabaseError(ScriptExecutionContext* context, const String& 
         context->securityOrigin()->toString().ascii().data());
 }
 
-PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+PassRefPtr<Database> DatabaseManager::openDatabaseBackend(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
     ASSERT(error == DatabaseError::None);
 
     RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
 
-    RefPtr<DatabaseBackendBase> backend = m_server->openDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
+    RefPtr<Database> backend = m_server->openDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
 
     if (!backend) {
         ASSERT(error != DatabaseError::None);
@@ -281,17 +281,15 @@ RefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* context,
 
     bool setVersionInNewDatabase = !creationCallback;
     String errorMessage;
-    RefPtr<DatabaseBackendBase> backend = openDatabaseBackend(context, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
-    if (!backend)
+    RefPtr<Database> database = openDatabaseBackend(context, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
+    if (!database)
         return nullptr;
-
-    RefPtr<Database> database = Database::create(context, backend);
 
     RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
     databaseContext->setHasOpenDatabases();
     InspectorInstrumentation::didOpenDatabase(context, database.copyRef(), context->securityOrigin()->host(), name, expectedVersion);
 
-    if (backend->isNew() && creationCallback.get()) {
+    if (database->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
         database->setHasPendingCreationEvent(true);
         database->m_scriptExecutionContext->postTask([creationCallback, database] (ScriptExecutionContext&) {

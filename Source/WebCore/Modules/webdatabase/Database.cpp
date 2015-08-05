@@ -60,15 +60,6 @@
 
 namespace WebCore {
 
-PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<DatabaseBackendBase> backend)
-{
-    // FIXME: Currently, we're only simulating the backend by return the
-    // frontend database as its own the backend. When we split the 2 apart,
-    // this create() function should be changed to be a factory method for
-    // instantiating the backend.
-    return static_cast<Database*>(backend.get());
-}
-
 Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBackendBase(databaseContext.get(), name, expectedVersion, displayName, estimatedSize)
     , m_transactionInProgress(false)
