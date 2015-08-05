@@ -50,20 +50,6 @@ class DatabaseBackendBase : public ThreadSafeRefCounted<DatabaseBackendBase> {
 public:
     virtual ~DatabaseBackendBase();
 
-    virtual String version() const;
-
-    bool opened() const { return m_opened; }
-    bool isNew() const { return m_new; }
-
-    virtual SecurityOrigin* securityOrigin() const;
-    virtual String stringIdentifier() const;
-    virtual String displayName() const;
-    virtual unsigned long estimatedSize() const;
-    virtual String fileName() const;
-    virtual DatabaseDetails details() const;
-    SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
-
-    unsigned long long maximumSize() const;
 
     DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
     void setFrontend(Database* frontend) { m_frontend = frontend; }
@@ -76,15 +62,6 @@ protected:
     friend class SQLTransactionBackendSync;
 
     DatabaseBackendBase(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
-
-
-    void setExpectedVersion(const String&);
-    const String& expectedVersion() const { return m_expectedVersion; }
-    bool getActualVersionForTransaction(String& version);
-
-#if !LOG_DISABLED || !ERROR_DISABLED
-    String databaseDebugName() const;
-#endif
 
     RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
     RefPtr<DatabaseContext> m_databaseContext; // Associated with m_scriptExecutionContext.

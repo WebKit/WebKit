@@ -228,6 +228,17 @@ Database::~Database()
             RefPtr<ScriptExecutionContext> scriptExecutionContext(passedContext);
         }});
     }
+
+    // SQLite is "multi-thread safe", but each database handle can only be used
+    // on a single thread at a time.
+    //
+    // For DatabaseBackend, we open the SQLite database on the DatabaseThread,
+    // and hence we should also close it on that same thread. This means that the
+    // SQLite database need to be closed by another mechanism (see
+    // DatabaseContext::stopDatabases()). By the time we get here, the SQLite
+    // database should have already been closed.
+
+    ASSERT(!m_opened);
 }
 
 bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
@@ -473,6 +484,11 @@ bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersi
     return result;
 }
 
+void Database::setExpectedVersion(const String& version)
+{
+    m_expectedVersion = version.isolatedCopy();
+}
+
 String Database::getCachedVersion() const
 {
     std::lock_guard<std::mutex> locker(guidMutex());
@@ -486,6 +502,15 @@ void Database::setCachedVersion(const String& actualVersion)
     std::lock_guard<std::mutex> locker(guidMutex());
 
     updateGuidVersionMap(m_guid, actualVersion);
+}
+
+bool Database::getActualVersionForTransaction(String &actualVersion)
+{
+    ASSERT(m_sqliteDatabase.transactionInProgress());
+
+    // Note: In multi-process browsers the cached value may be inaccurate.
+    // So we retrieve the value from the database and update the cached value here.
+    return getVersionFromDatabase(actualVersion, true);
 }
 
 void Database::scheduleTransaction()
@@ -560,7 +585,11 @@ String Database::version() const
 {
     if (m_deleted)
         return String();
-    return DatabaseBackendBase::version();
+
+    // Note: In multi-process browsers the cached value may be accurate, but we cannot read the
+    // actual version from the database without potentially inducing a deadlock.
+    // FIXME: Add an async version getter to the DatabaseAPI.
+    return getCachedVersion();
 }
 
 void Database::markAsDeletedAndClose()
@@ -598,6 +627,35 @@ void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefP
 void Database::readTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback)
 {
     runTransaction(callback, errorCallback, successCallback, true);
+}
+
+String Database::stringIdentifier() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_name.isolatedCopy();
+}
+
+String Database::displayName() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_displayName.isolatedCopy();
+}
+
+unsigned long Database::estimatedSize() const
+{
+    return m_estimatedSize;
+}
+
+String Database::fileName() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_filename.isolatedCopy();
+}
+
+DatabaseDetails Database::details() const
+{
+    // This code path is only used for database quota delegate calls, so file dates are irrelevant and left uninitialized.
+    return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0, 0, 0);
 }
 
 void Database::disableAuthorizer()
@@ -740,5 +798,17 @@ SecurityOrigin* Database::securityOrigin() const
         return m_databaseThreadSecurityOrigin.get();
     return 0;
 }
+
+unsigned long long Database::maximumSize() const
+{
+    return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
+}
+
+#if !LOG_DISABLED || !ERROR_DISABLED
+String Database::databaseDebugName() const
+{
+    return m_contextThreadSecurityOrigin->toString() + "::" + m_name;
+}
+#endif
 
 } // namespace WebCore

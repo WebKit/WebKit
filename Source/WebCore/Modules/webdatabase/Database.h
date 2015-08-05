@@ -57,6 +57,11 @@ public:
     virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
     void close();
 
+    bool opened() const { return m_opened; }
+    bool isNew() const { return m_new; }
+
+    unsigned long long maximumSize() const;
+
     PassRefPtr<SQLTransactionBackend> runTransaction(PassRefPtr<SQLTransaction>, bool readOnly, const ChangeVersionData*);
     void scheduleTransactionStep(SQLTransactionBackend*);
     void inProgressTransactionCompleted();
@@ -70,13 +75,20 @@ public:
     SQLTransactionCoordinator* transactionCoordinator() const;
 
     // Direct support for the DOM API
-    virtual String version() const;
+    String version() const;
     void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionCallback>,
                        PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
     void transaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
     void readTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
 
     // Internal engine support
+    String stringIdentifier() const;
+    String displayName() const;
+    unsigned long estimatedSize() const;
+    String fileName() const;
+    DatabaseDetails details() const;
+    SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
+
     void disableAuthorizer();
     void enableAuthorizer();
     void setAuthorizerPermissions(int);
@@ -112,12 +124,19 @@ private:
 
     bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
     bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
+    void setExpectedVersion(const String&);
+    const String& expectedVersion() const { return m_expectedVersion; }
     String getCachedVersion()const;
     void setCachedVersion(const String&);
+    bool getActualVersionForTransaction(String& version);
 
     void scheduleTransaction();
 
     void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* = nullptr);
+
+#if !LOG_DISABLED || !ERROR_DISABLED
+    String databaseDebugName() const;
+#endif
 
     Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
     DeprecatedMutex m_transactionInProgressMutex;
@@ -137,6 +156,7 @@ private:
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
     friend class SQLStatement;
     friend class SQLTransaction;
+    friend class SQLTransactionBackend;
 };
 
 } // namespace WebCore
