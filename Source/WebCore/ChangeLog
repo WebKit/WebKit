@@ -1,3 +1,13 @@
+2015-08-03  Brady Eidson  <beidson@apple.com>
+
+        Crash when signing into twitter calling WebCore::DocumentLoader::responseReceived(WebCore::CachedResource*, WebCore::ResourceResponse const&).
+        <rdar://problem/22098457> and https://bugs.webkit.org/show_bug.cgi?id=147560
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Only grab identifierForLoadWithoutResourceLoader() if there's no ResourceLoader.
+
 2015-07-31  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Have DataObjectGtk::unknownTypes() return a reference to the HashMap object
