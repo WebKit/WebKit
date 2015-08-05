@@ -351,6 +351,16 @@ void HistoryItem::clearDocumentState()
     m_documentState.clear();
 }
 
+void HistoryItem::setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy policy)
+{
+    m_shouldOpenExternalURLsPolicy = policy;
+}
+
+ShouldOpenExternalURLsPolicy HistoryItem::shouldOpenExternalURLsPolicy() const
+{
+    return m_shouldOpenExternalURLsPolicy;
+}
+
 bool HistoryItem::isTargetItem() const
 {
     return m_isTargetItem;

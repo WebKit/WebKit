@@ -28,6 +28,7 @@
 #define HistoryItem_h
 
 #include "FloatRect.h"
+#include "FrameLoaderTypes.h"
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "SerializedScriptValue.h"
@@ -116,6 +117,9 @@ public:
     WEBCORE_EXPORT const Vector<String>& documentState() const;
     WEBCORE_EXPORT void setDocumentState(const Vector<String>&);
     void clearDocumentState();
+
+    WEBCORE_EXPORT void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy);
+    WEBCORE_EXPORT ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const;
 
     void setURL(const URL&);
     WEBCORE_EXPORT void setURLString(const String&);
@@ -231,6 +235,8 @@ private:
     IntPoint m_scrollPoint;
     float m_pageScaleFactor;
     Vector<String> m_documentState;
+
+    ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     
     HistoryItemVector m_children;
     

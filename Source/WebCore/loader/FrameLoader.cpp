@@ -3228,7 +3228,11 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 
     if (!item.referrer().isNull())
         request.setHTTPReferrer(item.referrer());
-    
+
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(m_frame, item.shouldOpenExternalURLsPolicy());
+    bool isFormSubmission = false;
+    Event* event = nullptr;
+
     // If this was a repost that failed the page cache, we might try to repost the form.
     NavigationAction action;
     if (formData) {
@@ -3254,10 +3258,10 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         
         if (cacheLoadPolicy == MayAttemptCacheOnlyLoadForFormSubmissionItem) {
             request.setCachePolicy(ReturnCacheDataDontLoad);
-            action = NavigationAction(request, loadType, false);
+            action = NavigationAction(request, loadType, isFormSubmission, event, shouldOpenExternalURLsPolicy);
         } else {
             request.setCachePolicy(ReturnCacheDataElseLoad);
-            action = NavigationAction(request, NavigationType::FormResubmitted);
+            action = NavigationAction(request, NavigationType::FormResubmitted, event, shouldOpenExternalURLsPolicy);
         }
     } else {
         switch (loadType) {
@@ -3282,7 +3286,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 
         ResourceRequest requestForOriginalURL(request);
         requestForOriginalURL.setURL(itemOriginalURL);
-        action = NavigationAction(requestForOriginalURL, loadType, false);
+        action = NavigationAction(requestForOriginalURL, loadType, isFormSubmission, event, shouldOpenExternalURLsPolicy);
     }
 
     loadWithNavigationAction(request, action, LockHistory::No, loadType, 0, AllowNavigationToInvalidURL::Yes);
