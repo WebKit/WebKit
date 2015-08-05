@@ -1,3 +1,16 @@
+2015-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use fastMalloc instead of g_slice
+        https://bugs.webkit.org/show_bug.cgi?id=147357
+
+        Reviewed by Sergio Villar Senin.
+
+        The use of g_slice is no longer encouraged by glib developers.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::mapGstBuffer):
+        (WebCore::unmapGstBuffer):
+
 2015-07-27  Brady Eidson  <beidson@apple.com>
 
         Crash in WebCore::DocumentLoader::willSendRequest() with ContentFilter and AppCache.

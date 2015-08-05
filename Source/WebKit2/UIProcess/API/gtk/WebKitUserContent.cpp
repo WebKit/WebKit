@@ -136,7 +136,7 @@ void webkit_user_style_sheet_unref(WebKitUserStyleSheet* userStyleSheet)
 {
     if (g_atomic_int_dec_and_test(&userStyleSheet->referenceCount)) {
         userStyleSheet->~WebKitUserStyleSheet();
-        g_slice_free(WebKitUserStyleSheet, userStyleSheet);
+        fastFree(userStyleSheet);
     }
 }
 
@@ -163,7 +163,7 @@ void webkit_user_style_sheet_unref(WebKitUserStyleSheet* userStyleSheet)
 WebKitUserStyleSheet* webkit_user_style_sheet_new(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserStyleLevel level, const char* const* whitelist, const char* const* blacklist)
 {
     g_return_val_if_fail(source, nullptr);
-    WebKitUserStyleSheet* userStyleSheet = g_slice_new(WebKitUserStyleSheet);
+    WebKitUserStyleSheet* userStyleSheet = static_cast<WebKitUserStyleSheet*>(fastMalloc(sizeof(WebKitUserStyleSheet)));
     new (userStyleSheet) WebKitUserStyleSheet(source, injectedFrames, level, whitelist, blacklist);
     return userStyleSheet;
 }
@@ -222,7 +222,7 @@ void webkit_user_script_unref(WebKitUserScript* userScript)
 {
     if (g_atomic_int_dec_and_test(&userScript->referenceCount)) {
         userScript->~WebKitUserScript();
-        g_slice_free(WebKitUserScript, userScript);
+        fastFree(userScript);
     }
 }
 
@@ -249,7 +249,7 @@ void webkit_user_script_unref(WebKitUserScript* userScript)
 WebKitUserScript* webkit_user_script_new(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* whitelist, const gchar* const* blacklist)
 {
     g_return_val_if_fail(source, nullptr);
-    WebKitUserScript* userScript = g_slice_new(WebKitUserScript);
+    WebKitUserScript* userScript = static_cast<WebKitUserScript*>(fastMalloc(sizeof(WebKitUserScript)));
     new (userScript) WebKitUserScript(source, injectedFrames, injectionTime, whitelist, blacklist);
     return userScript;
 }

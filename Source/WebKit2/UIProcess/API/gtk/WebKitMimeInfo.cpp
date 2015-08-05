@@ -42,7 +42,7 @@ G_DEFINE_BOXED_TYPE(WebKitMimeInfo, webkit_mime_info, webkit_mime_info_ref, webk
 
 WebKitMimeInfo* webkitMimeInfoCreate(const WebCore::MimeClassInfo& mimeInfo)
 {
-    WebKitMimeInfo* info = g_slice_new(WebKitMimeInfo);
+    WebKitMimeInfo* info = static_cast<WebKitMimeInfo*>(fastMalloc(sizeof(WebKitMimeInfo)));
     new (info) WebKitMimeInfo(mimeInfo);
     return info;
 }
@@ -75,7 +75,7 @@ void webkit_mime_info_unref(WebKitMimeInfo* info)
 {
     if (g_atomic_int_dec_and_test(&info->referenceCount)) {
         info->~WebKitMimeInfo();
-        g_slice_free(WebKitMimeInfo, info);
+        fastFree(info);
     }
 }
 

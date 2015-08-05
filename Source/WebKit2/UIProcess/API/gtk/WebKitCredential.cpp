@@ -71,7 +71,7 @@ static inline WebCore::CredentialPersistence toWebCoreCredentialPersistence(WebK
 
 WebKitCredential* webkitCredentialCreate(const WebCore::Credential& coreCredential)
 {
-    WebKitCredential* credential = g_slice_new(WebKitCredential);
+    WebKitCredential* credential = static_cast<WebKitCredential*>(fastMalloc(sizeof(WebKitCredential)));
     new (credential) WebKitCredential(coreCredential);
     return credential;
 }
@@ -132,7 +132,7 @@ void webkit_credential_free(WebKitCredential* credential)
     g_return_if_fail(credential);
 
     credential->~WebKitCredential();
-    g_slice_free(WebKitCredential, credential);
+    fastFree(credential);
 }
 
 /**

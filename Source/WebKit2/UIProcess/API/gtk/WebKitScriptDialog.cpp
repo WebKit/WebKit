@@ -24,7 +24,7 @@
 
 static WebKitScriptDialog* webkitScriptDialogCopy(WebKitScriptDialog* dialog)
 {
-    WebKitScriptDialog* copy = g_slice_new0(WebKitScriptDialog);
+    WebKitScriptDialog* copy = static_cast<WebKitScriptDialog*>(fastZeroedMalloc(sizeof(WebKitScriptDialog)));
     new (copy) WebKitScriptDialog(dialog);
     return copy;
 }
@@ -32,7 +32,7 @@ static WebKitScriptDialog* webkitScriptDialogCopy(WebKitScriptDialog* dialog)
 static void webkitScriptDialogFree(WebKitScriptDialog* dialog)
 {
     dialog->~WebKitScriptDialog();
-    g_slice_free(WebKitScriptDialog, dialog);
+    fastFree(dialog);
 }
 
 G_DEFINE_BOXED_TYPE(WebKitScriptDialog, webkit_script_dialog, webkitScriptDialogCopy, webkitScriptDialogFree)
