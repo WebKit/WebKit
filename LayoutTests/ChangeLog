@@ -1,3 +1,15 @@
+2015-07-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Freetype] Always allow font matching for strong aliases
+        https://bugs.webkit.org/show_bug.cgi?id=147057
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/fonts/font-family-fallback-ignores-weak-aliases-expected.html: Added.
+        * platform/gtk/fonts/font-family-fallback-ignores-weak-aliases.html: Added.
+        * platform/gtk/fonts/font-family-fallback-respects-strong-aliases-expected.html: Added.
+        * platform/gtk/fonts/font-family-fallback-respects-strong-aliases.html: Added.
+
 2015-07-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash happens when calling removeEventListener for an SVG element which has an instance inside a <defs> element of shadow tree

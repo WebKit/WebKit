@@ -1,3 +1,32 @@
+2015-07-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Freetype] Always allow font matching for strong aliases
+        https://bugs.webkit.org/show_bug.cgi?id=147057
+
+        Reviewed by Martin Robinson.
+
+        Tests: platform/gtk/fonts/font-family-fallback-ignores-weak-aliases.html
+               platform/gtk/fonts/font-family-fallback-respects-strong-aliases.html
+
+        Treat fonts that are strongly-aliased to each other as if they were identical for the
+        purposes of CSS font fallback. This improves the layout of many web pages by allowing
+        fontconfig to replace fonts with metric-compatible equivalents (e.g. Arial -> Liberation
+        Sans) instead of rejecting the metric-compatible font as unsuitable.
+
+        * platform/graphics/cairo/RefPtrCairo.cpp:
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull):
+        * platform/graphics/cairo/RefPtrCairo.h:
+        * platform/graphics/freetype/FcUniquePtr.h: Added.
+        (WebCore::FcPtrDeleter<FcFontSet>::operator()):
+        (WebCore::FcPtrDeleter<FcLangSet>::operator()):
+        (WebCore::FcPtrDeleter<FcObjectSet>::operator()):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::strengthOfFirstAlias):
+        (WebCore::strongAliasesForFamily):
+        (WebCore::areStronglyAliased):
+        (WebCore::FontCache::createFontPlatformData):
+
 2015-07-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash happens when calling removeEventListener for an SVG element which has an instance inside a <defs> element of shadow tree

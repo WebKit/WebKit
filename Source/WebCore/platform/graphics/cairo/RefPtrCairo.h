@@ -33,6 +33,7 @@ typedef struct _cairo_region cairo_region_t;
 
 #if USE(FREETYPE)
 typedef struct _FcPattern FcPattern;
+typedef struct _FcConfig FcConfig;
 #endif
 
 namespace WTF {
@@ -58,6 +59,9 @@ template<> void derefIfNotNull(cairo_region_t*);
 #if USE(FREETYPE)
 template<> void refIfNotNull(FcPattern* ptr);
 template<> void derefIfNotNull(FcPattern* ptr);
+
+template<> void refIfNotNull(FcConfig* ptr);
+template<> void derefIfNotNull(FcConfig* ptr);
 #endif
 
 } // namespace WTF

@@ -115,6 +115,17 @@ template<> void derefIfNotNull(FcPattern* ptr)
         FcPatternDestroy(ptr);
 }
 
+template<> void refIfNotNull(FcConfig* ptr)
+{
+    if (LIKELY(ptr != nullptr))
+        FcConfigReference(ptr);
+}
+
+template<> void derefIfNotNull(FcConfig* ptr)
+{
+    if (LIKELY(ptr != nullptr))
+        FcConfigDestroy(ptr);
+}
 #endif
 
 } // namespace WTF
