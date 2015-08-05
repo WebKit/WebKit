@@ -520,70 +520,9 @@ bool DatabaseBackendBase::getActualVersionForTransaction(String &actualVersion)
     return getVersionFromDatabase(actualVersion, true);
 }
 
-void DatabaseBackendBase::disableAuthorizer()
-{
-    ASSERT(m_databaseAuthorizer);
-    m_databaseAuthorizer->disable();
-}
-
-void DatabaseBackendBase::enableAuthorizer()
-{
-    ASSERT(m_databaseAuthorizer);
-    m_databaseAuthorizer->enable();
-}
-
-void DatabaseBackendBase::setAuthorizerPermissions(int permissions)
-{
-    ASSERT(m_databaseAuthorizer);
-    m_databaseAuthorizer->setPermissions(permissions);
-}
-
-bool DatabaseBackendBase::lastActionChangedDatabase()
-{
-    ASSERT(m_databaseAuthorizer);
-    return m_databaseAuthorizer->lastActionChangedDatabase();
-}
-
-bool DatabaseBackendBase::lastActionWasInsert()
-{
-    ASSERT(m_databaseAuthorizer);
-    return m_databaseAuthorizer->lastActionWasInsert();
-}
-
-void DatabaseBackendBase::resetDeletes()
-{
-    ASSERT(m_databaseAuthorizer);
-    m_databaseAuthorizer->resetDeletes();
-}
-
-bool DatabaseBackendBase::hadDeletes()
-{
-    ASSERT(m_databaseAuthorizer);
-    return m_databaseAuthorizer->hadDeletes();
-}
-
-void DatabaseBackendBase::resetAuthorizer()
-{
-    if (m_databaseAuthorizer)
-        m_databaseAuthorizer->reset();
-}
-
 unsigned long long DatabaseBackendBase::maximumSize() const
 {
     return DatabaseTracker::tracker().getMaxSizeForDatabase(static_cast<const Database*>(this));
-}
-
-void DatabaseBackendBase::incrementalVacuumIfNeeded()
-{
-    SQLiteTransactionInProgressAutoCounter transactionCounter;
-
-    int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
-    int64_t totalSize = m_sqliteDatabase.totalSize();
-    if (totalSize <= 10 * freeSpaceSize) {
-        int result = m_sqliteDatabase.runIncrementalVacuumCommand();
-        if (result != SQLITE_OK)
-            m_frontend->logErrorMessage(formatErrorMessage("error vacuuming database", result, m_sqliteDatabase.lastErrorMsg()));
-    }
 }
 
 } // namespace WebCore

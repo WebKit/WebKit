@@ -64,16 +64,6 @@ public:
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 
     unsigned long long maximumSize() const;
-    void incrementalVacuumIfNeeded();
-
-    void disableAuthorizer();
-    void enableAuthorizer();
-    void setAuthorizerPermissions(int permissions);
-    bool lastActionChangedDatabase();
-    bool lastActionWasInsert();
-    void resetDeletes();
-    bool hadDeletes();
-    void resetAuthorizer();
 
     DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
     void setFrontend(Database* frontend) { m_frontend = frontend; }
@@ -116,7 +106,6 @@ protected:
 
     Database* m_frontend;
 
-private:
     DatabaseGuid m_guid;
     bool m_opened;
     bool m_new;

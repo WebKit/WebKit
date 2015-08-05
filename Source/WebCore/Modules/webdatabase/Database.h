@@ -77,6 +77,15 @@ public:
     void readTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
 
     // Internal engine support
+    void disableAuthorizer();
+    void enableAuthorizer();
+    void setAuthorizerPermissions(int);
+    bool lastActionChangedDatabase();
+    bool lastActionWasInsert();
+    void resetDeletes();
+    bool hadDeletes();
+    void resetAuthorizer();
+
     DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
 
     ScriptExecutionContext* scriptExecutionContext() { return m_scriptExecutionContext.get(); }
@@ -93,6 +102,8 @@ public:
 
     virtual bool performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
     Vector<String> performGetTableNames();
+
+    void incrementalVacuumIfNeeded();
 
 private:
     Database(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);

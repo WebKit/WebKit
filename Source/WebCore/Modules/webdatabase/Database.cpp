@@ -31,6 +31,7 @@
 
 #include "ChangeVersionData.h"
 #include "ChangeVersionWrapper.h"
+#include "DatabaseAuthorizer.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"
@@ -45,6 +46,7 @@
 #include "SQLTransaction.h"
 #include "SQLTransactionCallback.h"
 #include "SQLTransactionErrorCallback.h"
+#include "SQLiteDatabaseTracker.h"
 #include "SQLiteStatement.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -54,11 +56,12 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS)
-#include "SQLiteDatabaseTracker.h"
-#endif
-
 namespace WebCore {
+
+static String formatErrorMessage(const char* message, int sqliteErrorCode, const char* sqliteErrorMessage)
+{
+    return String::format("%s (%d %s)", message, sqliteErrorCode, sqliteErrorMessage);
+}
 
 Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBackendBase(databaseContext.get(), name, expectedVersion, displayName, estimatedSize)
@@ -260,6 +263,54 @@ void Database::readTransaction(PassRefPtr<SQLTransactionCallback> callback, Pass
     runTransaction(callback, errorCallback, successCallback, true);
 }
 
+void Database::disableAuthorizer()
+{
+    ASSERT(m_databaseAuthorizer);
+    m_databaseAuthorizer->disable();
+}
+
+void Database::enableAuthorizer()
+{
+    ASSERT(m_databaseAuthorizer);
+    m_databaseAuthorizer->enable();
+}
+
+void Database::setAuthorizerPermissions(int permissions)
+{
+    ASSERT(m_databaseAuthorizer);
+    m_databaseAuthorizer->setPermissions(permissions);
+}
+
+bool Database::lastActionChangedDatabase()
+{
+    ASSERT(m_databaseAuthorizer);
+    return m_databaseAuthorizer->lastActionChangedDatabase();
+}
+
+bool Database::lastActionWasInsert()
+{
+    ASSERT(m_databaseAuthorizer);
+    return m_databaseAuthorizer->lastActionWasInsert();
+}
+
+void Database::resetDeletes()
+{
+    ASSERT(m_databaseAuthorizer);
+    m_databaseAuthorizer->resetDeletes();
+}
+
+bool Database::hadDeletes()
+{
+    ASSERT(m_databaseAuthorizer);
+    return m_databaseAuthorizer->hadDeletes();
+}
+
+void Database::resetAuthorizer()
+{
+    if (m_databaseAuthorizer)
+        m_databaseAuthorizer->reset();
+}
+
 void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* changeVersionData)
 {
     RefPtr<SQLTransaction> transaction = SQLTransaction::create(*this, WTF::move(callback), WTF::move(successCallback), errorCallback.copyRef(), readOnly);
@@ -308,6 +359,19 @@ Vector<String> Database::performGetTableNames()
     }
 
     return tableNames;
+}
+
+void Database::incrementalVacuumIfNeeded()
+{
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+
+    int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
+    int64_t totalSize = m_sqliteDatabase.totalSize();
+    if (totalSize <= 10 * freeSpaceSize) {
+        int result = m_sqliteDatabase.runIncrementalVacuumCommand();
+        if (result != SQLITE_OK)
+            logErrorMessage(formatErrorMessage("error vacuuming database", result, m_sqliteDatabase.lastErrorMsg()));
+    }
 }
 
 void Database::logErrorMessage(const String& message)
