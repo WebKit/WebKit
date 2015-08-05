@@ -248,8 +248,6 @@ animations/fill-mode-transform.html [ Skip ]
 animations/pause-crash.html [ Skip ]
 animations/resume-after-page-cache.html [ Skip ]
 animations/stop-animation-on-suspend.html [ Skip ]
-compositing/animation/filling-animation-overlap-at-end.html
-compositing/animation/filling-animation-overlap.html
 compositing/animation/keyframe-order.html
 compositing/animation/layer-for-filling-animation.html
 compositing/animation/matrix-animation.html
@@ -557,7 +555,6 @@ css3/images/cross-fade-background-size.html [ Failure ]
 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-round-padding.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
-css3/masking/mask-svg-clipped-fragmentId.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/shape-box/shape-outside-box-002.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/shape-box/shape-outside-box-003.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/shape-box/shape-outside-box-004.html [ ImageOnlyFailure ]
@@ -2653,7 +2650,6 @@ fast/dom/timer-increase-min-interval-repeating.html [ Timeout Pass ]
 fast/dom/timer-increase-min-interval.html [ Timeout Pass ]
 fast/dom/timer-increase-then-decrease-min-interval-repeating.html [ Timeout Pass ]
 fast/dom/timer-increase-then-decrease-min-interval.html [ Timeout Pass ]
-fast/dom/timer-throttle-on-scrolling-iframe-away.html [ Timeout Pass ]
 fast/events/dispatch-message-string-data.html [ Timeout Pass ]
 fast/events/dispatch-synthetic-mouseevent.html [ Timeout Pass ]
 fast/events/dispatch-to-function-with-handle-event.html [ Timeout Pass ]

@@ -1,3 +1,10 @@
+2015-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove non-existant tests from iOS TestExpectations files.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-08-05  Brent Fulgham  <bfulgham@apple.com>
 
         Mark failing scrolling test.
