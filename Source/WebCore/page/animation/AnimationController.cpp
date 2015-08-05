@@ -72,8 +72,6 @@ AnimationControllerPrivate::AnimationControllerPrivate(Frame& frame)
     , m_updateStyleIfNeededDispatcher(*this, &AnimationControllerPrivate::updateStyleIfNeededDispatcherFired)
     , m_frame(frame)
     , m_beginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet)
-    , m_animationsWaitingForStyle()
-    , m_animationsWaitingForStartTimeResponse()
     , m_beginAnimationUpdateCount(0)
     , m_waitingForAsyncStartNotification(false)
     , m_isSuspended(false)
@@ -97,6 +95,8 @@ CompositeAnimation& AnimationControllerPrivate::ensureCompositeAnimation(RenderE
 
 bool AnimationControllerPrivate::clear(RenderElement& renderer)
 {
+    LOG(Animations, "AnimationControllerPrivate %p clear: %p", this, &renderer);
+
     ASSERT(renderer.isCSSAnimating());
     ASSERT(m_compositeAnimations.contains(&renderer));
 
@@ -410,6 +410,8 @@ void AnimationControllerPrivate::endAnimationUpdate()
 
 void AnimationControllerPrivate::receivedStartTimeResponse(double time)
 {
+    LOG(Animations, "AnimationControllerPrivate %p receivedStartTimeResponse %f", this, time);
+
     m_waitingForAsyncStartNotification = false;
     startTimeResponse(time);
 }
@@ -509,8 +511,21 @@ void AnimationControllerPrivate::startTimeResponse(double time)
 
 void AnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation)
 {
+    LOG(Animations, "AnimationControllerPrivate %p animationWillBeRemoved: %p", this, animation);
+
     removeFromAnimationsWaitingForStyle(animation);
     removeFromAnimationsWaitingForStartTimeResponse(animation);
+
+    bool anyAnimationsWaitingForAsyncStart = false;
+    for (auto& animation : m_animationsWaitingForStartTimeResponse) {
+        if (animation->waitingForStartTime() && animation->isAccelerated()) {
+            anyAnimationsWaitingForAsyncStart = true;
+            break;
+        }
+    }
+
+    if (!anyAnimationsWaitingForAsyncStart)
+        m_waitingForAsyncStartNotification = false;
 }
 
 AnimationController::AnimationController(Frame& frame)
@@ -588,8 +603,11 @@ PassRefPtr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderE
     return m_data->getAnimatedStyleForRenderer(renderer);
 }
 
-void AnimationController::notifyAnimationStarted(RenderElement&, double startTime)
+void AnimationController::notifyAnimationStarted(RenderElement& renderer, double startTime)
 {
+    LOG(Animations, "AnimationController %p notifyAnimationStarted on renderer %p, time=%f", this, &renderer, startTime);
+    UNUSED_PARAM(renderer);
+
     AnimationUpdateBlock animationUpdateBlock(this);
     m_data->receivedStartTimeResponse(startTime);
 }

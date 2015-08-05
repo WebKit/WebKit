@@ -1,0 +1,5 @@
+The remaining square should show a color animation from orange to green.
+
+Color keyframes.
+PASS - colors animation ran.
+
