@@ -3200,6 +3200,9 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_registerPreview
 {
+    if (!_webView.allowsLinkPreview)
+        return;
+
     _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
     [_previewItemController setDelegate:self];
     _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
