@@ -77,14 +77,9 @@ protected:
 
     DatabaseBackendBase(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
-    void closeDatabase();
-
-    virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
     void setExpectedVersion(const String&);
     const String& expectedVersion() const { return m_expectedVersion; }
-    String getCachedVersion()const;
-    void setCachedVersion(const String&);
     bool getActualVersionForTransaction(String& version);
 
 #if !LOG_DISABLED || !ERROR_DISABLED

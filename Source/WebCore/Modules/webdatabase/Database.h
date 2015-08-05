@@ -100,7 +100,7 @@ public:
 
     void scheduleTransactionCallback(SQLTransaction*);
 
-    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError&, String& errorMessage);
     Vector<String> performGetTableNames();
 
     void incrementalVacuumIfNeeded();
@@ -108,8 +108,12 @@ public:
 private:
     Database(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
+    void closeDatabase();
+
     bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
     bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
+    String getCachedVersion()const;
+    void setCachedVersion(const String&);
 
     void scheduleTransaction();
 
