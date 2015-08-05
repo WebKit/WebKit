@@ -188,8 +188,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
 void MediaPlayerPrivateMediaStreamAVFObjC::playInternal()
 {
     m_playing = true;
-    if (shouldBePlaying())
-        [m_synchronizer setRate:m_rate];
 
     for (auto track : m_MediaStreamPrivate->tracks())
         track->source()->startProducingData();

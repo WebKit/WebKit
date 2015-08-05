@@ -156,7 +156,6 @@ private:
     RetainPtr<AVCaptureVideoPreviewLayer> m_previewLayer;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     Vector<RetainPtr<AVSampleBufferAudioRenderer>> m_sampleBufferAudioRenderers;
-    RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<CGImageRef> m_lastImage;
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
