@@ -398,12 +398,13 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
     get _currentSelectorText()
     {
-        if (!this._style.ownerRule)
-            return;
-
         var selectorText = this._selectorElement.textContent;
-        if (!selectorText || !selectorText.length)
+        if (!selectorText || !selectorText.length) {
+            if (!this._style.ownerRule)
+                return;
+
             selectorText = this._style.ownerRule.selectorText;
+        }
 
         return selectorText.trim();
     },
@@ -451,6 +452,15 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             return;
 
         var contextMenu = new WebInspector.ContextMenu(event);
+
+        if (!this._style.inherited) {
+            contextMenu.appendItem(WebInspector.UIString("Duplicate Selector"), function() {
+                if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
+                    this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
+
+                this._style.nodeStyles.addRuleWithSelector(this._currentSelectorText);
+            }.bind(this));
+        }
 
         contextMenu.appendItem(WebInspector.UIString("Copy Rule"), function() {
             InspectorFrontendHost.copyText(this._generateCSSRuleString());

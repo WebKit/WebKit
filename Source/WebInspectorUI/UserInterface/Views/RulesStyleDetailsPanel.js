@@ -411,6 +411,11 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         this.element.classList.toggle("filter-non-matching", !matchFound);
     }
 
+    cssStyleDeclarationSectionFocusNextNewInspectorRule()
+    {
+        this._focusNextNewInspectorRule = true;
+    }
+
     // Protected
 
     shown()

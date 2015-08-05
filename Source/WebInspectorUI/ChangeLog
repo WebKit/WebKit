@@ -1,3 +1,23 @@
+2015-08-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Allow users to duplicate rules in the Rules sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=147361
+
+        Reviewed by Timothy Hatcher.
+
+        Adds context menu option to non-inherited rules that, when clicked, creates
+        a new rule with the same selector and no properties, and then focuses it.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.addRuleWithSelector.addedRule):
+        (WebInspector.DOMNodeStyles.prototype.addRuleWithSelector):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.get _currentSelectorText):
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleContextMenuEvent):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionFocusNextNewInspectorRule):
+
 2015-08-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Layout & Rendering timeline grid should show TimelineRecord parent/child relationships
