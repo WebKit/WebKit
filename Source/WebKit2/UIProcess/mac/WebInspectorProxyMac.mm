@@ -587,7 +587,7 @@ void WebInspectorProxy::platformBringToFront()
 
     // FIXME <rdar://problem/10937688>: this will not bring a background tab in Safari to the front, only its window.
     [m_inspectorView.get().window makeKeyAndOrderFront:nil];
-    [m_inspectorView.get().window makeFirstResponder:m_inspectorView->_page->wkView()];
+    [m_inspectorView.get().window makeFirstResponder:m_inspectorView.get()];
 }
 
 bool WebInspectorProxy::platformIsFront()
@@ -810,7 +810,7 @@ void WebInspectorProxy::platformAttach()
     inspectedViewFrameDidChange(currentDimension);
 
     [[inspectedView superview] addSubview:m_inspectorView.get() positioned:NSWindowBelow relativeTo:inspectedView];
-    [m_inspectorView.get().window makeFirstResponder:m_inspectorView->_page->wkView()];
+    [m_inspectorView.get().window makeFirstResponder:m_inspectorView.get()];
 }
 
 void WebInspectorProxy::platformDetach()
