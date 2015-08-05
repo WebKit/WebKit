@@ -116,7 +116,7 @@ protected:
     HashMap<IntSize, HBITMAP> m_defaultIconMap;
     HashMap<IntSize, HBITMAP> m_sharedIconMap;
 
-    Mutex m_notificationMutex;
+    DeprecatedMutex m_notificationMutex;
     Vector<String> m_notificationQueue;
     void scheduleNotificationDelivery();
     bool m_deliveryRequested;
