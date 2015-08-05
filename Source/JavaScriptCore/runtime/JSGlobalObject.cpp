@@ -70,7 +70,6 @@
 #include "JSDollarVM.h"
 #include "JSDollarVMPrototype.h"
 #include "JSFunction.h"
-#include "JSFunctionNameScope.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
@@ -302,7 +301,6 @@ void JSGlobalObject::init(VM& vm)
     m_typedArrays[toIndex(TypeFloat64)].structure.set(vm, this, JSFloat64Array::createStructure(vm, this, m_typedArrays[toIndex(TypeFloat64)].prototype.get()));
     m_typedArrays[toIndex(TypeDataView)].structure.set(vm, this, JSDataView::createStructure(vm, this, m_typedArrays[toIndex(TypeDataView)].prototype.get()));
     
-    m_functionNameScopeStructure.set(vm, this, JSFunctionNameScope::createStructure(vm, this, jsNull()));
     m_lexicalEnvironmentStructure.set(vm, this, JSLexicalEnvironment::createStructure(vm, this));
     m_strictEvalActivationStructure.set(vm, this, StrictEvalActivation::createStructure(vm, this, jsNull()));
     m_debuggerScopeStructure.set(m_vm, this, DebuggerScope::createStructure(m_vm, this));
@@ -776,7 +774,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_withScopeStructure);
     visitor.append(&thisObject->m_strictEvalActivationStructure);
     visitor.append(&thisObject->m_lexicalEnvironmentStructure);
-    visitor.append(&thisObject->m_functionNameScopeStructure);
     visitor.append(&thisObject->m_directArgumentsStructure);
     visitor.append(&thisObject->m_scopedArgumentsStructure);
     visitor.append(&thisObject->m_outOfBandArgumentsStructure);

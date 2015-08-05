@@ -32,7 +32,6 @@
 #include "JIT.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSNameScope.h"
 #include "LabelScope.h"
 #include "Lexer.h"
 #include "JSCInlines.h"

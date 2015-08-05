@@ -116,7 +116,6 @@ void computeUsesForBytecodeOffset(
     case op_get_enumerable_length:
     case op_new_func_exp:
     case op_to_index_string:
-    case op_push_name_scope:
     case op_push_with_scope:
     case op_create_lexical_environment:
     case op_resolve_scope:
@@ -294,7 +293,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_enumerator_structure_pname:
     case op_enumerator_generic_pname:
     case op_get_parent_scope:
-    case op_push_name_scope:
     case op_push_with_scope:
     case op_create_lexical_environment:
     case op_resolve_scope:

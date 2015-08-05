@@ -1,3 +1,95 @@
+2015-08-05  Saam barati  <saambarati1@gmail.com>
+
+        Replace JSFunctionNameScope with JSLexicalEnvironment for the function name scope.
+        https://bugs.webkit.org/show_bug.cgi?id=147657
+
+        Reviewed by Mark Lam.
+
+        This kills the last of the name scope objects. Function name scopes are
+        now built on top of the scoping mechanisms introduced with ES6 block scoping.
+        A name scope is now just a JSLexicalEnvironment.  We treat assignments to the
+        function name scoped variable carefully depending on if the function is in
+        strict mode. If we're in strict mode, then we treat the variable exactly
+        like a "const" variable. If we're not in strict mode, we can't treat
+        this variable like like ES6 "const" because that would cause the bytecode
+        generator to throw an exception when it shouldn't.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::resolveType):
+        (JSC::BytecodeGenerator::emitThrowTypeError):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::pushScopedControlFlowContext):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        * debugger/DebuggerScope.cpp:
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_string):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_push_name_scope): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_to_string):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_push_name_scope): Deleted.
+        * jit/JITOperations.cpp:
+        (JSC::pushNameScope): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Nodes.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/JSFunctionNameScope.cpp: Removed.
+        * runtime/JSFunctionNameScope.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::withScopeStructure):
+        (JSC::JSGlobalObject::strictEvalActivationStructure):
+        (JSC::JSGlobalObject::activationStructure):
+        (JSC::JSGlobalObject::directArgumentsStructure):
+        (JSC::JSGlobalObject::scopedArgumentsStructure):
+        (JSC::JSGlobalObject::outOfBandArgumentsStructure):
+        (JSC::JSGlobalObject::functionNameScopeStructure): Deleted.
+        * runtime/JSNameScope.cpp: Removed.
+        * runtime/JSNameScope.h: Removed.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toThis):
+        (JSC::JSObject::seal):
+        (JSC::JSObject::isFunctionNameScopeObject): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::isCatchScope):
+        (JSC::JSScope::isFunctionNameScopeObject):
+        (JSC::resolveModeName):
+        * runtime/JSScope.h:
+        * runtime/JSSymbolTableObject.cpp:
+        * runtime/SymbolTable.h:
+        * runtime/VM.cpp:
+
 2015-08-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Support for PropertyName Iterator (Reflect.enumerate) in Inspector

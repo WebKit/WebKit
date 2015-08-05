@@ -36,7 +36,6 @@
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
 #include "JSFunction.h"
-#include "JSFunctionNameScope.h"
 #include "JSGlobalObject.h"
 #include "Lookup.h"
 #include "NativeErrorConstructor.h"
@@ -1599,11 +1598,6 @@ JSString* JSObject::toString(ExecState* exec) const
 JSValue JSObject::toThis(JSCell* cell, ExecState*, ECMAMode)
 {
     return jsCast<JSObject*>(cell);
-}
-
-bool JSObject::isFunctionNameScopeObject() const
-{
-    return inherits(JSFunctionNameScope::info());
 }
 
 void JSObject::seal(VM& vm)

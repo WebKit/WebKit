@@ -48,7 +48,6 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
-#include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSStackInlines.h"
 #include "JSString.h"

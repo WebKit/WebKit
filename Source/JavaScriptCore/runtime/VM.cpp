@@ -61,7 +61,6 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSLock.h"
-#include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSPromiseDeferred.h"
 #include "JSPropertyNameEnumerator.h"

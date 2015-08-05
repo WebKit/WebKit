@@ -48,7 +48,6 @@
 #include "JITExceptions.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
-#include "JSNameScope.h"
 #include "ObjectConstructor.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"

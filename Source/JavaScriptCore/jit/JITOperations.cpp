@@ -44,10 +44,8 @@
 #include "JIT.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JSCInlines.h"
-#include "JSFunctionNameScope.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
-#include "JSNameScope.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSStackInlines.h"
 #include "JSWithScope.h"
@@ -62,24 +60,6 @@
 #include <wtf/InlineASM.h>
 
 namespace JSC {
-
-template<typename ScopeType>
-void pushNameScope(ExecState* exec, int32_t dst, SymbolTable* symbolTable, EncodedJSValue encodedValue)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    
-    ASSERT(!JITCode::isOptimizingJIT(exec->codeBlock()->jitType()));
-
-    // FIXME: This won't work if this operation is called from the DFG or FTL.
-    // This should be changed to pass in the new scope.
-    JSScope* currentScope = exec->uncheckedR(dst).Register::scope();
-    JSNameScope* scope = ScopeType::create(vm, exec->lexicalGlobalObject(), currentScope, symbolTable, JSValue::decode(encodedValue));
-
-    // FIXME: This won't work if this operation is called from the DFG or FTL.
-    // This should be changed to return the new scope.
-    exec->uncheckedR(dst) = scope;
-}
 
 extern "C" {
 
@@ -1362,11 +1342,6 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
     baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
 }
 #endif
-
-void JIT_OPERATION operationPushFunctionNameScope(ExecState* exec, int32_t dst, SymbolTable* symbolTable, EncodedJSValue encodedValue)
-{
-    pushNameScope<JSFunctionNameScope>(exec, dst, symbolTable, encodedValue);
-}
 
 void JIT_OPERATION operationPushWithScope(ExecState* exec, int32_t dst, EncodedJSValue encodedValue)
 {

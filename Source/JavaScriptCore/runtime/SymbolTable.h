@@ -652,7 +652,8 @@ public:
     enum ScopeType {
         VarScope,
         LexicalScope,
-        CatchScope
+        CatchScope,
+        FunctionNameScope
     };
     void setScopeType(ScopeType type) { m_scopeType = type; }
     ScopeType scopeType() const { return static_cast<ScopeType>(m_scopeType); }

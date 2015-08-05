@@ -530,7 +530,6 @@ namespace JSC {
         void emit_op_profile_will_call(Instruction*);
         void emit_op_profile_type(Instruction*);
         void emit_op_profile_control_flow(Instruction*);
-        void emit_op_push_name_scope(Instruction*);
         void emit_op_push_with_scope(Instruction*);
         void emit_op_create_lexical_environment(Instruction*);
         void emit_op_get_parent_scope(Instruction*);

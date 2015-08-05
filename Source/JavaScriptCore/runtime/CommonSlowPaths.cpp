@@ -44,7 +44,6 @@
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
-#include "JSNameScope.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
 #include "JSWithScope.h"

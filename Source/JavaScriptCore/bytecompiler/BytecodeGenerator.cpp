@@ -35,7 +35,6 @@
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
-#include "JSNameScope.h"
 #include "JSTemplateRegistryKey.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
@@ -250,13 +249,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())
         && functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode())) {
-        // When we do this, we should make our local scope stack know about the function name symbol
-        // table. Currently this works because bytecode linking creates a phony name scope.
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141885
-        // Also, we could create the scope once per JSFunction instance that needs it. That wouldn't
-        // be any more correct, but it would be more performant.
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141887
-        emitPushFunctionNameScope(m_scopeRegister, functionNode->ident(), &m_calleeRegister, ReadOnly | DontDelete);
+        emitPushFunctionNameScope(functionNode->ident(), &m_calleeRegister);
     }
     
     if (shouldCaptureSomeOfTheThings) {
@@ -577,7 +570,7 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         }
         
         // This implements step 25 of section 9.2.12.
-        pushLexicalScopeInternal(environment, true, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope);
+        pushLexicalScopeInternal(environment, true, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
 
         RefPtr<RegisterID> temp = newTemporary();
         for (unsigned i = 0; i < parameters.size(); i++) {
@@ -1417,10 +1410,11 @@ RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst)
 void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult)
 {
     VariableEnvironment& environment = node->lexicalVariables();
-    pushLexicalScopeInternal(environment, canOptimizeTDZChecks, constantSymbolTableResult, TDZRequirement::UnderTDZ, ScopeType::LetConstScope);
+    pushLexicalScopeInternal(environment, canOptimizeTDZChecks, constantSymbolTableResult, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
 }
 
-void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environment, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult, TDZRequirement tdzRequirement, ScopeType scopeType)
+void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environment, bool canOptimizeTDZChecks, 
+    RegisterID** constantSymbolTableResult, TDZRequirement tdzRequirement, ScopeType scopeType, ScopeRegisterType scopeRegisterType)
 {
     if (!environment.size())
         return;
@@ -1435,6 +1429,9 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
         break;
     case ScopeType::LetConstScope:
         symbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
+        break;
+    case ScopeType::FunctionNameScope:
+        symbolTable->setScopeType(SymbolTable::ScopeType::FunctionNameScope);
         break;
     }
 
@@ -1472,8 +1469,11 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
         symbolTableConstantIndex = constantSymbolTable->index();
     }
     if (hasCapturedVariables) {
-        newScope = newBlockScopeVariable();
-        newScope->ref();
+        if (scopeRegisterType == ScopeRegisterType::Block) {
+            newScope = newBlockScopeVariable();
+            newScope->ref();
+        } else
+            newScope = addVar();
         if (!constantSymbolTable) {
             ASSERT(!vm()->typeProfiler());
             constantSymbolTable = addConstantValue(symbolTable->cloneScopePart(*m_vm));
@@ -1664,7 +1664,11 @@ Variable BytecodeGenerator::variable(const Identifier& property)
         SymbolTableEntry symbolTableEntry = symbolTable->get(property.impl());
         if (symbolTableEntry.isNull())
             continue;
-        
+        if (symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope && m_usesNonStrictEval) {
+            // We don't know if an eval has introduced a "var" named the same thing as the function name scope variable name.
+            // We resort to dynamic lookup to answer this question.
+            return Variable(property);
+        }
         return variableForLocalEntry(property, symbolTableEntry, stackEntry.m_symbolTableConstantIndex, symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope);
     }
 
@@ -1745,6 +1749,11 @@ ResolveType BytecodeGenerator::resolveType()
     for (unsigned i = m_symbolTableStack.size(); i--; ) {
         if (m_symbolTableStack[i].m_isWithScope)
             return Dynamic;
+        if (m_usesNonStrictEval && m_symbolTableStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
+            // What we really want here is something like LocalClosureVarWithVarInjectionsCheck but it's probably
+            // not worth inventing just for the function name scope.
+            return Dynamic;
+        }
     }
 
     if (m_usesNonStrictEval)
@@ -3064,13 +3073,27 @@ void BytecodeGenerator::emitThrowTypeError(const String& message)
     instructions().append(false);
 }
 
-void BytecodeGenerator::emitPushFunctionNameScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes)
+void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, RegisterID* callee)
 {
-    emitOpcode(op_push_name_scope);
-    instructions().append(dst->index());
-    instructions().append(value->index());
-    instructions().append(addConstantValue(SymbolTable::createNameScopeTable(*vm(), property, attributes))->index());
-    instructions().append(JSNameScope::FunctionNameScope);
+    // There is some nuance here:
+    // If we're in strict mode code, the function name scope variable acts exactly like a "const" variable.
+    // If we're not in strict mode code, we want to allow bogus assignments to the name scoped variable.
+    // This means any assignment to the variable won't throw, but it won't actually assign a new value to it.
+    // To accomplish this, we don't report that this scope is a lexical scope. This will prevent
+    // any throws when trying to assign to the variable (while still ensuring it keeps its original
+    // value). There is some ugliness and exploitation of a leaky abstraction here, but it's better than 
+    // having a completely new op code and a class to handle name scopes which are so close in functionality
+    // to lexical environments.
+    VariableEnvironment nameScopeEnvironment;
+    auto addResult = nameScopeEnvironment.add(property);
+    addResult.iterator->value.setIsCaptured();
+    addResult.iterator->value.setIsConst(); // The function name scope name acts like a const variable.
+    unsigned numVars = m_codeBlock->m_numVars;
+    pushLexicalScopeInternal(nameScopeEnvironment, true, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::FunctionNameScope, ScopeRegisterType::Var);
+    ASSERT_UNUSED(numVars, m_codeBlock->m_numVars == static_cast<int>(numVars + 1)); // Should have only created one new "var" for the function name scope.
+    bool shouldTreatAsLexicalVariable = isStrictMode();
+    Variable functionVar = variableForLocalEntry(property, m_symbolTableStack.last().m_symbolTable->get(property.impl()), m_symbolTableStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
+    emitPutToScope(m_symbolTableStack.last().m_scope, functionVar, callee, ThrowIfNotFound);
 }
 
 void BytecodeGenerator::pushScopedControlFlowContext()
@@ -3092,7 +3115,7 @@ void BytecodeGenerator::popScopedControlFlowContext()
 void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterID* exceptionValue, VariableEnvironment& environment)
 {
     RELEASE_ASSERT(environment.contains(property.impl()));
-    pushLexicalScopeInternal(environment, true, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::CatchScope);
+    pushLexicalScopeInternal(environment, true, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::CatchScope, ScopeRegisterType::Block);
     Variable exceptionVar = variable(property);
     RELEASE_ASSERT(exceptionVar.isResolved());
     RefPtr<RegisterID> scope = emitResolveScope(nullptr, exceptionVar);

@@ -166,6 +166,7 @@ public:
 
     bool isLexicalScope();
     bool isCatchScope();
+    bool isFunctionNameScopeObject();
 
     ScopeChainIterator begin();
     ScopeChainIterator end();

@@ -31,7 +31,6 @@
 #include "DFGDriver.h"
 #include "JIT.h"
 #include "JSCInlines.h"
-#include "JSFunctionNameScope.h"
 #include "LLIntEntrypoint.h"
 #include "Parser.h"
 #include "ProfilerDatabase.h"
@@ -247,19 +246,6 @@ RefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
         return nullptr;
     }
 
-    // Parsing reveals whether our function uses features that require a separate function name object in the scope chain.
-    // Be sure to add this scope before linking the bytecode because this scope will change the resolution depth of non-local variables.
-    if (functionNameIsInScope(executable->name(), executable->functionMode())
-        && functionNameScopeIsDynamic(executable->usesEval(), executable->isStrictMode())) {
-        // We shouldn't have to do this. But we do, because bytecode linking requires a real scope
-        // chain.
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=141885
-        SymbolTable* symbolTable =
-            SymbolTable::createNameScopeTable(*vm, executable->name(), ReadOnly | DontDelete);
-        scope = JSFunctionNameScope::create(
-            *vm, scope->globalObject(), scope, symbolTable, function);
-    }
-    
     SourceProvider* provider = executable->source().provider();
     unsigned sourceOffset = executable->source().startOffset();
     unsigned startColumn = executable->source().startColumn();

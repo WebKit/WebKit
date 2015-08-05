@@ -28,7 +28,6 @@
 
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
-#include "JSNameScope.h"
 #include "JSWithScope.h"
 
 namespace JSC {

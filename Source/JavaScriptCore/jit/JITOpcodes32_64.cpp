@@ -38,7 +38,6 @@
 #include "JSCell.h"
 #include "JSEnvironmentRecord.h"
 #include "JSFunction.h"
-#include "JSNameScope.h"
 #include "JSPropertyNameEnumerator.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
@@ -798,14 +797,6 @@ void JIT::emitSlow_op_to_string(Instruction* currentInstruction, Vector<SlowCase
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_string);
     slowPathCall.call();
-}
-
-void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    emitLoad(currentInstruction[2].u.operand, regT1, regT0);
-    RELEASE_ASSERT(currentInstruction[4].u.operand == JSNameScope::FunctionNameScope);
-    callOperation(operationPushFunctionNameScope, dst, jsCast<SymbolTable*>(getConstantOperand(currentInstruction[3].u.operand)), regT1, regT0);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)

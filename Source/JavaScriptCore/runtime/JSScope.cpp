@@ -28,7 +28,6 @@
 
 #include "JSGlobalObject.h"
 #include "JSLexicalEnvironment.h"
-#include "JSNameScope.h"
 #include "JSWithScope.h"
 #include "JSCInlines.h"
 
@@ -217,6 +216,13 @@ bool JSScope::isCatchScope()
     return lexicalEnvironment->symbolTable()->scopeType() == SymbolTable::ScopeType::CatchScope;
 }
 
+bool JSScope::isFunctionNameScopeObject()
+{
+    JSLexicalEnvironment* lexicalEnvironment = jsDynamicCast<JSLexicalEnvironment*>(this);
+    if (!lexicalEnvironment)
+        return false;
+    return lexicalEnvironment->symbolTable()->scopeType() == SymbolTable::ScopeType::FunctionNameScope;
+}
 
 const char* resolveModeName(ResolveMode mode)
 {

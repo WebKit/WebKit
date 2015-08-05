@@ -47,7 +47,6 @@
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
-#include "JSNameScope.h"
 #include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
@@ -1439,15 +1438,6 @@ void CodeBlock::dumpBytecode(
             int parentScope = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "get_parent_scope");
             out.printf("%s, %s", registerName(dst).data(), registerName(parentScope).data());
-            break;
-        }
-        case op_push_name_scope: {
-            int dst = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int k0 = (++it)->u.operand;
-            JSNameScope::Type scopeType = (JSNameScope::Type)(++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "push_name_scope");
-            out.printf("%s, %s, %s, %s", registerName(dst).data(), registerName(r1).data(), constantName(k0).data(), (scopeType == JSNameScope::FunctionNameScope) ? "functionScope" : "unknownScopeType");
             break;
         }
         case op_create_lexical_environment: {
