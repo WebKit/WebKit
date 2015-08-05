@@ -11,8 +11,8 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         win/WebURLAuthenticationChallengeSenderCURL.cpp
     )
     list(APPEND WebKit_LIBRARIES
-        libeay32.lib
-        ssleay32.lib
+        PRIVATE libeay32.lib
+        PRIVATE ssleay32.lib
     )
 else ()
     list(APPEND WebKit_SOURCES_Classes
@@ -20,7 +20,7 @@ else ()
         win/WebURLAuthenticationChallengeSenderCFNet.cpp
     )
     list(APPEND WebKit_LIBRARIES
-        WebKitSystemInterface
+        PRIVATE WebKitSystemInterface
     )
 endif ()
 
@@ -417,15 +417,15 @@ add_library(WebKitGUID STATIC
 set_target_properties(WebKitGUID PROPERTIES FOLDER "WebKit")
 
 list(APPEND WebKit_LIBRARIES
-    Comctl32
-    Comsupp
-    Crypt32
-    Iphlpapi
-    Rpcrt4
-    Shlwapi
-    Usp10
-    Version
-    WebKitGUID
+    PRIVATE Comctl32
+    PRIVATE Comsupp
+    PRIVATE Crypt32
+    PRIVATE Iphlpapi
+    PRIVATE Rpcrt4
+    PRIVATE Shlwapi
+    PRIVATE Usp10
+    PRIVATE Version
+    PRIVATE WebKitGUID
 )
 
 if (ENABLE_GRAPHICS_CONTEXT_3D)

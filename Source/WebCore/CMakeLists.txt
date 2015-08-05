@@ -3294,7 +3294,6 @@ set(WebCoreTestSupport_SOURCES
 set(WebCoreTestSupport_LIBRARIES
     JavaScriptCore
     WTF
-    WebCore
 )
 
 # Modules that the bindings generator scripts may use

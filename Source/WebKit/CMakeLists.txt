@@ -17,9 +17,9 @@ set(WebKit_INCLUDE_DIRECTORIES
 set(WebKit_SYSTEM_INCLUDE_DIRECTORIES "")
 
 set(WebKit_LIBRARIES
-    JavaScriptCore
-    WTF
-    WebCore
+    PRIVATE JavaScriptCore
+    PRIVATE WTF
+    PRIVATE WebCore
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

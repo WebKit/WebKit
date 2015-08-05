@@ -1,3 +1,13 @@
+2015-08-05  Alex Christensen  <achristensen@webkit.org>
+
+        Build DumpRenderTree with CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=147519
+
+        Reviewed by Brent Fulgham.
+
+        * WebView.cpp:
+        Include JSScriptProfile.h to export toJS(ExecState*, JSDomGlobalObject*, JSC::Profile*) from WebKit.dll.
+
 2015-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build.

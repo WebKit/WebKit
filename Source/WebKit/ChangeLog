@@ -1,3 +1,16 @@
+2015-08-05  Alex Christensen  <achristensen@webkit.org>
+
+        Build DumpRenderTree with CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=147519
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        Make the libraries WebKit links with private, which means that CMake will not make everything
+        that links with WebKit link with everything WebKit links with.
+
 2015-08-04  Filip Pizlo  <fpizlo@apple.com>
 
         Rename Mutex to DeprecatedMutex

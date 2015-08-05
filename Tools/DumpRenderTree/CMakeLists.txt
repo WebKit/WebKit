@@ -5,6 +5,7 @@ set(DumpRenderTree_SOURCES
     CyclicRedundancyCheck.cpp
     DumpRenderTreeCommon.cpp
     GCController.cpp
+    JavaScriptThreading.cpp
     PixelDumpSupport.cpp
     TestRunner.cpp
     WorkQueue.cpp
@@ -13,7 +14,6 @@ set(DumpRenderTree_SOURCES
 set(DumpRenderTree_LIBRARIES
     JavaScriptCore
     WTF
-    WebCore
     WebCoreTestSupport
     WebKit
 )
