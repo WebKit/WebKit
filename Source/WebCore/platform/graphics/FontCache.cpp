@@ -467,6 +467,8 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
             fontVerticalDataCache.remove(key);
     }
 #endif
+
+    platformPurgeInactiveFontData();
 }
 
 size_t FontCache::fontCount()
