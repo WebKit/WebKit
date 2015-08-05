@@ -70,7 +70,10 @@ RenderView* RenderFrameBase::childRenderView() const
 
 void RenderFrameBase::peformLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
 {
-    if (!childRenderView() || !shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
+    if (!childRenderView())
+        return;
+
+    if (!shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
         if (updateWidgetPosition() == ChildWidgetState::Destroyed)
             return;
         childView()->layout();
