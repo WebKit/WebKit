@@ -148,21 +148,6 @@ WebInspector.Object = class Object
     }
 };
 
-// FIXME: Uses arguments.callee, so it cannot be in the class.
-WebInspector.Object.deprecatedAddConstructorFunctions = function(subclassConstructor)
-{
-    // Copies the relevant functions to the subclass constructor.
-    var list = ["addEventListener", "removeEventListener", "removeAllListeners", "hasEventListeners"];
-    for (var property of list) {
-        var value = WebInspector.Object[property];
-        if (typeof value !== "function")
-            continue;
-        if (value === arguments.callee)
-            continue;
-        subclassConstructor[property] = value;
-    }
-};
-
 WebInspector.Event = class Event
 {
     constructor(target, type, data)

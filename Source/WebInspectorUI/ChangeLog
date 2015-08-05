@@ -1,5 +1,17 @@
 2015-08-05  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: remove unused Object.deprecatedAddConstructorFunctions
+        https://bugs.webkit.org/show_bug.cgi?id=147690
+
+        Reviewed by Timothy Hatcher.
+
+        This is no longer used following the conversion to ES6 classes.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.deprecatedAddConstructorFunctions): Deleted.
+
+2015-08-05  Brian Burg  <bburg@apple.com>
+
         Web Inspector: Convert miscellaneous view widgets to use ES6 classes
         https://bugs.webkit.org/show_bug.cgi?id=147658
 
