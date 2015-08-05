@@ -1,5 +1,11 @@
 2015-08-05  Brent Fulgham  <bfulgham@apple.com>
 
+        Mark failing scrolling test.
+
+        * platform/mac/TestExpectations:
+
+2015-08-05  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed test gardening.
 
         Skip new latched scrolling test on WK1 due to timeout. Check in some minor clean-ups in
