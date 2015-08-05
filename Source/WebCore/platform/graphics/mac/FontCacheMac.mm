@@ -494,6 +494,8 @@ static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, 
         if (acceptable)
             return font;
     }
+#else
+    UNUSED_PARAM(fontSize);
 #endif
     CFIndex coveredLength = 0;
     return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, nullptr, &coveredLength));
