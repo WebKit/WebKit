@@ -1,3 +1,23 @@
+2015-07-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Have DataObjectGtk::unknownTypes() return a reference to the HashMap object
+        https://bugs.webkit.org/show_bug.cgi?id=147401
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't copy the DataObjectGtk::m_unknownTypes HashMap on every retrieval through
+        DataObjectGtk::unknownTypes(). The range-based for-loops that iterate over the
+        map in PasteboardGtk.cpp and PasteboardHelper.cpp are also cleaned up.
+
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::unknownTypes):
+        * platform/gtk/DataObjectGtk.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writePasteboard):
+        (WebCore::Pasteboard::types):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillSelectionData):
+
 2015-07-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Crashes when SoupSession is destroyed in exit handler

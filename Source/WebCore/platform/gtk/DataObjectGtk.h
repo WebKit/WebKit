@@ -54,7 +54,7 @@ public:
     String text() const { return m_text; }
     String markup() const { return m_markup; }
     String unknownTypeData(const String& type) const { return m_unknownTypeData.get(type); }
-    HashMap<String, String> unknownTypes() const;
+    const HashMap<String, String>& unknownTypes() const;
     void setText(const String&);
     void setMarkup(const String&);
     void setUnknownTypeData(const String& type, const String& data) { m_unknownTypeData.set(type, data); }

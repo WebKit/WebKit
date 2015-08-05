@@ -162,10 +162,8 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
 
-        auto types = dataObject->unknownTypes();
-        auto end = types.end();
-        for (auto it = types.begin(); it != end; ++it) {
-            GUniquePtr<gchar> dictItem(g_strdup_printf("{'%s', '%s'}", it->key.utf8().data(), it->value.utf8().data()));
+        for (auto& it : dataObject->unknownTypes()) {
+            GUniquePtr<gchar> dictItem(g_strdup_printf("{'%s', '%s'}", it.key.utf8().data(), it.value.utf8().data()));
             g_variant_builder_add_parsed(&builder, dictItem.get());
         }
 

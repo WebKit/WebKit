@@ -204,10 +204,8 @@ void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
     if (sourceDataObject->hasImage())
         m_dataObject->setImage(sourceDataObject->image());
     if (sourceDataObject->hasUnknownTypeData()) {
-        auto types = m_dataObject->unknownTypes();
-        auto end = types.end();
-        for (auto it = types.begin(); it != end; ++it)
-            m_dataObject->setUnknownTypeData(it->key, it->value);
+        for (auto& it : m_dataObject->unknownTypes())
+            m_dataObject->setUnknownTypeData(it.key, it.value);
     }
 
     if (m_gtkClipboard)
@@ -300,10 +298,8 @@ Vector<String> Pasteboard::types()
     if (m_dataObject->hasFilenames())
         types.append(ASCIILiteral("Files"));
 
-    auto unknownTypes = m_dataObject->unknownTypes();
-    auto end = unknownTypes.end();
-    for (auto it = unknownTypes.begin(); it != end; ++it)
-        types.append(it->key);
+    for (auto& key : m_dataObject->unknownTypes().keys())
+        types.append(key);
 
     return types;
 }
