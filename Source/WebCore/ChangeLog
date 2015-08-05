@@ -1,3 +1,16 @@
+2015-07-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Crashes when SoupSession is destroyed in exit handler
+        https://bugs.webkit.org/show_bug.cgi?id=145347
+
+        Reviewed by Carlos Garcia Campos.
+
+        Leak the default SoupSession with NeverDestroyed to avoid races at program exit.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::defaultSession):
+        * platform/network/soup/SoupNetworkSession.h:
+
 2015-07-29  Brady Eidson  <beidson@apple.com>
 
         Review feedback followup to: Crash in WebCore::DocumentLoader::stopLoadingForPolicyChange.
