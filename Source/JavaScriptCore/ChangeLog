@@ -1,3 +1,11 @@
+2015-08-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the Intl API to the status page
+
+        * features.json:
+        Andy VanWagoner landed the skeleton of the API and it is
+        enabled by default.
+
 2015-08-04  Filip Pizlo  <fpizlo@apple.com>
 
         Rename Mutex to DeprecatedMutex
