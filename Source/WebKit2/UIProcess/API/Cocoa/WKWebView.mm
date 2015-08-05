@@ -2046,6 +2046,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->process().terminate();
 }
 
+- (void)_killWebContentProcessAndResetState
+{
+    _page->terminateProcess();
+}
+
 #if PLATFORM(IOS)
 static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRect& bounds)
 {

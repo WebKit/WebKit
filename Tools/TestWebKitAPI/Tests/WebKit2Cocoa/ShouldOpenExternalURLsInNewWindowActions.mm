@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKNavigationActionPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
@@ -205,6 +206,48 @@ TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
     newWebView = nullptr;
     action = nullptr;
 }
+
+TEST(WebKit2, RestoreShouldOpenExternalURLsPolicyAfterCrash)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+    auto controller = adoptNS([[ShouldOpenExternalURLsInNewWindowActionsController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+    [webView setUIDelegate:controller.get()];
+
+    finishedNavigation = false;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"should-open-external-schemes" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    // Before crash
+    decidedPolicy = false;
+    [webView evaluateJavaScript:@"navigateToTelURLInNestedZeroTimer()" completionHandler:nil]; // Non-user initiated navigation because it is performed in a nested timer callback.
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_FALSE([action _shouldOpenAppLinks]);
+
+    // Crash
+    [webView _killWebContentProcessAndResetState];
+    [webView reload];
+
+    finishedNavigation = false;
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    // After crash
+    decidedPolicy = false;
+    [webView evaluateJavaScript:@"navigateToTelURLInNestedZeroTimer()" completionHandler:nil]; // Non-user initiated navigation because it is performed in a nested timer callback.
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_FALSE([action _shouldOpenAppLinks]);
+};
 
 #endif
 

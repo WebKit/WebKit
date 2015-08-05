@@ -54,6 +54,7 @@ static const CFStringRef sessionHistoryEntryURLKey = CFSTR("SessionHistoryEntryU
 static const CFStringRef sessionHistoryEntryTitleKey = CFSTR("SessionHistoryEntryTitle");
 static const CFStringRef sessionHistoryEntryOriginalURLKey = CFSTR("SessionHistoryEntryOriginalURL");
 static const CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData");
+static const CFStringRef sessionHistoryEntryShouldOpenExternalURLsPolicyKey = CFSTR("SessionHistoryEntryShouldOpenExternalURLsPolicyKey");
 
 // Session history entry data.
 const uint32_t sessionHistoryEntryDataVersion = 2;
@@ -426,12 +427,15 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
         auto title = item.pageState.title.createCFString();
         auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
         auto data = encodeSessionHistoryEntryData(item.pageState.mainFrameState);
+        auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item.pageState.shouldOpenExternalURLsPolicy);
+        auto shouldOpenExternalURLsPolicy = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &shouldOpenExternalURLsPolicyValue));
 
         auto entryDictionary = createDictionary({
             { sessionHistoryEntryURLKey, url.get() },
             { sessionHistoryEntryTitleKey, title.get() },
             { sessionHistoryEntryOriginalURLKey, originalURL.get() },
             { sessionHistoryEntryDataKey, data.get() },
+            { sessionHistoryEntryShouldOpenExternalURLsPolicyKey, shouldOpenExternalURLsPolicy.get() },
         });
 
         CFArrayAppendValue(entries.get(), entryDictionary.get());
@@ -965,10 +969,20 @@ static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwa
     if (!historyEntryData)
         return false;
 
+    auto rawShouldOpenExternalURLsPolicy = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryShouldOpenExternalURLsPolicyKey));
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
+    if (rawShouldOpenExternalURLsPolicy) {
+        uint64_t value;
+        CFNumberGetValue(rawShouldOpenExternalURLsPolicy, kCFNumberSInt64Type, &value);
+        shouldOpenExternalURLsPolicy = static_cast<WebCore::ShouldOpenExternalURLsPolicy>(value);
+    } else
+        shouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes;
+
     if (!decodeSessionHistoryEntryData(historyEntryData, backForwardListItemState.pageState.mainFrameState))
         return false;
 
     backForwardListItemState.pageState.title = title;
+    backForwardListItemState.pageState.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     backForwardListItemState.pageState.mainFrameState.urlString = urlString;
     backForwardListItemState.pageState.mainFrameState.originalURLString = originalURLString;
 

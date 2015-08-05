@@ -1,3 +1,28 @@
+2015-08-05  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r185111): Clicking phone numbers doesn't prompt to call sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=147678
+        <rdar://problem/21827815>
+
+        Reviewed by Brady Eidson.
+
+        Teach WebKit to save and restore the "should open external URLs" policy.
+
+        * Shared/SessionState.cpp:
+        (WebKit::isValidEnum): Added.
+        (WebKit::PageState::encode): Modified to encode the "should open external URLs" policy.
+        (WebKit::PageState::decode): Modified to decode the "should open external URLs" policy.
+        * Shared/SessionState.h: Added ShouldOpenExternalURLsPolicy to PageState (defaults to WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow).
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _killWebContentProcessAndResetState]): Added; used in the unit test TestWebKitAPI/Tests/WebKit2Cocoa/ShouldOpenExternalURLsInNewWindowActions.mm.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Declare -[WKWebView _killWebContentProcessAndResetState].
+        * UIProcess/mac/LegacySessionStateCoding.cpp: Defined constant sessionHistoryEntryShouldOpenExternalURLsPolicyKey.
+        (WebKit::encodeSessionHistory): Modified to encode the "should open external URLs" policy.
+        (WebKit::decodeSessionHistoryEntry): Modified to decode the "should open external URLs" policy.
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toPageState): Copy "should open external URLs" policy from specified history item.
+        (WebKit::toHistoryItem): Apply "should open external URLs" policy from PageState to HistoryItem.
+
 2015-08-04  Antti Koivisto  <antti@apple.com>
 
         Network cache fetches should have timeout
