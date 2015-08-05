@@ -84,9 +84,7 @@ private:
         BasicBlock* block = m_graph.block(blockIndex);
         if (!block)
             return;
-        
-        // FIXME: It's likely that this can be improved, for static analyses that use
-        // HashSets. https://bugs.webkit.org/show_bug.cgi?id=118455
+
         m_live = block->ssa->liveAtTail;
         
         for (unsigned nodeIndex = block->size(); nodeIndex--;) {
@@ -134,9 +132,9 @@ private:
             return;
         
         m_changed = true;
-        block->ssa->liveAtHead = m_live;
         for (unsigned i = block->predecessors.size(); i--;)
             block->predecessors[i]->ssa->liveAtTail.add(m_live.begin(), m_live.end());
+        block->ssa->liveAtHead = WTF::move(m_live);
     }
     
     void addChildUse(Node*, Edge& edge)
