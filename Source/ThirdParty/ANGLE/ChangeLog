@@ -1,5 +1,12 @@
 2015-08-04  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix after r187928.
+
+        * CMakeLists.txt:
+        Typo. Set libGLESv2 compile definitions instead of libEGL, which are set separately.
+
+2015-08-04  Alex Christensen  <achristensen@webkit.org>
+
         Soft link libGLESv2 and libEGL on Windows again
         https://bugs.webkit.org/show_bug.cgi?id=147671
 
