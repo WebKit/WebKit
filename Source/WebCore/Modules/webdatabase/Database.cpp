@@ -58,9 +58,71 @@
 
 namespace WebCore {
 
+static const char versionKey[] = "WebKitDatabaseVersionKey";
+static const char unqualifiedInfoTableName[] = "__WebKitDatabaseInfoTable__";
+
+static const char* fullyQualifiedInfoTableName()
+{
+    static const char qualifier[] = "main.";
+    static char qualifiedName[sizeof(qualifier) + sizeof(unqualifiedInfoTableName) - 1];
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        strcpy(qualifiedName, qualifier);
+        strcpy(qualifiedName + sizeof(qualifier) - 1, unqualifiedInfoTableName);
+    });
+
+    return qualifiedName;
+}
+
 static String formatErrorMessage(const char* message, int sqliteErrorCode, const char* sqliteErrorMessage)
 {
     return String::format("%s (%d %s)", message, sqliteErrorCode, sqliteErrorMessage);
+}
+
+static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, const String& value)
+{
+    SQLiteStatement statement(db, query);
+    int result = statement.prepare();
+
+    if (result != SQLITE_OK) {
+        LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.ascii().data());
+        return false;
+    }
+
+    statement.bindText(1, value);
+
+    result = statement.step();
+    if (result != SQLITE_DONE) {
+        LOG_ERROR("Failed to step statement to set value in database (%s)", query.ascii().data());
+        return false;
+    }
+
+    return true;
+}
+
+static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& query, String& resultString)
+{
+    SQLiteStatement statement(db, query);
+    int result = statement.prepare();
+
+    if (result != SQLITE_OK) {
+        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", result, query.ascii().data());
+        return false;
+    }
+
+    result = statement.step();
+    if (result == SQLITE_ROW) {
+        resultString = statement.getColumnText(0);
+        return true;
+    }
+    if (result == SQLITE_DONE) {
+        resultString = String();
+        return true;
+    }
+
+    LOG_ERROR("Error (%i) reading text result from database (%s)", result, query.ascii().data());
+    return false;
 }
 
 Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
@@ -149,6 +211,44 @@ bool Database::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&
     }
 
     return false;
+}
+
+bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
+{
+    String query(String("SELECT value FROM ") + fullyQualifiedInfoTableName() +  " WHERE key = '" + versionKey + "';");
+
+    m_databaseAuthorizer->disable();
+
+    bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, query, version);
+    if (result) {
+        if (shouldCacheVersion)
+            setCachedVersion(version);
+    } else
+        LOG_ERROR("Failed to retrieve version from database %s", databaseDebugName().ascii().data());
+
+    m_databaseAuthorizer->enable();
+
+    return result;
+}
+
+bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersion)
+{
+    // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
+    // clause in the CREATE statement (see Database::performOpenAndVerify()).
+    String query(String("INSERT INTO ") + fullyQualifiedInfoTableName() +  " (key, value) VALUES ('" + versionKey + "', ?);");
+
+    m_databaseAuthorizer->disable();
+
+    bool result = setTextValueInDatabase(m_sqliteDatabase, query, version);
+    if (result) {
+        if (shouldCacheVersion)
+            setCachedVersion(version);
+    } else
+        LOG_ERROR("Failed to set version %s in database (%s)", version.ascii().data(), query.ascii().data());
+
+    m_databaseAuthorizer->enable();
+
+    return result;
 }
 
 void Database::scheduleTransaction()
@@ -347,7 +447,7 @@ Vector<String> Database::performGetTableNames()
     int result;
     while ((result = statement.step()) == SQLITE_ROW) {
         String name = statement.getColumnText(0);
-        if (name != databaseInfoTableName())
+        if (name != unqualifiedInfoTableName)
             tableNames.append(name);
     }
 

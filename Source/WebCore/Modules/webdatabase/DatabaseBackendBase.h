@@ -81,15 +81,11 @@ protected:
 
     virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
-    bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
-    bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
     void setExpectedVersion(const String&);
     const String& expectedVersion() const { return m_expectedVersion; }
     String getCachedVersion()const;
     void setCachedVersion(const String&);
     bool getActualVersionForTransaction(String& version);
-
-    static const char* databaseInfoTableName();
 
 #if !LOG_DISABLED || !ERROR_DISABLED
     String databaseDebugName() const;

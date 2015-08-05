@@ -108,6 +108,9 @@ public:
 private:
     Database(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
+    bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
+    bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
+
     void scheduleTransaction();
 
     void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* = nullptr);
@@ -124,6 +127,8 @@ private:
     bool m_deleted;
     bool m_hasPendingCreationEvent { false };
 
+    friend class ChangeVersionWrapper;
+    friend class DatabaseBackendBase;
     friend class DatabaseManager;
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
     friend class SQLStatement;
