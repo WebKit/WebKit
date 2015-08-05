@@ -2,7 +2,14 @@
 
 import argparse
 import logging
+import os
 import sys
+
+try:
+    import twisted
+except ImportError:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../..')))
+    from webkitpy.thirdparty.autoinstalled.twisted import twisted
 
 from twisted.web import static, server
 from twisted.web.resource import Resource
@@ -27,12 +34,12 @@ class ServerControl(Resource):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='python TwistedHTTPServer.py webRoot')
-    parser.add_argument('webRoot')
+    parser = argparse.ArgumentParser(description='python twisted_http_server.py web_root')
+    parser.add_argument('web_root')
     args = parser.parse_args()
-    webRoot = static.File(args.webRoot)
+    web_root = static.File(args.web_root)
     serverControl = ServerControl()
-    webRoot.putChild('shutdown', serverControl)
-    webRoot.putChild('report', serverControl)
-    reactor.listenTCP(0, server.Site(webRoot))
+    web_root.putChild('shutdown', serverControl)
+    web_root.putChild('report', serverControl)
+    reactor.listenTCP(0, server.Site(web_root))
     reactor.run()

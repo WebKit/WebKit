@@ -1,3 +1,15 @@
+2015-08-04  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Install twisted package for http server when necessary.
+        https://bugs.webkit.org/show_bug.cgi?id=147082
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_twisted):
+
 2015-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update Apple Windows build for VS2015

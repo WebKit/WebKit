@@ -91,6 +91,8 @@ class AutoinstallImportHook(object):
             self._install_buildbot()
         elif '.keyring' in fullname:
             self._install_keyring()
+        elif '.twisted' in fullname:
+            self._install_twisted()
 
     def _install_mechanize(self):
         self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
@@ -147,6 +149,11 @@ class AutoinstallImportHook(object):
 
     def _install_eliza(self):
         self._install(url="http://www.adambarth.com/webkit/eliza", target_name="eliza.py")
+
+    def _install_twisted(self):
+        twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted")
+        installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
+        installer.install(url="https://pypi.python.org/packages/source/T/Twisted/Twisted-12.1.0.tar.bz2#md5=f396f1d6f5321e869c2f89b2196a9eb5", url_subpath="Twisted-12.1.0/twisted")
 
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
