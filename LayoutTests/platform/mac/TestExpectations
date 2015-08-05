@@ -7,6 +7,7 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 accessibility/mac [ Pass ]
+editing/mac [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -425,7 +426,8 @@ webkit.org/b/95027 fast/block/float/016.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=93878
 # Due to JSC::Bindings::Instance::createRuntimeObject(JSC::ExecState*) crashes:
 editing/pasteboard/paste-TIFF.html [ Skip ]
-platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html [ Skip ]
+editing/mac/pasteboard/dataTransfer-set-data-file-url.html [ Skip ]
+webkit.org/b/147674 editing/mac/pasteboard/5583362.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=94458
 # Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
@@ -665,7 +667,7 @@ webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyF
 
 webkit.org/b/104962 platform/mac/fast/loader/file-url-mimetypes-2.html [ Failure ]
 
-webkit.org/b/105777 platform/mac/editing/spelling/autocorrection-in-textarea.html [ Failure Pass ]
+webkit.org/b/105777 editing/mac/spelling/autocorrection-in-textarea.html [ Failure Pass ]
 
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
@@ -767,7 +769,7 @@ webkit.org/b/73304 fast/forms/select/menulist-popup-crash.html [ Skip ]
 webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Skip ]
 webkit.org/b/74384 fast/forms/select/menulist-onchange-fired-with-key-up-down.html [ WontFix ] # Additionally, this is not an expected behavior on Mac.
 
-webkit.org/b/123029 [ Debug ] platform/mac/editing/attributed-string [ Pass Crash ]
+webkit.org/b/123029 [ Debug ] editing/mac/attributed-string [ Pass Crash ]
 
 webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Pass Failure ]
 
@@ -1147,7 +1149,7 @@ webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-multiple.html [ Pass ImageOn
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
 
 # FIXME: Needs bugzilla
-platform/mac/editing/input/undo-grouping-on-text-insertion.html [ Skip ]
+editing/mac/input/undo-grouping-on-text-insertion.html [ Skip ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17890720>)
 [ Yosemite+ ] fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Skip ]

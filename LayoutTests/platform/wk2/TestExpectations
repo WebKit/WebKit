@@ -90,24 +90,24 @@ fast/dom/tab-in-right-alignment.html
 fast/events/ime-composition-events-001.html
 fast/forms/cursor-at-editable-content-boundary.html
 fast/text/international/thai-cursor-position.html
-platform/mac/editing/input/5576619.html
-platform/mac/editing/input/bold-node.html
-platform/mac/editing/input/caret-primary-bidi.html
-platform/mac/editing/input/firstrectforcharacterrange-caret-in-br.html
-platform/mac/editing/input/firstrectforcharacterrange-plain.html
-platform/mac/editing/input/firstrectforcharacterrange-styled.html
-platform/mac/editing/input/firstrectforcharacterrange-vertical.html
-platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html
-platform/mac/editing/input/insert-delete-smp-symbol.html
-platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html
-platform/mac/editing/input/range-for-empty-document.html
-platform/mac/editing/input/replace-invalid-range.html
-platform/mac/editing/input/secure-input.html
-platform/mac/editing/input/text-input-controller.html
-platform/mac/editing/input/wrapped-line-char-rect.html
-platform/mac/editing/input/NSBackgroundColor-transparent.html
-platform/mac/editing/pasteboard/paste-and-match-style-selector-event.html
-platform/mac/editing/selection/25228.html
+editing/mac/input/5576619.html
+editing/mac/input/bold-node.html
+editing/mac/input/caret-primary-bidi.html
+editing/mac/input/firstrectforcharacterrange-caret-in-br.html
+editing/mac/input/firstrectforcharacterrange-plain.html
+editing/mac/input/firstrectforcharacterrange-styled.html
+editing/mac/input/firstrectforcharacterrange-vertical.html
+editing/mac/input/hangul-enter-confirms-and-sends-keypress.html
+editing/mac/input/insert-delete-smp-symbol.html
+editing/mac/input/kotoeri-enter-to-confirm-and-newline.html
+editing/mac/input/range-for-empty-document.html
+editing/mac/input/replace-invalid-range.html
+editing/mac/input/secure-input.html
+editing/mac/input/text-input-controller.html
+editing/mac/input/wrapped-line-char-rect.html
+editing/mac/input/NSBackgroundColor-transparent.html
+editing/mac/pasteboard/paste-and-match-style-selector-event.html
+editing/mac/selection/25228.html
 platform/mac/fast/dom/character-index-for-point.html
 platform/mac/fast/forms/attributed-strings.html
 platform/mac/fast/text/attributed-substring-from-range-001.html
@@ -538,7 +538,7 @@ storage/websql/multiple-databases-garbage-collection.html
 editing/pasteboard/copy-standalone-image.html
 
 # Mysterious failure after enabling paste tests
-platform/mac/editing/pasteboard/text-precomposed.html
+editing/mac/pasteboard/text-precomposed.html
 
 # An empty layer is missing.
 platform/mac/fast/forms/input-appearance-spinbutton-up.html
@@ -599,7 +599,7 @@ platform/mac/plugins/undefined-property-crash.html
 platform/mac/plugins/webScriptObject-exception-deadlock.html
 
 # WebKitTestRunner doesn't have objCPlugin
-platform/mac/editing/pasteboard/5583362.html
+editing/mac/pasteboard/5583362.html [ Skip ]
 platform/mac/plugins/jsobjc-dom-wrappers.html
 platform/mac/plugins/jsobjc-simple.html
 platform/mac/plugins/throw-on-dealloc.html

@@ -1,0 +1,178 @@
+<html>
+<head>
+<script src=../../editing.js language="javascript" type="text/javascript"></script>
+<title>Editing word with marker test 1</title>
+</head>
+<body>
+<p>The test verified that when a word is modified, its Spelling and Autocorrection Markers are removed.
+When manully testing, type "it's a meagesga", then edit the word "meagesga". You should see the 
+underline under the modified "meagesga" disppears after editing.</p>
+<textarea id="test" cols="80" rows="10"></textarea>
+<div id="console"></div>
+<script language="javascript" type="text/javascript">
+function resetText() {
+    document.getElementById('test').focus();
+    execSelectAllCommand();
+    execDeleteCommand();
+    typeCharacterCommand('i');
+    typeCharacterCommand('t');
+    typeCharacterCommand('\'');
+    typeCharacterCommand('s');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('g');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+resetText();
+textarea = document.getElementById('test');
+textarea.focus();
+textarea.setSelectionRange(14, 15);
+execDeleteCommand();
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,7) == 0) {
+        document.getElementById('console').innerHTML = 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = "FAILURE. The word 'meagesg' has underline.<br>";
+    }
+}
+
+// Testing deletion at various location.
+resetText();
+textarea.setSelectionRange(6, 6);
+execForwardDeleteCommand();
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(6,8) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'ameagesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea.setSelectionRange(7, 7);
+execForwardDeleteCommand();
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,7) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'eagesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea.setSelectionRange(10, 10);
+typeCharacterCommand(' ');
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,3) == 0 && window.internals.hasSpellingMarker(11,5) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The segment 'mea gesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea.setSelectionRange(10, 13);
+execDeleteCommand();
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,5) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meaga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea.setSelectionRange(10, 13);
+typeCharacterCommand(' ');
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,3) == 0 && window.internals.hasSpellingMarker(11,2) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The segment 'mea ga' has underline.<br>";
+    }
+}
+
+// Testing appending non-whitespace character.
+resetText();
+textarea.setSelectionRange(7, 7);
+typeCharacterCommand('a');
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(8,8) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'ameagesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea.setSelectionRange(15, 15);
+typeCharacterCommand('a');
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,8) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesgaa' has underline.<br>";
+    }
+}
+
+// Testing pasting.
+resetText();
+textarea = document.getElementById('test');
+textarea.setSelectionRange(0,4);
+execCopyCommand();
+textarea.setSelectionRange(7, 7);
+execPasteCommand();
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(11,8) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea = document.getElementById('test');
+textarea.setSelectionRange(0,4);
+execCopyCommand();
+textarea.setSelectionRange(15, 15);
+if (window.internals)
+    internals.updateEditorUINowIfScheduled();
+execPasteCommand();
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,8) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea = document.getElementById('test');
+textarea.setSelectionRange(0,4);
+execCopyCommand();
+textarea.setSelectionRange(10, 10);
+execPasteCommand();
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(7,3) == 0 && window.internals.hasSpellingMarker(15,5) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meait\'sgesga' has underline.<br>";
+    }
+}
+
+</script>
+</body>
+</html>

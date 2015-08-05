@@ -10,6 +10,7 @@ accessibility/ios-simulator [ Skip ]
 accessibility/gtk [ Skip ]
 accessibility/mac [ Skip ]
 accessibility/win [ Skip ]
+editing/mac [ Skip ]
 editing/pasteboard/gtk [ Skip ]
 tiled-drawing [ Skip ]
 

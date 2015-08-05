@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>Test what happens when navigating from a page with unconfirmed inline input when the page is cacheable</title>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.setCanOpenWindows();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+// Window we will be controlling.
+var target;
+
+// Counter for visits to first page.
+var firstPageVisits = 0;
+
+window.addEventListener('message', function(event) {
+
+    if (event.data === 'first-page') {
+        firstPageVisits++;
+        if (firstPageVisits == 1) {
+            debug("Adding unconfirmed inline text...");
+            target.postMessage('add-unconfirmed-text', '*');
+            target.postMessage('has-marked-text', '*');
+        } else {
+            target.postMessage('has-marked-text', '*');
+        }
+        return;
+    }
+
+    if (event.data.indexOf('has-marked-text: ') == 0) {
+        if (firstPageVisits == 1) {
+            shouldBe("event.data", "'has-marked-text: 1'");
+            debug("Navigating away from a page with unconfirmed inline input...");
+            target.postMessage('navigate-other-page', '*');
+        } else {
+            shouldBe("event.data", "'has-marked-text: 0'");
+            finishJSTest();
+        }
+        return;
+    }
+
+    if (event.data === 'other-page') {
+        debug("Navigating back to the first page...");
+        target.postMessage('navigate-back', '*');
+        return;
+    }
+
+}, false);
+
+// Open the target window and we will start to exchange messages.
+onload = function() { target = window.open('resources/first-page.html'); }
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

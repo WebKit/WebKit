@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body onload="onLoad()">
+<p>This test checks that conext menu selection allows whitespace for non-editable fields.
+To test manually, right click on the blank text in the input box.</p>
+<div style="width:500px; height:16px" id="input" contenteditable="true">
+<pre>The crowd says: New York, New York<span id="inputWhitespace">    </span>is a helluva town!</pre>
+</div>
+<div style="width:500px; height:16px" id="readOnlyInput" readonly>
+<pre>The crowd says: New York, New York<span id="readOnlyWhitespace">    </span>is a helluva town!</pre>
+</div>
+<div id="console">
+</body>
+<script>
+
+function getSelectionForId(elementId)
+{
+    var target = document.getElementById(elementId);
+
+    var x = target.offsetParent.offsetLeft + target.offsetLeft + target.clientWidth / 2;
+    var y = target.offsetParent.offsetTop + target.offsetTop + target.clientHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.contextClick();
+
+    return window.getSelection().toString().trim();
+}
+
+function performTest()
+{
+    shouldBe("getSelectionForId('inputWhitespace')", '""');
+    shouldBe("getSelectionForId('readOnlyWhitespace')", '"New York, New York"');
+
+    finishJSTest();
+}
+
+function onLoad()
+{
+    if (window.testRunner) {
+        window.jsTestIsAsync = true;
+        testRunner.waitUntilDone();
+    }
+
+    setTimeout(performTest, 500); // Wait for page to display
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<pre id="description"></pre>
+<div id="test" contenteditable></div>
+<p id="console"></p>
+<script type="text/javascript">
+
+    description("When inserting text with the undo insertion attribute, each blob of inserted text should create an undo group so that, sending an undo command will undo just that last text insertion.");
+    var jsTestIsAsync = true;
+    window.jsTestIsAsync = true;
+    testRunner.waitUntilDone();
+
+    var undoCount = 0;
+    var textArea;
+    function undoNow() 
+    {
+        if (!undoCount)
+            shouldBe("textArea.innerText", "'test1test2test3no1no2'");
+        else if (undoCount == 1)
+            shouldBe("textArea.innerText", "'test1test2test3'");
+        else if (undoCount == 2)
+            shouldBe("textArea.innerText", "'test1test2'");
+        else if (undoCount == 3)
+            shouldBe("textArea.innerText", "'test1'");
+
+        document.execCommand("Undo");
+        undoCount++;
+        if (undoCount == 4) {
+            testRunner.notifyDone();
+            finishJSTest();
+        } else {
+            setTimeout("undoNow()", 1);
+        }
+    }
+
+    if (window.testRunner) {
+    
+        textArea = document.getElementById("test");
+        textArea.focus();
+
+        // Insert 3 times. When we undo, we should roll back only each insertion.
+        textInputController.insertText(textInputController.makeUndoGroupingInsertionString("test1"));
+        textInputController.insertText(textInputController.makeUndoGroupingInsertionString("test2"));
+        textInputController.insertText(textInputController.makeUndoGroupingInsertionString("test3"));
+
+        // Insert 2 strings that will be undone with the first undo command, instead of generating their own undo group.
+        textInputController.insertText(textInputController.makeDictatedString("no1", "test", 0, 1));
+        textInputController.insertText(textInputController.makeDictatedString("no2", "test", 0, 1));
+
+        setTimeout("undoNow()", 1);
+
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>
