@@ -189,7 +189,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 PassRefPtr<HistoryItem> toHistoryItem(const PageState& pageState)
 {
     RefPtr<HistoryItem> historyItem = HistoryItem::create(pageState.mainFrameState.urlString, pageState.title);
-    historyItem.setShouldOpenExternalURLsPolicy(pageState.shouldOpenExternalURLsPolicy);
+    historyItem->setShouldOpenExternalURLsPolicy(pageState.shouldOpenExternalURLsPolicy);
     applyFrameState(*historyItem, pageState.mainFrameState);
 
     return historyItem.release();
