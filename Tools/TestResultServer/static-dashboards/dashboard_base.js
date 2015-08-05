@@ -73,7 +73,7 @@ var ONE_DAY_SECONDS = 60 * 60 * 24;
 var ONE_WEEK_SECONDS = ONE_DAY_SECONDS * 7;
 
 // These should match the testtype uploaded to webkit-test-results.webkit.org.
-// See http://webkit-test-results.webkit.org/testfile.
+// See https://webkit-test-results.webkit.org/testfile.
 var TEST_TYPES = [
     'layout-tests'
 ];

@@ -97,7 +97,7 @@ var treemapConfig = {
 var g_history = new history.History(treemapConfig);
 g_history.parseCrossDashboardParameters();
 
-var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/";
+var TEST_URL_BASE_PATH = "https://svn.webkit.org/repository/webkit/trunk/";
 
 function humanReadableTime(milliseconds)
 {

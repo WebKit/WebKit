@@ -182,8 +182,8 @@ ui.html.webKitRevisionLink = function(results, index)
         results,
         index,
         WEBKIT_REVISIONS_KEY,
-        'http://trac.webkit.org/changeset/<rev>',
-        'http://trac.webkit.org/log/trunk/?rev=<rev1>&stop_rev=<rev2>&limit=100&verbose=on');
+        'https://trac.webkit.org/changeset/<rev>',
+        'https://trac.webkit.org/log/trunk/?rev=<rev1>&stop_rev=<rev2>&limit=100&verbose=on');
 }
 
 

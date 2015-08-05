@@ -40,7 +40,7 @@ patch_regexp = re.compile(r"patch (?P<patch_id>\d+)")
 @register.filter
 @stringfilter
 def webkit_linkify(value):
-    value = bug_regexp.sub(r'<a href="http://webkit.org/b/\g<bug_id>">bug \g<bug_id></a>', value)
+    value = bug_regexp.sub(r'<a href="https://webkit.org/b/\g<bug_id>">bug \g<bug_id></a>', value)
     value = patch_regexp.sub(r'<a href="https://bugs.webkit.org/attachment.cgi?id=\g<patch_id>&action=prettypatch">patch \g<patch_id></a>', value)
     return value
 
@@ -48,7 +48,7 @@ def webkit_linkify(value):
 @register.filter
 @stringfilter
 def webkit_bug_id(value):
-    return '<a href="http://webkit.org/b/%s">%s</a>' % (value, value)
+    return '<a href="https://webkit.org/b/%s">%s</a>' % (value, value)
 
 
 @register.filter

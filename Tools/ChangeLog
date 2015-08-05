@@ -1,3 +1,17 @@
+2015-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        AppScale: Use https URLs for subresources and links
+        https://bugs.webkit.org/show_bug.cgi?id=147686
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/filters/webkit_extras.py:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/treemap.js:
+        * TestResultServer/static-dashboards/ui.js:
+
 2015-08-04  Filip Pizlo  <fpizlo@apple.com>
 
         Rename Mutex to DeprecatedMutex

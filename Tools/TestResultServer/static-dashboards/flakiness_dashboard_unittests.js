@@ -400,7 +400,7 @@ test('htmlForIndividualTests', 4, function() {
 
     var tests = [test1, test2];
     equal(htmlForIndividualTests(tests),
-        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
+        '<h2><a href="https://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
         htmlForIndividualTestOnAllBuilders(test1) + 
         '<div class=expectations test=foo/nonexistant.html>' +
             '<div><span class=link onclick=\"g_history.setQueryParameter(\'showExpectations\', true)\">Show results</span> | ' +
@@ -408,7 +408,7 @@ test('htmlForIndividualTests', 4, function() {
             '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b></div>' +
         '</div>' +
         '<hr>' +
-        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/bar/nonexistant.html" target="_blank">bar/nonexistant.html</a></h2>' +
+        '<h2><a href="https://trac.webkit.org/browser/trunk/LayoutTests/bar/nonexistant.html" target="_blank">bar/nonexistant.html</a></h2>' +
         htmlForIndividualTestOnAllBuilders(test2) +
         '<div class=expectations test=bar/nonexistant.html>' +
             '<div><span class=link onclick=\"g_history.setQueryParameter(\'showExpectations\', true)\">Show results</span> | ' +
@@ -427,14 +427,14 @@ test('htmlForIndividualTests', 4, function() {
     historyInstance.dashboardSpecificState.showChrome = true;
 
     equal(htmlForIndividualTests(tests),
-        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
+        '<h2><a href="https://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
         htmlForIndividualTestOnAllBuildersWithResultsLinks(test1));
 
     tests = [test1, test2];
     equal(htmlForIndividualTests(tests),
-        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
+        '<h2><a href="https://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
         htmlForIndividualTestOnAllBuildersWithResultsLinks(test1) + '<hr>' +
-        '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/bar/nonexistant.html" target="_blank">bar/nonexistant.html</a></h2>' +
+        '<h2><a href="https://trac.webkit.org/browser/trunk/LayoutTests/bar/nonexistant.html" target="_blank">bar/nonexistant.html</a></h2>' +
         htmlForIndividualTestOnAllBuildersWithResultsLinks(test2));
 });
 
