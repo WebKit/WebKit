@@ -669,7 +669,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(RetainPtr<NSCell> cell, Gr
     ASSERT(drawButtonCell || drawFocusRing);
     bool needsRepaint = false;
     if (useImageBuffer) {
-        NSRect imageBufferDrawRect = CGRectMake(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, inflatedRect.width(), inflatedRect.height());
+        NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, inflatedRect.width(), inflatedRect.height()));
         std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, ColorSpaceSRGB, context, false);
         {
             LocalCurrentGraphicsContext localContext(imageBuffer->context());
