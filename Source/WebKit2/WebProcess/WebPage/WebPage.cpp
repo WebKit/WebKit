@@ -480,10 +480,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
         m_mimeTypesWithCustomContentProviders.add(mimeType);
-
-#if PLATFORM(IOS)
-    m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
-#endif
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)

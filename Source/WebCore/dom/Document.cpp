@@ -2807,24 +2807,8 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
 {
     ASSERT(!equiv.isNull() && !content.isNull());
 
-    HttpEquivPolicy policy = httpEquivPolicy();
-    if (policy != HttpEquivPolicy::Enabled) {
-        String reason;
-        switch (policy) {
-        case HttpEquivPolicy::Enabled:
-            ASSERT_NOT_REACHED();
-            break;
-        case HttpEquivPolicy::DisabledBySettings:
-            reason = "by the embedder.";
-            break;
-        case HttpEquivPolicy::DisabledByContentDispositionAttachmentSandbox:
-            reason = "for documents with Content-Disposition: attachment.";
-            break;
-        }
-        String message = "http-equiv '" + equiv + "' is disabled " + reason;
-        addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
+    if (page() && !page()->settings().httpEquivEnabled())
         return;
-    }
 
     Frame* frame = this->frame();
 
@@ -4688,8 +4672,15 @@ void Document::initSecurityContext()
     m_cookieURL = m_url;
     enforceSandboxFlags(m_frame->loader().effectiveSandboxFlags());
 
-    if (shouldEnforceContentDispositionAttachmentSandbox())
-        enforceSandboxFlags(SandboxAll);
+#if PLATFORM(IOS)
+    // On iOS we display attachments inline regardless of whether the response includes
+    // the HTTP header "Content-Disposition: attachment". So, we enforce a unique
+    // security origin for such documents. As an optimization, we don't need to parse
+    // the responde header (i.e. call ResourceResponse::isAttachment()) for a synthesized
+    // document because such documents cannot be an attachment.
+    if (!m_isSynthesized && m_frame->loader().activeDocumentLoader()->response().isAttachment())
+        enforceSandboxFlags(SandboxOrigin);
+#endif
 
     setSecurityOrigin(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url));
     setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
@@ -5768,15 +5759,6 @@ void Document::didAddWheelEventHandler()
     wheelEventHandlerCountChanged(this);
 }
 
-HttpEquivPolicy Document::httpEquivPolicy() const
-{
-    if (shouldEnforceContentDispositionAttachmentSandbox())
-        return HttpEquivPolicy::DisabledByContentDispositionAttachmentSandbox;
-    if (page() && !page()->settings().httpEquivEnabled())
-        return HttpEquivPolicy::DisabledBySettings;
-    return HttpEquivPolicy::Enabled;
-}
-
 void Document::didRemoveWheelEventHandler()
 {
     ASSERT(m_wheelEventHandlerCount > 0);
@@ -6227,18 +6209,5 @@ void Document::setInputCursor(PassRefPtr<InputCursor> cursor)
     m_inputCursor = cursor;
 }
 #endif
-
-bool Document::shouldEnforceContentDispositionAttachmentSandbox() const
-{
-    if (m_isSynthesized)
-        return false;
-
-    bool contentDispositionAttachmentSandboxEnabled = settings() && settings()->contentDispositionAttachmentSandboxEnabled();
-    bool responseIsAttachment = false;
-    if (DocumentLoader* documentLoader = m_frame ? m_frame->loader().activeDocumentLoader() : nullptr)
-        responseIsAttachment = documentLoader->response().isAttachment();
-
-    return contentDispositionAttachmentSandboxEnabled && responseIsAttachment;
-}
 
 } // namespace WebCore

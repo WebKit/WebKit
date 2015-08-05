@@ -231,9 +231,3 @@ useImageDocumentForSubframePDF initial=false
 allowNavigationToInvalidURL initial=false
 
 httpEquivEnabled initial=true
-
-# Some ports (e.g. iOS) might choose to display attachments inline, regardless of whether the response includes the
-# HTTP header "Content-Disposition: attachment". This setting enables a sandbox around these attachments. The sandbox
-# enforces all frame sandbox flags (see enum SandboxFlag in SecurityContext.h), and also disables <meta http-equiv>
-# processing and subframe loading.
-contentDispositionAttachmentSandboxEnabled initial=false

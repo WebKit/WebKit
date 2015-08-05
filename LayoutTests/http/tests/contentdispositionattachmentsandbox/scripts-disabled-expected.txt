@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/contentdispositionattachmentsandbox/resources/scripts-frame.php' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-This test verifies that scripts are disabled when 'Content-Disposition: attachment' sandboxing is enabled. A security error will be logged to the console if the test passes.
-
-

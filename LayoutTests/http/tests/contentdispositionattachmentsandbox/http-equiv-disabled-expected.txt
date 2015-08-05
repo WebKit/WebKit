@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 2: http-equiv 'refresh' is disabled for documents with Content-Disposition: attachment.
-This test verifies that <meta http-equiv> processing is disabled when 'Content-Disposition: attachment' sandboxing is enabled. A security error will be logged to the console if the test passes.
-
-

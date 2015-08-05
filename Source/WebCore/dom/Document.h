@@ -254,12 +254,6 @@ enum class DocumentCompatibilityMode : unsigned char {
     LimitedQuirksMode = 1 << 2
 };
 
-enum class HttpEquivPolicy {
-    Enabled,
-    DisabledBySettings,
-    DisabledByContentDispositionAttachmentSandbox
-};
-
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame, const URL& url)
@@ -1286,7 +1280,6 @@ public:
     void setHasStyleWithViewportUnits() { m_hasStyleWithViewportUnits = true; }
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
     void updateViewportUnitsOnResize();
-    bool shouldEnforceContentDispositionAttachmentSandbox() const;
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
@@ -1362,8 +1355,6 @@ private:
     void visualUpdatesSuppressionTimerFired(Timer<Document>&);
 
     void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
-
-    HttpEquivPolicy httpEquivPolicy() const;
 
     void didAssociateFormControlsTimerFired(Timer<Document>&);
 
