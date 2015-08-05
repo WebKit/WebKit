@@ -405,6 +405,7 @@ void CachedResource::responseReceived(const ResourceResponse& response)
 void CachedResource::clearLoader()
 {
     ASSERT(m_loader);
+    m_identifierForLoadWithoutResourceLoader = m_loader->identifier();
     m_loader = nullptr;
     deleteIfPossible();
 }
