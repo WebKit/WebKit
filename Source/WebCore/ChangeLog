@@ -1,3 +1,23 @@
+2015-07-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash happens when calling removeEventListener for an SVG element which has an instance inside a <defs> element of shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=147290
+
+        Reviewed by Daniel Bates.
+
+        When the shadow tree is built for a <use> element, all the SVG elements
+        are allowed to be cloned in the shadow tree but later some of the elements
+        are disallowed and removed. Make sure, when disallowing an element in the
+        shadow tree, to reset the correspondingElement relationship between all
+        the disallowed descendant SVG elements and all their original elements.
+        
+        Test: svg/custom/remove-event-listener-shadow-disallowed-element.svg
+
+        *svg/SVGElement.cpp:
+        (WebCore::SVGElement::setCorrespondingElement)
+        * svg/SVGUseElement.cpp:
+        (WebCore::removeDisallowedElementsFromSubtree):
+
 2015-07-27  David Hyatt  <hyatt@apple.com>
 
         ASSERTION FAILED: !currBox->needsLayout() loading bing maps (and apple.com/music and nytimes)
