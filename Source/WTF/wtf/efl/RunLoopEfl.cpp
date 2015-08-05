@@ -59,7 +59,7 @@ void RunLoop::wakeUpEvent(void* data, void*, unsigned)
     RunLoop* loop = static_cast<RunLoop*>(data);
 
     {
-        MutexLocker locker(loop->m_wakeUpEventRequestedLock);
+        DeprecatedMutexLocker locker(loop->m_wakeUpEventRequestedLock);
         loop->m_wakeUpEventRequested = false;
     }
 
@@ -69,14 +69,14 @@ void RunLoop::wakeUpEvent(void* data, void*, unsigned)
 void RunLoop::wakeUp()
 {
     {
-        MutexLocker locker(m_wakeUpEventRequestedLock);
+        DeprecatedMutexLocker locker(m_wakeUpEventRequestedLock);
         if (m_wakeUpEventRequested)
             return;
         m_wakeUpEventRequested = true;
     }
 
     {
-        MutexLocker locker(m_pipeLock);
+        DeprecatedMutexLocker locker(m_pipeLock);
         ecore_pipe_write(m_pipe.get(), wakupEcorePipeMessage, ecorePipeMessageSize);
     }
 }

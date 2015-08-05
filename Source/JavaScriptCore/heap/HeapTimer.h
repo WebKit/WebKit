@@ -59,7 +59,7 @@ protected:
     RetainPtr<CFRunLoopRef> m_runLoop;
     CFRunLoopTimerContext m_context;
 
-    Mutex m_shutdownMutex;
+    DeprecatedMutex m_shutdownMutex;
 #elif PLATFORM(EFL)
     static bool timerEvent(void*);
     Ecore_Timer* add(double delay, void* agent);

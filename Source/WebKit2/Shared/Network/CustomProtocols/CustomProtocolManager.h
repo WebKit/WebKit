@@ -100,11 +100,11 @@ private:
 
 #if PLATFORM(COCOA)
     HashSet<String> m_registeredSchemes;
-    Mutex m_registeredSchemesMutex;
+    DeprecatedMutex m_registeredSchemesMutex;
 
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol>> CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap;
-    Mutex m_customProtocolMapMutex;
+    DeprecatedMutex m_customProtocolMapMutex;
     
     // WKCustomProtocol objects can be removed from the m_customProtocolMap from multiple threads.
     // We return a RetainPtr here because it is unsafe to return a raw pointer since the object might immediately be destroyed from a different thread.

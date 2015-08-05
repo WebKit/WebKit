@@ -84,14 +84,14 @@ bool DisplayRefreshMonitorMac::requestRefreshCallback()
         setIsActive(true);
     }
 
-    MutexLocker lock(mutex());
+    DeprecatedMutexLocker lock(mutex());
     setIsScheduled(true);
     return true;
 }
 
 void DisplayRefreshMonitorMac::displayLinkFired(double nowSeconds, double outputTimeSeconds)
 {
-    MutexLocker lock(mutex());
+    DeprecatedMutexLocker lock(mutex());
     if (!isPreviousFrameDone())
         return;
 

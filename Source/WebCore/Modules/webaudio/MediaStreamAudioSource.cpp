@@ -63,13 +63,13 @@ const RealtimeMediaSourceStates& MediaStreamAudioSource::states()
 
 void MediaStreamAudioSource::addAudioConsumer(PassRefPtr<AudioDestinationConsumer> consumer)
 {
-    MutexLocker locker(m_audioConsumersLock);
+    DeprecatedMutexLocker locker(m_audioConsumersLock);
     m_audioConsumers.append(consumer);
 }
 
 bool MediaStreamAudioSource::removeAudioConsumer(AudioDestinationConsumer* consumer)
 {
-    MutexLocker locker(m_audioConsumersLock);
+    DeprecatedMutexLocker locker(m_audioConsumersLock);
     size_t pos = m_audioConsumers.find(consumer);
     if (pos != notFound) {
         m_audioConsumers.remove(pos);
@@ -80,14 +80,14 @@ bool MediaStreamAudioSource::removeAudioConsumer(AudioDestinationConsumer* consu
 
 void MediaStreamAudioSource::setAudioFormat(size_t numberOfChannels, float sampleRate)
 {
-    MutexLocker locker(m_audioConsumersLock);
+    DeprecatedMutexLocker locker(m_audioConsumersLock);
     for (auto& consumer : m_audioConsumers)
         consumer->setFormat(numberOfChannels, sampleRate);
 }
 
 void MediaStreamAudioSource::consumeAudio(AudioBus* bus, size_t numberOfFrames)
 {
-    MutexLocker locker(m_audioConsumersLock);
+    DeprecatedMutexLocker locker(m_audioConsumersLock);
     for (auto& consumer : m_audioConsumers)
         consumer->consumeAudio(bus, numberOfFrames);
 }

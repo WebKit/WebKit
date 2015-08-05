@@ -48,7 +48,7 @@ private:
     
     Worklist* m_worklist;
     ThreadIdentifier m_identifier;
-    Mutex m_rightToRun;
+    DeprecatedMutex m_rightToRun;
     Safepoint* m_safepoint;
 };
 

@@ -89,7 +89,7 @@ private:
 
     class MediaPlayerListener;
     HashSet<MediaPlayerListener*> m_listeners;
-    Mutex m_mutexListeners;
+    DeprecatedMutex m_mutexListeners;
 
     COMPtr<IMFMediaSession> m_mediaSession;
     COMPtr<IMFSourceResolver> m_sourceResolver;
@@ -149,7 +149,7 @@ private:
         ULONG m_refCount;
         MediaPlayerPrivateMediaFoundation* m_mediaPlayer;
         bool m_event;
-        Mutex m_mutex;
+        DeprecatedMutex m_mutex;
     };
 
 };

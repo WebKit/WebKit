@@ -57,7 +57,7 @@ private:
     class DatabaseTableNamesTask;
 
     Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
-    Mutex m_transactionInProgressMutex;
+    DeprecatedMutex m_transactionInProgressMutex;
     bool m_transactionInProgress;
     bool m_isTransactionQueueEnabled;
 

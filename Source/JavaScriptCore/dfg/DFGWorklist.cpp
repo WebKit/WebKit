@@ -46,7 +46,7 @@ Worklist::Worklist(CString worklistName)
 Worklist::~Worklist()
 {
     {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         for (unsigned i = m_threads.size(); i--;)
             m_queue.append(nullptr); // Use null plan to indicate that we want the thread to terminate.
         m_planEnqueued.broadcast();
@@ -77,7 +77,7 @@ Ref<Worklist> Worklist::create(CString worklistName, unsigned numberOfThreads, i
 
 bool Worklist::isActiveForVM(VM& vm) const
 {
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     PlanMap::const_iterator end = m_plans.end();
     for (PlanMap::const_iterator iter = m_plans.begin(); iter != end; ++iter) {
         if (&iter->value->vm == &vm)
@@ -89,7 +89,7 @@ bool Worklist::isActiveForVM(VM& vm) const
 void Worklist::enqueue(PassRefPtr<Plan> passedPlan)
 {
     RefPtr<Plan> plan = passedPlan;
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     if (Options::verboseCompilationQueue()) {
         dump(locker, WTF::dataFile());
         dataLog(": Enqueueing plan to optimize ", plan->key(), "\n");
@@ -102,7 +102,7 @@ void Worklist::enqueue(PassRefPtr<Plan> passedPlan)
 
 Worklist::State Worklist::compilationState(CompilationKey key)
 {
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     PlanMap::iterator iter = m_plans.find(key);
     if (iter == m_plans.end())
         return NotKnown;
@@ -118,7 +118,7 @@ void Worklist::waitUntilAllPlansForVMAreReady(VM& vm)
     // After we release this lock, we know that although other VMs may still
     // be adding plans, our VM will not be.
     
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     
     if (Options::verboseCompilationQueue()) {
         dump(locker, WTF::dataFile());
@@ -147,7 +147,7 @@ void Worklist::waitUntilAllPlansForVMAreReady(VM& vm)
 void Worklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<Plan>, 8>& myReadyPlans)
 {
     DeferGC deferGC(vm.heap);
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     for (size_t i = 0; i < m_readyPlans.size(); ++i) {
         RefPtr<Plan> plan = m_readyPlans[i];
         if (&plan->vm != &vm)
@@ -192,7 +192,7 @@ Worklist::State Worklist::completeAllReadyPlansForVM(VM& vm, CompilationKey requ
     }
     
     if (!!requestedKey && resultingState == NotKnown) {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         if (m_plans.contains(requestedKey))
             resultingState = Compiling;
     }
@@ -225,7 +225,7 @@ void Worklist::visitWeakReferences(SlotVisitor& visitor, CodeBlockSet& codeBlock
 {
     VM* vm = visitor.heap()->vm();
     {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
             Plan* plan = iter->value.get();
             if (&plan->vm != vm)
@@ -248,7 +248,7 @@ void Worklist::visitWeakReferences(SlotVisitor& visitor, CodeBlockSet& codeBlock
 void Worklist::removeDeadPlans(VM& vm)
 {
     {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         HashSet<CompilationKey> deadPlanKeys;
         for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
             Plan* plan = iter->value.get();
@@ -295,17 +295,17 @@ void Worklist::removeDeadPlans(VM& vm)
 
 size_t Worklist::queueLength()
 {
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     return m_queue.size();
 }
 
 void Worklist::dump(PrintStream& out) const
 {
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     dump(locker, out);
 }
 
-void Worklist::dump(const MutexLocker&, PrintStream& out) const
+void Worklist::dump(const DeprecatedMutexLocker&, PrintStream& out) const
 {
     out.print(
         "Worklist(", RawPointer(this), ")[Queue Length = ", m_queue.size(),
@@ -325,7 +325,7 @@ void Worklist::runThread(ThreadData* data)
     for (;;) {
         RefPtr<Plan> plan;
         {
-            MutexLocker locker(m_lock);
+            DeprecatedMutexLocker locker(m_lock);
             while (m_queue.isEmpty())
                 m_planEnqueued.wait(m_lock);
             
@@ -341,9 +341,9 @@ void Worklist::runThread(ThreadData* data)
         }
         
         {
-            MutexLocker locker(data->m_rightToRun);
+            DeprecatedMutexLocker locker(data->m_rightToRun);
             {
-                MutexLocker locker(m_lock);
+                DeprecatedMutexLocker locker(m_lock);
                 if (plan->stage == Plan::Cancelled) {
                     m_numberOfActiveThreads--;
                     continue;
@@ -359,7 +359,7 @@ void Worklist::runThread(ThreadData* data)
             RELEASE_ASSERT(!plan->vm.heap.isCollecting());
             
             {
-                MutexLocker locker(m_lock);
+                DeprecatedMutexLocker locker(m_lock);
                 if (plan->stage == Plan::Cancelled) {
                     m_numberOfActiveThreads--;
                     continue;
@@ -370,7 +370,7 @@ void Worklist::runThread(ThreadData* data)
         }
 
         {
-            MutexLocker locker(m_lock);
+            DeprecatedMutexLocker locker(m_lock);
             
             // We could have been cancelled between releasing rightToRun and acquiring m_lock.
             // This would mean that we might be in the middle of GC right now.

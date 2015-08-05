@@ -107,7 +107,7 @@ public:
     // MobileSafari will grab this mutex on the main thread before dispatching the task to 
     // clean up zero byte database files.  Any operations to open new database will have to
     // wait for that task to finish by waiting on this mutex.
-    static Mutex& openDatabaseMutex();
+    static DeprecatedMutex& openDatabaseMutex();
     
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskWillBeScheduled();
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskDidFinish();
@@ -150,11 +150,11 @@ private:
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
     typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*> DatabaseOriginMap;
 
-    Mutex m_openDatabaseMapGuard;
+    DeprecatedMutex m_openDatabaseMapGuard;
     mutable std::unique_ptr<DatabaseOriginMap> m_openDatabaseMap;
 
     // This lock protects m_database, m_originLockMap, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
-    Mutex m_databaseGuard;
+    DeprecatedMutex m_databaseGuard;
     SQLiteDatabase m_database;
 
     typedef HashMap<String, RefPtr<OriginLock>> OriginLockMap;

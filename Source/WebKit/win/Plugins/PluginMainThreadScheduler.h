@@ -79,7 +79,7 @@ private:
 
     bool m_callPending;
     CallQueueMap m_callQueueMap;
-    Mutex m_queueMutex;
+    DeprecatedMutex m_queueMutex;
 };
 
 } // namespace WebCore

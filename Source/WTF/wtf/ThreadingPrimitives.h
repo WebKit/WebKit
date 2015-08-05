@@ -70,11 +70,11 @@ typedef void* PlatformMutex;
 typedef void* PlatformCondition;
 #endif
     
-class Mutex {
-    WTF_MAKE_NONCOPYABLE(Mutex); WTF_MAKE_FAST_ALLOCATED;
+class DeprecatedMutex {
+    WTF_MAKE_NONCOPYABLE(DeprecatedMutex); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WTF_EXPORT_PRIVATE Mutex();
-    WTF_EXPORT_PRIVATE ~Mutex();
+    WTF_EXPORT_PRIVATE DeprecatedMutex();
+    WTF_EXPORT_PRIVATE ~DeprecatedMutex();
 
     WTF_EXPORT_PRIVATE void lock();
     WTF_EXPORT_PRIVATE bool tryLock();
@@ -86,7 +86,7 @@ private:
     PlatformMutex m_mutex;
 };
 
-typedef Locker<Mutex> MutexLocker;
+typedef Locker<DeprecatedMutex> DeprecatedMutexLocker;
 
 class ThreadCondition {
     WTF_MAKE_NONCOPYABLE(ThreadCondition);
@@ -94,10 +94,10 @@ public:
     WTF_EXPORT_PRIVATE ThreadCondition();
     WTF_EXPORT_PRIVATE ~ThreadCondition();
     
-    WTF_EXPORT_PRIVATE void wait(Mutex& mutex);
+    WTF_EXPORT_PRIVATE void wait(DeprecatedMutex&);
     // Returns true if the condition was signaled before absoluteTime, false if the absoluteTime was reached or is in the past.
     // The absoluteTime is in seconds, starting on January 1, 1970. The time is assumed to use the same time zone as WTF::currentTime().
-    WTF_EXPORT_PRIVATE bool timedWait(Mutex&, double absoluteTime);
+    WTF_EXPORT_PRIVATE bool timedWait(DeprecatedMutex&, double absoluteTime);
     WTF_EXPORT_PRIVATE void signal();
     WTF_EXPORT_PRIVATE void broadcast();
     
@@ -113,8 +113,8 @@ WTF_EXPORT_PRIVATE DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime);
 
 } // namespace WTF
 
-using WTF::Mutex;
-using WTF::MutexLocker;
+using WTF::DeprecatedMutex;
+using WTF::DeprecatedMutexLocker;
 using WTF::ThreadCondition;
 
 #if OS(WINDOWS)

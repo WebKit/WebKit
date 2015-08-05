@@ -106,7 +106,7 @@ private:
     HashMap<UniqueIDBDatabaseIdentifier, RefPtr<UniqueIDBDatabase>> m_idbDatabases;
 
     Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
-    Mutex m_databaseTaskMutex;
+    DeprecatedMutex m_databaseTaskMutex;
 };
 
 } // namespace WebKit

@@ -102,9 +102,9 @@ void unsafeThreadWasDetached(ThreadIdentifier);
 void threadDidExit(ThreadIdentifier);
 void threadWasJoined(ThreadIdentifier);
 
-static Mutex& threadMapMutex()
+static DeprecatedMutex& threadMapMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DeprecatedMutex, mutex, ());
     return mutex;
 }
 
@@ -126,7 +126,7 @@ void initializeThreading()
     ThreadIdentifierData::initializeOnce();
     StackStats::initialize();
     wtfThreadData();
-    s_dtoaP5Mutex = new Mutex;
+    s_dtoaP5Mutex = new DeprecatedMutex;
     initializeDates();
 }
 
@@ -138,7 +138,7 @@ static ThreadMap& threadMap()
 
 static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle)
 {
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
 
     ThreadMap::iterator i = threadMap().begin();
     for (; i != threadMap().end(); ++i) {
@@ -152,7 +152,7 @@ static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle
 static ThreadIdentifier establishIdentifierForPthreadHandle(const pthread_t& pthreadHandle)
 {
     ASSERT(!identifierByPthreadHandle(pthreadHandle));
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
     static ThreadIdentifier identifierCount = 1;
     threadMap().add(identifierCount, std::make_unique<PthreadState>(pthreadHandle));
     return identifierCount++;
@@ -219,7 +219,7 @@ void changeThreadPriority(ThreadIdentifier threadID, int delta)
     ASSERT(threadID);
 
     {
-        MutexLocker locker(threadMapMutex());
+        DeprecatedMutexLocker locker(threadMapMutex());
         pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
         ASSERT(pthreadHandle);
     }
@@ -242,7 +242,7 @@ int waitForThreadCompletion(ThreadIdentifier threadID)
 
     {
         // We don't want to lock across the call to join, since that can block our thread and cause deadlock.
-        MutexLocker locker(threadMapMutex());
+        DeprecatedMutexLocker locker(threadMapMutex());
         pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
         ASSERT(pthreadHandle);
     }
@@ -254,7 +254,7 @@ int waitForThreadCompletion(ThreadIdentifier threadID)
     else if (joinResult)
         LOG_ERROR("ThreadIdentifier %u was unable to be joined.\n", threadID);
 
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
     PthreadState* state = threadMap().get(threadID);
     ASSERT(state);
     ASSERT(state->joinableState() == PthreadState::Joinable);
@@ -273,7 +273,7 @@ void detachThread(ThreadIdentifier threadID)
 {
     ASSERT(threadID);
 
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
     pthread_t pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
     ASSERT(pthreadHandle);
 
@@ -291,7 +291,7 @@ void detachThread(ThreadIdentifier threadID)
 
 void threadDidExit(ThreadIdentifier threadID)
 {
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
     PthreadState* state = threadMap().get(threadID);
     ASSERT(state);
     
@@ -313,7 +313,7 @@ ThreadIdentifier currentThread()
     return id;
 }
 
-Mutex::Mutex()
+DeprecatedMutex::DeprecatedMutex()
 {
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
@@ -325,19 +325,19 @@ Mutex::Mutex()
     pthread_mutexattr_destroy(&attr);
 }
 
-Mutex::~Mutex()
+DeprecatedMutex::~DeprecatedMutex()
 {
     int result = pthread_mutex_destroy(&m_mutex);
     ASSERT_UNUSED(result, !result);
 }
 
-void Mutex::lock()
+void DeprecatedMutex::lock()
 {
     int result = pthread_mutex_lock(&m_mutex);
     ASSERT_UNUSED(result, !result);
 }
 
-bool Mutex::tryLock()
+bool DeprecatedMutex::tryLock()
 {
     int result = pthread_mutex_trylock(&m_mutex);
 
@@ -350,7 +350,7 @@ bool Mutex::tryLock()
     return false;
 }
 
-void Mutex::unlock()
+void DeprecatedMutex::unlock()
 {
     int result = pthread_mutex_unlock(&m_mutex);
     ASSERT_UNUSED(result, !result);
@@ -366,13 +366,13 @@ ThreadCondition::~ThreadCondition()
     pthread_cond_destroy(&m_condition);
 }
     
-void ThreadCondition::wait(Mutex& mutex)
+void ThreadCondition::wait(DeprecatedMutex& mutex)
 {
     int result = pthread_cond_wait(&m_condition, &mutex.impl());
     ASSERT_UNUSED(result, !result);
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
+bool ThreadCondition::timedWait(DeprecatedMutex& mutex, double absoluteTime)
 {
     if (absoluteTime < currentTime())
         return false;

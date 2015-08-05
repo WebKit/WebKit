@@ -3632,7 +3632,7 @@ static inline IMP getMethod(id o, SEL s)
 
     IntRect newRect;
     {
-        MutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
+        DeprecatedMutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
         if (CGRectIsNull(_private->pendingFixedPositionLayoutRect))
             return;
         newRect = enclosingIntRect(_private->pendingFixedPositionLayoutRect);
@@ -3646,7 +3646,7 @@ static inline IMP getMethod(id o, SEL s)
 - (void)_setCustomFixedPositionLayoutRectInWebThread:(CGRect)rect synchronize:(BOOL)synchronize
 {
     {
-        MutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
+        DeprecatedMutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
         _private->pendingFixedPositionLayoutRect = rect;
     }
     if (!synchronize)
@@ -3660,7 +3660,7 @@ static inline IMP getMethod(id o, SEL s)
 {
     ASSERT(WebThreadIsLocked());
     {
-        MutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
+        DeprecatedMutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
         _private->pendingFixedPositionLayoutRect = rect;
     }
     [self _synchronizeCustomFixedPositionLayoutRect];
@@ -3668,7 +3668,7 @@ static inline IMP getMethod(id o, SEL s)
 
 - (BOOL)_fetchCustomFixedPositionLayoutRect:(NSRect*)rect
 {
-    MutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
+    DeprecatedMutexLocker locker(_private->pendingFixedPositionLayoutRectMutex);
     if (CGRectIsNull(_private->pendingFixedPositionLayoutRect))
         return false;
 

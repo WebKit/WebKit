@@ -81,7 +81,7 @@ private:
     void runLoop();
 
     WTF::ThreadIdentifier m_threadID;
-    Mutex m_threadCreationMutex;
+    DeprecatedMutex m_threadCreationMutex;
     MessageQueue<DecodingTask> m_queue;
 };
 

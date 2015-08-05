@@ -76,7 +76,7 @@ public:
         bool m_running;
         ParallelEnvironment* m_parent;
 
-        mutable Mutex m_mutex;
+        mutable DeprecatedMutex m_mutex;
         ThreadCondition m_threadCondition;
 
         ThreadFunction m_threadFunction;

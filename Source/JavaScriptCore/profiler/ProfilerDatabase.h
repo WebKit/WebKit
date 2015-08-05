@@ -81,8 +81,8 @@ private:
     //   performance, but if we did have contention, we would want a sensible,
     //   power-aware backoff. An adaptive mutex will do this as a matter of course,
     //   but a spinlock won't.
-    typedef Mutex Lock;
-    typedef MutexLocker Locker;
+    typedef DeprecatedMutex Lock;
+    typedef DeprecatedMutexLocker Locker;
     
 
     void addDatabaseToAtExit();

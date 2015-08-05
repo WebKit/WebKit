@@ -160,11 +160,11 @@ private:
     typedef HashMap<ScrollingNodeID, ScrollingTreeNode*> ScrollingTreeNodeMap;
     ScrollingTreeNodeMap m_nodeMap;
 
-    Mutex m_mutex;
+    DeprecatedMutex m_mutex;
     Region m_nonFastScrollableRegion;
     FloatPoint m_mainFrameScrollPosition;
 
-    Mutex m_swipeStateMutex;
+    DeprecatedMutex m_swipeStateMutex;
     ScrollPinningBehavior m_scrollPinningBehavior { DoNotPin };
     ScrollingNodeID m_latchedNode { 0 };
 

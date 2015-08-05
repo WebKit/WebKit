@@ -59,7 +59,7 @@ int SQLiteStatement::prepare()
 {
     ASSERT(!m_isPrepared);
 
-    MutexLocker databaseLock(m_database.databaseMutex());
+    DeprecatedMutexLocker databaseLock(m_database.databaseMutex());
     if (m_database.isInterrupted())
         return SQLITE_INTERRUPT;
 
@@ -88,7 +88,7 @@ int SQLiteStatement::prepare()
 
 int SQLiteStatement::step()
 {
-    MutexLocker databaseLock(m_database.databaseMutex());
+    DeprecatedMutexLocker databaseLock(m_database.databaseMutex());
     if (m_database.isInterrupted())
         return SQLITE_INTERRUPT;
 

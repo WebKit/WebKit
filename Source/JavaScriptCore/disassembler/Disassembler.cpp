@@ -78,14 +78,14 @@ public:
     
     void enqueue(std::unique_ptr<DisassemblyTask> task)
     {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         m_queue.append(WTF::move(task));
         m_condition.broadcast();
     }
     
     void waitUntilEmpty()
     {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         while (!m_queue.isEmpty() || m_working)
             m_condition.wait(m_lock);
     }
@@ -96,7 +96,7 @@ private:
         for (;;) {
             std::unique_ptr<DisassemblyTask> task;
             {
-                MutexLocker locker(m_lock);
+                DeprecatedMutexLocker locker(m_lock);
                 m_working = false;
                 m_condition.broadcast();
                 while (m_queue.isEmpty())
@@ -112,7 +112,7 @@ private:
         }
     }
     
-    Mutex m_lock;
+    DeprecatedMutex m_lock;
     ThreadCondition m_condition;
     Deque<std::unique_ptr<DisassemblyTask>> m_queue;
     bool m_working { false };

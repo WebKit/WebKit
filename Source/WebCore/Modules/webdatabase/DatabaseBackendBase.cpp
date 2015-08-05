@@ -322,7 +322,7 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
 #if PLATFORM(IOS)
     {
         // Make sure we wait till the background removal of the empty database files finished before trying to open any database.
-        MutexLocker locker(DatabaseTracker::openDatabaseMutex());
+        DeprecatedMutexLocker locker(DatabaseTracker::openDatabaseMutex());
     }
 #endif
 
@@ -593,7 +593,7 @@ void DatabaseBackendBase::interrupt()
 
 bool DatabaseBackendBase::isInterrupted()
 {
-    MutexLocker locker(m_sqliteDatabase.databaseMutex());
+    DeprecatedMutexLocker locker(m_sqliteDatabase.databaseMutex());
     return m_sqliteDatabase.isInterrupted();
 }
 

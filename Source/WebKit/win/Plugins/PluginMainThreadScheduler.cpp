@@ -42,7 +42,7 @@ PluginMainThreadScheduler::PluginMainThreadScheduler()
 
 void PluginMainThreadScheduler::scheduleCall(NPP npp, MainThreadFunction function, void* userData)
 {
-    MutexLocker lock(m_queueMutex);
+    DeprecatedMutexLocker lock(m_queueMutex);
 
     CallQueueMap::iterator it = m_callQueueMap.find(npp);
     if (it == m_callQueueMap.end())
@@ -58,7 +58,7 @@ void PluginMainThreadScheduler::scheduleCall(NPP npp, MainThreadFunction functio
 
 void PluginMainThreadScheduler::registerPlugin(NPP npp)
 {
-    MutexLocker lock(m_queueMutex);
+    DeprecatedMutexLocker lock(m_queueMutex);
 
     ASSERT(!m_callQueueMap.contains(npp));
     m_callQueueMap.set(npp, Deque<Call>());
@@ -66,7 +66,7 @@ void PluginMainThreadScheduler::registerPlugin(NPP npp)
 
 void PluginMainThreadScheduler::unregisterPlugin(NPP npp)
 {
-    MutexLocker lock(m_queueMutex);
+    DeprecatedMutexLocker lock(m_queueMutex);
 
     ASSERT(m_callQueueMap.contains(npp));
     m_callQueueMap.remove(npp);
@@ -77,7 +77,7 @@ void PluginMainThreadScheduler::dispatchCallsForPlugin(NPP npp, const Deque<Call
     for (auto& call : calls) {
         // Check if the plug-in has been destroyed.
         {
-            MutexLocker lock(m_queueMutex);
+            DeprecatedMutexLocker lock(m_queueMutex);
             if (!m_callQueueMap.contains(npp))
                 return;
         }

@@ -1,3 +1,21 @@
+2015-08-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename Mutex to DeprecatedMutex
+        https://bugs.webkit.org/show_bug.cgi?id=147675
+
+        Reviewed by Geoffrey Garen.
+
+        * Storage/WebDatabaseManager.mm:
+        (transactionBackgroundTaskIdentifierLock):
+        (+[WebDatabaseManager startBackgroundTask]):
+        (+[WebDatabaseManager endBackgroundTask]):
+        * WebView/WebView.mm:
+        (-[WebView _synchronizeCustomFixedPositionLayoutRect]):
+        (-[WebView _setCustomFixedPositionLayoutRectInWebThread:synchronize:]):
+        (-[WebView _setCustomFixedPositionLayoutRect:]):
+        (-[WebView _fetchCustomFixedPositionLayoutRect:]):
+        * WebView/WebViewData.h:
+
 2015-08-04  Anders Carlsson  <andersca@apple.com>
 
         Remove database thread pause code

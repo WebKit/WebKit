@@ -85,7 +85,7 @@ private:
 
     const String m_databaseIdentifier;
 
-    Mutex m_syncLock;
+    DeprecatedMutex m_syncLock;
     HashMap<String, String> m_itemsPendingSync;
     bool m_clearItemsWhileSyncing;
     bool m_syncScheduled;
@@ -94,7 +94,7 @@ private:
 
     bool m_syncCloseDatabase;
 
-    mutable Mutex m_importLock;
+    mutable DeprecatedMutex m_importLock;
     ThreadCondition m_importCondition;
     bool m_importComplete;
     void markImported();

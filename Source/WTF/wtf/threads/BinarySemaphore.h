@@ -44,7 +44,7 @@ public:
 private:
     bool m_isSet;
 
-    Mutex m_mutex;
+    DeprecatedMutex m_mutex;
     ThreadCondition m_condition;
 };
 

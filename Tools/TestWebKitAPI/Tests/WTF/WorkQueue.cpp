@@ -40,7 +40,7 @@ static const char* dispatchAfterLabel = "dispatchAfter";
     
 TEST(WTF_WorkQueue, Simple)
 {
-    Mutex m_lock;
+    DeprecatedMutex m_lock;
     ThreadCondition m_testCompleted;
     Vector<std::string> m_functionCallOrder;
 
@@ -56,7 +56,7 @@ TEST(WTF_WorkQueue, Simple)
     int initialRefCount = queue->refCount();
     EXPECT_EQ(1, initialRefCount);
 
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     queue->dispatch([&](void) {
         m_functionCallOrder.append(simpleTestLabel);
         calledSimpleTest = true;
@@ -69,7 +69,7 @@ TEST(WTF_WorkQueue, Simple)
     });
 
     queue->dispatch([&](void) {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         m_functionCallOrder.append(thirdTestLabel);
         calledThirdTest = true;
 
@@ -96,7 +96,7 @@ TEST(WTF_WorkQueue, Simple)
 
 TEST(WTF_WorkQueue, TwoQueues)
 {
-    Mutex m_lock;
+    DeprecatedMutex m_lock;
     ThreadCondition m_testQueue1Completed, m_testQueue2Completed;
     Vector<std::string> m_functionCallOrder;
 
@@ -110,7 +110,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     EXPECT_EQ(1, queue1->refCount());
     EXPECT_EQ(1, queue2->refCount());
 
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
     
     queue1->dispatch([&](void) {
         m_functionCallOrder.append(simpleTestLabel);
@@ -120,7 +120,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     queue2->dispatch([&](void) {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
 
         // Will fail if queue2 took the mutex before queue1.
         EXPECT_TRUE(calledThirdTest);
@@ -131,7 +131,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     });
 
     queue1->dispatch([&](void) {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         m_functionCallOrder.append(thirdTestLabel);
         calledThirdTest = true;
         
@@ -158,7 +158,7 @@ TEST(WTF_WorkQueue, TwoQueues)
 
 TEST(WTF_WorkQueue, DispatchAfter)
 {
-    Mutex m_lock;
+    DeprecatedMutex m_lock;
     ThreadCondition m_testCompleted, m_dispatchAfterTestCompleted;
     Vector<std::string> m_functionCallOrder;
 
@@ -167,17 +167,17 @@ TEST(WTF_WorkQueue, DispatchAfter)
 
     auto queue = WorkQueue::create("com.apple.WebKit.Test.dispatchAfter");
 
-    MutexLocker locker(m_lock);
+    DeprecatedMutexLocker locker(m_lock);
 
     queue->dispatch([&](void) {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         m_functionCallOrder.append(simpleTestLabel);
         calledSimpleTest = true;
         m_testCompleted.signal();
     });
 
     queue->dispatchAfter(std::chrono::milliseconds(500), [&](void) {
-        MutexLocker locker(m_lock);
+        DeprecatedMutexLocker locker(m_lock);
         m_functionCallOrder.append(dispatchAfterLabel);
         calledDispatchAfterTest = true;
         m_dispatchAfterTestCompleted.signal();

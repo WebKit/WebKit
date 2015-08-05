@@ -285,7 +285,7 @@ void SamplingTool::doRun()
 
 #if ENABLE(CODEBLOCK_SAMPLING)
     if (CodeBlock* codeBlock = sample.codeBlock()) {
-        MutexLocker locker(m_scriptSampleMapMutex);
+        DeprecatedMutexLocker locker(m_scriptSampleMapMutex);
         ScriptSampleRecord* record = m_scopeSampleMap->get(codeBlock->ownerExecutable());
         ASSERT(record);
         record->sample(codeBlock, sample.vPC());
@@ -301,7 +301,7 @@ void SamplingTool::sample()
 void SamplingTool::notifyOfScope(VM& vm, ScriptExecutable* script)
 {
 #if ENABLE(CODEBLOCK_SAMPLING)
-    MutexLocker locker(m_scriptSampleMapMutex);
+    DeprecatedMutexLocker locker(m_scriptSampleMapMutex);
     m_scopeSampleMap->set(script, adoptPtr(new ScriptSampleRecord(vm, script)));
 #else
     UNUSED_PARAM(vm);

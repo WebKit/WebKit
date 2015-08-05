@@ -95,15 +95,15 @@ private:
     void syncImportOriginIdentifiers();
 
     // Mutex for m_database and m_storageDirectoryPath.
-    Mutex m_databaseMutex;
+    DeprecatedMutex m_databaseMutex;
     SQLiteDatabase m_database;
     String m_storageDirectoryPath;
 
-    Mutex m_clientMutex;
+    DeprecatedMutex m_clientMutex;
     StorageTrackerClient* m_client;
 
     // Guard for m_originSet and m_originsBeingDeleted.
-    Mutex m_originSetMutex;
+    DeprecatedMutex m_originSetMutex;
     typedef HashSet<String> OriginSet;
     OriginSet m_originSet;
     OriginSet m_originsBeingDeleted;

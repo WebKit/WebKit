@@ -85,7 +85,7 @@ private:
     
     void removeAllReadyPlansForVM(VM&, Vector<RefPtr<Plan>, 8>&);
 
-    void dump(const MutexLocker&, PrintStream&) const;
+    void dump(const DeprecatedMutexLocker&, PrintStream&) const;
     
     CString m_threadName;
     
@@ -103,9 +103,9 @@ private:
     // be completed.
     Vector<RefPtr<Plan>, 16> m_readyPlans;
 
-    Mutex m_suspensionLock;
+    DeprecatedMutex m_suspensionLock;
     
-    mutable Mutex m_lock;
+    mutable DeprecatedMutex m_lock;
     ThreadCondition m_planEnqueued;
     ThreadCondition m_planCompiled;
     

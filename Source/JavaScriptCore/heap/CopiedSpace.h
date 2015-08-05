@@ -138,7 +138,7 @@ private:
     bool m_inCopyingPhase;
     bool m_shouldDoCopyPhase;
 
-    Mutex m_loanedBlocksLock; 
+    DeprecatedMutex m_loanedBlocksLock; 
     ThreadCondition m_loanedBlocksCondition;
     size_t m_numberOfLoanedBlocks;
     

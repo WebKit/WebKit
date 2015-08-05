@@ -145,7 +145,7 @@ private:
 
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!
     Vector<std::function<void()>> m_renderQueue;
-    Mutex m_renderQueueMutex;
+    DeprecatedMutex m_renderQueueMutex;
 
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 

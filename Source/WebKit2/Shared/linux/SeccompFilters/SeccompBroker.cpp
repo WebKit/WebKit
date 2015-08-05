@@ -65,7 +65,7 @@ private:
 
     int m_socket;
 
-    mutable Mutex m_socketLock;
+    mutable DeprecatedMutex m_socketLock;
 
     // Maps files that may be read by malloc() to open file descriptors.
     HashMap<String, int> m_fileDescriptorCache;

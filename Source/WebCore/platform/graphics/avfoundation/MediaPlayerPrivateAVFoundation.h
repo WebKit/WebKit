@@ -317,7 +317,7 @@ private:
     std::function<void()> m_pendingSeek;
 
     Vector<Notification> m_queuedNotifications;
-    mutable Mutex m_queueMutex;
+    mutable DeprecatedMutex m_queueMutex;
 
     mutable std::unique_ptr<PlatformTimeRanges> m_cachedLoadedTimeRanges;
 

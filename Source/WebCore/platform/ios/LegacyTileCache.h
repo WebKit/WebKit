@@ -211,9 +211,9 @@ private:
     float m_pendingScale;
     float m_pendingZoomedOutScale;
 
-    mutable Mutex m_tileMutex;
-    mutable Mutex m_savedDisplayRectMutex;
-    mutable Mutex m_contentReplacementImageMutex;
+    mutable DeprecatedMutex m_tileMutex;
+    mutable DeprecatedMutex m_savedDisplayRectMutex;
+    mutable DeprecatedMutex m_contentReplacementImageMutex;
 
     bool m_tileControllerShouldUseLowScaleTiles;
 };

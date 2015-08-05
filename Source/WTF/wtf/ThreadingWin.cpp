@@ -143,9 +143,9 @@ void initializeCurrentThreadInternal(const char* szThreadName)
 #endif
 }
 
-static Mutex& threadMapMutex()
+static DeprecatedMutex& threadMapMutex()
 {
-    static Mutex mutex;
+    static DeprecatedMutex mutex;
     return mutex;
 }
 
@@ -165,7 +165,7 @@ void initializeThreading()
     threadMapMutex();
     initializeRandomNumberGenerator();
     wtfThreadData();
-    s_dtoaP5Mutex = new Mutex;
+    s_dtoaP5Mutex = new DeprecatedMutex;
     initializeDates();
 }
 
@@ -177,20 +177,20 @@ static HashMap<DWORD, HANDLE>& threadMap()
 
 static void storeThreadHandleByIdentifier(DWORD threadID, HANDLE threadHandle)
 {
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
     ASSERT(!threadMap().contains(threadID));
     threadMap().add(threadID, threadHandle);
 }
 
 static HANDLE threadHandleForIdentifier(ThreadIdentifier id)
 {
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
     return threadMap().get(id);
 }
 
 static void clearThreadHandleForIdentifier(ThreadIdentifier id)
 {
-    MutexLocker locker(threadMapMutex());
+    DeprecatedMutexLocker locker(threadMapMutex());
     ASSERT(threadMap().contains(id));
     threadMap().remove(id);
 }
@@ -277,25 +277,25 @@ ThreadIdentifier currentThread()
     return static_cast<ThreadIdentifier>(GetCurrentThreadId());
 }
 
-Mutex::Mutex()
+DeprecatedMutex::DeprecatedMutex()
 {
     m_mutex.m_recursionCount = 0;
     InitializeCriticalSection(&m_mutex.m_internalMutex);
 }
 
-Mutex::~Mutex()
+DeprecatedMutex::~DeprecatedMutex()
 {
     DeleteCriticalSection(&m_mutex.m_internalMutex);
 }
 
-void Mutex::lock()
+void DeprecatedMutex::lock()
 {
     EnterCriticalSection(&m_mutex.m_internalMutex);
     ++m_mutex.m_recursionCount;
 }
     
 #pragma warning(suppress: 26115)
-bool Mutex::tryLock()
+bool DeprecatedMutex::tryLock()
 {
     // This method is modeled after the behavior of pthread_mutex_trylock,
     // which will return an error if the lock is already owned by the
@@ -321,7 +321,7 @@ bool Mutex::tryLock()
     return false;
 }
 
-void Mutex::unlock()
+void DeprecatedMutex::unlock()
 {
     ASSERT(m_mutex.m_recursionCount);
     --m_mutex.m_recursionCount;
@@ -458,12 +458,12 @@ ThreadCondition::~ThreadCondition()
     CloseHandle(m_condition.m_unblockLock);
 }
 
-void ThreadCondition::wait(Mutex& mutex)
+void ThreadCondition::wait(DeprecatedMutex& mutex)
 {
     m_condition.timedWait(mutex.impl(), INFINITE);
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
+bool ThreadCondition::timedWait(DeprecatedMutex& mutex, double absoluteTime)
 {
     DWORD interval = absoluteTimeToWaitTimeoutInterval(absoluteTime);
 

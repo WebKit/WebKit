@@ -111,9 +111,9 @@ private:
 
     ThreadIdentifier m_threadIdentifier;
     ThreadCondition m_initializeRunLoopCondition;
-    Mutex m_initializeRunLoopConditionMutex;
+    DeprecatedMutex m_initializeRunLoopConditionMutex;
     ThreadCondition m_terminateRunLoopCondition;
-    Mutex m_terminateRunLoopConditionMutex;
+    DeprecatedMutex m_terminateRunLoopConditionMutex;
 };
 
 } // namespace WebKit

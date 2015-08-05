@@ -41,7 +41,7 @@ struct _WebKitSoupRequestInputStreamPrivate {
     uint64_t bytesReceived;
     uint64_t bytesRead;
 
-    Mutex readLock;
+    DeprecatedMutex readLock;
     std::unique_ptr<AsyncReadData> pendingAsyncRead;
 };
 
@@ -84,7 +84,7 @@ static void webkitSoupRequestInputStreamReadAsync(GInputStream* inputStream, voi
     WebKitSoupRequestInputStream* stream = WEBKIT_SOUP_REQUEST_INPUT_STREAM(inputStream);
     GRefPtr<GTask> task = adoptGRef(g_task_new(stream, cancellable, callback, userData));
 
-    MutexLocker locker(stream->priv->readLock);
+    DeprecatedMutexLocker locker(stream->priv->readLock);
 
     if (!webkitSoupRequestInputStreamHasDataToRead(stream) && !webkitSoupRequestInputStreamIsWaitingForData(stream)) {
         g_task_return_int(task.get(), 0);
@@ -143,7 +143,7 @@ void webkitSoupRequestInputStreamAddData(WebKitSoupRequestInputStream* stream, c
     if (webkitSoupRequestInputStreamFinished(stream))
         return;
 
-    MutexLocker locker(stream->priv->readLock);
+    DeprecatedMutexLocker locker(stream->priv->readLock);
 
     if (dataLength) {
         // Truncate the dataLength to the contentLength if it's known.

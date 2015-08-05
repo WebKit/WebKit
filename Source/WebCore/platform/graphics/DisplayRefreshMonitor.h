@@ -72,7 +72,7 @@ public:
 
     void setMonotonicAnimationStartTime(double startTime) { m_monotonicAnimationStartTime = startTime; }
 
-    Mutex& mutex() { return m_mutex; }
+    DeprecatedMutex& mutex() { return m_mutex; }
 
     static RefPtr<DisplayRefreshMonitor> createDefaultDisplayRefreshMonitor(PlatformDisplayID);
 
@@ -89,7 +89,7 @@ private:
     bool m_previousFrameDone;
     int m_unscheduledFireCount; // Number of times the display link has fired with no clients.
     PlatformDisplayID m_displayID;
-    Mutex m_mutex;
+    DeprecatedMutex m_mutex;
 
     HashSet<DisplayRefreshMonitorClient*> m_clients;
     HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified;

@@ -44,9 +44,9 @@ WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit
 
 typedef HashMap<String, LocalizedString*> LocalizedStringMap;
 
-static Mutex& mainBundleLocStringsMutex()
+static DeprecatedMutex& mainBundleLocStringsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DeprecatedMutex, mutex, ());
     return mutex;
 }
 
@@ -56,9 +56,9 @@ static LocalizedStringMap& mainBundleLocStrings()
     return map;
 }
 
-static Mutex& frameworkLocStringsMutex()
+static DeprecatedMutex& frameworkLocStringsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DeprecatedMutex, mutex, ());
     return mutex;
 }
 
@@ -175,12 +175,12 @@ static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* st
 static LocalizedString* findCachedString(WebLocalizableStringsBundle* stringsBundle, const String& key)
 {
     if (!stringsBundle) {
-        MutexLocker lock(mainBundleLocStringsMutex());
+        DeprecatedMutexLocker lock(mainBundleLocStringsMutex());
         return mainBundleLocStrings().get(key);
     }
 
     if (stringsBundle->bundle == WebKitLocalizableStringsBundle.bundle) {
-        MutexLocker lock(frameworkLocStringsMutex());
+        DeprecatedMutexLocker lock(frameworkLocStringsMutex());
         return frameworkLocStrings().get(key);
     }
 
@@ -190,12 +190,12 @@ static LocalizedString* findCachedString(WebLocalizableStringsBundle* stringsBun
 static void cacheString(WebLocalizableStringsBundle* stringsBundle, const String& key, LocalizedString* value)
 {
     if (!stringsBundle) {
-        MutexLocker lock(mainBundleLocStringsMutex());
+        DeprecatedMutexLocker lock(mainBundleLocStringsMutex());
         mainBundleLocStrings().set(key, value);
         return;
     }
 
-    MutexLocker lock(frameworkLocStringsMutex());
+    DeprecatedMutexLocker lock(frameworkLocStringsMutex());
     frameworkLocStrings().set(key, value);
 }
 

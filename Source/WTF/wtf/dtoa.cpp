@@ -54,7 +54,7 @@
 
 namespace WTF {
 
-Mutex* s_dtoaP5Mutex;
+DeprecatedMutex* s_dtoaP5Mutex;
 
 typedef union {
     double d;

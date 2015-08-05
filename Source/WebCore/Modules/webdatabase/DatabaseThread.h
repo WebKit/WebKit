@@ -72,7 +72,7 @@ private:
     static void databaseThreadStart(void*);
     void databaseThread();
 
-    Mutex m_threadCreationMutex;
+    DeprecatedMutex m_threadCreationMutex;
     ThreadIdentifier m_threadID;
     RefPtr<DatabaseThread> m_selfRef;
 
