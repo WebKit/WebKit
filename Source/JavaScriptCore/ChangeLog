@@ -1,3 +1,21 @@
+2015-08-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Support for PropertyName Iterator (Reflect.enumerate) in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=147679
+
+        Reviewed by Timothy Hatcher.
+
+        Improve native iterator support for the PropertyName Iterator by
+        allowing inspection of the internal object within the iterator
+        and peeking of the next upcoming values of the iterator.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::iteratedValue):
+
 2015-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update Apple Windows build for VS2015

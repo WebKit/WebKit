@@ -3748,6 +3748,162 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
 }
 
 -----------------------------------------------------
+EXPRESSION: Reflect.enumerate({a:1, b:2, c:3})
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "PropertyName Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "PropertyName Iterator",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "object",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "b",
+              "_type": "number",
+              "_value": "2"
+            },
+            {
+              "_name": "c",
+              "_type": "number",
+              "_value": "3"
+            }
+          ],
+          "_entries": null
+        },
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "a",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "b",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "c",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "PropertyName Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "PropertyName Iterator",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "object",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: new Promise(function(){})
 {
   "_type": "object",

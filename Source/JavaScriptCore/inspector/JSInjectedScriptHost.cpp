@@ -40,6 +40,7 @@
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
+#include "JSPropertyNameIterator.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
@@ -165,7 +166,8 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
     if (value.inherits(JSArrayIterator::info())
         || value.inherits(JSMapIterator::info())
         || value.inherits(JSSetIterator::info())
-        || value.inherits(JSStringIterator::info()))
+        || value.inherits(JSStringIterator::info())
+        || value.inherits(JSPropertyNameIterator::info()))
         return jsNontrivialString(exec, ASCIILiteral("iterator"));
 
     if (value.inherits(JSInt8Array::info()) || value.inherits(JSInt16Array::info()) || value.inherits(JSInt32Array::info()))
@@ -336,6 +338,13 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         return array;
     }
 
+    if (JSPropertyNameIterator* propertyNameIterator = jsDynamicCast<JSPropertyNameIterator*>(value)) {
+        unsigned index = 0;
+        JSArray* array = constructEmptyArray(exec, nullptr, 1);
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "object", propertyNameIterator->iteratedValue()));
+        return array;
+    }
+
     return jsUndefined();
 }
 
@@ -441,6 +450,8 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
         iterator = setIterator->clone(exec);
     else if (JSStringIterator* stringIterator = jsDynamicCast<JSStringIterator*>(value))
         iterator = stringIterator->clone(exec);
+    else if (JSPropertyNameIterator* propertyNameIterator = jsDynamicCast<JSPropertyNameIterator*>(value))
+        iterator = propertyNameIterator->clone(exec);
     else
         return jsUndefined();
 

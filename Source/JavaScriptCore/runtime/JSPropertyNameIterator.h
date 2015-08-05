@@ -54,6 +54,8 @@ public:
     JSPropertyNameIterator* clone(ExecState*);
     bool next(ExecState*, JSValue&);
 
+    JSValue iteratedValue() const { return m_iteratedObject.get(); }
+
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:

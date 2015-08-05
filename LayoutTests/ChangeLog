@@ -1,3 +1,13 @@
+2015-08-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Support for PropertyName Iterator (Reflect.enumerate) in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=147679
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+
 2015-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Put Yosemite mac editing results in the correct location.
