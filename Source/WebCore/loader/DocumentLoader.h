@@ -325,6 +325,8 @@ namespace WebCore {
 
         void clearMainResource();
 
+        void cancelPolicyCheckIfNeeded();
+
         Frame* m_frame;
         Ref<CachedResourceLoader> m_cachedResourceLoader;
 
