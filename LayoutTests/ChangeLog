@@ -1,3 +1,15 @@
+2015-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r173784): [Mac] Correct latching error for non-scrollable iframe nested inside scrollable div.
+        https://bugs.webkit.org/show_bug.cgi?id=147668
+        <rdar://problem/21870332>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/fast/scrolling/resources/background.html: Added.
+        * platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html: Added.
+
 2015-08-04  Chris Dumez  <cdumez@apple.com>
 
         Subframes with no current HistoryItem should not prevent page-caching
