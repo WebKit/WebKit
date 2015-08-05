@@ -1,3 +1,11 @@
+2015-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix script paths in these tests.
+
+        * tiled-drawing/scrolling/non-fast-region/destroy-element-with-multiple-handlers-crash.html:
+        * tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-crash.html:
+        * tiled-drawing/scrolling/non-fast-region/destroy-wheel-element-parent-crash.html:
+
 2015-08-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed gardening. Marked appcache test as flakey.
