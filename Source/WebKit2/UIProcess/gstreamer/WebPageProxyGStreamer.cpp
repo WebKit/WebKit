@@ -28,8 +28,8 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "PageClient.h"
 #include "WebPageMessages.h"
-#include <gst/pbutils/install-plugins.h>
 
 namespace WebKit {
 
@@ -38,8 +38,8 @@ void WebPageProxy::requestInstallMissingMediaPlugins(const String& details)
     CString detail = details.utf8();
     const char* detailArray[2] = { detail.data(), nullptr };
     ref();
-    // FIXME: Use a proper GstInstallPluginsContext instead of nullptr.
-    GstInstallPluginsReturn result = gst_install_plugins_async(detailArray, nullptr, [](GstInstallPluginsReturn result, gpointer userData) {
+    GUniquePtr<GstInstallPluginsContext> context = m_pageClient.createGstInstallPluginsContext();
+    GstInstallPluginsReturn result = gst_install_plugins_async(detailArray, context.get(), [](GstInstallPluginsReturn result, gpointer userData) {
         RefPtr<WebPageProxy> page = adoptRef(static_cast<WebPageProxy*>(userData));
         if (page->isValid())
             page->send(Messages::WebPage::DidEndRequestInstallMissingMediaPlugins(static_cast<uint32_t>(result)));

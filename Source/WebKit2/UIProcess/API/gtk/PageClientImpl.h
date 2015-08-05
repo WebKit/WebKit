@@ -136,6 +136,10 @@ private:
 
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 
+#if ENABLE(VIDEO)
+    virtual GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext() override;
+#endif
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

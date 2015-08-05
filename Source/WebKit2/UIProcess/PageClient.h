@@ -34,6 +34,10 @@
 #include <WebCore/EditorClient.h>
 #include <wtf/Forward.h>
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+#include <WebCore/GUniquePtrGStreamer.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
 
@@ -314,6 +318,10 @@ public:
 
 #if PLATFORM(MAC)
     virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, API::Object*) = 0;
+#endif
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    virtual GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext() = 0;
 #endif
 };
 
