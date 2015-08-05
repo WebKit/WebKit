@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2011, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -292,6 +292,8 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitFullScreenEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanFalse);
+
+    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey), kCFBooleanTrue);
 
     defaultSettings = defaults;
 }
@@ -1840,5 +1842,17 @@ HRESULT WebPreferences::isInheritURIQueryComponentEnabled(BOOL* enabled)
 HRESULT WebPreferences::setEnableInheritURIQueryComponent(BOOL enabled)
 {
     setBoolValue(WebKitEnableInheritURIQueryComponentPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::allowDisplayAndRunningOfInsecureContent(BOOL* enabled)
+{
+    *enabled = boolValueForKey(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setAllowDisplayAndRunningOfInsecureContent(BOOL enabled)
+{
+    setBoolValue(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey, enabled);
     return S_OK;
 }

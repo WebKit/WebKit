@@ -490,6 +490,8 @@ public:
     // IWebPreferencesPrivate2
     virtual HRESULT STDMETHODCALLTYPE javaScriptRuntimeFlags(unsigned*);
     virtual HRESULT STDMETHODCALLTYPE setJavaScriptRuntimeFlags(unsigned);
+    virtual HRESULT STDMETHODCALLTYPE allowDisplayAndRunningOfInsecureContent(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowDisplayAndRunningOfInsecureContent(BOOL);
 
     // WebPreferences
 

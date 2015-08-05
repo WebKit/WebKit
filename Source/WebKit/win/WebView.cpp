@@ -5248,6 +5248,12 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setEnableInheritURIQueryComponent(enabled);
 
+    hr = prefsPrivate->allowDisplayAndRunningOfInsecureContent(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setAllowDisplayOfInsecureContent(!!enabled);
+    settings.setAllowRunningOfInsecureContent(!!enabled);
+
     hr = prefsPrivate->javaScriptRuntimeFlags(&javaScriptRuntimeFlags);
     if (FAILED(hr))
         return hr;

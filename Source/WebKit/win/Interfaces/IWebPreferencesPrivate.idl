@@ -166,4 +166,6 @@ interface IWebPreferencesPrivate2 : IWebPreferencesPrivate
 {
     HRESULT javaScriptRuntimeFlags([out, retval] unsigned* flags);
     HRESULT setJavaScriptRuntimeFlags([in] unsigned flags);
+    HRESULT allowDisplayAndRunningOfInsecureContent([out, retval] BOOL* enabled);
+    HRESULT setAllowDisplayAndRunningOfInsecureContent([in] BOOL enabled);
 }

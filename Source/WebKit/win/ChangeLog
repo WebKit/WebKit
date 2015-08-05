@@ -1,3 +1,19 @@
+2015-08-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Allow display of mixed content on Windows by default
+        https://bugs.webkit.org/show_bug.cgi?id=147693
+        <rdar://problem/22059707>
+
+        Reviewed by Alex Christensen.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Add preference accessor
+        to allow getting/setting use of insecure content.
+        * WebPreferenceKeysPrivate.h: Add new key for preference.
+        * WebPreferences.cpp: Implement preference accessor.
+        * WebPreferences.h:
+        * WebView.cpp: Set WebCore settings to match prefernces for
+        loading mixed content.
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/187972.
