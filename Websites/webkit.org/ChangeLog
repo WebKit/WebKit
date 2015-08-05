@@ -1,3 +1,9 @@
+2015-08-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the twitter links on the status page
+
+        * status.html:
+
 2015-08-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Prepare screenshots for a potential blog post

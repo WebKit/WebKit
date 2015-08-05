@@ -133,6 +133,12 @@ function initializeStatusPage() {
             return container;
         }
 
+        function makeTwitterLink(twitterHandle) {
+            if (twitterHandle[0] == "@")
+                twitterHandle = twitterHandle.substring(1);
+            return "https://twitter.com/" + twitterHandle;
+        }
+
         var container = document.createElement('li');
         container.className = "feature";
 
@@ -214,7 +220,7 @@ function initializeStatusPage() {
                 var li = document.createElement("li");
                 li.textContent = "Contact: ";
                 if (featureObject.contact.twitter) {
-                    li.appendChild(createLinkWithHeading("span", null, featureObject.contact.twitter, featureObject.contact.twitter));
+                    li.appendChild(createLinkWithHeading("span", null, featureObject.contact.twitter, makeTwitterLink(featureObject.contact.twitter)));
                 }
                 if (featureObject.contact.email) {
                     if (featureObject.contact.twitter) {
