@@ -1,5 +1,18 @@
 2015-08-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Put Yosemite mac editing results in the correct location.
+
+        * platform/mac-yosemite/editing/mac/attributed-string/anchor-element-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/anchor-element-expected.txt.
+        * platform/mac-yosemite/editing/mac/attributed-string/basic-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/basic-expected.txt.
+        * platform/mac-yosemite/editing/mac/attributed-string/font-size-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/font-size-expected.txt.
+        * platform/mac-yosemite/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-yosemite/editing/mac/attributed-string/font-weight-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/font-weight-expected.txt.
+        * platform/mac-yosemite/editing/mac/attributed-string/letter-spacing-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/letter-spacing-expected.txt.
+        * platform/mac-yosemite/editing/mac/attributed-string/text-decorations-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/text-decorations-expected.txt.
+        * platform/mac-yosemite/editing/mac/attributed-string/vertical-align-expected.txt: Renamed from LayoutTests/platform/mac-yosemite/editing/mac/editing/attributed-string/vertical-align-expected.txt.
+
+2015-08-04  Simon Fraser  <simon.fraser@apple.com>
+
         Move some Windows results for Mac editing tests (confused? I am) to the right places.
 
         * platform/win/editing/mac/input/devanagari-ligature-expected.txt: Renamed from LayoutTests/platform/win/platform/mac/editing/input/devanagari-ligature-expected.txt.
