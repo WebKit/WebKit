@@ -573,7 +573,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(!this._timelineViewMap.has(timeline), timeline);
 
-        this._timelineViewMap.set(timeline, new WebInspector.ContentView(timeline, {timelineSidebarPanel: this._timelineSidebarPanel}));
+        this._timelineViewMap.set(timeline, WebInspector.ContentView.createFromRepresentedObject(timeline, {timelineSidebarPanel: this._timelineSidebarPanel}));
         if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
             this._renderingFrameTimeline = timeline;
 

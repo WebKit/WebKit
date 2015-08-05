@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,68 +23,66 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceContentView = function(resource, styleClassName)
+WebInspector.ResourceContentView = class className extends WebInspector.ContentView
 {
-    console.assert(resource);
-    console.assert(styleClassName);
+    constructor(resource, styleClassName)
+    {
+        console.assert(resource instanceof WebInspector.Resource, resource);
+        console.assert(typeof styleClassName === "string");
 
-    WebInspector.ContentView.call(this, resource);
+        super(resource);
 
-    this._resource = resource;
+        this._resource = resource;
 
-    this.element.classList.add(styleClassName, "resource");
+        this.element.classList.add(styleClassName, "resource");
 
-    // Append a spinner while waiting for contentAvailable. The subclasses are responsible for removing
-    // the spinner before showing the resource content.
-    var spinner = new WebInspector.IndeterminateProgressSpinner;
-    this.element.appendChild(spinner.element);
+        // Append a spinner while waiting for contentAvailable. The subclasses are responsible for removing
+        // the spinner before showing the resource content.
+        var spinner = new WebInspector.IndeterminateProgressSpinner;
+        this.element.appendChild(spinner.element);
 
-    this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
+        this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
-    // Request content last so the spinner will always be removed in case the content is immediately available.
-    resource.requestContent().then(this._contentAvailable.bind(this)).catch(this._protocolError.bind(this));
+        // Request content last so the spinner will always be removed in case the content is immediately available.
+        resource.requestContent().then(this._contentAvailable.bind(this)).catch(this._protocolError.bind(this));
 
-    if (!this.managesOwnIssues) {
-        WebInspector.issueManager.addEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
+        if (!this.managesOwnIssues) {
+            WebInspector.issueManager.addEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
 
-        var issues = WebInspector.issueManager.issuesForSourceCode(resource);
-        for (var i = 0; i < issues.length; ++i)
-            this.addIssue(issues[i]);
+            var issues = WebInspector.issueManager.issuesForSourceCode(resource);
+            for (var i = 0; i < issues.length; ++i)
+                this.addIssue(issues[i]);
+        }
     }
-};
-
-WebInspector.ResourceContentView.prototype = {
-    constructor: WebInspector.ResourceContentView,
-    __proto__: WebInspector.ContentView.prototype,
 
     // Public
 
     get resource()
     {
         return this._resource;
-    },
+    }
 
-    contentAvailable: function(content, base64Encoded)
+    contentAvailable(content, base64Encoded)
     {
         // Implemented by subclasses.
-    },
+    }
 
-    addIssue: function(issue)
+    addIssue(issue)
     {
         // This generically shows only the last issue, subclasses can override for better handling.
         this.element.removeChildren();
         this.element.appendChild(WebInspector.createMessageTextView(issue.text, issue.level === WebInspector.IssueMessage.Level.Error));
-    },
+    }
 
-    closed: function()
+    closed()
     {
         if (!this.managesOwnIssues)
             WebInspector.issueManager.removeEventListener(null, null, this);
-    },
+    }
 
     // Private
 
-    _contentAvailable: function(parameters)
+    _contentAvailable(parameters)
     {
         if (parameters.error) {
             this._contentError(parameters.error);
@@ -94,28 +92,28 @@ WebInspector.ResourceContentView.prototype = {
         // Content is ready to show, call the public method now.
         console.assert(!this._hasContent());
         this.contentAvailable(parameters.content, parameters.base64Encoded);
-    },
+    }
 
-    _contentError: function(error)
+    _contentError(error)
     {
         if (this._hasContent())
             return;
 
         this.element.removeChildren();
         this.element.appendChild(WebInspector.createMessageTextView(error, true));
-    },
+    }
 
-    _protocolError: function(error)
+    _protocolError(error)
     {
         this._contentError(WebInspector.UIString("An error occurred trying to load the resource."));
-    },
+    }
 
-    _hasContent: function()
+    _hasContent()
     {
         return !this.element.querySelector("." + WebInspector.IndeterminateProgressSpinner.StyleClassName);
-    },
+    }
 
-    _issueWasAdded: function(event)
+    _issueWasAdded(event)
     {
         console.assert(!this.managesOwnIssues);
 
@@ -126,9 +124,9 @@ WebInspector.ResourceContentView.prototype = {
             return;
 
         this.addIssue(issue);
-    },
+    }
 
-    _mouseWasClicked: function(event)
+    _mouseWasClicked(event)
     {
         WebInspector.handlePossibleLinkClick(event, this.resource.parentFrame);
     }

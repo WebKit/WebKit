@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceClusterContentView = function(resource)
+WebInspector.ResourceClusterContentView = class ResourceClusterContentView extends WebInspector.ClusterContentView
 {
-    WebInspector.ClusterContentView.call(this, resource);
-
-    this._resource = resource;
-    this._resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
-    this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
-
-    function createPathComponent(displayName, className, identifier)
+    constructor(resource)
     {
-        var pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, true);
-        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
-        return pathComponent;
+        super(resource);
+
+        this._resource = resource;
+        this._resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
+        this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
+
+        function createPathComponent(displayName, className, identifier)
+        {
+            var pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, true);
+            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            return pathComponent;
+        }
+
+        this._requestPathComponent = createPathComponent.call(this, WebInspector.UIString("Request"), WebInspector.ResourceClusterContentView.RequestIconStyleClassName, WebInspector.ResourceClusterContentView.RequestIdentifier);
+        this._responsePathComponent = createPathComponent.call(this, WebInspector.UIString("Response"), WebInspector.ResourceClusterContentView.ResponseIconStyleClassName, WebInspector.ResourceClusterContentView.ResponseIdentifier);
+
+        this._requestPathComponent.nextSibling = this._responsePathComponent;
+        this._responsePathComponent.previousSibling = this._requestPathComponent;
+
+        this._currentContentViewSetting = new WebInspector.Setting("resource-current-view-" + this._resource.url.hash, WebInspector.ResourceClusterContentView.ResponseIdentifier);
     }
-
-    this._requestPathComponent = createPathComponent.call(this, WebInspector.UIString("Request"), WebInspector.ResourceClusterContentView.RequestIconStyleClassName, WebInspector.ResourceClusterContentView.RequestIdentifier);
-    this._responsePathComponent = createPathComponent.call(this, WebInspector.UIString("Response"), WebInspector.ResourceClusterContentView.ResponseIconStyleClassName, WebInspector.ResourceClusterContentView.ResponseIdentifier);
-
-    this._requestPathComponent.nextSibling = this._responsePathComponent;
-    this._responsePathComponent.previousSibling = this._requestPathComponent;
-
-    this._currentContentViewSetting = new WebInspector.Setting("resource-current-view-" + this._resource.url.hash, WebInspector.ResourceClusterContentView.ResponseIdentifier);
-};
-
-WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey = "resource-cluster-content-view-identifier";
-
-WebInspector.ResourceClusterContentView.RequestIconStyleClassName = "request-icon";
-WebInspector.ResourceClusterContentView.ResponseIconStyleClassName = "response-icon";
-WebInspector.ResourceClusterContentView.RequestIdentifier = "request";
-WebInspector.ResourceClusterContentView.ResponseIdentifier = "response";
-
-WebInspector.ResourceClusterContentView.prototype = {
-    constructor: WebInspector.ResourceClusterContentView,
 
     // Public
 
     get resource()
     {
         return this._resource;
-    },
+    }
 
     get responseContentView()
     {
@@ -91,7 +83,7 @@ WebInspector.ResourceClusterContentView.prototype = {
         }
 
         return this._responseContentView;
-    },
+    }
 
     get requestContentView()
     {
@@ -104,7 +96,7 @@ WebInspector.ResourceClusterContentView.prototype = {
         this._requestContentView = new WebInspector.TextContentView(this._resource.requestData || "", this._resource.requestDataContentType);
 
         return this._requestContentView;
-    },
+    }
 
     get selectionPathComponents()
     {
@@ -118,45 +110,45 @@ WebInspector.ResourceClusterContentView.prototype = {
         // Append the current view's path components to the path component representing the current view.
         var components = [this._pathComponentForContentView(currentContentView)];
         return components.concat(currentContentView.selectionPathComponents);
-    },
+    }
 
-    shown: function()
+    shown()
     {
-        WebInspector.ClusterContentView.prototype.shown.call(this);
+        super.shown();
 
         if (this._shownInitialContent)
             return;
 
         this._showContentViewForIdentifier(this._currentContentViewSetting.value);
-    },
+    }
 
-    closed: function()
+    closed()
     {
-        WebInspector.ClusterContentView.prototype.closed.call(this);
+        super.closed();
 
         this._shownInitialContent = false;
-    },
+    }
 
-    saveToCookie: function(cookie)
+    saveToCookie(cookie)
     {
         cookie[WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
-    },
+    }
 
-    restoreFromCookie: function(cookie)
+    restoreFromCookie(cookie)
     {
         var contentView = this._showContentViewForIdentifier(cookie[WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey]);
         if (typeof contentView.revealPosition === "function" && "lineNumber" in cookie && "columnNumber" in cookie)
             contentView.revealPosition(new WebInspector.SourceCodePosition(cookie.lineNumber, cookie.columnNumber));
-    },
+    }
 
-    showRequest: function()
+    showRequest()
     {
         this._shownInitialContent = true;
 
         return this._showContentViewForIdentifier(WebInspector.ResourceClusterContentView.RequestIdentifier);
-    },
+    }
 
-    showResponse: function(positionToReveal, textRangeToSelect, forceUnformatted)
+    showResponse(positionToReveal, textRangeToSelect, forceUnformatted)
     {
         this._shownInitialContent = true;
 
@@ -170,11 +162,11 @@ WebInspector.ResourceClusterContentView.prototype = {
         if (typeof responseContentView.revealPosition === "function")
             responseContentView.revealPosition(positionToReveal, textRangeToSelect, forceUnformatted);
         return responseContentView;
-    },
+    }
 
     // Private
 
-    _canShowRequestContentView: function()
+    _canShowRequestContentView()
     {
         var requestData = this._resource.requestData;
         if (!requestData)
@@ -185,9 +177,9 @@ WebInspector.ResourceClusterContentView.prototype = {
             return false;
 
         return true;
-    },
+    }
 
-    _pathComponentForContentView: function(contentView)
+    _pathComponentForContentView(contentView)
     {
         console.assert(contentView);
         if (!contentView)
@@ -198,9 +190,9 @@ WebInspector.ResourceClusterContentView.prototype = {
             return this._responsePathComponent;
         console.error("Unknown contentView.");
         return null;
-    },
+    }
 
-    _identifierForContentView: function(contentView)
+    _identifierForContentView(contentView)
     {
         console.assert(contentView);
         if (!contentView)
@@ -211,9 +203,9 @@ WebInspector.ResourceClusterContentView.prototype = {
             return WebInspector.ResourceClusterContentView.ResponseIdentifier;
         console.error("Unknown contentView.");
         return null;
-    },
+    }
 
-    _showContentViewForIdentifier: function(identifier)
+    _showContentViewForIdentifier(identifier)
     {
         var contentViewToShow = null;
 
@@ -234,14 +226,14 @@ WebInspector.ResourceClusterContentView.prototype = {
         this._currentContentViewSetting.value = this._identifierForContentView(contentViewToShow);
 
         return this.contentViewContainer.showContentView(contentViewToShow);
-    },
+    }
 
-    _pathComponentSelected: function(event)
+    _pathComponentSelected(event)
     {
         this._showContentViewForIdentifier(event.data.pathComponent.representedObject);
-    },
+    }
 
-    _resourceTypeDidChange: function(event)
+    _resourceTypeDidChange(event)
     {
         // Since resource views are based on the type, we need to make a new content view and tell the container to replace this
         // content view with the new one. Make a new ResourceContentView which will use the new resource type to make the correct
@@ -254,9 +246,9 @@ WebInspector.ResourceClusterContentView.prototype = {
         delete this._responseContentView;
 
         this.contentViewContainer.replaceContentView(currentResponseContentView, this.responseContentView);
-    },
+    }
 
-    _resourceLoadingDidFinish: function(event)
+    _resourceLoadingDidFinish(event)
     {
         if ("_positionToReveal" in this) {
             if (this._contentViewContainer.currentContentView === this._responseContentView)
@@ -269,4 +261,9 @@ WebInspector.ResourceClusterContentView.prototype = {
     }
 };
 
-WebInspector.ResourceClusterContentView.prototype.__proto__ = WebInspector.ClusterContentView.prototype;
+WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey = "resource-cluster-content-view-identifier";
+
+WebInspector.ResourceClusterContentView.RequestIconStyleClassName = "request-icon";
+WebInspector.ResourceClusterContentView.ResponseIconStyleClassName = "response-icon";
+WebInspector.ResourceClusterContentView.RequestIdentifier = "request";
+WebInspector.ResourceClusterContentView.ResponseIdentifier = "response";

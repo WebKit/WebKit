@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FrameDOMTreeContentView = function(domTree)
+WebInspector.FrameDOMTreeContentView = class FrameDOMTreeContentView extends WebInspector.DOMTreeContentView
 {
-    console.assert(domTree);
+    constructor(domTree)
+    {
+        console.assert(domTree instanceof WebInspector.DOMTree, domTree);
 
-    WebInspector.DOMTreeContentView.call(this, domTree);
+        super(domTree);
 
-    this._domTree = domTree;
-    this._domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
+        this._domTree = domTree;
+        this._domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
 
-    this._requestRootDOMNode();
-};
-
-
-WebInspector.FrameDOMTreeContentView.prototype = {
-    constructor: WebInspector.FrameDOMTreeContentView,
-    __proto__: WebInspector.DOMTreeContentView.prototype,
+        this._requestRootDOMNode();
+    }
 
     // Public
 
     get domTree()
     {
         return this._domTree;
-    },
+    }
 
-    closed: function()
+    closed()
     {
         this._domTree.removeEventListener(null, null, this);
 
-        WebInspector.DOMTreeContentView.prototype.closed.call(this);
-    },
+        super.closed();
+    }
 
-    getSearchContextNodes: function(callback)
+    getSearchContextNodes(callback)
     {
         this._domTree.requestRootDOMNode(function(rootDOMNode) {
             callback([rootDOMNode.id]);
         });
-    },
+    }
 
     // Private
 
-    _rootDOMNodeAvailable: function(rootDOMNode)
+    _rootDOMNodeAvailable(rootDOMNode)
     {
         this.domTreeOutline.rootDOMNode = rootDOMNode;
 
@@ -73,16 +70,15 @@ WebInspector.FrameDOMTreeContentView.prototype = {
         }
 
         this._restoreSelectedNodeAfterUpdate(this._domTree.frame.url, rootDOMNode.body || rootDOMNode.documentElement || rootDOMNode.firstChild);
-    },
+    }
 
-    _rootDOMNodeInvalidated: function(event)
+    _rootDOMNodeInvalidated(event)
     {
         this._requestRootDOMNode();
-    },
+    }
 
-    _requestRootDOMNode: function()
+    _requestRootDOMNode()
     {
         this._domTree.requestRootDOMNode(this._rootDOMNodeAvailable.bind(this));
     }
-
 };

@@ -1,3 +1,50 @@
+2015-08-05  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Convert remaining ContentViews to use ES6 classes
+        https://bugs.webkit.org/show_bug.cgi?id=147534
+
+        Reviewed by Joseph Pecoraro.
+
+        Along the way, inline a few style class names.
+
+        Elided mechanical changes from the Changelog.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        * UserInterface/Views/ClusterContentView.js:
+        * UserInterface/Views/ConsoleTabContentView.js:
+        * UserInterface/Views/ContentBrowserTabContentView.js: Rearrange initialization
+        of the tab's content browser to comply with TDZ rules for using `this`.
+        * UserInterface/Views/ContentFlowDOMTreeContentView.js:
+        * UserInterface/Views/ContentView.js:
+        * UserInterface/Views/ContentViewContainer.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        * UserInterface/Views/DOMStorageContentView.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        * UserInterface/Views/DatabaseContentView.js:
+        * UserInterface/Views/DatabaseTableContentView.js:
+        * UserInterface/Views/DebuggerTabContentView.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        * UserInterface/Views/FontResourceContentView.js:
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        * UserInterface/Views/GenericResourceContentView.js:
+        * UserInterface/Views/ImageResourceContentView.js:
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        * UserInterface/Views/LogContentView.js:
+        * UserInterface/Views/NetworkGridContentView.js:
+        * UserInterface/Views/NetworkTabContentView.js:
+        * UserInterface/Views/NewTabContentView.js:
+        * UserInterface/Views/ResourceClusterContentView.js:
+        * UserInterface/Views/ResourceContentView.js:
+        * UserInterface/Views/ResourcesTabContentView.js:
+        * UserInterface/Views/ScriptContentView.js:
+        * UserInterface/Views/SearchTabContentView.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        * UserInterface/Views/StorageTabContentView.js:
+        * UserInterface/Views/TabContentView.js:
+        * UserInterface/Views/TextContentView.js:
+        * UserInterface/Views/TextResourceContentView.js:
+        * UserInterface/Views/TimelineRecordingContentView.js:
+
 2015-08-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Allow users to duplicate rules in the Rules sidebar panel

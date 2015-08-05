@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SettingsTabContentView = function(identifier)
+WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebInspector.TabContentView
 {
-    var tabBarItem = new WebInspector.TabBarItem("Images/Gear.svg", WebInspector.UIString("Settings"), true);
+    constructor(identifier)
+    {
+        var tabBarItem = new WebInspector.TabBarItem("Images/Gear.svg", WebInspector.UIString("Settings"), true);
 
-    WebInspector.TabContentView.call(this, identifier || "settings", "settings", tabBarItem);
-};
-
-WebInspector.SettingsTabContentView.prototype = {
-    constructor: WebInspector.SettingsTabContentView,
-    __proto__: WebInspector.TabContentView.prototype,
+        super(identifier || "settings", "settings", tabBarItem);
+    }
 
     // Public
 

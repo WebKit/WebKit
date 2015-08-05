@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,93 +23,91 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseObjectStoreContentView = function(objectStoreOrIndex)
+WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreContentView extends WebInspector.ContentView
 {
-    WebInspector.ContentView.call(this, objectStoreOrIndex);
-
-    this.element.classList.add("indexed-database-object-store");
-
-    if (objectStoreOrIndex instanceof WebInspector.IndexedDatabaseObjectStore) {
-        this._objectStore = objectStoreOrIndex;
-        this._objectStoreIndex = null;
-    } else if (objectStoreOrIndex instanceof WebInspector.IndexedDatabaseObjectStoreIndex) {
-        this._objectStore = objectStoreOrIndex.parentObjectStore;
-        this._objectStoreIndex = objectStoreOrIndex;
-    }
-
-    function displayKeyPath(keyPath)
+    constructor(objectStoreOrIndex)
     {
-        if (!keyPath)
-            return "";
-        if (keyPath instanceof Array)
-            return keyPath.join(WebInspector.UIString(", "));
-        console.assert(keyPath instanceof String || typeof keyPath === "string");
-        return keyPath;
+        super(objectStoreOrIndex);
+
+        this.element.classList.add("indexed-database-object-store");
+
+        if (objectStoreOrIndex instanceof WebInspector.IndexedDatabaseObjectStore) {
+            this._objectStore = objectStoreOrIndex;
+            this._objectStoreIndex = null;
+        } else if (objectStoreOrIndex instanceof WebInspector.IndexedDatabaseObjectStoreIndex) {
+            this._objectStore = objectStoreOrIndex.parentObjectStore;
+            this._objectStoreIndex = objectStoreOrIndex;
+        }
+
+        function displayKeyPath(keyPath)
+        {
+            if (!keyPath)
+                return "";
+            if (keyPath instanceof Array)
+                return keyPath.join(WebInspector.UIString(", "));
+            console.assert(keyPath instanceof String || typeof keyPath === "string");
+            return keyPath;
+        }
+
+        var displayPrimaryKeyPath = displayKeyPath(this._objectStore.keyPath);
+
+        var columnInfo = {
+            primaryKey: {title: displayPrimaryKeyPath ? WebInspector.UIString("Primary Key \u2014 %s").format(displayPrimaryKeyPath) : WebInspector.UIString("Primary Key")},
+            key: {},
+            value: {title: WebInspector.UIString("Value")}
+        };
+
+        if (this._objectStoreIndex) {
+            // When there is an index, show the key path in the Key column.
+            var displayIndexKeyPath = displayKeyPath(this._objectStoreIndex.keyPath);
+            columnInfo.key.title = WebInspector.UIString("Index Key \u2014 %s").format(displayIndexKeyPath);
+        } else {
+            // Only need to show Key for indexes -- it is the same as Primary Key
+            // when there is no index being used.
+            delete columnInfo.key;
+        }
+
+        this._dataGrid = new WebInspector.DataGrid(columnInfo);
+        this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
+        this.element.appendChild(this._dataGrid.element);
+
+        this._entries = [];
+
+        this._fetchMoreData();
+
+        this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
     }
-
-    var displayPrimaryKeyPath = displayKeyPath(this._objectStore.keyPath);
-
-    var columnInfo = {
-        primaryKey: {title: displayPrimaryKeyPath ? WebInspector.UIString("Primary Key \u2014 %s").format(displayPrimaryKeyPath) : WebInspector.UIString("Primary Key")},
-        key: {},
-        value: {title: WebInspector.UIString("Value")}
-    };
-
-    if (this._objectStoreIndex) {
-        // When there is an index, show the key path in the Key column.
-        var displayIndexKeyPath = displayKeyPath(this._objectStoreIndex.keyPath);
-        columnInfo.key.title = WebInspector.UIString("Index Key \u2014 %s").format(displayIndexKeyPath);
-    } else {
-        // Only need to show Key for indexes -- it is the same as Primary Key
-        // when there is no index being used.
-        delete columnInfo.key;
-    }
-
-    this._dataGrid = new WebInspector.DataGrid(columnInfo);
-    this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
-    this.element.appendChild(this._dataGrid.element);
-
-    this._entries = [];
-
-    this._fetchMoreData();
-
-    this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
-    this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
-};
-
-WebInspector.IndexedDatabaseObjectStoreContentView.prototype = {
-    constructor: WebInspector.IndexedDatabaseObjectStoreContentView,
-    __proto__: WebInspector.ContentView.prototype,
 
     // Public
 
     get navigationItems()
     {
         return [this._refreshButtonNavigationItem];
-    },
+    }
 
-    closed: function()
+    closed()
     {
         this._reset();
-    },
+    }
 
-    saveToCookie: function(cookie)
+    saveToCookie(cookie)
     {
         cookie.type = WebInspector.ContentViewCookieType.IndexedDatabaseObjectStore;
         cookie.securityOrigin = this._objectStore.parentDatabase.securityOrigin;
         cookie.databaseName = this._objectStore.parentDatabase.name;
         cookie.objectStoreName = this._objectStore.name;
         cookie.objectStoreIndexName = this._objectStoreIndex && this._objectStoreIndex.name;
-    },
+    }
 
-    updateLayout: function()
+    updateLayout()
     {
         this._dataGrid.updateLayout();
-    },
+    }
 
     // Private
 
-    _reset: function()
+    _reset()
     {
         for (var entry of this._entries) {
             entry.primaryKey.release();
@@ -119,17 +117,17 @@ WebInspector.IndexedDatabaseObjectStoreContentView.prototype = {
 
         this._entries = [];
         this._dataGrid.removeChildren();
-    },
+    }
 
-    _dataGridScrolled: function()
+    _dataGridScrolled()
     {
         if (!this._moreEntriesAvailable || !this._dataGrid.isScrolledToLastRow())
             return;
 
         this._fetchMoreData();
-    },
+    }
 
-    _fetchMoreData: function()
+    _fetchMoreData()
     {
         if (this._fetchingMoreData)
             return;
@@ -153,9 +151,9 @@ WebInspector.IndexedDatabaseObjectStoreContentView.prototype = {
         this._fetchingMoreData = true;
 
         WebInspector.storageManager.requestIndexedDatabaseData(this._objectStore, this._objectStoreIndex, this._entries.length, 25, processEntries.bind(this));
-    },
+    }
 
-    _refreshButtonClicked: function()
+    _refreshButtonClicked()
     {
         this._reset();
         this._fetchMoreData();
