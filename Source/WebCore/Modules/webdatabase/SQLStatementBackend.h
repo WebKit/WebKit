@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class DatabaseBackend;
+class Database;
 class SQLError;
 class SQLResultSet;
 class SQLStatement;
@@ -47,7 +47,7 @@ public:
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
     virtual ~SQLStatementBackend();
 
-    bool execute(DatabaseBackend&);
+    bool execute(Database&);
     bool lastExecutionFailedDueToQuota() const;
 
     bool hasStatementCallback() const { return m_hasCallback; }

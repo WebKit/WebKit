@@ -29,9 +29,10 @@
 #ifndef Database_h
 #define Database_h
 
-#include "DatabaseBackend.h"
+#include "DatabaseBackendBase.h"
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
+#include <wtf/Deque.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,10 +45,12 @@ class SecurityOrigin;
 class SQLTransaction;
 class SQLTransactionBackend;
 class SQLTransactionCallback;
+class SQLTransactionClient;
+class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
 class VoidCallback;
 
-class Database final : public DatabaseBackend {
+class Database final : public DatabaseBackendBase {
 public:
     virtual ~Database();
 
@@ -74,7 +77,6 @@ public:
     void readTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
 
     // Internal engine support
-    static Database* from(DatabaseBackend*);
     DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
 
     ScriptExecutionContext* scriptExecutionContext() { return m_scriptExecutionContext.get(); }
@@ -89,19 +91,22 @@ public:
 
     void scheduleTransactionCallback(SQLTransaction*);
 
+    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    Vector<String> performGetTableNames();
+
 private:
     Database(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
-    PassRefPtr<DatabaseBackend> backend();
     static PassRefPtr<Database> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackendBase>);
-
-    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
     void scheduleTransaction();
 
     void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* = nullptr);
 
-    Vector<String> performGetTableNames();
+    Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
+    DeprecatedMutex m_transactionInProgressMutex;
+    bool m_transactionInProgress;
+    bool m_isTransactionQueueEnabled;
 
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
@@ -112,7 +117,6 @@ private:
 
     friend class DatabaseManager;
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
-    friend class DatabaseBackend; // FIXME: remove this when the backend has been split out.
     friend class SQLStatement;
     friend class SQLTransaction;
 };

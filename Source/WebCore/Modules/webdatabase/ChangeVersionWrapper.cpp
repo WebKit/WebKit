@@ -45,7 +45,7 @@ bool ChangeVersionWrapper::performPreflight(SQLTransactionBackend* transaction)
 {
     ASSERT(transaction && transaction->database());
 
-    DatabaseBackend* database = transaction->database();
+    Database* database = transaction->database();
 
     String actualVersion;
     if (!database->getVersionFromDatabase(actualVersion)) {
@@ -67,7 +67,7 @@ bool ChangeVersionWrapper::performPostflight(SQLTransactionBackend* transaction)
 {
     ASSERT(transaction && transaction->database());
 
-    DatabaseBackend* database = transaction->database();
+    Database* database = transaction->database();
 
     if (!database->setVersionInDatabase(m_newVersion)) {
         int sqliteError = database->sqliteDatabase().lastError();

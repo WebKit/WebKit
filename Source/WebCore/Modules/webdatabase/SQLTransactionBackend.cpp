@@ -29,9 +29,8 @@
 #include "config.h"
 #include "SQLTransactionBackend.h"
 
-#include "Database.h" // FIXME: Should only be used in the frontend.
+#include "Database.h"
 #include "DatabaseAuthorizer.h"
-#include "DatabaseBackend.h"
 #include "DatabaseContext.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
@@ -529,7 +528,7 @@ void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatement> statement, 
     RefPtr<SQLStatementBackend> statementBackend;
     statementBackend = SQLStatementBackend::create(WTF::move(statement), sqlStatement, arguments, permissions);
 
-    if (Database::from(m_database.get())->deleted())
+    if (m_database->deleted())
         statementBackend->setDatabaseDeletedError();
 
     enqueueStatementBackend(statementBackend);
@@ -567,7 +566,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
     LOG(StorageAPI, "Opening and preflighting transaction %p", this);
 
     // If the database was deleted, jump to the error callback
-    if (Database::from(m_database.get())->deleted()) {
+    if (m_database->deleted()) {
         m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to open a transaction, because the user deleted the database");
         return nextStateForTransactionError();
     }

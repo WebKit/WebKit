@@ -28,7 +28,7 @@
 #include "config.h"
 #include "SQLStatementBackend.h"
 
-#include "DatabaseBackend.h"
+#include "Database.h"
 #include "Logging.h"
 #include "SQLError.h"
 #include "SQLResultSet.h"
@@ -112,7 +112,7 @@ PassRefPtr<SQLResultSet> SQLStatementBackend::sqlResultSet() const
     return m_resultSet;
 }
 
-bool SQLStatementBackend::execute(DatabaseBackend& db)
+bool SQLStatementBackend::execute(Database& db)
 {
     ASSERT(!m_resultSet);
 

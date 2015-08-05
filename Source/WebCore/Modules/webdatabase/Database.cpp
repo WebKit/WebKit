@@ -70,7 +70,9 @@ PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<Databa
 }
 
 Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : DatabaseBackend(databaseContext.get(), name, expectedVersion, displayName, estimatedSize)
+    : DatabaseBackendBase(databaseContext.get(), name, expectedVersion, displayName, estimatedSize)
+    , m_transactionInProgress(false)
+    , m_isTransactionQueueEnabled(true)
     , m_scriptExecutionContext(databaseContext->scriptExecutionContext())
     , m_databaseContext(databaseContext)
     , m_deleted(false)
@@ -138,7 +140,7 @@ void Database::close()
     // to it with a local pointer here for a liitle longer, so that we can
     // unschedule any DatabaseTasks that refer to it before the database gets
     // deleted.
-    Ref<DatabaseBackend> protect(*this);
+    Ref<Database> protect(*this);
     databaseContext()->databaseThread()->recordDatabaseClosed(this);
     databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
 }
@@ -221,16 +223,6 @@ SQLTransactionClient* Database::transactionClient() const
 SQLTransactionCoordinator* Database::transactionCoordinator() const
 {
     return databaseContext()->databaseThread()->transactionCoordinator();
-}
-
-Database* Database::from(DatabaseBackend* backend)
-{
-    return static_cast<Database*>(backend->m_frontend);
-}
-
-PassRefPtr<DatabaseBackend> Database::backend()
-{
-    return this;
 }
 
 String Database::version() const
