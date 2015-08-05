@@ -1,3 +1,36 @@
+2015-08-04  Antti Koivisto  <antti@apple.com>
+
+        Network cache fetches should have timeout
+        https://bugs.webkit.org/show_bug.cgi?id=147631
+
+        Reviewed by Andreas Kling.
+
+        System might be under heavy I/O pressure. If it takes long time to get data from disk we should load from network instead.
+
+        This patch introduces 1.5s timeout for disk reads. If the last dispatched cache read takes longer than that we cancel all
+        active and pending reads and just load those resources from network.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::ReadOperation::ReadOperation):
+        (WebKit::NetworkCache::Storage::ReadOperation::cancel):
+        (WebKit::NetworkCache::Storage::ReadOperation::finish):
+
+            Factor to functions.
+
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::updateFileModificationTime):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+        (WebKit::NetworkCache::Storage::cancelAllReadOperations):
+        (WebKit::NetworkCache::Storage::dispatchPendingReadOperations):
+        (WebKit::NetworkCache::Storage::dispatchPendingWriteOperations):
+
+            Also make dispatch functions transfer the operation ownership.
+
+        (WebKit::NetworkCache::shouldStoreBodyAsBlob):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-08-04  Matt Rajca  <mrajca@apple.com>
 
         Media Session: add a focus manager that WebKit clients can use to access the focused media element
