@@ -1,3 +1,24 @@
+2015-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Subframes with no current HistoryItem should not prevent page-caching
+        https://bugs.webkit.org/show_bug.cgi?id=147649
+        <rdar://problem/21614832>
+
+        Reviewed by Andreas Kling.
+
+        Add a layout test that covers page-caching of a page that contains an
+        iframe with no current HistoryItem. The sub-frame has no current
+        HistoryItem because its URL is invalid: "http://".
+
+        * http/tests/navigation/page-cache-iframe-no-current-historyItem-expected.txt: Added.
+        * http/tests/navigation/page-cache-iframe-no-current-historyItem.html: Added.
+        New test.
+
+        * platform/mac-wk1/TestExpectations:
+        Skip the new test on Mac WK1. The page is still not cacheable on Mac WK1
+        because WebFrameLoaderClient::canCachePage() returns false if the frame
+        does not contain HTML at the moment.
+
 2015-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix script paths in these tests.

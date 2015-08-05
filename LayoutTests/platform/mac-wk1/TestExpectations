@@ -77,6 +77,9 @@ plugins/snapshotting
 # WK1 doesn't do pending WebGL policies 
 fast/canvas/webgl/useWhilePending.html [ Skip ]
 
+# Mac-WK1 only caches frames containing HTML at the moment.
+http/tests/navigation/page-cache-iframe-no-current-historyItem.html
+
 # Animated image throttling behaves differently on WK1.
 fast/images/animated-gif-body-outside-viewport.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]
