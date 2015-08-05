@@ -38,6 +38,12 @@ extern "C" {
 
 #include <EGL/eglplatform.h>
 
+#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
+#define EGL_SOFT_LINKING 1
+#else
+#define EGL_SOFT_LINKING 0
+#endif
+
 /* Generated on date 20150102 */
 
 /* Generated C header for:
@@ -118,6 +124,7 @@ typedef void (*__eglMustCastToProperFunctionPointerType)(void);
 #define EGL_VERSION                       0x3054
 #define EGL_WIDTH                         0x3057
 #define EGL_WINDOW_BIT                    0x0004
+#if !EGL_SOFT_LINKING
 EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig (EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs, EGLint config_size, EGLint *num_config);
 EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers (EGLDisplay dpy, EGLSurface surface, EGLNativePixmapType target);
 EGLAPI EGLContext EGLAPIENTRY eglCreateContext (EGLDisplay dpy, EGLConfig config, EGLContext share_context, const EGLint *attrib_list);
@@ -142,6 +149,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers (EGLDisplay dpy, EGLSurface surface
 EGLAPI EGLBoolean EGLAPIENTRY eglTerminate (EGLDisplay dpy);
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitGL (void);
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative (EGLint engine);
+#endif
 #endif /* EGL_VERSION_1_0 */
 
 #ifndef EGL_VERSION_1_1
@@ -160,10 +168,12 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative (EGLint engine);
 #define EGL_TEXTURE_RGB                   0x305D
 #define EGL_TEXTURE_RGBA                  0x305E
 #define EGL_TEXTURE_TARGET                0x3081
+#if !EGL_SOFT_LINKING
 EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage (EGLDisplay dpy, EGLSurface surface, EGLint buffer);
 EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage (EGLDisplay dpy, EGLSurface surface, EGLint buffer);
 EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib (EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint value);
 EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval (EGLDisplay dpy, EGLint interval);
+#endif
 #endif /* EGL_VERSION_1_1 */
 
 #ifndef EGL_VERSION_1_2
@@ -199,11 +209,13 @@ typedef void *EGLClientBuffer;
 #define EGL_SWAP_BEHAVIOR                 0x3093
 #define EGL_UNKNOWN                       ((EGLint)-1)
 #define EGL_VERTICAL_RESOLUTION           0x3091
+#if !EGL_SOFT_LINKING
 EGLAPI EGLBoolean EGLAPIENTRY eglBindAPI (EGLenum api);
 EGLAPI EGLenum EGLAPIENTRY eglQueryAPI (void);
 EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferFromClientBuffer (EGLDisplay dpy, EGLenum buftype, EGLClientBuffer buffer, EGLConfig config, const EGLint *attrib_list);
 EGLAPI EGLBoolean EGLAPIENTRY eglReleaseThread (void);
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitClient (void);
+#endif
 #endif /* EGL_VERSION_1_2 */
 
 #ifndef EGL_VERSION_1_3
@@ -232,7 +244,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitClient (void);
 #define EGL_OPENGL_API                    0x30A2
 #define EGL_OPENGL_BIT                    0x0008
 #define EGL_SWAP_BEHAVIOR_PRESERVED_BIT   0x0400
+#if !EGL_SOFT_LINKING
 EGLAPI EGLContext EGLAPIENTRY eglGetCurrentContext (void);
+#endif
 #endif /* EGL_VERSION_1_4 */
 
 #ifndef EGL_VERSION_1_5
@@ -284,6 +298,7 @@ typedef void *EGLImage;
 #define EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z 0x30B8
 #define EGL_IMAGE_PRESERVED               0x30D2
 #define EGL_NO_IMAGE                      ((EGLImage)0)
+#if !EGL_SOFT_LINKING
 EGLAPI EGLSync EGLAPIENTRY eglCreateSync (EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list);
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroySync (EGLDisplay dpy, EGLSync sync);
 EGLAPI EGLint EGLAPIENTRY eglClientWaitSync (EGLDisplay dpy, EGLSync sync, EGLint flags, EGLTime timeout);
@@ -294,7 +309,12 @@ EGLAPI EGLDisplay EGLAPIENTRY eglGetPlatformDisplay (EGLenum platform, void *nat
 EGLAPI EGLSurface EGLAPIENTRY eglCreatePlatformWindowSurface (EGLDisplay dpy, EGLConfig config, void *native_window, const EGLAttrib *attrib_list);
 EGLAPI EGLSurface EGLAPIENTRY eglCreatePlatformPixmapSurface (EGLDisplay dpy, EGLConfig config, void *native_pixmap, const EGLAttrib *attrib_list);
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitSync (EGLDisplay dpy, EGLSync sync, EGLint flags);
+#endif
 #endif /* EGL_VERSION_1_5 */
+
+#if EGL_SOFT_LINKING
+#include <EGL/eglsoftlinking.h>
+#endif
 
 #ifdef __cplusplus
 }

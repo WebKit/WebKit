@@ -27,7 +27,7 @@
 SOFT_LINK_LIBRARY(libEGL)
 
 SOFT_LINK(libEGL, eglGetError, EGLint, EGLAPIENTRY, (void), ());
-SOFT_LINK(libEGL, eglGetDisplay, EGLDisplay, EGLAPIENTRY, (EGLNativeDisplayType display_id), (display_id));
+SOFT_LINK_OPTIONAL(libEGL, eglGetDisplay, EGLDisplay, EGLAPIENTRY, (EGLNativeDisplayType display_id));
 SOFT_LINK(libEGL, eglInitialize, EGLBoolean, EGLAPIENTRY, (EGLDisplay dpy, EGLint *major, EGLint *minor), (dpy, major, minor));
 SOFT_LINK(libEGL, eglTerminate, EGLBoolean, EGLAPIENTRY, (EGLDisplay dpy), (dpy));
 SOFT_LINK(libEGL, eglQueryString, const char *, EGLAPIENTRY, (EGLDisplay dpy, EGLint name), (dpy, name));

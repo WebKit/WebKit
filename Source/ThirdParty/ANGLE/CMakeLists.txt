@@ -20,6 +20,13 @@ endif ()
 
 add_library(libEGL SHARED
     src/libEGL/libEGL.cpp
+    src/libEGL/libEGL.def
+    src/libEGL/libEGL.rc
+)
+
+set_property(TARGET libEGL PROPERTY COMPILE_DEFINITIONS
+    ANGLE_WEBKIT_WIN
+    EGLAPI=
 )
 
 add_library(libGLESv2 SHARED
@@ -31,6 +38,14 @@ add_library(libGLESv2 SHARED
     src/libGLESv2/entry_points_gles_3_0_ext.cpp
     src/libGLESv2/global_state.cpp
     src/libGLESv2/libGLESv2.cpp
+    src/libGLESv2/libGLESv2.def
+    src/libGLESv2/libGLESv2.rc
+)
+
+set_property(TARGET libEGL PROPERTY COMPILE_DEFINITIONS
+    ANGLE_WEBKIT_WIN
+    GL_APICALL=
+    LIBGLESV2_IMPLEMENTATION
 )
 
 add_library(libANGLE STATIC

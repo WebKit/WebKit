@@ -1,5 +1,19 @@
 2015-08-04  Alex Christensen  <achristensen@webkit.org>
 
+        Soft link libGLESv2 and libEGL on Windows again
+        https://bugs.webkit.org/show_bug.cgi?id=147671
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt:
+        Clean up some warnings when compiling with CMake.
+        * include/EGL/egl.h:
+        * include/EGL/eglsoftlinking.h:
+        * include/GLES2/gl2.h:
+        Soft link egl optionally.
+
+2015-08-04  Alex Christensen  <achristensen@webkit.org>
+
         Enable WebGL on Windows CMake build.
         https://bugs.webkit.org/show_bug.cgi?id=143311
 
