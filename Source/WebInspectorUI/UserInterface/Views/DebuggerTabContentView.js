@@ -53,7 +53,7 @@ WebInspector.DebuggerTabContentView = class DebuggerTabContentView extends WebIn
 
     showDetailsSidebarPanels()
     {
-        WebInspector.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels.call(this);
+        super.showDetailsSidebarPanels();
 
         if (!this._showScopeChainDetailsSidebarPanel || !WebInspector.scopeChainDetailsSidebarPanel.parentSidebar)
             return;

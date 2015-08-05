@@ -145,7 +145,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
 
     onattach()
     {
-        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+        super.onattach();
 
         console.assert(this.element);
 

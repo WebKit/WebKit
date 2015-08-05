@@ -94,7 +94,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     shown()
     {
-        WebInspector.TextEditor.prototype.shown.call(this);
+        super.shown();
 
         if (WebInspector.showJavaScriptTypeInformationSetting.value) {
             if (this._typeTokenAnnotator)
@@ -111,7 +111,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     hidden()
     {
-        WebInspector.TextEditor.prototype.hidden.call(this);
+        super.hidden();
 
         this.tokenTrackingController.removeHighlightedRange();
 
@@ -152,7 +152,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         if (this._sourceCode instanceof WebInspector.SourceMapResource)
             return false;
 
-        return WebInspector.TextEditor.prototype.canBeFormatted.call(this);
+        return super.canBeFormatted();
     }
 
     canShowTypeAnnotations()
