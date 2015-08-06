@@ -216,9 +216,9 @@
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="rel/libs/efl/efl-1.14.0.tar.gz" version="1.14.0"
+    <branch module="rel/libs/efl/efl-1.15.0.tar.gz" version="1.15.0"
             repo="download.enlightenment.org"
-            hash="sha256:30a8a239449e0d068a39787b5a4769dd26ddf0476f58f094c85e65b108086269">
+            hash="sha256:2552e364e83b8b747ba6f6fcca699a025751a65407055faa9a2afce29d12b6f4">
       <patch file="ecore_remove_warnings.patch" strip="1"/>
     </branch>
   </autotools>
@@ -226,9 +226,9 @@
   <autotools id="elementary"
              autogen-sh="configure"
              autogenargs="--disable-emap --disable-eweather --with-elementary-web-backend=none">
-    <branch module="rel/libs/elementary/elementary-1.14.0.tar.gz" version="1.14.0"
+    <branch module="rel/libs/elementary/elementary-1.15.0.tar.gz" version="1.15.0"
             repo="download.enlightenment.org"
-            hash="sha256:aa06ca1b332b3cd29ffd136c1f10edf08a06906b3532785ce7e390c1cad6090e">
+            hash="sha256:62b4b7d506cf9ca82f9890328ec01b82d0f84a8d4acd787cec68c3367817ba20">
     </branch>
     <dependencies>
         <dep package="efl"/>

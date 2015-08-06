@@ -1,3 +1,12 @@
+2015-08-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Bump EFL version to 1.15.0
+        https://bugs.webkit.org/show_bug.cgi?id=147450
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+
 2015-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash closing a page when a context menu is open
