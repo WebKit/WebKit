@@ -1,5 +1,14 @@
 2015-08-06  Enrica Casucci  <enrica@apple.com>
 
+        Build fix for iOS after http://trac.webkit.org/changeset/188053.
+
+        Unreviewed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _registerPreview]):
+
+2015-08-06  Enrica Casucci  <enrica@apple.com>
+
         Allow long press to cancel link preview.
         https://bugs.webkit.org/show_bug.cgi?id=147743
         rdar://problem/22128839
