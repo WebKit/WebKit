@@ -129,6 +129,9 @@
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point;
 
+- (void)setAllowsLinkPreview:(BOOL)allowsLinkPreview;
+- (BOOL)allowsLinkPreview;
+
 - (void)saveBackForwardSnapshotForCurrentItem;
 - (void)saveBackForwardSnapshotForItem:(WKBackForwardListItemRef)item;
 
