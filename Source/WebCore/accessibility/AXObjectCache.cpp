@@ -129,6 +129,8 @@ void AXObjectCache::disableAccessibility()
 void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool flag)
 {
     gAccessibilityEnhancedUserInterfaceEnabled = flag;
+    if (flag)
+        enableAccessibility();
 }
 
 AXObjectCache::AXObjectCache(Document& document)
