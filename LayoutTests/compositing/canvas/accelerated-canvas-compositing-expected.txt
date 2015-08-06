@@ -1,0 +1,3 @@
+Tests whether an accelerated canvas creates a compositing layer.
+
+

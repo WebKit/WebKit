@@ -1,3 +1,10 @@
+2015-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Make platform/mac/compositing/canvas/accelerated-canvas-compositing.html a cross-platform test.
+
+        * compositing/canvas/accelerated-canvas-compositing-expected.txt: Added.
+        * compositing/canvas/accelerated-canvas-compositing.html: Renamed from LayoutTests/platform/mac/compositing/canvas/accelerated-canvas-compositing.html.
+
 2015-08-05  Brian Burg  <bburg@apple.com>
 
         Web Inspector: rewrite protocol test for console messages from X-Frame-Options
