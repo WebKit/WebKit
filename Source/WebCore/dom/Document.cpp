@@ -6717,6 +6717,9 @@ bool Document::shouldEnforceContentDispositionAttachmentSandbox() const
     if (m_isSynthesized)
         return false;
 
+    if (isMediaDocument())
+        return false;
+
     bool contentDispositionAttachmentSandboxEnabled = settings() && settings()->contentDispositionAttachmentSandboxEnabled();
     bool responseIsAttachment = false;
     if (DocumentLoader* documentLoader = m_frame ? m_frame->loader().activeDocumentLoader() : nullptr)

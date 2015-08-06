@@ -1,5 +1,23 @@
 2015-08-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188051.
+
+    2015-08-06  Eric Carlson  <eric.carlson@apple.com>
+
+            Do not enforce "content-disposition: attachment" sandbox restrictions on a MediaDocument
+            https://bugs.webkit.org/show_bug.cgi?id=147734
+            rdar://problem/22028179
+
+            Reviewed by Dean Jackson.
+
+            Test to follow, see https://bugs.webkit.org/show_bug.cgi?id=147735
+
+            * dom/Document.cpp:
+            (WebCore::Document::shouldEnforceContentDispositionAttachmentSandbox): Return
+              early if the Document is a MediaDocument.
+
+2015-08-06  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187693.
 
     2015-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
