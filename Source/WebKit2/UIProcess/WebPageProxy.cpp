@@ -3882,19 +3882,6 @@ void WebPageProxy::handleMediaEvent(MediaEventType eventType)
     
     m_process->send(Messages::WebPage::HandleMediaEvent(eventType), m_pageID);
 }
-
-void WebPageProxy::isMediaElementPaused(uint64_t elementID, RefPtr<UnsignedCallback> callback)
-{
-    if (!isValid()) {
-        callback->invalidate();
-        return;
-    }
-
-    uint64_t callbackID = callback->callbackID();
-    m_callbacks.put(callback);
-
-    m_process->send(Messages::WebPage::IsMediaElementPaused(elementID, callbackID), m_pageID);
-}
 #endif
 
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
@@ -5950,8 +5937,14 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
     m_isShowingNavigationGestureSnapshot = false;
 }
 
-void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state)
+void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state, uint64_t sourceElementID)
 {
+#if ENABLE(MEDIA_SESSION)
+    WebMediaSessionFocusManager* focusManager = process().processPool().supplement<WebMediaSessionFocusManager>();
+    ASSERT(focusManager);
+    focusManager->mediaElementIsPlayingDidChange(this, sourceElementID, state & MediaProducer::IsSourceElementPlaying);
+#endif
+
     if (state == m_mediaState)
         return;
 

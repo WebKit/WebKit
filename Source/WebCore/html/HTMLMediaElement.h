@@ -98,6 +98,8 @@ typedef Vector<CueInterval> CueList;
 class MediaStream;
 #endif
 
+extern const uint64_t HTMLMediaElementInvalidID;
+
 class HTMLMediaElement
     : public HTMLElement
     , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public PlatformMediaSessionClient, private MediaProducer

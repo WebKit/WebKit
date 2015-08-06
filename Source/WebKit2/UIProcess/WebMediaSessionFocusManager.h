@@ -44,6 +44,7 @@ public:
     static PassRefPtr<WebMediaSessionFocusManager> create(WebProcessPool*);
 
     void isFocusedContentMediaElementPaused(std::function<void(bool, CallbackBase::Error)>);
+    void mediaElementIsPlayingDidChange(WebPageProxy*, uint64_t, bool);
 
     void setFocusedMediaElement(WebPageProxy&, uint64_t);
     void clearFocusedMediaElement();
@@ -59,6 +60,7 @@ private:
     virtual void derefWebContextSupplement() override;
 
     std::unique_ptr<FocusedMediaElement> m_focusedMediaElement;
+    bool m_focusedMediaElementIsPlaying { false };
 };
 
 } // namespace WebKit

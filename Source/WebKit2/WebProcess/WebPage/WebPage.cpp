@@ -4076,12 +4076,6 @@ void WebPage::handleMediaEvent(uint32_t eventType)
 {
     m_page->handleMediaEvent(static_cast<MediaEventType>(eventType));
 }
-
-void WebPage::isMediaElementPaused(uint64_t elementID, uint64_t callbackID)
-{
-    bool paused = m_page->isMediaElementPaused(elementID);
-    send(Messages::WebPageProxy::UnsignedCallback(paused, callbackID));
-}
 #endif
 
 void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)

@@ -62,10 +62,15 @@ void WebMediaSessionFocusManager::isFocusedContentMediaElementPaused(std::functi
     if (!m_focusedMediaElement)
         return;
 
-    RefPtr<UnsignedCallback> callback = UnsignedCallback::create(callbackFunction);
-    WebPageProxy* proxy = m_focusedMediaElement->first;
-    uint64_t elementID = m_focusedMediaElement->second;
-    proxy->isMediaElementPaused(elementID, callback);
+    callbackFunction(!m_focusedMediaElementIsPlaying, CallbackBase::Error::None);
+}
+
+void WebMediaSessionFocusManager::mediaElementIsPlayingDidChange(WebPageProxy* proxy, uint64_t elementID, bool isPlaying)
+{
+    if (m_focusedMediaElement) {
+        if (proxy == m_focusedMediaElement->first && elementID == m_focusedMediaElement->second)
+            m_focusedMediaElementIsPlaying = isPlaying;
+    }
 }
 
 void WebMediaSessionFocusManager::setFocusedMediaElement(WebPageProxy& proxy, uint64_t elementID)

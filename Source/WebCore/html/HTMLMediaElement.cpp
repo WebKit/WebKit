@@ -202,6 +202,8 @@ static const char* mediaSourceBlobProtocol = "blob";
 static const char* mediaStreamBlobProtocol = "blob";
 #endif
 
+const uint64_t HTMLMediaElementInvalidID = 0;
+
 using namespace HTMLNames;
 
 typedef HashMap<Document*, HashSet<HTMLMediaElement*>> DocumentElementSetMap;
@@ -299,6 +301,9 @@ static IDToElementMap& elementIDsToElements()
 
 HTMLMediaElement* HTMLMediaElement::elementWithID(uint64_t id)
 {
+    if (id == HTMLMediaElementInvalidID)
+        return nullptr;
+    
     return elementIDsToElements().get(id);
 }
 
@@ -3164,7 +3169,12 @@ void HTMLMediaElement::setMuted(bool muted)
             }
         }
         scheduleEvent(eventNames().volumechangeEvent);
+
+#if ENABLE(MEDIA_SESSION)
+        document().updateIsPlayingMedia(m_elementID);
+#else
         document().updateIsPlayingMedia();
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         updateMediaState(UpdateMediaState::Asynchronously);
@@ -4528,7 +4538,11 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     if (isPlaying() && !m_mediaSession->playbackPermitted(*this))
         pauseInternal();
 
+#if ENABLE(MEDIA_SESSION)
+    document().updateIsPlayingMedia(m_elementID);
+#else
     document().updateIsPlayingMedia();
+#endif
 
     endProcessingMediaPlayerCallback();
 }
@@ -4788,7 +4802,12 @@ void HTMLMediaElement::setPlaying(bool playing)
         return;
 
     m_playing = playing;
+
+#if ENABLE(MEDIA_SESSION)
+    document().updateIsPlayingMedia(m_elementID);
+#else
     document().updateIsPlayingMedia();
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     updateMediaState(UpdateMediaState::Asynchronously);

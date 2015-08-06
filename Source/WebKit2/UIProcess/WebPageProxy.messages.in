@@ -422,7 +422,7 @@ messages -> WebPageProxy {
     ContentFilterDidBlockLoadForFrame(WebCore::ContentFilterUnblockHandler unblockHandler, uint64_t frameID)
 #endif
 
-    IsPlayingMediaDidChange(unsigned state)
+    IsPlayingMediaDidChange(unsigned state, uint64_t sourceElementID)
 
 #if ENABLE(MEDIA_SESSION)
     HasMediaSessionWithActiveMediaElementsDidChange(bool state)

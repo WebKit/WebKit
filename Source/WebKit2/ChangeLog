@@ -1,3 +1,38 @@
+2015-08-04  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: push paused state to the media session focus manager instead of polling
+        https://bugs.webkit.org/show_bug.cgi?id=147633
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/WebMediaSessionFocusManager.cpp:
+        (WebKit::WebMediaSessionFocusManager::isFocusedContentMediaElementPaused): Report whether the focused media
+         element is currently playing. The callback is no longer necessary and will be removed in a future patch in
+         favor of returning a value directly.
+        (WebKit::WebMediaSessionFocusManager::mediaElementIsPlayingDidChange): Keep track of whether the focused media
+         element is currently playing.
+        * UIProcess/WebMediaSessionFocusManager.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange): If the focused media element begins/ends playing, keep track
+         of its playing state.
+        (WebKit::WebPageProxy::isMediaElementPaused): Deleted. We now push media playback state changes instead of
+         polling.
+        * UIProcess/WebPageProxy.h: isPlayingMediaDidChange is now passed the ID of the media element that triggered
+         the 'playing' state change. This can be used in conjunction with the IsSourcePlaying media flag to identify
+         whether the source element begin/ended playing.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setPluginIsPlayingAudio): Since a media element did not trigger this, pass in 0 for the
+         source media element.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::isPlayingMediaDidChange): isPlayingMediaDidChange is now passed the ID of the media
+         element that triggered the 'playing' state change.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::isMediaElementPaused): Deleted. We now push media playback state changes instead of polling.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
 2015-08-05  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugins are clipped in link previews (and remain so when opened)
