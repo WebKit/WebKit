@@ -511,6 +511,8 @@ HTMLMediaElement::~HTMLMediaElement()
         m_session->removeMediaElement(*this);
         m_session = nullptr;
     }
+
+    elementIDsToElements().remove(m_elementID);
 #endif
 
     m_seekTaskQueue.close();
