@@ -35,6 +35,7 @@
 #include "JSSQLStatementErrorCallback.h"
 #include "JSDOMWindowCustom.h"
 #include "SQLTransaction.h"
+#include "SQLValue.h"
 
 using namespace JSC;
 

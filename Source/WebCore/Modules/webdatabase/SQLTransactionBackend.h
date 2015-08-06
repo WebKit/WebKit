@@ -42,7 +42,6 @@ class Database;
 class OriginLock;
 class SQLError;
 class SQLiteTransaction;
-class SQLStatement;
 class SQLStatementBackend;
 class SQLTransaction;
 class SQLTransactionBackend;
@@ -77,9 +76,9 @@ public:
     // APIs called from the frontend published via SQLTransactionBackend:
     void requestTransitToState(SQLTransactionState);
     PassRefPtr<SQLError> transactionError();
-    SQLStatement* currentStatement();
+    SQLStatementBackend* currentStatement();
     void setShouldRetryCurrentStatement(bool);
-    void executeSQL(std::unique_ptr<SQLStatement>, const String& statement, const Vector<SQLValue>& arguments, int permissions);
+    void executeSQL(std::unique_ptr<SQLStatementBackend>);
     
 private:
     SQLTransactionBackend(Database*, PassRefPtr<SQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);

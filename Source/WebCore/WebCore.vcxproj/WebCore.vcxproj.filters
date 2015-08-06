@@ -516,9 +516,6 @@
     <ClCompile Include="..\Modules\webdatabase\SQLResultSetRowList.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\SQLStatement.cpp">
-      <Filter>Modules\webdatabase</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\SQLStatementBackend.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
@@ -7488,9 +7485,6 @@
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLResultSetRowList.h">
-      <Filter>Modules\webdatabase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\SQLStatement.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLStatementBackend.h">

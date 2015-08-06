@@ -423,9 +423,9 @@ void SQLTransactionBackend::doCleanup()
     m_wrapper = nullptr;
 }
 
-SQLStatement* SQLTransactionBackend::currentStatement()
+SQLStatementBackend* SQLTransactionBackend::currentStatement()
 {
-    return m_currentStatementBackend->frontend();
+    return m_currentStatementBackend.get();
 }
 
 PassRefPtr<SQLError> SQLTransactionBackend::transactionError()
@@ -523,10 +523,8 @@ bool SQLTransactionBackend::shouldPerformWhilePaused() const
 }
 #endif
 
-void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatement> statement, const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
+void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatementBackend> statementBackend)
 {
-    auto statementBackend = std::make_unique<SQLStatementBackend>(WTF::move(statement), sqlStatement, arguments, permissions);
-
     if (m_database->deleted())
         statementBackend->setDatabaseDeletedError();
 

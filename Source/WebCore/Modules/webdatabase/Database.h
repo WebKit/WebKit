@@ -169,7 +169,6 @@ private:
     friend class ChangeVersionWrapper;
     friend class DatabaseManager;
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
-    friend class SQLStatement;
     friend class SQLTransaction;
     friend class SQLTransactionBackend;
 };

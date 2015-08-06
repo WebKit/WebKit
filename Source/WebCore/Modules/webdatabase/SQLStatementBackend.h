@@ -20,7 +20,7 @@
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * LOSS OF USE, DATA, OR PROFITS;   OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -28,6 +28,9 @@
 #ifndef SQLStatementBackend_h
 #define SQLStatementBackend_h
 
+#include "SQLCallbackWrapper.h"
+#include "SQLStatementCallback.h"
+#include "SQLStatementErrorCallback.h"
 #include "SQLValue.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -38,24 +41,23 @@ namespace WebCore {
 class Database;
 class SQLError;
 class SQLResultSet;
-class SQLStatement;
 class SQLTransactionBackend;
 
 class SQLStatementBackend {
 public:
-    SQLStatementBackend(std::unique_ptr<SQLStatement>, const String& statement, const Vector<SQLValue>& arguments, int permissions);
+    SQLStatementBackend(Database&, const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
     ~SQLStatementBackend();
 
     bool execute(Database&);
     bool lastExecutionFailedDueToQuota() const;
 
-    bool hasStatementCallback() const { return m_hasCallback; }
-    bool hasStatementErrorCallback() const { return m_hasErrorCallback; }
+    bool hasStatementCallback() const { return m_statementCallbackWrapper.hasCallback(); }
+    bool hasStatementErrorCallback() const { return m_statementErrorCallbackWrapper.hasCallback(); }
+    bool performCallback(SQLTransaction*);
 
     void setDatabaseDeletedError();
     void setVersionMismatchedError();
 
-    SQLStatement* frontend();
     PassRefPtr<SQLError> sqlError() const;
     PassRefPtr<SQLResultSet> sqlResultSet() const;
 
@@ -63,11 +65,10 @@ private:
     void setFailureDueToQuota();
     void clearFailureDueToQuota();
 
-    std::unique_ptr<SQLStatement> m_frontend;
     String m_statement;
     Vector<SQLValue> m_arguments;
-    bool m_hasCallback;
-    bool m_hasErrorCallback;
+    SQLCallbackWrapper<SQLStatementCallback> m_statementCallbackWrapper;
+    SQLCallbackWrapper<SQLStatementErrorCallback> m_statementErrorCallbackWrapper;
 
     RefPtr<SQLError> m_error;
     RefPtr<SQLResultSet> m_resultSet;

@@ -30,7 +30,6 @@
 #define SQLTransaction_h
 
 #include "SQLCallbackWrapper.h"
-#include "SQLStatement.h"
 #include "SQLTransactionStateMachine.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>

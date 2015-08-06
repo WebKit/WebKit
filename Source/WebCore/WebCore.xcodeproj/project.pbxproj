@@ -3727,8 +3727,6 @@
 		97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A001505F081001B74AC /* SQLResultSet.h */; };
 		97BC6A441505F081001B74AC /* SQLResultSetRowList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC6A021505F081001B74AC /* SQLResultSetRowList.cpp */; };
 		97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A031505F081001B74AC /* SQLResultSetRowList.h */; };
-		97BC6A471505F081001B74AC /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC6A051505F081001B74AC /* SQLStatement.cpp */; };
-		97BC6A481505F081001B74AC /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A061505F081001B74AC /* SQLStatement.h */; };
 		97BC6A491505F081001B74AC /* SQLStatementCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A071505F081001B74AC /* SQLStatementCallback.h */; };
 		97BC6A4B1505F081001B74AC /* SQLStatementErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A091505F081001B74AC /* SQLStatementErrorCallback.h */; };
 		97BC6A4F1505F081001B74AC /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC6A0D1505F081001B74AC /* SQLTransaction.cpp */; };
@@ -11067,8 +11065,6 @@
 		97BC6A021505F081001B74AC /* SQLResultSetRowList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLResultSetRowList.cpp; sourceTree = "<group>"; };
 		97BC6A031505F081001B74AC /* SQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLResultSetRowList.h; sourceTree = "<group>"; };
 		97BC6A041505F081001B74AC /* SQLResultSetRowList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLResultSetRowList.idl; sourceTree = "<group>"; };
-		97BC6A051505F081001B74AC /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
-		97BC6A061505F081001B74AC /* SQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatement.h; sourceTree = "<group>"; };
 		97BC6A071505F081001B74AC /* SQLStatementCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementCallback.h; sourceTree = "<group>"; };
 		97BC6A081505F081001B74AC /* SQLStatementCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLStatementCallback.idl; sourceTree = "<group>"; };
 		97BC6A091505F081001B74AC /* SQLStatementErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementErrorCallback.h; sourceTree = "<group>"; };
@@ -18810,8 +18806,6 @@
 				97BC6A021505F081001B74AC /* SQLResultSetRowList.cpp */,
 				97BC6A031505F081001B74AC /* SQLResultSetRowList.h */,
 				97BC6A041505F081001B74AC /* SQLResultSetRowList.idl */,
-				97BC6A051505F081001B74AC /* SQLStatement.cpp */,
-				97BC6A061505F081001B74AC /* SQLStatement.h */,
 				FE8A674516CDD19E00930BF8 /* SQLStatementBackend.cpp */,
 				FE8A674616CDD19E00930BF8 /* SQLStatementBackend.h */,
 				97BC6A071505F081001B74AC /* SQLStatementCallback.h */,
@@ -26726,7 +26720,6 @@
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
 				97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */,
 				97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */,
-				97BC6A481505F081001B74AC /* SQLStatement.h in Headers */,
 				FE8A674816CDD19E00930BF8 /* SQLStatementBackend.h in Headers */,
 				97BC6A491505F081001B74AC /* SQLStatementCallback.h in Headers */,
 				97BC6A4B1505F081001B74AC /* SQLStatementErrorCallback.h in Headers */,
@@ -30195,7 +30188,6 @@
 				1A22464D0CC98DDB00C05240 /* SQLiteTransaction.cpp in Sources */,
 				97BC6A411505F081001B74AC /* SQLResultSet.cpp in Sources */,
 				97BC6A441505F081001B74AC /* SQLResultSetRowList.cpp in Sources */,
-				97BC6A471505F081001B74AC /* SQLStatement.cpp in Sources */,
 				FE8A674716CDD19E00930BF8 /* SQLStatementBackend.cpp in Sources */,
 				97BC6A4F1505F081001B74AC /* SQLTransaction.cpp in Sources */,
 				FEE1811316C319E800084849 /* SQLTransactionBackend.cpp in Sources */,

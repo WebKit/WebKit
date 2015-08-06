@@ -32,7 +32,6 @@
 #include "Logging.h"
 #include "SQLError.h"
 #include "SQLResultSet.h"
-#include "SQLStatement.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
 #include "SQLValue.h"
@@ -75,25 +74,17 @@
 
 namespace WebCore {
 
-SQLStatementBackend::SQLStatementBackend(std::unique_ptr<SQLStatement> frontend,
-    const String& statement, const Vector<SQLValue>& arguments, int permissions)
-    : m_frontend(WTF::move(frontend))
-    , m_statement(statement.isolatedCopy())
+SQLStatementBackend::SQLStatementBackend(Database& database, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
+    : m_statement(statement.isolatedCopy())
     , m_arguments(arguments)
-    , m_hasCallback(m_frontend->hasCallback())
-    , m_hasErrorCallback(m_frontend->hasErrorCallback())
+    , m_statementCallbackWrapper(callback, database.scriptExecutionContext())
+    , m_statementErrorCallbackWrapper(errorCallback, database.scriptExecutionContext())
     , m_permissions(permissions)
 {
-    m_frontend->setBackend(this);
 }
 
 SQLStatementBackend::~SQLStatementBackend()
 {
-}
-
-SQLStatement* SQLStatementBackend::frontend()
-{
-    return m_frontend.get();
 }
 
 PassRefPtr<SQLError> SQLStatementBackend::sqlError() const
@@ -206,6 +197,29 @@ bool SQLStatementBackend::execute(Database& db)
 
     m_resultSet = resultSet;
     return true;
+}
+
+bool SQLStatementBackend::performCallback(SQLTransaction* transaction)
+{
+    ASSERT(transaction);
+
+    bool callbackError = false;
+
+    RefPtr<SQLStatementCallback> callback = m_statementCallbackWrapper.unwrap();
+    RefPtr<SQLStatementErrorCallback> errorCallback = m_statementErrorCallbackWrapper.unwrap();
+    RefPtr<SQLError> error = sqlError();
+
+    // Call the appropriate statement callback and track if it resulted in an error,
+    // because then we need to jump to the transaction error callback.
+    if (error) {
+        if (errorCallback)
+            callbackError = errorCallback->handleEvent(transaction, error.get());
+    } else if (callback) {
+        RefPtr<SQLResultSet> resultSet = sqlResultSet();
+        callbackError = !callback->handleEvent(transaction, resultSet.get());
+    }
+
+    return callbackError;
 }
 
 void SQLStatementBackend::setDatabaseDeletedError()
