@@ -50,6 +50,9 @@ messages -> PluginProxy LegacyReceiver {
     # Cancels the given stream load.
     CancelStreamLoad(uint64_t streamID)
 
+    # Continues the given stream load.
+    ContinueStreamLoad(uint64_t streamID)
+
     # Cancel the manual stream load.
     CancelManualStreamLoad()
 

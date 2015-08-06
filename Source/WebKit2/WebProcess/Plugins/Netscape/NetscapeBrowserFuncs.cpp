@@ -983,6 +983,13 @@ static NPBool NPN_ConvertPoint(NPP npp, double sourceX, double sourceY, NPCoordi
 }
 #endif
 
+static void NPN_URLRedirectResponse(NPP npp, void* notifyData, NPBool allow)
+{
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+    plugin->urlRedirectResponse(notifyData, allow);
+}
+
 static void initializeBrowserFuncs(NPNetscapeFuncs &netscapeFuncs)
 {
     netscapeFuncs.size = sizeof(NPNetscapeFuncs);
@@ -1045,6 +1052,11 @@ static void initializeBrowserFuncs(NPNetscapeFuncs &netscapeFuncs)
 #else
     netscapeFuncs.popupcontextmenu = 0;
     netscapeFuncs.convertpoint = 0;
+#endif
+#if ENABLE(NETWORK_PROCESS)
+    netscapeFuncs.urlredirectresponse = NPN_URLRedirectResponse;
+#else
+    netscapeFuncs.urlredirectresponse = 0;
 #endif
 }
     

@@ -116,6 +116,7 @@ NPError STDCALL NP_GetEntryPoints(NPPluginFuncs *pluginFuncs)
     pluginFuncs->print = NPP_Print;
     pluginFuncs->event = NPP_HandleEvent;
     pluginFuncs->urlnotify = NPP_URLNotify;
+    pluginFuncs->urlredirectnotify = NPP_URLRedirectNotify;
     pluginFuncs->getvalue = NPP_GetValue;
     pluginFuncs->setvalue = NPP_SetValue;
     
@@ -797,6 +798,12 @@ void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyD
          executeScript(obj, obj->onURLNotify);
 
     handleCallback(obj, url, reason, notifyData);
+}
+
+void NPP_URLRedirectNotify(NPP instance, const char *url, int32_t status, void *notifyData)
+{
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
+    obj->pluginTest->NPP_URLRedirectNotify(url, status, notifyData);
 }
 
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)

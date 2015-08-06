@@ -1,5 +1,41 @@
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
+        Merge r187886. rdar://problem/15779101
+
+    2015-08-04  Alexey Proskuryakov  <ap@apple.com>
+
+            Implement NPAPI redirect handling
+            https://bugs.webkit.org/show_bug.cgi?id=138675
+            rdar://problem/15779101
+
+            Patch by Jeffrey Pfau, updated and tweaked by me.
+
+            Reviewed by Anders Carlsson.
+
+            Test: http/tests/plugins/get-url-redirect-notify.html
+
+            * loader/NetscapePlugInStreamLoader.cpp:
+            (WebCore::NetscapePlugInStreamLoader::init):
+            (WebCore::NetscapePlugInStreamLoader::willSendRequest):
+            (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+            * loader/NetscapePlugInStreamLoader.h:
+            * loader/ResourceLoader.cpp:
+            (WebCore::ResourceLoader::init):
+            (WebCore::ResourceLoader::isSubresourceLoader):
+            (WebCore::ResourceLoader::willSendRequestInternal):
+            (WebCore::ResourceLoader::willSendRequest):
+            (WebCore::ResourceLoader::didSendData):
+            * loader/ResourceLoader.h:
+            * loader/SubresourceLoader.cpp:
+            (WebCore::SubresourceLoader::isSubresourceLoader):
+            (WebCore::SubresourceLoader::willSendRequestInternal):
+            (WebCore::SubresourceLoader::willSendRequest): Deleted.
+            * loader/SubresourceLoader.h:
+            * plugins/npapi.h:
+            * plugins/npfunctions.h:
+
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
         Merge r187693. rdar://problem/22047626
 
     2015-07-31  Myles C. Maxfield  <mmaxfield@apple.com>

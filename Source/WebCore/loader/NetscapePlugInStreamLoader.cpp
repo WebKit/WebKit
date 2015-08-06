@@ -88,6 +88,18 @@ bool NetscapePlugInStreamLoader::init(const ResourceRequest& request)
     return true;
 }
 
+void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback)
+{
+    RefPtr<NetscapePlugInStreamLoader> protect(this);
+
+    m_client->willSendRequest(this, WTF::move(request), redirectResponse, [protect, redirectResponse, callback](ResourceRequest request) {
+        if (!request.isNull())
+            protect->willSendRequestInternal(request, redirectResponse);
+
+        callback(WTF::move(request));
+    });
+}
+
 void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& response)
 {
     Ref<NetscapePlugInStreamLoader> protect(*this);

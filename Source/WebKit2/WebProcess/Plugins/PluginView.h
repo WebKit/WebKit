@@ -196,6 +196,7 @@ private:
     virtual String userAgent() override;
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
     virtual void cancelStreamLoad(uint64_t streamID) override;
+    virtual void continueStreamLoad(uint64_t streamID) override;
     virtual void cancelManualStreamLoad() override;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     virtual NPObject* windowScriptNPObject() override;

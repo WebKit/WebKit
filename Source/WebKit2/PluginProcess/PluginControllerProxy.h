@@ -86,6 +86,7 @@ private:
     virtual void invalidate(const WebCore::IntRect&) override;
     virtual String userAgent() override;
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
+    virtual void continueStreamLoad(uint64_t streamID) override;
     virtual void cancelStreamLoad(uint64_t streamID) override;
     virtual void cancelManualStreamLoad() override;
     virtual NPObject* windowScriptNPObject() override;
@@ -126,6 +127,7 @@ private:
     void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle);
     void visibilityDidChange(bool isVisible);
     void didEvaluateJavaScript(uint64_t requestID, const String& result);
+    void streamWillSendRequest(uint64_t streamID, const String& requestURLString, const String& redirectResponseURLString, uint32_t redirectResponseStatusCode);
     void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void streamDidReceiveData(uint64_t streamID, const IPC::DataReference& data);
     void streamDidFinishLoading(uint64_t streamID);

@@ -61,9 +61,11 @@ public:
     uint32_t streamID() const { return m_streamID; }
 
     void startStreamWithResponse(NSURLResponse *response);
-    void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length);
-    void didFinishLoading(WebCore::NetscapePlugInStreamLoader*);
-    void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&);
+
+    // FIXME: Can these be made private?
+    void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length) override;
+    void didFinishLoading(WebCore::NetscapePlugInStreamLoader*) override;
+    void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&) override;
 
     void start();
     void stop();
@@ -84,8 +86,9 @@ private:
     NSError *pluginCancelledConnectionError() const;
 
     // NetscapePlugInStreamLoaderClient methods.
-    void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&);
-    bool wantsAllStreams() const;
+    void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, std::function<void (WebCore::ResourceRequest&&)>&&) override;
+    void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&) override;
+    bool wantsAllStreams() const override;
     
     RefPtr<NetscapePluginInstanceProxy> m_instance;
     uint32_t m_streamID;

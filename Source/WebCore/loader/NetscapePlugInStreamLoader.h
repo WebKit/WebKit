@@ -38,6 +38,7 @@ class NetscapePlugInStreamLoader;
 
 class NetscapePlugInStreamLoaderClient {
 public:
+    virtual void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void (ResourceRequest&&)>&&) = 0;
     virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) = 0;
     virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) = 0;
     virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&) = 0;
@@ -58,6 +59,7 @@ public:
 private:
     virtual bool init(const ResourceRequest&) override;
 
+    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback) override;
     virtual void didReceiveResponse(const ResourceResponse&) override;
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
     virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;

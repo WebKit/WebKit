@@ -128,6 +128,7 @@ private:
     virtual void frameDidFinishLoading(uint64_t requestID) override;
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled) override;
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) override;
+    virtual void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatus) override { }
     virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) override;
     virtual void streamDidFinishLoading(uint64_t streamID) override;

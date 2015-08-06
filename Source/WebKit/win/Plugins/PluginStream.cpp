@@ -403,6 +403,12 @@ void PluginStream::sendJavaScriptStream(const URL& requestURL, const CString& re
     destroyStream(resultString.isNull() ? NPRES_NETWORK_ERR : NPRES_DONE);
 }
 
+void PluginStream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse&, std::function<void (WebCore::ResourceRequest&&)>&& callback)
+{
+    // FIXME: We should notify the plug-in with NPP_URLRedirectNotify here.
+    callback(WTF::move(request));
+}
+
 void PluginStream::didReceiveResponse(NetscapePlugInStreamLoader* loader, const ResourceResponse& response)
 {
     ASSERT_UNUSED(loader, loader == m_loader);

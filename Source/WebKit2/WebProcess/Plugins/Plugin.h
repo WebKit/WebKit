@@ -165,6 +165,9 @@ public:
     // back the result. If evaluating the script failed, result will be null.
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) = 0;
 
+    // Tells the plug-in that a stream may send an HTTP request.
+    virtual void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatusCode) = 0;
+
     // Tells the plug-in that a stream has received its HTTP response.
     virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, 
                                           uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
