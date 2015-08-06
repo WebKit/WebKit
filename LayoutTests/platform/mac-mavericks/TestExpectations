@@ -14,10 +14,10 @@ compositing/media-controls-bar-appearance-big.html [ Skip ]
 media/accessiblity-describes-video.html [ Skip ]
 
 # Reftests have different expected results in Mavericks and Yosemite
-platform/mac/fast/ruby/ruby-expansion-cjk.html [ Skip ]
-platform/mac/fast/ruby/ruby-expansion-cjk-2.html [ Skip ]
-platform/mac/fast/ruby/ruby-expansion-cjk-3.html [ Skip ]
-platform/mac/fast/ruby/ruby-expansion-cjk-4.html [ Skip ]
+fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 
 # Colorspaces on CA OpenGL layers not available in Mavericks and Yosemite
 fast/canvas/webgl/match-page-color-space.html [ Skip ]

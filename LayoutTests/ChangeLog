@@ -1,5 +1,11 @@
 2015-08-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix paths to ruby-expansion tests, and make them ImageOnlyFailure rather than Skip.
+
+        * platform/mac-mavericks/TestExpectations:
+
+2015-08-05  Simon Fraser  <simon.fraser@apple.com>
+
         Move /mac/fast/text reference tests into fast/text. Some may need to be skipped on other platforms.
 
         * fast/text/arabic-zwj-and-zwnj-expected.html: Renamed from LayoutTests/platform/mac/fast/text/arabic-zwj-and-zwnj-expected.html.
