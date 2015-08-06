@@ -202,8 +202,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
                         entry.parentRecord.children.push(record);
                 }
 
-                if (recordPayload.children)
-                    stack.push({array: recordPayload.children, parent: recordPayload, parentRecord: record, index: 0});
+                if (recordPayload.children && recordPayload.children.length)
+                    stack.push({array: recordPayload.children, parent: recordPayload, parentRecord: record || entry.parentRecord, index: 0});
                 ++entry.index;
             } else
                 stack.pop();

@@ -1,5 +1,19 @@
 2015-08-05  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION (r187634): Script time is missing from the frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=147654
+
+        Reviewed by Brian Burg.
+
+        Use the current stack entry's parent record when pushing a new stack entry, if no
+        TimelineRecord was generated from the parent record payload.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        Don't create a stack entry when record payload children array is empty.
+
+2015-08-05  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: REGRESSION (r187900): Breakpoint context menu is broken in Debugger tab
         https://bugs.webkit.org/show_bug.cgi?id=147699
 
