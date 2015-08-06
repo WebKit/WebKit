@@ -1,3 +1,15 @@
+2015-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Unksip TestContextMenu GTK+ API test.
+
+        This has been skipped for a long time, and it's very
+        unconvenient. It has never failed for me locally, so let's try
+        again to see if it works in the bots. I'll skip it again if it
+        keeps failing.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/187972.
