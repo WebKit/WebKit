@@ -138,17 +138,32 @@ private:
     String databaseDebugName() const;
 #endif
 
-    Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
-    Mutex m_transactionInProgressMutex;
-    bool m_transactionInProgress;
-    bool m_isTransactionQueueEnabled;
-
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
     RefPtr<DatabaseContext> m_databaseContext;
 
     bool m_deleted;
     bool m_hasPendingCreationEvent { false };
+
+    String m_name;
+    String m_expectedVersion;
+    String m_displayName;
+    unsigned long m_estimatedSize;
+    String m_filename;
+
+    DatabaseGuid m_guid;
+    bool m_opened;
+    bool m_new;
+
+    SQLiteDatabase m_sqliteDatabase;
+
+    RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
+
+    Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
+    Mutex m_transactionInProgressMutex;
+    bool m_transactionInProgress;
+    bool m_isTransactionQueueEnabled;
 
     friend class ChangeVersionWrapper;
     friend class DatabaseBackendBase;

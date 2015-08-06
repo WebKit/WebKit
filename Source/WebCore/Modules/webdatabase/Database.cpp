@@ -60,6 +60,35 @@
 
 namespace WebCore {
 
+// Registering "opened" databases with the DatabaseTracker
+// =======================================================
+// The DatabaseTracker maintains a list of databases that have been
+// "opened" so that the client can call interrupt or delete on every database
+// associated with a DatabaseContext.
+//
+// We will only call DatabaseTracker::addOpenDatabase() to add the database
+// to the tracker as opened when we've succeeded in opening the database,
+// and will set m_opened to true. Similarly, we only call
+// DatabaseTracker::removeOpenDatabase() to remove the database from the
+// tracker when we set m_opened to false in closeDatabase(). This sets up
+// a simple symmetry between open and close operations, and a direct
+// correlation to adding and removing databases from the tracker's list,
+// thus ensuring that we have a correct list for the interrupt and
+// delete operations to work on.
+//
+// The only databases instances not tracked by the tracker's open database
+// list are the ones that have not been added yet, or the ones that we
+// attempted an open on but failed to. Such instances only exist in the
+// DatabaseServer's factory methods for creating database backends.
+//
+// The factory methods will either call openAndVerifyVersion() or
+// performOpenAndVerify(). These methods will add the newly instantiated
+// database backend if they succeed in opening the requested database.
+// In the case of failure to open the database, the factory methods will
+// simply discard the newly instantiated database backend when they return.
+// The ref counting mechanims will automatically destruct the un-added
+// (and un-returned) databases instances.
+
 static const char versionKey[] = "WebKitDatabaseVersionKey";
 static const char unqualifiedInfoTableName[] = "__WebKitDatabaseInfoTable__";
 
@@ -184,12 +213,17 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
 }
 
 Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : DatabaseBackendBase(databaseContext.get(), name, expectedVersion, displayName, estimatedSize)
-    , m_transactionInProgress(false)
-    , m_isTransactionQueueEnabled(true)
-    , m_scriptExecutionContext(databaseContext->scriptExecutionContext())
+    : m_scriptExecutionContext(databaseContext->scriptExecutionContext())
     , m_databaseContext(databaseContext)
     , m_deleted(false)
+    , m_name(name.isolatedCopy())
+    , m_expectedVersion(expectedVersion.isolatedCopy())
+    , m_displayName(displayName.isolatedCopy())
+    , m_estimatedSize(estimatedSize)
+    , m_opened(false)
+    , m_new(false)
+    , m_transactionInProgress(false)
+    , m_isTransactionQueueEnabled(true)
 {
     m_contextThreadSecurityOrigin = m_databaseContext->securityOrigin()->isolatedCopy();
 
@@ -211,7 +245,6 @@ Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& na
     m_filename = DatabaseManager::singleton().fullPathForDatabase(securityOrigin(), m_name);
 
     m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->isolatedCopy();
-    setFrontend(this);
 
     ASSERT(m_databaseContext->databaseThread());
 }
@@ -365,7 +398,7 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
                     m_sqliteDatabase.close();
                     return false;
                 }
-            } else if (!m_frontend->getVersionFromDatabase(currentVersion, false)) {
+            } else if (!getVersionFromDatabase(currentVersion, false)) {
                 errorMessage = formatErrorMessage("unable to open database, failed to read current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 transaction.rollback();
                 m_sqliteDatabase.close();
@@ -376,7 +409,7 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
                 LOG(StorageAPI, "Retrieved current version %s from database %s", currentVersion.ascii().data(), databaseDebugName().ascii().data());
             } else if (!m_new || shouldSetVersionInNewDatabase) {
                 LOG(StorageAPI, "Setting version %s in database %s that was just created", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
-                if (!m_frontend->setVersionInDatabase(m_expectedVersion, false)) {
+                if (!setVersionInDatabase(m_expectedVersion, false)) {
                     errorMessage = formatErrorMessage("unable to open database, failed to write current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();

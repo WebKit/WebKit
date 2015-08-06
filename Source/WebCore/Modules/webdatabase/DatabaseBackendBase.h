@@ -51,9 +51,6 @@ public:
     virtual ~DatabaseBackendBase();
 
 
-    DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
-    void setFrontend(Database* frontend) { m_frontend = frontend; }
-
 protected:
     friend class ChangeVersionWrapper;
     friend class SQLStatementBackend;
@@ -61,26 +58,7 @@ protected:
     friend class SQLTransactionBackend;
     friend class SQLTransactionBackendSync;
 
-    DatabaseBackendBase(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
-
-    RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
-    RefPtr<DatabaseContext> m_databaseContext; // Associated with m_scriptExecutionContext.
-
-    String m_name;
-    String m_expectedVersion;
-    String m_displayName;
-    unsigned long m_estimatedSize;
-    String m_filename;
-
-    Database* m_frontend;
-
-    DatabaseGuid m_guid;
-    bool m_opened;
-    bool m_new;
-
-    SQLiteDatabase m_sqliteDatabase;
-
-    RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
+    DatabaseBackendBase();
 
     friend class DatabaseServer;
 };
