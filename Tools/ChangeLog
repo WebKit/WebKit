@@ -1,3 +1,12 @@
+2015-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip GTK+ test /webkit2/WebKitWebView/submit-form.
+
+        It's flaky.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2015-08-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Bump EFL version to 1.15.0
