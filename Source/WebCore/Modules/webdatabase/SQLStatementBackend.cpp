@@ -75,12 +75,6 @@
 
 namespace WebCore {
 
-Ref<SQLStatementBackend> SQLStatementBackend::create(std::unique_ptr<SQLStatement> frontend,
-    const String& statement, const Vector<SQLValue>& arguments, int permissions)
-{
-    return adoptRef(*new SQLStatementBackend(WTF::move(frontend), statement, arguments, permissions));
-}
-
 SQLStatementBackend::SQLStatementBackend(std::unique_ptr<SQLStatement> frontend,
     const String& statement, const Vector<SQLValue>& arguments, int permissions)
     : m_frontend(WTF::move(frontend))

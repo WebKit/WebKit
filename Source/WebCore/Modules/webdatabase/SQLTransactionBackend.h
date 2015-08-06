@@ -86,7 +86,7 @@ private:
 
     void doCleanup();
 
-    void enqueueStatementBackend(PassRefPtr<SQLStatementBackend>);
+    void enqueueStatementBackend(std::unique_ptr<SQLStatementBackend>);
 
     // State Machine functions:
     virtual StateFunction stateFunctionFor(SQLTransactionState) override;
@@ -113,7 +113,7 @@ private:
     void releaseOriginLockIfNeeded();
 
     RefPtr<SQLTransaction> m_frontend; // Has a reference cycle, and will break in doCleanup().
-    RefPtr<SQLStatementBackend> m_currentStatementBackend;
+    std::unique_ptr<SQLStatementBackend> m_currentStatementBackend;
 
     RefPtr<Database> m_database;
     RefPtr<SQLTransactionWrapper> m_wrapper;
@@ -129,7 +129,7 @@ private:
     bool m_hasVersionMismatch;
 
     Mutex m_statementMutex;
-    Deque<RefPtr<SQLStatementBackend>> m_statementQueue;
+    Deque<std::unique_ptr<SQLStatementBackend>> m_statementQueue;
 
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     RefPtr<OriginLock> m_originLock;

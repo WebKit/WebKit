@@ -41,11 +41,10 @@ class SQLResultSet;
 class SQLStatement;
 class SQLTransactionBackend;
 
-class SQLStatementBackend : public ThreadSafeRefCounted<SQLStatementBackend> {
+class SQLStatementBackend {
 public:
-    static Ref<SQLStatementBackend> create(std::unique_ptr<SQLStatement>,
-        const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
-    virtual ~SQLStatementBackend();
+    SQLStatementBackend(std::unique_ptr<SQLStatement>, const String& statement, const Vector<SQLValue>& arguments, int permissions);
+    ~SQLStatementBackend();
 
     bool execute(Database&);
     bool lastExecutionFailedDueToQuota() const;
@@ -61,9 +60,6 @@ public:
     PassRefPtr<SQLResultSet> sqlResultSet() const;
 
 private:
-    SQLStatementBackend(std::unique_ptr<SQLStatement>, const String& statement,
-        const Vector<SQLValue>& arguments, int permissions);
-
     void setFailureDueToQuota();
     void clearFailureDueToQuota();
 

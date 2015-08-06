@@ -463,10 +463,10 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
     return stateFunctions[static_cast<int>(state)];
 }
 
-void SQLTransactionBackend::enqueueStatementBackend(PassRefPtr<SQLStatementBackend> statementBackend)
+void SQLTransactionBackend::enqueueStatementBackend(std::unique_ptr<SQLStatementBackend> statementBackend)
 {
     MutexLocker locker(m_statementMutex);
-    m_statementQueue.append(statementBackend);
+    m_statementQueue.append(WTF::move(statementBackend));
 }
 
 void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
@@ -525,13 +525,12 @@ bool SQLTransactionBackend::shouldPerformWhilePaused() const
 
 void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatement> statement, const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
 {
-    RefPtr<SQLStatementBackend> statementBackend;
-    statementBackend = SQLStatementBackend::create(WTF::move(statement), sqlStatement, arguments, permissions);
+    auto statementBackend = std::make_unique<SQLStatementBackend>(WTF::move(statement), sqlStatement, arguments, permissions);
 
     if (m_database->deleted())
         statementBackend->setDatabaseDeletedError();
 
-    enqueueStatementBackend(statementBackend);
+    enqueueStatementBackend(WTF::move(statementBackend));
 }
 
 void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
