@@ -41,6 +41,8 @@ public:
     void startUpdating(WKGeolocationManagerRef);
     void stopUpdating(WKGeolocationManagerRef);
 
+    bool isActive() const { return m_isActive; }
+
 private:
     void sendPositionIfNeeded();
     void sendErrorIfNeeded();

@@ -646,6 +646,12 @@ static JSValueRef numberOfPendingGeolocationPermissionRequestsCallback(JSContext
     return JSValueMakeNumber(context, controller->numberOfPendingGeolocationPermissionRequests());
 }
 
+static JSValueRef isGeolocationProviderActiveCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeBoolean(context, controller->isGeolocationProviderActive());
+}
+
 static JSValueRef queueBackNavigationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
@@ -2033,6 +2039,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "originsWithApplicationCache", originsWithApplicationCacheCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "goBack", goBackCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
         { "ignoreLegacyWebNotificationPermissionRequests", ignoreLegacyWebNotificationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isGeolocationProviderActive", isGeolocationProviderActiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isCommandEnabled", isCommandEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfPendingGeolocationPermissionRequests", numberOfPendingGeolocationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

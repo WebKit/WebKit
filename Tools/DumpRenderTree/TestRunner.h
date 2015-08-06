@@ -76,6 +76,7 @@ public:
     void keepWebHistory();
     void notifyDone();
     int numberOfPendingGeolocationPermissionRequests();
+    bool isGeolocationProviderActive();
     void overridePreference(JSStringRef key, JSStringRef value);
     JSStringRef pathToLocalResource(JSContextRef, JSStringRef url);
     void queueBackNavigation(int howFarBackward);

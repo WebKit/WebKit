@@ -115,6 +115,11 @@
     _timer = 0;
 }
 
+- (BOOL)isActive
+{
+    return !_registeredViews.isEmpty();
+}
+
 - (void)timerFired
 {
     _timer = 0;

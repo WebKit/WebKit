@@ -464,6 +464,16 @@ void InjectedBundle::setMockGeolocationPositionUnavailableError(WKStringRef erro
     WKBundlePagePostMessage(page()->page(), messageName.get(), errorMessage);
 }
 
+bool InjectedBundle::isGeolocationProviderActive() const
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("IsGeolocationClientActive"));
+    WKTypeRef resultToPass = 0;
+    WKBundlePagePostSynchronousMessage(page()->page(), messageName.get(), 0, &resultToPass);
+    WKRetainPtr<WKBooleanRef> isActive(AdoptWK, static_cast<WKBooleanRef>(resultToPass));
+
+    return WKBooleanGetValue(isActive.get());
+}
+
 void InjectedBundle::setUserMediaPermission(bool enabled)
 {
     auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetUserMediaPermission"));

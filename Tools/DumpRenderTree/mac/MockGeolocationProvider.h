@@ -44,6 +44,7 @@
 - (void)setPositionUnavailableErrorWithMessage:(NSString *)errorMessage;
 
 - (void)stopTimer;
+- (BOOL)isActive;
 
 @end
 #endif

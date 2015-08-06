@@ -63,7 +63,7 @@ void GeolocationController::addObserver(Geolocation* observer, bool enableHighAc
 
     if (enableHighAccuracy)
         m_client.setEnableHighAccuracy(true);
-    if (wasEmpty)
+    if (wasEmpty && m_page.isVisible())
         m_client.startUpdating();
 }
 
@@ -124,8 +124,17 @@ GeolocationPosition* GeolocationController::lastPosition()
     return m_client.lastPosition();
 }
 
-void GeolocationController::viewStateDidChange(ViewState::Flags, ViewState::Flags)
+void GeolocationController::viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState)
 {
+    // Toggle GPS based on page visibility to save battery.
+    ViewState::Flags changed = oldViewState ^ newViewState;
+    if (changed & ViewState::IsVisible && !m_observers.isEmpty()) {
+        if (newViewState & ViewState::IsVisible)
+            m_client.startUpdating();
+        else
+            m_client.stopUpdating();
+    }
+
     if (!m_page.isVisible())
         return;
 

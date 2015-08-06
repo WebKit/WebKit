@@ -1,3 +1,18 @@
+2015-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Toggle GPS state based on page visibility to save battery
+        https://bugs.webkit.org/show_bug.cgi?id=147685
+
+        Reviewed by Benjamin Poulain.
+
+        Add layout tests to check that the GeolocationClient starts and stops
+        updating when page visibility changes.
+
+        * fast/dom/Geolocation/startUpdatingOnlyWhenPageVisible-expected.txt: Added.
+        * fast/dom/Geolocation/startUpdatingOnlyWhenPageVisible.html: Added.
+        * fast/dom/Geolocation/stopUpdatingForHiddenPage-expected.txt: Added.
+        * fast/dom/Geolocation/stopUpdatingForHiddenPage.html: Added.
+
 2015-08-06  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move http/tests/inspector-protocol/ contents to http/tests/inspector/

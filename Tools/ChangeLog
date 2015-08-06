@@ -1,3 +1,38 @@
+2015-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Toggle GPS state based on page visibility to save battery
+        https://bugs.webkit.org/show_bug.cgi?id=147685
+
+        Reviewed by Benjamin Poulain.
+
+        Add testRunner.isGeolocationProviderActive() test support function.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (isGeolocationProviderActiveCallback):
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/MockGeolocationProvider.h:
+        * DumpRenderTree/mac/MockGeolocationProvider.mm:
+        (-[MockGeolocationProvider isActive]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::isGeolocationProviderActive):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::isGeolocationProviderActive):
+        * WebKitTestRunner/GeolocationProviderMock.h:
+        (WTR::GeolocationProviderMock::isActive):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::isGeolocationProviderActive):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::isGeolocationProviderActive):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::isGeolocationProviderActive):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2015-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Automate JSBench with run-benchmark

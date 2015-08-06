@@ -254,6 +254,11 @@ int TestRunner::numberOfPendingGeolocationPermissionRequests()
     return [(UIDelegate *)[[mainFrame webView] UIDelegate] numberOfPendingGeolocationPermissionRequests];
 }
 
+bool TestRunner::isGeolocationProviderActive()
+{
+    return MockGeolocationProvider.shared.isActive;
+}
+
 size_t TestRunner::webHistoryItemCount()
 {
     return [[[WebHistory optionalSharedHistory] allItems] count];

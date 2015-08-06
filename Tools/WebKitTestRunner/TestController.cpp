@@ -1478,6 +1478,11 @@ void TestController::handleGeolocationPermissionRequest(WKGeolocationPermissionR
     decidePolicyForGeolocationPermissionRequestIfPossible();
 }
 
+bool TestController::isGeolocationProviderActive() const
+{
+    return m_geolocationProvider->isActive();
+}
+
 void TestController::setUserMediaPermission(bool enabled)
 {
     m_isUserMediaPermissionSet = true;

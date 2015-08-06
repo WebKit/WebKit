@@ -699,6 +699,11 @@ void TestRunner::setGeolocationPermission(bool enabled)
     InjectedBundle::singleton().setGeolocationPermission(enabled);
 }
 
+bool TestRunner::isGeolocationProviderActive()
+{
+    return InjectedBundle::singleton().isGeolocationProviderActive();
+}
+
 void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef jsAltitude, JSValueRef jsAltitudeAccuracy, JSValueRef jsHeading, JSValueRef jsSpeed)
 {
     auto& injectedBundle = InjectedBundle::singleton();

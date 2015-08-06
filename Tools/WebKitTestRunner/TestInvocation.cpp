@@ -642,6 +642,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return 0;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "IsGeolocationClientActive")) {
+        bool isActive = TestController::singleton().isGeolocationProviderActive();
+        WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(isActive));
+        return result;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsWorkQueueEmpty")) {
         bool isEmpty = TestController::singleton().workQueueManager().isWorkQueueEmpty();
         WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(isEmpty));

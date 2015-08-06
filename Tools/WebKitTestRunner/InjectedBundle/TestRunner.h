@@ -256,6 +256,7 @@ public:
     void setGeolocationPermission(bool);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef altitude, JSValueRef altitudeAccuracy, JSValueRef heading, JSValueRef speed);
     void setMockGeolocationPositionUnavailableError(JSStringRef message);
+    bool isGeolocationProviderActive();
 
     // MediaStream
     void setUserMediaPermission(bool);
