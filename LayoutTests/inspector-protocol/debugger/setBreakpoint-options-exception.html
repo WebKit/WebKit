@@ -5,7 +5,7 @@
 <script>
 function test()
 {
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
 
     InspectorTest.sendCommand("Console.enable", {});
     InspectorTest.sendCommand("Debugger.enable", {});
@@ -45,8 +45,8 @@ function test()
 
     InspectorTest.eventHandler["Console.messageAdded"] = function(messageObject)
     {
-        var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
-        InspectorTest.log("PASS: Console Message: " + JSON.stringify(simplifiedMessage));
+        var message = InspectorTest.Console.sanitizeConsoleMessage(messageObject);
+        InspectorTest.log("PASS: Console Message: " + JSON.stringify(message));
 
         if (++logsSeen === expectedLogs)
             InspectorTest.completeTest();

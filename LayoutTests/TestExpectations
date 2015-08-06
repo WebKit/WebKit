@@ -93,7 +93,6 @@ webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
 
 webkit.org/b/133761 inspector-protocol/debugger/breakpoint-action-detach.html [ Skip ]
 webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
-webkit.org/b/127414 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
 
 webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-rethrow-in-catch.html [ Skip ]
 webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-with-catch.html [ Skip ]

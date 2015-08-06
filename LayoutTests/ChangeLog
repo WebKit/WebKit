@@ -1,3 +1,31 @@
+2015-08-05  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: rewrite protocol test for console messages from X-Frame-Options
+        https://bugs.webkit.org/show_bug.cgi?id=147714
+
+        Reviewed by Joseph Pecoraro.
+
+        Rewrite deny-X-FrameOption.html to use AsyncTestSuite, and hopefully address
+        the flakiness of the test. It is now in the inspector-protocol/console/ directory.
+
+        Extract the addConsoleTestCase helper to a shared file. Clean up console test
+        helpers and use a less awkward namespace for these helpers.
+
+        * TestExpectations: Unskip the deleted test, the new test should be less flaky.
+        * inspector-protocol/console/console-message.html:
+        * inspector-protocol/console/css-source-locations.html:
+        * inspector-protocol/console/js-source-locations.html:
+        * inspector-protocol/console/x-frame-options-message-expected.txt: Added.
+        * inspector-protocol/console/x-frame-options-message.html: Added.
+        * inspector-protocol/debugger/setBreakpoint-actions.html:
+        * inspector-protocol/debugger/setBreakpoint-options-exception.html:
+        * inspector-protocol/page/deny-X-FrameOption-expected.txt: Removed.
+        * inspector-protocol/page/deny-X-FrameOption.html: Removed.
+        * inspector-protocol/resources/console-helper.js: Removed.
+        * inspector-protocol/resources/console-test.js: Added.
+        (InspectorTest.Console.sanitizeConsoleMessage):
+        (InspectorTest.Console.addTestCase):
+
 2015-08-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         [ES6] Class parser does not allow methods named set and get.

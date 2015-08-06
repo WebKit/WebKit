@@ -13,9 +13,11 @@ function generateSimpleConsoleMessages()
 
 function test()
 {
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
+
     var suite = new InspectorTest.AsyncTestSuite("Console.MessagesFromCommandLineAPI");
 
-    addConsoleTestCase({
+    InspectorTest.Console.addTestCase(suite, {
         name: "ConsoleLogString",
         description: "Test `console.log(\"log\")`",
         expression: 'console.log("log");',
@@ -27,7 +29,7 @@ function test()
         }
     });
 
-    addConsoleTestCase({
+    InspectorTest.Console.addTestCase(suite, {
         name: "ConsoleInfoString",
         description: "Test `console.info(\"info\")`",
         expression: 'console.info("info");',
@@ -39,7 +41,7 @@ function test()
         }
     });
 
-    addConsoleTestCase({
+    InspectorTest.Console.addTestCase(suite, {
         name: "ConsoleWarnString",
         description: "Test `console.warn(\"warn\")`",
         expression: 'console.warn("warn");',
@@ -51,7 +53,7 @@ function test()
         }
     });
 
-    addConsoleTestCase({
+    InspectorTest.Console.addTestCase(suite, {
         name: "ConsoleErrorString",
         description: "Test `console.error(\"error\")`",
         expression: 'console.error("error");',
@@ -63,7 +65,7 @@ function test()
         }
     });
 
-    addConsoleTestCase({
+    InspectorTest.Console.addTestCase(suite, {
         name: "ConsoleDebugString",
         description: "Test `console.debug(\"debug\")`",
         expression: 'console.debug("debug");',
@@ -74,9 +76,6 @@ function test()
             parameters: ['string']
         }
     });
-
-    // Set up the console prior to running the test suite.
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
 
     InspectorTest.awaitCommand({
         method: "Console.enable",
@@ -90,41 +89,6 @@ function test()
     function fatalError(e) {
         InspectorTest.log("Test failed with fatal error: " + JSON.stringify(e));
         InspectorTest.completeTest();
-    }
-
-    function addConsoleTestCase(args) {
-        var {name, description, expression, expected} = args;
-        suite.addTestCase({
-            name,
-            description,
-            test: function(resolve, reject) {
-                InspectorTest.awaitEvent({
-                    event: "Console.messageAdded",
-                })
-                .then(function(messageObject) {
-                    var consoleMessage = messageObject.params.message;
-                    var {source, level, text, parameters} = consoleMessage;
-                    InspectorTest.assert(source === expected.source, "ConsoleMessage type should be '" + expected.source + "'.");
-                    InspectorTest.assert(level === expected.level, "ConsoleMessage level should be '" + expected.level + "'.");
-                    InspectorTest.assert(text === expected.text, "ConsoleMessage text should be '" + expected.text + "'.");
-
-                    InspectorTest.assert(parameters.length === expected.parameters.length, "ConsoleMessage parameters.length === " + expected.parameters.length);
-                    for (var i = 0; i < parameters.length; ++i) {
-                        var expectedType = expected.parameters[i];
-                        InspectorTest.assert(parameters[i].type === expectedType, "ConsoleMessage parameter " + i + " should have type '" + expectedType + "'.");
-                    }
-                    resolve();
-                })
-                .catch(reject);
-
-                // Cause a messageAdded event to be generated.
-                InspectorTest.log("Evaluating expression: " + expression);
-                InspectorTest.sendCommand({
-                    method: "Runtime.evaluate",
-                    params: {expression}
-                });
-            }
-        });
     }
 }
 </script>

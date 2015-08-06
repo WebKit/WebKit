@@ -10,7 +10,7 @@ console.warn("warn 1"); console.error("error 1");
 <script>
 function test()
 {
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
 
     var consoleMessageCount = 0;
     const expectedConsoleMessageCount = 8;
@@ -20,8 +20,8 @@ function test()
     InspectorTest.addEventListener({
         event: "Console.messageAdded",
         listener: function(messageObject) {
-            var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
-            InspectorTest.log(JSON.stringify(simplifiedMessage));
+            var message = InspectorTest.Console.sanitizeConsoleMessage(messageObject);
+            InspectorTest.log(JSON.stringify(message));
 
             if (++consoleMessageCount === expectedConsoleMessageCount)
                 InspectorTest.completeTest();

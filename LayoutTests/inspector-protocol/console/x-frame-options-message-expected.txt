@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 41: Refused to display 'x-frame-options-message.html' in a frame because it set 'X-Frame-Options' to 'deny'.
+
+
+== Running test suite: Console.XFrameOptionsMessages
+-- Running test case: XFrameOptionsDeny
+Evaluating expression: triggerXFrameOptionDeny();
+PASS: ConsoleMessage type should be 'security'.
+PASS: ConsoleMessage level should be 'error'.
+
