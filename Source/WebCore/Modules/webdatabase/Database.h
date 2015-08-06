@@ -29,9 +29,9 @@
 #ifndef Database_h
 #define Database_h
 
-#include "DatabaseBackendBase.h"
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
+#include "SQLiteDatabase.h"
 #include <wtf/Deque.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +39,7 @@ namespace WebCore {
 
 class ChangeVersionData;
 class DatabaseCallback;
+class DatabaseDetails;
 class DatabaseContext;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -50,7 +51,7 @@ class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
 class VoidCallback;
 
-class Database final : public DatabaseBackendBase {
+class Database final : public ThreadSafeRefCounted<Database> {
 public:
     virtual ~Database();
 
@@ -166,7 +167,6 @@ private:
     bool m_isTransactionQueueEnabled;
 
     friend class ChangeVersionWrapper;
-    friend class DatabaseBackendBase;
     friend class DatabaseManager;
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
     friend class SQLStatement;

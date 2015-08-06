@@ -40,7 +40,6 @@ namespace WebCore {
 
 class AbstractDatabaseServer;
 class Database;
-class DatabaseBackendBase;
 class DatabaseCallback;
 class DatabaseContext;
 class DatabaseManagerClient;

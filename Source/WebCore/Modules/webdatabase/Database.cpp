@@ -189,7 +189,7 @@ static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-typedef HashMap<DatabaseGuid, std::unique_ptr<HashSet<DatabaseBackendBase*>>> GuidDatabaseMap;
+typedef HashMap<DatabaseGuid, std::unique_ptr<HashSet<Database*>>> GuidDatabaseMap;
 
 static GuidDatabaseMap& guidToDatabaseMap()
 {
@@ -236,9 +236,9 @@ Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& na
         std::lock_guard<std::mutex> locker(guidMutex());
 
         m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
-        std::unique_ptr<HashSet<DatabaseBackendBase*>>& hashSet = guidToDatabaseMap().add(m_guid, nullptr).iterator->value;
+        std::unique_ptr<HashSet<Database*>>& hashSet = guidToDatabaseMap().add(m_guid, nullptr).iterator->value;
         if (!hashSet)
-            hashSet = std::make_unique<HashSet<DatabaseBackendBase*>>();
+            hashSet = std::make_unique<HashSet<Database*>>();
         hashSet->add(this);
     }
 
@@ -324,20 +324,20 @@ void Database::close()
 
 class DoneCreatingDatabaseOnExitCaller {
 public:
-    DoneCreatingDatabaseOnExitCaller(DatabaseBackendBase* database)
+    DoneCreatingDatabaseOnExitCaller(Database* database)
         : m_database(database)
         , m_openSucceeded(false)
     {
     }
     ~DoneCreatingDatabaseOnExitCaller()
     {
-        DatabaseTracker::tracker().doneCreatingDatabase(static_cast<Database*>(m_database));
+        DatabaseTracker::tracker().doneCreatingDatabase(m_database);
     }
 
     void setOpenSucceeded() { m_openSucceeded = true; }
 
 private:
-    DatabaseBackendBase* m_database;
+    Database* m_database;
     bool m_openSucceeded;
 };
 

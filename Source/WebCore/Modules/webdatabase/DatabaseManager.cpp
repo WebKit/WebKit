@@ -28,7 +28,6 @@
 
 #include "AbstractDatabaseServer.h"
 #include "Database.h"
-#include "DatabaseBackendBase.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseServer.h"
