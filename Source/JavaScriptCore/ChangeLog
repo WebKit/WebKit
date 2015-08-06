@@ -1,5 +1,18 @@
 2015-08-06  Keith Miller  <keith_miller@apple.com>
 
+        The typedArrayLength function in FTLLowerDFGToLLVM is dead code.
+        https://bugs.webkit.org/show_bug.cgi?id=147749
+
+        Reviewed by Filip Pizlo.
+
+        Removed dead code elimination. the TypedArray length is compiled in compileGetArrayLength()
+        thus no one calls this code.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::typedArrayLength): Deleted.
+
+2015-08-06  Keith Miller  <keith_miller@apple.com>
+
         The JSONP parser incorrectly parsers -0 as +0.
         https://bugs.webkit.org/show_bug.cgi?id=147590
 

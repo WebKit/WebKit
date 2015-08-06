@@ -6047,19 +6047,6 @@ private:
             m_out.phi(m_out.intPtr, fastButterfly, slowButterfly));
     }
     
-    LValue typedArrayLength(Edge baseEdge, ArrayMode arrayMode, LValue base)
-    {
-        JSArrayBufferView* view = m_graph.tryGetFoldableView(provenValue(baseEdge), arrayMode);
-        if (view)
-            return m_out.constInt32(view->length());
-        return m_out.load32NonNegative(base, m_heaps.JSArrayBufferView_length);
-    }
-    
-    LValue typedArrayLength(Edge baseEdge, ArrayMode arrayMode)
-    {
-        return typedArrayLength(baseEdge, arrayMode, lowCell(baseEdge));
-    }
-    
     LValue boolify(Edge edge)
     {
         switch (edge.useKind()) {
