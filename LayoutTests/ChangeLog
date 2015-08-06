@@ -1,3 +1,12 @@
+2015-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix TestExpectations lint warnings.
+
+        * platform/mac-wk2/TestExpectations: Remove duplicate entries.
+
+        * platform/win/TestExpectations: Update for the big platform move of 2015. One of
+        these tests no longer asserts, so it doesn't need to be skipped.
+
 2015-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix paths to ruby-expansion tests, and make them ImageOnlyFailure rather than Skip.

@@ -1466,13 +1466,13 @@ accessibility/content-editable-as-textarea.html [ Skip ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Skip ]
 [ Release ] accessibility/loading-iframe-sends-notification.html [ Failure ]
 [ Debug ] accessibility/loading-iframe-sends-notification.html [ Skip ] # Debug assertion
-platform/win/accessibility/single-select-children-changed.html	[ Skip ]
+accessibility/win/single-select-children-changed.html	[ Skip ]
 webkit.org/b/142016 accessibility/aria-switch-sends-notification.html [ Skip ]
 
 webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
 
 # Test times out
-webkit.org/b/95405 platform/win/accessibility/single-select-children.html [ Skip ]
+webkit.org/b/95405 accessibility/win/single-select-children.html [ Skip ]
 accessibility/file-upload-button-stringvalue.html
 webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Skip ] #  [ Timeout ]
 
@@ -1484,8 +1484,8 @@ webkit.org/b/108249 [ Debug ] accessibility/corresponding-control-deleted-crash.
 accessibility/color-well.html
 
 # Failing Windows-only accessibility tests
-webkit.org/b/127485 [ Debug ] platform/win/accessibility/parent-element.html [ Failure ]
-webkit.org/b/127485 [ Release ] platform/win/accessibility/parent-element.html [ Pass Failure ]
+webkit.org/b/127485 [ Debug ] accessibility/win/parent-element.html [ Failure ]
+webkit.org/b/127485 [ Release ] accessibility/win/parent-element.html [ Pass Failure ]
 
 # Skipping on windows, missing implementation of cellForColumnAndRow
 webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
@@ -1671,8 +1671,6 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/textbox-role-on-contenteditable-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/textbox-role-reports-selection.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/updating-attribute-in-table-causes-crash.html [ Skip ] # Debug assertion
-
-[ Debug ] platform/win/accessibility/option-element-selection-and-focus-events.html [ Skip ] # Debug Assertion
 
 webkit.org/b/146903 accessibility/aria-table-hierarchy.html [ Skip ]
 webkit.org/b/146903 accessibility/roles-table-and-cell.html [ Skip ]
