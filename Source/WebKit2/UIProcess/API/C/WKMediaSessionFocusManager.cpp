@@ -40,13 +40,12 @@ WKTypeID WKMediaSessionFocusManagerGetTypeID()
 #endif
 }
 
-void WKMediaSessionFocusManagerIsFocusedContentMediaElementPaused(WKMediaSessionFocusManagerRef manager, void* context, WKMediaSessionFocusManagerIsFocusedContentMediaElementPausedCallback callback)
+bool WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying(WKMediaSessionFocusManagerRef manager)
 {
 #if ENABLE(MEDIA_SESSION)
-    toImpl(manager)->isFocusedContentMediaElementPaused(toGenericCallbackFunction<bool, bool>(context, callback));
+    return toImpl(manager)->isFocusedContentMediaElementPlaying();
 #else
     UNUSED_PARAM(manager);
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(callback);
+    return false;
 #endif
 }

@@ -38,8 +38,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKMediaSessionFocusManagerGetTypeID();
 
-typedef void (*WKMediaSessionFocusManagerIsFocusedContentMediaElementPausedCallback)(bool, WKErrorRef, void*);
-WK_EXPORT void WKMediaSessionFocusManagerIsFocusedContentMediaElementPaused(WKMediaSessionFocusManagerRef manager, void* context, WKMediaSessionFocusManagerIsFocusedContentMediaElementPausedCallback callback);
+WK_EXPORT bool WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying(WKMediaSessionFocusManagerRef manager);
 
 #ifdef __cplusplus
 }

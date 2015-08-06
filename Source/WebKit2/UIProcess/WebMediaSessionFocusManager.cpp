@@ -57,12 +57,12 @@ void WebMediaSessionFocusManager::derefWebContextSupplement()
     API::Object::deref();
 }
 
-void WebMediaSessionFocusManager::isFocusedContentMediaElementPaused(std::function<void(bool, CallbackBase::Error)> callbackFunction)
+bool WebMediaSessionFocusManager::isFocusedContentMediaElementPlaying() const
 {
     if (!m_focusedMediaElement)
-        return;
+        return false;
 
-    callbackFunction(!m_focusedMediaElementIsPlaying, CallbackBase::Error::None);
+    return m_focusedMediaElementIsPlaying;
 }
 
 void WebMediaSessionFocusManager::mediaElementIsPlayingDidChange(WebPageProxy* proxy, uint64_t elementID, bool isPlaying)

@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "APIObject.h"
-#include "GenericCallback.h"
 #include "WebContextSupplement.h"
 #include "WebPageProxy.h"
 
@@ -43,7 +42,7 @@ public:
 
     static PassRefPtr<WebMediaSessionFocusManager> create(WebProcessPool*);
 
-    void isFocusedContentMediaElementPaused(std::function<void(bool, CallbackBase::Error)>);
+    bool isFocusedContentMediaElementPlaying() const;
     void mediaElementIsPlayingDidChange(WebPageProxy*, uint64_t, bool);
 
     void setFocusedMediaElement(WebPageProxy&, uint64_t);
