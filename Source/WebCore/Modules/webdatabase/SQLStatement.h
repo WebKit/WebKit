@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLStatementBackend_h
-#define SQLStatementBackend_h
+#ifndef SQLStatement_h
+#define SQLStatement_h
 
 #include "SQLCallbackWrapper.h"
 #include "SQLStatementCallback.h"
@@ -43,10 +43,10 @@ class SQLError;
 class SQLResultSet;
 class SQLTransactionBackend;
 
-class SQLStatementBackend {
+class SQLStatement {
 public:
-    SQLStatementBackend(Database&, const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
-    ~SQLStatementBackend();
+    SQLStatement(Database&, const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
+    ~SQLStatement();
 
     bool execute(Database&);
     bool lastExecutionFailedDueToQuota() const;
@@ -78,4 +78,4 @@ private:
 
 } // namespace WebCore
 
-#endif // SQLStatementBackend_h
+#endif // SQLStatement_h

@@ -38,7 +38,7 @@
 #include "Logging.h"
 #include "OriginLock.h"
 #include "SQLError.h"
-#include "SQLStatementBackend.h"
+#include "SQLStatement.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
 #include "SQLTransaction.h"
@@ -423,7 +423,7 @@ void SQLTransactionBackend::doCleanup()
     m_wrapper = nullptr;
 }
 
-SQLStatementBackend* SQLTransactionBackend::currentStatement()
+SQLStatement* SQLTransactionBackend::currentStatement()
 {
     return m_currentStatementBackend.get();
 }
@@ -463,7 +463,7 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
     return stateFunctions[static_cast<int>(state)];
 }
 
-void SQLTransactionBackend::enqueueStatementBackend(std::unique_ptr<SQLStatementBackend> statementBackend)
+void SQLTransactionBackend::enqueueStatementBackend(std::unique_ptr<SQLStatement> statementBackend)
 {
     MutexLocker locker(m_statementMutex);
     m_statementQueue.append(WTF::move(statementBackend));
@@ -523,7 +523,7 @@ bool SQLTransactionBackend::shouldPerformWhilePaused() const
 }
 #endif
 
-void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatementBackend> statementBackend)
+void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatement> statementBackend)
 {
     if (m_database->deleted())
         statementBackend->setDatabaseDeletedError();

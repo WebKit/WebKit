@@ -1013,7 +1013,7 @@ set(WebCore_SOURCES
     Modules/webdatabase/SQLException.cpp
     Modules/webdatabase/SQLResultSet.cpp
     Modules/webdatabase/SQLResultSetRowList.cpp
-    Modules/webdatabase/SQLStatementBackend.cpp
+    Modules/webdatabase/SQLStatement.cpp
     Modules/webdatabase/SQLTransaction.cpp
     Modules/webdatabase/SQLTransactionBackend.cpp
     Modules/webdatabase/SQLTransactionClient.cpp

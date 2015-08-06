@@ -42,7 +42,7 @@ class Database;
 class OriginLock;
 class SQLError;
 class SQLiteTransaction;
-class SQLStatementBackend;
+class SQLStatement;
 class SQLTransaction;
 class SQLTransactionBackend;
 class SQLValue;
@@ -76,16 +76,16 @@ public:
     // APIs called from the frontend published via SQLTransactionBackend:
     void requestTransitToState(SQLTransactionState);
     PassRefPtr<SQLError> transactionError();
-    SQLStatementBackend* currentStatement();
+    SQLStatement* currentStatement();
     void setShouldRetryCurrentStatement(bool);
-    void executeSQL(std::unique_ptr<SQLStatementBackend>);
+    void executeSQL(std::unique_ptr<SQLStatement>);
     
 private:
     SQLTransactionBackend(Database*, PassRefPtr<SQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     void doCleanup();
 
-    void enqueueStatementBackend(std::unique_ptr<SQLStatementBackend>);
+    void enqueueStatementBackend(std::unique_ptr<SQLStatement>);
 
     // State Machine functions:
     virtual StateFunction stateFunctionFor(SQLTransactionState) override;
@@ -112,7 +112,7 @@ private:
     void releaseOriginLockIfNeeded();
 
     RefPtr<SQLTransaction> m_frontend; // Has a reference cycle, and will break in doCleanup().
-    std::unique_ptr<SQLStatementBackend> m_currentStatementBackend;
+    std::unique_ptr<SQLStatement> m_currentStatementBackend;
 
     RefPtr<Database> m_database;
     RefPtr<SQLTransactionWrapper> m_wrapper;
@@ -128,7 +128,7 @@ private:
     bool m_hasVersionMismatch;
 
     Mutex m_statementMutex;
-    Deque<std::unique_ptr<SQLStatementBackend>> m_statementQueue;
+    Deque<std::unique_ptr<SQLStatement>> m_statementQueue;
 
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     RefPtr<OriginLock> m_originLock;

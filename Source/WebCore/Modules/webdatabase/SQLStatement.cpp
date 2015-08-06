@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-#include "SQLStatementBackend.h"
+#include "SQLStatement.h"
 
 #include "Database.h"
 #include "Logging.h"
@@ -46,14 +46,14 @@
 //
 //     At birth (in SQLTransactionBackend::executeSQL()):
 //     =================================================
-//     SQLTransactionBackend           // Deque<RefPtr<SQLStatementBackend>> m_statementQueue points to ...
-//     --> SQLStatementBackend         // std::unique_ptr<SQLStatement> m_frontend points to ...
+//     SQLTransactionBackend           // Deque<RefPtr<SQLStatement>> m_statementQueue points to ...
+//     --> SQLStatement         // std::unique_ptr<SQLStatement> m_frontend points to ...
 //         --> SQLStatement
 //
 //     After grabbing the statement for execution (in SQLTransactionBackend::getNextStatement()):
 //     =========================================================================================
-//     SQLTransactionBackend           // RefPtr<SQLStatementBackend> m_currentStatementBackend points to ...
-//     --> SQLStatementBackend         // std::unique_ptr<SQLStatement> m_frontend points to ...
+//     SQLTransactionBackend           // RefPtr<SQLStatement> m_currentStatementBackend points to ...
+//     --> SQLStatement         // std::unique_ptr<SQLStatement> m_frontend points to ...
 //         --> SQLStatement
 //
 //     Then we execute the statement in SQLTransactionBackend::runCurrentStatementAndGetNextState().
@@ -67,14 +67,14 @@
 //     =======================================================================================
 //     When we're done executing, we'll grab the next statement. But before we
 //     do that, getNextStatement() nullify SQLTransactionBackend::m_currentStatementBackend.
-//     This will trigger the deletion of the SQLStatementBackend and SQLStatement.
+//     This will trigger the deletion of the SQLStatement and SQLStatement.
 //
 //     Note: unlike with SQLTransaction, there is no JS representation of SQLStatement.
 //     Hence, there is no GC dependency at play here.
 
 namespace WebCore {
 
-SQLStatementBackend::SQLStatementBackend(Database& database, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
+SQLStatement::SQLStatement(Database& database, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
     : m_statement(statement.isolatedCopy())
     , m_arguments(arguments)
     , m_statementCallbackWrapper(callback, database.scriptExecutionContext())
@@ -83,21 +83,21 @@ SQLStatementBackend::SQLStatementBackend(Database& database, const String& state
 {
 }
 
-SQLStatementBackend::~SQLStatementBackend()
+SQLStatement::~SQLStatement()
 {
 }
 
-PassRefPtr<SQLError> SQLStatementBackend::sqlError() const
+PassRefPtr<SQLError> SQLStatement::sqlError() const
 {
     return m_error;
 }
 
-PassRefPtr<SQLResultSet> SQLStatementBackend::sqlResultSet() const
+PassRefPtr<SQLResultSet> SQLStatement::sqlResultSet() const
 {
     return m_resultSet;
 }
 
-bool SQLStatementBackend::execute(Database& db)
+bool SQLStatement::execute(Database& db)
 {
     ASSERT(!m_resultSet);
 
@@ -199,7 +199,7 @@ bool SQLStatementBackend::execute(Database& db)
     return true;
 }
 
-bool SQLStatementBackend::performCallback(SQLTransaction* transaction)
+bool SQLStatement::performCallback(SQLTransaction* transaction)
 {
     ASSERT(transaction);
 
@@ -222,31 +222,31 @@ bool SQLStatementBackend::performCallback(SQLTransaction* transaction)
     return callbackError;
 }
 
-void SQLStatementBackend::setDatabaseDeletedError()
+void SQLStatement::setDatabaseDeletedError()
 {
     ASSERT(!m_error && !m_resultSet);
     m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database");
 }
 
-void SQLStatementBackend::setVersionMismatchedError()
+void SQLStatement::setVersionMismatchedError()
 {
     ASSERT(!m_error && !m_resultSet);
     m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
 }
 
-void SQLStatementBackend::setFailureDueToQuota()
+void SQLStatement::setFailureDueToQuota()
 {
     ASSERT(!m_error && !m_resultSet);
     m_error = SQLError::create(SQLError::QUOTA_ERR, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space");
 }
 
-void SQLStatementBackend::clearFailureDueToQuota()
+void SQLStatement::clearFailureDueToQuota()
 {
     if (lastExecutionFailedDueToQuota())
         m_error = nullptr;
 }
 
-bool SQLStatementBackend::lastExecutionFailedDueToQuota() const
+bool SQLStatement::lastExecutionFailedDueToQuota() const
 {
     return m_error && m_error->code() == SQLError::QUOTA_ERR;
 }

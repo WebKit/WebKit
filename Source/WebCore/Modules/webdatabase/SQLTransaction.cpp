@@ -35,7 +35,7 @@
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "SQLError.h"
-#include "SQLStatementBackend.h"
+#include "SQLStatement.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
 #include "SQLTransactionBackend.h"
@@ -185,7 +185,7 @@ SQLTransactionState SQLTransaction::deliverStatementCallback()
     // Otherwise, continue to loop through the statement queue
     m_executeSqlAllowed = true;
 
-    SQLStatementBackend* currentStatement = m_backend->currentStatement();
+    SQLStatement* currentStatement = m_backend->currentStatement();
     ASSERT(currentStatement);
 
     bool result = currentStatement->performCallback(this);
@@ -258,7 +258,7 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    auto statement = std::make_unique<SQLStatementBackend>(m_database, sqlStatement, arguments, WTF::move(callback), WTF::move(callbackError), permissions);
+    auto statement = std::make_unique<SQLStatement>(m_database, sqlStatement, arguments, WTF::move(callback), WTF::move(callbackError), permissions);
     m_backend->executeSQL(WTF::move(statement));
 }
 
