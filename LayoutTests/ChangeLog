@@ -1,5 +1,19 @@
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
+        Merge r187964. rdar://problem/21870332
+
+    2015-08-05  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed test gardening.
+
+            Skip new latched scrolling test on WK1 due to timeout. Check in some minor clean-ups in
+            the test based on feedback from Antti and others:
+
+            * platform/mac/TestExpectations:
+            * platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html:
+
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
         Merge r187935. rdar://problem/22097682
 
     2015-08-04  Doug Russell  <d_russell@apple.com>
