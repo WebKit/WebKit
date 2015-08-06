@@ -33,6 +33,7 @@
 #include "WidthIterator.h"
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -214,8 +215,8 @@ static bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& 
 
 static FontCascadeCache& fontCascadeCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontCascadeCache, cache, ());
-    return cache;
+    static NeverDestroyed<FontCascadeCache> cache;
+    return cache.get();
 }
 
 void invalidateFontCascadeCache()
