@@ -105,8 +105,11 @@ public:
         , m_family(family)
     { }
 
-    FontPlatformDataCacheKey(HashTableDeletedValueType) : m_fontDescriptionKey(hashTableDeletedSize()) { }
-    bool isHashTableDeletedValue() const { return m_fontDescriptionKey.size == hashTableDeletedSize(); }
+    explicit FontPlatformDataCacheKey(HashTableDeletedValueType t)
+        : m_fontDescriptionKey(t)
+    { }
+
+    bool isHashTableDeletedValue() const { return m_fontDescriptionKey.isHashTableDeletedValue(); }
 
     bool operator==(const FontPlatformDataCacheKey& other) const
     {
@@ -115,9 +118,6 @@ public:
 
     FontDescriptionKey m_fontDescriptionKey;
     AtomicString m_family;
-
-private:
-    static unsigned hashTableDeletedSize() { return 0xFFFFFFFFU; }
 };
 
 struct FontPlatformDataCacheKeyHash {

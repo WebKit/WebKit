@@ -37,6 +37,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
@@ -67,18 +68,40 @@ typedef IMLangFontLink IMLangFontLinkType;
 
 // This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
 struct FontDescriptionKey {
-    explicit FontDescriptionKey(unsigned size = 0)
-        : size(size)
-        , weight(0)
-        , flags(0)
-        , localeHash(0)
-    { }
+    FontDescriptionKey() = default;
+
     FontDescriptionKey(const FontDescription& description)
-        : size(description.computedPixelSize())
-        , weight(description.weight())
-        , flags(makeFlagKey(description))
-        , localeHash(description.locale().isNull() ? 0 : description.locale().impl()->existingHash())
+        : m_size(description.computedPixelSize())
+        , m_weight(description.weight())
+        , m_flags(makeFlagKey(description))
+        , m_locale(description.locale())
+        , m_featureSettings(description.featureSettings())
     { }
+
+    explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
+        : m_size(cHashTableDeletedSize)
+    { }
+
+    bool operator==(const FontDescriptionKey& other) const
+    {
+        return m_size == other.m_size && m_weight == other.m_weight && m_flags == other.m_flags && m_locale == other.m_locale
+            && ((m_featureSettings == other.m_featureSettings) || (m_featureSettings && other.m_featureSettings && m_featureSettings.get() == other.m_featureSettings.get()));
+    }
+
+    bool operator!=(const FontDescriptionKey& other) const
+    {
+        return !(*this == other);
+    }
+
+    bool isHashTableDeletedValue() const { return m_size == cHashTableDeletedSize; }
+
+    inline unsigned computeHash() const
+    {
+        unsigned toHash[] = {m_size, m_weight, m_flags, m_locale.isNull() ? 0 : m_locale.impl()->existingHash(), m_featureSettings ? m_featureSettings->hash() : 0};
+        return StringHasher::hashMemory(toHash, sizeof(toHash));
+    }
+
+private:
     static unsigned makeFlagKey(const FontDescription& description)
     {
         static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
@@ -91,22 +114,14 @@ struct FontDescriptionKey {
             | static_cast<unsigned>(description.italic()) << 1
             | static_cast<unsigned>(description.renderingMode());
     }
-    bool operator==(const FontDescriptionKey& other) const
-    {
-        return size == other.size && weight == other.weight && flags == other.flags && localeHash == other.localeHash;
-    }
-    bool operator!=(const FontDescriptionKey& other) const
-    {
-        return !(*this == other);
-    }
-    inline unsigned computeHash() const
-    {
-        return StringHasher::hashMemory<sizeof(FontDescriptionKey)>(this);
-    }
-    unsigned size;
-    unsigned weight;
-    unsigned flags;
-    unsigned localeHash; // FIXME: Here, and every client of us, makes hashes of hashes.
+
+    static const unsigned cHashTableDeletedSize = 0xFFFFFFFFU;
+
+    unsigned m_size { 0 };
+    unsigned m_weight { 0 };
+    unsigned m_flags { 0 };
+    AtomicString m_locale;
+    RefPtr<FontFeatureSettings> m_featureSettings;
 };
 
 class FontCache {

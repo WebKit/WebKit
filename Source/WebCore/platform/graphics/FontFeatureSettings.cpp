@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FontFeatureSettings.h"
 
+#include <wtf/text/AtomicStringHash.h>
+
 namespace WebCore {
 
 FontFeature::FontFeature(const AtomicString& tag, int value)
@@ -44,6 +46,11 @@ bool FontFeature::operator<(const FontFeature& other) const
     return (m_tag.impl() < other.m_tag.impl()) || (m_tag.impl() == other.m_tag.impl() && m_value < other.m_value);
 }
 
+unsigned FontFeature::hash() const
+{
+    return WTF::PairHash<AtomicString, unsigned>::hash(std::make_pair(m_tag, m_value));
+}
+
 Ref<FontFeatureSettings> FontFeatureSettings::create()
 {
     return adoptRef(*new FontFeatureSettings);
@@ -58,6 +65,14 @@ void FontFeatureSettings::insert(FontFeature&& feature)
             break;
     }
     m_list.insert(i, WTF::move(feature));
+}
+
+unsigned FontFeatureSettings::hash() const
+{
+    unsigned result = 0;
+    for (size_t i = 0; i < size(); ++i)
+        result = WTF::pairIntHash(result, at(i).hash());
+    return result;
 }
 
 }

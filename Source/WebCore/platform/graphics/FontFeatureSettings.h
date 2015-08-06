@@ -44,6 +44,8 @@ public:
     const AtomicString& tag() const { return m_tag; }
     int value() const { return m_value; }
 
+    unsigned hash() const;
+
 private:
     AtomicString m_tag;
     const int m_value { 0 };
@@ -58,6 +60,8 @@ public:
     size_t size() const { return m_list.size(); }
     const FontFeature& operator[](int index) const { return m_list[index]; }
     const FontFeature& at(size_t index) const { return m_list.at(index); }
+
+    unsigned hash() const;
 
 private:
     FontFeatureSettings() { }
