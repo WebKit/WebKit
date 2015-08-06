@@ -4936,7 +4936,7 @@ void Document::initSecurityContext()
     enforceSandboxFlags(m_frame->loader().effectiveSandboxFlags());
 
     if (shouldEnforceContentDispositionAttachmentSandbox())
-        enforceSandboxFlags(SandboxAll);
+        applyContentDispositionAttachmentSandbox();
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
     setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
@@ -6717,15 +6717,22 @@ bool Document::shouldEnforceContentDispositionAttachmentSandbox() const
     if (m_isSynthesized)
         return false;
 
-    if (isMediaDocument())
-        return false;
-
     bool contentDispositionAttachmentSandboxEnabled = settings() && settings()->contentDispositionAttachmentSandboxEnabled();
     bool responseIsAttachment = false;
     if (DocumentLoader* documentLoader = m_frame ? m_frame->loader().activeDocumentLoader() : nullptr)
         responseIsAttachment = documentLoader->response().isAttachment();
 
     return contentDispositionAttachmentSandboxEnabled && responseIsAttachment;
+}
+
+void Document::applyContentDispositionAttachmentSandbox()
+{
+    ASSERT(shouldEnforceContentDispositionAttachmentSandbox());
+
+    if (!isMediaDocument())
+        enforceSandboxFlags(SandboxAll);
+    else
+        enforceSandboxFlags(SandboxOrigin);
 }
 
 } // namespace WebCore
