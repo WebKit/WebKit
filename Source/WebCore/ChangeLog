@@ -1,5 +1,31 @@
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
+        Merge r187930. rdar://problem/21870332
+
+    2015-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION (r173784): [Mac] Correct latching error for non-scrollable iframe nested inside scrollable div.
+            https://bugs.webkit.org/show_bug.cgi?id=147668
+            <rdar://problem/21870332>
+
+            Reviewed by Simon Fraser.
+
+            Test: platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html
+
+            When we are wrapping up processing of the wheel event for a given frame, if the current latching context
+            does NOT apply to the current frame (e.g., because it's latched to an enclosing frame) we should not pass
+            wheel events directly to the latched elements scrollable container. Instead, we should just give the current
+            frame an opportunity to perform any custom wheel event handling and return, so that the enclosing (latched)
+            frame can do the rest of its event handling.
+
+            If we don't do this, we incorrectly ask the enclosing frame to process the event, then return claiming that
+            we handled the event, preventing the enclosing frame from doing its part of the processing.
+
+            * page/mac/EventHandlerMac.mm:
+            (WebCore::EventHandler::platformCompleteWheelEvent):
+
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
         Merge r187892. rdar://problem/21932187
 
     2015-08-04  Eric Carlson  <eric.carlson@apple.com>

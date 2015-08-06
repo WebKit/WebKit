@@ -1009,7 +1009,7 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
     FrameView* view = m_frame.view();
 
     ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
-    if (wheelEvent.useLatchedEventElement() && latchingState && latchingState->scrollableContainer()) {
+    if (wheelEvent.useLatchedEventElement() && !latchingIsLockedToAncestorOfThisFrame(m_frame) && latchingState && latchingState->scrollableContainer()) {
 
         m_isHandlingWheelEvent = false;
 

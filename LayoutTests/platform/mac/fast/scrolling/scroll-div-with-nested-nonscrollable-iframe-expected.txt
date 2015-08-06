@@ -1,0 +1,16 @@
+Put mouse inside the iframe (below) and flick downwards
+
+Tests that iframe does scroll when inner iframe is NOT scrollable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS div did scroll.
+PASS Page did NOT scroll.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
