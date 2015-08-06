@@ -412,7 +412,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
     [self removeGestureRecognizer:_singleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
-    [self removeGestureRecognizer:_longPressGestureRecognizer.get()];
     [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 }
@@ -422,7 +421,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
     [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
-    [self addGestureRecognizer:_longPressGestureRecognizer.get()];
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 }
@@ -873,6 +871,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textSelectionAssistant.get().singleTapGesture))
         return YES;
 
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _previewSecondaryGestureRecognizer.get()))
+        return YES;
+
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _previewGestureRecognizer.get()))
         return YES;
 
@@ -1073,20 +1074,24 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _longPressGestureRecognizer);
 
-#if HAVE(LINK_PREVIEW)
-    if ([_previewItemController interactionInProgress])
-        return;
-#endif
-
     _lastInteractionLocation = gestureRecognizer.startPoint;
 
-    if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
+    switch ([gestureRecognizer state]) {
+    case UIGestureRecognizerStateBegan:
+    {
         SEL action = [self _actionForLongPress];
         if (action) {
             [self performSelector:action];
             [self _cancelLongPressGestureRecognizer];
-            [UIApp _cancelAllTouches];
         }
+    }
+        break;
+    case UIGestureRecognizerStateCancelled:
+    case UIGestureRecognizerStateEnded:
+        [_actionSheetAssistant cleanupSheet];
+        break;
+    default:
+        break;
     }
 }
 
@@ -3217,12 +3222,14 @@ static bool isAssistableInputType(InputType type)
     _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
     [_previewItemController setDelegate:self];
     _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
+    _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
 }
 
 - (void)_unregisterPreview
 {
     [_previewItemController setDelegate:nil];
     _previewGestureRecognizer = nil;
+    _previewSecondaryGestureRecognizer = nil;
     _previewItemController = nil;
 }
 

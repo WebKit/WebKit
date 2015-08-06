@@ -1,3 +1,23 @@
+2015-08-06  Enrica Casucci  <enrica@apple.com>
+
+        Allow long press to cancel link preview.
+        https://bugs.webkit.org/show_bug.cgi?id=147743
+        rdar://problem/22128839
+
+        Reviewed by Tim Horton.
+
+        We should be able to show the context menu at the beginnig of link preview.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _longPressRecognized:]):
+        (-[WKContentView _singleTapRecognized:]):
+        (-[WKContentView _registerPreview]):
+        (-[WKContentView _unregisterPreview]):
+
 2015-08-06  Matt Rajca  <mrajca@apple.com>
 
         Media Session: rename isFocusedContentMediaElementPaused and get rid of callback
