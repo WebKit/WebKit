@@ -1,3 +1,111 @@
+2015-08-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Bezier curve visual editor
+        https://bugs.webkit.org/show_bug.cgi?id=134501
+
+        Reviewed by Timothy Hatcher.
+
+        Added a visual Cubic Bezier curve editor that is usable in both
+        the CSS sidebar and the resources panel.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/DOMUtilities.js:
+        (createSVGElement):
+        * UserInterface/Controllers/CodeMirrorBezierEditingController.js:
+        (WebInspector.CodeMirrorBezierEditingController):
+        (WebInspector.CodeMirrorBezierEditingController.prototype.get initialValue):
+        (WebInspector.CodeMirrorBezierEditingController.prototype.get cssClassName):
+        (WebInspector.CodeMirrorBezierEditingController.prototype.popoverWillPresent):
+        (WebInspector.CodeMirrorBezierEditingController.prototype.popoverDidPresent):
+        (WebInspector.CodeMirrorBezierEditingController.prototype._bezierEditorBezierChanged):
+        * UserInterface/Images/CubicBezier.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/Models/Geometry.js:
+        (WebInspector.Point.prototype.distance):
+        (WebInspector.Point):
+        (WebInspector.CubicBezier):
+        (WebInspector.CubicBezier.fromPoints):
+        (WebInspector.CubicBezier.fromString):
+        (WebInspector.CubicBezier.prototype.get inPoint):
+        (WebInspector.CubicBezier.prototype.get outPoint):
+        (WebInspector.CubicBezier.prototype.copy):
+        (WebInspector.CubicBezier.prototype.toString):
+        (WebInspector.CubicBezier.prototype.solve):
+        (WebInspector.CubicBezier.prototype._sampleCurveX):
+        (WebInspector.CubicBezier.prototype._sampleCurveY):
+        (WebInspector.CubicBezier.prototype._sampleCurveDerivativeX):
+        (WebInspector.CubicBezier.prototype._solveCurveX):
+        * UserInterface/Models/TextMarker.js:
+        * UserInterface/Models/UnitBezier.js: Removed.
+        * UserInterface/Views/BezierEditor.css: Added.
+        (.bezier-editor):
+        (.bezier-editor > .bezier-preview):
+        (.bezier-editor > .bezier-preview > div):
+        (.bezier-editor > .bezier-preview-timing):
+        (.bezier-editor > .bezier-preview-timing.animate):
+        (.bezier-editor > .bezier-container):
+        (@keyframes bezierPreview):
+        (.bezier-editor > .bezier-container):
+        (.bezier-editor > .bezier-container .linear-curve):
+        (.bezier-editor > .bezier-container .bezier-curve):
+        (.bezier-editor > .bezier-container .control-line):
+        (.bezier-editor > .bezier-container .control-handle):
+        * UserInterface/Views/BezierEditor.js: Added.
+        (WebInspector.BezierEditor.createControl):
+        (WebInspector.BezierEditor):
+        (WebInspector.BezierEditor.prototype.get element):
+        (WebInspector.BezierEditor.prototype.set bezier):
+        (WebInspector.BezierEditor.prototype.get bezier):
+        (WebInspector.BezierEditor.prototype.handleEvent):
+        (WebInspector.BezierEditor.prototype._handleMousedown):
+        (WebInspector.BezierEditor.prototype._handleMousemove):
+        (WebInspector.BezierEditor.prototype._handleMouseup):
+        (WebInspector.BezierEditor.prototype._updateControlPointsForMouseEvent):
+        (WebInspector.BezierEditor.prototype._updateValue.round):
+        (WebInspector.BezierEditor.prototype._updateValue):
+        (WebInspector.BezierEditor.prototype._updateBezier):
+        (WebInspector.BezierEditor.prototype._updateControl):
+        (WebInspector.BezierEditor.prototype._triggerPreviewAnimation):
+        (WebInspector.BezierEditor.prototype._resetPreviewAnimation):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:hover):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:active):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.didDismissPopover):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._contentChanged):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createBezierEditors.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createBezierEditors):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._commentProperty.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._commentProperty):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._uncommentRange.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._uncommentRange):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._cubicBezierMarkerClicked.updateCodeMirror.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._cubicBezierMarkerClicked.updateCodeMirror):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._cubicBezierMarkerClicked):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent):
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        * UserInterface/Views/CodeMirrorTextMarkers.js: Added.
+        (createCodeMirrorTextMarkers):
+        (createCodeMirrorColorTextMarkers):
+        (createCodeMirrorGradientTextMarkers):
+        (createCodeMirrorCubicBezierTextMarkers):
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover.prototype._animateFrame):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._updateEditableMarkers):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.createColorMarkers):
+        (WebInspector.TextEditor.prototype.createGradientMarkers):
+        (WebInspector.TextEditor.prototype.createCubicBezierMarkers):
+        (WebInspector.TextEditor.prototype.editingControllerForMarker):
+
 2015-08-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Logging error objects should have a better UI

@@ -1,0 +1,95 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.bezier-editor {
+    width: 200px;
+    height: 225px;
+}
+
+.bezier-editor > .bezier-preview {
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 5px 5px 0;
+    border-bottom: 1px solid lightgrey;
+}
+
+.bezier-editor > .bezier-preview > div {
+    width: 20px;
+    height: 20px;
+    background-color: hsl(212, 92%, 54%);
+    border-radius: 50%;
+}
+
+.bezier-editor > .bezier-preview-timing {
+    position: absolute;
+    top: 34px;
+    margin-left: 11px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid black;
+}
+
+.bezier-editor > .bezier-preview-timing.animate {
+    animation: bezierPreview 2s linear 250ms forwards;
+}
+
+@keyframes bezierPreview {
+    from { transform: translate(0, 0); }
+    to { transform: translate(170px, 0); }
+}
+
+.bezier-editor > .bezier-container {
+    margin: 0 8px;
+}
+
+.bezier-editor > .bezier-container .linear-curve {
+    fill: none;
+    stroke:lightgrey;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.bezier-editor > .bezier-container .bezier-curve {
+    fill: none;
+    stroke: black;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.bezier-editor > .bezier-container .control-line {
+    fill: none;
+    stroke: hsl(210, 100%, 49%);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.bezier-editor > .bezier-container .control-handle {
+    r: 5px;
+    fill: hsl(210, 100%, 49%);
+}
+
+.bezier-editor > .bezier-container .control-handle.selected {
+    r: 7px;
+}

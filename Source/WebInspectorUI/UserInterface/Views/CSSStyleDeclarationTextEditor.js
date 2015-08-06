@@ -389,7 +389,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     didDismissPopover(popover)
     {
         if (popover === this._colorPickerPopover)
-            delete this._colorPickerPopover;
+            this._colorPickerPopover = null;
+        if (popover === this._cubicBezierEditorPopover)
+            this._cubicBezierEditorPopover = null;
     }
 
     completionControllerCompletionsHidden(completionController)
@@ -768,8 +770,10 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         // When the change is a completion change, create color swatches now since the changes
         // will not go through _propertiesChanged until completionControllerCompletionsHidden happens.
         // This way any auto completed colors get swatches right away.
-        if (this._completionController.isCompletionChange(change))
+        if (this._completionController.isCompletionChange(change)) {
             this._createColorSwatches(false, change.from.line);
+            this._createBezierEditors(false, change.from.line);
+        }
 
         // Use a short delay for user input to coalesce more changes before committing. Other actions like
         // undo, redo and paste are atomic and work better with a zero delay. CodeMirror identifies changes that
@@ -821,6 +825,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             // Look for colors and make swatches.
             this._createColorSwatches(true);
+            this._createBezierEditors(true);
 
             this._markLinesWithCheckboxPlaceholder();
         }
@@ -873,7 +878,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             var range = typeof lineNumber === "number" ? new WebInspector.TextRange(lineNumber, 0, lineNumber + 1, 0) : null;
 
             // Look for color strings and add swatches in front of them.
-            this._codeMirror.createColorMarkers(range, function(marker, color, colorString) {
+            createCodeMirrorColorTextMarkers(this._codeMirror, range, function(marker, color, colorString) {
                 var swatchElement = document.createElement("span");
                 swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format.");
                 swatchElement.className = WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName;
@@ -888,6 +893,33 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
                 swatchInnerElement.__colorTextMarker = codeMirrorTextMarker;
                 swatchInnerElement.__color = color;
+            }.bind(this));
+        }
+
+        if (nonatomic)
+            update.call(this);
+        else
+            this._codeMirror.operation(update.bind(this));
+    }
+
+    _createBezierEditors(nonatomic, lineNumber)
+    {
+        function update()
+        {
+            var range = typeof lineNumber === "number" ? new WebInspector.TextRange(lineNumber, 0, lineNumber + 1, 0) : null;
+
+            // Look for cubic-bezier and timing functions and add cubic-bezier icons in front of them.
+            createCodeMirrorCubicBezierTextMarkers(this._codeMirror, range, function(marker, cubicBezier) {
+                var bezierMarker = document.createElement("span");
+                bezierMarker.title = WebInspector.UIString("Click to open a cubic-bezier editor");
+                bezierMarker.className = WebInspector.CSSStyleDeclarationTextEditor.BezierEditorClassName;
+                bezierMarker.addEventListener("click", this._cubicBezierMarkerClicked.bind(this));
+
+                var codeMirrorTextMarker = marker.codeMirrorTextMarker;
+                this._codeMirror.setUniqueBookmark(codeMirrorTextMarker.find().from, bezierMarker);
+
+                bezierMarker.__textMarker = codeMirrorTextMarker;
+                bezierMarker.__bezier = cubicBezier;
             }.bind(this));
         }
 
@@ -1242,8 +1274,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             // Replace the text with a commented version.
             this._codeMirror.replaceRange("/* " + text + " */", range.from, range.to);
 
-            // Update the line for any color swatches that got removed.
+            // Update the line for any color swatches or cubic-beziers that got removed.
             this._createColorSwatches(true, range.from.line);
+            this._createBezierEditors(true, range.from.line);
         }
 
         this._codeMirror.operation(update.bind(this));
@@ -1281,8 +1314,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._codeMirror.addLineClass(range.from.line, "wrap", WebInspector.CSSStyleDeclarationTextEditor.EditingLineStyleClassName);
             this._codeMirror.replaceRange(text, range.from, range.to);
 
-            // Update the line for any color swatches that got removed.
+            // Update the line for any color swatches or cubic-beziers that got removed.
             this._createColorSwatches(true, range.from.line);
+            this._createBezierEditors(true, range.from.line);
         }
 
         this._codeMirror.operation(update.bind(this));
@@ -1389,6 +1423,93 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             colorPicker.color = color;
         }
+    }
+
+    _cubicBezierMarkerClicked(event)
+    {
+        if (this._cubicBezierEditorPopover)
+            return;
+
+        var bezierMarker = event.target;
+
+        var bezier = bezierMarker.__bezier;
+        console.assert(bezier);
+        if (!bezier)
+            return;
+
+        var bezierTextMarker = bezierMarker.__textMarker;
+        console.assert(bezierTextMarker);
+        if (!bezierTextMarker)
+            return;
+
+        var range = bezierTextMarker.find();
+        console.assert(range);
+        if (!range)
+            return;
+
+        function updateCodeMirror(newCubicBezierText)
+        {
+            function update()
+            {
+                // The original text marker might have been cleared by a style update,
+                // in this case we need to find the new bezier text marker so we know
+                // the right range for the new style bezier text.
+                if (!bezierTextMarker || !bezierTextMarker.find()) {
+                    bezierTextMarker = null;
+
+                    var marks = this._codeMirror.findMarksAt(range.from);
+                    if (!marks.length)
+                        return;
+
+                    for (var i = 0; i < marks.length; ++i) {
+                        var mark = marks[i];
+                        if (WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(mark).type !== WebInspector.TextMarker.Type.CubicBezier)
+                            continue;
+                        bezierTextMarker = mark;
+                        break;
+                    }
+                }
+
+                if (!bezierTextMarker)
+                    return;
+
+                // Sometimes we still might find a stale text marker with findMarksAt.
+                var newRange = bezierTextMarker.find();
+                if (!newRange)
+                    return;
+
+                range = newRange;
+
+                bezierTextMarker.clear();
+
+                this._codeMirror.replaceRange(newCubicBezierText, range.from, range.to);
+
+                // The bezier's text format could have changed, so we need to update the "range"
+                // variable to anticipate a different "range.to" property.
+                range.to.ch = range.from.ch + newCubicBezierText.length;
+
+                bezierTextMarker = this._codeMirror.markText(range.from, range.to);
+
+                bezierMarker.__textMarker = bezierTextMarker;
+            }
+
+            this._codeMirror.operation(update.bind(this));
+        }
+
+        this._cubicBezierEditorPopover = new WebInspector.Popover(this);
+
+        var bezierEditor = new WebInspector.BezierEditor;
+
+        bezierEditor.addEventListener(WebInspector.BezierEditor.Event.BezierChanged, function(event) {
+            updateCodeMirror.call(this, event.data.bezier.toString());
+        }.bind(this));
+
+        var bounds = WebInspector.Rect.rectFromClientRect(bezierMarker.getBoundingClientRect());
+
+        this._cubicBezierEditorPopover.content = bezierEditor.element;
+        this._cubicBezierEditorPopover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
+
+        bezierEditor.bezier = bezier;
     }
 
     _propertyOverriddenStatusChanged(event)
@@ -1594,6 +1715,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             // Look for colors and make swatches.
             this._createColorSwatches(true);
+            this._createBezierEditors(true);
 
             // Restore the cursor position/selection.
             this._codeMirror.setSelection(selectionAnchor, selectionHead);
@@ -1682,6 +1804,7 @@ WebInspector.CSSStyleDeclarationTextEditor.Event = {
 WebInspector.CSSStyleDeclarationTextEditor.StyleClassName = "css-style-text-editor";
 WebInspector.CSSStyleDeclarationTextEditor.ReadOnlyStyleClassName = "read-only";
 WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName = "color-swatch";
+WebInspector.CSSStyleDeclarationTextEditor.BezierEditorClassName = "cubic-bezier-marker";
 WebInspector.CSSStyleDeclarationTextEditor.CheckboxPlaceholderElementStyleClassName = "checkbox-placeholder";
 WebInspector.CSSStyleDeclarationTextEditor.EditingLineStyleClassName = "editing-line";
 WebInspector.CSSStyleDeclarationTextEditor.CommitCoalesceDelay = 250;
