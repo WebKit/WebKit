@@ -42,7 +42,7 @@ namespace WebCore {
 
 static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
-    if (fontData->platformData().isCompositeFontReference())
+    if (fontData->platformData().isCompositeFontReference() || fontData->isSystemFont())
         return true;
     if (fontData->platformData().widthVariant() != RegularWidth || fontData->hasVerticalGlyphs()) {
         // Ideographs don't have a vertical variant or width variants.

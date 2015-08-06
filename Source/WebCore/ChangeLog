@@ -1,5 +1,24 @@
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
+        Merge r187693. rdar://problem/22047626
+
+    2015-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] Latin quotes are used with the system font on Chinese devices
+            https://bugs.webkit.org/show_bug.cgi?id=147504
+
+            Reviewed by Dean Jackson.
+
+            The system font has some fancy logic regarding character selection which requires
+            using Core Text for glyph selection.
+
+            No new tests because tests can't change the system language of the device.
+
+            * platform/graphics/mac/GlyphPageMac.cpp:
+            (WebCore::shouldUseCoreText):
+
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
         Merge r187622. rdar://problem/15779101
 
     2015-07-30  Anders Carlsson  <andersca@apple.com>
