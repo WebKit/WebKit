@@ -116,6 +116,8 @@ namespace WebCore {
         NPReason m_reason;
         NPStream m_stream;
         PluginQuirkSet m_quirks;
+
+        friend class PluginView;
     };
 
 } // namespace WebCore
