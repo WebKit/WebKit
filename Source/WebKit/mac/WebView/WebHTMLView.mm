@@ -334,7 +334,7 @@ static IMP oldSetNeedsDisplayInRectIMP;
 
 static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
 {
-    if (![self _drawnByAncestor]) {
+    if (![NSThread isMainThread] || ![self _drawnByAncestor]) {
         wtfCallIMP<id>(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
         return;
     }

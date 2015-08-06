@@ -1,3 +1,16 @@
+2015-08-06  Anders Carlsson  <andersca@apple.com>
+
+        Crashes when calling swizzled setNeedsDisplayInRect: on heartbeat thread
+        https://bugs.webkit.org/show_bug.cgi?id=147746
+        rdar://problem/18698271
+
+        Reviewed by Dan Bernstein.
+
+        Back off if someone is calling our swizzled setNeedsDisplayInRect on a non-main thread.
+
+        * WebView/WebHTMLView.mm:
+        (setNeedsDisplayInRect):
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/187972.
