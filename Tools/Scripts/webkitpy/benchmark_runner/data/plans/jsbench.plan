@@ -1,8 +1,6 @@
 {
-    "http_server_driver": "SimpleHTTPServerDriver", 
     "timeout": 600,
     "count": 1,
-    "benchmark_builder": "GenericBenchmarkBuilder",
     "remote_archive": "http://plg.uwaterloo.ca/~dynjs/jsbench/suite/jsbench-2013.1.tar.gz",
     "benchmark_patch": "data/patches/JSBench.patch",
     "entry_point": "index.html",

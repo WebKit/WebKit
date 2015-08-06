@@ -12,7 +12,7 @@ import types
 import os
 import urlparse
 
-from benchmark_builder.benchmark_builder_factory import BenchmarkBuilderFactory
+from benchmark_builder import BenchmarkBuilder
 from benchmark_results import BenchmarkResults
 from browser_driver.browser_driver_factory import BrowserDriverFactory
 from http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
@@ -24,7 +24,7 @@ _log = logging.getLogger(__name__)
 
 class BenchmarkRunner(object):
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, http_server_driver_override=None, device_id=None):
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, device_id=None):
         try:
             plan_file = self._find_plan_file(plan_file)
             with open(plan_file, 'r') as fp:
@@ -34,10 +34,8 @@ class BenchmarkRunner(object):
                     self._plan['local_copy'] = local_copy
                 if count_override:
                     self._plan['count'] = count_override
-                if http_server_driver_override:
-                    self._plan['http_server_driver'] = http_server_driver_override
                 self._browser_driver = BrowserDriverFactory.create(platform, browser)
-                self._http_server_driver = HTTPServerDriverFactory.create(self._plan['http_server_driver'])
+                self._http_server_driver = HTTPServerDriverFactory.create(platform)
                 self._http_server_driver.set_device_id(device_id)
                 self._build_dir = os.path.abspath(build_dir) if build_dir else None
                 self._output_file = output_file
@@ -64,7 +62,7 @@ class BenchmarkRunner(object):
         _log.info('Start to execute the plan')
         _log.info('Start a new benchmark')
         results = []
-        self._benchmark_builder = BenchmarkBuilderFactory.create(self._plan['benchmark_builder'])
+        self._benchmark_builder = BenchmarkBuilder()
 
         web_root = self._benchmark_builder.prepare(self._plan_name, self._plan)
         for x in xrange(int(self._plan['count'])):

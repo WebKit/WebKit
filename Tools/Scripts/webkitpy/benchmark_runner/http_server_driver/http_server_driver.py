@@ -4,7 +4,8 @@ from abc import abstractmethod
 
 
 class HTTPServerDriver(object):
-    name = None
+    platforms = []
+
     @abstractmethod
     def serve(self, webRoot):
         pass

@@ -19,8 +19,8 @@ from http_server_driver_factory import HTTPServerDriverFactory
 
 
 def http_server_driver_loader(http_server_driver_class):
-    if http_server_driver_class.name:
-        HTTPServerDriverFactory.add(http_server_driver_class.name, http_server_driver_class)
+    for platform in http_server_driver_class.platforms:
+        HTTPServerDriverFactory.add(platform, http_server_driver_class)
 
 
 load_subclasses(

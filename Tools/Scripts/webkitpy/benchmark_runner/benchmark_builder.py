@@ -15,10 +15,7 @@ from webkitpy.benchmark_runner.utils import get_path_from_project_root, force_re
 _log = logging.getLogger(__name__)
 
 
-class GenericBenchmarkBuilder(object):
-
-    builder_name = 'GenericBenchmarkBuilder'
-
+class BenchmarkBuilder(object):
     def prepare(self, name, plan):
         self._name = name
         self._web_root = tempfile.mkdtemp()

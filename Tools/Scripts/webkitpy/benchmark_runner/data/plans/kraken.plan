@@ -1,8 +1,6 @@
 {
-    "http_server_driver": "SimpleHTTPServerDriver",
     "timeout": 300,
     "count": 5,
-    "benchmark_builder": "GenericBenchmarkBuilder",
     "remote_archive": "http://hg.mozilla.org/projects/kraken/archive/tip.zip",
     "benchmark_patch": "data/patches/Kraken.patch",
     "create_script": ["python", "make-hosted.py"],

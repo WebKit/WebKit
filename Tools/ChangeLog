@@ -1,3 +1,43 @@
+2015-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        http_server_driver and benchmark_builder should not be in run-benchmark's plan files
+        https://bugs.webkit.org/show_bug.cgi?id=147752
+
+        Reviewed by Chris Dumez.
+
+        Removed BenchmarkBuilderFactory since we have exactly one subclass of BenchmarkBuilder.
+
+        Also made HTTPServerDriverFactory instantiate the appropriate HTTP server based on the platform name instead of HTTP server name.
+        This allows us to remove --http-server-driver option from run-benchmark, which was added to support the HTTP server for iOS.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder: Removed.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder.py: Moved from benchmark_runner/benchmark_builder/generic_benchmark_builder.py.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/__init__.py: Removed.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/benchmark_builder_factory.py: Removed.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py: Moved to benchmark_runner/benchmark_builder.py.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__): No longer takes http_server_driver_override as an argument since this is not handled by
+        HTTPServerDriverFactory taking the platform name as an argument.
+        (BenchmarkRunner.execute): Directly instantiate BenchmarkBuilder.
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-cssquery.plan: Removed http_server_driver and benchmark_builder.
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-dom.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-jslib.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jsbench.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/kraken.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/octane.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/speedometer.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/sunspider.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/__init__.py:
+        (http_server_driver_loader): Register http server drivers via supported platform names instead of http server names.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py:
+        (HTTPServerDriver): Replaced name by platforms.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver): Ditto.
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (parse_args): Removed --http-server-driver option.
+        (start): Ditto.
+
 2015-08-06  Chris Dumez  <cdumez@apple.com>
 
         Toggle GPS state based on page visibility to save battery

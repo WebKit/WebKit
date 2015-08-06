@@ -1,8 +1,6 @@
 {
-    "http_server_driver": "SimpleHTTPServerDriver",
     "timeout": 300,
     "count": 5,
-    "benchmark_builder": "GenericBenchmarkBuilder",
     "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/SunSpider/@r182170",
     "benchmark_patch": "data/patches/SunSpider.patch",
     "create_script": ["perl", "make-hosted"],

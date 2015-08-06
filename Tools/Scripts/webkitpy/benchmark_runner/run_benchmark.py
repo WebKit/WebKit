@@ -23,7 +23,6 @@ def parse_args():
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark. e.g. PerformanceTests/SunSpider/')
     parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark. e.g. 5')
-    parser.add_argument('--http-server-driver', dest='httpServerDriverOverride', default=None, help='Specify which HTTP server you wants to use')
     parser.add_argument('--device-id', dest='device_id', default=None)
 
     args = parser.parse_args()
@@ -39,7 +38,7 @@ def parse_args():
 
 
 def start(args):
-    runner = BenchmarkRunner(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.httpServerDriverOverride, args.device_id)
+    runner = BenchmarkRunner(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.device_id)
     runner.execute()
 
 
