@@ -535,6 +535,19 @@ WebInspector.RemoteObject = class RemoteObject
         RuntimeAgent.getProperties(this._objectId, ownProperties, true, this._getPropertyDescriptorsResolver.bind(this, callback));
     }
 
+    getOwnPropertyDescriptorsAsObject(callback)
+    {
+        this.getOwnPropertyDescriptors(function(properties) {
+            var propertiesResult = {};
+            var internalPropertiesResult = {};
+            for (var propertyDescriptor of properties) {
+                var object = propertyDescriptor.isInternalProperty ? internalPropertiesResult : propertiesResult;
+                object[propertyDescriptor.name] = propertyDescriptor;
+            }
+            callback(propertiesResult, internalPropertiesResult);
+        });
+    }
+
     _getPropertyDescriptorsResolver(callback, error, properties, internalProperties)
     {
         if (error) {

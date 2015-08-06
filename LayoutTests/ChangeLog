@@ -1,3 +1,15 @@
+2015-08-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Logging error objects should have a better UI
+        https://bugs.webkit.org/show_bug.cgi?id=143853
+
+        Add tests for stack trace format in case it changes.
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/js-stacktrace-expected.txt: Added.
+        * inspector/debugger/js-stacktrace.html: Added.
+
 2015-08-05  Zalan Bujtas  <zalan@apple.com>
 
         Add missing test case (r187994).

@@ -42,6 +42,48 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
         return new WebInspector.StackTrace(callFrames);
     }
 
+    static fromString(stack)
+    {
+        var payload = WebInspector.StackTrace._parseStackTrace(stack);
+        return WebInspector.StackTrace.fromPayload(payload);
+    }
+
+    static _parseStackTrace(stack)
+    {
+        var lines = stack.split(/\n/g);
+        var result = [];
+
+        for (var line of lines) {
+            var functionName = "";
+            var url = "";
+            var lineNumber = 0;
+            var columnNumber = 0;
+
+            var index = line.indexOf("@");
+            if (index !== -1) {
+                functionName = line.slice(0, index);
+                url = line.slice(index + 1);
+
+                var columnIndex = url.lastIndexOf(":");
+                if (columnIndex !== -1) {
+                    columnNumber = url.slice(columnIndex + 1);
+
+                    url = url.slice(0, columnIndex);
+                    var lineIndex = url.lastIndexOf(":", columnIndex);
+                    if (lineIndex !== -1) {
+                        lineNumber = url.slice(lineIndex + 1, columnIndex);
+                        url = url.slice(0, lineIndex);
+                    }
+                }
+            } else
+                functionName = line;
+
+            result.push({functionName, url, lineNumber, columnNumber});
+        }
+
+        return result;
+    }
+
     // Public
 
     get callFrames()

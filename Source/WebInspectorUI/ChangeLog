@@ -1,3 +1,88 @@
+2015-08-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Logging error objects should have a better UI
+        https://bugs.webkit.org/show_bug.cgi?id=143853
+
+        Previously, an error object looked like any other object, which wasn't very useful.
+        Source links couldn't be clicked and stacktraces were unreadable.
+
+        Unify console.trace, caught and uncaught exceptions. The following examples use
+        the same StaceTraceView:
+        - ({}).x.y
+        - try { ({}).x.y } catch (e) { console.log(e); }
+        - console.trace()
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.fromPayload):
+        (WebInspector.CallFrame):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.getOwnPropertyDescriptorsAsObject):
+        * UserInterface/Test.html:
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame .separator):
+        (.call-frame .subtitle .source-link): Deleted.
+        (.call-frame:focus .subtitle .source-link): Deleted.
+        (.call-frame .subtitle:empty): Deleted.
+        (.call-frame .subtitle): Deleted.
+        * UserInterface/Views/CallFrameView.js:
+        (WebInspector.CallFrameView):
+        - Start usind CallFrameView in stacktraces.
+        - Introduce showFunctionName optional argument. In stacktraces anonymous functions
+        are shown as "(anonymous function)" but in console message location
+        links (the ones on the right side of a console message) we omit them.
+        - Dash was a pseudo-element and it couldn't be copied to the clipboard.
+        Make it an actual HTML element.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message-location.call-frame):
+        (.console-message-location.call-frame > .title):
+        (.console-message-location.call-frame > .subtitle > .source-link):
+        Since .call-frame rules are now used in stacktraces, move console message
+        specific rules from CallFrameView.css to ConsoleMessageView.css.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        (WebInspector.ConsoleMessageView.prototype._appendStackTrace):
+        (WebInspector.ConsoleMessageView.prototype._formatParameter):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsError): Added.
+        Format errors differently from other objects.
+
+        * UserInterface/Views/ErrorObjectView.css: Added.
+        (.error-object::before):
+        (.error-object.expanded::before):
+        (.error-object-link-container):
+        (.error-object.expanded > .formatted-error > .error-object-link-container):
+        (.error-object:not(.expanded) .error-object-outline):
+        (.error-object-outline):
+        * UserInterface/Views/ErrorObjectView.js: Added.
+        (WebInspector.ErrorObjectView):
+        (WebInspector.ErrorObjectView.parseStackTrace):
+        (WebInspector.ErrorObjectView.makeSourceLinkWithPrefix):
+        (WebInspector.ErrorObjectView.prototype.get object):
+        (WebInspector.ErrorObjectView.prototype.get element):
+        (WebInspector.ErrorObjectView.prototype.get treeOutline):
+        (WebInspector.ErrorObjectView.prototype.get expanded):
+        (WebInspector.ErrorObjectView.prototype.update):
+        (WebInspector.ErrorObjectView.prototype.expand):
+        (WebInspector.ErrorObjectView.prototype.collapse):
+        (WebInspector.ErrorObjectView.prototype._handlePreviewOrTitleElementClick):
+        (WebInspector.ErrorObjectView.prototype._buildStackTrace):
+        ErrorObjectView is used to log caught exceptions, e.g.:
+        try { i.dont.exist++ } catch (e) { console.log(e) }
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForError): Added.
+        Create error preview.
+
+        (WebInspector.FormattedValue.createElementForTypesAndValue):
+        Fix typo.
+
+        (WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject):
+        Format errors differently from other objects.
+
 2015-08-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r187634): Script time is missing from the frames timeline

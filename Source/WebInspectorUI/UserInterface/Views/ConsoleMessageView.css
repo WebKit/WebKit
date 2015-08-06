@@ -236,9 +236,25 @@
     -webkit-user-select: text;
 }
 
-.console-message .call-frame {
+.console-message-location.call-frame {
+    display: inline-block;
     -webkit-user-select: text;
-    height: 1.2em;
+    max-height: 16px;
+
+    max-width: 50vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.console-message-location.call-frame > .title {
+    max-width: 20vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+.console-message-location.call-frame > .subtitle > .source-link {
+    max-width: 30vw;
 }
 
 .console-message .go-to-link {

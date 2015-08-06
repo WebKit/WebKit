@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.call-frame {
-    white-space: nowrap;
-    cursor: pointer;
-}
-
-.call-frame .icon {
+.error-object::before {
     display: inline-block;
-    vertical-align: top;
-    width: 16px;
-    height: 16px;
-    margin-right: 3px;
+    vertical-align: baseline;
+    margin-bottom: -2px;
+    margin-right: 2px;
+    width: 13px;
+    height: 13px;
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+    background-position: center;
+    content: "";
 }
 
-.call-frame .titles {
-    display: inline-block;
+.error-object.expanded::before {
+    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
 }
 
-.call-frame .subtitle,
-.call-frame .subtitle .source-link {
-    color: hsla(0, 0%, 0%, 0.6);
-    text-decoration: none;
+.error-object-link-container {
+    color: hsla(0, 0%, 0%, 0.2);
 }
 
-.call-frame:hover .subtitle .source-link,
-.call-frame:focus .subtitle .source-link {
-    color: hsl(210, 0%, 0%);
-}
-
-.call-frame .subtitle:empty {
+.error-object.expanded > .formatted-error > .error-object-link-container {
     display: none;
 }
 
-.call-frame .subtitle {
-    font-size: inherit;
+.error-object:not(.expanded) .error-object-outline {
+    display: none;
 }
 
-.call-frame .colon {
-    background-color: red;
-}
-
-.call-frame .separator {
-    white-space: nowrap;
-    color: hsla(0, 0%, 0%, 0.2);
+.error-object-outline {
+    padding-left: 16px
 }

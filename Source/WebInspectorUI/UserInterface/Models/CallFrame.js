@@ -125,7 +125,9 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
             }
         }
 
-        var functionName = payload.functionName !== "global code" ? payload.functionName : null;
+        var functionName = null;
+        if (payload.functionName !== "global code" && payload.functionName !== "eval code")
+            functionName = payload.functionName;
 
         return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode);
     }
