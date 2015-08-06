@@ -1,5 +1,23 @@
 2015-08-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Make ruby-expansion tests cross-platform. They may have to be skipped on other platforms.
+
+        * fast/ruby/resources/green.png: Renamed from LayoutTests/platform/mac/fast/ruby/resources/green.png.
+        * fast/ruby/resources/ruby-expansion.svg: Renamed from LayoutTests/platform/mac/fast/ruby/resources/ruby-expansion.svg.
+        * fast/ruby/ruby-expansion-cjk-2-expected.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-2-expected.html.
+        * fast/ruby/ruby-expansion-cjk-2.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-2.html.
+        * fast/ruby/ruby-expansion-cjk-3-expected.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-3-expected.html.
+        * fast/ruby/ruby-expansion-cjk-3.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-3.html.
+        * fast/ruby/ruby-expansion-cjk-4-expected.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-4-expected.html.
+        * fast/ruby/ruby-expansion-cjk-4.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-4.html.
+        * fast/ruby/ruby-expansion-cjk-5-expected.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-5-expected.html.
+        * fast/ruby/ruby-expansion-cjk-5.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-5.html.
+        * fast/ruby/ruby-expansion-cjk-expected.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-expected.html.
+        * fast/ruby/ruby-expansion-cjk.html: Renamed from LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk.html.
+        * platform/mac-wk1/TestExpectations:
+
+2015-08-05  Simon Fraser  <simon.fraser@apple.com>
+
         Remove the XBM image test. Mac doesn't suport XBM images any more.
 
         * platform/mac/fast/canvas/canvas-draw-xbm-image-expected.png: Removed.
