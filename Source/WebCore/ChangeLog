@@ -1,5 +1,28 @@
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
+        Merge r187892. rdar://problem/21932187
+
+    2015-08-04  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] Do not require a video track for AirPlay
+            https://bugs.webkit.org/show_bug.cgi?id=147647
+
+            Reviewed by Jer Noble.
+
+            * Modules/mediacontrols/mediaControlsApple.js:
+            (Controller.prototype.handleReadyStateChange): Call updateWirelessTargetAvailable().
+            (Controller.prototype.updateHasVideo): Don't call updateWirelessTargetAvailable().
+            (Controller.prototype.updateWirelessTargetAvailable): Don't require video.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::setReadyState): Call updateMediaState when we reach HAVE_METADATA.
+            (WebCore::HTMLMediaElement::mediaState): Don't require video, only that the file can play.
+
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::showPlaybackTargetPicker): Check readyState instead of hasVideo.
+
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
         Merge r187886. rdar://problem/15779101
 
     2015-08-04  Alexey Proskuryakov  <ap@apple.com>

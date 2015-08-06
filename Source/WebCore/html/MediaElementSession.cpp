@@ -200,8 +200,8 @@ void MediaElementSession::showPlaybackTargetPicker(const HTMLMediaElement& eleme
     }
 
 #if !PLATFORM(IOS)
-    if (!element.hasVideo()) {
-        LOG(Media, "MediaElementSession::showPlaybackTargetPicker - returning early because element has no video");
+    if (element.readyState() < HTMLMediaElementEnums::HAVE_METADATA) {
+        LOG(Media, "MediaElementSession::showPlaybackTargetPicker - returning early because element is not playable");
         return;
     }
 #endif
