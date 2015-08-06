@@ -1,5 +1,13 @@
 2015-08-06  Brent Fulgham  <bfulgham@apple.com>
 
+        Add more media control examples.
+
+        * blog-files/backdrop-filters/dynamic_backdrop.m4v: Added.
+        * blog-files/backdrop-filters/Media_Controls_Complete_2x.jpg: Added.
+        * blog-files/backdrop-filters/Media_Controls_Complete_2x.jpg: Added.
+
+2015-08-06  Brent Fulgham  <bfulgham@apple.com>
+
         Add two more files for a future blog post.
 
         * blog-files/backdrop-filters/Media_Controls_1x.jpg: Added.
