@@ -1,3 +1,22 @@
+2015-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Structures used for tryGetConstantProperty() should be registered first
+        https://bugs.webkit.org/show_bug.cgi?id=147750
+
+        Reviewed by Saam Barati and Michael Saboff.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetConstantProperty): Add an assertion to that effect. This should catch the bug sooner.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addStructureSet): Register structures when we make a structure set. That ensures that we won't call tryGetConstantProperty() on a structure that hasn't been registered yet.
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run): Don't register structure sets here anymore. Registering them before we get here means there is no chance of the code being DCE'd before the structures get registered. It also enables the tryGetConstantProperty() assertion, since that code runs before StructureRegisterationPhase.
+        (JSC::DFG::StructureRegistrationPhase::registerStructures):
+        (JSC::DFG::StructureRegistrationPhase::registerStructure):
+        (JSC::DFG::StructureRegistrationPhase::assertAreRegistered):
+        (JSC::DFG::StructureRegistrationPhase::assertIsRegistered):
+        (JSC::DFG::performStructureRegistration):
+
 2015-08-06  Keith Miller  <keith_miller@apple.com>
 
         Remove UnspecifiedBoolType from JSC

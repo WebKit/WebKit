@@ -325,6 +325,8 @@ public:
     
     StructureSet* addStructureSet(const StructureSet& structureSet)
     {
+        for (Structure* structure : structureSet)
+            registerStructure(structure);
         m_structureSet.append(structureSet);
         return &m_structureSet.last();
     }
