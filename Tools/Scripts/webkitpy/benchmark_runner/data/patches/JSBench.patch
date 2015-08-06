@@ -1,0 +1,55 @@
+diff --git a/harness.js b/harness.js
+index 4b9d269..f3f1285 100644
+--- a/harness.js
++++ b/harness.js
+@@ -104,6 +104,7 @@
+                 return;
+             }
+         } catch (ex) {}
++        setTimeout(runBenchmark, 200);
+         gob.onclick = function() {
+             gob.style.display = "none";
+             setTimeout(runBenchmark, 200);
+@@ -207,6 +208,8 @@
+         var spc = "\u00a0\u00a0";
+         var spc2 = spc + spc;
+ 
++        var tests = {};
++
+         // calculate all the real results
+         for (var b = 0; b < benchmarks.length; b++) {
+             var benchmark = benchmarks[b];
+@@ -221,6 +224,9 @@
+                 var bmresults = results[benchmark][mode].slice(-keepRuns);
+                 if (bmresults.length == 0) continue;
+ 
++                if (pr)
++                    tests[benchmark] = {'metrics': {'Time': {'current': bmresults}}};
++
+                 // get the raw results
+                 var rr = spc2 + mode + ": [";
+                 for (var i = 0; i < bmresults.length; i++) {
+@@ -272,6 +278,23 @@
+             ptotals.push(spc + curRun + " runs");
+         ptotals.push("");
+ 
++        if (pr) {
++            var jsonResults = JSON.stringify({"JSBench": {"metrics": {"Time": ["Geometric"]}, "tests": tests}});
++            var xhr = new XMLHttpRequest();
++            xhr.open("POST", "/report");
++            xhr.setRequestHeader("Content-Type", "application/json");
++            xhr.setRequestHeader("Content-Length", jsonResults.length);
++            xhr.setRequestHeader("Connection", "close");
++            xhr.onreadystatechange = function() {
++            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                    closeRequest = new XMLHttpRequest();
++                    closeRequest.open("GET", "/shutdown");
++                    closeRequest.send();
++                }
++            }
++            xhr.send(jsonResults);
++        }
++
+         // if there are errors, mark those too
+         if ("errors" in results) {
+             ptotals.push("ERRORS:");

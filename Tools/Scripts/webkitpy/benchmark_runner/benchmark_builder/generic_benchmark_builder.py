@@ -6,6 +6,7 @@ import os
 import urllib
 import shutil
 import subprocess
+import tarfile
 
 from zipfile import ZipFile
 from webkitpy.benchmark_runner.utils import get_path_from_project_root, force_remove
@@ -55,12 +56,23 @@ class GenericBenchmarkBuilder(object):
         shutil.copytree(get_path_from_project_root(benchmark_path), self._dest)
 
     def _fetch_remote_archive(self, archive_url):
-        archive_path = os.path.join(self._web_root, 'archive.zip')
+        if archive_url.endswith('.zip'):
+            archive_type = 'zip'
+        elif archive_url.endswith('tar.gz'):
+            archive_type = 'tar.gz'
+        else:
+            raise Exception('Could not infer the file extention from URL: %s' % archive_url)
+
+        archive_path = os.path.join(self._web_root, 'archive.' + archive_type)
         _log.info('Downloading %s to %s' % (archive_url, archive_path))
         urllib.urlretrieve(archive_url, archive_path)
 
-        with ZipFile(archive_path, 'r') as archive:
-            archive.extractall(self._dest)
+        if archive_type == 'zip':
+            with ZipFile(archive_path, 'r') as archive:
+                archive.extractall(self._dest)
+        elif archive_type == 'tar.gz':
+            with tarfile.open(archive_path, 'r:gz') as archive:
+                archive.extractall(self._dest)
 
         unarchived_files = filter(lambda name: not name.startswith('.'), os.listdir(self._dest))
         if len(unarchived_files) == 1:

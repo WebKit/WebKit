@@ -1,6 +1,6 @@
 {
     "http_server_driver": "SimpleHTTPServerDriver", 
-    "timeout" : 600,
+    "timeout": 600,
     "count": 5,
     "benchmark_builder": "GenericBenchmarkBuilder",
     "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/JetStream/@r183091",

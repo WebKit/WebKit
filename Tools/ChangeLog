@@ -1,3 +1,29 @@
+2015-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Automate JSBench with run-benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=147716
+
+        Reviewed by Chris Dumez.
+
+        Added JSBench plan to run-benchmark.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py:
+        (GenericBenchmarkBuilder.prepare): Pass in the archive type to _fetch_remote_archive.
+        (GenericBenchmarkBuilder._fetch_remote_archive): Added the support for extracting files from tar.gz in addition to zip.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Dromaeo.patch: Fixed the coding style.
+        * Scripts/webkitpy/benchmark_runner/data/patches/JSBench.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/patches/JetStream.patch: Fixed the coding style.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Kraken.patch: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Octane.patch: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/patches/SunSpider.patch: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-cssquery.plan: Specified the archive type.
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-dom.plan: Specified the archive type.
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-jslib.plan: Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan: Fixed the coding style.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jsbench.plan: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/kraken.plan: Specified the archive type.
+        * Scripts/webkitpy/benchmark_runner/data/plans/octane.plan: Ditto.
+
 2015-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Pass-through the undefined options in run-jsc

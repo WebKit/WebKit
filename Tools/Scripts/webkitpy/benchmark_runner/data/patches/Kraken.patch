@@ -32,7 +32,7 @@ index bfb2c94..5ad1704 100644
 +    xhr.setRequestHeader("Content-Length", results.length);
 +    xhr.setRequestHeader("Connection", "close");
 +    xhr.onreadystatechange = function() {
-+    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++    if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 +            closeRequest = new XMLHttpRequest();
 +            closeRequest.open("GET", "/shutdown");
 +            closeRequest.send();

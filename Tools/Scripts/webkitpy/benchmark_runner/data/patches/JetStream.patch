@@ -31,7 +31,7 @@ index 73ee420..60f587c 100644
 +        xhr.setRequestHeader("Connection", "close");
 + 
 +        xhr.onreadystatechange = function() {
-+        if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 +                closeRequest = new XMLHttpRequest();
 +                closeRequest.open("GET", "/shutdown");
 +                closeRequest.send()
