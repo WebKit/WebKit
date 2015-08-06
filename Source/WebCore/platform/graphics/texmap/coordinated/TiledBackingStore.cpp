@@ -48,12 +48,6 @@ TiledBackingStore::~TiledBackingStore()
 {
 }
 
-void TiledBackingStore::setTileSize(const IntSize& size)
-{
-    m_tileSize = size;
-    m_tiles.clear();
-}
-
 void TiledBackingStore::setTrajectoryVector(const FloatPoint& trajectoryVector)
 {
     m_pendingTrajectoryVector = trajectoryVector;

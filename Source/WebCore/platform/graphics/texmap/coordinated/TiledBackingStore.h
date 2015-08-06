@@ -52,9 +52,6 @@ public:
 
     void invalidate(const IntRect& dirtyRect);
 
-    IntSize tileSize() { return m_tileSize; }
-    void setTileSize(const IntSize&);
-
     IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;
 
