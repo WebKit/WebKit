@@ -41,6 +41,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DisplaySleepDisabler.h"
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
@@ -201,8 +202,6 @@ static const char* mediaSourceBlobProtocol = "blob";
 // URL protocol used to signal that the media stream API is being used.
 static const char* mediaStreamBlobProtocol = "blob";
 #endif
-
-const uint64_t HTMLMediaElementInvalidID = 0;
 
 using namespace HTMLNames;
 

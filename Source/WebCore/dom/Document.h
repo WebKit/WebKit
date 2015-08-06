@@ -226,7 +226,7 @@ struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
 class MediaSession;
 #endif
 
-WEBCORE_EXPORT extern const uint64_t HTMLMediaElementInvalidID;
+const uint64_t HTMLMediaElementInvalidID = 0;
 
 enum PageshowEventPersistence {
     PageshowEventNotPersisted = 0,
