@@ -1,5 +1,17 @@
 2015-08-06  Brent Fulgham  <bfulgham@apple.com>
 
+        Add an example of backdrop-filter.
+
+        * demos/backdrop-filter: Added.
+        * demos/backdrop-filter/dynamic_poster.jpg: Added.
+        * demos/backdrop-filter/dynamic_source.m4v: Added.
+        * demos/backdrop-filter/index.html: Added.
+        * demos/backdrop-filter/inverted_color.jpg: Added.
+        * demos/backdrop-filter/multiple.jpg: Added.
+        * demos/backdrop-filter/simple_blur.jpg: Added.
+
+2015-08-06  Brent Fulgham  <bfulgham@apple.com>
+
         Add a poster image for the video.
 
         * blog-files/backdrop-filters/dynamic_poster.jpg: Added.
