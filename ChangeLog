@@ -1,3 +1,9 @@
+2015-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.8.5 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-08-04  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] Accelerated 2D Canvas enabled when cairo-gl is not available

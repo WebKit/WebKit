@@ -1,4 +1,21 @@
 =================
+WebKitGTK+  2.8.5
+=================
+
+What's new in WebKitGTK+ 2.8.5?
+
+  - Fix the window size reported when the web view isn't realized yet. This fixes the layout of
+    some websites when opening new tabs in the browser and anchor links when opened in new tabs too.
+  - Prevent clipboard contents from being lost when web process finishes.
+  - Always allow font matching for strong aliases.
+  - Move GStreamer missing plugins installer to the UI process.
+  - Fix a crash when spell checker returns no guesses.
+  - Fix a crash when SoupSession is destroyed in exit handler.
+  - Fix a crash closing a page when default context menu is open.
+  - Several crashes and rendering issues fixed.
+  - Translation updates: Swedish.
+
+=================
 WebKitGTK+  2.8.4
 =================
 
