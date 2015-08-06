@@ -144,7 +144,7 @@ void WebFrameProxy::didFailProvisionalLoad()
     m_frameLoadState.didFailProvisionalLoad();
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo& certificateInfo)
+void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo& certificateInfo, bool containsPluginDocument)
 {
     m_frameLoadState.didCommitLoad();
 
@@ -152,6 +152,7 @@ void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo&
     m_MIMEType = contentType;
     m_isFrameSet = false;
     m_certificateInfo = &certificateInfo;
+    m_containsPluginDocument = containsPluginDocument;
 }
 
 void WebFrameProxy::didFinishLoad()
