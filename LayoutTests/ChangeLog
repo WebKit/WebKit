@@ -1,3 +1,15 @@
+2015-08-06  Brady Eidson  <beidson@apple.com>
+
+        Re-baseline test for WK1 on this branch
+
+        Collaboration of Brady and Alexey.
+
+        * platform/mac-wk1/http: Added.
+        * platform/mac-wk1/http/tests: Added.
+        * platform/mac-wk1/http/tests/misc: Added.
+        * platform/mac-wk1/http/tests/misc/authentication-redirect-3: Added.
+        * platform/mac-wk1/http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials-expected.txt: Added.
+
 2015-07-29  Babak Shafiei  <bshafiei@apple.com>
 
         Roll out r185848.
