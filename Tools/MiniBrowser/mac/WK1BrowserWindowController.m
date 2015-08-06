@@ -52,6 +52,7 @@
     [[WebPreferences standardPreferences] setDeveloperExtrasEnabled:YES];
     [[WebPreferences standardPreferences] setImageControlsEnabled:YES];
     [[WebPreferences standardPreferences] setServiceControlsEnabled:YES];
+    [[WebPreferences standardPreferences] setJavaScriptCanOpenWindowsAutomatically:YES];
 
     [_webView _listenForLayoutMilestones:WebDidFirstLayout | WebDidFirstVisuallyNonEmptyLayout | WebDidHitRelevantRepaintedObjectsAreaThreshold];
 
@@ -87,7 +88,7 @@
 - (IBAction)showHideWebView:(id)sender
 {
     BOOL hidden = ![_webView isHidden];
-    
+
     [_webView setHidden:hidden];
 }
 
@@ -95,7 +96,7 @@
 {
     if ([_webView window]) {
         [_webView retain];
-        [_webView removeFromSuperview]; 
+        [_webView removeFromSuperview];
     } else {
         [containerView addSubview:_webView];
         [_webView release];
@@ -104,7 +105,7 @@
 
 - (IBAction)setScale:(id)sender
 {
-    
+
 }
 
 - (IBAction)reload:(id)sender
@@ -154,10 +155,10 @@
 
     if (action == @selector(goBack:))
         return [_webView canGoBack];
-    
+
     if (action == @selector(goForward:))
         return [_webView canGoForward];
-    
+
     return YES;
 }
 
@@ -300,6 +301,14 @@
 // WebFrameLoadDelegate Methods
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
+}
+
+- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
+{
+    WK1BrowserWindowController *newBrowserWindowController = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+    [newBrowserWindowController.window makeKeyAndOrderFront:self];
+
+    return newBrowserWindowController->_webView;
 }
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame

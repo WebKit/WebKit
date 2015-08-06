@@ -1,5 +1,16 @@
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
+        Merge r187622. rdar://problem/15779101
+
+    2015-07-30  Anders Carlsson  <andersca@apple.com>
+
+            Remove stray printf.
+
+            * loader/SubframeLoader.cpp:
+            (WebCore::SubframeLoader::requestObject):
+
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
         Merge r187620. rdar://problem/15779101
 
     2015-07-30  Anders Carlsson  <andersca@apple.com>

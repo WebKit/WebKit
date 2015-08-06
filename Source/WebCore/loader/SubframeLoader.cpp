@@ -212,7 +212,6 @@ static void logPluginRequest(Page* page, const String& mimeType, const String& u
 
 bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const String& url, const AtomicString& frameName, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    printf("request oject url %s mime type %s\n", url.ascii().data(), mimeType.ascii().data());
     if (url.isEmpty() && mimeType.isEmpty())
         return false;
 
