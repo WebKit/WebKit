@@ -1,3 +1,10 @@
+2015-08-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Add two more files for a future blog post.
+
+        * blog-files/backdrop-filters/Media_Controls_1x.jpg: Added.
+        * blog-files/backdrop-filters/Media_Controls_2x.jpg: Added.
+
 2015-08-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the twitter links on the status page
