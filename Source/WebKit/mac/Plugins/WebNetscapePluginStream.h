@@ -98,9 +98,9 @@ private:
 
     // NetscapePlugInStreamLoaderClient methods.
     void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, std::function<void (WebCore::ResourceRequest&&)>&&) override;
-    void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&);
-    void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&);
-    bool wantsAllStreams() const;
+    void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&) override;
+    void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&) override;
+    bool wantsAllStreams() const override;
 
     RetainPtr<NSMutableData> m_deliveryData;
     WebCore::URL m_requestURL;
