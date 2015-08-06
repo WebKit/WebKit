@@ -36,10 +36,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(RESOURCE_TIMING)
-#include <wtf/text/AtomicString.h>
-#endif
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
