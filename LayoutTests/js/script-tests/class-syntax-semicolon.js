@@ -4,10 +4,10 @@ description('Tests for ES6 class syntax containing semicolon in the class body')
 
 shouldThrow("class A { foo;() { } }", "'SyntaxError: Unexpected token \\';\\'. Expected an opening \\'(\\' before a method\\'s parameter list.'");
 shouldThrow("class A { foo() ; { } }", "'SyntaxError: Unexpected token \\\';\\'. Expected an opening \\'{\\' at the start of a method body.'");
-shouldThrow("class A { get ; foo() { } }", "'SyntaxError: Unexpected token \\';\\''");
+shouldThrow("class A { get ; foo() { } }", "'SyntaxError: Unexpected token \\';\\'. Expected an opening \\'(\\' before a method\\'s parameter list.'");
 shouldThrow("class A { get foo;() { } }", "'SyntaxError: Unexpected token \\\';\\'. Expected a parameter list for getter definition.'");
 shouldThrow("class A { get foo() ; { } }", "'SyntaxError: Unexpected token \\\';\\'. Expected an opening \\'{\\' at the start of a getter body.'");
-shouldThrow("class A { set ; foo(x) { } }", "'SyntaxError: Unexpected token \\';\\''");
+shouldThrow("class A { set ; foo(x) { } }", "'SyntaxError: Unexpected token \\';\\'. Expected an opening \\'(\\' before a method\\'s parameter list.'");
 shouldThrow("class A { set foo;(x) { } }", "'SyntaxError: Unexpected token \\\';\\'. Expected a parameter list for setter definition.'");
 shouldThrow("class A { set foo(x) ; { } }", "'SyntaxError: Unexpected token \\\';\\'. Expected an opening \\'{\\' at the start of a setter body.'");
 

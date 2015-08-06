@@ -1950,9 +1950,12 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
             break;
         case IDENT:
             ident = m_token.m_data.ident;
-            isGetter = *ident == propertyNames.get;
-            isSetter = *ident == propertyNames.set;
             ASSERT(ident);
+            next();
+            if (match(IDENT) || match(STRING) || match(DOUBLE) || match(INTEGER)) {
+                isGetter = *ident == propertyNames.get;
+                isSetter = *ident == propertyNames.set;
+            }
             break;
         case DOUBLE:
         case INTEGER:
@@ -1967,7 +1970,6 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         TreeProperty property;
         const bool alwaysStrictInsideClass = true;
         if (isGetter || isSetter) {
-            nextExpectIdentifier(LexerFlagsIgnoreReservedWords);
             property = parseGetterSetter(context, alwaysStrictInsideClass, isGetter ? PropertyNode::Getter : PropertyNode::Setter, methodStart,
                 ConstructorKind::None, SuperBinding::Needed);
             failIfFalse(property, "Cannot parse this method");

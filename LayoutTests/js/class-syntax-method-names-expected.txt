@@ -1,0 +1,23 @@
+Tests for various method names
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS class A { 0.1() { return 1; } }; (new A)[0.1]() is 1
+PASS class A { get() { return 2; } }; (new A).get() is 2
+PASS class A { set() { return 3; } }; (new A).set() is 3
+PASS class A { get get() { return 4; } }; (new A).get is 4
+PASS class A { get set() { return 5; } }; (new A).set is 5
+PASS setterValue = undefined; class A { set get(x) { setterValue = x; } }; (new A).get = 6; setterValue is 6
+PASS setterValue = undefined; class A { set set(x) { setterValue = x; } }; (new A).set = 7; setterValue is 7
+PASS class A { static 0.1() { return 101; } }; A[0.1]() is 101
+PASS class A { static get() { return 102; } }; A.get() is 102
+PASS class A { static set() { return 103; } }; A.set() is 103
+PASS class A { static get get() { return 104; } }; A.get is 104
+PASS class A { static get set() { return 105; } }; A.set is 105
+PASS setterValue = undefined; class A { static set get(x) { setterValue = x; } }; A.get = 106; setterValue is 106
+PASS setterValue = undefined; class A { static set set(x) { setterValue = x; } }; A.set = 107; setterValue is 107
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
