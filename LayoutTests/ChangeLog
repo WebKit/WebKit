@@ -1,3 +1,16 @@
+2015-08-05  Chris Dumez  <cdumez@apple.com>
+
+        Crash when removing children of a MathMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=147704
+        <rdar://problem/21940321>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test that reproduces the crash under guardmalloc.
+
+        * mathml/maction-removeChild-expected.txt: Added.
+        * mathml/maction-removeChild.html: Added.
+
 2015-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         Move platform/ios-simulator/ios/fast/events/touch tests to fast/events/touch
