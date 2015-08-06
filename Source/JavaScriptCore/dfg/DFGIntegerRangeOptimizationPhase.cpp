@@ -111,8 +111,6 @@ public:
             return Relationship();
         return Relationship(left, right, kind, offset);
     }
-    
-    typedef void* (Relationship::*UnspecifiedBoolType);
 
     explicit operator bool() const { return m_left; }
     

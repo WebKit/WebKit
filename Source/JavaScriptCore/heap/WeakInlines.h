@@ -99,9 +99,9 @@ template<typename T> inline bool Weak<T>::operator!() const
     return !m_impl || !m_impl->jsValue() || m_impl->state() != WeakImpl::Live;
 }
 
-template<typename T> inline Weak<T>::operator UnspecifiedBoolType*() const
+template<typename T> inline Weak<T>::operator bool() const
 {
-    return reinterpret_cast<UnspecifiedBoolType*>(!!*this);
+    return !!*this;
 }
 
 template<typename T> inline WeakImpl* Weak<T>::leakImpl()
