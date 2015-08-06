@@ -121,7 +121,6 @@ CTFontDescriptorRef CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(
 CTFontRef CTFontCreatePhysicalFontForCharactersWithLanguage(CTFontRef, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
 bool CTFontIsAppleColorEmoji(CTFontRef);
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
-CTFontRef CTFontCreateForCSS(CFStringRef name, uint16_t weight, CTFontSymbolicTraits, CGFloat size);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 
 }
