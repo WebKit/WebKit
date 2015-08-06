@@ -35,6 +35,7 @@ use FindBin;
 use lib $FindBin::Bin;
 use Getopt::Long;
 use webkitdirs;
+Getopt::Long::Configure("pass_through");
 
 my $usage = "Usage: run-jsc [--count run_count] shell_file [file2...]";
 

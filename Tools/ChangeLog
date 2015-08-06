@@ -1,3 +1,15 @@
+2015-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Pass-through the undefined options in run-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=147717
+
+        Undefined options in run-jsc is just passed to the actual jsc shell.
+        We can execute `Tools/Scripts/run-jsc -d`.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-jsc:
+
 2015-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Skip GTK+ test /webkit2/WebKitWebView/submit-form.
