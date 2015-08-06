@@ -1,3 +1,48 @@
+2015-08-05  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugins are clipped in link previews (and remain so when opened)
+        https://bugs.webkit.org/show_bug.cgi?id=147708
+        <rdar://problem/22055130>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView _supportsArbitraryLayoutModes]):
+        (-[WKView _didCommitLoadForMainFrame]):
+        (-[WKView _setLayoutMode:]):
+        (-[WKView _setViewScale:]):
+        Avoid using any layout mode other than "ViewSize" for main frame PluginDocuments,
+        because they will often end up behaving incorrectly (especially with PDFPlugin,
+        which is even more special in that it takes over application of page scale).
+
+        Save any incoming changes to the viewScale and layoutMode, and re-apply
+        them once we load something in the main frame that is *not* a PluginDocument.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scalePage):
+        Make sure to reset WebCore's page scale if the main frame contains a 
+        PluginDocument that takes care of page scale itself.
+
+        (WebKit::WebPage::didCommitLoad):
+        Do the same thing as what we do in WKView _didCommitLoadForMainFrame,
+        but without the UI process round-trip, to avoid an ugly flash.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::containsPluginDocument):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        Plumb and keep track of whether the main frame contains a PluginDocument or not.
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/187972.

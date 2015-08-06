@@ -119,6 +119,7 @@ struct WebPageConfiguration;
 - (BOOL)_suppressVisibilityUpdates;
 
 - (void)_didFirstVisuallyNonEmptyLayoutForMainFrame;
+- (void)_didCommitLoadForMainFrame;
 - (void)_didFinishLoadForMainFrame;
 - (void)_didFailLoadForMainFrame;
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)type;
