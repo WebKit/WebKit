@@ -1,3 +1,23 @@
+2015-08-05  Chris Dumez  <cdumez@apple.com>
+
+        Crash when removing children of a MathMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=147704
+        <rdar://problem/21940321>
+
+        Reviewed by Ryosuke Niwa.
+
+        When MathMLSelectElement::childrenChanged() is called after its
+        children have been removed, MathMLSelectElement calls
+        updateSelectedChild() which accesses m_selectedChild. However,
+        in this case, m_selectedChild is the previously selected child
+        and it may be destroyed as this point if it was removed. To avoid
+        this problem, MathMLSelectElement now keep a strong ref to the
+        currently selected element.
+
+        Test: mathml/maction-removeChild.html
+
+        * mathml/MathMLSelectElement.h:
+
 2015-08-03  Brady Eidson  <beidson@apple.com>
 
         Crash when signing into twitter calling WebCore::DocumentLoader::responseReceived(WebCore::CachedResource*, WebCore::ResourceResponse const&).

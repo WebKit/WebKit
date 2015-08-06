@@ -56,7 +56,7 @@ private:
     Element* getSelectedSemanticsChild();
 
     void updateSelectedChild() override;
-    Element* m_selectedChild;
+    RefPtr<Element> m_selectedChild;
 };
 
 }
