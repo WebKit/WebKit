@@ -1,5 +1,24 @@
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
+        Merge r187935. rdar://problem/22097682
+
+    2015-08-04  Doug Russell  <d_russell@apple.com>
+
+            AX: tree item children returned from ranged getter are different from full array of children
+            https://bugs.webkit.org/show_bug.cgi?id=147660
+
+            Add an isTreeItem() check in ranged element getter so that it matches the logic in
+            the getter for the full children array. This prevents returning a row as a child
+            when only the rows contents should be returned. This prevents navigation issues on
+            websites without aria outlines.
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/mac/aria-tree-item-children-expected.txt: Added.
+            * accessibility/mac/aria-tree-item-children.html: Added.
+
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
         Merge r187930. rdar://problem/21870332
 
     2015-08-04  Brent Fulgham  <bfulgham@apple.com>
