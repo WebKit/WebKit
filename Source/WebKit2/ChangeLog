@@ -1,3 +1,18 @@
+2015-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash closing a page when a context menu is open
+        https://bugs.webkit.org/show_bug.cgi?id=147682
+
+        Reviewed by Sergio Villar Senin.
+
+        Implement WebContextMenuProxy::cancelTracking() to clear the
+        internal menu when the web page is closed.
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::cancelTracking):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk): Deleted.
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+
 2015-08-04  Matt Rajca  <mrajca@apple.com>
 
         Media Session: push paused state to the media session focus manager instead of polling

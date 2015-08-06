@@ -171,10 +171,7 @@ WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy*
 
 WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
 {
-    for (auto iter = m_signalHandlers.begin(); iter != m_signalHandlers.end(); ++iter)
-        g_signal_handler_disconnect(iter->value, iter->key);
-
-    webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), 0);
+    cancelTracking();
 }
 
 void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* y, gboolean* pushIn, WebContextMenuProxyGtk* popupMenu)
@@ -192,6 +189,16 @@ void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* 
         *y -= menuSize.height;
 
     *pushIn = FALSE;
+}
+
+void WebContextMenuProxyGtk::cancelTracking()
+{
+    for (auto iter = m_signalHandlers.begin(); iter != m_signalHandlers.end(); ++iter)
+        g_signal_handler_disconnect(iter->value, iter->key);
+    m_signalHandlers.clear();
+
+    webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), nullptr);
+    m_menu.setPlatformDescription(nullptr);
 }
 
 } // namespace WebKit

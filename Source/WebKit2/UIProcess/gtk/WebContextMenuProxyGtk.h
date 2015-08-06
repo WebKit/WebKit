@@ -47,8 +47,9 @@ public:
     }
     ~WebContextMenuProxyGtk();
 
-    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&);
-    virtual void hideContextMenu();
+    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&) override;
+    virtual void hideContextMenu() override;
+    virtual void cancelTracking() override;
 
     void populate(Vector<WebCore::ContextMenuItem>&);
     GtkMenu* gtkMenu() const { return m_menu.platformDescription(); }
