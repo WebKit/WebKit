@@ -1,6 +1,6 @@
 <html>
 <head>
-<script type="text/javascript" src="resources/protocol-test.js"></script>
+<script type="text/javascript" src="../resources/protocol-test.js"></script>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
@@ -70,6 +70,6 @@ function test()
 </head>
 <body>
 <p>Test that code evaluated in the main frame cannot access $0 that resolves into a node in a frame from a different domain. <a href="https://bugs.webkit.org/show_bug.cgi?id=105423">Bug 105423.</p>
-<iframe id="myframe" src="http://localhost:8000/inspector-protocol/resources/test-page.html" onload="runTest()"></iframe>
+<iframe id="myframe" src="http://localhost:8000/inspector/page/resources/test-page.html" onload="runTest()"></iframe>
 </body>
 </html>

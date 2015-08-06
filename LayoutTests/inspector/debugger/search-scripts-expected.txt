@@ -1,7 +1,7 @@
 Test DebuggerAgent.searchInContent to search script content.
 
 
-SCRIPT: LayoutTests/http/tests/inspector/inspector-test.js
+SCRIPT: LayoutTests/http/tests/inspector/resources/inspector-test.js
 RESULTS: 0
 
 SCRIPT: LayoutTests/inspector/debugger/search-scripts.html

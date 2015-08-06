@@ -1,3 +1,169 @@
+2015-08-06  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move http/tests/inspector-protocol/ contents to http/tests/inspector/
+        https://bugs.webkit.org/show_bug.cgi?id=147739
+
+        Reviewed by Timothy Hatcher.
+
+        Start merging inspector-protocol/ directory into inspector/, starting with http tests.
+
+        This patch puts the few http tests into their own domain directories. Files related
+        to the test harness have been moved to the appropriate resources/ directory.
+        Update all inspector tests to the new paths.
+
+        Lastly, rename InspectorTest.js and protocol-test.html to ProtocolTestStub, to make
+        it obvious that these files are only used by the protocol test harness.
+
+        * http/tests/inspector/console/access-inspected-object-expected.txt: Renamed from LayoutTests/http/tests/inspector-protocol/access-inspected-object-expected.txt.
+        * http/tests/inspector/console/access-inspected-object.html: Renamed from LayoutTests/http/tests/inspector-protocol/access-inspected-object.html.
+        * http/tests/inspector/css/bad-mime-type.html:
+        * http/tests/inspector/dom/resources/InspectorDOMListener.js: Renamed from LayoutTests/http/tests/inspector-protocol/resources/InspectorDOMListener.js.
+        * http/tests/inspector/page/loading-iframe-document-node-expected.txt: Renamed from LayoutTests/http/tests/inspector-protocol/loading-iframe-document-node-expected.txt.
+        * http/tests/inspector/page/loading-iframe-document-node.html: Renamed from LayoutTests/http/tests/inspector-protocol/loading-iframe-document-node.html.
+        * http/tests/inspector/page/resources/slow-test-page.html: Renamed from LayoutTests/http/tests/inspector-protocol/resources/slow-test-page.html.
+        * http/tests/inspector/page/resources/test-page.html: Renamed from LayoutTests/http/tests/inspector-protocol/resources/test-page.html.
+        * http/tests/inspector/replay/document-last-modified-fallback-value.html:
+        * http/tests/inspector/resources/ProtocolTestStub.html: Renamed from LayoutTests/http/tests/inspector-protocol/resources/protocol-test.html.
+        * http/tests/inspector/resources/ProtocolTestStub.js: Renamed from LayoutTests/http/tests/inspector-protocol/resources/InspectorTest.js.
+        * http/tests/inspector/resources/inspector-test.js: Renamed from LayoutTests/http/tests/inspector/inspector-test.js.
+        * http/tests/inspector/resources/protocol-test.js: Renamed from LayoutTests/http/tests/inspector-protocol/resources/protocol-test.js.
+        * inspector-protocol/async-test-suite.html:
+        * inspector-protocol/console/console-message.html:
+        * inspector-protocol/console/css-source-locations.html: Fix references to console helpers.
+        * inspector-protocol/console/js-source-locations.html:
+        * inspector-protocol/console/x-frame-options-message.html:
+        * inspector-protocol/css/getSupportedCSSProperties.html:
+        * inspector-protocol/debugger/breakpoint-action-detach.html:
+        * inspector-protocol/debugger/breakpoint-action-with-exception.html:
+        * inspector-protocol/debugger/breakpoint-condition-detach.html:
+        * inspector-protocol/debugger/breakpoint-condition-with-bad-script.html:
+        * inspector-protocol/debugger/breakpoint-condition-with-exception.html:
+        * inspector-protocol/debugger/breakpoint-eval-with-exception.html:
+        * inspector-protocol/debugger/breakpoint-inside-conditons-and-actions.html:
+        * inspector-protocol/debugger/call-frame-function-name.html:
+        * inspector-protocol/debugger/call-frame-this-host.html:
+        * inspector-protocol/debugger/call-frame-this-nonstrict.html:
+        * inspector-protocol/debugger/call-frame-this-strict.html:
+        * inspector-protocol/debugger/debugger-statement.html:
+        * inspector-protocol/debugger/didSampleProbe-multiple-probes.html:
+        * inspector-protocol/debugger/hit-breakpoint-from-console.html:
+        * inspector-protocol/debugger/nested-inspectors.html:
+        * inspector-protocol/debugger/pause-dedicated-worker.html:
+        * inspector-protocol/debugger/pause-on-assert.html:
+        * inspector-protocol/debugger/regress-133182.html:
+        * inspector-protocol/debugger/removeBreakpoint.html:
+        * inspector-protocol/debugger/searchInContent-linebreaks.html:
+        * inspector-protocol/debugger/setBreakpoint-actions.html:
+        * inspector-protocol/debugger/setBreakpoint-autoContinue.html:
+        * inspector-protocol/debugger/setBreakpoint-column.html:
+        * inspector-protocol/debugger/setBreakpoint-condition.html:
+        * inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html:
+        * inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html:
+        * inspector-protocol/debugger/setBreakpoint-dfg.html:
+        * inspector-protocol/debugger/setBreakpoint-options-exception.html:
+        * inspector-protocol/debugger/setBreakpoint.html:
+        * inspector-protocol/debugger/setBreakpointByUrl-sourceURL.html:
+        * inspector-protocol/debugger/setPauseOnExceptions-all.html:
+        * inspector-protocol/debugger/setPauseOnExceptions-none.html:
+        * inspector-protocol/debugger/setPauseOnExceptions-uncaught.html:
+        * inspector-protocol/debugger/setVariableValue.html:
+        * inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html:
+        * inspector-protocol/dom-debugger/node-removed.html:
+        * inspector-protocol/dom/dom-remove-events.html:
+        * inspector-protocol/dom/dom-search-crash.html:
+        * inspector-protocol/dom/dom-search-with-context.html:
+        * inspector-protocol/dom/dom-search.html:
+        * inspector-protocol/dom/focus.html:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode_liveRegion.html:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode_mouseEventNodeId.html:
+        * inspector-protocol/dom/highlight-flow-with-no-region.html:
+        * inspector-protocol/dom/remove-multiple-nodes.html:
+        * inspector-protocol/dom/request-child-nodes-depth.html:
+        * inspector-protocol/layers/layers-anonymous.html:
+        * inspector-protocol/layers/layers-blending-compositing-reasons.html:
+        * inspector-protocol/layers/layers-compositing-reasons.html:
+        * inspector-protocol/layers/layers-for-node.html:
+        * inspector-protocol/layers/layers-generated-content.html:
+        * inspector-protocol/layers/layers-reflected-content.html:
+        * inspector-protocol/page/archive.html:
+        * inspector-protocol/page/frameScheduledNavigation.html:
+        * inspector-protocol/page/frameStartedLoading.html:
+        * inspector-protocol/page/javascriptDialogEvents.html:
+        * inspector-protocol/page/setEmulatedMedia.html:
+        * inspector-protocol/runtime/getProperties.html:
+        * inspector-protocol/sync-test-suite.html:
+        * inspector/console/command-line-api.html:
+        * inspector/console/console-api.html:
+        * inspector/console/console-table.html:
+        * inspector/css/get-system-fonts.html:
+        * inspector/css/matched-style-properties.html:
+        * inspector/css/modify-rule-selector.html:
+        * inspector/css/pseudo-element-matches-for-pseudo-element-node.html:
+        * inspector/css/pseudo-element-matches.html:
+        * inspector/css/selector-dynamic-specificity.html:
+        * inspector/css/selector-specificity.html:
+        * inspector/css/stylesheet-with-mutations.html:
+        * inspector/debugger/break-on-exception-catch.html:
+        * inspector/debugger/break-on-exception-finally.html:
+        * inspector/debugger/break-on-exception-native.html:
+        * inspector/debugger/break-on-exception-throw-in-promise-rethrow-in-catch.html:
+        * inspector/debugger/break-on-exception-throw-in-promise-then-with-catch.html:
+        * inspector/debugger/break-on-exception-throw-in-promise-then.html:
+        * inspector/debugger/break-on-exception-throw-in-promise-with-catch.html:
+        * inspector/debugger/break-on-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-exception-window-onerror.html:
+        * inspector/debugger/break-on-exception.html:
+        * inspector/debugger/break-on-uncaught-exception-catch.html:
+        * inspector/debugger/break-on-uncaught-exception-finally.html:
+        * inspector/debugger/break-on-uncaught-exception-native.html:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-rethrow-in-catch.html:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-with-catch.html:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-then.html:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-with-catch.html:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise.html:
+        * inspector/debugger/break-on-uncaught-exception-window-onerror.html:
+        * inspector/debugger/break-on-uncaught-exception.html:
+        * inspector/debugger/breakpoint-action-eval.html:
+        * inspector/debugger/breakpoint-columns.html:
+        * inspector/debugger/breakpoint-scope.html:
+        * inspector/debugger/command-line-api-exception-nested-catch.html:
+        * inspector/debugger/command-line-api-exception.html:
+        * inspector/debugger/js-stacktrace.html:
+        * inspector/debugger/pause-reason.html:
+        * inspector/debugger/probe-manager-add-remove-actions.html:
+        * inspector/debugger/search-scripts-expected.txt:
+        * inspector/debugger/search-scripts.html:
+        * inspector/dom/content-flow-content-nodes.html:
+        * inspector/dom/content-flow-content-removal.html:
+        * inspector/dom/content-flow-list.html:
+        * inspector/dom/content-node-region-info.html:
+        * inspector/dom/highlight-shape-outside-margin.html:
+        * inspector/dom/highlight-shape-outside.html:
+        * inspector/dom/highlightSelector.html:
+        * inspector/dom/pseudo-element-dynamic.html:
+        * inspector/dom/pseudo-element-static.html:
+        * inspector/dom/template-content.html:
+        * inspector/event-listener-set.html:
+        * inspector/event-listener.html:
+        * inspector/model/parse-script-syntax-tree.html:
+        * inspector/model/remote-object-get-properties.html:
+        * inspector/model/remote-object-weak-collection.html:
+        * inspector/model/remote-object.html:
+        * inspector/page/main-frame-resource.html:
+        * inspector/protocol-promise-result.html:
+        * inspector/replay/javascript-date-now.html:
+        * inspector/replay/javascript-random-seed.html:
+        * inspector/replay/window-navigator-plugins-memoized.html:
+        * inspector/test-harness-trivially-works.html:
+        * inspector/timeline/debugger-paused-while-recording.html:
+        * inspector/timeline/exception-in-injected-script-while-recording.html:
+        * inspector/timeline/recording-start-stop-timestamps.html:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2015-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font feature settings comparisons are order-dependent and case-dependent

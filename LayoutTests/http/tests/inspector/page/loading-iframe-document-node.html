@@ -1,6 +1,6 @@
 <html>
 <head>
-<script type="text/javascript" src="resources/protocol-test.js"></script>
+<script type="text/javascript" src="../resources/protocol-test.js"></script>
 <script>
 
 var frame;
@@ -8,7 +8,7 @@ var frame;
 function appendIframe()
 {
     frame = document.createElement("iframe");
-    frame.src = "http://localhost:8000/inspector-protocol/resources/slow-test-page.html";
+    frame.src = "http://localhost:8000/inspector/page/resources/slow-test-page.html";
     document.body.appendChild(frame);
 }
 

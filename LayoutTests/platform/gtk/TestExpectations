@@ -1262,7 +1262,7 @@ webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html
 
 webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]
 
-webkit.org/b/122571 http/tests/inspector-protocol/access-inspected-object.html [ Timeout Pass ]
+webkit.org/b/122571 http/tests/inspector/console/access-inspected-object.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/call-frame-function-name.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-options-exception.html [ Timeout Pass ]

@@ -2170,7 +2170,7 @@ compositing/tiling/transform-origin-tiled.html [ Failure ]
 
 # [EFL] REGRESSION(r183907): It made all inspector-protocol test crash
 webkit.org/b/144737 inspector-protocol [ Skip ]
-webkit.org/b/144737 http/tests/inspector-protocol [ Skip ]
+webkit.org/b/144737 http/tests/inspector [ Skip ]
 
 webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +86,7 @@ function runTest()
         }
     }
 
-    var url = scriptUrlBasePath + "/protocol-test.html";
+    var url = scriptUrlBasePath + "/ProtocolTestStub.html";
     var inspectorFrontend = window.internals.openDummyInspectorFrontend(url);
     inspectorFrontend.addEventListener("load", function(event) {
         // FIXME: rename this 'test' global field across all tests.

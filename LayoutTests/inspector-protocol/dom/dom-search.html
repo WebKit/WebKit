@@ -1,6 +1,6 @@
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
 function test()
 {
@@ -8,7 +8,7 @@ function test()
     InspectorTest.importScript("../../../../inspector-protocol/dom/resources/dom-search-queries.js");
 
     // Create a DOM listener to convert nodeIds to tag names.
-    InspectorTest.importScript("InspectorDOMListener.js");
+    InspectorTest.importScript("../dom/resources/InspectorDOMListener.js");
     var dom = createDOMListener();
 
     // Caching the output to avoid searching through the log.
