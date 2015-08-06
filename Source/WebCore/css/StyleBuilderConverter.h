@@ -1014,7 +1014,7 @@ inline RefPtr<FontFeatureSettings> StyleBuilderConverter::convertFontFeatureSett
     RefPtr<FontFeatureSettings> settings = FontFeatureSettings::create();
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& feature = downcast<CSSFontFeatureValue>(item.get());
-        settings->append(FontFeature(feature.tag(), feature.value()));
+        settings->insert(FontFeature(feature.tag(), feature.value()));
     }
     return WTF::move(settings);
 }

@@ -10378,7 +10378,7 @@ bool CSSParser::parseFontFeatureTag(CSSValueList& settings)
             return false;
     }
 
-    String tag = value->string;
+    String tag = String(value->string).convertToASCIILowercase();
     int tagValue = 1;
     // Feature tag values could follow: <integer> | on | off
     value = m_valueList->next();

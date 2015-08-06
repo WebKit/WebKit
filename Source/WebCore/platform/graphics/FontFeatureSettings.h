@@ -37,29 +37,30 @@ namespace WebCore {
 class FontFeature {
 public:
     FontFeature(const AtomicString& tag, int value);
-    bool operator==(const FontFeature&);
+
+    bool operator==(const FontFeature& other) const;
+    bool operator<(const FontFeature& other) const;
 
     const AtomicString& tag() const { return m_tag; }
     int value() const { return m_value; }
 
 private:
     AtomicString m_tag;
-    const int m_value;
+    const int m_value { 0 };
 };
 
 class FontFeatureSettings : public RefCounted<FontFeatureSettings> {
 public:
-    static Ref<FontFeatureSettings> create()
-    {
-        return adoptRef(*new FontFeatureSettings);
-    }
-    void append(const FontFeature& feature) { m_list.append(feature); }
+    static Ref<FontFeatureSettings> create();
+
+    void insert(FontFeature&&);
+
     size_t size() const { return m_list.size(); }
     const FontFeature& operator[](int index) const { return m_list[index]; }
     const FontFeature& at(size_t index) const { return m_list.at(index); }
 
 private:
-    FontFeatureSettings();
+    FontFeatureSettings() { }
     Vector<FontFeature> m_list;
 };
 

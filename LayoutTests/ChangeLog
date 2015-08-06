@@ -1,3 +1,15 @@
+2015-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font feature settings comparisons are order-dependent and case-dependent
+        https://bugs.webkit.org/show_bug.cgi?id=147719
+
+        Reviewed by Benjamin Poulain.
+
+        Make the test insensitive to order and case.
+
+        * css3/font-feature-settings-parsing-expected.txt:
+        * css3/font-feature-settings-parsing.html:
+
 2015-08-06  Doug Russell  <d_russell@apple.com>
 
         AX: AXLoadComplete that comes before AX API access won't fire
