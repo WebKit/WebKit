@@ -320,7 +320,7 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
 #if PLATFORM(IOS)
     {
         // Make sure we wait till the background removal of the empty database files finished before trying to open any database.
-        DeprecatedMutexLocker locker(DatabaseTracker::openDatabaseMutex());
+        MutexLocker locker(DatabaseTracker::openDatabaseMutex());
     }
 #endif
 

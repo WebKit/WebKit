@@ -139,7 +139,7 @@ private:
 #endif
 
     Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
-    DeprecatedMutex m_transactionInProgressMutex;
+    Mutex m_transactionInProgressMutex;
     bool m_transactionInProgress;
     bool m_isTransactionQueueEnabled;
 
