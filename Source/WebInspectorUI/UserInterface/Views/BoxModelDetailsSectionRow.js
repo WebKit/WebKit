@@ -97,6 +97,8 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             else
                 element.classList.remove("active");
         }
+
+        this.element.classList.toggle("hovered", showHighlight);
     }
 
     _updateMetrics()

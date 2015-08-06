@@ -1,5 +1,51 @@
 2015-08-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Move the Metrics style sidebar panel into Computed
+        https://bugs.webkit.org/show_bug.cgi?id=147715
+
+        Reviewed by Timothy Hatcher.
+
+        Deleted the Metrics sidebar panel and moved its contents into the Computed sidebar panel.
+        In addition, not hovering over the Metrics section will display the colors of each box.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        (.details-section .row.box-model :matches(.position, .margin, .border, .padding, .content)):
+        (.details-section .row.box-model .position):
+        (.details-section .row.box-model .margin):
+        (.details-section .row.box-model .border):
+        (.details-section .row.box-model .padding):
+        (.details-section .row.box-model :matches(.content span, .top, .right, .bottom, .left)):
+        (.details-section .row.box-model :matches(.right, .left)):
+        (.details-section .row.box-model .content): Deleted.
+        (.details-section .row.box-model .content span): Deleted.
+        (.details-section .row.box-model .left): Deleted.
+        (.details-section .row.box-model .right): Deleted.
+        (.details-section .row.box-model .top): Deleted.
+        (.details-section .row.box-model .bottom): Deleted.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._highlightDOMNode):
+        If no metric box is hovered, apply a class to the entire section.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        Removed the usage of MetricsStyleDetailsPanel.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.details-section.style-box-model:not(.collapsed) > :matches(.header, .content)):
+        Give the metrics section in the Computed panel a white background.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.refresh):
+        Don't refresh the content unless the change is significant (without this, you cannot edit
+        metrics values using the arrow keys).
+
+        * UserInterface/Views/MetricsStyleDetailsPanel.js: Removed.
+
+2015-08-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Bezier curve visual editor
         https://bugs.webkit.org/show_bug.cgi?id=134501
 
