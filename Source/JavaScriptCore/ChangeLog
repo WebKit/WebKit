@@ -1,3 +1,16 @@
+2015-08-06  Keith Miller  <keith_miller@apple.com>
+
+        The JSONP parser incorrectly parsers -0 as +0.
+        https://bugs.webkit.org/show_bug.cgi?id=147590
+
+        Reviewed by Michael Saboff.
+
+        In the LiteralParser we should use a double to store the accumulator for numerical tokens
+        rather than an int. Using an int means that -0 is, incorrectly, parsed as +0.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::Lexer::lexNumber):
+
 2015-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Structures used for tryGetConstantProperty() should be registered first

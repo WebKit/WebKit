@@ -497,7 +497,7 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
         while (m_ptr < m_end && isASCIIDigit(*m_ptr))
             ++m_ptr;
     } else if (m_ptr < m_end && (*m_ptr != 'e' && *m_ptr != 'E') && (m_ptr - token.start) < 10) {
-        int result = 0;
+        double result = 0;
         token.type = TokNumber;
         token.end = m_ptr;
         const CharType* digit = token.start;
