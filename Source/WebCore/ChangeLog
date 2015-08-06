@@ -1,3 +1,44 @@
+2015-08-06  Dana Burkart  <dburkart@apple.com>
+
+        Merge r187620. rdar://problem/15779101
+
+    2015-07-30  Anders Carlsson  <andersca@apple.com>
+
+            Assertion failure when a plug-in loads a resource that redirects somewhere
+            https://bugs.webkit.org/show_bug.cgi?id=147469
+
+            Reviewed by Alexey Proskuryakov.
+
+            Test: http/tests/plugins/get-url-redirect.html
+
+            r186597 moved the call to addPlugInStreamLoader to willSendRequest. This is wrong since
+            willSendRequest can be invoked more than once.
+
+            Fix this by making the initialization phase of NetscapePlugInStreamLoader be more like
+            SubresourceLoader where we only call addPlugInStreamLoader once we've successfully initialized
+            the loader, and only call removePlugInStreamLoader if we've called addPlugInStreamLoader.
+
+            Also change addPlugInStreamLoader and removePlugInStreamLoader to take references.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::addPlugInStreamLoader):
+            (WebCore::DocumentLoader::removePlugInStreamLoader):
+            * loader/DocumentLoader.h:
+            * loader/NetscapePlugInStreamLoader.cpp:
+            (WebCore::NetscapePlugInStreamLoader::create):
+            (WebCore::NetscapePlugInStreamLoader::init):
+            (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+            (WebCore::NetscapePlugInStreamLoader::didFail):
+            (WebCore::NetscapePlugInStreamLoader::didCancel):
+            (WebCore::NetscapePlugInStreamLoader::notifyDone):
+            * loader/NetscapePlugInStreamLoader.h:
+            * loader/ResourceLoader.cpp:
+            (WebCore::ResourceLoader::willSendRequest): Deleted.
+            * loader/ResourceLoader.h:
+            (WebCore::ResourceLoader::isPlugInStreamLoader): Deleted.
+            * loader/SubframeLoader.cpp:
+            (WebCore::SubframeLoader::requestObject):
+
 2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r187805. rdar://problem/21838271

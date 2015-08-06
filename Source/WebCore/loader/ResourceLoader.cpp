@@ -314,9 +314,6 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
         }
     }
 #endif
-    
-    if (isPlugInStreamLoader())
-        documentLoader()->addPlugInStreamLoader(this);
 
     if (request.isNull()) {
         didFail(cannotShowURLError());

@@ -228,8 +228,8 @@ namespace WebCore {
 
         void addSubresourceLoader(ResourceLoader*);
         void removeSubresourceLoader(ResourceLoader*);
-        WEBCORE_EXPORT void addPlugInStreamLoader(ResourceLoader*);
-        WEBCORE_EXPORT void removePlugInStreamLoader(ResourceLoader*);
+        void addPlugInStreamLoader(ResourceLoader&);
+        void removePlugInStreamLoader(ResourceLoader&);
 
         void subresourceLoaderFinishedLoadingOnePart(ResourceLoader*);
 

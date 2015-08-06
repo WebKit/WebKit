@@ -180,7 +180,6 @@ private:
     virtual void didCancel(const ResourceError&) = 0;
 
     void addDataOrBuffer(const char*, unsigned, SharedBuffer*, DataPayloadType);
-    virtual bool isPlugInStreamLoader() { return false; }
 
     // ResourceHandleClient
     virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse) override;
