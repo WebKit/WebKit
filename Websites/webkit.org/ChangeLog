@@ -1,5 +1,11 @@
 2015-08-06  Brent Fulgham  <bfulgham@apple.com>
 
+        Correct a typo in the explanatory text.
+
+        * demos/backdrop-filter/index.html:
+
+2015-08-06  Brent Fulgham  <bfulgham@apple.com>
+
         Add an example of backdrop-filter.
 
         * demos/backdrop-filter: Added.
