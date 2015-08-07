@@ -74,29 +74,16 @@ ParserError BytecodeGenerator::generate()
 
     {
         RefPtr<RegisterID> temp = newTemporary();
-        RefPtr<RegisterID> globalScope;
+        RefPtr<RegisterID> globalScope = m_topMostScope;
         for (auto functionPair : m_functionsToInitialize) {
             FunctionBodyNode* functionBody = functionPair.first;
             FunctionVariableType functionType = functionPair.second;
             emitNewFunction(temp.get(), functionBody);
             if (functionType == NormalFunctionVariable)
                 initializeVariable(variable(functionBody->ident()) , temp.get());
-            else if (functionType == GlobalFunctionVariable) {
-                if (!globalScope) {
-                    if (m_symbolTableStack.isEmpty() || !m_symbolTableStack.first().m_scope) {
-                        // We haven't allocated a lexical scope on top of the global object, so scopeRegister() will correspond to the global scope.
-                        globalScope = scopeRegister();
-                    } else {
-                        // We know this will resolve to the global object because our parser doesn't allow
-                        // "let" variables to have the same names as functions.
-                        ASSERT(m_scopeNode->lexicalVariables().hasCapturedVariables());
-                        RefPtr<RegisterID> globalObjectScope = emitResolveScope(nullptr, Variable(functionBody->ident()));
-                        globalScope = newBlockScopeVariable();
-                        emitMove(globalScope.get(), globalObjectScope.get());
-                    }
-                }
+            else if (functionType == GlobalFunctionVariable)
                 emitPutToScope(globalScope.get(), Variable(functionBody->ident()), temp.get(), ThrowIfNotFound);
-            } else
+            else
                 RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -137,11 +124,9 @@ ParserError BytecodeGenerator::generate()
         if (end <= start)
             continue;
         
-        ASSERT(range.tryData->targetScopeDepth != UINT_MAX);
         ASSERT(range.tryData->handlerType != HandlerType::Illegal);
         UnlinkedHandlerInfo info(static_cast<uint32_t>(start), static_cast<uint32_t>(end),
-            static_cast<uint32_t>(range.tryData->target->bind()), range.tryData->targetScopeDepth,
-            range.tryData->handlerType);
+            static_cast<uint32_t>(range.tryData->target->bind()), range.tryData->handlerType);
         m_codeBlock->addExceptionHandler(info);
     }
     
@@ -2635,13 +2620,21 @@ void BytecodeGenerator::emitGetScope()
     instructions().append(scopeRegister()->index());
 }
 
-RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* dst, RegisterID* scope)
+RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* objectScope)
 {
     pushScopedControlFlowContext();
+    RegisterID* newScope = newBlockScopeVariable();
+    newScope->ref();
 
-    RegisterID* result = emitUnaryOp(op_push_with_scope, dst, scope);
-    m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(), nullptr, true, 0 });
-    return result;
+    emitOpcode(op_push_with_scope);
+    instructions().append(newScope->index());
+    instructions().append(objectScope->index());
+    instructions().append(scopeRegister()->index());
+
+    emitMove(scopeRegister(), newScope);
+    m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(), newScope, true, 0 });
+
+    return newScope;
 }
 
 RegisterID* BytecodeGenerator::emitGetParentScope(RegisterID* dst, RegisterID* scope)
@@ -2658,11 +2651,12 @@ void BytecodeGenerator::emitPopScope(RegisterID* dst, RegisterID* scope)
     emitMove(dst, parentScope.get());
 }
 
-void BytecodeGenerator::emitPopWithScope(RegisterID* srcDst)
+void BytecodeGenerator::emitPopWithScope()
 {
-    emitPopScope(srcDst, srcDst);
+    emitPopScope(scopeRegister(), scopeRegister());
     popScopedControlFlowContext();
     SymbolTableStackEntry stackEntry = m_symbolTableStack.takeLast();
+    stackEntry.m_scope->deref();
     RELEASE_ASSERT(stackEntry.m_isWithScope);
 }
 
@@ -2841,6 +2835,8 @@ void BytecodeGenerator::allocateAndEmitScope()
     m_scopeRegister->ref();
     m_codeBlock->setScopeRegister(scopeRegister()->virtualRegister());
     emitGetScope();
+    m_topMostScope = addVar();
+    emitMove(m_topMostScope, scopeRegister());
 }
 
 void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowContext* topScope, ControlFlowContext* bottomScope)
@@ -2998,7 +2994,6 @@ TryData* BytecodeGenerator::pushTry(Label* start)
 {
     TryData tryData;
     tryData.target = newLabel();
-    tryData.targetScopeDepth = UINT_MAX;
     tryData.handlerType = HandlerType::Illegal;
     m_tryData.append(tryData);
     TryData* result = &m_tryData.last();
@@ -3026,27 +3021,24 @@ void BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* excepti
     m_tryContextStack.removeLast();
     
     emitLabel(tryRange.tryData->target.get());
-    tryRange.tryData->targetScopeDepth = calculateTargetScopeDepthForExceptionHandler();
     tryRange.tryData->handlerType = handlerType;
 
     emitOpcode(op_catch);
     instructions().append(exceptionRegister->index());
     instructions().append(thrownValueRegister->index());
-}
 
-int BytecodeGenerator::calculateTargetScopeDepthForExceptionHandler() const
-{
-    int depth = localScopeDepth();
-
-    // Currently, we're maintaing compatibility with how things are done and letting the exception handling
-    // code take into consideration the base activation of the function. There is no reason we shouldn't
-    // be able to calculate the exact depth here and let the exception handler not worry if there is a base
-    // activation or not.
-    if (m_lexicalEnvironmentRegister)
-        depth--;
-
-    ASSERT(depth >= 0);
-    return depth;
+    bool foundLocalScope = false;
+    for (unsigned i = m_symbolTableStack.size(); i--; ) {
+        // Note that if we don't find a local scope in the current function/program, 
+        // we must grab the outer-most scope of this bytecode generation.
+        if (m_symbolTableStack[i].m_scope) {
+            foundLocalScope = true;
+            emitMove(scopeRegister(), m_symbolTableStack[i].m_scope);
+            break;
+        }
+    }
+    if (!foundLocalScope)
+        emitMove(scopeRegister(), m_topMostScope);
 }
 
 int BytecodeGenerator::localScopeDepth() const

@@ -705,21 +705,6 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallF
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->exceptionUnwind(callFrame);
 
-    // Unwind the scope chain within the exception handler's call frame.
-    int targetScopeDepth = handler->scopeDepth;
-    if (codeBlock->needsActivation() && callFrame->hasActivation())
-        ++targetScopeDepth;
-
-    int scopeRegisterOffset = codeBlock->scopeRegister().offset();
-    JSScope* scope = callFrame->scope(scopeRegisterOffset);
-    int scopeDelta = scope->depth() - targetScopeDepth;
-    RELEASE_ASSERT(scopeDelta >= 0);
-
-    while (scopeDelta--)
-        scope = scope->next();
-
-    callFrame->setScope(scopeRegisterOffset, scope);
-
     return handler;
 }
 

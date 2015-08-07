@@ -644,8 +644,8 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         unsigned i = 0;
         do {
             HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
-            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] depth: [%4d] } %s\n",
-                i + 1, handler.start, handler.end, handler.target, handler.scopeDepth, handler.typeName());
+            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] } %s\n",
+                i + 1, handler.start, handler.end, handler.target, handler.typeName());
             ++i;
         } while (i < m_rareData->m_exceptionHandlers.size());
     }
@@ -1429,8 +1429,9 @@ void CodeBlock::dumpBytecode(
         case op_push_with_scope: {
             int dst = (++it)->u.operand;
             int newScope = (++it)->u.operand;
+            int currentScope = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "push_with_scope");
-            out.printf("%s, %s", registerName(dst).data(), registerName(newScope).data());
+            out.printf("%s, %s, %s", registerName(dst).data(), registerName(newScope).data(), registerName(currentScope).data());
             break;
         }
         case op_get_parent_scope: {
@@ -1789,15 +1790,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
             m_rareData->m_exceptionHandlers.resizeToFit(count);
-            size_t nonLocalScopeDepth = scope->depth();
             for (size_t i = 0; i < count; i++) {
                 const UnlinkedHandlerInfo& unlinkedHandler = unlinkedCodeBlock->exceptionHandler(i);
                 HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
 #if ENABLE(JIT)
-                handler.initialize(unlinkedHandler, nonLocalScopeDepth,
-                    CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(op_catch))));
+                handler.initialize(unlinkedHandler, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(op_catch))));
 #else
-                handler.initialize(unlinkedHandler, nonLocalScopeDepth);
+                handler.initialize(unlinkedHandler);
 #endif
             }
         }

@@ -107,7 +107,7 @@
             { "name" : "op_put_to_scope", "length" : 7 },
             { "name" : "op_get_from_arguments", "length" : 5 },
             { "name" : "op_put_to_arguments", "length" : 4 },
-            { "name" : "op_push_with_scope", "length" : 3 },
+            { "name" : "op_push_with_scope", "length" : 4 },
             { "name" : "op_create_lexical_environment", "length" : 5 },
             { "name" : "op_get_parent_scope", "length" : 3 },
             { "name" : "op_catch", "length" : 3 },

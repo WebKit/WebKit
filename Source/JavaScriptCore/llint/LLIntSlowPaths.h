@@ -106,7 +106,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_eval);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tear_off_arguments);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_strcat);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_to_primitive);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_push_with_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw_static_error);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_watchdog_timer);

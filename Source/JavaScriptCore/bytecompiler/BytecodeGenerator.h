@@ -176,7 +176,6 @@ namespace JSC {
 
     struct TryData {
         RefPtr<Label> target;
-        unsigned targetScopeDepth;
         HandlerType handlerType;
     };
 
@@ -593,10 +592,8 @@ namespace JSC {
         void emitPopCatchScope(VariableEnvironment&);
 
         void emitGetScope();
-        RegisterID* emitPushWithScope(RegisterID* dst, RegisterID* scope);
-        void emitPopScope(RegisterID* dst, RegisterID* scope);
-        void emitPopWithScope(RegisterID* srcDst);
-        RegisterID* emitGetParentScope(RegisterID* dst, RegisterID* scope);
+        RegisterID* emitPushWithScope(RegisterID* objectScope);
+        void emitPopWithScope();
 
         void emitDebugHook(DebugHookID, unsigned line, unsigned charOffset, unsigned lineStart);
 
@@ -636,6 +633,8 @@ namespace JSC {
         enum class ScopeRegisterType { Var, Block };
         void pushLexicalScopeInternal(VariableEnvironment&, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult, TDZRequirement, ScopeType, ScopeRegisterType);
         void popLexicalScopeInternal(VariableEnvironment&, TDZRequirement);
+        void emitPopScope(RegisterID* dst, RegisterID* scope);
+        RegisterID* emitGetParentScope(RegisterID* dst, RegisterID* scope);
     public:
         void pushLexicalScope(VariableEnvironmentNode*, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);
@@ -767,6 +766,7 @@ namespace JSC {
         RegisterID m_thisRegister;
         RegisterID m_calleeRegister;
         RegisterID* m_scopeRegister { nullptr };
+        RegisterID* m_topMostScope { nullptr };
         RegisterID* m_argumentsRegister { nullptr };
         RegisterID* m_lexicalEnvironmentRegister { nullptr };
         RegisterID* m_emptyValueRegister { nullptr };
@@ -783,7 +783,6 @@ namespace JSC {
         int m_localScopeDepth { 0 };
         const CodeType m_codeType;
 
-        int calculateTargetScopeDepthForExceptionHandler() const;
         int localScopeDepth() const;
         void pushScopedControlFlowContext();
         void popScopedControlFlowContext();

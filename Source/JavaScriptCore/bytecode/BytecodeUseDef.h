@@ -116,7 +116,6 @@ void computeUsesForBytecodeOffset(
     case op_get_enumerable_length:
     case op_new_func_exp:
     case op_to_index_string:
-    case op_push_with_scope:
     case op_create_lexical_environment:
     case op_resolve_scope:
     case op_get_from_scope:
@@ -177,6 +176,7 @@ void computeUsesForBytecodeOffset(
     case op_stricteq:
     case op_neq:
     case op_eq:
+    case op_push_with_scope:
     case op_del_by_val: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);

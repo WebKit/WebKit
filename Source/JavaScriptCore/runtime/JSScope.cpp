@@ -124,14 +124,6 @@ JSObject* JSScope::objectAtScope(JSScope* scope)
     return object;
 }
 
-int JSScope::depth()
-{
-    int depth = 0;
-    for (JSScope* scope = this; scope; scope = scope->next())
-        ++depth;
-    return depth;
-}
-
 // When an exception occurs, the result of isUnscopable becomes false.
 static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* object, const Identifier& ident)
 {

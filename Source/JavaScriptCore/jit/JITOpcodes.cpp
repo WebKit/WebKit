@@ -425,9 +425,8 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    callOperation(operationPushWithScope, dst, regT0);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_push_with_scope);
+    slowPathCall.call();
 }
 
 void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqType type)

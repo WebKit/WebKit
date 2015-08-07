@@ -1263,20 +1263,6 @@ LLINT_SLOW_PATH_DECL(slow_path_to_primitive)
     LLINT_RETURN(LLINT_OP_C(2).jsValue().toPrimitive(exec));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_push_with_scope)
-{
-    LLINT_BEGIN();
-    JSValue v = LLINT_OP_C(2).jsValue();
-    JSObject* o = v.toObject(exec);
-    LLINT_CHECK_EXCEPTION();
-
-    int scopeReg = pc[1].u.operand;
-    JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
-    exec->uncheckedR(scopeReg) = JSWithScope::create(exec, o, currentScope);
-    
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_throw)
 {
     LLINT_BEGIN();

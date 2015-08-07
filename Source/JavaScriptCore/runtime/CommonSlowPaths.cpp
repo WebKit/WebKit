@@ -649,4 +649,15 @@ SLOW_PATH_DECL(slow_path_create_lexical_environment)
     RETURN(newScope);
 }
 
+SLOW_PATH_DECL(slow_path_push_with_scope)
+{
+    BEGIN();
+    JSObject* newScope = OP_C(2).jsValue().toObject(exec);
+    CHECK_EXCEPTION();
+
+    int scopeReg = pc[3].u.operand;
+    JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
+    RETURN(JSWithScope::create(exec, newScope, currentScope));
+}
+
 } // namespace JSC

@@ -2574,9 +2574,9 @@ void WithNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     RefPtr<RegisterID> scope = generator.emitNode(m_expr);
     generator.emitExpressionInfo(m_divot, m_divot - m_expressionLength, m_divot);
-    generator.emitPushWithScope(generator.scopeRegister(), scope.get());
+    generator.emitPushWithScope(scope.get());
     generator.emitNode(dst, m_statement);
-    generator.emitPopWithScope(generator.scopeRegister());
+    generator.emitPopWithScope();
 }
 
 // ------------------------------ CaseClauseNode --------------------------------

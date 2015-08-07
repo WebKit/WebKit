@@ -308,7 +308,6 @@ void JIT_OPERATION operationPutSetterById(ExecState*, JSCell*, Identifier*, JSCe
 void JIT_OPERATION operationPutGetterSetter(ExecState*, JSCell*, Identifier*, JSCell*, JSCell*) WTF_INTERNAL;
 #endif
 void JIT_OPERATION operationPushFunctionNameScope(ExecState*, int32_t, SymbolTable*, EncodedJSValue) WTF_INTERNAL;
-void JIT_OPERATION operationPushWithScope(ExecState*, int32_t, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPopScope(ExecState*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationProfileDidCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationProfileWillCall(ExecState*, EncodedJSValue) WTF_INTERNAL;

@@ -748,9 +748,8 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    emitLoad(currentInstruction[2].u.operand, regT1, regT0);
-    callOperation(operationPushWithScope, dst, regT1, regT0);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_push_with_scope);
+    slowPathCall.call();
 }
 
 void JIT::emit_op_to_number(Instruction* currentInstruction)

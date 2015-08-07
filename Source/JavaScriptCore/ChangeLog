@@ -1,3 +1,67 @@
+2015-08-07  Saam barati  <saambarati1@gmail.com>
+
+        Interpreter::unwind shouldn't be responsible for assigning the correct scope.
+        https://bugs.webkit.org/show_bug.cgi?id=147666
+
+        Reviewed by Geoffrey Garen.
+
+        If we make the bytecode generator know about every local scope it 
+        creates, and if we give each local scope a unique register, the
+        bytecode generator has all the information it needs to assign
+        the correct scope to a catch handler. Because the bytecode generator
+        knows this information, it's a better separation of responsibilties
+        for it to set up the proper scope instead of relying on the exception
+        handling runtime to find the scope.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/HandlerInfo.h:
+        (JSC::UnlinkedHandlerInfo::UnlinkedHandlerInfo):
+        (JSC::HandlerInfo::initialize):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::emitGetScope):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitGetParentScope):
+        (JSC::BytecodeGenerator::emitPopScope):
+        (JSC::BytecodeGenerator::emitPopWithScope):
+        (JSC::BytecodeGenerator::allocateAndEmitScope):
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::pushTry):
+        (JSC::BytecodeGenerator::popTryAndEmitCatch):
+        (JSC::BytecodeGenerator::localScopeDepth):
+        (JSC::BytecodeGenerator::calculateTargetScopeDepthForExceptionHandler): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::WithNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::compileOpStrictEq):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::emit_op_to_number):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::objectAtScope):
+        (JSC::isUnscopable):
+        (JSC::JSScope::depth): Deleted.
+        * runtime/JSScope.h:
+
 2015-08-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add MacroAssembler::patchableBranch64 and fix ARM64's patchableBranchPtr

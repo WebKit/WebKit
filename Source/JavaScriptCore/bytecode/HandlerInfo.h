@@ -61,36 +61,33 @@ struct HandlerInfoBase {
     uint32_t start;
     uint32_t end;
     uint32_t target;
-    uint32_t scopeDepth : 30;
     uint32_t typeBits : 2; // HandlerType
 };
 
 struct UnlinkedHandlerInfo : public HandlerInfoBase {
-    UnlinkedHandlerInfo(uint32_t start, uint32_t end, uint32_t target, uint32_t scopeDepth, HandlerType handlerType)
+    UnlinkedHandlerInfo(uint32_t start, uint32_t end, uint32_t target, HandlerType handlerType)
     {
         this->start = start;
         this->end = end;
         this->target = target;
-        this->scopeDepth = scopeDepth;
         setType(handlerType);
         ASSERT(type() == handlerType);
     }
 };
 
 struct HandlerInfo : public HandlerInfoBase {
-    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, size_t nonLocalScopeDepth)
+    void initialize(const UnlinkedHandlerInfo& unlinkedInfo)
     {
         start = unlinkedInfo.start;
         end = unlinkedInfo.end;
         target = unlinkedInfo.target;
-        scopeDepth = unlinkedInfo.scopeDepth + nonLocalScopeDepth;
         typeBits = unlinkedInfo.typeBits;
     }
 
 #if ENABLE(JIT)
-    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, size_t nonLocalScopeDepth, CodeLocationLabel label)
+    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodeLocationLabel label)
     {
-        initialize(unlinkedInfo, nonLocalScopeDepth);
+        initialize(unlinkedInfo);
         nativeCode = label;
     }
 
