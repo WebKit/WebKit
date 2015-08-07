@@ -1,3 +1,10 @@
+2015-08-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Update AppEngine app version numbers to the latest commit.
+
+        * QueueStatusServer/app.yaml:
+        * TestResultServer/app.yaml:
+
 2015-08-07  Anders Carlsson  <andersca@apple.com>
 
         Simplify WKTR's view options

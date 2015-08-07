@@ -1,5 +1,5 @@
 application: webkit-queues
-version: 178455 # SVN revision of last major change
+version: 187975 # SVN revision of last major change
 runtime: python27
 threadsafe: false
 api_version: 1
