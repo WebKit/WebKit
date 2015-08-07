@@ -1,5 +1,18 @@
 2015-08-07  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r188058
+
+    2015-08-06  Enrica Casucci  <enrica@apple.com>
+
+            Build fix for iOS after http://trac.webkit.org/changeset/188053.
+
+            Unreviewed.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _registerPreview]):
+
+2015-08-07  Lucas Forschler  <lforschler@apple.com>
+
         Merge r188053
 
     2015-08-06  Enrica Casucci  <enrica@apple.com>
