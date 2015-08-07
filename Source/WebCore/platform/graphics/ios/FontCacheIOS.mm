@@ -677,13 +677,6 @@ static uint16_t toCTFontWeight(FontWeight fontWeight)
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
-    // Special case for "Courier" font. We used to have only an oblique variant on iOS, so prior to
-    // iOS 6.0, we disallowed its use here. We'll fall back on "Courier New". <rdar://problem/5116477&10850227>
-    static NeverDestroyed<AtomicString> courier("Courier", AtomicString::ConstructFromLiteral);
-    static bool shouldDisallowCourier = !iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0);
-    if (shouldDisallowCourier && equalIgnoringCase(family, courier))
-        return nullptr;
-
     CTFontSymbolicTraits traits = 0;
     if (fontDescription.italic())
         traits |= kCTFontTraitItalic;
