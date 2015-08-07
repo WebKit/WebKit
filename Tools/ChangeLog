@@ -1,3 +1,23 @@
+2015-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Build more testing binaries with CMake on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147799
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/CMakeLists.txt:
+        Build TestNetscapePlugin.
+        * DumpRenderTree/PlatformWin.cmake:
+        Build ImageDiff and add files necessary for TestNetscapePlugin on Windows.
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders: Added.
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit: Added.
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npapi.h: Copied from DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npapi.h.
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npfunctions.h: Copied from DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npfunctions.h.
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npruntime.h: Copied from DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npruntime.h.
+        * DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npapi.h: Removed.
+        * DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npfunctions.h: Removed.
+        * DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npruntime.h: Removed.
+
 2015-08-07  Jason Marcell  <jmarcell@apple.com>
 
         Refactor BuildbotQueue.compareIterations and BuildbotQueue.compareIterationsByRevisions to be more generic

@@ -1,5 +1,6 @@
 set(DumpRenderTreeLib_SOURCES
     ${DumpRenderTree_SOURCES}
+
     win/AccessibilityControllerWin.cpp
     win/AccessibilityUIElementWin.cpp
     win/DRTDataObject.cpp
@@ -26,8 +27,46 @@ set(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
 
+list(APPEND TestNetscapePlugin_SOURCES
+    DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.def
+    DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.rc
+
+    TestNetscapePlugin/Tests/win/CallJSThatDestroysPlugin.cpp
+    TestNetscapePlugin/Tests/win/DrawsGradient.cpp
+    TestNetscapePlugin/Tests/win/DumpWindowRect.cpp
+    TestNetscapePlugin/Tests/win/GetValueNetscapeWindow.cpp
+    TestNetscapePlugin/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp
+    TestNetscapePlugin/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp
+    TestNetscapePlugin/Tests/win/WindowRegionIsSetToClipRect.cpp
+    TestNetscapePlugin/Tests/win/WindowlessPaintRectCoordinates.cpp
+
+    TestNetscapePlugin/win/WindowGeometryTest.cpp
+    TestNetscapePlugin/win/WindowedPluginTest.cpp
+)
+
+list(APPEND TestNetscapePlugin_LIBRARIES
+    Msimg32
+    Shlwapi
+)
+
+set(ImageDiff_SOURCES
+    win/ImageDiffWin.cpp
+)
+
+set(ImageDiff_LIBRARIES
+   JavaScriptCore
+   WTF
+   WebKit
+)
+
 list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     win
+    DumpRenderTree.vcxproj/TestNetscapePlugin
+    TestNetscapePlugin
+    TestNetscapePlugin/ForwardingHeaders
+    TestNetscapePlugin/Tests
+    TestNetscapePlugin/win
+    TestNetscapePlugin/Tests/win
 )
 
 list(APPEND DumpRenderTree_LIBRARIES
@@ -49,16 +88,49 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND DumpRenderTreeLib_SOURCES
         cairo/PixelDumpSupportCairo.cpp
     )
+    list(APPEND ImageDiff_SOURCES
+        win/ImageDiffCairo.cpp
+    )
+    list(APPEND ImageDiff_LIBRARIES
+        cairo
+    )
+else ()
+    list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
+        cg
+    )
+    list(APPEND DumpRenderTreeLib_SOURCES
+        cg/PixelDumpSupportCG.cpp
+    )
+    list(APPEND DumpRenderTreeLib_LIBRARIES
+        CFNetwork
+        CoreGraphics
+    )
+    list(APPEND ImageDiff_SOURCES
+        cg/ImageDiffCG.cpp
+    )
+    list(APPEND ImageDiff_LIBRARIES
+       CoreFoundation
+       CoreGraphics
+    )
 endif ()
 
 ADD_PRECOMPILED_HEADER("DumpRenderTreePrefix.h" "win/DumpRenderTreePrefix.cpp" DumpRenderTreeLib_SOURCES)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT")
+add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 
 add_library(DumpRenderTreeLib SHARED ${DumpRenderTreeLib_SOURCES})
 set_target_properties(DumpRenderTreeLib PROPERTIES FOLDER "Tools")
 set_target_properties(DumpRenderTreeLib PROPERTIES OUTPUT_NAME "DumpRenderTree")
 target_link_libraries(DumpRenderTreeLib ${DumpRenderTreeLib_LIBRARIES})
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:wWinMainCRTStartup")
+add_executable(ImageDiff ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp)
+target_link_libraries(ImageDiff shlwapi)
+set_target_properties(ImageDiff PROPERTIES FOLDER "Tools")
+set_target_properties(ImageDiff PROPERTIES OUTPUT_NAME "ImageDiff")
+
+add_library(ImageDiffLib SHARED ${ImageDiff_SOURCES})
+set_target_properties(ImageDiffLib PROPERTIES FOLDER "Tools")
+set_target_properties(ImageDiffLib PROPERTIES OUTPUT_NAME "ImageDiff")
+target_link_libraries(ImageDiffLib ${ImageDiff_LIBRARIES})
 
 add_definitions(-D_UNICODE)
-

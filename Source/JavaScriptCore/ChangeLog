@@ -1,3 +1,13 @@
+2015-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Build more testing binaries with CMake on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147799
+
+        Reviewed by Brent Fulgham.
+
+        * shell/PlatformWin.cmake: Added.
+        Build jsc.dll and jsc.exe to find Apple Application Support or WinCairo dlls before using them.
+
 2015-08-07  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive

@@ -157,7 +157,8 @@ void shutDownWebKit()
 }
 
 //FIXME: We should consider moving this to a new file for cross-project functionality
-WEBKIT_API PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
+WEBKIT_API PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name);
+PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
 {
     int idr;
     // temporary hack to get resource id

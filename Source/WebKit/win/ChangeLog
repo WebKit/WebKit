@@ -1,3 +1,14 @@
+2015-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Build more testing binaries with CMake on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147799
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitDLL.cpp:
+        (loadResourceIntoBuffer):
+        AppleWin doesn't like exporting a function without a separate declaration.
+
 2015-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build
