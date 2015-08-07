@@ -1,3 +1,10 @@
+2015-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Move platform/ios-sim-deprecated/http/tests/loading/multiple-prioritization.html into http/tests/loading/
+
+        * http/tests/loading/multiple-prioritization-expected.txt: Renamed from LayoutTests/platform/ios-sim-deprecated/http/tests/loading/multiple-prioritization-expected.txt.
+        * http/tests/loading/multiple-prioritization.html: Renamed from LayoutTests/platform/ios-sim-deprecated/http/tests/loading/multiple-prioritization.html.
+
 2015-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         Move ios-sim-deprecated/fast/dom/ tests into fast/dom
