@@ -1,3 +1,17 @@
+2015-08-06  Beth Dakin  <bdakin@apple.com>
+
+        TextIndicator can have stale contentImage data and crash
+        https://bugs.webkit.org/show_bug.cgi?id=147770
+        -and corresponding-
+        rdar://problem/22181735
+
+        Reviewed by Tim Horton.
+
+        If there is no contentImage or contentImageWithHighlight, set them to 
+        nullptr.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextIndicatorData>::decode):
+
 2015-08-06  Dan Bernstein  <mitz@apple.com>
 
         Fixed all the builds after trying to fix the non-HAVE(LINK_PREVIEW) build.

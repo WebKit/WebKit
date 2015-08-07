@@ -2165,12 +2165,16 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
     bool hasImage;
     if (!decoder.decode(hasImage))
         return false;
+    if (!hasImage)
+        textIndicatorData.contentImage = nullptr;
     if (hasImage && !decodeImage(decoder, textIndicatorData.contentImage))
         return false;
 
     bool hasImageWithHighlight;
     if (!decoder.decode(hasImageWithHighlight))
         return false;
+    if (!hasImageWithHighlight)
+        textIndicatorData.contentImageWithHighlight = nullptr;
     if (hasImageWithHighlight && !decodeImage(decoder, textIndicatorData.contentImageWithHighlight))
         return false;
 
