@@ -169,6 +169,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitHitTestResultPrivate.h
     UIProcess/API/gtk/WebKitInjectedBundleClient.cpp
     UIProcess/API/gtk/WebKitInjectedBundleClient.h
+    UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.cpp
+    UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h
+    UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h
     UIProcess/API/gtk/WebKitJavascriptResult.cpp
     UIProcess/API/gtk/WebKitJavascriptResult.h
     UIProcess/API/gtk/WebKitJavascriptResultPrivate.h
@@ -290,6 +293,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
+    UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
     UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
     UIProcess/gtk/DragAndDropHandler.cpp
@@ -393,6 +397,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitForwardDeclarations.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitJavascriptResult.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitMimeInfo.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNavigationAction.h
@@ -500,6 +505,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/gtk"
     "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols/soup"
     "${WEBKIT2_DIR}/UIProcess/Plugins/gtk"
+    "${WEBKIT2_DIR}/UIProcess/gstreamer"
     "${WEBKIT2_DIR}/UIProcess/gtk"
     "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk"

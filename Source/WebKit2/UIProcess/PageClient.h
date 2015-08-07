@@ -34,10 +34,6 @@
 #include <WebCore/EditorClient.h>
 #include <wtf/Forward.h>
 
-#if USE(GSTREAMER)
-#include <WebCore/GUniquePtrGStreamer.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include "PluginComplexTextInputState.h"
 
@@ -77,6 +73,10 @@ class WebColorPicker;
 
 #if ENABLE(FULLSCREEN_API)
 class WebFullScreenManagerProxyClient;
+#endif
+
+#if USE(GSTREAMER)
+class InstallMissingMediaPluginsPermissionRequest;
 #endif
 
 #if PLATFORM(COCOA)
@@ -341,7 +341,7 @@ public:
     virtual void derefView() = 0;
 
 #if USE(GSTREAMER)
-    virtual GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext() = 0;
+    virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) = 0;
 #endif
 };
 

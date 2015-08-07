@@ -457,7 +457,7 @@ public:
 #if ENABLE(VIDEO)
     virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) { }
 #if USE(GSTREAMER)
-    virtual void requestInstallMissingMediaPlugins(const String& /*details*/, MediaPlayerRequestInstallMissingPluginsCallback&) { };
+    virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, MediaPlayerRequestInstallMissingPluginsCallback&) { };
 #endif
 #endif
 

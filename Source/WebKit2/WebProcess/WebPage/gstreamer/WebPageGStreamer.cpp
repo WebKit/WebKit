@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-void WebPage::requestInstallMissingMediaPlugins(const String& details, WebCore::MediaPlayerRequestInstallMissingPluginsCallback& callback)
+void WebPage::requestInstallMissingMediaPlugins(const String& details, const String& description, WebCore::MediaPlayerRequestInstallMissingPluginsCallback& callback)
 {
     if (m_installMediaPluginsCallback) {
         callback.complete(GST_INSTALL_PLUGINS_INSTALL_IN_PROGRESS);
@@ -42,7 +42,7 @@ void WebPage::requestInstallMissingMediaPlugins(const String& details, WebCore::
     }
 
     m_installMediaPluginsCallback = &callback;
-    send(Messages::WebPageProxy::RequestInstallMissingMediaPlugins(details));
+    send(Messages::WebPageProxy::RequestInstallMissingMediaPlugins(details, description));
 }
 
 void WebPage::didEndRequestInstallMissingMediaPlugins(uint32_t result)

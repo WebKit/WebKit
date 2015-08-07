@@ -180,6 +180,36 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     g_signal_handler_disconnect(test->m_webView, scriptDialogID);
 }
 
+static gboolean permissionRequestCallback(WebKitWebView*, WebKitPermissionRequest* request, WebViewTest* test)
+{
+    if (!WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request))
+        return FALSE;
+
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
+    WebKitInstallMissingMediaPluginsPermissionRequest* missingPluginsRequest = WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request);
+    g_assert(webkit_install_missing_media_plugins_permission_request_get_description(missingPluginsRequest));
+    webkit_permission_request_deny(request);
+    test->quitMainLoop();
+}
+
+static void testInstallMissingPluginsPermissionRequest(WebViewTest* test, gconstpointer)
+{
+    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
+        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(proxy.get(), "RemoveAVPluginsFromGSTRegistry",
+        nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr, nullptr));
+
+    test->showInWindowAndWaitUntilMapped();
+
+    gulong permissionRequestSignalID = g_signal_connect(test->m_webView, "permission-request", G_CALLBACK(permissionRequestCallback), test);
+    // FIXME: the base URI needs to finish with / to work, that shouldn't happen.
+    GUniquePtr<char> baseURI(g_strconcat("file://", Test::getResourcesDir(Test::WebKit2Resources).data(), "/", nullptr));
+    test->loadHtml("<html><body><video src=\"test.mp4\" autoplay></video></body></html>", baseURI.get());
+    g_main_loop_run(test->m_mainLoop);
+    g_signal_handler_disconnect(test->m_webView, permissionRequestSignalID);
+}
+
 void beforeAll()
 {
     bus = new WebKitTestBus();
@@ -191,6 +221,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "web-process-crashed", testWebKitWebViewProcessCrashed);
     WebViewTest::add("WebKitWebExtension", "window-object-cleared", testWebExtensionWindowObjectCleared);
     WebViewTest::add("WebKitWebExtension", "isolated-world", testWebExtensionIsolatedWorld);
+    WebViewTest::add("WebKitWebView", "install-missing-plugins-permission-request", testInstallMissingPluginsPermissionRequest);
 }
 
 void afterAll()

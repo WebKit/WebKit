@@ -6132,12 +6132,12 @@ double HTMLMediaElement::mediaPlayerRequestedPlaybackRate() const
 }
 
 #if USE(GSTREAMER)
-void HTMLMediaElement::requestInstallMissingPlugins(const String& details, MediaPlayerRequestInstallMissingPluginsCallback& callback)
+void HTMLMediaElement::requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback)
 {
     if (!document().page())
         return;
 
-    document().page()->chrome().client().requestInstallMissingMediaPlugins(details, callback);
+    document().page()->chrome().client().requestInstallMissingMediaPlugins(details, description, callback);
 }
 #endif
 

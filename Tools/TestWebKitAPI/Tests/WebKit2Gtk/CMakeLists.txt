@@ -26,6 +26,7 @@ include_directories(
 include_directories(SYSTEM
     ${ATSPI_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
+    ${GSTREAMER_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
     ${GTK_UNIX_PRINT_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}

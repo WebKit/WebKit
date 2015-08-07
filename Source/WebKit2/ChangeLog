@@ -1,3 +1,67 @@
+2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Do not automatically show PackageKit codec installation notifications
+        https://bugs.webkit.org/show_bug.cgi?id=135973
+
+        Reviewed by Philippe Normand.
+
+        Add InstallMissingMediaPluginsPermissionRequest to ask the API
+        layer whether to allow or deny the installation of missing media
+        plugins. And add a GTK+ implementation based on current permission
+        request API. Replace the
+        PageClientImpl::createGstInstallPluginsContext() with
+        decicePolicyForInstallMissingMediaPluginsPermissionRequest() that
+        passes the InstallMissingMediaPluginsPermissionRequest object to
+        the API layer. The allow method receives the
+        GstInstallPluginsContext now, so that it can be created by the API implementation.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::decicePolicyForInstallMissingMediaPluginsPermissionRequest):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.cpp: Added.
+        (createGstInstallPluginsContext):
+        (webkitInstallMissingMediaPluginsPermissionRequestAllow):
+        (webkitInstallMissingMediaPluginsPermissionRequestDeny):
+        (webkit_permission_request_interface_init):
+        (webkitInstallMissingMediaPluginsPermissionRequestDispose):
+        (webkit_install_missing_media_plugins_permission_request_class_init):
+        (webkitInstallMissingMediaPluginsPermissionRequestCreate):
+        (webkit_install_missing_media_plugins_permission_request_get_description):
+        * UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h: Added.
+        * UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRequestInstallMissingMediaPlugins):
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/efl/WebViewEfl.h:
+        * UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp: Copied from Source/WebKit2/UIProcess/gstreamer/WebPageProxyGStreamer.cpp.
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::InstallMissingMediaPluginsPermissionRequest):
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::~InstallMissingMediaPluginsPermissionRequest):
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::allow):
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::deny):
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::didEndRequestInstallMissingMediaPlugins):
+        * UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.h: Copied from Source/WebKit2/WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp.
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::create):
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::page):
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::details):
+        (WebKit::InstallMissingMediaPluginsPermissionRequest::description):
+        * UIProcess/gstreamer/WebPageProxyGStreamer.cpp:
+        (WebKit::WebPageProxy::requestInstallMissingMediaPlugins):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestInstallMissingMediaPlugins):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp:
+        (WebKit::WebPage::requestInstallMissingMediaPlugins):
+
 2015-08-06  Beth Dakin  <bdakin@apple.com>
 
         TextIndicator can have stale contentImage data and crash

@@ -48,6 +48,7 @@
 #include <webkit2/WebKitFormSubmissionRequest.h>
 #include <webkit2/WebKitGeolocationPermissionRequest.h>
 #include <webkit2/WebKitHitTestResult.h>
+#include <webkit2/WebKitInstallMissingMediaPluginsPermissionRequest.h>
 #include <webkit2/WebKitJavascriptResult.h>
 #include <webkit2/WebKitMimeInfo.h>
 #include <webkit2/WebKitNavigationAction.h>

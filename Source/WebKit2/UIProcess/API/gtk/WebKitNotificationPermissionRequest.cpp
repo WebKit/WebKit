@@ -35,6 +35,11 @@ using namespace WebKit;
  * WebKitNotificationPermissionRequest represents a request for
  * permission to decide whether WebKit should provide the user with
  * notifications through the Web Notification API.
+ *
+ * When a WebKitNotificationPermissionRequest is not handled by the user,
+ * it is denied by default.
+ *
+ * Since: 2.8
  */
 
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);

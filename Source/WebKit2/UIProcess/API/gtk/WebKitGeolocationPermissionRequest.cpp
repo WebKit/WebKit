@@ -35,6 +35,9 @@ using namespace WebKit;
  * WebKitGeolocationPermissionRequest represents a request for
  * permission to decide whether WebKit should provide the user's
  * location to a website when requested throught the Geolocation API.
+ *
+ * When a WebKitGeolocationPermissionRequest is not handled by the user,
+ * it is denied by default.
  */
 
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);

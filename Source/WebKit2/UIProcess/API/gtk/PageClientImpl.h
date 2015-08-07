@@ -142,7 +142,9 @@ private:
     virtual void refView() override;
     virtual void derefView() override;
 
-    virtual GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext() override;
+#if ENABLE(VIDEO)
+    virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
+#endif
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

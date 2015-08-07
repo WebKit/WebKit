@@ -1478,7 +1478,7 @@ private:
 #if ENABLE(VIDEO)
     void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&);
 #if USE(GSTREAMER)
-    void requestInstallMissingMediaPlugins(const String& details);
+    void requestInstallMissingMediaPlugins(const String& details, const String& description);
 #endif
 #endif
 

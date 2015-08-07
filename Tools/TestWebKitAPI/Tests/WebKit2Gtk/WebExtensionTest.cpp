@@ -22,6 +22,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <gio/gio.h>
+#include <gst/gst.h>
 #include <stdlib.h>
 #include <string.h>
 #include <webkit2/webkit-web-extension.h>
@@ -51,6 +52,8 @@ static const char introspectionXML[] =
     "  </method>"
     "  <method name='GetProcessIdentifier'>"
     "   <arg type='u' name='identifier' direction='out'/>"
+    "  </method>"
+    "  <method name='RemoveAVPluginsFromGSTRegistry'>"
     "  </method>"
     "  <signal name='DocumentLoaded'/>"
     "  <signal name='URIChanged'>"
@@ -301,6 +304,17 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
     } else if (!g_strcmp0(methodName, "GetProcessIdentifier")) {
         g_dbus_method_invocation_return_value(invocation,
             g_variant_new("(u)", static_cast<guint32>(getCurrentProcessID())));
+    } else if (!g_strcmp0(methodName, "RemoveAVPluginsFromGSTRegistry")) {
+        gst_init(nullptr, nullptr);
+        static const char* avPlugins[] = { "libav", "omx", "vaapi", nullptr };
+        GstRegistry* registry = gst_registry_get();
+        for (unsigned i = 0; avPlugins[i]; ++i) {
+            if (GstPlugin* plugin = gst_registry_find_plugin(registry, avPlugins[i])) {
+                gst_registry_remove_plugin(registry, plugin);
+                gst_object_unref(plugin);
+            }
+        }
+        g_dbus_method_invocation_return_value(invocation, nullptr);
     }
 }
 

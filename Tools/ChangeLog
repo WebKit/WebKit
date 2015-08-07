@@ -1,3 +1,23 @@
+2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Do not automatically show PackageKit codec installation notifications
+        https://bugs.webkit.org/show_bug.cgi?id=135973
+
+        Reviewed by Philippe Normand.
+
+        Handle the missing media plugins installation permission request
+        in MiniBrowser and add a test case for the new API.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewDecidePermissionRequest):
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        (permissionRequestCallback):
+        (testInstallMissingPluginsPermissionRequest):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (methodCallCallback):
+
 2015-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, reduce the duration of a Lock unit test. It was timing out.

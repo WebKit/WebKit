@@ -454,6 +454,10 @@ static gboolean webViewDecidePermissionRequest(WebKitWebView *webView, WebKitPer
                 dialog_message = "audio";
         } else if (is_for_video_device)
             dialog_message = "video";
+    } else if (WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request)) {
+        dialog_title = "Media plugin missing request";
+        dialog_message_format = "The media backend was unable to find a plugin to play the requested media:\n%s.\nAllow to search and install the missing plugin?";
+        dialog_message = webkit_install_missing_media_plugins_permission_request_get_description(WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request));
     } else
         return FALSE;
 

@@ -36,6 +36,9 @@ using namespace WebKit;
  * permission to decide whether WebKit should be allowed to access the user's
  * audio and video source devices when requested throught the getUserMedia API.
  *
+ * When a WebKitUserMediaPermissionRequest is not handled by the user,
+ * it is denied by default.
+ *
  * Since: 2.8
  */
 

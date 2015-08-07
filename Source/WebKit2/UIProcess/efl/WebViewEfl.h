@@ -98,7 +98,7 @@ private:
     virtual void derefView() override final { }
 
 #if USE(GSTREAMER)
-    virtual GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext() override final { return nullptr; };
+    virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override final { return false; };
 #endif
 
 private:

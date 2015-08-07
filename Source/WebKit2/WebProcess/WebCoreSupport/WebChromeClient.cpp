@@ -1170,9 +1170,9 @@ void WebChromeClient::mediaDocumentNaturalSizeChanged(const WebCore::IntSize& ne
 }
 
 #if USE(GSTREAMER)
-void WebChromeClient::requestInstallMissingMediaPlugins(const String& details, WebCore::MediaPlayerRequestInstallMissingPluginsCallback& callback)
+void WebChromeClient::requestInstallMissingMediaPlugins(const String& details, const String& description, WebCore::MediaPlayerRequestInstallMissingPluginsCallback& callback)
 {
-    m_page->requestInstallMissingMediaPlugins(details, callback);
+    m_page->requestInstallMissingMediaPlugins(details, description, callback);
 }
 #endif
 #endif // ENABLE(VIDEO)
