@@ -1,3 +1,10 @@
+2015-08-06  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] CMake build fix after r188098.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+        OptionsWindows.cmake uses WTF_PLATFORM_WIN_CAIRO now, so we need to set it before including OptionsWindows.
+
 2015-08-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix quirks with CMake and VS2015
