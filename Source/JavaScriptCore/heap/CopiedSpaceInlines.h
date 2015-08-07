@@ -98,7 +98,7 @@ inline void CopiedSpace::recycleEvacuatedBlock(CopiedBlock* block, HeapOperation
     ASSERT(block->canBeRecycled());
     ASSERT(!block->m_isPinned);
     {
-        LockHolder locker(&m_toSpaceLock);
+        SpinLockHolder locker(&m_toSpaceLock);
         m_blockSet.remove(block);
         if (collectionType == EdenCollection)
             m_newGen.fromSpace->remove(block);

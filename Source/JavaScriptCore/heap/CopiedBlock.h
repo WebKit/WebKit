@@ -31,7 +31,7 @@
 #include "Options.h"
 #include <wtf/Atomics.h>
 #include <wtf/DoublyLinkedList.h>
-#include <wtf/Lock.h>
+#include <wtf/SpinLock.h>
 
 namespace JSC {
 
@@ -54,8 +54,8 @@ public:
     void didPromote();
 
     unsigned liveBytes();
-    bool shouldReportLiveBytes(LockHolder&, JSCell* owner);
-    void reportLiveBytes(LockHolder&, JSCell*, CopyToken, unsigned);
+    bool shouldReportLiveBytes(SpinLockHolder&, JSCell* owner);
+    void reportLiveBytes(SpinLockHolder&, JSCell*, CopyToken, unsigned);
     void reportLiveBytesDuringCopying(unsigned);
     void didSurviveGC();
     void didEvacuateBytes(unsigned);
@@ -85,7 +85,7 @@ public:
 
     bool hasWorkList();
     CopyWorkList& workList();
-    Lock& workListLock() { return m_workListLock; }
+    SpinLock& workListLock() { return m_workListLock; }
 
 private:
     CopiedBlock(size_t);
@@ -98,7 +98,7 @@ private:
 
     size_t m_capacity;
 
-    Lock m_workListLock;
+    SpinLock m_workListLock;
     std::unique_ptr<CopyWorkList> m_workList;
 
     size_t m_remaining;

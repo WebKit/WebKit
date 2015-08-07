@@ -33,7 +33,7 @@
 #include "WeakReferenceHarvester.h"
 #include <condition_variable>
 #include <wtf/HashSet.h>
-#include <wtf/Lock.h>
+#include <wtf/SpinLock.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -97,7 +97,7 @@ private:
     std::mutex m_opaqueRootsMutex;
     HashSet<void*> m_opaqueRoots;
 
-    Lock m_copyLock;
+    SpinLock m_copyLock;
     Vector<CopiedBlock*> m_blocksToCopy;
     size_t m_copyIndex;
     static const size_t s_blockFragmentLength = 32;
@@ -115,7 +115,7 @@ private:
 
 inline void GCThreadSharedData::getNextBlocksToCopy(size_t& start, size_t& end)
 {
-    LockHolder locker(&m_copyLock);
+    SpinLockHolder locker(&m_copyLock);
     start = m_copyIndex;
     end = std::min(m_blocksToCopy.size(), m_copyIndex + s_blockFragmentLength);
     m_copyIndex = end;

@@ -60,7 +60,7 @@ void MetaAllocatorTracker::release(MetaAllocatorHandle* handle)
 
 ALWAYS_INLINE void MetaAllocator::release(MetaAllocatorHandle* handle)
 {
-    LockHolder locker(&m_lock);
+    SpinLockHolder locker(&m_lock);
     if (handle->sizeInBytes()) {
         decrementPageOccupancy(handle->start(), handle->sizeInBytes());
         addFreeSpaceFromReleasedHandle(handle->start(), handle->sizeInBytes());
@@ -91,7 +91,7 @@ void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
 {
     ASSERT(newSizeInBytes <= m_sizeInBytes);
     
-    LockHolder locker(&m_allocator->m_lock);
+    SpinLockHolder locker(&m_allocator->m_lock);
 
     newSizeInBytes = m_allocator->roundUp(newSizeInBytes);
     
@@ -150,7 +150,7 @@ MetaAllocator::MetaAllocator(size_t allocationGranule, size_t pageSize)
 
 PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void* ownerUID)
 {
-    LockHolder locker(&m_lock);
+    SpinLockHolder locker(&m_lock);
 
     if (!sizeInBytes)
         return 0;
@@ -196,7 +196,7 @@ PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void
 
 MetaAllocator::Statistics MetaAllocator::currentStatistics()
 {
-    LockHolder locker(&m_lock);
+    SpinLockHolder locker(&m_lock);
     Statistics result;
     result.bytesAllocated = m_bytesAllocated;
     result.bytesReserved = m_bytesReserved;
@@ -281,7 +281,7 @@ void MetaAllocator::addFreeSpaceFromReleasedHandle(void* start, size_t sizeInByt
 
 void MetaAllocator::addFreshFreeSpace(void* start, size_t sizeInBytes)
 {
-    LockHolder locker(&m_lock);
+    SpinLockHolder locker(&m_lock);
     m_bytesReserved += sizeInBytes;
     addFreeSpace(start, sizeInBytes);
 }
@@ -289,7 +289,7 @@ void MetaAllocator::addFreshFreeSpace(void* start, size_t sizeInBytes)
 size_t MetaAllocator::debugFreeSpaceSize()
 {
 #ifndef NDEBUG
-    LockHolder locker(&m_lock);
+    SpinLockHolder locker(&m_lock);
     size_t result = 0;
     for (FreeSpaceNode* node = m_freeSpaceSizeMap.first(); node; node = node->successor())
         result += node->m_sizeInBytes;

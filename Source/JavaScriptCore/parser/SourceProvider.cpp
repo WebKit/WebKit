@@ -27,7 +27,7 @@
 #include "SourceProvider.h"
 
 #include "JSCInlines.h"
-#include <wtf/Lock.h>
+#include <wtf/SpinLock.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -44,11 +44,11 @@ SourceProvider::~SourceProvider()
 {
 }
 
-static StaticLock providerIdLock;
+static StaticSpinLock providerIdLock;
 
 void SourceProvider::getID()
 {
-    LockHolder lock(&providerIdLock);
+    SpinLockHolder lock(&providerIdLock);
     if (!m_id) {
         static intptr_t nextProviderID = 0;
         m_id = ++nextProviderID;

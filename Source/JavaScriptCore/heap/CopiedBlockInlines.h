@@ -33,7 +33,7 @@
 
 namespace JSC {
     
-inline bool CopiedBlock::shouldReportLiveBytes(LockHolder&, JSCell* owner)
+inline bool CopiedBlock::shouldReportLiveBytes(SpinLockHolder&, JSCell* owner)
 {
     // We want to add to live bytes if the owner isn't part of the remembered set or
     // if this block was allocated during the last cycle. 
@@ -43,7 +43,7 @@ inline bool CopiedBlock::shouldReportLiveBytes(LockHolder&, JSCell* owner)
     return !Heap::isRemembered(owner) || !m_isOld;
 }
 
-inline void CopiedBlock::reportLiveBytes(LockHolder&, JSCell* owner, CopyToken token, unsigned bytes)
+inline void CopiedBlock::reportLiveBytes(SpinLockHolder&, JSCell* owner, CopyToken token, unsigned bytes)
 {
     checkConsistency();
 #ifndef NDEBUG

@@ -250,7 +250,7 @@ inline void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, si
 
     ASSERT(heap()->m_storageSpace.contains(block));
 
-    LockHolder locker(&block->workListLock());
+    SpinLockHolder locker(&block->workListLock());
     if (heap()->operationInProgress() == FullCollection || block->shouldReportLiveBytes(locker, owner)) {
         m_bytesCopied += bytes;
         block->reportLiveBytes(locker, owner, token, bytes);

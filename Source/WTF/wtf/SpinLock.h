@@ -32,16 +32,6 @@
 
 namespace WTF {
 
-// SpinLock is a very simple lock implementation that has extremely fast lock/unlock for very small
-// uncontended critical sections. However, it will exhibit bad performance degradation when the lock
-// becomes contended: the thread trying to acquire the lock will simply waste CPU cycles.
-//
-// For most (all?) locking use cases, it's better to use Lock (see wtf/Lock.h). That uses only a bit
-// more memory (8 bytes instead of 4 on 64-bit), and is only a bit slower in the uncontended case
-// (Lock needs CAS to unlock, while SpinLock doesn't), but will burn a lot less CPU time - for 10
-// threads acquiring a 50 microsecond critical section, Lock will use up to 100x less kernel CPU time
-// than SpinLock.
-
 // SpinLockBase is a struct without an explicitly defined constructors so that
 // it can be initialized at compile time. See StaticSpinLock below.
 struct SpinLockBase {

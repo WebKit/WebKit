@@ -32,9 +32,9 @@
 #include <WebEvent.h>
 #include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SpinLock.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
@@ -97,7 +97,7 @@ private:
 #endif
     std::unique_ptr<WebCore::WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
 #if ENABLE(IOS_TOUCH_EVENTS)
-    Lock m_touchEventsLock;
+    SpinLock m_touchEventsLock;
     HashMap<uint64_t, TouchEventQueue> m_touchEvents;
 #endif
 };

@@ -568,8 +568,8 @@ bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t
 {
     // Prevent two VMs from suspending each other's threads at the same time,
     // which can cause deadlock: <rdar://problem/20300842>.
-    static StaticLock mutex;
-    std::lock_guard<StaticLock> lock(mutex);
+    static StaticSpinLock mutex;
+    std::lock_guard<StaticSpinLock> lock(mutex);
 
     *size = 0;
 

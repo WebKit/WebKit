@@ -178,7 +178,7 @@ void GCThreadSharedData::didFinishMarking()
 void GCThreadSharedData::didStartCopying()
 {
     {
-        LockHolder locker(&m_copyLock);
+        SpinLockHolder locker(&m_copyLock);
         if (m_vm->heap.operationInProgress() == EdenCollection) {
             // Reset the vector to be empty, but don't throw away the backing store.
             m_blocksToCopy.shrink(0);

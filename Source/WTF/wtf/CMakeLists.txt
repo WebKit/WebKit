@@ -41,7 +41,6 @@ set(WTF_HEADERS
     IteratorAdaptors.h
     IteratorRange.h
     ListHashSet.h
-    Lock.h
     Locker.h
     MD5.h
     MainThread.h
@@ -157,7 +156,6 @@ set(WTF_SOURCES
     FunctionDispatcher.cpp
     GregorianDateTime.cpp
     HashTable.cpp
-    Lock.cpp
     MD5.cpp
     MainThread.cpp
     MediaTime.cpp

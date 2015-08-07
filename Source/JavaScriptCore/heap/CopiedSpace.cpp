@@ -191,7 +191,7 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block, CopiedBlock** exchange)
 
     {
         // Always put the block into the old gen because it's being promoted!
-        LockHolder locker(&m_toSpaceLock);
+        SpinLockHolder locker(&m_toSpaceLock);
         m_oldGen.toSpace->push(block);
         m_blockSet.add(block);
         m_oldGen.blockFilter.add(reinterpret_cast<Bits>(block));

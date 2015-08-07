@@ -33,9 +33,9 @@
 #include <wtf/CheckedBoolean.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashSet.h>
-#include <wtf/Lock.h>
 #include <wtf/OSAllocator.h>
 #include <wtf/PageBlock.h>
+#include <wtf/SpinLock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadingPrimitives.h>
 
@@ -113,7 +113,7 @@ private:
 
     HashSet<CopiedBlock*> m_blockSet;
 
-    Lock m_toSpaceLock;
+    SpinLock m_toSpaceLock;
 
     struct CopiedGeneration {
         CopiedGeneration()

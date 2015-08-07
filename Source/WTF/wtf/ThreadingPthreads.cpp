@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *

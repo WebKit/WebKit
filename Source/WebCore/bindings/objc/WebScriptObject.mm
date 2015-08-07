@@ -48,7 +48,7 @@
 #import <runtime/JSLock.h>
 #import <runtime/Completion.h>
 #import <runtime/Completion.h>
-#import <wtf/Lock.h>
+#import <wtf/SpinLock.h>
 #import <wtf/Threading.h>
 #import <wtf/spi/cocoa/NSMapTableSPI.h>
 #import <wtf/text/WTFString.h>
@@ -72,12 +72,12 @@ using JSC::makeSource;
 namespace WebCore {
 
 static NSMapTable* JSWrapperCache;
-static StaticLock spinLock;
+static StaticSpinLock spinLock;
 
 NSObject* getJSWrapper(JSObject* impl)
 {
     ASSERT(isMainThread());
-    LockHolder holder(&spinLock);
+    SpinLockHolder holder(&spinLock);
 
     if (!JSWrapperCache)
         return nil;
@@ -88,7 +88,7 @@ NSObject* getJSWrapper(JSObject* impl)
 void addJSWrapper(NSObject* wrapper, JSObject* impl)
 {
     ASSERT(isMainThread());
-    LockHolder holder(&spinLock);
+    SpinLockHolder holder(&spinLock);
 
     if (!JSWrapperCache)
         JSWrapperCache = createWrapperCache();
@@ -97,7 +97,7 @@ void addJSWrapper(NSObject* wrapper, JSObject* impl)
 
 void removeJSWrapper(JSObject* impl)
 {
-    LockHolder holder(&spinLock);
+    SpinLockHolder holder(&spinLock);
 
     if (!JSWrapperCache)
         return;
@@ -106,7 +106,7 @@ void removeJSWrapper(JSObject* impl)
 
 static void removeJSWrapperIfRetainCountOne(NSObject* wrapper, JSObject* impl)
 {
-    LockHolder holder(&spinLock);
+    SpinLockHolder holder(&spinLock);
 
     if (!JSWrapperCache)
         return;

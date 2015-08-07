@@ -75,7 +75,6 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Lock.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MD5.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MediaTime.cpp

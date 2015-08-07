@@ -31,13 +31,13 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/MetaAllocatorHandle.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RedBlackTree.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SpinLock.h>
 
 namespace WTF {
 
@@ -183,7 +183,7 @@ private:
     size_t m_bytesReserved;
     size_t m_bytesCommitted;
     
-    Lock m_lock;
+    SpinLock m_lock;
 
     MetaAllocatorTracker* m_tracker;
 
