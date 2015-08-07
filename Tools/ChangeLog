@@ -1,5 +1,20 @@
 2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WTF unit tests are timing out in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=147777
+
+        Reviewed by Filip Pizlo.
+
+        Add a way to mark google unit tests as slow and add
+        WTF_Lock.ContentedShortSection to the list. In case of slow test
+        we use the double of the given timeout for that particular test.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+        (TestRunner._run_google_test):
+
+2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] run-gtk-tests should not stop when a google test case fails
         https://bugs.webkit.org/show_bug.cgi?id=147778
 

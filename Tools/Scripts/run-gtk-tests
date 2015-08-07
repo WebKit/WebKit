@@ -80,6 +80,10 @@ class TestRunner:
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
     ]
 
+    SLOW = [
+        "WTF_Lock.ContentedShortSection",
+    ]
+
     def __init__(self, options, tests=[]):
         self._options = options
 
@@ -340,7 +344,10 @@ class TestRunner:
 
     def _run_google_test(self, test_program, subtest):
         test_command = [test_program, '--gtest_filter=%s' % (subtest)]
-        return self._run_test_command(test_command, self._options.timeout)
+        timeout = self._options.timeout
+        if subtest in TestRunner.SLOW:
+            timeout *= 2
+        return self._run_test_command(test_command, timeout)
 
     def _run_google_test_suite(self, test_program):
         retcode = 0
