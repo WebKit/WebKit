@@ -1306,3 +1306,6 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 # WK1-only timeout.
 webkit.org/b/147683 platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]
+
+webkit.org/b/147763 [ Mavericks ] accessibility/mac/loaded-notification.html [ Skip ]
+webkit.org/b/147763 [ Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]

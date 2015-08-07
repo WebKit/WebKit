@@ -1,3 +1,12 @@
+2015-08-07  Doug Russell  <d_russell@apple.com>
+
+        AX: Bug 147737 is causing test failures in Mavericks WK1
+        https://bugs.webkit.org/show_bug.cgi?id=147763
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/TestExpectations:
+
 2015-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce get_by_id like IC into get_by_val when the given name is String or Symbol
