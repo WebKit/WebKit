@@ -28,11 +28,13 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <wtf/text/StringBuilder.h>
+
 #define CHECK_READ(length) do { if (m_cursor + length > m_buffer.end()) return false; } while (0)
 
 namespace JSC {
 
-bool WASMReader::readUnsignedInt32(uint32_t& result)
+bool WASMReader::readUInt32(uint32_t& result)
 {
     CHECK_READ(4);
     result = m_cursor[0] | m_cursor[1] << 8 | m_cursor[2] << 16 | m_cursor[3] << 24;
@@ -73,6 +75,64 @@ bool WASMReader::readDouble(double& result)
     };
     result = u.doubleValue;
     m_cursor += 8;
+    return true;
+}
+
+bool WASMReader::readCompactUInt32(uint32_t& result)
+{
+    uint32_t sum = 0;
+    unsigned shift = 0;
+    do {
+        CHECK_READ(1);
+        uint32_t byte = *m_cursor++;
+        if (byte < 0x80) {
+            if ((shift == 28 && byte >= 0x10) || (shift && !byte))
+                return false;
+            result = sum | (byte << shift);
+            return true;
+        }
+        sum |= (byte & firstSevenBitsMask) << shift;
+        shift += 7;
+    } while (shift < 35);
+    return false;
+}
+
+bool WASMReader::readString(String& result)
+{
+    StringBuilder builder;
+    while (true) {
+        CHECK_READ(1);
+        char c = *m_cursor++;
+        if (!c)
+            break;
+        builder.append(c);
+    }
+    result = builder.toString();
+    return true;
+}
+
+bool WASMReader::readType(WASMType& result)
+{
+    return readByte<WASMType>(result, (uint8_t)WASMType::NumberOfTypes);
+}
+
+bool WASMReader::readExpressionType(WASMExpressionType& result)
+{
+    return readByte<WASMExpressionType>(result, (uint8_t)WASMExpressionType::NumberOfExpressionTypes);
+}
+
+bool WASMReader::readExportFormat(WASMExportFormat& result)
+{
+    return readByte<WASMExportFormat>(result, (uint8_t)WASMExportFormat::NumberOfExportFormats);
+}
+
+template <class T> bool WASMReader::readByte(T& result, uint8_t numberOfValues)
+{
+    CHECK_READ(1);
+    uint8_t byte = *m_cursor++;
+    if (byte >= numberOfValues)
+        return false;
+    result = T(byte);
     return true;
 }
 

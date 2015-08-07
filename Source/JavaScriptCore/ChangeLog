@@ -1,3 +1,56 @@
+2015-08-06  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Parse the entire WebAssembly modules
+        https://bugs.webkit.org/show_bug.cgi?id=147393
+
+        Reviewed by Geoffrey Garen.
+
+        Parse the entire WebAssembly modules from files produced by pack-asmjs
+        <https://github.com/WebAssembly/polyfill-prototype-1>. This patch can only
+        parse modules whose function definition section contains only functions that
+        have "return 0;" as their only statement. Parsing of any functions will be
+        implemented in a subsequent patch.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/JSWASMModule.cpp:
+        (JSC::JSWASMModule::destroy):
+        * wasm/JSWASMModule.h:
+        (JSC::JSWASMModule::i32Constants):
+        (JSC::JSWASMModule::f32Constants):
+        (JSC::JSWASMModule::f64Constants):
+        (JSC::JSWASMModule::signatures):
+        (JSC::JSWASMModule::functionImports):
+        (JSC::JSWASMModule::functionImportSignatures):
+        (JSC::JSWASMModule::globalVariableTypes):
+        (JSC::JSWASMModule::functionDeclarations):
+        (JSC::JSWASMModule::functionPointerTables):
+        * wasm/WASMFormat.h: Added.
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::parse):
+        (JSC::WASMModuleParser::parseModule):
+        (JSC::WASMModuleParser::parseConstantPoolSection):
+        (JSC::WASMModuleParser::parseSignatureSection):
+        (JSC::WASMModuleParser::parseFunctionImportSection):
+        (JSC::WASMModuleParser::parseGlobalSection):
+        (JSC::WASMModuleParser::parseFunctionDeclarationSection):
+        (JSC::WASMModuleParser::parseFunctionPointerTableSection):
+        (JSC::WASMModuleParser::parseFunctionDefinitionSection):
+        (JSC::WASMModuleParser::parseFunctionDefinition):
+        (JSC::WASMModuleParser::parseExportSection):
+        * wasm/WASMModuleParser.h:
+        * wasm/WASMReader.cpp:
+        (JSC::WASMReader::readUInt32):
+        (JSC::WASMReader::readCompactUInt32):
+        (JSC::WASMReader::readString):
+        (JSC::WASMReader::readType):
+        (JSC::WASMReader::readExpressionType):
+        (JSC::WASMReader::readExportFormat):
+        (JSC::WASMReader::readByte):
+        (JSC::WASMReader::readUnsignedInt32): Deleted.
+        * wasm/WASMReader.h:
+
 2015-08-06  Keith Miller  <keith_miller@apple.com>
 
         The typedArrayLength function in FTLLowerDFGToLLVM is dead code.

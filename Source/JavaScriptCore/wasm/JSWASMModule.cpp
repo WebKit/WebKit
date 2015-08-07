@@ -35,6 +35,12 @@ namespace JSC {
 
 const ClassInfo JSWASMModule::s_info = { "WASMModule", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWASMModule) };
 
+void JSWASMModule::destroy(JSCell* cell)
+{
+    JSWASMModule* thisObject = jsCast<JSWASMModule*>(cell);
+    thisObject->JSWASMModule::~JSWASMModule();
+}
+
 void JSWASMModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWASMModule* thisObject = jsCast<JSWASMModule*>(cell);

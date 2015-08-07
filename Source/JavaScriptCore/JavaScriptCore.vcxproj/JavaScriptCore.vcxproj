@@ -1758,6 +1758,7 @@
     <ClInclude Include="..\tools\ProfileTreeNode.h" />
     <ClInclude Include="..\tools\TieredMMapArray.h" />
     <ClInclude Include="..\wasm\JSWASMModule.h" />
+    <ClInclude Include="..\wasm\WASMFormat.h" />
     <ClInclude Include="..\wasm\WASMMagicNumber.h" />
     <ClInclude Include="..\wasm\WASMModuleParser.h" />
     <ClInclude Include="..\wasm\WASMReader.h" />

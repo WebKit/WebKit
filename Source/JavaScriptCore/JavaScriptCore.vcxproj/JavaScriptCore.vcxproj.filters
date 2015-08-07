@@ -4348,6 +4348,9 @@
     <ClInclude Include="..\wasm\JSWASMModule.h">
       <Filter>wasm</Filter>
     </ClInclude>
+    <ClInclude Include="..\wasm\WASMFormat.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
     <ClInclude Include="..\wasm\WASMMagicNumber.h">
       <Filter>wasm</Filter>
     </ClInclude>

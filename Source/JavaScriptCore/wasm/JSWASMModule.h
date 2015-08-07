@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSDestructibleObject.h"
+#include "WASMFormat.h"
 
 namespace JSC {
 
@@ -50,13 +51,34 @@ public:
         return Structure::create(vm, globalObject, jsNull(), TypeInfo(ObjectType, StructureFlags), info());
     }
 
+    static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    Vector<uint32_t>& i32Constants() { return m_i32Constants; }
+    Vector<float>& f32Constants() { return m_f32Constants; }
+    Vector<double>& f64Constants() { return m_f64Constants; }
+    Vector<WASMSignature>& signatures() { return m_signatures; }
+    Vector<WASMFunctionImport>& functionImports() { return m_functionImports; }
+    Vector<WASMFunctionImportSignature>& functionImportSignatures() { return m_functionImportSignatures; }
+    Vector<WASMType>& globalVariableTypes() { return m_globalVariableTypes; }
+    Vector<WASMFunctionDeclaration>& functionDeclarations() { return m_functionDeclarations; }
+    Vector<WASMFunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
 
 private:
     JSWASMModule(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
     }
+
+    Vector<uint32_t> m_i32Constants;
+    Vector<float> m_f32Constants;
+    Vector<double> m_f64Constants;
+    Vector<WASMSignature> m_signatures;
+    Vector<WASMFunctionImport> m_functionImports;
+    Vector<WASMFunctionImportSignature> m_functionImportSignatures;
+    Vector<WASMType> m_globalVariableTypes;
+    Vector<WASMFunctionDeclaration> m_functionDeclarations;
+    Vector<WASMFunctionPointerTable> m_functionPointerTables;
 
     Vector<WriteBarrier<JSFunction>> m_functions;
 };

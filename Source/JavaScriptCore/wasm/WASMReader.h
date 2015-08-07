@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WASMFormat.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -40,11 +41,20 @@ public:
     {
     }
 
-    bool readUnsignedInt32(uint32_t& result);
+    bool readUInt32(uint32_t& result);
     bool readFloat(float& result);
     bool readDouble(double& result);
+    bool readCompactUInt32(uint32_t& result);
+    bool readString(String& result);
+    bool readType(WASMType& result);
+    bool readExpressionType(WASMExpressionType& result);
+    bool readExportFormat(WASMExportFormat& result);
 
 private:
+    static const uint32_t firstSevenBitsMask = 0x7f;
+
+    template <class T> bool readByte(T& result, uint8_t numberOfValues);
+
     const Vector<uint8_t>& m_buffer;
     const uint8_t* m_cursor;
 };

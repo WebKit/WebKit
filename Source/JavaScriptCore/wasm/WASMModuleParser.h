@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "Strong.h"
 #include "WASMReader.h"
 #include <wtf/text/WTFString.h>
 
@@ -45,9 +46,19 @@ public:
     JSWASMModule* parse(VM&, JSGlobalObject*, String& errorMessage);
 
 private:
-    bool parseModule();
+    void parseModule();
+    void parseConstantPoolSection();
+    void parseSignatureSection();
+    void parseFunctionImportSection();
+    void parseGlobalSection();
+    void parseFunctionDeclarationSection();
+    void parseFunctionPointerTableSection();
+    void parseFunctionDefinitionSection();
+    void parseFunctionDefinition();
+    void parseExportSection();
 
     WASMReader m_reader;
+    Strong<JSWASMModule> m_module;
     String m_errorMessage;
 };
 
