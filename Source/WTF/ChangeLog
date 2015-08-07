@@ -1,3 +1,11 @@
+2015-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, work around assertions in Windows's std::atomic.
+
+        * wtf/Atomics.h:
+        (WTF::Atomic::compareExchangeWeak):
+        (WTF::Atomic::compareExchangeStrong):
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive

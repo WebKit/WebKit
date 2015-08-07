@@ -91,12 +91,21 @@ struct Atomic {
 
     bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
+#if OS(WINDOWS)
+        // Windows makes strange assertions about the argument to compare_exchange_weak, and anyway,
+        // Windows is X86 so seq_cst is cheap.
+        order = std::memory_order_seq_cst;
+#endif
         T expectedOrActual = expected;
         return value.compare_exchange_weak(expectedOrActual, desired, order);
     }
 
     bool compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
+#if OS(WINDOWS)
+        // See above.
+        order = std::memory_order_seq_cst;
+#endif
         T expectedOrActual = expected;
         return value.compare_exchange_strong(expectedOrActual, desired, order);
     }
