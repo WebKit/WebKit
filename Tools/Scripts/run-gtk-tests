@@ -343,11 +343,11 @@ class TestRunner:
         return self._run_test_command(test_command, self._options.timeout)
 
     def _run_google_test_suite(self, test_program):
+        retcode = 0
         for subtest in self._get_tests_from_google_test_suite(test_program):
-            retcode = self._run_google_test(test_program, subtest)
-            if retcode:
-                return retcode
-        return 0
+            if self._run_google_test(test_program, subtest):
+                retcode = 1
+        return retcode
 
     def _run_test(self, test_program):
         basedir = os.path.basename(os.path.dirname(test_program))

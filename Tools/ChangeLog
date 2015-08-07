@@ -1,5 +1,19 @@
 2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] run-gtk-tests should not stop when a google test case fails
+        https://bugs.webkit.org/show_bug.cgi?id=147778
+
+        Reviewed by Philippe Normand.
+
+        For glib based tests we run the test runner with the -k option,
+        but for google tests we are aborting as soon as we find a failure.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_google_test_suite): Use a global return code that
+        is set to 1 when any test has failed.
+
+2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GStreamer] Do not automatically show PackageKit codec installation notifications
         https://bugs.webkit.org/show_bug.cgi?id=135973
 
