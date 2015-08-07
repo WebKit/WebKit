@@ -1,3 +1,25 @@
+2015-08-06  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: notify focus manager clients when the playing state of the focused media element changes
+        https://bugs.webkit.org/show_bug.cgi?id=147745
+
+        Reviewed by Tim Horton.
+
+        Added plumbing to allow focus manager's clients to be notified when the focused Content media element begins
+        playing or is paused.
+
+        * UIProcess/API/C/WKMediaSessionFocusManager.cpp:
+        (WKMediaSessionFocusManagerSetClient):
+        * UIProcess/API/C/WKMediaSessionFocusManager.h:
+        * UIProcess/WebMediaSessionFocusManager.cpp:
+        (WebKit::WebMediaSessionFocusManager::initializeClient):
+        (WebKit::WebMediaSessionFocusManager::mediaElementIsPlayingDidChange):
+        * UIProcess/WebMediaSessionFocusManager.h:
+        * UIProcess/WebMediaSessionFocusManagerClient.cpp:
+        (WebKit::WebMediaSessionFocusManagerClient::didChangePlaybackAttribute):
+        * UIProcess/WebMediaSessionFocusManagerClient.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Make CMake usable on Mac.

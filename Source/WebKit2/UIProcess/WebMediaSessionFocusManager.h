@@ -30,6 +30,7 @@
 
 #include "APIObject.h"
 #include "WebContextSupplement.h"
+#include "WebMediaSessionFocusManagerClient.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
@@ -41,6 +42,8 @@ public:
     static const char* supplementName();
 
     static PassRefPtr<WebMediaSessionFocusManager> create(WebProcessPool*);
+
+    void initializeClient(const WKMediaSessionFocusManagerClientBase*);
 
     bool isFocusedContentMediaElementPlaying() const;
     void mediaElementIsPlayingDidChange(WebPageProxy*, uint64_t, bool);
@@ -60,6 +63,7 @@ private:
 
     std::unique_ptr<FocusedMediaElement> m_focusedMediaElement;
     bool m_focusedMediaElementIsPlaying { false };
+    WebMediaSessionFocusManagerClient m_client;
 };
 
 } // namespace WebKit

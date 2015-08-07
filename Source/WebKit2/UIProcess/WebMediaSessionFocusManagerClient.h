@@ -23,39 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebMediaSessionFocusManagerClient_h
+#define WebMediaSessionFocusManagerClient_h
+
+#if ENABLE(MEDIA_SESSION)
+
+#include "APIClient.h"
 #include "WKMediaSessionFocusManager.h"
+#include <wtf/Forward.h>
 
-#include "WKAPICast.h"
-#include "WebMediaSessionFocusManager.h"
-
-using namespace WebKit;
-
-WKTypeID WKMediaSessionFocusManagerGetTypeID()
-{
-#if ENABLE(MEDIA_SESSION)
-    return toAPI(WebMediaSessionFocusManager::APIType);
-#else
-    return toAPI(API::Object::Type::Null);
-#endif
+namespace API {
+template<> struct ClientTraits<WKMediaSessionFocusManagerClientBase> {
+    typedef std::tuple<WKMediaSessionFocusManagerClientV0> Versions;
+};
 }
 
-void WKMediaSessionFocusManagerSetClient(WKMediaSessionFocusManagerRef manager, const WKMediaSessionFocusManagerClientBase* client)
-{
-#if ENABLE(MEDIA_SESSION)
-    toImpl(manager)->initializeClient(client);
-#else
-    UNUSED_PARAM(manager);
-    UNUSED_PARAM(client);
-#endif
-}
+namespace WebKit {
 
-bool WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying(WKMediaSessionFocusManagerRef manager)
-{
-#if ENABLE(MEDIA_SESSION)
-    return toImpl(manager)->isFocusedContentMediaElementPlaying();
-#else
-    UNUSED_PARAM(manager);
-    return false;
-#endif
-}
+class WebMediaSessionFocusManager;
+
+class WebMediaSessionFocusManagerClient : public API::Client<WKMediaSessionFocusManagerClientBase> {
+public:
+    void didChangePlaybackAttribute(WebMediaSessionFocusManager*, WKMediaSessionFocusManagerPlaybackAttribute, bool);
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(MEDIA_SESSION)
+
+#endif // WebMediaSessionFocusManagerClient_h

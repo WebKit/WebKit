@@ -24,38 +24,23 @@
  */
 
 #include "config.h"
-#include "WKMediaSessionFocusManager.h"
+#include "WebMediaSessionFocusManagerClient.h"
+
+#if ENABLE(MEDIA_SESSION)
 
 #include "WKAPICast.h"
 #include "WebMediaSessionFocusManager.h"
 
-using namespace WebKit;
+namespace WebKit {
 
-WKTypeID WKMediaSessionFocusManagerGetTypeID()
+void WebMediaSessionFocusManagerClient::didChangePlaybackAttribute(WebMediaSessionFocusManager* manager, WKMediaSessionFocusManagerPlaybackAttribute playbackAttribute, bool value)
 {
-#if ENABLE(MEDIA_SESSION)
-    return toAPI(WebMediaSessionFocusManager::APIType);
-#else
-    return toAPI(API::Object::Type::Null);
-#endif
+    if (!m_client.didChangePlaybackAttribute)
+        return;
+
+    m_client.didChangePlaybackAttribute(toAPI(manager), playbackAttribute, value, m_client.base.clientInfo);
 }
 
-void WKMediaSessionFocusManagerSetClient(WKMediaSessionFocusManagerRef manager, const WKMediaSessionFocusManagerClientBase* client)
-{
-#if ENABLE(MEDIA_SESSION)
-    toImpl(manager)->initializeClient(client);
-#else
-    UNUSED_PARAM(manager);
-    UNUSED_PARAM(client);
-#endif
-}
+} // namespace WebKit
 
-bool WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying(WKMediaSessionFocusManagerRef manager)
-{
-#if ENABLE(MEDIA_SESSION)
-    return toImpl(manager)->isFocusedContentMediaElementPlaying();
-#else
-    UNUSED_PARAM(manager);
-    return false;
-#endif
-}
+#endif // ENABLE(MEDIA_SESSION)

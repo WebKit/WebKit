@@ -36,7 +36,29 @@
 extern "C" {
 #endif
 
+enum {
+    IsPlaying = 1 << 0
+};
+typedef uint32_t WKMediaSessionFocusManagerPlaybackAttribute;
+
+// Media Session Focus Manager Client
+typedef void (*WKMediaSessionFocusManagerDidChangePlaybackAttribute)(WKMediaSessionFocusManagerRef manager, WKMediaSessionFocusManagerPlaybackAttribute playbackAttribute, bool value, const void *clientInfo);
+
+typedef struct WKMediaSessionFocusManagerClientBase {
+    int                                                  version;
+    const void *                                         clientInfo;
+} WKMediaSessionFocusManagerClientBase;
+
+typedef struct WKMediaSessionFocusManagerClientV0 {
+    WKMediaSessionFocusManagerClientBase                 base;
+
+    // Version 0.
+    WKMediaSessionFocusManagerDidChangePlaybackAttribute didChangePlaybackAttribute;
+} WKMediaSessionFocusManagerClientV0;
+
 WK_EXPORT WKTypeID WKMediaSessionFocusManagerGetTypeID();
+
+WK_EXPORT void WKMediaSessionFocusManagerSetClient(WKMediaSessionFocusManagerRef manager, const WKMediaSessionFocusManagerClientBase* client);
 
 WK_EXPORT bool WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying(WKMediaSessionFocusManagerRef manager);
 
