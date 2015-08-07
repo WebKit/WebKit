@@ -172,13 +172,13 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 #if ENABLE(IOS_TOUCH_EVENTS)
 void EventDispatcher::clearQueuedTouchEventsForPage(const WebPage& webPage)
 {
-    SpinLockHolder locker(&m_touchEventsLock);
+    LockHolder locker(&m_touchEventsLock);
     m_touchEvents.remove(webPage.pageID());
 }
 
 void EventDispatcher::getQueuedTouchEventsForPage(const WebPage& webPage, TouchEventQueue& destinationQueue)
 {
-    SpinLockHolder locker(&m_touchEventsLock);
+    LockHolder locker(&m_touchEventsLock);
     destinationQueue = m_touchEvents.take(webPage.pageID());
 }
 
@@ -186,7 +186,7 @@ void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& t
 {
     bool updateListWasEmpty;
     {
-        SpinLockHolder locker(&m_touchEventsLock);
+        LockHolder locker(&m_touchEventsLock);
         updateListWasEmpty = m_touchEvents.isEmpty();
         auto addResult = m_touchEvents.add(pageID, TouchEventQueue());
         if (addResult.isNewEntry)
@@ -217,7 +217,7 @@ void EventDispatcher::dispatchTouchEvents()
 {
     HashMap<uint64_t, TouchEventQueue> localCopy;
     {
-        SpinLockHolder locker(&m_touchEventsLock);
+        LockHolder locker(&m_touchEventsLock);
         localCopy.swap(m_touchEvents);
     }
 

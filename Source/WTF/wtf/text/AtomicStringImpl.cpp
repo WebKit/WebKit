@@ -33,7 +33,7 @@
 #include <wtf/unicode/UTF8.h>
 
 #if USE(WEB_THREAD)
-#include "SpinLock.h"
+#include "Lock.h"
 #endif
 
 namespace WTF {
@@ -42,18 +42,18 @@ using namespace Unicode;
 
 #if USE(WEB_THREAD)
 
-class AtomicStringTableLocker : public SpinLockHolder {
+class AtomicStringTableLocker : public LockHolder {
     WTF_MAKE_NONCOPYABLE(AtomicStringTableLocker);
 
-    static StaticSpinLock s_stringTableLock;
+    static StaticLock s_stringTableLock;
 public:
     AtomicStringTableLocker()
-        : SpinLockHolder(&s_stringTableLock)
+        : LockHolder(&s_stringTableLock)
     {
     }
 };
 
-StaticSpinLock AtomicStringTableLocker::s_stringTableLock;
+StaticLock AtomicStringTableLocker::s_stringTableLock;
 
 #else
 

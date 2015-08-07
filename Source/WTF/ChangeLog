@@ -1,3 +1,106 @@
+2015-08-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Lightweight locks should be adaptive
+        https://bugs.webkit.org/show_bug.cgi?id=147545
+
+        Reviewed by Geoffrey Garen.
+
+        A common idiom in WebKit is to use spinlocks. We use them because the lock acquisition
+        overhead is lower than system locks and because they take dramatically less space than system
+        locks. The speed and space advantages of spinlocks can be astonishing: an uncontended spinlock
+        acquire is up to 10x faster and under microcontention - short critical section with two or
+        more threads taking turns - spinlocks are up to 100x faster. Spinlocks take only 1 byte or 4
+        bytes depending on the flavor, while system locks take 64 bytes or more. Clearly, WebKit
+        should continue to avoid system locks - they are just far too slow and far too big.
+
+        But there is a problem with this idiom. System lock implementations will sleep a thread when
+        it attempts to acquire a lock that is held, while spinlocks will cause the thread to burn CPU.
+        In WebKit spinlocks, the thread will repeatedly call sched_yield(). This is awesome for
+        microcontention, but awful when the lock will not be released for a while. In fact, when
+        critical sections take tens of microseconds or more, the CPU time cost of our spinlocks is
+        almost 100x more than the CPU time cost of a system lock. This case doesn't arise too
+        frequently in our current uses of spinlocks, but that's probably because right now there are
+        places where we make a conscious decision to use system locks - even though they use more
+        memory and are slower - because we don't want to waste CPU cycles when a thread has to wait a
+        while to acquire the lock.
+
+        The solution is to just implement a modern adaptive mutex in WTF. Luckily, this isn't a new
+        concept. This patch implements a mutex that is reminiscent of the kinds of low-overhead locks
+        that JVMs use. The actual implementation here is inspired by some of the ideas from [1]. The
+        idea is simple: the fast path is an inlined CAS to immediately acquire a lock that isn't held,
+        the slow path tries some number of spins to acquire the lock, and if that fails, the thread is
+        put on a queue and put to sleep. The queue is made up of statically allocated thread nodes and
+        the lock itself is a tagged pointer: either it is just bits telling us the complete lock state
+        (not held or held) or it is a pointer to the head of a queue of threads waiting to acquire the
+        lock. This approach gives WTF::Lock three different levels of adaptation: an inlined fast path
+        if the lock is not contended, a short burst of spinning for microcontention, and a full-blown
+        queue for critical sections that are held for a long time.
+
+        On a locking microbenchmark, this new Lock exhibits the following performance
+        characteristics:
+
+        - Lock+unlock on an uncontended no-op critical section: 2x slower than SpinLock and 3x faster
+          than a system mutex.
+
+        - Lock+unlock on a contended no-op critical section: 2x slower than SpinLock and 100x faster
+          than a system mutex.
+
+        - CPU time spent in lock() on a lock held for a while: same as system mutex, 90x less than a
+          SpinLock.
+
+        - Memory usage: sizeof(void*), so on 64-bit it's 8x less than a system mutex but 2x worse than
+          a SpinLock.
+
+        This patch replaces all uses of SpinLock with Lock, since our critical sections are not
+        no-ops so if you do basically anything in your critical section, the Lock overhead will be
+        invisible. Also, in all places where we used SpinLock, we could tolerate 8 bytes of overhead
+        instead of 4. Performance benchmarking using JSC macrobenchmarks shows no difference, which is
+        as it should be: the purpose of this change is to reduce CPU time wasted, not wallclock time.
+        This patch doesn't replace any uses of ByteSpinLock, since we expect that the space benefits
+        of having a lock that just uses a byte are still better than the CPU wastage benefits of
+        Lock. But, this work will enable some future work to create locks that will fit in just 1.6
+        bits: https://bugs.webkit.org/show_bug.cgi?id=147665.
+        
+        Rolling this back in after fixing Lock::unlockSlow() for architectures that have a truly weak
+        CAS. Since the Lock::unlock() fast path can go to slow path spuriously, it may go there even if
+        there aren't any threads on the Lock's queue. So, unlockSlow() must be able to deal with the
+        possibility of a null queue head.
+
+        [1] http://www.filpizlo.com/papers/pizlo-pppj2011-fable.pdf
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * benchmarks: Added.
+        * benchmarks/LockSpeedTest.cpp: Added.
+        (main):
+        * wtf/Atomics.h:
+        (WTF::Atomic::compareExchangeWeak):
+        (WTF::Atomic::compareExchangeStrong):
+        * wtf/CMakeLists.txt:
+        * wtf/Lock.cpp: Added.
+        (WTF::LockBase::lockSlow):
+        (WTF::LockBase::unlockSlow):
+        * wtf/Lock.h: Added.
+        (WTF::LockBase::lock):
+        (WTF::LockBase::unlock):
+        (WTF::LockBase::isHeld):
+        (WTF::LockBase::isLocked):
+        (WTF::Lock::Lock):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        * wtf/MetaAllocator.h:
+        * wtf/SpinLock.h:
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/ThreadingWin.cpp:
+        * wtf/text/AtomicString.cpp:
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::AtomicStringTableLocker::AtomicStringTableLocker):
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/187972.

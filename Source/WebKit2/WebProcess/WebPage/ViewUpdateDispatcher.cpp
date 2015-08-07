@@ -58,7 +58,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const Visib
 {
     bool updateListWasEmpty;
     {
-        SpinLockHolder locker(&m_dataMutex);
+        LockHolder locker(&m_dataMutex);
         updateListWasEmpty = m_latestUpdate.isEmpty();
         auto iterator = m_latestUpdate.find(pageID);
         if (iterator == m_latestUpdate.end())
@@ -78,7 +78,7 @@ void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
     HashMap<uint64_t, UpdateData> update;
     {
-        SpinLockHolder locker(&m_dataMutex);
+        LockHolder locker(&m_dataMutex);
         update = WTF::move(m_latestUpdate);
     }
 

@@ -1,3 +1,43 @@
+2015-08-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Lightweight locks should be adaptive
+        https://bugs.webkit.org/show_bug.cgi?id=147545
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGCommon.cpp:
+        (JSC::DFG::startCrashing):
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::workListLock):
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::shouldReportLiveBytes):
+        (JSC::CopiedBlock::reportLiveBytes):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::doneFillingBlock):
+        * heap/CopiedSpace.h:
+        (JSC::CopiedSpace::CopiedGeneration::CopiedGeneration):
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::recycleEvacuatedBlock):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::didStartCopying):
+        * heap/GCThreadSharedData.h:
+        (JSC::GCThreadSharedData::getNextBlocksToCopy):
+        * heap/ListableHandler.h:
+        (JSC::ListableHandler::List::addThreadSafe):
+        (JSC::ListableHandler::List::addNotThreadSafe):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::copyLater):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::~SourceProvider):
+        (JSC::SourceProvider::getID):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::addDatabaseToAtExit):
+        (JSC::Profiler::Database::removeDatabaseFromAtExit):
+        (JSC::Profiler::Database::removeFirstAtExitDatabase):
+        * runtime/TypeProfilerLog.h:
+
 2015-08-07  Mark Lam  <mark.lam@apple.com>
 
         Rename some variables in the JSC watchdog implementation.
