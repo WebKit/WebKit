@@ -1,1 +1,0 @@
-FAIL: layers should have gone. hadLayers = true, haveLayers = true

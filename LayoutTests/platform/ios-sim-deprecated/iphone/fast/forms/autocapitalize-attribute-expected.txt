@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 66: TypeError: HTMLParagraphElement is not a function (evaluating 'description('Test the "autocapitalize" attribute values and fallback values.')')
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x16
-  RenderBlock {HTML} at (0,0) size 800x16
-    RenderBody {BODY} at (8,16) size 784x0
-      RenderBlock {P} at (0,0) size 784x0
-      RenderBlock {DIV} at (0,0) size 784x0

@@ -1,3 +1,0 @@
-FAIL: did not end fast enough
-END OF TEST
-

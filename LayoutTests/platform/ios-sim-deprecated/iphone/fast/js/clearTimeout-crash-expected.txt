@@ -1,3 +1,0 @@
-<rdar://problem/6628098> Assertion failure calling clearTimeout() with zero or a negative number
-
-PASS

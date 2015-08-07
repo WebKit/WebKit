@@ -1,9 +1,0 @@
-(GraphicsLayer
-  (bounds 800.00 2710.00)
-  (children 1
-    (GraphicsLayer
-      (bounds 800.00 2710.00)
-    )
-  )
-)
-

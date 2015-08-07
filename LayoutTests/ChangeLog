@@ -1,3 +1,9 @@
+2015-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove platform/ios-sim-deprecated. All of the tests here exist elsewhere already.
+
+        * platform/ios-sim-deprecated/: Removed.
+
 2015-08-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move LayoutTests/inspector-protocol/ tests to LayoutTests/inspector/
