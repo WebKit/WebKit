@@ -1162,19 +1162,19 @@ bool RenderView::rootBackgroundIsEntirelyFixed() const
     return rootObject->rendererForRootBackground().hasEntirelyFixedBackground();
 }
     
-LayoutRect RenderView::unextendedBackgroundRect(RenderBox*) const
+LayoutRect RenderView::unextendedBackgroundRect() const
 {
     // FIXME: What is this? Need to patch for new columns?
     return unscaledDocumentRect();
 }
     
-LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
+LayoutRect RenderView::backgroundRect() const
 {
     // FIXME: New columns care about this?
     if (frameView().hasExtendedBackgroundRectForPainting())
         return frameView().extendedBackgroundRectForPainting();
 
-    return unextendedBackgroundRect(backgroundRenderer);
+    return unextendedBackgroundRect();
 }
 
 IntRect RenderView::documentRect() const

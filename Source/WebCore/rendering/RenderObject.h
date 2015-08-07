@@ -568,8 +568,8 @@ public:
 
     RenderView& view() const { return *document().renderView(); };
 
-    // Returns true if this renderer is rooted, and optionally returns the hosting view (the root of the hierarchy).
-    bool isRooted(RenderView** = nullptr) const;
+    // Returns true if this renderer is rooted.
+    bool isRooted() const;
 
     Node* node() const { return isAnonymous() ? nullptr : &m_node; }
     Node* nonPseudoNode() const { return isPseudoElement() ? nullptr : node(); }

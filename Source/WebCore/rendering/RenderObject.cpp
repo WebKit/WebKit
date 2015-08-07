@@ -141,10 +141,10 @@ RenderTheme& RenderObject::theme() const
     return document().page()->theme();
 }
 
-bool RenderObject::isDescendantOf(const RenderObject* obj) const
+bool RenderObject::isDescendantOf(const RenderObject* ancestor) const
 {
-    for (const RenderObject* r = this; r; r = r->m_parent) {
-        if (r == obj)
+    for (const RenderObject* renderer = this; renderer; renderer = renderer->m_parent) {
+        if (renderer == ancestor)
             return true;
     }
     return false;
@@ -571,13 +571,13 @@ void RenderObject::clearNeedsLayout()
 
 static void scheduleRelayoutForSubtree(RenderElement& renderer)
 {
-    if (!is<RenderView>(renderer)) {
-        if (!renderer.isRooted())
-            return;
-        renderer.view().frameView().scheduleRelayoutOfSubtree(renderer);
+    if (is<RenderView>(renderer)) {
+        downcast<RenderView>(renderer).frameView().scheduleRelayout();
         return;
     }
-    downcast<RenderView>(renderer).frameView().scheduleRelayout();
+
+    if (renderer.isRooted())
+        renderer.view().frameView().scheduleRelayoutOfSubtree(renderer);
 }
 
 void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayout, RenderElement* newRoot)
@@ -1249,61 +1249,58 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
 void RenderObject::repaint() const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    RenderView* view;
-    if (!isRooted(&view))
+    if (!isRooted())
         return;
 
-    if (view->printing())
-        return; // Don't repaint if we're printing.
+    const RenderView& view = this->view();
+    if (view.printing())
+        return;
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
-    repaintUsingContainer(repaintContainer ? repaintContainer : view, clippedOverflowRectForRepaint(repaintContainer));
+    repaintUsingContainer(repaintContainer ? repaintContainer : &view, clippedOverflowRectForRepaint(repaintContainer));
 }
 
 void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    RenderView* view;
-    if (!isRooted(&view))
+    if (!isRooted())
         return;
 
-    if (view->printing())
-        return; // Don't repaint if we're printing.
+    const RenderView& view = this->view();
+    if (view.printing())
+        return;
 
     LayoutRect dirtyRect(r);
-
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    dirtyRect.move(view->layoutDelta());
+    dirtyRect.move(view.layoutDelta());
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
     computeRectForRepaint(repaintContainer, dirtyRect);
-    repaintUsingContainer(repaintContainer ? repaintContainer : view, dirtyRect, shouldClipToLayer);
+    repaintUsingContainer(repaintContainer ? repaintContainer : &view, dirtyRect, shouldClipToLayer);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    RenderView* view;
-    if (!isRooted(&view))
+    if (!isRooted())
         return;
 
-    // Don't repaint if we're printing.
-    if (view->printing())
+    const RenderView& view = this->view();
+    if (view.printing())
         return;
 
-    RenderLayerModelObject* repaintContainer = containerForRepaint();
+    const RenderLayerModelObject* repaintContainer = containerForRepaint();
     if (!repaintContainer)
-        repaintContainer = view;
+        repaintContainer = &view;
 
     bool shouldClipToLayer = true;
     IntRect repaintRect;
-
     // If this is the root background, we need to check if there is an extended background rect. If
     // there is, then we should not allow painting to clip to the layer size.
     if (isRoot() || isBody()) {
-        shouldClipToLayer = !view->frameView().hasExtendedBackgroundRectForPainting();
-        repaintRect = snappedIntRect(view->backgroundRect(view));
+        shouldClipToLayer = !view.frameView().hasExtendedBackgroundRectForPainting();
+        repaintRect = snappedIntRect(view.backgroundRect());
     } else
         repaintRect = snappedIntRect(clippedOverflowRectForRepaint(repaintContainer));
 
@@ -1764,19 +1761,9 @@ LayoutRect RenderObject::localCaretRect(InlineBox*, int, LayoutUnit* extraWidthT
     return LayoutRect();
 }
 
-bool RenderObject::isRooted(RenderView** view) const
+bool RenderObject::isRooted() const
 {
-    const RenderObject* renderer = this;
-    while (renderer->parent())
-        renderer = renderer->parent();
-
-    if (!is<RenderView>(*renderer))
-        return false;
-
-    if (view)
-        *view = const_cast<RenderView*>(downcast<RenderView>(renderer));
-
-    return true;
+    return isDescendantOf(&view());
 }
 
 RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const

@@ -188,8 +188,8 @@ public:
     WEBCORE_EXPORT bool usesCompositing() const;
 
     WEBCORE_EXPORT IntRect unscaledDocumentRect() const;
-    LayoutRect unextendedBackgroundRect(RenderBox* backgroundRenderer) const;
-    LayoutRect backgroundRect(RenderBox* backgroundRenderer) const;
+    LayoutRect unextendedBackgroundRect() const;
+    LayoutRect backgroundRect() const;
 
     WEBCORE_EXPORT IntRect documentRect() const;
 

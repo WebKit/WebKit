@@ -2581,7 +2581,7 @@ static bool isObjectAncestorContainerOf(RenderObject* ancestor, RenderObject* de
 void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
 {
     ASSERT(renderView());
-    RenderView& renderView = *this->renderView();
+    const RenderView& renderView = *this->renderView();
 
     // Try to catch unnecessary work during render tree teardown.
     ASSERT(!renderView.documentBeingDestroyed());
@@ -2879,7 +2879,7 @@ IntRect FrameView::extendedBackgroundRectForPainting() const
     if (!renderView)
         return IntRect();
     
-    LayoutRect extendedRect = renderView->unextendedBackgroundRect(renderView);
+    LayoutRect extendedRect = renderView->unextendedBackgroundRect();
     if (!tiledBacking->hasMargins())
         return snappedIntRect(extendedRect);
     

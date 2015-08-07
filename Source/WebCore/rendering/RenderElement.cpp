@@ -1446,7 +1446,7 @@ static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const 
         backgroundIsPaintedByRoot = !rootRenderer.hasBackground();
 
     }
-    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? renderer.view().backgroundRect(&renderer.view()) : renderer.absoluteClippedOverflowRect();
+    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? renderer.view().backgroundRect() : renderer.absoluteClippedOverflowRect();
     if (!visibleRect.intersects(enclosingIntRect(backgroundPaintingRect)))
         return false;
 
