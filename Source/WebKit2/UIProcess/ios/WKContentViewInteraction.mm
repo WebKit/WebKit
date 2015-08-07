@@ -216,8 +216,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 @protocol UISelectionInteractionAssistant;
+#if HAVE(LINK_PREVIEW)
 @interface UIPreviewItemController (StagingToRemove)
 @property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
+#endif
 @end
 
 #endif
