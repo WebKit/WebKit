@@ -220,10 +220,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @end
 
 @protocol UISelectionInteractionAssistant;
-@interface UIPreviewItemController (StagingToRemove)
-@property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
-@end
-
 #endif
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
@@ -3225,8 +3221,7 @@ static bool isAssistableInputType(InputType type)
     _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
     [_previewItemController setDelegate:self];
     _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
-    if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
-        _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
+    _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
 }
 
 - (void)_unregisterPreview
