@@ -36,10 +36,11 @@ class ServerControl(Resource):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='python twisted_http_server.py web_root')
     parser.add_argument('web_root')
+    parser.add_argument('--port', type=int, default=0)
     args = parser.parse_args()
     web_root = static.File(args.web_root)
     serverControl = ServerControl()
     web_root.putChild('shutdown', serverControl)
     web_root.putChild('report', serverControl)
-    reactor.listenTCP(0, server.Site(web_root))
+    reactor.listenTCP(args.port, server.Site(web_root))
     reactor.run()
