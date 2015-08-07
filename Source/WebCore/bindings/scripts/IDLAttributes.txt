@@ -34,6 +34,7 @@ ConstructorConditional=*
 ConstructorRaisesException
 ConstructorTemplate=Event|TypedArray
 Custom
+CustomBinding
 CustomCall
 CustomConstructor
 CustomDeleteProperty

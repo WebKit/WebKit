@@ -1092,7 +1092,7 @@ sub GenerateHeader
     foreach my $function (@{$interface->functions}) {
         $numCustomFunctions++ if HasCustomMethod($function->signature->extendedAttributes);
 
-        if ($function->signature->extendedAttributes->{"ForwardDeclareInHeader"}) {
+        if ($function->signature->extendedAttributes->{"ForwardDeclareInHeader"} or $function->signature->extendedAttributes->{"CustomBinding"}) {
             $hasForwardDeclaringFunctions = 1;
         }
     }
@@ -1225,7 +1225,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$interface->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
-            next unless $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
+            next unless $function->signature->extendedAttributes->{"ForwardDeclareInHeader"} or $function->signature->extendedAttributes->{"CustomBinding"};
 
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
@@ -1246,6 +1246,7 @@ sub GenerateHeader
         }
 
         push(@headerContent, $endAppleCopyright) if $inAppleCopyright;
+        push(@headerContent,"\n");
     }
 
     if ($hasForwardDeclaringAttributes) {
@@ -1743,6 +1744,7 @@ sub GenerateImplementation
         foreach my $function (@{$interface->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             next if $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
+            next if $function->signature->extendedAttributes->{"CustomBinding"};
 
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
@@ -2760,6 +2762,7 @@ sub GenerateImplementation
     if ($numFunctions > 0) {
         my $inAppleCopyright = 0;
         foreach my $function (@{$interface->functions}) {
+            next if $function->signature->extendedAttributes->{"CustomBinding"};
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
                 if (!$inAppleCopyright) {

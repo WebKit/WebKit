@@ -598,6 +598,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithException", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithException), (intptr_t) (0) },
     { "customMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t) (0) },
     { "customMethodWithArgs", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t) (3) },
+    { "customBindingMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomBindingMethod), (intptr_t) (0) },
+    { "customBindingMethodWithArgs", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomBindingMethodWithArgs), (intptr_t) (3) },
     { "addEventListener", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAddEventListener), (intptr_t) (2) },
     { "removeEventListener", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionRemoveEventListener), (intptr_t) (2) },
     { "withScriptStateVoid", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptStateVoid), (intptr_t) (0) },

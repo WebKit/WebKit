@@ -538,6 +538,7 @@ sub SkipFunction
     return 1 if $codeGenerator->GetArrayType($function->signature->type);
 
     return 1 if $function->signature->type eq "Promise";
+    return 1 if $function->signature->extendedAttributes->{"CustomBinding"};
 
     foreach my $param (@{$function->parameters}) {
         return 1 if $codeGenerator->GetSequenceType($param->type);

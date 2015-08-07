@@ -109,6 +109,10 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [Custom] void customMethod();
     [Custom] void customMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
 
+    // 'CustomBinding' extended attribute
+    [CustomBinding] void customBindingMethod();
+    [CustomBinding] void customBindingMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     attribute EventHandler onfoo;

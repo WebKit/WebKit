@@ -101,6 +101,11 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestObj*)
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestObj*);
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj& impl) { return toJS(exec, globalObject, &impl); }
 
+// Functions
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomBindingMethod(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomBindingMethodWithArgs(JSC::ExecState*);
+
 
 } // namespace WebCore
 
