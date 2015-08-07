@@ -1,3 +1,38 @@
+2015-08-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Simplify OS-specific CSS class names
+        https://bugs.webkit.org/show_bug.cgi?id=147794
+
+        Replace "body:not(.el-capitan)" with ".legacy-mac".
+        Replace "body.el-capitan" with ".latest-mac".
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        * UserInterface/Views/Toolbar.css:
+        (body.legacy-mac .toolbar .dashboard-container):
+        (body.legacy-mac .toolbar .search-bar > input[type="search"]):
+        (body.legacy-mac .toolbar .search-bar > input[type="search"]:focus):
+        (body.legacy-mac .toolbar .item.button:active):
+        (body.window-inactive.legacy-mac .toolbar .dashboard-container):
+        (body.latest-mac .toolbar .dashboard-container):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]):
+        (body.latest-mac .toolbar .search-bar > input[type="search"]:focus):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (body.latest-mac .toolbar .item.button:active):
+        (body.latest-mac.window-inactive .toolbar .dashboard-container):
+        (body:not(.el-capitan) .toolbar .dashboard-container): Deleted.
+        (body:not(.el-capitan) .toolbar .search-bar > input[type="search"]): Deleted.
+        (body:not(.el-capitan) .toolbar .search-bar > input[type="search"]:focus): Deleted.
+        (body:not(.el-capitan) .toolbar .item.button:active): Deleted.
+        (body.window-inactive:not(.el-capitan) .toolbar .dashboard-container): Deleted.
+        (body.el-capitan .toolbar .dashboard-container): Deleted.
+        (body.el-capitan .toolbar .search-bar > input[type="search"]): Deleted.
+        (body.el-capitan .toolbar .search-bar > input[type="search"]:focus): Deleted.
+        (body.el-capitan .toolbar .item.button:active): Deleted.
+        (body.el-capitan.window-inactive .toolbar .dashboard-container): Deleted.
+
 2015-08-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Option+Up/Down arrow keys should increment/decrement numbers in HTML and SVG attributes
