@@ -1073,6 +1073,24 @@ void RenderElement::willBeRemovedFromTree()
     RenderObject::willBeRemovedFromTree();
 }
 
+inline void RenderElement::clearLayoutRootIfNeeded() const
+{
+    if (documentBeingDestroyed())
+        return;
+
+    if (view().frameView().layoutRoot() != this)
+        return;
+
+    // Normally when a renderer is detached from the tree, the appropriate dirty bits get set
+    // which ensures that this renderer is no longer the layout root.
+    ASSERT_NOT_REACHED();
+    
+    // This indicates a failure to layout the child, which is why
+    // the layout root is still set to |this|. Make sure to clear it
+    // since we are getting destroyed.
+    view().frameView().clearLayoutRoot();
+}
+
 void RenderElement::willBeDestroyed()
 {
     animation().cancelAnimations(*this);
@@ -1093,6 +1111,7 @@ void RenderElement::willBeDestroyed()
         }
     }
 #endif
+    clearLayoutRootIfNeeded();
 }
 
 void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle)
