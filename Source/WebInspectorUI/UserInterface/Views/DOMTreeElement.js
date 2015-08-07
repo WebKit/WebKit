@@ -754,6 +754,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         removeZeroWidthSpaceRecursive(attribute);
 
         var config = new WebInspector.EditingConfig(this._attributeEditingCommitted.bind(this), this._editingCancelled.bind(this), attributeName);
+        config.setNumberCommitHandler(this._attributeNumberEditingCommitted.bind(this));
         this._editing = WebInspector.startEditing(attribute, config);
 
         window.getSelection().setBaseAndExtent(elementForSelection, 0, elementForSelection, 1);
@@ -874,6 +875,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _attributeEditingCommitted(element, newText, oldText, attributeName, moveDirection)
     {
+        if (newText === oldText)
+            return;
+
         this._editing = false;
 
         var treeOutline = this.treeOutline;
@@ -927,6 +931,14 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
 
         this.representedObject.setAttribute(attributeName, newText, moveToNextAttributeIfNeeded.bind(this));
+    }
+
+    _attributeNumberEditingCommitted(element, newText, oldText, attributeName, moveDirection)
+    {
+        if (newText === oldText)
+            return;
+
+        this.representedObject.setAttribute(attributeName, newText);
     }
 
     _tagNameEditingCommitted(element, newText, oldText, tagName, moveDirection)

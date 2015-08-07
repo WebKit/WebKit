@@ -1,3 +1,25 @@
+2015-08-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Option+Up/Down arrow keys should increment/decrement numbers in HTML and SVG attributes
+        https://bugs.webkit.org/show_bug.cgi?id=147317
+
+        Reviewed by Timothy Hatcher.
+
+        If the value under the cursor in an HTML element attribute is a number, pressing alt and
+        up/down will increment/decrement the number value and apply that change to the element.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._alteredFloatNumber):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._handleKeyDown):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._startEditingAttribute):
+        (WebInspector.DOMTreeElement.prototype._attributeEditingCommitted):
+        (WebInspector.DOMTreeElement.prototype._attributeNumberEditingCommitted):
+        * UserInterface/Views/EditingSupport.js:
+        (WebInspector.EditingConfig.prototype.setNumberCommitHandler):
+        (WebInspector.startEditing.defaultFinishHandler):
+        (WebInspector.startEditing.handleEditingResult):
+
 2015-08-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Move the Metrics style sidebar panel into Computed
