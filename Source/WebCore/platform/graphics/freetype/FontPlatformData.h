@@ -63,7 +63,7 @@ public:
         { }
 
     FontPlatformData(FcPattern*, const FontDescription&);
-    FontPlatformData(cairo_font_face_t*, float size, bool bold, bool italic, FontOrientation);
+    FontPlatformData(cairo_font_face_t*, const FontDescription&, bool bold, bool italic);
     FontPlatformData(float size, bool bold, bool italic);
     FontPlatformData(const FontPlatformData&);
     FontPlatformData(const FontPlatformData&, float size);
