@@ -39,6 +39,7 @@ namespace WTR {
 class TestInvocation;
 class PlatformWebView;
 class EventSenderProxy;
+struct ViewOptions;
 
 // FIXME: Rename this TestRunner?
 class TestController {
@@ -67,7 +68,7 @@ public:
 
     EventSenderProxy* eventSenderProxy() { return m_eventSenderProxy.get(); }
 
-    void ensureViewSupportsOptions(WKDictionaryRef options);
+    void ensureViewSupportsOptions(const ViewOptions&);
     bool shouldUseRemoteLayerTree() const { return m_shouldUseRemoteLayerTree; }
     
     // Runs the run loop until `done` is true or the timeout elapses.
@@ -124,7 +125,7 @@ public:
 
 private:
     void initialize(int argc, const char* argv[]);
-    void createWebViewWithOptions(WKDictionaryRef);
+    void createWebViewWithOptions(const ViewOptions&);
     void run();
 
     void runTestingServerLoop();

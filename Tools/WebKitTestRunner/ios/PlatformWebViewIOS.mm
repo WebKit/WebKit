@@ -121,16 +121,12 @@
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKPageRef relatedPage, WKDictionaryRef options)
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKPageRef relatedPage, const ViewOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
-    WKRetainPtr<WKStringRef> useTiledDrawingKey(AdoptWK, WKStringCreateWithUTF8CString("TiledDrawing"));
-    WKTypeRef useTiledDrawingValue = options ? WKDictionaryGetItemForKey(options, useTiledDrawingKey.get()) : NULL;
-    bool useTiledDrawing = useTiledDrawingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useTiledDrawingValue));
-
     CGRect rect = CGRectMake(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useTiledDrawing:useTiledDrawing];
+    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useTiledDrawing:m_options.useTiledDrawing];
 
     WKPreferencesSetCompositingBordersVisible(WKPageGroupGetPreferences(pageGroupRef), YES);
     WKPreferencesSetCompositingRepaintCountersVisible(WKPageGroupGetPreferences(pageGroupRef), YES);
@@ -229,13 +225,12 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     return 0; // FIXME for iOS?
 }
 
-bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const
+bool PlatformWebView::viewSupportsOptions(cost ViewOptions& options) const
 {
-    WKRetainPtr<WKStringRef> useTiledDrawingKey(AdoptWK, WKStringCreateWithUTF8CString("TiledDrawing"));
-    WKTypeRef useTiledDrawingValue = WKDictionaryGetItemForKey(options, useTiledDrawingKey.get());
-    bool useTiledDrawing = useTiledDrawingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useTiledDrawingValue));
+    if (m_options.useTiledDrawing != options.useTiledDrawing)
+        return false;
 
-    return useTiledDrawing == [(TestRunnerWKView *)m_view useTiledDrawing];
+    return true;
 }
 
 } // namespace WTR

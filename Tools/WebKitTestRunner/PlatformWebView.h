@@ -26,6 +26,7 @@
 #ifndef PlatformWebView_h
 #define PlatformWebView_h
 
+#include "ViewOptions.h"
 #include <WebKit/WKRetainPtr.h>
 
 #if defined(__APPLE__) && __APPLE__
@@ -51,7 +52,7 @@ namespace WTR {
 
 class PlatformWebView {
 public:
-    PlatformWebView(WKContextRef, WKPageGroupRef, WKPageRef relatedPage, WKDictionaryRef options = 0);
+    PlatformWebView(WKContextRef, WKPageGroupRef, WKPageRef relatedPage, const ViewOptions&);
     ~PlatformWebView();
 
     WKPageRef page();
@@ -74,14 +75,10 @@ public:
     void setWindowIsKey(bool isKey) { m_windowIsKey = isKey; }
     bool windowIsKey() const { return m_windowIsKey; }
 
-#if PLATFORM(COCOA) || PLATFORM(EFL)
-    bool viewSupportsOptions(WKDictionaryRef) const;
-#else
-    bool viewSupportsOptions(WKDictionaryRef) const { return true; }
-#endif
+    bool viewSupportsOptions(const ViewOptions&) const;
 
     WKRetainPtr<WKImageRef> windowSnapshotImage();
-    WKDictionaryRef options() const { return m_options.get(); }
+    const ViewOptions& options() const { return m_options; }
 
     void changeWindowScaleIfNeeded(float newScale);
 
@@ -95,7 +92,8 @@ private:
     PlatformWKView m_view;
     PlatformWindow m_window;
     bool m_windowIsKey;
-    WKRetainPtr<WKDictionaryRef> m_options;
+    const ViewOptions m_options;
+
 #if PLATFORM(EFL)
     bool m_usingFixedLayout;
 #endif

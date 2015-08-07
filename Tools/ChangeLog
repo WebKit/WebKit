@@ -1,3 +1,36 @@
+2015-08-07  Anders Carlsson  <andersca@apple.com>
+
+        Simplify WKTR's view options
+        https://bugs.webkit.org/show_bug.cgi?id=147791
+
+        Reviewed by Sam Weinig.
+
+        Instead of using a WKDictionaryRef, just use a struct for the options.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::options):
+        (WTR::PlatformWebView::viewSupportsOptions): Deleted.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::ensureViewSupportsOptions):
+        (WTR::TestController::updateLayoutTypeForTest):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/ViewOptions.h: Added.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+
 2015-08-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Running tests for a long time results in some tests running very slowly (throttling)

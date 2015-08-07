@@ -141,6 +141,11 @@ void PlatformWebView::didInitializeClients()
 {
 }
 
+bool PlatformWebView::viewSupportsOptions(const TestOptions&) const
+{
+    return true;
+}
+
 void PlatformWebView::dismissAllPopupMenus()
 {
     // gtk_menu_popdown doesn't modify the GList of attached menus, so it should

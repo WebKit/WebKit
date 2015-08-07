@@ -119,40 +119,30 @@ enum {
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKPageRef relatedPage, WKDictionaryRef options)
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKPageRef relatedPage, const ViewOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
-    WKRetainPtr<WKStringRef> useThreadedScrollingKey(AdoptWK, WKStringCreateWithUTF8CString("ThreadedScrolling"));
-    WKRetainPtr<WKStringRef> useRemoteLayerTreeKey(AdoptWK, WKStringCreateWithUTF8CString("RemoteLayerTree"));
-    WKTypeRef useThreadedScrollingValue = options ? WKDictionaryGetItemForKey(options, useThreadedScrollingKey.get()) : NULL;
-    bool useThreadedScrolling = useThreadedScrollingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useThreadedScrollingValue));
-
     // The tiled drawing specific tests also depend on threaded scrolling.
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroupRef);
-    WKPreferencesSetThreadedScrollingEnabled(preferences, useThreadedScrolling);
+    WKPreferencesSetThreadedScrollingEnabled(preferences, m_options.useThreadedScrolling);
 
     // FIXME: Not sure this is the best place for this; maybe we should have API to set this so we can do it from TestController?
-    WKTypeRef useRemoteLayerTreeValue = options ? WKDictionaryGetItemForKey(options, useRemoteLayerTreeKey.get()) : NULL;
-    if (useRemoteLayerTreeValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useRemoteLayerTreeValue)))
+    if (m_options.useRemoteLayerTree)
         [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
 
     NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useThreadedScrolling:useThreadedScrolling];
+    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useThreadedScrolling:m_options.useThreadedScrolling];
     [m_view setWindowOcclusionDetectionEnabled:NO];
 
-    WKRetainPtr<WKStringRef> shouldShowWebViewKey(AdoptWK, WKStringCreateWithUTF8CString("ShouldShowWebView"));
-    WKTypeRef shouldShowWebViewValue = options ? WKDictionaryGetItemForKey(options, shouldShowWebViewKey.get()) : NULL;
-    bool shouldShowWebView = shouldShowWebViewValue && WKBooleanGetValue(static_cast<WKBooleanRef>(shouldShowWebViewValue));
-
     NSScreen *firstScreen = [[NSScreen screens] objectAtIndex:0];
-    NSRect windowRect = (shouldShowWebView) ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
+    NSRect windowRect = m_options.shouldShowWebView ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
     m_window = [[WebKitTestRunnerWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:(NSBackingStoreType)_NSBackingStoreUnbuffered defer:YES];
     m_window.platformWebView = this;
     [m_window setColorSpace:[firstScreen colorSpace]];
     [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
     [[m_window contentView] addSubview:m_view];
-    if (shouldShowWebView)
+    if (m_options.shouldShowWebView)
         [m_window orderFront:nil];
     else
         [m_window orderBack:nil];
@@ -249,13 +239,12 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     return adoptWK(WKImageCreateFromCGImage(windowSnapshotImage.get(), 0));
 }
 
-bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const
+bool PlatformWebView::viewSupportsOptions(const ViewOptions& options) const
 {
-    WKRetainPtr<WKStringRef> useThreadedScrollingKey(AdoptWK, WKStringCreateWithUTF8CString("ThreadedScrolling"));
-    WKTypeRef useThreadedScrollingValue = WKDictionaryGetItemForKey(options, useThreadedScrollingKey.get());
-    bool useThreadedScrolling = useThreadedScrollingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useThreadedScrollingValue));
+    if (m_options.useThreadedScrolling != options.useThreadedScrolling)
+        return false;
 
-    return useThreadedScrolling == [(TestRunnerWKView *)m_view useThreadedScrolling];
+    return true;
 }
 
 void PlatformWebView::changeWindowScaleIfNeeded(float newScale)

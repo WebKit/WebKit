@@ -98,20 +98,13 @@ void TestController::platformResetPreferencesToConsistentValues()
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
-    auto viewOptions = adoptWK(WKMutableDictionaryCreate());
-    auto useThreadedScrollingKey = adoptWK(WKStringCreateWithUTF8CString("ThreadedScrolling"));
-    auto useThreadedScrollingValue = adoptWK(WKBooleanCreate(shouldUseThreadedScrolling(test)));
-    WKDictionarySetItem(viewOptions.get(), useThreadedScrollingKey.get(), useThreadedScrollingValue.get());
+    ViewOptions viewOptions;
 
-    auto useRemoteLayerTreeKey = adoptWK(WKStringCreateWithUTF8CString("RemoteLayerTree"));
-    auto useRemoteLayerTreeValue = adoptWK(WKBooleanCreate(shouldUseRemoteLayerTree()));
-    WKDictionarySetItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
+    viewOptions.useThreadedScrolling = shouldUseThreadedScrolling(test);
+    viewOptions.useRemoteLayerTree = shouldUseRemoteLayerTree();
+    viewOptions.shouldShowWebView = shouldShowWebView();
 
-    auto shouldShowWebViewKey = adoptWK(WKStringCreateWithUTF8CString("ShouldShowWebView"));
-    auto shouldShowWebViewValue = adoptWK(WKBooleanCreate(shouldShowWebView()));
-    WKDictionarySetItem(viewOptions.get(), shouldShowWebViewKey.get(), shouldShowWebViewValue.get());
-
-    ensureViewSupportsOptions(viewOptions.get());
+    ensureViewSupportsOptions(viewOptions);
 
 #if WK_API_ENABLED
     if (!test.urlContains("contentextensions/"))

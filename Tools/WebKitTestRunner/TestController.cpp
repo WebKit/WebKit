@@ -432,26 +432,14 @@ void TestController::initialize(int argc, const char* argv[])
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     resetPreferencesToConsistentValues();
 
-    WKRetainPtr<WKMutableDictionaryRef> viewOptions;
-    if (m_shouldUseRemoteLayerTree) {
-        viewOptions = adoptWK(WKMutableDictionaryCreate());
-        WKRetainPtr<WKStringRef> useRemoteLayerTreeKey = adoptWK(WKStringCreateWithUTF8CString("RemoteLayerTree"));
-        WKRetainPtr<WKBooleanRef> useRemoteLayerTreeValue = adoptWK(WKBooleanCreate(m_shouldUseRemoteLayerTree));
-        WKDictionarySetItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
-    }
+    ViewOptions viewOptions;
+    viewOptions.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
+    viewOptions.shouldShowWebView = m_shouldShowWebView;
 
-    if (m_shouldShowWebView) {
-        if (!viewOptions)
-            viewOptions = adoptWK(WKMutableDictionaryCreate());
-        WKRetainPtr<WKStringRef> shouldShowWebViewKey = adoptWK(WKStringCreateWithUTF8CString("ShouldShowWebView"));
-        WKRetainPtr<WKBooleanRef> shouldShowWebViewValue = adoptWK(WKBooleanCreate(m_shouldShowWebView));
-        WKDictionarySetItem(viewOptions.get(), shouldShowWebViewKey.get(), shouldShowWebViewValue.get());
-    }
-
-    createWebViewWithOptions(viewOptions.get());
+    createWebViewWithOptions(viewOptions);
 }
 
-void TestController::createWebViewWithOptions(WKDictionaryRef options)
+void TestController::createWebViewWithOptions(const ViewOptions& options)
 {
     m_mainWebView = std::make_unique<PlatformWebView>(m_context.get(), m_pageGroup.get(), nullptr, options);
     WKPageUIClientV5 pageUIClient = {
@@ -554,7 +542,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
     m_mainWebView->changeWindowScaleIfNeeded(1);
 }
 
-void TestController::ensureViewSupportsOptions(WKDictionaryRef options)
+void TestController::ensureViewSupportsOptions(const ViewOptions& options)
 {
     if (m_mainWebView && !m_mainWebView->viewSupportsOptions(options)) {
         WKPageSetPageUIClient(m_mainWebView->page(), 0);
@@ -797,12 +785,11 @@ static bool shouldUseFixedLayout(const TestInvocation& test)
 
 void TestController::updateLayoutTypeForTest(const TestInvocation& test)
 {
-    auto viewOptions = adoptWK(WKMutableDictionaryCreate());
-    auto useFixedLayoutKey = adoptWK(WKStringCreateWithUTF8CString("UseFixedLayout"));
-    auto useFixedLayoutValue = adoptWK(WKBooleanCreate(shouldUseFixedLayout(test)));
-    WKDictionarySetItem(viewOptions.get(), useFixedLayoutKey.get(), useFixedLayoutValue.get());
+    ViewOptions viewOptions;
 
-    ensureViewSupportsOptions(viewOptions.get());
+    viewOptions.useFixedLayout = shouldUseFixedLayout(test);
+
+    ensureViewSupportsOptions(viewOptions);
 }
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
