@@ -39,8 +39,11 @@ FontCustomPlatformData::~FontCustomPlatformData()
         RemoveFontMemResourceEx(m_fontReference);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, FontWidthVariant, FontRenderingMode renderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&, bool bold, bool italic)
 {
+    int size = fontDescription.computedPixelSize();
+    FontRenderingMode renderingMode = fontDescription.renderingMode();
+
     LOGFONT logFont;
     memset(&logFont, 0, sizeof(LOGFONT));
     wcsncpy(logFont.lfFaceName, m_name.charactersWithNullTermination().data(), LF_FACESIZE - 1);
