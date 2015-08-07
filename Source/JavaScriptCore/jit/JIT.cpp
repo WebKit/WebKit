@@ -657,17 +657,22 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     for (unsigned i = m_putByIds.size(); i--;)
         m_putByIds[i].finalize(patchBuffer);
 
-    m_codeBlock->setNumberOfByValInfos(m_byValCompilationInfo.size());
-    for (unsigned i = 0; i < m_byValCompilationInfo.size(); ++i) {
-        CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(m_byValCompilationInfo[i].badTypeJump));
-        CodeLocationLabel doneTarget = patchBuffer.locationOf(m_byValCompilationInfo[i].doneTarget);
-        CodeLocationLabel slowPathTarget = patchBuffer.locationOf(m_byValCompilationInfo[i].slowPathTarget);
-        CodeLocationCall returnAddress = patchBuffer.locationOf(m_byValCompilationInfo[i].returnAddress);
-        
-        m_codeBlock->byValInfo(i) = ByValInfo(
-            m_byValCompilationInfo[i].bytecodeIndex,
+    for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
+        PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
+        CodeLocationJump notIndexJump = CodeLocationJump();
+        if (Jump(patchableNotIndexJump).isSet())
+            notIndexJump = CodeLocationJump(patchBuffer.locationOf(patchableNotIndexJump));
+        CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(byValCompilationInfo.badTypeJump));
+        CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget);
+        CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget);
+        CodeLocationCall returnAddress = patchBuffer.locationOf(byValCompilationInfo.returnAddress);
+
+        *byValCompilationInfo.byValInfo = ByValInfo(
+            byValCompilationInfo.bytecodeIndex,
+            notIndexJump,
             badTypeJump,
-            m_byValCompilationInfo[i].arrayMode,
+            byValCompilationInfo.arrayMode,
+            byValCompilationInfo.arrayProfile,
             differenceBetweenCodePtr(badTypeJump, doneTarget),
             differenceBetweenCodePtr(returnAddress, slowPathTarget));
     }

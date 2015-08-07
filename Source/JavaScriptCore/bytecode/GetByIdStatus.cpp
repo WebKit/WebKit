@@ -98,7 +98,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     GetByIdStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfo(
+    result = computeForStubInfoWithoutExitSiteFeedback(
         locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)), uid,
         CallLinkStatus::computeExitSiteData(locker, profiledBlock, bytecodeIndex));
     
@@ -116,7 +116,20 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 }
 
 #if ENABLE(JIT)
-GetByIdStatus GetByIdStatus::computeForStubInfo(
+GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+{
+    GetByIdStatus result = GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
+        locker, profiledBlock, stubInfo, uid,
+        CallLinkStatus::computeExitSiteData(locker, profiledBlock, codeOrigin.bytecodeIndex));
+
+    if (!result.takesSlowPath() && GetByIdStatus::hasExitSite(locker, profiledBlock, codeOrigin.bytecodeIndex))
+        return GetByIdStatus(result.makesCalls() ? GetByIdStatus::MakesCalls : GetByIdStatus::TakesSlowPath, true);
+    return result;
+}
+#endif // ENABLE(JIT)
+
+#if ENABLE(JIT)
+GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
     const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, UniquedStringImpl* uid,
     CallLinkStatus::ExitSiteData callExitSiteData)
 {
@@ -242,7 +255,7 @@ GetByIdStatus GetByIdStatus::computeFor(
         GetByIdStatus result;
         {
             ConcurrentJITLocker locker(dfgBlock->m_lock);
-            result = computeForStubInfo(
+            result = computeForStubInfoWithoutExitSiteFeedback(
                 locker, dfgBlock, dfgMap.get(codeOrigin), uid, exitSiteData);
         }
         

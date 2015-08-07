@@ -649,6 +649,7 @@ private:
         case CheckStructure:
         case CheckCell:
         case CheckNotEmpty:
+        case CheckIdent:
         case CheckBadCell:
         case PutStructure:
         case VarInjectionWatchpoint:

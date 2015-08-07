@@ -1,3 +1,162 @@
+2015-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce get_by_id like IC into get_by_val when the given name is String or Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=147480
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds get_by_id IC to get_by_val operation by caching the string / symbol id.
+        The IC site only caches one id. After checking that the given id is the same to the
+        cached one, we perform the get_by_id IC onto it.
+        And by collecting IC StructureStubInfo information, we pass it to the DFG and DFG
+        compiles get_by_val op code into CheckIdent (with edge type check) and GetById related
+        operations when the given get_by_val leverages the property load with the cached id.
+
+        To ensure the incoming value is the expected id, in DFG layer, we use SymbolUse and
+        StringIdentUse to enforce the type. To use it, this patch implements SymbolUse.
+        This can be leveraged to optimize symbol operations in DFG.
+
+        And since byValInfo is frequently used, we align the byValInfo design to the stubInfo like one.
+        Allocated by the Bag and operations take the raw byValInfo pointer directly instead of performing
+        binary search onto m_byValInfos. And by storing ArrayProfile* under the ByValInfo, we replaced the
+        argument ArrayProfile* in the operations with ByValInfo*.
+
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getByValInfoMap):
+        (JSC::CodeBlock::addByValInfo):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getByValInfo): Deleted.
+        (JSC::CodeBlock::setNumberOfByValInfos): Deleted.
+        (JSC::CodeBlock::numberOfByValInfos): Deleted.
+        (JSC::CodeBlock::byValInfo): Deleted.
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByIdStatus.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasUidOperand):
+        (JSC::DFG::Node::uidOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckIdent):
+        (JSC::DFG::SpeculativeJIT::speculateSymbol):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckIdent):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowSymbol):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculate):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isNotSymbol):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateSymbol):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::ByValCompilationInfo::ByValCompilationInfo):
+        (JSC::JIT::compileGetByValWithCachedId):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * runtime/Symbol.h:
+        * tests/stress/get-by-val-with-string-constructor.js: Added.
+        (Hello):
+        (get Hello.prototype.generate):
+        (ok):
+        * tests/stress/get-by-val-with-string-exit.js: Added.
+        (shouldBe):
+        (getByVal):
+        (getStr1):
+        (getStr2):
+        * tests/stress/get-by-val-with-string-generated.js: Added.
+        (shouldBe):
+        (getByVal):
+        (getStr1):
+        (getStr2):
+        * tests/stress/get-by-val-with-string-getter.js: Added.
+        (object.get hello):
+        (ok):
+        * tests/stress/get-by-val-with-string.js: Added.
+        (shouldBe):
+        (getByVal):
+        (getStr1):
+        (getStr2):
+        * tests/stress/get-by-val-with-symbol-constructor.js: Added.
+        (Hello):
+        (get Hello.prototype.generate):
+        (ok):
+        * tests/stress/get-by-val-with-symbol-exit.js: Added.
+        (shouldBe):
+        (getByVal):
+        (getSym1):
+        (getSym2):
+        * tests/stress/get-by-val-with-symbol-getter.js: Added.
+        (object.get hello):
+        (.get ok):
+        * tests/stress/get-by-val-with-symbol.js: Added.
+        (shouldBe):
+        (getByVal):
+        (getSym1):
+        (getSym2):
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive

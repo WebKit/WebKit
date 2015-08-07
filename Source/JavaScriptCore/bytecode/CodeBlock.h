@@ -200,6 +200,9 @@ public:
     
     void getCallLinkInfoMap(const ConcurrentJITLocker&, CallLinkInfoMap& result);
     void getCallLinkInfoMap(CallLinkInfoMap& result);
+
+    void getByValInfoMap(const ConcurrentJITLocker&, ByValInfoMap& result);
+    void getByValInfoMap(ByValInfoMap& result);
     
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo();
@@ -211,11 +214,8 @@ public:
     StructureStubInfo* findStubInfo(CodeOrigin);
 
     void resetStub(StructureStubInfo&);
-    
-    ByValInfo& getByValInfo(unsigned bytecodeIndex)
-    {
-        return *(binarySearch<ByValInfo, unsigned>(m_byValInfos, m_byValInfos.size(), bytecodeIndex, getByValInfoBytecodeIndex));
-    }
+
+    ByValInfo* addByValInfo();
 
     CallLinkInfo* addCallLinkInfo();
     Bag<CallLinkInfo>::iterator callLinkInfosBegin() { return m_callLinkInfos.begin(); }
@@ -366,12 +366,6 @@ public:
     void clearEvalCache();
 
     String nameForRegister(VirtualRegister);
-
-#if ENABLE(JIT)
-    void setNumberOfByValInfos(size_t size) { m_byValInfos.resizeToFit(size); }
-    size_t numberOfByValInfos() const { return m_byValInfos.size(); }
-    ByValInfo& byValInfo(size_t index) { return m_byValInfos[index]; }
-#endif
 
     unsigned numberOfArgumentValueProfiles()
     {
@@ -1016,7 +1010,7 @@ private:
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)
     Bag<StructureStubInfo> m_stubInfos;
-    Vector<ByValInfo> m_byValInfos;
+    Bag<ByValInfo> m_byValInfos;
     Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
     SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;

@@ -1,3 +1,83 @@
+2015-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce get_by_id like IC into get_by_val when the given name is String or Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=147480
+
+        Reviewed by Filip Pizlo.
+
+        Add synthetic benchmarks that replaces normal property load with symbol/string keyed load.
+
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination-expected.txt: Added.
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination-simple-expected.txt: Added.
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination-simple.html: Added.
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination.html: Added.
+        * js/regress/get-by-val-with-string-chain-from-try-block-expected.txt: Added.
+        * js/regress/get-by-val-with-string-chain-from-try-block.html: Added.
+        * js/regress/get-by-val-with-string-check-structure-elimination-expected.txt: Added.
+        * js/regress/get-by-val-with-string-check-structure-elimination.html: Added.
+        * js/regress/get-by-val-with-string-proto-or-self-expected.txt: Added.
+        * js/regress/get-by-val-with-string-proto-or-self.html: Added.
+        * js/regress/get-by-val-with-string-quadmorphic-check-structure-elimination-simple-expected.txt: Added.
+        * js/regress/get-by-val-with-string-quadmorphic-check-structure-elimination-simple.html: Added.
+        * js/regress/get-by-val-with-string-self-or-proto-expected.txt: Added.
+        * js/regress/get-by-val-with-string-self-or-proto.html: Added.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination-expected.txt: Added.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination-simple-expected.txt: Added.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination-simple.html: Added.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination.html: Added.
+        * js/regress/get-by-val-with-symbol-chain-from-try-block-expected.txt: Added.
+        * js/regress/get-by-val-with-symbol-chain-from-try-block.html: Added.
+        * js/regress/get-by-val-with-symbol-check-structure-elimination-expected.txt: Added.
+        * js/regress/get-by-val-with-symbol-check-structure-elimination.html: Added.
+        * js/regress/get-by-val-with-symbol-proto-or-self-expected.txt: Added.
+        * js/regress/get-by-val-with-symbol-proto-or-self.html: Added.
+        * js/regress/get-by-val-with-symbol-quadmorphic-check-structure-elimination-simple-expected.txt: Added.
+        * js/regress/get-by-val-with-symbol-quadmorphic-check-structure-elimination-simple.html: Added.
+        * js/regress/get-by-val-with-symbol-self-or-proto-expected.txt: Added.
+        * js/regress/get-by-val-with-symbol-self-or-proto.html: Added.
+        * js/regress/script-tests/get-by-val-with-string-bimorphic-check-structure-elimination-simple.js: Added.
+        * js/regress/script-tests/get-by-val-with-string-bimorphic-check-structure-elimination.js: Added.
+        * js/regress/script-tests/get-by-val-with-string-chain-from-try-block.js: Added.
+        (A):
+        (B):
+        (C):
+        (D):
+        (E):
+        (F):
+        (G):
+        (foo):
+        * js/regress/script-tests/get-by-val-with-string-check-structure-elimination.js: Added.
+        * js/regress/script-tests/get-by-val-with-string-proto-or-self.js: Added.
+        (foo):
+        (bar):
+        (Foo):
+        * js/regress/script-tests/get-by-val-with-string-quadmorphic-check-structure-elimination-simple.js: Added.
+        * js/regress/script-tests/get-by-val-with-string-self-or-proto.js: Added.
+        (foo):
+        (bar):
+        (Foo):
+        * js/regress/script-tests/get-by-val-with-symbol-bimorphic-check-structure-elimination-simple.js: Added.
+        * js/regress/script-tests/get-by-val-with-symbol-bimorphic-check-structure-elimination.js: Added.
+        * js/regress/script-tests/get-by-val-with-symbol-chain-from-try-block.js: Added.
+        (A):
+        (B):
+        (C):
+        (D):
+        (E):
+        (F):
+        (G):
+        (foo):
+        * js/regress/script-tests/get-by-val-with-symbol-check-structure-elimination.js: Added.
+        * js/regress/script-tests/get-by-val-with-symbol-proto-or-self.js: Added.
+        (foo):
+        (bar):
+        (Foo):
+        * js/regress/script-tests/get-by-val-with-symbol-quadmorphic-check-structure-elimination-simple.js: Added.
+        * js/regress/script-tests/get-by-val-with-symbol-self-or-proto.js: Added.
+        (foo):
+        (bar):
+        (Foo):
+
 2015-08-06  Keith Miller  <keith_miller@apple.com>
 
         The JSONP parser incorrectly parses -0 as +0.
