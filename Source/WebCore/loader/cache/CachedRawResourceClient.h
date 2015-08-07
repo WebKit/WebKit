@@ -41,6 +41,10 @@ public:
     virtual void responseReceived(CachedResource*, const ResourceResponse&) { }
     virtual void dataReceived(CachedResource*, const char* /* data */, int /* length */) { }
     virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) { }
+
+    // In response to a redirect, some clients wish to receive no futher callbacks, but cannot immediately remove themselves as a client.
+    // Those clients can express their desire to recieve no futher callbacks by setting shouldContinue to false.
+    virtual void syntheticRedirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& response, bool& /* shouldContinue */) { redirectReceived(resource, request, response); }
 #if USE(SOUP)
     virtual char* getOrCreateReadBuffer(CachedResource*, size_t /* requestedSize */, size_t& /* actualSize */) { return 0; }
 #endif

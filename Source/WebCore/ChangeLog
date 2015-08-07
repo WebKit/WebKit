@@ -1,3 +1,35 @@
+2015-08-07  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r188150.
+
+    2015-08-07  Andy Estes  <aestes@apple.com>
+
+            Crash when following a Google search link to Twitter with Limit Adult Content enabled
+            https://bugs.webkit.org/show_bug.cgi?id=147651
+
+            Reviewed by Brady Eidson.
+
+            When a loaded CachedRawResource gets a new client, it synthesizes the callbacks that the new client would have
+            received while the resource was loading. Unlike a real network load, it synthesizes these callbacks in a single
+            run loop iteration. When DocumentLoader receives a redirect, and finds substitute data in the app cache for the
+            redirect URL, it schedules a timer that removes DocumentLoader as a client of the CachedRawResource then
+            synthesizes its own set of CachedRawResourceClient callbacks. But since CachedRawResource has already delivered
+            client callbacks before the app cache timer fires, DocumentLoader unexpectedly ends up getting two sets of
+            client callbacks and badness ensues.
+
+            The fix is to let CachedRawResource detect if a redirect will trigger the client to load substitute data. If so,
+            stop delivering client callbacks.
+
+            Layout test to follow.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::syntheticRedirectReceived): If there is valid substitute data, do not continue.
+            * loader/DocumentLoader.h:
+            * loader/cache/CachedRawResource.cpp: Returned early if syntheticRedirectReceived() said not to continue.
+            (WebCore::CachedRawResource::didAddClient):
+            * loader/cache/CachedRawResourceClient.h:
+            (WebCore::CachedRawResourceClient::syntheticRedirectReceived):
+
 2015-08-06  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r188062.
