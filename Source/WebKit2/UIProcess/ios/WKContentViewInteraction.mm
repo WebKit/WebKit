@@ -219,8 +219,8 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 #if HAVE(LINK_PREVIEW)
 @interface UIPreviewItemController (StagingToRemove)
 @property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
-#endif
 @end
+#endif
 
 #endif
 

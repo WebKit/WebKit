@@ -1,5 +1,11 @@
 2015-08-06  Dan Bernstein  <mitz@apple.com>
 
+        Fixed all the builds after trying to fix the non-HAVE(LINK_PREVIEW) build.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+2015-08-06  Dan Bernstein  <mitz@apple.com>
+
         Fixed the non-HAVE(LINK_PREVIEW) build.
 
         * UIProcess/ios/WKContentViewInteraction.mm:
