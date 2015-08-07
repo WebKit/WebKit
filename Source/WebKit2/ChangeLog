@@ -1,5 +1,12 @@
 2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ compile warning also introduced in r188121.
+
+        * UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.cpp:
+        (webkit_install_missing_media_plugins_permission_request_get_description):
+
+2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ debug build after r188121.
 
         * UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.cpp:

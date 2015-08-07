@@ -160,7 +160,7 @@ const char* webkit_install_missing_media_plugins_permission_request_get_descript
 
     const auto& description = request->priv->request->description();
     ASSERT(!description.isEmpty());
-    request->priv->description = request->priv->request->description().utf8();
+    request->priv->description = description.utf8();
 #endif
     return request->priv->description.data();
 }
