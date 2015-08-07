@@ -1,3 +1,20 @@
+2015-08-07  Brady Eidson  <beidson@apple.com>
+
+        Move concrete KeyedDecoder/Encoder implementations to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=147757.
+
+        Rubberstamped by Andy Estes.
+
+        * DatabaseProcess/IndexedDB/IDBSerialization.cpp:
+        (WebKit::serializeIDBKeyPath):
+        (WebKit::deserializeIDBKeyPath):
+        (WebKit::serializeIDBKeyData):
+        (WebKit::deserializeIDBKeyData):
+        
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ compile warning also introduced in r188121.

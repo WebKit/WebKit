@@ -47,9 +47,6 @@ list(APPEND WebKit2_SOURCES
     Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
 
-    Shared/glib/KeyedDecoder.cpp
-    Shared/glib/KeyedEncoder.cpp
-
     Shared/linux/WebMemorySamplerLinux.cpp
 
     Shared/linux/SeccompFilters/OpenSyscall.cpp

@@ -28,10 +28,9 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ArgumentEncoder.h"
-#include "KeyedDecoder.h"
-#include "KeyedEncoder.h"
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBKeyPath.h>
+#include <WebCore/KeyedCoding.h>
 
 using namespace WebCore;
 
@@ -39,9 +38,9 @@ namespace WebKit {
 
 RefPtr<SharedBuffer> serializeIDBKeyPath(const IDBKeyPath& keyPath)
 {
-    KeyedEncoder encoder;
-    keyPath.encode(encoder);
-    return encoder.finishEncoding();
+    auto encoder = KeyedEncoder::encoder();
+    keyPath.encode(*encoder);
+    return encoder->finishEncoding();
 }
 
 bool deserializeIDBKeyPath(const uint8_t* data, size_t size, IDBKeyPath& result)
@@ -49,15 +48,15 @@ bool deserializeIDBKeyPath(const uint8_t* data, size_t size, IDBKeyPath& result)
     if (!data || !size)
         return false;
 
-    KeyedDecoder decoder(data, size);
-    return IDBKeyPath::decode(decoder, result);
+    auto decoder = KeyedDecoder::decoder(data, size);
+    return IDBKeyPath::decode(*decoder, result);
 }
 
 RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 {
-    KeyedEncoder encoder;
-    key.encode(encoder);
-    return encoder.finishEncoding();
+    auto encoder = KeyedEncoder::encoder();
+    key.encode(*encoder);
+    return encoder->finishEncoding();
 }
 
 bool deserializeIDBKeyData(const uint8_t* data, size_t size, IDBKeyData& result)
@@ -65,8 +64,8 @@ bool deserializeIDBKeyData(const uint8_t* data, size_t size, IDBKeyData& result)
     if (!data || !size)
         return false;
 
-    KeyedDecoder decoder(data, size);
-    return IDBKeyData::decode(decoder, result);
+    auto decoder = KeyedDecoder::decoder(data, size);
+    return IDBKeyData::decode(*decoder, result);
 }
 
 } // namespace WebKit

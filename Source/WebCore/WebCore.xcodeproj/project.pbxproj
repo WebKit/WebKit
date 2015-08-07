@@ -1998,6 +1998,10 @@
 		5179CE2A195C91860019C198 /* GamepadProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE29195C91860019C198 /* GamepadProviderClient.h */; };
 		5179CE36195CAC7E0019C198 /* HIDGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5179CE34195CAC7E0019C198 /* HIDGamepadProvider.cpp */; };
 		5179CE37195CAC7E0019C198 /* HIDGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE35195CAC7E0019C198 /* HIDGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */; };
+		517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */; };
+		517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A63C61B74319200E7DCDC /* KeyedEncoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */; };
 		5189F01D10B37BD900F3C739 /* JSPopStateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5189F01B10B37BD900F3C739 /* JSPopStateEvent.cpp */; };
 		5189F01E10B37BD900F3C739 /* JSPopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5189F01C10B37BD900F3C739 /* JSPopStateEvent.h */; };
@@ -9249,6 +9253,10 @@
 		5179CE29195C91860019C198 /* GamepadProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProviderClient.h; sourceTree = "<group>"; };
 		5179CE34195CAC7E0019C198 /* HIDGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDGamepadProvider.cpp; sourceTree = "<group>"; };
 		5179CE35195CAC7E0019C198 /* HIDGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDGamepadProvider.h; sourceTree = "<group>"; };
+		517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedDecoderCF.cpp; sourceTree = "<group>"; };
+		517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedDecoderCF.h; sourceTree = "<group>"; };
+		517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedEncoderCF.cpp; sourceTree = "<group>"; };
+		517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedEncoderCF.h; sourceTree = "<group>"; };
 		517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtension.cpp; sourceTree = "<group>"; };
 		517FBA18151AA71B00B57959 /* DOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowExtension.h; sourceTree = "<group>"; };
 		5189F01B10B37BD900F3C739 /* JSPopStateEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPopStateEvent.cpp; sourceTree = "<group>"; };
@@ -15451,6 +15459,10 @@
 				443817FD1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp */,
 				443817FE1A91B2F8006E04F2 /* CoreMediaSoftLink.h */,
 				5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */,
+				517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */,
+				517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */,
+				517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */,
+				517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */,
 				5CBC8DAA1AAA302200E1C803 /* MediaAccessibilitySoftLink.cpp */,
 				5CBC8DAB1AAA302200E1C803 /* MediaAccessibilitySoftLink.h */,
 				2D76BB8319456F8100CFD29A /* RunLoopObserver.cpp */,
@@ -25624,6 +25636,7 @@
 				07969DB017D14151007FF842 /* JSRTCDTMFSender.h in Headers */,
 				07969DB217D14151007FF842 /* JSRTCDTMFToneChangeEvent.h in Headers */,
 				07969DB617D14151007FF842 /* JSRTCIceCandidate.h in Headers */,
+				517A63C61B74319200E7DCDC /* KeyedEncoderCF.h in Headers */,
 				07969DB817D14151007FF842 /* JSRTCIceCandidateEvent.h in Headers */,
 				073794EC19EE341E00E5A045 /* JSRTCIceServer.h in Headers */,
 				07969DBA17D14151007FF842 /* JSRTCPeerConnection.h in Headers */,
@@ -26424,6 +26437,7 @@
 				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
+				517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */,
 				436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */,
 				436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */,
 				2B365C841525119E0091D27B /* RenderSVGEllipse.h in Headers */,
@@ -29625,6 +29639,7 @@
 				07C59B6817F784BA000FBCBB /* MediaSourceStates.cpp in Sources */,
 				078E08FF17D14CEE00420AA1 /* MediaStream.cpp in Sources */,
 				078E094B17D1709600420AA1 /* MediaStreamAudioDestinationNode.cpp in Sources */,
+				517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */,
 				0783228418013ED800999E0C /* MediaStreamAudioSource.cpp in Sources */,
 				FD671A77159BB07000197559 /* MediaStreamAudioSourceNode.cpp in Sources */,
 				0705851517FB0EEA005F2BCB /* MediaStreamCapabilities.cpp in Sources */,
@@ -29735,6 +29750,7 @@
 				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
 				9B55EEE91B3E8898005342BC /* EditorCocoa.mm in Sources */,
 				65FEA86909833ADE00BED4AB /* Page.cpp in Sources */,
+				517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */,
 				1477E7760BF4134A00152872 /* PageCache.cpp in Sources */,
 				CD5E5B611A15F156000C609E /* PageConfiguration.cpp in Sources */,
 				F3820892147D35F90010BC06 /* PageConsoleAgent.cpp in Sources */,

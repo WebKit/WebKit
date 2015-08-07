@@ -62,8 +62,6 @@ list(APPEND WebKit2_SOURCES
 
     Shared/cairo/ShareableBitmapCairo.cpp
 
-    Shared/glib/KeyedDecoder.cpp
-    Shared/glib/KeyedEncoder.cpp
     Shared/gtk/ArgumentCodersGtk.cpp
     Shared/gtk/NativeContextMenuItemGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp

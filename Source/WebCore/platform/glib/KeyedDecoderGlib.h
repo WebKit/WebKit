@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Igaia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyedDecoder_h
-#define KeyedDecoder_h
+#ifndef KeyedDecoderGlib_h
+#define KeyedDecoderGlib_h
 
-#include <WebCore/KeyedCoding.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+#include "KeyedCoding.h"
+#include <glib.h>
+#include <wtf/HashMap.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace WebCore {
 
-class KeyedDecoder final : public WebCore::KeyedDecoder {
+class KeyedDecoderGlib final : public KeyedDecoder {
 public:
-    KeyedDecoder(const uint8_t* data, size_t);
-    virtual ~KeyedDecoder() override;
+    KeyedDecoderGlib(const uint8_t* data, size_t);
+    virtual ~KeyedDecoderGlib() override;
 
 private:
     virtual bool decodeBytes(const String& key, const uint8_t*&, size_t&) override;
@@ -55,13 +58,14 @@ private:
     virtual void endArrayElement() override;
     virtual void endArray() override;
 
-    RetainPtr<CFDictionaryRef> m_rootDictionary;
+    template<typename T, typename F> bool decodeSimpleValue(const String& key, T& result, F getFunction);
+    HashMap<String, GRefPtr<GVariant>> dictionaryFromGVariant(GVariant*);
 
-    Vector<CFDictionaryRef, 16> m_dictionaryStack;
-    Vector<CFArrayRef, 16> m_arrayStack;
-    Vector<CFIndex> m_arrayIndexStack;
+    Vector<HashMap<String, GRefPtr<GVariant>>> m_dictionaryStack;
+    Vector<GVariant*, 16> m_arrayStack;
+    Vector<unsigned> m_arrayIndexStack;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // KeyedDecoder_h
+#endif // KeyedDecoderGlib_h

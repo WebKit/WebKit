@@ -106,6 +106,9 @@ list(APPEND WebCore_SOURCES
     platform/geoclue/GeolocationProviderGeoclue1.cpp
     platform/geoclue/GeolocationProviderGeoclue2.cpp
 
+    platform/glib/KeyedDecoderGlib.cpp
+    platform/glib/KeyedEncoderGlib.cpp
+
     platform/graphics/ImageSource.cpp
     platform/graphics/PlatformDisplay.cpp
     platform/graphics/WOFFFileFormat.cpp

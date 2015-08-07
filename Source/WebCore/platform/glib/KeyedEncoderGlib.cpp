@@ -24,22 +24,25 @@
  */
 
 #include "config.h"
-#include "KeyedEncoder.h"
+#include "KeyedEncoderGlib.h"
 
-#include <WebCore/SharedBuffer.h>
+#include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
+std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
+{
+    return std::make_unique<KeyedEncoderGlib>();
+}
 
-KeyedEncoder::KeyedEncoder()
+KeyedEncoderGlib::KeyedEncoderGlib()
 {
     g_variant_builder_init(&m_variantBuilder, G_VARIANT_TYPE("a{sv}"));
     m_variantBuilderStack.append(&m_variantBuilder);
 }
 
-KeyedEncoder::~KeyedEncoder()
+KeyedEncoderGlib::~KeyedEncoderGlib()
 {
     ASSERT(m_variantBuilderStack.size() == 1);
     ASSERT(m_variantBuilderStack.last() == &m_variantBuilder);
@@ -47,84 +50,84 @@ KeyedEncoder::~KeyedEncoder()
     ASSERT(m_objectStack.isEmpty());
 }
 
-void KeyedEncoder::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
+void KeyedEncoderGlib::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
 {
     GRefPtr<GBytes> gBytes = adoptGRef(g_bytes_new_static(bytes, size));
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_from_bytes(G_VARIANT_TYPE("ay"), gBytes.get(), TRUE));
 }
 
-void KeyedEncoder::encodeBool(const String& key, bool value)
+void KeyedEncoderGlib::encodeBool(const String& key, bool value)
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_boolean(value));
 }
 
-void KeyedEncoder::encodeUInt32(const String& key, uint32_t value)
+void KeyedEncoderGlib::encodeUInt32(const String& key, uint32_t value)
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_uint32(value));
 }
 
-void KeyedEncoder::encodeInt32(const String& key, int32_t value)
+void KeyedEncoderGlib::encodeInt32(const String& key, int32_t value)
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_int32(value));
 }
 
-void KeyedEncoder::encodeInt64(const String& key, int64_t value)
+void KeyedEncoderGlib::encodeInt64(const String& key, int64_t value)
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_int64(value));
 }
 
-void KeyedEncoder::encodeFloat(const String& key, float value)
+void KeyedEncoderGlib::encodeFloat(const String& key, float value)
 {
     encodeDouble(key, value);
 }
 
-void KeyedEncoder::encodeDouble(const String& key, double value)
+void KeyedEncoderGlib::encodeDouble(const String& key, double value)
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_double(value));
 }
 
-void KeyedEncoder::encodeString(const String& key, const String& value)
+void KeyedEncoderGlib::encodeString(const String& key, const String& value)
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_string(value.utf8().data()));
 }
 
-void KeyedEncoder::beginObject(const String& key)
+void KeyedEncoderGlib::beginObject(const String& key)
 {
     GRefPtr<GVariantBuilder> builder = adoptGRef(g_variant_builder_new(G_VARIANT_TYPE("aa{sv}")));
     m_objectStack.append(std::make_pair(key, builder));
     m_variantBuilderStack.append(builder.get());
 }
 
-void KeyedEncoder::endObject()
+void KeyedEncoderGlib::endObject()
 {
     GVariantBuilder* builder = m_variantBuilderStack.takeLast();
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", m_objectStack.last().first.utf8().data(), g_variant_builder_end(builder));
     m_objectStack.removeLast();
 }
 
-void KeyedEncoder::beginArray(const String& key)
+void KeyedEncoderGlib::beginArray(const String& key)
 {
     m_arrayStack.append(std::make_pair(key, adoptGRef(g_variant_builder_new(G_VARIANT_TYPE("aa{sv}")))));
 }
 
-void KeyedEncoder::beginArrayElement()
+void KeyedEncoderGlib::beginArrayElement()
 {
     m_variantBuilderStack.append(g_variant_builder_new(G_VARIANT_TYPE("a{sv}")));
 }
 
-void KeyedEncoder::endArrayElement()
+void KeyedEncoderGlib::endArrayElement()
 {
     GRefPtr<GVariantBuilder> variantBuilder = adoptGRef(m_variantBuilderStack.takeLast());
     g_variant_builder_add_value(m_arrayStack.last().second.get(), g_variant_builder_end(variantBuilder.get()));
 }
 
-void KeyedEncoder::endArray()
+void KeyedEncoderGlib::endArray()
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", m_arrayStack.last().first.utf8().data(), g_variant_builder_end(m_arrayStack.last().second.get()));
     m_arrayStack.removeLast();
 }
 
-PassRefPtr<SharedBuffer> KeyedEncoder::finishEncoding()
+PassRefPtr<SharedBuffer> KeyedEncoderGlib::finishEncoding()
 {
     g_assert(m_variantBuilderStack.last() == &m_variantBuilder);
     GRefPtr<GVariant> variant = g_variant_builder_end(&m_variantBuilder);
@@ -132,4 +135,4 @@ PassRefPtr<SharedBuffer> KeyedEncoder::finishEncoding()
     return SharedBuffer::create(static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), static_cast<unsigned>(g_bytes_get_size(data.get())));
 }
 
-} // namespace WebKit
+} // namespace WebCore

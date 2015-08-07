@@ -462,8 +462,6 @@
 		1AE00D4C182D6EB000087DD7 /* WKBrowsingContextHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */; };
 		1AE00D4D182D6EB000087DD7 /* WKBrowsingContextHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D4B182D6EB000087DD7 /* WKBrowsingContextHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE00D4F182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */; };
-		1AE00D5C182DADE100087DD7 /* KeyedEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D5A182DADE100087DD7 /* KeyedEncoder.cpp */; };
-		1AE00D5D182DADE100087DD7 /* KeyedEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D5B182DADE100087DD7 /* KeyedEncoder.h */; };
 		1AE00D601831792100087DD7 /* FrameLoadState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */; };
 		1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D5F1831792100087DD7 /* FrameLoadState.h */; };
 		1AE00D6B18327C1200087DD7 /* StringReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D6918327C1200087DD7 /* StringReference.cpp */; };
@@ -947,8 +945,6 @@
 		51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51834591134532E80092B696 /* WebIconDatabaseClient.h */; };
 		518353DA1885BF8C00D9FE44 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */; };
 		518353DB1885BF8C00D9FE44 /* IDBSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 518353D91885BF8C00D9FE44 /* IDBSerialization.h */; };
-		518353DE1887128B00D9FE44 /* KeyedDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518353DC1887128B00D9FE44 /* KeyedDecoder.cpp */; };
-		518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 518353DD1887128B00D9FE44 /* KeyedDecoder.h */; };
 		5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */; };
 		51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51871B59127CB89D00F76232 /* WebContextMenu.cpp */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
@@ -2588,8 +2584,6 @@
 		1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBrowsingContextHandle.mm; sourceTree = "<group>"; };
 		1AE00D4B182D6EB000087DD7 /* WKBrowsingContextHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandle.h; sourceTree = "<group>"; };
 		1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandleInternal.h; sourceTree = "<group>"; };
-		1AE00D5A182DADE100087DD7 /* KeyedEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedEncoder.cpp; sourceTree = "<group>"; };
-		1AE00D5B182DADE100087DD7 /* KeyedEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedEncoder.h; sourceTree = "<group>"; };
 		1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoadState.cpp; sourceTree = "<group>"; };
 		1AE00D5F1831792100087DD7 /* FrameLoadState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoadState.h; sourceTree = "<group>"; };
 		1AE00D6918327C1200087DD7 /* StringReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringReference.cpp; sourceTree = "<group>"; };
@@ -3111,8 +3105,6 @@
 		51834591134532E80092B696 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
 		518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
 		518353D91885BF8C00D9FE44 /* IDBSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSerialization.h; sourceTree = "<group>"; };
-		518353DC1887128B00D9FE44 /* KeyedDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedDecoder.cpp; sourceTree = "<group>"; };
-		518353DD1887128B00D9FE44 /* KeyedDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedDecoder.h; sourceTree = "<group>"; };
 		5183B3931379F85C00E8754E /* Shim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shim.xcconfig; sourceTree = "<group>"; };
 		5184BC4A132E907A006B9E28 /* WebIconDatabase.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIconDatabase.messages.in; sourceTree = "<group>"; };
 		51871B59127CB89D00F76232 /* WebContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenu.cpp; sourceTree = "<group>"; };
@@ -4871,10 +4863,6 @@
 			children = (
 				1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */,
 				1AAF0C4812B16334008E49E2 /* ArgumentCodersCF.h */,
-				518353DC1887128B00D9FE44 /* KeyedDecoder.cpp */,
-				518353DD1887128B00D9FE44 /* KeyedDecoder.h */,
-				1AE00D5A182DADE100087DD7 /* KeyedEncoder.cpp */,
-				1AE00D5B182DADE100087DD7 /* KeyedEncoder.h */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -7699,8 +7687,6 @@
 				C58CDF2A1887548B00871536 /* InteractionInformationAtPosition.h in Headers */,
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
-				518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */,
-				1AE00D5D182DADE100087DD7 /* KeyedEncoder.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
@@ -9497,8 +9483,6 @@
 				C58CDF2D1887609F00871536 /* InteractionInformationAtPosition.cpp in Sources */,
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
-				518353DE1887128B00D9FE44 /* KeyedDecoder.cpp in Sources */,
-				1AE00D5C182DADE100087DD7 /* KeyedEncoder.cpp in Sources */,
 				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				0F0C365E18C110A500F607D7 /* LayerRepresentation.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContext.cpp in Sources */,

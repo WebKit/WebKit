@@ -24,14 +24,19 @@
  */
 
 #include "config.h"
-#include "KeyedDecoder.h"
+#include "KeyedDecoderCF.h"
 
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace WebCore {
 
-KeyedDecoder::KeyedDecoder(const uint8_t* data, size_t size)
+std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
+{
+    return std::make_unique<KeyedDecoderCF>(data, size);
+}
+
+KeyedDecoderCF::KeyedDecoderCF(const uint8_t* data, size_t size)
 {
     auto cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, data, size, kCFAllocatorNull));
 
@@ -42,7 +47,7 @@ KeyedDecoder::KeyedDecoder(const uint8_t* data, size_t size)
     m_dictionaryStack.append(m_rootDictionary.get());
 }
 
-KeyedDecoder::~KeyedDecoder()
+KeyedDecoderCF::~KeyedDecoderCF()
 {
     ASSERT(m_dictionaryStack.size() == 1);
     ASSERT(m_dictionaryStack.last() == m_rootDictionary);
@@ -50,7 +55,7 @@ KeyedDecoder::~KeyedDecoder()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
-bool KeyedDecoder::decodeBytes(const String& key, const uint8_t*& bytes, size_t& size)
+bool KeyedDecoderCF::decodeBytes(const String& key, const uint8_t*& bytes, size_t& size)
 {
     auto data = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!data)
@@ -61,7 +66,7 @@ bool KeyedDecoder::decodeBytes(const String& key, const uint8_t*& bytes, size_t&
     return true;
 }
 
-bool KeyedDecoder::decodeBool(const String& key, bool& result)
+bool KeyedDecoderCF::decodeBool(const String& key, bool& result)
 {
     auto boolean = dynamic_cf_cast<CFBooleanRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!boolean)
@@ -71,12 +76,12 @@ bool KeyedDecoder::decodeBool(const String& key, bool& result)
     return true;
 }
 
-bool KeyedDecoder::decodeUInt32(const String& key, uint32_t& result)
+bool KeyedDecoderCF::decodeUInt32(const String& key, uint32_t& result)
 {
     return decodeInt32(key, reinterpret_cast<int32_t&>(result));
 }
 
-bool KeyedDecoder::decodeInt32(const String& key, int32_t& result)
+bool KeyedDecoderCF::decodeInt32(const String& key, int32_t& result)
 {
     auto number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!number)
@@ -85,7 +90,7 @@ bool KeyedDecoder::decodeInt32(const String& key, int32_t& result)
     return CFNumberGetValue(number, kCFNumberSInt32Type, &result);
 }
 
-bool KeyedDecoder::decodeInt64(const String& key, int64_t& result)
+bool KeyedDecoderCF::decodeInt64(const String& key, int64_t& result)
 {
     auto number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!number)
@@ -94,7 +99,7 @@ bool KeyedDecoder::decodeInt64(const String& key, int64_t& result)
     return CFNumberGetValue(number, kCFNumberSInt64Type, &result);
 }
 
-bool KeyedDecoder::decodeFloat(const String& key, float& result)
+bool KeyedDecoderCF::decodeFloat(const String& key, float& result)
 {
     auto number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!number)
@@ -103,7 +108,7 @@ bool KeyedDecoder::decodeFloat(const String& key, float& result)
     return CFNumberGetValue(number, kCFNumberFloatType, &result);
 }
 
-bool KeyedDecoder::decodeDouble(const String& key, double& result)
+bool KeyedDecoderCF::decodeDouble(const String& key, double& result)
 {
     auto number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!number)
@@ -112,7 +117,7 @@ bool KeyedDecoder::decodeDouble(const String& key, double& result)
     return CFNumberGetValue(number, kCFNumberDoubleType, &result);
 }
 
-bool KeyedDecoder::decodeString(const String& key, String& result)
+bool KeyedDecoderCF::decodeString(const String& key, String& result)
 {
     auto string = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!string)
@@ -122,7 +127,7 @@ bool KeyedDecoder::decodeString(const String& key, String& result)
     return true;
 }
 
-bool KeyedDecoder::beginObject(const String& key)
+bool KeyedDecoderCF::beginObject(const String& key)
 {
     auto dictionary = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!dictionary)
@@ -132,12 +137,12 @@ bool KeyedDecoder::beginObject(const String& key)
     return true;
 }
 
-void KeyedDecoder::endObject()
+void KeyedDecoderCF::endObject()
 {
     m_dictionaryStack.removeLast();
 }
 
-bool KeyedDecoder::beginArray(const String& key)
+bool KeyedDecoderCF::beginArray(const String& key)
 {
     auto array = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!array)
@@ -154,7 +159,7 @@ bool KeyedDecoder::beginArray(const String& key)
     return true;
 }
 
-bool KeyedDecoder::beginArrayElement()
+bool KeyedDecoderCF::beginArrayElement()
 {
     if (m_arrayIndexStack.last() >= CFArrayGetCount(m_arrayStack.last()))
         return false;
@@ -164,15 +169,15 @@ bool KeyedDecoder::beginArrayElement()
     return true;
 }
 
-void KeyedDecoder::endArrayElement()
+void KeyedDecoderCF::endArrayElement()
 {
     m_dictionaryStack.removeLast();
 }
 
-void KeyedDecoder::endArray()
+void KeyedDecoderCF::endArray()
 {
     m_arrayStack.removeLast();
     m_arrayIndexStack.removeLast();
 }
 
-} // namespace WebKit
+} // namespace WebCore

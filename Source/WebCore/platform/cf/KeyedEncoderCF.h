@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyedEncoder_h
-#define KeyedEncoder_h
+#ifndef KeyedEncoderCF_h
+#define KeyedEncoderCF_h
 
-#include <WebCore/KeyedCoding.h>
-#include <glib.h>
+#include "KeyedCoding.h"
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace WebCore {
 
-class KeyedEncoder final : public WebCore::KeyedEncoder {
+class KeyedEncoderCF final : public KeyedEncoder {
 public:
-    KeyedEncoder();
-    ~KeyedEncoder();
+    KeyedEncoderCF();
+    ~KeyedEncoderCF();
 
     virtual PassRefPtr<WebCore::SharedBuffer> finishEncoding() override;
 
@@ -59,12 +57,12 @@ private:
     virtual void endArrayElement() override;
     virtual void endArray() override;
 
-    GVariantBuilder m_variantBuilder;
-    Vector<GVariantBuilder*, 16> m_variantBuilderStack;
-    Vector<std::pair<String, GRefPtr<GVariantBuilder>>, 16> m_arrayStack;
-    Vector<std::pair<String, GRefPtr<GVariantBuilder>>, 16> m_objectStack;
+    RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
+
+    Vector<CFMutableDictionaryRef, 16> m_dictionaryStack;
+    Vector<CFMutableArrayRef, 16> m_arrayStack;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // KeyedEncoder_h
+#endif // KeyedEncoderCF_h
