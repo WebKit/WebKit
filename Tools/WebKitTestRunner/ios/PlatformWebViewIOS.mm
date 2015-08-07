@@ -225,7 +225,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     return 0; // FIXME for iOS?
 }
 
-bool PlatformWebView::viewSupportsOptions(cost ViewOptions& options) const
+bool PlatformWebView::viewSupportsOptions(const ViewOptions& options) const
 {
     if (m_options.useTiledDrawing != options.useTiledDrawing)
         return false;

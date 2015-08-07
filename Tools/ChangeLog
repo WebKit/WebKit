@@ -1,3 +1,10 @@
+2015-08-07  Anders Carlsson  <andersca@apple.com>
+
+        Fix a tyop.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+
 2015-08-07  Alexey Proskuryakov  <ap@apple.com>
 
         Update AppEngine app version numbers to the latest commit.
