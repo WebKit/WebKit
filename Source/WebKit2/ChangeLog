@@ -1,5 +1,15 @@
 2015-08-07  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r188111
+
+    2015-08-06  Dan Bernstein  <mitz@apple.com>
+
+            Fixed the non-HAVE(LINK_PREVIEW) build.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+
+2015-08-07  Lucas Forschler  <lforschler@apple.com>
+
         Merge r188109
 
     2015-08-06  Enrica Casucci  <enrica@apple.com>
