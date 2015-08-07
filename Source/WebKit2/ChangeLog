@@ -1,3 +1,14 @@
+2015-08-06  Enrica Casucci  <enrica@apple.com>
+
+        Cleanup action sheet only when long press is canceled (non ended).
+        https://bugs.webkit.org/show_bug.cgi?id=147766
+        rdar://problem/22181842
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _longPressRecognized:]):
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive

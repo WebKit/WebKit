@@ -1091,7 +1091,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     }
         break;
     case UIGestureRecognizerStateCancelled:
-    case UIGestureRecognizerStateEnded:
         [_actionSheetAssistant cleanupSheet];
         break;
     default:
