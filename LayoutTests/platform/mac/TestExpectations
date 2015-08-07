@@ -1312,4 +1312,4 @@ webkit.org/b/147763 [ Mavericks ] accessibility/mac/loaded-notification.html [ S
 webkit.org/b/147763 [ Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]
 
 # Language-specific font fallback is disabled on certain versions of OS X
-webkit.org/b/147390 fast/text/fallback-language-han.html [ Failure ]
+webkit.org/b/147390 [ Mavericks Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]

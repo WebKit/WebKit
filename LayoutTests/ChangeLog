@@ -1,5 +1,13 @@
 2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Mac] Test gardening
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
+2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [OS X] Font fallback is not language-sensitive
         https://bugs.webkit.org/show_bug.cgi?id=147390
 
