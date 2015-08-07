@@ -95,18 +95,16 @@ private:
     SQLTransactionState acquireLock();
     SQLTransactionState openTransactionAndPreflight();
     SQLTransactionState runStatements();
-    SQLTransactionState postflightAndCommit();
     SQLTransactionState cleanupAndTerminate();
     SQLTransactionState cleanupAfterTransactionErrorCallback();
 
     SQLTransactionState unreachableState();
-    SQLTransactionState sendToFrontendState();
-
-    SQLTransactionState nextStateForCurrentStatementError();
-    SQLTransactionState nextStateForTransactionError();
-    SQLTransactionState runCurrentStatementAndGetNextState();
 
     void getNextStatement();
+    bool runCurrentStatement();
+    void handleCurrentStatementError();
+    void handleTransactionError();
+    void postflightAndCommit();
 
     void acquireOriginLock();
     void releaseOriginLockIfNeeded();
