@@ -1,5 +1,47 @@
 2015-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        ios-sim-deprecated/iphone/fast/events/touch/ already existed in fast/events/touch, so remove them.
+
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/document-create-touch-list-ios-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/document-create-touch-list-ios.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/gesture-event-basic-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/gesture-event-basic.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/input-touch-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/input-touch-target.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/inserted-fragment-touch-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/inserted-fragment-touch-target.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/moved-touch-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/moved-touch-target.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/multi-touch-some-without-handlers-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/multi-touch-some-without-handlers.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/ontouchstart-active-selector-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/ontouchstart-active-selector.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/removed-fragment-touch-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/removed-fragment-touch-target.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/removed-touch-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/removed-touch-target.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/TEMPLATE.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/document-create-touch-list-ios.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/input-touch-target.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/multi-touch-some-without-handlers.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/text-node-touch-target.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/textarea-touch-target.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/touch-event-frames.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/touch-event-pageXY.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/script-tests/zoomed-touch-event-pageXY.js: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/text-node-touch-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/text-node-touch-target.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/textarea-touch-target-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/textarea-touch-target.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/touch-event-frames-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/touch-event-frames.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/touch-event-pageXY-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/touch-event-pageXY.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/zoomed-touch-event-pageXY-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/events/touch/zoomed-touch-event-pageXY.html: Removed.
+
+2015-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Move platform/ios-sim-deprecated/http/tests/loading/multiple-prioritization.html into http/tests/loading/
 
         * http/tests/loading/multiple-prioritization-expected.txt: Renamed from LayoutTests/platform/ios-sim-deprecated/http/tests/loading/multiple-prioritization-expected.txt.

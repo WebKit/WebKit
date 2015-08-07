@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 111: TypeError: HTMLParagraphElement is not a function (evaluating 'description("This tests multi touch event support where one of the touches has no touch event handler.")')
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#0000FF]
-      RenderBlock {P} at (0,116) size 784x0
-      RenderBlock {DIV} at (0,116) size 784x0
