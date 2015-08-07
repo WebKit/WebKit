@@ -228,6 +228,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'ConvolverNode').hasOwnProperty('ge
 PASS Object.getOwnPropertyDescriptor(global, 'ConvolverNode').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ConvolverNode').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ConvolverNode').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CountQueuingStrategy').value is CountQueuingStrategy
+PASS Object.getOwnPropertyDescriptor(global, 'CountQueuingStrategy').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CountQueuingStrategy').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CountQueuingStrategy').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CountQueuingStrategy').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').value is Counter
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').hasOwnProperty('set') is false

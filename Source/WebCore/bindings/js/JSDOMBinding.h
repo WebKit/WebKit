@@ -632,6 +632,17 @@ public:
     static bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = ReportSecurityError);
     static bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = ReportSecurityError);
 };
+
+inline JSC::JSValue getPropertyFromObject(JSC::ExecState& exec, JSC::JSObject& object, const char* identifier)
+{
+    return object.get(&exec, JSC::Identifier::fromString(&exec, identifier));
+}
+
+inline void setPropertyToObject(JSC::ExecState& exec, JSC::JSObject& object, const char* name, JSC::JSValue value)
+{
+    JSC::PutPropertySlot propertySlot(&object);
+    JSC::JSObject::put(&object, &exec, JSC::Identifier::fromString(&exec, name), value, propertySlot);
+}
     
 } // namespace WebCore
 

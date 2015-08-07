@@ -51,11 +51,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-static inline JSValue getPropertyFromObject(ExecState& exec, JSObject& object, const char* identifier)
-{
-    return object.get(&exec, Identifier::fromString(&exec, identifier));
-}
-
 static inline JSValue callFunction(ExecState& exec, JSValue jsFunction, JSValue thisValue, const ArgList& arguments)
 {
     CallData callData;

@@ -41,6 +41,9 @@
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
+#if ENABLE(STREAMS_API)
+#include "JSCountQueuingStrategy.cpp"
+#endif
 #if ENABLE(WEBGL)
 #include "JSEXTBlendMinMax.cpp"
 #include "JSEXTFragDepth.cpp"

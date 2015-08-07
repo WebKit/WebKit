@@ -35,6 +35,9 @@
 #include "JSAudioTrackListCustom.cpp"
 #include "JSBlobCustom.cpp"
 #include "JSCDATASectionCustom.cpp"
+#if ENABLE(STREAMS_API)
+#include "JSCountQueuingStrategyCustom.cpp"
+#endif
 #include "JSCSSRuleCustom.cpp"
 #include "JSCSSRuleListCustom.cpp"
 #include "JSCSSStyleDeclarationCustom.cpp"
