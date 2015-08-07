@@ -268,13 +268,13 @@ BuildbotQueue.prototype = {
 
     compareIterations: function(a, b)
     {
-        var result = b.revision[Dashboard.Repository.OpenSource.name] - a.revision[Dashboard.Repository.OpenSource.name];
-        if (result)
-            return result;
-
-        result = b.revision[Dashboard.Repository.Internal.name] - a.revision[Dashboard.Repository.Internal.name];
-        if (result)
-            return result;
+        var sortedRepositories = Dashboard.sortedRepositories;
+        for (var i = 0; i < sortedRepositories.length; ++i) {
+            var repositoryName = sortedRepositories[i].name;
+            var result = b.revision[repositoryName] - a.revision[repositoryName];
+            if (result)
+                return result;
+        }
 
         // A loaded iteration may not have revision numbers if it failed early, before svn steps finished.
         result = b.loaded - a.loaded;
@@ -286,13 +286,13 @@ BuildbotQueue.prototype = {
 
     compareIterationsByRevisions: function(a, b)
     {
-        var result = b.revision[Dashboard.Repository.OpenSource.name] - a.revision[Dashboard.Repository.OpenSource.name];
-        if (result)
-            return result;
-
-        result = b.revision[Dashboard.Repository.Internal.name] - a.revision[Dashboard.Repository.Internal.name];
-        if (result)
-            return result;
+        var sortedRepositories = Dashboard.sortedRepositories;
+        for (var i = 0; i < sortedRepositories.length; ++i) {
+            var repositoryName = sortedRepositories[i].name;
+            var result = b.revision[repositoryName] - a.revision[repositoryName];
+            if (result)
+                return result;
+        }
 
         return 0;
     },

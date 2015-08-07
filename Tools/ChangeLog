@@ -1,3 +1,27 @@
+2015-08-07  Jason Marcell  <jmarcell@apple.com>
+
+        Refactor BuildbotQueue.compareIterations and BuildbotQueue.compareIterationsByRevisions to be more generic
+        https://bugs.webkit.org/show_bug.cgi?id=147667
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.compareIterations): Refactored to work more generically with repositories
+        other than "openSource" and "internal".
+        (BuildbotQueue.prototype.compareIterationsByRevisions): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        (Dashboard.get sortedPlatforms): Added. Returns a sorted array of platforms.
+        (Dashboard.get sortedRepositories): Added. Returns a sorted array of repositories.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (documentReady): Using Dashboard.sortedPlatforms instead of sortedPlatforms.
+        (sortedPlatforms): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsMain.js:
+        (buildQueuesTable): Using Dashboard.sortedPlatforms instead of sortedPlatforms.
+        (sortedPlatforms): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        (sortDictionariesByOrder): Added. Takes an array of dictionaries that have an "order" property
+        and sorts them by this property returning the new sorted array.
+
 2015-08-07  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive

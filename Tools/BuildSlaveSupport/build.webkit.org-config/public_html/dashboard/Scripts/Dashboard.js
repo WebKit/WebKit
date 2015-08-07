@@ -39,5 +39,17 @@ Dashboard = {
     Repository: {
         OpenSource: { name: "openSource", order: 0 },
         Internal: { name: "internal", order: 1 },
-    }
+    },
+    get sortedPlatforms()
+    {
+        if (!this._sortedPlatforms)
+            this._sortedPlatforms = sortDictionariesByOrder(Dashboard.Platform);
+        return this._sortedPlatforms;
+    },
+    get sortedRepositories()
+    {
+        if (!this._sortedRepositories)
+            this._sortedRepositories = sortDictionariesByOrder(Dashboard.Repository);
+        return this._sortedRepositories;
+    },
 };

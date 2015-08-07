@@ -70,20 +70,6 @@ var testNames = {};
 testNames[Buildbot.TestCategory.WebKit2] = "WK2 Tests";
 testNames[Buildbot.TestCategory.WebKit1] = "WK1 Tests";
 
-function sortedPlatforms()
-{
-    var platforms = [];
-
-    for (var platformKey in Dashboard.Platform)
-        platforms.push(Dashboard.Platform[platformKey]);
-
-    platforms.sort(function(a, b) {
-        return a.order - b.order;
-    });
-
-    return platforms;
-}
-
 function updateHiddenPlatforms()
 {
     var hiddenPlatforms = settings.getObject("hiddenPlatforms");
@@ -204,7 +190,7 @@ function buildQueuesTable()
 
     table.appendChild(row);
 
-    var platforms = sortedPlatforms();
+    var platforms = Dashboard.sortedPlatforms;
 
     for (var i in platforms) {
         var platform = platforms[i];

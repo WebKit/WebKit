@@ -196,4 +196,18 @@ String.prototype.contains = function(substring)
 String.prototype.startsWith = function(substring)
 {
     return this.lastIndexOf(substring, 0) === 0;
-}
+};
+
+function sortDictionariesByOrder(unsorted)
+{
+    var sorted = [];
+
+    for (var key in unsorted)
+        sorted.push(unsorted[key]);
+
+    sorted.sort(function(a, b) {
+        return a.order - b.order;
+    });
+
+    return sorted;
+};
