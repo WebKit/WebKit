@@ -678,7 +678,7 @@ webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
 webkit.org/b/119374 fast/workers/termination-early.html [ Pass Crash ]
 
-webkit.org/b/110186 inspector-protocol/page/javascriptDialogEvents.html [ Skip ]
+webkit.org/b/110186 inspector/page/javascriptDialogEvents.html [ Skip ]
 
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
@@ -755,7 +755,7 @@ webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ Pass ImageOnlyFailure 
 webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/100846, webkit.org/b/136715
-inspector-protocol/debugger
+inspector/debugger
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 

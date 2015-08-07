@@ -748,9 +748,8 @@ webkit.org/b/136099 fast/harness/show-modal-dialog.html [ Crash Timeout ]
 
 webkit.org/b/136227 mathml/very-large-stretchy-operators.html [ Crash Timeout Pass ]
 
-#webkit.org/b/142158 inspector-protocol/dom/remove-multiple-nodes.html [ Crash Pass ]
-
-webkit.org/b/147018 inspector/css/get-system-fonts.html [ Skip ]
+#webkit.org/b/142158 inspector/dom/remove-multiple-nodes.html [ Crash Pass ]
+#webkit.org/b/147018 inspector/css/get-system-fonts.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
@@ -1537,8 +1536,8 @@ Bug(EFL) transitions/negative-delay.html [ Failure Pass ]
 webkit.org/b/102068 webkit.org/b/102993 media/audio-repaint.html [ Failure ]
 webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html [ Timeout ]
 
-#webkit.org/b/100846 inspector-protocol/debugger/pause-dedicated-worker.html [ Skip ]
-#webkit.org/b/100846 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]
+#webkit.org/b/100846 inspector/debugger/pause-dedicated-worker.html [ Skip ]
+#webkit.org/b/100846 inspector/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]
 
 # New media test introduced in r133660 fails.
 webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure Pass ]
@@ -1979,7 +1978,7 @@ webkit.org/b/133308 fast/selectors/hover-quirks.html [ Failure ]
 webkit.org/b/133972 mathml/presentation/foreign-element-in-token.html [ Failure ]
 
 # Tests failing or flaky with closer reasons unknwown at this time
-#webkit.org/b/133857 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
+#webkit.org/b/133857 inspector/layers/layers-blending-compositing-reasons.html [ Failure ]
 webkit.org/b/133860 fast/regions/auto-size/autosize-region-window-resize.html [ ImageOnlyFailure Pass ]
 webkit.org/b/133974 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure Pass ]
 
@@ -2062,8 +2061,8 @@ webkit.org/b/141512 fast/css/pseudo-invalid-form-invalidation-optimization.html 
 webkit.org/b/141512 fast/css/pseudo-valid-form-invalidation-optimization.html [ Failure ]
 
 # Probably started failing since r159110
-#webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]
-#webkit.org/b/141591 inspector-protocol/debugger/setBreakpoint-actions.html [ Failure ]
+#webkit.org/b/141591 inspector/debugger/breakpoint-eval-with-exception.html [ Failure ]
+#webkit.org/b/141591 inspector/debugger/setBreakpoint-actions.html [ Failure ]
 
 # Doesn't support inter-ideograph justification
 webkit.org/b/141593 fast/text/justify-ideograph-complex.html [ Failure ]
@@ -2168,8 +2167,8 @@ webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]
 compositing/masks/compositing-clip-path-change-no-repaint.html [ Failure ]
 compositing/tiling/transform-origin-tiled.html [ Failure ]
 
-# [EFL] REGRESSION(r183907): It made all inspector-protocol test crash
-webkit.org/b/144737 inspector-protocol [ Skip ]
+# [EFL] REGRESSION(r183907): It made all inspector test crash
+webkit.org/b/144737 inspector [ Skip ]
 webkit.org/b/144737 http/tests/inspector [ Skip ]
 
 webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]

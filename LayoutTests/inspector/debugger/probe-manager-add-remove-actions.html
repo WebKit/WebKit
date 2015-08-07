@@ -3,7 +3,7 @@
 <head>
 <script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script type="text/javascript" src="../../http/tests/inspector/debugger/debugger-test.js"></script>
-<script type="text/javascript" src="./resources/breakpoint.js"></script>
+<script type="text/javascript" src="resources/script-for-breakpoint-actions.js"></script>
 <script>
 function test()
 {
@@ -27,7 +27,7 @@ function test()
 
             var scriptObject = event.data.script;
 
-            if (!/breakpoint\.js$/.test(scriptObject.url))
+            if (!/script\-for\-breakpoint\-actions\.js$/.test(scriptObject.url))
                 return;
 
             var location = scriptObject.createSourceCodeLocation(4, 0);

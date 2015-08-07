@@ -1,7 +1,8 @@
+<!doctype html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/protocol-test.js"></script>
-<script src="../resources/errors.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/errors.js"></script>
   <script>   [].x.x   </script>
 <script>
 console.warn("warn 1"); console.error("error 1");
@@ -10,7 +11,7 @@ console.warn("warn 1"); console.error("error 1");
 <script>
 function test()
 {
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
+    InspectorTest.importScript("console-test.js");
 
     var consoleMessageCount = 0;
     const expectedConsoleMessageCount = 8;

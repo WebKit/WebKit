@@ -1,10 +1,11 @@
+<!doctype html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
 function test()
 {
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
+    InspectorTest.importScript("console-test.js");
 
     let suite = new InspectorTest.AsyncTestSuite("Console.XFrameOptionsMessages");
 

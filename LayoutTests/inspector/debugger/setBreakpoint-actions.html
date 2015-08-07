@@ -5,8 +5,8 @@
 <script>
 function test()
 {
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
-    InspectorTest.importScript("../../../../inspector-protocol/resources/probe-helper.js");
+    InspectorTest.importScript("console-test.js");
+    InspectorTest.importScript("probe-test.js");
 
     InspectorTest.sendCommand("Console.enable", {});
     InspectorTest.sendCommand("Debugger.enable", {});

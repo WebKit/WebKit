@@ -1,6 +1,7 @@
+<!doctype html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
 function generateSimpleConsoleMessages()
 {
@@ -13,7 +14,7 @@ function generateSimpleConsoleMessages()
 
 function test()
 {
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
+    InspectorTest.importScript("console-test.js");
 
     var suite = new InspectorTest.AsyncTestSuite("Console.MessagesFromCommandLineAPI");
 

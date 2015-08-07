@@ -1,3 +1,186 @@
+2015-08-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move LayoutTests/inspector-protocol/ tests to LayoutTests/inspector/
+        https://bugs.webkit.org/show_bug.cgi?id=147729
+
+        Reviewed by Timothy Hatcher.
+
+        Merge inspector-protocol tests into the inspector directory. Rename a few helper
+        resources whose names clashed. Put top-level tests into unit-tests/ and protocol/.
+
+        Update TestExpectations to not reference inspector-protocol paths.
+
+        * TestExpectations:
+        * http/tests/inspector/resources/console-test.js: Renamed from LayoutTests/inspector-protocol/resources/console-test.js.
+        * http/tests/inspector/resources/probe-test.js: Renamed from LayoutTests/inspector-protocol/resources/probe-helper.js.
+        * inspector-protocol/debugger/resources/breakpoint.js: Removed.
+        * inspector/console/console-message-expected.txt: Renamed from LayoutTests/inspector-protocol/console/console-message-expected.txt.
+        * inspector/console/console-message.html: Renamed from LayoutTests/inspector-protocol/console/console-message.html.
+        * inspector/console/css-source-locations-expected.txt: Renamed from LayoutTests/inspector-protocol/console/css-source-locations-expected.txt.
+        * inspector/console/css-source-locations.html: Renamed from LayoutTests/inspector-protocol/console/css-source-locations.html.
+        * inspector/console/js-source-locations-expected.txt: Renamed from LayoutTests/inspector-protocol/console/js-source-locations-expected.txt.
+        * inspector/console/js-source-locations.html: Renamed from LayoutTests/inspector-protocol/console/js-source-locations.html.
+        * inspector/console/resources/errors.css: Renamed from LayoutTests/inspector-protocol/resources/errors.css.
+        (div):
+        * inspector/console/resources/errors.js: Renamed from LayoutTests/inspector-protocol/resources/errors.js.
+        (foo):
+        * inspector/console/x-frame-options-message-expected.txt: Renamed from LayoutTests/inspector-protocol/console/x-frame-options-message-expected.txt.
+        * inspector/console/x-frame-options-message.html: Renamed from LayoutTests/inspector-protocol/console/x-frame-options-message.html.
+        * inspector/css/getSupportedCSSProperties-expected.txt: Renamed from LayoutTests/inspector-protocol/css/getSupportedCSSProperties-expected.txt.
+        * inspector/css/getSupportedCSSProperties.html: Renamed from LayoutTests/inspector-protocol/css/getSupportedCSSProperties.html.
+        * inspector/debugger/breakpoint-action-detach-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-action-detach-expected.txt.
+        * inspector/debugger/breakpoint-action-detach.html: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-action-detach.html.
+        * inspector/debugger/breakpoint-action-eval.html:
+        * inspector/debugger/breakpoint-action-with-exception-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-action-with-exception-expected.txt.
+        * inspector/debugger/breakpoint-action-with-exception.html: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-action-with-exception.html.
+        * inspector/debugger/breakpoint-condition-detach-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-condition-detach-expected.txt.
+        * inspector/debugger/breakpoint-condition-detach.html: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-condition-detach.html.
+        * inspector/debugger/breakpoint-condition-with-bad-script-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-condition-with-bad-script-expected.txt.
+        * inspector/debugger/breakpoint-condition-with-bad-script.html: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-condition-with-bad-script.html.
+        * inspector/debugger/breakpoint-condition-with-exception-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-condition-with-exception-expected.txt.
+        * inspector/debugger/breakpoint-condition-with-exception.html: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-condition-with-exception.html.
+        * inspector/debugger/breakpoint-eval-with-exception-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-eval-with-exception-expected.txt.
+        * inspector/debugger/breakpoint-eval-with-exception.html: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-eval-with-exception.html.
+        * inspector/debugger/breakpoint-inside-conditons-and-actions-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-inside-conditons-and-actions-expected.txt.
+        * inspector/debugger/breakpoint-inside-conditons-and-actions.html: Renamed from LayoutTests/inspector-protocol/debugger/breakpoint-inside-conditons-and-actions.html.
+        * inspector/debugger/call-frame-function-name-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-function-name-expected.txt.
+        * inspector/debugger/call-frame-function-name.html: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-function-name.html.
+        * inspector/debugger/call-frame-this-host-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-this-host-expected.txt.
+        * inspector/debugger/call-frame-this-host.html: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-this-host.html.
+        * inspector/debugger/call-frame-this-nonstrict-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-this-nonstrict-expected.txt.
+        * inspector/debugger/call-frame-this-nonstrict.html: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-this-nonstrict.html.
+        * inspector/debugger/call-frame-this-strict-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-this-strict-expected.txt.
+        * inspector/debugger/call-frame-this-strict.html: Renamed from LayoutTests/inspector-protocol/debugger/call-frame-this-strict.html.
+        * inspector/debugger/debugger-statement-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/debugger-statement-expected.txt.
+        * inspector/debugger/debugger-statement.html: Renamed from LayoutTests/inspector-protocol/debugger/debugger-statement.html.
+        * inspector/debugger/didSampleProbe-multiple-probes-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/didSampleProbe-multiple-probes-expected.txt.
+        * inspector/debugger/didSampleProbe-multiple-probes.html: Renamed from LayoutTests/inspector-protocol/debugger/didSampleProbe-multiple-probes.html.
+        * inspector/debugger/hit-breakpoint-from-console-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/hit-breakpoint-from-console-expected.txt.
+        * inspector/debugger/hit-breakpoint-from-console.html: Renamed from LayoutTests/inspector-protocol/debugger/hit-breakpoint-from-console.html.
+        * inspector/debugger/nested-inspectors-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/nested-inspectors-expected.txt.
+        * inspector/debugger/nested-inspectors.html: Renamed from LayoutTests/inspector-protocol/debugger/nested-inspectors.html.
+        * inspector/debugger/pause-dedicated-worker-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/pause-dedicated-worker-expected.txt.
+        * inspector/debugger/pause-dedicated-worker.html: Renamed from LayoutTests/inspector-protocol/debugger/pause-dedicated-worker.html.
+        * inspector/debugger/pause-on-assert-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/pause-on-assert-expected.txt.
+        * inspector/debugger/pause-on-assert.html: Renamed from LayoutTests/inspector-protocol/debugger/pause-on-assert.html.
+        * inspector/debugger/probe-manager-add-remove-actions.html:
+        * inspector/debugger/regress-133182-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/regress-133182-expected.txt.
+        * inspector/debugger/regress-133182.html: Renamed from LayoutTests/inspector-protocol/debugger/regress-133182.html.
+        * inspector/debugger/removeBreakpoint-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/removeBreakpoint-expected.txt.
+        * inspector/debugger/removeBreakpoint.html: Renamed from LayoutTests/inspector-protocol/debugger/removeBreakpoint.html.
+        * inspector/debugger/resources/assert.js: Renamed from LayoutTests/inspector-protocol/debugger/resources/assert.js.
+        * inspector/debugger/resources/dedicated-worker.js: Renamed from LayoutTests/inspector-protocol/debugger/resources/dedicated-worker.js.
+        * inspector/debugger/resources/exception.js: Renamed from LayoutTests/inspector-protocol/debugger/resources/exception.js.
+        * inspector/debugger/resources/mac-linebreaks.js: Renamed from LayoutTests/inspector-protocol/debugger/resources/mac-linebreaks.js.
+        * inspector/debugger/resources/mixed-linebreaks.js: Renamed from LayoutTests/inspector-protocol/debugger/resources/mixed-linebreaks.js.
+        * inspector/debugger/resources/script-for-breakpoint-actions.js: Copied from LayoutTests/inspector/debugger/resources/breakpoint.js.
+        * inspector/debugger/resources/unix-linebreaks.js: Renamed from LayoutTests/inspector-protocol/debugger/resources/unix-linebreaks.js.
+        * inspector/debugger/resources/windows-linebreaks.js: Renamed from LayoutTests/inspector-protocol/debugger/resources/windows-linebreaks.js.
+        * inspector/debugger/searchInContent-linebreaks-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/searchInContent-linebreaks-expected.txt.
+        * inspector/debugger/searchInContent-linebreaks.html: Renamed from LayoutTests/inspector-protocol/debugger/searchInContent-linebreaks.html.
+        * inspector/debugger/setBreakpoint-actions-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-actions-expected.txt.
+        * inspector/debugger/setBreakpoint-actions.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-actions.html.
+        * inspector/debugger/setBreakpoint-autoContinue-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-autoContinue-expected.txt.
+        * inspector/debugger/setBreakpoint-autoContinue.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-autoContinue.html.
+        * inspector/debugger/setBreakpoint-column-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-column-expected.txt.
+        * inspector/debugger/setBreakpoint-column.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-column.html.
+        * inspector/debugger/setBreakpoint-column.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-column.txt.
+        * inspector/debugger/setBreakpoint-condition-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-condition-expected.txt.
+        * inspector/debugger/setBreakpoint-condition.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-condition.html.
+        * inspector/debugger/setBreakpoint-dfg-and-modify-local-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local-expected.txt.
+        * inspector/debugger/setBreakpoint-dfg-and-modify-local.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html.
+        * inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local-expected.txt.
+        * inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html.
+        * inspector/debugger/setBreakpoint-dfg-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-dfg-expected.txt.
+        * inspector/debugger/setBreakpoint-dfg.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-dfg.html.
+        * inspector/debugger/setBreakpoint-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-expected.txt.
+        * inspector/debugger/setBreakpoint-options-exception-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-options-exception-expected.txt.
+        * inspector/debugger/setBreakpoint-options-exception.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint-options-exception.html.
+        * inspector/debugger/setBreakpoint.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpoint.html.
+        * inspector/debugger/setBreakpointByUrl-sourceURL-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpointByUrl-sourceURL-expected.txt.
+        * inspector/debugger/setBreakpointByUrl-sourceURL.html: Renamed from LayoutTests/inspector-protocol/debugger/setBreakpointByUrl-sourceURL.html.
+        * inspector/debugger/setPauseOnExceptions-all-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setPauseOnExceptions-all-expected.txt.
+        * inspector/debugger/setPauseOnExceptions-all.html: Renamed from LayoutTests/inspector-protocol/debugger/setPauseOnExceptions-all.html.
+        * inspector/debugger/setPauseOnExceptions-none-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setPauseOnExceptions-none-expected.txt.
+        * inspector/debugger/setPauseOnExceptions-none.html: Renamed from LayoutTests/inspector-protocol/debugger/setPauseOnExceptions-none.html.
+        * inspector/debugger/setPauseOnExceptions-uncaught-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setPauseOnExceptions-uncaught-expected.txt.
+        * inspector/debugger/setPauseOnExceptions-uncaught.html: Renamed from LayoutTests/inspector-protocol/debugger/setPauseOnExceptions-uncaught.html.
+        * inspector/debugger/setVariableValue-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/setVariableValue-expected.txt.
+        * inspector/debugger/setVariableValue.html: Renamed from LayoutTests/inspector-protocol/debugger/setVariableValue.html.
+        * inspector/debugger/terminate-dedicated-worker-while-paused-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger/terminate-dedicated-worker-while-paused-expected.txt.
+        * inspector/debugger/terminate-dedicated-worker-while-paused.html: Renamed from LayoutTests/inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html.
+        * inspector/dom-debugger/node-removed-expected.txt: Renamed from LayoutTests/inspector-protocol/dom-debugger/node-removed-expected.txt.
+        * inspector/dom-debugger/node-removed.html: Renamed from LayoutTests/inspector-protocol/dom-debugger/node-removed.html.
+        * inspector/dom/dom-remove-events-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/dom-remove-events-expected.txt.
+        * inspector/dom/dom-remove-events.html: Renamed from LayoutTests/inspector-protocol/dom/dom-remove-events.html.
+        * inspector/dom/dom-search-crash-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/dom-search-crash-expected.txt.
+        * inspector/dom/dom-search-crash.html: Renamed from LayoutTests/inspector-protocol/dom/dom-search-crash.html.
+        * inspector/dom/dom-search-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/dom-search-expected.txt.
+        * inspector/dom/dom-search-with-context-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/dom-search-with-context-expected.txt.
+        * inspector/dom/dom-search-with-context.html: Renamed from LayoutTests/inspector-protocol/dom/dom-search-with-context.html.
+        * inspector/dom/dom-search.html: Renamed from LayoutTests/inspector-protocol/dom/dom-search.html.
+        * inspector/dom/focus-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/focus-expected.txt.
+        * inspector/dom/focus.html: Renamed from LayoutTests/inspector-protocol/dom/focus.html.
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt.
+        * inspector/dom/getAccessibilityPropertiesForNode.html: Renamed from LayoutTests/inspector-protocol/dom/getAccessibilityPropertiesForNode.html.
+        * inspector/dom/getAccessibilityPropertiesForNode_liveRegion-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/getAccessibilityPropertiesForNode_liveRegion-expected.txt.
+        * inspector/dom/getAccessibilityPropertiesForNode_liveRegion.html: Renamed from LayoutTests/inspector-protocol/dom/getAccessibilityPropertiesForNode_liveRegion.html.
+        * inspector/dom/getAccessibilityPropertiesForNode_mouseEventNodeId-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/getAccessibilityPropertiesForNode_mouseEventNodeId-expected.txt.
+        * inspector/dom/getAccessibilityPropertiesForNode_mouseEventNodeId.html: Renamed from LayoutTests/inspector-protocol/dom/getAccessibilityPropertiesForNode_mouseEventNodeId.html.
+        * inspector/dom/highlight-flow-with-no-region-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/highlight-flow-with-no-region-expected.txt.
+        * inspector/dom/highlight-flow-with-no-region.html: Renamed from LayoutTests/inspector-protocol/dom/highlight-flow-with-no-region.html.
+        * inspector/dom/remove-multiple-nodes-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/remove-multiple-nodes-expected.txt.
+        * inspector/dom/remove-multiple-nodes.html: Renamed from LayoutTests/inspector-protocol/dom/remove-multiple-nodes.html.
+        * inspector/dom/request-child-nodes-depth-expected.txt: Renamed from LayoutTests/inspector-protocol/dom/request-child-nodes-depth-expected.txt.
+        * inspector/dom/request-child-nodes-depth.html: Renamed from LayoutTests/inspector-protocol/dom/request-child-nodes-depth.html.
+        * inspector/dom/resources/dom-search-crash-iframe.html: Renamed from LayoutTests/inspector-protocol/dom/resources/dom-search-crash-iframe.html.
+        * inspector/dom/resources/dom-search-iframe.html: Renamed from LayoutTests/inspector-protocol/dom/resources/dom-search-iframe.html.
+        * inspector/dom/resources/dom-search-queries.js: Renamed from LayoutTests/inspector-protocol/dom/resources/dom-search-queries.js.
+        * inspector/layers/layers-anonymous-expected.txt: Renamed from LayoutTests/inspector-protocol/layers/layers-anonymous-expected.txt.
+        * inspector/layers/layers-anonymous.html: Renamed from LayoutTests/inspector-protocol/layers/layers-anonymous.html.
+        * inspector/layers/layers-blending-compositing-reasons-expected.txt: Renamed from LayoutTests/inspector-protocol/layers/layers-blending-compositing-reasons-expected.txt.
+        * inspector/layers/layers-blending-compositing-reasons.html: Renamed from LayoutTests/inspector-protocol/layers/layers-blending-compositing-reasons.html.
+        * inspector/layers/layers-compositing-reasons-expected.txt: Renamed from LayoutTests/inspector-protocol/layers/layers-compositing-reasons-expected.txt.
+        * inspector/layers/layers-compositing-reasons.html: Renamed from LayoutTests/inspector-protocol/layers/layers-compositing-reasons.html.
+        * inspector/layers/layers-for-node-expected.txt: Renamed from LayoutTests/inspector-protocol/layers/layers-for-node-expected.txt.
+        * inspector/layers/layers-for-node.html: Renamed from LayoutTests/inspector-protocol/layers/layers-for-node.html.
+        * inspector/layers/layers-generated-content-expected.txt: Renamed from LayoutTests/inspector-protocol/layers/layers-generated-content-expected.txt.
+        * inspector/layers/layers-generated-content.html: Renamed from LayoutTests/inspector-protocol/layers/layers-generated-content.html.
+        * inspector/layers/layers-reflected-content-expected.txt: Renamed from LayoutTests/inspector-protocol/layers/layers-reflected-content-expected.txt.
+        * inspector/layers/layers-reflected-content.html: Renamed from LayoutTests/inspector-protocol/layers/layers-reflected-content.html.
+        * inspector/page/archive-expected.txt: Renamed from LayoutTests/inspector-protocol/page/archive-expected.txt.
+        * inspector/page/archive.html: Renamed from LayoutTests/inspector-protocol/page/archive.html.
+        * inspector/page/frameScheduledNavigation-expected.txt: Renamed from LayoutTests/inspector-protocol/page/frameScheduledNavigation-expected.txt.
+        * inspector/page/frameScheduledNavigation.html: Renamed from LayoutTests/inspector-protocol/page/frameScheduledNavigation.html.
+        * inspector/page/frameStartedLoading-expected.txt: Renamed from LayoutTests/inspector-protocol/page/frameStartedLoading-expected.txt.
+        * inspector/page/frameStartedLoading.html: Renamed from LayoutTests/inspector-protocol/page/frameStartedLoading.html.
+        * inspector/page/javascriptDialogEvents-expected.txt: Renamed from LayoutTests/inspector-protocol/page/javascriptDialogEvents-expected.txt.
+        * inspector/page/javascriptDialogEvents.html: Renamed from LayoutTests/inspector-protocol/page/javascriptDialogEvents.html.
+        * inspector/page/resources/blank.html: Renamed from LayoutTests/inspector-protocol/page/resources/blank.html.
+        * inspector/page/setEmulatedMedia-expected.txt: Renamed from LayoutTests/inspector-protocol/page/setEmulatedMedia-expected.txt.
+        * inspector/page/setEmulatedMedia.html: Renamed from LayoutTests/inspector-protocol/page/setEmulatedMedia.html.
+        * inspector/protocol/protocol-promise-result-expected.txt: Renamed from LayoutTests/inspector/protocol-promise-result-expected.txt.
+        * inspector/protocol/protocol-promise-result.html: Renamed from LayoutTests/inspector/protocol-promise-result.html.
+        * inspector/runtime/getProperties-expected.txt: Renamed from LayoutTests/inspector-protocol/runtime/getProperties-expected.txt.
+        * inspector/runtime/getProperties.html: Renamed from LayoutTests/inspector-protocol/runtime/getProperties.html.
+        * inspector/unit-tests/async-test-suite-expected.txt: Renamed from LayoutTests/inspector-protocol/async-test-suite-expected.txt.
+        * inspector/unit-tests/async-test-suite.html: Renamed from LayoutTests/inspector-protocol/async-test-suite.html.
+        * inspector/unit-tests/event-listener-expected.txt: Renamed from LayoutTests/inspector/event-listener-expected.txt.
+        * inspector/unit-tests/event-listener-set-expected.txt: Renamed from LayoutTests/inspector/event-listener-set-expected.txt.
+        * inspector/unit-tests/event-listener-set.html: Renamed from LayoutTests/inspector/event-listener-set.html.
+        * inspector/unit-tests/event-listener.html: Renamed from LayoutTests/inspector/event-listener.html.
+        * inspector/unit-tests/sync-test-suite-expected.txt: Renamed from LayoutTests/inspector-protocol/sync-test-suite-expected.txt.
+        * inspector/unit-tests/sync-test-suite.html: Renamed from LayoutTests/inspector-protocol/sync-test-suite.html.
+        * inspector/unit-tests/test-harness-trivially-works-expected.txt: Renamed from LayoutTests/inspector/test-harness-trivially-works-expected.txt.
+        * inspector/unit-tests/test-harness-trivially-works.html: Renamed from LayoutTests/inspector/test-harness-trivially-works.html.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-08-07  Simon Fraser  <simon.fraser@apple.com>
 
         ios-sim-deprecated/iphone/fast/events/touch/ already existed in fast/events/touch, so remove them.

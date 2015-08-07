@@ -1,7 +1,8 @@
+<!doctype html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/protocol-test.js"></script>
-<link rel="stylesheet" href="../resources/errors.css">
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<link rel="stylesheet" href="resources/errors.css">
   <style>    div { * color: red; }</style>
 <style>div { * color: red; }
 div { * color: red; }
@@ -14,7 +15,7 @@ div { * color: red; }
 <script>
 function test()
 {
-    InspectorTest.importScript("../../../../inspector-protocol/resources/console-test.js");
+    InspectorTest.importScript("console-test.js");
 
     var consoleMessageCount = 0;
     const expectedConsoleMessageCount = 7;
