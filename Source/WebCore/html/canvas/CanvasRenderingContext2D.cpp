@@ -2357,7 +2357,39 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 #if USE(CG)
     const CanvasStyle& drawStyle = fill ? state().m_fillStyle : state().m_strokeStyle;
     if (drawStyle.canvasGradient() || drawStyle.canvasPattern()) {
+
         IntRect maskRect = enclosingIntRect(textRect);
+
+        // If we have a shadow, we need to draw it before the mask operation.
+        // Follow a procedure similar to paintTextWithShadows in TextPainter.
+
+        if (shouldDrawShadows()) {
+            GraphicsContextStateSaver stateSaver(*c);
+
+            FloatSize offset = FloatSize(0, 2 * maskRect.height());
+
+            FloatSize shadowOffset;
+            float shadowRadius;
+            Color shadowColor;
+            ColorSpace shadowColorSpace;
+            c->getShadow(shadowOffset, shadowRadius, shadowColor, shadowColorSpace);
+
+            FloatRect shadowRect(maskRect);
+            shadowRect.inflate(shadowRadius * 1.4);
+            shadowRect.move(shadowOffset * -1);
+            c->clip(shadowRect);
+
+            shadowOffset += offset;
+
+            c->setLegacyShadow(shadowOffset, shadowRadius, shadowColor, shadowColorSpace);
+
+            if (fill)
+                c->setFillColor(Color::black, ColorSpaceDeviceRGB);
+            else
+                c->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
+
+            c->drawBidiText(font, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
+        }
 
         std::unique_ptr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
 
