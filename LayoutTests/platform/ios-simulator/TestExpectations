@@ -287,10 +287,10 @@ fast/layers/no-clipping-overflow-hidden-added-after-transform.html
 # Animation tests that fail:
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
-animations/play-state-suspend.html [ Failure ]
-animations/suspend-resume-animation.html [ Failure ]
-animations/unprefixed-events-mixed-with-prefixed.html [ Failure ]
-animations/unprefixed-events.html [ Failure ]
+animations/play-state-suspend.html [ Pass Failure ]
+animations/suspend-resume-animation.html [ Pass Failure ]
+animations/unprefixed-events-mixed-with-prefixed.html [ Pass Failure ]
+animations/unprefixed-events.html [ Pass Failure ]
 
 # Animation tests that are flaky:
 animations/3d/matrix-transform-type-animation.html [ Skip ] # Pass, Timeout, Missing

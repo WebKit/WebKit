@@ -1,3 +1,17 @@
+2015-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Move two ios-sim-deprecated/animations/ tests into animations.
+
+        * animations/resources/anim.html: Renamed from LayoutTests/platform/ios-sim-deprecated/animations/resources/anim.html.
+        * animations/restart-after-scroll-expected.txt: Copied from LayoutTests/platform/ios-sim-deprecated/animations/restart-after-scroll-nested-expected.txt.
+        * animations/restart-after-scroll-nested-expected.txt: Renamed from LayoutTests/platform/ios-sim-deprecated/animations/restart-after-scroll-nested-expected.txt.
+        * animations/restart-after-scroll-nested.html: Renamed from LayoutTests/platform/ios-sim-deprecated/animations/restart-after-scroll-nested.html.
+        * animations/restart-after-scroll.html: Renamed from LayoutTests/platform/ios-sim-deprecated/animations/restart-after-scroll.html.
+        * platform/ios-sim-deprecated/animations/restart-after-scroll-expected.txt: Removed.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-08-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Create CountQueuingStrategy object as per spec

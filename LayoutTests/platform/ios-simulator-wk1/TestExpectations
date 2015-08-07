@@ -1428,8 +1428,8 @@ security/block-test-no-port.html
 security/block-test.html
 
 # Animation tests that fail:
-animations/combo-transform-translate+scale.html [ Failure ]
-animations/suspend-resume-animation-events.html [ Failure ]
+animations/combo-transform-translate+scale.html [ Pass Failure ]
+animations/suspend-resume-animation-events.html [ Pass Failure ]
 
 # IndexedDB is not supported on iOS WK1.
 storage/indexeddb

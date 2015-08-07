@@ -5,8 +5,8 @@
 # Animation tests that fail:
 webkit.org/b/129562 [ Debug ] animations/animation-direction-reverse-fill-mode.html [ Skip ]
 webkit.org/b/129562 [ Debug ] animations/fill-mode-reverse.html [ Skip ]
-animations/additive-transform-animations.html [ Failure ]
-animations/play-state-paused.html [ Failure ]
+animations/additive-transform-animations.html [ Pass Failure ]
+animations/play-state-paused.html [ Pass Failure ]
 
 # Animation tests that time out:
 animations/animation-direction-normal.html
