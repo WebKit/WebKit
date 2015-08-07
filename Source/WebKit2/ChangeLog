@@ -1,3 +1,19 @@
+2015-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Temporarily allow programmatic input assistance for adding Gmail account
+        https://bugs.webkit.org/show_bug.cgi?id=147792
+
+        Reviewed by Enrica Casucci.
+        <rdar://problem/22126518>
+
+        Temporary fix for keyboard input sliding out and immediately back in upon user interaction
+        in the Gmail 2-factor authentication page.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]): Early
+            return no longer triggers due to lack of user interaction when adding a new Gmail account
+            through Settings.
+
 2015-08-07  Brady Eidson  <beidson@apple.com>
 
         Move concrete KeyedDecoder/Encoder implementations to WebCore.

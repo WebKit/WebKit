@@ -64,6 +64,7 @@
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
+#import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
@@ -3018,7 +3019,9 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode userObject:(NSObject <NSSecureCoding> *)userObject
 {
-    if (!userIsInteracting && !_textSelectionAssistant)
+    // FIXME: This is a temporary workaround for <rdar://problem/22126518>. The real fix will involve refactoring
+    // the way we assist programmatically focused nodes.
+    if (!applicationIsGmailAddAccountOnIOS() && !userIsInteracting && !_textSelectionAssistant)
         return;
 
     if (blurPreviousNode)
