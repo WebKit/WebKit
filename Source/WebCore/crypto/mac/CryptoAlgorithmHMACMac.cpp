@@ -89,7 +89,7 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
     return result;
 }
 
-void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&, ExceptionCode& ec)
 {
     CCHmacAlgorithm algorithm;
     if (!getCommonCryptoHMACAlgorithm(parameters.hash, algorithm)) {
@@ -102,7 +102,7 @@ void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& paramete
     callback(signature);
 }
 
-void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&&, ExceptionCode& ec)
 {
     CCHmacAlgorithm algorithm;
     if (!getCommonCryptoHMACAlgorithm(parameters.hash, algorithm)) {

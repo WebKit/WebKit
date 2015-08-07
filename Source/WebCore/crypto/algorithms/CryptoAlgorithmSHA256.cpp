@@ -52,7 +52,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA256::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParameters&, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
+void CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParameters&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
     std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoAlgorithmIdentifier::SHA_256);
     if (!digest) {

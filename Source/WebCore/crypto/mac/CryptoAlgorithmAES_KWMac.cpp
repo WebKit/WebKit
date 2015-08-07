@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
+void CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
     if (data.second % 8) {
         // RFC 3394 uses 64-bit blocks as input.
@@ -54,7 +54,7 @@ void CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const Crypt
     callback(result);
 }
 
-void CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
+void CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
     Vector<uint8_t> result(CCSymmetricUnwrappedSize(kCCWRAPAES, data.second));
     size_t resultSize = result.size();
