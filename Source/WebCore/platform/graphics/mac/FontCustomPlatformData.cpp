@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "FontCache.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
@@ -39,7 +40,10 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
 #if CORETEXT_WEB_FONTS
-    return FontPlatformData(adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr)).get(), size, bold, italic, orientation, widthVariant);
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
+    if (font && fontDescription.featureSettings() && fontDescription.featureSettings()->size())
+        font = applyFontFeatureSettings(font.get(), *fontDescription.featureSettings());
+    return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant);
 #else
     return FontPlatformData(m_cgFont.get(), size, bold, italic, orientation, widthVariant);
 #endif

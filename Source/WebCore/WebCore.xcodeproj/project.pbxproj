@@ -951,6 +951,7 @@
 		1C2417BA1992C04100EF9938 /* SpellingDot@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C2417B91992C04100EF9938 /* SpellingDot@3x.png */; };
 		1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */; };
 		1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */; };
+		1C3969D01B74211E002BCFA7 /* FontCacheCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */; };
 		1C6466251A12C38E0094603C /* CoreTextSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5E980F1A02CEFA002DB55F /* CoreTextSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C6466281A12C4200094603C /* NSFontSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C6466271A12C3F90094603C /* NSFontSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95A0E97330800266E07 /* InspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9560E97330800266E07 /* InspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8116,6 +8117,7 @@
 		1C2417B91992C04100EF9938 /* SpellingDot@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SpellingDot@3x.png"; sourceTree = "<group>"; };
 		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
 		1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageMac.cpp; sourceTree = "<group>"; };
+		1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCacheCoreText.cpp; sourceTree = "<group>"; };
 		1C5E980F1A02CEFA002DB55F /* CoreTextSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextSPI.h; sourceTree = "<group>"; };
 		1C6466271A12C3F90094603C /* NSFontSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFontSPI.h; sourceTree = "<group>"; };
 		1C81B9560E97330800266E07 /* InspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorController.h; sourceTree = "<group>"; };
@@ -21258,6 +21260,7 @@
 		B5320D68122A24E9002D1440 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */,
 				B2AFFC780D00A5C10030074D /* FontCascadeCocoa.mm */,
 				7C4EDD731A7B607800198C4D /* FontCocoa.mm */,
 				B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */,
@@ -29996,6 +29999,7 @@
 				BCEA4888097D93020094C9E4 /* RenderThemeMac.mm in Sources */,
 				93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */,
 				5824ABAA1AE849C8009074B7 /* RenderTreePosition.cpp in Sources */,
+				1C3969D01B74211E002BCFA7 /* FontCacheCoreText.cpp in Sources */,
 				E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
 				BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */,

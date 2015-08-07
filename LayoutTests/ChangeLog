@@ -1,3 +1,15 @@
+2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-feature-settings
+        https://bugs.webkit.org/show_bug.cgi?id=147722
+
+        Reviewed by Simon Fraser.
+
+        Until I can make a custom font for reference tests, use a simple dump-render-tree test.
+
+        * css3/font-feature-settings-preinstalled-fonts.html: Added.
+        * platform/mac-yosemite/css3/font-feature-settings-preinstalled-fonts-expected.txt: Added.
+
 2015-08-07  Simon Fraser  <simon.fraser@apple.com>
 
         Remove platform/ios-sim-deprecated. All of the tests here exist elsewhere already.

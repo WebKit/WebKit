@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>
+This test dumps render tree information for text styled with font-feature-settings.
+</p>
+<script>
+var fonts = ["Andale Mono", "Arial", "Didot", "Geneva", "Georgia", "Gill Sans", "Helvetica", "Helvetica Neue", "Hoefler Text", "Impact", "Lucida Grande", "Menlo", "Monaco", "Optima", "Tahoma", "Times", "Verdana", "Zapfino"];
+var features = ['"smcp" 1', '"c2sc" 1', '"zero" 1', '"nalt" 1', '"kern" 1', '"liga" 1', '"dlig" 1', '"hlig" 1', '"clig" 1', '"swsh" 1', '"calt" 1', '"hist" 1', '"salt" 1', '"ss01" 1', '"ss02" 1', '"ss03" 1', '"ss04" 1', '"ss05" 1', '"lnum" 1', '"onum" 1', '"pnum" 1', '"tnum" 1', '"frac" 1', '"afrc" 1'];
+fonts.map(function(font) {
+    features.map(function(feature) {
+        var element = document.createElement("div");
+        element.textContent = "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord.";
+        element.style.fontFamily = font;
+        element.style.webkitFontFeatureSettings = feature;
+        document.body.appendChild(element);
+    });
+});
+</script>
+</body>
+</html>
