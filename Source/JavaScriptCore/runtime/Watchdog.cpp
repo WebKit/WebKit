@@ -37,9 +37,9 @@ namespace JSC {
 Watchdog::Watchdog()
     : m_timerDidFire(false)
     , m_didFire(false)
-    , m_limit(NO_LIMIT)
-    , m_startTime(0)
-    , m_elapsedTime(0)
+    , m_timeoutPeriod(NO_LIMIT)
+    , m_startCPUTime(0)
+    , m_elapsedCPUTime(0)
     , m_reentryCount(0)
     , m_isStopped(true)
     , m_callback(0)
@@ -66,7 +66,7 @@ void Watchdog::setTimeLimit(VM& vm, std::chrono::microseconds limit,
 
     m_didFire = false; // Reset the watchdog.
 
-    m_limit = limit;
+    m_timeoutPeriod = limit;
     m_callback = callback;
     m_callbackData1 = data1;
     m_callbackData2 = data2;
@@ -98,9 +98,9 @@ bool Watchdog::didFire(ExecState* exec)
     stopCountdown();
 
     auto currentTime = currentCPUTime();
-    auto deltaTime = currentTime - m_startTime;
-    auto totalElapsedTime = m_elapsedTime + deltaTime;
-    if (totalElapsedTime > m_limit) {
+    auto deltaCPUTime = currentTime - m_startCPUTime;
+    auto totalElapsedCPUTime = m_elapsedCPUTime + deltaCPUTime;
+    if (totalElapsedCPUTime > m_timeoutPeriod) {
         // Case 1: the allowed CPU time has elapsed.
 
         // If m_callback is not set, then we terminate by default.
@@ -121,10 +121,10 @@ bool Watchdog::didFire(ExecState* exec)
 
         // Tell the timer to alarm us again when it thinks we've reached the
         // end of the allowed time.
-        auto remainingTime = m_limit - totalElapsedTime;
-        m_elapsedTime = totalElapsedTime;
-        m_startTime = currentTime;
-        startCountdown(remainingTime);
+        auto remainingCPUTime = m_timeoutPeriod - totalElapsedCPUTime;
+        m_elapsedCPUTime = totalElapsedCPUTime;
+        m_startCPUTime = currentTime;
+        startCountdown(remainingCPUTime);
     }
 
     return false;
@@ -132,7 +132,7 @@ bool Watchdog::didFire(ExecState* exec)
 
 bool Watchdog::isEnabled()
 {
-    return (m_limit != NO_LIMIT);
+    return (m_timeoutPeriod != NO_LIMIT);
 }
 
 void Watchdog::fire()
@@ -164,9 +164,9 @@ void Watchdog::startCountdownIfNeeded()
         return; // Not executing JS script. No need to start.
 
     if (isEnabled()) {
-        m_elapsedTime = std::chrono::microseconds::zero();
-        m_startTime = currentCPUTime();
-        startCountdown(m_limit);
+        m_elapsedCPUTime = std::chrono::microseconds::zero();
+        m_startCPUTime = currentCPUTime();
+        startCountdown(m_timeoutPeriod);
     }
 }
 

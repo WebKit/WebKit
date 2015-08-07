@@ -1,3 +1,22 @@
+2015-08-07  Mark Lam  <mark.lam@apple.com>
+
+        Rename some variables in the JSC watchdog implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=147790
+
+        Rubber stamped by Benjamin Poulain.
+
+        This is just a refactoring patch to give the variable better names that describe their
+        intended use.  There is no behavior change.
+
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::Watchdog):
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::didFire):
+        (JSC::Watchdog::isEnabled):
+        (JSC::Watchdog::fire):
+        (JSC::Watchdog::startCountdownIfNeeded):
+        * runtime/Watchdog.h:
+
 2015-08-07  Saam barati  <saambarati1@gmail.com>
 
         Interpreter::unwind shouldn't be responsible for assigning the correct scope.

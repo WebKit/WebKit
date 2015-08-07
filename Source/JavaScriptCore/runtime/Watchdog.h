@@ -82,9 +82,9 @@ private:
     bool m_timerDidFire;
     bool m_didFire;
 
-    std::chrono::microseconds m_limit;
-    std::chrono::microseconds m_startTime;
-    std::chrono::microseconds m_elapsedTime;
+    std::chrono::microseconds m_timeoutPeriod;
+    std::chrono::microseconds m_startCPUTime;
+    std::chrono::microseconds m_elapsedCPUTime;
 
     int m_reentryCount;
     bool m_isStopped;
