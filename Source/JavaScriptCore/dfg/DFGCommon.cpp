@@ -34,7 +34,7 @@
 
 namespace JSC { namespace DFG {
 
-static StaticSpinLock crashLock;
+static StaticLock crashLock;
 
 void startCrashing()
 {

@@ -27,7 +27,7 @@
 #include "dtoa.h"
 
 #if USE(WEB_THREAD)
-#include "SpinLock.h"
+#include "Lock.h"
 #endif
 
 namespace WTF {

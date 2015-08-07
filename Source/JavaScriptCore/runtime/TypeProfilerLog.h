@@ -32,7 +32,6 @@
 #include "JSCJSValue.h"
 #include "Structure.h"
 #include "TypeProfiler.h"
-#include <wtf/ByteSpinLock.h>
 
 namespace JSC {
 
