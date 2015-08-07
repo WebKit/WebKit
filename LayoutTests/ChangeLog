@@ -1,3 +1,32 @@
+2015-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Move platform/mac/fast/forms/ tests to fast/forms/
+
+        * TestExpectations:
+        * fast/forms/attributed-strings-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/attributed-strings-expected.txt.
+        * fast/forms/attributed-strings.html: Renamed from LayoutTests/platform/mac/fast/forms/attributed-strings.html.
+        * fast/forms/focus-option-control-on-page-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/focus-option-control-on-page-expected.txt.
+        * fast/forms/focus-option-control-on-page.html: Renamed from LayoutTests/platform/mac/fast/forms/focus-option-control-on-page.html.
+        * fast/forms/indeterminate-progress-inline-height-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/indeterminate-progress-inline-height-expected.txt.
+        * fast/forms/indeterminate-progress-inline-height.html: Renamed from LayoutTests/platform/mac/fast/forms/indeterminate-progress-inline-height.html.
+        * fast/forms/input-appearance-spinbutton-expected.png: Renamed from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton-expected.png.
+        * fast/forms/input-appearance-spinbutton-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton-expected.txt.
+        * fast/forms/input-appearance-spinbutton-size-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton-size-expected.txt.
+        * fast/forms/input-appearance-spinbutton-size.html: Renamed from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton-size.html.
+        * fast/forms/input-appearance-spinbutton-up-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt.
+        * fast/forms/input-appearance-spinbutton-up.html: Renamed from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton-up.html.
+        * fast/forms/input-appearance-spinbutton.html: Renamed from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton.html.
+        * fast/forms/input-number-click-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/input-number-click-expected.txt.
+        * fast/forms/input-number-click.html: Renamed from LayoutTests/platform/mac/fast/forms/input-number-click.html.
+        * fast/forms/listbox-scrollbar-hit-test-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/listbox-scrollbar-hit-test-expected.txt.
+        * fast/forms/listbox-scrollbar-hit-test.html: Renamed from LayoutTests/platform/mac/fast/forms/listbox-scrollbar-hit-test.html.
+        * fast/forms/script-tests/focus-option-control-on-page.js: Renamed from LayoutTests/platform/mac/fast/forms/script-tests/focus-option-control-on-page.js.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.png: Removed.
+        * platform/wk2/TestExpectations:
+
 2015-08-06  Dean Jackson  <dino@apple.com>
 
         Shadows don't draw on fillText when using a gradient fill

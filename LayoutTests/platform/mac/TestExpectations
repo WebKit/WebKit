@@ -367,12 +367,12 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Pass Failure ]
 
 # <rdar://problem/11224160> Focus not transferring properly in DumpRenderTree in Mountain Lion
 fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
-platform/mac/fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
+fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure ]
 
 [ Mavericks ] accessibility/mac/form-control-value-settable.html [ Failure ]
-platform/mac/fast/forms/input-appearance-spinbutton-up.html [ Failure ]
-platform/mac/fast/forms/input-appearance-spinbutton.html [ Failure ]
+[ Mavericks ] fast/forms/input-appearance-spinbutton-up.html [ Failure ]
+[ Mavericks ] fast/forms/input-appearance-spinbutton.html [ Failure ]
 platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
 
 fast/css/resize-corner-tracking.html [ Pass Failure ]

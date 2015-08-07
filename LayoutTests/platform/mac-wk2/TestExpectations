@@ -113,7 +113,6 @@ http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
 editing/mac/pasteboard/dataTransfer-set-data-file-url.html
 editing/mac/pasteboard/drag-selections-to-contenteditable.html
-platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 editing/pasteboard/drag-drop-paragraph-crasher.html
 
 # [WK2] [Mac] Spellcheck tests don't seem to work

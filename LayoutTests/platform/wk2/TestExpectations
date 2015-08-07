@@ -109,7 +109,6 @@ editing/mac/input/NSBackgroundColor-transparent.html
 editing/mac/pasteboard/paste-and-match-style-selector-event.html
 editing/mac/selection/25228.html
 platform/mac/fast/dom/character-index-for-point.html
-platform/mac/fast/forms/attributed-strings.html
 platform/mac/fast/text/attributed-substring-from-range-001.html
 platform/mac/fast/text/attributed-substring-from-range-002.html
 platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
@@ -539,9 +538,6 @@ editing/pasteboard/copy-standalone-image.html
 
 # Mysterious failure after enabling paste tests
 editing/mac/pasteboard/text-precomposed.html
-
-# An empty layer is missing.
-platform/mac/fast/forms/input-appearance-spinbutton-up.html
 
 # [WK2] http/tests/security/local-image-from-remote-whitelisted.html crashes
 # https://bugs.webkit.org/show_bug.cgi?id=73435
