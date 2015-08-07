@@ -3284,7 +3284,6 @@ set(WebCoreTestSupport_SOURCES
     testing/InternalSettings.cpp
     testing/Internals.cpp
     testing/MicroTaskTest.cpp
-    testing/MockCDM.cpp
     testing/MockPageOverlayClient.cpp
 
     testing/js/WebCoreTestSupport.cpp
