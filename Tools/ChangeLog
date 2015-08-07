@@ -1,3 +1,16 @@
+2015-08-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Running tests for a long time results in some tests running very slowly (throttling)
+        https://bugs.webkit.org/show_bug.cgi?id=147718
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Ensure throttling settings are disabled for tests for all ports, as
+        COCOA ports default to having these setting enabled. Note, there is
+        still other timer throttling not covered by these setting.
+
 2015-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive

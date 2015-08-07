@@ -621,6 +621,9 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesSetMediaSourceEnabled(preferences, true);
 #endif
 
+    WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
+    WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
+
     WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing);
 
     WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
