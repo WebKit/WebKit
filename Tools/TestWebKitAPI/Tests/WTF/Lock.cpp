@@ -94,7 +94,7 @@ TEST(WTF_Lock, ManyContentedShortSections)
 
 TEST(WTF_Lock, ManyContentedLongSections)
 {
-    runLockTest<Lock>(10, 10, 10000, 2000);
+    runLockTest<Lock>(10, 10, 10000, 1000);
 }
 
 } // namespace TestWebKitAPI

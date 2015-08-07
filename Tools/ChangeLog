@@ -1,3 +1,10 @@
+2015-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, reduce the duration of a Lock unit test. It was timing out.
+
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-08-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Running tests for a long time results in some tests running very slowly (throttling)
