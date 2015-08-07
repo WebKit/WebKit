@@ -1727,3 +1727,5 @@ fast/history/history-length.html [ Crash ]
 storage/websql/alter-to-info-table.html [ Crash ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
+
+fast/dom/timer-fire-after-page-pause.html [ Pass ]

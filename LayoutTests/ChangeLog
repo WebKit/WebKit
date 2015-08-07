@@ -1,5 +1,25 @@
 2015-08-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Move ios-sim-deprecated/fast/dom/ tests into fast/dom
+
+        * TestExpectations:
+        * fast/dom/Range/expand-word-with-apostrophe-expected.txt: Renamed from LayoutTests/platform/ios-sim-deprecated/fast/dom/Range/expand-word-with-apostrophe-expected.txt.
+        * fast/dom/Range/expand-word-with-apostrophe.html: Renamed from LayoutTests/platform/ios-sim-deprecated/fast/dom/Range/expand-word-with-apostrophe.html.
+        * fast/dom/Window/no-window-resize-on-document-size-change-expected.txt: Added.
+        * fast/dom/Window/no-window-resize-on-document-size-change.html: Renamed from LayoutTests/platform/ios-sim-deprecated/fast/dom/Window/no-window-resize-on-document-size-change.html.
+        * fast/dom/adopt-attribute-crash-expected.txt:
+        * fast/dom/navigator-iOS-userAgent-expected.txt: Added.
+        * fast/dom/navigator-iOS-userAgent.html: Renamed from LayoutTests/platform/ios-sim-deprecated/fast/dom/navigator-iOS-userAgent.html.
+        * fast/dom/timer-fire-after-page-pause-expected.txt: Renamed from LayoutTests/platform/ios-sim-deprecated/fast/dom/timer-fire-after-page-pause-expected.txt.
+        * fast/dom/timer-fire-after-page-pause.html: Renamed from LayoutTests/platform/ios-sim-deprecated/fast/dom/timer-fire-after-page-pause.html.
+        * platform/ios-sim-deprecated/fast/dom/Window/no-window-resize-on-document-size-change-expected.txt: Removed.
+        * platform/ios-sim-deprecated/fast/dom/navigator-iOS-userAgent-expected.txt: Removed.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/dom/navigator-iOS-userAgent-expected.txt: Added.
+
+2015-08-06  Simon Fraser  <simon.fraser@apple.com>
+
         Move two ios-sim-deprecated/animations/ tests into animations.
 
         * animations/resources/anim.html: Renamed from LayoutTests/platform/ios-sim-deprecated/animations/resources/anim.html.

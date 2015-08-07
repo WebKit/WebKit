@@ -2694,6 +2694,8 @@ fast/fixed-layout/fixed-layout.html [ Failure Crash Pass ]
 # Not implemented
 webkit.org/b/145617 compositing/layer-creation/zoomed-clip-intersection.html [ Skip ]
 
+fast/dom/timer-fire-after-page-pause.html [ Skip ]
+
 # This test depends on location, and it is impossible to mock the particular mechanism
 # this test uses to determine location.
 fast/text/softbank-emoji.html [ Failure Pass ]
