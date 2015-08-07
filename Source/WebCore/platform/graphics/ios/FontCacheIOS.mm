@@ -80,8 +80,14 @@ PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescrip
     const FontPlatformData& platformData = originalFontData->platformData();
     CTFontRef ctFont = platformData.font();
 
+    RetainPtr<CFStringRef> localeString;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
+    if (!description.locale().isNull())
+        localeString = description.locale().string().createCFString();
+#endif
+
     CFIndex coveredLength = 0;
-    RetainPtr<CTFontRef> substituteFont = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(ctFont, (const UTF16Char*)characters, (CFIndex)length, 0, &coveredLength));
+    RetainPtr<CTFontRef> substituteFont = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(ctFont, (const UTF16Char*)characters, (CFIndex)length, localeString.get(), &coveredLength));
     if (!substituteFont)
         return nullptr;
 

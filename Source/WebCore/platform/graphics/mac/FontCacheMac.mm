@@ -484,9 +484,11 @@ void FontCache::platformPurgeInactiveFontData()
         fallbackDedupSet().remove(font);
 }
 
-static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, const UChar* characters, unsigned length)
+static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, const AtomicString& locale, const UChar* characters, unsigned length)
 {
+    RetainPtr<CFStringRef> localeString;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1090
+    UNUSED_PARAM(locale);
     if (!font) {
         font = reinterpret_cast<CTFontRef>([NSFont userFontOfSize:fontSize]);
         bool acceptable = true;
@@ -501,18 +503,24 @@ static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, 
         if (acceptable)
             return font;
     }
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
+    UNUSED_PARAM(fontSize);
+    if (!locale.isNull())
+        localeString = locale.string().createCFString();
 #else
     UNUSED_PARAM(fontSize);
+    UNUSED_PARAM(locale);
 #endif
+
     CFIndex coveredLength = 0;
-    return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, nullptr, &coveredLength));
+    return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
 }
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length)
 {
     const FontPlatformData& platformData = originalFontData->platformData();
     NSFont *nsFont = platformData.nsFont();
-    RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), characters, length);
+    RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), description.locale(), characters, length);
     if (result && description.featureSettings() && description.featureSettings()->size())
         result = applyFontFeatureSettings(result.get(), *description.featureSettings());
     if (!result)

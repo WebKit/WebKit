@@ -2250,3 +2250,6 @@ webkit.org/b/146887 accessibility/roles-exposed.html [ Failure ]
 webkit.org/b/146887 accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
 webkit.org/b/146887 accessibility/table-with-footer-section-above-body.html [ Failure ]
 webkit.org/b/146887 accessibility/table-with-missing-aria-role-rows.html [ Failure ]
+
+# This test hardcodes the result of a platform-dependent font lookup algorithm.
+fast/text/fallback-language-han.html [ Skip ]

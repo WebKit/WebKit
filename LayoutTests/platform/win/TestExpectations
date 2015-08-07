@@ -3146,3 +3146,6 @@ http/tests/misc/large-js-program.php [ Slow Crash ]
 fast/repaint/block-inputrange-repaint.html [ Pass Failure ]
 
 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
+
+# This test hardcodes the result of a platform-dependent font lookup algorithm.
+fast/text/fallback-language-han.html [ Skip ]
