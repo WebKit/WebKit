@@ -8,6 +8,7 @@
 
 accessibility/mac [ Pass ]
 editing/mac [ Pass ]
+fast/scrolling/latching [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -1305,7 +1306,7 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 [ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.fill.source-in.html [ Pass Failure ]
 
 # WK1-only timeout.
-webkit.org/b/147683 platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]
+webkit.org/b/147683 fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]
 
 webkit.org/b/147763 [ Mavericks ] accessibility/mac/loaded-notification.html [ Skip ]
 webkit.org/b/147763 [ Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]

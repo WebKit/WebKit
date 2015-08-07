@@ -1,5 +1,47 @@
 2015-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Move platform/mac/fast/scrolling/ tests into fast/scrolling/latching/
+
+        * TestExpectations:
+        * fast/scrolling/latching/iframe_in_iframe-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/iframe_in_iframe-expected.txt.
+        * fast/scrolling/latching/iframe_in_iframe.html: Renamed from LayoutTests/platform/mac/fast/scrolling/iframe_in_iframe.html.
+        * fast/scrolling/latching/resources/background.html: Renamed from LayoutTests/platform/mac/fast/scrolling/resources/background.html.
+        * fast/scrolling/latching/resources/inner_content.html: Renamed from LayoutTests/platform/mac/fast/scrolling/resources/inner_content.html.
+        * fast/scrolling/latching/resources/scroll_nested_iframe_test_inner.html: Renamed from LayoutTests/platform/mac/fast/scrolling/resources/scroll_nested_iframe_test_inner.html.
+        * fast/scrolling/latching/resources/scroll_nested_iframe_test_outer.html: Renamed from LayoutTests/platform/mac/fast/scrolling/resources/scroll_nested_iframe_test_outer.html.
+        * fast/scrolling/latching/resources/testContent.html: Renamed from LayoutTests/platform/mac/fast/scrolling/resources/testContent.html.
+        * fast/scrolling/latching/resources/testImage.png: Renamed from LayoutTests/platform/mac/fast/scrolling/resources/testImage.png.
+        * fast/scrolling/latching/scroll-div-latched-div-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-latched-div-expected.txt.
+        * fast/scrolling/latching/scroll-div-latched-div.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-latched-div.html.
+        * fast/scrolling/latching/scroll-div-latched-mainframe-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-latched-mainframe-expected.txt.
+        * fast/scrolling/latching/scroll-div-latched-mainframe.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-latched-mainframe.html.
+        * fast/scrolling/latching/scroll-div-no-latching-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-no-latching-expected.txt.
+        * fast/scrolling/latching/scroll-div-no-latching.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-no-latching.html.
+        * fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe-expected.txt.
+        * fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html.
+        * fast/scrolling/latching/scroll-iframe-fragment-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-fragment-expected.txt.
+        * fast/scrolling/latching/scroll-iframe-fragment.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-fragment.html.
+        * fast/scrolling/latching/scroll-iframe-latched-iframe-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-latched-iframe-expected.txt.
+        * fast/scrolling/latching/scroll-iframe-latched-iframe.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-latched-iframe.html.
+        * fast/scrolling/latching/scroll-iframe-latched-mainframe-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-latched-mainframe-expected.txt.
+        * fast/scrolling/latching/scroll-iframe-latched-mainframe.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-latched-mainframe.html.
+        * fast/scrolling/latching/scroll-iframe-webkit1-latching-bug-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-webkit1-latching-bug-expected.txt.
+        * fast/scrolling/latching/scroll-iframe-webkit1-latching-bug.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-iframe-webkit1-latching-bug.html.
+        * fast/scrolling/latching/scroll-latched-nested-div-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-latched-nested-div-expected.txt.
+        * fast/scrolling/latching/scroll-latched-nested-div.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-latched-nested-div.html.
+        * fast/scrolling/latching/scroll-nested-iframe-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-nested-iframe-expected.txt.
+        * fast/scrolling/latching/scroll-nested-iframe.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-nested-iframe.html.
+        * fast/scrolling/latching/scroll-select-bottom-test-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-select-bottom-test-expected.txt.
+        * fast/scrolling/latching/scroll-select-bottom-test.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-select-bottom-test.html.
+        * fast/scrolling/latching/scroll-select-latched-mainframe-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-select-latched-mainframe-expected.txt.
+        * fast/scrolling/latching/scroll-select-latched-mainframe.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-select-latched-mainframe.html.
+        * fast/scrolling/latching/scroll-select-latched-select-expected.txt: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-select-latched-select-expected.txt.
+        * fast/scrolling/latching/scroll-select-latched-select.html: Renamed from LayoutTests/platform/mac/fast/scrolling/scroll-select-latched-select.html.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2015-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Move platform/mac/fast/forms/ tests to fast/forms/
 
         * TestExpectations:

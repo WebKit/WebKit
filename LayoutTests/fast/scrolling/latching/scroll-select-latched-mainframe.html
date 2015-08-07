@@ -25,7 +25,7 @@
 }
 
 </style>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 function onLoad() {
     setupTopLevel();
@@ -35,8 +35,6 @@ function onLoad() {
 <body onload="onLoad();">
 <script>
 
-var clientInset = 100;
-
 var selectTarget;
 var pageScrollPositionBefore;
 var selectScrollPositionBefore;
@@ -44,17 +42,17 @@ var continueCount = 5;
 
 function checkForScroll() {
 
-    // The page should not have scrolled at all.
+    // The select should not have scrolled at all.
     var pageScrollPositionAfter = document.body.scrollTop;
     var selectScrollPositionAfter = selectTarget.scrollTop;
 
     //debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
     //debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
 
-    if (pageScrollPositionBefore != pageScrollPositionAfter)
-        testFailed("Page received wheel events.");
+    if (selectScrollPositionBefore != selectScrollPositionAfter)
+        testFailed("Select consumed wheel events.");
     else
-        testPassed("Page did not receive wheel events.");
+        testPassed("Select did not receive wheel events.");
 
     testRunner.notifyDone();
 }
@@ -64,15 +62,13 @@ function scrollTest() {
     pageScrollPositionBefore = document.body.scrollTop;
 
     selectTarget = document.getElementById('target');
-    selectTarget.scrollTop = selectTarget.scrollHeight - selectTarget.clientHeight - 100;
 
     selectScrollPositionBefore = selectTarget.scrollTop;
- 
+
     // Scroll the #source until we reach the #target.
-    var startPosX = selectTarget.offsetLeft + 20;
-    debug("div display height = " + selectTarget.clientHeight);
-    var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) + clientInset - 2; // Very near top (accounting for top content inset).
-    eventSender.mouseMoveTo(startPosX, startPosY);
+    var startPosX = Math.round(selectTarget.offsetLeft) + 20;
+    var startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the IFrame
+    eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
     debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
@@ -90,7 +86,6 @@ function scrollTest() {
 function setupTopLevel() {
 
     if (window.eventSender) {
-        testRunner.dumpAsText(true);
         testRunner.waitUntilDone();
 
         setTimeout(scrollTest, 1000);
@@ -98,14 +93,11 @@ function setupTopLevel() {
         var messageLocation = document.getElementById('parent');
         var message = document.createElement('div');
         message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
-            + "inside the select box, and scroll near (but not AT) the bottom of the range. Use the mouse wheel or a two-finger<br/>"
-            + "swipe to scroll through the rest of the select options.<br/><br/>"
-            + "You should not see the page position change if this test is successful.</p>";
+            + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll down<br/>"
+            + "past the selectTarget.<br/><br/>"
+            + "You should not see the 'content21' label if this test is successful.</p>";
         messageLocation.appendChild(message);
     }
-
-    if (window.internals)
-        window.internals.setTopContentInset(clientInset);
 }
 
 </script>
@@ -143,8 +135,8 @@ function setupTopLevel() {
 </div>
 <div id="console"></div>
 <script>
-description("Tests that a select doesn't pass wheel events to main frame when scrolling at bottom");
+description("Tests that a select doesn't consume wheel events when scroll is latched to main frame.");
 </script>
-<script src="../../../../resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

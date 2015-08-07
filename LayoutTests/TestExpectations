@@ -15,6 +15,7 @@ editing/pasteboard/gtk [ Skip ]
 tiled-drawing [ Skip ]
 
 fast/forms/attributed-strings.html [ Skip ]
+fast/scrolling/latching [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
