@@ -450,6 +450,7 @@ namespace JSC {
         Jump emitJumpIfImmediateInteger(RegisterID);
         Jump emitJumpIfNotImmediateInteger(RegisterID);
         Jump emitJumpIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
+        PatchableJump emitPatchableJumpIfNotImmediateInteger(RegisterID);
         void emitJumpSlowCaseIfNotImmediateInteger(RegisterID);
         void emitJumpSlowCaseIfNotImmediateNumber(RegisterID);
         void emitJumpSlowCaseIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);

@@ -1208,6 +1208,11 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateInteger(RegisterID reg)
     return branch64(Below, reg, tagTypeNumberRegister);
 }
 
+ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotImmediateInteger(RegisterID reg)
+{
+    return patchableBranch64(Below, reg, tagTypeNumberRegister);
+}
+
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateIntegers(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     move(reg1, scratch);

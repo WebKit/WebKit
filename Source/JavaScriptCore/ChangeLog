@@ -1,3 +1,26 @@
+2015-08-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add MacroAssembler::patchableBranch64 and fix ARM64's patchableBranchPtr
+        https://bugs.webkit.org/show_bug.cgi?id=147761
+
+        Reviewed by Mark Lam.
+
+        This patch implements MacroAssembler::patchableBranch64 in 64bit environments.
+        And fix the existing MacroAssemblerARM64::patchableBranchPtr, before this patch,
+        it truncates the immediate pointer into the 32bit immediate.
+        And use patchableBranch64 in the baseline JIT under the JSVALUE64 configuration.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::patchableBranchPtr):
+        (JSC::MacroAssemblerARM64::patchableBranch64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::patchableBranch64):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitPatchableJumpIfNotImmediateInteger):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+
 2015-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce get_by_id like IC into get_by_val when the given name is String or Symbol

@@ -756,6 +756,16 @@ public:
         store64(scratchRegister, address);
         return label;
     }
+
+    PatchableJump patchableBranch64(RelationalCondition cond, RegisterID reg, TrustedImm64 imm)
+    {
+        return PatchableJump(branch64(cond, reg, imm));
+    }
+
+    PatchableJump patchableBranch64(RelationalCondition cond, RegisterID left, RegisterID right)
+    {
+        return PatchableJump(branch64(cond, left, right));
+    }
     
     using MacroAssemblerX86Common::branch8;
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)

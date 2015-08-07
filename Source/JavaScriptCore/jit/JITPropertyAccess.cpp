@@ -104,18 +104,9 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
 
-    // FIXME: patchableBranch64 could reduce the following 2 jumps into 1. Like,
-    //
-    // PatchableJump notIndex = emitJumpIfNotImmediateInteger(regT1);
-    //
-    // To use patchableBranch64, we need to fix the existing patchableBranchPtr in ARM64
-    // and introduce patchableBranch64 helper function for 64bit environments.
-    // https://bugs.webkit.org/show_bug.cgi?id=147761
-    Jump isIndex = emitJumpIfImmediateInteger(regT1);
-    PatchableJump notIndex = patchableJump();
+    PatchableJump notIndex = emitPatchableJumpIfNotImmediateInteger(regT1);
     addSlowCase(notIndex);
 
-    isIndex.link(this);
     // This is technically incorrect - we're zero-extending an int32.  On the hot path this doesn't matter.
     // We check the value as if it was a uint32 against the m_vectorLength - which will always fail if
     // number was signed since m_vectorLength is always less than intmax (since the total allocation

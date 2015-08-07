@@ -2341,10 +2341,10 @@ public:
         return branch32(cond, left, dataTempRegister);
     }
 
-    PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
+    PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right)
     {
         m_makeJumpPatchable = true;
-        Jump result = branch32(cond, left, TrustedImm32(right));
+        Jump result = branch64(cond, left, TrustedImm64(right));
         m_makeJumpPatchable = false;
         return PatchableJump(result);
     }
@@ -2361,6 +2361,22 @@ public:
     {
         m_makeJumpPatchable = true;
         Jump result = branch32(cond, reg, imm);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
+    PatchableJump patchableBranch64(RelationalCondition cond, RegisterID reg, TrustedImm64 imm)
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branch64(cond, reg, imm);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
+    PatchableJump patchableBranch64(RelationalCondition cond, RegisterID left, RegisterID right)
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branch64(cond, left, right);
         m_makeJumpPatchable = false;
         return PatchableJump(result);
     }
