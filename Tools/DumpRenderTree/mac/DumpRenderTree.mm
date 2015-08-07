@@ -978,6 +978,9 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaSourceEnabled:YES];
 #endif
 
+    [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
+    [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
+
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
