@@ -28,11 +28,9 @@
 
 namespace WebCore {
 
-static inline void appendTrueTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
+static inline void appendTrueTypeFeature(CFMutableArrayRef, const FontFeature&)
 {
-    // FIXME: We should map OpenType feature strings to the TrueType feature type identifiers listed in <CoreText/SFNTLayoutTypes.h>
-    UNUSED_PARAM(features);
-    UNUSED_PARAM(feature);
+    // FIXME: We should map OpenType feature strings to the TrueType feature type identifiers listed in <CoreText/SFNTLayoutTypes.h>.
 }
 
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
@@ -41,9 +39,9 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
     RetainPtr<CFStringRef> featureKey = feature.tag().string().createCFString();
     int rawFeatureValue = feature.value();
     RetainPtr<CFNumberRef> featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawFeatureValue));
-    CFStringRef featureDictionaryKeys[] = {kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue};
-    CFTypeRef featureDictionaryValues[] = {featureKey.get(), featureValue.get()};
-    RetainPtr<CFDictionaryRef> featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)featureDictionaryKeys, featureDictionaryValues, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    CFStringRef featureDictionaryKeys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
+    CFTypeRef featureDictionaryValues[] = { featureKey.get(), featureValue.get() };
+    RetainPtr<CFDictionaryRef> featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)featureDictionaryKeys, featureDictionaryValues, WTF_ARRAY_LENGTH(featureDictionaryValues), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFArrayAppendValue(features, featureDictionary.get());
 #else
     UNUSED_PARAM(features);
@@ -51,12 +49,15 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
 #endif
 }
 
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const FontFeatureSettings& features)
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const FontFeatureSettings* features)
 {
-    RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
-    for (size_t i = 0; i < features.size(); ++i) {
-        appendTrueTypeFeature(featureArray.get(), features[i]);
-        appendOpenTypeFeature(featureArray.get(), features[i]);
+    if (!originalFont || !features || !features->size())
+        return originalFont;
+
+    RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features->size(), &kCFTypeArrayCallBacks));
+    for (size_t i = 0; i < features->size(); ++i) {
+        appendTrueTypeFeature(featureArray.get(), features->at(i));
+        appendOpenTypeFeature(featureArray.get(), features->at(i));
     }
     CFArrayRef featureArrayPtr = featureArray.get();
     RetainPtr<CFDictionaryRef> dictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)&kCTFontFeatureSettingsAttribute, (const void**)&featureArrayPtr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

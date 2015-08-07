@@ -41,8 +41,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     FontWidthVariant widthVariant = fontDescription.widthVariant();
 #if CORETEXT_WEB_FONTS
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
-    if (font && fontDescription.featureSettings() && fontDescription.featureSettings()->size())
-        font = applyFontFeatureSettings(font.get(), *fontDescription.featureSettings());
+    font = applyFontFeatureSettings(font.get(), fontDescription.featureSettings());
     return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant);
 #else
     return FontPlatformData(m_cgFont.get(), size, bold, italic, orientation, widthVariant);
