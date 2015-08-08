@@ -1,3 +1,11 @@
+2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [El Capitan] Test Gardening
+
+        Unreviewed.
+
+        * platform/mac/css3/font-feature-settings-preinstalled-fonts-expected.txt: Added.
+
 2015-08-07  James Craig  <jcraig@apple.com>
 
         REGRESSION(r184722) AX: WebKit video playback toolbar removed from DOM; no longer accessible to VoiceOver
