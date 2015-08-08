@@ -208,6 +208,7 @@ public:
     void setIsCSSAnimating(bool b) { m_isCSSAnimating = b; }
     
     const RenderElement* enclosingRendererWithTextDecoration(TextDecoration, bool firstLine) const;
+    void drawLineForBoxSide(GraphicsContext&, const FloatRect&, BoxSide, Color, EBorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false) const;
 
 protected:
     enum BaseTypeFlags {
@@ -263,6 +264,9 @@ protected:
     void setRenderBlockFlowHasMarkupTruncation(bool b) { m_renderBlockFlowHasMarkupTruncation = b; }
     unsigned renderBlockFlowLineLayoutPath() const { return m_renderBlockFlowLineLayoutPath; }
     bool renderBlockFlowHasMarkupTruncation() const { return m_renderBlockFlowHasMarkupTruncation; }
+
+    void paintFocusRing(PaintInfo&, const LayoutPoint&, const RenderStyle&);
+    void paintOutline(PaintInfo&, const LayoutRect&);
 
 private:
     RenderElement(ContainerNode&, Ref<RenderStyle>&&, unsigned baseTypeFlags);

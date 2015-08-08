@@ -613,7 +613,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& styl
         adjustInputElementButtonStyle(style, static_cast<HTMLInputElement&>(*element));
 }
 
-bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     RenderStyle& style = box.style();
     float borderTopWidth = style.borderTopWidth();
@@ -643,7 +643,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, con
 
     float separator = clip.maxX() - MenuListButtonPaddingRight;
 
-    box.drawLineForBoxSide(paintInfo.context, separator - borderTopWidth, clip.y(), separator, clip.maxY(), BSRight, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
+    box.drawLineForBoxSide(*paintInfo.context, FloatRect(FloatPoint(separator - borderTopWidth, clip.y()), FloatPoint(separator, clip.maxY())), BSRight, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
 
     FloatRect buttonClip(separator - adjustTop, clip.y() - adjustTop, MenuListButtonPaddingRight + adjustTop + adjustRight, clip.height() + adjustTop + adjustBottom);
 
@@ -662,7 +662,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, con
 
     // Paint Indicators.
 
-    if (box.isMenuList() && downcast<HTMLSelectElement>(box.node())->multiple()) {
+    if (box.isMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
         int size = 2;
         int count = 3;
         int padding = 3;

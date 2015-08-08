@@ -1555,7 +1555,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     RenderStyle& styleToUse = style();
     // Only paint the focus ring by hand if the theme isn't able to draw it.
     if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse))
-        paintFocusRing(paintInfo, paintOffset, &styleToUse);
+        paintFocusRing(paintInfo, paintOffset, styleToUse);
 
     if (hasOutlineAnnotation() && !styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse))
         addPDFURLRect(paintInfo, paintOffset);
@@ -1614,11 +1614,11 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
     IntRect pixelSnappedNextLine = snappedIntRect(paintOffset.x() + nextline.x(), 0, nextline.width(), 0);
     
     // left edge
-    drawLineForBoxSide(graphicsContext,
-        pixelSnappedBox.x() - outlineWidth,
-        pixelSnappedBox.y() - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? outlineWidth : 0),
-        pixelSnappedBox.x(),
-        pixelSnappedBox.maxY() + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? outlineWidth : 0),
+    drawLineForBoxSide(*graphicsContext,
+        FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
+        pixelSnappedBox.y() - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? outlineWidth : 0)),
+        FloatPoint(pixelSnappedBox.x(),
+        pixelSnappedBox.maxY() + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? outlineWidth : 0))),
         BSLeft,
         outlineColor, outlineStyle,
         (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? outlineWidth : -outlineWidth),
@@ -1626,11 +1626,11 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
         antialias);
     
     // right edge
-    drawLineForBoxSide(graphicsContext,
-        pixelSnappedBox.maxX(),
-        pixelSnappedBox.y() - (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? outlineWidth : 0),
-        pixelSnappedBox.maxX() + outlineWidth,
-        pixelSnappedBox.maxY() + (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? outlineWidth : 0),
+    drawLineForBoxSide(*graphicsContext,
+        FloatRect(FloatPoint(pixelSnappedBox.maxX(),
+        pixelSnappedBox.y() - (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? outlineWidth : 0)),
+        FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
+        pixelSnappedBox.maxY() + (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? outlineWidth : 0))),
         BSRight,
         outlineColor, outlineStyle,
         (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? outlineWidth : -outlineWidth),
@@ -1638,32 +1638,32 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
         antialias);
     // upper edge
     if (thisline.x() < lastline.x())
-        drawLineForBoxSide(graphicsContext,
-            pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.y() - outlineWidth,
-            std::min(pixelSnappedBox.maxX() + outlineWidth, (lastline.isEmpty() ? 1000000 : pixelSnappedLastLine.x())),
-            pixelSnappedBox.y(),
+        drawLineForBoxSide(*graphicsContext,
+            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
+            pixelSnappedBox.y() - outlineWidth),
+            FloatPoint(std::min(pixelSnappedBox.maxX() + outlineWidth, (lastline.isEmpty() ? 1000000 : pixelSnappedLastLine.x())),
+            pixelSnappedBox.y())),
             BSTop, outlineColor, outlineStyle,
             outlineWidth,
             (!lastline.isEmpty() && paintOffset.x() + lastline.x() + 1 < pixelSnappedBox.maxX() + outlineWidth) ? -outlineWidth : outlineWidth,
             antialias);
     
     if (lastline.maxX() < thisline.maxX())
-        drawLineForBoxSide(graphicsContext,
-            std::max(lastline.isEmpty() ? -1000000 : pixelSnappedLastLine.maxX(), pixelSnappedBox.x() - outlineWidth),
-            pixelSnappedBox.y() - outlineWidth,
-            pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.y(),
+        drawLineForBoxSide(*graphicsContext,
+            FloatRect(FloatPoint(std::max(lastline.isEmpty() ? -1000000 : pixelSnappedLastLine.maxX(), pixelSnappedBox.x() - outlineWidth),
+            pixelSnappedBox.y() - outlineWidth),
+            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
+            pixelSnappedBox.y())),
             BSTop, outlineColor, outlineStyle,
             (!lastline.isEmpty() && pixelSnappedBox.x() - outlineWidth < paintOffset.x() + lastline.maxX()) ? -outlineWidth : outlineWidth,
             outlineWidth, antialias);
 
     if (thisline.x() == thisline.maxX())
-          drawLineForBoxSide(graphicsContext,
-            pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.y() - outlineWidth,
-            pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.y(),
+        drawLineForBoxSide(*graphicsContext,
+            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
+            pixelSnappedBox.y() - outlineWidth),
+            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
+            pixelSnappedBox.y())),
             BSTop, outlineColor, outlineStyle,
             outlineWidth,
             outlineWidth,
@@ -1671,32 +1671,32 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
 
     // lower edge
     if (thisline.x() < nextline.x())
-        drawLineForBoxSide(graphicsContext,
-            pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.maxY(),
-            std::min(pixelSnappedBox.maxX() + outlineWidth, !nextline.isEmpty() ? pixelSnappedNextLine.x() + 1 : 1000000),
-            pixelSnappedBox.maxY() + outlineWidth,
+        drawLineForBoxSide(*graphicsContext,
+            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
+            pixelSnappedBox.maxY()),
+            FloatPoint(std::min(pixelSnappedBox.maxX() + outlineWidth, !nextline.isEmpty() ? pixelSnappedNextLine.x() + 1 : 1000000),
+            pixelSnappedBox.maxY() + outlineWidth)),
             BSBottom, outlineColor, outlineStyle,
             outlineWidth,
             (!nextline.isEmpty() && paintOffset.x() + nextline.x() + 1 < pixelSnappedBox.maxX() + outlineWidth) ? -outlineWidth : outlineWidth,
             antialias);
     
     if (nextline.maxX() < thisline.maxX())
-        drawLineForBoxSide(graphicsContext,
-            std::max(!nextline.isEmpty() ? pixelSnappedNextLine.maxX() : -1000000, pixelSnappedBox.x() - outlineWidth),
-            pixelSnappedBox.maxY(),
-            pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.maxY() + outlineWidth,
+        drawLineForBoxSide(*graphicsContext,
+            FloatRect(FloatPoint(std::max(!nextline.isEmpty() ? pixelSnappedNextLine.maxX() : -1000000, pixelSnappedBox.x() - outlineWidth),
+            pixelSnappedBox.maxY()),
+            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
+            pixelSnappedBox.maxY() + outlineWidth)),
             BSBottom, outlineColor, outlineStyle,
             (!nextline.isEmpty() && pixelSnappedBox.x() - outlineWidth < paintOffset.x() + nextline.maxX()) ? -outlineWidth : outlineWidth,
             outlineWidth, antialias);
 
     if (thisline.x() == thisline.maxX())
-          drawLineForBoxSide(graphicsContext,
-            pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.maxY(),
-            pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.maxY() + outlineWidth,
+        drawLineForBoxSide(*graphicsContext,
+            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
+            pixelSnappedBox.maxY()),
+            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
+            pixelSnappedBox.maxY() + outlineWidth)),
             BSBottom, outlineColor, outlineStyle,
             outlineWidth,
             outlineWidth,

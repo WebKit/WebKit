@@ -62,6 +62,8 @@ public:
         : m_location(location), m_size(size) { }
     FloatRect(float x, float y, float width, float height)
         : m_location(FloatPoint(x, y)), m_size(FloatSize(width, height)) { }
+    FloatRect(const FloatPoint& topLeft, const FloatPoint& bottomRight)
+        : m_location(topLeft), m_size(FloatSize(bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y())) { }
     WEBCORE_EXPORT FloatRect(const IntRect&);
 
     static FloatRect narrowPrecision(double x, double y, double width, double height);

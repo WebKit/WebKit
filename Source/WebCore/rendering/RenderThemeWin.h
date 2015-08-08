@@ -87,7 +87,7 @@ public:
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
 
-    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    virtual bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;

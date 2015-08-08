@@ -860,7 +860,7 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const Paint
     return false;
 }
 
-bool RenderThemeGtk::paintMenuListButtonDecorations(const RenderObject& object, const PaintInfo& info, const FloatRect& rect)
+bool RenderThemeGtk::paintMenuListButtonDecorations(const RenderBox& object, const PaintInfo& info, const FloatRect& rect)
 {
     return paintMenuList(object, info, rect);
 }

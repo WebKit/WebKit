@@ -72,7 +72,7 @@ protected:
     virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    virtual bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
     virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
