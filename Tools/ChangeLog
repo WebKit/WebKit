@@ -1,5 +1,13 @@
 2015-08-07  Alex Christensen  <achristensen@webkit.org>
 
+        [GTK] Another build fix after r188157.
+
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::viewSupportsOptions):
+        Name all the things correctly!
+
+2015-08-07  Alex Christensen  <achristensen@webkit.org>
+
         [EFL, GTK] Build fix after r188176.
 
         * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:

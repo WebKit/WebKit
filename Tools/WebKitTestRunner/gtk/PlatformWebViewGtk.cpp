@@ -141,7 +141,7 @@ void PlatformWebView::didInitializeClients()
 {
 }
 
-bool PlatformWebView::viewSupportsOptions(const TestOptions&) const
+bool PlatformWebView::viewSupportsOptions(const ViewOptions&) const
 {
     return true;
 }
