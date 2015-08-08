@@ -185,12 +185,14 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     toClipboardString(isPrefixOptional)
     {
-        var clipboardString = this._messageTextElement.innerText;
+        let clipboardString = this._messageTextElement.innerText.removeWordBreakCharacters();
+        if (this._message.savedResultIndex)
+            clipboardString = clipboardString.replace(/\s*=\s*(\$\d+)$/, " = $1");
 
         if (this._message.type === WebInspector.ConsoleMessage.MessageType.Trace)
             clipboardString = "console.trace()";
 
-        var hasStackTrace = this._shouldShowStackTrace();
+        let hasStackTrace = this._shouldShowStackTrace();
         if (hasStackTrace) {
             this._message.stackTrace.callFrames.forEach(function(frame) {
                 clipboardString += "\n\t" + (frame.functionName || WebInspector.UIString("(anonymous function)"));
@@ -198,10 +200,10 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                     clipboardString += " (" + WebInspector.displayNameForURL(frame.url) + ", line " + frame.lineNumber + ")";
             });
         } else {
-            var repeatString = this.repeatCount > 1 ? "x" + this.repeatCount : "";
-            var urlLine = "";
+            let repeatString = this.repeatCount > 1 ? "x" + this.repeatCount : "";
+            let urlLine = "";
             if (this._message.url) {
-                var components = [WebInspector.displayNameForURL(this._message.url), "line " + this._message.line];
+                let components = [WebInspector.displayNameForURL(this._message.url), "line " + this._message.line];
                 if (repeatString)
                     components.push(repeatString);
                 urlLine = " (" + components.join(", ") + ")";
@@ -209,7 +211,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 urlLine = " (" + repeatString + ")";
 
             if (urlLine) {
-                var lines = clipboardString.split("\n");
+                let lines = clipboardString.split("\n");
                 lines[0] += urlLine;
                 clipboardString = lines.join("\n");
             }
