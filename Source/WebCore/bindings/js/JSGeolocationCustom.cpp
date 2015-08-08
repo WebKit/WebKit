@@ -69,7 +69,7 @@ static void setMaximumAge(PositionOptions* options, const double& maximumAge)
 }
 
 
-static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue value)
+static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue value)
 {
     // Create default options.
     RefPtr<PositionOptions> options = PositionOptions::create();
@@ -77,7 +77,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValu
     // Argument is optional (hence undefined is allowed), and null is allowed.
     if (value.isUndefinedOrNull()) {
         // Use default options.
-        return options.release();
+        return options;
     }
 
     // Given the above test, this will always yield an object.
@@ -87,13 +87,13 @@ static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValu
     JSDictionary dictionary(exec, object);
 
     if (!dictionary.tryGetProperty("enableHighAccuracy", options.get(), setEnableHighAccuracy))
-        return 0;
+        return nullptr;
     if (!dictionary.tryGetProperty("timeout", options.get(), setTimeout))
-        return 0;
+        return nullptr;
     if (!dictionary.tryGetProperty("maximumAge", options.get(), setMaximumAge))
-        return 0;
+        return nullptr;
 
-    return options.release();
+    return options;
 }
 
 JSValue JSGeolocation::getCurrentPosition(ExecState* exec)

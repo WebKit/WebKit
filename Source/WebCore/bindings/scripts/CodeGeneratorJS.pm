@@ -900,9 +900,9 @@ sub GenerateHeader
     # JSValue to implementation type
     if (!$hasParent || $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if ($interfaceName eq "NodeFilter") {
-            push(@headerContent, "    static PassRefPtr<NodeFilter> toWrapped(JSC::VM&, JSC::JSValue);\n");
+            push(@headerContent, "    static RefPtr<NodeFilter> toWrapped(JSC::VM&, JSC::JSValue);\n");
         } elsif ($interfaceName eq "DOMStringList") {
-            push(@headerContent, "    static PassRefPtr<DOMStringList> toWrapped(JSC::ExecState*, JSC::JSValue);\n");
+            push(@headerContent, "    static RefPtr<DOMStringList> toWrapped(JSC::ExecState*, JSC::JSValue);\n");
         } else {
             push(@headerContent, "    static $implType* toWrapped(JSC::JSValue);\n");
         }

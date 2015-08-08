@@ -108,7 +108,7 @@ static void webkitDOMXPathNSResolverIfaceInit(WebKitDOMXPathNSResolverIface* ifa
 
 namespace WebKit {
 
-PassRefPtr<WebCore::XPathNSResolver> core(WebKitDOMXPathNSResolver* xPathNSResolver)
+RefPtr<WebCore::XPathNSResolver> core(WebKitDOMXPathNSResolver* xPathNSResolver)
 {
     if (!xPathNSResolver)
         return nullptr;
@@ -118,7 +118,7 @@ PassRefPtr<WebCore::XPathNSResolver> core(WebKitDOMXPathNSResolver* xPathNSResol
         coreResolver = core(WEBKIT_DOM_NATIVE_XPATH_NS_RESOLVER(xPathNSResolver));
     else
         coreResolver = WebCore::GObjectXPathNSResolver::create(xPathNSResolver);
-    return coreResolver.release();
+    return coreResolver;
 }
 
 WebKitDOMXPathNSResolver* kit(WebCore::XPathNSResolver* coreXPathNSResolver)

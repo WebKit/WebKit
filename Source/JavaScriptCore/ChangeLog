@@ -1,3 +1,15 @@
+2015-08-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce uses of PassRefPtr in bindings
+        https://bugs.webkit.org/show_bug.cgi?id=147781
+
+        Reviewed by Chris Dumez.
+
+        Use RefPtr when function can return null or an instance. If not, Ref is used.
+
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::toNativeTypedView):
+
 2015-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Build more testing binaries with CMake on Windows

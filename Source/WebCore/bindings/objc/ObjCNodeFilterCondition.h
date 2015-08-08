@@ -29,7 +29,6 @@
 
 #include "NodeFilterCondition.h"
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 
 @protocol DOMNodeFilter;

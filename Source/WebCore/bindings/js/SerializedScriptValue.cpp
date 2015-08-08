@@ -2695,7 +2695,7 @@ Ref<SerializedScriptValue> SerializedScriptValue::undefinedValue()
 }
 #endif
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
+RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
 {
     ExecState* exec = toJS(originContext);
     JSLockHolder locker(exec);
@@ -2705,10 +2705,10 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef ori
         if (exception)
             *exception = toRef(exec, exec->exception()->value());
         exec->clearException();
-        return 0;
+        return nullptr;
     }
     ASSERT(serializedValue);
-    return serializedValue.release();
+    return serializedValue;
 }
 
 String SerializedScriptValue::toString()

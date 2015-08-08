@@ -51,10 +51,10 @@ private:
 
 // Creates a JS EventListener for "onerror" event handler in worker context. It has custom implementation because
 // unlike other event listeners it accepts three parameters.
-inline PassRefPtr<JSErrorHandler> createJSErrorHandler(JSC::ExecState* exec, JSC::JSValue listener, JSC::JSObject* wrapper)
+inline RefPtr<JSErrorHandler> createJSErrorHandler(JSC::ExecState* exec, JSC::JSValue listener, JSC::JSObject* wrapper)
 {
     if (!listener.isObject())
-        return 0;
+        return nullptr;
 
     return JSErrorHandler::create(asObject(listener), wrapper, true, currentWorld(exec));
 }

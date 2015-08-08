@@ -260,11 +260,11 @@ private:
 };
 
 template<typename Adaptor>
-inline PassRefPtr<typename Adaptor::ViewType> toNativeTypedView(JSValue value)
+inline RefPtr<typename Adaptor::ViewType> toNativeTypedView(JSValue value)
 {
     typename Adaptor::JSViewType* wrapper = jsDynamicCast<typename Adaptor::JSViewType*>(value);
     if (!wrapper)
-        return 0;
+        return nullptr;
     return wrapper->typedImpl();
 }
 

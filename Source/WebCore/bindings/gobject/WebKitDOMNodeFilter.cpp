@@ -65,7 +65,7 @@ WebKitDOMNodeFilter* kit(WebCore::NodeFilter* coreNodeFilter)
     return nodeFilterMap().get(coreNodeFilter);
 }
 
-PassRefPtr<WebCore::NodeFilter> core(WebKitDOMNodeFilter* nodeFilter)
+RefPtr<WebCore::NodeFilter> core(WebKitDOMNodeFilter* nodeFilter)
 {
     if (!nodeFilter)
         return nullptr;

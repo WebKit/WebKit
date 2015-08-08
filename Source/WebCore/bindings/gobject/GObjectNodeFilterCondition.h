@@ -22,7 +22,6 @@
 #include "NodeFilterCondition.h"
 
 #include "WebKitDOMNodeFilter.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/glib/GRefPtr.h>
 

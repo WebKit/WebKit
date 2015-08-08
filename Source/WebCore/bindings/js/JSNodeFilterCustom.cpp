@@ -35,14 +35,14 @@ void JSNodeFilter::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     visitor.addOpaqueRoot(&impl());
 }
 
-PassRefPtr<NodeFilter> JSNodeFilter::toWrapped(JSC::VM& vm, JSC::JSValue value)
+RefPtr<NodeFilter> JSNodeFilter::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
     if (value.inherits(JSNodeFilter::info()))
         return &JSC::jsCast<JSNodeFilter*>(asObject(value))->impl();
 
     RefPtr<NodeFilter> result = NodeFilter::create();
     result->setCondition(JSNodeFilterCondition::create(vm, result.get(), value));
-    return result.release();
+    return result;
 }
 
 } // namespace WebCore

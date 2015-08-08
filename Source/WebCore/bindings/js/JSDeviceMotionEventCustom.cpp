@@ -40,78 +40,78 @@ using namespace JSC;
 
 namespace WebCore {
 
-static PassRefPtr<DeviceMotionData::Acceleration> readAccelerationArgument(JSValue value, ExecState* exec)
+static RefPtr<DeviceMotionData::Acceleration> readAccelerationArgument(JSValue value, ExecState* exec)
 {
     if (value.isUndefinedOrNull())
-        return 0;
+        return nullptr;
 
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(exec);
 
     JSValue xValue = object->get(exec, Identifier::fromString(exec, "x"));
     if (exec->hadException())
-        return 0;
+        return nullptr;
     bool canProvideX = !xValue.isUndefinedOrNull();
     double x = xValue.toNumber(exec);
     if (exec->hadException())
-        return 0;
+        return nullptr;
 
     JSValue yValue = object->get(exec, Identifier::fromString(exec, "y"));
     if (exec->hadException())
-        return 0;
+        return nullptr;
     bool canProvideY = !yValue.isUndefinedOrNull();
     double y = yValue.toNumber(exec);
     if (exec->hadException())
-        return 0;
+        return nullptr;
 
     JSValue zValue = object->get(exec, Identifier::fromString(exec, "z"));
     if (exec->hadException())
-        return 0;
+        return nullptr;
     bool canProvideZ = !zValue.isUndefinedOrNull();
     double z = zValue.toNumber(exec);
     if (exec->hadException())
-        return 0;
+        return nullptr;
 
     if (!canProvideX && !canProvideY && !canProvideZ)
-        return 0;
+        return nullptr;
 
     return DeviceMotionData::Acceleration::create(canProvideX, x, canProvideY, y, canProvideZ, z);
 }
 
-static PassRefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(JSValue value, ExecState* exec)
+static RefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(JSValue value, ExecState* exec)
 {
     if (value.isUndefinedOrNull())
-        return 0;
+        return nullptr;
 
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(exec);
 
     JSValue alphaValue = object->get(exec, Identifier::fromString(exec, "alpha"));
     if (exec->hadException())
-        return 0;
+        return nullptr;
     bool canProvideAlpha = !alphaValue.isUndefinedOrNull();
     double alpha = alphaValue.toNumber(exec);
     if (exec->hadException())
-        return 0;
+        return nullptr;
 
     JSValue betaValue = object->get(exec, Identifier::fromString(exec, "beta"));
     if (exec->hadException())
-        return 0;
+        return nullptr;
     bool canProvideBeta = !betaValue.isUndefinedOrNull();
     double beta = betaValue.toNumber(exec);
     if (exec->hadException())
-        return 0;
+        return nullptr;
 
     JSValue gammaValue = object->get(exec, Identifier::fromString(exec, "gamma"));
     if (exec->hadException())
-        return 0;
+        return nullptr;
     bool canProvideGamma = !gammaValue.isUndefinedOrNull();
     double gamma = gammaValue.toNumber(exec);
     if (exec->hadException())
-        return 0;
+        return nullptr;
 
     if (!canProvideAlpha && !canProvideBeta && !canProvideGamma)
-        return 0;
+        return nullptr;
 
     return DeviceMotionData::RotationRate::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }

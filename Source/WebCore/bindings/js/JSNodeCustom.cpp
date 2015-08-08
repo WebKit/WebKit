@@ -67,7 +67,6 @@
 #include "StyleSheet.h"
 #include "StyledElement.h"
 #include "Text.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 using namespace JSC;

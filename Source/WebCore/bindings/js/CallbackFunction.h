@@ -46,11 +46,11 @@ bool checkFunctionOnlyCallback(JSC::ExecState*, JSC::JSValue, CallbackAllowedVal
 
 // Creates callback objects for callbacks marked as FunctionOnly in WebIDL.
 template <typename JSCallbackType>
-PassRefPtr<JSCallbackType> createFunctionOnlyCallback(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, JSC::JSValue value, CallbackAllowedValueFlags acceptedValues = 0)
+RefPtr<JSCallbackType> createFunctionOnlyCallback(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, JSC::JSValue value, CallbackAllowedValueFlags acceptedValues = 0)
 {
     if (checkFunctionOnlyCallback(exec, value, acceptedValues))
         return JSCallbackType::create(asObject(value), globalObject);
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

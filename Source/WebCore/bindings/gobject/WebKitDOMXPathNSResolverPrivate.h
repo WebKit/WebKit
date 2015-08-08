@@ -23,7 +23,6 @@
 
 #include "XPathNSResolver.h"
 #include <webkitdom/WebKitDOMXPathNSResolver.h>
-#include <wtf/PassRefPtr.h>
 
 #define WEBKIT_DOM_TYPE_NATIVE_XPATH_NS_RESOLVER            (webkit_dom_native_xpath_ns_resolver_get_type())
 #define WEBKIT_DOM_NATIVE_XPATH_NS_RESOLVER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_NATIVE_XPATH_NS_RESOLVER, WebKitDOMNativeXPathNSResolver))
@@ -36,7 +35,7 @@ typedef struct _WebKitDOMNativeXPathNSResolver WebKitDOMNativeXPathNSResolver;
 typedef struct _WebKitDOMNativeXPathNSResolverClass WebKitDOMNativeXPathNSResolverClass;
 
 namespace WebKit {
-PassRefPtr<WebCore::XPathNSResolver> core(WebKitDOMXPathNSResolver*);
+RefPtr<WebCore::XPathNSResolver> core(WebKitDOMXPathNSResolver*);
 WebKitDOMXPathNSResolver* kit(WebCore::XPathNSResolver*);
 WebCore::XPathNSResolver* core(WebKitDOMNativeXPathNSResolver*);
 } // namespace WebKit
