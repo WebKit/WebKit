@@ -1,5 +1,12 @@
 2015-08-07  Alex Christensen  <achristensen@webkit.org>
 
+        [EFL, GTK] Build fix after r188176.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        I moved forwarding headers out of a unix subdirectory because I am using them on Windows now.
+
+2015-08-07  Alex Christensen  <achristensen@webkit.org>
+
         [GTK] Speculative build fix after r188157.
 
         * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
