@@ -380,8 +380,6 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 
     font = [NSFont fontWithName:chosenFullName size:size];
 
-#endif
-
     if (!font)
         return nil;
 
@@ -411,6 +409,8 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
         if (fontWithoutSyntheticTraits)
             font = fontWithoutSyntheticTraits;
     }
+
+#endif
 
     return font;
 }
