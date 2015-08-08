@@ -2005,7 +2005,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     }
 
     if ((changeType == BackgroundImageChanged) && canCreateTiledImage(renderer().style()))
-        updateAfterLayout(NeedsFullRepaint | IsUpdateRoot);
+        updateGeometry();
 
     if ((changeType == MaskImageChanged) && m_maskLayer) {
         // The composited layer bounds relies on box->maskClipRect(), which changes
