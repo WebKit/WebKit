@@ -1,5 +1,13 @@
 2015-08-07  Alex Christensen  <achristensen@webkit.org>
 
+        [GTK] Speculative build fix after r188157.
+
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        Update parameter list.
+
+2015-08-07  Alex Christensen  <achristensen@webkit.org>
+
         Build more testing binaries with CMake on Windows
         https://bugs.webkit.org/show_bug.cgi?id=147799
 
