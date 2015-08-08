@@ -1,3 +1,12 @@
+2015-08-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Correct expectations for platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html.
+
+        Use a correct path, and only skip the test on WK1.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2015-08-06  Dana Burkart  <dburkart@apple.com>
 
         Merge r187964. rdar://problem/21870332
