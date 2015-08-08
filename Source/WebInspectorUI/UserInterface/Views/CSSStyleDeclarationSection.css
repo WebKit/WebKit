@@ -27,7 +27,7 @@
     display: flex;
     flex-direction: column;
 
-    padding: 5px;
+    padding: 3px;
 }
 
 .style-declaration-section.locked {
@@ -40,19 +40,13 @@
 }
 
 .style-declaration-section.last-in-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 
     border-bottom: 1px solid hsla(0, 0%, 0%, 0.3);
 }
 
 .style-declaration-section + .style-declaration-section {
     border-top: 1px solid hsla(0, 0%, 0%, 0.15);
-}
-
-.style-declaration-section.last-in-group + .style-declaration-section {
-    margin-top: 15px;
-
-    border-top-color: hsla(0, 0%, 0%, 0.3);
 }
 
 .style-declaration-section:last-child {
