@@ -8,11 +8,11 @@
         testRunner.dumpAsText();
     }
     window.onload = function () {
-    	var canvas = document.createElement('canvas');
-		canvas.width = 0;
-		canvas.height = 0;
-		var context = canvas.getContext('2d');
-		if(context.webkitImageSmoothingEnabled) {context.webkitImageSmoothingEnabled = false;}
+        var canvas = document.createElement('canvas');
+        canvas.width = 0;
+        canvas.height = 0;
+        var context = canvas.getContext('2d');
+        if(context.imageSmoothingEnabled) {context.imageSmoothingEnabled = false;}
     };
     </script>
   </body>
