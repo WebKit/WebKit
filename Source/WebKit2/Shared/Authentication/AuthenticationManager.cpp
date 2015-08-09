@@ -84,9 +84,8 @@ bool AuthenticationManager::shouldCoalesceChallenge(uint64_t challengeID, const 
     if (!canCoalesceChallenge(challenge))
         return false;
 
-    auto end =  m_challenges.end();
-    for (auto it = m_challenges.begin(); it != end; ++it) {
-        if (it->key != challengeID && ProtectionSpace::compare(challenge.protectionSpace(), it->value.protectionSpace()))
+    for (auto& item : m_challenges) {
+        if (item.key != challengeID && ProtectionSpace::compare(challenge.protectionSpace(), item.value.protectionSpace()))
             return true;
     }
     return false;
@@ -103,10 +102,9 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
     if (!canCoalesceChallenge(challenge))
         return challengesToCoalesce;
 
-    auto end = m_challenges.end();
-    for (auto it = m_challenges.begin(); it != end; ++it) {
-        if (it->key != challengeID && ProtectionSpace::compare(challenge.protectionSpace(), it->value.protectionSpace()))
-            challengesToCoalesce.append(it->key);
+    for (auto& item : m_challenges) {
+        if (item.key != challengeID && ProtectionSpace::compare(challenge.protectionSpace(), item.value.protectionSpace()))
+            challengesToCoalesce.append(item.key);
     }
 
     return challengesToCoalesce;

@@ -1,3 +1,16 @@
+2015-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Follow-up nit fixes after r187691.
+        https://bugs.webkit.org/show_bug.cgi?id=128006
+
+        Reviewed by Gavin Barraclough.
+
+        Use modern for-loops instead of explicit iterators.
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::shouldCoalesceChallenge):
+        (WebKit::AuthenticationManager::coalesceChallengesMatching):
+
 2015-08-07  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive
