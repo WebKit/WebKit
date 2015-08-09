@@ -46,7 +46,7 @@ public:
 
     void setXSLStyleSheet(PassRefPtr<XSLStyleSheet> styleSheet) { m_stylesheet = styleSheet; }
     bool transformToString(Node& source, String& resultMIMEType, String& resultString, String& resultEncoding);
-    PassRefPtr<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
+    Ref<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
     
     // DOM methods
     void importStylesheet(PassRefPtr<Node> style)

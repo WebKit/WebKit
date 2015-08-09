@@ -68,7 +68,7 @@ public:
     void setDocumentWasLoadedAsPartOfNavigation();
 
 private:
-    PassRefPtr<Document> createDocument(const URL&);
+    Ref<Document> createDocument(const URL&);
     void clear();
 
     Frame* m_frame;

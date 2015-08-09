@@ -58,13 +58,13 @@ public:
     DOMImplementation* getInterface(const String& feature);
 
     // From the DOMImplementationCSS interface
-    static RefPtr<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media, ExceptionCode&);
+    static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media, ExceptionCode&);
 
     // From the HTMLDOMImplementation interface
-    RefPtr<HTMLDocument> createHTMLDocument(const String& title);
+    Ref<HTMLDocument> createHTMLDocument(const String& title);
 
     // Other methods (not part of DOM)
-    static RefPtr<Document> createDocument(const String& MIMEType, Frame*, const URL&);
+    static Ref<Document> createDocument(const String& MIMEType, Frame*, const URL&);
 
     WEBCORE_EXPORT static bool isXMLMIMEType(const String& MIMEType);
     WEBCORE_EXPORT static bool isTextMIMEType(const String& MIMEType);

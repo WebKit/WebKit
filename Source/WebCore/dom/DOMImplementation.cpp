@@ -238,13 +238,13 @@ RefPtr<Document> DOMImplementation::createDocument(const String& namespaceURI,
     return doc;
 }
 
-RefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media, ExceptionCode&)
+Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media, ExceptionCode&)
 {
     // FIXME: Title should be set.
     // FIXME: Media could have wrong syntax, in which case we should generate an exception.
-    auto sheet = CSSStyleSheet::create(StyleSheetContents::create());
-    sheet.get().setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(media));
-    return WTF::move(sheet);
+    Ref<CSSStyleSheet> sheet = CSSStyleSheet::create(StyleSheetContents::create());
+    sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(media));
+    return sheet;
 }
 
 static inline bool isValidXMLMIMETypeChar(UChar c)
@@ -289,18 +289,18 @@ bool DOMImplementation::isTextMIMEType(const String& mimeType)
     return false;
 }
 
-RefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
+Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    RefPtr<HTMLDocument> d = HTMLDocument::create(0, URL());
-    d->open();
-    d->write("<!doctype html><html><body></body></html>");
+    Ref<HTMLDocument> doc = HTMLDocument::create(nullptr, URL());
+    doc->open();
+    doc->write("<!doctype html><html><body></body></html>");
     if (!title.isNull())
-        d->setTitle(title);
-    d->setSecurityOriginPolicy(m_document.securityOriginPolicy());
-    return d;
+        doc->setTitle(title);
+    doc->setSecurityOriginPolicy(m_document.securityOriginPolicy());
+    return doc;
 }
 
-RefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url)
+Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url)
 {
     // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
     if (type == "text/html")

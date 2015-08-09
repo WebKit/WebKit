@@ -68,7 +68,7 @@ XSLTProcessor::~XSLTProcessor()
     ASSERT(!m_stylesheetRootNode || !m_stylesheet || m_stylesheet->hasOneRef());
 }
 
-PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
+Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
     const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame)
 {
     Ref<Document> ownerDocument(sourceNode->document());
@@ -106,7 +106,7 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
 
     result->setContent(documentSource);
 
-    return result.release();
+    return result.releaseNonNull();
 }
 
 PassRefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)

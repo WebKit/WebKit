@@ -32,7 +32,7 @@ class DOMParser : public RefCounted<DOMParser> {
 public:
     static Ref<DOMParser> create() { return adoptRef(*new DOMParser); }
 
-    PassRefPtr<Document> parseFromString(const String&, const String& contentType, ExceptionCode&);
+    RefPtr<Document> parseFromString(const String&, const String& contentType, ExceptionCode&);
 
 private:
     DOMParser() { }
