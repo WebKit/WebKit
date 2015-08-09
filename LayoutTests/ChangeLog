@@ -1,3 +1,14 @@
+2015-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash in ComplexTextController when laying out obscure text
+        https://bugs.webkit.org/show_bug.cgi?id=147806
+        <rdar://problem/22102378>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/crash-obscure-text-expected.txt: Added.
+        * fast/text/crash-obscure-text.html: Added.
+
 2015-08-08  Dean Jackson  <dino@apple.com>
 
         Remove the webkit prefix from CanvasRenderingContext2D imageSmoothingEnabled
