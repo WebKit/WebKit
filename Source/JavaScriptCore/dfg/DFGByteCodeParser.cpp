@@ -969,7 +969,6 @@ private:
         
         CallLinkInfoMap m_callLinkInfos;
         StubInfoMap m_stubInfos;
-        ByValInfoMap m_byValInfos;
         
         // Did we see any returns? We need to handle the (uncommon but necessary)
         // case where a procedure that does not return was inlined.
@@ -3398,35 +3397,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_get_by_val: {
             SpeculatedType prediction = getPredictionWithoutOSRExit();
-
+            
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
-            bool compiledAsGetById = false;
-            {
-                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
-                // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
-                // At that time, there is no information.
-                if (byValInfo && byValInfo->stubInfo && !byValInfo->tookSlowPath && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)) {
-                    compiledAsGetById = true;
-                    unsigned identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
-                    UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-
-                    addToGraph(CheckIdent, OpInfo(uid), property);
-
-                    GetByIdStatus getByIdStatus = GetByIdStatus::computeForStubInfo(
-                        locker, m_inlineStackTop->m_profiledBlock,
-                        byValInfo->stubInfo, currentCodeOrigin(), uid);
-
-                    handleGetById(currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus);
-                }
-            }
-
-            if (!compiledAsGetById) {
-                ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
-                Node* getByVal = addToGraph(GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction), base, property);
-                set(VirtualRegister(currentInstruction[1].u.operand), getByVal);
-            }
+            Node* getByVal = addToGraph(GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction), base, property);
+            set(VirtualRegister(currentInstruction[1].u.operand), getByVal);
 
             NEXT_OPCODE(op_get_by_val);
         }
@@ -4329,7 +4305,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         if (m_profiledBlock->hasBaselineJITProfiling()) {
             m_profiledBlock->getStubInfoMap(locker, m_stubInfos);
             m_profiledBlock->getCallLinkInfoMap(locker, m_callLinkInfos);
-            m_profiledBlock->getByValInfoMap(locker, m_byValInfos);
         }
     }
     

@@ -209,7 +209,6 @@ namespace JSC { namespace DFG {
     macro(CheckNotEmpty, NodeMustGenerate) \
     macro(CheckBadCell, NodeMustGenerate) \
     macro(CheckInBounds, NodeMustGenerate) \
-    macro(CheckIdent, NodeMustGenerate) \
     \
     /* Optimizations for array mutation. */\
     macro(ArrayPush, NodeResultJS | NodeMustGenerate) \

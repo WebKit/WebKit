@@ -1067,7 +1067,6 @@ void JIT::emit_op_has_indexed_property(Instruction* currentInstruction)
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-    ByValInfo* byValInfo = m_codeBlock->addByValInfo();
     
     emitGetVirtualRegisters(base, regT0, property, regT1);
 
@@ -1099,7 +1098,7 @@ void JIT::emit_op_has_indexed_property(Instruction* currentInstruction)
     
     emitPutVirtualRegister(dst);
     
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, PatchableJump(), badType, mode, profile, done));
+    m_byValCompilationInfo.append(ByValCompilationInfo(m_bytecodeOffset, badType, mode, done));
 }
 
 void JIT::emitSlow_op_has_indexed_property(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1107,7 +1106,7 @@ void JIT::emitSlow_op_has_indexed_property(Instruction* currentInstruction, Vect
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
-    ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
+    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
     linkSlowCase(iter); // base array check
@@ -1118,7 +1117,7 @@ void JIT::emitSlow_op_has_indexed_property(Instruction* currentInstruction, Vect
     
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    Call call = callOperation(operationHasIndexedPropertyDefault, dst, regT0, regT1, byValInfo);
+    Call call = callOperation(operationHasIndexedPropertyDefault, dst, regT0, regT1, profile);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;

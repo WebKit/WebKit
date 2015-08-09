@@ -1,3 +1,116 @@
+2015-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r188105): Seems to have caused crashes during PLT on some iPads
+        https://bugs.webkit.org/show_bug.cgi?id=147818
+
+        Unreviewed, roll out r188105.
+
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getByValInfoMap): Deleted.
+        (JSC::CodeBlock::addByValInfo): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getByValInfo):
+        (JSC::CodeBlock::setNumberOfByValInfos):
+        (JSC::CodeBlock::numberOfByValInfos):
+        (JSC::CodeBlock::byValInfo):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString): Deleted.
+        * bytecode/ExitKind.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback): Deleted.
+        * bytecode/GetByIdStatus.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): Deleted.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants): Deleted.
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Deleted.
+        (JSC::DFG::FixupPhase::observeUseKindOnNode): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasUidOperand): Deleted.
+        (JSC::DFG::Node::uidOperand): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate): Deleted.
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()): Deleted.
+        (JSC::DFG::safeToExecute): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckIdent): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateSymbol): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculate): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal): Deleted.
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor): Deleted.
+        (JSC::DFG::isCell): Deleted.
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckIdent): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowSymbol): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculate): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::isNotSymbol): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateSymbol): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::ByValCompilationInfo::ByValCompilationInfo):
+        (JSC::JIT::compileGetByValWithCachedId): Deleted.
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitGetByValWithCachedId): Deleted.
+        (JSC::JIT::privateCompileGetByVal): Deleted.
+        (JSC::JIT::privateCompileGetByValWithCachedId): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitGetByValWithCachedId): Deleted.
+        * runtime/Symbol.h:
+        * tests/stress/get-by-val-with-string-constructor.js: Removed.
+        * tests/stress/get-by-val-with-string-exit.js: Removed.
+        * tests/stress/get-by-val-with-string-generated.js: Removed.
+        * tests/stress/get-by-val-with-string-getter.js: Removed.
+        * tests/stress/get-by-val-with-string.js: Removed.
+        * tests/stress/get-by-val-with-symbol-constructor.js: Removed.
+        * tests/stress/get-by-val-with-symbol-exit.js: Removed.
+        * tests/stress/get-by-val-with-symbol-getter.js: Removed.
+        * tests/stress/get-by-val-with-symbol.js: Removed.
+
 2015-08-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Reduce uses of PassRefPtr in bindings

@@ -1,3 +1,53 @@
+2015-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r188105): Seems to have caused crashes during PLT on some iPads
+        https://bugs.webkit.org/show_bug.cgi?id=147818
+
+        Unreviewed, roll out r188105.
+
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination-expected.txt: Removed.
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination-simple-expected.txt: Removed.
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination-simple.html: Removed.
+        * js/regress/get-by-val-with-string-bimorphic-check-structure-elimination.html: Removed.
+        * js/regress/get-by-val-with-string-chain-from-try-block-expected.txt: Removed.
+        * js/regress/get-by-val-with-string-chain-from-try-block.html: Removed.
+        * js/regress/get-by-val-with-string-check-structure-elimination-expected.txt: Removed.
+        * js/regress/get-by-val-with-string-check-structure-elimination.html: Removed.
+        * js/regress/get-by-val-with-string-proto-or-self-expected.txt: Removed.
+        * js/regress/get-by-val-with-string-proto-or-self.html: Removed.
+        * js/regress/get-by-val-with-string-quadmorphic-check-structure-elimination-simple-expected.txt: Removed.
+        * js/regress/get-by-val-with-string-quadmorphic-check-structure-elimination-simple.html: Removed.
+        * js/regress/get-by-val-with-string-self-or-proto-expected.txt: Removed.
+        * js/regress/get-by-val-with-string-self-or-proto.html: Removed.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination-expected.txt: Removed.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination-simple-expected.txt: Removed.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination-simple.html: Removed.
+        * js/regress/get-by-val-with-symbol-bimorphic-check-structure-elimination.html: Removed.
+        * js/regress/get-by-val-with-symbol-chain-from-try-block-expected.txt: Removed.
+        * js/regress/get-by-val-with-symbol-chain-from-try-block.html: Removed.
+        * js/regress/get-by-val-with-symbol-check-structure-elimination-expected.txt: Removed.
+        * js/regress/get-by-val-with-symbol-check-structure-elimination.html: Removed.
+        * js/regress/get-by-val-with-symbol-proto-or-self-expected.txt: Removed.
+        * js/regress/get-by-val-with-symbol-proto-or-self.html: Removed.
+        * js/regress/get-by-val-with-symbol-quadmorphic-check-structure-elimination-simple-expected.txt: Removed.
+        * js/regress/get-by-val-with-symbol-quadmorphic-check-structure-elimination-simple.html: Removed.
+        * js/regress/get-by-val-with-symbol-self-or-proto-expected.txt: Removed.
+        * js/regress/get-by-val-with-symbol-self-or-proto.html: Removed.
+        * js/regress/script-tests/get-by-val-with-string-bimorphic-check-structure-elimination-simple.js: Removed.
+        * js/regress/script-tests/get-by-val-with-string-bimorphic-check-structure-elimination.js: Removed.
+        * js/regress/script-tests/get-by-val-with-string-chain-from-try-block.js: Removed.
+        * js/regress/script-tests/get-by-val-with-string-check-structure-elimination.js: Removed.
+        * js/regress/script-tests/get-by-val-with-string-proto-or-self.js: Removed.
+        * js/regress/script-tests/get-by-val-with-string-quadmorphic-check-structure-elimination-simple.js: Removed.
+        * js/regress/script-tests/get-by-val-with-string-self-or-proto.js: Removed.
+        * js/regress/script-tests/get-by-val-with-symbol-bimorphic-check-structure-elimination-simple.js: Removed.
+        * js/regress/script-tests/get-by-val-with-symbol-bimorphic-check-structure-elimination.js: Removed.
+        * js/regress/script-tests/get-by-val-with-symbol-chain-from-try-block.js: Removed.
+        * js/regress/script-tests/get-by-val-with-symbol-check-structure-elimination.js: Removed.
+        * js/regress/script-tests/get-by-val-with-symbol-proto-or-self.js: Removed.
+        * js/regress/script-tests/get-by-val-with-symbol-quadmorphic-check-structure-elimination-simple.js: Removed.
+        * js/regress/script-tests/get-by-val-with-symbol-self-or-proto.js: Removed.
+
 2015-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Crash in ComplexTextController when laying out obscure text

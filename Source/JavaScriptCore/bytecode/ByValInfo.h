@@ -26,17 +26,15 @@
 #ifndef ByValInfo_h
 #define ByValInfo_h
 
+#if ENABLE(JIT)
+
 #include "ClassInfo.h"
 #include "CodeLocation.h"
-#include "CodeOrigin.h"
 #include "IndexingType.h"
 #include "JITStubRoutine.h"
 #include "Structure.h"
-#include "StructureStubInfo.h"
 
 namespace JSC {
-
-#if ENABLE(JIT)
 
 enum JITArrayMode {
     JITInt32,
@@ -203,33 +201,24 @@ inline JITArrayMode jitArrayModeForStructure(Structure* structure)
 
 struct ByValInfo {
     ByValInfo() { }
-
-    ByValInfo(unsigned bytecodeIndex, CodeLocationJump notIndexJump, CodeLocationJump badTypeJump, JITArrayMode arrayMode, ArrayProfile* arrayProfile, int16_t badTypeJumpToDone, int16_t returnAddressToSlowPath)
+    
+    ByValInfo(unsigned bytecodeIndex, CodeLocationJump badTypeJump, JITArrayMode arrayMode, int16_t badTypeJumpToDone, int16_t returnAddressToSlowPath)
         : bytecodeIndex(bytecodeIndex)
-        , notIndexJump(notIndexJump)
         , badTypeJump(badTypeJump)
         , arrayMode(arrayMode)
-        , arrayProfile(arrayProfile)
         , badTypeJumpToDone(badTypeJumpToDone)
         , returnAddressToSlowPath(returnAddressToSlowPath)
         , slowPathCount(0)
-        , stubInfo(nullptr)
-        , tookSlowPath(false)
     {
     }
-
+    
     unsigned bytecodeIndex;
-    CodeLocationJump notIndexJump;
     CodeLocationJump badTypeJump;
     JITArrayMode arrayMode; // The array mode that was baked into the inline JIT code.
-    ArrayProfile* arrayProfile;
     int16_t badTypeJumpToDone;
     int16_t returnAddressToSlowPath;
     unsigned slowPathCount;
     RefPtr<JITStubRoutine> stubRoutine;
-    Identifier cachedId;
-    StructureStubInfo* stubInfo;
-    bool tookSlowPath;
 };
 
 inline unsigned getByValInfoBytecodeIndex(ByValInfo* info)
@@ -237,15 +226,9 @@ inline unsigned getByValInfoBytecodeIndex(ByValInfo* info)
     return info->bytecodeIndex;
 }
 
-typedef HashMap<CodeOrigin, ByValInfo*, CodeOriginApproximateHash> ByValInfoMap;
-
-#else // ENABLE(JIT)
-
-typedef HashMap<int, void*> ByValInfoMap;
+} // namespace JSC
 
 #endif // ENABLE(JIT)
-
-} // namespace JSC
 
 #endif // ByValInfo_h
 

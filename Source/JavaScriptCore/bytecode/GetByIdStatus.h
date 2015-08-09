@@ -71,11 +71,7 @@ public:
     static GetByIdStatus computeFor(const StructureSet&, UniquedStringImpl* uid);
     
     static GetByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, UniquedStringImpl* uid);
-
-#if ENABLE(JIT)
-    static GetByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
-#endif
-
+    
     State state() const { return m_state; }
     
     bool isSet() const { return m_state != NoInformation; }
@@ -99,7 +95,7 @@ private:
     static bool hasExitSite(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex);
 #endif
 #if ENABLE(JIT)
-    static GetByIdStatus computeForStubInfoWithoutExitSiteFeedback(
+    static GetByIdStatus computeForStubInfo(
         const ConcurrentJITLocker&, CodeBlock* profiledBlock, StructureStubInfo*,
         UniquedStringImpl* uid, CallLinkStatus::ExitSiteData);
 #endif

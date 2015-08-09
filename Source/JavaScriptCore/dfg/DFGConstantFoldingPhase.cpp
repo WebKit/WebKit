@@ -208,33 +208,6 @@ private:
                 break;
             }
 
-            case CheckIdent: {
-                UniquedStringImpl* uid = node->uidOperand();
-                JSValue childConstant = m_state.forNode(node->child1()).value();
-                const UniquedStringImpl* constantUid = nullptr;
-                if (childConstant) {
-                    if (uid->isSymbol()) {
-                        if (childConstant.isSymbol())
-                            constantUid = asSymbol(childConstant)->privateName().uid();
-                    } else {
-                        if (childConstant.isString()) {
-                            // Since we already filtered the value with StringIdentUse,
-                            // the held impl is always atomic.
-                            if (const auto* impl = asString(childConstant)->tryGetValueImpl()) {
-                                ASSERT(impl->isAtomic());
-                                constantUid = static_cast<const UniquedStringImpl*>(impl);
-                            }
-                        }
-                    }
-                }
-
-                if (constantUid == uid) {
-                    node->remove();
-                    eliminated = true;
-                }
-                break;
-            }
-
             case CheckInBounds: {
                 JSValue left = m_state.forNode(node->child1()).value();
                 JSValue right = m_state.forNode(node->child2()).value();

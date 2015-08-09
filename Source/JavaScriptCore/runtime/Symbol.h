@@ -79,8 +79,6 @@ public:
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
     double toNumber(ExecState*) const;
 
-    static size_t offsetOfPrivateName() { return OBJECT_OFFSETOF(Symbol, m_privateName); }
-
 protected:
     static void destroy(JSCell*);
 

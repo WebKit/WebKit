@@ -3850,10 +3850,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CheckIdent:
-        compileCheckIdent(node);
-        break;
-
     case GetExecutable: {
         SpeculateCellOperand function(this, node->child1());
         GPRTemporary result(this, Reuse, function);
