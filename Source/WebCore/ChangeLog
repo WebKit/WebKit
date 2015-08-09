@@ -1,3 +1,22 @@
+2015-08-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r188162.
+
+    2015-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Temporarily allow programmatic input assistance for adding Gmail account
+            https://bugs.webkit.org/show_bug.cgi?id=147792
+
+            Reviewed by Enrica Casucci.
+            <rdar://problem/22126518>
+
+            Temporary fix for keyboard input sliding out and immediately back in upon user interaction
+            in the Gmail 2-factor authentication page.
+
+            * platform/RuntimeApplicationChecksIOS.h:
+            * platform/RuntimeApplicationChecksIOS.mm:
+            (WebCore::applicationIsGmailAddAccountOnIOS): Added bundle ID for Gmail settings.
+
 2015-08-07  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r188150.

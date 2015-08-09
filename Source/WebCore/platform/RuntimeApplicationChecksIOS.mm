@@ -122,6 +122,12 @@ bool applicationIsIBooksOnIOS()
     return isIBooksOnIOS;
 }
 
+bool applicationIsGmailAddAccountOnIOS()
+{
+    static const bool isGmailAddAccountOnIOS = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.social.SLGoogleAuth.SLGoogleAuthService"];
+    return isGmailAddAccountOnIOS;
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(IOS)
