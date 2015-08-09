@@ -157,6 +157,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
     reset()
     {
         this._contentTreeOutline.removeChildren();
+        this._timelineSidebarPanel.hideEmptyContentPlaceholder();
     }
 
 

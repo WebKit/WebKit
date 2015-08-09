@@ -1,3 +1,14 @@
+2015-08-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Don't show "No Filter Results" when timeline is empty
+        https://bugs.webkit.org/show_bug.cgi?id=147662
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.reset):
+        Now hides the empty content placeholder on timeline clear.
+
 2015-08-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Decrease the padding of each rule in the Rules sidebar to allow more content to show
