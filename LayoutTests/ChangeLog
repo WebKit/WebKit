@@ -1,3 +1,22 @@
+2015-08-10  Antti Koivisto  <antti@apple.com>
+
+        http/tests/cache/disk-cache/disk-cache-validation.html has too many subtests
+        https://bugs.webkit.org/show_bug.cgi?id=147827
+
+        Reviewed by Chris Dumez.
+
+        Looks like it occasionally times out because a bot is running slowly and 243 subtests take >30s.
+
+        * http/tests/cache/disk-cache/disk-cache-validation-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation.html:
+
+        Split Vary header cases to a separate test.
+
+        * http/tests/cache/disk-cache/disk-cache-vary-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-vary.html:
+
+        Reduce test matrix size by no testing Expires header here.
+
 2015-08-10  James Craig  <jcraig@apple.com>
 
         AX: Address follow-up comments in bug 145684

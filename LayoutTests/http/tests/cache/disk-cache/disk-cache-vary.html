@@ -12,11 +12,6 @@ var testMatrix =
   ],
  [
   {},
-  { responseHeaders: {'Expires': 'now(0)' } },
-  { responseHeaders: {'Expires': 'now(100)' } },
-  ],
- [
-  {},
   { responseHeaders: {'Cache-control': 'no-store' } },
   { responseHeaders: {'Cache-control': 'no-cache' } },
   ],
@@ -25,9 +20,13 @@ var testMatrix =
   { responseHeaders: {'ETag': 'match' } },
   { responseHeaders: {'ETag': 'nomatch' } },
   ],
+ [
+  { responseHeaders: {'Vary': 'Accept-Language' }, requestHeaders: { 'Accept-Language': 'en' } },
+  { responseHeaders: {'Vary': 'Accept-Language' }, requestHeaders: { 'Accept-Language': 'unique()' } },
+  ],
  ];
 
-description("Test permutations of various cache headers");
+description("Test permutations of various cache headers with Vary");
 
 var tests = generateTests(testMatrix);
 
