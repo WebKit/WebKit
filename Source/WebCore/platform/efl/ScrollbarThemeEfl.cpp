@@ -33,6 +33,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "RenderThemeEfl.h"
+#include "Settings.h"
 
 #include <wtf/NeverDestroyed.h>
 
@@ -61,6 +62,11 @@ ScrollbarThemeEfl::~ScrollbarThemeEfl()
 int ScrollbarThemeEfl::scrollbarThickness(ScrollbarControlSize)
 {
     return defaultThickness;
+}
+
+bool ScrollbarThemeEfl::usesOverlayScrollbars() const
+{
+    return Settings::usesOverlayScrollbars();
 }
 
 bool ScrollbarThemeEfl::hasThumb(Scrollbar& scrollbar)

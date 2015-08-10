@@ -43,7 +43,7 @@ public:
     void setScrollbarThickness(int thickness) { m_scrollbarThickness = thickness; }
 
 protected:
-    virtual bool usesOverlayScrollbars() const override { return true; }
+    virtual bool usesOverlayScrollbars() const override;
     virtual bool hasButtons(Scrollbar&) override { return false; }
     virtual bool hasThumb(Scrollbar&) override;
 
