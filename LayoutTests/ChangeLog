@@ -1,3 +1,16 @@
+2015-08-10  James Craig  <jcraig@apple.com>
+
+        AX: Address follow-up comments in bug 145684
+        https://bugs.webkit.org/show_bug.cgi?id=147817
+
+        Reviewed by Dean Jackson.
+
+        Minor cleanup and style updates requested by Dean.
+
+        * http/tests/contentextensions/text-track-blocked-expected.txt:
+        * media/video-controls-show-on-kb-or-ax-event.html:
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.txt:
+
 2015-08-07  Antti Koivisto  <antti@apple.com>
 
         Expand network cache tests to cover memory cache behavior

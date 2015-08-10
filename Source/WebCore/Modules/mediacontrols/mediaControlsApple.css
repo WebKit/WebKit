@@ -119,6 +119,8 @@ video::-webkit-media-show-controls {
     width: 100%;
     height: 10px;
     opacity: 0;
+    border: 0;
+    background: none;
     -webkit-appearance: none;
 }
 

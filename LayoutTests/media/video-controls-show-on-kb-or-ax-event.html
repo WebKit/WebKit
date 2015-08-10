@@ -27,9 +27,8 @@
             if (button) {
                 button.focus();
                 eventSender.keyDown(' '); // Use keyboard to press the selected button.
-            } else {
+            } else
                 result.innerHTML += 'FAIL: "Show Controls" button is not available.<br>';	
-            }
 
             // Verifies the toolbar is back in the DOM.
             var controls = root.firstChild.querySelector('[role="toolbar"]');
