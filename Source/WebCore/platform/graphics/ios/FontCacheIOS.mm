@@ -33,6 +33,7 @@
 #import "CoreTextSPI.h"
 #import "FontCascade.h"
 #import "RenderThemeIOS.h"
+#import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
@@ -472,8 +473,25 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
 Vector<String> FontCache::systemFontFamilies()
 {
-    // FIXME: <https://webkit.org/b/147033> Web Inspector: [iOS] Allow inspector to retrieve a list of system fonts
+    // FIXME: <rdar://problem/21890188>
     Vector<String> fontFamilies;
+    auto emptyFontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes((CFDictionaryRef) @{ }));
+    auto matchedDescriptors = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(emptyFontDescriptor.get(), nullptr));
+    if (!matchedDescriptors)
+        return fontFamilies;
+
+    CFIndex numMatches = CFArrayGetCount(matchedDescriptors.get());
+    if (!numMatches)
+        return fontFamilies;
+
+    HashSet<String> visited;
+    for (CFIndex i = 0; i < numMatches; ++i) {
+        auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matchedDescriptors.get(), i));
+        if (auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontFamilyNameAttribute))))
+            visited.add(familyName.get());
+    }
+
+    copyToVector(visited, fontFamilies);
     return fontFamilies;
 }
 
