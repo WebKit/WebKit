@@ -53,7 +53,7 @@ template <> struct VectorTraits<JSC::Scope> : SimpleClassVectorTraits {
 namespace JSC {
 
 class ExecState;
-class FunctionBodyNode;
+class FunctionMetadataNode;
 class FunctionParameters;
 class Identifier;
 class VM;
@@ -838,8 +838,8 @@ private:
     void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&, VariableEnvironment&, CodeFeatures, int, const Vector<RefPtr<UniquedStringImpl>>&&);
 
     // Used to determine type of error to report.
-    bool isFunctionBodyNode(ScopeNode*) { return false; }
-    bool isFunctionBodyNode(FunctionBodyNode*) { return true; }
+    bool isFunctionMetadataNode(ScopeNode*) { return false; }
+    bool isFunctionMetadataNode(FunctionMetadataNode*) { return true; }
 
     ALWAYS_INLINE void next(unsigned lexerFlags = 0)
     {
@@ -1315,7 +1315,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
         // we ran out of stack while parsing. If we see an error while parsing eval or program
         // code we assume that it was a syntax error since running out of stack is much less
         // likely, and we are currently unable to distinguish between the two cases.
-        if (isFunctionBodyNode(static_cast<ParsedNode*>(0)) || m_hasStackOverflow)
+        if (isFunctionMetadataNode(static_cast<ParsedNode*>(0)) || m_hasStackOverflow)
             error = ParserError(ParserError::StackOverflow, ParserError::SyntaxErrorNone, m_token);
         else {
             ParserError::SyntaxErrorType errorType = ParserError::SyntaxErrorIrrecoverable;

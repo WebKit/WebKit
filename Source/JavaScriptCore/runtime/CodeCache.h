@@ -40,7 +40,7 @@
 namespace JSC {
 
 class EvalExecutable;
-class FunctionBodyNode;
+class FunctionMetadataNode;
 class Identifier;
 class JSScope;
 class ParserError;

@@ -76,13 +76,13 @@ ParserError BytecodeGenerator::generate()
         RefPtr<RegisterID> temp = newTemporary();
         RefPtr<RegisterID> globalScope = m_topMostScope;
         for (auto functionPair : m_functionsToInitialize) {
-            FunctionBodyNode* functionBody = functionPair.first;
+            FunctionMetadataNode* metadata = functionPair.first;
             FunctionVariableType functionType = functionPair.second;
-            emitNewFunction(temp.get(), functionBody);
+            emitNewFunction(temp.get(), metadata);
             if (functionType == NormalFunctionVariable)
-                initializeVariable(variable(functionBody->ident()) , temp.get());
+                initializeVariable(variable(metadata->ident()) , temp.get());
             else if (functionType == GlobalFunctionVariable)
-                emitPutToScope(globalScope.get(), Variable(functionBody->ident()), temp.get(), ThrowIfNotFound);
+                emitPutToScope(globalScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound);
             else
                 RELEASE_ASSERT_NOT_REACHED();
         }
@@ -162,7 +162,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     const FunctionStack& functionStack = programNode->functionStack();
 
     for (size_t i = 0; i < functionStack.size(); ++i) {
-        FunctionBodyNode* function = functionStack[i];
+        FunctionMetadataNode* function = functionStack[i];
         m_functionsToInitialize.append(std::make_pair(function, GlobalFunctionVariable));
     }
     if (Options::validateBytecode()) {
@@ -271,7 +271,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     // Need to know what our functions are called. Parameters have some goofy behaviors when it
     // comes to functions of the same name.
-    for (FunctionBodyNode* function : functionNode->functionStack())
+    for (FunctionMetadataNode* function : functionNode->functionStack())
         m_functions.add(function->ident().impl());
     
     if (needsArguments) {
@@ -378,7 +378,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         ASSERT(!parameters.hasDefaultParameterValues());
         createVariable(ident, varKind(ident.impl()), functionSymbolTable);
     }
-    for (FunctionBodyNode* function : functionNode->functionStack()) {
+    for (FunctionMetadataNode* function : functionNode->functionStack()) {
         const Identifier& ident = function->ident();
         createVariable(ident, varKind(ident.impl()), functionSymbolTable);
         m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
@@ -2232,7 +2232,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode* function)
+RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadataNode* function)
 {
     return emitNewFunctionInternal(dst, m_codeBlock->addFunctionDecl(makeFunction(function)));
 }
@@ -2256,8 +2256,8 @@ RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
 
 RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExprNode* n)
 {
-    FunctionBodyNode* function = n->body();
-    unsigned index = m_codeBlock->addFunctionExpr(makeFunction(function));
+    FunctionMetadataNode* metadata = n->metadata();
+    unsigned index = m_codeBlock->addFunctionExpr(makeFunction(metadata));
 
     emitOpcode(op_new_func_exp);
     instructions().append(r0->index());

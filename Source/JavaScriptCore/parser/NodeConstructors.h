@@ -884,18 +884,18 @@ namespace JSC {
     {
     }
 
-    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source)
+    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
         : ExpressionNode(location)
-        , m_body(body)
+        , m_metadata(m_metadata)
     {
-        m_body->finishParsing(source, ident, FunctionExpression);
+        m_metadata->finishParsing(source, ident, FunctionExpression);
     }
 
-    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source)
+    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
         : StatementNode(location)
-        , m_body(body)
+        , m_metadata(m_metadata)
     {
-        m_body->finishParsing(source, ident, FunctionDeclaration);
+        m_metadata->finishParsing(source, ident, FunctionDeclaration);
     }
 
 #if ENABLE(ES6_CLASS_SYNTAX)

@@ -1,3 +1,69 @@
+2015-08-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Let's rename FunctionBodyNode
+        https://bugs.webkit.org/show_bug.cgi?id=147292
+
+        Reviewed by Mark Lam & Saam Barati.
+
+        FunctionBodyNode => FunctionMetadataNode
+
+        Make FunctionMetadataNode inherit from Node instead of StatementNode
+        because a FunctionMetadataNode can appear in expression context and does
+        not have a next statement.
+
+        (I decided to continue allocating FunctionMetadataNode in the AST arena,
+        and to retain "Node" in its name, because it really is a parsing
+        construct, and we transform its data before consuming it elsewhere.
+
+        There is still room for a future patch to distill and simplify the
+        metadata we track about functions between FunDeclNode/FuncExprNode,
+        FunctionMetadataNode, and UnlinkedFunctionExecutable. But this is a start.)
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EvalNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode): Deleted.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createFunctionBody):
+        * parser/NodeConstructors.h:
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        * parser/Nodes.cpp:
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        (JSC::FunctionMetadataNode::finishParsing):
+        (JSC::FunctionMetadataNode::setEndPosition):
+        (JSC::FunctionBodyNode::FunctionBodyNode): Deleted.
+        (JSC::FunctionBodyNode::finishParsing): Deleted.
+        (JSC::FunctionBodyNode::setEndPosition): Deleted.
+        * parser/Nodes.h:
+        (JSC::FuncExprNode::body):
+        (JSC::FuncDeclNode::body):
+        * parser/Parser.h:
+        (JSC::Parser::isFunctionMetadataNode):
+        (JSC::Parser::next):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::Parser::isFunctionBodyNode): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+
 2015-08-09  Chris Dumez  <cdumez@apple.com>
 
         Regression(r188105): Seems to have caused crashes during PLT on some iPads

@@ -109,7 +109,7 @@ public:
     typedef TemplateLiteralNode* TemplateLiteral;
 #endif
     typedef FunctionParameters* FormalParameterList;
-    typedef FunctionBodyNode* FunctionBody;
+    typedef FunctionMetadataNode* FunctionBody;
 #if ENABLE(ES6_CLASS_SYNTAX)
     typedef ClassExprNode* ClassExpression;
 #endif
@@ -336,7 +336,7 @@ public:
     ExpressionNode* createAssignResolve(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* rhs, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end, AssignmentContext assignmentContext)
     {
         if (rhs->isFuncExprNode())
-            static_cast<FuncExprNode*>(rhs)->body()->setInferredName(ident);
+            static_cast<FuncExprNode*>(rhs)->metadata()->setInferredName(ident);
         AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, ident, rhs, assignmentContext);
         setExceptionLocation(node, start, divot, end);
         return node;
@@ -358,13 +358,13 @@ public:
         return result;
     }
 
-    FunctionBodyNode* createFunctionBody(
+    FunctionMetadataNode* createFunctionMetadata(
         const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, 
         unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
         int functionNameStart, int parametersStart, bool inStrictContext, 
         ConstructorKind constructorKind, unsigned parameterCount, FunctionParseMode mode)
     {
-        return new (m_parserArena) FunctionBodyNode(
+        return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 
             inStrictContext, constructorKind, parameterCount, mode);
@@ -408,7 +408,7 @@ public:
     PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding = SuperBinding::NotNeeded)
     {
         if (node->isFuncExprNode())
-            static_cast<FuncExprNode*>(node)->body()->setInferredName(*propertyName);
+            static_cast<FuncExprNode*>(node)->metadata()->setInferredName(*propertyName);
         return new (m_parserArena) PropertyNode(*propertyName, node, type, putType, superBinding);
     }
     PropertyNode* createProperty(VM* vm, ParserArena& parserArena, double propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool)
@@ -438,7 +438,7 @@ public:
             m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn));
         if (*functionInfo.name == m_vm->propertyNames->arguments)
             usesArguments();
-        m_scope.m_funcDeclarations.append(decl->body());
+        m_scope.m_funcDeclarations.append(decl->metadata());
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         return decl;
     }
@@ -1211,7 +1211,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
         if (op == OpEqual) {
             if (expr->isFuncExprNode())
-                static_cast<FuncExprNode*>(expr)->body()->setInferredName(resolve->identifier());
+                static_cast<FuncExprNode*>(expr)->metadata()->setInferredName(resolve->identifier());
             AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, resolve->identifier(), expr, AssignmentContext::AssignmentExpression);
             setExceptionLocation(node, start, divot, end);
             return node;
@@ -1230,7 +1230,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
     if (op == OpEqual) {
         if (expr->isFuncExprNode())
-            static_cast<FuncExprNode*>(expr)->body()->setInferredName(dot->identifier());
+            static_cast<FuncExprNode*>(expr)->metadata()->setInferredName(dot->identifier());
         return new (m_parserArena) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), start, end);
     }
 

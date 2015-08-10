@@ -2907,11 +2907,7 @@ void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     generator.emitEnd(dstRegister.get());
 }
 
-// ------------------------------ FunctionBodyNode -----------------------------
-
-void FunctionBodyNode::emitBytecode(BytecodeGenerator&, RegisterID*)
-{
-}
+// ------------------------------ FunctionNode -----------------------------
 
 void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {

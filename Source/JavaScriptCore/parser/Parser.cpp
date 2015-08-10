@@ -1536,7 +1536,7 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
         next();
         if (match(CLOSEBRACE)) {
             unsigned endColumn = tokenColumn();
-            return context.createFunctionBody(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode);
+            return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode);
         }
     }
 
@@ -1548,7 +1548,7 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     else
         failIfFalse(parseSourceElements(syntaxChecker, CheckForStrictMode), bodyType == StandardFunctionBodyBlock ? "Cannot parse body of this function" : "Cannot parse body of this arrow function");
     unsigned endColumn = tokenColumn();
-    return context.createFunctionBody(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode);
+    return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode);
 }
 
 static const char* stringForFunctionMode(FunctionParseMode mode)
@@ -1741,7 +1741,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
             endLocation.startOffset - endLocation.lineStartOffset;
         unsigned currentLineStartOffset = m_token.m_location.lineStartOffset;
 
-        functionInfo.body = context.createFunctionBody(
+        functionInfo.body = context.createFunctionMetadata(
             startLocation, endLocation, functionInfo.bodyStartColumn, bodyEndColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 
             cachedInfo->strictMode, constructorKind, cachedInfo->parameterCount, mode);

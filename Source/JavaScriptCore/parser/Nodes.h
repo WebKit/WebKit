@@ -41,7 +41,7 @@ namespace JSC {
 
     class ArgumentListNode;
     class BytecodeGenerator;
-    class FunctionBodyNode;
+    class FunctionMetadataNode;
     class FunctionParameters;
     class Label;
     class PropertyListNode;
@@ -81,7 +81,7 @@ namespace JSC {
     typedef HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
 
     namespace DeclarationStacks {
-        typedef Vector<FunctionBodyNode*> FunctionStack;
+        typedef Vector<FunctionMetadataNode*> FunctionStack;
     }
 
     struct SwitchInfo {
@@ -1779,17 +1779,15 @@ namespace JSC {
         bool m_hasDefaultParameterValues { false };
     };
 
-    class FunctionBodyNode final : public StatementNode, public ParserArenaDeletable {
+    class FunctionMetadataNode final : public Node, public ParserArenaDeletable {
     public:
         using ParserArenaDeletable::operator new;
 
-        FunctionBodyNode(
+        FunctionMetadataNode(
             ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
             unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
             int functionNameStart, int parametersStart, bool isInStrictContext, 
             ConstructorKind, unsigned, FunctionParseMode);
-
-        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         void finishParsing(const SourceCode&, const Identifier&, FunctionMode);
         
@@ -1816,6 +1814,14 @@ namespace JSC {
         bool isInStrictContext() const { return m_isInStrictContext; }
         ConstructorKind constructorKind() { return static_cast<ConstructorKind>(m_constructorKind); }
 
+        void setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)
+        {
+            m_lastLine = lastLine;
+            m_position = JSTextPosition(firstLine, startOffset, lineStartOffset);
+            ASSERT(m_position.offset >= m_position.lineStartOffset);
+        }
+        unsigned lastLine() const { return m_lastLine; }
+
     protected:
         Identifier m_ident;
         Identifier m_inferredName;
@@ -1828,6 +1834,7 @@ namespace JSC {
         SourceCode m_source;
         int m_startStartOffset;
         unsigned m_parameterCount;
+        int m_lastLine;
         FunctionParseMode m_parseMode;
         unsigned m_isInStrictContext : 1;
         unsigned m_constructorKind : 2;
@@ -1862,16 +1869,16 @@ namespace JSC {
 
     class FuncExprNode : public ExpressionNode {
     public:
-        FuncExprNode(const JSTokenLocation&, const Identifier&, FunctionBodyNode*, const SourceCode&);
+        FuncExprNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
 
-        FunctionBodyNode* body() { return m_body; }
+        FunctionMetadataNode* metadata() { return m_metadata; }
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         virtual bool isFuncExprNode() const override { return true; }
 
-        FunctionBodyNode* m_body;
+        FunctionMetadataNode* m_metadata;
     };
 
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -1997,15 +2004,15 @@ namespace JSC {
 
     class FuncDeclNode : public StatementNode {
     public:
-        FuncDeclNode(const JSTokenLocation&, const Identifier&, FunctionBodyNode*, const SourceCode&);
+        FuncDeclNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
 
         virtual bool isFuncDeclNode() const override { return true; }
-        FunctionBodyNode* body() { return m_body; }
+        FunctionMetadataNode* metadata() { return m_metadata; }
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
-        FunctionBodyNode* m_body;
+        FunctionMetadataNode* m_metadata;
     };
 
 #if ENABLE(ES6_CLASS_SYNTAX)

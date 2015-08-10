@@ -166,15 +166,15 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
     if (!funcDecl || !funcDecl->isFuncDeclNode())
         return nullptr;
 
-    FunctionBodyNode* body = static_cast<FuncDeclNode*>(funcDecl)->body();
-    ASSERT(body);
-    if (!body)
+    FunctionMetadataNode* metadata = static_cast<FuncDeclNode*>(funcDecl)->metadata();
+    ASSERT(metadata);
+    if (!metadata)
         return nullptr;
     
-    body->setEndPosition(positionBeforeLastNewline);
+    metadata->setEndPosition(positionBeforeLastNewline);
     // The Function constructor only has access to global variables, so no variables will be under TDZ.
     VariableEnvironment emptyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, body, UnlinkedNormalFunction, ConstructAbility::CanConstruct, emptyTDZVariables);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, ConstructAbility::CanConstruct, emptyTDZVariables);
     functionExecutable->m_nameValue.set(vm, functionExecutable, jsString(&vm, name.string()));
 
     m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));

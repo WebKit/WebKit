@@ -84,16 +84,16 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const S
     ExpressionNode* funcExpr = static_cast<ExprStatementNode*>(exprStatement)->expr();
     RELEASE_ASSERT(funcExpr);
     RELEASE_ASSERT(funcExpr->isFuncExprNode());
-    FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
+    FunctionMetadataNode* metadata = static_cast<FuncExprNode*>(funcExpr)->metadata();
     RELEASE_ASSERT(!program->hasCapturedVariables());
     
-    body->setEndPosition(positionBeforeLastNewline);
-    RELEASE_ASSERT(body);
-    RELEASE_ASSERT(body->ident().isNull());
+    metadata->setEndPosition(positionBeforeLastNewline);
+    RELEASE_ASSERT(metadata);
+    RELEASE_ASSERT(metadata->ident().isNull());
     
     // This function assumes an input string that would result in a single anonymous function expression.
-    body->setEndPosition(positionBeforeLastNewline);
-    RELEASE_ASSERT(body);
+    metadata->setEndPosition(positionBeforeLastNewline);
+    RELEASE_ASSERT(metadata);
     for (const auto& closedVariable : program->closedVariables()) {
         if (closedVariable == m_vm.propertyNames->arguments.impl())
             continue;
@@ -101,9 +101,9 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const S
         if (closedVariable == m_vm.propertyNames->undefinedKeyword.impl())
             continue;
     }
-    body->overrideName(name);
+    metadata->overrideName(name);
     VariableEnvironment dummyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, kind, constructAbility, dummyTDZVariables, WTF::move(sourceOverride));
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, metadata, kind, constructAbility, dummyTDZVariables, WTF::move(sourceOverride));
     functionExecutable->m_nameValue.set(m_vm, functionExecutable, jsString(&m_vm, name.string()));
     return functionExecutable;
 }

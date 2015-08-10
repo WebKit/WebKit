@@ -48,7 +48,7 @@
 namespace JSC {
 
 class Debugger;
-class FunctionBodyNode;
+class FunctionMetadataNode;
 class FunctionExecutable;
 class JSScope;
 class ParserError;
@@ -108,7 +108,7 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables, RefPtr<SourceProvider>&& sourceOverride = nullptr)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables, RefPtr<SourceProvider>&& sourceOverride = nullptr)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
             UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind, constructAbility, parentScopeTDZVariables);
@@ -168,7 +168,7 @@ public:
     const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
 
 private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&);
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&);
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 

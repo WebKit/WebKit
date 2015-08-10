@@ -80,7 +80,7 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(
     return result;
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables)
     : Base(*vm, structure)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())

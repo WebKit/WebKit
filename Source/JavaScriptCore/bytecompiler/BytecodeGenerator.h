@@ -477,7 +477,7 @@ namespace JSC {
         RegisterID* emitNewObject(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*, unsigned length); // stops at first elision
 
-        RegisterID* emitNewFunction(RegisterID* dst, FunctionBodyNode*);
+        RegisterID* emitNewFunction(RegisterID* dst, FunctionMetadataNode*);
         RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
         RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name);
@@ -712,17 +712,17 @@ namespace JSC {
 
         unsigned addConstantBuffer(unsigned length);
         
-        UnlinkedFunctionExecutable* makeFunction(FunctionBodyNode* body)
+        UnlinkedFunctionExecutable* makeFunction(FunctionMetadataNode* metadata)
         {
             VariableEnvironment variablesUnderTDZ;
             getVariablesUnderTDZ(variablesUnderTDZ);
 
-            FunctionParseMode parseMode = body->parseMode();
+            FunctionParseMode parseMode = metadata->parseMode();
             ConstructAbility constructAbility = ConstructAbility::CanConstruct;
-            if (parseMode == GetterMode || parseMode == SetterMode || parseMode == ArrowFunctionMode || (parseMode == MethodMode && body->constructorKind() == ConstructorKind::None))
+            if (parseMode == GetterMode || parseMode == SetterMode || parseMode == ArrowFunctionMode || (parseMode == MethodMode && metadata->constructorKind() == ConstructorKind::None))
                 constructAbility = ConstructAbility::CannotConstruct;
 
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, variablesUnderTDZ);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, variablesUnderTDZ);
         }
 
         void getVariablesUnderTDZ(VariableEnvironment&);
@@ -792,7 +792,7 @@ namespace JSC {
         Vector<std::unique_ptr<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
         enum FunctionVariableType : uint8_t { NormalFunctionVariable, GlobalFunctionVariable };
-        Vector<std::pair<FunctionBodyNode*, FunctionVariableType>> m_functionsToInitialize;
+        Vector<std::pair<FunctionMetadataNode*, FunctionVariableType>> m_functionsToInitialize;
         bool m_needToInitializeArguments { false };
         
         Vector<TryRange> m_tryRanges;
@@ -800,7 +800,7 @@ namespace JSC {
 
         int m_nextConstantOffset { 0 };
 
-        typedef HashMap<FunctionBodyNode*, unsigned> FunctionOffsetMap;
+        typedef HashMap<FunctionMetadataNode*, unsigned> FunctionOffsetMap;
         FunctionOffsetMap m_functionOffsets;
         
         // Constant pool

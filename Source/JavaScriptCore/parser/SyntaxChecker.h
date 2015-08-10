@@ -186,7 +186,7 @@ public:
     ClassExpression createClassExpr(const JSTokenLocation&, const Identifier&, ExpressionType, ExpressionType, PropertyList, PropertyList) { return ClassExpr; }
 #endif
     ExpressionType createFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
-    int createFunctionBody(const JSTokenLocation&, const JSTokenLocation&, int, int, bool, int, int, int, ConstructorKind, unsigned, int) { return FunctionBodyResult; }
+    int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, int, int, bool, int, int, int, ConstructorKind, unsigned, int) { return FunctionBodyResult; }
     ExpressionType createArrowFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     void setFunctionNameStart(int, int) { }
     int createArguments() { return ArgumentsResult; }

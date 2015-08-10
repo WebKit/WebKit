@@ -145,14 +145,14 @@ EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocatio
 {
 }
 
-// ------------------------------ FunctionBodyNode -----------------------------
+// ------------------------------ FunctionMetadataNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(
+FunctionMetadataNode::FunctionMetadataNode(
     ParserArena&, const JSTokenLocation& startLocation, 
     const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, 
     int functionKeywordStart, int functionNameStart, int parametersStart, bool isInStrictContext, 
     ConstructorKind constructorKind, unsigned parameterCount, FunctionParseMode mode)
-        : StatementNode(endLocation)
+        : Node(endLocation)
         , m_startColumn(startColumn)
         , m_endColumn(endColumn)
         , m_functionKeywordStart(functionKeywordStart)
@@ -167,14 +167,14 @@ FunctionBodyNode::FunctionBodyNode(
     ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
 }
 
-void FunctionBodyNode::finishParsing(const SourceCode& source, const Identifier& ident, enum FunctionMode functionMode)
+void FunctionMetadataNode::finishParsing(const SourceCode& source, const Identifier& ident, enum FunctionMode functionMode)
 {
     m_source = source;
     m_ident = ident;
     m_functionMode = functionMode;
 }
 
-void FunctionBodyNode::setEndPosition(JSTextPosition position)
+void FunctionMetadataNode::setEndPosition(JSTextPosition position)
 {
     m_lastLine = position.line;
     m_endColumn = position.offset - position.lineStartOffset;
