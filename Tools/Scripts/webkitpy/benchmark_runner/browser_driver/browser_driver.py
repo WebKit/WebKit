@@ -18,3 +18,7 @@ class BrowserDriver(object):
     @abc.abstractmethod
     def close_browsers(self):
         pass
+
+    @abc.abstractmethod
+    def restore_env(self):
+        pass

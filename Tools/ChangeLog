@@ -1,3 +1,34 @@
+2015-08-10  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Make cleanup more robust and minor code cleaning in run benchmark script.
+        https://bugs.webkit.org/show_bug.cgi?id=147800
+
+        Reviewed by Ryosuke Niwa.
+
+        Use 'finnaly' block to make sure cleanup code is always executed.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (built_benchmark):
+        (built_benchmark.__init__):
+        (built_benchmark.__enter__):
+        (built_benchmark.__exit__):
+        (test_environment):
+        (test_environment.__init__):
+        (test_environment.__enter__):
+        (test_environment.__exit__):
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner.execute):
+        (BenchmarkRunner._dump):
+        (BenchmarkRunner._wrap):
+        (BenchmarkRunner): Deleted.
+        (BenchmarkRunner._cleanup): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.close_browsers):
+        (BrowserDriver):
+        (BrowserDriver.restore_env):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.__init__): We do not actually need to know external ip address for now.
+
 2015-08-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Compile warning (-Wsign-compare) on 32-bits at WebCore/platform/FileSystem.cpp

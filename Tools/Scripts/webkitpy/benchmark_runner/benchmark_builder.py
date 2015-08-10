@@ -16,29 +16,35 @@ _log = logging.getLogger(__name__)
 
 
 class BenchmarkBuilder(object):
-    def prepare(self, name, plan):
+    def __init__(self, name, plan):
         self._name = name
+        self._plan = plan
+
+    def __enter__(self):
         self._web_root = tempfile.mkdtemp()
         self._dest = os.path.join(self._web_root, self._name)
-        if 'local_copy' in plan:
-            self._copy_benchmark_to_temp_dir(plan['local_copy'])
-        elif 'remote_archive' in plan:
-            self._fetch_remote_archive(plan['remote_archive'])
-        elif 'svn_source' in plan:
-            self._checkout_with_subversion(plan['svn_source'])
+        if 'local_copy' in self._plan:
+            self._copy_benchmark_to_temp_dir(self._plan['local_copy'])
+        elif 'remote_archive' in self._plan:
+            self._fetch_remote_archive(self._plan['remote_archive'])
+        elif 'svn_source' in self._plan:
+            self._checkout_with_subversion(self._plan['svn_source'])
         else:
             raise Exception('The benchmark location was not specified')
 
         _log.info('Copied the benchmark into: %s' % self._dest)
         try:
-            if 'create_script' in plan:
+            if 'create_script' in self._plan:
                 self._run_create_script(plan['create_script'])
-            if 'benchmark_patch' in plan:
-                self._apply_patch(plan['benchmark_patch'])
+            if 'benchmark_patch' in self._plan:
+                self._apply_patch(self._plan['benchmark_patch'])
             return self._web_root
         except Exception:
-            self.clean()
+            self._clean()
             raise
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self._clean()
 
     def _run_create_script(self, create_script):
         old_working_directory = os.getcwd()
@@ -92,7 +98,7 @@ class BenchmarkBuilder(object):
         if error_code:
             raise Exception('Cannot apply patch, will skip current benchmark_path - Error: %s' % error_code)
 
-    def clean(self):
+    def _clean(self):
         _log.info('Cleaning Benchmark')
         if self._web_root:
             force_remove(self._web_root)

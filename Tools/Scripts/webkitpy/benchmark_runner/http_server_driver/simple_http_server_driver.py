@@ -24,14 +24,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     def __init__(self):
         self._server_process = None
         self._server_port = 0
-        # FIXME: This may not be reliable.
-        _log.info('Finding the IP address of current machine')
-        try:
-            self._ip = [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][0]
-            _log.info('IP of current machine is: %s' % self._ip)
-        except Exception as error:
-            _log.error('Cannot get the ip address of current machine - Error: %s' % error)
-            raise
+        self._ip = '127.0.0.1'
 
     def serve(self, web_root):
         _log.info('Launching an http server')

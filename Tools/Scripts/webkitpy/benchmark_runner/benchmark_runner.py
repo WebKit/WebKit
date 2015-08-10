@@ -41,10 +41,10 @@ class BenchmarkRunner(object):
                 self._output_file = output_file
                 self._device_id = device_id
         except IOError as error:
-            _log.error('Can not open plan file: %s - Error %s' % (plan_file, error))
+            _log.error('Can not open plan file: {plan_file} - Error {error}'.format(plan_file=plan_file, error=error))
             raise error
         except ValueError as error:
-            _log.error('Plan file: %s may not follow JSON format - Error %s' % (plan_file, error))
+            _log.error('Plan file: {plan_file} may not follow JSON format - Error {error}'.format(plan_file=plan_file, error=error))
             raise error
 
     def _find_plan_file(self, plan_file):
@@ -58,46 +58,33 @@ class BenchmarkRunner(object):
                 return absPath
         return plan_file
 
-    def execute(self):
-        _log.info('Start to execute the plan')
-        _log.info('Start a new benchmark')
+    def _run_benchmark(self, count, web_root):
         results = []
-        self._benchmark_builder = BenchmarkBuilder()
-
-        web_root = self._benchmark_builder.prepare(self._plan_name, self._plan)
-        for x in xrange(int(self._plan['count'])):
-            _log.info('Start the iteration %d of current benchmark' % (x + 1))
-            self._http_server_driver.serve(web_root)
-            self._browser_driver.prepare_env(self._device_id)
-            url = urlparse.urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + self._plan['entry_point'])
-            self._browser_driver.launch_url(url, self._build_dir)
-            result = None
+        for iteration in xrange(1, count + 1):
+            _log.info('Start the iteration {current_iteration} of current benchmark'.format(current_iteration=iteration))
             try:
+                result = None
+                self._http_server_driver.serve(web_root)
+                self._browser_driver.prepare_env(self._device_id)
+                url = urlparse.urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + self._plan['entry_point'])
+                self._browser_driver.launch_url(url, self._build_dir)
                 with timeout(self._plan['timeout']):
                     result = self._http_server_driver.fetch_result()
-                assert(not self._http_server_driver.get_return_code())
-                assert(result)
-                results.append(json.loads(result))
-            except Exception as error:
-                _log.error('No result or the server crashed. Something went wrong. Will skip current benchmark.\nError: %s, Server return code: %d, result: %s' % (error, self._http_server_driver.get_return_code(), result))
-                self._cleanup()
-                sys.exit(1)
+                    assert(not self._http_server_driver.get_return_code())
+                    assert(result)
+                    results.append(json.loads(result))
             finally:
+                self._browser_driver.restore_env()
                 self._browser_driver.close_browsers()
-                _log.info('End of %d iteration of current benchmark' % (x + 1))
+                self._http_server_driver.kill_server()
+            _log.info('End of {current_iteration} iteration of current benchmark'.format(current_iteration=iteration))
         results = self._wrap(results)
         self._dump(results, self._output_file if self._output_file else self._plan['output_file'])
         self._show_results(results)
-        self._benchmark_builder.clean()
-        sys.exit()
 
-    def _cleanup(self):
-        if self._browser_driver:
-            self._browser_driver.close_browsers()
-        if self._http_server_driver:
-            self._http_server_driver.kill_server()
-        if self._benchmark_builder:
-            self._benchmark_builder.clean()
+    def execute(self):
+        with BenchmarkBuilder(self._plan_name, self._plan) as web_root:
+            self._run_benchmark(int(self._plan['count']), web_root)
 
     @classmethod
     def _dump(cls, results, output_file):
@@ -106,18 +93,18 @@ class BenchmarkRunner(object):
             with open(output_file, 'w') as fp:
                 json.dump(results, fp)
         except IOError as error:
-            _log.error('Cannot open output file: %s - Error: %s' % (output_file, error))
-            _log.error('Results are:\n %s', json.dumps(results))
+            _log.error('Cannot open output file: {output_file} - Error: {error}'.format(output_file=output_file, error=error))
+            _log.error('Results are:\n {result}'.format(json.dumps(results)))
 
     @classmethod
     def _wrap(cls, dicts):
-        _log.debug('Merging following results:\n%s', json.dumps(dicts))
+        _log.debug('Merging following results:\n{results}'.format(results=json.dumps(dicts)))
         if not dicts:
             return None
         ret = {}
         for dic in dicts:
             ret = cls._merge(ret, dic)
-        _log.debug('Results after merging:\n%s', json.dumps(ret))
+        _log.debug('Results after merging:\n{result}'.format(result=json.dumps(ret)))
         return ret
 
     @classmethod
