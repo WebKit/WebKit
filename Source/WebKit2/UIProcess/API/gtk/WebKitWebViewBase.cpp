@@ -450,6 +450,7 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* chi
 static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
+    g_cancellable_cancel(webView->priv->screenSaverInhibitCancellable.get());
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
     webView->priv->pageProxy->close();
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
@@ -1134,7 +1135,7 @@ static void webkitWebViewBaseSendInhibitMessageToScreenSaver(WebKitWebViewBase* 
     ASSERT(priv->screenSaverProxy);
     priv->screenSaverCookie = 0;
     if (!priv->screenSaverInhibitCancellable)
-        priv->screenSaverInhibitCancellable = g_cancellable_new();
+        priv->screenSaverInhibitCancellable = adoptGRef(g_cancellable_new());
     g_dbus_proxy_call(priv->screenSaverProxy.get(), "Inhibit", g_variant_new("(ss)", g_get_prgname(), _("Website running in fullscreen mode")),
         G_DBUS_CALL_FLAGS_NONE, -1, priv->screenSaverInhibitCancellable.get(), reinterpret_cast<GAsyncReadyCallback>(screenSaverInhibitedCallback), webViewBase);
 }
@@ -1162,7 +1163,7 @@ static void webkitWebViewBaseInhibitScreenSaver(WebKitWebViewBase* webViewBase)
         return;
     }
 
-    priv->screenSaverInhibitCancellable = g_cancellable_new();
+    priv->screenSaverInhibitCancellable = adoptGRef(g_cancellable_new());
     g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
         nullptr, "org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver", priv->screenSaverInhibitCancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(screenSaverProxyCreatedCallback), webViewBase);

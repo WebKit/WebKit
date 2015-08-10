@@ -1,3 +1,19 @@
+2015-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash when the web view is destroyed while the screensaver DBUs proxy is being created
+        https://bugs.webkit.org/show_bug.cgi?id=147780
+
+        Reviewed by Sergio Villar Senin.
+
+        We should cancel the screenSaverInhibitCancellable on
+        dispose. Also use adoptGRef() when creating the cancellable object
+        to not leak it.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDispose):
+        (webkitWebViewBaseSendInhibitMessageToScreenSaver):
+        (webkitWebViewBaseInhibitScreenSaver):
+
 2015-08-09  Chris Dumez  <cdumez@apple.com>
 
         Follow-up nit fixes after r187691.
