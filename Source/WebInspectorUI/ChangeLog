@@ -1,5 +1,158 @@
 2015-08-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add different types of non-numerical Visual editors for CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=147711
+
+        Added editors for keyword based CSS properties for use in the Visual style
+        details panel in the CSS sidebar.  Also added images for keyword values that
+        are simple enough to be conveyed in an image.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Images/ClearBoth.svg: Added.
+        * UserInterface/Images/ClearLeft.svg: Added.
+        * UserInterface/Images/ClearRight.svg: Added.
+        * UserInterface/Images/FloatLeft.svg: Added.
+        * UserInterface/Images/FloatRight.svg: Added.
+        * UserInterface/Images/FontStyleItalic.svg: Added.
+        * UserInterface/Images/FontStyleNormal.svg: Added.
+        * UserInterface/Images/FontVariantSmallCaps.svg: Added.
+        * UserInterface/Images/TextAlignCenter.svg: Added.
+        * UserInterface/Images/TextAlignJustify.svg: Added.
+        * UserInterface/Images/TextAlignLeft.svg: Added.
+        * UserInterface/Images/TextAlignRight.svg: Added.
+        * UserInterface/Images/TextDecorationLineThrough.svg: Added.
+        * UserInterface/Images/TextDecorationOverline.svg: Added.
+        * UserInterface/Images/TextDecorationUnderline.svg: Added.
+        * UserInterface/Images/TextTransformCapitalize.svg: Added.
+        * UserInterface/Images/TextTransformLowercase.svg: Added.
+        * UserInterface/Images/TextTransformUppercase.svg: Added.
+        * UserInterface/Images/VisualStyleNone.svg: Added.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        Changed color swatch title.
+
+        * UserInterface/Views/Slider.js:
+        (WebInspector.Slider):
+        (WebInspector.Slider.prototype.set value):
+        (WebInspector.Slider.prototype.set knobX):
+        (WebInspector.Slider.prototype.get maxX):
+        If the given value is below 0, reset it to 0.
+        (WebInspector.Slider.prototype._handleMousedown):
+        (WebInspector.Slider.prototype._handleMousemove):
+        (WebInspector.Slider.prototype.get _maxX): Deleted.
+
+        * UserInterface/Views/VisualStyleColorPicker.css: Added.
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .visual-style-special-property-placeholder):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch:hover):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch:active):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch > span):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > input):
+        (.visual-style-property-container.input-color-picker.multiple > .visual-style-property-value-container > .visual-style-multiple-property-placeholder):
+
+        * UserInterface/Views/VisualStyleColorPicker.js: Added.
+        (WebInspector.VisualStyleColorPicker):
+        (WebInspector.VisualStyleColorPicker.prototype.get value):
+        (WebInspector.VisualStyleColorPicker.prototype.set value):
+        (WebInspector.VisualStyleColorPicker.prototype.get placeholder):
+        (WebInspector.VisualStyleColorPicker.prototype.set placeholder):
+        (WebInspector.VisualStyleColorPicker.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleColorPicker.prototype.get hasCompletions):
+        (WebInspector.VisualStyleColorPicker.prototype.set completions):
+        (WebInspector.VisualStyleColorPicker.prototype._updateColorSwatch):
+        (WebInspector.VisualStyleColorPicker.prototype._colorSwatchClicked):
+        (WebInspector.VisualStyleColorPicker.prototype._colorPickerColorDidChange):
+        (WebInspector.VisualStyleColorPicker.prototype._completionClicked):
+        (WebInspector.VisualStyleColorPicker.prototype._textInputKeyDown):
+        (WebInspector.VisualStyleColorPicker.prototype._textInputKeyUp):
+        (WebInspector.VisualStyleColorPicker.prototype._showCompletionsIfAble):
+        (WebInspector.VisualStyleColorPicker.prototype._hideCompletions):
+        (WebInspector.VisualStyleColorPicker.prototype._toggleTabbingOfSelectableElements):
+
+        * UserInterface/Views/VisualStyleKeywordCheckbox.css: Added.
+        (.visual-style-property-container.keyword-checkbox > .visual-style-property-value-container):
+        (.visual-style-property-container.keyword-checkbox > .visual-style-property-value-container > input):
+        (.visual-style-property-container.keyword-checkbox > .visual-style-property-value-container > div):
+
+        * UserInterface/Views/VisualStyleKeywordCheckbox.js: Added.
+        (WebInspector.VisualStyleKeywordCheckbox):
+        (WebInspector.VisualStyleKeywordCheckbox.prototype.get value):
+        (WebInspector.VisualStyleKeywordCheckbox.prototype.set value):
+        (WebInspector.VisualStyleKeywordCheckbox.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleKeywordCheckbox.prototype._toggleTabbingOfSelectableElements):
+
+        * UserInterface/Views/VisualStyleKeywordIconList.css: Added.
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:first-child):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:last-child):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:matches(.computed, .selected)):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected svg .stroked):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected svg .filled):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:matches(.computed, .selected) + .keyword-icon):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon > div):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:not(.selected) > div):
+
+        * UserInterface/Views/VisualStyleKeywordIconList.js: Added.
+        (WebInspector.VisualStyleKeywordIconList.dashToCapital):
+        (WebInspector.VisualStyleKeywordIconList.createListItem):
+        (WebInspector.VisualStyleKeywordIconList):
+        (WebInspector.VisualStyleKeywordIconList.prototype.get value):
+        (WebInspector.VisualStyleKeywordIconList.prototype.set value):
+        (WebInspector.VisualStyleKeywordIconList.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleKeywordIconList.prototype._handleKeywordChanged):
+
+        * UserInterface/Views/VisualStyleKeywordPicker.js: Added.
+        (WebInspector.VisualStyleKeywordPicker):
+        (WebInspector.VisualStyleKeywordPicker.prototype.get value):
+        (WebInspector.VisualStyleKeywordPicker.prototype.set value):
+        (WebInspector.VisualStyleKeywordPicker.prototype.set placeholder):
+        (WebInspector.VisualStyleKeywordPicker.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleKeywordPicker.prototype.updateEditorValues):
+        (WebInspector.VisualStyleKeywordPicker.prototype._handleKeywordChanged):
+        (WebInspector.VisualStyleKeywordPicker.prototype._keywordSelectMouseDown):
+        (WebInspector.VisualStyleKeywordPicker.prototype._addValues):
+        (WebInspector.VisualStyleKeywordPicker.prototype._addAdvancedValues):
+        (WebInspector.VisualStyleKeywordPicker.prototype._removeAdvancedValues):
+        (WebInspector.VisualStyleKeywordPicker.prototype._toggleTabbingOfSelectableElements):
+
+        * UserInterface/Views/VisualStylePropertyNameInput.js: Added.
+        (WebInspector.VisualStylePropertyNameInput):
+        (WebInspector.VisualStylePropertyNameInput.prototype.get value):
+        (WebInspector.VisualStylePropertyNameInput.prototype.set value):
+        (WebInspector.VisualStylePropertyNameInput.prototype.get synthesizedValue):
+        (WebInspector.VisualStylePropertyNameInput.prototype.get hasCompletions):
+        (WebInspector.VisualStylePropertyNameInput.prototype.set completions):
+        (WebInspector.VisualStylePropertyNameInput.prototype._completionClicked):
+        (WebInspector.VisualStylePropertyNameInput.prototype._inputKeyDown):
+        (WebInspector.VisualStylePropertyNameInput.prototype._inputKeyUp):
+        (WebInspector.VisualStylePropertyNameInput.prototype._hideCompletions):
+        (WebInspector.VisualStylePropertyNameInput.prototype._toggleTabbingOfSelectableElements):
+
+        * UserInterface/Views/VisualStyleURLInput.js: Added.
+        (WebInspector.VisualStyleURLInput):
+        (WebInspector.VisualStyleURLInput.prototype.set get value):
+        (WebInspector.VisualStyleURLInput.prototype.parseValue):
+
+        * UserInterface/Views/VisualStyleUnitSlider.css: Added.
+        (.visual-style-property-container.unit-slider > .visual-style-property-value-container > .slider):
+        (.visual-style-property-container.unit-slider > .visual-style-property-value-container > .slider > img):
+        (.visual-style-property-container.unit-slider.opacity > .visual-style-property-value-container > .slider):
+
+        * UserInterface/Views/VisualStyleUnitSlider.js: Added.
+        (WebInspector.VisualStyleUnitSlider):
+        (WebInspector.VisualStyleUnitSlider.prototype.set value):
+        (WebInspector.VisualStyleUnitSlider.prototype.get value):
+        (WebInspector.VisualStyleUnitSlider.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleUnitSlider.prototype.sliderValueDidChange):
+
+2015-08-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Add VisualStyleSelectorSection
         https://bugs.webkit.org/show_bug.cgi?id=147572
 

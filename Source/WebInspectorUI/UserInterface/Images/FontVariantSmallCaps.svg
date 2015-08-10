@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" font-size="7" font-family="-apple-system, sans-serif">
+    <rect class="filled" x="-2" width="20" height="20" fill="white" stroke="none" />
+    <text class="filled" x="0.25" y="11" font-size="10">A</text>
+    <text class="filled" x="6.75" y="11">B</text>
+    <text class="filled" x="11" y="11">C</text>
+</svg>

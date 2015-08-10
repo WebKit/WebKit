@@ -880,7 +880,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             // Look for color strings and add swatches in front of them.
             createCodeMirrorColorTextMarkers(this._codeMirror, range, function(marker, color, colorString) {
                 var swatchElement = document.createElement("span");
-                swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format.");
+                swatchElement.title = WebInspector.UIString("Click to select a color. Shift-click to switch color formats.");
                 swatchElement.className = WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName;
                 swatchElement.addEventListener("click", this._colorSwatchClicked.bind(this));
 
