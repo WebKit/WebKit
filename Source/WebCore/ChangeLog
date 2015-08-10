@@ -1,5 +1,38 @@
 2015-08-10  Dana Burkart  <dburkart@apple.com>
 
+        Merge r188182. rdar://problem/21254835
+
+    2015-08-07  James Craig  <jcraig@apple.com>
+
+            REGRESSION(r184722) AX: WebKit video playback toolbar removed from DOM; no longer accessible to VoiceOver
+            https://bugs.webkit.org/show_bug.cgi?id=145684
+
+            Reviewed by Dean Jackson.
+
+            Updated Apple Video controls to add an invisible but focusable button that allows VoiceOver
+            users (and when unblocked, keyboard users) to re-display the video controls.
+
+            Test: media/video-controls-show-on-kb-or-ax-event.html
+
+            * English.lproj/mediaControlsLocalizedStrings.js:
+            * Modules/mediacontrols/mediaControlsApple.css:
+            (audio::-webkit-media-show-controls):
+            (video::-webkit-media-show-controls):
+            * Modules/mediacontrols/mediaControlsApple.js:
+            (Controller.prototype.createControls):
+            (Controller.prototype.handleFullscreenChange):
+            (Controller.prototype.handleShowControlsClick):
+            (Controller.prototype.handleWrapperMouseMove):
+            (Controller.prototype.updateForShowingControls):
+            (Controller.prototype.showControls):
+            (Controller.prototype.hideControls):
+            (Controller.prototype.setNeedsUpdateForDisplayedWidth):
+            * Modules/mediacontrols/mediaControlsiOS.css:
+            (audio::-webkit-media-show-controls):
+            (video::-webkit-media-show-controls):
+
+2015-08-10  Dana Burkart  <dburkart@apple.com>
+
         Merge r188196. rdar://problem/22192773
 
     2015-08-09  Eric Carlson  <eric.carlson@apple.com>

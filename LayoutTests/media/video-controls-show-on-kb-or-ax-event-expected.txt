@@ -1,0 +1,6 @@
+This tests that, after the video controls fade out, they can be shown when VoiceOver or a keyboard user clicks the hidden "Show Controls" button.
+
+PASS
+
+
+

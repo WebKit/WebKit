@@ -1,5 +1,21 @@
 2015-08-10  Dana Burkart  <dburkart@apple.com>
 
+        Merge r188182. rdar://problem/21254835
+
+    2015-08-07  James Craig  <jcraig@apple.com>
+
+            REGRESSION(r184722) AX: WebKit video playback toolbar removed from DOM; no longer accessible to VoiceOver
+            https://bugs.webkit.org/show_bug.cgi?id=145684
+
+            Reviewed by Dean Jackson.
+
+            * http/tests/contentextensions/text-track-blocked-expected.txt: Minor update to test case expectation.
+            * media/video-controls-show-on-kb-or-ax-event-expected.txt: Added.
+            * media/video-controls-show-on-kb-or-ax-event.html: New test validates video controls can be displayed without the need for a mouse.
+            * platform/mac/media/track/track-cue-rendering-horizontal-expected.txt: Minor update to test case expectation.
+
+2015-08-10  Dana Burkart  <dburkart@apple.com>
+
         Merge r188190. rdar://problem/22191482
 
     2015-08-08  Commit Queue  <commit-queue@webkit.org>
