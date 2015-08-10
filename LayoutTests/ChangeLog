@@ -1,3 +1,37 @@
+2015-08-07  Antti Koivisto  <antti@apple.com>
+
+        Expand network cache tests to cover memory cache behavior
+        https://bugs.webkit.org/show_bug.cgi?id=147783
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add another round to existing cache tests with hot memory cache.
+        This add 691 individual cases worth of memory cache test coverage.
+
+        XHR (and main resource, CachedRawResource in general) behaves differently from other resource types. The added
+        coverage maps this behavior. The regular subresource behavior needs coverage too.
+
+        * http/tests/cache/disk-cache/disk-cache-204-status-code-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-302-status-code-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-307-status-code-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-404-status-code-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-disable-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-media-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-range-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-request-headers-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-request-max-stale-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-attachment-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-no-body-expected.txt:
+        * http/tests/cache/disk-cache/resources/cache-test.js:
+        (loadResource):
+        (loadResourcesWithOptions):
+        (loadResources):
+        (.):
+        (runTests):
+
 2015-08-09  Chris Dumez  <cdumez@apple.com>
 
         Page cache doesn't work for pages actively using Geolocation

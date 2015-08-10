@@ -446,6 +446,10 @@ String Internals::xhrResponseSource(XMLHttpRequest* xhr)
         return "Disk cache";
     case ResourceResponse::Source::DiskCacheAfterValidation:
         return "Disk cache after validation";
+    case ResourceResponse::Source::MemoryCache:
+        return "Memory cache";
+    case ResourceResponse::Source::MemoryCacheAfterValidation:
+        return "Memory cache after validation";
     }
     ASSERT_NOT_REACHED();
     return "Error";

@@ -107,7 +107,8 @@ public:
     WEBCORE_EXPORT Optional<std::chrono::system_clock::time_point> expires() const;
     WEBCORE_EXPORT Optional<std::chrono::system_clock::time_point> lastModified() const;
 
-    enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation };
+    // This is primarily for testing support. It is not necessarily accurate in all scenarios.
+    enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation };
     WEBCORE_EXPORT Source source() const;
     WEBCORE_EXPORT void setSource(Source);
 
