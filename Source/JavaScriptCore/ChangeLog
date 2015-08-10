@@ -1,3 +1,31 @@
+2015-08-10  Mark Lam  <mark.lam@apple.com>
+
+        Refactor LiveObjectList and LiveObjectData into their own files.
+        https://bugs.webkit.org/show_bug.cgi?id=147843
+
+        Reviewed by Saam Barati.
+
+        There is no behavior change in this patch.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/HeapVerifier.cpp:
+        (JSC::HeapVerifier::HeapVerifier):
+        (JSC::LiveObjectList::findObject): Deleted.
+        * heap/HeapVerifier.h:
+        (JSC::LiveObjectData::LiveObjectData): Deleted.
+        (JSC::LiveObjectList::LiveObjectList): Deleted.
+        (JSC::LiveObjectList::reset): Deleted.
+        * heap/LiveObjectData.h: Added.
+        (JSC::LiveObjectData::LiveObjectData):
+        * heap/LiveObjectList.cpp: Added.
+        (JSC::LiveObjectList::findObject):
+        * heap/LiveObjectList.h: Added.
+        (JSC::LiveObjectList::LiveObjectList):
+        (JSC::LiveObjectList::reset):
+
 2015-08-07  Geoffrey Garen  <ggaren@apple.com>
 
         Let's rename FunctionBodyNode

@@ -1705,6 +1705,9 @@
 		FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */ = {isa = PBXBuildFile; fileRef = FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE384EE71ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE384EE31ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp */; };
 		FE384EE81ADDB7AD0055DE2C /* JSDollarVMPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = FE384EE41ADDB7AD0055DE2C /* JSDollarVMPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE3913541B794F6E00EDAF71 /* LiveObjectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */; };
+		FE3913551B794F8A00EDAF71 /* LiveObjectData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913511B794AC900EDAF71 /* LiveObjectData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913531B794AC900EDAF71 /* LiveObjectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
 		FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4D55B71AE716CA0052E459 /* IterationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3557,6 +3560,9 @@
 		FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDollarVM.h; sourceTree = "<group>"; };
 		FE384EE31ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDollarVMPrototype.cpp; sourceTree = "<group>"; };
 		FE384EE41ADDB7AD0055DE2C /* JSDollarVMPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDollarVMPrototype.h; sourceTree = "<group>"; };
+		FE3913511B794AC900EDAF71 /* LiveObjectData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveObjectData.h; sourceTree = "<group>"; };
+		FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveObjectList.cpp; sourceTree = "<group>"; };
+		FE3913531B794AC900EDAF71 /* LiveObjectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveObjectList.h; sourceTree = "<group>"; };
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
 		FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionOverrides.h; sourceTree = "<group>"; };
 		FE4D55B71AE716CA0052E459 /* IterationStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterationStatus.h; sourceTree = "<group>"; };
@@ -4083,6 +4089,9 @@
 				FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */,
 				FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */,
 				C2DA778218E259990066FCB6 /* HeapInlines.h */,
+				FE3913511B794AC900EDAF71 /* LiveObjectData.h */,
+				FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */,
+				FE3913531B794AC900EDAF71 /* LiveObjectList.h */,
 				ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */,
 				2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */,
 				2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */,
@@ -6329,6 +6338,7 @@
 				7B39F76E1B62DE3200360FB4 /* WASMModuleParser.h in Headers */,
 				BC18C4210E16F5CD00B34460 /* JSGlobalObject.h in Headers */,
 				A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */,
+				FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */,
 				A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */,
 				A57D23EA1891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h in Headers */,
 				BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */,
@@ -6691,6 +6701,7 @@
 				142E313C134FF0A600AFADB5 /* Weak.h in Headers */,
 				14E84F9F14EE1ACC00D6D5D4 /* WeakBlock.h in Headers */,
 				14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */,
+				FE3913551B794F8A00EDAF71 /* LiveObjectData.h in Headers */,
 				14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */,
 				14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */,
 				0F2DD8121AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h in Headers */,
@@ -7415,6 +7426,7 @@
 				0F0332C018ADFAE1005F979A /* ExitingJITType.cpp in Sources */,
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
 				0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */,
+				FE3913541B794F6E00EDAF71 /* LiveObjectList.cpp in Sources */,
 				0F978B3B1AAEA71D007C7369 /* ConstantMode.cpp in Sources */,
 				0FE050251AA9095600D33B33 /* ClonedArguments.cpp in Sources */,
 				0F79085519A290B200F6310C /* DFGStructureRegistrationPhase.cpp in Sources */,

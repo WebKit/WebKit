@@ -294,6 +294,9 @@
     <ClCompile Include="..\heap\JITStubRoutineSet.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\LiveObjectList.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\MachineStackMarker.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -2235,6 +2238,12 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\ListableHandler.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\LiveObjectData.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\LiveObjectList.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\Local.h">

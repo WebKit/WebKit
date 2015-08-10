@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,43 +27,12 @@
 #define HeapVerifier_h
 
 #include "Heap.h"
-#include <wtf/Vector.h>
+#include "LiveObjectList.h"
 
 namespace JSC {
 
 class JSObject;
 class MarkedBlock;
-
-struct LiveObjectData {
-    LiveObjectData(JSObject* obj, bool isConfirmedDead = false)
-        : obj(obj)
-        , isConfirmedDead(isConfirmedDead)
-    {
-    }
-
-    JSObject* obj;
-    bool isConfirmedDead;
-};
-
-struct LiveObjectList {
-    LiveObjectList(const char* name)
-        : name(name)
-        , hasLiveObjects(true)
-    {
-    }
-
-    void reset()
-    {
-        liveObjects.clear();
-        hasLiveObjects = true; // Presume to have live objects until the list is trimmed.
-    }
-
-    LiveObjectData* findObject(JSObject*);
-
-    const char* name;
-    Vector<LiveObjectData> liveObjects;
-    bool hasLiveObjects;
-};
 
 class HeapVerifier {
     WTF_MAKE_FAST_ALLOCATED;

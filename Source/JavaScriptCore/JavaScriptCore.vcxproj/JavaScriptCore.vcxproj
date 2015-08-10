@@ -565,6 +565,7 @@
     <ClCompile Include="..\heap\HeapVerifier.cpp" />
     <ClCompile Include="..\heap\IncrementalSweeper.cpp" />
     <ClCompile Include="..\heap\JITStubRoutineSet.cpp" />
+    <ClCompile Include="..\heap\LiveObjectList.cpp" />
     <ClCompile Include="..\heap\MachineStackMarker.cpp" />
     <ClCompile Include="..\heap\MarkedAllocator.cpp" />
     <ClCompile Include="..\heap\MarkedBlock.cpp" />
@@ -1321,6 +1322,8 @@
     <ClInclude Include="..\heap\IncrementalSweeper.h" />
     <ClInclude Include="..\heap\JITStubRoutineSet.h" />
     <ClInclude Include="..\heap\ListableHandler.h" />
+    <ClInclude Include="..\heap\LiveObjectData.h" />
+    <ClInclude Include="..\heap\LiveObjectList.h" />
     <ClInclude Include="..\heap\Local.h" />
     <ClInclude Include="..\heap\LocalScope.h" />
     <ClInclude Include="..\heap\MachineStackMarker.h" />
