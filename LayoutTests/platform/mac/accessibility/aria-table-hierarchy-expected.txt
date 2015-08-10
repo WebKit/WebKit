@@ -25,7 +25,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 AXRole: AXWebArea AXValue: 
-  AXRole: AXGrid AXValue: 
+  AXRole: AXTable AXValue: 
     AXRole: AXRow AXValue: 
       AXRole: AXCell AXValue: 
         AXRole: AXStaticText AXValue: foo
@@ -38,7 +38,7 @@ AXRole: AXWebArea AXValue:
       AXRole: AXCell AXValue: 
         AXRole: AXStaticText AXValue: bar
     AXRole: AXGroup AXValue: 
-  AXRole: AXGrid AXValue: 
+  AXRole: AXTable AXValue: 
     AXRole: AXRow AXValue: 
       AXRole: AXCell AXValue: 
         AXRole: AXStaticText AXValue: Odd
@@ -73,7 +73,7 @@ AXRole: AXWebArea AXValue:
         AXRole: AXStaticText AXValue: Odd
       AXRole: AXCell AXValue: 
         AXRole: AXStaticText AXValue: Even
-  AXRole: AXGrid AXValue: 
+  AXRole: AXTable AXValue: 
     AXRole: AXRow AXValue: 
       AXRole: AXCell AXValue: 
         AXRole: AXStaticText AXValue: hello
@@ -86,7 +86,7 @@ AXRole: AXWebArea AXValue:
       AXRole: AXCell AXValue: 
         AXRole: AXStaticText AXValue: world
     AXRole: AXGroup AXValue: 
-  AXRole: AXGrid AXValue: 
+  AXRole: AXTable AXValue: 
     AXRole: AXRow AXValue: 
       AXRole: AXCell AXValue: 
         AXRole: AXStaticText AXValue: Odd

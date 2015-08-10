@@ -87,9 +87,9 @@ void AccessibilityARIAGrid::addRowDescendant(AccessibilityObject* rowChild, Hash
     if (!rowChild)
         return;
 
-    if (!rowChild->isTableRow()) {
+    if (!rowChild->isTableRow() || !rowChild->node()) {
         // Although a "grid" should have rows as its direct descendants, if this is not a table row,
-        // dive deeper into the descendants to try to find a valid row.
+        // or this row is anonymous, dive deeper into the descendants to try to find a valid row.
         for (const auto& child : rowChild->children())
             addRowDescendant(child.get(), appendedRows, columnCount);
     } else

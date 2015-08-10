@@ -1,3 +1,20 @@
+2015-08-09  Nan Wang  <n_wang@apple.com>
+
+        AX: CSS table display styles can cause malformed, inaccessible AXTables to be exposed to the AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=136415
+        <rdar://problem/22026625>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-table-with-presentational-elements-expected.txt:
+        * accessibility/aria-table-with-presentational-elements.html:
+        * accessibility/mac/malformed-table-expected.txt: Added.
+        * accessibility/mac/malformed-table.html: Added.
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/aria-table-hierarchy-expected.txt:
+        * platform/mac/accessibility/aria-tables-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2015-08-08  Darin Adler  <darin@apple.com>
 
         Remove -webkit-color-correction CSS property

@@ -44,6 +44,8 @@
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
 
+#include <wtf/Deque.h>
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -421,6 +423,29 @@ void AccessibilityTable::addChildren()
 
 }
 
+void AccessibilityTable::addTableCellChild(AccessibilityObject* rowObject, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
+{
+    if (!rowObject || !is<AccessibilityTableRow>(*rowObject))
+        return;
+
+    auto& row = downcast<AccessibilityTableRow>(*rowObject);
+    // We need to check every cell for a new row, because cell spans
+    // can cause us to miss rows if we just check the first column.
+    if (appendedRows.contains(&row))
+        return;
+    
+    row.setRowIndex(static_cast<int>(m_rows.size()));
+    m_rows.append(&row);
+    if (!row.accessibilityIsIgnored())
+        m_children.append(&row);
+    appendedRows.add(&row);
+        
+    // store the maximum number of columns
+    unsigned rowCellCount = row.children().size();
+    if (rowCellCount > columnCount)
+        columnCount = rowCellCount;
+}
+
 void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection, unsigned& maxColumnCount)
 {
     ASSERT(tableSection);
@@ -437,20 +462,23 @@ void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection
             continue;
         
         AccessibilityObject& rowObject = *axCache->getOrCreate(renderRow);
-        if (!is<AccessibilityTableRow>(rowObject))
-            continue;
         
-        auto& row = downcast<AccessibilityTableRow>(rowObject);
-        // We need to check every cell for a new row, because cell spans
-        // can cause us to miss rows if we just check the first column.
-        if (appendedRows.contains(&row))
-            continue;
-        
-        row.setRowIndex(static_cast<int>(m_rows.size()));
-        m_rows.append(&row);
-        if (!row.accessibilityIsIgnored())
-            m_children.append(&row);
-        appendedRows.add(&row);
+        // If the row is anonymous, we should dive deeper into the descendants to try to find a valid row.
+        if (renderRow->isAnonymous()) {
+            Deque<AccessibilityObject*> queue;
+            queue.append(&rowObject);
+            
+            while (!queue.isEmpty()) {
+                AccessibilityObject* obj = queue.takeFirst();
+                if (obj->node() && is<AccessibilityTableRow>(*obj)) {
+                    addTableCellChild(obj, appendedRows, maxColumnCount);
+                    continue;
+                }
+                for (auto child = obj->firstChild(); child; child = child->nextSibling())
+                    queue.append(child);
+            }
+        } else
+            addTableCellChild(&rowObject, appendedRows, maxColumnCount);
     }
     
     maxColumnCount = std::max(tableSection->numColumns(), maxColumnCount);

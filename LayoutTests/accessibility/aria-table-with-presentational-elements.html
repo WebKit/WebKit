@@ -32,7 +32,7 @@ if (window.accessibilityController) {
     var table = accessibilityController.accessibleElementById("table");
     var row = table.rowAtIndex(0);
     shouldBe("row.role", "'AXRole: AXRow'");
-    shouldBe("row.parentElement().role", "'AXRole: AXGrid'");
+    shouldBe("row.parentElement().role", "'AXRole: AXTable'");
 
     document.getElementById("content").style.visibility = "hidden";
 }

@@ -10,8 +10,8 @@ cell
 header 1	header 2	header 2
 cell	cell	cell
 cell
-AXRole: AXGrid
-AXRole: AXGrid
+AXRole: AXTable
+AXRole: AXTable
 AXRole: AXCell
 AXRole: AXCell
 AXRole: AXCell
