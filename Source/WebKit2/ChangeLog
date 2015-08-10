@@ -1,3 +1,9 @@
+2015-08-10  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the 32-bit build.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2015-08-08  Sam Weinig  <sam@webkit.org>
 
         Replace WebPageConfiguration with API::PageConfiguration and expose a C-SPI accessor for it
