@@ -1,5 +1,99 @@
 2015-08-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add numerical input and slider based Visual editors for CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=147712
+
+        Reviewed by Brian Burg.
+
+        Added editors for CSS properties with numerical values for use in the Visual style
+        details panel in the CSS sidebar, in the form of a combined select and input or an
+        input range.  Also added optional visual linkages to sync values between multiple
+        editors of this type.
+
+        * UserInterface/Images/VisualStylePropertyLinked.svg: Added.
+        * UserInterface/Images/VisualStylePropertyUnlinked.svg: Added.
+
+        * UserInterface/Views/VisualStyleNumberInputBox.css: Added.
+        (.visual-style-property-container > .visual-style-property-value-container.focused > .focus-ring):
+        (.visual-style-property-container > .visual-style-property-value-container > .number-input-keyword-select):
+        (.visual-style-property-container > .visual-style-property-value-container > .number-input-container):
+        (.visual-style-property-container > .visual-style-property-value-container:not(.number-input-editable) > .number-input-container):
+        (.visual-style-property-container > .visual-style-property-value-container > .number-input-container > .number-input-value):
+        (.visual-style-property-container > .visual-style-property-value-container > .number-input-container > span):
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js: Added.
+        (WebInspector.VisualStyleNumberInputBox):
+        (WebInspector.VisualStyleNumberInputBox.prototype.get value):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set value):
+        (WebInspector.VisualStyleNumberInputBox.prototype.get units):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set units):
+        (WebInspector.VisualStyleNumberInputBox.prototype.get placeholder):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set placeholder):
+        (WebInspector.VisualStyleNumberInputBox.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleNumberInputBox.prototype.get numberInputEditable):
+        (WebInspector.VisualStyleNumberInputBox.prototype.updateValueFromText):
+        (WebInspector.VisualStyleNumberInputBox.prototype.parseValue):
+        (WebInspector.VisualStyleNumberInputBox.prototype._keywordChanged):
+        (WebInspector.VisualStyleNumberInputBox.prototype._valueNumberInputKeyDown.shiftValue):
+        (WebInspector.VisualStyleNumberInputBox.prototype._valueNumberInputKeyDown):
+        (WebInspector.VisualStyleNumberInputBox.prototype._numberInputChanged):
+        (WebInspector.VisualStyleNumberInputBox.prototype._keywordSelectMouseDown):
+        (WebInspector.VisualStyleNumberInputBox.prototype._createValueOptions):
+        (WebInspector.VisualStyleNumberInputBox.prototype._createUnitOptions):
+        (WebInspector.VisualStyleNumberInputBox.prototype._addAdvancedUnits):
+        (WebInspector.VisualStyleNumberInputBox.prototype._removeAdvancedUnits):
+        (WebInspector.VisualStyleNumberInputBox.prototype._focusContentElement):
+        (WebInspector.VisualStyleNumberInputBox.prototype._blurContentElement):
+        (WebInspector.VisualStyleNumberInputBox.prototype._toggleTabbingOfSelectableElements):
+
+        * UserInterface/Views/VisualStylePropertyEditorLink.css: Added.
+        (.visual-style-property-editor-link):
+        (.visual-style-property-editor-link.disabled):
+        (.visual-style-property-editor-link.link-all):
+        (.visual-style-property-editor-link.link-all.linked):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-border):
+        (.visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-icon:hover + .visual-style-property-editor-link-border.right):
+        (.visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-border.left):
+        (.visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-border.right):
+        (.visual-style-property-editor-link.linked > .visual-style-property-editor-link-border):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-border.left):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-border.right):
+        (.visual-style-property-editor-link:not(.link-all) > .visual-style-property-editor-link-border):
+        (.visual-style-property-editor-link:not(.link-all).linked > .visual-style-property-editor-link-border):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon > .unlinked-icon):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon > .unlinked-icon svg .filled):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon > .unlinked-icon svg .stroked):
+        (.visual-style-property-editor-link:not(.link-all) > .visual-style-property-editor-link-icon):
+        (.visual-style-property-editor-link.link-all > .visual-style-property-editor-link-icon):
+
+        * UserInterface/Views/VisualStylePropertyEditorLink.js: Added.
+        (WebInspector.VisualStylePropertyEditorLink):
+        (WebInspector.VisualStylePropertyEditorLink.prototype.get element):
+        (WebInspector.VisualStylePropertyEditorLink.prototype.set disabled):
+        (WebInspector.VisualStylePropertyEditorLink.prototype._linkedPropertyValueChanged):
+        (WebInspector.VisualStylePropertyEditorLink.prototype._updateLinkedEditors):
+        (WebInspector.VisualStylePropertyEditorLink.prototype._iconMouseover):
+        (WebInspector.VisualStylePropertyEditorLink.prototype._iconMouseout):
+        (WebInspector.VisualStylePropertyEditorLink.prototype._iconClicked):
+
+        * UserInterface/Views/VisualStyleRelativeNumberSlider.css: Added.
+        (.visual-style-property-container.number-input-box.relative-number-slider > .visual-style-property-title):
+        (.visual-style-property-container.number-input-box.relative-number-slider > .visual-style-property-value-container):
+        (.visual-style-property-container.number-input-box.relative-number-slider.disabled > .relative-slider):
+        (.visual-style-property-container.number-input-box.relative-number-slider > .visual-style-property-value-container.no-values.no-units):
+        (.visual-style-property-container.number-input-box.relative-number-slider > .relative-slider):
+
+        * UserInterface/Views/VisualStyleRelativeNumberSlider.js: Added.
+        (WebInspector.VisualStyleRelativeNumberSlider):
+        (WebInspector.VisualStyleRelativeNumberSlider.prototype.set scale):
+        (WebInspector.VisualStyleRelativeNumberSlider.prototype.updateEditorValues):
+        (WebInspector.VisualStyleRelativeNumberSlider.prototype._resetSlider):
+        (WebInspector.VisualStyleRelativeNumberSlider.prototype._sliderChanged):
+        (WebInspector.VisualStyleRelativeNumberSlider.prototype._numberInputChanged):
+
+2015-08-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Add different types of non-numerical Visual editors for CSS properties
         https://bugs.webkit.org/show_bug.cgi?id=147711
 
