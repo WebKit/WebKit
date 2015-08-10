@@ -272,7 +272,7 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
         indexOfClientWillPlayToTarget = indexOfClientThatRequestedPicker;
     if (indexOfClientWillPlayToTarget == notFound && indexOfLastClientToRequestPicker != notFound)
         indexOfClientWillPlayToTarget = indexOfLastClientToRequestPicker;
-    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute)
+    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute && flagsAreSet(m_clientState[0]->flags, MediaProducer::ExternalDeviceAutoPlayCandidate) && !flagsAreSet(m_clientState[0]->flags, MediaProducer::IsPlayingVideo))
         indexOfClientWillPlayToTarget = 0;
 
     LOG(Media, "WebMediaSessionManager::configurePlaybackTargetClients - indexOfClientWillPlayToTarget = %zu", indexOfClientWillPlayToTarget);

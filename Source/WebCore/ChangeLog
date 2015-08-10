@@ -1,5 +1,23 @@
 2015-08-10  Dana Burkart  <dburkart@apple.com>
 
+        Merge r188196. rdar://problem/22192773
+
+    2015-08-09  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] Always require ExternalDeviceAutoPlayCandidate flag to AirPlay automatically
+            https://bugs.webkit.org/show_bug.cgi?id=147801
+
+            Reviewed by Dean Jackson.
+
+            Test: http/tests/media/video-media-document-disposition-download.html
+
+            * Modules/mediasession/WebMediaSessionManager.cpp:
+            (WebCore::WebMediaSessionManager::configurePlaybackTargetClients): Don't tell the last element
+              to begin playing to the target unless the ExternalDeviceAutoPlayCandidate flag is set and
+              it is not currently playing.
+
+2015-08-10  Dana Burkart  <dburkart@apple.com>
+
         Merge r188190. rdar://problem/22191482
 
     2015-08-08  Commit Queue  <commit-queue@webkit.org>
