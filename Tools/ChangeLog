@@ -1,3 +1,23 @@
+2015-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test  /webkit2/WebKitWebView/submit-form is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=147727
+
+        Reviewed by Sergio Villar Senin.
+
+        I think it was not this test in particular, but
+        /webkit2/WebKitWebView/custom-charset that is affecting the
+        others. This is because changing the encoding reloads the page,
+        but we don't wait for the page to be reloaded, so when the test
+        finishes and other test starts the web process is still reloading
+        the page.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip /webkit2/WebKitWebView/submit-form.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewCustomCharset): Wait until page is reloaded after
+        changing the charset.
+
 2015-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Skip GTK+ test /webkit2/WebKitWebView/install-missing-plugins-permission-request.
