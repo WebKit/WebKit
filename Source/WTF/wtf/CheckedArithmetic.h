@@ -122,63 +122,84 @@ template <typename T, class OverflowHandler = CrashOnOverflow> class Checked;
 template <typename T> struct RemoveChecked;
 template <typename T> struct RemoveChecked<Checked<T>>;
 
-template <typename Target, typename Source, bool targetSigned = std::numeric_limits<Target>::is_signed, bool sourceSigned = std::numeric_limits<Source>::is_signed> struct BoundsChecker;
-template <typename Target, typename Source> struct BoundsChecker<Target, Source, false, false> {
+template <typename Target, typename Source, bool isTargetBigger = sizeof(Target) >= sizeof(Source), bool targetSigned = std::numeric_limits<Target>::is_signed, bool sourceSigned = std::numeric_limits<Source>::is_signed> struct BoundsChecker;
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, false, false, false> {
     static bool inBounds(Source value)
     {
-        // Same signedness so implicit type conversion will always increase precision
-        // to widest type
+        // Same signedness so implicit type conversion will always increase precision to widest type.
         return value <= std::numeric_limits<Target>::max();
     }
 };
-
-template <typename Target, typename Source> struct BoundsChecker<Target, Source, true, true> {
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, false, true, true> {
     static bool inBounds(Source value)
     {
-        // Same signedness so implicit type conversion will always increase precision
-        // to widest type
+        // Same signedness so implicit type conversion will always increase precision to widest type.
         return std::numeric_limits<Target>::min() <= value && value <= std::numeric_limits<Target>::max();
     }
 };
 
-template <typename Target, typename Source> struct BoundsChecker<Target, Source, false, true> {
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, false, false, true> {
     static bool inBounds(Source value)
     {
-        // Target is unsigned so any value less than zero is clearly unsafe
-        if (value < 0)
-            return false;
-        // If our (unsigned) Target is the same or greater width we can
-        // convert value to type Target without losing precision
-        if (sizeof(Target) >= sizeof(Source)) 
-            return static_cast<Target>(value) <= std::numeric_limits<Target>::max();
-        // The signed Source type has greater precision than the target so
-        // max(Target) -> Source will widen.
+        // When converting value to unsigned Source, value will become a big value if value is negative.
+        // Casted value will become bigger than Target::max as Source is bigger than Target.
+        return static_cast<typename std::make_unsigned<Source>::type>(value) <= std::numeric_limits<Target>::max();
+    }
+};
+
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, false, true, false> {
+    static bool inBounds(Source value)
+    {
+        // The unsigned Source type has greater precision than the target so max(Target) -> Source will widen.
         return value <= static_cast<Source>(std::numeric_limits<Target>::max());
     }
 };
 
-template <typename Target, typename Source> struct BoundsChecker<Target, Source, true, false> {
-    static bool inBounds(Source value)
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, true, false, false> {
+    static bool inBounds(Source)
     {
-        // Signed target with an unsigned source
-        if (sizeof(Target) <= sizeof(Source)) 
-            return value <= static_cast<Source>(std::numeric_limits<Target>::max());
-        // Target is Wider than Source so we're guaranteed to fit any value in
-        // unsigned Source
+        // Same sign, greater or same precision.
         return true;
     }
 };
 
-template <typename Target, typename Source, bool CanElide = std::is_same<Target, Source>::value || (sizeof(Target) > sizeof(Source)) > struct BoundsCheckElider;
-template <typename Target, typename Source> struct BoundsCheckElider<Target, Source, true> {
-    static bool inBounds(Source) { return true; }
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, true, true, true> {
+    static bool inBounds(Source)
+    {
+        // Same sign, greater or same precision.
+        return true;
+    }
 };
-template <typename Target, typename Source> struct BoundsCheckElider<Target, Source, false> : public BoundsChecker<Target, Source> {
+
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, true, true, false> {
+    static bool inBounds(Source value)
+    {
+        // Target is signed with greater or same precision. If strictly greater, it is always safe.
+        if (sizeof(Target) > sizeof(Source))
+            return true;
+        return value <= static_cast<Source>(std::numeric_limits<Target>::max());
+    }
+};
+
+template <typename Target, typename Source> struct BoundsChecker<Target, Source, true, false, true> {
+    static bool inBounds(Source value)
+    {
+        // Target is unsigned with greater precision.
+        return value >= 0;
+    }
 };
 
 template <typename Target, typename Source> static inline bool isInBounds(Source value)
 {
-    return BoundsCheckElider<Target, Source>::inBounds(value);
+    return BoundsChecker<Target, Source>::inBounds(value);
+}
+
+template <typename Target, typename Source> static inline bool convertSafely(Source input, Target& output)
+{
+    if (!isInBounds<Target>(input))
+        return false;
+    output = static_cast<Target>(input);
+    return true;
 }
 
 template <typename T> struct RemoveChecked {

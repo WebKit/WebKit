@@ -1,3 +1,18 @@
+2015-08-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Compile warning (-Wsign-compare) on 32-bits at WebCore/platform/FileSystem.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=146414
+
+        Reviewed by Darin Adler.
+
+        Added convertSafely routine based on isInBounds routine.
+        Updated BoundChecker by adding a third boolean parameter to this template giving whether Target has greater or equal precision than Source.
+        Removed BoundCheckElider, which is no longer necessary and had some issues.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::isInBounds):
+        (WTF::convertSafely):
+
 2015-08-07  Filip Pizlo  <fpizlo@apple.com>
 
         Lightweight locks should be adaptive

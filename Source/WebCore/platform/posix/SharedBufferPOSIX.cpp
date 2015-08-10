@@ -51,8 +51,8 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
         return 0;
     }
 
-    size_t bytesToRead = fileStat.st_size;
-    if (fileStat.st_size < 0 || bytesToRead != static_cast<unsigned long long>(fileStat.st_size)) {
+    size_t bytesToRead;
+    if (!WTF::convertSafely(fileStat.st_size, bytesToRead)) {
         close(fd);
         return 0;
     }
