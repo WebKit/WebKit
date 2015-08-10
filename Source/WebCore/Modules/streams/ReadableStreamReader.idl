@@ -37,5 +37,5 @@
     Promise cancel([Default=Undefined] optional any reason);
     [RaisesException] void releaseLock();
 
-    [CustomGetter] readonly attribute Promise closed;
+    [CustomGetter, CachedAttribute] readonly attribute Promise closed;
 };
