@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page actively using geolocation can go into the page cache.');
+window.jsTestIsAsync = true;
+
+var mockLatitude = 51.478;
+var mockLongitude = -0.166;
+var mockAccuracy = 100.0;
+
+var stage = "before_restore";
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (event.persisted) {
+        stage = "after_restore";
+        testPassed("Page did enter and was restored from the page cache");
+
+        // Going into PageCache should have disabled GPS so the GeolocationProvider should be
+        // temporarily inactive when restoring.
+        shouldBeFalse("testRunner.isGeolocationProviderActive()");
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    } else {
+        // Update the position right before going into PageCache to make sure that:
+        // 1. The watcher callback is NOT called while in the PageCache.
+        // 2. The watcher callback DOES get called when restoring from the PageCache.
+        testRunner.setMockGeolocationPosition(++mockLatitude, ++mockLongitude, ++mockAccuracy);
+
+        stage = "in_page_cache";
+    }
+}, false);
+
+function checkPosition(p) {
+    position = p;
+    shouldBe('position.coords.latitude', 'mockLatitude');
+    shouldBe('position.coords.longitude', 'mockLongitude');
+    shouldBe('position.coords.accuracy', 'mockAccuracy');
+    debug('');
+}
+
+function geolocationWatchFunction(position)
+{
+    debug("Watcher callback called");
+    shouldBeTrue("testRunner.isGeolocationProviderActive()");
+    shouldBeFalse("stage == 'in_page_cache'");
+    checkPosition(position);
+
+    if (stage == "before_restore") {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper.html";
+    } else {
+        finishJSTest();
+    }
+}
+
+window.addEventListener('load', function() {
+    navigator.geolocation.watchPosition(geolocationWatchFunction, function(e) {
+        testFailed('Error callback invoked unexpectedly');
+        finishJSTest();
+    });
+}, false);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

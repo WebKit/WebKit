@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page actively using geolocation can go into the page cache.');
+window.jsTestIsAsync = true;
+
+var mockLatitude = 51.478;
+var mockLongitude = -0.166;
+var mockAccuracy = 100.0;
+
+var stage = "before_restore";
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (event.persisted) {
+        stage = "after_restore";
+        testPassed("Page did enter and was restored from the page cache");
+
+        // Going into PageCache should have disabled GPS so the GeolocationProvider should be
+        // temporarily inactive when restoring.
+        shouldBeFalse("testRunner.isGeolocationProviderActive()");
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    } else {
+        stage = "in_page_cache";
+
+        // Give permission right before entering the PageCache to make sure that:
+        // 1. The geolocation callback is NOT called while in the page cache.
+        // 2. The geolocation callback DOES get called after restoring from the page cache.
+        testRunner.setGeolocationPermission(true);
+    }
+}, false);
+
+function checkPosition(p) {
+    position = p;
+    shouldBe('position.coords.latitude', 'mockLatitude');
+    shouldBe('position.coords.longitude', 'mockLongitude');
+    shouldBe('position.coords.accuracy', 'mockAccuracy');
+    debug('');
+}
+
+function geolocationCallback(position)
+{
+    debug("Watcher callback called");
+    shouldBeTrue("testRunner.isGeolocationProviderActive()");
+    shouldBeEqualToString('stage', 'after_restore');
+    checkPosition(position);
+    finishJSTest();
+}
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+
+    setTimeout(function() {
+          navigator.geolocation.getCurrentPosition(geolocationCallback, function(e) {
+          testFailed('Error callback invoked unexpectedly');
+          finishJSTest();
+      });
+    }, 0);
+}, false);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

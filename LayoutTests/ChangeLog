@@ -1,3 +1,19 @@
+2015-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Page cache doesn't work for pages actively using Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=147785
+        <rdar://problem/11147901>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage for page caching of pages actively using
+        the Geolocation API.
+
+        * fast/history/page-cache-geolocation-active-oneshot-expected.txt: Added.
+        * fast/history/page-cache-geolocation-active-oneshot.html: Added.
+        * fast/history/page-cache-geolocation-active-watcher-expected.txt: Added.
+        * fast/history/page-cache-geolocation-active-watcher.html: Added.
+
 2015-08-09  Nan Wang  <n_wang@apple.com>
 
         AX: CSS table display styles can cause malformed, inaccessible AXTables to be exposed to the AX tree
