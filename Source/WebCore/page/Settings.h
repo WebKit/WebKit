@@ -269,6 +269,11 @@ public:
     void setMediaKeysStorageDirectory(const String& directory) { m_mediaKeysStorageDirectory = directory; }
     const String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
 #endif
+    
+#if ENABLE(MEDIA_STREAM)
+    void setMediaDeviceIdentifierStorageDirectory(const String& directory) { m_mediaDeviceIdentifierStorageDirectory = directory; }
+    const String& mediaDeviceIdentifierStorageDirectory() const { return m_mediaDeviceIdentifierStorageDirectory; }
+#endif
 
     WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
     bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
@@ -352,6 +357,10 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     String m_mediaKeysStorageDirectory;
+#endif
+    
+#if ENABLE(MEDIA_STREAM)
+    String m_mediaDeviceIdentifierStorageDirectory;
 #endif
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;

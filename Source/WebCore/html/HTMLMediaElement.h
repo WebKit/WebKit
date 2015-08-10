@@ -559,6 +559,10 @@ private:
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) override;
     virtual String mediaPlayerMediaKeysStorageDirectory() const override;
 #endif
+    
+#if ENABLE(MEDIA_STREAM)
+    virtual String mediaPlayerMediaDeviceIdentifierStorageDirectory() const override;
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) override;
