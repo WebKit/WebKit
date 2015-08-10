@@ -1,3 +1,98 @@
+2015-08-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add VisualStyleSelectorSection
+        https://bugs.webkit.org/show_bug.cgi?id=147572
+
+        Reviewed by Brian Burg.
+
+        Adds a section to the new Visual style sidebar panel that contains the list of
+        styles for the currently selected node.
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.get mediaText):
+        Returns a string containing the list of media queries.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration):
+        (WebInspector.CSSStyleDeclaration.prototype.set text):
+        (WebInspector.CSSStyleDeclaration.prototype.get modified):
+        (WebInspector.CSSStyleDeclaration.prototype.resetText):
+        (WebInspector.CSSStyleDeclaration.prototype.generateCSSRuleString):
+        Generates a formatted string of the style text.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleContextMenuEvent):
+        (WebInspector.CSSStyleDeclarationSection.prototype._generateCSSRuleString): Deleted.
+
+        * UserInterface/Views/VisualStyleSelectorSection.css: Added.
+        (.details-section.visual-style-selector-section > .header):
+        (.details-section.visual-style-selector-section:not(.collapsed) > .header):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (.details-section.visual-style-selector-section > .header > .current-selector):
+        (.visual-style-selector-section.details-section:not(.collapsed) > .header > .current-selector):
+        (.details-section.visual-style-selector-section > .header > .current-selector > .icon):
+        (.details-section.visual-style-selector-section > .header > .current-selector > span):
+        (.details-section.visual-style-selector-section > .header > .controls):
+        (.details-section.visual-style-selector-section.collapsed > .header > .controls):
+        (.details-section.visual-style-selector-section > .header > .controls > .visual-style-selector-section-add-rule):
+        (.details-section.visual-style-selector-section > .content > .selectors):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .visual-style-selector-item:nth-child(odd)):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider > .icon):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider > :matches(.disclosure-button, .icon)):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider > .titles > .title):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider ~ .visual-style-selector-item:nth-child(even)):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider ~ .visual-style-selector-item:nth-child(odd)):
+
+        * UserInterface/Views/VisualStyleSelectorSection.js: Added.
+        (WebInspector.VisualStyleSelectorSection):
+        (WebInspector.VisualStyleSelectorSection.prototype.update.createSelectorItem):
+        (WebInspector.VisualStyleSelectorSection.prototype.update.uniqueOrderedRules):
+        (WebInspector.VisualStyleSelectorSection.prototype.update.insertAllMatchingPseudoRules):
+        (WebInspector.VisualStyleSelectorSection.prototype.update):
+        (WebInspector.VisualStyleSelectorSection.prototype.currentStyle):
+        (WebInspector.VisualStyleSelectorSection.prototype._selectorChanged):
+        (WebInspector.VisualStyleSelectorSection.prototype._styleTextReset):
+        (WebInspector.VisualStyleSelectorSection.prototype._addNewRule):
+        (WebInspector.VisualStyleSelectorSection.prototype._treeElementCheckboxToggled):
+        (WebInspector.VisualStyleSelectorSection.prototype._handleMouseOver):
+        (WebInspector.VisualStyleSelectorSection.prototype._handleMouseOut):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (.item.visual-style-selector-item):
+        (.item.visual-style-selector-item.selected):
+        (.item.visual-style-selector-item > .disclosure-button):
+        (.item.visual-style-selector-item > input[type="checkbox"]):
+        (.item.visual-style-selector-item > .icon):
+        (.item.visual-style-selector-item.modified > .icon):
+        (.item.visual-style-selector-item.selector-invalid > .icon):
+        (.item.visual-style-selector-item.selector-invalid > .titles > .title):
+        (.item.visual-style-selector-item.selector-invalid > .titles > .title::before):
+        (.item.visual-style-selector-item > .titles):
+        (.item.visual-style-selector-item:not(.dom-element-icon) > .titles > .title):
+        (.item.visual-style-selector-item:not(.dom-element-icon).editable > .titles > .title):
+        (.item.visual-style-selector-item:not(.dom-element-icon).editable > .titles > .title:focus):
+        (.item.visual-style-selector-item > .titles > .subtitle::before):
+        (.item.visual-style-selector-item > .titles > .subtitle):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.get iconClassName):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.get selectorText):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.onattach):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.ondeselect):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._highlightNodesWithSelector):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._hideDOMNodeHighlight):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleCheckboxChanged):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._updateCheckboxTitle):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleMainTitleMouseDown):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleMainTitleKeyDown):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._commitSelector):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._styleTextModified):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._selectorChanged):
+
 2015-08-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: TDZ in ProbeSetDataGrid construction

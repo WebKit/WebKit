@@ -43,6 +43,9 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         this._pendingProperties = [];
         this._propertyNameMap = {};
 
+        this._initialText = text;
+        this._hasModifiedInitialText = false;
+
         this.update(text, properties, styleSheetTextRange, true);
     }
 
@@ -183,7 +186,23 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         if (this._text === text)
             return;
 
+        var modified = text !== this._initialText;
+        if (modified !== this._hasModifiedInitialText) {
+            this._hasModifiedInitialText = modified;
+            this.dispatchEventToListeners(WebInspector.CSSStyleDeclaration.Event.InitialTextModified);
+        }
+
         this._nodeStyles.changeStyleText(this, text);
+    }
+
+    resetText()
+    {
+        this.text = this._initialText;
+    }
+
+    get modified()
+    {
+        return this._hasModifiedInitialText;
     }
 
     get properties()
@@ -260,6 +279,43 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         return newProperty;
     }
 
+    generateCSSRuleString()
+    {
+        if (!this._ownerRule)
+            return;
+
+        let styleText = "";
+        let mediaQueriesCount = 0;
+        let mediaList = this._ownerRule.mediaList;
+        if (mediaList.length) {
+            mediaQueriesCount = mediaList.length;
+
+            for (let i = mediaQueriesCount - 1; i >= 0; --i)
+                styleText += "    ".repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
+        }
+
+        styleText += "    ".repeat(mediaQueriesCount) + this._ownerRule.selectorText + " {\n";
+
+        for (let property of this._properties) {
+            if (property.anonymous)
+                continue;
+
+            styleText += "    ".repeat(mediaQueriesCount + 1) + property.text.trim();
+
+            if (!styleText.endsWith(";"))
+                styleText += ";";
+
+            styleText += "\n";
+        }
+
+        for (let i = mediaQueriesCount; i > 0; --i)
+            styleText += "    ".repeat(i) + "}\n";
+
+        styleText += "}";
+
+        return styleText;
+    }
+
     // Protected
 
     get nodeStyles()
@@ -269,7 +325,8 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
 };
 
 WebInspector.CSSStyleDeclaration.Event = {
-    PropertiesChanged: "css-style-declaration-properties-changed"
+    PropertiesChanged: "css-style-declaration-properties-changed",
+    InitialTextModified: "css-style-declaration-initial-text-modified"
 };
 
 WebInspector.CSSStyleDeclaration.Type = {
