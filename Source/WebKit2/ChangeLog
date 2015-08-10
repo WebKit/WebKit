@@ -1,3 +1,22 @@
+2015-08-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r187131 and r187286.
+        https://bugs.webkit.org/show_bug.cgi?id=147839
+
+         Causing mroe frequent crashes with invalid layer bounds
+        (rdar://problem/21465328) (Requested by smfr on #webkit).
+
+        Reverted changesets:
+
+        "[iOS] Menu drop down such as on nike.com does not stay"
+        https://bugs.webkit.org/show_bug.cgi?id=147047
+        http://trac.webkit.org/changeset/187131
+
+        "[iOS] REGRESSION (187131): Loading CuteOverload zooms in to
+        the top left corner."
+        https://bugs.webkit.org/show_bug.cgi?id=147251
+        http://trac.webkit.org/changeset/187286
+
 2015-08-07  Matt Rajca  <mrajca@apple.com>
 
         Media Session: generalize isFocusedContentMediaElementPlaying so it works with other playback attributes
