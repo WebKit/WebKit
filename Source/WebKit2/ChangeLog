@@ -1,3 +1,21 @@
+2015-08-07  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: generalize isFocusedContentMediaElementPlaying so it works with other playback attributes
+        https://bugs.webkit.org/show_bug.cgi?id=147797
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/C/WKMediaSessionFocusManager.cpp:
+        (WKMediaSessionFocusManagerValueForPlaybackAttribute):
+        (WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying): Deleted.
+        * UIProcess/API/C/WKMediaSessionFocusManager.h:
+        * UIProcess/WebMediaSessionFocusManager.cpp:
+        (WebKit::WebMediaSessionFocusManager::valueForPlaybackAttribute):
+        (WebKit::WebMediaSessionFocusManager::mediaControlIsEnabledDidChange):
+        (WebKit::WebMediaSessionFocusManager::isFocusedContentMediaElementPlaying): Deleted.
+        (WebKit::WebMediaSessionFocusManager::mediaElementIsPlayingDidChange): Deleted.
+        * UIProcess/WebMediaSessionFocusManager.h:
+
 2015-08-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Fix forward declarations of CoordinatedGraphicsLayerState, ViewportAttributes

@@ -36,10 +36,12 @@
 extern "C" {
 #endif
 
-enum {
-    IsPlaying = 1 << 0
+enum WKMediaSessionFocusManagerPlaybackAttribute {
+    IsPlaying                     = 1 << 0,
+    IsPreviousTrackControlEnabled = 1 << 1,
+    IsNextTrackControlEnabled     = 1 << 2,
 };
-typedef uint32_t WKMediaSessionFocusManagerPlaybackAttribute;
+typedef uint32_t WKMediaSessionFocusManagerPlaybackAttributes;
 
 // Media Session Focus Manager Client
 typedef void (*WKMediaSessionFocusManagerDidChangePlaybackAttribute)(WKMediaSessionFocusManagerRef manager, WKMediaSessionFocusManagerPlaybackAttribute playbackAttribute, bool value, const void *clientInfo);
@@ -60,7 +62,7 @@ WK_EXPORT WKTypeID WKMediaSessionFocusManagerGetTypeID();
 
 WK_EXPORT void WKMediaSessionFocusManagerSetClient(WKMediaSessionFocusManagerRef manager, const WKMediaSessionFocusManagerClientBase* client);
 
-WK_EXPORT bool WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying(WKMediaSessionFocusManagerRef manager);
+WK_EXPORT bool WKMediaSessionFocusManagerValueForPlaybackAttribute(WKMediaSessionFocusManagerRef, WKMediaSessionFocusManagerPlaybackAttribute);
 
 #ifdef __cplusplus
 }

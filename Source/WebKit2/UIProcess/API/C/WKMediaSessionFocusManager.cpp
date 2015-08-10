@@ -50,12 +50,13 @@ void WKMediaSessionFocusManagerSetClient(WKMediaSessionFocusManagerRef manager, 
 #endif
 }
 
-bool WKMediaSessionFocusManagerIsFocusedContentMediaElementPlaying(WKMediaSessionFocusManagerRef manager)
+bool WKMediaSessionFocusManagerValueForPlaybackAttribute(WKMediaSessionFocusManagerRef manager, WKMediaSessionFocusManagerPlaybackAttribute attribute)
 {
 #if ENABLE(MEDIA_SESSION)
-    return toImpl(manager)->isFocusedContentMediaElementPlaying();
+    return toImpl(manager)->valueForPlaybackAttribute(attribute);
 #else
     UNUSED_PARAM(manager);
+    UNUSED_PARAM(attribute);
     return false;
 #endif
 }

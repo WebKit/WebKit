@@ -62,19 +62,23 @@ void WebMediaSessionFocusManager::initializeClient(const WKMediaSessionFocusMana
     m_client.initialize(client);
 }
 
-bool WebMediaSessionFocusManager::isFocusedContentMediaElementPlaying() const
+bool WebMediaSessionFocusManager::valueForPlaybackAttribute(WKMediaSessionFocusManagerPlaybackAttribute attribute) const
 {
     if (!m_focusedMediaElement)
         return false;
 
-    return m_focusedMediaElementIsPlaying;
+    return m_playbackAttributes & attribute;
 }
 
 void WebMediaSessionFocusManager::mediaElementIsPlayingDidChange(WebPageProxy* proxy, uint64_t elementID, bool isPlaying)
 {
     if (m_focusedMediaElement) {
         if (proxy == m_focusedMediaElement->first && elementID == m_focusedMediaElement->second) {
-            m_focusedMediaElementIsPlaying = isPlaying;
+            if (isPlaying)
+                m_playbackAttributes |= IsPlaying;
+            else
+                m_playbackAttributes &= ~IsPlaying;
+
             m_client.didChangePlaybackAttribute(this, IsPlaying, isPlaying);
         }
     }
