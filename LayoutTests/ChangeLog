@@ -3,6 +3,20 @@
         http/tests/cache/disk-cache/disk-cache-validation.html has too many subtests
         https://bugs.webkit.org/show_bug.cgi?id=147827
 
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Also split the no-body variant of this.
+
+        * http/tests/cache/disk-cache/disk-cache-validation-no-body-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-no-body.html:
+        * http/tests/cache/disk-cache/disk-cache-vary-no-body-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-vary-no-body.html: Added.
+
+2015-08-10  Antti Koivisto  <antti@apple.com>
+
+        http/tests/cache/disk-cache/disk-cache-validation.html has too many subtests
+        https://bugs.webkit.org/show_bug.cgi?id=147827
+
         Reviewed by Chris Dumez.
 
         Looks like it occasionally times out because a bot is running slowly and 243 subtests take >30s.
