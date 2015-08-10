@@ -1,3 +1,17 @@
+2015-08-10  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Small repaint issues when device scale factor != 1.
+        https://bugs.webkit.org/show_bug.cgi?id=147825
+
+        Reviewed by Alex Christensen.
+
+        When scaling, we should scale a FloatRect, and then compute the enclosing IntRect.
+
+        * WebView.cpp:
+        (WebView::repaint):
+        (WebView::scrollBackingStore):
+        (WebView::paintIntoBackingStore):
+
 2015-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Build more testing binaries with CMake on Windows

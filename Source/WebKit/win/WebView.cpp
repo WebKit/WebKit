@@ -831,8 +831,9 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
 void WebView::repaint(const WebCore::IntRect& logicalWindowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
-    WebCore::IntRect windowRect(logicalWindowRect);
-    windowRect.scale(deviceScaleFactor());
+    FloatRect windowRectFloat(logicalWindowRect);
+    windowRectFloat.scale(deviceScaleFactor());
+    IntRect windowRect(enclosingIntRect(windowRectFloat));
 
     if (isAcceleratedCompositing()) {
         // The contentChanged, immediate, and repaintContentOnly parameters are all based on a non-
@@ -939,9 +940,10 @@ void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logica
     float scaleFactor = deviceScaleFactor();
     int dx = clampTo<int>(scaleFactor * logicalDx);
     int dy = clampTo<int>(scaleFactor * logicalDy);
-    IntRect scrollViewRect(logicalScrollViewRect);
-    scrollViewRect.scale(scaleFactor);
-    IntRect clipRect(logicalClipRect);
+    FloatRect scrollViewRectFloat(logicalScrollViewRect);
+    scrollViewRectFloat.scale(scaleFactor);
+    IntRect scrollViewRect(enclosingIntRect(scrollViewRectFloat));
+    FloatRect clipRect(logicalClipRect);
     clipRect.scale(scaleFactor);
 
     if (isAcceleratedCompositing()) {
@@ -975,7 +977,7 @@ void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logica
 
     // Scroll the bitmap.
     RECT scrollRectWin(scrollViewRect);
-    RECT clipRectWin(clipRect);
+    RECT clipRectWin(enclosingIntRect(clipRect));
     ::ScrollDC(bitmapDC.get(), dx, dy, &scrollRectWin, &clipRectWin, updateRegion.get(), 0);
     RECT regionBox;
     ::GetRgnBox(updateRegion.get(), &regionBox);
@@ -1272,8 +1274,9 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
     float scaleFactor = deviceScaleFactor();
     float inverseScaleFactor = 1.0f / scaleFactor;
 
-    IntRect logicalDirtyRect = dirtyRectPixels;
-    logicalDirtyRect.scale(inverseScaleFactor);
+    FloatRect logicalDirtyRectFloat = dirtyRectPixels;
+    logicalDirtyRectFloat.scale(inverseScaleFactor);    
+    IntRect logicalDirtyRect(enclosingIntRect(logicalDirtyRectFloat));
 
     GraphicsContext gc(bitmapDC, m_transparent);
     gc.setShouldIncludeChildWindows(windowsToPaint == PaintWebViewAndChildren);
