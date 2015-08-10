@@ -1,3 +1,15 @@
+2015-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip GTK+ test /webkit2/WebKitWebView/install-missing-plugins-permission-request.
+
+        It's timing out in the bots. My guess is that there's no installer
+        installed in the bots and gst_install_plugins_supported() returns
+        false, so we don't even get a permission request because no
+        installer will be launched.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2015-08-07  Alex Christensen  <achristensen@webkit.org>
 
         [GTK] Another build fix after r188157.
