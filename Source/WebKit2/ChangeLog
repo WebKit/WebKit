@@ -1,3 +1,13 @@
+2015-08-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Fix forward declarations of CoordinatedGraphicsLayerState, ViewportAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=147823
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+
 2015-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash when the web view is destroyed while the screensaver DBUs proxy is being created

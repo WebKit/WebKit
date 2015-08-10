@@ -45,13 +45,13 @@
 #include <wtf/Threading.h>
 
 namespace WebCore {
-class CoordinatedGraphicsLayerState;
-struct CoordinatedGraphicsState;
 class CoordinatedSurface;
 class GraphicsContext;
 class GraphicsLayer;
 class GraphicsLayerFactory;
 class GraphicsLayerFactory;
+struct CoordinatedGraphicsLayerState;
+struct CoordinatedGraphicsState;
 }
 
 namespace WebKit {
