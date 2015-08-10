@@ -51,7 +51,7 @@ CREATE TABLE tests (
     reftest_type varchar(64));
 
 CREATE TABLE results (
-    id serial PRIMARY KEY,
+    id bigserial PRIMARY KEY,
     test integer REFERENCES tests ON DELETE CASCADE,
     build integer REFERENCES builds ON DELETE CASCADE,
     expected varchar(64) NOT NULL,
@@ -64,4 +64,4 @@ CREATE INDEX results_test ON results(test);
 CREATE INDEX results_build ON results(build);
 CREATE INDEX results_is_flaky ON results(is_flaky);
 
-SET work_mem='50MB';
+SET work_mem='1024MB';

@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '1024M');
 
 require_once('db.php');
 
@@ -67,7 +68,7 @@ function recursively_add_test_results($db, $build_id, $tests, $full_name) {
     require_format('test_time', $tests['time'], '/^\d*$/');
     $modifiers = array_get($tests, 'modifiers');
     if ($modifiers)
-        require_format('test_modifiers', $modifiers, '/^[A-Za-z0-9 \.\/]+$/');
+        require_format('test_modifiers', $modifiers, '/^[A-Za-z0-9 \.\/\+]+$/');
     else
         $modifiers = NULL;
     $category = 'LayoutTest'; // FIXME: Support other test categories.

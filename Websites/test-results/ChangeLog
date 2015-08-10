@@ -1,3 +1,15 @@
+2015-08-10  Dana Burkart  <dburkart@apple.com>
+
+        Fix flakiness dashboard stability and performance issues.
+        https://bugs.webkit.org/show_bug.cgi?id=147835
+
+        Reviewed by Ryosuke Niwa.
+
+        * init-database.sql:
+        * public/.htaccess:
+        * public/include/json-shared.php:
+        * public/include/test-results.php:
+
 2014-01-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Upstream changes to json-shared.php from the perf dashboard
@@ -535,7 +547,7 @@
         (TestResultsView._createResultCell): Show the test time and the expected result.
         (TestResultsView._createTestResultRow): Compute the slowest run and also round time to tenth of second for time
         less than 10s or second if it's more than 10s so that the test time will always be shown in two digits.
-        Also show the bug number and the latest expected result on the left columns after linkifying the bug numbers. 
+        Also show the bug number and the latest expected result on the left columns after linkifying the bug numbers.
         (TestResultsView._matchesFailureType): Added. Determines whether results is of a particular failure type.
         (TestResultsView._populateBuilderPane):
         (TestResultsView.fetchFailingTestsForBuilder): Store the failure type such as flaky, wrongtestexpectations.
@@ -576,4 +588,3 @@
         loadTestsFromLocationHash.
         (TestResultsView.loadTestsFromLocationHash): Take care of both 'tests' and 'builder' components.
         (fetchManifest): Setup the UI to select a builder.
-
