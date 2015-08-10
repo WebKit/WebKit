@@ -282,7 +282,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitBoxReflect,
     CSSPropertyWebkitBoxShadow,
     CSSPropertyWebkitClipPath,
-    CSSPropertyWebkitColorCorrection,
     CSSPropertyWebkitColumnBreakAfter,
     CSSPropertyWebkitColumnBreakBefore,
     CSSPropertyWebkitColumnBreakInside,
@@ -3006,8 +3005,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         }
         case CSSPropertyPointerEvents:
             return cssValuePool().createValue(style->pointerEvents());
-        case CSSPropertyWebkitColorCorrection:
-            return cssValuePool().createValue(style->colorSpace());
         case CSSPropertyWebkitLineGrid:
             if (style->lineGrid().isNull())
                 return cssValuePool().createIdentifierValue(CSSValueNone);

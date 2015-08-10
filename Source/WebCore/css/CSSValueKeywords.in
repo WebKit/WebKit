@@ -920,10 +920,6 @@ geometricPrecision
 economy
 exact
 
-// -webkit-color-correction
-//default
-sRGB
-
 #if defined(ENABLE_VIEW_MODE_CSS_MEDIA) && ENABLE_VIEW_MODE_CSS_MEDIA
 // (-webkit-view-mode:) media feature:
 floating

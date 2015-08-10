@@ -1,3 +1,104 @@
+2015-08-08  Darin Adler  <darin@apple.com>
+
+        Remove -webkit-color-correction CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=147812
+
+        Reviewed by Maciej Stachowiak.
+
+        Given that -webkit-color-correction had no effect on rendering on any platform in any
+        configuration we covered, it's amazing how many tests we had for it.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt: Removed expected results for
+        -webkit-color-correction property.
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Ditto.
+        * svg/css/getComputedStyle-basic-expected.txt: Ditto.
+
+        * fast/css/getComputedStyle/resources/property-names.js: Removed -webkit-color-correction.
+
+        * fast/css/color-correction-backgrounds-and-text.html: Removed.
+        * fast/css/color-correction-on-background-image.html: Removed.
+        * fast/css/color-correction-on-backgrounds.html: Removed.
+        * fast/css/color-correction-on-box-shadow.html: Removed.
+        * fast/css/color-correction-on-text-shadow.html: Removed.
+        * fast/css/color-correction-on-text.html: Removed.
+        * fast/css/color-correction-untagged-images.html: Removed.
+        * fast/css/color-correction.html: Removed.
+        * fast/css/parsing-color-correction-expected.txt: Removed.
+        * fast/css/parsing-color-correction.html: Removed.
+        * fast/css/resources/parsing-color-correction.js: Removed.
+        * platform/efl/fast/css/color-correction-backgrounds-and-text-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-backgrounds-and-text-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-background-image-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-on-background-image-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-backgrounds-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-on-backgrounds-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-box-shadow-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-on-box-shadow-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-text-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-on-text-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-text-shadow-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-on-text-shadow-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-untagged-images-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-untagged-images-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-backgrounds-and-text-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-backgrounds-and-text-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-on-background-image-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-on-background-image-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-on-backgrounds-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-on-backgrounds-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-on-box-shadow-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-on-box-shadow-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-on-text-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-on-text-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-on-text-shadow-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-on-text-shadow-expected.txt: Removed.
+        * platform/gtk/fast/css/color-correction-untagged-images-expected.png: Removed.
+        * platform/gtk/fast/css/color-correction-untagged-images-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-backgrounds-and-text-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-on-background-image-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-on-backgrounds-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-on-box-shadow-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-on-text-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-on-text-shadow-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/color-correction-untagged-images-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-backgrounds-and-text-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-on-background-image-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-on-backgrounds-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-on-box-shadow-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-on-text-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-on-text-shadow-expected.txt: Removed.
+        * platform/ios-simulator/fast/css/color-correction-untagged-images-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-backgrounds-and-text-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-backgrounds-and-text-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-on-background-image-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-on-background-image-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-on-backgrounds-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-on-backgrounds-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-on-text-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-on-text-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-on-text-shadow-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-on-text-shadow-expected.txt: Removed.
+        * platform/mac/fast/css/color-correction-untagged-images-expected.png: Removed.
+        * platform/mac/fast/css/color-correction-untagged-images-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-backgrounds-and-text-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-on-background-image-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-on-backgrounds-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-on-box-shadow-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-on-text-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-on-text-shadow-expected.txt: Removed.
+        * platform/win/fast/css/color-correction-untagged-images-expected.txt: Removed.
+
 2015-08-09  Chris Dumez  <cdumez@apple.com>
 
         Regression(r188105): Seems to have caused crashes during PLT on some iPads

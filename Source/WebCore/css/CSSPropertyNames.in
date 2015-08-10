@@ -419,7 +419,6 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 // Let -webkit-box-shadow blur radius be w_r and box-shadow blur radius be b_r. For
 // w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2).
 -webkit-box-shadow [Custom=All]
--webkit-color-correction [Inherited, NameForMethods=ColorSpace]
 -webkit-column-axis
 -webkit-column-break-after [Initial=initialPageBreak]
 -webkit-column-break-before [Initial=initialPageBreak]

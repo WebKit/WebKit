@@ -3747,42 +3747,6 @@ template<> inline CSSPrimitiveValue::operator TextRenderingMode() const
     return AutoTextRendering;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColorSpace space)
-    : CSSValue(PrimitiveClass)
-{
-    m_primitiveUnitType = CSS_VALUE_ID;
-    switch (space) {
-    case ColorSpaceDeviceRGB:
-        m_value.valueID = CSSValueDefault;
-        break;
-    case ColorSpaceSRGB:
-        m_value.valueID = CSSValueSrgb;
-        break;
-    case ColorSpaceLinearRGB:
-        // CSS color correction does not support linearRGB yet.
-        ASSERT_NOT_REACHED();
-        m_value.valueID = CSSValueDefault;
-        break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator ColorSpace() const
-{
-    ASSERT(isValueID());
-
-    switch (m_value.valueID) {
-    case CSSValueDefault:
-        return ColorSpaceDeviceRGB;
-    case CSSValueSrgb:
-        return ColorSpaceSRGB;
-    default:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return ColorSpaceDeviceRGB;
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Hyphens hyphens)
     : CSSValue(PrimitiveClass)
 {

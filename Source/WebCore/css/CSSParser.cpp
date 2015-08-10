@@ -873,10 +873,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueJustify)
             return true;
         break;
-    case CSSPropertyWebkitColorCorrection:
-        if (valueID == CSSValueSrgb || valueID == CSSValueDefault)
-            return true;
-        break;
     case CSSPropertyColumnFill:
         if (valueID == CSSValueAuto || valueID == CSSValueBalance)
             return true;
@@ -1111,7 +1107,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBoxLines:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
-    case CSSPropertyWebkitColorCorrection:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
@@ -3100,7 +3095,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitBoxLines:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
-    case CSSPropertyWebkitColorCorrection:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
