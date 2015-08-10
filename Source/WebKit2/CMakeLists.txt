@@ -393,6 +393,7 @@ set(WebKit2_SOURCES
     UIProcess/API/APIFrameInfo.cpp
     UIProcess/API/APINavigation.cpp
     UIProcess/API/APINavigationData.cpp
+    UIProcess/API/APIPageConfiguration.cpp
     UIProcess/API/APIProcessPoolConfiguration.cpp
     UIProcess/API/APISession.cpp
     UIProcess/API/APISessionState.cpp

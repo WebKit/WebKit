@@ -37,6 +37,11 @@ using namespace WebKit;
 
 namespace API {
 
+Ref<PageConfiguration> PageConfiguration::create()
+{
+    return adoptRef(*new PageConfiguration);
+}
+
 PageConfiguration::PageConfiguration()
 {
 }
@@ -44,6 +49,28 @@ PageConfiguration::PageConfiguration()
 PageConfiguration::~PageConfiguration()
 {
 }
+
+Ref<PageConfiguration> PageConfiguration::copy() const
+{
+    auto copy = create();
+
+    copy->m_processPool = this->m_processPool;
+    copy->m_userContentController = this->m_userContentController;
+    copy->m_pageGroup = this->m_pageGroup;
+    copy->m_preferences = this->m_preferences;
+    copy->m_preferenceValues = this->m_preferenceValues;
+    copy->m_relatedPage = this->m_relatedPage;
+    copy->m_visitedLinkProvider = this->m_visitedLinkProvider;
+    copy->m_websiteDataStore = this->m_websiteDataStore;
+    copy->m_sessionID = this->m_sessionID;
+    copy->m_treatsSHA1SignedCertificatesAsInsecure = this->m_treatsSHA1SignedCertificatesAsInsecure;
+#if PLATFORM(IOS)
+    copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
+#endif
+
+    return copy;
+}
+
 
 WebProcessPool* PageConfiguration::processPool()
 {
@@ -95,16 +122,35 @@ void PageConfiguration::setRelatedPage(WebPageProxy* relatedPage)
     m_relatedPage = relatedPage;
 }
 
-WebKit::WebPageConfiguration PageConfiguration::webPageConfiguration()
+
+VisitedLinkProvider* PageConfiguration::visitedLinkProvider()
 {
-    WebKit::WebPageConfiguration configuration;
+    return m_visitedLinkProvider.get();
+}
 
-    configuration.userContentController = userContentController();
-    configuration.pageGroup = pageGroup();
-    configuration.preferences = preferences();
-    configuration.relatedPage = relatedPage();
+void PageConfiguration::setVisitedLinkProvider(VisitedLinkProvider* visitedLinkProvider)
+{
+    m_visitedLinkProvider = visitedLinkProvider;
+}
 
-    return configuration;
+API::WebsiteDataStore* PageConfiguration::websiteDataStore()
+{
+    return m_websiteDataStore.get();
+}
+
+void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataStore)
+{
+    m_websiteDataStore = websiteDataStore;
+}
+
+WebCore::SessionID PageConfiguration::sessionID()
+{
+    return m_sessionID;
+}
+
+void PageConfiguration::setSessionID(WebCore::SessionID sessionID)
+{
+    m_sessionID = sessionID;
 }
 
 } // namespace API

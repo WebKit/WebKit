@@ -59,6 +59,8 @@ WK_EXPORT WKTypeID WKPageGetTypeID();
 WK_EXPORT WKContextRef WKPageGetContext(WKPageRef page);
 WK_EXPORT WKPageGroupRef WKPageGetPageGroup(WKPageRef page);
 
+WK_EXPORT WKPageConfigurationRef WKPageCopyPageConfiguration(WKPageRef page);
+
 // URL Requests
 WK_EXPORT void WKPageLoadURL(WKPageRef page, WKURLRef url);
 WK_EXPORT void WKPageLoadURLWithUserData(WKPageRef page, WKURLRef url, WKTypeRef userData);

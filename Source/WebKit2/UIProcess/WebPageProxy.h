@@ -254,28 +254,6 @@ typedef GenericCallback<const WebCore::IntPoint&, uint32_t> TouchesCallback;
 typedef GenericCallback<const WebCore::MachSendRight&> MachSendRightCallback;
 #endif
 
-struct WebPageConfiguration {
-    WebPageGroup* pageGroup = nullptr;
-    WebPreferences* preferences = nullptr;
-    WebUserContentControllerProxy* userContentController = nullptr;
-    VisitedLinkProvider* visitedLinkProvider = nullptr;
-
-    WebsiteDataStore* websiteDataStore = nullptr;
-    // FIXME: We currently have to pass the session ID separately here to support the legacy private browsing session.
-    // Once we get rid of it we should get rid of this configuration parameter as well.
-    WebCore::SessionID sessionID;
-
-    WebPageProxy* relatedPage = nullptr;
-
-    bool treatsSHA1SignedCertificatesAsInsecure = false;
-
-#if PLATFORM(IOS)
-    bool alwaysRunsAtForegroundPriority = false;
-#endif
-
-    WebPreferencesStore::ValueMap preferenceValues;
-};
-
 class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
@@ -287,8 +265,10 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public IPC::MessageReceiver
     , public IPC::MessageSender {
 public:
-    static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
+    static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();
+
+    const API::PageConfiguration& configuration() const;
 
     uint64_t pageID() const { return m_pageID; }
     WebCore::SessionID sessionID() const { return m_sessionID; }
@@ -1084,7 +1064,7 @@ public:
     void clearWheelEventTestTrigger();
 
 private:
-    WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
+    WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
@@ -1488,6 +1468,8 @@ private:
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
 
     PageClient& m_pageClient;
+    Ref<API::PageConfiguration> m_configuration;
+
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
     std::unique_ptr<API::NavigationClient> m_navigationClient;

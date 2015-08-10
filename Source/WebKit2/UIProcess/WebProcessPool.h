@@ -76,6 +76,7 @@ OBJC_CLASS NSString;
 namespace API {
 class DownloadClient;
 class LegacyContextHistoryClient;
+class PageConfiguration;
 }
 
 namespace WebKit {
@@ -86,7 +87,6 @@ class WebIconDatabase;
 class WebPageGroup;
 class WebPageProxy;
 struct StatisticsData;
-struct WebPageConfiguration;
 struct WebProcessCreationParameters;
     
 typedef GenericCallback<API::Dictionary*> DictionaryCallback;
@@ -171,7 +171,7 @@ public:
 
     API::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
 
-    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageConfiguration);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 
