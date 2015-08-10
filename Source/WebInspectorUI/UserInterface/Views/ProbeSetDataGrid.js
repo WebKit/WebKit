@@ -29,7 +29,6 @@ WebInspector.ProbeSetDataGrid = class ProbeSetDataGrid extends WebInspector.Data
     constructor(probeSet)
     {
         console.assert(probeSet instanceof WebInspector.ProbeSet, "Invalid ProbeSet argument: ", probeSet);
-        this.probeSet = probeSet;
 
         var columns = {};
         for (var probe of probeSet.probes) {
@@ -38,6 +37,8 @@ WebInspector.ProbeSetDataGrid = class ProbeSetDataGrid extends WebInspector.Data
         }
 
         super(columns);
+
+        this.probeSet = probeSet;
 
         this.element.classList.add("inline");
 
