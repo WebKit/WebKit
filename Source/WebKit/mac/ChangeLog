@@ -1,3 +1,17 @@
+2015-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Align WebKit1's PageCache size with WebKit2's
+        https://bugs.webkit.org/show_bug.cgi?id=147831
+
+        Reviewed by Sam Weinig.
+
+        Align WebKit1's PageCache size with WebKit2's for consistency. Also, we
+        have data showing that keeping more than 3 pages in the PageCache is
+        not really useful.
+
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2015-08-06  Anders Carlsson  <andersca@apple.com>
 
         Crashes when calling swizzled setNeedsDisplayInRect: on heartbeat thread
