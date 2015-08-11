@@ -1,3 +1,14 @@
+2015-08-10  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should have a ParkingLot for parking sleeping threads, so that locks can fit in 1.6 bits
+        https://bugs.webkit.org/show_bug.cgi?id=147665
+
+        Reviewed by Mark Lam.
+
+        Replace ByteSpinLock with ByteLock.
+
+        * runtime/ConcurrentJITLock.h:
+
 2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Numeric setter on prototype doesn't get called.

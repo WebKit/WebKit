@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include <wtf/ByteLock.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -95,6 +96,41 @@ TEST(WTF_Lock, ManyContentedShortSections)
 TEST(WTF_Lock, ManyContentedLongSections)
 {
     runLockTest<Lock>(10, 10, 10000, 1000);
+}
+
+TEST(WTF_ByteLock, UncontentedShortSection)
+{
+    runLockTest<ByteLock>(1, 1, 1, 10000000);
+}
+
+TEST(WTF_ByteLock, UncontentedLongSection)
+{
+    runLockTest<ByteLock>(1, 1, 10000, 1000);
+}
+
+TEST(WTF_ByteLock, ContentedShortSection)
+{
+    runLockTest<ByteLock>(1, 10, 1, 10000000);
+}
+
+TEST(WTF_ByteLock, ContentedLongSection)
+{
+    runLockTest<ByteLock>(1, 10, 10000, 10000);
+}
+
+TEST(WTF_ByteLock, ManyContentedShortSections)
+{
+    runLockTest<ByteLock>(10, 10, 1, 500000);
+}
+
+TEST(WTF_ByteLock, ManyContentedLongSections)
+{
+    runLockTest<ByteLock>(10, 10, 10000, 1000);
+}
+
+TEST(WTF_ByteLock, SectionAddressCollision)
+{
+    runLockTest<ByteLock>(4, 2, 10000, 2000);
 }
 
 } // namespace TestWebKitAPI

@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <unistd.h>
+#include <wtf/ByteLock.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Lock.h>
 #include <wtf/SpinLock.h>
@@ -43,7 +44,7 @@ unsigned numIterations;
     
 NO_RETURN void usage()
 {
-    printf("Usage: LockSpeedTest spinlock|lock|mutex|all <num thread groups> <num threads per group> <work per critical section> <num noise threads> <num iterations>\n");
+    printf("Usage: LockSpeedTest spinlock|lock|bytelock|mutex|all <num thread groups> <num threads per group> <work per critical section> <num noise threads> <num iterations>\n");
     exit(1);
 }
 
@@ -123,6 +124,10 @@ int main(int argc, char** argv)
     }
     if (!strcmp(argv[1], "lock") || !strcmp(argv[1], "all")) {
         runBenchmark<Lock>("WTF Lock");
+        didRun = true;
+    }
+    if (!strcmp(argv[1], "bytelock") || !strcmp(argv[1], "all")) {
+        runBenchmark<ByteLock>("WTF ByteLock");
         didRun = true;
     }
     if (!strcmp(argv[1], "mutex") || !strcmp(argv[1], "all")) {

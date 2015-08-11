@@ -326,6 +326,7 @@
     <ClCompile Include="..\Tests\WTF\MetaAllocator.cpp" />
     <ClCompile Include="..\Tests\WTF\NakedPtr.cpp" />
     <ClCompile Include="..\Tests\WTF\Optional.cpp" />
+    <ClCompile Include="..\Tests\WTF\ParkingLot.cpp" />
     <ClCompile Include="..\Tests\WTF\RedBlackTree.cpp" />
     <ClCompile Include="..\Tests\WTF\Ref.cpp" />
     <ClCompile Include="..\Tests\WTF\RefCounter.cpp" />

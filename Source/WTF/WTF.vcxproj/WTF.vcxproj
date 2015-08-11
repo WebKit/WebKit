@@ -53,6 +53,7 @@
   <ItemGroup>
     <ClCompile Include="..\wtf\Assertions.cpp" />
     <ClCompile Include="..\wtf\BitVector.cpp" />
+    <ClCompile Include="..\wtf\ByteLock.cpp" />
     <ClCompile Include="..\wtf\CompilationThread.cpp" />
     <ClCompile Include="..\wtf\CryptographicUtilities.cpp" />
     <ClCompile Include="..\wtf\CryptographicallyRandomNumber.cpp" />
@@ -116,6 +117,7 @@
     <ClCompile Include="..\wtf\OSRandomSource.cpp" />
     <ClCompile Include="..\wtf\PageBlock.cpp" />
     <ClCompile Include="..\wtf\ParallelJobsGeneric.cpp" />
+    <ClCompile Include="..\wtf\ParkingLot.cpp" />
     <ClCompile Include="..\wtf\PrintStream.cpp" />
     <ClCompile Include="..\wtf\RAMSize.cpp" />
     <ClCompile Include="..\wtf\RandomNumber.cpp" />
@@ -171,6 +173,7 @@
     <ClInclude Include="..\wtf\BlockStack.h" />
     <ClInclude Include="..\wtf\BloomFilter.h" />
     <ClInclude Include="..\wtf\BumpPointerAllocator.h" />
+    <ClInclude Include="..\wtf\ByteLock.h" />
     <ClInclude Include="..\wtf\CheckedArithmetic.h" />
     <ClInclude Include="..\wtf\CheckedBoolean.h" />
     <ClInclude Include="..\wtf\Compiler.h" />
@@ -246,6 +249,7 @@
     <ClInclude Include="..\wtf\ParallelJobsGeneric.h" />
     <ClInclude Include="..\wtf\ParallelJobsLibdispatch.h" />
     <ClInclude Include="..\wtf\ParallelJobsOpenMP.h" />
+    <ClInclude Include="..\wtf\ParkingLot.h" />
     <ClInclude Include="..\wtf\PassRefPtr.h" />
     <ClInclude Include="..\wtf\Platform.h" />
     <ClInclude Include="..\wtf\PrintStream.h" />

@@ -7,6 +7,7 @@ set(WTF_HEADERS
     BitVector.h
     Bitmap.h
     BumpPointerAllocator.h
+    ByteLock.h
     ByteOrder.h
     CompilationThread.h
     Compiler.h
@@ -62,6 +63,7 @@ set(WTF_HEADERS
     ParallelJobsGeneric.h
     ParallelJobsLibdispatch.h
     ParallelJobsOpenMP.h
+    ParkingLot.h
     PassRefPtr.h
     Platform.h
     PrintStream.h
@@ -144,6 +146,7 @@ set(WTF_SOURCES
     Assertions.cpp
     Atomics.cpp
     BitVector.cpp
+    ByteLock.cpp
     CompilationThread.cpp
     CryptographicUtilities.cpp
     CryptographicallyRandomNumber.cpp
@@ -166,6 +169,7 @@ set(WTF_SOURCES
     OSRandomSource.cpp
     PageBlock.cpp
     ParallelJobsGeneric.cpp
+    ParkingLot.cpp
     PrintStream.cpp
     RAMSize.cpp
     RandomNumber.cpp

@@ -102,6 +102,33 @@ namespace WTF {
 //   acquisition order under contention. The same caveat is generally true of SpinLock and platform
 //   mutexes on some platforms.
 
+// FIXME: We could make this Lock more efficient by using ParkingLot and atomic add instead of CAS.
+// The lock would be available if the 32-bit lock word <= 1. Locking would atomically add 2 to the
+// word. The lock would be known to be held if the old value of the word was <= 1. The low bit
+// just indicates if anyone is waiting. If the word was >= 2 after the atomic add, we would go to a
+// slow path that repeatedly attempts to set the lock word to 3 [sic] from 0 or 1, and parks if that's
+// not possible. The slow path could also perform defensive fixup that drops the lock value down to
+// 3 if it was greater than 3, anytime that it needed to go to park. The unlock fast path would
+// atomically subtract 2. If the decrement operation does not cause the count to zero, it would go to
+// a slow path. The slow path would unpark one. If unparking returns false, the slow path would
+// attempt a strong CAS from 1 to 0. It wouldn't do anything if the CAS fails, since the only goal of
+// that CAS is to tell future unlock fast paths that there is possibly a thread parked. As such the
+// states of the lock are:
+//
+//   0: lock available and nobody waiting
+//   1: lock available and there may be threads waiting
+//   2: lock taken and no threads waiting
+// >=3: lock taken and threads waiting
+//
+// It may be possible to design an even better lock implementation based on atomic increments rather
+// than atomic +=2/-=2.
+//
+// Note that because ParkingLot uses this lock internally, we would probably rename this lock
+// implementation to something like BootstrapLock or even make it part of an anonymous namespace
+// inside ParkingLot.
+//
+// https://bugs.webkit.org/show_bug.cgi?id=147841
+
 // This is a struct without a constructor or destructor so that it can be statically initialized.
 // Use Lock in instance variables.
 struct LockBase {

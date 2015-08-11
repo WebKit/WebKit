@@ -1,3 +1,54 @@
+2015-08-10  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should have a ParkingLot for parking sleeping threads, so that locks can fit in 1.6 bits
+        https://bugs.webkit.org/show_bug.cgi?id=147665
+
+        Reviewed by Mark Lam.
+
+        This change adds a major new abstraction for concurrency algorithms in WebKit. It's called a
+        ParkingLot, and it makes available a thread parking queue for each virtual address in memory.
+        The queues are maintained by a data-access-parallel concurrent hashtable implementation. The
+        memory usage is bounded at around half a KB per thread.
+
+        The ParkingLot makes it easy to turn any spinlock-based concurrency protocol into one that
+        parks threads after a while. Because queue state management is up to the ParkingLot and not
+        the user's data structure, this patch uses it to implement a full adaptive mutex in one byte.
+        In fact, only three states of that byte are used (0 = available, 1 = locked, 2 = locked and
+        there are parked threads). Hence the joke that ParkingLot allows locks that fit in 1.6 bits.
+
+        ByteLock is used as a replacement for ByteSpinLock in JavaScriptCore.
+
+        The API tests for this also demo how to create a completely fair (FIFO) binary semamphore. The
+        comment in Lock.h shows how we could accelerate Lock performance using ParkingLot. After we
+        are sure that this code works, we can expand the use of ParkingLot. That's covered by
+        https://bugs.webkit.org/show_bug.cgi?id=147841.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * benchmarks/LockSpeedTest.cpp:
+        (main):
+        * wtf/Atomics.h:
+        (WTF::Atomic::compareExchangeWeak):
+        (WTF::Atomic::compareExchangeStrong):
+        * wtf/ByteLock.cpp: Added.
+        (WTF::ByteLock::lockSlow):
+        (WTF::ByteLock::unlockSlow):
+        * wtf/ByteLock.h: Added.
+        (WTF::ByteLock::ByteLock):
+        (WTF::ByteLock::lock):
+        (WTF::ByteLock::unlock):
+        (WTF::ByteLock::isHeld):
+        (WTF::ByteLock::isLocked):
+        * wtf/CMakeLists.txt:
+        * wtf/Lock.h:
+        * wtf/ParkingLot.cpp: Added.
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkAll):
+        (WTF::ParkingLot::forEach):
+        * wtf/ParkingLot.h: Added.
+        (WTF::ParkingLot::compareAndPark):
+
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

@@ -24,6 +24,10 @@
 		0F0D85B417234CC100338210 /* NoLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0D85B317234CB100338210 /* NoLock.h */; };
 		0F2B66A617B6B4FB00A7AE3F /* DeferrableRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */; };
 		0F2B66A717B6B4FD00A7AE3F /* FlipBytes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */; };
+		0F824A661B7443A0002E345D /* ByteLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A621B7443A0002E345D /* ByteLock.cpp */; };
+		0F824A671B7443A0002E345D /* ByteLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F824A631B7443A0002E345D /* ByteLock.h */; };
+		0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A641B7443A0002E345D /* ParkingLot.cpp */; };
+		0F824A691B7443A0002E345D /* ParkingLot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F824A651B7443A0002E345D /* ParkingLot.h */; };
 		0F87105A16643F190090B0AD /* RawPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87105916643F190090B0AD /* RawPointer.h */; };
 		0F885E0F1845AEA900F1E3FA /* FastBitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F885E0E1845AE9F00F1E3FA /* FastBitVector.cpp */; };
 		0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */; };
@@ -307,6 +311,10 @@
 		0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferrableRefCounted.h; sourceTree = "<group>"; };
 		0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlipBytes.h; sourceTree = "<group>"; };
 		0F300B7D18AB48B400A6D72E /* HashMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashMethod.h; sourceTree = "<group>"; };
+		0F824A621B7443A0002E345D /* ByteLock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ByteLock.cpp; sourceTree = "<group>"; };
+		0F824A631B7443A0002E345D /* ByteLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteLock.h; sourceTree = "<group>"; };
+		0F824A641B7443A0002E345D /* ParkingLot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParkingLot.cpp; sourceTree = "<group>"; };
+		0F824A651B7443A0002E345D /* ParkingLot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkingLot.h; sourceTree = "<group>"; };
 		0F87105916643F190090B0AD /* RawPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawPointer.h; sourceTree = "<group>"; };
 		0F885E0E1845AE9F00F1E3FA /* FastBitVector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FastBitVector.cpp; sourceTree = "<group>"; };
 		0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationThread.cpp; sourceTree = "<group>"; };
@@ -716,6 +724,8 @@
 				A8A47264151A825A004123FF /* BlockStack.h */,
 				A8A47265151A825A004123FF /* BloomFilter.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
+				0F824A621B7443A0002E345D /* ByteLock.cpp */,
+				0F824A631B7443A0002E345D /* ByteLock.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
 				0FEC3EE4171B834700FDAC8D /* ByteSpinLock.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
@@ -810,6 +820,8 @@
 				A8A472E5151A825B004123FF /* PageReservation.h */,
 				A8A472E6151A825B004123FF /* ParallelJobs.h */,
 				A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */,
+				0F824A641B7443A0002E345D /* ParkingLot.cpp */,
+				0F824A651B7443A0002E345D /* ParkingLot.h */,
 				A8A472ED151A825B004123FF /* PassRefPtr.h */,
 				A876DBD7151816E500DADB95 /* Platform.h */,
 				0F9D335D165DBA73005AD387 /* PrintStream.cpp */,
@@ -1156,6 +1168,7 @@
 				A8A47415151A825B004123FF /* RandomNumber.h in Headers */,
 				A8A47416151A825B004123FF /* RandomNumberSeed.h in Headers */,
 				0F87105A16643F190090B0AD /* RawPointer.h in Headers */,
+				0F824A671B7443A0002E345D /* ByteLock.h in Headers */,
 				A8A47417151A825B004123FF /* RedBlackTree.h in Headers */,
 				A8A47418151A825B004123FF /* RefCounted.h in Headers */,
 				A8A47419151A825B004123FF /* RefCountedArray.h in Headers */,
@@ -1167,6 +1180,7 @@
 				1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */,
 				14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */,
 				1469419616EAAFF80024E146 /* SchedulePair.h in Headers */,
+				0F824A691B7443A0002E345D /* ParkingLot.h in Headers */,
 				A8A4741F151A825B004123FF /* SegmentedVector.h in Headers */,
 				A8A47420151A825B004123FF /* SentinelLinkedList.h in Headers */,
 				A8A47422151A825B004123FF /* SHA1.h in Headers */,
@@ -1325,6 +1339,7 @@
 			files = (
 				A8A47386151A825B004123FF /* Assertions.cpp in Sources */,
 				A8A47435151A825B004123FF /* AtomicString.cpp in Sources */,
+				0F824A661B7443A0002E345D /* ByteLock.cpp in Sources */,
 				9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */,
 				A5BA15FB182435A600A82E69 /* StringCF.cpp in Sources */,
 				1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */,
@@ -1340,6 +1355,7 @@
 				A8A4739A151A825B004123FF /* CryptographicallyRandomNumber.cpp in Sources */,
 				A8A47439151A825B004123FF /* CString.cpp in Sources */,
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
+				0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */,
 				86F46F601A2840EE00CCBF22 /* RefCounter.cpp in Sources */,
 				A8A4739E151A825B004123FF /* DataLog.cpp in Sources */,
 				A8A473A0151A825B004123FF /* DateMath.cpp in Sources */,
