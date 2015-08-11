@@ -1,3 +1,18 @@
+2015-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Arabic letter Yeh is drawn in LastResort
+        https://bugs.webkit.org/show_bug.cgi?id=147862
+        <rdar://problem/22202935>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/arabic-glyph-cache-fill-combine-expected.html: Added.
+        * fast/text/arabic-glyph-cache-fill-combine.html: Added.
+        * platform/mac/TestExpectations: Mark test as iOS-specific
+        * platform/gtk/TestExpectations: Mark test as iOS-specific
+        * platform/efl/TestExpectations: Mark test as iOS-specific
+        * platform/efl/TestExpectations: Mark test as iOS-specific
+
 2015-08-11  Chris Dumez  <cdumez@apple.com>
 
         The 'length' property on interface objects should be configurable

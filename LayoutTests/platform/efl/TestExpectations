@@ -2253,3 +2253,6 @@ webkit.org/b/146887 accessibility/table-with-missing-aria-role-rows.html [ Failu
 
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
+
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
