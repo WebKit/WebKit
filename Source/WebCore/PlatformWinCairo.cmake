@@ -81,6 +81,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/GraphicsContextCairoWin.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/ImageCairoWin.cpp
+    platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
     platform/graphics/win/SimpleFontDataCairoWin.cpp
     platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
