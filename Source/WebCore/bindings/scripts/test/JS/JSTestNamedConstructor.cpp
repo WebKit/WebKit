@@ -118,7 +118,7 @@ void JSTestNamedConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, globalObject), DontDelete | ReadOnly);
+    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
@@ -156,7 +156,7 @@ void JSTestNamedConstructorNamedConstructor::finishCreation(VM& vm, JSDOMGlobalO
 {
     Base::finishCreation(globalObject);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, globalObject), None);
+    putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
