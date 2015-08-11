@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
+#include "RenderElement.h"
 #include "Text.h"
 #include "htmlediting.h"
 

@@ -28,6 +28,7 @@
 #include "CodeBlock.h"
 #include "HeapInlines.h"
 #include "JITCode.h"
+#include "JSCellInlines.h"
 #include "JSObject.h"
 #include "LLIntThunks.h"
 #include "LowLevelInterpreter.h"
