@@ -12,7 +12,9 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
     list(APPEND WebKit_LIBRARIES
         PRIVATE libeay32.lib
+        PRIVATE mfuuid.lib
         PRIVATE ssleay32.lib
+        PRIVATE strmiids.lib
     )
 else ()
     list(APPEND WebKit_SOURCES_Classes
