@@ -189,11 +189,6 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
     return info->cp + stringIndex;
 }
 
-static inline bool safeCFEqual(CFTypeRef a, CFTypeRef b)
-{
-    return (!a && !b) || (a && b && CFEqual(a, b));
-}
-
 void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const Font* font)
 {
     if (!font) {
@@ -264,14 +259,14 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
             CTFontRef runCTFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
             ASSERT(CFGetTypeID(runCTFont) == CTFontGetTypeID());
             RetainPtr<CFTypeRef> runFontEqualityObject = FontPlatformData::objectForEqualityCheck(runCTFont);
-            if (!safeCFEqual(runFontEqualityObject.get(), font->platformData().objectForEqualityCheck().get())) {
+            if (!CFEqual(runFontEqualityObject.get(), font->platformData().objectForEqualityCheck().get())) {
                 // Begin trying to see if runFont matches any of the fonts in the fallback list.
 
                 for (unsigned i = 0; !m_font.fallbackRangesAt(i).isNull(); ++i) {
                     runFont = m_font.fallbackRangesAt(i).fontForCharacter(baseCharacter);
                     if (!runFont)
                         continue;
-                    if (safeCFEqual(runFont->platformData().objectForEqualityCheck().get(), runFontEqualityObject.get()))
+                    if (CFEqual(runFont->platformData().objectForEqualityCheck().get(), runFontEqualityObject.get()))
                         break;
                     runFont = nullptr;
                 }
