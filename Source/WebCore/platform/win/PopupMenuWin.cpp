@@ -288,7 +288,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     IntRect absoluteBounds = ((RenderMenuList*)m_popupClient)->absoluteBoundingBoxRect();
     IntRect absoluteScreenCoords(v->contentsToWindow(absoluteBounds.location()), absoluteBounds.size());
     POINT absoluteLocation(absoluteScreenCoords.location());
-    if (!::ClientToScreen(v->hostWindow()->platformPageClient(), &absoluteLocation))
+    if (!::ClientToScreen(hostWindow, &absoluteLocation))
         return;
     absoluteScreenCoords.setLocation(absoluteLocation);
 
@@ -313,11 +313,15 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     // r is in absolute document coordinates, but we want to be in screen coordinates.
 
     // First, move to WebView coordinates
-    IntRect rScreenCoords(v->contentsToWindow(r.location()), r.size());
+    IntRect rScaled = r;
+    Page* page = v->frame().page();
+    if (page)
+        rScaled.scale(page->deviceScaleFactor());
+    IntRect rScreenCoords(v->contentsToWindow(rScaled.location()), rScaled.size());
 
     // Then, translate to screen coordinates
     POINT location(rScreenCoords.location());
-    if (!::ClientToScreen(v->hostWindow()->platformPageClient(), &location))
+    if (!::ClientToScreen(hostWindow, &location))
         return;
 
     rScreenCoords.setLocation(location);
