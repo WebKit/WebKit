@@ -71,23 +71,6 @@ typedef struct WKPagePolicyClientV1 {
     WKPageDecidePolicyForResponseCallback                                decidePolicyForResponse;
 } WKPagePolicyClientV1;
 
-// FIXME: These should be deprecated.
-enum { kWKPagePolicyClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKPagePolicyClient {
-    int                                                                  version;
-    const void *                                                         clientInfo;
-
-    // Version 0.
-    WKPageDecidePolicyForNavigationActionCallback_deprecatedForUseWithV0 decidePolicyForNavigationAction_deprecatedForUseWithV0;
-    WKPageDecidePolicyForNewWindowActionCallback                         decidePolicyForNewWindowAction;
-    WKPageDecidePolicyForResponseCallback_deprecatedForUseWithV0         decidePolicyForResponse_deprecatedForUseWithV0;
-    WKPageUnableToImplementPolicyCallback                                unableToImplementPolicy;
-
-    // Version 1.
-    WKPageDecidePolicyForNavigationActionCallback                        decidePolicyForNavigationAction;
-    WKPageDecidePolicyForResponseCallback                                decidePolicyForResponse;
-} WKPagePolicyClient;
-
 #ifdef __cplusplus
 }
 #endif

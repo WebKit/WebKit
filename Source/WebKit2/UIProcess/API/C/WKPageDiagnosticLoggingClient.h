@@ -51,17 +51,6 @@ typedef struct WKPageDiagnosticLoggingClientV0 {
     WKPageLogDiagnosticMessageWithValueCallback                        logDiagnosticMessageWithValue;
 } WKPageDiagnosticLoggingClientV0;
 
-enum { kWKPageDiagnosticLoggingClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKPageDiagnosticLoggingClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKPageLogDiagnosticMessageCallback                                  logDiagnosticMessage;
-    WKPageLogDiagnosticMessageWithResultCallback                        logDiagnosticMessageWithResult;
-    WKPageLogDiagnosticMessageWithValueCallback                         logDiagnosticMessageWithValue;
-} WKPageDiagnosticLoggingClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #ifdef __cplusplus
 }
 #endif

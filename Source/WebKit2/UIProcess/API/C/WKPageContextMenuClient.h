@@ -98,26 +98,6 @@ typedef struct WKPageContextMenuClientV3 {
     WKPageHideContextMenuCallback                                                hideContextMenu;
 } WKPageContextMenuClientV3;
 
-enum { kWKPageContextMenuClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 3 };
-typedef struct WKPageContextMenuClient {
-    int                                                                          version;
-    const void *                                                                 clientInfo;
-
-    // Version 0.
-    WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0   getContextMenuFromProposedMenu_deprecatedForUseWithV0;
-    WKPageCustomContextMenuItemSelectedCallback                                  customContextMenuItemSelected;
-
-    // Version 1.
-    WKPageContextMenuDismissedCallback                                           contextMenuDismissed;
-
-    // Version 2.
-    WKPageGetContextMenuFromProposedContextMenuCallback                          getContextMenuFromProposedMenu;
-
-    // Version 3.
-    WKPageShowContextMenuCallback                                                showContextMenu;
-    WKPageHideContextMenuCallback                                                hideContextMenu;
-} WKPageContextMenuClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #ifdef __cplusplus
 }
 #endif

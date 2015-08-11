@@ -88,20 +88,6 @@ typedef struct WKBundlePageOverlayClientV1 {
     WKBundlePageOverlayDataDetectorsDidHideUI                           dataDetectorsDidHideUI;
 } WKBundlePageOverlayClientV1;
 
-enum { kWKBundlePageOverlayClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKBundlePageOverlayClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
-    WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
-    WKBundlePageOverlayDrawRectCallback                                 drawRect;
-    WKBundlePageOverlayMouseDownCallback                                mouseDown;
-    WKBundlePageOverlayMouseUpCallback                                  mouseUp;
-    WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
-    WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
-} WKBundlePageOverlayClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 typedef WKTypeRef (*WKAccessibilityAttributeValueCallback)(WKBundlePageOverlayRef pageOverlay, WKStringRef attribute, WKTypeRef parameter, const void* clientInfo);
 typedef WKArrayRef (*WKAccessibilityAttributeNamesCallback)(WKBundlePageOverlayRef pageOverlay, bool parameterizedNames, const void* clientInfo);
 
@@ -117,16 +103,6 @@ typedef struct WKBundlePageOverlayAccessibilityClientV0 {
     WKAccessibilityAttributeValueCallback                               copyAccessibilityAttributeValue;
     WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
 } WKBundlePageOverlayAccessibilityClientV0;
-
-enum { kWKBundlePageOverlayAccessibilityClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKBundlePageOverlayAccessibilityClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKAccessibilityAttributeValueCallback                               copyAccessibilityAttributeValue;
-    WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
-} WKBundlePageOverlayAccessibilityClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 

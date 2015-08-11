@@ -92,26 +92,4 @@ typedef struct WKBundlePageFormClientV2 {
     WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
 } WKBundlePageFormClientV2;
 
-enum { kWKBundlePageFormClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };
-typedef struct WKBundlePageFormClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    
-    // Version 0.
-    WKBundlePageTextFieldDidBeginEditingCallback                        textFieldDidBeginEditing;
-    WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
-    WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
-    WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
-    WKBundlePageShouldPerformActionInTextFieldCallback                  shouldPerformActionInTextField;
-    WKBundlePageWillSubmitFormCallback                                  willSubmitForm;
-    
-    // Version 1.
-    WKBundlePageWillSendSubmitEventCallback                             willSendSubmitEvent;
-
-    // version 2.
-    WKBundlePageDidFocusTextFieldCallback                               didFocusTextField;
-    WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
-    WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
-} WKBundlePageFormClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #endif // WKBundlePageFormClient_h

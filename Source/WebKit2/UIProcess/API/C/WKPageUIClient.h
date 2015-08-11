@@ -456,64 +456,6 @@ typedef struct WKPageUIClientV5 {
     WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
 } WKPageUIClientV5;
 
-enum { kWKPageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };
-typedef struct WKPageUIClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKPageCreateNewPageCallback_deprecatedForUseWithV0                  createNewPage_deprecatedForUseWithV0;
-    WKPageUIClientCallback                                              showPage;
-    WKPageUIClientCallback                                              close;
-    WKPageTakeFocusCallback                                             takeFocus;
-    WKPageFocusCallback                                                 focus;
-    WKPageUnfocusCallback                                               unfocus;
-    WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV0             runJavaScriptAlert;
-    WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV0           runJavaScriptConfirm;
-    WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV0            runJavaScriptPrompt;
-    WKPageSetStatusTextCallback                                         setStatusText;
-    WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0        mouseDidMoveOverElement_deprecatedForUseWithV0;
-    WKPageMissingPluginButtonClickedCallback_deprecatedForUseWithV0     missingPluginButtonClicked_deprecatedForUseWithV0;
-    WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
-    WKPageDidNotHandleWheelEventCallback                                didNotHandleWheelEvent;
-    WKPageGetToolbarsAreVisibleCallback                                 toolbarsAreVisible;
-    WKPageSetToolbarsAreVisibleCallback                                 setToolbarsAreVisible;
-    WKPageGetMenuBarIsVisibleCallback                                   menuBarIsVisible;
-    WKPageSetMenuBarIsVisibleCallback                                   setMenuBarIsVisible;
-    WKPageGetStatusBarIsVisibleCallback                                 statusBarIsVisible;
-    WKPageSetStatusBarIsVisibleCallback                                 setStatusBarIsVisible;
-    WKPageGetIsResizableCallback                                        isResizable;
-    WKPageSetIsResizableCallback                                        setIsResizable;
-    WKPageGetWindowFrameCallback                                        getWindowFrame;
-    WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
-    WKPageUIClientCallback                                              didDraw;
-    WKPageUIClientCallback                                              pageDidScroll;
-    WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
-    WKPageRunOpenPanelCallback                                          runOpenPanel;
-    WKPageDecidePolicyForGeolocationPermissionRequestCallback           decidePolicyForGeolocationPermissionRequest;
-    WKPageHeaderHeightCallback                                          headerHeight;
-    WKPageFooterHeightCallback                                          footerHeight;
-    WKPageDrawHeaderCallback                                            drawHeader;
-    WKPageDrawFooterCallback                                            drawFooter;
-    WKPagePrintFrameCallback                                            printFrame;
-    WKPageUIClientCallback                                              runModal;
-    void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
-    WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    void*                                                               shouldInterruptJavaScript_unavailable;
-
-    // Version 1.
-    WKPageCreateNewPageCallback                                         createNewPage;
-    WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
-    WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
-    WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
-
-    // Version 2.
-    WKPageShowColorPickerCallback                                       showColorPicker;
-    WKPageHideColorPickerCallback                                       hideColorPicker;
-    WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
-} WKPageUIClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #ifdef __cplusplus
 }
 #endif

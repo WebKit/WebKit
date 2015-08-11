@@ -58,18 +58,4 @@ typedef struct WKBundlePageDiagnosticLoggingClientV1 {
     WKBundlePageLogDiagnosticMessageWithValueCallback                   logDiagnosticMessageWithValue;
 } WKBundlePageDiagnosticLoggingClientV1;
 
-enum { kWKBundlePageDiagnosticLoggingClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKBundlePageDiagnosticLoggingClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKBundlePageDiagnosticLoggingCallback                               logDiagnosticMessageDeprecated;
-
-    // Version 1.
-    WKBundlePageLogDiagnosticMessageCallback                            logDiagnosticMessage;
-    WKBundlePageLogDiagnosticMessageWithResultCallback                  logDiagnosticMessageWithResult;
-    WKBundlePageLogDiagnosticMessageWithValueCallback                   logDiagnosticMessageWithValue;
-} WKBundlePageDiagnosticLoggingClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #endif // WKBundlePageDiagnosticLoggingClient_h

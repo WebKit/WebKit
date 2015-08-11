@@ -50,17 +50,6 @@ typedef struct WKPageFindClientV0 {
     WKPageDidCountStringMatchesCallback                                 didCountStringMatches;
 } WKPageFindClientV0;
 
-enum { kWKPageFindClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKPageFindClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKPageDidFindStringCallback                                         didFindString;
-    WKPageDidFailToFindStringCallback                                   didFailToFindString;
-    WKPageDidCountStringMatchesCallback                                 didCountStringMatches;
-} WKPageFindClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #ifdef __cplusplus
 }
 #endif

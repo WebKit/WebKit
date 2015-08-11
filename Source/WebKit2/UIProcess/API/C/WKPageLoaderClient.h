@@ -462,65 +462,6 @@ typedef struct WKPageLoaderClientV6 {
     WKPageNavigationGestureDidEndCallback                               navigationGestureDidEnd;
 } WKPageLoaderClientV6;
 
-// FIXME: These should be deprecated.
-enum { kWKPageLoaderClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 3 };
-typedef struct WKPageLoaderClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKPageDidStartProvisionalLoadForFrameCallback                       didStartProvisionalLoadForFrame;
-    WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
-    WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
-    WKPageDidCommitLoadForFrameCallback                                 didCommitLoadForFrame;
-    WKPageDidFinishDocumentLoadForFrameCallback                         didFinishDocumentLoadForFrame;
-    WKPageDidFinishLoadForFrameCallback                                 didFinishLoadForFrame;
-    WKPageDidFailLoadWithErrorForFrameCallback                          didFailLoadWithErrorForFrame;
-    WKPageDidSameDocumentNavigationForFrameCallback                     didSameDocumentNavigationForFrame;
-    WKPageDidReceiveTitleForFrameCallback                               didReceiveTitleForFrame;
-    WKPageDidFirstLayoutForFrameCallback                                didFirstLayoutForFrame;
-    WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback                didFirstVisuallyNonEmptyLayoutForFrame;
-    WKPageDidRemoveFrameFromHierarchyCallback                           didRemoveFrameFromHierarchy;
-    WKPageDidDisplayInsecureContentForFrameCallback                     didDisplayInsecureContentForFrame;
-    WKPageDidRunInsecureContentForFrameCallback                         didRunInsecureContentForFrame;
-    WKPageCanAuthenticateAgainstProtectionSpaceInFrameCallback          canAuthenticateAgainstProtectionSpaceInFrame;
-    WKPageDidReceiveAuthenticationChallengeInFrameCallback              didReceiveAuthenticationChallengeInFrame;
-
-    // FIXME: Move to progress client.
-    WKPageLoaderClientCallback                                          didStartProgress;
-    WKPageLoaderClientCallback                                          didChangeProgress;
-    WKPageLoaderClientCallback                                          didFinishProgress;
-
-    // FIXME: These three functions should not be part of this client.
-    WKPageLoaderClientCallback                                          processDidBecomeUnresponsive;
-    WKPageLoaderClientCallback                                          processDidBecomeResponsive;
-    WKPageLoaderClientCallback                                          processDidCrash;
-    WKPageDidChangeBackForwardListCallback                              didChangeBackForwardList;
-    WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
-    WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0      didFailToInitializePlugin_deprecatedForUseWithV0;
-
-    // Version 1.
-    WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
-
-    void*                                                               didNewFirstVisuallyNonEmptyLayout_unavailable;
-
-    WKPageWillGoToBackForwardListItemCallback                           willGoToBackForwardListItem;
-
-    WKPageLoaderClientCallback                                          interactionOccurredWhileProcessUnresponsive;
-    WKPagePluginDidFailCallback_deprecatedForUseWithV1                  pluginDidFail_deprecatedForUseWithV1;
-
-    // Version 2.
-    void                                                                (*didReceiveIntentForFrame_unavailable)(void);
-    void                                                                (*registerIntentServiceForFrame_unavailable)(void);
-
-    WKPageDidLayoutCallback                                             didLayout;
-    WKPagePluginLoadPolicyCallback_deprecatedForUseWithV2               pluginLoadPolicy_deprecatedForUseWithV2;
-    WKPagePluginDidFailCallback                                         pluginDidFail;
-
-    // Version 3.
-    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
-} WKPageLoaderClient;
-
 #ifdef __cplusplus
 }
 #endif

@@ -59,19 +59,6 @@ typedef struct WKBundlePageBannerClientV0 {
     WKBundlePageBannerMouseDraggedCallback                              mouseDragged;
 } WKBundlePageBannerClientV0;
 
-enum { kWKBundlePageBannerClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKBundlePageBannerClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKBundlePageBannerMouseDownCallback                                 mouseDown;
-    WKBundlePageBannerMouseUpCallback                                   mouseUp;
-    WKBundlePageBannerMouseMovedCallback                                mouseMoved;
-    WKBundlePageBannerMouseDraggedCallback                              mouseDragged;
-} WKBundlePageBannerClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
-
 WK_EXPORT WKTypeID WKBundlePageBannerGetTypeID();
 
 #ifdef __cplusplus

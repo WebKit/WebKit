@@ -54,16 +54,4 @@ typedef struct WKBundlePagePolicyClientV0 {
     WKBundlePageUnableToImplementPolicyCallback                         unableToImplementPolicy;
 } WKBundlePagePolicyClientV0;
 
-enum { kWKBundlePagePolicyClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKBundlePagePolicyClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKBundlePageDecidePolicyForNavigationActionCallback                 decidePolicyForNavigationAction;
-    WKBundlePageDecidePolicyForNewWindowActionCallback                  decidePolicyForNewWindowAction;
-    WKBundlePageDecidePolicyForResponseCallback                         decidePolicyForResponse;
-    WKBundlePageUnableToImplementPolicyCallback                         unableToImplementPolicy;
-} WKBundlePagePolicyClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #endif // WKBundlePagePolicyClient_h

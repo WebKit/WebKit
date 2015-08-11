@@ -68,21 +68,6 @@ typedef struct WKBundleClientV1 {
     WKBundleDidReceiveMessageToPageCallback                             didReceiveMessageToPage;
 } WKBundleClientV1;
 
-enum { kWKBundleClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKBundleClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKBundleDidCreatePageCallback                                       didCreatePage;
-    WKBundleWillDestroyPageCallback                                     willDestroyPage;
-    WKBundleDidInitializePageGroupCallback                              didInitializePageGroup;
-    WKBundleDidReceiveMessageCallback                                   didReceiveMessage;
-
-    // Version 1.
-    WKBundleDidReceiveMessageToPageCallback                             didReceiveMessageToPage;
-} WKBundleClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 WK_EXPORT WKTypeID WKBundleGetTypeID();
 
 WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClientBase* client);

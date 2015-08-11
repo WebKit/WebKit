@@ -76,25 +76,4 @@ typedef struct WKBundlePageResourceLoadClientV1 {
     WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
 } WKBundlePageResourceLoadClientV1;
 
-enum { kWKBundlePageResourceLoadClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKBundlePageResourceLoadClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKBundlePageDidInitiateLoadForResourceCallback                      didInitiateLoadForResource;
-
-    // willSendRequestForFrame is supposed to return a retained reference to the URL request.
-    WKBundlePageWillSendRequestForFrameCallback                         willSendRequestForFrame;
-
-    WKBundlePageDidReceiveResponseForResourceCallback                   didReceiveResponseForResource;
-    WKBundlePageDidReceiveContentLengthForResourceCallback              didReceiveContentLengthForResource;
-    WKBundlePageDidFinishLoadForResourceCallback                        didFinishLoadForResource;
-    WKBundlePageDidFailLoadForResourceCallback                          didFailLoadForResource;
-
-    // Version 1.
-    WKBundlePageShouldCacheResponseCallback                             shouldCacheResponse;
-    WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
-} WKBundlePageResourceLoadClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #endif // WKBundlePageResourceLoadClient_h

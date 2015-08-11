@@ -114,28 +114,4 @@ typedef struct WKBundlePageEditorClientV1 {
     WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
 } WKBundlePageEditorClientV1;
 
-enum { kWKBundlePageEditorClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKBundlePageEditorClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKBundlePageShouldBeginEditingCallback                              shouldBeginEditing;
-    WKBundlePageShouldEndEditingCallback                                shouldEndEditing;
-    WKBundlePageShouldInsertNodeCallback                                shouldInsertNode;
-    WKBundlePageShouldInsertTextCallback                                shouldInsertText;
-    WKBundlePageShouldDeleteRangeCallback                               shouldDeleteRange;
-    WKBundlePageShouldChangeSelectedRange                               shouldChangeSelectedRange;
-    WKBundlePageShouldApplyStyle                                        shouldApplyStyle;
-    WKBundlePageEditingNotification                                     didBeginEditing;
-    WKBundlePageEditingNotification                                     didEndEditing;
-    WKBundlePageEditingNotification                                     didChange;
-    WKBundlePageEditingNotification                                     didChangeSelection;
-
-    // Version 1.
-    WKBundlePageWillWriteToPasteboard                                   willWriteToPasteboard;
-    WKBundlePageGetPasteboardDataForRange                               getPasteboardDataForRange;
-    WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
-} WKBundlePageEditorClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #endif // WKBundlePageEditorClient_h

@@ -61,17 +61,6 @@ typedef struct WKGeolocationProviderV1 {
     WKGeolocationProviderSetEnableHighAccuracyCallback                  setEnableHighAccuracy;
 } WKGeolocationProviderV1;
 
-enum { kWKGeolocationProviderCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKGeolocationProvider {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    WKGeolocationProviderStartUpdatingCallback                          startUpdating;
-    WKGeolocationProviderStopUpdatingCallback                           stopUpdating;
-
-    // Version 1.
-    WKGeolocationProviderSetEnableHighAccuracyCallback                  setEnableHighAccuracy;
-} WKGeolocationProvider WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 
 WK_EXPORT WKTypeID WKGeolocationManagerGetTypeID();
 

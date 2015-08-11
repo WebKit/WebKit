@@ -64,20 +64,4 @@ typedef struct WKBundlePageFullScreenClientV1 {
     WKBundlePageCloseFullScreen                                         closeFullScreen;
 } WKBundlePageFullScreenClientV1;
 
-enum { kWKBundlePageFullScreenClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKBundlePageFullScreenClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0:
-    WKBundlePageSupportsFullScreen                                      supportsFullScreen;
-    WKBundlePageEnterFullScreenForElement                               enterFullScreenForElement;
-    WKBundlePageExitFullScreenForElement                                exitFullScreenForElement;
-
-    // Version 1:
-    WKBundlePageBeganEnterFullScreen                                    beganEnterFullScreen;
-    WKBundlePageBeganExitFullScreen                                     beganExitFullScreen;
-    WKBundlePageCloseFullScreen                                         closeFullScreen;
-} WKBundlePageFullScreenClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #endif // WKBundlePageFullScreenClient_h

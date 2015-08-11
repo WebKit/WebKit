@@ -85,16 +85,6 @@ typedef struct WKDatabaseManagerClientV0 {
     WKDatabaseManagerDidModifyDatabaseCallback                          didModifyDatabase;
 } WKDatabaseManagerClientV0;
 
-enum { kWKDatabaseManagerClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKDatabaseManagerClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKDatabaseManagerDidModifyOriginCallback                            didModifyOrigin;
-    WKDatabaseManagerDidModifyDatabaseCallback                          didModifyDatabase;
-} WKDatabaseManagerClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
 
 WK_EXPORT void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManager, const WKDatabaseManagerClientBase* client);

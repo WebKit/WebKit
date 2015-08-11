@@ -47,15 +47,6 @@ typedef struct WKPageFormClientV0 {
     WKPageWillSubmitFormCallback                                        willSubmitForm;
 } WKPageFormClientV0;
 
-enum { kWKPageFormClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
-typedef struct WKPageFormClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKPageWillSubmitFormCallback                                        willSubmitForm;
-} WKPageFormClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #ifdef __cplusplus
 }
 #endif

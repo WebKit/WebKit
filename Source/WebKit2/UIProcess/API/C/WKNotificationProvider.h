@@ -58,21 +58,6 @@ typedef struct WKNotificationProviderV0 {
     WKNotificationProviderClearNotificationsCallback                      clearNotifications;
 } WKNotificationProviderV0;
 
-enum { kWKNotificationProviderCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0, };
-typedef struct WKNotificationProvider {
-    int                                                                   version;
-    const void*                                                           clientInfo;
-
-    // Version 0.
-    WKNotificationProviderShowCallback                                    show;
-    WKNotificationProviderCancelCallback                                  cancel;
-    WKNotificationProviderDidDestroyNotificationCallback                  didDestroyNotification;
-    WKNotificationProviderAddNotificationManagerCallback                  addNotificationManager;
-    WKNotificationProviderRemoveNotificationManagerCallback               removeNotificationManager;
-    WKNotificationProviderNotificationPermissionsCallback                 notificationPermissions;
-    WKNotificationProviderClearNotificationsCallback                      clearNotifications;
-} WKNotificationProvider WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 #ifdef __cplusplus
 }
 #endif

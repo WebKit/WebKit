@@ -75,17 +75,6 @@ typedef struct WKContextClientV1 {
     WKContextCopyWebCryptoMasterKeyCallback                             copyWebCryptoMasterKey;
 } WKContextClientV1;
 
-enum { kWKContextClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
-typedef struct WKContextClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
-    WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
-    WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
-} WKContextClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
-
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,
     kWKProcessModelMultipleSecondaryProcesses = 1
