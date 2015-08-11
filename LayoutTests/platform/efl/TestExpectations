@@ -2288,3 +2288,6 @@ accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
 accessibility/radio-button-group-members.html [ Missing ]
 editing/selection/designmode-no-caret.html [ Missing ]
 accessibility/content-editable-as-textarea.html [ Missing ]
+
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
