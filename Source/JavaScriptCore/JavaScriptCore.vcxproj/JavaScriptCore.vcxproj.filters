@@ -996,9 +996,6 @@
     <ClCompile Include="..\parser\SourceCode.cpp">
       <Filter>parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\IntendedStructureChain.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\CommonSlowPathsExceptions.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -1692,9 +1689,6 @@
     <ClCompile Include="..\bytecode\ComplexGetStatus.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
-    <ClCompile Include="..\bytecode\ConstantStructureCheck.cpp">
-      <Filter>bytecode</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGDoesGC.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1833,6 +1827,12 @@
     <ClCompile Include="..\dfg\DFGMinifiedGraph.cpp" />
     <ClCompile Include="..\dfg\DFGOSRExitFuzz.cpp" />
     <ClCompile Include="..\dfg\DFGStoreBarrierInsertionPhase.cpp" />
+    <ClCompile Include="..\bytecode\ObjectPropertyCondition.cpp" />
+    <ClCompile Include="..\bytecode\ObjectPropertyConditionSet.cpp" />
+    <ClCompile Include="..\bytecode\PropertyCondition.cpp" />
+    <ClCompile Include="..\dfg\DFGAdaptiveInferredPropertyValueWatchpoint.cpp" />
+    <ClCompile Include="..\dfg\DFGAdaptiveStructureWatchpoint.cpp" />
+    <ClCompile Include="..\dfg\DFGMultiGetByOffsetData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -3225,9 +3225,6 @@
     <ClInclude Include="..\runtime\VMEntryScope.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\IntendedStructureChain.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\CommonSlowPathsExceptions.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -4222,9 +4219,6 @@
     <ClInclude Include="..\bytecode\ComplexGetStatus.h">
       <Filter>bytecode</Filter>
     </ClInclude>
-    <ClInclude Include="..\bytecode\ConstantStructureCheck.h">
-      <Filter>bytecode</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGDoesGC.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -4378,6 +4372,12 @@
     <ClInclude Include="..\dfg\DFGIntegerRangeOptimizationPhase.h" />
     <ClInclude Include="..\dfg\DFGOSRExitFuzz.h" />
     <ClInclude Include="..\dfg\DFGStoreBarrierInsertionPhase.h" />
+    <ClInclude Include="..\bytecode\ObjectPropertyCondition.h" />
+    <ClInclude Include="..\bytecode\ObjectPropertyConditionSet.h" />
+    <ClInclude Include="..\bytecode\PropertyCondition.h" />
+    <ClInclude Include="..\dfg\DFGAdaptiveInferredPropertyValueWatchpoint.h" />
+    <ClInclude Include="..\dfg\DFGAdaptiveStructureWatchpoint.h" />
+    <ClInclude Include="..\dfg\DFGMultiGetByOffsetData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />

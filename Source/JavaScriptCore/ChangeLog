@@ -1,5 +1,12 @@
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed gardening.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Add missing
+        file references so they appear in the proper IDE locations.
+
+2015-08-11  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed windows build fix for VS2015.
 
         * bindings/ScriptValue.h: Add missing JSCJSValueInlines.h include.
