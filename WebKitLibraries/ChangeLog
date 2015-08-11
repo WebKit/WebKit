@@ -1,3 +1,9 @@
+2015-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix for VS2015 targets.
+
+        * win/lib32/WebKitSystemInterface.lib: Update with VS2015 version of library.
+
 2015-08-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix quirks with CMake and VS2015
