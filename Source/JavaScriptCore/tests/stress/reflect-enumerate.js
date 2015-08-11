@@ -52,3 +52,32 @@ testIterator(object, ['0', '1', '100000', 'hello', 'world']);
 testIterator({ hello:42, 0: 0, __proto__: { 1: 1, world: 42 } }, ['0', 'hello', '1', 'world']);
 testIterator({}, []);
 testIterator([], []);
+
+(function () {
+    var object = { hello: 42, world: 50 };
+    var iterator = Reflect.enumerate(object);
+    iterator.next();
+    delete object.hello;
+    delete object.world;
+    shouldBe(iterator.next().done, true);
+}());
+
+(function () {
+    var proto = { ng: 200 };
+    var object = { __proto__: proto, hello: 42, world: 50 };
+    var iterator = Reflect.enumerate(object);
+    iterator.next();
+    delete proto.ng;
+    shouldBe(iterator.next().value !== 'ng', true);
+    shouldBe(iterator.next().done, true);
+}());
+
+(function () {
+    var proto = { ng: 200 };
+    var object = { __proto__: proto, world: 50 };
+    var iterator = Reflect.enumerate(object);
+    iterator.next();
+    delete proto.world;
+    shouldBe(iterator.next().value, 'ng');
+    shouldBe(iterator.next().done, true);
+}());

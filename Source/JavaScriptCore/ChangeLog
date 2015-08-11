@@ -1,3 +1,14 @@
+2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Ensure that Reflect.enumerate does not produce the deleted keys
+        https://bugs.webkit.org/show_bug.cgi?id=147677
+
+        Reviewed by Darin Adler.
+
+        Add tests for Reflect.enumerate that delete the property keys during the enumeration.
+
+        * tests/stress/reflect-enumerate.js:
+
 2015-08-10  Geoffrey Garen  <ggaren@apple.com>
 
         Start beating UnlinkedCodeBlock.h/.cpp with the "One Class per File" stick
