@@ -152,11 +152,11 @@ public:
     ObjectConstructorGetPrototypeOfFunctor(JSObject* object)
         : m_hasSkippedFirstFrame(false)
         , m_object(object)
-        , m_result(JSValue::encode(jsUndefined()))
+        , m_result(jsUndefined())
     {
     }
 
-    EncodedJSValue result() const { return m_result; }
+    JSValue result() const { return m_result; }
 
     StackVisitor::Status operator()(StackVisitor& visitor)
     {
@@ -166,24 +166,29 @@ public:
         }
 
         if (m_object->allowsAccessFrom(visitor->callFrame()))
-            m_result = JSValue::encode(m_object->prototype());
+            m_result = m_object->prototype();
         return StackVisitor::Done;
     }
 
 private:
     bool m_hasSkippedFirstFrame;
     JSObject* m_object;
-    EncodedJSValue m_result;
+    JSValue m_result;
 };
+
+JSValue objectConstructorGetPrototypeOf(ExecState* exec, JSObject* object)
+{
+    ObjectConstructorGetPrototypeOfFunctor functor(object);
+    exec->iterate(functor);
+    return functor.result();
+}
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 {
     JSObject* object = exec->argument(0).toObject(exec);
     if (exec->hadException())
-        return JSValue::encode(jsNull());
-    ObjectConstructorGetPrototypeOfFunctor functor(object);
-    exec->iterate(functor);
-    return functor.result();
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(objectConstructorGetPrototypeOf(exec, object));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)

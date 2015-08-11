@@ -27,6 +27,7 @@
 #include "ReflectObject.h"
 
 #include "JSCInlines.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSPropertyNameIterator.h"
 #include "Lookup.h"
 #include "ObjectConstructor.h"
@@ -34,9 +35,11 @@
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState*);
+static EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState*);
+static EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState*);
 
 }
 
@@ -53,9 +56,11 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
     apply             reflectObjectApply             DontEnum|Function 3
     deleteProperty    reflectObjectDeleteProperty    DontEnum|Function 2
     enumerate         reflectObjectEnumerate         DontEnum|Function 1
+    getPrototypeOf    reflectObjectGetPrototypeOf    DontEnum|Function 1
     isExtensible      reflectObjectIsExtensible      DontEnum|Function 1
     ownKeys           reflectObjectOwnKeys           DontEnum|Function 1
     preventExtensions reflectObjectPreventExtensions DontEnum|Function 1
+    setPrototypeOf    reflectObjectSetPrototypeOf    DontEnum|Function 2
 @end
 */
 
@@ -85,6 +90,14 @@ EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState* exec)
     return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), asObject(target)));
 }
 
+EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.getPrototypeOf requires the first argument be an object")));
+    return JSValue::encode(objectConstructorGetPrototypeOf(exec, asObject(target)));
+}
+
 EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState* exec)
 {
     JSValue target = exec->argument(0);
@@ -108,6 +121,26 @@ EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState* exec)
         return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.preventExtensions requires the first argument be an object")));
     asObject(target)->preventExtensions(exec->vm());
     return JSValue::encode(jsBoolean(true));
+}
+
+EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.setPrototypeOf requires the first argument be an object")));
+    JSValue proto = exec->argument(1);
+    if (!proto.isObject() && !proto.isNull())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.setPrototypeOf requires the second argument be either an object or null")));
+
+    JSObject* object = asObject(target);
+
+    if (!checkProtoSetterAccessAllowed(exec, object))
+        return JSValue::encode(jsBoolean(false));
+
+    if (!object->isExtensible())
+        return JSValue::encode(jsBoolean(false));
+
+    return JSValue::encode(jsBoolean(object->setPrototypeWithCycleCheck(exec, proto)));
 }
 
 } // namespace JSC

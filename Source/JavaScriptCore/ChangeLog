@@ -1,3 +1,34 @@
+2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.getPrototypeOf and Reflect.setPrototypeOf
+        https://bugs.webkit.org/show_bug.cgi?id=147874
+
+        Reviewed by Darin Adler.
+
+        This patch implements ES6 Reflect.{getPrototypeOf, setPrototypeOf}.
+        The difference from the Object.* one is
+
+        1. They dont not perform ToObject onto the non-object arguments. They make it as a TypeError.
+        2. Reflect.setPrototyeOf returns false when the operation is failed. In Object.setPrototypeOf, it raises a TypeError.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::ObjectConstructorGetPrototypeOfFunctor):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::result):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::operator()):
+        (JSC::objectConstructorGetPrototypeOf):
+        * runtime/ObjectConstructor.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectGetPrototypeOf):
+        (JSC::reflectObjectSetPrototypeOf):
+        * tests/stress/reflect-get-prototype-of.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (Base):
+        (Derived):
+        * tests/stress/reflect-set-prototype-of.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2015-08-11  Ting-Wei Lan  <lantw44@gmail.com>
 
         Fix debug build when optimization is enabled
