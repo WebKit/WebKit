@@ -3124,6 +3124,3 @@ fast/text/hangul-generic-font-families.html [ WontFix ]
 
 # New test for Bug 144830 (r186388) always fails.
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Failure ]
-
-# This test relies on iOS-specific font fallback.
-fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
