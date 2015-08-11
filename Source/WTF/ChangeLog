@@ -1,3 +1,10 @@
+2015-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * WTF.vcxproj/WTF.vcxproj.filters: Place file references so that files appear in correct
+        folders in IDE.
+
 2015-08-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Compile warning (-Wsign-compare) on 32-bits at WebCore/platform/FileSystem.cpp

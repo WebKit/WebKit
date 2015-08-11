@@ -259,6 +259,7 @@
     <ClCompile Include="..\wtf\win\WorkItemWin.cpp">
       <Filter>wtf\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\Lock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\wtf\dtoa\utils.h">
@@ -714,6 +715,7 @@
       <Filter>wtf\win</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\TinyPtrSet.h" />
+    <ClInclude Include="..\wtf\Lock.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WTFPostBuild.cmd" />
