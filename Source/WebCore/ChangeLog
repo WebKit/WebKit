@@ -1,3 +1,44 @@
+2015-08-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r188263. rdar://problem/22202935
+
+    2015-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [iOS] Arabic letter Yeh is drawn in LastResort
+            https://bugs.webkit.org/show_bug.cgi?id=147862
+            <rdar://problem/22202935>
+
+            Reviewed by Darin Adler.
+
+            In order to perform font fallback, we must know which fonts support which characters. We
+            perform this check by asking each font to map a sequence of codepoints to glyphs, and
+            any glyphs which end up with a 0 value are unsupported by the font.
+
+            One of the mechanisms that we use to do this is to combine the code points into a string,
+            and tell Core Text to lay out the string. However, this is fundamentally a different
+            operation than the one we are trying to perform. Strings combine adjacent codepoints into
+            grapheme clusters, and CoreText operates on these. However, we are trying to gain
+            information regarding codepoints, not grapheme clusters.
+
+            Instead of taking this string-based approach, we should try harder to use Core Text
+            functions which operate on ordered collections of characters, rather than strings. In
+            particular, CTFontGetGlyphsForCharacters() and CTFontGetVerticalGlyphsForCharacters()
+            have the behavior we want where any unmapped characters end up with a 0 value glyph.
+
+            Previously, we were only using the result of those functions if they were successfully
+            able to map their entire input. However, given the fact that we can degrade gracefully
+            in the case of a partial mapping, we shouldn't need to bail completely to the
+            string-based approach should a partial mapping occur.
+
+            At some point we should delete the string-based approach entirely. However, this path
+            is still explicitly used for composite fonts. Fixing that use case is out of scope
+            for this patch.
+
+            Test: fast/text/arabic-glyph-cache-fill-combine.html
+
+            * platform/graphics/mac/GlyphPageMac.cpp:
+            (WebCore::GlyphPage::fill):
+
 2015-08-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r188162.
