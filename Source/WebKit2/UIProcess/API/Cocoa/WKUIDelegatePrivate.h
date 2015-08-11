@@ -48,7 +48,7 @@ struct UIEdgeInsets;
 // FIXME: This should be handled by the WKWebsiteDataStore delegate.
 - (void)_webView:(WKWebView *)webView decideWebApplicationCacheQuotaForSecurityOrigin:(WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota totalBytesNeeded:(unsigned long long)totalBytesNeeded decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
 
-- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame userInitiated:(BOOL)userInitiated WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 - (void)_webViewClose:(WKWebView *)webView;
 - (void)_webViewFullscreenMayReturnToInline:(WKWebView *)webView;

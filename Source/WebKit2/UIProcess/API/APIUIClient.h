@@ -139,7 +139,7 @@ public:
     virtual float footerHeight(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) { return 0; }
     virtual void drawHeader(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::FloatRect&) { }
     virtual void drawFooter(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::FloatRect&) { }
-    virtual void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) { }
+    virtual void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, bool processingUserGesture) { }
 
     virtual bool canRunModal() const { return false; }
     virtual void runModal(WebKit::WebPageProxy*) { }

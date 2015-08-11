@@ -3836,7 +3836,7 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const FileChooserSettings& set
     }
 }
 
-void WebPageProxy::printFrame(uint64_t frameID)
+void WebPageProxy::printFrame(uint64_t frameID, bool processingUserGesture)
 {
     ASSERT(!m_isPerformingDOMPrintOperation);
     m_isPerformingDOMPrintOperation = true;
@@ -3844,15 +3844,10 @@ void WebPageProxy::printFrame(uint64_t frameID)
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    m_uiClient->printFrame(this, frame);
+    m_uiClient->printFrame(this, frame, processingUserGesture);
 
     endPrinting(); // Send a message synchronously while m_isPerformingDOMPrintOperation is still true.
     m_isPerformingDOMPrintOperation = false;
-}
-
-void WebPageProxy::printMainFrame()
-{
-    printFrame(m_mainFrame->frameID());
 }
 
 void WebPageProxy::setMediaVolume(float volume)

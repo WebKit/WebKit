@@ -39,6 +39,7 @@
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
 		33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */; };
+		376481801B79CD8D00D24B97 /* PrintFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3764817D1B79CD7D00D24B97 /* PrintFrame.mm */; settings = {ASSET_TAGS = (); }; };
 		378E64771632655E00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */; };
 		378E64791632707400B6C676 /* link-with-title.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 378E647816326FDF00B6C676 /* link-with-title.html */; };
 		379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 379028B814FABE49007E6B43 /* acceptsFirstMouse.html */; };
@@ -496,6 +497,7 @@
 		33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mouse-move-listener.html"; sourceTree = "<group>"; };
 		3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageFromDOMRange.mm; sourceTree = "<group>"; };
 		3751AF7A169518F800764319 /* DOMNodeFromJSObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNodeFromJSObject.mm; sourceTree = "<group>"; };
+		3764817D1B79CD7D00D24B97 /* PrintFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintFrame.mm; sourceTree = "<group>"; };
 		3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceScaleFactorInDashboardRegions.mm; sourceTree = "<group>"; };
 		378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest.cpp; sourceTree = "<group>"; };
 		378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest_Bundle.cpp; sourceTree = "<group>"; };
@@ -866,6 +868,7 @@
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
+				3764817D1B79CD7D00D24B97 /* PrintFrame.mm */,
 				37D36F311B004DD400BAF5D9 /* ProvisionalURLChange.mm */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
@@ -1561,6 +1564,7 @@
 				7CCE7F0B1A411AE600447C4C /* PreventEmptyUserAgent.cpp in Sources */,
 				7CCE7F2C1A411B1000447C4C /* PreventImageLoadWithAutoResizing.mm in Sources */,
 				7CCE7F0C1A411AE600447C4C /* PrivateBrowsingPushStateNoHistoryCallback.cpp in Sources */,
+				376481801B79CD8D00D24B97 /* PrintFrame.mm in Sources */,
 				7CCE7EC81A411A7E00447C4C /* PublicSuffix.mm in Sources */,
 				7CCE7F3E1A411B8E00447C4C /* RedBlackTree.cpp in Sources */,
 				7CCE7F3F1A411B8E00447C4C /* Ref.cpp in Sources */,

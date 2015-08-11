@@ -1,3 +1,36 @@
+2015-08-11  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] The UI delegate can't tell if printing was user-initiated
+        https://bugs.webkit.org/show_bug.cgi?id=147869
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::printFrame): Added processingUserGesture argument.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient): Updated for new client function signature.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Added userInitiated boolean argument to
+          -_webView:printFrame:.
+
+        * UIProcess/Cocoa/UIDelegate.h: Added bool to m_delegateMethods for the new method.
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIDelegate):
+        (WebKit::UIDelegate::setDelegate): Initialized new bool.
+        (WebKit::UIDelegate::UIClient::printFrame): Pass processingUserGesture as the delegate’s
+          userInitiated argument.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::printFrame): Added processingUserGesture argument, passing it along
+          to the client.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in: Added processingUserGesture argument to printFrame.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::print): Pass new argument.
+
 2015-08-10  Matthew Daiter  <mdaiter@apple.com>
 
         Add MediaDeviceIdentifier to WebsiteDataTypes
