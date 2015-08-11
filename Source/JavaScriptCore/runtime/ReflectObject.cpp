@@ -57,6 +57,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
     deleteProperty    reflectObjectDeleteProperty    DontEnum|Function 2
     enumerate         reflectObjectEnumerate         DontEnum|Function 1
     getPrototypeOf    reflectObjectGetPrototypeOf    DontEnum|Function 1
+    has               reflectObjectHas               DontEnum|Function 2
     isExtensible      reflectObjectIsExtensible      DontEnum|Function 1
     ownKeys           reflectObjectOwnKeys           DontEnum|Function 1
     preventExtensions reflectObjectPreventExtensions DontEnum|Function 1

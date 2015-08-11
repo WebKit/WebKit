@@ -47,3 +47,12 @@ function deleteProperty(target, propertyKey)
     return delete target[propertyKey];
 }
 
+function has(target, propertyKey)
+{
+    "use strict";
+
+    if (!@isObject(target))
+        throw new @TypeError("Reflect.has requires the first argument be an object");
+
+    return propertyKey in target;
+}

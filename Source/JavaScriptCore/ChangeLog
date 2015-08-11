@@ -1,5 +1,26 @@
 2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ES6] Implement Reflect.has
+        https://bugs.webkit.org/show_bug.cgi?id=147875
+
+        Reviewed by Sam Weinig.
+
+        This patch implements Reflect.has[1].
+        Since the semantics is the same to the `in` operator in the JS[2],
+        we can implement it in builtin JS code.
+
+        [1]: http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.has
+        [2]: http://www.ecma-international.org/ecma-262/6.0/#sec-relational-operators-runtime-semantics-evaluation
+
+        * builtins/ReflectObject.js:
+        (has):
+        * runtime/ReflectObject.cpp:
+        * tests/stress/reflect-has.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
+2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Implement Reflect.getPrototypeOf and Reflect.setPrototypeOf
         https://bugs.webkit.org/show_bug.cgi?id=147874
 
