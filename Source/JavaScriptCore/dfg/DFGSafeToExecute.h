@@ -59,6 +59,7 @@ public:
         case ObjectOrOtherUse:
         case StringIdentUse:
         case StringUse:
+        case SymbolUse:
         case StringObjectUse:
         case StringOrStringObjectUse:
         case NotStringVarUse:
@@ -188,6 +189,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckCell:
     case CheckBadCell:
     case CheckNotEmpty:
+    case CheckIdent:
     case RegExpExec:
     case RegExpTest:
     case CompareLess:

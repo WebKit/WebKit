@@ -1012,6 +1012,15 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
         }
+
+        case CheckIdent: {
+            UniquedStringImpl* uid = node->uidOperand();
+            if (uid->isSymbol())
+                fixEdge<SymbolUse>(node->child1());
+            else
+                fixEdge<StringIdentUse>(node->child1());
+            break;
+        }
             
         case Arrayify:
         case ArrayifyToStructure: {
@@ -1760,6 +1769,7 @@ private:
         case FunctionUse:
         case StringUse:
         case KnownStringUse:
+        case SymbolUse:
         case StringObjectUse:
         case StringOrStringObjectUse:
             if (alwaysUnboxSimplePrimitives()

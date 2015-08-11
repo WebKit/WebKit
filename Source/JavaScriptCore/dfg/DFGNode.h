@@ -1328,6 +1328,17 @@ struct Node {
         return reinterpret_cast<void*>(m_opInfo);
     }
 
+    bool hasUidOperand()
+    {
+        return op() == CheckIdent;
+    }
+
+    UniquedStringImpl* uidOperand()
+    {
+        ASSERT(hasUidOperand());
+        return reinterpret_cast<UniquedStringImpl*>(m_opInfo);
+    }
+
     bool hasTransition()
     {
         switch (op()) {

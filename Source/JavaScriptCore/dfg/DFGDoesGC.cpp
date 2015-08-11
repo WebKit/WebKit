@@ -107,6 +107,7 @@ bool doesGC(Graph& graph, Node* node)
     case VarInjectionWatchpoint:
     case CheckCell:
     case CheckNotEmpty:
+    case CheckIdent:
     case RegExpExec:
     case RegExpTest:
     case CompareLess:
