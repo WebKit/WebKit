@@ -24,6 +24,11 @@ set(GTEST_SOURCES
     ${GTEST_DIR}/src/gtest-typed-test.cc
 )
 
+if (WIN32)
+    # MSVC 2015 requires this definition for INTMAX_MAX to be defined.
+    add_definitions(-D__STDC_LIMIT_MACROS)
+endif ()
+
 add_library(gtest SHARED ${GTEST_SOURCES})
 include_directories(${GTEST_INCLUDE_DIRECTORIES})
 add_definitions(-DGTEST_CREATE_SHARED_LIBRARY=1 -DGTEST_HAS_RTTI=0)

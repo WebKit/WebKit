@@ -1,5 +1,12 @@
 2015-08-10  Alex Christensen  <achristensen@webkit.org>
 
+        [Win] Unreviewed build fix after r188239.
+
+        * gtest/CMakeLists.txt:
+        VS2015 requires __STDC_LIMIT_MACROS to be defined for INTMAX_MAX to be defined.
+
+2015-08-10  Alex Christensen  <achristensen@webkit.org>
+
         Build TestWebKitAPI with CMake on Windows
         https://bugs.webkit.org/show_bug.cgi?id=147851
 
