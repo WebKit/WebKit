@@ -7,7 +7,7 @@ EXPECTED (fragment != 'null') OK
 ** The document fragment should have one child, an empty Text node **
 EXPECTED (fragment.childNodes.length == '1') OK
 EXPECTED (fragment.childNodes[0].length == '0') OK
-EXPECTED (fragment.childNodes[0].constructor.name == 'undefined') OK
+EXPECTED (fragment.childNodes[0].constructor.name == 'Text') OK
 
 END OF TEST
 
