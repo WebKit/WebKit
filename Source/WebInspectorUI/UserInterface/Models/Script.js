@@ -118,7 +118,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
             return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
-        return DebuggerAgent.getScriptSource.promise(this._id);
+        return DebuggerAgent.getScriptSource(this._id);
     }
 
     saveIdentityToCookie(cookie)

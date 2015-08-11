@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let dummyCallback = function(){};
+    let invokeCallbackResult = RuntimeAgent.evaluate("41", dummyCallback);
+    InspectorTest.expectThat(!(invokeCallbackResult instanceof Promise), "RuntimeAgent.evaluate should not return a promise when invoked with a function as the last parameter.");
+
+    let invokePromiseResult = RuntimeAgent.evaluate("42");
+    InspectorTest.expectThat(invokePromiseResult instanceof Promise, "RuntimeAgent.evaluate should return a Promise when invoked without a callback.");
+
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the inspector backend's return values when invoking a protocol command in various ways.</p>
+</body>
+</html>

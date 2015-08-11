@@ -1,7 +1,0 @@
-Testing that the inspector backend can return command results using promises.
-
-Using a callback, got RuntimeAgent.evaluate() result: 41
-Setting up two promises for RuntimeAgent.evaluate.
-Using a promise, got RuntimeAgent.evaluate() result: 42
-Using a promise, got RuntimeAgent.evaluate() result: 43
-

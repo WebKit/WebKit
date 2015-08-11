@@ -1,3 +1,58 @@
+2015-08-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Agent commands do not actually return a promise when expected
+        https://bugs.webkit.org/show_bug.cgi?id=138665
+
+        Reviewed by Timothy Hatcher.
+
+        This patch unifies the handling of different invocation and dispatch modes in the
+        InspectorBackend protocol system. Command responses are dispatched to a provided
+        callback function; if no function was provided, then the command returns a promise.
+
+        Rather than awkwardly converting between promises and callbacks at invocation and
+        response dispatch time, the backend now stores the callback or promise thunks and
+        knows how to invoke each when the response comes. This mirrors how response handling
+        works in ProtocolTestStub.js. InspectorBackend includes more machinery to support Agent
+        objects and various debug flags.
+
+        Performanace impact is expected to be negligible, because there are relatively
+        few commands issued by the inspector frontend and returned promises are short-lived.
+
+        Remove all uses of Command.prototype.promise, since it is no longer necessary.
+
+        * UserInterface/Base/Test.js:
+        (InspectorTest.reloadPage):
+        * UserInterface/Controllers/ReplayManager.js:
+        (WebInspector.ReplayManager.prototype.getSession.get var):
+        (WebInspector.ReplayManager.getSegment.get var):
+        * UserInterface/Models/ReplaySession.js:
+        (WebInspector.ReplaySession.prototype.segmentsChanged):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.requestContentFromBackend):
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.requestContentFromBackend):
+        * UserInterface/Models/SourceMapResource.js:
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend):
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.dispatch):
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        (InspectorBackendClass.prototype._sendCommandToBackendWithCallback.set this):
+        (InspectorBackendClass.set this):
+        (InspectorBackendClass.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackendClass.prototype._dispatchResponseToCallback):
+        (InspectorBackendClass.prototype._dispatchResponseToPromise):
+        (InspectorBackendClass.prototype._flushPendingScripts):
+        (InspectorBackend.Command.prototype.invoke):
+        (InspectorBackend.Command.prototype._invokeWithArguments):
+        (InspectorBackendClass.prototype._willSendMessageToBackend.set return): Deleted.
+        (InspectorBackendClass._dispatchCallback.get if): Deleted.
+        (InspectorBackendClass.prototype._willSendMessageToBackend): Deleted.
+        (InspectorBackendClass.prototype._invokeCommand): Deleted.
+        (.callable): Deleted.
+        (InspectorBackend.Command.create): Deleted.
+        (InspectorBackend.Command.prototype.promise): Deleted.
+
 2015-08-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Hovering over an element in the Elements tab should highlight the whole line

@@ -55,7 +55,7 @@ WebInspector.ReplaySession = class ReplaySession extends WebInspector.Object
     segmentsChanged()
     {
         // The replay manager won't update the session's list of segments nor create a new session.
-        ReplayAgent.getSessionData.promise(this.identifier)
+        ReplayAgent.getSessionData(this.identifier)
             .then(this._updateFromPayload.bind(this));
     }
 

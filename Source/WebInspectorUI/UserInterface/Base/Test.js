@@ -220,7 +220,7 @@ InspectorTest.reloadPage = function(shouldIgnoreCache)
 
     this._testPageIsReloading = true;
 
-    return PageAgent.reload.promise(!!shouldIgnoreCache)
+    return PageAgent.reload(!!shouldIgnoreCache)
         .then(function() {
             this._shouldResendResults = true;
             this._testPageReloadedOnce = true;

@@ -1,3 +1,20 @@
+2015-08-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Agent commands do not actually return a promise when expected
+        https://bugs.webkit.org/show_bug.cgi?id=138665
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new test that only checks for proper invocation return values.
+        Once the async test suite infrastructure is available for frontend tests,
+        more thorough tests of promises and callbacks will be added.
+
+        * inspector/protocol/inspector-backend-invocation-return-value-expected.txt: Added.
+        * inspector/protocol/inspector-backend-invocation-return-value.html: Added.
+        * inspector/protocol/protocol-promise-result-expected.txt: Removed.
+        * inspector/protocol/protocol-promise-result.html: Removed.
+        * platform/win/TestExpectations: Remove deleted test.
+
 2015-08-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         feMorphology is not rendered correctly on Retina display

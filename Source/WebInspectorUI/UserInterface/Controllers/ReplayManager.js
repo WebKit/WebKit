@@ -133,7 +133,7 @@ WebInspector.ReplayManager = class ReplayManager extends WebInspector.Object
         if (this._sessionPromises.has(sessionId))
             return this._sessionPromises.get(sessionId);
 
-        var newPromise = ReplayAgent.getSessionData.promise(sessionId)
+        var newPromise = ReplayAgent.getSessionData(sessionId)
             .then(function(payload) {
                 return Promise.resolve(WebInspector.ReplaySession.fromPayload(sessionId, payload));
             });
@@ -148,7 +148,7 @@ WebInspector.ReplayManager = class ReplayManager extends WebInspector.Object
         if (this._segmentPromises.has(segmentId))
             return this._segmentPromises.get(segmentId);
 
-        var newPromise = ReplayAgent.getSegmentData.promise(segmentId)
+        var newPromise = ReplayAgent.getSegmentData(segmentId)
             .then(function(payload) {
                 return Promise.resolve(new WebInspector.ReplaySessionSegment(segmentId, payload));
             });

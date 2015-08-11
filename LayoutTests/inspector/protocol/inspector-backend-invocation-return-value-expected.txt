@@ -1,0 +1,5 @@
+Testing the inspector backend's return values when invoking a protocol command in various ways.
+
+PASS: RuntimeAgent.evaluate should not return a promise when invoked with a function as the last parameter.
+PASS: RuntimeAgent.evaluate should return a Promise when invoked without a callback.
+
