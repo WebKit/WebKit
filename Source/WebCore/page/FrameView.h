@@ -155,7 +155,6 @@ public:
     void willRecalcStyle();
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
-    bool flushCompositingStateForThisFrame(Frame* rootFrameForFlush);
 
     void clearBackingStores();
     void restoreBackingStores();
@@ -265,7 +264,7 @@ public:
 
     void addSlowRepaintObject(RenderElement*);
     void removeSlowRepaintObject(RenderElement*);
-    bool hasSlowRepaintObject(RenderElement* o) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(o); }
+    bool hasSlowRepaintObject(const RenderElement& renderer) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(&renderer); }
     bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && m_slowRepaintObjects->size(); }
 
     // Includes fixed- and sticky-position objects.
@@ -404,7 +403,7 @@ public:
     bool scrollToFragment(const URL&);
     bool scrollToAnchor(const String&);
     void maintainScrollPositionAtAnchor(ContainerNode*);
-    WEBCORE_EXPORT void scrollElementToRect(Element*, const IntRect&);
+    WEBCORE_EXPORT void scrollElementToRect(const Element&, const IntRect&);
 
     // Methods to convert points and rects between the coordinate space of the renderer, and this view.
     WEBCORE_EXPORT IntRect convertFromRendererToContainingView(const RenderElement*, const IntRect&) const;
@@ -418,7 +417,7 @@ public:
     virtual IntPoint convertToContainingView(const IntPoint&) const override;
     virtual IntPoint convertFromContainingView(const IntPoint&) const override;
 
-    bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
+    bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner == &scrollCorner; }
 
     // isScrollable() takes an optional Scrollability parameter that allows the caller to define what they mean by 'scrollable.'
     // Most callers are interested in the default value, Scrollability::Scrollable, which means that there is actually content
@@ -589,6 +588,7 @@ private:
     bool shouldLayoutAfterContentsResized() const;
 
     bool shouldUpdateCompositingLayersAfterScrolling() const;
+    bool flushCompositingStateForThisFrame(const Frame& rootFrameForFlush);
 
     virtual bool shouldDeferScrollUpdateAfterContentSizeChange() override;
 
@@ -687,7 +687,7 @@ private:
     std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     const Ref<Frame> m_frame;
 
-    std::unique_ptr<HashSet<RenderElement*>> m_slowRepaintObjects;
+    std::unique_ptr<HashSet<const RenderElement*>> m_slowRepaintObjects;
 
     bool m_needsFullRepaint;
     

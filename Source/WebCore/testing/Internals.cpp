@@ -1183,7 +1183,7 @@ void Internals::scrollElementToRect(Element* element, long x, long y, long w, lo
         return;
     }
     FrameView* frameView = element->document().view();
-    frameView->scrollElementToRect(element, IntRect(x, y, w, h));
+    frameView->scrollElementToRect(*element, IntRect(x, y, w, h));
 }
 
 void Internals::paintControlTints(ExceptionCode& ec)

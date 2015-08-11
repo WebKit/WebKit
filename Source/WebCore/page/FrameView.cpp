@@ -980,7 +980,7 @@ bool FrameView::isScrollSnapInProgress() const
 }
 #endif
 
-bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
+bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)
 {
     RenderView* renderView = this->renderView();
     if (!renderView)
@@ -998,8 +998,7 @@ bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
         tileCache->doPendingRepaints();
 #endif
 
-    renderView->compositor().flushPendingLayerChanges(rootFrameForFlush == m_frame.ptr());
-
+    renderView->compositor().flushPendingLayerChanges(&rootFrameForFlush == m_frame.ptr());
     return true;
 }
 
@@ -1126,12 +1125,12 @@ bool FrameView::flushCompositingStateIncludingSubframes()
 {
     InspectorInstrumentation::willComposite(frame());
 
-    bool allFramesFlushed = flushCompositingStateForThisFrame(&frame());
+    bool allFramesFlushed = flushCompositingStateForThisFrame(frame());
 
     for (Frame* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
         if (!child->view())
             continue;
-        bool flushed = child->view()->flushCompositingStateForThisFrame(&frame());
+        bool flushed = child->view()->flushCompositingStateForThisFrame(frame());
         allFramesFlushed &= flushed;
     }
     return allFramesFlushed;
@@ -1625,7 +1624,7 @@ void FrameView::addSlowRepaintObject(RenderElement* o)
     bool hadSlowRepaintObjects = hasSlowRepaintObjects();
 
     if (!m_slowRepaintObjects)
-        m_slowRepaintObjects = std::make_unique<HashSet<RenderElement*>>();
+        m_slowRepaintObjects = std::make_unique<HashSet<const RenderElement*>>();
 
     m_slowRepaintObjects->add(o);
 
@@ -2079,12 +2078,12 @@ void FrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
         scrollToAnchor();
 }
 
-void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
+void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
 {
     frame().document()->updateLayoutIgnorePendingStylesheets();
 
     LayoutRect bounds;
-    if (RenderElement* renderer = element->renderer())
+    if (RenderElement* renderer = element.renderer())
         bounds = renderer->anchorRect();
     int centeringOffsetX = (rect.width() - bounds.width()) / 2;
     int centeringOffsetY = (rect.height() - bounds.height()) / 2;
