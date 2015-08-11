@@ -4781,15 +4781,15 @@ sub GenerateConstructorHelperMethods
     if (IsDOMGlobalObject($interface)) {
         push(@$outputArray, "    Base::finishCreation(vm);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject->prototype(), DontDelete | ReadOnly | DontEnum);\n");
     } elsif ($generatingNamedConstructor) {
         push(@$outputArray, "    Base::finishCreation(globalObject);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), None);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);\n");
     } else {
         push(@$outputArray, "    Base::finishCreation(vm);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);\n");
     }
 
     if (defined $leastConstructorLength) {
