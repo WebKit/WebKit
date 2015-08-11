@@ -219,6 +219,9 @@
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\UnlinkedFunctionExecutable.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>

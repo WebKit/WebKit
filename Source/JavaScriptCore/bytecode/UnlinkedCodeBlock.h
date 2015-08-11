@@ -39,9 +39,9 @@
 #include "RegExp.h"
 #include "SpecialPointer.h"
 #include "SymbolTable.h"
+#include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
 #include "VirtualRegister.h"
-
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
@@ -58,164 +58,15 @@ class SourceProvider;
 class SymbolTable;
 class UnlinkedCodeBlock;
 class UnlinkedFunctionCodeBlock;
+class UnlinkedFunctionExecutable;
 class UnlinkedInstructionStream;
+struct ExecutableInfo;
 
 typedef unsigned UnlinkedValueProfile;
 typedef unsigned UnlinkedArrayProfile;
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
-
-struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind)
-        : m_needsActivation(needsActivation)
-        , m_usesEval(usesEval)
-        , m_isStrictMode(isStrictMode)
-        , m_isConstructor(isConstructor)
-        , m_isBuiltinFunction(isBuiltinFunction)
-        , m_constructorKind(static_cast<unsigned>(constructorKind))
-    {
-        ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
-    }
-
-    bool needsActivation() const { return m_needsActivation; }
-    bool usesEval() const { return m_usesEval; }
-    bool isStrictMode() const { return m_isStrictMode; }
-    bool isConstructor() const { return m_isConstructor; }
-    bool isBuiltinFunction() const { return m_isBuiltinFunction; }
-    ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
-
-private:
-    unsigned m_needsActivation : 1;
-    unsigned m_usesEval : 1;
-    unsigned m_isStrictMode : 1;
-    unsigned m_isConstructor : 1;
-    unsigned m_isBuiltinFunction : 1;
-    unsigned m_constructorKind : 2;
-};
-
-enum UnlinkedFunctionKind {
-    UnlinkedNormalFunction,
-    UnlinkedBuiltinFunction,
-};
-
-class UnlinkedFunctionExecutable final : public JSCell {
-public:
-    friend class BuiltinExecutables;
-    friend class CodeCache;
-    friend class VM;
-
-    typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables, RefPtr<SourceProvider>&& sourceOverride = nullptr)
-    {
-        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
-            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind, constructAbility, parentScopeTDZVariables);
-        instance->finishCreation(*vm);
-        return instance;
-    }
-
-    const Identifier& name() const { return m_name; }
-    const Identifier& inferredName() const { return m_inferredName; }
-    JSString* nameValue() const { return m_nameValue.get(); }
-    unsigned parameterCount() const { return m_parameterCount; };
-    FunctionParseMode parseMode() const { return m_parseMode; };
-    bool isInStrictContext() const { return m_isInStrictContext; }
-    FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
-    ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
-
-    unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
-    unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
-    unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }
-    unsigned startOffset() const { return m_startOffset; }
-    unsigned sourceLength() { return m_sourceLength; }
-    unsigned parametersStartOffset() const { return m_parametersStartOffset; }
-    unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
-    unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
-
-    UnlinkedFunctionCodeBlock* codeBlockFor(
-        VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, 
-        ParserError&);
-
-    static UnlinkedFunctionExecutable* fromGlobalCode(
-        const Identifier&, ExecState&, const SourceCode&, JSObject*& exception, 
-        int overrideLineNumber);
-
-    FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNumber = -1);
-
-    void clearCodeForRecompilation()
-    {
-        m_codeBlockForCall.clear();
-        m_codeBlockForConstruct.clear();
-    }
-
-    void recordParse(CodeFeatures features, bool hasCapturedVariables)
-    {
-        m_features = features;
-        m_hasCapturedVariables = hasCapturedVariables;
-    }
-
-    CodeFeatures features() const { return m_features; }
-    bool hasCapturedVariables() const { return m_hasCapturedVariables; }
-
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
-
-    bool isBuiltinFunction() const { return m_isBuiltinFunction; }
-    ConstructAbility constructAbility() const { return static_cast<ConstructAbility>(m_constructAbility); }
-    bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
-    const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
-
-private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&);
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
-
-    Identifier m_name;
-    Identifier m_inferredName;
-    WriteBarrier<JSString> m_nameValue;
-    RefPtr<SourceProvider> m_sourceOverride;
-    VariableEnvironment m_parentScopeTDZVariables;
-    unsigned m_firstLineOffset;
-    unsigned m_lineCount;
-    unsigned m_unlinkedFunctionNameStart;
-    unsigned m_unlinkedBodyStartColumn;
-    unsigned m_unlinkedBodyEndColumn;
-    unsigned m_startOffset;
-    unsigned m_sourceLength;
-    unsigned m_parametersStartOffset;
-    unsigned m_typeProfilingStartOffset;
-    unsigned m_typeProfilingEndOffset;
-    unsigned m_parameterCount;
-    FunctionParseMode m_parseMode;
-
-    CodeFeatures m_features;
-
-    unsigned m_isInStrictContext : 1;
-    unsigned m_hasCapturedVariables : 1;
-    unsigned m_isBuiltinFunction : 1;
-    unsigned m_constructAbility: 1;
-    unsigned m_constructorKind : 2;
-    unsigned m_functionMode : 1; // FunctionMode
-
-protected:
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-        m_nameValue.set(vm, this, jsString(&vm, name().string()));
-    }
-
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-public:
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
-    {
-        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionExecutableType, StructureFlags), info());
-    }
-
-    DECLARE_EXPORT_INFO;
-};
 
 struct UnlinkedStringJumpTable {
     typedef HashMap<RefPtr<StringImpl>, int32_t> StringOffsetTable;

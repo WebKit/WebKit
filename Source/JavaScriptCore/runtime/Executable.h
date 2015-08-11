@@ -32,6 +32,7 @@
 #include "CodeSpecializationKind.h"
 #include "CompilationResult.h"
 #include "DFGPlan.h"
+#include "ExecutableInfo.h"
 #include "HandlerInfo.h"
 #include "InferredValue.h"
 #include "JITCode.h"
@@ -41,6 +42,7 @@
 #include "SourceCode.h"
 #include "TypeSet.h"
 #include "UnlinkedCodeBlock.h"
+#include "UnlinkedFunctionExecutable.h"
 
 namespace JSC {
 
