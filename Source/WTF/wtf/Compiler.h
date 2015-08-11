@@ -137,6 +137,12 @@
 #define ASAN_ENABLED 0
 #endif
 
+#if ASAN_ENABLED
+#define SUPPRESS_ASAN __attribute__((no_sanitize_address))
+#else
+#define SUPPRESS_ASAN
+#endif
+
 /* ==== Compiler-independent macros for various compiler features, in alphabetical order ==== */
 
 /* ALWAYS_INLINE */
