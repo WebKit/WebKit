@@ -1,3 +1,10 @@
+2015-08-11  Alex Christensen  <achristensen@webkit.org>
+
+        Update WinCairoRequirements to VS2015.
+
+        * Scripts/update-webkit-wincairo-libs:
+        Update WinCairoRequirements location.
+
 2015-08-11  Jason Marcell  <jmarcell@apple.com>
 
         Substituted Dashboard.Repository.OpenSource.trac for webkitTrac and Dashboard.Repository.Internal.trac
