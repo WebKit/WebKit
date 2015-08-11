@@ -12,54 +12,54 @@ function test()
     // This test setting 2 breakpoints in DFG compiled functions: one inlined,
     // and one not inlined.
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var breakpointId = null;
     var scriptId = 0;
     var startLine = 0;
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             scriptId = messageObject.params.scriptId;
             startLine = messageObject.params.startLine;
 
-            InspectorTest.sendCommand("Runtime.evaluate", {
+            InspectorProtocol.sendCommand("Runtime.evaluate", {
                 expression: "dfgWithoutInline2();"
             }, function(responseObject) {
-                InspectorTest.log("dfg function warmed up\n");
+                ProtocolTest.log("dfg function warmed up\n");
 
                 var location1 = {scriptId: scriptId, lineNumber: 2, columnNumber: 0};
 
-                InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location1}, function(responseObject) {
-                    InspectorTest.checkForError(responseObject);
-                    InspectorTest.log("Breakpoint set in breakpointBasic()");
+                InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location1}, function(responseObject) {
+                    InspectorProtocol.checkForError(responseObject);
+                    ProtocolTest.log("Breakpoint set in breakpointBasic()");
 
                     breakpointId = responseObject.result.breakpointId;
-                    InspectorTest.sendCommand("Runtime.evaluate", {
+                    InspectorProtocol.sendCommand("Runtime.evaluate", {
                         expression: "callNotInlineable2();"
                     }, function(responseObject) {
-                        InspectorTest.log("Test complete");
-                        InspectorTest.completeTest();
+                        ProtocolTest.log("Test complete");
+                        ProtocolTest.completeTest();
                     });
                 });
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Hit Breakpoint!");
+        ProtocolTest.log("Hit Breakpoint!");
         var callFrames = messageObject.params.callFrames;
         if (callFrames.length < 3)
-            InspectorTest.log("FAIL: too few frames in stack trace");
+            ProtocolTest.log("FAIL: too few frames in stack trace");
 
         var callFrameId = callFrames[1].callFrameId;
-        InspectorTest.log("Evaluating in DFG frame at frame[1]: 'x = 20000;'");
-        InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "x = 20000;" }, function(responseObject) {
-            InspectorTest.sendCommand("Debugger.resume", {}, function(responseObject) {
-                InspectorTest.log("Resumed from breakpoint");
+        ProtocolTest.log("Evaluating in DFG frame at frame[1]: 'x = 20000;'");
+        InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "x = 20000;" }, function(responseObject) {
+            InspectorProtocol.sendCommand("Debugger.resume", {}, function(responseObject) {
+                ProtocolTest.log("Resumed from breakpoint");
             });
         });
     }

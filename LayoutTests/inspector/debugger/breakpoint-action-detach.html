@@ -21,10 +21,10 @@ function disconnect()
 
 function test()
 {
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             var breakpoint = {
                 location: {
                     scriptId: messageObject.params.scriptId,
@@ -38,18 +38,18 @@ function test()
                     ]
                 }
             };
-            InspectorTest.sendCommand("Debugger.setBreakpoint", breakpoint, InspectorTest.checkForError);
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "runBreakpointWithCondition()"});
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", breakpoint, InspectorProtocol.checkForError);
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "runBreakpointWithCondition()"});
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("FAIL: Paused in debugger: reason = \"" + messageObject.params.reason + "\"");
-        InspectorTest.completeTest();
+        ProtocolTest.log("FAIL: Paused in debugger: reason = \"" + messageObject.params.reason + "\"");
+        ProtocolTest.completeTest();
     }
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 }
 </script>
 </head>

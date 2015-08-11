@@ -11,25 +11,25 @@ console.warn("warn 1"); console.error("error 1");
 <script>
 function test()
 {
-    InspectorTest.importScript("console-test.js");
+    ProtocolTest.importScript("console-test.js");
 
     var consoleMessageCount = 0;
     const expectedConsoleMessageCount = 8;
 
     // Due to the difficulty of testing inline script tags in a test case, this test
     // is a reference test that contains serialized Console.messageAdded event data.
-    InspectorTest.addEventListener({
+    InspectorProtocol.addEventListener({
         event: "Console.messageAdded",
         listener: function(messageObject) {
-            var message = InspectorTest.Console.sanitizeConsoleMessage(messageObject);
-            InspectorTest.log(JSON.stringify(message));
+            var message = ProtocolTest.Console.sanitizeConsoleMessage(messageObject);
+            ProtocolTest.log(JSON.stringify(message));
 
             if (++consoleMessageCount === expectedConsoleMessageCount)
-                InspectorTest.completeTest();
+                ProtocolTest.completeTest();
         }
     });
 
-    InspectorTest.sendCommand({
+    InspectorProtocol.sendCommand({
         method: "Console.enable",
         params: {}
     });

@@ -15,14 +15,14 @@ function test()
             try {
                 processStepOrFail(s);
             } catch (e) {
-                InspectorTest.log(e.stack);
-                InspectorTest.completeTest();
+                ProtocolTest.log(e.stack);
+                ProtocolTest.completeTest();
             }
         }
 
         function processStepOrFail(s) {
             if (!s) {
-                InspectorTest.completeTest();
+                ProtocolTest.completeTest();
                 return;
             }
             if (!s.command) {
@@ -37,29 +37,29 @@ function test()
                 if ("error" in response) {
                     if (!("errorHandler" in s)) {
                         // Error message is not logged intentionally, it may be platform-specific.
-                        InspectorTest.log("Protocol command '" + s.command + "' failed");
-                        InspectorTest.completeTest();
+                        ProtocolTest.log("Protocol command '" + s.command + "' failed");
+                        ProtocolTest.completeTest();
                         return;
                     }
                     try {
                         next = s.errorHandler(response.error);
                     } catch (e) {
-                        InspectorTest.log(e.stack);
-                        InspectorTest.completeTest();
+                        ProtocolTest.log(e.stack);
+                        ProtocolTest.completeTest();
                         return;
                     }
                 } else {
                     try {
                         next = s.callback(response.result);
                     } catch (e) {
-                        InspectorTest.log(e.stack);
-                        InspectorTest.completeTest();
+                        ProtocolTest.log(e.stack);
+                        ProtocolTest.completeTest();
                         return;
                     }
                 }
                 processStep(next);
             }
-            InspectorTest.sendCommand(s.command, s.params, innerCallback);
+            InspectorProtocol.sendCommand(s.command, s.params, innerCallback);
         }
     }
 
@@ -95,8 +95,8 @@ function test()
         };
 
         function callbackLogClosureEval(result) {
-            InspectorTest.log("Closure returns: " + JSON.stringify(result.result));
-            InspectorTest.log(" (expected: 'ttttrue52013')");
+            ProtocolTest.log("Closure returns: " + JSON.stringify(result.result));
+            ProtocolTest.log(" (expected: 'ttttrue52013')");
 
             var params = {
                 functionObjectId: functionObjectId,
@@ -110,7 +110,7 @@ function test()
         }
 
         function setVariableCallback() {
-            InspectorTest.log("Debugger.setVariableValue OK");
+            ProtocolTest.log("Debugger.setVariableValue OK");
 
             var params = {
                 objectId: functionObjectId,
@@ -123,8 +123,8 @@ function test()
         }
 
         function callbackLogClosureEval2(result) {
-            InspectorTest.log("Closure returns: " + JSON.stringify(result.result));
-            InspectorTest.log(" (expected: 'ttttrue42013')");
+            ProtocolTest.log("Closure returns: " + JSON.stringify(result.result));
+            ProtocolTest.log(" (expected: 'ttttrue42013')");
 
             var params = {
                 // No target is specified
@@ -138,7 +138,7 @@ function test()
         }
 
         function setVariableErrorCallback3(error) {
-            InspectorTest.log("Expected error: " + JSON.stringify(error));
+            ProtocolTest.log("Expected error: " + JSON.stringify(error));
 
             var params = {
                 functionObjectId: functionObjectId,
@@ -152,7 +152,7 @@ function test()
         }
 
         function setVariableErrorCallback4(error) {
-            InspectorTest.log("Expected error");
+            ProtocolTest.log("Expected error");
 
             var params = {
                 functionObjectId: functionObjectId,
@@ -166,7 +166,7 @@ function test()
         }
 
         function setVariableErrorCallback5(error) {
-            InspectorTest.log("Expected error");
+            ProtocolTest.log("Expected error");
 
             // End of test.
             return;

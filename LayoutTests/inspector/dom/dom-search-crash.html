@@ -4,18 +4,18 @@
 <script>
 function test()
 {
-    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
 
     function onGotDocument(message) {
-        InspectorTest.checkForError(message);
-        InspectorTest.sendCommand("DOM.performSearch", {query: "FooBar"}, onSearchCompleted);
+        InspectorProtocol.checkForError(message);
+        InspectorProtocol.sendCommand("DOM.performSearch", {query: "FooBar"}, onSearchCompleted);
     }
 
     function onSearchCompleted(message)
     {
-        InspectorTest.checkForError(message);
-        InspectorTest.log("PASS: Test passes if it doesn't crash.");
-        InspectorTest.completeTest();
+        InspectorProtocol.checkForError(message);
+        ProtocolTest.log("PASS: Test passes if it doesn't crash.");
+        ProtocolTest.completeTest();
     }
 }
 </script>

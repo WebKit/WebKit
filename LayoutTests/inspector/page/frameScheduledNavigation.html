@@ -10,29 +10,29 @@ function load()
 
 function test()
 {
-    InspectorTest.eventHandler["Page.frameScheduledNavigation"] = onScheduled;
-    InspectorTest.eventHandler["Page.frameStartedLoading"] = onStarted;
-    InspectorTest.eventHandler["Page.frameClearedScheduledNavigation"] = onCleared;
-    InspectorTest.sendCommand("Page.enable", {});
+    InspectorProtocol.eventHandler["Page.frameScheduledNavigation"] = onScheduled;
+    InspectorProtocol.eventHandler["Page.frameStartedLoading"] = onStarted;
+    InspectorProtocol.eventHandler["Page.frameClearedScheduledNavigation"] = onCleared;
+    InspectorProtocol.sendCommand("Page.enable", {});
 
     function onScheduled(msg)
     {
-        InspectorTest.log("Scheduled navigation with delay " + msg.params.delay);
+        ProtocolTest.log("Scheduled navigation with delay " + msg.params.delay);
     }
 
     function onStarted(msg)
     {
         // This event should be received before the scheduled navigation is cleared.
-        InspectorTest.log("Started loading");
+        ProtocolTest.log("Started loading");
     }
 
     function onCleared(msg)
     {
-        InspectorTest.log("Cleared scheduled navigation");
-        InspectorTest.completeTest();
+        ProtocolTest.log("Cleared scheduled navigation");
+        ProtocolTest.completeTest();
     }
 
-    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "load()" });
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "load()" });
 }
 
 </script>

@@ -5,9 +5,9 @@
 <script>
 function test()
 {
-    InspectorTest.importScript("probe-test.js");
+    ProtocolTest.importScript("probe-test.js");
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var samples = [];
     const expectedSampleCount = 4;
@@ -18,7 +18,7 @@ function test()
 
     function dumpSamples() {
         for (var i = 0; i < samples.length; i++)
-            InspectorTest.log("Sample " + (i + 1) + ": " + JSON.stringify(samples[i]));
+            ProtocolTest.log("Sample " + (i + 1) + ": " + JSON.stringify(samples[i]));
     }
 
     var tests = [
@@ -45,10 +45,10 @@ function test()
         },
     ];
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             var scriptIdentifier = messageObject.params.scriptId;
             var location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
             var options = {
@@ -59,30 +59,30 @@ function test()
                 ]
             };
 
-            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
-                InspectorTest.checkForError(responseObject);
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
 
-                InspectorTest.log("Running breakpointActions to trigger probe samples.");
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
+                ProtocolTest.log("Running breakpointActions to trigger probe samples.");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.didSampleProbe"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.didSampleProbe"] = function(messageObject)
     {
-        var sample = ProbeHelper.simplifiedProbeSample(messageObject);
+        var sample = ProtocolTest.Probe.sanitizeProbeSample(messageObject);
         samples.push(sample);
-        InspectorTest.log("Received probe sample payload: " + JSON.stringify(sample.payload));
+        ProtocolTest.log("Received probe sample payload: " + JSON.stringify(sample.payload));
 
         if (receivedAllExpectedSamples()) {
             tests.forEach(function(test) {
                 var result = test.predicate();
-                InspectorTest.assert(result, test.message);
+                ProtocolTest.assert(result, test.message);
                 if (!result)
                     test.error();
             });
-            InspectorTest.completeTest();
+            ProtocolTest.completeTest();
         }
     }
 }

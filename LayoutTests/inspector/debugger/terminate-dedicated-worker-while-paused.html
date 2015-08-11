@@ -18,7 +18,7 @@ function test()
     var workerRequestId = 1;
     function sendCommandToWorker(method, params)
     {
-        InspectorTest.sendCommand("Worker.sendMessageToWorker", {
+        InspectorProtocol.sendCommand("Worker.sendMessageToWorker", {
             "workerId": workerId,
             "message": {
                 "method": method,
@@ -28,32 +28,32 @@ function test()
         });
     }
 
-    InspectorTest.sendCommand("Worker.enable", {}, function(messageObject) {
+    InspectorProtocol.sendCommand("Worker.enable", {}, function(messageObject) {
         if ("error" in messageObject) {
-            InspectorTest.log("FAIL: Couldn't enable worker debugger: " + messageObject.error.message);
-            InspectorTest.completeTest();
+            ProtocolTest.log("FAIL: Couldn't enable worker debugger: " + messageObject.error.message);
+            ProtocolTest.completeTest();
         }
     });
 
-    InspectorTest.eventHandler["Worker.workerCreated"] = function(messageObject)
+    InspectorProtocol.eventHandler["Worker.workerCreated"] = function(messageObject)
     {
         workerId = messageObject["params"]["workerId"];
-        InspectorTest.log("Worker created");
-        InspectorTest.sendCommand("Worker.connectToWorker", {"workerId": workerId}, function(messageObject) {
-            InspectorTest.log("didConnectToWorker");
+        ProtocolTest.log("Worker created");
+        InspectorProtocol.sendCommand("Worker.connectToWorker", {"workerId": workerId}, function(messageObject) {
+            ProtocolTest.log("didConnectToWorker");
             sendCommandToWorker("Debugger.enable", {});
             sendCommandToWorker("Debugger.pause", {});
         });
     }
 
-    InspectorTest.eventHandler["Worker.dispatchMessageFromWorker"] = function(messageObject)
+    InspectorProtocol.eventHandler["Worker.dispatchMessageFromWorker"] = function(messageObject)
     {
         var message = messageObject["params"]["message"];
         if (message["method"] === "Debugger.paused") {
-            InspectorTest.log("Worker paused");
-            InspectorTest.sendCommand("Runtime.evaluate", {"expression": "worker.terminate()"}, function(messageObject) {
-                InspectorTest.log("SUCCESS: Did terminate paused worker");
-                InspectorTest.completeTest();
+            ProtocolTest.log("Worker paused");
+            InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "worker.terminate()"}, function(messageObject) {
+                ProtocolTest.log("SUCCESS: Did terminate paused worker");
+                ProtocolTest.completeTest();
             });
         }
     }

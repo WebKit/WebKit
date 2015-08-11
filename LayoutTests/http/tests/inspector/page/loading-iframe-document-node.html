@@ -27,24 +27,24 @@ function test()
     4. Use the JS object to retrieve the DOM agent nodeid for the document node.
     */
 
-    InspectorTest.eventHandler["Page.frameStartedLoading"] = step2_onFrameStartedLoading;
-    InspectorTest.eventHandler["Runtime.executionContextCreated"] = step3_onExecutionContextCreated;
-    InspectorTest.eventHandler["Page.loadEventFired"] = onLoadEventFired;
+    InspectorProtocol.eventHandler["Page.frameStartedLoading"] = step2_onFrameStartedLoading;
+    InspectorProtocol.eventHandler["Runtime.executionContextCreated"] = step3_onExecutionContextCreated;
+    InspectorProtocol.eventHandler["Page.loadEventFired"] = onLoadEventFired;
     
     var targetFrameId = null;
 
     function step1_bootstrap() {
-        InspectorTest.log("step1_bootstrap");
+        ProtocolTest.log("step1_bootstrap");
         // Enable the frame events.
-        InspectorTest.sendCommand("Page.enable", {}, function() {
+        InspectorProtocol.sendCommand("Page.enable", {}, function() {
             // Enable the Runtime.executionContextCreated event.
-            InspectorTest.sendCommand("Runtime.enable", {}, function() {
+            InspectorProtocol.sendCommand("Runtime.enable", {}, function() {
                 // Initialize the DOM agent.
-                InspectorTest.sendCommand("DOM.getDocument", {}, function() {
-                    InspectorTest.log("Main document loaded");
+                InspectorProtocol.sendCommand("DOM.getDocument", {}, function() {
+                    ProtocolTest.log("Main document loaded");
                     
                     // Add the iframe to the DOM.
-                    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "appendIframe()" });
+                    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "appendIframe()" });
                 });
             });
         });
@@ -52,7 +52,7 @@ function test()
 
     function step2_onFrameStartedLoading(response)
     {
-        InspectorTest.log("step2_onFrameStartedLoading");
+        ProtocolTest.log("step2_onFrameStartedLoading");
         targetFrameId = response.params.frameId;
     }
 
@@ -62,9 +62,9 @@ function test()
         if (frameId !== targetFrameId)
             return;
 
-        InspectorTest.log("step3_onExecutionContextCreated: Requesting document from iframe's context.");
+        ProtocolTest.log("step3_onExecutionContextCreated: Requesting document from iframe's context.");
 
-        InspectorTest.sendCommand("Runtime.evaluate", {
+        InspectorProtocol.sendCommand("Runtime.evaluate", {
             "expression": "document",
             "objectGroup": "console",
             "includeCommandLineAPI": false,
@@ -77,7 +77,7 @@ function test()
         function callback(response)
         {
             var objectId = response.result.result.objectId;
-            InspectorTest.log("Received script object for iframe's document node");
+            ProtocolTest.log("Received script object for iframe's document node");
             step4_requestNode(frameId, objectId);
         }
     }
@@ -86,27 +86,27 @@ function test()
     {
         function callback(response)
         {
-            InspectorTest.log(response.result.nodeId ? "PASS: Received node for iframe's document node" : "FAIL: Iframe's document node is not available");
+            ProtocolTest.log(response.result.nodeId ? "PASS: Received node for iframe's document node" : "FAIL: Iframe's document node is not available");
             completeTest();
         }
 
-        InspectorTest.log("step4_requestNode: Requesting DOM node for iframe's document node");
-        InspectorTest.sendCommand("DOM.requestNode", { objectId: objectId }, callback);
+        ProtocolTest.log("step4_requestNode: Requesting DOM node for iframe's document node");
+        InspectorProtocol.sendCommand("DOM.requestNode", { objectId: objectId }, callback);
     }
 
     function completeTest()
     {
-        InspectorTest.log("Test finished");
+        ProtocolTest.log("Test finished");
         // Stop loading the iframe to avoid timing out the test.
-        InspectorTest.sendCommand("Runtime.evaluate", { "expression": "removeIframe()" });
-        InspectorTest.completeTest();
+        InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "removeIframe()" });
+        ProtocolTest.completeTest();
     }
 
     function onLoadEventFired()
     {
         // We should finish the test before this event is triggered.
         // If you see this in the output, then the slow-image is not loaded correctly in the iframe.
-        InspectorTest.log("FAIL: Iframe load event fired before the test finished.");
+        ProtocolTest.log("FAIL: Iframe load event fired before the test finished.");
     }
 
     step1_bootstrap()

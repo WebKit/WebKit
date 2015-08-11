@@ -5,7 +5,7 @@
 function test()
 {
     // Create a DOM listener to convert nodeIds to tag names.
-    InspectorTest.importScript("../dom/resources/InspectorDOMListener.js");
+    ProtocolTest.importScript("../dom/resources/InspectorDOMListener.js");
     var dom = createDOMListener();
 
     // Caching the output to avoid searching through the log.
@@ -44,10 +44,10 @@ function test()
         }
     ];
 
-    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
 
     function onGotDocument(message) {
-        InspectorTest.checkForError(message);
+        InspectorProtocol.checkForError(message);
         dom.collectNode(message.result.root);
         documentId = message.result.root.nodeId;
         performSearches(domSearchQueries, testFinished);
@@ -68,8 +68,8 @@ function test()
     {
         resolveSelectors(queryData.nodes, function(nodeIds) {
             output.push("=== Query: " + JSON.stringify(queryData.query) + " in [" + queryData.nodes.join(", ") + "] ===");
-            InspectorTest.sendCommand("DOM.performSearch", {query: queryData.query, nodeIds: nodeIds}, function(message) {
-                InspectorTest.checkForError(message);
+            InspectorProtocol.sendCommand("DOM.performSearch", {query: queryData.query, nodeIds: nodeIds}, function(message) {
+                InspectorProtocol.checkForError(message);
                 printSearchResults(message.result, callback);
             });
         });
@@ -82,8 +82,8 @@ function test()
         if (!remaining)
             return callback(results);
         nodes.forEach(function(selector, index) {
-            InspectorTest.sendCommand("DOM.querySelector", {nodeId: documentId, selector: selector}, function(message) {
-                InspectorTest.checkForError(message);
+            InspectorProtocol.sendCommand("DOM.querySelector", {nodeId: documentId, selector: selector}, function(message) {
+                InspectorProtocol.checkForError(message);
                 results[index] = message.result.nodeId;
                 if (--remaining <= 0)
                     callback(results);
@@ -98,7 +98,7 @@ function test()
             return callback();
 
         var options = {"searchId": results.searchId, "fromIndex": 0, "toIndex": results.resultCount};
-        InspectorTest.sendCommand("DOM.getSearchResults", options, function(message) {
+        InspectorProtocol.sendCommand("DOM.getSearchResults", options, function(message) {
             for (var nodeId of message.result.nodeIds)
                 output.push(dom.getNodeIdentifier(nodeId));
             callback();
@@ -107,8 +107,8 @@ function test()
 
     function testFinished()
     {
-        InspectorTest.log(output.join("\n"));
-        InspectorTest.completeTest();
+        ProtocolTest.log(output.join("\n"));
+        ProtocolTest.completeTest();
     }
 }
 </script>

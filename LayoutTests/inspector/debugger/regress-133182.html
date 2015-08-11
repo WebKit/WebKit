@@ -24,27 +24,27 @@ function test()
         // Evaluate statement and expect to pause.
         if (testIndex < statementsWithUncaughtExceptions.length) {
             var statement = statementsWithUncaughtExceptions[testIndex++];
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
             return;
         }
 
         // Done evaluating statements to pause. Evaluate some more we do not expect to pause.
-        InspectorTest.log("PASS - paused for each uncaught exception");
-        InspectorTest.completeTest();
+        ProtocolTest.log("PASS - paused for each uncaught exception");
+        ProtocolTest.completeTest();
     }
 
-    InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "uncaught"}, function(responseObject) {
-        InspectorTest.checkForError(responseObject);
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "uncaught"}, function(responseObject) {
+        InspectorProtocol.checkForError(responseObject);
         expectPause = true;
         triggerNextUncaughtException();
     });
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
         if (!expectPause) {
-            InspectorTest.log("FAIL - debugger paused when we did not expect to");
-            InspectorTest.completeTest();
+            ProtocolTest.log("FAIL - debugger paused when we did not expect to");
+            ProtocolTest.completeTest();
             return;
         }
 
@@ -52,15 +52,15 @@ function test()
             console.log("[" + testIndex + "] Testing statement '" + statementsWithUncaughtExceptions[testIndex - 1] + "'");
             console.log("[" + testIndex + "] Paused and about to step");
             isStepping = true;
-            InspectorTest.sendCommand("Debugger.stepOver", {});
+            InspectorProtocol.sendCommand("Debugger.stepOver", {});
         } else {
             console.log("[" + testIndex + "] Paused after stepping");
             isStepping = false;
-            InspectorTest.sendCommand("Debugger.resume", {});
+            InspectorProtocol.sendCommand("Debugger.resume", {});
         }
     }
 
-    InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.resumed"] = function(messageObject)
     {
         console.log("[" + testIndex + "] Resumed");
         if (!isStepping)

@@ -18,9 +18,9 @@ function test()
 {
     var nodesById = {};
 
-    InspectorTest.eventHandler["DOM.setChildNodes"] = onSetChildNodes;
-    InspectorTest.eventHandler["DOM.childNodeRemoved"] = onChildNodeRemoved;
-    InspectorTest.eventHandler["DOM.childNodeInserted"] = onChildNodeInserted;
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = onSetChildNodes;
+    InspectorProtocol.eventHandler["DOM.childNodeRemoved"] = onChildNodeRemoved;
+    InspectorProtocol.eventHandler["DOM.childNodeInserted"] = onChildNodeInserted;
 
     function createNodeAttributesMap(attributes)
     {
@@ -67,32 +67,32 @@ function test()
     function onChildNodeRemoved(response)
     {
         var nodeId = response.params.nodeId;
-        InspectorTest.log("Removing node " + getNodeIdentifier(nodeId));
+        ProtocolTest.log("Removing node " + getNodeIdentifier(nodeId));
         delete nodesById[nodeId];
     }
 
     function onChildNodeInserted(response)
     {
         collectNode(response.params.node);
-        InspectorTest.log("Inserting node " + getNodeIdentifier(response.params.node.nodeId) + " into " + getNodeIdentifier(response.params.parentNodeId));
+        ProtocolTest.log("Inserting node " + getNodeIdentifier(response.params.node.nodeId) + " into " + getNodeIdentifier(response.params.parentNodeId));
     }
 
-    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
 
     function onGotDocument(msg)
     {
-        InspectorTest.checkForError(msg);
-        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": msg.result.root.nodeId, "selector": "#parent_container,#final_container"}, onQuerySelectorAll);
+        InspectorProtocol.checkForError(msg);
+        InspectorProtocol.sendCommand("DOM.querySelectorAll", {"nodeId": msg.result.root.nodeId, "selector": "#parent_container,#final_container"}, onQuerySelectorAll);
     }
 
     function onQuerySelectorAll(response)
     {
         // Make sure we receive the children of the "#final_container" as they are added.
         for (var i = 0; i < response.result.nodeIds.length; ++i)
-            InspectorTest.sendCommand("DOM.requestChildNodes", {nodeId: response.result.nodeIds[i]});
+            InspectorProtocol.sendCommand("DOM.requestChildNodes", {nodeId: response.result.nodeIds[i]});
         
-        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
-            InspectorTest.completeTest();
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
+            ProtocolTest.completeTest();
         });
     }
 }

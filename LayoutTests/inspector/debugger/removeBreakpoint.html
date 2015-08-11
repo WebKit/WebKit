@@ -5,48 +5,48 @@
 <script>
 function test()
 {
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var breakpointTriggered = 0;
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             var scriptIdentifier = messageObject.params.scriptId;
             var location = {scriptId: scriptIdentifier, lineNumber: 3, columnNumber: 0};
-            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location}, function(responseObject) {
-                InspectorTest.checkForError(responseObject);
-                InspectorTest.log("Set Breakpoint, Triggering it");
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                ProtocolTest.log("Set Breakpoint, Triggering it");
                 breakpointIdentifier = responseObject.result.breakpointId;
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointBasic()"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointBasic()"});
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Hit Breakpoint!");
+        ProtocolTest.log("Hit Breakpoint!");
         ++breakpointTriggered;
 
         if (breakpointTriggered === 1)
-            InspectorTest.sendCommand("Debugger.resume", {});
+            InspectorProtocol.sendCommand("Debugger.resume", {});
         else {
-            InspectorTest.log("FAIL: should not have hit breakpoint after it was removed.");
-            InspectorTest.completeTest();
+            ProtocolTest.log("FAIL: should not have hit breakpoint after it was removed.");
+            ProtocolTest.completeTest();
         }
     }
 
-    InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.resumed"] = function(messageObject)
     {
-        InspectorTest.log("Resumed, Removing Breakpoint and trying to trigger it again");
-        InspectorTest.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointIdentifier}, function(responseObject) {
-            InspectorTest.checkForError(responseObject);
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointBasic()"}, function(responseObject) {
-                InspectorTest.checkForError(responseObject);
+        ProtocolTest.log("Resumed, Removing Breakpoint and trying to trigger it again");
+        InspectorProtocol.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointIdentifier}, function(responseObject) {
+            InspectorProtocol.checkForError(responseObject);
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointBasic()"}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
                 setTimeout(function() {
-                    InspectorTest.log("PASS: did not hit breakpoint after removing it.");
-                    InspectorTest.completeTest();
+                    ProtocolTest.log("PASS: did not hit breakpoint after removing it.");
+                    ProtocolTest.completeTest();
                 }, 50);
             });
         });

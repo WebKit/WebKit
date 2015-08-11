@@ -9,22 +9,22 @@ if (window.testRunner) {
 
 function test()
 {
-    InspectorTest.sendCommand("DOM.getDocument", {}, didGetDocument);
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, didGetDocument);
 
     function didGetDocument(messageObject)
     {
-        InspectorTest.sendCommand("DOM.querySelector", {
+        InspectorProtocol.sendCommand("DOM.querySelector", {
                 "nodeId": messageObject.result.root.nodeId,
                 "selector": "iframe#myframe"
             }, didFindIframe);
-        InspectorTest.eventHandler["DOM.setChildNodes"] = iframeRequestHandler;
+        InspectorProtocol.eventHandler["DOM.setChildNodes"] = iframeRequestHandler;
     }
 
     function didFindIframe(messageObject)
     {
         if (messageObject.error) {
-            InspectorTest.log("FAIL: " + messageObject.error);
-            InspectorTest.completeTest();
+            ProtocolTest.log("FAIL: " + messageObject.error);
+            ProtocolTest.completeTest();
         }
     }
 
@@ -33,8 +33,8 @@ function test()
         var node = messageObject.params.nodes[0];
         if (!node || node.nodeName !== "IFRAME")
             return;
-        InspectorTest.eventHandler["DOM.setChildNodes"] = null;
-        InspectorTest.sendCommand("DOM.querySelector", {
+        InspectorProtocol.eventHandler["DOM.setChildNodes"] = null;
+        InspectorProtocol.sendCommand("DOM.querySelector", {
                 "nodeId": node.contentDocument.nodeId,
                 "selector": "div#rootDiv"
             }, didFindDiv);
@@ -42,15 +42,15 @@ function test()
 
     function didFindDiv(messageObject)
     {
-        InspectorTest.sendCommand("Console.enable", {});
-        InspectorTest.sendCommand("Console.addInspectedNode", {
+        InspectorProtocol.sendCommand("Console.enable", {});
+        InspectorProtocol.sendCommand("Console.addInspectedNode", {
                 "nodeId": messageObject.result.nodeId
             }, didAddInspectedNode);
     }
 
     function didAddInspectedNode(messageObject)
     {
-        InspectorTest.sendCommand("Runtime.evaluate", {
+        InspectorProtocol.sendCommand("Runtime.evaluate", {
                 "expression": "$0",
                 "includeCommandLineAPI": true
             }, didEvaluate);
@@ -59,10 +59,10 @@ function test()
     function didEvaluate(messageObject)
     {
         if (messageObject.result.wasThrown)
-            InspectorTest.log("FAIL: unexpected exception: " + JSON.stringify(messageObject, null, 2));
+            ProtocolTest.log("FAIL: unexpected exception: " + JSON.stringify(messageObject, null, 2));
         if (messageObject.result.result.value !== null)
-            InspectorTest.log("FAIL: unexpected value: " + JSON.stringify(messageObject, null, 2));
-        InspectorTest.completeTest();
+            ProtocolTest.log("FAIL: unexpected value: " + JSON.stringify(messageObject, null, 2));
+        ProtocolTest.completeTest();
     }
 }
 

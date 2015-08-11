@@ -9,16 +9,16 @@
 <script>
 function test()
 {
-    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
 
     function onGotDocument(msg) {
-        InspectorTest.checkForError(msg);
+        InspectorProtocol.checkForError(msg);
         var node = msg.result.root;
-        InspectorTest.sendCommand("DOM.querySelector", { "nodeId": node.nodeId, "selector": "#inspectedElement" }, onQuerySelector);
+        InspectorProtocol.sendCommand("DOM.querySelector", { "nodeId": node.nodeId, "selector": "#inspectedElement" }, onQuerySelector);
     }
 
     function onQuerySelector(msg) {
-        InspectorTest.checkForError(msg);
+        InspectorProtocol.checkForError(msg);
         var node = msg.result;
         var highlightConfig = {
             showInfo: true,
@@ -27,12 +27,12 @@ function test()
             borderColor: {r: 255, g: 255, b: 255},
             marginColor: {r: 255, g: 255, b: 255},
         };
-        InspectorTest.sendCommand("DOM.highlightNode", { "highlightConfig": highlightConfig, "nodeId": node.nodeId }, onHighlightComplete);
+        InspectorProtocol.sendCommand("DOM.highlightNode", { "highlightConfig": highlightConfig, "nodeId": node.nodeId }, onHighlightComplete);
     }
 
     function onHighlightComplete(msg) {
-        InspectorTest.checkForError(msg);
-        InspectorTest.completeTest();
+        InspectorProtocol.checkForError(msg);
+        ProtocolTest.completeTest();
     }
 }
 </script>

@@ -8,7 +8,7 @@ function test()
 
     var nodes;
  
-    InspectorTest.eventHandler["DOM.setChildNodes"] = setChildNodes;
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = setChildNodes;
 
     enableLayerTreeAgent();
     
@@ -71,7 +71,7 @@ function test()
         assert("Node has id", node.attributes[0], "id");
         assert("Node has expected id", node.attributes[1], "first-letter");
         
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     };
 
     function setChildNodes (messageObject) {
@@ -87,20 +87,20 @@ function test()
 
     function logTestName(name)
     {
-        InspectorTest.log("\n=== " + name + " ===\n");
+        ProtocolTest.log("\n=== " + name + " ===\n");
     };
 
     function runCommand(command)
     {
-        InspectorTest.sendCommand(command.command, command.parameters, function(messageObject) {
+        InspectorProtocol.sendCommand(command.command, command.parameters, function(messageObject) {
             if (messageObject.hasOwnProperty("error")) {
-                InspectorTest.log("FAIL: " + messageObject.error.message + " (" + messageObject.error.code + ")");
-                InspectorTest.completeTest();
+                ProtocolTest.log("FAIL: " + messageObject.error.message + " (" + messageObject.error.code + ")");
+                ProtocolTest.completeTest();
                 return;
             }
 
             if (command.name)
-                InspectorTest.log("PASS");
+                ProtocolTest.log("PASS");
 
             if (command.callback)
                 command.callback(messageObject.result);
@@ -110,9 +110,9 @@ function test()
     function assert(name, actual, expected)
     {
         if (expected === actual)
-            InspectorTest.log("PASS: " + name + ".");
+            ProtocolTest.log("PASS: " + name + ".");
         else
-            InspectorTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
+            ProtocolTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
     };
 
 };

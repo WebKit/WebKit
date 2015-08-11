@@ -5,32 +5,32 @@
 <script>
 function test()
 {
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             var scriptIdentifier = messageObject.params.scriptId;
             var location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
             var options = {
                 condition: "a > 10",
             };
-            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
-                InspectorTest.checkForError(responseObject);
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
                 // Should NOT hit breakpoint (a < 10).
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"});
                 // Should hit breakpoint (a > 10).
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Hit Breakpoint!");
-        InspectorTest.log("PASS");
-        InspectorTest.completeTest();
+        ProtocolTest.log("Hit Breakpoint!");
+        ProtocolTest.log("PASS");
+        ProtocolTest.completeTest();
     }
 
 }

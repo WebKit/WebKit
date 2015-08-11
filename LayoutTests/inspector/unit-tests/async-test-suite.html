@@ -6,60 +6,60 @@
 function test()
 {
     try {
-        new InspectorTest.AsyncTestSuite();
-        InspectorTest.log("FAIL: instantiating AsyncTestSuite requires name argument.");
+        new ProtocolTest.AsyncTestSuite();
+        ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires name argument.");
     } catch (e) {
-        InspectorTest.log("PASS: instantiating AsyncTestSuite requires name argument.");
+        ProtocolTest.log("PASS: instantiating AsyncTestSuite requires name argument.");
     }
 
     try {
-        new InspectorTest.AsyncTestSuite({});
-        InspectorTest.log("FAIL: instantiating AsyncTestSuite requires string name argument.");
+        new ProtocolTest.AsyncTestSuite({});
+        ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires string name argument.");
     } catch (e) {
-        InspectorTest.log("PASS: instantiating AsyncTestSuite requires string name argument.");
+        ProtocolTest.log("PASS: instantiating AsyncTestSuite requires string name argument.");
     }
 
-    var badArgsSuite = new InspectorTest.AsyncTestSuite("dummy");
+    var badArgsSuite = new ProtocolTest.AsyncTestSuite("dummy");
     try {
         badArgsSuite.addTestCase();
-        InspectorTest.log("FAIL: should not be able to add empty test case.");
+        ProtocolTest.log("FAIL: should not be able to add empty test case.");
     } catch (e) {
-        InspectorTest.log("PASS: should not be able to add empty test case.");
+        ProtocolTest.log("PASS: should not be able to add empty test case.");
     }
     try {
         badArgsSuite.addTestCase("string");
-        InspectorTest.log("FAIL: should not be able to add non-object test case.");
+        ProtocolTest.log("FAIL: should not be able to add non-object test case.");
     } catch (e) {
-        InspectorTest.log("PASS: should not be able to add non-object test case.");
+        ProtocolTest.log("PASS: should not be able to add non-object test case.");
     }
     try {
         badArgsSuite.addTestCase({
             name: {},
             test: function() {},
         });
-        InspectorTest.log("FAIL: test case should require string name.");
+        ProtocolTest.log("FAIL: test case should require string name.");
     } catch (e) {
-        InspectorTest.log("PASS: test case should require string name.");
+        ProtocolTest.log("PASS: test case should require string name.");
     }
     try {
         badArgsSuite.addTestCase({
             name: "foo",
             test: null,
         });
-        InspectorTest.log("FAIL: test case should require test function.");
+        ProtocolTest.log("FAIL: test case should require test function.");
     } catch (e) {
-        InspectorTest.log("PASS: test case should require test function.");
+        ProtocolTest.log("PASS: test case should require test function.");
     }
 
-    var runEmptySuite = new InspectorTest.AsyncTestSuite("AsyncTestSuite.RunEmptySuite");
+    var runEmptySuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.RunEmptySuite");
     try {
         runEmptySuite.runTestCases();
-        InspectorTest.log("FAIL: should not be able to run empty test suite.");
+        ProtocolTest.log("FAIL: should not be able to run empty test suite.");
     } catch (e) {
-        InspectorTest.log("PASS: should not be able to run empty test suite.");
+        ProtocolTest.log("PASS: should not be able to run empty test suite.");
     }
 
-    var runTwiceSuite = new InspectorTest.AsyncTestSuite("AsyncTestSuite.RunTwiceSuite");
+    var runTwiceSuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.RunTwiceSuite");
     runTwiceSuite.addTestCase({
         name: "DummyTest0",
         description: "Check that a suite can't run more than once.",
@@ -73,15 +73,15 @@ function test()
         // Test cases won't run in this event loop; this call should still throw.
         // Later tests are chained to this suite to avoid nondeterminism.
         runTwiceSuite.runTestCases();
-        InspectorTest.log("FAIL: should not be able to run a test suite twice.");
+        ProtocolTest.log("FAIL: should not be able to run a test suite twice.");
     } catch (e) {
-        InspectorTest.log("PASS: should not be able to run a test suite twice.");
+        ProtocolTest.log("PASS: should not be able to run a test suite twice.");
     }
 
     var rejectToken = {"token": 666};
     var thrownError = new Error(rejectToken);
 
-    var sequentialExecutionSuite = new InspectorTest.AsyncTestSuite("AsyncTestSuite.SequentialExecution");
+    var sequentialExecutionSuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.SequentialExecution");
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest1",
         description: "Check test case execution order.",
@@ -111,7 +111,7 @@ function test()
         }
     });
 
-    var abortOnFailureSuite = new InspectorTest.AsyncTestSuite("AsyncTestSuite.AbortOnFailure");
+    var abortOnFailureSuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.AbortOnFailure");
     abortOnFailureSuite.addTestCase({
         name: "PassingTest5",
         description: "This test is a dummy.",
@@ -136,41 +136,41 @@ function test()
 
     result = result.then(function() {
         var promise = sequentialExecutionSuite.runTestCases();
-        InspectorTest.assert(result instanceof Promise, "AsyncTestSuite.RunTestCases() should return a Promise.");
+        ProtocolTest.assert(result instanceof Promise, "AsyncTestSuite.RunTestCases() should return a Promise.");
         return promise;
     });
     result = result.then(function resolved() {
-        InspectorTest.log("FAIL: Promise from sequentialExecutionSuite.runTestCases() should reject when a test case fails.");
+        ProtocolTest.log("FAIL: Promise from sequentialExecutionSuite.runTestCases() should reject when a test case fails.");
         return Promise.resolve(); // Continue this test.
     }, function rejected(e) {
-        InspectorTest.log("PASS: Promise from sequentialExecutionSuite.runTestCases() should reject when a test case fails.");
-        InspectorTest.assert(e === thrownError, "Promise from sequentialExecutionSuite.runTestCases() should reject without altering its result value.");
+        ProtocolTest.log("PASS: Promise from sequentialExecutionSuite.runTestCases() should reject when a test case fails.");
+        ProtocolTest.assert(e === thrownError, "Promise from sequentialExecutionSuite.runTestCases() should reject without altering its result value.");
 
-        InspectorTest.assert(sequentialExecutionSuite.runCount === 4, "sequentialExecutionSuite should have executed four tests.");
-        InspectorTest.assert(sequentialExecutionSuite.passCount === 3, "sequentialExecutionSuite should have passed three tests.");
-        InspectorTest.assert(sequentialExecutionSuite.failCount === 1, "sequentialExecutionSuite should have failed 1 test.");
-        InspectorTest.assert(sequentialExecutionSuite.skipCount === 0, "sequentialExecutionSuite should have skipped zero tests.");
+        ProtocolTest.assert(sequentialExecutionSuite.runCount === 4, "sequentialExecutionSuite should have executed four tests.");
+        ProtocolTest.assert(sequentialExecutionSuite.passCount === 3, "sequentialExecutionSuite should have passed three tests.");
+        ProtocolTest.assert(sequentialExecutionSuite.failCount === 1, "sequentialExecutionSuite should have failed 1 test.");
+        ProtocolTest.assert(sequentialExecutionSuite.skipCount === 0, "sequentialExecutionSuite should have skipped zero tests.");
         return Promise.resolve(); // Continue this test.
     });
 
     result = result.then(function() {
         return abortOnFailureSuite.runTestCases();
     }).then(function resolved() {
-        InspectorTest.log("FAIL: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.");
+        ProtocolTest.log("FAIL: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.");
         return Promise.resolve(); // Continue this test.
     }, function rejected(e) {
-        InspectorTest.log("PASS: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.");
-        InspectorTest.assert(e === rejectToken, "Promise from abortOnFailureSuite.runTestCases() should reject without altering its result value.");
-        InspectorTest.assert(abortOnFailureSuite.runCount === 2, "abortOnFailureSuite should have executed two tests.");
-        InspectorTest.assert(abortOnFailureSuite.passCount === 1, "abortOnFailureSuite should have passed one test.");
-        InspectorTest.assert(abortOnFailureSuite.failCount === 1, "abortOnFailureSuite should have failed one test.");
-        InspectorTest.assert(abortOnFailureSuite.skipCount === 1, "abortOnFailureSuite should have skipped one test.");
+        ProtocolTest.log("PASS: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.");
+        ProtocolTest.assert(e === rejectToken, "Promise from abortOnFailureSuite.runTestCases() should reject without altering its result value.");
+        ProtocolTest.assert(abortOnFailureSuite.runCount === 2, "abortOnFailureSuite should have executed two tests.");
+        ProtocolTest.assert(abortOnFailureSuite.passCount === 1, "abortOnFailureSuite should have passed one test.");
+        ProtocolTest.assert(abortOnFailureSuite.failCount === 1, "abortOnFailureSuite should have failed one test.");
+        ProtocolTest.assert(abortOnFailureSuite.skipCount === 1, "abortOnFailureSuite should have skipped one test.");
 
         return Promise.resolve(); // Continue this test.
     });
 
     // This will finish the test whether the chain was resolved or rejected.
-    result = result.then(function() { InspectorTest.completeTest(); });
+    result = result.then(function() { ProtocolTest.completeTest(); });
 }
 </script>
 </head>

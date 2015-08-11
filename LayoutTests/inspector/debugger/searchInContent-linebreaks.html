@@ -13,12 +13,12 @@ function test()
 
     var testResults = [];
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/-linebreaks\.js$/.test(messageObject.params.url)) {
-            InspectorTest.sendCommand("Debugger.searchInContent", {"scriptId": messageObject.params.scriptId, "query": "test"}, function(url, messageObject) {
+            InspectorProtocol.sendCommand("Debugger.searchInContent", {"scriptId": messageObject.params.scriptId, "query": "test"}, function(url, messageObject) {
                 var results = messageObject.result.result;
 
                 var testResult = {url: url, count: results.length, matches: []};
@@ -42,21 +42,21 @@ function test()
 
         var sortedTestResults = testResults.sort(compareResultURLs);
 
-        InspectorTest.log("Scripts searched: " + sortedTestResults.length);
-        InspectorTest.log("");
+        ProtocolTest.log("Scripts searched: " + sortedTestResults.length);
+        ProtocolTest.log("");
 
         for (var testResult of sortedTestResults) {
             var fileName = /([\w-]+\.js)$/.exec(testResult.url)[1];
-            InspectorTest.log("Script: " + fileName);
-            InspectorTest.log("Results found: " + testResult.count);
+            ProtocolTest.log("Script: " + fileName);
+            ProtocolTest.log("Results found: " + testResult.count);
     
             for (var match of testResult.matches)
-                InspectorTest.log("Line " + match.lineNumber + ": " + JSON.stringify(match.lineContent));    
+                ProtocolTest.log("Line " + match.lineNumber + ": " + JSON.stringify(match.lineContent));    
 
-            InspectorTest.log("");
+            ProtocolTest.log("");
         }
 
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     }
 }
 </script>

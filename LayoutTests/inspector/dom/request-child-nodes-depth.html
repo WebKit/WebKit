@@ -9,7 +9,7 @@ function test()
 
     getDocument();
 
-    InspectorTest.eventHandler["DOM.setChildNodes"] = function setChildNodes(messageObject)
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = function setChildNodes(messageObject)
     {
         eventsCount++;
 
@@ -20,7 +20,7 @@ function test()
         else if (eventsCount === 3)
             gotAllChildren(messageObject);
         else
-            InspectorTest.log(JSON.stringify(messageObject, null, "    "));
+            ProtocolTest.log(JSON.stringify(messageObject, null, "    "));
     };
 
     function getDocument()
@@ -104,15 +104,15 @@ function test()
     {
         assert("Expected number of setChildNodes events", eventsCount, 3);
 
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     };
 
     function step(test)
     {
-        InspectorTest.log("\n=== " + test.name + " ===\n");
-        InspectorTest.sendCommand(test.command, test.parameters, function(messageObject) {
+        ProtocolTest.log("\n=== " + test.name + " ===\n");
+        InspectorProtocol.sendCommand(test.command, test.parameters, function(messageObject) {
             if (messageObject.hasOwnProperty("error"))
-                InspectorTest.log("Backend error: " + messageObject.error.message + " (" + messageObject.error.code + ")\n");
+                ProtocolTest.log("Backend error: " + messageObject.error.message + " (" + messageObject.error.code + ")\n");
 
             if (test.callback)
                 test.callback(messageObject.result);
@@ -122,10 +122,10 @@ function test()
     function assert(message, actual, expected)
     {
         if (actual === expected)
-            InspectorTest.log("PASS: " + message);
+            ProtocolTest.log("PASS: " + message);
         else {
-            InspectorTest.log("FAIL: " + message + ", expected \"" + expected + "\" but got \"" + actual + "\"");
-            InspectorTest.completeTest();
+            ProtocolTest.log("FAIL: " + message + ", expected \"" + expected + "\" but got \"" + actual + "\"");
+            ProtocolTest.completeTest();
         }
     };
 };

@@ -5,10 +5,10 @@
 <script>
 function test()
 {
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
 
             var breakpoint = {
                 location: {
@@ -23,30 +23,30 @@ function test()
                     ]
                 }
             };
-            InspectorTest.sendCommand("Debugger.setBreakpoint", breakpoint, InspectorTest.checkForError);
-            InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, InspectorTest.checkForError);
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(1,2)"}, function(messageObject) {
-                InspectorTest.checkForError(messageObject);
-                InspectorTest.log("PASS: Breakpoint action executed, but the exception did not cause the debugger to pause.")
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", breakpoint, InspectorProtocol.checkForError);
+            InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, InspectorProtocol.checkForError);
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(1,2)"}, function(messageObject) {
+                InspectorProtocol.checkForError(messageObject);
+                ProtocolTest.log("PASS: Breakpoint action executed, but the exception did not cause the debugger to pause.")
                 completeTest();
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("FAIL: Paused in debugger: reason = \"" + messageObject.params.reason + "\"");
+        ProtocolTest.log("FAIL: Paused in debugger: reason = \"" + messageObject.params.reason + "\"");
         completeTest();
     }
 
     function completeTest()
     {
         // Reset the pauseOnException state before ending the test.
-        InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "none"});
-        InspectorTest.completeTest();
+        InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "none"});
+        ProtocolTest.completeTest();
     }
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 }
 </script>
 </head>

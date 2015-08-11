@@ -13,27 +13,27 @@ function onBeforeUnload()
 
 function test()
 {
-    InspectorTest.eventHandler["Page.javascriptDialogOpening"] = onOpening;
-    InspectorTest.eventHandler["Page.javascriptDialogClosed"] = onClosed;
-    InspectorTest.sendCommand("Page.enable", {});
+    InspectorProtocol.eventHandler["Page.javascriptDialogOpening"] = onOpening;
+    InspectorProtocol.eventHandler["Page.javascriptDialogClosed"] = onClosed;
+    InspectorProtocol.sendCommand("Page.enable", {});
 
     function onOpening(event)
     {
-        InspectorTest.log("Opening with message: " + event.params.message);
+        ProtocolTest.log("Opening with message: " + event.params.message);
     }
     function onClosed()
     {
-        InspectorTest.log("Closed");
+        ProtocolTest.log("Closed");
     }
 
-    InspectorTest.sendCommand("Page.navigate", { "url": "nosuchurl" });
-    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "alert('alert')" });
-    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "confirm('confirm')" });
-    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "prompt('prompt')" }, onDone);
+    InspectorProtocol.sendCommand("Page.navigate", { "url": "nosuchurl" });
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "alert('alert')" });
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "confirm('confirm')" });
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "prompt('prompt')" }, onDone);
 
     function onDone()
     {
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     }
 }
 

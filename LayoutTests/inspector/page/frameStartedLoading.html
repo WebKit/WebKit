@@ -12,21 +12,21 @@ function load()
 
 function test()
 {
-    InspectorTest.eventHandler["Page.frameStartedLoading"] = onStart;
-    InspectorTest.eventHandler["Page.frameStoppedLoading"] = onStop;
-    InspectorTest.sendCommand("Page.enable", {});
+    InspectorProtocol.eventHandler["Page.frameStartedLoading"] = onStart;
+    InspectorProtocol.eventHandler["Page.frameStoppedLoading"] = onStop;
+    InspectorProtocol.sendCommand("Page.enable", {});
 
     function onStart()
     {
-        InspectorTest.log("Started loading");
+        ProtocolTest.log("Started loading");
     }
     function onStop()
     {
-        InspectorTest.log("Stopped loading");
-        InspectorTest.completeTest();
+        ProtocolTest.log("Stopped loading");
+        ProtocolTest.completeTest();
     }
 
-    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "load()" });
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "load()" });
 }
 
 </script>

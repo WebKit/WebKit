@@ -43,7 +43,7 @@ function test()
             var statement = list[i];
             var last = i === list.length - 1;
             var responseCallback = last ? function() { setTimeout(callback, 10); } : function(){};
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"}, responseCallback);
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"}, responseCallback);
         }
     }
 
@@ -51,7 +51,7 @@ function test()
     {
         var statements = statementsWithoutExceptions;
         evaluateStatements(statements, function() {
-            InspectorTest.log("PASS - did not pause on non-exception statements");
+            ProtocolTest.log("PASS - did not pause on non-exception statements");
             callback();
         });
     }
@@ -64,7 +64,7 @@ function test()
         // Evaluate statement and expect to pause.
         if (currentCaughtExceptionStatement < statementsWithCaughtExceptions.length) {
             var statement = statementsWithCaughtExceptions[currentCaughtExceptionStatement++];
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
             return;
         }
 
@@ -73,7 +73,7 @@ function test()
             return;
 
         // Done evaluating caught exceptions statements. Move on to uncaught exceptions.
-        InspectorTest.log("PASS - paused for each caught exception");
+        ProtocolTest.log("PASS - paused for each caught exception");
         triggerNext = triggerNextUncaughtException;
         triggerNext();
     }
@@ -83,7 +83,7 @@ function test()
         // Evaluate statement and expect to pause.
         if (currentUncaughtExceptionStatement < statementsWithUncaughtExceptions.length) {
             var statement = statementsWithUncaughtExceptions[currentUncaughtExceptionStatement++];
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
             return;
         }
 
@@ -92,40 +92,40 @@ function test()
             return;
 
         // Done evaluating statements to pause. Evaluate some more we do not expect to pause.
-        InspectorTest.log("PASS - paused for each uncaught exception");
+        ProtocolTest.log("PASS - paused for each uncaught exception");
         expectPause = false;
         evaluateExpectedNoPauses(function() {
-            InspectorTest.completeTest();
+            ProtocolTest.completeTest();
         });
     }
 
 
-    InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
-        InspectorTest.checkForError(responseObject);
-        InspectorTest.log("Debugger.setPauseOnExceptions - all");
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
+        InspectorProtocol.checkForError(responseObject);
+        ProtocolTest.log("Debugger.setPauseOnExceptions - all");
         evaluateExpectedNoPauses(function() {
             expectPause = true;
             triggerNext();
         });
     });
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Paused!");
+        ProtocolTest.log("Paused!");
 
         if (!expectPause) {
-            InspectorTest.log("FAIL - debugger paused when we did not expect to");
-            InspectorTest.completeTest();
+            ProtocolTest.log("FAIL - debugger paused when we did not expect to");
+            ProtocolTest.completeTest();
             return;
         }
 
-        InspectorTest.sendCommand("Debugger.resume", {});
+        InspectorProtocol.sendCommand("Debugger.resume", {});
     }
 
-    InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.resumed"] = function(messageObject)
     {
-        InspectorTest.log("Resumed");
+        ProtocolTest.log("Resumed");
         triggerNext();
     }
 }

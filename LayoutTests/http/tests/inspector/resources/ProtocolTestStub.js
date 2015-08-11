@@ -25,16 +25,18 @@
  */
 InspectorFrontendAPI = {};
 
-InspectorTest = {};
-InspectorTest._dispatchTable = [];
-InspectorTest._requestId = -1;
-InspectorTest.eventHandler = {};
-InspectorTest.logCount = 0;
+InspectorProtocol = {};
+InspectorProtocol._dispatchTable = [];
+InspectorProtocol._requestId = -1;
+InspectorProtocol.eventHandler = {};
 
-InspectorTest.dumpInspectorProtocolMessages = false;
-InspectorTest.forceSyncDebugLogging = false;
+ProtocolTest = {};
+ProtocolTest.logCount = 0;
 
-InspectorTest.sendCommand = function(methodOrObject, params, handler)
+ProtocolTest.forceSyncDebugLogging = false;
+InspectorProtocol.dumpInspectorProtocolMessages = false;
+
+InspectorProtocol.sendCommand = function(methodOrObject, params, handler)
 {
     // Allow new-style arguments object, as in awaitCommand.
     var method = methodOrObject;
@@ -48,7 +50,7 @@ InspectorTest.sendCommand = function(methodOrObject, params, handler)
     return this._requestId;
 }
 
-InspectorTest.awaitCommand = function(args)
+InspectorProtocol.awaitCommand = function(args)
 {
     var {method, params} = args;
     return new Promise(function(resolve, reject) {
@@ -58,21 +60,21 @@ InspectorTest.awaitCommand = function(args)
     }.bind(this));
 }
 
-InspectorTest.awaitEvent = function(args)
+InspectorProtocol.awaitEvent = function(args)
 {
     var {event} = args;
     if (typeof event !== "string")
         throw new Error("Event must be a string.");
 
     return new Promise(function(resolve, reject) {
-        InspectorTest.eventHandler[event] = function(message) {
-            InspectorTest.eventHandler[event] = undefined;
+        InspectorProtocol.eventHandler[event] = function(message) {
+            InspectorProtocol.eventHandler[event] = undefined;
             resolve(message);
         }
     });
 }
 
-InspectorTest.addEventListener = function(eventTypeOrObject, listener)
+InspectorProtocol.addEventListener = function(eventTypeOrObject, listener)
 {
     var event = eventTypeOrObject;
     if (typeof eventTypeOrObject === "object")
@@ -85,11 +87,11 @@ InspectorTest.addEventListener = function(eventTypeOrObject, listener)
         throw new Error("Event listener must be callable.");
 
     // Convert to an array of listeners.
-    var listeners = InspectorTest.eventHandler[event];
+    var listeners = InspectorProtocol.eventHandler[event];
     if (!listeners)
-        listeners = InspectorTest.eventHandler[event] = [];
+        listeners = InspectorProtocol.eventHandler[event] = [];
     else if (typeof listeners === "function")
-        listeners = InspectorTest.eventHandler[event] = [listeners];
+        listeners = InspectorProtocol.eventHandler[event] = [listeners];
 
     // Prevent registering multiple times.
     if (listeners.includes(listener))
@@ -98,14 +100,23 @@ InspectorTest.addEventListener = function(eventTypeOrObject, listener)
     listeners.push(listener);
 }
 
-InspectorTest.sendMessage = function(messageObject)
+InspectorProtocol.sendMessage = function(messageObject)
 {
     // This matches the debug dumping in InspectorBackend, which is bypassed
-    // by InspectorTest. Return messages should be dumped by InspectorBackend.
+    // by InspectorProtocol. Return messages should be dumped by InspectorBackend.
     if (this.dumpInspectorProtocolMessages)
         console.log("frontend: " + JSON.stringify(messageObject));
 
     InspectorFrontendHost.sendMessageToBackend(JSON.stringify(messageObject));
+}
+
+InspectorProtocol.checkForError = function(responseObject)
+{
+    if (responseObject.error) {
+        ProtocolTest.log("PROTOCOL ERROR: " + JSON.stringify(responseObject.error));
+        ProtocolTest.completeTest();
+        throw "PROTOCOL ERROR";
+    }
 }
 
 InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
@@ -113,7 +124,7 @@ InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
     // If the message has an id, then it is a reply to a command.
     var messageId = messageObject["id"];
     if (typeof messageId === "number") {
-        var handler = InspectorTest._dispatchTable[messageId];
+        var handler = InspectorProtocol._dispatchTable[messageId];
         if (!handler)
             return;
 
@@ -129,7 +140,7 @@ InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
     // Otherwise, it is an event.
     } else {
         var eventName = messageObject["method"];
-        var handler = InspectorTest.eventHandler[eventName];
+        var handler = InspectorProtocol.eventHandler[eventName];
         if (!handler)
             return;
 
@@ -149,7 +160,20 @@ InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
     }
 }
 
-InspectorTest.AsyncTestSuite = class AsyncTestSuite {
+window.addEventListener("message", function(event) {
+    try {
+        eval(event.data);
+    } catch (e) {
+        alert(e.stack);
+        ProtocolTest.completeTest();
+        throw e;
+    }
+});
+
+// FIXME: Everything below here should be extracted to a file containing shared test utilities
+// between the two harnesses.
+
+ProtocolTest.AsyncTestSuite = class AsyncTestSuite {
     constructor(name) {
         if (!name || typeof name !== "string")
             throw new Error("Tried to create AsyncTestSuite without string suite name.");
@@ -193,7 +217,7 @@ InspectorTest.AsyncTestSuite = class AsyncTestSuite {
     runTestCasesAndFinish()
     {
         function finish() {
-            InspectorTest.completeTest();
+            ProtocolTest.completeTest();
         }
 
         this.runTestCases()
@@ -210,19 +234,19 @@ InspectorTest.AsyncTestSuite = class AsyncTestSuite {
 
         this._startedRunning = true;
 
-        InspectorTest.log("");
-        InspectorTest.log("== Running test suite: " + this.name);
+        ProtocolTest.log("");
+        ProtocolTest.log("== Running test suite: " + this.name);
 
         // Avoid adding newlines if nothing was logged.
-        var priorLogCount = InspectorTest.logCount;
+        var priorLogCount = ProtocolTest.logCount;
         var suite = this;
         var result = this.testcases.reduce(function(chain, testcase, i) {
             return chain.then(function() {
-                if (i > 0 && priorLogCount + 1 < InspectorTest.logCount)
-                    InspectorTest.log("");
+                if (i > 0 && priorLogCount + 1 < ProtocolTest.logCount)
+                    ProtocolTest.log("");
 
-                priorLogCount = InspectorTest.logCount;
-                InspectorTest.log("-- Running test case: " + testcase.name);
+                priorLogCount = ProtocolTest.logCount;
+                ProtocolTest.log("-- Running test case: " + testcase.name);
                 suite.runCount++;
                 return new Promise(testcase.test);
             });
@@ -237,13 +261,13 @@ InspectorTest.AsyncTestSuite = class AsyncTestSuite {
             if (typeof message !== "string")
                 message = JSON.stringify(message);
 
-            InspectorTest.log("!! EXCEPTION: " + message);
+            ProtocolTest.log("!! EXCEPTION: " + message);
             throw e; // Reject this promise by re-throwing the error.
         });
     }
 }
 
-InspectorTest.SyncTestSuite = class SyncTestSuite {
+ProtocolTest.SyncTestSuite = class SyncTestSuite {
     constructor(name) {
         if (!name || typeof name !== "string")
             throw new Error("Tried to create SyncTestSuite without string suite name.");
@@ -286,7 +310,7 @@ InspectorTest.SyncTestSuite = class SyncTestSuite {
     runTestCasesAndFinish()
     {
         this.runTestCases();
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     }
 
     runTestCases()
@@ -298,19 +322,19 @@ InspectorTest.SyncTestSuite = class SyncTestSuite {
 
         this._startedRunning = true;
 
-        InspectorTest.log("");
-        InspectorTest.log("== Running test suite: " + this.name);
+        ProtocolTest.log("");
+        ProtocolTest.log("== Running test suite: " + this.name);
 
-        var priorLogCount = InspectorTest.logCount;
+        var priorLogCount = ProtocolTest.logCount;
         var suite = this;
         for (var i = 0; i < this.testcases.length; i++) {
             var testcase = this.testcases[i];
-            if (i > 0 && priorLogCount + 1 < InspectorTest.logCount)
-                InspectorTest.log("");
+            if (i > 0 && priorLogCount + 1 < ProtocolTest.logCount)
+                ProtocolTest.log("");
 
-            priorLogCount = InspectorTest.logCount;
+            priorLogCount = ProtocolTest.logCount;
 
-            InspectorTest.log("-- Running test case: " + testcase.name);
+            ProtocolTest.log("-- Running test case: " + testcase.name);
             suite.runCount++;
             try {
                 var result = testcase.test.call(null);
@@ -329,7 +353,7 @@ InspectorTest.SyncTestSuite = class SyncTestSuite {
                 if (typeof message !== "string")
                     message = JSON.stringify(message);
 
-                InspectorTest.log("!! EXCEPTION: " + message);
+                ProtocolTest.log("!! EXCEPTION: " + message);
                 return false;
             }
         }
@@ -339,18 +363,18 @@ InspectorTest.SyncTestSuite = class SyncTestSuite {
 }
 
 // Logs a message to test document.
-InspectorTest.log = function(message)
+ProtocolTest.log = function(message)
 {
-    ++InspectorTest.logCount;
+    ++ProtocolTest.logCount;
 
     if (this.forceSyncDebugLogging)
         this.debugLog(message);
     else
-        this.sendCommand("Runtime.evaluate", { "expression": "log(" + JSON.stringify(message) + ")" } );
+        InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "log(" + JSON.stringify(message) + ")" } );
 }
 
 // Logs an assertion result to the test document.
-InspectorTest.assert = function(condition, message)
+ProtocolTest.assert = function(condition, message)
 {
     var status = condition ? "PASS" : "FAIL";
     var message = typeof message !== "string" ? JSON.stringify(message) : message;
@@ -360,26 +384,17 @@ InspectorTest.assert = function(condition, message)
 
 // Logs message a directly to stdout of the test process via alert function.
 // This message should survive process crash or kill by timeout.
-InspectorTest.debugLog = function(message)
+ProtocolTest.debugLog = function(message)
 {
-    this.sendCommand("Runtime.evaluate", { "expression": "debugLog(" + JSON.stringify(message) + ")" } );
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "debugLog(" + JSON.stringify(message) + ")" } );
 }
 
-InspectorTest.completeTest = function()
+ProtocolTest.completeTest = function()
 {
-    this.sendCommand("Runtime.evaluate", { "expression": "closeTest();"} );
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "closeTest();"} );
 }
 
-InspectorTest.checkForError = function(responseObject)
-{
-    if (responseObject.error) {
-        InspectorTest.log("PROTOCOL ERROR: " + JSON.stringify(responseObject.error));
-        InspectorTest.completeTest();
-        throw "PROTOCOL ERROR";
-    }
-}
-
-InspectorTest.importScript = function(scriptName)
+ProtocolTest.importScript = function(scriptName)
 {
     var xhr = new XMLHttpRequest();
     var isAsyncRequest = false;
@@ -390,13 +405,3 @@ InspectorTest.importScript = function(scriptName)
     var script = "try { " + xhr.responseText + "} catch (e) { alert(" + JSON.stringify("Error in: " + scriptName) + "); throw e; }";
     window.eval(script);
 }
-
-window.addEventListener("message", function(event) {
-    try {
-        eval(event.data);
-    } catch (e) {
-        alert(e.stack);
-        InspectorTest.completeTest();
-        throw e;
-    }
-});

@@ -9,12 +9,12 @@ theMediaQueryList.addListener(function(aMediaQueryList) {
 
 function test()
 {
-    InspectorTest.sendCommand("Page.enable", {});
-    InspectorTest.sendCommand("Page.setEmulatedMedia", {"media": "print"}, function(messageObject) {
+    InspectorProtocol.sendCommand("Page.enable", {});
+    InspectorProtocol.sendCommand("Page.setEmulatedMedia", {"media": "print"}, function(messageObject) {
         if (messageObject.error)
-            InspectorTest.log("FAILED: " + messageObject.error.message);
-        InspectorTest.sendCommand("Page.disable", {});
-        InspectorTest.completeTest();
+            ProtocolTest.log("FAILED: " + messageObject.error.message);
+        InspectorProtocol.sendCommand("Page.disable", {});
+        ProtocolTest.completeTest();
     });
 }
 </script>

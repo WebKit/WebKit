@@ -5,18 +5,18 @@
 <script>
 function test()
 {
-    InspectorTest.importScript("console-test.js");
+    ProtocolTest.importScript("console-test.js");
 
-    let suite = new InspectorTest.AsyncTestSuite("Console.XFrameOptionsMessages");
+    let suite = new ProtocolTest.AsyncTestSuite("Console.XFrameOptionsMessages");
 
-    InspectorTest.Console.addTestCase(suite, {
+    ProtocolTest.Console.addTestCase(suite, {
         name: "XFrameOptionsDeny",
         description: "Ensure that a console message is logged when enforcing an X-Frame-Options policy. In this case, setting X-Frame-Options: 'deny' means the iframe does not want to be embedded in the test page.",
         expression: "triggerXFrameOptionDeny();",
         expected: {source: 'security', level: 'error'}
     });
 
-    InspectorTest.awaitCommand({
+    InspectorProtocol.awaitCommand({
         method: "Console.enable",
         params: {}
     })
@@ -26,8 +26,8 @@ function test()
     .catch(fatalError);
 
     function fatalError(e) {
-        InspectorTest.log("Test failed with fatal error: " + JSON.stringify(e));
-        InspectorTest.completeTest();
+        ProtocolTest.log("Test failed with fatal error: " + JSON.stringify(e));
+        ProtocolTest.completeTest();
     }
 }
 </script>

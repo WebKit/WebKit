@@ -4,7 +4,7 @@
 <script>
 function test()
 {
-    var suite = new InspectorTest.AsyncTestSuite("Runtime.getProperties");
+    var suite = new ProtocolTest.AsyncTestSuite("Runtime.getProperties");
 
     addGetPropertiesTestCase({
         name: "CheckPropertiesOfWrapperObject",
@@ -33,8 +33,8 @@ function test()
             name,
             description,
             test: function(resolve, reject) {
-                InspectorTest.log("Evaluating expression: " + expression);
-                InspectorTest.awaitCommand({
+                ProtocolTest.log("Evaluating expression: " + expression);
+                InspectorProtocol.awaitCommand({
                     method: "Runtime.evaluate",
                     params: {expression}
                 })
@@ -43,7 +43,7 @@ function test()
                     if (objectId === undefined)
                         throw new Error("objectId is expected");
 
-                    return InspectorTest.awaitCommand({
+                    return InspectorProtocol.awaitCommand({
                         method: "Runtime.getProperties",
                         params: {objectId, ownProperties: true}
                     });
@@ -61,14 +61,14 @@ function test()
     function dumpGetPropertiesResult(protocolResult) {
         var properties = protocolResult.result;
         if (properties) {
-            InspectorTest.log("Properties:");
+            ProtocolTest.log("Properties:");
             properties.sort(NamedThingComparator);
             properties.map(dumpSingleProperty);
         }
 
         var internalProperties = protocolResult.internalProperties;
         if (internalProperties) {
-            InspectorTest.log("Internal properties:");
+            ProtocolTest.log("Internal properties:");
             internalProperties.sort(NamedThingComparator);
             internalProperties.map(dumpSingleProperty);
         }
@@ -76,9 +76,9 @@ function test()
         function dumpSingleProperty(property) {
             var {name, value} = property;
             if (value)
-                InspectorTest.log("  " + name + " " + value.type + " " + (value.value || value.description));
+                ProtocolTest.log("  " + name + " " + value.type + " " + (value.value || value.description));
             else
-                InspectorTest.log("  " + name);
+                ProtocolTest.log("  " + name);
         }
 
         function NamedThingComparator(o1, o2) {

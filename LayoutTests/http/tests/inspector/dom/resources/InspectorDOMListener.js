@@ -31,9 +31,9 @@ function createDOMListener()
 {
     var nodesById = {};
 
-    InspectorTest.addEventListener("DOM.setChildNodes", onSetChildNodes);
-    InspectorTest.addEventListener("DOM.childNodeRemoved", onChildNodeRemoved);
-    InspectorTest.addEventListener("DOM.childNodeInserted", onChildNodeInserted);
+    InspectorProtocol.addEventListener("DOM.setChildNodes", onSetChildNodes);
+    InspectorProtocol.addEventListener("DOM.childNodeRemoved", onChildNodeRemoved);
+    InspectorProtocol.addEventListener("DOM.childNodeInserted", onChildNodeInserted);
 
     function createNodeAttributesMap(attributes)
     {

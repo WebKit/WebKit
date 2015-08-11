@@ -8,7 +8,7 @@ function test()
 
     var nodes = [];
  
-    InspectorTest.eventHandler["DOM.setChildNodes"] = setChildNodes;
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = setChildNodes;
 
     enableLayerTreeAgent();
     
@@ -76,7 +76,7 @@ function test()
             }
 
             if (++count === layers.length)
-                InspectorTest.completeTest();
+                ProtocolTest.completeTest();
         };
 
         layers.forEach(function (layer) {
@@ -105,16 +105,16 @@ function test()
 
     function logTestName(name)
     {
-        InspectorTest.log("\n=== " + name + " ===\n");
+        ProtocolTest.log("\n=== " + name + " ===\n");
     };
 
     function runCommand(command)
     {
-        InspectorTest.sendCommand(command.command, command.parameters, function(messageObject) {
-            InspectorTest.checkForError(messageObject);
+        InspectorProtocol.sendCommand(command.command, command.parameters, function(messageObject) {
+            InspectorProtocol.checkForError(messageObject);
 
             if (command.name)
-                InspectorTest.log("PASS");
+                ProtocolTest.log("PASS");
 
             if (command.callback)
                 command.callback(messageObject.result);
@@ -124,9 +124,9 @@ function test()
     function assert(name, actual, expected)
     {
         if (expected === actual)
-            InspectorTest.log("PASS: " + name + ".");
+            ProtocolTest.log("PASS: " + name + ".");
         else
-            InspectorTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
+            ProtocolTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
     };
 
 };

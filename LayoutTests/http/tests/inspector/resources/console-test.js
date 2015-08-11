@@ -1,6 +1,6 @@
-InspectorTest.Console = {};
+ProtocolTest.Console = {};
 
-InspectorTest.Console.sanitizeConsoleMessage = function(messageObject)
+ProtocolTest.Console.sanitizeConsoleMessage = function(messageObject)
 {
     function basename(url)
     {
@@ -30,9 +30,9 @@ InspectorTest.Console.sanitizeConsoleMessage = function(messageObject)
     return obj;
 }
 
-InspectorTest.Console.addTestCase = function(suite, args)
+ProtocolTest.Console.addTestCase = function(suite, args)
 {
-    if (!(suite instanceof InspectorTest.AsyncTestSuite))
+    if (!(suite instanceof ProtocolTest.AsyncTestSuite))
         throw new Error("Console test cases must be added to an async test suite.");
 
     var {name, description, expression, expected} = args;
@@ -40,23 +40,23 @@ InspectorTest.Console.addTestCase = function(suite, args)
         name,
         description,
         test: function(resolve, reject) {
-            InspectorTest.awaitEvent({
+            InspectorProtocol.awaitEvent({
                 event: "Console.messageAdded",
             })
             .then(function(messageObject) {
                 var consoleMessage = messageObject.params.message;
                 var {source, level, text, parameters} = consoleMessage;
-                InspectorTest.assert(source === expected.source, "ConsoleMessage type should be '" + expected.source + "'.");
-                InspectorTest.assert(level === expected.level, "ConsoleMessage level should be '" + expected.level + "'.");
+                ProtocolTest.assert(source === expected.source, "ConsoleMessage type should be '" + expected.source + "'.");
+                ProtocolTest.assert(level === expected.level, "ConsoleMessage level should be '" + expected.level + "'.");
 
                 if (expected.text)
-                    InspectorTest.assert(text === expected.text, "ConsoleMessage text should be '" + expected.text + "'.");
+                    ProtocolTest.assert(text === expected.text, "ConsoleMessage text should be '" + expected.text + "'.");
 
                 if (expected.parameters) {
-                    InspectorTest.assert(parameters.length === expected.parameters.length, "ConsoleMessage parameters.length === " + expected.parameters.length);
+                    ProtocolTest.assert(parameters.length === expected.parameters.length, "ConsoleMessage parameters.length === " + expected.parameters.length);
                     for (var i = 0; i < parameters.length; ++i) {
                         var expectedType = expected.parameters[i];
-                        InspectorTest.assert(parameters[i].type === expectedType, "ConsoleMessage parameter " + i + " should have type '" + expectedType + "'.");
+                        ProtocolTest.assert(parameters[i].type === expectedType, "ConsoleMessage parameter " + i + " should have type '" + expectedType + "'.");
                     }
                 }
 
@@ -65,8 +65,8 @@ InspectorTest.Console.addTestCase = function(suite, args)
             .catch(reject);
 
             // Cause a messageAdded event to be generated.
-            InspectorTest.log("Evaluating expression: " + expression);
-            InspectorTest.sendCommand({
+            ProtocolTest.log("Evaluating expression: " + expression);
+            InspectorProtocol.sendCommand({
                 method: "Runtime.evaluate",
                 params: {expression}
             });

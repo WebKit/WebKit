@@ -8,30 +8,30 @@ eval("function sourceURLFunction() {\n    var a = 1;\n    var b = 2;\n    var c 
 
 function test()
 {
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/sourceURL-test\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found sourceURL-test.js");
+            ProtocolTest.log("Found sourceURL-test.js");
             var params = {url: messageObject.params.url, lineNumber: 3, columnNumber: 0};
-            InspectorTest.sendCommand("Debugger.setBreakpointByUrl", params, function(responseObject) {
-                InspectorTest.checkForError(responseObject);
-                InspectorTest.log("Running sourceURLFunction");
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "sourceURLFunction()"});
+            InspectorProtocol.sendCommand("Debugger.setBreakpointByUrl", params, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                ProtocolTest.log("Running sourceURLFunction");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "sourceURLFunction()"});
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Hit Breakpoint!");
+        ProtocolTest.log("Hit Breakpoint!");
         var callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
-        InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
-            InspectorTest.log("Evaluted value of `a` (expecting number 1) was: " + JSON.stringify(messageObject.result.result));
-            InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "c"}, function(messageObject) {
-                InspectorTest.log("Evaluted value of `c` (expecting undefined) was: " + JSON.stringify(messageObject.result.result));
-                InspectorTest.completeTest();
+        InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+            ProtocolTest.log("Evaluted value of `a` (expecting number 1) was: " + JSON.stringify(messageObject.result.result));
+            InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "c"}, function(messageObject) {
+                ProtocolTest.log("Evaluted value of `c` (expecting undefined) was: " + JSON.stringify(messageObject.result.result));
+                ProtocolTest.completeTest();
             });
         });
     }

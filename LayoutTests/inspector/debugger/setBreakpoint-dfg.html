@@ -12,39 +12,39 @@ function test()
     // This test setting 2 breakpoints in DFG compiled functions: one inlined,
     // and one not inlined.
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var dfgNonInlinedBreakpointId = null;
     var dfgInlinedBreakpointId = null;
     var scriptIdentifier = 0;
     var startLine = 0;
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             scriptIdentifier = messageObject.params.scriptId;
             startLine = messageObject.params.startLine;
 
-            InspectorTest.sendCommand("Runtime.evaluate", {
+            InspectorProtocol.sendCommand("Runtime.evaluate", {
                 expression: "dfgWithoutInline(); dfgWithInline();"
             }, function(responseObject) {
-                InspectorTest.log("dfg functions warmed up\n");
+                ProtocolTest.log("dfg functions warmed up\n");
 
                 var location1 = {scriptId: scriptIdentifier, lineNumber: 22, columnNumber: 0};
 
-                InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location1}, function(responseObject) {
-                    InspectorTest.checkForError(responseObject);
-                    InspectorTest.log("Breakpoint set in notInlineable()");
+                InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location1}, function(responseObject) {
+                    InspectorProtocol.checkForError(responseObject);
+                    ProtocolTest.log("Breakpoint set in notInlineable()");
 
                     dfgNonInlinedBreakpointId = responseObject.result.breakpointId;
                     var location2 = {scriptId: scriptIdentifier, lineNumber: 28, columnNumber: 0};
-                    InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location2}, function(responseObject) {
-                        InspectorTest.checkForError(responseObject);
-                        InspectorTest.log("Breakpoint set in inlineable()\n");
+                    InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location2}, function(responseObject) {
+                        InspectorProtocol.checkForError(responseObject);
+                        ProtocolTest.log("Breakpoint set in inlineable()\n");
 
                         dfgInlinedBreakpointId = responseObject.result.breakpointId;
-                        InspectorTest.sendCommand("Runtime.evaluate", {
+                        InspectorProtocol.sendCommand("Runtime.evaluate", {
                             expression: "dfgWithoutInline(); dfgWithInline();"
                         });
                     });
@@ -54,24 +54,24 @@ function test()
     }
 
     var breakpointsHit = 0;
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
         var breakpointId = null;
         breakpointsHit++;
-        InspectorTest.log("Hit Breakpoint " + breakpointsHit + "!");
+        ProtocolTest.log("Hit Breakpoint " + breakpointsHit + "!");
         if (breakpointsHit == 1)
             breakpointId = dfgNonInlinedBreakpointId;
         else if (breakpointsHit == 2)
             breakpointId = dfgInlinedBreakpointId;
         else
-            InspectorTest.log("Unexpected breakpoint");
+            ProtocolTest.log("Unexpected breakpoint");
 
-        InspectorTest.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointId}, function(responseObject) {
-            InspectorTest.log("Removed Breakpoint " + breakpointsHit + "!");
-            InspectorTest.sendCommand("Debugger.resume", {}, function(responseObject) {
+        InspectorProtocol.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointId}, function(responseObject) {
+            ProtocolTest.log("Removed Breakpoint " + breakpointsHit + "!");
+            InspectorProtocol.sendCommand("Debugger.resume", {}, function(responseObject) {
                 if (breakpointsHit == 2) {
-                    InspectorTest.log("PASS");
-                    InspectorTest.completeTest();
+                    ProtocolTest.log("PASS");
+                    ProtocolTest.completeTest();
                 }
             });
         });

@@ -1,3 +1,96 @@
+2015-08-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: use different namespaces in test fixtures for protocol tests and frontend tests
+        https://bugs.webkit.org/show_bug.cgi?id=147787
+
+        Reviewed by Timothy Hatcher.
+
+        Refactor test methods to use three distinct namespaces to reflect their implementation:
+
+        - InspectorProtocol contains commands that are only used from within protocol tests.
+        This includes sending and receiving protocol messages and checking message errors.
+
+        - InspectorTest contains test methods for full inspector frontend tests.
+
+        - ProtocolTest contains test methods for protocol tests.
+
+        In a subsequent patch, most methods in InspectorTest and ProtocolTest namespaces
+        will be unified so that implementations of log, assert, etc. are no longer duplicated.
+        For now, at least make it obvious at each callsite what code is being invoked.
+
+        * http/tests/inspector/console/access-inspected-object.html:
+        * http/tests/inspector/dom/resources/InspectorDOMListener.js:
+        * http/tests/inspector/page/loading-iframe-document-node.html:
+        * http/tests/inspector/resources/ProtocolTestStub.js:
+        * http/tests/inspector/resources/console-test.js:
+        * http/tests/inspector/resources/probe-test.js:
+        * inspector/console/console-message.html:
+        * inspector/console/css-source-locations.html:
+        * inspector/console/js-source-locations.html:
+        * inspector/console/x-frame-options-message.html:
+        * inspector/css/getSupportedCSSProperties.html:
+        * inspector/debugger/breakpoint-action-detach.html:
+        * inspector/debugger/breakpoint-action-with-exception.html:
+        * inspector/debugger/breakpoint-condition-detach.html:
+        * inspector/debugger/breakpoint-condition-with-bad-script.html:
+        * inspector/debugger/breakpoint-condition-with-exception.html:
+        * inspector/debugger/breakpoint-eval-with-exception.html:
+        * inspector/debugger/breakpoint-inside-conditons-and-actions.html:
+        * inspector/debugger/call-frame-function-name.html:
+        * inspector/debugger/call-frame-this-host.html:
+        * inspector/debugger/call-frame-this-nonstrict.html:
+        * inspector/debugger/call-frame-this-strict.html:
+        * inspector/debugger/debugger-statement.html:
+        * inspector/debugger/didSampleProbe-multiple-probes.html:
+        * inspector/debugger/hit-breakpoint-from-console.html:
+        * inspector/debugger/nested-inspectors.html:
+        * inspector/debugger/pause-dedicated-worker.html:
+        * inspector/debugger/pause-on-assert.html:
+        * inspector/debugger/regress-133182.html:
+        * inspector/debugger/removeBreakpoint.html:
+        * inspector/debugger/searchInContent-linebreaks.html:
+        * inspector/debugger/setBreakpoint-actions.html:
+        * inspector/debugger/setBreakpoint-autoContinue.html:
+        * inspector/debugger/setBreakpoint-column.html:
+        * inspector/debugger/setBreakpoint-condition.html:
+        * inspector/debugger/setBreakpoint-dfg-and-modify-local.html:
+        * inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html:
+        * inspector/debugger/setBreakpoint-dfg.html:
+        * inspector/debugger/setBreakpoint-options-exception.html:
+        * inspector/debugger/setBreakpoint.html:
+        * inspector/debugger/setBreakpointByUrl-sourceURL.html:
+        * inspector/debugger/setPauseOnExceptions-all.html:
+        * inspector/debugger/setPauseOnExceptions-none.html:
+        * inspector/debugger/setPauseOnExceptions-uncaught.html:
+        * inspector/debugger/setVariableValue.html:
+        * inspector/debugger/terminate-dedicated-worker-while-paused.html:
+        * inspector/dom-debugger/node-removed.html:
+        * inspector/dom/dom-remove-events.html:
+        * inspector/dom/dom-search-crash.html:
+        * inspector/dom/dom-search-with-context.html:
+        * inspector/dom/dom-search.html:
+        * inspector/dom/focus.html:
+        * inspector/dom/getAccessibilityPropertiesForNode.html:
+        * inspector/dom/getAccessibilityPropertiesForNode_liveRegion.html:
+        * inspector/dom/getAccessibilityPropertiesForNode_mouseEventNodeId.html:
+        * inspector/dom/highlight-flow-with-no-region.html:
+        * inspector/dom/remove-multiple-nodes.html:
+        * inspector/dom/request-child-nodes-depth.html:
+        * inspector/layers/layers-anonymous.html:
+        * inspector/layers/layers-blending-compositing-reasons.html:
+        * inspector/layers/layers-compositing-reasons.html:
+        * inspector/layers/layers-for-node.html:
+        * inspector/layers/layers-generated-content.html:
+        * inspector/layers/layers-reflected-content.html:
+        * inspector/page/archive.html:
+        * inspector/page/frameScheduledNavigation.html:
+        * inspector/page/frameStartedLoading.html:
+        * inspector/page/javascriptDialogEvents.html:
+        * inspector/page/setEmulatedMedia.html:
+        * inspector/runtime/getProperties.html:
+        * inspector/unit-tests/async-test-suite.html:
+        * inspector/unit-tests/sync-test-suite.html:
+
 2015-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Arabic letter Yeh is drawn in LastResort

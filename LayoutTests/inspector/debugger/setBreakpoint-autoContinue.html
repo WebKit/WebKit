@@ -5,34 +5,34 @@
 <script>
 function test()
 {
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var allowedToHitBreakpoint = false;
     var breakpointIdentifier = null;
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             var scriptIdentifier = messageObject.params.scriptId;
             var location = {scriptId: scriptIdentifier, lineNumber: 13, columnNumber: 0};
             var options = {autoContinue: true};
-            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
-                InspectorTest.checkForError(responseObject);
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
                 breakpointIdentifier = responseObject.result.breakpointId;
-                InspectorTest.log("Running breakpointAutomaticallyContinue multiple times with automatically continue");
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"});
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"});
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"}, function() {
-                    InspectorTest.log("Removing breakpoint");
-                    InspectorTest.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointIdentifier}, function(responseObject) {
-                        InspectorTest.checkForError(responseObject);
+                ProtocolTest.log("Running breakpointAutomaticallyContinue multiple times with automatically continue");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"}, function() {
+                    ProtocolTest.log("Removing breakpoint");
+                    InspectorProtocol.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointIdentifier}, function(responseObject) {
+                        InspectorProtocol.checkForError(responseObject);
                         allowedToHitBreakpoint = true;
                         options = {autoContinue: false};
-                        InspectorTest.log("Setting new breakpoint without autoContinue that should trigger");
-                        InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
-                            InspectorTest.checkForError(responseObject);
-                            InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"});
+                        ProtocolTest.log("Setting new breakpoint without autoContinue that should trigger");
+                        InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                            InspectorProtocol.checkForError(responseObject);
+                            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointAutomaticallyContinue()"});
                         });
                     });
                 });
@@ -40,16 +40,16 @@ function test()
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Hit Breakpoint!");
+        ProtocolTest.log("Hit Breakpoint!");
 
         if (!allowedToHitBreakpoint) {
-            InspectorTest.log("FAIL: should not have hit breakpoint.");
-            InspectorTest.completeTest();
+            ProtocolTest.log("FAIL: should not have hit breakpoint.");
+            ProtocolTest.completeTest();
         } else {
-            InspectorTest.log("PASS: hit breakpoint when allowed.");
-            InspectorTest.completeTest();
+            ProtocolTest.log("PASS: hit breakpoint when allowed.");
+            ProtocolTest.completeTest();
         }
     }
 }

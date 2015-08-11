@@ -5,19 +5,19 @@
 function test()
 {
     // Loading the queries from external file to avoid having them show up in the results.
-    InspectorTest.importScript("../../../../inspector/dom/resources/dom-search-queries.js");
+    ProtocolTest.importScript("../../../../inspector/dom/resources/dom-search-queries.js");
 
     // Create a DOM listener to convert nodeIds to tag names.
-    InspectorTest.importScript("../dom/resources/InspectorDOMListener.js");
+    ProtocolTest.importScript("../dom/resources/InspectorDOMListener.js");
     var dom = createDOMListener();
 
     // Caching the output to avoid searching through the log.
     var output = [];
 
-    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
 
     function onGotDocument(message) {
-        InspectorTest.checkForError(message);
+        InspectorProtocol.checkForError(message);
         dom.collectNode(message.result.root);
         performSearches(domSearchQueries, testFinished);
     }
@@ -36,8 +36,8 @@ function test()
     function search(query, callback)
     {
         output.push("=== Query: " + JSON.stringify(query) + " ===");
-        InspectorTest.sendCommand("DOM.performSearch", {query: query}, function(message) {
-            InspectorTest.checkForError(message);
+        InspectorProtocol.sendCommand("DOM.performSearch", {query: query}, function(message) {
+            InspectorProtocol.checkForError(message);
             printSearchResults(message.result, callback);
         });
     }
@@ -49,7 +49,7 @@ function test()
             return callback();
 
         var options = {"searchId": results.searchId, "fromIndex": 0, "toIndex": results.resultCount};
-        InspectorTest.sendCommand("DOM.getSearchResults", options, function onResultsReceived(message) {
+        InspectorProtocol.sendCommand("DOM.getSearchResults", options, function onResultsReceived(message) {
             for (var nodeId of message.result.nodeIds)
                 output.push(dom.getNodeIdentifier(nodeId));
             callback();
@@ -58,8 +58,8 @@ function test()
 
     function testFinished()
     {
-        InspectorTest.log(output.join("\n"));
-        InspectorTest.completeTest();
+        ProtocolTest.log(output.join("\n"));
+        ProtocolTest.completeTest();
     }
 }
 </script>

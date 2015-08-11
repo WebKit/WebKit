@@ -139,45 +139,45 @@ function test() {
     var documentNodeId = null;
 
     function onGotDocument(response) {
-        InspectorTest.checkForError(response);
+        InspectorProtocol.checkForError(response);
         documentNodeId = response.result.root.nodeId;
-        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": documentNodeId}, onGotAccessibilityPropertiesForDocumentNode);
+        InspectorProtocol.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": documentNodeId}, onGotAccessibilityPropertiesForDocumentNode);
     }
 
     function onGotAccessibilityPropertiesForDocumentNode(response) {
-        InspectorTest.checkForError(response);
-        InspectorTest.log("#document");
+        InspectorProtocol.checkForError(response);
+        ProtocolTest.log("#document");
         logAccessibilityProperties(response.result.properties);
-        InspectorTest.log("\n");
-        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": documentNodeId, "selector": ".ex"}, onGotQuerySelectorAll);
+        ProtocolTest.log("\n");
+        InspectorProtocol.sendCommand("DOM.querySelectorAll", {"nodeId": documentNodeId, "selector": ".ex"}, onGotQuerySelectorAll);
     }
 
     function onGotQuerySelectorAll(response) {
-        InspectorTest.checkForError(response);
+        InspectorProtocol.checkForError(response);
         examples = response.result.nodeIds;
-        InspectorTest.log("Total elements to be tested: " + examples.length + ".");
+        ProtocolTest.log("Total elements to be tested: " + examples.length + ".");
         loop();
     }
 
     function loop() {
         if (examples.length) {
-            InspectorTest.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
+            InspectorProtocol.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
         } else {
             finishTest();
         }
     }
 
     function onGotOuterHTML(response) {
-        InspectorTest.checkForError(response);
+        InspectorProtocol.checkForError(response);
         var outerHTML = response.result.outerHTML;
         outerHTML = outerHTML.replace(/ class="ex"/g, ""); // remove any duplicated, unnecessary class attributes
         outerHTML = outerHTML.replace(/;base64,.*?"/, "...\""); // suppress full data URIs in output
-        InspectorTest.log("\n" + outerHTML);
-        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAccessibilityProperties);
+        ProtocolTest.log("\n" + outerHTML);
+        InspectorProtocol.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAccessibilityProperties);
     }
 
     function onGotAccessibilityProperties(response) {
-        InspectorTest.checkForError(response);
+        InspectorProtocol.checkForError(response);
         logAccessibilityProperties(response.result.properties);
         examples.pop();
         loop();
@@ -193,7 +193,7 @@ function test() {
             case "mouseEventNodeId":
             case "parentNodeId":
                 if (typeof value === "number")
-                    InspectorTest.log("    " + key + ": exists");
+                    ProtocolTest.log("    " + key + ": exists");
                 break;
             case "childNodeIds":
             case "controlledNodeIds":
@@ -201,23 +201,23 @@ function test() {
             case "ownedNodeIds":
             case "selectedChildNodeIds":
                 if (typeof value === "object" && value.length)
-                    InspectorTest.log("    " + key + ".length: " + value.length);
+                    ProtocolTest.log("    " + key + ".length: " + value.length);
                 break;
             default:
-                InspectorTest.log("    " + key + ": " + value);
+                ProtocolTest.log("    " + key + ": " + value);
             }
         }
     }
 
     function finishTest() {
-        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
-            InspectorTest.completeTest();
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
+            ProtocolTest.completeTest();
         });
     }
 
 
 
-    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
 
 }
 </script>

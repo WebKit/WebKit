@@ -8,40 +8,40 @@ function test()
     function testFunction() {
         // This function runs in the second inspector window. We can use this one to debug the first inspector.
 
-        InspectorTest.sendCommand("Debugger.enable", {});
-        InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
-            InspectorTest.checkForError(responseObject);
-            InspectorTest.log("Debugger.setPauseOnExceptions - all");
+        InspectorProtocol.sendCommand("Debugger.enable", {});
+        InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
+            InspectorProtocol.checkForError(responseObject);
+            ProtocolTest.log("Debugger.setPauseOnExceptions - all");
 
             // Trigger an exception in the main inspector.
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throw new Error('PASS: Expected exception') }, 0);"});
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throw new Error('PASS: Expected exception') }, 0);"});
         });
 
-        InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+        InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
         {
-            InspectorTest.log("PASS: Paused!");
-            InspectorTest.sendCommand("Debugger.resume", {});
+            ProtocolTest.log("PASS: Paused!");
+            InspectorProtocol.sendCommand("Debugger.resume", {});
         }
 
-        InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+        InspectorProtocol.eventHandler["Debugger.resumed"] = function(messageObject)
         {
-            InspectorTest.log("PASS: Resumed!");
+            ProtocolTest.log("PASS: Resumed!");
 
             // Revert Debugger.setPauseOnExceptions as it can have an impact on the following tests.
-            InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "none"}, function(responseObject) {
-                InspectorTest.completeTest();
+            InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "none"}, function(responseObject) {
+                ProtocolTest.completeTest();
             });
         }
     };
 
-    window.log = InspectorTest.log.bind(InspectorTest);
+    window.log = ProtocolTest.log.bind(InspectorProtocol);
     window.closeTest = function()
     {
         window.internals.closeDummyInspectorFrontend();
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     }
 
-    var secondInspectorFrontend = window.internals.openDummyInspectorFrontend("ProtocolTestStub.html");
+    var secondInspectorFrontend = window.internals.openDummyInspectorFrontend("InspectorProtocolStub.html");
     secondInspectorFrontend.addEventListener("load", function(event) {
         secondInspectorFrontend.postMessage("(" + testFunction.toString() +")();", "*");
     });

@@ -14,11 +14,11 @@ function generateSimpleConsoleMessages()
 
 function test()
 {
-    InspectorTest.importScript("console-test.js");
+    ProtocolTest.importScript("console-test.js");
 
-    var suite = new InspectorTest.AsyncTestSuite("Console.MessagesFromCommandLineAPI");
+    var suite = new ProtocolTest.AsyncTestSuite("Console.MessagesFromCommandLineAPI");
 
-    InspectorTest.Console.addTestCase(suite, {
+    ProtocolTest.Console.addTestCase(suite, {
         name: "ConsoleLogString",
         description: "Test `console.log(\"log\")`",
         expression: 'console.log("log");',
@@ -30,7 +30,7 @@ function test()
         }
     });
 
-    InspectorTest.Console.addTestCase(suite, {
+    ProtocolTest.Console.addTestCase(suite, {
         name: "ConsoleInfoString",
         description: "Test `console.info(\"info\")`",
         expression: 'console.info("info");',
@@ -42,7 +42,7 @@ function test()
         }
     });
 
-    InspectorTest.Console.addTestCase(suite, {
+    ProtocolTest.Console.addTestCase(suite, {
         name: "ConsoleWarnString",
         description: "Test `console.warn(\"warn\")`",
         expression: 'console.warn("warn");',
@@ -54,7 +54,7 @@ function test()
         }
     });
 
-    InspectorTest.Console.addTestCase(suite, {
+    ProtocolTest.Console.addTestCase(suite, {
         name: "ConsoleErrorString",
         description: "Test `console.error(\"error\")`",
         expression: 'console.error("error");',
@@ -66,7 +66,7 @@ function test()
         }
     });
 
-    InspectorTest.Console.addTestCase(suite, {
+    ProtocolTest.Console.addTestCase(suite, {
         name: "ConsoleDebugString",
         description: "Test `console.debug(\"debug\")`",
         expression: 'console.debug("debug");',
@@ -78,7 +78,7 @@ function test()
         }
     });
 
-    InspectorTest.awaitCommand({
+    InspectorProtocol.awaitCommand({
         method: "Console.enable",
         params: {}
     })
@@ -88,8 +88,8 @@ function test()
     .catch(fatalError);
 
     function fatalError(e) {
-        InspectorTest.log("Test failed with fatal error: " + JSON.stringify(e));
-        InspectorTest.completeTest();
+        ProtocolTest.log("Test failed with fatal error: " + JSON.stringify(e));
+        ProtocolTest.completeTest();
     }
 }
 </script>

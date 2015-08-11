@@ -12,52 +12,52 @@ function test()
     // This test setting a breakpoints in DFG compiled functions callee and then modify
     // and examine a global and local via the DFG frame.
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var breakpointId = null;
     var scriptId = 0;
     var startLine = 0;
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
             scriptId = messageObject.params.scriptId;
             startLine = messageObject.params.startLine;
 
-            InspectorTest.sendCommand("Runtime.evaluate", {
+            InspectorProtocol.sendCommand("Runtime.evaluate", {
                 expression: "dfgWithoutInline3();"
             }, function(responseObject) {
-                InspectorTest.log("dfg function warmed up\n");
+                ProtocolTest.log("dfg function warmed up\n");
 
                 var location1 = {scriptId: scriptId, lineNumber: 2, columnNumber: 0};
 
-                InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location1}, function(responseObject) {
-                    InspectorTest.checkForError(responseObject);
-                    InspectorTest.log("Breakpoint set in breakpointBasic()");
+                InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location1}, function(responseObject) {
+                    InspectorProtocol.checkForError(responseObject);
+                    ProtocolTest.log("Breakpoint set in breakpointBasic()");
 
                     breakpointId = responseObject.result.breakpointId;
-                    InspectorTest.sendCommand("Runtime.evaluate", {
+                    InspectorProtocol.sendCommand("Runtime.evaluate", {
                         expression: "dfgWithoutInline3();"
                     }, function(responseObject) {
-                        InspectorTest.log("Test complete");
-                        InspectorTest.completeTest();
+                        ProtocolTest.log("Test complete");
+                        ProtocolTest.completeTest();
                     });
                 });
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
         function dumpResponse(response)
         {
             try {
                 if (response.result.wasThrown) {
-                    InspectorTest.log("Exception thrown processing request");
+                    ProtocolTest.log("Exception thrown processing request");
                     return false;
                 }
-                InspectorTest.log("Response value is " + response.result.result.value);
+                ProtocolTest.log("Response value is " + response.result.result.value);
                 return true;
             } catch (e) {
                 return false;
@@ -66,39 +66,39 @@ function test()
 
         function resumeFromBreakpoint()
         {
-            InspectorTest.sendCommand("Debugger.resume", {}, function(responseObject) {
-                InspectorTest.log("Resumed from breakpoint");
+            InspectorProtocol.sendCommand("Debugger.resume", {}, function(responseObject) {
+                ProtocolTest.log("Resumed from breakpoint");
             });
         }
 
-        InspectorTest.log("Hit Breakpoint!");
+        ProtocolTest.log("Hit Breakpoint!");
         var callFrames = messageObject.params.callFrames;
         if (callFrames.length < 3) {
-            InspectorTest.log("FAIL: too few frames in stack trace");
+            ProtocolTest.log("FAIL: too few frames in stack trace");
             resumeFromBreakpoint();
             return;
         }
         var callFrameId = callFrames[2].callFrameId;
-        InspectorTest.log("Evaluating in DFG frame at frame[2]: 'globalVal3 = 30;'");
-        InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "globalVal3 = 30;" }, function(responseObject) {
+        ProtocolTest.log("Evaluating in DFG frame at frame[2]: 'globalVal3 = 30;'");
+        InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "globalVal3 = 30;" }, function(responseObject) {
             if (!dumpResponse(responseObject)) {
                 resumeFromBreakpoint();
                 return;
             }
-            InspectorTest.log("Evaluating in DFG frame at frame[2]: 'localVal3 = 12;'");
-            InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "localVal3 = 12;" }, function(responseObject) {
+            ProtocolTest.log("Evaluating in DFG frame at frame[2]: 'localVal3 = 12;'");
+            InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "localVal3 = 12;" }, function(responseObject) {
                 if (!dumpResponse(responseObject)) {
                     resumeFromBreakpoint();
                     return;
                 }
-                InspectorTest.log("Evaluating in DFG frame at frame[2]: 'localVal3'");
-                InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "localVal3" }, function(responseObject) {
+                ProtocolTest.log("Evaluating in DFG frame at frame[2]: 'localVal3'");
+                InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "localVal3" }, function(responseObject) {
                     if (!dumpResponse(responseObject)) {
                         resumeFromBreakpoint();
                         return;
                     }
-                    InspectorTest.sendCommand("Debugger.resume", {}, function(responseObject) {
-                        InspectorTest.log("Resumed from breakpoint");
+                    InspectorProtocol.sendCommand("Debugger.resume", {}, function(responseObject) {
+                        ProtocolTest.log("Resumed from breakpoint");
                     });
                 });
             });

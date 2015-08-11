@@ -11,26 +11,26 @@ function test()
     // We set a breakpoint before evaluating 'sum += ...', and verify that
     // call frame functionNames are what we expect.
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/call-frame-function-name\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
-            InspectorTest.log("Found <script>");
+            ProtocolTest.log("Found <script>");
             var scriptIdentifier = messageObject.params.scriptId;
             var lineNumber = messageObject.params.startLine + 6;
             var columnNumber = 12;
             var location = {scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber};
-            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
-                InspectorTest.log("Running testFunction");
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "testFunction()"});
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
+                ProtocolTest.log("Running testFunction");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "testFunction()"});
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Hit Breakpoint!");
+        ProtocolTest.log("Hit Breakpoint!");
         var functionNames = [ ];
         var i;
         for (i = 0; i < 3; i++)
@@ -38,9 +38,9 @@ function test()
         
         function assertFunctionName(index, actual, expected) {
             if (actual == expected)
-                InspectorTest.log('PASS: frame[' + index + '] "' + actual + '"');
+                ProtocolTest.log('PASS: frame[' + index + '] "' + actual + '"');
             else
-                InspectorTest.log('FAIL: frame[' + index + '] expect "' + expected + '", actual "' + actual + '"');
+                ProtocolTest.log('FAIL: frame[' + index + '] expect "' + expected + '", actual "' + actual + '"');
         }
 
         // frame 0 should be the anonymous inner function.
@@ -52,7 +52,7 @@ function test()
         // frame 2 should be "testFunction".
         assertFunctionName(2, functionNames[2], "testFunction");
 
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     }
 }
 </script>

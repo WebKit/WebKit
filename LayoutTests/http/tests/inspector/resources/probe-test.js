@@ -1,6 +1,6 @@
-window.ProbeHelper = {};
+ProtocolTest.Probe = {};
 
-ProbeHelper.simplifiedProbeSample = function(messageObject)
+ProtocolTest.Probe.sanitizeProbeSample = function(messageObject)
 {
     var data = messageObject.params.sample;
     return {
@@ -11,7 +11,7 @@ ProbeHelper.simplifiedProbeSample = function(messageObject)
     };
 }
 
-ProbeHelper.stringifyProbeSample = function(ProbeSample)
+ProtocolTest.Probe.stringifyProbeSample = function(ProbeSample)
 {
     console.assert(ProbeSample instanceof WebInspector.ProbeSample, "Unexpected object type!");
     return JSON.stringify({
@@ -20,7 +20,7 @@ ProbeHelper.stringifyProbeSample = function(ProbeSample)
     });
 }
 
-ProbeHelper.installTracingListeners = function()
+ProtocolTest.Probe.installTracingListeners = function()
 {
     if (!WebInspector.debuggerManager || !WebInspector.probeManager)
         return;

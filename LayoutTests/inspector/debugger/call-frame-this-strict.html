@@ -11,49 +11,49 @@ function test()
     // We set a breakpoint before evaluating 'sum += ...', and verify that
     // call frame this values are what we expect.
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/call-frame-this-strict\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
-            InspectorTest.log("Found <script>");
+            ProtocolTest.log("Found <script>");
             var scriptIdentifier = messageObject.params.scriptId;
             var lineNumber = messageObject.params.startLine + 3;
             var columnNumber = 4;
             var location = {scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber};
-            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
-                InspectorTest.log("Running testFunction");
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "testFunction()"});
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
+                ProtocolTest.log("Running testFunction");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "testFunction()"});
             });
         }
     }
 
     var step = 0;
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
         function assertThisValue(step, actual, expected) {
             var success = true;
             if (actual.type != expected.type) {
-                InspectorTest.log('FAIL: step ' + step + ': expect type "' + expected.type + '", actual "' + actual.type + '"');
+                ProtocolTest.log('FAIL: step ' + step + ': expect type "' + expected.type + '", actual "' + actual.type + '"');
                 success = false;
             }
 
             if (actual.type != "undefined") {
                 if (typeof actual.value != typeof expected.value) {
-                    InspectorTest.log('FAIL: step ' + step + ': expect value type "' + typeof expected.value + '", actual "' + typeof actual.value + '"');
+                    ProtocolTest.log('FAIL: step ' + step + ': expect value type "' + typeof expected.value + '", actual "' + typeof actual.value + '"');
                     success = false;
                 }
 
                 if (actual.value != expected.value) {
                     var actualResult
-                    InspectorTest.log('FAIL: step ' + step + ': expect value "' + expected.value + '", actual "' + actual.value + '"');
+                    ProtocolTest.log('FAIL: step ' + step + ': expect value "' + expected.value + '", actual "' + actual.value + '"');
                     success = false;
                 }
             }
 
             if (success)
-                InspectorTest.log('PASS: step ' + step + ': type "' + actual.type + '" value "' + actual.value + '"');
+                ProtocolTest.log('PASS: step ' + step + ': type "' + actual.type + '" value "' + actual.value + '"');
         }
 
         switch (step) {
@@ -97,9 +97,9 @@ function test()
             });
             break;
         }
-        InspectorTest.sendCommand("Debugger.resume", {});
+        InspectorProtocol.sendCommand("Debugger.resume", {});
         if (step == 5)
-            InspectorTest.completeTest();
+            ProtocolTest.completeTest();
         step++;
     }
 }

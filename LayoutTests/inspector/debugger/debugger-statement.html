@@ -12,30 +12,30 @@ function test()
     // This test setting 2 breakpoints in DFG compiled functions: one inlined,
     // and one not inlined.
 
-    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var breakpointFound = false;
 
-    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
         if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
-            InspectorTest.log("Found breakpoint.js");
+            ProtocolTest.log("Found breakpoint.js");
 
-            InspectorTest.sendCommand("Runtime.evaluate", {
+            InspectorProtocol.sendCommand("Runtime.evaluate", {
                 expression: "debuggerStatement();"
             }, function(responseObject) {
                 if (breakpointFound)
-                    InspectorTest.log("PASS");
-                InspectorTest.completeTest();
+                    ProtocolTest.log("PASS");
+                ProtocolTest.completeTest();
             });
         }
     }
 
-    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
     {
-        InspectorTest.log("Broke at debugger statement\n");
+        ProtocolTest.log("Broke at debugger statement\n");
         breakpointFound = true;
-        InspectorTest.sendCommand("Debugger.resume", {});
+        InspectorProtocol.sendCommand("Debugger.resume", {});
     }
 }
 </script>

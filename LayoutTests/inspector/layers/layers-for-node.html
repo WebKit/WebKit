@@ -17,7 +17,7 @@ function test()
     var initialLayers;
     var eventsCount = 0;
 
-    InspectorTest.eventHandler["LayerTree.layerTreeDidChange"] = function (messageObject) {
+    InspectorProtocol.eventHandler["LayerTree.layerTreeDidChange"] = function (messageObject) {
         eventsCount++;
     };
 
@@ -99,7 +99,7 @@ function test()
     {
         var attributes = attributesDictionaryFromArray(result.attributes);
         if (attributes.id !== "last-element")
-            InspectorTest.log("FAIL: Did not obtain the expected element for the last inserted layer.");
+            ProtocolTest.log("FAIL: Did not obtain the expected element for the last inserted layer.");
 
         finishTest();
     };
@@ -107,11 +107,11 @@ function test()
     function finishTest()
     {
         if (!eventsCount)
-            InspectorTest.log("FAIL: Did not receive layerTreeDidChange events.");
+            ProtocolTest.log("FAIL: Did not receive layerTreeDidChange events.");
         else
-            InspectorTest.log("\n=== Test complete, all expected conditions met ===");
+            ProtocolTest.log("\n=== Test complete, all expected conditions met ===");
 
-        InspectorTest.completeTest();
+        ProtocolTest.completeTest();
     };
 
     function layerMutations(oldLayers, newLayers)
@@ -157,20 +157,20 @@ function test()
             return value;
         };
         
-        InspectorTest.log("\n" + JSON.stringify(layers, replacer, "    "));
+        ProtocolTest.log("\n" + JSON.stringify(layers, replacer, "    "));
     };
 
     function step(test)
     {
-        InspectorTest.log("\n=== " + test.name + " ===\n")
-        InspectorTest.sendCommand(test.command, test.parameters, function(messageObject) {
+        ProtocolTest.log("\n=== " + test.name + " ===\n")
+        InspectorProtocol.sendCommand(test.command, test.parameters, function(messageObject) {
             if (messageObject.hasOwnProperty("error")) {
-                InspectorTest.log("FAIL: " + messageObject.error.message + " (" + messageObject.error.code + ")");
-                InspectorTest.completeTest();
+                ProtocolTest.log("FAIL: " + messageObject.error.message + " (" + messageObject.error.code + ")");
+                ProtocolTest.completeTest();
                 return;
             }
 
-            InspectorTest.log("PASS");
+            ProtocolTest.log("PASS");
             test.callback(messageObject.result);
         });
     };
@@ -178,9 +178,9 @@ function test()
     function assert(name, actual, expected)
     {
         if (expected === actual)
-            InspectorTest.log("PASS: " + name + ".");
+            ProtocolTest.log("PASS: " + name + ".");
         else
-            InspectorTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
+            ProtocolTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
     };
 
 };
