@@ -233,12 +233,12 @@ TEST(WTF_ParkingLot, UnparkOneOneFast)
 
 TEST(WTF_ParkingLot, UnparkOneHundredFast)
 {
-    repeatParkingTest(100, 1, 0, 100, 100);
+    repeatParkingTest(20, 1, 0, 100, 100);
 }
 
 TEST(WTF_ParkingLot, UnparkOneFiftyThenFiftyAllFast)
 {
-    repeatParkingTest(200, 1, 0, 100, 50);
+    repeatParkingTest(50, 1, 0, 100, 50);
 }
 
 TEST(WTF_ParkingLot, UnparkAllOne)
@@ -256,9 +256,9 @@ TEST(WTF_ParkingLot, UnparkOneOne)
     repeatParkingTest(10, 1, 10000, 1, 1);
 }
 
-TEST(WTF_ParkingLot, UnparkOneHundred)
+TEST(WTF_ParkingLot, UnparkOneFifty)
 {
-    repeatParkingTest(1, 1, 10000, 100, 100);
+    repeatParkingTest(1, 1, 10000, 50, 50);
 }
 
 TEST(WTF_ParkingLot, UnparkOneFiftyThenFiftyAll)

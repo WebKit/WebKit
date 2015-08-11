@@ -1,3 +1,10 @@
+2015-08-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, gardening these tests to run faster so that they don't timeout on slower OSes.
+
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch Windows build to Visual Studio 2015
