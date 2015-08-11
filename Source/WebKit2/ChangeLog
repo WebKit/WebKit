@@ -1,5 +1,38 @@
 2015-08-11  Dan Bernstein  <mitz@apple.com>
 
+        Reverted r188255, because it turned out that delegates do nonot need this information.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::footerHeight):
+        (API::UIClient::drawHeader):
+        (API::UIClient::drawFooter):
+        (API::UIClient::printFrame):
+        (API::UIClient::canRunModal):
+        (API::UIClient::runModal):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIDelegate):
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::reachedApplicationCacheOriginQuota):
+        (WebKit::UIDelegate::UIClient::printFrame):
+        (WebKit::UIDelegate::UIClient::close):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel):
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::printMainFrame):
+        (WebKit::WebPageProxy::setMediaVolume):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setShouldSendEventsSynchronously):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::print):
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+
+2015-08-11  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] The UI delegate can't tell if printing was user-initiated
         https://bugs.webkit.org/show_bug.cgi?id=147869
 

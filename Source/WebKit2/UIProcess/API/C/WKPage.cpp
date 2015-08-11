@@ -1730,7 +1730,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.drawFooter(toAPI(page), toAPI(frame), toAPI(rect), m_client.base.clientInfo);
         }
 
-        virtual void printFrame(WebPageProxy* page, WebFrameProxy* frame, bool) override
+        virtual void printFrame(WebPageProxy* page, WebFrameProxy* frame) override
         {
             if (!m_client.printFrame)
                 return;

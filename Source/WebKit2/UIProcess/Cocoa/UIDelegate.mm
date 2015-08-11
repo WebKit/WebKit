@@ -41,11 +41,6 @@
 #import "_WKFrameHandleInternal.h"
 #import <WebCore/URL.h>
 
-@protocol WKUIDelegatePrivateDeprecated <WKUIDelegatePrivate>
-@optional
-- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
-@end
-
 namespace WebKit {
 
 UIDelegate::UIDelegate(WKWebView *webView)
@@ -78,7 +73,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
     m_delegateMethods.webViewPrintFrame = [delegate respondsToSelector:@selector(_webView:printFrame:)];
-    m_delegateMethods.webViewPrintFrameUserInitiated = [delegate respondsToSelector:@selector(_webView:printFrame:userInitiated:)];
     m_delegateMethods.webViewDidClose = [delegate respondsToSelector:@selector(webViewDidClose:)];
     m_delegateMethods.webViewClose = [delegate respondsToSelector:@selector(_webViewClose:)];
     m_delegateMethods.webViewFullscreenMayReturnToInline = [delegate respondsToSelector:@selector(_webViewFullscreenMayReturnToInline:)];
@@ -236,21 +230,18 @@ void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, con
     }];
 }
 
-void UIDelegate::UIClient::printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy* webFrameProxy, bool processingUserGesture)
+void UIDelegate::UIClient::printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy* webFrameProxy)
 {
     ASSERT_ARG(webFrameProxy, webFrameProxy);
 
-    if (!m_uiDelegate.m_delegateMethods.webViewPrintFrame  && !m_uiDelegate.m_delegateMethods.webViewPrintFrameUserInitiated)
+    if (!m_uiDelegate.m_delegateMethods.webViewPrintFrame)
         return;
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return;
 
-    if (m_uiDelegate.m_delegateMethods.webViewPrintFrameUserInitiated)
-        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(API::FrameHandle::create(webFrameProxy->frameID())) userInitiated:processingUserGesture];
-    else
-        [(id <WKUIDelegatePrivateDeprecated>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(API::FrameHandle::create(webFrameProxy->frameID()))];
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(API::FrameHandle::create(webFrameProxy->frameID()))];
 }
 
 void UIDelegate::UIClient::close(WebKit::WebPageProxy*)

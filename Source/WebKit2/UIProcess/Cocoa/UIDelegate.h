@@ -68,7 +68,7 @@ private:
         virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, const WebKit::SecurityOriginData&, std::function<void (const WTF::String&)> completionHandler) override;
         virtual void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)>) override;
         virtual void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, std::function<void (unsigned long long)> completionHandler) override;
-        virtual void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, bool processingUserGesture) override;
+        virtual void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) override;
 #if PLATFORM(IOS)
 #if HAVE(APP_LINKS)
         virtual bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) override;
@@ -94,7 +94,6 @@ private:
         bool webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;
         bool webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded : 1;
         bool webViewPrintFrame : 1;
-        bool webViewPrintFrameUserInitiated : 1;
         bool webViewDidClose : 1;
         bool webViewClose : 1;
         bool webViewFullscreenMayReturnToInline : 1;
