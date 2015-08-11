@@ -1,5 +1,13 @@
 2015-08-11  Alex Christensen  <achristensen@webkit.org>
 
+        Another speculative build fix after r188280.
+
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        std::this_thread is too modern c++ for VS2013 and supported GCC versions, 
+        so let's go back to usleep and I made something close to usleep, but with much lower resolution.
+
+2015-08-11  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed build fix after r188280.
 
         * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:

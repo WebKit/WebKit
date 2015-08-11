@@ -33,6 +33,10 @@
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 
+#if PLATFORM(WIN)
+#include <windows.h>
+#endif
+
 using namespace WTF;
 
 namespace TestWebKitAPI {
@@ -191,7 +195,11 @@ void runParkingTest(unsigned numLatches, unsigned delay, unsigned numThreads, un
         tests[latchIndex].initialize(numThreads);
 
     for (unsigned unparkIndex = 0; unparkIndex < numSingleUnparks; ++unparkIndex) {
-        std::this_thread::sleep_for(std::chrono::microseconds(delay));
+#if PLATFORM(WIN)
+        Sleep(delay / 1000);
+#else
+        usleep(delay);
+#endif
         for (unsigned latchIndex = numLatches; latchIndex--;)
             tests[latchIndex].unparkOne(unparkIndex);
     }
