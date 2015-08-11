@@ -1,3 +1,12 @@
+2015-08-10  Alex Christensen  <achristensen@webkit.org>
+
+        Another build fix after r188239.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        Link with more libraries.
+        * WinLauncher/CMakeLists.txt:
+        /NODEFAULTLIB:MSVCRT is not just needed for AppleWin.
+
 2015-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r188237.

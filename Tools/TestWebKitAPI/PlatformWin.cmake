@@ -27,7 +27,12 @@ set(test_webcore_LIBRARIES
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND test_webcore_LIBRARIES
         cairo
-        curl
+        libANGLE
+        libeay32
+        mfuuid
+        ssleay32
+        strmiids
+        vcruntime
     )
 else ()
     list(APPEND test_webcore_LIBRARIES
