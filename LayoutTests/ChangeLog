@@ -1,3 +1,16 @@
+2015-08-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        feMorphology is not rendered correctly on Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=147589
+
+        Reviewed by Dean Jackson.
+
+        Ensure we take the filter scale factor into consideration when applying
+        the FEMorphology.
+
+        * fast/hidpi/filters-morphology-expected.html: Added.
+        * fast/hidpi/filters-morphology.html: Added.
+
 2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Numeric setter on prototype doesn't get called.
