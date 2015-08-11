@@ -38,9 +38,9 @@ BuildbotQueueView = function(queues)
         queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
     }.bind(this));
 
-    webkitTrac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
-    if (typeof internalTrac != "undefined")
-        internalTrac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
+    Dashboard.Repository.OpenSource.trac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
+    if (typeof Dashboard.Repository.Internal.trac != "undefined")
+        Dashboard.Repository.Internal.trac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
 };
 
 BaseObject.addConstructorFunctions(BuildbotQueueView);
@@ -76,6 +76,8 @@ BuildbotQueueView.prototype = {
         if (!latestProductiveIteration)
             return;
 
+        var webkitTrac = Dashboard.Repository.OpenSource.trac;
+        var internalTrac = Dashboard.Repository.Internal.trac;
         var latestRecordedOpenSourceRevisionNumber = webkitTrac.latestRecordedRevisionNumber;
         if (!latestRecordedOpenSourceRevisionNumber || webkitTrac.oldestRecordedRevisionNumber > latestProductiveIteration.revision[Dashboard.Repository.OpenSource.name]) {
             webkitTrac.loadMoreHistoricalData();
@@ -153,6 +155,8 @@ BuildbotQueueView.prototype = {
         var content = document.createElement("div");
         content.className = "commit-history-popover";
 
+        var webkitTrac = Dashboard.Repository.OpenSource.trac;
+        var internalTrac = Dashboard.Repository.Internal.trac;
         var linesForOpenSource = this._popoverLinesForCommitRange(webkitTrac, queue.branch.openSource, latestProductiveIteration.revision[Dashboard.Repository.OpenSource.name] + 1, webkitTrac.latestRecordedRevisionNumber);
         for (var i = 0; i != linesForOpenSource.length; ++i)
             content.appendChild(linesForOpenSource[i]);
@@ -262,12 +266,14 @@ BuildbotQueueView.prototype = {
     {
         console.assert(iteration.revision[Dashboard.Repository.OpenSource.name]);
 
-        var openSourceContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration, Dashboard.Repository.OpenSource.name, webkitTrac);
+        var openSourceContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration,
+            Dashboard.Repository.OpenSource.name, Dashboard.Repository.OpenSource.trac);
 
         if (!iteration.revision[Dashboard.Repository.Internal.name])
             return openSourceContent;
 
-        var internalContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration, Dashboard.Repository.Internal.name, internalTrac);
+        var internalContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration,
+            Dashboard.Repository.Internal.name, Dashboard.Repository.Internal.trac);
 
         var fragment = document.createDocumentFragment();
         fragment.appendChild(openSourceContent);

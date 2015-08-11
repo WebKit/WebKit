@@ -30,7 +30,7 @@ Analyzer = function()
     // Only load one queue at a time to not overload the server.
     this._queueBeingLoaded = null;
 
-    webkitTrac.addEventListener(Trac.Event.Loaded, this._loadedFromTrac, this);
+    Dashboard.Repository.OpenSource.trac.addEventListener(Trac.Event.Loaded, this._loadedFromTrac, this);
 };
 
 BaseObject.addConstructorFunctions(Analyzer);
@@ -77,7 +77,7 @@ Analyzer.prototype = {
                 this._queuesReadyToAnalyze.push(queue);
         }, this);
 
-        webkitTrac.load(this._rangeStartTime, this._rangeEndTime);
+        Dashboard.Repository.OpenSource.trac.load(this._rangeStartTime, this._rangeEndTime);
 
         bubbleQueueServer.loadProcessingTimes(this._rangeStartTime, this._rangeEndTime, this._loadedBubblesTiming.bind(this));
     },
@@ -264,7 +264,7 @@ Analyzer.prototype = {
         var worstTimeRevision;
         var worstOwnTimeRevision;
 
-        webkitTrac.recordedCommits.forEach(function(revision) {
+        Dashboard.Repository.OpenSource.trac.recordedCommits.forEach(function(revision) {
             if (revision.date < this._rangeStartTime || revision.date >= this._rangeEndTime)
                 return;
 

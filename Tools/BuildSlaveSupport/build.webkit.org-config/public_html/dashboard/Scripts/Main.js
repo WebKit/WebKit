@@ -296,8 +296,8 @@ function documentReady()
     }
 }
 
-webkitTrac.startPeriodicUpdates();
-if (typeof internalTrac !== "undefined")
-    internalTrac.startPeriodicUpdates();
+Dashboard.Repository.OpenSource.trac.startPeriodicUpdates();
+if (typeof Dashboard.Repository.Internal.trac !== "undefined")
+    Dashboard.Repository.Internal.trac.startPeriodicUpdates();
 
 document.addEventListener("DOMContentLoaded", documentReady);
