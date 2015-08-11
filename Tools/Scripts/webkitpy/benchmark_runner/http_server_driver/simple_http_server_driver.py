@@ -91,3 +91,6 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     def get_return_code(self):
         return self._server_process.returncode
+
+    def set_device_id(self, device_id):
+        pass

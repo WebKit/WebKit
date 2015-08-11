@@ -18,6 +18,9 @@ class OSXBrowserDriver(BrowserDriver):
         from Quartz import CGWarpMouseCursorPosition
         CGWarpMouseCursorPosition((10, 0))
 
+    def restore_env(self):
+        pass
+
     def close_browsers(self):
         self._terminiate_processes(self.process_name)
 
