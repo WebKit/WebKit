@@ -68,62 +68,62 @@ void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned
         EXPECT_EQ(expected, words[threadGroupIndex]);
 }
 
-TEST(WTF_Lock, UncontentedShortSection)
+TEST(WTF_Lock, UncontendedShortSection)
 {
     runLockTest<Lock>(1, 1, 1, 10000000);
 }
 
-TEST(WTF_Lock, UncontentedLongSection)
+TEST(WTF_Lock, UncontendedLongSection)
 {
     runLockTest<Lock>(1, 1, 10000, 1000);
 }
 
-TEST(WTF_Lock, ContentedShortSection)
+TEST(WTF_Lock, ContendedShortSection)
 {
     runLockTest<Lock>(1, 10, 1, 10000000);
 }
 
-TEST(WTF_Lock, ContentedLongSection)
+TEST(WTF_Lock, ContendedLongSection)
 {
     runLockTest<Lock>(1, 10, 10000, 10000);
 }
 
-TEST(WTF_Lock, ManyContentedShortSections)
+TEST(WTF_Lock, ManyContendedShortSections)
 {
     runLockTest<Lock>(10, 10, 1, 500000);
 }
 
-TEST(WTF_Lock, ManyContentedLongSections)
+TEST(WTF_Lock, ManyContendedLongSections)
 {
     runLockTest<Lock>(10, 10, 10000, 1000);
 }
 
-TEST(WTF_ByteLock, UncontentedShortSection)
+TEST(WTF_ByteLock, UncontendedShortSection)
 {
     runLockTest<ByteLock>(1, 1, 1, 10000000);
 }
 
-TEST(WTF_ByteLock, UncontentedLongSection)
+TEST(WTF_ByteLock, UncontendedLongSection)
 {
     runLockTest<ByteLock>(1, 1, 10000, 1000);
 }
 
-TEST(WTF_ByteLock, ContentedShortSection)
+TEST(WTF_ByteLock, ContendedShortSection)
 {
     runLockTest<ByteLock>(1, 10, 1, 10000000);
 }
 
-TEST(WTF_ByteLock, ContentedLongSection)
+TEST(WTF_ByteLock, ContendedLongSection)
 {
     runLockTest<ByteLock>(1, 10, 10000, 10000);
 }
 
-TEST(WTF_ByteLock, ManyContentedShortSections)
+TEST(WTF_ByteLock, ManyContendedShortSections)
 {
     runLockTest<ByteLock>(10, 10, 1, 500000);
 }
 
-TEST(WTF_ByteLock, ManyContentedLongSections)
+TEST(WTF_ByteLock, ManyContendedLongSections)
 {
     runLockTest<ByteLock>(10, 10, 10000, 1000);
 }

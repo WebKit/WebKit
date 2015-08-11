@@ -81,7 +81,7 @@ class TestRunner:
     ]
 
     SLOW = [
-        "WTF_Lock.ContentedShortSection",
+        "WTF_Lock.ContendedShortSection",
     ]
 
     def __init__(self, options, tests=[]):

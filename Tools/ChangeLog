@@ -1,3 +1,20 @@
+2015-08-11  Mark Lam  <mark.lam@apple.com>
+
+        Fix names of Lock tests: should be "Contended", not "Contented".
+        https://bugs.webkit.org/show_bug.cgi?id=147905
+
+        Reviewed by Saam Barati.
+
+        We're testing the behavior of lock contention (i.e. when threads contend), not
+        whether the locks are happy (contented).
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+        (TestRunner.__init__): Deleted.
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::runLockTest):
+        (TestWebKitAPI::TEST):
+
 2015-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Update WinCairoRequirements to VS2015.
