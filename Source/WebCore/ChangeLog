@@ -1,3 +1,20 @@
+2015-08-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r187758. rdar://problem/22095006
+
+    2015-08-03  Anders Carlsson  <andersca@apple.com>
+
+            Safari is failing to remove SQLite Databases via Remove All Website Data
+            https://bugs.webkit.org/show_bug.cgi?id=147584
+            rdar://problem/22095006
+
+            Reviewed by Brady Eidson.
+
+            If we end up deleting every single database for an origin, make sure to also delete the origin.
+
+            * Modules/webdatabase/DatabaseTracker.cpp:
+            (WebCore::DatabaseTracker::deleteDatabasesModifiedSince):
+
 2015-08-10  Dana Burkart  <dburkart@apple.com>
 
         Merge r188182. rdar://problem/21254835
