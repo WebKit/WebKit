@@ -40,6 +40,7 @@ if (WTF_PLATFORM_WIN_CAIRO)
         CFLite
     )
 else ()
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT")
     list(APPEND WinLauncher_LIBRARIES
         CoreFoundation
     )

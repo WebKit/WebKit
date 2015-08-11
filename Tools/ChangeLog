@@ -1,3 +1,28 @@
+2015-08-10  Alex Christensen  <achristensen@webkit.org>
+
+        Build TestWebKitAPI with CMake on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147851
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * TestWebKitAPI/CMakeLists.txt:
+        Removed TestJavaScriptCore because JavaScriptCore's API tests are elsewhere and this was just making an empty binary.
+        Surrounded WebKit2-specific features with ENABLE_WEBKIT2 checks.
+        Include directories after the Platform*.cmake is included because HostWindow.h needs to be found in Tools/TestWebKitAPI/win 
+        before we look in Source/WebCore/platform, where another file named HostWindow.h exists.
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        Windows needs all the binaries to be in the same directory to find gtest.dll and the other dlls.
+        I did this without changing the directory structure of the existing EFL and GTK builds.
+        * TestWebKitAPI/PlatformWin.cmake: Added.
+        * TestWebKitAPI/win/main.cpp:
+        (main):
+        (dllLauncherEntryPoint):
+        Added so we can launch TestWebKitAPI executables after finding the AAS directory.
+        * WinLauncher/CMakeLists.txt:
+        AppleWin port needs /NODEFAULTLIB:MSVCRT.
+
 2015-08-10  Dewei Zhu  <dewei_zhu@apple.com>
 
         Make cleanup more robust and minor code cleaning in run benchmark script.

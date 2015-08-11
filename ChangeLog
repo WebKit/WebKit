@@ -1,3 +1,13 @@
+2015-08-10  Alex Christensen  <achristensen@webkit.org>
+
+        Build TestWebKitAPI with CMake on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147851
+
+        Reviewed by Chris Dumez.
+
+        * Source/cmake/OptionsWindows.cmake:
+        Enable api tests and set USE_SYSTEM_MALLOC to avoid warnings when redefining it.
+
 2015-08-06  Alex Christensen  <achristensen@webkit.org>
 
         [Win] CMake build fix after r188098.
