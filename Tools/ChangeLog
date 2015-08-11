@@ -1,3 +1,10 @@
+2015-08-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, shorten another test since it timed out.
+
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-08-11  Mark Lam  <mark.lam@apple.com>
 
         Fix names of Lock tests: should be "Contended", not "Contented".

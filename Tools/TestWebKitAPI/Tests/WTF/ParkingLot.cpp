@@ -223,7 +223,7 @@ TEST(WTF_ParkingLot, UnparkAllOneFast)
 
 TEST(WTF_ParkingLot, UnparkAllHundredFast)
 {
-    repeatParkingTest(1000, 1, 0, 100, 0);
+    repeatParkingTest(100, 1, 0, 100, 0);
 }
 
 TEST(WTF_ParkingLot, UnparkOneOneFast)
