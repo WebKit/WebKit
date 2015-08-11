@@ -1,3 +1,16 @@
+2015-08-11  Brian Burg  <bburg@apple.com>
+
+        webkit-patch should not explode when $EDITOR is set incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=147884
+
+        Reviewed by Darin Adler.
+
+        If $EDITOR doesn't exist, log a warning and continue.
+
+        * Scripts/webkitpy/common/system/user.py: 
+        (User.edit):
+        (User.edit_changelog):
+
 2015-08-11  Dan Bernstein  <mitz@apple.com>
 
         Reverted r188255, because it turned out that delegates do nonot need this information.

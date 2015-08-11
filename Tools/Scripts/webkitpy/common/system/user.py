@@ -126,7 +126,10 @@ class User(object):
         editor = os.environ.get("EDITOR") or "vi"
         args = shlex.split(editor)
         # Note: Not thread safe: http://bugs.python.org/issue2320
-        subprocess.call(args + files)
+        try:
+            subprocess.call(args + files)
+        except OSError, e:
+            _log.warn("There was a problem editing the ChangeLog using editor '%s': %s." % (editor, e))
 
     def _warn_if_application_is_xcode(self, edit_application):
         if "Xcode" in edit_application:
