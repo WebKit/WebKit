@@ -1,3 +1,32 @@
+2015-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch Windows build to Visual Studio 2015
+        https://bugs.webkit.org/show_bug.cgi?id=147887
+        <rdar://problem/22235098>
+
+        Reviewed by Alex Christensen.
+
+        Update Visual Studio project file settings to use the current Visual
+        Studio and compiler. Continue targeting binaries to run on our minimum
+        supported configuration of Windows 7.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiff.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncher.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj:
+        * Scripts/webkitdirs.pm: Modify our Visual Studio search routines to
+        prefer the newer MSBuild included in Visual Studio 2015.
+        (visualStudioInstallDir):
+        (msBuildInstallDir):
+        (visualStudioVersion):
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj:
+        * win/record-memory/record-memory.vcxproj:
+
 2015-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Another speculative build fix after r188280.

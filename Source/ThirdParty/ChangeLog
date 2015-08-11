@@ -1,3 +1,17 @@
+2015-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch Windows build to Visual Studio 2015
+        https://bugs.webkit.org/show_bug.cgi?id=147887
+        <rdar://problem/22235098>
+
+        Reviewed by Alex Christensen.
+
+        Update Visual Studio project file settings to use the current Visual
+        Studio and compiler. Continue targeting binaries to run on our minimum
+        supported configuration of Windows 7.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2015-08-10  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Unreviewed build fix after r188239.
