@@ -1,5 +1,19 @@
 2015-08-11  Chris Dumez  <cdumez@apple.com>
 
+        The 'length' property on interface objects should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=147858
+
+        Reviewed by Daniel Bates.
+
+        Add layout test to check that the 'length' property on interface
+        objects has the following attributes:
+        { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }
+
+        * fast/dom/length-property-configurable-expected.txt: Added.
+        * fast/dom/length-property-configurable.html: Added.
+
+2015-08-11  Chris Dumez  <cdumez@apple.com>
+
         [WebIDL] All interface objects must have a property named "name"
         https://bugs.webkit.org/show_bug.cgi?id=147865
 

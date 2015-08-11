@@ -140,7 +140,7 @@ void JSTestEventConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestEventConstructor"))), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }
 
 ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, ConstructData& constructData)

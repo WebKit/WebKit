@@ -92,7 +92,7 @@ void JSreadonlyConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObje
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSreadonly::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("readonly"))), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
 /* Hash table for prototype */

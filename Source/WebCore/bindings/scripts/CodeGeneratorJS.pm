@@ -4795,7 +4795,7 @@ sub GenerateConstructorHelperMethods
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral(\"$visibleInterfaceName\"))), ReadOnly | DontEnum);\n");
 
     if (defined $leastConstructorLength) {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontEnum);\n");
     }
 
     if (ConstructorHasProperties($interface)) {
