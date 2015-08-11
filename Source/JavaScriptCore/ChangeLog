@@ -1,3 +1,9 @@
+2015-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed windows build fix for VS2015.
+
+        * bindings/ScriptValue.h: Add missing JSCJSValueInlines.h include.
+
 2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.has
