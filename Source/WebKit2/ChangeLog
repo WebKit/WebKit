@@ -1,3 +1,17 @@
+2015-08-11  Andy Estes  <aestes@apple.com>
+
+        WebFrameLoaderClient::dispatchDecidePolicyForResponse() calls an std::function after it's been moved from
+        https://bugs.webkit.org/show_bug.cgi?id=147873
+
+        Reviewed by Alexey Proskuryakov.
+        
+        I noticed during code inspection that we were calling an std::function after WTF::move() has been called on it.
+        Calling an empty std::function results in a C++ exception being thrown. I don't know how to make a sync IPC
+        message fail, so I'm not sure how to test this.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse): Called didReceivePolicyDecision instead.
+
 2015-08-11  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r188053): Sometimes unable to save an image from Google Search/
