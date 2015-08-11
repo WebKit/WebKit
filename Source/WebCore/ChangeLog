@@ -1,5 +1,39 @@
 2015-08-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188203. rdar://problem/22026625
+
+    2015-08-09  Nan Wang  <n_wang@apple.com>
+
+            AX: CSS table display styles can cause malformed, inaccessible AXTables to be exposed to the AX tree
+            https://bugs.webkit.org/show_bug.cgi?id=136415
+            <rdar://problem/22026625>
+
+            Reviewed by Chris Fleizach.
+
+            Applying CSS display styles to tables can end up inserting anonymous RenderTableRows, which is not handled well by the
+            accessibility code, which treats these as the actual rows. We can address this by diving deeper into anonymous nodes
+            and finding the real rows and cells we want. In addition, another thing also causing malformed tables is that "grid"
+            roles are being exposed as AXGrid instead of AXTable.
+
+            Test: accessibility/mac/malformed-table.html
+
+            * accessibility/AccessibilityARIAGrid.cpp:
+            (WebCore::AccessibilityARIAGrid::addRowDescendant):
+            * accessibility/AccessibilityTable.cpp:
+            (WebCore::AccessibilityTable::addChildren):
+            (WebCore::AccessibilityTable::addTableCellChild):
+            (WebCore::AccessibilityTable::addChildrenFromSection):
+            * accessibility/AccessibilityTable.h:
+            * accessibility/AccessibilityTableCell.cpp:
+            (WebCore::AccessibilityTableCell::parentTable):
+            (WebCore::AccessibilityTableCell::rowIndexRange):
+            * accessibility/AccessibilityTableRow.cpp:
+            (WebCore::AccessibilityTableRow::parentTable):
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (createAccessibilityRoleMap):
+
+2015-08-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188243. rdar://problem/22102378
 
     2015-08-10  Myles C. Maxfield  <mmaxfield@apple.com>

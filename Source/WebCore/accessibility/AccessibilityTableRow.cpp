@@ -98,13 +98,14 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
     // The parent table might not be the direct ancestor of the row unfortunately. ARIA states that role="grid" should
     // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
-        // If this is a table object, but not an accessibility table, we should stop because we don't want to
+        // If this is a non-anonymous table object, but not an accessibility table, we should stop because we don't want to
         // choose another ancestor table as this row's table.
         if (is<AccessibilityTable>(*parent)) {
             auto& parentTable = downcast<AccessibilityTable>(*parent);
             if (parentTable.isExposableThroughAccessibility())
                 return &parentTable;
-            break;
+            if (parentTable.node())
+                break;
         }
     }
     

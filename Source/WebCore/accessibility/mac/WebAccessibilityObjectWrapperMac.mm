@@ -1918,7 +1918,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { RulerMarkerRole, NSAccessibilityRulerMarkerRole },
         { LinkRole, NSAccessibilityLinkRole },
         { DisclosureTriangleRole, NSAccessibilityDisclosureTriangleRole },
-        { GridRole, NSAccessibilityGridRole },
+        { GridRole, NSAccessibilityTableRole },
         { WebCoreLinkRole, NSAccessibilityLinkRole },
         { ImageMapLinkRole, NSAccessibilityLinkRole },
         { ImageMapRole, @"AXImageMap" },
