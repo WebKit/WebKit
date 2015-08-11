@@ -44,6 +44,13 @@ public:
     
     bool run()
     {
+        // FIXME: This phase shouldn't exist. We should have registered all structures by now, since
+        // we may already have done optimizations that rely on structures having been registered.
+        // Currently, we still have places where we don't register structures prior to this phase,
+        // but structures don't end up being used for optimization prior to this phase. That's a
+        // pretty fragile situation and we should fix it eventually.
+        // https://bugs.webkit.org/show_bug.cgi?id=147889
+        
         // We need to set this before this phase finishes. This phase doesn't do anything
         // conditioned on this field, except for assertIsRegistered() below. We intend for that
         // method to behave as if the phase was already finished. So, we set this up here.

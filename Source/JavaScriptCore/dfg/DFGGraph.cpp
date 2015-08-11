@@ -1280,9 +1280,6 @@ void Graph::assertIsRegistered(Structure* structure)
     if (!structure)
         return;
     
-    if (m_structureRegistrationState == HaveNotStartedRegistering)
-        return;
-    
     DFG_ASSERT(*this, nullptr, m_plan.weakReferences.contains(structure));
     
     if (!structure->dfgShouldWatch())

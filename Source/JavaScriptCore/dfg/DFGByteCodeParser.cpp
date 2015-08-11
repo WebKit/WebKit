@@ -204,7 +204,6 @@ private:
     bool handleConstantInternalFunction(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, const ChecksFunctor& insertChecks);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
-    Node* handleGetByOffset(SpeculatedType, Node* base, const StructureSet&, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
     Node* handleGetByOffset(SpeculatedType, Node* base, UniquedStringImpl*, PropertyOffset, NodeType = GetByOffset);
 
     // Create a presence ObjectPropertyCondition based on some known offset and structure set. Does not
@@ -2286,18 +2285,6 @@ Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, u
     return getByOffset;
 }
 
-Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, const StructureSet& structureSet, unsigned identifierNumber, PropertyOffset offset, NodeType op)
-{
-    if (base->hasConstant()) {
-        if (JSValue constant = m_graph.tryGetConstantProperty(base->asJSValue(), structureSet, offset)) {
-            addToGraph(Phantom, base);
-            return weakJSConstant(constant);
-        }
-    }
-    
-    return handleGetByOffset(prediction, base, identifierNumber, offset, op);
-}
-
 Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, PropertyOffset offset, Node* value)
 {
     Node* propertyStorage;
@@ -2593,8 +2580,7 @@ Node* ByteCodeParser::load(
         loadedValue = load(loadPrediction, variant.conditionSet(), loadOp);
     else {
         loadedValue = handleGetByOffset(
-            loadPrediction, base, variant.structureSet(), identifierNumber, variant.offset(),
-            loadOp);
+            loadPrediction, base, identifierNumber, variant.offset(), loadOp);
     }
 
     return loadedValue;

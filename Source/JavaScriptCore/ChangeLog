@@ -1,3 +1,19 @@
+2015-08-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::ByteCodeParser shouldn't call tryGetConstantProperty() with some StructureSet if it isn't checking that the base has a structure in that StructureSet
+        https://bugs.webkit.org/show_bug.cgi?id=147891
+        rdar://problem/22129447
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetByOffset): Get rid of this.
+        (JSC::DFG::ByteCodeParser::load): Don't call the version of handleGetByOffset() that assumes that we had CheckStructure'd some StructureSet, since we may not have CheckStructure'd anything.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::assertIsRegistered): Make this always assert even before the StructureRegistrationPhase.
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run): Add a FIXME that notes that we no longer believe that structures should be registered only at this phase. They should be registered before this phase and this phase should be removed.
+
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch Windows build to Visual Studio 2015
