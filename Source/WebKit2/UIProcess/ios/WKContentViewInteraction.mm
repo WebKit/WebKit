@@ -1083,21 +1083,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     _lastInteractionLocation = gestureRecognizer.startPoint;
 
-    switch ([gestureRecognizer state]) {
-    case UIGestureRecognizerStateBegan:
-    {
+    if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
         SEL action = [self _actionForLongPress];
         if (action) {
             [self performSelector:action];
             [self _cancelLongPressGestureRecognizer];
         }
-    }
-        break;
-    case UIGestureRecognizerStateCancelled:
-        [_actionSheetAssistant cleanupSheet];
-        break;
-    default:
-        break;
     }
 }
 
