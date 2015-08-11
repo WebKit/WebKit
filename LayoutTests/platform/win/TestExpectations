@@ -3151,3 +3151,22 @@ fast/text/fallback-language-han.html [ Skip ]
 
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+
+fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
+fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
+fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
+fast/text/trailing-word.html [ ImageOnlyFailure ]
+
+# TestRunner::addChromeInputField() and focusWebView() not implemented
+fast/forms/focus-option-control-on-page.html [ Skip ]
+
+# TestRunner::setMockGeolocationPosition() not implemented
+fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
+fast/history/page-cache-geolocation-active-watcher.html [ Skip ]
+
+fast/forms/indeterminate-progress-inline-height.html [ Failure ]
+fast/forms/listbox-scrollbar-hit-test.html [ Failure ]

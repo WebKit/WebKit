@@ -1,3 +1,12 @@
+2015-08-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Windows test gardening.
+
+        * platform/win/TestExpectations:
+        * platform/win/css3/font-feature-settings-preinstalled-fonts-expected.txt: Added.
+        * platform/win/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/win/fast/forms/input-appearance-spinbutton-up-expected.txt: Added.
+
 2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce get_by_id like IC into get_by_val when the given name is String or Symbol
