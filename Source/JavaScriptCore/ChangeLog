@@ -1,3 +1,47 @@
+2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Numeric setter on prototype doesn't get called.
+        https://bugs.webkit.org/show_bug.cgi?id=144252
+
+        Reviewed by Darin Adler.
+
+        When switching the blank indexing type to the other one in putByIndex,
+        if the `structure(vm)->needsSlowPutIndexing()` is true, we need to switch
+        it to the slow put indexing type and reloop the putByIndex since there may
+        be some indexing accessor in the prototype chain. Previously, we just set
+        the value into the allocated vector.
+
+        In the putDirectIndex case, we just store the value to the vector.
+        This is because putDirectIndex is the operation to store the own property
+        and it does not check the accessors in the prototype chain.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        * tests/stress/injected-numeric-setter-on-prototype.js: Added.
+        (shouldBe):
+        (Trace):
+        (Trace.prototype.trace):
+        (Trace.prototype.get count):
+        (.):
+        * tests/stress/numeric-setter-on-prototype-non-blank-array.js: Added.
+        (shouldBe):
+        (Trace):
+        (Trace.prototype.trace):
+        (Trace.prototype.get count):
+        (.):
+        * tests/stress/numeric-setter-on-prototype.js: Added.
+        (shouldBe):
+        (Trace):
+        (Trace.prototype.trace):
+        (Trace.prototype.get count):
+        (.z.__proto__.set 3):
+        * tests/stress/numeric-setter-on-self.js: Added.
+        (shouldBe):
+        (Trace):
+        (Trace.prototype.trace):
+        (Trace.prototype.get count):
+        (.y.set 2):
+
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

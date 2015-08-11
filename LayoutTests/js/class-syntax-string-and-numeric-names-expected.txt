@@ -28,14 +28,14 @@ PASS class A { get 0() { return 20; } }; (new A)[0] is 20
 PASS class A { get 0() { return 20; } }; A[0] is undefined
 PASS class A { static get 1() { return 21; } }; A[1] is 21
 PASS class A { static get 1() { return 21; } }; (new A)[1] is undefined
-FAIL setterValue = 0; X = class { set 2(x) { setterValue = x; } }; (new X)[2] = 22; setterValue should be 22. Was 0.
-FAIL X[2] = 23; setterValue should be 22. Was 0.
+PASS setterValue = 0; X = class { set 2(x) { setterValue = x; } }; (new X)[2] = 22; setterValue is 22
+PASS X[2] = 23; setterValue is 22
 PASS setterValue = 0; X = class { static set 3(x) { setterValue = x; } }; X[3] = 23; setterValue is 23
 PASS (new X)[3] = 23; setterValue is 23
 PASS X = class { get 4() { return 24 } set 4(x) { } }; x = new X; x[4] is 24
 PASS X[4] is undefined
-FAIL setterValue = 0; X = class { get 5() { } set 5(x) { setterValue = x; } }; (new X)[5] = 25; setterValue should be 25. Was 0.
-FAIL X[5] = 26; setterValue should be 25. Was 0.
+PASS setterValue = 0; X = class { get 5() { } set 5(x) { setterValue = x; } }; (new X)[5] = 25; setterValue is 25
+PASS X[5] = 26; setterValue is 25
 PASS X = class { static set 6(x) { } static get 6() { return 26 } }; X[6] is 26
 PASS (new X)[6] is undefined
 PASS setterValue = 0; X = class { static set 7(x) { setterValue = x } static get 7() { } }; X[7] = 27; setterValue is 27

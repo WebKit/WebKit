@@ -1,3 +1,14 @@
+2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Numeric setter on prototype doesn't get called.
+        https://bugs.webkit.org/show_bug.cgi?id=144252
+
+        Reviewed by Darin Adler.
+
+        Update the test expectation file.
+
+        * js/class-syntax-string-and-numeric-names-expected.txt:
+
 2015-08-11  Brian Burg  <bburg@apple.com>
 
         Web Inspector: use different namespaces in test fixtures for protocol tests and frontend tests
