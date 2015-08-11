@@ -35,7 +35,7 @@ class BenchmarkBuilder(object):
         _log.info('Copied the benchmark into: %s' % self._dest)
         try:
             if 'create_script' in self._plan:
-                self._run_create_script(plan['create_script'])
+                self._run_create_script(self._plan['create_script'])
             if 'benchmark_patch' in self._plan:
                 self._apply_patch(self._plan['benchmark_patch'])
             return self._web_root

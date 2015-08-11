@@ -1,3 +1,10 @@
+2015-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r188237.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder.py:
+        (BenchmarkBuilder.__enter__):
+
 2015-08-10  Dewei Zhu  <dewei_zhu@apple.com>
 
         Update ReadMe and correct the way to use abstract abstract class.
