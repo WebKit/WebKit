@@ -1,3 +1,10 @@
+2015-08-11  Andy Estes  <aestes@apple.com>
+
+        Tried again to fix the iOS build.
+
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS initWithProcessPool:]):
+
 2015-08-11  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the iOS build.
