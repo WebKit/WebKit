@@ -53,7 +53,6 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
-#include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
@@ -110,20 +109,9 @@ static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
     // The <body> only paints its background if the root element has defined a background independent of the body,
     // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
     auto documentElementRenderer = bodyElementRenderer->document().documentElement()->renderer();
-
-    if (!documentElementRenderer)
-        return false;
-
-    if (documentElementRenderer->hasBackground())
-        return false;
-
-    if (documentElementRenderer != bodyElementRenderer->parent())
-        return false;
-
-    if (bodyElementRenderer->isComposited() && documentElementRenderer->isComposited())
-        return downcast<RenderLayerModelObject>(documentElementRenderer)->layer()->backing()->graphicsLayer()->drawsContent();
-
-    return true;
+    return documentElementRenderer
+        && !documentElementRenderer->hasBackground()
+        && (documentElementRenderer == bodyElementRenderer->parent());
 }
 
 RenderBox::RenderBox(Element& element, Ref<RenderStyle>&& style, unsigned baseTypeFlags)

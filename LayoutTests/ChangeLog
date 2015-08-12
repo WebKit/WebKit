@@ -1,3 +1,21 @@
+2015-08-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r188190.
+
+    2015-08-08  Commit Queue  <commit-queue@webkit.org>
+
+            Unreviewed, rolling out r179871.
+            https://bugs.webkit.org/show_bug.cgi?id=147810
+
+            Breaks product images on http://www.apple.com/shop/buy-
+            mac/macbook (Requested by smfr on #webkit).
+
+            Reverted changeset:
+
+            "Render: properly update body's background image"
+            https://bugs.webkit.org/show_bug.cgi?id=140183
+            http://trac.webkit.org/changeset/179871
+
 2015-08-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r188195. rdar://problem/22102378
