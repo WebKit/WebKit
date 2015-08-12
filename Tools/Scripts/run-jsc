@@ -42,6 +42,8 @@ my $usage = "Usage: run-jsc [--count run_count] shell_file [file2...]";
 my $count = 1;
 GetOptions("count|c=i" => \$count);
 
+setConfiguration();
+
 my $jsc = jscProductDir() . "/jsc @ARGV";
 
 my $dyld = jscProductDir();

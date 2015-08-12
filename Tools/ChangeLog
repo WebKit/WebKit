@@ -1,3 +1,14 @@
+2015-08-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Allow --debug option in run-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=147923
+
+        Reviewed by Csaba Osztrogonác.
+
+        When `--debug` option is specified in run-jsc, it runs the JSC shell built in the debug mode.
+
+        * Scripts/run-jsc:
+
 2015-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix test after build fix in r188286.
