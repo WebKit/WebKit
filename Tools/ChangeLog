@@ -1,3 +1,52 @@
+2015-08-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a tool that dumps class and struct member layout, showing padding
+        https://bugs.webkit.org/show_bug.cgi?id=147898
+
+        Reviewed by Zalan Bujtas.
+        
+        This 'dump-class-layout' script uses the lldb Python bindings to collect data
+        about data member layout, and displays it.
+        
+        Sample output:
+
+              +0 { 72} WTF::ListHashSet<WebCore::URL, WebCore::URLHash>::Node
+              +0 < 56>     WebCore::URL m_value;
+              +0 <  8>         WTF::String m_string;
+              +0 <  8>             WTF::RefPtr<WTF::StringImpl> m_impl;
+              +0 <  8>                 WTF::StringImpl * m_ptr;
+              +8 <  1>         bool:1 m_isValid;
+              +8 <  1>         bool:1 m_protocolIsInHTTPFamily;
+              +9 <  3>         <PADDING>
+             +12 <  4>         int m_schemeEnd;
+             +16 <  4>         int m_userStart;
+             +20 <  4>         int m_userEnd;
+             +24 <  4>         int m_passwordEnd;
+             +28 <  4>         int m_hostEnd;
+             +32 <  4>         int m_portEnd;
+             +36 <  4>         int m_pathAfterLastSlash;
+             +40 <  4>         int m_pathEnd;
+             +44 <  4>         int m_queryEnd;
+             +48 <  4>         int m_fragmentEnd;
+             +52 <  4>         <PADDING>
+             +52 <  4>     <PADDING>
+             +56 <  8>     WTF::ListHashSetNode<WebCore::URL> * m_prev;
+             +64 <  8>     WTF::ListHashSetNode<WebCore::URL> * m_next;
+            Total byte size: 72
+            Total pad bytes: 11
+            Padding percentage: 15.28 %
+
+        * Scripts/dump-class-layout: Added.
+        (webkit_build_dir):
+        (developer_dir):
+        (import_lldb):
+        (find_build_directory):
+        (verify_type):
+        (verify_type_recursive):
+        (dump_class):
+        (main):
+        (main.or):
+
 2015-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Fix Debug CMake builds on Windows
