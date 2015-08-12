@@ -346,7 +346,7 @@ class TestRunner:
         test_command = [test_program, '--gtest_filter=%s' % (subtest)]
         timeout = self._options.timeout
         if subtest in TestRunner.SLOW:
-            timeout *= 2
+            timeout *= 5
         return self._run_test_command(test_command, timeout)
 
     def _run_google_test_suite(self, test_program):

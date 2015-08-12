@@ -1,3 +1,15 @@
+2015-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. run-gtk-tests: Use a longer timeout for slow tests.
+
+        In r188125 I added a way to mark tests as slow to use a longer
+        timeout. But it seems it was not enough for
+        WTF_Lock.ContendedShortSection, so let's try again with a longer
+        timeout now.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_google_test):
+
 2015-08-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Allow --debug option in run-jsc
