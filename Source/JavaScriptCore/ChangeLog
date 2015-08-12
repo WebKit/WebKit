@@ -1,3 +1,25 @@
+2015-08-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Re-land r188339, since Alex fixed it in r188341 by landing the WebCore half.
+
+        * jit/ExecutableAllocator.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionAddressOf):
+        (functionVersion):
+        (functionReleaseExecutableMemory): Deleted.
+        * runtime/VM.cpp:
+        (JSC::StackPreservingRecompiler::operator()):
+        (JSC::VM::throwException):
+        (JSC::VM::updateFTLLargestStackSize):
+        (JSC::VM::gatherConservativeRoots):
+        (JSC::VM::releaseExecutableMemory): Deleted.
+        (JSC::releaseExecutableMemory): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::isCollectorBusy):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::setTimeLimit):
+
 2015-08-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Roll out r188339, which broke the build.
