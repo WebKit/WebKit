@@ -1,3 +1,13 @@
+2015-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Not receiving responses for async request IndexedDB.requestDatabaseNames
+        https://bugs.webkit.org/show_bug.cgi?id=147844
+
+        Reviewed by Brian Burg.
+
+        * inspector/indexeddb/requestDatabaseNames-expected.txt: Added.
+        * inspector/indexeddb/requestDatabaseNames.html: Added.
+
 2015-08-11  Matt Rajca  <mrajca@apple.com>
 
         Media Session: test Play/Pause media control events delivered to Default media sessions

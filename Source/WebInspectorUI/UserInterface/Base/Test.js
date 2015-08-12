@@ -155,6 +155,16 @@ InspectorTest.debugLog = function(message)
     this.evaluateInPage("InspectorTestProxy.debugLog(unescape('" + escape(JSON.stringify(message)) + "'))");
 }
 
+// Appends a message in the test document if there was an error, and attempts to complete the test.
+InspectorTest.expectNoError = function(error)
+{
+    if (error) {
+        InspectorTest.log("PROTOCOL ERROR: " + error);
+        InspectorTest.completeTest();
+        throw "PROTOCOL ERROR";
+    }
+}
+
 InspectorTest.completeTest = function()
 {
     if (InspectorTest.dumpMessagesToConsole)

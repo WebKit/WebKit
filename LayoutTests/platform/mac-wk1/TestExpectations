@@ -65,6 +65,7 @@ http/tests/security/cross-origin-worker-indexeddb.html
 http/tests/security/no-indexeddb-from-sandbox.html
 crypto/subtle/rsa-indexeddb.html
 crypto/subtle/rsa-indexeddb-non-exportable.html
+inspector/indexeddb
 
 # But since it is disabled at runtime, we should make sure it is correctly disabled
 storage/indexeddb/properties-disabled-at-runtime.html [ Pass ]

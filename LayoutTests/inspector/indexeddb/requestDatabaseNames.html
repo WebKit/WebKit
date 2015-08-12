@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function createDatabase(name)
+{
+    let request = window.indexedDB.open(name, 1);
+    request.addEventListener('success', function() {
+        console.log(`Created Database '${name}'`);
+    });
+}
+
+function test()
+{
+    var steps = [
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially");
+                    InspectorTest.evaluateInPage("createDatabase('Database1')");
+                });
+            }
+        },
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist");
+                    InspectorTest.log(JSON.stringify(names));
+                    InspectorTest.evaluateInPage("createDatabase('Database2')");
+                });
+            }
+        },
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist");
+                    InspectorTest.log(JSON.stringify(names));
+                    next();
+                });
+            }
+        }
+    ];
+
+    function next() {
+        let step = steps.shift();
+        if (!step) {
+            InspectorTest.completeTest();
+            return;
+        }
+        step.action();
+    }
+
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+        InspectorTest.log(event.data.message.messageText);
+        next();
+    });
+
+    InspectorTest.log("");
+    next();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>
