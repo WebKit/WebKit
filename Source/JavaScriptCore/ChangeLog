@@ -1,3 +1,37 @@
+2015-08-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.defineProperty
+        https://bugs.webkit.org/show_bug.cgi?id=147943
+
+        Reviewed by Saam Barati.
+
+        This patch implements Reflect.defineProperty.
+        The difference from the Object.defineProperty is,
+
+        1. Reflect.defineProperty does not perform ToObject operation onto the first argument.
+        2. Reflect.defineProperty does not throw a TypeError when the [[DefineOwnProperty]] operation fails.
+        3. Reflect.defineProperty returns the boolean value that represents whether [[DefineOwnProperty]] succeeded.
+
+        And this patch comments the links to the ES6 spec.
+
+        * builtins/ReflectObject.js:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/ObjectConstructor.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectDefineProperty):
+        * tests/stress/reflect-define-property.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (.set getter):
+        (setter):
+        (.get testDescriptor):
+        (.set get var):
+        (.set testDescriptor):
+        (.set get testDescriptor):
+        (.set get shouldThrow):
+        (.get var):
+
 2015-08-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::ByteCodeParser should attempt constant folding on loads from structures that are DFG-watchable
