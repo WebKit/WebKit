@@ -57,12 +57,12 @@
     -webkit-transform: translateX(0px);
 }
 
-.timeline-overview.frames > .timeline-ruler > .selection-handle.right {
+.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right {
     -webkit-transform: translateX(5px);
 }
 
 .timeline-overview.frames > .timeline-ruler > .markers,
-.timeline-overview.frames > .timeline-ruler > .shaded-area.right {
+.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right {
     -webkit-transform: translateX(1px);
 }
 

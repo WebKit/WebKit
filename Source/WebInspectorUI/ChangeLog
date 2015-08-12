@@ -1,3 +1,32 @@
+2015-08-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Dragging a timeline ruler handle when both handles clamped is broken
+        https://bugs.webkit.org/show_bug.cgi?id=147912
+
+        Reviewed by Timothy Hatcher.
+
+        When clamped handles overlap, the handle nearest in time to the ruler's edge should be visible and
+        clickable, and the other should be hidden. This change ensures that clicking and dragging a ruler
+        handle to modify a selection outside the visible area works correctly.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right):
+        Style adjustment for rendering frames, which offsets the right handle by 5px instead of 4px.
+        (.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right):
+        Style adjustment for rendering frames, which offsets the right shaded area by 1px.
+        (.timeline-overview.frames > .timeline-ruler > .selection-handle.right): Deleted.
+        (.timeline-overview.frames > .timeline-ruler > .shaded-area.right): Deleted.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler.both-handles-clamped > .selection-handle):
+        Updated handle style when both are clamped.
+        (.timeline-ruler > .selection-handle.clamped.hidden):
+        Hide the clamped handle that is beneath the other clamped handle.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+
+
 2015-08-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Disabling attribute styles should not be possible
