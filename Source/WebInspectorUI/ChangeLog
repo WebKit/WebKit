@@ -1,3 +1,55 @@
+2015-08-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add the ability to filter out tasks in the Rendering Frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=147389
+
+        Reviewed by Timothy Hatcher.
+
+        Added filtering by task type to the Rendering Frames timeline view. Legend item checkboxes
+        in the timeline sidebar toggle filtering for the corresponding task. The "Other" category
+        cannot be filtered, since all rendering frame records include some "other" time in addition to
+        child records from at least one additional task type.
+
+        A row is filtered (hidden) from the data grid when the corresponding rendering frame has no
+        unfiltered child records.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._windowFocused):
+        (WebInspector._windowBlurred):
+        Added inactive style for docked window.
+
+        * UserInterface/Views/ChartDetailsSectionRow.css:
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > .color-key):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]):
+        (body.window-inactive .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]):
+        (.details-section > .content > .group > .row.chart > .defs-only):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label > .color-swatch): Deleted.
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label): Deleted.
+        Switched to label elements, added checkbox styles, and updated color swatch style for non-checkbox items.
+
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        (WebInspector.ChartDetailsSectionRow):
+        Added svg filter container and style sheet element.
+        (WebInspector.ChartDetailsSectionRow.prototype.set data):
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegend.createGammaPrimitive):
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegend.createCheckboxFilterElement):
+        Helper function to create an svg:filter to blend legend key color over the native checkbox element.
+        Filter assumes grayscale input, and each checkbox requires a separate filter.
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegend):
+        Creates legend items, svg filters, and checkbox style sheet.
+        (WebInspector.ChartDetailsSectionRow.prototype._legendItemCheckboxValueChanged):
+        Repackage and forward checkbox changed event.
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegendItem): Deleted.
+        Logic moved to WebInspector.ChartDetailsSectionRow.prototype._createLegend.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        Added set of rendering frame task types against which tree elements can be filtered.
+        (WebInspector.TimelineSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        If filter is not empty, check ancestor rendering frame record for unfiltered data.
+        (WebInspector.TimelineSidebarPanel.prototype._frameSelectionLegendItemChecked):
+        Update task filter in response when legend items are checked/unchecked.
+
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch Windows build to Visual Studio 2015

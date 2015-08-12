@@ -95,6 +95,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
             this._frameSelectionChartRow = new WebInspector.ChartDetailsSectionRow(this);
             this._frameSelectionChartRow.innerRadius = 0.5;
+            this._frameSelectionChartRow.addEventListener(WebInspector.ChartDetailsSectionRow.Event.LegendItemChecked, this._frameSelectionLegendItemChecked, this);
+
+            this._renderingFrameTaskFilter = new Set;
 
             var chartGroup = new WebInspector.DetailsSectionGroup([this._frameSelectionChartRow]);
             this._frameSelectionChartSection = new WebInspector.DetailsSection("frames-selection-chart", WebInspector.UIString("Selected Frames"), [chartGroup], null, true);
@@ -390,6 +393,30 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         if (!this._displayedContentView)
             return true;
+
+        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames && this._renderingFrameTaskFilter.size) {
+            while (treeElement && !(treeElement.record instanceof WebInspector.RenderingFrameTimelineRecord))
+                treeElement = treeElement.parent;
+
+            console.assert(treeElement, "Cannot apply task filter: no RenderingFrameTimelineRecord found.");
+            if (!treeElement)
+                return false;
+
+            var visible = false;
+            for (var key in WebInspector.RenderingFrameTimelineRecord.TaskType) {
+                var taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
+                if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Other)
+                    continue;
+
+                if (!this._renderingFrameTaskFilter.has(taskType) && treeElement.record.durationForTask(taskType) > 0) {
+                    visible = true;
+                    break;
+                }
+            }
+
+            if (!visible)
+                return false;
+        }
 
         return this._displayedContentView.matchTreeElementAgainstCustomFilters(treeElement);
     }
@@ -820,6 +847,16 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this.updateFilter();
     }
 
+    _frameSelectionLegendItemChecked(event)
+    {
+        if (event.data.checked)
+            this._renderingFrameTaskFilter.delete(event.data.id);
+        else
+            this._renderingFrameTaskFilter.add(event.data.id);
+
+        this.updateFilter();
+    }
+
     _refreshFrameSelectionChart()
     {
         if (!this.visible)
@@ -856,7 +893,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             var label = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(taskType);
             var value = records.reduce(function(previousValue, currentValue) { return previousValue + currentValue.durationForTask(taskType); }, 0);
             var color = this._chartColors.get(taskType);
-            return {label, value, color};
+            return {id: taskType, label, value, color, checkbox: taskType !== WebInspector.RenderingFrameTimelineRecord.TaskType.Other};
         }, this);
 
         this._frameSelectionChartRow.data = chartData;

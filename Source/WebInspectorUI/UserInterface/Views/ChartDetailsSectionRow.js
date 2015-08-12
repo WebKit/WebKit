@@ -55,6 +55,14 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         this._innerLabelFontSize = 11;
         this._shadowColor = "rgba(0, 0, 0, 0.6)";
         this._total = 0;
+
+        this._svgFiltersElement = document.createElement("svg");
+        this._svgFiltersElement.classList.add("defs-only");
+        this.element.append(this._svgFiltersElement);
+
+        this._checkboxStyleElement = document.createElement("style");
+        this._checkboxStyleElement.id = "checkbox-styles";
+        document.getElementsByTagName("head")[0].append(this._checkboxStyleElement);
     }
 
     // Public
@@ -108,38 +116,106 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         this._items = items;
         this._total = this._items.reduce(function(previousValue, currentValue) { return previousValue + currentValue.value; }, 0);;
 
-        this._legendElement.removeChildren();
-        this._items.forEach(function(item) { this._legendElement.appendChild(this._createLegendItem(item)); }, this);
-
+        this._createLegend();
         this._refresh();
     }
 
     // Private
 
-    _createLegendItem(item)
+    _addCheckboxColorFilter(id, r, g, b)
     {
-        var colorSwatchElement = document.createElement("div");
-        colorSwatchElement.className = "color-swatch";
-        colorSwatchElement.style.backgroundColor = item.color;
+        for (let i = 0; i < this._svgFiltersElement.childNodes.length; ++i) {
+            if (this._svgFiltersElement.childNodes[i].id === id)
+                return;
+        }
 
-        var labelElement = document.createElement("div");
-        labelElement.className = "label";
-        labelElement.append(colorSwatchElement, item.label);
+        r /= 255;
+        b /= 255;
+        g /= 255;
 
-        var valueElement = document.createElement("div");
-        valueElement.className = "value";
+        // Create an svg:filter element that approximates "background-blend-mode: color", for grayscale input.
+        let filterElement = createSVGElement("filter");
+        filterElement.id = id;
+        filterElement.setAttribute("color-interpolation-filters", "sRGB");
 
-        if (this._delegate && typeof this._delegate.formatChartValue === "function")
-            valueElement.textContent = this._delegate.formatChartValue(item.value);
-        else
-            valueElement.textContent = item.value;
+        let values = [1 - r, 0, 0, 0, r,
+                      1 - g, 0, 0, 0, g,
+                      1 - b, 0, 0, 0, b,
+                      0,     0, 0, 1, 0];
 
-        var legendItemElement = document.createElement("div");
-        legendItemElement.className = "legend-item";
-        legendItemElement.appendChild(labelElement);
-        legendItemElement.appendChild(valueElement);
+        let colorMatrixPrimitive = createSVGElement("feColorMatrix");
+        colorMatrixPrimitive.setAttribute("type", "matrix");
+        colorMatrixPrimitive.setAttribute("values", values.join(" "));
 
-        return legendItemElement;
+        function createGammaPrimitive(tagName, value)
+        {
+            let gammaPrimitive = createSVGElement(tagName);
+            gammaPrimitive.setAttribute("type", "gamma");
+            gammaPrimitive.setAttribute("value", value);
+            return gammaPrimitive;
+        }
+
+        let componentTransferPrimitive = createSVGElement("feComponentTransfer");
+        componentTransferPrimitive.append(createGammaPrimitive("feFuncR", 1.2), createGammaPrimitive("feFuncG", 1.2), createGammaPrimitive("feFuncB", 1.2));
+        filterElement.append(colorMatrixPrimitive, componentTransferPrimitive);
+
+        this._svgFiltersElement.append(filterElement);
+
+        let styleSheet = this._checkboxStyleElement.sheet;
+        styleSheet.insertRule(".details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]." + id + " { -webkit-filter: grayscale(1) url(#" + id + ") }", 0);
+    }
+
+    _createLegend()
+    {
+        this._legendElement.removeChildren();
+
+        for (let item of this._items) {
+            let labelElement = document.createElement("label");
+            let keyElement;
+            if (item.checkbox) {
+                let className = item.id.toLowerCase();
+                let rgb = item.color.substring(4, item.color.length - 1).replace(/ /g, "").split(",");
+                if (rgb[0] === rgb[1] && rgb[1] === rgb[2])
+                    rgb[0] = rgb[1] = rgb[2] = Math.min(160, rgb[0]);
+
+                keyElement = document.createElement("input");
+                keyElement.type = "checkbox";
+                keyElement.classList.add(className);
+                keyElement.checked = item.checked || true;
+                keyElement[WebInspector.ChartDetailsSectionRow.DataItemIdSymbol] = item.id;
+
+                keyElement.addEventListener("change", this._legendItemCheckboxValueChanged.bind(this));
+
+                this._addCheckboxColorFilter(className, rgb[0], rgb[1], rgb[2]);
+            } else {
+                keyElement = document.createElement("div");
+                keyElement.classList.add("color-key");
+                keyElement.style.backgroundColor = item.color;
+            }
+
+            labelElement.append(keyElement, item.label);
+
+            let valueElement = document.createElement("div");
+            valueElement.classList.add("value");
+
+            if (this._delegate && typeof this._delegate.formatChartValue === "function")
+                valueElement.textContent = this._delegate.formatChartValue(item.value);
+            else
+                valueElement.textContent = item.value;
+
+            let legendItemElement = document.createElement("div");
+            legendItemElement.classList.add("legend-item");
+            legendItemElement.append(labelElement, valueElement);
+
+            this._legendElement.append(legendItemElement);
+        }
+    }
+
+    _legendItemCheckboxValueChanged(event)
+    {
+        let checkbox = event.target;
+        let id = checkbox[WebInspector.ChartDetailsSectionRow.DataItemIdSymbol];
+        this.dispatchEventToListeners(WebInspector.ChartDetailsSectionRow.Event.LegendItemChecked, {id, checked: checkbox.checked});
     }
 
     _refresh()
@@ -193,4 +269,10 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
             context.fillText(this._innerLabel, offsetX, centerY);
         }
     }
+};
+
+WebInspector.ChartDetailsSectionRow.DataItemIdSymbol = Symbol("chart-details-section-row-data-item-id");
+
+WebInspector.ChartDetailsSectionRow.Event = {
+    LegendItemChecked: "chart-details-section-row-legend-item-checked"
 };

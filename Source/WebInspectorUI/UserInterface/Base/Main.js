@@ -1214,20 +1214,20 @@ WebInspector._saveCookieForOpenTabs = function()
 
 WebInspector._windowFocused = function(event)
 {
-    if (event.target.document.nodeType !== Node.DOCUMENT_NODE || this.docked)
+    if (event.target.document.nodeType !== Node.DOCUMENT_NODE)
         return;
 
     // FIXME: We should use the :window-inactive pseudo class once https://webkit.org/b/38927 is fixed.
-    document.body.classList.remove("window-inactive");
+    document.body.classList.remove(this.docked ? "window-docked-inactive" : "window-inactive");
 };
 
 WebInspector._windowBlurred = function(event)
 {
-    if (event.target.document.nodeType !== Node.DOCUMENT_NODE || this.docked)
+    if (event.target.document.nodeType !== Node.DOCUMENT_NODE)
         return;
 
     // FIXME: We should use the :window-inactive pseudo class once https://webkit.org/b/38927 is fixed.
-    document.body.classList.add("window-inactive");
+    document.body.classList.add(this.docked ? "window-docked-inactive" : "window-inactive");
 };
 
 WebInspector._windowResized = function(event)
