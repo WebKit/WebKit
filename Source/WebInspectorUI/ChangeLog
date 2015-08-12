@@ -1,3 +1,23 @@
+2015-08-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove clamp and adopt Number.constrain
+        https://bugs.webkit.org/show_bug.cgi?id=147952
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        Removed clamp function.
+
+        * UserInterface/Views/BezierEditor.js:
+        (WebInspector.BezierEditor.prototype._updateControlPointsForMouseEvent):
+        * UserInterface/Views/ProfileNodeDataGridNode.js:
+        (WebInspector.ProfileNodeDataGridNode.prototype.updateRangeTimes):
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.updateRangeTimes):
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+        Replaced instances of clamp with Number.constrain.
+
 2015-08-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DOM Node should have context menu to scroll it into view on the inspected page

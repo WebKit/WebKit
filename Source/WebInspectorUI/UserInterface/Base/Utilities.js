@@ -1079,11 +1079,6 @@ function doubleQuotedString(str)
     return "\"" + str.replace(/"/g, "\\\"") + "\"";
 }
 
-function clamp(min, value, max)
-{
-    return Math.min(Math.max(min, value), max);
-}
-
 function insertionIndexForObjectInListSortedByFunction(object, list, comparator, insertionIndexAfter)
 {
     if (insertionIndexAfter) {

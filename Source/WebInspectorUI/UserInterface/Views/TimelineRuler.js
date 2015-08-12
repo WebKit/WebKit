@@ -595,7 +595,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         let formattedStartTimeText = this._formatDividerLabelText(this._selectionStartTime);
         let formattedEndTimeText = this._formatDividerLabelText(this._selectionEndTime);
 
-        let newLeftPosition = clamp(0, (this._selectionStartTime - this._startTime) / duration, 1);
+        let newLeftPosition = Number.constrain((this._selectionStartTime - this._startTime) / duration, 0, 1);
         this._updatePositionOfElement(this._leftShadedAreaElement, newLeftPosition, visibleWidth, "width");
         this._updatePositionOfElement(this._leftSelectionHandleElement, newLeftPosition, visibleWidth, "left");
         this._updatePositionOfElement(this._selectionDragElement, newLeftPosition, visibleWidth, "left");
@@ -604,7 +604,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         this._leftSelectionHandleElement.classList.toggle("hidden", startTimeClamped && endTimeClamped && this._selectionStartTime < this._startTime);
         this._leftSelectionHandleElement.title = formattedStartTimeText;
 
-        let newRightPosition = 1 - clamp(0, (this._selectionEndTime - this._startTime) / duration, 1);
+        let newRightPosition = 1 - Number.constrain((this._selectionEndTime - this._startTime) / duration, 0, 1);
         this._updatePositionOfElement(this._rightShadedAreaElement, newRightPosition, visibleWidth, "width");
         this._updatePositionOfElement(this._rightSelectionHandleElement, newRightPosition, visibleWidth, "right");
         this._updatePositionOfElement(this._selectionDragElement, newRightPosition, visibleWidth, "right");

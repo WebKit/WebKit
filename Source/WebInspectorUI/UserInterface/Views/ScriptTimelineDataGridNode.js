@@ -99,10 +99,10 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
         // We only need a refresh if the new range time changes the visible portion of this record.
         var recordStart = this._record.startTime;
         var recordEnd = this._record.startTime + this._record.duration;
-        var oldStartBoundary = clamp(recordStart, oldRangeStartTime, recordEnd);
-        var oldEndBoundary = clamp(recordStart, oldRangeEndTime, recordEnd);
-        var newStartBoundary = clamp(recordStart, startTime, recordEnd);
-        var newEndBoundary = clamp(recordStart, endTime, recordEnd);
+        var oldStartBoundary = Number.constrain(oldRangeStartTime, recordStart, recordEnd);
+        var oldEndBoundary = Number.constrain(oldRangeEndTime, recordStart, recordEnd);
+        var newStartBoundary = Number.constrain(startTime, recordStart, recordEnd);
+        var newEndBoundary = Number.constrain(endTime, recordStart, recordEnd);
 
         if (oldStartBoundary !== newStartBoundary || oldEndBoundary !== newEndBoundary)
             this.needsRefresh();
