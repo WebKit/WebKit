@@ -592,29 +592,25 @@ void CachedResource::setResourceToRevalidate(CachedResource* resource)
     ASSERT(resource != this);
     ASSERT(m_handlesToRevalidate.isEmpty());
     ASSERT(resource->type() == type());
+    ASSERT(!resource->m_proxyResource);
 
     LOG(ResourceLoading, "CachedResource %p setResourceToRevalidate %p", this, resource);
-
-    // The following assert should be investigated whenever it occurs. Although it should never fire, it currently does in rare circumstances.
-    // https://bugs.webkit.org/show_bug.cgi?id=28604.
-    // So the code needs to be robust to this assert failing thus the "if (m_resourceToRevalidate->m_proxyResource == this)" in CachedResource::clearResourceToRevalidate.
-    ASSERT(!resource->m_proxyResource);
 
     resource->m_proxyResource = this;
     m_resourceToRevalidate = resource;
 }
 
 void CachedResource::clearResourceToRevalidate() 
-{ 
+{
     ASSERT(m_resourceToRevalidate);
+    ASSERT(m_resourceToRevalidate->m_proxyResource == this);
+
     if (m_switchingClientsToRevalidatedResource)
         return;
 
-    // A resource may start revalidation before this method has been called, so check that this resource is still the proxy resource before clearing it out.
-    if (m_resourceToRevalidate->m_proxyResource == this) {
-        m_resourceToRevalidate->m_proxyResource = 0;
-        m_resourceToRevalidate->deleteIfPossible();
-    }
+    m_resourceToRevalidate->m_proxyResource = nullptr;
+    m_resourceToRevalidate->deleteIfPossible();
+
     m_handlesToRevalidate.clear();
     m_resourceToRevalidate = 0;
     deleteIfPossible();

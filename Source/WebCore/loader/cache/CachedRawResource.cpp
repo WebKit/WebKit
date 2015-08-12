@@ -141,10 +141,12 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
 
     if (!m_response.isNull()) {
         ResourceResponse response(m_response);
-        if (validationInProgress())
+        if (validationCompleting())
             response.setSource(ResourceResponse::Source::MemoryCacheAfterValidation);
-        else
+        else {
+            ASSERT(!validationInProgress());
             response.setSource(ResourceResponse::Source::MemoryCache);
+        }
         client->responseReceived(this, response);
     }
     if (!hasClient(c))
