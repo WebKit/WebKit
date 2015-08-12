@@ -5949,7 +5949,7 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
 #if ENABLE(MEDIA_SESSION)
     WebMediaSessionFocusManager* focusManager = process().processPool().supplement<WebMediaSessionFocusManager>();
     ASSERT(focusManager);
-    focusManager->mediaElementIsPlayingDidChange(this, sourceElementID, state & MediaProducer::IsSourceElementPlaying);
+    focusManager->updatePlaybackAttributesFromMediaState(this, sourceElementID, state);
 #endif
 
     if (state == m_mediaState)

@@ -70,16 +70,23 @@ bool WebMediaSessionFocusManager::valueForPlaybackAttribute(WKMediaSessionFocusM
     return m_playbackAttributes & attribute;
 }
 
-void WebMediaSessionFocusManager::mediaElementIsPlayingDidChange(WebPageProxy* proxy, uint64_t elementID, bool isPlaying)
+void WebMediaSessionFocusManager::updatePlaybackAttribute(WKMediaSessionFocusManagerPlaybackAttribute attribute, bool value)
+{
+    if (value)
+        m_playbackAttributes |= attribute;
+    else
+        m_playbackAttributes &= ~attribute;
+
+    m_client.didChangePlaybackAttribute(this, attribute, value);
+}
+
+void WebMediaSessionFocusManager::updatePlaybackAttributesFromMediaState(WebPageProxy* proxy, uint64_t elementID, WebCore::MediaProducer::MediaStateFlags flags)
 {
     if (m_focusedMediaElement) {
         if (proxy == m_focusedMediaElement->first && elementID == m_focusedMediaElement->second) {
-            if (isPlaying)
-                m_playbackAttributes |= IsPlaying;
-            else
-                m_playbackAttributes &= ~IsPlaying;
-
-            m_client.didChangePlaybackAttribute(this, IsPlaying, isPlaying);
+            updatePlaybackAttribute(IsPlaying, flags & WebCore::MediaProducer::IsSourceElementPlaying);
+            updatePlaybackAttribute(IsNextTrackControlEnabled, flags & WebCore::MediaProducer::IsNextTrackControlEnabled);
+            updatePlaybackAttribute(IsPreviousTrackControlEnabled, flags & WebCore::MediaProducer::IsPreviousTrackControlEnabled);
         }
     }
 }

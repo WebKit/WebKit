@@ -71,7 +71,7 @@ MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
     // 3. If media session's current media session type is "content", then create a new media remote controller for media
     //    session. (Otherwise media session has no media remote controller.)
     if (m_kind == Kind::Content)
-        m_controls = adoptRef(*new MediaRemoteControls(context));
+        m_controls = MediaRemoteControls::create(context, this);
 
     MediaSessionManager::singleton().addMediaSession(*this);
 }
@@ -79,6 +79,9 @@ MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
 MediaSession::~MediaSession()
 {
     MediaSessionManager::singleton().removeMediaSession(*this);
+
+    if (m_controls)
+        m_controls->clearSession();
 }
 
 String MediaSession::kind() const
@@ -315,6 +318,21 @@ void MediaSession::skipToPreviousTrack()
 {
     if (m_controls && m_controls->previousTrackEnabled())
         m_controls->dispatchEvent(Event::create(eventNames().previoustrackEvent, false, false));
+}
+
+void MediaSession::controlIsEnabledDidChange()
+{
+    // Media remote controls are only allowed on Content media sessions.
+    ASSERT(m_kind == Kind::Content);
+
+    // Media elements belonging to Content media sessions have mutually-exclusive playback.
+    ASSERT(m_activeParticipatingElements.size() <= 1);
+
+    if (m_activeParticipatingElements.isEmpty())
+        return;
+
+    HTMLMediaElement* element = *m_activeParticipatingElements.begin();
+    m_document.updateIsPlayingMedia(element->elementID());
 }
 
 }

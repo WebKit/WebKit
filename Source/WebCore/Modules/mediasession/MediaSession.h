@@ -86,6 +86,8 @@ public:
     void skipToNextTrack();
     void skipToPreviousTrack();
 
+    void controlIsEnabledDidChange();
+
 private:
     friend class HTMLMediaElement;
 

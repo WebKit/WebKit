@@ -46,7 +46,7 @@ public:
     void initializeClient(const WKMediaSessionFocusManagerClientBase*);
 
     bool valueForPlaybackAttribute(WKMediaSessionFocusManagerPlaybackAttribute) const;
-    void mediaElementIsPlayingDidChange(WebPageProxy*, uint64_t, bool);
+    void updatePlaybackAttributesFromMediaState(WebPageProxy*, uint64_t, WebCore::MediaProducer::MediaStateFlags);
 
     void setFocusedMediaElement(WebPageProxy&, uint64_t);
     void clearFocusedMediaElement();
@@ -60,6 +60,8 @@ private:
     // WebContextSupplement
     virtual void refWebContextSupplement() override;
     virtual void derefWebContextSupplement() override;
+
+    void updatePlaybackAttribute(WKMediaSessionFocusManagerPlaybackAttribute, bool);
 
     std::unique_ptr<FocusedMediaElement> m_focusedMediaElement;
     WKMediaSessionFocusManagerPlaybackAttributes m_playbackAttributes { 0 };
