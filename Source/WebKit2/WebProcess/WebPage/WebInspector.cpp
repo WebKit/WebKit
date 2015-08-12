@@ -60,11 +60,6 @@ Ref<WebInspector> WebInspector::create(WebPage* page)
 
 WebInspector::WebInspector(WebPage* page)
     : m_page(page)
-    , m_attached(false)
-    , m_previousCanAttach(false)
-#if ENABLE(INSPECTOR_SERVER)
-    , m_remoteFrontendConnected(false)
-#endif
 {
 }
 
@@ -102,8 +97,11 @@ void WebInspector::closeFrontend()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
 
-    m_frontendConnection->invalidate();
-    m_frontendConnection = nullptr;
+    // If we tried to close the frontend before it was created, then no connection exists yet.
+    if (m_frontendConnection) {
+        m_frontendConnection->invalidate();
+        m_frontendConnection = nullptr;
+    }
 
     m_attached = false;
     m_previousCanAttach = false;

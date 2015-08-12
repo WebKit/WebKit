@@ -1,3 +1,14 @@
+2015-08-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: CRASH under WebInspector::closeFrontend for some protocol tests
+        https://bugs.webkit.org/show_bug.cgi?id=147948
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::closeFrontend): Don't invalidate the channel if it's null.
+        * WebProcess/WebPage/WebInspector.h: Add default member variable values.
+
 2015-08-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Not receiving responses for async request IndexedDB.requestDatabaseNames
