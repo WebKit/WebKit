@@ -119,7 +119,7 @@ public:
             || isValueList();
     }
 
-    PassRefPtr<CSSValue> cloneForCSSOM() const;
+    RefPtr<CSSValue> cloneForCSSOM() const;
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 

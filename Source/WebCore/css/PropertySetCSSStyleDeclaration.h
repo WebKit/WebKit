@@ -54,7 +54,7 @@ private:
     virtual CSSRule* parentRule() const override { return nullptr; }
     virtual unsigned length() const override final;
     virtual String item(unsigned index) const override final;
-    virtual PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override final;
+    virtual RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override final;
     virtual String getPropertyValue(const String& propertyName) override final;
     virtual String getPropertyPriority(const String& propertyName) override final;
     virtual String getPropertyShorthand(const String& propertyName) override final;
@@ -63,7 +63,7 @@ private:
     virtual String removeProperty(const String& propertyName, ExceptionCode&) override final;
     virtual String cssText() const override final;
     virtual void setCssText(const String&, ExceptionCode&) override final;
-    virtual PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override final;
+    virtual RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override final;
     virtual String getPropertyValueInternal(CSSPropertyID) override final;
     virtual bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override final;
     
@@ -83,9 +83,9 @@ protected:
 class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration
 {
 public:
-    static PassRefPtr<StyleRuleCSSStyleDeclaration> create(MutableStyleProperties& propertySet, CSSRule& parentRule)
+    static Ref<StyleRuleCSSStyleDeclaration> create(MutableStyleProperties& propertySet, CSSRule& parentRule)
     {
-        return adoptRef(new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
+        return adoptRef(*new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
     }
     virtual ~StyleRuleCSSStyleDeclaration();
 

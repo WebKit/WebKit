@@ -40,7 +40,7 @@ public:
 
     String customCSSText() const;
 
-    PassRefPtr<Image> image(RenderElement*, const FloatSize&);
+    RefPtr<Image> image(RenderElement*, const FloatSize&);
     bool isFixedSize() const { return true; }
     FloatSize fixedSize(const RenderElement*);
 

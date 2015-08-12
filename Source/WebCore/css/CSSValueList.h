@@ -76,7 +76,7 @@ public:
 
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
     
-    PassRefPtr<CSSValueList> cloneForCSSOM() const;
+    Ref<CSSValueList> cloneForCSSOM() const;
 
 protected:
     CSSValueList(ClassType, ValueListSeparator);

@@ -1212,7 +1212,7 @@ void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const St
         addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
+RefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
 {
     RefPtr<CSSPrimitiveValue> result;
 

@@ -63,7 +63,7 @@ public:
 
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
-    PassRefPtr<CSSImageSetValue> cloneForCSSOM() const;
+    Ref<CSSImageSetValue> cloneForCSSOM() const;
 
 protected:
     ImageWithScale bestImageForScaleFactor();

@@ -49,12 +49,12 @@ class ComputedStyleExtractor {
 public:
     ComputedStyleExtractor(PassRefPtr<Node>, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
 
-    PassRefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
+    RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 
     // Helper methods for HTML editing.
     Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
     Ref<MutableStyleProperties> copyProperties() const;
-    PassRefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword() const;
+    RefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword() const;
     bool useFixedFontDefaultSize() const;
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
@@ -67,16 +67,16 @@ private:
     // on Elements, but right now editing creates these for text nodes. We should fix that.
     Node* styledNode() const;
 
-    PassRefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout) const;
-    PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
+    RefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout) const;
+    RefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
 
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
-    PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
+    RefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
 
-    PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
-    PassRefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&) const;
-    PassRefPtr<CSSValueList> getBackgroundShorthandValue() const;
-    PassRefPtr<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&) const;
+    RefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
+    RefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&) const;
+    RefPtr<CSSValueList> getBackgroundShorthandValue() const;
+    RefPtr<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&) const;
 
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;
@@ -103,7 +103,7 @@ private:
     virtual CSSRule* parentRule() const override;
     virtual unsigned length() const override;
     virtual String item(unsigned index) const override;
-    virtual PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override;
+    virtual RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) override;
     virtual String getPropertyValue(const String& propertyName) override;
     virtual String getPropertyPriority(const String& propertyName) override;
     virtual String getPropertyShorthand(const String& propertyName) override;
@@ -112,12 +112,12 @@ private:
     virtual String removeProperty(const String& propertyName, ExceptionCode&) override;
     virtual String cssText() const override;
     virtual void setCssText(const String&, ExceptionCode&) override;
-    virtual PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override;
+    virtual RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override;
     virtual String getPropertyValueInternal(CSSPropertyID) override;
     virtual bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override;
     virtual Ref<MutableStyleProperties> copyProperties() const override;
 
-    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
+    RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;

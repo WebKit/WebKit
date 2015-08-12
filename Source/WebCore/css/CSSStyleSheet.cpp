@@ -271,10 +271,10 @@ bool CSSStyleSheet::canAccessRules() const
     return false;
 }
 
-PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
+RefPtr<CSSRuleList> CSSStyleSheet::rules()
 {
     if (!canAccessRules())
-        return 0;
+        return nullptr;
     // IE behavior.
     RefPtr<StaticCSSRuleList> nonCharsetRules = StaticCSSRuleList::create();
     unsigned ruleCount = length();
@@ -284,7 +284,7 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
             continue;
         nonCharsetRules->rules().append(rule);
     }
-    return nonCharsetRules.release();
+    return nonCharsetRules;
 }
 
 unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, ExceptionCode& ec)
@@ -358,10 +358,10 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Exceptio
 }
 
 
-PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules()
+RefPtr<CSSRuleList> CSSStyleSheet::cssRules()
 {
     if (!canAccessRules())
-        return 0;
+        return nullptr;
     if (!m_ruleListCSSOMWrapper)
         m_ruleListCSSOMWrapper = std::make_unique<StyleSheetCSSRuleList>(this);
     return m_ruleListCSSOMWrapper.get();

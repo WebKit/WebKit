@@ -84,9 +84,9 @@ WebKitCSSTransformValue::WebKitCSSTransformValue(const WebKitCSSTransformValue& 
 {
 }
 
-PassRefPtr<WebKitCSSTransformValue> WebKitCSSTransformValue::cloneForCSSOM() const
+Ref<WebKitCSSTransformValue> WebKitCSSTransformValue::cloneForCSSOM() const
 {
-    return adoptRef(new WebKitCSSTransformValue(*this));
+    return adoptRef(*new WebKitCSSTransformValue(*this));
 }
 
 }

@@ -457,7 +457,7 @@ void CSSValue::destroy()
     ASSERT_NOT_REACHED();
 }
 
-PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
+RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
 {
     switch (classType()) {
     case PrimitiveClass:

@@ -99,7 +99,7 @@ void CSSFilterImageValue::loadSubimages(CachedResourceLoader& cachedResourceLoad
     m_filterSubimageObserver.setReady(true);
 }
 
-PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSize& size)
+RefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSize& size)
 {
     if (size.isEmpty())
         return nullptr;

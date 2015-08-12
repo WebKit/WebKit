@@ -169,9 +169,9 @@ CSSValueList::CSSValueList(const CSSValueList& cloneFrom)
         m_values.uncheckedAppend(*cloneFrom.m_values[i]->cloneForCSSOM());
 }
 
-PassRefPtr<CSSValueList> CSSValueList::cloneForCSSOM() const
+Ref<CSSValueList> CSSValueList::cloneForCSSOM() const
 {
-    return adoptRef(new CSSValueList(*this));
+    return adoptRef(*new CSSValueList(*this));
 }
 
 } // namespace WebCore

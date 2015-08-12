@@ -47,7 +47,7 @@ public:
     void addListener(PassRefPtr<MediaQueryListListener>, PassRefPtr<MediaQueryList>);
     void removeListener(MediaQueryListListener*, MediaQueryList*);
 
-    PassRefPtr<MediaQueryList> matchMedia(const String&);
+    RefPtr<MediaQueryList> matchMedia(const String&);
 
     unsigned evaluationRound() const { return m_evaluationRound; }
     void styleResolverChanged();

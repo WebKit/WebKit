@@ -66,7 +66,7 @@ bool CSSToStyleMap::useSVGZoomRules() const
     return m_resolver->useSVGZoomRules();
 }
 
-PassRefPtr<StyleImage> CSSToStyleMap::styleImage(CSSPropertyID propertyId, CSSValue& value)
+RefPtr<StyleImage> CSSToStyleMap::styleImage(CSSPropertyID propertyId, CSSValue& value)
 {
     return m_resolver->styleImage(propertyId, value);
 }

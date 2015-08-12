@@ -192,8 +192,8 @@ public:
         m_values.append(y);
     }
 
-    PassRefPtr<CSSPrimitiveValue> getXAt(unsigned i) const { return m_values.at(i * 2); }
-    PassRefPtr<CSSPrimitiveValue> getYAt(unsigned i) const { return m_values.at(i * 2 + 1); }
+    RefPtr<CSSPrimitiveValue> getXAt(unsigned i) const { return m_values.at(i * 2); }
+    RefPtr<CSSPrimitiveValue> getYAt(unsigned i) const { return m_values.at(i * 2 + 1); }
     const Vector<RefPtr<CSSPrimitiveValue>>& values() const { return m_values; }
 
     void setWindRule(WindRule w) { m_windRule = w; }

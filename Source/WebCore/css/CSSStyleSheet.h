@@ -63,12 +63,12 @@ public:
     virtual bool disabled() const override { return m_isDisabled; }
     virtual void setDisabled(bool) override;
     
-    PassRefPtr<CSSRuleList> cssRules();
+    RefPtr<CSSRuleList> cssRules();
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
     
     // IE Extensions
-    PassRefPtr<CSSRuleList> rules();
+    RefPtr<CSSRuleList> rules();
     int addRule(const String& selector, const String& style, int index, ExceptionCode&);
     int addRule(const String& selector, const String& style, ExceptionCode&);
     void removeRule(unsigned index, ExceptionCode& ec) { deleteRule(index, ec); }

@@ -103,48 +103,48 @@ public:
     // specified operation applied. The this value is not modified.
 
     // Multiply this matrix by secondMatrix, on the right (result = this * secondMatrix)
-    PassRefPtr<WebKitCSSMatrix> multiply(WebKitCSSMatrix* secondMatrix) const;
+    RefPtr<WebKitCSSMatrix> multiply(WebKitCSSMatrix* secondMatrix) const;
 
     // Return the inverse of this matrix. Throw an exception if the matrix is not invertible
-    PassRefPtr<WebKitCSSMatrix> inverse(ExceptionCode&) const;
+    RefPtr<WebKitCSSMatrix> inverse(ExceptionCode&) const;
 
     // Return this matrix translated by the passed values.
     // Passing a NaN will use a value of 0. This allows the 3D form to used for 2D operations
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the translation values on the left (result = translation(x,y,z) * this)
-    PassRefPtr<WebKitCSSMatrix> translate(double x, double y, double z) const;
+    RefPtr<WebKitCSSMatrix> translate(double x, double y, double z) const;
 
     // Returns this matrix scaled by the passed values.
     // Passing scaleX or scaleZ as NaN uses a value of 1, but passing scaleY of NaN
     // makes it the same as scaleX. This allows the 3D form to used for 2D operations
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the scale values on the left (result = scale(x,y,z) * this)
-    PassRefPtr<WebKitCSSMatrix> scale(double scaleX, double scaleY, double scaleZ) const;
+    RefPtr<WebKitCSSMatrix> scale(double scaleX, double scaleY, double scaleZ) const;
 
     // Returns this matrix rotated by the passed values.
     // If rotY and rotZ are NaN, rotate about Z (rotX=0, rotateY=0, rotateZ=rotX).
     // Otherwise use a rotation value of 0 for any passed NaN.
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the rotation values on the left (result = rotation(x,y,z) * this)
-    PassRefPtr<WebKitCSSMatrix> rotate(double rotX, double rotY, double rotZ) const;
+    RefPtr<WebKitCSSMatrix> rotate(double rotX, double rotY, double rotZ) const;
 
     // Returns this matrix rotated about the passed axis by the passed angle.
     // Passing a NaN will use a value of 0. If the axis is (0,0,0) use a value
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the rotation values on the left (result = rotation(x,y,z,angle) * this)
-    PassRefPtr<WebKitCSSMatrix> rotateAxisAngle(double x, double y, double z, double angle) const;
+    RefPtr<WebKitCSSMatrix> rotateAxisAngle(double x, double y, double z, double angle) const;
 
     // Return this matrix skewed along the X axis by the passed values.
     // Passing a NaN will use a value of 0.
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the skew values on the left (result = skewX(angle) * this)
-    PassRefPtr<WebKitCSSMatrix> skewX(double angle) const;
+    RefPtr<WebKitCSSMatrix> skewX(double angle) const;
 
     // Return this matrix skewed along the Y axis by the passed values.
     // Passing a NaN will use a value of 0.
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the skew values on the left (result = skewY(angle) * this)
-    PassRefPtr<WebKitCSSMatrix> skewY(double angle) const;
+    RefPtr<WebKitCSSMatrix> skewY(double angle) const;
 
     const TransformationMatrix& transform() const { return m_matrix; }
 
