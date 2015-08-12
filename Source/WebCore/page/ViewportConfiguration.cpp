@@ -452,7 +452,7 @@ ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(con
 
     ts << "\n";
     ts.writeIndent();
-    ts << "(initialScale " << parameters.width << ", set: " << (parameters.initialScaleIsSet ? "true" : "false") << ")";
+    ts << "(initialScale " << parameters.initialScale << ", set: " << (parameters.initialScaleIsSet ? "true" : "false") << ")";
     ts.decreaseIndent();
 
     dumpProperty(ts, "minimumScale", parameters.minimumScale);
