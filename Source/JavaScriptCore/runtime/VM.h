@@ -514,7 +514,6 @@ public:
     JS_EXPORT_PRIVATE void dumpRegExpTrace();
 
     bool isCollectorBusy() { return heap.isBusy(); }
-    JS_EXPORT_PRIVATE void releaseExecutableMemory();
 
 #if ENABLE(GC_VALIDATION)
     bool isInitializingObject() const; 

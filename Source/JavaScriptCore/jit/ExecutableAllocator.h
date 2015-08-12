@@ -67,7 +67,6 @@
 namespace JSC {
 
 class VM;
-void releaseExecutableMemory(VM&);
 
 static const unsigned jitAllocationGranule = 32;
 

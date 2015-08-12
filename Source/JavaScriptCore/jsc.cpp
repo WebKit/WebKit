@@ -463,7 +463,6 @@ static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDeleteAllCompiledCode(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState*);
 #ifndef NDEBUG
-static EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
 #endif
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
@@ -612,7 +611,6 @@ protected:
         addFunction(vm, "addressOf", functionAddressOf, 1);
 #ifndef NDEBUG
         addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
-        addFunction(vm, "releaseExecutableMemory", functionReleaseExecutableMemory, 0);
 #endif
         addFunction(vm, "version", functionVersion, 1);
         addFunction(vm, "run", functionRun, 1);
@@ -908,16 +906,6 @@ EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState* exec)
     EncodedJSValue returnValue = JSValue::encode(jsNumber(bitwise_cast<double>(asNumber)));
     return returnValue;
 }
-
-
-#ifndef NDEBUG
-EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState* exec)
-{
-    JSLockHolder lock(exec);
-    exec->vm().releaseExecutableMemory();
-    return JSValue::encode(jsUndefined());
-}
-#endif
 
 EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 {

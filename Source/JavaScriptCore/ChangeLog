@@ -1,3 +1,35 @@
+2015-08-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Remove VM::releaseExecutableMemory
+        https://bugs.webkit.org/show_bug.cgi?id=147915
+
+        Reviewed by Saam Barati.
+
+        releaseExecutableMemory() was only used in one place, where discardAllCode()
+        would work just as well.
+
+        It's confusing to have two slightly different ways to discard code. Also,
+        releaseExecutableMemory() is unused in any production code, and it seems
+        to have bit-rotted.
+
+        * jit/ExecutableAllocator.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionAddressOf):
+        (functionVersion):
+        (functionReleaseExecutableMemory): Deleted.
+        * runtime/VM.cpp:
+        (JSC::StackPreservingRecompiler::operator()):
+        (JSC::VM::throwException):
+        (JSC::VM::updateFTLLargestStackSize):
+        (JSC::VM::gatherConservativeRoots):
+        (JSC::VM::releaseExecutableMemory): Deleted.
+        (JSC::releaseExecutableMemory): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::isCollectorBusy):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::setTimeLimit):
+
 2015-08-12  Mark Lam  <mark.lam@apple.com>
 
         Add a JSC option to enable the watchdog for testing.
