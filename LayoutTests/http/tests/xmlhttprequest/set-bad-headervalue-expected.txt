@@ -9,6 +9,4 @@ PASS XMLHttpRequest: setRequestHeader() value argument checks 6
 PASS XMLHttpRequest: setRequestHeader() value argument checks 7 
 PASS XMLHttpRequest: setRequestHeader() value argument checks 8 
 PASS XMLHttpRequest: setRequestHeader() value argument checks 9 
-PASS XMLHttpRequest: setRequestHeader() value argument checks 10 
-PASS XMLHttpRequest: setRequestHeader() value argument checks 11 
 

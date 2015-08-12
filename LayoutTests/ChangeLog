@@ -1,3 +1,18 @@
+2015-08-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        XHR.setRequestHeader should remove trailing and leading whitespaces from the header value
+        https://bugs.webkit.org/show_bug.cgi?id=147445
+
+        Reviewed by Darin Adler.
+
+        * http/tests/xmlhttprequest/inject-header-expected.txt:
+        * http/tests/xmlhttprequest/inject-header.html:
+        * http/tests/xmlhttprequest/resources/print-xtest-header.cgi: Added.
+        * http/tests/xmlhttprequest/set-bad-headervalue-expected.txt:
+        * http/tests/xmlhttprequest/set-bad-headervalue.html:
+        * http/tests/xmlhttprequest/setrequestheader-allow-whitespace-in-value-expected.txt: Added.
+        * http/tests/xmlhttprequest/setrequestheader-allow-whitespace-in-value.htm: Added.
+
 2015-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [font-features] Map OpenType feature tags to TrueType feature selectors

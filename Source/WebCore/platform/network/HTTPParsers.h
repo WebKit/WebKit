@@ -87,6 +87,17 @@ size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReas
 size_t parseHTTPHeader(const char* data, size_t length, String& failureReason, String& nameStr, String& valueStr, bool strict = true);
 size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body);
 
+inline bool isHTTPSpace(UChar character)
+{
+    return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r');
+}
+
+// Strip leading and trailing whitespace as defined in https://fetch.spec.whatwg.org/#concept-header-value-normalize.
+inline String stripLeadingAndTrailingHTTPSpaces(const String& string)
+{
+    return string.stripWhiteSpace(isHTTPSpace);
+}
+
 }
 
 #endif
