@@ -1,3 +1,25 @@
+2015-08-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::ByteCodeParser should attempt constant folding on loads from structures that are DFG-watchable
+        https://bugs.webkit.org/show_bug.cgi?id=147950
+
+        Reviewed by Michael Saboff.
+
+        Previously we reduced the constant folding power of ByteCodeParser::load() because that code was
+        responsible for memory corruption, since it would sometimes install watchpoints on structures that
+        weren't being traced.  It seemed like the safest fix was to remove the constant folding rule
+        entirely since later phases also do constant folding, and they do it without introducing the bug.
+        Well, that change (http://trac.webkit.org/changeset/188292) caused a big regression, because we
+        still have some constant folding rules that only exist in ByteCodeParser, and so ByteCodeParser must
+        be maximally aggressive in constant-folding whenever possible.
+
+        So, this change now brings back that constant folding rule - for loads from object constants that
+        have DFG-watchable structures - and implements it properly, by ensuring that we only call into
+        tryGetConstantProperty() if we have registered the structure set.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::load):
+
 2015-08-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Add ES6 Modules preparsing phase to collect the dependencies

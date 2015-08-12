@@ -2581,6 +2581,15 @@ Node* ByteCodeParser::load(
     if (!variant.conditionSet().isEmpty())
         loadedValue = load(loadPrediction, variant.conditionSet(), loadOp);
     else {
+        if (needStructureCheck && base->hasConstant()) {
+            // We did emit a structure check. That means that we have an opportunity to do constant folding
+            // here, since we didn't do it above.
+            JSValue constant = m_graph.tryGetConstantProperty(
+                base->asJSValue(), variant.structureSet(), variant.offset());
+            if (constant)
+                return weakJSConstant(constant);
+        }
+        
         loadedValue = handleGetByOffset(
             loadPrediction, base, identifierNumber, variant.offset(), loadOp);
     }
