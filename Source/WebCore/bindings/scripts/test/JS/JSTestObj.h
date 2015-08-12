@@ -21,7 +21,6 @@
 #ifndef JSTestObj_h
 #define JSTestObj_h
 
-#include "JSDOMPromise.h"
 #include "JSDOMWrapper.h"
 #include "TestObj.h"
 #include <wtf/NeverDestroyed.h>
@@ -55,14 +54,12 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
     JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute1;
     JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
-    JSC::Strong<JSC::JSPromiseDeferred> m_testPromiseAttrPromiseDeferred;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
 
     // Custom attributes
     JSC::JSValue customAttr(JSC::ExecState*) const;
     void setCustomAttr(JSC::ExecState*, JSC::JSValue);
-    JSC::JSValue testPromiseAttr(JSC::ExecState*) const;
 
     // Custom functions
     JSC::JSValue customMethod(JSC::ExecState*);

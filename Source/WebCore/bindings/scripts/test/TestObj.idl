@@ -281,9 +281,6 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     attribute _optional                attributeWithReservedEnumType;
     void _any(unrestricted float a, long b);
 
-    // Promise attributes
-    [CustomGetter] readonly attribute Promise testPromiseAttr;
-
     // Promise function
     Promise testPromiseFunction();
     Promise testPromiseFunctionWithFloatArgument(float a);
