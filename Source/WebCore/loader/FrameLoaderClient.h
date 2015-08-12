@@ -30,6 +30,7 @@
 #ifndef FrameLoaderClient_h
 #define FrameLoaderClient_h
 
+#include "DNS.h"
 #include "FrameLoaderTypes.h"
 #include "IconURL.h"
 #include "LayoutMilestones.h"
@@ -347,6 +348,7 @@ namespace WebCore {
 #if ENABLE(CONTENT_FILTERING)
         virtual void contentFilterDidBlockLoad(ContentFilterUnblockHandler) { }
 #endif
+        virtual void prefetchDNS(const String& hostname) { WebCore::prefetchDNS(hostname); }
     };
 
 } // namespace WebCore

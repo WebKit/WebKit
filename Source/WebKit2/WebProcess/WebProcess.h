@@ -214,6 +214,8 @@ public:
     bool hasRichContentServices() const { return m_hasRichContentServices; }
 #endif
 
+    void prefetchDNS(const String&);
+
 private:
     WebProcess();
     ~WebProcess();

@@ -37,7 +37,6 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "ContainerNode.h"
-#include "DNS.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -98,8 +97,8 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
         Settings* settings = document.settings();
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
         // to complete that as URL <https://bugs.webkit.org/show_bug.cgi?id=48857>.
-        if (settings && settings->dnsPrefetchingEnabled() && href.isValid() && !href.isEmpty())
-            prefetchDNS(href.host());
+        if (settings && settings->dnsPrefetchingEnabled() && href.isValid() && !href.isEmpty() && document.frame())
+            document.frame()->loader().client().prefetchDNS(href.host());
     }
 
 #if ENABLE(LINK_PREFETCH)
