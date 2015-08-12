@@ -1,3 +1,21 @@
+2015-08-12  Jason Marcell  <jmarcell@apple.com>
+
+        Refactor BuildbotQueueView.revisionContentForIteration to work more generically with repositories
+        other than "openSource" and "internal".
+        https://bugs.webkit.org/show_bug.cgi?id=147796
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._revisionContentWithPopoverForIteration): The "repository" parameter
+        is now a repository object instead of the repository name, thus we don't have to pass the "trac"
+        object in separately. Also added an assertion to see if the given repository is in iteration.revision,
+        and another assertion that, if the previousIteration is non-null, the given repository is in
+        previousIteration.revision.
+        (BuildbotQueueView.prototype.revisionContentForIteration): Refactored to work more generically
+        with repositories other than "openSource" and "internal". Also added an assertion that the returned
+        fragment has at least one child node.
+
 2015-08-12  Simon Fraser  <simon.fraser@apple.com>
 
         Add a tool that dumps class and struct member layout, showing padding

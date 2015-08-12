@@ -208,18 +208,21 @@ BuildbotQueueView.prototype = {
         return true;
     },
 
-    _revisionContentWithPopoverForIteration: function(iteration, previousIteration, repository, trac)
+    _revisionContentWithPopoverForIteration: function(iteration, previousIteration, repository)
     {
+        var repositoryName = repository.name;
+        console.assert(iteration.revision[repositoryName]);
         var content = document.createElement("span");
-        content.textContent = "r" + iteration.revision[repository];
+        content.textContent = "r" + iteration.revision[repositoryName];
         content.classList.add("revision-number");
 
         if (previousIteration) {
+            console.assert(previousIteration.revision[repositoryName]);
             var context = {
-                trac: trac,
-                branch: iteration.queue.branch[repository],
-                firstRevision: previousIteration.revision[repository] + 1,
-                lastRevision: iteration.revision[repository]
+                trac: repository.trac,
+                branch: iteration.queue.branch[repositoryName],
+                firstRevision: previousIteration.revision[repositoryName] + 1,
+                lastRevision: iteration.revision[repositoryName]
             };
             if (context.firstRevision <= context.lastRevision)
                 new PopoverTracker(content, this._presentPopoverForRevisionRange.bind(this), context);
@@ -264,21 +267,20 @@ BuildbotQueueView.prototype = {
 
     revisionContentForIteration: function(iteration, previousDisplayedIteration)
     {
-        console.assert(iteration.revision[Dashboard.Repository.OpenSource.name]);
-
-        var openSourceContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration,
-            Dashboard.Repository.OpenSource.name, Dashboard.Repository.OpenSource.trac);
-
-        if (!iteration.revision[Dashboard.Repository.Internal.name])
-            return openSourceContent;
-
-        var internalContent = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration,
-            Dashboard.Repository.Internal.name, Dashboard.Repository.Internal.trac);
-
         var fragment = document.createDocumentFragment();
-        fragment.appendChild(openSourceContent);
-        fragment.appendChild(document.createTextNode(" \uff0b "));
-        fragment.appendChild(internalContent);
+        var shouldAddPlusSign = false;
+        var sortedRepositories = Dashboard.sortedRepositories;
+        for (var i = 0; i < sortedRepositories.length; ++i) {
+            var repository = sortedRepositories[i];
+            if (!iteration.revision[repository.name])
+                continue;
+            var content = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration, repository);
+            if (shouldAddPlusSign)
+                fragment.appendChild(document.createTextNode(" \uff0b "));
+            fragment.appendChild(content);
+            shouldAddPlusSign = true;
+        }
+        console.assert(fragment.childNodes.length);
         return fragment;
     },
 
