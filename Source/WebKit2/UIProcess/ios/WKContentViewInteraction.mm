@@ -3381,7 +3381,8 @@ static bool isAssistableInputType(InputType type)
 {
     [self _addDefaultGestureRecognizers];
 
-    _page->stopInteraction();
+    if (![_actionSheetAssistant isShowingSheet])
+        _page->stopInteraction();
 }
 
 - (void)_previewItemController:(UIPreviewItemController *)controller didDismissPreview:(UIViewController *)viewController committing:(BOOL)committing

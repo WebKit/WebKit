@@ -67,6 +67,7 @@ struct InteractionInformationAtPosition;
 - (void)updateSheetPosition;
 - (RetainPtr<NSArray>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo;
 - (RetainPtr<NSArray>)defaultActionsForImageSheet:(_WKActivatedElementInfo *)elementInfo;
+- (BOOL)isShowingSheet;
 @end
 
 #endif // PLATFORM(IOS)

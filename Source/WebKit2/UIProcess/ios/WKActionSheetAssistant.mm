@@ -204,6 +204,11 @@ static LSAppLink *appLinkForURL(NSURL *url)
     [_interactionSheet updateSheetPosition];
 }
 
+- (BOOL)isShowingSheet
+{
+    return _interactionSheet != nil;
+}
+
 - (void)_createSheetWithElementActions:(NSArray *)actions showLinkTitle:(BOOL)showLinkTitle
 {
     auto delegate = _delegate.get();
