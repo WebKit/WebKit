@@ -1,3 +1,14 @@
+2015-08-12  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r185606): ASSERT in WebCore::RenderElement::styleWillChange
+        https://bugs.webkit.org/show_bug.cgi?id=147596
+        <rdar://problem/21963355>
+
+        Reviewed by Jon Honeycutt.
+
+        * css3/scroll-snap/improper-snap-points-crash-expected.txt: Added.
+        * css3/scroll-snap/improper-snap-points-crash.html: Added.
+
 2015-08-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         XHR.setRequestHeader should remove trailing and leading whitespaces from the header value

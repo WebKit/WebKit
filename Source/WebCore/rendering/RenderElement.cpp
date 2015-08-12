@@ -901,11 +901,12 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
 
 #if ENABLE(CSS_SCROLL_SNAP)
     if (!newStyle.scrollSnapCoordinates().isEmpty() || (oldStyle && !oldStyle->scrollSnapCoordinates().isEmpty())) {
-        ASSERT(is<RenderBox>(this));
-        if (newStyle.scrollSnapCoordinates().isEmpty())
-            view().unregisterBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
-        else
-            view().registerBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
+        if (is<RenderBox>(*this)) {
+            if (newStyle.scrollSnapCoordinates().isEmpty())
+                view().unregisterBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
+            else
+                view().registerBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
+        }
     }
 #endif
 
@@ -1066,8 +1067,8 @@ void RenderElement::willBeRemovedFromTree()
     
 #if ENABLE(CSS_SCROLL_SNAP)
     if (!m_style->scrollSnapCoordinates().isEmpty()) {
-        ASSERT(is<RenderBox>(this));
-        view().unregisterBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
+        if (is<RenderBox>(*this))
+            view().unregisterBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
     }
 #endif
 
