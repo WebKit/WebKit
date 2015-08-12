@@ -1,5 +1,30 @@
 2015-08-11  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: TimelineView data not cleared when recording is reset
+        https://bugs.webkit.org/show_bug.cgi?id=147916
+
+        Reviewed by Timothy Hatcher.
+
+        Each derived timeline view maintains a separate array of timeline records. These weren't
+        cleared on reset, so switching to a timeline view after clearing the recording caused
+        the view to populate its tree outline.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.set columns):
+        (WebInspector.LayoutTimelineView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.set columns):
+        (WebInspector.NetworkTimelineView):
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.reset):
+        (WebInspector.OverviewTimelineView.prototype._processPendingRepresentedObjects):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype.reset):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype.reset):
+
+2015-08-11  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Dragging a timeline ruler handle when both handles clamped is broken
         https://bugs.webkit.org/show_bug.cgi?id=147912
 

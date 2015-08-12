@@ -162,6 +162,8 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         super.reset();
 
         this._dataGrid.reset();
+
+        this._pendingRecords = [];
     }
 
     // Protected

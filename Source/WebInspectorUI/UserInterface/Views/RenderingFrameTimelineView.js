@@ -189,6 +189,8 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         super.reset();
 
         this._dataGrid.reset();
+
+        this._pendingRecords = [];
     }
 
     // Protected
