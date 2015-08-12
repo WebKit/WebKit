@@ -1,3 +1,13 @@
+2015-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Debug CMake builds on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147940
+
+        Reviewed by Chris Dumez.
+
+        * PlatformWin.cmake:
+        We need /NODEFAULTLIB with the debug version of libraries, too.
+
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch Windows build to Visual Studio 2015

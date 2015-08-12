@@ -224,3 +224,11 @@ add_custom_command(
     WORKING_DIRECTORY "${DERIVED_SOURCES_WEBCORE_DIR}"
     COMMAND echo /* Identifying AVFoundation Support */ > WebCoreHeaderDetection.h
     VERBATIM)
+
+make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj)
+file(COPY
+    "${WEBCORE_DIR}/English.lproj/Localizable.strings"
+    "${WEBCORE_DIR}/English.lproj/mediaControlsLocalizedStrings.js"
+    DESTINATION
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
+)

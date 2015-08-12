@@ -1,3 +1,16 @@
+2015-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Debug CMake builds on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147940
+
+        Reviewed by Chris Dumez.
+
+        * DumpRenderTree/PlatformWin.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        The BitmapImage test is not enabled on the AppleWin port.
+        * WinLauncher/CMakeLists.txt:
+        Debug builds need /NODEFAULTLIB:MSVCRTD, too.
+
 2015-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. run-gtk-tests: Use a longer timeout for slow tests.

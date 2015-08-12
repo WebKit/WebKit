@@ -27,3 +27,9 @@ endif ()
 list(REMOVE_ITEM JavaScriptCore_SOURCES
     inspector/JSGlobalObjectInspectorController.cpp
 )
+
+file(COPY
+    "${JAVASCRIPTCORE_DIR}/JavaScriptCore.vcxproj/JavaScriptCore.resources"
+    DESTINATION
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)

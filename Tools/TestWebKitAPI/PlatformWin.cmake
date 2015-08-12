@@ -24,6 +24,16 @@ set(test_webcore_LIBRARIES
     gtest
 )
 
+set(TestWebCoreLib_SOURCES
+    ${test_main_SOURCES}
+    ${TESTWEBKITAPI_DIR}/TestsController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/CalculationValue.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/TimeRanges.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
+)
+
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND test_webcore_LIBRARIES
         cairo
@@ -33,6 +43,9 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         ssleay32
         strmiids
         vcruntime
+    )
+    list(APPEND TestWebCoreLib_SOURCES
+        ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/BitmapImage.cpp
     )
 else ()
     list(APPEND test_webcore_LIBRARIES
@@ -56,14 +69,7 @@ set(TestWTF_SOURCES
 )
 
 add_library(TestWebCoreLib SHARED
-    ${test_main_SOURCES}
-    ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/BitmapImage.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/CalculationValue.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/TimeRanges.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
+    ${TestWebCoreLib_SOURCES}
 )
 
 target_link_libraries(TestWebCoreLib ${test_webcore_LIBRARIES})
