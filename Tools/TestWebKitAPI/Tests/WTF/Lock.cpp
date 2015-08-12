@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include <wtf/ByteLock.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/WordLock.h>
 
 using namespace WTF;
 
@@ -68,6 +68,36 @@ void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned
         EXPECT_EQ(expected, words[threadGroupIndex]);
 }
 
+TEST(WTF_WordLock, UncontendedShortSection)
+{
+    runLockTest<WordLock>(1, 1, 1, 10000000);
+}
+
+TEST(WTF_WordLock, UncontendedLongSection)
+{
+    runLockTest<WordLock>(1, 1, 10000, 1000);
+}
+
+TEST(WTF_WordLock, ContendedShortSection)
+{
+    runLockTest<WordLock>(1, 10, 1, 10000000);
+}
+
+TEST(WTF_WordLock, ContendedLongSection)
+{
+    runLockTest<WordLock>(1, 10, 10000, 10000);
+}
+
+TEST(WTF_WordLock, ManyContendedShortSections)
+{
+    runLockTest<WordLock>(10, 10, 1, 500000);
+}
+
+TEST(WTF_WordLock, ManyContendedLongSections)
+{
+    runLockTest<WordLock>(10, 10, 10000, 1000);
+}
+
 TEST(WTF_Lock, UncontendedShortSection)
 {
     runLockTest<Lock>(1, 1, 1, 10000000);
@@ -98,39 +128,9 @@ TEST(WTF_Lock, ManyContendedLongSections)
     runLockTest<Lock>(10, 10, 10000, 1000);
 }
 
-TEST(WTF_ByteLock, UncontendedShortSection)
+TEST(WTF_Lock, SectionAddressCollision)
 {
-    runLockTest<ByteLock>(1, 1, 1, 10000000);
-}
-
-TEST(WTF_ByteLock, UncontendedLongSection)
-{
-    runLockTest<ByteLock>(1, 1, 10000, 1000);
-}
-
-TEST(WTF_ByteLock, ContendedShortSection)
-{
-    runLockTest<ByteLock>(1, 10, 1, 10000000);
-}
-
-TEST(WTF_ByteLock, ContendedLongSection)
-{
-    runLockTest<ByteLock>(1, 10, 10000, 10000);
-}
-
-TEST(WTF_ByteLock, ManyContendedShortSections)
-{
-    runLockTest<ByteLock>(10, 10, 1, 500000);
-}
-
-TEST(WTF_ByteLock, ManyContendedLongSections)
-{
-    runLockTest<ByteLock>(10, 10, 10000, 1000);
-}
-
-TEST(WTF_ByteLock, SectionAddressCollision)
-{
-    runLockTest<ByteLock>(4, 2, 10000, 2000);
+    runLockTest<Lock>(4, 2, 10000, 2000);
 }
 
 } // namespace TestWebKitAPI

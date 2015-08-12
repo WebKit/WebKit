@@ -7,7 +7,6 @@ set(WTF_HEADERS
     BitVector.h
     Bitmap.h
     BumpPointerAllocator.h
-    ByteLock.h
     ByteOrder.h
     CompilationThread.h
     Compiler.h
@@ -104,6 +103,7 @@ set(WTF_HEADERS
     VectorTraits.h
     WTFThreadData.h
     WeakPtr.h
+    WordLock.h
     WorkQueue.h
     dtoa.h
 
@@ -146,7 +146,6 @@ set(WTF_SOURCES
     Assertions.cpp
     Atomics.cpp
     BitVector.cpp
-    ByteLock.cpp
     CompilationThread.cpp
     CryptographicUtilities.cpp
     CryptographicallyRandomNumber.cpp
@@ -183,6 +182,7 @@ set(WTF_SOURCES
     StringPrintStream.cpp
     Threading.cpp
     WTFThreadData.cpp
+    WordLock.cpp
     WorkQueue.cpp
     dtoa.cpp
 

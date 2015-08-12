@@ -1,5 +1,65 @@
 2015-08-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Always use a byte-sized lock implementation
+        https://bugs.webkit.org/show_bug.cgi?id=147908
+
+        Reviewed by Geoffrey Garen.
+
+        At the start of my locking algorithm crusade, I implemented Lock, which is a sizeof(void*)
+        lock implementation with some nice theoretical properties and good performance. Then I added
+        the ParkingLot abstraction and ByteLock. ParkingLot uses Lock in its implementation.
+        ByteLock uses ParkingLot to create a sizeof(char) lock implementation that performs like
+        Lock.
+
+        It turns out that ByteLock is always at least as good as Lock, and sometimes a lot better:
+        it requires 8x less memory on 64-bit systems. It's hard to construct a benchmark where
+        ByteLock is significantly slower than Lock, and when you do construct such a benchmark,
+        tweaking it a bit can also create a scenario where ByteLock is significantly faster than
+        Lock.
+
+        So, the thing that we call "Lock" should really use ByteLock's algorithm, since it is more
+        compact and just as fast. That's what this patch does.
+
+        But we still need to keep the old Lock algorithm, because it's used to implement ParkingLot,
+        which in turn is used to implement ByteLock. So this patch does this transformation:
+
+        - Move the algorithm in Lock into files called WordLock.h|cpp. Make ParkingLot use
+          WordLock.
+
+        - Move the algorithm in ByteLock into Lock.h|cpp. Make everyone who used ByteLock use Lock
+          instead. All other users of Lock now get the byte-sized lock implementation.
+
+        - Remove the old ByteLock files.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * benchmarks/LockSpeedTest.cpp:
+        (main):
+        * wtf/WordLock.cpp: Added.
+        (WTF::WordLock::lockSlow):
+        (WTF::WordLock::unlockSlow):
+        * wtf/WordLock.h: Added.
+        (WTF::WordLock::WordLock):
+        (WTF::WordLock::lock):
+        (WTF::WordLock::unlock):
+        (WTF::WordLock::isHeld):
+        (WTF::WordLock::isLocked):
+        * wtf/ByteLock.cpp: Removed.
+        * wtf/ByteLock.h: Removed.
+        * wtf/CMakeLists.txt:
+        * wtf/Lock.cpp:
+        (WTF::LockBase::lockSlow):
+        (WTF::LockBase::unlockSlow):
+        * wtf/Lock.h:
+        (WTF::LockBase::lock):
+        (WTF::LockBase::unlock):
+        (WTF::LockBase::isHeld):
+        (WTF::LockBase::isLocked):
+        (WTF::Lock::Lock):
+        * wtf/ParkingLot.cpp:
+
+2015-08-11  Filip Pizlo  <fpizlo@apple.com>
+
         Remove ByteSpinLock
         https://bugs.webkit.org/show_bug.cgi?id=147900
 

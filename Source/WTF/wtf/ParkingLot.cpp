@@ -28,11 +28,11 @@
 
 #include "DataLog.h"
 #include "HashFunctions.h"
-#include "Lock.h"
 #include "StringPrintStream.h"
 #include "ThreadSpecific.h"
 #include "ThreadingPrimitives.h"
 #include "Vector.h"
+#include "WordLock.h"
 #include <condition_variable>
 #include <mutex>
 #include <thread>
@@ -170,7 +170,7 @@ public:
 
     // This lock protects the entire bucket. Thou shall not make changes to Bucket without holding
     // this lock.
-    Lock lock;
+    WordLock lock;
 
     // Put some distane between buckets in memory. This is one of several mitigations against false
     // sharing.

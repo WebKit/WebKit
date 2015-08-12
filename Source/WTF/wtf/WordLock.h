@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_Lock_h
-#define WTF_Lock_h
+#ifndef WTF_WordLock_h
+#define WTF_WordLock_h
 
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
@@ -33,19 +33,23 @@
 
 namespace WTF {
 
-// This is a fully adaptive mutex that only requires 1 byte of storage. It has fast paths that are
-// competetive to SpinLock (uncontended locking is inlined and is just a CAS, microcontention is
-// handled by spinning and yielding), and a slow path that is competetive to Mutex (if a lock cannot
-// be acquired in a short period of time, the thread is put to sleep until the lock is available
-// again). It uses less memory than either SpinLock or Mutex.
+// A WordLock is a fully adaptive mutex that uses sizeof(void*) storage. It has a fast path that is
+// similar to SpinLock, and a slow path that is similar to Mutex. In most cases, you should use Lock
+// instead. WordLock sits lower in the stack and is used to implement Lock, so Lock is the main
+// client of WordLock.
 
-// This is a struct without a constructor or destructor so that it can be statically initialized.
-// Use Lock in instance variables.
-struct LockBase {
+class WordLock {
+    WTF_MAKE_NONCOPYABLE(WordLock);
+public:
+    WordLock()
+    {
+        m_word.store(0, std::memory_order_relaxed);
+    }
+
     void lock()
     {
-        if (LIKELY(m_byte.compareExchangeWeak(0, isHeldBit, std::memory_order_acquire))) {
-            // Lock acquired!
+        if (LIKELY(m_word.compareExchangeWeak(0, isLockedBit, std::memory_order_acquire))) {
+            // WordLock acquired!
             return;
         }
 
@@ -54,8 +58,8 @@ struct LockBase {
 
     void unlock()
     {
-        if (LIKELY(m_byte.compareExchangeWeak(isHeldBit, 0, std::memory_order_release))) {
-            // Lock released and nobody was waiting!
+        if (LIKELY(m_word.compareExchangeWeak(isLockedBit, 0, std::memory_order_release))) {
+            // WordLock released, and nobody was waiting!
             return;
         }
 
@@ -64,7 +68,7 @@ struct LockBase {
 
     bool isHeld() const
     {
-        return m_byte.load(std::memory_order_acquire) & isHeldBit;
+        return m_word.load(std::memory_order_acquire) & isLockedBit;
     }
 
     bool isLocked() const
@@ -72,33 +76,23 @@ struct LockBase {
         return isHeld();
     }
 
-protected:
-    static const uint8_t isHeldBit = 1;
-    static const uint8_t hasParkedBit = 2;
+private:
+    static const uintptr_t isLockedBit = 1;
+    static const uintptr_t isQueueLockedBit = 2;
+    static const uintptr_t queueHeadMask = 3;
 
     WTF_EXPORT_PRIVATE void lockSlow();
     WTF_EXPORT_PRIVATE void unlockSlow();
 
-    Atomic<uint8_t> m_byte;
+    Atomic<uintptr_t> m_word;
 };
 
-class Lock : public LockBase {
-    WTF_MAKE_NONCOPYABLE(Lock);
-public:
-    Lock()
-    {
-        m_byte.store(0, std::memory_order_relaxed);
-    }
-};
-
-typedef LockBase StaticLock;
-typedef Locker<LockBase> LockHolder;
+typedef Locker<WordLock> WordLockHolder;
 
 } // namespace WTF
 
-using WTF::StaticLock;
-using WTF::Lock;
-using WTF::LockHolder;
+using WTF::WordLock;
+using WTF::WordLockHolder;
 
-#endif // WTF_Lock_h
+#endif // WTF_WordLock_h
 

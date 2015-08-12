@@ -24,8 +24,6 @@
 		0F0D85B417234CC100338210 /* NoLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0D85B317234CB100338210 /* NoLock.h */; };
 		0F2B66A617B6B4FB00A7AE3F /* DeferrableRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */; };
 		0F2B66A717B6B4FD00A7AE3F /* FlipBytes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */; };
-		0F824A661B7443A0002E345D /* ByteLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A621B7443A0002E345D /* ByteLock.cpp */; };
-		0F824A671B7443A0002E345D /* ByteLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F824A631B7443A0002E345D /* ByteLock.h */; };
 		0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A641B7443A0002E345D /* ParkingLot.cpp */; };
 		0F824A691B7443A0002E345D /* ParkingLot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F824A651B7443A0002E345D /* ParkingLot.h */; };
 		0F87105A16643F190090B0AD /* RawPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87105916643F190090B0AD /* RawPointer.h */; };
@@ -46,6 +44,8 @@
 		0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */; };
 		0FE1646A1B6FFC9600400E7C /* Lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE164681B6FFC9600400E7C /* Lock.cpp */; };
 		0FE1646B1B6FFC9600400E7C /* Lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE164691B6FFC9600400E7C /* Lock.h */; };
+		0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE4479A1B7AAA03009498EB /* WordLock.cpp */; };
+		0FE4479D1B7AAA03009498EB /* WordLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE4479B1B7AAA03009498EB /* WordLock.h */; };
 		0FED67B61B22D4D80066CE15 /* TinyPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */; };
 		14022F4118F5C3FC007FF0EB /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14022F4018F5C3FC007FF0EB /* libbmalloc.a */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
@@ -311,8 +311,6 @@
 		0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferrableRefCounted.h; sourceTree = "<group>"; };
 		0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlipBytes.h; sourceTree = "<group>"; };
 		0F300B7D18AB48B400A6D72E /* HashMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashMethod.h; sourceTree = "<group>"; };
-		0F824A621B7443A0002E345D /* ByteLock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ByteLock.cpp; sourceTree = "<group>"; };
-		0F824A631B7443A0002E345D /* ByteLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteLock.h; sourceTree = "<group>"; };
 		0F824A641B7443A0002E345D /* ParkingLot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParkingLot.cpp; sourceTree = "<group>"; };
 		0F824A651B7443A0002E345D /* ParkingLot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkingLot.h; sourceTree = "<group>"; };
 		0F87105916643F190090B0AD /* RawPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawPointer.h; sourceTree = "<group>"; };
@@ -333,6 +331,8 @@
 		0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrintStream.h; sourceTree = "<group>"; };
 		0FE164681B6FFC9600400E7C /* Lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lock.cpp; sourceTree = "<group>"; };
 		0FE164691B6FFC9600400E7C /* Lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lock.h; sourceTree = "<group>"; };
+		0FE4479A1B7AAA03009498EB /* WordLock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WordLock.cpp; sourceTree = "<group>"; };
+		0FE4479B1B7AAA03009498EB /* WordLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordLock.h; sourceTree = "<group>"; };
 		0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyPtrSet.h; sourceTree = "<group>"; };
 		14022F4018F5C3FC007FF0EB /* libbmalloc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
@@ -723,8 +723,6 @@
 				A8A47264151A825A004123FF /* BlockStack.h */,
 				A8A47265151A825A004123FF /* BloomFilter.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
-				0F824A621B7443A0002E345D /* ByteLock.cpp */,
-				0F824A631B7443A0002E345D /* ByteLock.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
@@ -892,6 +890,8 @@
 				A8A47371151A825B004123FF /* VectorTraits.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
 				974CFC8D16A4F327006D5404 /* WeakPtr.h */,
+				0FE4479A1B7AAA03009498EB /* WordLock.cpp */,
+				0FE4479B1B7AAA03009498EB /* WordLock.h */,
 				E4A0AD371A96245500536DF6 /* WorkQueue.cpp */,
 				E4A0AD381A96245500536DF6 /* WorkQueue.h */,
 				A8A4737A151A825B004123FF /* WTFThreadData.cpp */,
@@ -1166,7 +1166,6 @@
 				A8A47415151A825B004123FF /* RandomNumber.h in Headers */,
 				A8A47416151A825B004123FF /* RandomNumberSeed.h in Headers */,
 				0F87105A16643F190090B0AD /* RawPointer.h in Headers */,
-				0F824A671B7443A0002E345D /* ByteLock.h in Headers */,
 				A8A47417151A825B004123FF /* RedBlackTree.h in Headers */,
 				A8A47418151A825B004123FF /* RefCounted.h in Headers */,
 				A8A47419151A825B004123FF /* RefCountedArray.h in Headers */,
@@ -1220,6 +1219,7 @@
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
 				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
+				0FE4479D1B7AAA03009498EB /* WordLock.h in Headers */,
 				A8A4746D151A825B004123FF /* UnionFind.h in Headers */,
 				A8A4746A151A825B004123FF /* UTF8.h in Headers */,
 				A8A473B9151A825B004123FF /* utils.h in Headers */,
@@ -1337,7 +1337,6 @@
 			files = (
 				A8A47386151A825B004123FF /* Assertions.cpp in Sources */,
 				A8A47435151A825B004123FF /* AtomicString.cpp in Sources */,
-				0F824A661B7443A0002E345D /* ByteLock.cpp in Sources */,
 				9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */,
 				A5BA15FB182435A600A82E69 /* StringCF.cpp in Sources */,
 				1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */,
@@ -1400,6 +1399,7 @@
 				70ECA60D1B02426800449739 /* AtomicStringImpl.cpp in Sources */,
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
+				0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
 				A5BA15FC182435A600A82E69 /* StringImplCF.cpp in Sources */,
 				A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */,

@@ -27,14 +27,14 @@
 #define ConcurrentJITLock_h
 
 #include "DeferGC.h"
-#include <wtf/ByteLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NoLock.h>
 
 namespace JSC {
 
 #if ENABLE(CONCURRENT_JIT)
-typedef ByteLock ConcurrentJITLock;
-typedef ByteLocker ConcurrentJITLockerImpl;
+typedef Lock ConcurrentJITLock;
+typedef LockHolder ConcurrentJITLockerImpl;
 #else
 typedef NoLock ConcurrentJITLock;
 typedef NoLockLocker ConcurrentJITLockerImpl;

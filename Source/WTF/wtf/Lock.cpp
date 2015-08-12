@@ -27,55 +27,14 @@
 #include "Lock.h"
 
 #include "DataLog.h"
+#include "ParkingLot.h"
 #include "StringPrintStream.h"
-#include "ThreadSpecific.h"
 #include "ThreadingPrimitives.h"
-#include <condition_variable>
-#include <mutex>
 #include <thread>
 
 namespace WTF {
 
-namespace {
-
-// This data structure serves three purposes:
-//
-// 1) A parking mechanism for threads that go to sleep. That involves just a system mutex and
-//    condition variable.
-//
-// 2) A queue node for when a thread is on some Lock's queue.
-//
-// 3) The queue head. This is kind of funky. When a thread is the head of a queue, it also serves as
-//    the basic queue bookkeeping data structure. When a thread is dequeued, the next thread in the
-//    queue takes on the queue head duties.
-struct ThreadData {
-    // The parking mechanism.
-    bool shouldPark { false };
-    std::mutex parkingLock;
-    std::condition_variable parkingCondition;
-
-    // The queue node.
-    ThreadData* nextInQueue { nullptr };
-
-    // The queue itself.
-    ThreadData* queueTail { nullptr };
-};
-
-ThreadSpecific<ThreadData>* threadData;
-
-ThreadData* myThreadData()
-{
-    static std::once_flag initializeOnce;
-    std::call_once(
-        initializeOnce,
-        [] {
-            threadData = new ThreadSpecific<ThreadData>();
-        });
-
-    return *threadData;
-}
-
-} // anonymous namespace
+static const bool verbose = false;
 
 void LockBase::lockSlow()
 {
@@ -85,184 +44,62 @@ void LockBase::lockSlow()
     const unsigned spinLimit = 40;
     
     for (;;) {
-        uintptr_t currentWordValue = m_word.load();
-        
-        if (!(currentWordValue & isLockedBit)) {
-            // It's not possible for someone to hold the queue lock while the lock itself is no longer
-            // held, since we will only attempt to acquire the queue lock when the lock is held and
-            // the queue lock prevents unlock.
-            ASSERT(!(currentWordValue & isQueueLockedBit));
-            if (m_word.compareExchangeWeak(currentWordValue, currentWordValue | isLockedBit)) {
-                // Success! We acquired the lock.
-                return;
-            }
-        }
+        uint8_t currentByteValue = m_byte.load();
+        if (verbose)
+            dataLog(toString(currentThread(), ": locking with ", currentByteValue, "\n"));
 
-        // If there is no queue and we haven't spun too much, we can just try to spin around again.
-        if (!(currentWordValue & ~queueHeadMask) && spinCount < spinLimit) {
+        // We allow ourselves to barge in.
+        if (!(currentByteValue & isHeldBit)
+            && m_byte.compareExchangeWeak(currentByteValue, currentByteValue | isHeldBit))
+            return;
+
+        // If there is nobody parked and we haven't spun too much, we can just try to spin around.
+        if (!(currentByteValue & hasParkedBit) && spinCount < spinLimit) {
             spinCount++;
             std::this_thread::yield();
             continue;
         }
 
-        // Need to put ourselves on the queue. Create the queue if one does not exist. This requries
-        // owning the queue for a little bit. The lock that controls the queue is itself a spinlock.
-        // But before we acquire the queue spinlock, we make sure that we have a ThreadData for this
-        // thread.
-        ThreadData* me = myThreadData();
-        ASSERT(!me->shouldPark);
-        ASSERT(!me->nextInQueue);
-        ASSERT(!me->queueTail);
-
-        // Reload the current word value, since some time may have passed.
-        currentWordValue = m_word.load();
-
-        // We proceed only if the queue lock is not held, the Lock is held, and we succeed in
-        // acquiring the queue lock.
-        if ((currentWordValue & isQueueLockedBit)
-            || !(currentWordValue & isLockedBit)
-            || !m_word.compareExchangeWeak(currentWordValue, currentWordValue | isQueueLockedBit)) {
-            std::this_thread::yield();
+        // Need to park. We do this by setting the parked bit first, and then parking. We spin around
+        // if the parked bit wasn't set and we failed at setting it.
+        if (!(currentByteValue & hasParkedBit)
+            && !m_byte.compareExchangeWeak(currentByteValue, currentByteValue | hasParkedBit))
             continue;
-        }
-        
-        me->shouldPark = true;
 
-        // We own the queue. Nobody can enqueue or dequeue until we're done. Also, it's not possible
-        // to release the Lock while we hold the queue lock.
-        ThreadData* queueHead = bitwise_cast<ThreadData*>(currentWordValue & ~queueHeadMask);
-        if (queueHead) {
-            // Put this thread at the end of the queue.
-            queueHead->queueTail->nextInQueue = me;
-            queueHead->queueTail = me;
+        // We now expect the value to be isHeld|hasParked. So long as that's the case, we can park.
+        ParkingLot::compareAndPark(&m_byte, isHeldBit | hasParkedBit);
 
-            // Release the queue lock.
-            currentWordValue = m_word.load();
-            ASSERT(currentWordValue & ~queueHeadMask);
-            ASSERT(currentWordValue & isQueueLockedBit);
-            ASSERT(currentWordValue & isLockedBit);
-            m_word.store(currentWordValue & ~isQueueLockedBit);
-        } else {
-            // Make this thread be the queue-head.
-            queueHead = me;
-            me->queueTail = me;
-
-            // Release the queue lock and install ourselves as the head. No need for a CAS loop, since
-            // we own the queue lock.
-            currentWordValue = m_word.load();
-            ASSERT(~(currentWordValue & ~queueHeadMask));
-            ASSERT(currentWordValue & isQueueLockedBit);
-            ASSERT(currentWordValue & isLockedBit);
-            uintptr_t newWordValue = currentWordValue;
-            newWordValue |= bitwise_cast<uintptr_t>(queueHead);
-            newWordValue &= ~isQueueLockedBit;
-            m_word.store(newWordValue);
-        }
-
-        // At this point everyone who acquires the queue lock will see me on the queue, and anyone who
-        // acquires me's lock will see that me wants to park. Note that shouldPark may have been
-        // cleared as soon as the queue lock was released above, but it will happen while the
-        // releasing thread holds me's parkingLock.
-
-        {
-            std::unique_lock<std::mutex> locker(me->parkingLock);
-            while (me->shouldPark)
-                me->parkingCondition.wait(locker);
-        }
-
-        ASSERT(!me->shouldPark);
-        ASSERT(!me->nextInQueue);
-        ASSERT(!me->queueTail);
-        
-        // Now we can loop around and try to acquire the lock again.
+        // We have awaken, or we never parked because the byte value changed. Either way, we loop
+        // around and try again.
     }
 }
 
 void LockBase::unlockSlow()
 {
-    // The fast path can fail either because of spurious weak CAS failure, or because someone put a
-    // thread on the queue, or the queue lock is held. If the queue lock is held, it can only be
-    // because someone *will* enqueue a thread onto the queue.
-
-    // Acquire the queue lock, or release the lock. This loop handles both lock release in case the
-    // fast path's weak CAS spuriously failed and it handles queue lock acquisition if there is
-    // actually something interesting on the queue.
+    // Release the lock while finding out if someone is parked. Note that as soon as we do this,
+    // someone might barge in.
+    uint8_t oldByteValue;
     for (;;) {
-        uintptr_t currentWordValue = m_word.load();
-
-        ASSERT(currentWordValue & isLockedBit);
-        
-        if (currentWordValue == isLockedBit) {
-            if (m_word.compareExchangeWeak(isLockedBit, 0)) {
-                // The fast path's weak CAS had spuriously failed, and now we succeeded. The lock is
-                // unlocked and we're done!
-                return;
-            }
-            // Loop around and try again.
-            std::this_thread::yield();
-            continue;
-        }
-        
-        if (currentWordValue & isQueueLockedBit) {
-            std::this_thread::yield();
-            continue;
-        }
-
-        // If it wasn't just a spurious weak CAS failure and if the queue lock is not held, then there
-        // must be an entry on the queue.
-        ASSERT(currentWordValue & ~queueHeadMask);
-
-        if (m_word.compareExchangeWeak(currentWordValue, currentWordValue | isQueueLockedBit))
+        oldByteValue = m_byte.load();
+        if (verbose)
+            dataLog(toString(currentThread(), ": unlocking with ", oldByteValue, "\n"));
+        ASSERT(oldByteValue & isHeldBit);
+        if (m_byte.compareExchangeWeak(oldByteValue, 0))
             break;
     }
 
-    uintptr_t currentWordValue = m_word.load();
-        
-    // After we acquire the queue lock, the Lock must still be held and the queue must be
-    // non-empty. The queue must be non-empty since only the lockSlow() method could have held the
-    // queue lock and if it did then it only releases it after putting something on the queue.
-    ASSERT(currentWordValue & isLockedBit);
-    ASSERT(currentWordValue & isQueueLockedBit);
-    ThreadData* queueHead = bitwise_cast<ThreadData*>(currentWordValue & ~queueHeadMask);
-    ASSERT(queueHead);
+    // Note that someone could try to park right now. If that happens, they will return immediately
+    // because our parking predicate is that m_byte == isHeldBit | hasParkedBit, but we've already set
+    // m_byte = 0.
 
-    ThreadData* newQueueHead = queueHead->nextInQueue;
-    // Either this was the only thread on the queue, in which case we delete the queue, or there
-    // are still more threads on the queue, in which case we create a new queue head.
-    if (newQueueHead)
-        newQueueHead->queueTail = queueHead->queueTail;
-
-    // Change the queue head, possibly removing it if newQueueHead is null. No need for a CAS loop,
-    // since we hold the queue lock and the lock itself so nothing about the lock can change right
-    // now.
-    currentWordValue = m_word.load();
-    ASSERT(currentWordValue & isLockedBit);
-    ASSERT(currentWordValue & isQueueLockedBit);
-    ASSERT((currentWordValue & ~queueHeadMask) == bitwise_cast<uintptr_t>(queueHead));
-    uintptr_t newWordValue = currentWordValue;
-    newWordValue &= ~isLockedBit; // Release the Lock.
-    newWordValue &= ~isQueueLockedBit; // Release the queue lock.
-    newWordValue &= queueHeadMask; // Clear out the old queue head.
-    newWordValue |= bitwise_cast<uintptr_t>(newQueueHead); // Install new queue head.
-    m_word.store(newWordValue);
-
-    // Now the lock is available for acquisition. But we just have to wake up the old queue head.
-    // After that, we're done!
-
-    queueHead->nextInQueue = nullptr;
-    queueHead->queueTail = nullptr;
-
-    // We do this carefully because this may run either before or during the parkingLock critical
-    // section in lockSlow().
-    {
-        std::unique_lock<std::mutex> locker(queueHead->parkingLock);
-        queueHead->shouldPark = false;
-    }
-    // Doesn't matter if we notify_all() or notify_one() here since the only thread that could be
-    // waiting is queueHead.
-    queueHead->parkingCondition.notify_one();
-
-    // The old queue head can now contend for the lock again. We're done!
+    // If there had been threads parked, unpark all of them. This causes a thundering herd, but while
+    // that is theoretically scary, it's totally fine in WebKit because we usually don't have enough
+    // threads for this to matter.
+    // FIXME: We don't really need this to exhibit thundering herd. We could use unparkOne(), and if
+    // that returns true, just set the parked bit again. If in the process of setting the parked bit
+    // we fail the CAS, then just unpark again.
+    if (oldByteValue & hasParkedBit)
+        ParkingLot::unparkAll(&m_byte);
 }
 
 } // namespace WTF
