@@ -1,3 +1,10 @@
+2015-08-12  Matt Rajca  <mrajca@apple.com>
+
+        Fixed the Release build when MEDIA_SESSION is enabled.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageHandleMediaEvent):
+
 2015-08-07  Matt Rajca  <mrajca@apple.com>
 
         Media Session: notify the UI process when media controls are enabled/disabled

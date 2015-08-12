@@ -2186,6 +2186,7 @@ void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType wkEventType)
         break;
     default:
         ASSERT_NOT_REACHED();
+        return;
     }
 
     toImpl(page)->handleMediaEvent(eventType);

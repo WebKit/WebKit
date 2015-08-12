@@ -2796,6 +2796,7 @@ static MediaSessionInterruptingCategory interruptingCategoryFromString(const Str
     if (interruptingCategoryString == "transient-solo")
         return MediaSessionInterruptingCategory::TransientSolo;
     ASSERT_NOT_REACHED();
+    return MediaSessionInterruptingCategory::Content;
 }
 
 void Internals::sendMediaSessionStartOfInterruptionNotification(const String& interruptingCategoryString)
