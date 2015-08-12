@@ -26,16 +26,13 @@
 #include "config.h"
 #include <condition_variable>
 #include <mutex>
+#include <thread>
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListDump.h>
 #include <wtf/ParkingLot.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
-
-#if PLATFORM(WIN)
-#include <windows.h>
-#endif
 
 using namespace WTF;
 
@@ -195,11 +192,7 @@ void runParkingTest(unsigned numLatches, unsigned delay, unsigned numThreads, un
         tests[latchIndex].initialize(numThreads);
 
     for (unsigned unparkIndex = 0; unparkIndex < numSingleUnparks; ++unparkIndex) {
-#if PLATFORM(WIN)
-        Sleep(delay / 1000);
-#else
-        usleep(delay);
-#endif
+        std::this_thread::sleep_for(std::chrono::microseconds(delay));
         for (unsigned latchIndex = numLatches; latchIndex--;)
             tests[latchIndex].unparkOne(unparkIndex);
     }

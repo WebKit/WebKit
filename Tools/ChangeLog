@@ -1,3 +1,13 @@
+2015-08-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix test after build fix in r188286.
+        https://bugs.webkit.org/show_bug.cgi?id=147907
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        sleep_for can now be used, but we need to include <thread>
+
 2015-08-11  Filip Pizlo  <fpizlo@apple.com>
 
         Always use a byte-sized lock implementation
