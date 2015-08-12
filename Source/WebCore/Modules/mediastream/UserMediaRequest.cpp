@@ -68,6 +68,14 @@ static RefPtr<MediaConstraints> parseOptions(const Dictionary& options, const St
     return MediaConstraintsImpl::create();
 }
 
+void UserMediaRequest::enumerateDevices(Document* document, MediaDevices::EnumerateDevicePromise&& promise, ExceptionCode& ec)
+{
+    // FIXME(146426): Implement this.
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(promise);
+    UNUSED_PARAM(ec);
+}
+    
 void UserMediaRequest::start(Document* document, const Dictionary& options, MediaDevices::Promise&& promise, ExceptionCode& ec)
 {
     if (!options.isObject()) {

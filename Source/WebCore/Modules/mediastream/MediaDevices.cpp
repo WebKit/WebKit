@@ -65,6 +65,11 @@ void MediaDevices::getUserMedia(const Dictionary& options, Promise&& promise, Ex
     UserMediaRequest::start(document(), options, WTF::move(promise), ec);
 }
 
+void MediaDevices::enumerateDevices(EnumerateDevicePromise&& promise, ExceptionCode& ec) const
+{
+    UserMediaRequest::enumerateDevices(document(), WTF::move(promise), ec);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
