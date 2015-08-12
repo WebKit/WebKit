@@ -1,3 +1,20 @@
+2015-08-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Implement selector highlighting for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=147919
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView _layoutForNodeHighlight:offset:]):
+        Added offset parameter to start drawing the highlight at that index of the highlight quad list.
+
+        (-[WKInspectorHighlightView _layoutForNodeListHighlight:]):
+        Loops through the highlight quads and draws a new highlight for every 4 highlight quad objects.
+
+        (-[WKInspectorHighlightView update:]):
+        Now uses the light highlighting for both nodes and lists of nodes.
+
 2015-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkProcess: DNS prefetch happens in the Web Process

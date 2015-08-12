@@ -226,13 +226,22 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
 void InspectorOverlay::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
 {
-    if (!m_highlightNode && !m_highlightQuad)
+    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList)
         return;
 
     highlight.type = HighlightType::Rects;
     if (m_highlightNode)
         buildNodeHighlight(*m_highlightNode, nullptr, m_nodeHighlightConfig, highlight, coordinateSystem);
-    else
+    else if (m_highlightNodeList) {
+        highlight.setDataFromConfig(m_nodeHighlightConfig);
+        for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
+            Highlight nodeHighlight;
+            buildNodeHighlight(*(m_highlightNodeList->item(i)), nullptr, m_nodeHighlightConfig, nodeHighlight, coordinateSystem);
+            if (nodeHighlight.type == HighlightType::Node)
+                highlight.quads.appendVector(nodeHighlight.quads);
+        }
+        highlight.type = HighlightType::NodeList;
+    } else
         buildQuadHighlight(*m_highlightQuad, m_quadHighlightConfig, highlight);
 }
 
