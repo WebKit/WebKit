@@ -237,6 +237,8 @@ public:
     static Ref<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 
+    Watchdog& ensureWatchdog();
+
 private:
     RefPtr<JSLock> m_apiLock;
 

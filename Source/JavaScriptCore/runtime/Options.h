@@ -320,6 +320,8 @@ typedef const char* optionString;
     \
     v(bool, enableDollarVM, false, "installs the $vm debugging tool in global objects") \
     v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
+    \
+    v(unsigned, watchdog, 0, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
 
 class Options {
 public:

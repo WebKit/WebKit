@@ -286,6 +286,12 @@ VM::VM(VMType vmType, HeapType heapType)
         enableTypeProfiler();
     if (Options::enableControlFlowProfiler())
         enableControlFlowProfiler();
+
+    if (Options::watchdog()) {
+        std::chrono::milliseconds timeoutMillis(Options::watchdog());
+        Watchdog& watchdog = ensureWatchdog();
+        watchdog.setTimeLimit(*this, timeoutMillis);
+    }
 }
 
 VM::~VM()
@@ -369,6 +375,19 @@ VM*& VM::sharedInstanceInternal()
 {
     static VM* sharedInstance;
     return sharedInstance;
+}
+
+Watchdog& VM::ensureWatchdog()
+{
+    if (!watchdog) {
+        watchdog = adoptRef(new Watchdog());
+        
+        // The LLINT peeks into the Watchdog object directly. In order to do that,
+        // the LLINT assumes that the internal shape of a std::unique_ptr is the
+        // same as a plain C++ pointer, and loads the address of Watchdog from it.
+        RELEASE_ASSERT(*reinterpret_cast<Watchdog**>(&watchdog) == watchdog.get());
+    }
+    return *watchdog;
 }
 
 #if ENABLE(JIT)
