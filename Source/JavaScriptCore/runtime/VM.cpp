@@ -85,6 +85,7 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
+#include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapData.h"
 #include <wtf/CurrentTime.h>

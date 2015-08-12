@@ -44,6 +44,7 @@
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
+#include <runtime/Watchdog.h>
 
 using namespace JSC;
 

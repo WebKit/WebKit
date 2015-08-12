@@ -44,6 +44,7 @@
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
 #include "TypeProfilerLog.h"
+#include "Watchdog.h"
 
 namespace JSC { namespace DFG {
 

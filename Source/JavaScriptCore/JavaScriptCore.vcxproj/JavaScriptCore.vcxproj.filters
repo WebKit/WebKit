@@ -936,9 +936,6 @@
     <ClCompile Include="..\runtime\Watchdog.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\WatchdogNone.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\tools\CodeProfile.cpp">
       <Filter>tools</Filter>
     </ClCompile>

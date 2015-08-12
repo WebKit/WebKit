@@ -37,6 +37,7 @@
 #include "JSCInlines.h"
 #include "SourceProvider.h"
 #include "StackVisitor.h"
+#include "Watchdog.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -94,7 +95,7 @@ static bool internalScriptTimeoutCallback(ExecState* exec, void* callbackPtr, vo
 static void createWatchdogIfNeeded(VM& vm)
 {
     if (!vm.watchdog) {
-        vm.watchdog = std::make_unique<Watchdog>();
+        vm.watchdog = adoptRef(new Watchdog());
 
         // The LLINT peeks into the Watchdog object directly. In order to do that,
         // the LLINT assumes that the internal shape of a std::unique_ptr is the
@@ -120,9 +121,8 @@ void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
 {
     VM& vm = *toJS(group);
     JSLockHolder locker(&vm);
-    createWatchdogIfNeeded(vm);
-    Watchdog& watchdog = *vm.watchdog;
-    watchdog.setTimeLimit(vm, std::chrono::microseconds::max());
+    if (vm.watchdog)
+        vm.watchdog->setTimeLimit(vm, Watchdog::noTimeLimit);
 }
 
 // From the API's perspective, a global context remains alive iff it has been JSGlobalContextRetained.

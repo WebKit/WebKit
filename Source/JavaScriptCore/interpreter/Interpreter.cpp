@@ -71,6 +71,7 @@
 #include "Symbol.h"
 #include "VMEntryScope.h"
 #include "VirtualRegister.h"
+#include "Watchdog.h"
 
 #include <limits.h>
 #include <stdio.h>
@@ -880,8 +881,6 @@ failedJSONP:
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(vm.watchdog.get());
-
         result = program->generatedJITCode()->execute(&vm, &protoCallFrame);
     }
 
@@ -942,7 +941,6 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSCall);
-        Watchdog::Scope watchdogScope(vm.watchdog.get());
 
         // Execute the code:
         if (isJSCall)
@@ -1013,7 +1011,6 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get(), !isJSConstruct);
-        Watchdog::Scope watchdogScope(vm.watchdog.get());
 
         // Execute the code.
         if (isJSConstruct)
@@ -1082,8 +1079,6 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(vm.watchdog.get());
-
         result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
     }
 
@@ -1173,8 +1168,6 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-        Watchdog::Scope watchdogScope(vm.watchdog.get());
-
         result = eval->generatedJITCode()->execute(&vm, &protoCallFrame);
     }
 

@@ -53,6 +53,7 @@
 #include "ObjectConstructor.h"
 #include "ProtoCallFrame.h"
 #include "StructureRareDataInlines.h"
+#include "Watchdog.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace LLInt {

@@ -45,6 +45,7 @@
 #include "TypeLocation.h"
 #include "TypeProfilerLog.h"
 #include "VirtualRegister.h"
+#include "Watchdog.h"
 
 namespace JSC {
 
@@ -905,7 +906,7 @@ void JIT::emit_op_loop_hint(Instruction*)
     }
 
     // Emit the watchdog timer check:
-    if (m_vm->watchdog && m_vm->watchdog->isEnabled())
+    if (m_vm->watchdog && m_vm->watchdog->hasTimeLimit())
         addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog->timerDidFireAddress())));
 }
 
@@ -931,7 +932,7 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
 #endif
 
     // Emit the slow path of the watchdog timer check:
-    if (m_vm->watchdog && m_vm->watchdog->isEnabled()) {
+    if (m_vm->watchdog && m_vm->watchdog->hasTimeLimit()) {
         linkSlowCase(iter);
         callOperation(operationHandleWatchdogTimer);
 

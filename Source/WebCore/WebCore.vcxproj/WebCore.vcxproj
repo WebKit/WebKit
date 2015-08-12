@@ -20436,6 +20436,7 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\Structure.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\StructureChain.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\SymbolTable.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\Watchdog.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\WeakGCMap.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\WriteBarrier.h" />
     <ClInclude Include="..\ForwardingHeaders\yarr\YarrJIT.h" />

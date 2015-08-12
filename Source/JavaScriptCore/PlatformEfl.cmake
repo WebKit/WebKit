@@ -2,6 +2,7 @@ list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     ${ECORE_INCLUDE_DIRS}
     ${EINA_INCLUDE_DIRS}
     ${EO_INCLUDE_DIRS}
+    "${WTF_DIR}/wtf/efl"
 )
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 

@@ -57,6 +57,7 @@
 #include "ScopedArguments.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
+#include "Watchdog.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {

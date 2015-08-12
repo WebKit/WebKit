@@ -1728,7 +1728,6 @@
 		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */; };
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FED94F30171E3E2300BE77A4 /* WatchdogMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */; };
 		FEF040511AAE662D00BD28B0 /* CompareAndSwapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */; };
 		FEF6835E174343CC00A32E25 /* JITStubsARM.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835A174343CC00A32E25 /* JITStubsARM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF6835F174343CC00A32E25 /* JITStubsARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3587,7 +3586,6 @@
 		FED287B115EC9A5700DA8161 /* LLIntOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntOpcode.h; path = llint/LLIntOpcode.h; sourceTree = "<group>"; };
 		FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchdog.cpp; sourceTree = "<group>"; };
 		FED94F2C171E3E2300BE77A4 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
-		FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WatchdogMac.cpp; sourceTree = "<group>"; };
 		FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompareAndSwapTest.cpp; path = API/tests/CompareAndSwapTest.cpp; sourceTree = "<group>"; };
 		FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompareAndSwapTest.h; path = API/tests/CompareAndSwapTest.h; sourceTree = "<group>"; };
 		FEF6835A174343CC00A32E25 /* JITStubsARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARM.h; sourceTree = "<group>"; };
@@ -4920,7 +4918,6 @@
 				FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */,
 				FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */,
 				FED94F2C171E3E2300BE77A4 /* Watchdog.h */,
-				FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */,
 				A7CA3ADD17DA41AE006538AF /* WeakMapConstructor.cpp */,
@@ -7833,7 +7830,6 @@
 				E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */,
 				FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */,
 				FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */,
-				FED94F30171E3E2300BE77A4 /* WatchdogMac.cpp in Sources */,
 				7B98D1361B60CD5F0023B1A4 /* JSWASMModule.cpp in Sources */,
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,
 				1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */,

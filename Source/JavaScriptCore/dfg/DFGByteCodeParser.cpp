@@ -45,6 +45,7 @@
 #include "PutByIdStatus.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
+#include "Watchdog.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -4030,7 +4031,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             addToGraph(LoopHint);
             
-            if (m_vm->watchdog && m_vm->watchdog->isEnabled())
+            if (m_vm->watchdog && m_vm->watchdog->hasTimeLimit())
                 addToGraph(CheckWatchdogTimer);
             
             NEXT_OPCODE(op_loop_hint);

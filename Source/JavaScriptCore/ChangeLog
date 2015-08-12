@@ -1,3 +1,197 @@
+2015-08-11  Mark Lam  <mark.lam@apple.com>
+
+        Implementation JavaScript watchdog using WTF::WorkQueue.
+        https://bugs.webkit.org/show_bug.cgi?id=147107
+
+        Reviewed by Geoffrey Garen.
+
+        How the Watchdog works?
+        ======================
+
+        1. When do we start the Watchdog?
+           =============================
+           The watchdog should only be started if both the following conditions are true:
+           1. A time limit has been set.
+           2. We have entered the VM.
+ 
+        2. CPU time vs Wall Clock time
+           ===========================
+           Why do we need 2 time deadlines: m_cpuDeadline and m_wallClockDeadline?
+
+           The watchdog uses WorkQueue dispatchAfter() to queue a timer to measure the watchdog time
+           limit. WorkQueue timers measure time in monotonic wall clock time. m_wallClockDeadline
+           indicates the wall clock time point when the WorkQueue timer is expected to fire.
+
+           The time limit for which we allow JS code to run should be measured in CPU time, which can
+           differ from wall clock time.  m_cpuDeadline indicates the CPU time point when the watchdog
+           should fire.
+
+           Note: the timer firing is not the same thing as the watchdog firing.  When the timer fires,
+           we need to check if m_cpuDeadline has been reached.
+
+           If m_cpuDeadline has been reached, the watchdog is considered to have fired.
+
+           If not, then we have a remaining amount of CPU time, Tremainder, that we should allow JS
+           code to continue to run for.  Hence, we need to start a new timer to fire again after
+           Tremainder microseconds.
+    
+           See Watchdog::didFireSlow().
+
+        3. Spurious wake ups
+           =================
+           Because the WorkQueue timer cannot be cancelled, the watchdog needs to ignore stale timers.
+           It does this by checking the m_wallClockDeadline.  A wakeup that occurs right after
+           m_wallClockDeadline expires is considered to be the wakeup for the active timer.  All other
+           wake ups are considered to be spurious and will be ignored.
+ 
+           See Watchdog::didFireSlow().
+ 
+        4. Minimizing Timer creation cost
+           ==============================
+           Conceptually, we could start a new timer every time we start the watchdog. But we can do better
+           than this.
+ 
+           In practice, the time limit of a watchdog tends to be long, and the amount of time a watchdog
+           stays active tends to be short for well-behaved JS code. The user also tends to re-use the same
+           time limit. Consider the following example:
+ 
+               |---|-----|---|----------------|---------|
+               t0  t1    t2  t3            t0 + L    t2 + L 
+
+               |<--- T1 --------------------->|
+                         |<--- T2 --------------------->|
+               |<-- Td ->|                    |<-- Td ->|
+
+           1. The user initializes the watchdog with time limit L.
+           2. At t0, we enter the VM to execute JS code, and starts the watchdog timer, T1.
+              The timer is set to expire at t0 + L.
+           3. At t1, we exit the VM.
+           4. At t2, we enter the VM again, and would like to start a new watchdog timer, T2.
+         
+              However, we can note that the expiration time for T2 would be after the expiration time
+              of T1. Specifically, T2 would have expired at Td after T1 expires.
+         
+              Hence, we can just wait for T1 to expire, and then start a new timer T2' at time t0 + L
+              for a period or Td instead.
+
+           Note that didFireSlow() already compensates for time differences between wall clock and CPU time,
+           as well as handle spurious wake ups (see note 2 and 3 above).  As a result, didFireSlow() will
+           automatically take care of starting a new timer for the difference Td in the example above.
+           Instead of starting the new timer T2 and time t2, we just verify that if the active timer, T1's
+           expiration is less than T2s, then we are already covered by T1 and there's no need to start T2.
+
+           The benefit:
+
+           1. we minimize the number of timer instances we have queued in the workqueue at the same time
+              (ideally only 1 or 0), and use less peak memory usage.
+
+           2. we minimize the frequency of instantiating timer instances. By waiting for the current
+              active timer to expire first, on average, we get to start one timer per time limit
+              (which is infrequent because time limits tend to be long) instead of one timer per
+              VM entry (which tends to be frequent).
+
+           See Watchdog::startTimer().
+
+        * API/JSContextRef.cpp:
+        (createWatchdogIfNeeded):
+        (JSContextGroupClearExecutionTimeLimit):
+        - No need to create the watchdog (if not already created) just to clear it.
+          If the watchdog is not created yet, then it is effectively cleared.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (currentCPUTimeAsJSFunctionCallback):
+        (testExecutionTimeLimit):
+        (currentCPUTime): Deleted.
+        * API/tests/testapi.c:
+        (main):
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters:
+        - Enable watchdog tests for all platforms.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - Remove now unneeded WatchdogMac.cpp and WatchdogNone.cpp.
+
+        * PlatformEfl.cmake:
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOperations.cpp:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * runtime/VM.cpp:
+        - #include Watchdog.h in these files directly instead of doing it via VM.h.
+          These saves us from having to recompile the world when we change Watchdog.h.
+
+        * runtime/VM.h:
+        - See comment in Watchdog::startTimer() below for why the Watchdog needs to be
+          thread-safe ref counted.
+
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+        - We have done away with the WatchdogScope and arming/disarming of the watchdog.
+          Instead, the VMEntryScope will inform the watchdog of when we have entered and
+          exited the VM.
+
+        * runtime/Watchdog.cpp:
+        (JSC::currentWallClockTime):
+        (JSC::Watchdog::Watchdog):
+        (JSC::Watchdog::hasStartedTimer):
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::didFireSlow):
+        (JSC::Watchdog::hasTimeLimit):
+        (JSC::Watchdog::fire):
+        (JSC::Watchdog::enteredVM):
+        (JSC::Watchdog::exitedVM):
+
+        (JSC::Watchdog::startTimer):
+        - The Watchdog is now thread-safe ref counted because the WorkQueue may access it
+          (from a different thread) even after the VM shuts down.  We need to keep it
+          alive until the WorkQueue callback completes.
+
+          In Watchdog::startTimer(), we'll ref the Watchdog to keep it alive for each
+          WorkQueue callback we dispatch.  The callback will deref the Watchdog after it
+          is done with it.  This ensures that the Watchdog is kept alive until all
+          WorkQueue callbacks are done.
+
+        (JSC::Watchdog::stopTimer):
+        (JSC::Watchdog::~Watchdog): Deleted.
+        (JSC::Watchdog::didFire): Deleted.
+        (JSC::Watchdog::isEnabled): Deleted.
+        (JSC::Watchdog::arm): Deleted.
+        (JSC::Watchdog::disarm): Deleted.
+        (JSC::Watchdog::startCountdownIfNeeded): Deleted.
+        (JSC::Watchdog::startCountdown): Deleted.
+        (JSC::Watchdog::stopCountdown): Deleted.
+        * runtime/Watchdog.h:
+        (JSC::Watchdog::didFire):
+        (JSC::Watchdog::timerDidFireAddress):
+        (JSC::Watchdog::isArmed): Deleted.
+        (JSC::Watchdog::Scope::Scope): Deleted.
+        (JSC::Watchdog::Scope::~Scope): Deleted.
+        * runtime/WatchdogMac.cpp:
+        (JSC::Watchdog::initTimer): Deleted.
+        (JSC::Watchdog::destroyTimer): Deleted.
+        (JSC::Watchdog::startTimer): Deleted.
+        (JSC::Watchdog::stopTimer): Deleted.
+        * runtime/WatchdogNone.cpp:
+        (JSC::Watchdog::initTimer): Deleted.
+        (JSC::Watchdog::destroyTimer): Deleted.
+        (JSC::Watchdog::startTimer): Deleted.
+        (JSC::Watchdog::stopTimer): Deleted.
+
 2015-08-11  Filip Pizlo  <fpizlo@apple.com>
 
         Always use a byte-sized lock implementation

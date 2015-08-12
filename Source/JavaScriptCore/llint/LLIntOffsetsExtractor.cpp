@@ -55,6 +55,7 @@
 #include "TypeProfilerLog.h"
 #include "VMEntryRecord.h"
 #include "ValueProfile.h"
+#include "Watchdog.h"
 #include <wtf/text/StringImpl.h>
 
 

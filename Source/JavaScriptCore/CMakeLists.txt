@@ -617,7 +617,6 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/VMEntryScope.cpp
     runtime/VarOffset.cpp
     runtime/Watchdog.cpp
-    runtime/WatchdogNone.cpp
     runtime/WeakMapConstructor.cpp
     runtime/WeakMapData.cpp
     runtime/WeakMapPrototype.cpp

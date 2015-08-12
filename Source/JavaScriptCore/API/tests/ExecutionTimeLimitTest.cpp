@@ -26,33 +26,14 @@
 #include "config.h"
 #include "ExecutionTimeLimitTest.h"
 
-#if OS(DARWIN)
-
 #include "JSContextRefPrivate.h"
 #include "JavaScriptCore.h"
+#include <chrono>
+#include <wtf/CurrentTime.h>
 
-#include <mach/mach.h>
-#include <mach/mach_time.h>
-#include <stdio.h>
-#include <sys/time.h>
+using namespace std::chrono;
 
 static JSGlobalContextRef context = nullptr;
-
-static double currentCPUTime()
-{
-    mach_msg_type_number_t infoCount = THREAD_BASIC_INFO_COUNT;
-    thread_basic_info_data_t info;
-    
-    /* Get thread information */
-    mach_port_t threadPort = mach_thread_self();
-    thread_info(threadPort, THREAD_BASIC_INFO, (thread_info_t)(&info), &infoCount);
-    mach_port_deallocate(mach_task_self(), threadPort);
-    
-    double time = info.user_time.seconds + info.user_time.microseconds / 1000000.;
-    time += info.system_time.seconds + info.system_time.microseconds / 1000000.;
-    
-    return time;
-}
 
 static JSValueRef currentCPUTimeAsJSFunctionCallback(JSContextRef ctx, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -63,7 +44,7 @@ static JSValueRef currentCPUTimeAsJSFunctionCallback(JSContextRef ctx, JSObjectR
     UNUSED_PARAM(exception);
     
     ASSERT(JSContextGetGlobalContext(ctx) == context);
-    return JSValueMakeNumber(ctx, currentCPUTime());
+    return JSValueMakeNumber(ctx, currentCPUTime().count() / 1000000.);
 }
 
 bool shouldTerminateCallbackWasCalled = false;
@@ -120,18 +101,16 @@ int testExecutionTimeLimit()
     {
         const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .150) break; } ";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
-        double startTime;
-        double endTime;
         exception = nullptr;
         shouldTerminateCallbackWasCalled = false;
-        startTime = currentCPUTime();
+        auto startTime = currentCPUTime();
         v = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
-        endTime = currentCPUTime();
+        auto endTime = currentCPUTime();
         
-        if (((endTime - startTime) < .150f) && shouldTerminateCallbackWasCalled)
+        if (((endTime - startTime) < milliseconds(150)) && shouldTerminateCallbackWasCalled)
             printf("PASS: script timed out as expected.\n");
         else {
-            if (!((endTime - startTime) < .150f))
+            if (!((endTime - startTime) < milliseconds(150)))
                 printf("FAIL: script did not time out as expected.\n");
             if (!shouldTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
@@ -149,16 +128,14 @@ int testExecutionTimeLimit()
     {
         const char* loopForeverScript = "var startTime = currentCPUTime(); try { while (true) { if (currentCPUTime() - startTime > .150) break; } } catch(e) { }";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
-        double startTime;
-        double endTime;
         exception = nullptr;
         shouldTerminateCallbackWasCalled = false;
-        startTime = currentCPUTime();
+        auto startTime = currentCPUTime();
         v = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
-        endTime = currentCPUTime();
+        auto endTime = currentCPUTime();
         
-        if (((endTime - startTime) >= .150f) || !shouldTerminateCallbackWasCalled) {
-            if (!((endTime - startTime) < .150f))
+        if (((endTime - startTime) >= milliseconds(150)) || !shouldTerminateCallbackWasCalled) {
+            if (!((endTime - startTime) < milliseconds(150)))
                 printf("FAIL: script did not time out as expected.\n");
             if (!shouldTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
@@ -178,17 +155,15 @@ int testExecutionTimeLimit()
     {
         const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .150) break; } ";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
-        double startTime;
-        double endTime;
         exception = nullptr;
-        startTime = currentCPUTime();
+        auto startTime = currentCPUTime();
         v = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
-        endTime = currentCPUTime();
+        auto endTime = currentCPUTime();
         
-        if (((endTime - startTime) < .150f) && shouldTerminateCallbackWasCalled)
+        if (((endTime - startTime) < milliseconds(150)) && shouldTerminateCallbackWasCalled)
             printf("PASS: script timed out as expected when no callback is specified.\n");
         else {
-            if (!((endTime - startTime) < .150f))
+            if (!((endTime - startTime) < milliseconds(150)))
                 printf("FAIL: script did not time out as expected when no callback is specified.\n");
             failed = true;
         }
@@ -204,17 +179,15 @@ int testExecutionTimeLimit()
     {
         const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .150) break; } ";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
-        double startTime;
-        double endTime;
         exception = nullptr;
-        startTime = currentCPUTime();
+        auto startTime = currentCPUTime();
         v = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
-        endTime = currentCPUTime();
+        auto endTime = currentCPUTime();
         
-        if (((endTime - startTime) >= .150f) && cancelTerminateCallbackWasCalled && !exception)
+        if (((endTime - startTime) >= milliseconds(150)) && cancelTerminateCallbackWasCalled && !exception)
             printf("PASS: script timeout was cancelled as expected.\n");
         else {
-            if (((endTime - startTime) < .150) || exception)
+            if (((endTime - startTime) < milliseconds(150)) || exception)
                 printf("FAIL: script timeout was not cancelled.\n");
             if (!cancelTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
@@ -232,21 +205,18 @@ int testExecutionTimeLimit()
     {
         const char* loopForeverScript = "var startTime = currentCPUTime(); while (true) { if (currentCPUTime() - startTime > .500) break; } ";
         JSStringRef script = JSStringCreateWithUTF8CString(loopForeverScript);
-        double startTime;
-        double endTime;
-        double deltaTime;
         exception = nullptr;
-        startTime = currentCPUTime();
+        auto startTime = currentCPUTime();
         v = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
-        endTime = currentCPUTime();
-        deltaTime = endTime - startTime;
+        auto endTime = currentCPUTime();
+        auto deltaTime = endTime - startTime;
         
-        if ((deltaTime >= .300f) && (deltaTime < .500f) && (extendTerminateCallbackCalled == 2) && exception)
+        if ((deltaTime >= milliseconds(300)) && (deltaTime < milliseconds(500)) && (extendTerminateCallbackCalled == 2) && exception)
             printf("PASS: script timeout was extended as expected.\n");
         else {
-            if (deltaTime < .200f)
+            if (deltaTime < milliseconds(200))
                 printf("FAIL: script timeout was not extended as expected.\n");
-            else if (deltaTime >= .500f)
+            else if (deltaTime >= milliseconds(500))
                 printf("FAIL: script did not timeout.\n");
             
             if (extendTerminateCallbackCalled < 1)
@@ -264,5 +234,3 @@ int testExecutionTimeLimit()
     JSGlobalContextRelease(context);
     return failed;
 }
-
-#endif // OS(DARWIN)

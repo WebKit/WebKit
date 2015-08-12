@@ -50,7 +50,6 @@
 #include "ThunkGenerators.h"
 #include "TypedArrayController.h"
 #include "VMEntryRecord.h"
-#include "Watchdog.h"
 #include "Watchpoint.h"
 #include "WeakRandom.h"
 #include <wtf/Bag.h>
@@ -107,6 +106,7 @@ class UnlinkedFunctionExecutable;
 class UnlinkedProgramCodeBlock;
 class VirtualRegister;
 class VMEntryScope;
+class Watchdog;
 class Watchpoint;
 class WatchpointSet;
 
@@ -259,7 +259,7 @@ public:
     ClientData* clientData;
     VMEntryFrame* topVMEntryFrame;
     ExecState* topCallFrame;
-    std::unique_ptr<Watchdog> watchdog;
+    RefPtr<Watchdog> watchdog;
 
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;

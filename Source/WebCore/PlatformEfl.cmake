@@ -24,6 +24,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/efl"
     "${WEBCORE_DIR}/plugins/efl"
+    "${WTF_DIR}/wtf/efl"
 )
 
 list(APPEND WebCore_SOURCES

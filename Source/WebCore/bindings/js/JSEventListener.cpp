@@ -34,6 +34,7 @@
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
 #include <runtime/VMEntryScope.h>
+#include <runtime/Watchdog.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 

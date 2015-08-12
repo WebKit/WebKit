@@ -12198,6 +12198,9 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\SymbolTable.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\Watchdog.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\WeakGCMap.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>

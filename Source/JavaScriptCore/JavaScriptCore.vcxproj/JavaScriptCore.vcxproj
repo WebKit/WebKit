@@ -870,7 +870,6 @@
     <ClCompile Include="..\runtime\VMEntryScope.cpp" />
     <ClCompile Include="..\runtime\VarOffset.cpp" />
     <ClCompile Include="..\runtime\Watchdog.cpp" />
-    <ClCompile Include="..\runtime\WatchdogNone.cpp" />
     <ClCompile Include="..\runtime\WeakMapConstructor.cpp" />
     <ClCompile Include="..\runtime\WeakMapData.cpp" />
     <ClCompile Include="..\runtime\WeakMapPrototype.cpp" />

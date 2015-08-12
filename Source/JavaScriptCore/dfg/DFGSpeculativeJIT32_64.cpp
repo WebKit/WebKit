@@ -44,6 +44,7 @@
 #include "JSCInlines.h"
 #include "SetupVarargsFrame.h"
 #include "TypeProfilerLog.h"
+#include "Watchdog.h"
 
 namespace JSC { namespace DFG {
 

@@ -43,9 +43,7 @@
 #include "CustomGlobalObjectClassTest.h"
 #include "GlobalContextWithFinalizerTest.h"
 
-#if OS(DARWIN)
 #include "ExecutionTimeLimitTest.h"
-#endif
 
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
@@ -1893,9 +1891,7 @@ int main(int argc, char* argv[])
         JSGlobalContextRelease(context);
     }
 
-#if OS(DARWIN)
     failed = testExecutionTimeLimit() || failed;
-#endif /* OS(DARWIN) */
     failed = testGlobalContextWithFinalizer() || failed;
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
