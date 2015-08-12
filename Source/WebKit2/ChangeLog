@@ -1,3 +1,17 @@
+2015-08-11  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Try to fix the EFL build after r188279
+        https://bugs.webkit.org/show_bug.cgi?id=147917
+
+        Reviewed by Gyuyoung Kim.
+
+        Replaced the WKPageLoaderClient with variable name because it is removed in r188279.
+
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::PageLoadClientEfl):
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::PagePolicyClientEfl):
+
 2015-08-11  Andy Estes  <aestes@apple.com>
 
         Tried again to fix the iOS build.

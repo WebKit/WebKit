@@ -106,7 +106,7 @@ PagePolicyClientEfl::PagePolicyClientEfl(EwkView* view)
     ASSERT(pageRef);
 
     WKPagePolicyClientV1 policyClient;
-    memset(&policyClient, 0, sizeof(WKPagePolicyClient));
+    memset(&policyClient, 0, sizeof(policyClient));
     policyClient.base.version = 1;
     policyClient.base.clientInfo = this;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
