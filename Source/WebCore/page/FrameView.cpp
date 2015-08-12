@@ -160,6 +160,35 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
     return Pagination::BottomToTopPaginated;
 }
 
+class SubtreeLayoutStateMaintainer {
+public:
+    SubtreeLayoutStateMaintainer(RenderElement* subtreeLayoutRoot)
+        : m_layoutRoot(subtreeLayoutRoot)
+    {
+        if (m_layoutRoot) {
+            RenderView& view = m_layoutRoot->view();
+            view.pushLayoutState(*m_layoutRoot);
+            m_disableLayoutState = view.shouldDisableLayoutStateForSubtree(m_layoutRoot);
+            if (m_disableLayoutState)
+                view.disableLayoutState();
+        }
+    }
+
+    ~SubtreeLayoutStateMaintainer()
+    {
+        if (m_layoutRoot) {
+            RenderView& view = m_layoutRoot->view();
+            view.popLayoutState(*m_layoutRoot);
+            if (m_disableLayoutState)
+                view.enableLayoutState();
+        }
+    }
+
+private:
+    RenderElement* m_layoutRoot { nullptr };
+    bool m_disableLayoutState { false };
+};
+
 FrameView::FrameView(Frame& frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
@@ -1366,13 +1395,8 @@ void FrameView::layout(bool allowSubtree)
         }
 
         layer = root->enclosingLayer();
+        SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(m_layoutRoot);
 
-        bool disableLayoutState = false;
-        if (subtree) {
-            disableLayoutState = root->view().shouldDisableLayoutStateForSubtree(root);
-            root->view().pushLayoutState(*root);
-        }
-        LayoutStateDisabler layoutStateDisabler(disableLayoutState ? &root->view() : nullptr);
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&root->view());
 
         ASSERT(m_layoutPhase == InPreLayout);
@@ -1400,13 +1424,8 @@ void FrameView::layout(bool allowSubtree)
 #endif
 
         ASSERT(m_layoutPhase == InLayout);
-
-        if (subtree)
-            root->view().popLayoutState(*root);
-
         m_layoutRoot = nullptr;
-
-        // Close block here to end the scope of changeSchedulingEnabled and layoutStateDisabler.
+        // Close block here to end the scope of changeSchedulingEnabled and SubtreeLayoutStateMaintainer.
     }
 
     m_layoutPhase = InViewSizeAdjust;

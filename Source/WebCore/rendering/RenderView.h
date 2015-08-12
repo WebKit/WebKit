@@ -304,6 +304,7 @@ private:
 
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
+    friend class SubtreeLayoutStateMaintainer;
 
     virtual bool isScrollableOrRubberbandableBox() const override;
 
@@ -445,20 +446,19 @@ private:
 class LayoutStateDisabler {
     WTF_MAKE_NONCOPYABLE(LayoutStateDisabler);
 public:
-    LayoutStateDisabler(RenderView* view)
+    LayoutStateDisabler(RenderView& view)
         : m_view(view)
     {
-        if (m_view)
-            m_view->disableLayoutState();
+        m_view.disableLayoutState();
     }
 
     ~LayoutStateDisabler()
     {
-        if (m_view)
-            m_view->enableLayoutState();
+        m_view.enableLayoutState();
     }
+
 private:
-    RenderView* m_view;
+    RenderView& m_view;
 };
 
 } // namespace WebCore

@@ -149,7 +149,7 @@ void RenderMultiColumnFlowThread::populate()
     // Reparent children preceding the flow thread into the flow thread. It's multicol content
     // now. At this point there's obviously nothing after the flow thread, but renderers (column
     // sets and spanners) will be inserted there as we insert elements into the flow thread.
-    LayoutStateDisabler layoutStateDisabler(&view());
+    LayoutStateDisabler layoutStateDisabler(view());
     multicolContainer->moveChildrenTo(this, multicolContainer->firstChild(), this, true);
 }
 
@@ -161,7 +161,7 @@ void RenderMultiColumnFlowThread::evacuateAndDestroy()
     // Delete the line box tree.
     deleteLines();
     
-    LayoutStateDisabler layoutStateDisabler(&view());
+    LayoutStateDisabler layoutStateDisabler(view());
 
     // First promote all children of the flow thread. Before we move them to the flow thread's
     // container, we need to unregister the flow thread, so that they aren't just re-added again to

@@ -3061,7 +3061,7 @@ void RenderBlock::updateFirstLetterStyle(RenderElement* firstLetterBlock, Render
         newFirstLetter->initializeStyle();
 
         // Move the first letter into the new renderer.
-        LayoutStateDisabler layoutStateDisabler(&view());
+        LayoutStateDisabler layoutStateDisabler(view());
         while (RenderObject* child = firstLetter->firstChild()) {
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();
@@ -3237,7 +3237,7 @@ void RenderBlock::updateFirstLetter()
 
     // Our layout state is not valid for the repaints we are going to trigger by
     // adding and removing children of firstLetterContainer.
-    LayoutStateDisabler layoutStateDisabler(&view());
+    LayoutStateDisabler layoutStateDisabler(view());
 
     createFirstLetterRenderer(firstLetterContainer, downcast<RenderText>(firstLetterObj));
 }

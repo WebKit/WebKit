@@ -383,7 +383,7 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect) 
     if (!shouldRepaint(repaintRect) || !hasValidRegionInfo())
         return;
 
-    LayoutStateDisabler layoutStateDisabler(&view()); // We can't use layout state to repaint, since the regions are somewhere else.
+    LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the regions are somewhere else.
 
     for (auto& region : m_regionList)
         region->repaintFlowThreadContent(repaintRect);
