@@ -99,8 +99,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             break;
         }
 
-        // Matches all situations except for User Agent styles.
-        if (!(style.ownerRule && style.ownerRule.type === WebInspector.CSSRule.Type.UserAgent)) {
+        if (style.editable) {
             this._iconElement.classList.add("toggle-able");
             this._iconElement.title = WebInspector.UIString("Comment All Properties");
             this._iconElement.addEventListener("click", this._toggleRuleOnOff.bind(this));

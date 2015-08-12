@@ -1,5 +1,16 @@
 2015-08-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Disabling attribute styles should not be possible
+        https://bugs.webkit.org/show_bug.cgi?id=147922
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        Increases the specificity of the if statement that adds rule disable state toggling to the icon.
+
+2015-08-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Update to CodeMirror 5.5 or later
         https://bugs.webkit.org/show_bug.cgi?id=147109
 
