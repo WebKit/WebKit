@@ -1,3 +1,24 @@
+2015-08-12  Enrica Casucci  <enrica@apple.com>
+
+        Element interaction should not be canceled when the menu is already being shown.
+        https://bugs.webkit.org/show_bug.cgi?id=147945
+        rdar://problem/22206433
+
+        Reviewed by Beth Dakin.
+
+        When preview is canceled by the action menu gesture, we should not stop interacting
+        with the element, since the information about the element is used for the menu actions.
+        We now expose a new method in the action sheet assistant to know if the action sheed is
+        being shown and we use this as an indication that we should not stop the interaction
+        with the element.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant isShowingSheet]): Added.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionStoppedFromPreviewItemController:]): Do not stop
+        the interaction if the sheet is being shown.
+
 2015-08-12  Matt Rajca  <mrajca@apple.com>
 
         Fixed the Release build when MEDIA_SESSION is enabled.
