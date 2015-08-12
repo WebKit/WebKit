@@ -181,6 +181,7 @@ private:
     // PlatformCALayerClient overrides
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) override { }
     virtual bool platformCALayerRespondsToLayoutChanges() const override { return false; }
+    WEBCORE_EXPORT void platformCALayerCustomSublayersChanged(PlatformCALayer*) override;
 
     WEBCORE_EXPORT void platformCALayerAnimationStarted(const String& animationKey, CFTimeInterval beginTime) override;
     WEBCORE_EXPORT void platformCALayerAnimationEnded(const String& animationKey) override;

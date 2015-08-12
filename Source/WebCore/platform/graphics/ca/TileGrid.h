@@ -71,7 +71,7 @@ public:
         UnparentAllTiles    = 1 << 1
     };
     typedef unsigned TileValidationPolicy;
-    void revalidateTiles(TileValidationPolicy);
+    void revalidateTiles(TileValidationPolicy = 0);
 
     bool tilesWouldChangeForCoverageRect(const FloatRect&) const;
 

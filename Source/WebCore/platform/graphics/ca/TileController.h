@@ -158,6 +158,9 @@ private:
     virtual void setZoomedOutContentsScale(float) override;
     virtual float zoomedOutContentsScale() const override;
 
+    void clearZoomedOutTileGrid();
+    void tileGridsChanged();
+
     void tileRevalidationTimerFired();
     void setNeedsRevalidateTiles();
     

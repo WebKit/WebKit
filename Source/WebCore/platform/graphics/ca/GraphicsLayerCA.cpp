@@ -1404,6 +1404,11 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         client().didCommitChangesForLayer(this);
 }
 
+void GraphicsLayerCA::platformCALayerCustomSublayersChanged(PlatformCALayer*)
+{
+    noteLayerPropertyChanged(ChildrenChanged, m_isCommittingChanges ? DontScheduleFlush : ScheduleFlush);
+}
+
 bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platformLayer) const
 {
     // The repaint counters are painted into the TileController tiles (which have no corresponding platform layer),
@@ -3200,9 +3205,6 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
         m_contentsLayer->setContentsScale(contentsScale);
 
     if (tiledBacking()) {
-        // Scale change may swap in a different set of tiles changing the custom child layers.
-        if (isPageTiledBackingLayer())
-            m_uncommittedChanges |= ChildrenChanged;
         // Tiled backing repaints automatically on scale change.
         return;
     }
