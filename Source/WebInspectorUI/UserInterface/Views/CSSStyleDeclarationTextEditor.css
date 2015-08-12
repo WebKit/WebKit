@@ -45,7 +45,7 @@
 
 .css-style-text-editor > .CodeMirror pre {
     /* Compensate for the checkboxes so properties line up with readonly styles that do not have checkboxes. */
-    padding: 1px 5px 1px 25px;
+    padding: 0 5px 0 25px;
     text-indent: -21px;
 }
 

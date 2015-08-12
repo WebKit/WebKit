@@ -210,8 +210,8 @@
         var originalLineEndings = [];
         var formattedLineEndings = [];
         var mapping = {original: [0], formatted: [0]};
-        var builder = new FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
-        var formatter = new Formatter(cm, builder);
+        var builder = new WebInspector.FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+        var formatter = new WebInspector.Formatter(cm, builder);
 
         // Time the formatter.
         var startTime = Date.now();
@@ -332,8 +332,8 @@
             var originalLineEndings = [];
             var formattedLineEndings = [];
             var mapping = {original: [0], formatted: [0]};
-            var builder = new FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
-            var formatter = new Formatter(editor, builder);
+            var builder = new WebInspector.FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+            var formatter = new WebInspector.Formatter(editor, builder);
             formatter.format(start, end);
 
             // Compare results.

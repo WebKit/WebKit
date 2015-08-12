@@ -441,13 +441,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _handleMouseDown(event)
     {
-        if (this._codeMirror.options.readOnly || this._codeMirror.state.focused)
+        if (this._codeMirror.options.readOnly)
             return;
 
-        var cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
-        var line = this._codeMirror.getLine(cursor.line);
-        var trimmedLine = line.trimRight();
-
+        let cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
+        let line = this._codeMirror.getLine(cursor.line);
+        let trimmedLine = line.trimRight();
         if (!trimmedLine.trimLeft().length || cursor.ch !== trimmedLine.length)
             return;
 
@@ -459,16 +458,19 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (this._codeMirror.options.readOnly || !this._mouseDownCursorPosition)
             return;
 
-        var cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
-        var line = this._codeMirror.getLine(cursor.line);
-
+        let cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
         if (this._mouseDownCursorPosition.line === cursor.line && this._mouseDownCursorPosition.ch === cursor.ch) {
-            var replacement = "\n";
+            let nextLine = this._codeMirror.getLine(cursor.line + 1);
+            if (cursor.line < this._codeMirror.lineCount() - 1 && (!nextLine || !nextLine.trim().length)) {
+                this._codeMirror.setCursor({line: cursor.line + 1, ch: 0});
+            } else {
+                let line = this._codeMirror.getLine(cursor.line);
+                let replacement = "\n";
+                if (!line.trimRight().endsWith(";") && !this._textAtCursorIsComment(this._codeMirror, cursor))
+                    replacement = ";" + replacement;
 
-            if (!line.trimRight().endsWith(";") && !this._textAtCursorIsComment(this._codeMirror, cursor))
-                replacement = ";" + replacement;
-
-            this._codeMirror.replaceRange(replacement, cursor);
+                this._codeMirror.replaceRange(replacement, cursor);
+            }
         }
 
         this._mouseDownCursorPosition = null;
