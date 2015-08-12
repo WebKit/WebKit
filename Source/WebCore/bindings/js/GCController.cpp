@@ -113,19 +113,6 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
     detachThread(threadID);
 }
 
-void GCController::releaseExecutableMemory()
-{
-    JSLockHolder lock(JSDOMWindow::commonVM());
-
-    // We shouldn't have any JavaScript running on our stack when this function is called.
-    // The following line asserts that, but to be safe we check this in release builds anyway.
-    ASSERT(!JSDOMWindow::commonVM().entryScope);
-    if (JSDOMWindow::commonVM().entryScope)
-        return;
-
-    JSDOMWindow::commonVM().releaseExecutableMemory();
-}
-
 void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 {
     JSDOMWindow::commonVM().heap.setGarbageCollectionTimerEnabled(enable);
