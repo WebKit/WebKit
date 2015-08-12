@@ -1,5 +1,17 @@
 2015-08-11  Matt Rajca  <mrajca@apple.com>
 
+        Media Session: test Play/Pause media control events delivered to Default media sessions
+        https://bugs.webkit.org/show_bug.cgi?id=147910
+
+        Reviewed by Eric Carlson.
+
+        Media elements that aren't explicitly assigned a media session should respond to play/pause media control events.
+
+        * media/session/play-pause-media-events-in-default-sessions-expected.txt: Added.
+        * media/session/play-pause-media-events-in-default-sessions.html: Added.
+
+2015-08-11  Matt Rajca  <mrajca@apple.com>
+
         Media Session: add test for Content media session focus
         https://bugs.webkit.org/show_bug.cgi?id=147902
 
