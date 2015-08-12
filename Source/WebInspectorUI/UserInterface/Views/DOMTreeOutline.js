@@ -266,7 +266,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         } else if (commentNode && treeElement._populateNodeContextMenu) {
             if (populated)
                 contextMenu.appendSeparator();
-            treeElement._populateNodeContextMenu(contextMenu, textNode);
+            treeElement._populateNodeContextMenu(contextMenu);
             populated = true;
         }
 

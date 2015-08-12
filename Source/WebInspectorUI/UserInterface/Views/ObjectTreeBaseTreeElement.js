@@ -237,6 +237,11 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
                 });
             });
 
+            contextMenu.appendItem(WebInspector.UIString("Scroll Into View"), function() {
+                function scrollIntoView() { this.scrollIntoViewIfNeeded(true); }
+                resolvedValue.callFunction(scrollIntoView, undefined, false, function() {});
+            });
+
             contextMenu.appendSeparator();
 
             contextMenu.appendItem(WebInspector.UIString("Reveal in DOM Tree"), function() {

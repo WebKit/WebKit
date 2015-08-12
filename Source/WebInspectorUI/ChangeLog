@@ -1,3 +1,29 @@
+2015-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOM Node should have context menu to scroll it into view on the inspected page
+        https://bugs.webkit.org/show_bug.cgi?id=147913
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._updateChildren.set continue):
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        Add a context menu item to scroll into view for element nodes.
+
+        (WebInspector.DOMTreeElement.prototype._scrollIntoView.resolvedNode.scrollIntoView):
+        (WebInspector.DOMTreeElement.prototype._scrollIntoView.resolvedNode):
+        (WebInspector.DOMTreeElement.prototype._scrollIntoView):
+        Call scrollIntoViewIfNeeded on the real Node.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.populateContextMenu):
+        Remove unused parameter.
+
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._appendMenusItemsForObject):
+        Add context menu for Nodes in ObjectTrees.
+
 2015-08-12  Dan Bernstein  <mitz@apple.com>
 
         Removed the executable bit from non-executable source.
