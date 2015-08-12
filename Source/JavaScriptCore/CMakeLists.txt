@@ -385,7 +385,10 @@ set(JavaScriptCore_SOURCES
     jit/ThunkGenerators.cpp
 
     parser/Lexer.cpp
+    parser/ModuleAnalyzer.cpp
+    parser/ModuleRecord.cpp
     parser/Nodes.cpp
+    parser/NodesAnalyzeModule.cpp
     parser/Parser.cpp
     parser/ParserArena.cpp
     parser/SourceCode.cpp

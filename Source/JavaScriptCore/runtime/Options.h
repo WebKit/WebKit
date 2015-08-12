@@ -322,6 +322,8 @@ typedef const char* optionString;
     v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
     \
     v(unsigned, watchdog, 0, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
+    \
+    v(bool, dumpModuleRecord, false, nullptr) \
 
 class Options {
 public:

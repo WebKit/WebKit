@@ -1693,6 +1693,11 @@
 		E33637A51B63220200EE0840 /* ReflectObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33637A31B63220200EE0840 /* ReflectObject.cpp */; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E354622B1B6065D100545386 /* ConstructAbility.h in Headers */ = {isa = PBXBuildFile; fileRef = E354622A1B6065D100545386 /* ConstructAbility.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */; };
+		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3963CED1B73F75000EB4CE5 /* ModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E3963CEB1B73F75000EB4CE5 /* ModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3963CEE1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */; };
+		E3C09F551B79692A00EE36A2 /* ModuleRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3C09F541B79692A00EE36A2 /* ModuleRecord.cpp */; };
 		E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */; };
 		E3EF88751B66DF23003F26CB /* JSPropertyNameIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E49DC15512EF277200184A1F /* SourceProviderCache.cpp */; };
@@ -3517,6 +3522,11 @@
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
 		E354622A1B6065D100545386 /* ConstructAbility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructAbility.h; sourceTree = "<group>"; };
+		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
+		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
+		E3963CEB1B73F75000EB4CE5 /* ModuleRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleRecord.h; sourceTree = "<group>"; };
+		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
+		E3C09F541B79692A00EE36A2 /* ModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleRecord.cpp; sourceTree = "<group>"; };
 		E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
 		E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
 		E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCacheItem.h; sourceTree = "<group>"; };
@@ -4426,9 +4436,14 @@
 				93F1981A08245AAE001E9ABC /* Keywords.table */,
 				F692A8650255597D01FF60F7 /* Lexer.cpp */,
 				F692A8660255597D01FF60F7 /* Lexer.h */,
+				E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */,
+				E3794E741B77EB97005543AE /* ModuleAnalyzer.h */,
+				E3C09F541B79692A00EE36A2 /* ModuleRecord.cpp */,
+				E3963CEB1B73F75000EB4CE5 /* ModuleRecord.h */,
 				930DAD030FB1EB1A0082D205 /* NodeConstructors.h */,
 				F692A86D0255597D01FF60F7 /* Nodes.cpp */,
 				F692A86E0255597D01FF60F7 /* Nodes.h */,
+				E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */,
 				93F0B3A909BB4DC00068FCE3 /* Parser.cpp */,
 				93F0B3AA09BB4DC00068FCE3 /* Parser.h */,
 				93052C320FB792190048FDC3 /* ParserArena.cpp */,
@@ -6161,10 +6176,12 @@
 				0FEA0A11170513DB00BB722C /* FTLOutput.h in Headers */,
 				9E72940B190F0514001A91B5 /* BundlePath.h in Headers */,
 				0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */,
+				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
 				0F6B1CC41862C47800845D97 /* FTLRegisterAtOffset.h in Headers */,
 				0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */,
 				0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */,
 				E354622B1B6065D100545386 /* ConstructAbility.h in Headers */,
+				E3963CED1B73F75000EB4CE5 /* ModuleRecord.h in Headers */,
 				0F25F1B4181635F300522F39 /* FTLSlowPathCallKey.h in Headers */,
 				0F9D339B1803ADB70073C2BC /* FTLStackMaps.h in Headers */,
 				0FEA0A12170513DB00BB722C /* FTLState.h in Headers */,
@@ -7220,6 +7237,7 @@
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
 				0F6B1CC918641DF800845D97 /* ArityCheckFailReturnThunks.cpp in Sources */,
+				E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
 				65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */,
@@ -7584,6 +7602,7 @@
 				0F2B66ED17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp in Sources */,
 				0F2D4DE819832DAC007D4B19 /* ToThisStatus.cpp in Sources */,
 				FE384EE51ADDB7AD0055DE2C /* JSDollarVM.cpp in Sources */,
+				E3C09F551B79692A00EE36A2 /* ModuleRecord.cpp in Sources */,
 				978801401471AD920041B016 /* JSDateMath.cpp in Sources */,
 				0FE050171AA9091100D33B33 /* DirectArguments.cpp in Sources */,
 				140566D6107EC271005DBC8D /* JSFunction.cpp in Sources */,
@@ -7851,6 +7870,7 @@
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,
 				86704B8612DBA33700A9FE7B /* YarrJIT.cpp in Sources */,
 				86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */,
+				E3963CEE1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp in Sources */,
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

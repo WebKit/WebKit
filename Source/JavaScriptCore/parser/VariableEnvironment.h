@@ -38,11 +38,15 @@ public:
     ALWAYS_INLINE bool isConst() const { return m_bits & IsConst; }
     ALWAYS_INLINE bool isVar() const { return m_bits & IsVar; }
     ALWAYS_INLINE bool isLet() const { return m_bits & IsLet; }
+    ALWAYS_INLINE bool isExported() const { return m_bits & IsExported; }
+    ALWAYS_INLINE bool isImported() const { return m_bits & IsImported; }
 
     ALWAYS_INLINE void setIsCaptured() { m_bits |= IsCaptured; }
     ALWAYS_INLINE void setIsConst() { m_bits |= IsConst; }
     ALWAYS_INLINE void setIsVar() { m_bits |= IsVar; }
     ALWAYS_INLINE void setIsLet() { m_bits |= IsLet; }
+    ALWAYS_INLINE void setIsExported() { m_bits |= IsExported; }
+    ALWAYS_INLINE void setIsImported() { m_bits |= IsImported; }
 
     ALWAYS_INLINE void clearIsVar() { m_bits &= ~IsVar; }
 
@@ -51,7 +55,9 @@ private:
         IsCaptured = 1 << 0,
         IsConst = 1 << 1,
         IsVar = 1 << 2,
-        IsLet = 1 << 3
+        IsLet = 1 << 3,
+        IsExported = 1 << 4,
+        IsImported = 1 << 5
     };
     uint8_t m_bits { 0 };
 };
@@ -79,6 +85,8 @@ public:
     void markAllVariablesAsCaptured();
     bool hasCapturedVariables() const;
     bool captures(UniquedStringImpl* identifier) const;
+    void markVariableAsImported(const RefPtr<UniquedStringImpl>& identifier);
+    void markVariableAsExported(const RefPtr<UniquedStringImpl>& identifier);
 
 private:
     Map m_map;

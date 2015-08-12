@@ -1,3 +1,107 @@
+2015-08-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Add ES6 Modules preparsing phase to collect the dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=147353
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements ModuleRecord and ModuleAnalyzer.
+        ModuleAnalyzer analyzes the produced AST from the parser.
+        By collaborating with the parser, ModuleAnalyzer collects the information
+        that is necessary to request the loading for the dependent modules and
+        construct module's environment and namespace object before executing the actual
+        module body.
+
+        In the parser, we annotate which variable is imported binding and which variable
+        is exported from the current module. This information is leveraged in the ModuleAnalyzer
+        to categorize the export entries.
+
+        To preparse the modules in the parser, we just add the new flag `ModuleParseMode`
+        instead of introducing a new TreeContext type. This is because only 2 users use the
+        parseModuleSourceElements; preparser and actual compiler. Adding the flag is simple
+        enough to switch the context to the SyntaxChecker when parsing the non-module related
+        statement in the preparsing phase.
+
+        To demonstrate the module analyzer, we added the new option dumpModuleRecord option
+        into the JSC shell. By specifying this, the result of analysis is dumped when the module
+        is parsed and analyzed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createExportDefaultDeclaration):
+        * parser/ModuleAnalyzer.cpp: Added.
+        (JSC::ModuleAnalyzer::ModuleAnalyzer):
+        (JSC::ModuleAnalyzer::exportedBinding):
+        (JSC::ModuleAnalyzer::declareExportAlias):
+        (JSC::ModuleAnalyzer::exportVariable):
+        (JSC::ModuleAnalyzer::analyze):
+        * parser/ModuleAnalyzer.h: Added.
+        (JSC::ModuleAnalyzer::vm):
+        (JSC::ModuleAnalyzer::moduleRecord):
+        * parser/ModuleRecord.cpp: Added.
+        (JSC::printableName):
+        (JSC::ModuleRecord::dump):
+        * parser/ModuleRecord.h: Added.
+        (JSC::ModuleRecord::ImportEntry::isNamespace):
+        (JSC::ModuleRecord::create):
+        (JSC::ModuleRecord::appendRequestedModule):
+        (JSC::ModuleRecord::addImportEntry):
+        (JSC::ModuleRecord::addExportEntry):
+        (JSC::ModuleRecord::addStarExportEntry):
+        * parser/NodeConstructors.h:
+        (JSC::ModuleDeclarationNode::ModuleDeclarationNode):
+        (JSC::ImportDeclarationNode::ImportDeclarationNode):
+        (JSC::ExportAllDeclarationNode::ExportAllDeclarationNode):
+        (JSC::ExportDefaultDeclarationNode::ExportDefaultDeclarationNode):
+        (JSC::ExportLocalDeclarationNode::ExportLocalDeclarationNode):
+        (JSC::ExportNamedDeclarationNode::ExportNamedDeclarationNode):
+        * parser/Nodes.h:
+        (JSC::ExportDefaultDeclarationNode::localName):
+        * parser/NodesAnalyzeModule.cpp: Added.
+        (JSC::ScopeNode::analyzeModule):
+        (JSC::SourceElements::analyzeModule):
+        (JSC::ImportDeclarationNode::analyzeModule):
+        (JSC::ExportAllDeclarationNode::analyzeModule):
+        (JSC::ExportDefaultDeclarationNode::analyzeModule):
+        (JSC::ExportLocalDeclarationNode::analyzeModule):
+        (JSC::ExportNamedDeclarationNode::analyzeModule):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClassDeclaration):
+        (JSC::Parser<LexerType>::parseImportClauseItem):
+        (JSC::Parser<LexerType>::parseExportSpecifier):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        * parser/Parser.h:
+        (JSC::Scope::lexicalVariables):
+        (JSC::Scope::declareLexicalVariable):
+        (JSC::Parser::declareVariable):
+        (JSC::Parser::exportName):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * parser/ParserModes.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createExportDefaultDeclaration):
+        * parser/VariableEnvironment.cpp:
+        (JSC::VariableEnvironment::markVariableAsImported):
+        (JSC::VariableEnvironment::markVariableAsExported):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::isExported):
+        (JSC::VariableEnvironmentEntry::isImported):
+        (JSC::VariableEnvironmentEntry::setIsExported):
+        (JSC::VariableEnvironmentEntry::setIsImported):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Completion.cpp:
+        (JSC::checkModuleSyntax):
+        * runtime/Options.h:
+
 2015-08-12  Geoffrey Garen  <ggaren@apple.com>
 
         Re-land r188339, since Alex fixed it in r188341 by landing the WebCore half.

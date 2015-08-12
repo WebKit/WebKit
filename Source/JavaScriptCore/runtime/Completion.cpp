@@ -31,6 +31,8 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSCInlines.h"
+#include "ModuleAnalyzer.h"
+#include "ModuleRecord.h"
 #include "Parser.h"
 #include <wtf/WTFThreadData.h>
 
@@ -65,9 +67,15 @@ bool checkModuleSyntax(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
-    return !!parse<ModuleProgramNode>(
+    std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
         &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::Strict, JSParserCodeType::Module, error);
+    if (!moduleProgramNode)
+        return false;
+
+    ModuleAnalyzer moduleAnalyzer(vm, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
+    moduleAnalyzer.analyze(*moduleProgramNode);
+    return true;
 }
 
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)

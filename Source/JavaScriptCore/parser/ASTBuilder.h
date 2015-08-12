@@ -93,7 +93,6 @@ public:
         UnaryExprContext(ASTBuilder&) {}
     };
 
-
     typedef ExpressionNode* Expression;
     typedef JSC::SourceElements* SourceElements;
     typedef ArgumentsNode* Arguments;
@@ -650,9 +649,9 @@ public:
         return new (m_parserArena) ExportAllDeclarationNode(location, moduleSpecifier);
     }
 
-    StatementNode* createExportDefaultDeclaration(const JSTokenLocation& location, StatementNode* declaration)
+    StatementNode* createExportDefaultDeclaration(const JSTokenLocation& location, StatementNode* declaration, const Identifier& localName)
     {
-        return new (m_parserArena) ExportDefaultDeclarationNode(location, declaration);
+        return new (m_parserArena) ExportDefaultDeclarationNode(location, declaration, localName);
     }
 
     StatementNode* createExportLocalDeclaration(const JSTokenLocation& location, StatementNode* declaration)

@@ -38,6 +38,7 @@ enum class JSParserCodeType { Program, Function, Module };
 enum class ConstructorKind { None, Base, Derived };
 enum class SuperBinding { Needed, NotNeeded };
 enum class ThisTDZMode { AlwaysCheck, CheckIfNeeded };
+enum class ModuleParseMode { Analyze, Evaluate };
 
 enum ProfilerMode { ProfilerOff, ProfilerOn };
 enum DebuggerMode { DebuggerOff, DebuggerOn };

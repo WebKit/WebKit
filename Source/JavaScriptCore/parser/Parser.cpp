@@ -235,8 +235,10 @@ Parser<LexerType>::~Parser()
 }
 
 template <typename LexerType>
-String Parser<LexerType>::parseInner(const Identifier& calleeName, FunctionParseMode parseMode)
+String Parser<LexerType>::parseInner(const Identifier& calleeName, FunctionParseMode parseMode, ModuleParseMode moduleParseMode)
 {
+    UNUSED_PARAM(moduleParseMode);
+
     String parseError = String();
     
     ASTBuilder context(const_cast<VM*>(m_vm), m_parserArena, const_cast<SourceCode*>(m_source));
@@ -272,7 +274,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, FunctionParse
             sourceElements = parseArrowFunctionSingleExpressionBodySourceElements(context);
 #if ENABLE(ES6_MODULES)
         else if (m_codeType == JSParserCodeType::Module)
-            sourceElements = parseModuleSourceElements(context);
+            sourceElements = parseModuleSourceElements(context, moduleParseMode);
 #endif
         else
             sourceElements = parseSourceElements(context, CheckForStrictMode);
@@ -412,39 +414,48 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSourceElements(TreeBuilder& context)
+template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSourceElements(TreeBuilder& context, ModuleParseMode moduleParseMode)
 {
     TreeSourceElements sourceElements = context.createSourceElements();
-
-    // FIXME: When some sort of ModuleAnalyzer TreeBuilder is landed,
-    // this SyntaxChecker will be replaced with typedef under the TreeBuilder,
-    // like TreeBuilder::ModuleStatementItemBuilder.
-    // https://bugs.webkit.org/show_bug.cgi?id=147353
-    SyntaxChecker moduleStatementItemBuilder(const_cast<VM*>(m_vm), m_lexer.get());
+    SyntaxChecker syntaxChecker(const_cast<VM*>(m_vm), m_lexer.get());
 
     while (true) {
-        if (match(IMPORT) || match(EXPORT)) {
-            TreeStatement statement = 0;
-            if (match(IMPORT))
-                statement = parseImportDeclaration(context);
-            else
-                statement = parseExportDeclaration(context);
-
-            if (!statement)
-                break;
-            context.appendStatement(sourceElements, statement);
-        } else {
+        TreeStatement statement = 0;
+        if (match(IMPORT))
+            statement = parseImportDeclaration(context);
+        else if (match(EXPORT))
+            statement = parseExportDeclaration(context);
+        else {
             const Identifier* directive = 0;
             unsigned directiveLiteralLength = 0;
-            if (!parseStatementListItem(moduleStatementItemBuilder, directive, &directiveLiteralLength))
-                break;
+            if (moduleParseMode == ModuleParseMode::Analyze) {
+                if (!parseStatementListItem(syntaxChecker, directive, &directiveLiteralLength))
+                    break;
+                continue;
+            }
+            statement = parseStatementListItem(context, directive, &directiveLiteralLength);
         }
+
+        if (!statement)
+            break;
+        context.appendStatement(sourceElements, statement);
     }
 
     propagateError();
 
-    for (const auto& uid : currentScope()->moduleScopeData().exportedBindings())
-        semanticFailIfFalse(currentScope()->hasDeclaredVariable(uid) || currentScope()->hasLexicallyDeclaredVariable(uid), "Exported binding '", uid.get(), "' needs to refer to a top-level declared variable");
+    for (const auto& uid : currentScope()->moduleScopeData().exportedBindings()) {
+        if (currentScope()->hasDeclaredVariable(uid)) {
+            currentScope()->declaredVariables().markVariableAsExported(uid);
+            continue;
+        }
+
+        if (currentScope()->hasLexicallyDeclaredVariable(uid)) {
+            currentScope()->lexicalVariables().markVariableAsExported(uid);
+            continue;
+        }
+
+        semanticFail("Exported binding '", uid.get(), "' needs to refer to a top-level declared variable");
+    }
 
     return sourceElements;
 }
@@ -601,7 +612,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
                     RELEASE_ASSERT_NOT_REACHED();
                 }
             }
-            semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(*name), "Cannot export a duplicate name '", name->impl(), "'");
+            if (exportType == ExportType::Exported) {
+                semanticFailIfFalse(exportName(*name), "Cannot export a duplicate name '", name->impl(), "'");
+                currentScope()->moduleScopeData().exportBinding(*name);
+            }
 
             if (hasInitializer) {
                 JSTextPosition varDivot = tokenStartPosition() + 1;
@@ -705,7 +719,10 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
         }
     }
 
-    semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(name), "Cannot export a duplicate name '", name.impl(), "'");
+    if (exportType == ExportType::Exported) {
+        semanticFailIfFalse(exportName(name), "Cannot export a duplicate name '", name.impl(), "'");
+        currentScope()->moduleScopeData().exportBinding(name);
+    }
     return context.createBindingLocation(token.m_location, name, token.m_startPosition, token.m_endPosition, bindingContext);
 }
 
@@ -1856,7 +1873,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
         functionKeywordStart, functionInfo, StandardFunctionParseType)), "Cannot parse this function");
     failIfFalse(functionInfo.name, "Function statements must have a name");
     failIfTrueIfStrict(declareVariable(functionInfo.name) & DeclarationResult::InvalidStrictMode, "Cannot declare a function named '", functionInfo.name->impl(), "' in strict mode");
-    semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(*functionInfo.name), "Cannot export a duplicate function name: '", functionInfo.name->impl(), "'");
+    if (exportType == ExportType::Exported) {
+        semanticFailIfFalse(exportName(*functionInfo.name), "Cannot export a duplicate function name: '", functionInfo.name->impl(), "'");
+        currentScope()->moduleScopeData().exportBinding(*functionInfo.name);
+    }
     return context.createFuncDeclStatement(location, functionInfo);
 }
 
@@ -1876,7 +1896,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclarat
     DeclarationResultMask declarationResult = declareVariable(info.className, DeclarationType::LetDeclaration);
     if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
         internalFailWithMessage(false, "Cannot declare a class twice: '", info.className->impl(), "'");
-    semanticFailIfTrue(exportType == ExportType::Exported && !currentScope()->moduleScopeData().exportName(*info.className), "Cannot export a duplicate class name: '", info.className->impl(), "'");
+    if (exportType == ExportType::Exported) {
+        semanticFailIfFalse(exportName(*info.className), "Cannot export a duplicate class name: '", info.className->impl(), "'");
+        currentScope()->moduleScopeData().exportBinding(*info.className);
+    }
 
     JSTextPosition classEnd = lastTokenEndPosition();
     unsigned classEndLine = tokenLine();
@@ -2282,7 +2305,7 @@ template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerT
     }
 
     semanticFailIfTrue(localNameToken.m_type & KeywordTokenFlag, "Cannot use keyword as imported binding name");
-    DeclarationResultMask declarationResult = declareVariable(localName, DeclarationType::ConstDeclaration);
+    DeclarationResultMask declarationResult = declareVariable(localName, DeclarationType::ConstDeclaration, DeclarationImportType::Imported);
     if (declarationResult != DeclarationResult::Valid) {
         failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot declare an imported binding named ", localName->impl(), " in strict mode");
         if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
@@ -2384,7 +2407,7 @@ template <class TreeBuilder> typename TreeBuilder::ExportSpecifier Parser<LexerT
         next();
     }
 
-    semanticFailIfFalse(currentScope()->moduleScopeData().exportName(*exportedName), "Cannot export a duplicate name '", exportedName->impl(), "'");
+    semanticFailIfFalse(exportName(*exportedName), "Cannot export a duplicate name '", exportedName->impl(), "'");
     maybeLocalNames.append(localName);
     return context.createExportSpecifier(specifierLocation, *localName, *exportedName);
 }
@@ -2407,6 +2430,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         auto moduleSpecifier = parseModuleSpecifier(context);
         failIfFalse(moduleSpecifier, "Cannot parse the 'from' clause");
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
+
         return context.createExportAllDeclaration(exportLocation, moduleSpecifier);
     }
 
@@ -2418,8 +2442,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         next();
 
         TreeStatement result = 0;
-        bool hasName = false;
         bool isFunctionOrClassDeclaration = false;
+        const Identifier* localName = nullptr;
         SavePoint savePoint = createSavePoint();
         if (match(FUNCTION)
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -2429,11 +2453,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             isFunctionOrClassDeclaration = true;
             next();
             // FIXME: When landing ES6 generators, we need to take care of that '*' comes.
-            hasName = match(IDENT);
+            if (match(IDENT))
+                localName = m_token.m_data.ident;
             restoreSavePoint(savePoint);
         }
 
-        if (hasName) {
+        if (localName) {
             if (match(FUNCTION))
                 result = parseFunctionDeclaration(context);
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -2443,18 +2468,32 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             }
 #endif
         } else {
+            // export default expr;
+            //
+            // It should be treated as the same to the following.
+            //
+            // const *default* = expr;
+            // export { *default* as default }
             JSTokenLocation location(tokenLocation());
             JSTextPosition start = tokenStartPosition();
             TreeExpression expression = parseAssignmentExpression(context);
             failIfFalse(expression, "Cannot parse expression");
-            result = context.createExprStatement(location, expression, start, tokenEndPosition());
+
+            DeclarationResultMask declarationResult = declareVariable(&m_vm->propertyNames->starDefaultPrivateName, DeclarationType::ConstDeclaration);
+            if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
+                internalFailWithMessage(false, "Cannot export 'default' name twice: '");
+
+            TreeExpression assignment = context.createAssignResolve(location, m_vm->propertyNames->starDefaultPrivateName, expression, start, start, tokenEndPosition(), AssignmentContext::ConstDeclarationStatement);
+            result = context.createExprStatement(location, assignment, start, tokenEndPosition());
             if (!isFunctionOrClassDeclaration)
                 failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
+            localName = &m_vm->propertyNames->starDefaultPrivateName;
         }
         failIfFalse(result, "Cannot parse the declaration");
-        semanticFailIfFalse(currentScope()->moduleScopeData().exportName(m_vm->propertyNames->defaultKeyword), "Cannot export 'default' name twice.");
 
-        return context.createExportDefaultDeclaration(exportLocation, result);
+        semanticFailIfFalse(exportName(m_vm->propertyNames->defaultKeyword), "Cannot export 'default' name twice.");
+        currentScope()->moduleScopeData().exportBinding(*localName);
+        return context.createExportDefaultDeclaration(exportLocation, result, *localName);
     }
 
     case OPENBRACE: {

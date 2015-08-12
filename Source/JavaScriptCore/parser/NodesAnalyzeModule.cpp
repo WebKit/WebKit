@@ -1,0 +1,94 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "Nodes.h"
+#include "NodeConstructors.h"
+
+#include "ModuleAnalyzer.h"
+#include "ModuleRecord.h"
+
+namespace JSC {
+
+void ScopeNode::analyzeModule(ModuleAnalyzer& analyzer)
+{
+    m_statements->analyzeModule(analyzer);
+}
+
+void SourceElements::analyzeModule(ModuleAnalyzer& analyzer)
+{
+    // In the module analyzer phase, only module declarations are included in the top-level SourceElements.
+    for (StatementNode* statement = m_head; statement; statement = statement->next())
+        static_cast<ModuleDeclarationNode*>(statement)->analyzeModule(analyzer);
+}
+
+void ImportDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
+{
+    analyzer.moduleRecord().appendRequestedModule(m_moduleSpecifier->moduleName());
+    for (auto* specifier : m_specifierList->specifiers()) {
+        analyzer.moduleRecord().addImportEntry({
+            m_moduleSpecifier->moduleName(),
+            specifier->importedName(),
+            specifier->localName()
+        });
+    }
+}
+
+void ExportAllDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
+{
+    analyzer.moduleRecord().appendRequestedModule(m_moduleSpecifier->moduleName());
+    analyzer.moduleRecord().addStarExportEntry(m_moduleSpecifier->moduleName());
+}
+
+void ExportDefaultDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
+{
+    analyzer.declareExportAlias(m_localName, analyzer.vm().propertyNames->defaultKeyword);
+}
+
+void ExportLocalDeclarationNode::analyzeModule(ModuleAnalyzer&)
+{
+}
+
+void ExportNamedDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
+{
+    if (m_moduleSpecifier)
+        analyzer.moduleRecord().appendRequestedModule(m_moduleSpecifier->moduleName());
+
+    for (auto* specifier : m_specifierList->specifiers()) {
+        if (m_moduleSpecifier) {
+            // export { v } from "mod"
+            //
+            // In this case, no local variable names are imported into the current module.
+            // "v" indirectly points the binding in "mod".
+            analyzer.moduleRecord().addExportEntry(ModuleRecord::ExportEntry::createIndirect(specifier->exportedName(), specifier->localName(), m_moduleSpecifier->moduleName()));
+            continue;
+        }
+
+        if (specifier->localName() != specifier->exportedName())
+            analyzer.declareExportAlias(specifier->localName(), specifier->exportedName());
+    }
+}
+
+} // namespace JSC

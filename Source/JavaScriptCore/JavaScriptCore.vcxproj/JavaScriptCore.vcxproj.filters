@@ -456,7 +456,16 @@
     <ClCompile Include="..\parser\Lexer.cpp">
       <Filter>parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\parser\ModuleAnalyzer.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parser\ModuleRecord.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
     <ClCompile Include="..\parser\Nodes.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parser\NodesAnalyzeModule.cpp">
       <Filter>parser</Filter>
     </ClCompile>
     <ClCompile Include="..\parser\Parser.cpp">
@@ -2478,6 +2487,12 @@
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="..\parser\Lexer.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parser\ModuleAnalyzer.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parser\ModuleRecord.h">
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="..\parser\NodeConstructors.h">

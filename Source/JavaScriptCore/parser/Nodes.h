@@ -49,6 +49,7 @@ namespace JSC {
     class RegisterID;
     class JSScope;
     class ScopeNode;
+    class ModuleAnalyzer;
 
     enum Operator {
         OpEqual,
@@ -1276,6 +1277,7 @@ namespace JSC {
         StatementNode* lastStatement() const;
 
         void emitBytecode(BytecodeGenerator&, RegisterID* destination);
+        void analyzeModule(ModuleAnalyzer&);
 
     private:
         StatementNode* m_head;
@@ -1574,6 +1576,8 @@ namespace JSC {
         
         void setClosedVariables(Vector<RefPtr<UniquedStringImpl>>&&) { }
 
+        void analyzeModule(ModuleAnalyzer&);
+
     protected:
         int m_startLineNumber;
         unsigned m_startStartOffset;
@@ -1673,7 +1677,15 @@ namespace JSC {
         Specifiers m_specifiers;
     };
 
-    class ImportDeclarationNode : public StatementNode {
+    class ModuleDeclarationNode : public StatementNode {
+    public:
+        virtual void analyzeModule(ModuleAnalyzer&) = 0;
+
+    protected:
+        ModuleDeclarationNode(const JSTokenLocation&);
+    };
+
+    class ImportDeclarationNode : public ModuleDeclarationNode {
     public:
         ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleSpecifierNode*);
 
@@ -1682,12 +1694,13 @@ namespace JSC {
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        virtual void analyzeModule(ModuleAnalyzer&) override;
 
         ImportSpecifierListNode* m_specifierList;
         ModuleSpecifierNode* m_moduleSpecifier;
     };
 
-    class ExportAllDeclarationNode : public StatementNode {
+    class ExportAllDeclarationNode : public ModuleDeclarationNode {
     public:
         ExportAllDeclarationNode(const JSTokenLocation&, ModuleSpecifierNode*);
 
@@ -1695,21 +1708,26 @@ namespace JSC {
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        virtual void analyzeModule(ModuleAnalyzer&) override;
+
         ModuleSpecifierNode* m_moduleSpecifier;
     };
 
-    class ExportDefaultDeclarationNode : public StatementNode {
+    class ExportDefaultDeclarationNode : public ModuleDeclarationNode {
     public:
-        ExportDefaultDeclarationNode(const JSTokenLocation&, StatementNode*);
+        ExportDefaultDeclarationNode(const JSTokenLocation&, StatementNode*, const Identifier& localName);
 
         const StatementNode& declaration() const { return *m_declaration; }
+        const Identifier& localName() const { return m_localName; }
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        virtual void analyzeModule(ModuleAnalyzer&) override;
         StatementNode* m_declaration;
+        const Identifier& m_localName;
     };
 
-    class ExportLocalDeclarationNode : public StatementNode {
+    class ExportLocalDeclarationNode : public ModuleDeclarationNode {
     public:
         ExportLocalDeclarationNode(const JSTokenLocation&, StatementNode*);
 
@@ -1717,6 +1735,7 @@ namespace JSC {
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        virtual void analyzeModule(ModuleAnalyzer&) override;
         StatementNode* m_declaration;
     };
 
@@ -1746,7 +1765,7 @@ namespace JSC {
         Specifiers m_specifiers;
     };
 
-    class ExportNamedDeclarationNode : public StatementNode {
+    class ExportNamedDeclarationNode : public ModuleDeclarationNode {
     public:
         ExportNamedDeclarationNode(const JSTokenLocation&, ExportSpecifierListNode*, ModuleSpecifierNode*);
 
@@ -1755,6 +1774,7 @@ namespace JSC {
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        virtual void analyzeModule(ModuleAnalyzer&) override;
         ExportSpecifierListNode* m_specifierList;
         ModuleSpecifierNode* m_moduleSpecifier { nullptr };
     };

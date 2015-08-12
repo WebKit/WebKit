@@ -733,6 +733,11 @@ namespace JSC {
     {
     }
 
+    inline ModuleDeclarationNode::ModuleDeclarationNode(const JSTokenLocation& location)
+        : StatementNode(location)
+    {
+    }
+
     inline ModuleSpecifierNode::ModuleSpecifierNode(const JSTokenLocation& location, const Identifier& moduleName)
         : Node(location)
         , m_moduleName(moduleName)
@@ -747,32 +752,33 @@ namespace JSC {
     }
 
     inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleSpecifierNode* moduleSpecifier)
-        : StatementNode(location)
+        : ModuleDeclarationNode(location)
         , m_specifierList(importSpecifierList)
         , m_moduleSpecifier(moduleSpecifier)
     {
     }
 
     inline ExportAllDeclarationNode::ExportAllDeclarationNode(const JSTokenLocation& location, ModuleSpecifierNode* moduleSpecifier)
-        : StatementNode(location)
+        : ModuleDeclarationNode(location)
         , m_moduleSpecifier(moduleSpecifier)
     {
     }
 
-    inline ExportDefaultDeclarationNode::ExportDefaultDeclarationNode(const JSTokenLocation& location, StatementNode* declaration)
-        : StatementNode(location)
+    inline ExportDefaultDeclarationNode::ExportDefaultDeclarationNode(const JSTokenLocation& location, StatementNode* declaration, const Identifier& localName)
+        : ModuleDeclarationNode(location)
         , m_declaration(declaration)
+        , m_localName(localName)
     {
     }
 
     inline ExportLocalDeclarationNode::ExportLocalDeclarationNode(const JSTokenLocation& location, StatementNode* declaration)
-        : StatementNode(location)
+        : ModuleDeclarationNode(location)
         , m_declaration(declaration)
     {
     }
 
     inline ExportNamedDeclarationNode::ExportNamedDeclarationNode(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleSpecifierNode* moduleSpecifier)
-        : StatementNode(location)
+        : ModuleDeclarationNode(location)
         , m_specifierList(exportSpecifierList)
         , m_moduleSpecifier(moduleSpecifier)
     {

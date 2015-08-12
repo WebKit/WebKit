@@ -301,6 +301,7 @@
     macro(promiseRejectReactions) \
     macro(promiseResult) \
     macro(capabilities) \
+    macro(starDefault) \
 
 
 namespace JSC {

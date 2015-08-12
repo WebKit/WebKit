@@ -81,4 +81,18 @@ void VariableEnvironment::swap(VariableEnvironment& other)
     m_isEverythingCaptured = other.m_isEverythingCaptured;
 }
 
+void VariableEnvironment::markVariableAsImported(const RefPtr<UniquedStringImpl>& identifier)
+{
+    auto findResult = m_map.find(identifier);
+    RELEASE_ASSERT(findResult != m_map.end());
+    findResult->value.setIsImported();
+}
+
+void VariableEnvironment::markVariableAsExported(const RefPtr<UniquedStringImpl>& identifier)
+{
+    auto findResult = m_map.find(identifier);
+    RELEASE_ASSERT(findResult != m_map.end());
+    findResult->value.setIsExported();
+}
+
 } // namespace JSC

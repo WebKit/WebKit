@@ -265,7 +265,7 @@ public:
     void appendImportSpecifier(ImportSpecifierList, ImportSpecifier) { }
     int createImportDeclaration(const JSTokenLocation&, ImportSpecifierList, ModuleSpecifier) { return StatementResult; }
     int createExportAllDeclaration(const JSTokenLocation&, ModuleSpecifier) { return StatementResult; }
-    int createExportDefaultDeclaration(const JSTokenLocation&, int) { return StatementResult; }
+    int createExportDefaultDeclaration(const JSTokenLocation&, int, const Identifier&) { return StatementResult; }
     int createExportLocalDeclaration(const JSTokenLocation&, int) { return StatementResult; }
     int createExportNamedDeclaration(const JSTokenLocation&, ExportSpecifierList, ModuleSpecifier) { return StatementResult; }
     ExportSpecifier createExportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ExportSpecifierResult; }
