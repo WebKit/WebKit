@@ -1,3 +1,16 @@
+2015-08-11  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: add test for Content media session focus
+        https://bugs.webkit.org/show_bug.cgi?id=147902
+
+        Reviewed by Eric Carlson.
+
+        Playing a media element that belongs to a Content media session should pause other media elements that belong
+        to Content media sessions.
+
+        * media/session/content-session-focus-expected.txt: Added.
+        * media/session/content-session-focus.html: Added.
+
 2015-08-12  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r185606): ASSERT in WebCore::RenderElement::styleWillChange
