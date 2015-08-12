@@ -43,6 +43,7 @@ public:
 
     const AtomicString& tag() const { return m_tag; }
     int value() const { return m_value; }
+    bool enabled() const { return value(); }
 
     unsigned hash() const;
 

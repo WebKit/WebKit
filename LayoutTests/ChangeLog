@@ -1,3 +1,15 @@
+2015-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [font-features] Map OpenType feature tags to TrueType feature selectors
+        https://bugs.webkit.org/show_bug.cgi?id=147819
+
+        Reviewed by Dean Jackson.
+
+        Updated test results.
+
+        * platform/mac/css3/font-feature-settings-preinstalled-fonts-expected.png: Added.
+        * platform/mac/css3/font-feature-settings-preinstalled-fonts-expected.txt:
+
 2015-08-11  Simon Fraser  <simon.fraser@apple.com>
 
         Windows test gardening.

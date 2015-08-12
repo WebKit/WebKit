@@ -175,8 +175,8 @@ layer at (0,0) size 785x10402
         RenderText {#text} at (0,0) size 548x17
           text run at (0,0) width 548: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,1330) size 769x20
-        RenderText {#text} at (0,0) size 559x20
-          text run at (0,0) width 559: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
+        RenderText {#text} at (0,0) size 589x20
+          text run at (0,0) width 589: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,1350) size 769x20
         RenderText {#text} at (0,0) size 559x20
           text run at (0,0) width 559: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
@@ -232,8 +232,8 @@ layer at (0,0) size 785x10402
         RenderText {#text} at (0,0) size 559x20
           text run at (0,0) width 559: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,1710) size 769x20
-        RenderText {#text} at (0,0) size 559x20
-          text run at (0,0) width 559: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
+        RenderText {#text} at (0,0) size 556x20
+          text run at (0,0) width 556: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,1730) size 769x20
         RenderText {#text} at (0,0) size 559x20
           text run at (0,0) width 559: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
@@ -265,8 +265,8 @@ layer at (0,0) size 785x10402
         RenderText {#text} at (0,0) size 613x20
           text run at (0,0) width 613: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,1936) size 769x21
-        RenderText {#text} at (0,0) size 613x20
-          text run at (0,0) width 613: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
+        RenderText {#text} at (0,0) size 605x20
+          text run at (0,0) width 605: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,1957) size 769x21
         RenderText {#text} at (0,0) size 613x20
           text run at (0,0) width 613: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
@@ -523,8 +523,8 @@ layer at (0,0) size 785x10402
         RenderText {#text} at (0,0) size 548x18
           text run at (0,0) width 548: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,3586) size 769x18
-        RenderText {#text} at (0,0) size 548x18
-          text run at (0,0) width 548: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
+        RenderText {#text} at (0,0) size 545x18
+          text run at (0,0) width 545: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,3604) size 769x18
         RenderText {#text} at (0,0) size 548x18
           text run at (0,0) width 548: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
@@ -595,8 +595,8 @@ layer at (0,0) size 785x10402
         RenderText {#text} at (0,0) size 556x18
           text run at (0,0) width 556: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,4018) size 769x18
-        RenderText {#text} at (0,0) size 556x18
-          text run at (0,0) width 556: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
+        RenderText {#text} at (0,0) size 553x18
+          text run at (0,0) width 553: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,4036) size 769x18
         RenderText {#text} at (0,0) size 556x18
           text run at (0,0) width 556: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
@@ -661,8 +661,8 @@ layer at (0,0) size 785x10402
         RenderText {#text} at (0,0) size 589x16
           text run at (0,0) width 589: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,4378) size 769x16
-        RenderText {#text} at (0,0) size 589x16
-          text run at (0,0) width 589: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
+        RenderText {#text} at (0,0) size 594x16
+          text run at (0,0) width 594: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,4394) size 769x16
         RenderText {#text} at (0,0) size 589x16
           text run at (0,0) width 589: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
@@ -1360,8 +1360,8 @@ layer at (0,0) size 785x10402
         RenderText {#text} at (0,0) size 764x54
           text run at (0,0) width 764: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,10108) size 769x54
-        RenderText {#text} at (0,0) size 764x54
-          text run at (0,0) width 764: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
+        RenderText {#text} at (0,0) size 757x54
+          text run at (0,0) width 757: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
       RenderBlock {DIV} at (0,10162) size 769x54
         RenderText {#text} at (0,0) size 764x54
           text run at (0,0) width 764: "Lucky affluent actor asks to feast on giant 10.34\" cheese-filled quiche in fjord."
