@@ -510,6 +510,58 @@ void VM::clearSourceProviderCaches()
     sourceProviderCacheMap.clear();
 }
 
+struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
+    HashSet<FunctionExecutable*> currentlyExecutingFunctions;
+    inline void visit(JSCell* cell)
+    {
+        if (!cell->inherits(FunctionExecutable::info()))
+            return;
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
+        if (currentlyExecutingFunctions.contains(executable))
+            return;
+        executable->clearCode();
+    }
+    IterationStatus operator()(JSCell* cell)
+    {
+        visit(cell);
+        return IterationStatus::Continue;
+    }
+};
+
+void VM::releaseExecutableMemory()
+{
+    prepareToDiscardCode();
+    
+    if (entryScope) {
+        StackPreservingRecompiler recompiler;
+        HeapIterationScope iterationScope(heap);
+        HashSet<JSCell*> roots;
+        heap.getConservativeRegisterRoots(roots);
+        HashSet<JSCell*>::iterator end = roots.end();
+        for (HashSet<JSCell*>::iterator ptr = roots.begin(); ptr != end; ++ptr) {
+            ScriptExecutable* executable = 0;
+            JSCell* cell = *ptr;
+            if (cell->inherits(ScriptExecutable::info()))
+                executable = static_cast<ScriptExecutable*>(*ptr);
+            else if (cell->inherits(JSFunction::info())) {
+                JSFunction* function = jsCast<JSFunction*>(*ptr);
+                if (function->isHostFunction())
+                    continue;
+                executable = function->jsExecutable();
+            } else
+                continue;
+            ASSERT(executable->inherits(ScriptExecutable::info()));
+            executable->unlinkCalls();
+            if (executable->inherits(FunctionExecutable::info()))
+                recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
+                
+        }
+        heap.objectSpace().forEachLiveCell<StackPreservingRecompiler>(iterationScope, recompiler);
+    }
+    m_regExpCache->invalidateCode();
+    heap.collectAllGarbage();
+}
+
 void VM::throwException(ExecState* exec, Exception* exception)
 {
     if (Options::breakOnThrow()) {
@@ -616,6 +668,11 @@ void VM::updateFTLLargestStackSize(size_t stackSize)
     }
 }
 #endif
+
+void releaseExecutableMemory(VM& vm)
+{
+    vm.releaseExecutableMemory();
+}
 
 #if ENABLE(DFG_JIT)
 void VM::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
