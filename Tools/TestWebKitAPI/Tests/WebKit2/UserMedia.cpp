@@ -34,7 +34,7 @@ static bool done;
 
 void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* /* clientInfo */)
 {
-    WKUserMediaPermissionRequestAllow(permissionRequest);
+    WKUserMediaPermissionRequestAllowBest(permissionRequest);
     done = true;
 }
 

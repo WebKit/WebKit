@@ -36,7 +36,7 @@ public:
         return adoptRef(new UserMediaPermissionRequestProxy(manager, userMediaID, requiresAudio, requiresVideo, deviceUIDsVideo, deviceUIDsAudio));
     }
 
-    void allow();
+    void allow(const String& videoDeviceUID, const String& audioDeviceUID);
     void deny();
 
     void invalidate();
@@ -50,6 +50,9 @@ public:
     
     const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
     const Vector<String>& audioDeviceUIDs() const { return m_audiodeviceUIDs; }
+    
+    const String& firstVideoDeviceUID() const { return !videoDeviceUIDs().isEmpty() ? videoDeviceUIDs().at(0) : emptyString(); }
+    const String& firstAudioDeviceUID() const { return !audioDeviceUIDs().isEmpty() ? audioDeviceUIDs().at(0) : emptyString(); }
 
 private:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, bool requiresAudio, bool requiresVideo, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio);

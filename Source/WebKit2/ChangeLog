@@ -1,3 +1,30 @@
+2015-08-13  Matthew Daiter  <mdaiter@apple.com>
+
+        Linking device query ability from WebKit2 to clients
+        https://bugs.webkit.org/show_bug.cgi?id=147263
+        <rdar://problem/21983345>
+
+        Reviewed by Jer Noble.
+
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::setColorMatchUntaggedContent):
+        (WebKit::LayerHostingContext::colorMatchUntaggedContent):
+        * UIProcess/API/C/WKUserMediaPermissionRequest.cpp:
+        (WKUserMediaPermissionRequestAllow):
+        (WKUserMediaPermissionRequestDeviceNamesVideo):
+        (WKUserMediaPermissionRequestDeviceNamesAudio):
+        * UIProcess/API/C/WKUserMediaPermissionRequest.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecision): Deleted.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::allow):
+        (WebKit::UserMediaPermissionRequestProxy::deny):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::didReceiveUserMediaPermissionDecision):
+
+
 2015-08-12  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] WebKit processes should have access to com.apple.nesessionmanager.flow-divert-token

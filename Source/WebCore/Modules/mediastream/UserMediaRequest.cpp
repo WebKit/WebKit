@@ -143,8 +143,10 @@ void UserMediaRequest::constraintsValidated(const Vector<RefPtr<RealtimeMediaSou
     });
 }
 
-void UserMediaRequest::userMediaAccessGranted()
+void UserMediaRequest::userMediaAccessGranted(const String& videoDeviceUID, const String& audioDeviceUID)
 {
+    m_chosenVideoDeviceUID = videoDeviceUID;
+    m_chosenAudioDeviceUID = audioDeviceUID;
     RefPtr<UserMediaRequest> protectedThis(this);
     callOnMainThread([protectedThis] {
         // 3 - the user granted access, ask platform to create the media stream descriptors.

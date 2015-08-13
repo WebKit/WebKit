@@ -31,6 +31,7 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestInvocation.h"
+#include <WebKit/WKArray.h>
 #include <WebKit/WKAuthenticationChallenge.h>
 #include <WebKit/WKAuthenticationDecisionListener.h>
 #include <WebKit/WKContextConfigurationRef.h>
@@ -1492,9 +1493,10 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         return;
 
     for (auto& request : m_userMediaPermissionRequests) {
-        if (m_isUserMediaPermissionAllowed)
-            WKUserMediaPermissionRequestAllow(request.get());
-        else
+        if (m_isUserMediaPermissionAllowed) {
+            if (WKArrayGetSize(WKUserMediaPermissionRequestDeviceNamesVideo(request.get())) || WKArrayGetSize(WKUserMediaPermissionRequestDeviceNamesAudio(request.get())))
+                WKUserMediaPermissionRequestAllow(request.get(), WKUserMediaPermissionRequestFirstVideoDeviceUID(request.get()), WKUserMediaPermissionRequestFirstAudioDeviceUID(request.get()));
+        } else
             WKUserMediaPermissionRequestDeny(request.get());
     }
     m_userMediaPermissionRequests.clear();

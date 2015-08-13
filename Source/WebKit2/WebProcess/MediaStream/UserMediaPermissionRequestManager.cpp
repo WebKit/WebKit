@@ -82,7 +82,7 @@ void UserMediaPermissionRequestManager::didReceiveUserMediaPermissionDecision(ui
     m_requestToIDMap.remove(request);
 
     if (allowed)
-        request->userMediaAccessGranted();
+        request->userMediaAccessGranted(deviceUIDVideo, deviceUIDAudio);
     else
         request->userMediaAccessDenied();
 }

@@ -36,14 +36,14 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
 {
 }
 
-void UserMediaPermissionRequestProxy::allow()
+void UserMediaPermissionRequestProxy::allow(const String& videoDeviceUID, const String& audioDeviceUID)
 {
-    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, true);
+    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, true, videoDeviceUID, audioDeviceUID);
 }
 
 void UserMediaPermissionRequestProxy::deny()
 {
-    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, false);
+    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, false, emptyString(), emptyString());
 }
 
 void UserMediaPermissionRequestProxy::invalidate()

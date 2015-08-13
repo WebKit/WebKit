@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
     void start();
-    WEBCORE_EXPORT void userMediaAccessGranted();
+    WEBCORE_EXPORT void userMediaAccessGranted(const String& videoDeviceUID, const String& audioDeviceUID);
     WEBCORE_EXPORT void userMediaAccessDenied();
 
     bool requiresAudio() const { return m_audioConstraints; }
@@ -74,6 +74,9 @@ public:
     
     const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
     const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
+    
+    const String& firstVideoDeviceUID() const { return !videoDeviceUIDs().isEmpty() ? videoDeviceUIDs().at(0) : emptyString(); }
+    const String& firstAudioDeviceUID() const { return !audioDeviceUIDs().isEmpty() ? audioDeviceUIDs().at(0) : emptyString(); }
 
 private:
     UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&&);
@@ -93,6 +96,9 @@ private:
 
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;
+    
+    String m_chosenVideoDeviceUID;
+    String m_chosenAudioDeviceUID;
     
     UserMediaController* m_controller;
 

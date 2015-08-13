@@ -47,7 +47,7 @@ using namespace WebCore;
 }
 - (id)initWithUserMediaRequest:(PassRefPtr<UserMediaRequest>)request;
 - (void)cancelRequest;
-- (void)allow;
+- (void)allowDeviceWithVideoUID:(const String&)videoUID andAudioUID:(const String&)audioUID;
 - (void)deny;
 @end
 
@@ -152,8 +152,23 @@ void WebUserMediaClient::cancelRequest(UserMediaRequest& request)
 #if ENABLE(MEDIA_STREAM)
     if (!_request)
         return;
+    
+    const String& videoUID = _request->firstVideoDeviceUID();
+    const String& audioUID = _request->firstAudioDeviceUID();
+    
+    _request->userMediaAccessGranted(videoUID, audioUID);
+    RemoveRequestFromMap(_request.get());
+#endif
+}
 
-    _request->userMediaAccessGranted();
+- (void)allowDeviceWithVideoUID:(const String&)videoUID andAudioUID:(const String&)audioUID
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_request)
+        return;
+    
+    _request->userMediaAccessGranted(videoUID, audioUID);
+    
     RemoveRequestFromMap(_request.get());
 #endif
 }

@@ -21,6 +21,9 @@
 
 #include "UserMediaPermissionRequestProxy.h"
 #include "WKAPICast.h"
+#include "WKArray.h"
+#include "WKMutableArray.h"
+#include "WKString.h"
 
 using namespace WebKit;
 
@@ -29,12 +32,50 @@ WKTypeID WKUserMediaPermissionRequestGetTypeID()
     return toAPI(UserMediaPermissionRequestProxy::APIType);
 }
 
-void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
+
+void WKUserMediaPermissionRequestAllowBest(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
-    toImpl(userMediaPermissionRequestRef)->allow();
+    const String& videoDevice = toImpl(userMediaPermissionRequestRef)->firstVideoDeviceUID();
+    const String& audioDevice = toImpl(userMediaPermissionRequestRef)->firstAudioDeviceUID();
+    toImpl(userMediaPermissionRequestRef)->allow(videoDevice, audioDevice);
+}
+
+void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef, WKStringRef videoDeviceUID, WKStringRef audioDeviceUID)
+{
+    toImpl(userMediaPermissionRequestRef)->allow(toWTFString(videoDeviceUID), toWTFString(audioDeviceUID));
 }
 
 void WKUserMediaPermissionRequestDeny(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
     toImpl(userMediaPermissionRequestRef)->deny();
+}
+
+WKArrayRef WKUserMediaPermissionRequestDeviceNamesVideo(WKUserMediaPermissionRequestRef userMediaPermissionRef)
+{
+    WKMutableArrayRef array = WKMutableArrayRef();
+    for (auto& name : toImpl(userMediaPermissionRef)->videoDeviceUIDs()) {
+        String deviceName = toImpl(userMediaPermissionRef)->getDeviceNameForUID(name, WebCore::RealtimeMediaSource::Type::Video);
+        WKArrayAppendItem(array, toAPI(API::String::create(deviceName).ptr()));
+    }
+    return array;
+}
+
+WKArrayRef WKUserMediaPermissionRequestDeviceNamesAudio(WKUserMediaPermissionRequestRef userMediaPermissionRef)
+{
+    WKMutableArrayRef array = WKMutableArrayRef();
+    for (auto& name : toImpl(userMediaPermissionRef)->audioDeviceUIDs()) {
+        String deviceName = toImpl(userMediaPermissionRef)->getDeviceNameForUID(name, WebCore::RealtimeMediaSource::Type::Audio);
+        WKArrayAppendItem(array, toAPI(API::String::create(deviceName).ptr()));
+    }
+    return array;
+}
+
+WKStringRef WKUserMediaPermissionRequestFirstVideoDeviceUID(WKUserMediaPermissionRequestRef userMediaPermissionRef)
+{
+    return !toImpl(userMediaPermissionRef)->videoDeviceUIDs().isEmpty() ? reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(WKUserMediaPermissionRequestDeviceNamesVideo(userMediaPermissionRef), 0)) : reinterpret_cast<WKStringRef>(WKStringCreateWithUTF8CString(""));
+}
+
+WKStringRef WKUserMediaPermissionRequestFirstAudioDeviceUID(WKUserMediaPermissionRequestRef userMediaPermissionRef)
+{
+    return !toImpl(userMediaPermissionRef)->audioDeviceUIDs().isEmpty() ? reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(WKUserMediaPermissionRequestDeviceNamesAudio(userMediaPermissionRef), 0)) : reinterpret_cast<WKStringRef>(WKStringCreateWithUTF8CString(""));
 }

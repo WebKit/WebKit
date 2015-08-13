@@ -50,7 +50,7 @@ class RealtimeMediaSourceCenter {
 public:
     virtual ~RealtimeMediaSourceCenter();
 
-    static RealtimeMediaSourceCenter& singleton();
+    WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
     static void setSharedStreamCenter(RealtimeMediaSourceCenter*);
 
     virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;

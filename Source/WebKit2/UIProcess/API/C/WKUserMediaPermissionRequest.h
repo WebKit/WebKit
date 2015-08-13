@@ -27,8 +27,15 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKUserMediaPermissionRequestGetTypeID();
 
-WK_EXPORT void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef);
+WK_EXPORT void WKUserMediaPermissionRequestAllowBest(WKUserMediaPermissionRequestRef);
+WK_EXPORT void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef, WKStringRef videoDeviceUID, WKStringRef audioDeviceUID);
 WK_EXPORT void WKUserMediaPermissionRequestDeny(WKUserMediaPermissionRequestRef);
+
+WK_EXPORT WKArrayRef WKUserMediaPermissionRequestDeviceNamesVideo(WKUserMediaPermissionRequestRef);
+WK_EXPORT WKArrayRef WKUserMediaPermissionRequestDeviceNamesAudio(WKUserMediaPermissionRequestRef);
+    
+WK_EXPORT WKStringRef WKUserMediaPermissionRequestFirstVideoDeviceUID(WKUserMediaPermissionRequestRef);
+WK_EXPORT WKStringRef WKUserMediaPermissionRequestFirstAudioDeviceUID(WKUserMediaPermissionRequestRef);
 
 #ifdef __cplusplus
 }
