@@ -1,3 +1,11 @@
+2015-08-13  Lucas Forschler  <lforschler@apple.com>
+
+        Teach Scripts/copy-webkitlibraries-to-product-directory to copy the El Capitan Library.
+        
+        Unreviewed.
+        
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2015-08-13  Dewei Zhu  <dewei_zhu@apple.com>
 
         Run benchmark customized Dromaeo should not assume there is an internet connection.
