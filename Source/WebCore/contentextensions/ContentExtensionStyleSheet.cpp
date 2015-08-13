@@ -32,6 +32,7 @@
 #include "ContentExtensionsBackend.h"
 #include "Document.h"
 #include "StyleSheetContents.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace ContentExtensions {

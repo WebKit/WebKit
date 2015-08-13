@@ -57,6 +57,8 @@
 #include "WebGLDrawBuffers.h"
 #include "WebGLLoseContext.h"
 #include "WebGLVertexArrayObjectOES.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 
 namespace WebCore {
 
