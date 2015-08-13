@@ -1,3 +1,8 @@
+2015-08-12  Lucas Forschler  <lforschler@apple.com>
+
+        Check in LLVM 3.6.2 binary drops for OS X Yosemite
+        Check in drops built from the LLVM 3.6.2 open source release.
+
 2015-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix for VS2015 targets.
