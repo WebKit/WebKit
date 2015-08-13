@@ -37,6 +37,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
+#include <runtime/StructureInlines.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO_TRACK)
