@@ -30,7 +30,7 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
         super(WebInspector.TimelineRecord.Type.RenderingFrame, startTime, endTime);
 
         this._durationByTaskType = new Map;
-        this._frameIndex = WebInspector.RenderingFrameTimelineRecord._nextFrameIndex++;
+        this._frameIndex = -1;
     }
 
     // Static
@@ -79,6 +79,14 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
     get frameNumber()
     {
         return this._frameIndex + 1;
+    }
+
+    setupFrameIndex()
+    {
+        console.assert(this._frameIndex === -1, "Frame index should only be set once.");
+        if (this._frameIndex >= 0)
+            return;
+        this._frameIndex = WebInspector.RenderingFrameTimelineRecord._nextFrameIndex++;
     }
 
     durationForTask(taskType)
