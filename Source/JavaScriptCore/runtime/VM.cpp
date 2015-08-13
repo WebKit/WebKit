@@ -469,7 +469,7 @@ void VM::stopSampling()
     interpreter->stopSampling();
 }
 
-void VM::prepareToDiscardCode()
+void VM::prepareToDeleteCode()
 {
 #if ENABLE(DFG_JIT)
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
@@ -479,11 +479,11 @@ void VM::prepareToDiscardCode()
 #endif // ENABLE(DFG_JIT)
 }
 
-void VM::discardAllCode()
+void VM::deleteAllCode()
 {
-    prepareToDiscardCode();
+    prepareToDeleteCode();
     m_codeCache->clear();
-    m_regExpCache->invalidateCode();
+    m_regExpCache->deleteAllCode();
     heap.deleteAllCompiledCode();
     heap.deleteAllUnlinkedFunctionCode();
     heap.reportAbandonedObjectGraph();
@@ -706,7 +706,7 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
 {
     m_enabledProfiler = profiler;
     if (m_enabledProfiler) {
-        prepareToDiscardCode();
+        prepareToDeleteCode();
         SetEnabledProfilerFunctor functor;
         heap.forEachCodeBlock(functor);
     }

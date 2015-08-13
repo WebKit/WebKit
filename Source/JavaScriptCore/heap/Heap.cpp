@@ -903,8 +903,8 @@ std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
 
 void Heap::deleteAllCompiledCode()
 {
-    // If JavaScript is running, it's not safe to delete code, since we'll end
-    // up deleting code that is live on the stack.
+    // If JavaScript is running, it's not safe to delete JavaScript code, since
+    // we'll end up returning to deleted code.
     if (m_vm->entryScope)
         return;
     

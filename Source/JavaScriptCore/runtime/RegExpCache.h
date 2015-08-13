@@ -46,7 +46,7 @@ class RegExpCache : private WeakHandleOwner {
 
 public:
     RegExpCache(VM* vm);
-    void invalidateCode();
+    void deleteAllCode();
 
 private:
     

@@ -84,7 +84,7 @@ void Watchdog::setTimeLimit(VM& vm, std::chrono::microseconds limit,
     if (!hadTimeLimit) {
         // And if we've previously compiled any functions, we need to revert
         // them because they don't have the needed polling checks yet.
-        vm.discardAllCode();
+        vm.deleteAllCode();
     }
 
     if (m_hasEnteredVM && hasTimeLimit())
