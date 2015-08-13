@@ -947,11 +947,14 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
     }
 
     NSView *view = documentViewFor(renderer);
-    [popupButton drawWithFrame:inflatedRect inView:view];
-    if (isFocused(renderer) && renderer.style().outlineStyleIsAuto()) {
-        if (wkDrawCellFocusRingWithFrameAtTime(popupButton, inflatedRect, view, std::numeric_limits<double>::max()))
-            renderer.document().page()->focusController().setFocusedElementNeedsRepaint();
-    }
+    Page* page = renderer.document().page();
+    float pageScaleFactor = page->pageScaleFactor();
+    float deviceScaleFactor = page->deviceScaleFactor();
+    bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto();
+    bool shouldUseImageBuffer = zoomLevel != 1.0f || pageScaleFactor != 1.0f;
+    bool shouldDrawCell = true;
+    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(popupButton, paintInfo.context, inflatedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor))
+        page->focusController().setFocusedElementNeedsRepaint();
 
     [popupButton setControlView:nil];
 
