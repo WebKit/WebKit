@@ -99,7 +99,7 @@ TEST(WTF_WordLock, UncontendedLongSection)
 
 TEST(WTF_WordLock, ContendedShortSection)
 {
-    runLockTest<WordLock>(1, 10, 1, 10000000);
+    runLockTest<WordLock>(1, 10, 1, 5000000);
 }
 
 TEST(WTF_WordLock, ContendedLongSection)
