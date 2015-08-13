@@ -395,23 +395,18 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             return true;
 
         if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames && this._renderingFrameTaskFilter.size) {
-            while (treeElement && !(treeElement.record instanceof WebInspector.RenderingFrameTimelineRecord))
+            while (treeElement && !(treeElement.record instanceof WebInspector.TimelineRecord))
                 treeElement = treeElement.parent;
 
-            console.assert(treeElement, "Cannot apply task filter: no RenderingFrameTimelineRecord found.");
+            console.assert(treeElement, "Cannot apply task filter: no TimelineRecord found.");
             if (!treeElement)
                 return false;
 
             var visible = false;
-            for (var key in WebInspector.RenderingFrameTimelineRecord.TaskType) {
-                var taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
-                if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Other)
-                    continue;
-
-                if (!this._renderingFrameTaskFilter.has(taskType) && treeElement.record.durationForTask(taskType) > 0) {
+            if (!(treeElement.record instanceof WebInspector.RenderingFrameTimelineRecord)) {
+                var taskType = WebInspector.RenderingFrameTimelineRecord.taskTypeForTimelineRecord(treeElement.record);
+                if (!this._renderingFrameTaskFilter.has(taskType))
                     visible = true;
-                    break;
-                }
             }
 
             if (!visible)
