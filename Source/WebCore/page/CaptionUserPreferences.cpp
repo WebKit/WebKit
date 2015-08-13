@@ -30,7 +30,6 @@
 
 #include "AudioTrackList.h"
 #include "DOMWrapperWorld.h"
-#include "JSCellInlines.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "Settings.h"
@@ -39,6 +38,7 @@
 #include "UserContentTypes.h"
 #include "UserStyleSheet.h"
 #include "UserStyleSheetTypes.h"
+#include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
 
 namespace WebCore {

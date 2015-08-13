@@ -26,7 +26,6 @@
 #include "config.h"
 #include "UserContentController.h"
 
-#include "JSCellInlines.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "MainFrame.h"
@@ -34,6 +33,7 @@
 #include "ResourceLoadInfo.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
+#include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
