@@ -77,7 +77,10 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
         this._lastSelectedSectionSetting = new WebInspector.Setting("last-selected-style-details-panel", this._rulesStyleDetailsPanel.navigationInfo.identifier);
 
-        var selectedPanel = this._panelMatchingIdentifier(this._lastSelectedSectionSetting.value);
+        let selectedPanel = this._panelMatchingIdentifier(this._lastSelectedSectionSetting.value);
+        if (!selectedPanel)
+            selectedPanel = this._rulesStyleDetailsPanel;
+
         this._switchPanels(selectedPanel);
 
         this._navigationItem = new WebInspector.ScopeRadioButtonNavigationItem(this._identifier, this._displayName, this._panelNavigationInfo, selectedPanel.navigationInfo);
@@ -241,9 +244,9 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
             this.contentElement.classList.toggle("supports-new-rule", typeof this._selectedPanel.newRuleButtonClicked === "function");
             this._selectedPanel.shown();
-        }
 
-        this._lastSelectedSectionSetting.value = selectedPanel.navigationInfo.identifier;
+            this._lastSelectedSectionSetting.value = selectedPanel.navigationInfo.identifier;
+        }
     }
 
     _forcedPseudoClassCheckboxChanged(pseudoClass, event)
