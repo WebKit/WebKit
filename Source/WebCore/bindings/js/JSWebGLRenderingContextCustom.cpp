@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
+#include "DOMWrapperWorld.h"
 #include <heap/SlotVisitorInlines.h>
 
 using namespace JSC;

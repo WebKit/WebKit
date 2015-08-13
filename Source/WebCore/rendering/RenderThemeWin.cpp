@@ -38,6 +38,7 @@
 #include "SystemInfo.h"
 #include "UserAgentStyleSheets.h"
 #include "WebCoreBundleWin.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/win/GDIObject.h>
 
 #if ENABLE(VIDEO)

@@ -26,6 +26,7 @@
 #ifndef EventFactory_h
 #define EventFactory_h
 
+#include "DOMWrapperWorld.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicString.h>
 
