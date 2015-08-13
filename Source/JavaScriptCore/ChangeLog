@@ -1,3 +1,103 @@
+2015-08-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unify JSParserCodeType, FunctionParseMode and ModuleParseMode into SourceParseMode
+        https://bugs.webkit.org/show_bug.cgi?id=147353
+
+        Reviewed by Saam Barati.
+
+        This is the follow-up patch after r188355.
+        It includes the following changes.
+
+        - Unify JSParserCodeType, FunctionParseMode and ModuleParseMode into SourceParseMode
+        - Make SourceParseMode to C++ strongly-typed enum.
+        - Fix the comments.
+        - Rename ModuleSpecifier to ModuleName.
+        - Add the type name `ImportEntry` before the C++11 uniform initialization.
+        - Fix the thrown message for duplicate 'default' names.
+        - Assert the all statements in the top-level source elements are the module declarations under the module analyzer phase.
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateFunctionCodeBlock):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        (JSC::ASTBuilder::createModuleName):
+        (JSC::ASTBuilder::createImportDeclaration):
+        (JSC::ASTBuilder::createExportAllDeclaration):
+        (JSC::ASTBuilder::createExportNamedDeclaration):
+        (JSC::ASTBuilder::createModuleSpecifier): Deleted.
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::analyze):
+        * parser/NodeConstructors.h:
+        (JSC::ModuleNameNode::ModuleNameNode):
+        (JSC::ImportDeclarationNode::ImportDeclarationNode):
+        (JSC::ExportAllDeclarationNode::ExportAllDeclarationNode):
+        (JSC::ExportNamedDeclarationNode::ExportNamedDeclarationNode):
+        (JSC::ModuleSpecifierNode::ModuleSpecifierNode): Deleted.
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        * parser/Nodes.h:
+        (JSC::StatementNode::isModuleDeclarationNode):
+        (JSC::ModuleDeclarationNode::isModuleDeclarationNode):
+        (JSC::ImportDeclarationNode::moduleName):
+        (JSC::ExportAllDeclarationNode::moduleName):
+        (JSC::ExportNamedDeclarationNode::moduleName):
+        (JSC::ImportDeclarationNode::moduleSpecifier): Deleted.
+        (JSC::ExportAllDeclarationNode::moduleSpecifier): Deleted.
+        (JSC::ExportNamedDeclarationNode::moduleSpecifier): Deleted.
+        * parser/NodesAnalyzeModule.cpp:
+        (JSC::SourceElements::analyzeModule):
+        (JSC::ImportDeclarationNode::analyzeModule):
+        (JSC::ExportAllDeclarationNode::analyzeModule):
+        (JSC::ExportNamedDeclarationNode::analyzeModule):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseModuleName):
+        (JSC::Parser<LexerType>::parseImportDeclaration):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        (JSC::Parser<LexerType>::parseModuleSpecifier): Deleted.
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * parser/ParserModes.h:
+        (JSC::isFunctionParseMode):
+        (JSC::isModuleParseMode):
+        (JSC::isProgramParseMode):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        (JSC::SyntaxChecker::createModuleName):
+        (JSC::SyntaxChecker::createImportDeclaration):
+        (JSC::SyntaxChecker::createExportAllDeclaration):
+        (JSC::SyntaxChecker::createExportNamedDeclaration):
+        (JSC::SyntaxChecker::createModuleSpecifier): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::checkModuleSyntax):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax):
+        * tests/stress/modules-syntax-error-with-names.js:
+
 2015-08-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: A {Map, WeakMap, Set, WeakSet} object contains itself will hang the console

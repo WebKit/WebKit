@@ -717,9 +717,9 @@ namespace JSC {
             VariableEnvironment variablesUnderTDZ;
             getVariablesUnderTDZ(variablesUnderTDZ);
 
-            FunctionParseMode parseMode = metadata->parseMode();
+            SourceParseMode parseMode = metadata->parseMode();
             ConstructAbility constructAbility = ConstructAbility::CanConstruct;
-            if (parseMode == GetterMode || parseMode == SetterMode || parseMode == ArrowFunctionMode || (parseMode == MethodMode && metadata->constructorKind() == ConstructorKind::None))
+            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode || (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() == ConstructorKind::None))
                 constructAbility = ConstructAbility::CannotConstruct;
 
             return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, variablesUnderTDZ);

@@ -84,7 +84,7 @@ public:
         TemplateStringResult, TemplateStringListResult,
         TemplateExpressionListResult, TemplateExpr,
         TaggedTemplateExpr,
-        ModuleSpecifierResult,
+        ModuleNameResult,
         ImportSpecifierResult, ImportSpecifierListResult,
         ExportSpecifierResult, ExportSpecifierListResult
     };
@@ -127,7 +127,7 @@ public:
 #if ENABLE(ES6_CLASS_SYNTAX)
     typedef int ClassExpression;
 #endif
-    typedef int ModuleSpecifier;
+    typedef int ModuleName;
     typedef int ImportSpecifier;
     typedef int ImportSpecifierList;
     typedef int ExportSpecifier;
@@ -186,7 +186,7 @@ public:
     ClassExpression createClassExpr(const JSTokenLocation&, const Identifier&, ExpressionType, ExpressionType, PropertyList, PropertyList) { return ClassExpr; }
 #endif
     ExpressionType createFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
-    int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, int, int, bool, int, int, int, ConstructorKind, unsigned, int) { return FunctionBodyResult; }
+    int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, int, int, bool, int, int, int, ConstructorKind, unsigned, SourceParseMode) { return FunctionBodyResult; }
     ExpressionType createArrowFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     void setFunctionNameStart(int, int) { }
     int createArguments() { return ArgumentsResult; }
@@ -259,15 +259,15 @@ public:
     int createThrowStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createDebugger(const JSTokenLocation&, int, int) { return StatementResult; }
     int createConstStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
-    int createModuleSpecifier(const JSTokenLocation&, const Identifier&) { return ModuleSpecifierResult; }
+    int createModuleName(const JSTokenLocation&, const Identifier&) { return ModuleNameResult; }
     ImportSpecifier createImportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ImportSpecifierResult; }
     ImportSpecifierList createImportSpecifierList() { return ImportSpecifierListResult; }
     void appendImportSpecifier(ImportSpecifierList, ImportSpecifier) { }
-    int createImportDeclaration(const JSTokenLocation&, ImportSpecifierList, ModuleSpecifier) { return StatementResult; }
-    int createExportAllDeclaration(const JSTokenLocation&, ModuleSpecifier) { return StatementResult; }
+    int createImportDeclaration(const JSTokenLocation&, ImportSpecifierList, ModuleName) { return StatementResult; }
+    int createExportAllDeclaration(const JSTokenLocation&, ModuleName) { return StatementResult; }
     int createExportDefaultDeclaration(const JSTokenLocation&, int, const Identifier&) { return StatementResult; }
     int createExportLocalDeclaration(const JSTokenLocation&, int) { return StatementResult; }
-    int createExportNamedDeclaration(const JSTokenLocation&, ExportSpecifierList, ModuleSpecifier) { return StatementResult; }
+    int createExportNamedDeclaration(const JSTokenLocation&, ExportSpecifierList, ModuleName) { return StatementResult; }
     ExportSpecifier createExportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ExportSpecifierResult; }
     ExportSpecifierList createExportSpecifierList() { return ExportSpecifierListResult; }
     void appendExportSpecifier(ExportSpecifierList, ExportSpecifier) { }

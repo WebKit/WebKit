@@ -59,8 +59,8 @@ bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     return !!parse<ProgramNode>(
-        &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin, 
-        JSParserStrictMode::NotStrict, JSParserCodeType::Program, error);
+        &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
+        JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, error);
 }
 
 bool checkModuleSyntax(VM& vm, const SourceCode& source, ParserError& error)
@@ -69,7 +69,7 @@ bool checkModuleSyntax(VM& vm, const SourceCode& source, ParserError& error)
     RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
         &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::Strict, JSParserCodeType::Module, error);
+        JSParserStrictMode::Strict, SourceParseMode::ModuleAnalyzeMode, error);
     if (!moduleProgramNode)
         return false;
 

@@ -187,7 +187,12 @@ const B = 'Cocoa';
 checkModuleSyntaxError(String.raw`
 export default 20;
 export default function hello () { }
-`, `SyntaxError: Cannot export 'default' name twice..:4`);
+`, `SyntaxError: Only one 'default' export is allowed.:4`);
+
+checkModuleSyntaxError(String.raw`
+export default function hello () { }
+export default 20;
+`, `SyntaxError: Only one 'default' export is allowed.:4`);
 
 // FIXME: These tests also should be passed. But now, var and lexical declared names can be co-exist on Script / Module top level scope.
 // This will be fixed when this issue is fixed for Script environment.
