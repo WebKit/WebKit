@@ -28,6 +28,7 @@
 
 #include "AnimationUtilities.h"
 #include "CachedSVGDocumentReference.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
     
@@ -63,6 +64,11 @@ CachedSVGDocumentReference* ReferenceFilterOperation::getOrCreateCachedSVGDocume
     if (!m_cachedSVGDocumentReference)
         m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url);
     return m_cachedSVGDocumentReference.get();
+}
+
+void ReferenceFilterOperation::setFilterEffect(PassRefPtr<FilterEffect> filterEffect)
+{
+    m_filterEffect = filterEffect;
 }
 
 PassRefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)

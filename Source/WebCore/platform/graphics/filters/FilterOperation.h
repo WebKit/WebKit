@@ -27,7 +27,6 @@
 #define FilterOperation_h
 
 #include "Color.h"
-#include "FilterEffect.h"
 #include "LayoutSize.h"
 #include "Length.h"
 #include <wtf/RefCounted.h>
@@ -44,6 +43,7 @@ namespace WebCore {
 // CSS Filters
 
 class CachedSVGDocumentReference;
+class FilterEffect;
 
 class FilterOperation : public RefCounted<FilterOperation> {
 public:
@@ -188,7 +188,7 @@ public:
     CachedSVGDocumentReference* getOrCreateCachedSVGDocumentReference();
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
-    void setFilterEffect(PassRefPtr<FilterEffect> filterEffect) { m_filterEffect = filterEffect; }
+    void setFilterEffect(PassRefPtr<FilterEffect>);
 
 private:
     ReferenceFilterOperation(const String& url, const String& fragment);
