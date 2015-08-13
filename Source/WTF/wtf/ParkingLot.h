@@ -26,6 +26,7 @@
 #ifndef WTF_ParkingLot_h
 #define WTF_ParkingLot_h
 
+#include <chrono>
 #include <functional>
 #include <wtf/Atomics.h>
 #include <wtf/Threading.h>
@@ -39,10 +40,23 @@ class ParkingLot {
 public:
     // Parks the thread in a queue associated with the given address, which cannot be null. The
     // parking only succeeds if the validation function returns true while the queue lock is held.
-    // Returns true if the thread actually slept, or false if it returned quickly because of
-    // validation failure.
-    WTF_EXPORT_PRIVATE static bool parkConditionally(const void* address, std::function<bool()> validation);
+    // If validation returns false, it will unlock the internal parking queue and then it will
+    // return without doing anything else. If validation returns true, it will enqueue the thread,
+    // unlock the parking queue lock, call the beforeSleep function, and then it will sleep so long
+    // as the thread continues to be on the queue and the timeout hasn't fired. Finally, this
+    // returns true if we actually got unparked or false if the timeout was hit. Note that
+    // beforeSleep is called with no locks held, so it's OK to do pretty much anything so long as
+    // you don't recursively call parkConditionally(). You can call unparkOne()/unparkAll() though.
+    // It's useful to use beforeSleep() to unlock some mutex in the implementation of
+    // Condition::wait().
+    WTF_EXPORT_PRIVATE static bool parkConditionally(
+        const void* address,
+        std::function<bool()> validation,
+        std::function<void()> beforeSleep,
+        std::chrono::steady_clock::time_point timeout);
 
+    // Simple version of parkConditionally() that covers the most common case: you want to park
+    // indefinitely so long as the value at the given address hasn't changed.
     template<typename T, typename U>
     static bool compareAndPark(const Atomic<T>* address, U expected)
     {
@@ -51,7 +65,9 @@ public:
             [address, expected] () -> bool {
                 U value = address->load();
                 return value == expected;
-            });
+            },
+            [] () { },
+            std::chrono::steady_clock::time_point::max());
     }
 
     // Unparks one thread from the queue associated with the given address, which cannot be null.

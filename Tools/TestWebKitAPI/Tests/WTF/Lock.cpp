@@ -53,7 +53,7 @@ void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned
 
         for (unsigned threadIndex = numThreadsPerGroup; threadIndex--;) {
             threads[threadGroupIndex * numThreadsPerGroup + threadIndex] = createThread(
-                "Benchmark thread",
+                "Lock test thread",
                 [threadGroupIndex, &locks, &words, numIterations, workPerCriticalSection] () {
                     for (unsigned i = numIterations; i--;) {
                         locks[threadGroupIndex].lock();

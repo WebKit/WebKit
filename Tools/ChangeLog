@@ -1,5 +1,22 @@
 2015-08-13  Filip Pizlo  <fpizlo@apple.com>
 
+        WTF should have a compact Condition object to use with Lock
+        https://bugs.webkit.org/show_bug.cgi?id=147986
+
+        Reviewed by Geoffrey Garen.
+
+        Add a test for WTF::Condition.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Condition.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::runLockTest): Change the name of the thread.
+
+2015-08-13  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, shorten another test. It's timing out in debug on some bot.
 
         * TestWebKitAPI/Tests/WTF/Lock.cpp:
