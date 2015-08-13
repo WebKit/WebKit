@@ -3010,17 +3010,6 @@ void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* inco
     m_incomingLLIntCalls.push(incoming);
 }
 
-void CodeBlock::clearEvalCache()
-{
-    if (!!m_alternative)
-        m_alternative->clearEvalCache();
-    if (CodeBlock* otherBlock = specialOSREntryBlockOrNull())
-        otherBlock->clearEvalCache();
-    if (!m_rareData)
-        return;
-    m_rareData->m_evalCodeCache.clear();
-}
-
 void CodeBlock::install()
 {
     ownerExecutable()->installCode(this);

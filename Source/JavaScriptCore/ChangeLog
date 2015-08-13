@@ -1,3 +1,21 @@
+2015-08-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed clearEvalCodeCache()
+        https://bugs.webkit.org/show_bug.cgi?id=147957
+
+        Reviewed by Filip Pizlo.
+
+        It was unused.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC::CodeBlock::install):
+        (JSC::CodeBlock::clearEvalCache): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfJumpTargets):
+        (JSC::CodeBlock::jumpTarget):
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+
 2015-08-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.defineProperty

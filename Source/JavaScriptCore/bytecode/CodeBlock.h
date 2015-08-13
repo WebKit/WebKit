@@ -363,8 +363,6 @@ public:
     size_t numberOfJumpTargets() const { return m_unlinkedCode->numberOfJumpTargets(); }
     unsigned jumpTarget(int index) const { return m_unlinkedCode->jumpTarget(index); }
 
-    void clearEvalCache();
-
     String nameForRegister(VirtualRegister);
 
     unsigned numberOfArgumentValueProfiles()
