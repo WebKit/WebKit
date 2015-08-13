@@ -1,5 +1,25 @@
 2015-08-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Sometimes CSS resources don't update after editing via Styles panel
+        https://bugs.webkit.org/show_bug.cgi?id=143244
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/SourceCode.js:
+        (WebInspector.SourceCode.prototype._processContent):
+        This code is brittle and we should move off of putting the
+        possibly stale content in the Promise result.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype._contentAvailable):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._contentAvailable):
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.requestScriptSyntaxTree):
+        Use the current source code's content.
+
+2015-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix Poor Class Names
         https://bugs.webkit.org/show_bug.cgi?id=147958
 
