@@ -1,3 +1,14 @@
+2015-08-12  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] WebKit processes should have access to com.apple.nesessionmanager.flow-divert-token
+        https://bugs.webkit.org/show_bug.cgi?id=147949
+        rdar://problem/22254920
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2015-08-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: CRASH under WebInspector::closeFrontend for some protocol tests

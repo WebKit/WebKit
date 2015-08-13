@@ -197,6 +197,9 @@
        (global-name "com.apple.iconservices")
        (global-name "com.apple.iconservices.store")
 #endif
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+       (global-name "com.apple.nesessionmanager.flow-divert-token")
+#endif
 )
 
 ;; Security framework
