@@ -49,6 +49,12 @@ public:
     enum NetworkState { NETWORK_EMPTY, NETWORK_IDLE, NETWORK_LOADING, NETWORK_NO_SOURCE };
     enum TextTrackVisibilityCheckType { CheckTextTrackVisibility, AssumeTextTrackVisibilityChanged };
     enum InvalidURLAction { DoNothing, Complain };
+
+    typedef enum {
+        NoSeek,
+        Fast,
+        Precise
+    } SeekType;
 };
 
 }

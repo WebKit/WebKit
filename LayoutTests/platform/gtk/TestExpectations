@@ -2400,3 +2400,6 @@ fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
 fast/text/hangul-generic-font-families.html [ WontFix ]
+
+# This test uses an MPEG-4 video
+media/video-seek-to-current-time.html [ Skip ]
