@@ -899,17 +899,6 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         }
     }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-    if (!newStyle.scrollSnapCoordinates().isEmpty() || (oldStyle && !oldStyle->scrollSnapCoordinates().isEmpty())) {
-        if (is<RenderBox>(*this)) {
-            if (newStyle.scrollSnapCoordinates().isEmpty())
-                view().unregisterBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
-            else
-                view().registerBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
-        }
-    }
-#endif
-
     if (isRoot() || isBody())
         view().frameView().updateExtendBackgroundIfNecessary();
 }
@@ -1063,14 +1052,6 @@ void RenderElement::willBeRemovedFromTree()
 
     if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
         containerFlowThread->removeFlowChild(*this);
-
-    
-#if ENABLE(CSS_SCROLL_SNAP)
-    if (!m_style->scrollSnapCoordinates().isEmpty()) {
-        if (is<RenderBox>(*this))
-            view().unregisterBoxWithScrollSnapCoordinates(downcast<RenderBox>(*this));
-    }
-#endif
 
     RenderObject::willBeRemovedFromTree();
 }
