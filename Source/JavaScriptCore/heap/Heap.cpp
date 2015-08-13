@@ -43,6 +43,7 @@
 #include "JSCInlines.h"
 #include "JSVirtualMachineInternal.h"
 #include "RecursiveAllocationScope.h"
+#include "RegExpCache.h"
 #include "Tracing.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
@@ -1143,6 +1144,7 @@ void Heap::deleteOldCode(double gcStartTime)
 
     GCPHASE(DeleteOldCode);
     if (gcStartTime - m_lastCodeDiscardTime > minute) {
+        m_vm->regExpCache()->deleteAllCode();
         deleteAllCompiledCode();
         m_lastCodeDiscardTime = WTF::monotonicallyIncreasingTime();
     }
