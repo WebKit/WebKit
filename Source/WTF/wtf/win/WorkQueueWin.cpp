@@ -195,9 +195,22 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<v
         // timer handle has been stored in it.
         MutexLocker lock(context->timerMutex);
 
+        int64_t milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+        // From empirical testing, we've seen CreateTimerQueueTimer() sometimes fire up to 5+ ms early.
+        // This causes havoc for clients of this code that expect to not be called back until the
+        // specified duration has expired. Other folks online have also observed some slop in the
+        // firing times of CreateTimerQuqueTimer(). From the data posted at
+        // http://omeg.pl/blog/2011/11/on-winapi-timers-and-their-resolution, it appears that the slop
+        // can be up to about 10 ms. To ensure that we don't fire the timer early, we'll tack on a
+        // slop adjustment to the duration, and we'll use double the worst amount of slop observed
+        // so far.
+        const int64_t slopAdjustment = 20;
+        if (milliseconds) 
+            milliseconds += slopAdjustment;
+
         // Since our timer callback is quick, we can execute in the timer thread itself and avoid
         // an extra thread switch over to a worker thread.
-        int64_t milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
         if (!::CreateTimerQueueTimer(&context->timer, m_timerQueue, timerCallback, context.get(), clampTo<DWORD>(milliseconds), 0, WT_EXECUTEINTIMERTHREAD)) {
             ASSERT_WITH_MESSAGE(false, "::CreateTimerQueueTimer failed with error %lu", ::GetLastError());
             return;
