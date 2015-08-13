@@ -1,3 +1,29 @@
+2015-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: A {Map, WeakMap, Set, WeakSet} object contains itself will hang the console
+        https://bugs.webkit.org/show_bug.cgi?id=147966
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._initialPreview):
+        Renamed to initial preview. This is not a complete preview for
+        this object, and it needs some processing in order to be a
+        complete accurate preview.
+
+        (InjectedScript.RemoteObject.prototype._emptyPreview):
+        This attempts to be an accurate empty preview for the given object.
+        For types with entries, it adds an empty entries list and updates
+        the overflow and lossless properties.
+
+        (InjectedScript.RemoteObject.prototype._createObjectPreviewForValue):
+        Take a generatePreview parameter to generate a full preview or empty preview.
+
+        (InjectedScript.RemoteObject.prototype._appendPropertyPreviews):
+        (InjectedScript.RemoteObject.prototype._appendEntryPreviews):
+        (InjectedScript.RemoteObject.prototype._isPreviewableObject):
+        Take care to avoid cycles.
+
 2015-08-13  Geoffrey Garen  <ggaren@apple.com>
 
         Periodic code deletion should delete RegExp code

@@ -1,3 +1,16 @@
+2015-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: A {Map, WeakMap, Set, WeakSet} object contains itself will hang the console
+        https://bugs.webkit.org/show_bug.cgi?id=147966
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendEntryPreviews):
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        For empty overflow previews, don't show ", ..." if we didn't show any
+        values; just show "..." in these cases.
+
 2015-08-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Hide child rows for filtered tasks in the Rendering Frames data grid
