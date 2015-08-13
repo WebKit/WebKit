@@ -400,6 +400,7 @@ set(WebKit2_SOURCES
     UIProcess/API/APIUserContentExtension.cpp
     UIProcess/API/APIUserContentExtensionStore.cpp
     UIProcess/API/APIWebsiteDataStore.cpp
+    UIProcess/API/APIWindowFeatures.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp
@@ -449,6 +450,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKUserMediaPermissionRequest.cpp
     UIProcess/API/C/WKVibration.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
+    UIProcess/API/C/WKWindowFeaturesRef.cpp
 
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp
     UIProcess/Authentication/AuthenticationDecisionListener.cpp
