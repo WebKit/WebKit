@@ -1,3 +1,39 @@
+2015-08-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Rebaseline some iOS simulator test results for font changes.
+
+        Rubber-stamped by Sam Weinig.
+
+        * platform/ios-simulator/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/ios-simulator/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/ios-simulator/fast/ruby/bopomofo-expected.txt:
+        * platform/ios-simulator/fast/ruby/bopomofo-letter-spacing-expected.txt:
+        * platform/ios-simulator/fast/ruby/bopomofo-rl-expected.txt:
+        * platform/ios-simulator/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/ios-simulator/fast/text/backslash-to-yen-sign-expected.txt:
+        * platform/ios-simulator/fast/text/font-weights-zh-expected.txt:
+        * platform/ios-simulator/fast/text/indic-expected.txt:
+        * platform/ios-simulator/fast/text/international/plane2-expected.txt:
+        * platform/ios-simulator/fast/text/international/synthesized-italic-vertical-latin-expected.txt:
+        * platform/ios-simulator/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/ios-simulator/fast/text/international/text-spliced-font-expected.txt:
+        * platform/ios-simulator/fast/text/tatechuyoko-expected.txt:
+        * platform/ios-simulator/fast/text/text-combine-different-fonts-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/japanese-lr-selection-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/japanese-lr-text-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/japanese-rl-selection-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/japanese-rl-text-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/ios-simulator/fast/writing-mode/vertical-align-table-baseline-expected.txt:
+
 2015-08-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Watch Expressions
