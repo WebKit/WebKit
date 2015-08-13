@@ -1,3 +1,12 @@
+2015-08-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [Cocoa] [CJK-configured device] System font has vertical punctuation
+        https://bugs.webkit.org/show_bug.cgi?id=147964
+        <rdar://problem/22256660>
+
+        * platform/mac/fast/text/system-font-punctuation-expected.txt: Actually landing
+        results for Mac.
+
 2015-08-12  Alexey Proskuryakov  <ap@apple.com>
 
         Mac TestExpectations gardening.
