@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let fakeObject = WebInspector.RemoteObject.createFakeRemoteObject();
+
+    InspectorTest.assert(fakeObject instanceof WebInspector.RemoteObject);
+    InspectorTest.assert(fakeObject.objectId === WebInspector.RemoteObject.FakeRemoteObjectId);
+    InspectorTest.expectThat(fakeObject.type === "object" && !fakeObject.subtype, "A fake remote object should have object type.");
+    InspectorTest.expectThat(fakeObject !== WebInspector.RemoteObject.createFakeRemoteObject(), "Each fake remote object instance should be unique.");
+
+    fakeObject.getOwnPropertyDescriptors(function(properties) {
+        InspectorTest.expectThat(Array.isArray(properties) && !properties.length, "A fake remote object should have an empty list of own properties.");
+    });
+
+    fakeObject.getDisplayablePropertyDescriptors(function(properties) {
+        InspectorTest.expectThat(Array.isArray(properties) && !properties.length, "A fake remote object should have an empty list of displayable properties.");
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>
