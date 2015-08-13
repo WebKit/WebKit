@@ -1,5 +1,11 @@
 2015-08-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Removing an expectation for a long fixed bug.
+
+        * TestExpectations: Unskip fast/multicol/newmulticol/spanner-crash.html.
+
+2015-08-12  Alexey Proskuryakov  <ap@apple.com>
+
         http/tests/security/cors-post-redirect-308.html doesn't work properly
         https://bugs.webkit.org/show_bug.cgi?id=147914
 
