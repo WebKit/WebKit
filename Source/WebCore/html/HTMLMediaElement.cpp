@@ -2495,7 +2495,10 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     if (m_seekTaskQueue.hasPendingTasks()) {
         LOG(Media, "HTMLMediaElement::seekWithTolerance(%p) - cancelling pending seeks", this);
         m_seekTaskQueue.cancelAllTasks();
-        m_pendingSeek = nullptr;
+        if (m_pendingSeek) {
+            now = m_pendingSeek->now;
+            m_pendingSeek = nullptr;
+        }
         m_pendingSeekType = NoSeek;
     }
 
