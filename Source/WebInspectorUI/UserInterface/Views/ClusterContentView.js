@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ClusterContentView = class className extends WebInspector.ContentView
+WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.ContentView
 {
     constructor(representedObject)
     {

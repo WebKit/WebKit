@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceContentView = class className extends WebInspector.ContentView
+WebInspector.ResourceContentView = class ResourceContentView extends WebInspector.ContentView
 {
     constructor(resource, styleClassName)
     {
