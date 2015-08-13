@@ -281,6 +281,7 @@ public:
         
     virtual void elementDidFocus(const Node*) { };
     virtual void elementDidBlur(const Node*) { };
+    virtual void elementDidRefocus(const Node*) { };
     
     virtual bool shouldPaintEntireContents() const { return false; }
     virtual bool hasStablePageScaleFactor() const { return true; }

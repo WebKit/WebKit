@@ -3012,7 +3012,7 @@ static bool isAssistableInputType(InputType type)
 {
     // FIXME: This is a temporary workaround for <rdar://problem/22126518>. The real fix will involve refactoring
     // the way we assist programmatically focused nodes.
-    if (!applicationIsGmailAddAccountOnIOS() && !userIsInteracting && !_textSelectionAssistant)
+    if (!userIsInteracting && !_textSelectionAssistant)
         return;
 
     if (blurPreviousNode)

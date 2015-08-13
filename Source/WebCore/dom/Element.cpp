@@ -2117,8 +2117,12 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     if (!inDocument())
         return;
 
-    if (document().focusedElement() == this)
+    if (document().focusedElement() == this) {
+        if (document().page())
+            document().page()->chrome().client().elementDidRefocus(this);
+
         return;
+    }
 
     // If the stylesheets have already been loaded we can reliably check isFocusable.
     // If not, we continue and set the focused node on the focus controller below so

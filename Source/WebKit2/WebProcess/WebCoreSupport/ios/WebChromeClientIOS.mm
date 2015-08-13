@@ -54,6 +54,11 @@ void WebChromeClient::elementDidBlur(const WebCore::Node* node)
     m_page->elementDidBlur(const_cast<WebCore::Node*>(node));
 }
 
+void WebChromeClient::elementDidRefocus(const WebCore::Node* node)
+{
+    elementDidFocus(node);
+}
+
 void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
 {
     m_page->didReceiveMobileDocType(isMobileDoctype);
