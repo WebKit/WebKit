@@ -78,7 +78,7 @@ function test()
         if (receivedAllExpectedSamples()) {
             tests.forEach(function(test) {
                 var result = test.predicate();
-                ProtocolTest.assert(result, test.message);
+                ProtocolTest.expectThat(result, test.message);
                 if (!result)
                     test.error();
             });

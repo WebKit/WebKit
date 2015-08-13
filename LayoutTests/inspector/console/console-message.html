@@ -16,7 +16,7 @@ function test()
 {
     ProtocolTest.importScript("console-test.js");
 
-    var suite = new ProtocolTest.AsyncTestSuite("Console.MessagesFromCommandLineAPI");
+    var suite = ProtocolTest.createAsyncSuite("Console.MessagesFromCommandLineAPI");
 
     ProtocolTest.Console.addTestCase(suite, {
         name: "ConsoleLogString",

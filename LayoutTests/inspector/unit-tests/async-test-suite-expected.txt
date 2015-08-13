@@ -1,5 +1,6 @@
 PASS: instantiating AsyncTestSuite requires name argument.
 PASS: instantiating AsyncTestSuite requires string name argument.
+PASS: instantiating AsyncTestSuite requires test harness argument.
 PASS: should not be able to add empty test case.
 PASS: should not be able to add non-object test case.
 PASS: test case should require string name.
