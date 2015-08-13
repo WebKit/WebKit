@@ -59,6 +59,21 @@ public:
     // are no more threads on the queue.
     WTF_EXPORT_PRIVATE static bool unparkOne(const void* address);
 
+    // Unparks one thread from the queue associated with the given address, and calls the given
+    // functor while the address is locked. Reports to the callback whether any thread got unparked
+    // and whether there may be any other threads still on the queue. This is an expert-mode version
+    // of unparkOne() that allows for really good thundering herd avoidance in adaptive mutexes.
+    // Without this, a lock implementation that uses unparkOne() has to have some trick for knowing
+    // if there are still threads parked on the queue, so that it can set some bit in its lock word
+    // to indicate that the next unlock() also needs to unparkOne(). But there is a race between
+    // manipulating that bit and some other thread acquiring the lock. It's possible to work around
+    // that race - see Rusty Russel's well-known usersem library - but it's not pretty. This form
+    // allows that race to be completely avoided, since there is no way that a thread can be parked
+    // while the callback is running.
+    WTF_EXPORT_PRIVATE static void unparkOne(
+        const void* address,
+        std::function<void(bool didUnparkThread, bool mayHaveMoreThreads)> callback);
+
     // Unparks every thread from the queue associated with the given address, which cannot be null.
     WTF_EXPORT_PRIVATE static void unparkAll(const void* address);
 

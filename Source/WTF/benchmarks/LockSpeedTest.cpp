@@ -44,7 +44,7 @@ unsigned numIterations;
     
 NO_RETURN void usage()
 {
-    printf("Usage: LockSpeedTest spinlock|wordlock|lock|bytelock|mutex|all <num thread groups> <num threads per group> <work per critical section> <num noise threads> <num iterations>\n");
+    printf("Usage: LockSpeedTest spinlock|wordlock|lock|mutex|all <num thread groups> <num threads per group> <work per critical section> <num noise threads> <num iterations>\n");
     exit(1);
 }
 

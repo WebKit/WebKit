@@ -31,6 +31,10 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
+namespace TestWebKitAPI {
+struct LockInspector;
+};
+
 namespace WTF {
 
 // A WordLock is a fully adaptive mutex that uses sizeof(void*) storage. It has a fast path that is
@@ -77,12 +81,20 @@ public:
     }
 
 private:
+    friend struct TestWebKitAPI::LockInspector;
+    
     static const uintptr_t isLockedBit = 1;
     static const uintptr_t isQueueLockedBit = 2;
     static const uintptr_t queueHeadMask = 3;
 
     WTF_EXPORT_PRIVATE void lockSlow();
     WTF_EXPORT_PRIVATE void unlockSlow();
+
+    // Method used for testing only.
+    bool isFullyReset() const
+    {
+        return !m_word.load();
+    }
 
     Atomic<uintptr_t> m_word;
 };

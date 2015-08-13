@@ -31,6 +31,10 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
+namespace TestWebKitAPI {
+struct LockInspector;
+};
+
 namespace WTF {
 
 // This is a fully adaptive mutex that only requires 1 byte of storage. It has fast paths that are
@@ -73,11 +77,19 @@ struct LockBase {
     }
 
 protected:
+    friend struct TestWebKitAPI::LockInspector;
+    
     static const uint8_t isHeldBit = 1;
     static const uint8_t hasParkedBit = 2;
 
     WTF_EXPORT_PRIVATE void lockSlow();
     WTF_EXPORT_PRIVATE void unlockSlow();
+
+    // Method used for testing only.
+    bool isFullyReset() const
+    {
+        return !m_byte.load();
+    }
 
     Atomic<uint8_t> m_byte;
 };

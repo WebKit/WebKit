@@ -33,6 +33,14 @@ using namespace WTF;
 
 namespace TestWebKitAPI {
 
+struct LockInspector {
+    template<typename LockType>
+    static bool isFullyReset(LockType& lock)
+    {
+        return lock.isFullyReset();
+    }
+};
+
 template<typename LockType>
 void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned workPerCriticalSection, unsigned numIterations)
 {
@@ -66,6 +74,17 @@ void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned
 
     for (unsigned threadGroupIndex = numThreadGroups; threadGroupIndex--;)
         EXPECT_EQ(expected, words[threadGroupIndex]);
+
+    // Now test that the locks correctly reset themselves. We expect that if a single thread locks
+    // each of the locks twice in a row, then the lock should be in a pristine state.
+    for (unsigned threadGroupIndex = numThreadGroups; threadGroupIndex--;) {
+        for (unsigned i = 2; i--;) {
+            locks[threadGroupIndex].lock();
+            locks[threadGroupIndex].unlock();
+        }
+
+        EXPECT_EQ(true, LockInspector::isFullyReset(locks[threadGroupIndex]));
+    }
 }
 
 TEST(WTF_WordLock, UncontendedShortSection)
@@ -126,6 +145,11 @@ TEST(WTF_Lock, ManyContendedShortSections)
 TEST(WTF_Lock, ManyContendedLongSections)
 {
     runLockTest<Lock>(10, 10, 10000, 1000);
+}
+
+TEST(WTF_Lock, ManyContendedLongerSections)
+{
+    runLockTest<Lock>(10, 10, 100000, 100);
 }
 
 TEST(WTF_Lock, SectionAddressCollision)

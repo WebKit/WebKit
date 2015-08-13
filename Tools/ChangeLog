@@ -1,3 +1,17 @@
+2015-08-12  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF::Lock should not suffer from the thundering herd
+        https://bugs.webkit.org/show_bug.cgi?id=147947
+
+        Reviewed by Geoffrey Garen.
+
+        Add testing that checks that locks return to a pristine state after contention is over.
+
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::LockInspector::isFullyReset):
+        (TestWebKitAPI::runLockTest):
+        (TestWebKitAPI::TEST):
+
 2015-08-12  Dewei Zhu  <dewei_zhu@apple.com>
 
         Benchmarks supported by run_benchmark script should not assume we have internet access.

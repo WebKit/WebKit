@@ -69,37 +69,43 @@ void LockBase::lockSlow()
         // We now expect the value to be isHeld|hasParked. So long as that's the case, we can park.
         ParkingLot::compareAndPark(&m_byte, isHeldBit | hasParkedBit);
 
-        // We have awaken, or we never parked because the byte value changed. Either way, we loop
+        // We have awoken, or we never parked because the byte value changed. Either way, we loop
         // around and try again.
     }
 }
 
 void LockBase::unlockSlow()
 {
-    // Release the lock while finding out if someone is parked. Note that as soon as we do this,
-    // someone might barge in.
-    uint8_t oldByteValue;
+    // We could get here because the weak CAS in unlock() failed spuriously, or because there is
+    // someone parked. So, we need a CAS loop: even if right now the lock is just held, it could
+    // be held and parked if someone attempts to lock just as we are unlocking.
     for (;;) {
-        oldByteValue = m_byte.load();
-        if (verbose)
-            dataLog(toString(currentThread(), ": unlocking with ", oldByteValue, "\n"));
-        ASSERT(oldByteValue & isHeldBit);
-        if (m_byte.compareExchangeWeak(oldByteValue, 0))
-            break;
+        uint8_t oldByteValue = m_byte.load();
+        ASSERT(oldByteValue == isHeldBit || oldByteValue == (isHeldBit | hasParkedBit));
+        
+        if (oldByteValue == isHeldBit) {
+            if (m_byte.compareExchangeWeak(isHeldBit, 0))
+                return;
+            continue;
+        }
+
+        // Someone is parked. Unpark exactly one thread, possibly leaving the parked bit set if
+        // there is a chance that there are still other threads parked.
+        ASSERT(oldByteValue == (isHeldBit | hasParkedBit));
+        ParkingLot::unparkOne(
+            &m_byte,
+            [this] (bool, bool mayHaveMoreThreads) {
+                // We are the only ones that can clear either the isHeldBit or the hasParkedBit,
+                // so we should still see both bits set right now.
+                ASSERT(m_byte.load() == (isHeldBit | hasParkedBit));
+
+                if (mayHaveMoreThreads)
+                    m_byte.store(hasParkedBit);
+                else
+                    m_byte.store(0);
+            });
+        return;
     }
-
-    // Note that someone could try to park right now. If that happens, they will return immediately
-    // because our parking predicate is that m_byte == isHeldBit | hasParkedBit, but we've already set
-    // m_byte = 0.
-
-    // If there had been threads parked, unpark all of them. This causes a thundering herd, but while
-    // that is theoretically scary, it's totally fine in WebKit because we usually don't have enough
-    // threads for this to matter.
-    // FIXME: We don't really need this to exhibit thundering herd. We could use unparkOne(), and if
-    // that returns true, just set the parked bit again. If in the process of setting the parked bit
-    // we fail the CAS, then just unpark again.
-    if (oldByteValue & hasParkedBit)
-        ParkingLot::unparkAll(&m_byte);
 }
 
 } // namespace WTF

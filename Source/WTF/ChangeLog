@@ -1,3 +1,67 @@
+2015-08-12  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF::Lock should not suffer from the thundering herd
+        https://bugs.webkit.org/show_bug.cgi?id=147947
+
+        Reviewed by Geoffrey Garen.
+
+        This changes Lock::unlockSlow() to use unparkOne() instead of unparkAll(). The problem with
+        doing this is that it's not obvious after calling unparkOne() if there are any other threads
+        that are still parked on the lock's queue. If we assume that there are and leave the
+        hasParkedBit set, then future calls to unlock() will take the slow path. We don't want that
+        if there aren't actually any threads parked. On the other hand, if we assume that there
+        aren't any threads parked and clear the hasParkedBit, then if there actually were some
+        threads parked, then they may never be awoken since future calls to unlock() won't take slow
+        path and so won't call unparkOne(). In other words, we need a way to be very precise about
+        when we clear the hasParkedBit and we need to do it in a race-free way: it can't be the case
+        that we clear the bit just as some thread gets parked on the queue.
+
+        A similar problem arises in futexes, and one of the solutions is to have a thread that
+        acquires a lock after parking sets the hasParkedBit. This is what Rusty Russel's usersem
+        does. It's a subtle algorithm. Also, it means that if a thread barges in before the unparked
+        thread runs, then that barging thread will not know that there are threads parked. This
+        could increase the severity of barging.
+
+        Since ParkingLot is a user-level API, we don't have to worry about the kernel-user security
+        issues and so we can expose callbacks while ParkingLot is holding its internal locks. This
+        change does exactly that for unparkOne(). The new variant of unparkOne() will call a user
+        function while the queue from which we are unparking is locked. The callback is told basic
+        stats about the queue: did we unpark a thread this time, and could there be more threads to
+        unpark in the future. The callback runs while it's impossible for the queue state to change,
+        since the ParkingLot's internal locks for the queue is held. This means that
+        Lock::unlockSlow() can either clear, or leave, the hasParkedBit while releasing the lock
+        inside the callback from unparkOne(). This takes care of the thundering herd problem while
+        also reducing the greed that arises from barging threads.
+
+        This required some careful reworking of the ParkingLot algorithm. The first thing I noticed
+        was that the ThreadData::shouldPark flag was useless, since it's set exactly when
+        ThreadData::address is non-null. Then I had to make sure that dequeue() could lazily create
+        both hashtables and buckets, since the "callback is called while queue is locked" invariant
+        requires that we didn't exit early due to the hashtable or bucket not being present. Note
+        that all of this is done in such a way that the old unparkOne() and unparkAll() don't have
+        to create any buckets, though they now may create the hashtable. We don't care as much about
+        the hashtable being created by unpark since it's just such an unlikely scenario and it would
+        only happen once.
+
+        This change reduces the kernel CPU usage of WTF::Lock for the long critical section test by
+        about 8x and makes it always perform as well as WTF::WordLock and WTF::Mutex for that
+        benchmark.
+
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/Lock.cpp:
+        (WTF::LockBase::unlockSlow):
+        * wtf/Lock.h:
+        (WTF::LockBase::isLocked):
+        (WTF::LockBase::isFullyReset):
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkAll):
+        * wtf/ParkingLot.h:
+        * wtf/WordLock.h:
+        (WTF::WordLock::isLocked):
+        (WTF::WordLock::isFullyReset):
+
 2015-08-11  Filip Pizlo  <fpizlo@apple.com>
 
         Always use a byte-sized lock implementation
