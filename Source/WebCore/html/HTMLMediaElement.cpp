@@ -1017,7 +1017,7 @@ void HTMLMediaElement::prepareForLoad()
         m_paused = true;
 
         // 4.6 - If seeking is true, set it to false.
-        m_seeking = false;
+        clearSeeking();
 
         // 4.7 - Set the current playback position to 0.
         //       Set the official playback position to 0.
@@ -2493,8 +2493,10 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     // already running. Abort that other instance of the algorithm without waiting for the step that
     // it is running to complete.
     if (m_seekTaskQueue.hasPendingTasks()) {
+        LOG(Media, "HTMLMediaElement::seekWithTolerance(%p) - cancelling pending seeks", this);
         m_seekTaskQueue.cancelAllTasks();
         m_pendingSeek = nullptr;
+        m_pendingSeekType = NoSeek;
     }
 
     // 4 - Set the seeking IDL attribute to true.
@@ -2509,16 +2511,19 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     // 5 - If the seek was in response to a DOM method call or setting of an IDL attribute, then continue
     // the script. The remainder of these steps must be run asynchronously.
     m_pendingSeek = std::make_unique<PendingSeek>(now, time, negativeTolerance, positiveTolerance);
-    if (fromDOM)
+    if (fromDOM) {
+        LOG(Media, "HTMLMediaElement::seekWithTolerance(%p) - enqueuing seek from %s to %s", this, toString(now).utf8().data(), toString(time).utf8().data());
         m_seekTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::seekTask, this));
-    else
+    } else
         seekTask();
 }
 
 void HTMLMediaElement::seekTask()
 {
+    LOG(Media, "HTMLMediaElement::seekTask(%p)", this);
+
     if (!m_player) {
-        m_seeking = false;
+        clearSeeking();
         return;
     }
 
@@ -2545,7 +2550,7 @@ void HTMLMediaElement::seekTask()
 #if !LOG_DISABLED
     MediaTime mediaTime = m_player->mediaTimeForTimeValue(time);
     if (time != mediaTime)
-        LOG(Media, "HTMLMediaElement::seekTimerFired(%p) - %s - media timeline equivalent is %s", this, toString(time).utf8().data(), toString(mediaTime).utf8().data());
+        LOG(Media, "HTMLMediaElement::seekTask(%p) - %s - media timeline equivalent is %s", this, toString(time).utf8().data(), toString(mediaTime).utf8().data());
 #endif
     time = m_player->mediaTimeForTimeValue(time);
 
@@ -2554,11 +2559,14 @@ void HTMLMediaElement::seekTask()
     // that is the nearest to the new playback position. ... If there are no ranges given in the seekable
     // attribute then set the seeking IDL attribute to false and abort these steps.
     RefPtr<TimeRanges> seekableRanges = seekable();
+    bool noSeekRequired = !seekableRanges->length();
 
     // Short circuit seeking to the current time by just firing the events if no seek is required.
-    // Don't skip calling the media engine if we are in poster mode because a seek should always 
-    // cancel poster display.
-    bool noSeekRequired = !seekableRanges->length() || (time == now && displayMode() != Poster);
+    // Don't skip calling the media engine if 1) we are in poster mode (because a seek should always cancel
+    // poster display), or 2) if there is a pending fast seek, or 3) if this seek is not an exact seek
+    SeekType thisSeekType = (negativeTolerance == MediaTime::zeroTime() && positiveTolerance == MediaTime::zeroTime()) ? Precise : Fast;
+    if (!noSeekRequired && time == now && thisSeekType == Precise && m_pendingSeekType != Fast && displayMode() != Poster)
+        noSeekRequired = true;
 
 #if ENABLE(MEDIA_SOURCE)
     // Always notify the media engine of a seek if the source is not closed. This ensures that the source is
@@ -2568,18 +2576,21 @@ void HTMLMediaElement::seekTask()
 #endif
 
     if (noSeekRequired) {
+        LOG(Media, "HTMLMediaElement::seekTask(%p) - seek to %s ignored", this, toString(time).utf8().data());
         if (time == now) {
             scheduleEvent(eventNames().seekingEvent);
             scheduleTimeupdateEvent(false);
             scheduleEvent(eventNames().seekedEvent);
         }
-        m_seeking = false;
+        clearSeeking();
         return;
     }
     time = seekableRanges->ranges().nearest(time);
 
     m_sentEndEvent = false;
     m_lastSeekTime = time;
+    m_pendingSeekType = thisSeekType;
+    m_seeking = true;
 
     // 10 - Queue a task to fire a simple event named seeking at the element.
     scheduleEvent(eventNames().seekingEvent);
@@ -2592,13 +2603,20 @@ void HTMLMediaElement::seekTask()
     // 13 - Await a stable state. The synchronous section consists of all the remaining steps of this algorithm.
 }
 
+void HTMLMediaElement::clearSeeking()
+{
+    m_seeking = false;
+    m_pendingSeekType = NoSeek;
+    invalidateCachedTime();
+}
+
 void HTMLMediaElement::finishSeek()
 {
-    LOG(Media, "HTMLMediaElement::finishSeek(%p)", this);
-
     // 4.8.10.9 Seeking
     // 14 - Set the seeking IDL attribute to false.
-    m_seeking = false;
+    clearSeeking();
+
+    LOG(Media, "HTMLMediaElement::finishSeek(%p) - current time = %s", this, toString(currentMediaTime()).utf8().data());
 
     // 15 - Run the time maches on steps.
     // Handled by mediaPlayerTimeChanged().
