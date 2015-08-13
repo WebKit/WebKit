@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWindowFeatures.h"
+#ifndef APIWindowFeatures_h
+#define APIWindowFeatures_h
 
-#if WK_API_ENABLED
+#include "APIObject.h"
+#include <WebCore/WindowFeatures.h>
 
-#import "APIWindowFeatures.h"
-#import "WKObject.h"
+namespace API {
 
-namespace WebKit {
+class WindowFeatures final : public ObjectImpl<Object::Type::WindowFeatures> {
+public:
+    static Ref<WindowFeatures> create(const WebCore::WindowFeatures&);
+    virtual ~WindowFeatures();
 
-inline WKWindowFeatures *wrapper(API::WindowFeatures& windowFeatures)
-{
-    ASSERT([windowFeatures.wrapper() isKindOfClass:[WKWindowFeatures class]]);
+    const WebCore::WindowFeatures& windowFeatures() const { return m_windowFeatures; }
 
-    return (WKWindowFeatures *)windowFeatures.wrapper();
+private:
+    explicit WindowFeatures(const WebCore::WindowFeatures&);
+
+    const WebCore::WindowFeatures m_windowFeatures;
+};
+
 }
 
-}
-@interface WKWindowFeatures () <WKObject> {
-@package
-    API::ObjectStorage<API::WindowFeatures> _windowFeatures;
-}
-@end
-
-#endif
+#endif // APIWindowFeatures_h

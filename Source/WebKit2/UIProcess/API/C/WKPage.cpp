@@ -41,6 +41,7 @@
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
+#include "APIWindowFeatures.h"
 #include "AuthenticationChallengeProxy.h"
 #include "LegacySessionStateCoding.h"
 #include "Logging.h"
@@ -102,7 +103,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1341,38 +1342,55 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
     private:
-        virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy*, const SecurityOriginData&, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+        virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy* initiatingFrame, const SecurityOriginData& securityOriginData, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
         {
-            if (!m_client.base.version && !m_client.createNewPage_deprecatedForUseWithV0)
-                return 0;
+            if (m_client.base.version < 6) {
+                if (!m_client.base.version && !m_client.createNewPage_deprecatedForUseWithV0)
+                    return nullptr;
 
-            if (m_client.base.version > 0 && !m_client.createNewPage)
-                return 0;
+                if (!m_client.createNewPage_deprecatedForUseWithV1)
+                    return nullptr;
 
-            API::Dictionary::MapType map;
-            if (windowFeatures.x)
-                map.set("x", API::Double::create(*windowFeatures.x));
-            if (windowFeatures.y)
-                map.set("y", API::Double::create(*windowFeatures.y));
-            if (windowFeatures.width)
-                map.set("width", API::Double::create(*windowFeatures.width));
-            if (windowFeatures.height)
-                map.set("height", API::Double::create(*windowFeatures.height));
-            map.set("menuBarVisible", API::Boolean::create(windowFeatures.menuBarVisible));
-            map.set("statusBarVisible", API::Boolean::create(windowFeatures.statusBarVisible));
-            map.set("toolBarVisible", API::Boolean::create(windowFeatures.toolBarVisible));
-            map.set("locationBarVisible", API::Boolean::create(windowFeatures.locationBarVisible));
-            map.set("scrollbarsVisible", API::Boolean::create(windowFeatures.scrollbarsVisible));
-            map.set("resizable", API::Boolean::create(windowFeatures.resizable));
-            map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
-            map.set("dialog", API::Boolean::create(windowFeatures.dialog));
-            Ref<API::Dictionary> featuresMap = API::Dictionary::create(WTF::move(map));
+                API::Dictionary::MapType map;
+                if (windowFeatures.x)
+                    map.set("x", API::Double::create(*windowFeatures.x));
+                if (windowFeatures.y)
+                    map.set("y", API::Double::create(*windowFeatures.y));
+                if (windowFeatures.width)
+                    map.set("width", API::Double::create(*windowFeatures.width));
+                if (windowFeatures.height)
+                    map.set("height", API::Double::create(*windowFeatures.height));
+                map.set("menuBarVisible", API::Boolean::create(windowFeatures.menuBarVisible));
+                map.set("statusBarVisible", API::Boolean::create(windowFeatures.statusBarVisible));
+                map.set("toolBarVisible", API::Boolean::create(windowFeatures.toolBarVisible));
+                map.set("locationBarVisible", API::Boolean::create(windowFeatures.locationBarVisible));
+                map.set("scrollbarsVisible", API::Boolean::create(windowFeatures.scrollbarsVisible));
+                map.set("resizable", API::Boolean::create(windowFeatures.resizable));
+                map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
+                map.set("dialog", API::Boolean::create(windowFeatures.dialog));
+                Ref<API::Dictionary> featuresMap = API::Dictionary::create(WTF::move(map));
 
-            if (!m_client.base.version)
-                return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+                if (!m_client.base.version)
+                    return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
 
-            Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
-            return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(request.ptr()), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+                Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+                return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV1(toAPI(page), toAPI(request.ptr()), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+            }
+
+            if (!m_client.createNewPage)
+                return nullptr;
+
+            auto configuration = page->configuration().copy();
+            configuration->setRelatedPage(page);
+
+            auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame, securityOriginData.securityOrigin());
+
+            bool shouldOpenAppLinks = !protocolHostAndPortAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), resourceRequest.url());
+            auto apiNavigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.ptr(), nullptr, resourceRequest, WebCore::URL(), shouldOpenAppLinks);
+
+            auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
+
+            return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(configuration.ptr()), toAPI(apiNavigationAction.ptr()), toAPI(apiWindowFeatures.ptr()), m_client.base.clientInfo)));
         }
 
         virtual void showPage(WebPageProxy* page) override
