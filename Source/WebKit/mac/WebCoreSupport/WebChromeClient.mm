@@ -240,10 +240,10 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest&, const
 #endif
     
     if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {
-        NSNumber *x = features.xSet ? [[NSNumber alloc] initWithFloat:features.x] : nil;
-        NSNumber *y = features.ySet ? [[NSNumber alloc] initWithFloat:features.y] : nil;
-        NSNumber *width = features.widthSet ? [[NSNumber alloc] initWithFloat:features.width] : nil;
-        NSNumber *height = features.heightSet ? [[NSNumber alloc] initWithFloat:features.height] : nil;
+        NSNumber *x = features.x ? [[NSNumber alloc] initWithFloat:*features.x] : nil;
+        NSNumber *y = features.y ? [[NSNumber alloc] initWithFloat:*features.y] : nil;
+        NSNumber *width = features.width ? [[NSNumber alloc] initWithFloat:*features.width] : nil;
+        NSNumber *height = features.height ? [[NSNumber alloc] initWithFloat:*features.height] : nil;
         NSNumber *menuBarVisible = [[NSNumber alloc] initWithBool:features.menuBarVisible];
         NSNumber *statusBarVisible = [[NSNumber alloc] initWithBool:features.statusBarVisible];
         NSNumber *toolBarVisible = [[NSNumber alloc] initWithBool:features.toolBarVisible];

@@ -1,3 +1,16 @@
+2015-08-12  Anders Carlsson  <andersca@apple.com>
+
+        Use WTF::Optional in WindowFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=147956
+
+        Reviewed by Sam Weinig.
+
+        Add new operators to WTF::Optional to make it more like std::optional.
+
+        * wtf/Optional.h:
+        (WTF::Optional::operator->):
+        (WTF::Optional::operator*):
+
 2015-08-12  Filip Pizlo  <fpizlo@apple.com>
 
         WTF::Lock should not suffer from the thundering herd
