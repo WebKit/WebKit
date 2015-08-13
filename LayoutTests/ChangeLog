@@ -1,3 +1,9 @@
+2015-08-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Removing an expectation for a test that's fixed.
+
+        * platform/mac/TestExpectations:
+
 2015-08-12  Antti Koivisto  <antti@apple.com>
 
         CachedResource leak in validation code

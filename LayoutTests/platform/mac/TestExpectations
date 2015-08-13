@@ -878,8 +878,6 @@ webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Fail
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Pass Failure ]
 
-webkit.org/b/136718 fast/dynamic/layer-no-longer-paginated.html [ Skip ]
-
 webkit.org/b/137737 accessibility/table-cells-roles.html [ Skip ]
 
 # --- Start media tests ---
