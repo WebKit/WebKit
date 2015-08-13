@@ -42,9 +42,12 @@ namespace WebCore {
 
 static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
+    // This needs to be kept in sync with GlyphPage::fill(). Currently, the CoreText paths are not able to handle
+    // every situtation. Returning true from this function in a new situation will require you to explicitly add
+    // handling for that situation in the CoreText paths of GlyphPage::fill().
     if (fontData->platformData().isCompositeFontReference() || fontData->isSystemFont())
         return true;
-    if (fontData->platformData().widthVariant() != RegularWidth || fontData->hasVerticalGlyphs()) {
+    if (fontData->platformData().isForTextCombine() || fontData->hasVerticalGlyphs()) {
         // Ideographs don't have a vertical variant or width variants.
         for (unsigned i = 0; i < bufferLength; ++i) {
             if (!FontCascade::isCJKIdeograph(buffer[i]))
@@ -88,10 +91,12 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
             }
         }
     } else if (!fontData->platformData().isCompositeFontReference()) {
-        if (fontData->platformData().widthVariant() == RegularWidth)
-            CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
-        else
+        // Because we know the implementation of shouldUseCoreText(), if the font isn't for text combine and it isn't a system font,
+        // we know it must have vertical glyphs.
+        if (fontData->platformData().isForTextCombine() || fontData->isSystemFont())
             CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
+        else
+            CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
         // When buffer consists of surrogate pairs, CTFontGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
         // place the glyphs at indices corresponding to the first character of each pair.
         ASSERT(!(bufferLength % length) && (bufferLength / length == 1 || bufferLength / length == 2));
