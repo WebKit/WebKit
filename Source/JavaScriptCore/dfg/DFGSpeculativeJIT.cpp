@@ -716,6 +716,9 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
     case Array::Contiguous:
         return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, ContiguousShape);
 
+    case Array::Undecided:
+        return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, UndecidedShape);
+
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage: {
         ASSERT(!arrayMode.isJSArrayWithOriginalStructure());
@@ -781,6 +784,7 @@ void SpeculativeJIT::checkArray(Node* node)
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
+    case Array::Undecided:
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage: {
         GPRTemporary temp(this);

@@ -625,7 +625,6 @@ private:
             switch (arrayMode.type()) {
             case Array::SelectUsingPredictions:
             case Array::Unprofiled:
-            case Array::Undecided:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Array::Generic:
@@ -686,6 +685,7 @@ private:
             
             switch (node->arrayMode().modeForPut().type()) {
             case Array::SelectUsingPredictions:
+            case Array::SelectUsingArguments:
             case Array::Unprofiled:
             case Array::Undecided:
                 RELEASE_ASSERT_NOT_REACHED();

@@ -2331,6 +2331,26 @@ void SpeculativeJIT::compile(Node* node)
             terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
 #endif
             break;
+        case Array::Undecided: {
+            SpeculateStrictInt32Operand index(this, node->child2());
+            GPRTemporary resultTag(this, Reuse, index);
+            GPRTemporary resultPayload(this);
+
+            GPRReg indexGPR = index.gpr();
+            GPRReg resultTagGPR = resultTag.gpr();
+            GPRReg resultPayloadGPR = resultPayload.gpr();
+
+            use(node->child1());
+            index.use();
+
+            speculationCheck(OutOfBounds, JSValueRegs(), node,
+                m_jit.branch32(MacroAssembler::LessThan, indexGPR, MacroAssembler::TrustedImm32(0)));
+
+            m_jit.move(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), resultTagGPR);
+            m_jit.move(MacroAssembler::TrustedImm32(0), resultPayloadGPR);
+            jsValueResult(resultTagGPR, resultPayloadGPR, node, UseChildrenCalledExplicitly);
+            break;
+        }
         case Array::Generic: {
             SpeculateCellOperand base(this, node->child1()); // Save a register, speculate cell. We'll probably be right.
             JSValueOperand property(this, node->child2());

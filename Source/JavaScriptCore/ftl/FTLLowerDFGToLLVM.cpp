@@ -2447,6 +2447,14 @@ private:
             setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
             return;
         }
+
+        case Array::Undecided: {
+            LValue index = lowInt32(m_node->child2());
+
+            speculate(OutOfBounds, noValue(), m_node, m_out.lessThan(index, m_out.int32Zero));
+            setJSValue(m_out.constInt64(ValueUndefined));
+            return;
+        }
             
         case Array::DirectArguments: {
             LValue base = lowCell(m_node->child1());

@@ -1951,7 +1951,6 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         if (!arrayMode.isJSArray())
             return false;
         switch (arrayMode.type()) {
-        case Array::Undecided:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:

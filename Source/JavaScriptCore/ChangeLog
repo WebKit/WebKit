@@ -1,3 +1,100 @@
+2015-08-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add support for GetByVal on arrays of Undecided shape
+        https://bugs.webkit.org/show_bug.cgi?id=147814
+
+        Reviewed by Filip Pizlo.
+
+        Previously, GetByVal on Array::Undecided would just take
+        the generic path. The problem is the generic path is so
+        slow that it could take a significant amount of time
+        even for unfrequent accesses.
+
+        With this patch, if the following conditions are met,
+        the GetByVal just returns a "undefined" constant:
+        -The object is an OriginalArray.
+        -The prototype chain is sane.
+        -The index is an integer.
+        -The integer is positive (runtime check).
+
+        Ideally, the 4th conditions should be removed
+        deducing a compile-time constant gives us so much better
+        opportunities at getting rid of this code.
+
+        There are two cases where this patch removes the runtime
+        check:
+        -If the index is constant (uncommon but easy)
+        -If the index is within a range known to be positive.
+         (common case and made possible with DFGIntegerRangeOptimizationPhase).
+
+        When we get into those cases, DFG just nukes everything
+        and all we have left is a structure check :)
+
+        This patch is a 14% improvement on audio-beat-detection,
+        a few percent faster here and there and no regression.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        If the index is a positive constant, we can get rid of the GetByVal
+        entirely. :)
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        The returned type is now Array::Undecided + profiling information.
+        The useful type is set in ArrayMode::refine().
+
+        (JSC::DFG::ArrayMode::refine):
+        If we meet the particular set conditions, we speculate an Undecided
+        array type with sane chain. Anything else comes back to Generic.
+
+        (JSC::DFG::ArrayMode::originalArrayStructure):
+        To enable the structure check for Undecided array.
+
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withProfile):
+        (JSC::DFG::ArrayMode::canCSEStorage):
+        (JSC::DFG::ArrayMode::benefitsFromOriginalArray):
+        (JSC::DFG::ArrayMode::lengthNeedsStorage): Deleted.
+        (JSC::DFG::ArrayMode::isSpecific): Deleted.A
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic): Deleted.
+        This is somewhat unrelated.
+
+        Having Array::Undecided on ArrayPush was impossible before
+        since ArrayMode::fromObserved() used to return Array::Generic.
+
+        Now that Array::Undecided is possible, we must make sure not
+        to provide it to ArrayPush since there is no code to handle it
+        properly.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        The operation only depends on the index, it is pure.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Deleted.
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetByVal):
+        * tests/stress/get-by-val-on-undecided-array-type.js: Added.
+        * tests/stress/get-by-val-on-undecided-sane-chain-1.js: Added.
+        * tests/stress/get-by-val-on-undecided-sane-chain-2.js: Added.
+        * tests/stress/get-by-val-on-undecided-sane-chain-3.js: Added.
+        * tests/stress/get-by-val-on-undecided-sane-chain-4.js: Added.
+        * tests/stress/get-by-val-on-undecided-sane-chain-5.js: Added.
+        * tests/stress/get-by-val-on-undecided-sane-chain-6.js: Added.
+
 2015-08-13  Simon Fraser  <simon.fraser@apple.com>
 
         Remove a few includes from JSGlobalObject.h

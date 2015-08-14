@@ -1287,12 +1287,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         switch (node->arrayMode().type()) {
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
-        case Array::Undecided:
+        case Array::SelectUsingArguments:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         case Array::ForceExit:
             m_state.setIsValid(false);
             break;
+        case Array::Undecided: {
+            JSValue index = forNode(node->child2()).value();
+            if (index && index.isInt32() && index.asInt32() >= 0) {
+                setConstant(node, jsUndefined());
+                break;
+            }
+            forNode(node).setType(SpecOther);
+            break;
+        }
         case Array::Generic:
             clobberWorld(node->origin.semantic, clobberLimit);
             forNode(node).makeHeapTop();
@@ -1910,6 +1919,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::Undecided:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
             break;
