@@ -69,7 +69,7 @@ public:
         return m_state != NotCompiled;
     }
 
-    void invalidateCode();
+    void deleteCode();
 
 #if ENABLE(REGEXP_TRACING)
     void printTraceData();

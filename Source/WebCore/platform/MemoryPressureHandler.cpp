@@ -135,7 +135,7 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
 
     {
         ReliefLogger log("Discard all JIT-compiled code");
-        GCController::singleton().discardAllCompiledCode();
+        GCController::singleton().deleteAllCode();
     }
 
     {

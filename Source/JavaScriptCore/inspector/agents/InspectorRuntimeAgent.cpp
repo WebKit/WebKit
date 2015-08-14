@@ -332,7 +332,7 @@ static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTyp
     bool needsToRecompile = shouldRecompileFromTypeProfiler || shouldRecompileFromControlFlowProfiler;
 
     if (needsToRecompile) {
-        vm.prepareToDiscardCode();
+        vm.prepareToDeleteCode();
         TypeRecompiler recompiler;
         HeapIterationScope iterationScope(vm.heap);
         vm.heap.objectSpace().forEachLiveCell(iterationScope, recompiler);

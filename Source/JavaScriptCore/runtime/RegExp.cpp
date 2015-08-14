@@ -482,7 +482,7 @@ MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
     return MatchResult::failed();
 }
 
-void RegExp::invalidateCode()
+void RegExp::deleteCode()
 {
     if (!hasCode())
         return;

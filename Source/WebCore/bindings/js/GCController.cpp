@@ -118,10 +118,10 @@ void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
     JSDOMWindow::commonVM().heap.setGarbageCollectionTimerEnabled(enable);
 }
 
-void GCController::discardAllCompiledCode()
+void GCController::deleteAllCode()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().discardAllCode();
+    JSDOMWindow::commonVM().deleteAllCode();
 }
 
 } // namespace WebCore
