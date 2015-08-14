@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "VariableEnvironment.h"
-#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
 
