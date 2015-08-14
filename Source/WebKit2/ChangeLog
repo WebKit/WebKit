@@ -1,3 +1,17 @@
+2015-08-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r188404.
+        https://bugs.webkit.org/show_bug.cgi?id=148014
+
+        Broke 4 API tests (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "Add WKWindowFeaturesRef and a new modern createNewPage UI
+        client callback"
+        https://bugs.webkit.org/show_bug.cgi?id=147989
+        http://trac.webkit.org/changeset/188404
+
 2015-08-13  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the Gtk/EFL build.
