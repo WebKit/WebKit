@@ -685,7 +685,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         var treeElement = this.currentTimelineView.navigationSidebarTreeOutline.findTreeElement(event.data.record);
         console.assert(treeElement, "Timeline view has no tree element for record selected in timeline overview.", timelineView, event.data.record);
-        if (!treeElement)
+        if (!treeElement || treeElement.selected)
             return;
 
         // Don't select the record's tree element if one of it's children is already selected.

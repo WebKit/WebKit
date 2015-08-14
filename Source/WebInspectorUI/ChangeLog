@@ -1,5 +1,25 @@
 2015-08-14  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Long delay when row selection changes in timeline data grids
+        https://bugs.webkit.org/show_bug.cgi?id=148005
+
+        Reviewed by Brian Burg.
+
+        Selecting a tree element in the Timelines sidebar generates multiple
+        WebInspector.ContentView.SelectionPathComponentsDidChange events, each of which
+        causes NavigationBar to update its layout (which is extremely expensive).
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._contentViewSelectionPathComponentDidChange):
+        Call updateLayoutSoon instead of updateLayout to coalesce layout requests.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._recordSelected):
+        When the selected record changes in the overview graph, make sure the record's tree element
+        isn't already selected. Reselecting the tree element results in an extra NavigationBar layout.
+
+2015-08-14  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: REGRESSION (r188396): Rendering Frames timeline ruler dividers are off by 1px
         https://bugs.webkit.org/show_bug.cgi?id=148040
 
