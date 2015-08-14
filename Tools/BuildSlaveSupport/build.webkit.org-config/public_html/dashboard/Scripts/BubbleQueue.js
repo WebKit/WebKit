@@ -133,7 +133,7 @@ BubbleQueue.prototype = {
                 });
             }
 
-            console.assert(this.statusPageURL === data.status_page);
+            console.assert(this.statusPageURL.replace(/https?:\/\//g, "") === data.status_page.replace(/https?:\/\//g, ""));
             this._chartsPageURL = data.charts_page;
 
             this._loadedDetailedStatus = true;
