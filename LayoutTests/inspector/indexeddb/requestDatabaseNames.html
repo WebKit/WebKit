@@ -11,9 +11,25 @@ function createDatabase(name)
     });
 }
 
+function deleteDatabaseNames(names)
+{
+    for (let name of names)
+        window.indexedDB.deleteDatabase(name);
+}
+
 function test()
 {
     var steps = [
+        {
+            action: function() {
+                // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
+                // <https://webkit.org/b/148006> Each test should run with its own clean data store
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")");
+                    next();
+                });
+            }
+        },
         {
             action: function() {
                 IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
