@@ -958,7 +958,28 @@ public:
                     }
                     break;
                 }
-                    
+
+                case GetByVal: {
+                    if (node->arrayMode().type() != Array::Undecided)
+                        break;
+
+                    auto iter = m_relationships.find(node->child2().node());
+                    if (iter == m_relationships.end())
+                        break;
+
+                    int minValue = std::numeric_limits<int>::min();
+                    for (Relationship relationship : iter->value)
+                        minValue = std::max(minValue, relationship.minValueOfLeft());
+
+                    if (minValue < 0)
+                        break;
+
+                    executeNode(block->at(nodeIndex));
+                    m_graph.convertToConstant(node, jsUndefined());
+                    changed = true;
+                    break;
+                }
+
                 default:
                     break;
                 }

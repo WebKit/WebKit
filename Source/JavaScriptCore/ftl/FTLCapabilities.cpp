@@ -263,6 +263,7 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::Undecided:
         case Array::DirectArguments:
         case Array::ScopedArguments:
             break;
