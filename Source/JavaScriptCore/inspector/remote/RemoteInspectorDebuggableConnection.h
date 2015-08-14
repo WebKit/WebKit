@@ -31,7 +31,6 @@
 #import "InspectorFrontendChannel.h"
 #import "RemoteInspectorDebuggable.h"
 #import <mutex>
-#import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
 
@@ -92,7 +91,7 @@ public:
     void sendMessageToBackend(NSString *);
     virtual bool sendMessageToFrontend(const String&) override;
 
-    Lock& queueMutex() { return m_queueMutex; }
+    std::mutex& queueMutex() { return m_queueMutex; }
     RemoteInspectorQueue queue() const { return m_queue; }
     void clearQueue() { m_queue.clear(); }
 
@@ -106,14 +105,14 @@ private:
     // This connection from the RemoteInspector singleton to the Debuggable
     // can be used on multiple threads. So any access to the debuggable
     // itself must take this mutex to ensure m_debuggable is valid.
-    Lock m_debuggableMutex;
+    std::mutex m_debuggableMutex;
 
     // If a debuggable has a specific run loop it wants to evaluate on
     // we setup our run loop sources on that specific run loop.
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
     RemoteInspectorQueue m_queue;
-    Lock m_queueMutex;
+    std::mutex m_queueMutex;
 
     RemoteInspectorDebuggable* m_debuggable;
     RetainPtr<NSString> m_connectionIdentifier;

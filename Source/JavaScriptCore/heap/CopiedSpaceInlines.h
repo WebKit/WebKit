@@ -113,12 +113,12 @@ inline void CopiedSpace::recycleBorrowedBlock(CopiedBlock* block)
     CopiedBlock::destroy(block);
 
     {
-        LockHolder locker(m_loanedBlocksLock);
+        MutexLocker locker(m_loanedBlocksLock);
         ASSERT(m_numberOfLoanedBlocks > 0);
         ASSERT(m_inCopyingPhase);
         m_numberOfLoanedBlocks--;
         if (!m_numberOfLoanedBlocks)
-            m_loanedBlocksCondition.notifyOne();
+            m_loanedBlocksCondition.signal();
     }
 }
 
@@ -128,7 +128,7 @@ inline CopiedBlock* CopiedSpace::allocateBlockForCopyingPhase()
     CopiedBlock* block = CopiedBlock::createNoZeroFill();
 
     {
-        LockHolder locker(m_loanedBlocksLock);
+        MutexLocker locker(m_loanedBlocksLock);
         m_numberOfLoanedBlocks++;
     }
 

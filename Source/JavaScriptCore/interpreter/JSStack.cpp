@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,14 +33,17 @@
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "Options.h"
-#include <wtf/Lock.h>
 
 namespace JSC {
 
 #if !ENABLE(JIT)
 static size_t committedBytesCount = 0;
 
-static StaticLock stackStatisticsMutex;
+static Mutex& stackStatisticsMutex()
+{
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    return staticMutex;
+}    
 #endif // !ENABLE(JIT)
 
 JSStack::JSStack(VM& vm)
@@ -136,9 +139,14 @@ void JSStack::releaseExcessCapacity()
     m_commitTop = highAddressWithReservedZone;
 }
 
+void JSStack::initializeThreading()
+{
+    stackStatisticsMutex();
+}
+
 void JSStack::addToCommittedByteCount(long byteCount)
 {
-    LockHolder locker(stackStatisticsMutex);
+    MutexLocker locker(stackStatisticsMutex());
     ASSERT(static_cast<long>(committedBytesCount) + byteCount > -1);
     committedBytesCount += byteCount;
 }
@@ -168,7 +176,7 @@ Register* JSStack::highAddress() const
 size_t JSStack::committedByteCount()
 {
 #if !ENABLE(JIT)
-    LockHolder locker(stackStatisticsMutex);
+    MutexLocker locker(stackStatisticsMutex());
     return committedBytesCount;
 #else
     // When using the C stack, we don't know how many stack pages are actually

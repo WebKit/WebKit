@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include "UnconditionalFinalizer.h"
 #include "WeakReferenceHarvester.h"
 #include <condition_variable>
-#include <wtf/Condition.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
@@ -89,13 +88,13 @@ private:
 
     Vector<GCThread*> m_gcThreads;
 
-    Lock m_markingMutex;
-    Condition m_markingConditionVariable;
+    std::mutex m_markingMutex;
+    std::condition_variable m_markingConditionVariable;
     MarkStackArray m_sharedMarkStack;
     unsigned m_numberOfActiveParallelMarkers;
     bool m_parallelMarkersShouldExit;
 
-    Lock m_opaqueRootsMutex;
+    std::mutex m_opaqueRootsMutex;
     HashSet<void*> m_opaqueRoots;
 
     Lock m_copyLock;
@@ -103,9 +102,9 @@ private:
     size_t m_copyIndex;
     static const size_t s_blockFragmentLength = 32;
 
-    Lock m_phaseMutex;
-    Condition m_phaseConditionVariable;
-    Condition m_activityConditionVariable;
+    std::mutex m_phaseMutex;
+    std::condition_variable m_phaseConditionVariable;
+    std::condition_variable m_activityConditionVariable;
     unsigned m_numberOfActiveGCThreads;
     bool m_gcThreadsShouldWait;
     GCPhase m_currentPhase;

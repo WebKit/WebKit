@@ -27,13 +27,12 @@
 #include "Disassembler.h"
 
 #include "MacroAssemblerCodeRef.h"
-#include <wtf/Condition.h>
 #include <wtf/DataLog.h>
 #include <wtf/Deque.h>
-#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
+#include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {
 
@@ -79,14 +78,14 @@ public:
     
     void enqueue(std::unique_ptr<DisassemblyTask> task)
     {
-        LockHolder locker(m_lock);
+        MutexLocker locker(m_lock);
         m_queue.append(WTF::move(task));
-        m_condition.notifyAll();
+        m_condition.broadcast();
     }
     
     void waitUntilEmpty()
     {
-        LockHolder locker(m_lock);
+        MutexLocker locker(m_lock);
         while (!m_queue.isEmpty() || m_working)
             m_condition.wait(m_lock);
     }
@@ -97,9 +96,9 @@ private:
         for (;;) {
             std::unique_ptr<DisassemblyTask> task;
             {
-                LockHolder locker(m_lock);
+                MutexLocker locker(m_lock);
                 m_working = false;
-                m_condition.notifyAll();
+                m_condition.broadcast();
                 while (m_queue.isEmpty())
                     m_condition.wait(m_lock);
                 task = m_queue.takeFirst();
@@ -113,8 +112,8 @@ private:
         }
     }
     
-    Lock m_lock;
-    Condition m_condition;
+    Mutex m_lock;
+    ThreadCondition m_condition;
     Deque<std::unique_ptr<DisassemblyTask>> m_queue;
     bool m_working { false };
 };
