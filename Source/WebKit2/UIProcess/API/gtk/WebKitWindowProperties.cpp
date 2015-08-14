@@ -378,14 +378,14 @@ void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties* windowPropertie
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* windowProperties, const WindowFeatures& windowFeatures)
 {
     GdkRectangle geometry = windowProperties->priv->geometry;
-    if (windowFeatures.xSet)
-        geometry.x = windowFeatures.x;
-    if (windowFeatures.ySet)
-        geometry.y = windowFeatures.y;
-    if (windowFeatures.widthSet)
-        geometry.width = windowFeatures.width;
-    if (windowFeatures.heightSet)
-        geometry.height = windowFeatures.height;
+    if (windowFeatures.x)
+        geometry.x = *windowFeatures.x;
+    if (windowFeatures.y)
+        geometry.y = *windowFeatures.y;
+    if (windowFeatures.width)
+        geometry.width = *windowFeatures.width;
+    if (windowFeatures.height)
+        geometry.height = *windowFeatures.height;
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
 
     webkitWindowPropertiesSetMenubarVisible(windowProperties, windowFeatures.menuBarVisible);
