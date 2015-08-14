@@ -43,7 +43,10 @@
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
+
+#if PLATFORM(COCOA)
 #include <WebCore/TextIndicatorWindow.h>
+#endif
 
 using namespace WebCore;
 
@@ -322,7 +325,9 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         return false;
 
     m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInRootViewCoordinates());
+#if PLATFORM(COCOA)
     m_webPage->send(Messages::WebPageProxy::SetTextIndicator(indicator->data(), static_cast<uint64_t>(isShowingOverlay ? TextIndicatorWindowLifetime::Permanent : TextIndicatorWindowLifetime::Temporary)));
+#endif
     m_isShowingFindIndicator = true;
 
     return true;
