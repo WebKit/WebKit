@@ -34,10 +34,10 @@ WebInspector.CompletionSuggestionsView = class CompletionSuggestionsView extends
         this._selectedIndex = NaN;
 
         this._element = document.createElement("div");
-        this._element.className = "completion-suggestions";
+        this._element.classList.add("completion-suggestions", WebInspector.Popover.IgnoreAutoDismissClassName);
 
         this._containerElement = document.createElement("div");
-        this._containerElement.className = "completion-suggestions-container";
+        this._containerElement.classList.add("completion-suggestions-container");
         this._containerElement.addEventListener("mousedown", this._mouseDown.bind(this));
         this._containerElement.addEventListener("mouseup", this._mouseUp.bind(this));
         this._containerElement.addEventListener("click", this._itemClicked.bind(this));
