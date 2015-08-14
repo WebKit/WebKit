@@ -646,6 +646,8 @@
 		152A29B51B4EF5BA00B52AE0 /* MediaDevicesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 152A29B31B4EF59600B52AE0 /* MediaDevicesPrivate.h */; };
 		15739BBA1B42012A00D258C1 /* JSMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15739BB81B42012200D258C1 /* JSMediaDevices.cpp */; };
 		15739BBB1B42012D00D258C1 /* JSMediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 15739BB91B42012200D258C1 /* JSMediaDevices.h */; };
+		159741DA1B7D13F900201C92 /* JSMediaDeviceInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 157CC2611B7C1CA400D8D075 /* JSMediaDeviceInfo.cpp */; };
+		159741DB1B7D140100201C92 /* JSMediaDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 157CC2621B7C1CA400D8D075 /* JSMediaDeviceInfo.h */; };
 		159AE82B1B3A402F0037478B /* MediaDeviceInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159AE82A1B3A402F0037478B /* MediaDeviceInfo.cpp */; };
 		15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C7708A100D3C6A005BA267 /* ValidityState.h */; };
 		15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C77091100D3CA8005BA267 /* JSValidityState.h */; };
@@ -7792,6 +7794,8 @@
 		152A29B31B4EF59600B52AE0 /* MediaDevicesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesPrivate.h; sourceTree = "<group>"; };
 		15739BB81B42012200D258C1 /* JSMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaDevices.cpp; sourceTree = "<group>"; };
 		15739BB91B42012200D258C1 /* JSMediaDevices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaDevices.h; sourceTree = "<group>"; };
+		157CC2611B7C1CA400D8D075 /* JSMediaDeviceInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaDeviceInfo.cpp; sourceTree = "<group>"; };
+		157CC2621B7C1CA400D8D075 /* JSMediaDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaDeviceInfo.h; sourceTree = "<group>"; };
 		159AE82A1B3A402F0037478B /* MediaDeviceInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDeviceInfo.cpp; sourceTree = "<group>"; };
 		15C77089100D3C6A005BA267 /* ValidityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidityState.idl; sourceTree = "<group>"; };
 		15C7708A100D3C6A005BA267 /* ValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidityState.h; sourceTree = "<group>"; };
@@ -14968,6 +14972,8 @@
 		07CFD99317D01405001C4FFC /* MediaStream */ = {
 			isa = PBXGroup;
 			children = (
+				157CC2611B7C1CA400D8D075 /* JSMediaDeviceInfo.cpp */,
+				157CC2621B7C1CA400D8D075 /* JSMediaDeviceInfo.h */,
 				15739BB81B42012200D258C1 /* JSMediaDevices.cpp */,
 				15739BB91B42012200D258C1 /* JSMediaDevices.h */,
 				07C59B6F17F79C7C000FBCBB /* JSMediaSourceStates.cpp */,
@@ -26152,6 +26158,7 @@
 				1A569D0B0D7E2B82007C3983 /* NP_jsobject.h in Headers */,
 				1A927FD21416A15B003A83C8 /* npapi.h in Headers */,
 				1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */,
+				159741DB1B7D140100201C92 /* JSMediaDeviceInfo.h in Headers */,
 				1A927FD31416A15B003A83C8 /* npruntime.h in Headers */,
 				1A569D0F0D7E2B82007C3983 /* npruntime_impl.h in Headers */,
 				1A569D100D7E2B82007C3983 /* npruntime_internal.h in Headers */,
@@ -30106,6 +30113,7 @@
 				0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */,
 				BC14028A0E83680800319717 /* ScrollbarThemeComposite.cpp in Sources */,
 				44C991820F3D1E0D00586670 /* ScrollbarThemeIOS.mm in Sources */,
+				159741DA1B7D13F900201C92 /* JSMediaDeviceInfo.cpp in Sources */,
 				BCEF869F0E844E9D00A85CD5 /* ScrollbarThemeMac.mm in Sources */,
 				0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */,
 				5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */,

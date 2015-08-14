@@ -41,9 +41,11 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "JSMediaDeviceInfo.h"
 #include "JSMediaStream.h"
 #include "JSNavigatorUserMediaError.h"
 #include "MediaConstraintsImpl.h"
+#include "MediaDevicesPrivate.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
 #include "NavigatorUserMediaErrorCallback.h"
@@ -68,12 +70,11 @@ static RefPtr<MediaConstraints> parseOptions(const Dictionary& options, const St
     return MediaConstraintsImpl::create();
 }
 
-void UserMediaRequest::enumerateDevices(Document* document, MediaDevices::EnumerateDevicePromise&& promise, ExceptionCode& ec)
+void UserMediaRequest::enumerateDevices(Document* document, MediaDevices::EnumerateDevicePromise&& promise, ExceptionCode&)
 {
-    // FIXME(146426): Implement this.
-    UNUSED_PARAM(document);
-    UNUSED_PARAM(promise);
-    UNUSED_PARAM(ec);
+    RefPtr<MediaDevicesPrivate> deviceClient = MediaDevicesPrivate::create();
+    RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(deviceClient);
+    promise.resolve(deviceClient->availableMediaDevices(*document));
 }
     
 void UserMediaRequest::start(Document* document, const Dictionary& options, MediaDevices::Promise&& promise, ExceptionCode& ec)

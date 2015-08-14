@@ -29,21 +29,27 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AVCaptureDeviceManager.h"
-#include "AVMediaCaptureSource.h"
-#include "MediaStreamTrackSourcesRequestClient.h"
-
 namespace WebCore {
 
-MediaDevicesPrivate::MediaDevicesPrivate()
+Ref<MediaDevicesPrivate> MediaDevicesPrivate::create()
 {
+    return adoptRef(*new MediaDevicesPrivate);
+}
+
+MediaDevicesPrivate::MediaDevicesPrivate()
+    : m_capturedDevices()
+{
+}
+    
+void MediaDevicesPrivate::didCompleteRequest(const Vector<RefPtr<TrackSourceInfo>>& capturedDevices)
+{
+    m_capturedDevices = capturedDevices;
 }
 
 Vector<RefPtr<MediaDeviceInfo>> MediaDevicesPrivate::availableMediaDevices(ScriptExecutionContext& context)
 {
-    Vector<RefPtr<TrackSourceInfo>> capturedDevices = AVCaptureDeviceManager::singleton().getSourcesInfo("");
     Vector<RefPtr<MediaDeviceInfo>> mediaDevicesInfo;
-    for (auto device : capturedDevices) {
+    for (auto device : m_capturedDevices) {
         TrackSourceInfo* trackInfo = device.get();
         String deviceType = trackInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::audioInputType() : MediaDeviceInfo::videoInputType();
         mediaDevicesInfo.append(MediaDeviceInfo::create(&context, trackInfo->label(), trackInfo->deviceId(), trackInfo->groupId(), deviceType));

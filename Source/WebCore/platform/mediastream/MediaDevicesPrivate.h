@@ -29,8 +29,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AVCaptureDeviceManager.h"
 #include "MediaDeviceInfo.h"
+#include "MediaStreamTrackSourcesRequestClient.h"
 
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -38,13 +38,25 @@
 
 namespace WebCore {
 
-class MediaDevicesPrivate : public std::unique_ptr<MediaDevicesPrivate> {
+class MediaDevicesPrivate : public MediaStreamTrackSourcesRequestClient {
 public:
+    static Ref<MediaDevicesPrivate> create();
+    
     MediaDevicesPrivate();
 
-    virtual ~MediaDevicesPrivate() { }
+    ~MediaDevicesPrivate() { }
 
-    virtual Vector<RefPtr<MediaDeviceInfo>> availableMediaDevices(ScriptExecutionContext&);
+    Vector<RefPtr<MediaDeviceInfo>> availableMediaDevices(ScriptExecutionContext&);
+    
+    // FIXME(148041): requestOrigin inside of getMediaStreamTrackSources not used
+    const String& requestOrigin() const override { return emptyString(); }
+    
+    void didCompleteRequest(const Vector<RefPtr<TrackSourceInfo>>&) override;
+    
+    Vector<RefPtr<TrackSourceInfo>> capturedDevices() const { return m_capturedDevices; }
+    
+private:
+    Vector<RefPtr<TrackSourceInfo>> m_capturedDevices;
 };
 
 }
