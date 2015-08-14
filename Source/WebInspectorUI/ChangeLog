@@ -1,3 +1,22 @@
+2015-08-13  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r184000): Web Inspector: Stripped whitespace after editing CSS in Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=145679
+
+        Reviewed by Timothy Hatcher.
+
+        The formatter will now calculate the number of beginning spaces before the first line in a rule
+        and duplicate them in front of every other line.  If there is no new line at the beginning or are
+        no spaces, assume 4 spaces and a new line for each property.
+        Also cleaned up the code for _resetContent a bit.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update.set get this):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update.get this):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent):
+
 2015-08-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Skip rendering frame records without children
