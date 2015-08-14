@@ -497,9 +497,9 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             // This is a get/set property which may be overridden by a computed property later.
             if (hasComputedProperty) {
                 if (node->m_type & PropertyNode::Getter)
-                    generator.emitPutGetterById(dst, *node->name(), value);
+                    generator.emitPutGetterById(dst, *node->name(), Accessor, value);
                 else
-                    generator.emitPutSetterById(dst, *node->name(), value);
+                    generator.emitPutSetterById(dst, *node->name(), Accessor, value);
                 continue;
             }
 
@@ -544,12 +544,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             if (isClassProperty && pair.second)
                 emitPutHomeObject(generator, secondReg, dst);
 
-            if (isClassProperty) {
-                RefPtr<RegisterID> propertyNameRegister = generator.emitLoad(generator.newTemporary(), *node->name());
-                generator.emitCallDefineProperty(dst, propertyNameRegister.get(),
-                    nullptr, getterReg.get(), setterReg.get(), BytecodeGenerator::PropertyConfigurable, m_position);
-            } else
-                generator.emitPutGetterSetter(dst, *node->name(), getterReg.get(), setterReg.get());
+            generator.emitPutGetterSetter(dst, *node->name(), isClassProperty ? (Accessor | DontEnum) : Accessor, getterReg.get(), setterReg.get());
         }
     }
 

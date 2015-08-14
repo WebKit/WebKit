@@ -1198,21 +1198,31 @@ bool JSObject::allowsAccessFrom(ExecState* exec)
     return globalObject->globalObjectMethodTable()->allowsAccessFrom(globalObject, exec);
 }
 
-void JSObject::putGetter(ExecState* exec, PropertyName propertyName, JSValue getter)
+void JSObject::putGetter(ExecState* exec, PropertyName propertyName, JSValue getter, unsigned attributes)
 {
     PropertyDescriptor descriptor;
     descriptor.setGetter(getter);
-    descriptor.setEnumerable(true);
-    descriptor.setConfigurable(true);
+
+    ASSERT(attributes & Accessor);
+    if (!(attributes & ReadOnly))
+        descriptor.setConfigurable(true);
+    if (!(attributes & DontEnum))
+        descriptor.setEnumerable(true);
+
     defineOwnProperty(this, exec, propertyName, descriptor, false);
 }
 
-void JSObject::putSetter(ExecState* exec, PropertyName propertyName, JSValue setter)
+void JSObject::putSetter(ExecState* exec, PropertyName propertyName, JSValue setter, unsigned attributes)
 {
     PropertyDescriptor descriptor;
     descriptor.setSetter(setter);
-    descriptor.setEnumerable(true);
-    descriptor.setConfigurable(true);
+
+    ASSERT(attributes & Accessor);
+    if (!(attributes & ReadOnly))
+        descriptor.setConfigurable(true);
+    if (!(attributes & DontEnum))
+        descriptor.setEnumerable(true);
+
     defineOwnProperty(this, exec, propertyName, descriptor, false);
 }
 

@@ -1,3 +1,70 @@
+2015-08-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ES6 class syntax should allow computed name method
+        https://bugs.webkit.org/show_bug.cgi?id=142690
+
+        Reviewed by Saam Barati.
+
+        Added a new "attributes" attribute to op_put_getter_by_id, op_put_setter_by_id, op_put_getter_setter to specify
+        the property descriptor options so that we can use use op_put_setter_by_id and op_put_getter_setter to define
+        getters and setters for classes. Without this, getters and setters could erroneously override methods.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitPutGetterById):
+        (JSC::BytecodeGenerator::emitPutSetterById):
+        (JSC::BytecodeGenerator::emitPutGetterSetter):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode): Always use emitPutGetterSetter to emit getters and setters for classes
+        as done for object literals.
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::ClassExprNode::emitBytecode):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter):
+        (JSC::JIT::emit_op_del_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter):
+        (JSC::JIT::emit_op_del_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::createPropertyList):
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        * parser/Nodes.h:
+        (JSC::PropertyNode::expressionName):
+        (JSC::PropertyNode::name):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass): Added the support for computed property name. We don't support computed names
+        for getters and setters.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createProperty):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::allowsAccessFrom):
+        (JSC::JSObject::putGetter):
+        (JSC::JSObject::putSetter):
+        * runtime/JSObject.h:
+        * runtime/PropertyDescriptor.h:
+
 2015-08-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add InspectorInstrumentation builtin object to instrument the code in JS builtins like Promises

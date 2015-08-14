@@ -231,12 +231,12 @@ namespace JSC {
     {
     }
 
-    inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType)
+    inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding = SuperBinding::NotNeeded)
         : m_name(0)
         , m_expression(name)
         , m_assign(assign)
         , m_type(type)
-        , m_needsSuperBinding(false)
+        , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_putType(putType)
     {
     }

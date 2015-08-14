@@ -1,3 +1,15 @@
+2015-08-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ES6 class syntax should allow computed name method
+        https://bugs.webkit.org/show_bug.cgi?id=142690
+
+        Reviewed by Saam Barati.
+
+        Added test cases for computed method names.
+
+        * js/class-syntax-method-names-expected.txt:
+        * js/script-tests/class-syntax-method-names.js:
+
 2015-08-14  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] video-buffered-range-contains-currentTime.html is flakey after r188390

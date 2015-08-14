@@ -1245,7 +1245,7 @@ void JIT_OPERATION operationPutByIndex(ExecState* exec, EncodedJSValue encodedAr
 }
 
 #if USE(JSVALUE64)
-void JIT_OPERATION operationPutGetterById(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, EncodedJSValue encodedGetterValue)
+void JIT_OPERATION operationPutGetterById(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, int32_t options, EncodedJSValue encodedGetterValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1255,10 +1255,10 @@ void JIT_OPERATION operationPutGetterById(ExecState* exec, EncodedJSValue encode
 
     JSValue getter = JSValue::decode(encodedGetterValue);
     ASSERT(getter.isObject());
-    baseObj->putGetter(exec, *identifier, asObject(getter));
+    baseObj->putGetter(exec, *identifier, asObject(getter), options);
 }
 
-void JIT_OPERATION operationPutSetterById(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, EncodedJSValue encodedSetterValue)
+void JIT_OPERATION operationPutSetterById(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, int32_t options, EncodedJSValue encodedSetterValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1268,10 +1268,11 @@ void JIT_OPERATION operationPutSetterById(ExecState* exec, EncodedJSValue encode
 
     JSValue setter = JSValue::decode(encodedSetterValue);
     ASSERT(setter.isObject());
-    baseObj->putSetter(exec, *identifier, asObject(setter));
+    baseObj->putSetter(exec, *identifier, asObject(setter), options);
 }
 
-void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, EncodedJSValue encodedGetterValue, EncodedJSValue encodedSetterValue)
+void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, int32_t attribute,
+    EncodedJSValue encodedGetterValue, EncodedJSValue encodedSetterValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1291,10 +1292,10 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue enco
         accessor->setGetter(vm, exec->lexicalGlobalObject(), asObject(getter));
     if (!setter.isUndefined())
         accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
-    baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
+    baseObj->putDirectAccessor(exec, *identifier, accessor, attribute);
 }
 #else
-void JIT_OPERATION operationPutGetterById(ExecState* exec, JSCell* object, Identifier* identifier, JSCell* getter)
+void JIT_OPERATION operationPutGetterById(ExecState* exec, JSCell* object, Identifier* identifier, int32_t options, JSCell* getter)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1303,10 +1304,10 @@ void JIT_OPERATION operationPutGetterById(ExecState* exec, JSCell* object, Ident
     JSObject* baseObj = object->getObject();
 
     ASSERT(getter->isObject());
-    baseObj->putGetter(exec, *identifier, getter);
+    baseObj->putGetter(exec, *identifier, getter, options);
 }
 
-void JIT_OPERATION operationPutSetterById(ExecState* exec, JSCell* object, Identifier* identifier, JSCell* setter)
+void JIT_OPERATION operationPutSetterById(ExecState* exec, JSCell* object, Identifier* identifier, int32_t options, JSCell* setter)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1315,10 +1316,10 @@ void JIT_OPERATION operationPutSetterById(ExecState* exec, JSCell* object, Ident
     JSObject* baseObj = object->getObject();
 
     ASSERT(setter->isObject());
-    baseObj->putSetter(exec, *identifier, setter);
+    baseObj->putSetter(exec, *identifier, setter, options);
 }
 
-void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Identifier* identifier, JSCell* getter, JSCell* setter)
+void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Identifier* identifier, int32_t attribute, JSCell* getter, JSCell* setter)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1336,7 +1337,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
         accessor->setGetter(vm, exec->lexicalGlobalObject(), getter->getObject());
     if (setter)
         accessor->setSetter(vm, exec->lexicalGlobalObject(), setter->getObject());
-    baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
+    baseObj->putDirectAccessor(exec, *identifier, accessor, attribute);
 }
 #endif
 

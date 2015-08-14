@@ -483,23 +483,26 @@ void JIT::emit_op_put_by_index(Instruction* currentInstruction)
 void JIT::emit_op_put_getter_by_id(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
-    callOperation(operationPutGetterById, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1);
+    int32_t options = currentInstruction[3].u.operand;
+    emitGetVirtualRegister(currentInstruction[4].u.operand, regT1);
+    callOperation(operationPutGetterById, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), options, regT1);
 }
 
 void JIT::emit_op_put_setter_by_id(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
-    callOperation(operationPutSetterById, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1);
+    int32_t options = currentInstruction[3].u.operand;
+    emitGetVirtualRegister(currentInstruction[4].u.operand, regT1);
+    callOperation(operationPutSetterById, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), options, regT1);
 }
 
 void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
-    emitGetVirtualRegister(currentInstruction[4].u.operand, regT2);
-    callOperation(operationPutGetterSetter, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT2);
+    int32_t attribute = currentInstruction[3].u.operand;
+    emitGetVirtualRegister(currentInstruction[4].u.operand, regT1);
+    emitGetVirtualRegister(currentInstruction[5].u.operand, regT2);
+    callOperation(operationPutGetterSetter, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), attribute, regT1, regT2);
 }
 
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)
