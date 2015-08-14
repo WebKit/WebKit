@@ -172,6 +172,14 @@ body.window-inactive #split-content-browser {
     display: none;
 }
 
+#split-content-browser > .navigation-bar > :matches(.hierarchical-path, .log-search-bar, .log-scope-bar) {
+    pointer-events: none;
+}
+
+#split-content-browser > .navigation-bar > :matches(.log-search-bar, .log-scope-bar) > :matches(li, input) {
+    pointer-events: all;
+}
+
 #details-sidebar {
     width: 300px;
 }
