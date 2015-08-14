@@ -1,3 +1,30 @@
+2015-08-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add a visual editor for timing functions
+        https://bugs.webkit.org/show_bug.cgi?id=148022
+
+        Reviewed by Timothy Hatcher.
+
+        Uses the existing bezier editor and the Visual keyword picker to make an editor for timing functions.
+
+        * UserInterface/Views/VisualStyleTimingEditor.css: Added.
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container):
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .keyword-picker-select):
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor):
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor:hover):
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor:active):
+
+        * UserInterface/Views/VisualStyleTimingEditor.js: Added.
+        (WebInspector.VisualStyleTimingEditor):
+        (WebInspector.VisualStyleTimingEditor.prototype.parseValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.get bezierValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.set bezierValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._getValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._setValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._generateSynthesizedValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._bezierMarkerClicked):
+        (WebInspector.VisualStyleTimingEditor.prototype._handleKeywordChanged):
+
 2015-08-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Can't resize split console when window is too narrow
