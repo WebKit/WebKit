@@ -28,17 +28,13 @@
 
 #include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
-#include "PlatformCALayerClient.h"
 #include <QuartzCore/CABase.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 OBJC_CLASS AVPlayerLayer;
 
@@ -51,6 +47,7 @@ namespace WebCore {
 class LayerPool;
 class PlatformCALayer;
 class PlatformCAAnimation;
+class PlatformCALayerClient;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 

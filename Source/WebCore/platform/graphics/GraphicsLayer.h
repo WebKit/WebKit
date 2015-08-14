@@ -34,7 +34,6 @@
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
-#include "IntRect.h"
 #include "Path.h"
 #include "PlatformLayer.h"
 #include "TransformOperations.h"
