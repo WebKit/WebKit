@@ -39,9 +39,9 @@
 #include "MainFrame.h"
 #include "ProgressEvent.h"
 #include "ResourceHandle.h"
-#include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "Settings.h"
+#include "SubresourceLoader.h"
 
 namespace WebCore {
 

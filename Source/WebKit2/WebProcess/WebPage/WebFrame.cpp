@@ -70,9 +70,9 @@
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RenderTreeAsText.h>
-#include <WebCore/ResourceLoader.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SubresourceLoader.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/TextResourceDecoder.h>
 #include <wtf/text/StringBuilder.h>
@@ -274,15 +274,16 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     uint64_t policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = 0;
 
-    ResourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
+    SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
     auto& webProcess = WebProcess::singleton();
 #if ENABLE(NETWORK_PROCESS)
     if (webProcess.usesNetworkProcess()) {
-        // Use 0 to indicate that there is no main resource loader.
-        // This can happen if the main resource is in the WebCore memory cache.
+        // Use 0 to indicate that the resource load can't be converted and a new download must be started.
+        // This can happen if there is no loader because the main resource is in the WebCore memory cache,
+        // or because the conversion was attempted when not calling SubresourceLoader::didReceiveResponse().
         uint64_t mainResourceLoadIdentifier;
-        if (mainResourceLoader)
+        if (mainResourceLoader && mainResourceLoader->callingDidReceiveResponse())
             mainResourceLoadIdentifier = mainResourceLoader->identifier();
         else
             mainResourceLoadIdentifier = 0;
@@ -292,7 +293,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     }
 #endif
 
-    if (!mainResourceLoader) {
+    if (!mainResourceLoader || !mainResourceLoader->callingDidReceiveResponse()) {
         // The main resource has already been loaded. Start a new download instead.
         webProcess.downloadManager().startDownload(policyDownloadID, request);
         return;
