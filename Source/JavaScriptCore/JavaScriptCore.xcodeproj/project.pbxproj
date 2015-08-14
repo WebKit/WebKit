@@ -1692,12 +1692,15 @@
 		E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* VM.cpp */; };
 		E33637A51B63220200EE0840 /* ReflectObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33637A31B63220200EE0840 /* ReflectObject.cpp */; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
 		E354622B1B6065D100545386 /* ConstructAbility.h in Headers */ = {isa = PBXBuildFile; fileRef = E354622A1B6065D100545386 /* ConstructAbility.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3963CED1B73F75000EB4CE5 /* ModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E3963CEB1B73F75000EB4CE5 /* ModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3963CEE1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */; };
 		E3C09F551B79692A00EE36A2 /* ModuleRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3C09F541B79692A00EE36A2 /* ModuleRecord.cpp */; };
+		E35E035F1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */; };
+		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */; };
 		E3EF88751B66DF23003F26CB /* JSPropertyNameIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E49DC15512EF277200184A1F /* SourceProviderCache.cpp */; };
@@ -3521,12 +3524,16 @@
 		E18E3A570DF9278C00D90B34 /* VM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = VM.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
+		E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorInstrumentationObject.lut.h; path = InspectorInstrumentationObject.lut.h; sourceTree = "<group>"; };
 		E354622A1B6065D100545386 /* ConstructAbility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructAbility.h; sourceTree = "<group>"; };
 		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E3963CEB1B73F75000EB4CE5 /* ModuleRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleRecord.h; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E3C09F541B79692A00EE36A2 /* ModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleRecord.cpp; sourceTree = "<group>"; };
+		E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationObject.cpp; sourceTree = "<group>"; };
+		E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.h; sourceTree = "<group>"; };
+		E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorInstrumentationObject.js; sourceTree = "<group>"; };
 		E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
 		E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
 		E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCacheItem.h; sourceTree = "<group>"; };
@@ -4352,6 +4359,7 @@
 				A532438218568317002ED692 /* InspectorBackendDispatchers.h */,
 				A532438318568317002ED692 /* InspectorFrontendDispatchers.cpp */,
 				A532438418568317002ED692 /* InspectorFrontendDispatchers.h */,
+				E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */,
 				A532438518568317002ED692 /* InspectorProtocolObjects.cpp */,
 				A532438618568317002ED692 /* InspectorProtocolObjects.h */,
 				A18193E11B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h */,
@@ -4602,6 +4610,8 @@
 				0FF8BDE91AD4CF7100DFE884 /* InferredValue.h */,
 				E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */,
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
+				E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */,
+				E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */,
 				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
 				A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */,
 				A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */,
@@ -5708,6 +5718,7 @@
 				A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */,
 				A7A979C418BE8D9E002C3733 /* Function.prototype.js */,
 				7CF9BC5A1B65D9A3009DB1EF /* GlobalObject.js */,
+				E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */,
 				7CF9BC5B1B65D9A3009DB1EF /* Iterator.prototype.js */,
 				7CF9BC5C1B65D9B1009DB1EF /* ObjectConstructor.js */,
 				7CF9BC5D1B65D9B1009DB1EF /* Operations.Promise.js */,
@@ -6055,6 +6066,7 @@
 				0F300B7818AB051100A6D72E /* DFGNodeOrigin.h in Headers */,
 				0FA581BC150E953000B9A2D9 /* DFGNodeType.h in Headers */,
 				86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */,
+				E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */,
 				A7D89CFE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
@@ -6368,6 +6380,7 @@
 				A57D23EA1891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h in Headers */,
 				BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */,
 				A51007C1187CC3C600B38879 /* JSGlobalObjectInspectorController.h in Headers */,
+				E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */,
 				A50E4B6418809DD50068A46D /* JSGlobalObjectRuntimeAgent.h in Headers */,
 				A503FA2A188F105900110F14 /* JSGlobalObjectScriptDebugServer.h in Headers */,
 				A513E5C0185BFACC007E95AD /* JSInjectedScriptHost.h in Headers */,
@@ -7385,6 +7398,7 @@
 				70ECA6071AFDBEA200449739 /* TemplateRegistry.cpp in Sources */,
 				0F235BEB17178E7300690C7F /* DFGOSRExitBase.cpp in Sources */,
 				0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */,
+				E35E035F1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp in Sources */,
 				0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */,
 				0FC0977214693AF900CF2442 /* DFGOSRExitCompiler64.cpp in Sources */,
 				70EC0EC21AA0D7DA00B6AAFA /* JSStringIterator.cpp in Sources */,

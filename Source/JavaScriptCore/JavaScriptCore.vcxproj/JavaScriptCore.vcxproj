@@ -740,6 +740,7 @@
     <ClCompile Include="..\runtime\IndexingType.cpp" />
     <ClCompile Include="..\runtime\InferredValue.cpp" />
     <ClCompile Include="..\runtime\InitializeThreading.cpp" />
+    <ClCompile Include="..\runtime\InspectorInstrumentationObject.cpp" />
     <ClCompile Include="..\runtime\InternalFunction.cpp" />
     <ClCompile Include="..\runtime\IntlCollator.cpp" />
     <ClCompile Include="..\runtime\IntlCollatorConstructor.cpp" />
@@ -910,6 +911,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InjectedScriptSource.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorBackendDispatchers.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorFrontendDispatchers.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorInstrumentationObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorProtocolObjects.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h" />
@@ -1563,6 +1565,7 @@
     <ClInclude Include="..\runtime\Int32Array.h" />
     <ClInclude Include="..\runtime\Int8Array.h" />
     <ClInclude Include="..\runtime\InternalFunction.h" />
+    <ClInclude Include="..\runtime\InspectorInstrumentationObject.h" />
     <ClInclude Include="..\runtime\IntlCollator.h" />
     <ClInclude Include="..\runtime\IntlCollatorConstructor.h" />
     <ClInclude Include="..\runtime\IntlCollatorPrototype.h" />

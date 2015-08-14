@@ -486,6 +486,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/IndexingType.cpp
     runtime/InferredValue.cpp
     runtime/InitializeThreading.cpp
+    runtime/InspectorInstrumentationObject.cpp
     runtime/InternalFunction.cpp
     runtime/IntlCollator.cpp
     runtime/IntlCollatorConstructor.cpp
@@ -638,6 +639,7 @@ set(JavaScriptCore_LUT_FILES
     runtime/DateConstructor.cpp
     runtime/DatePrototype.cpp
     runtime/ErrorPrototype.cpp
+    runtime/InspectorInstrumentationObject.cpp
     runtime/IntlCollatorConstructor.cpp
     runtime/IntlCollatorPrototype.cpp
     runtime/IntlDateTimeFormatConstructor.cpp

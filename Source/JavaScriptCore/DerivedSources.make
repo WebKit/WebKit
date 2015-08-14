@@ -41,6 +41,7 @@ all : \
     DateConstructor.lut.h \
     DatePrototype.lut.h \
     ErrorPrototype.lut.h \
+    InspectorInstrumentationObject.lut.h \
     IntlCollatorConstructor.lut.h \
     IntlCollatorPrototype.lut.h \
     IntlDateTimeFormatConstructor.lut.h \

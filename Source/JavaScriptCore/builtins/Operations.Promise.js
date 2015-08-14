@@ -102,6 +102,9 @@ function rejectPromise(promise, reason)
     promise.@promiseFulfillReactions = undefined;
     promise.@promiseRejectReactions = undefined;
     promise.@promiseState = @promiseRejected;
+
+    @InspectorInstrumentation.promiseRejected(promise, reason, reactions);
+
     @triggerPromiseReactions(reactions, reason);
 }
 
@@ -114,6 +117,9 @@ function fulfillPromise(promise, value)
     promise.@promiseFulfillReactions = undefined;
     promise.@promiseRejectReactions = undefined;
     promise.@promiseState = @promiseFulfilled;
+
+    @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);
+
     @triggerPromiseReactions(reactions, value);
 }
 

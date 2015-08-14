@@ -131,6 +131,7 @@
     macro(input) \
     macro(instructionCount) \
     macro(isArray) \
+    macro(isEnabled) \
     macro(isPrototypeOf) \
     macro(isView) \
     macro(isWatchpoint) \
@@ -295,13 +296,12 @@
     macro(handler) \
     macro(promiseState) \
     macro(promisePending) \
-    macro(promiseFulfilled) \
-    macro(promiseRejected) \
     macro(promiseFulfillReactions) \
     macro(promiseRejectReactions) \
     macro(promiseResult) \
     macro(capabilities) \
     macro(starDefault) \
+    macro(InspectorInstrumentation) \
 
 
 namespace JSC {

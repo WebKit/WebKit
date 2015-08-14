@@ -1,3 +1,41 @@
+2015-08-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add InspectorInstrumentation builtin object to instrument the code in JS builtins like Promises
+        https://bugs.webkit.org/show_bug.cgi?id=147942
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds new private global object, @InspectorInstrumentation.
+        It is intended to be used as the namespace object (like Reflect/Math) for Inspector's
+        instrumentation system and it is used to instrument the builtin JS code, like Promises.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/InspectorInstrumentationObject.js: Added.
+        (debug):
+        (promiseFulfilled):
+        (promiseRejected):
+        * builtins/Operations.Promise.js:
+        (rejectPromise):
+        (fulfillPromise):
+        * runtime/CommonIdentifiers.h:
+        * runtime/InspectorInstrumentationObject.cpp: Added.
+        (JSC::InspectorInstrumentationObject::InspectorInstrumentationObject):
+        (JSC::InspectorInstrumentationObject::finishCreation):
+        (JSC::InspectorInstrumentationObject::getOwnPropertySlot):
+        (JSC::InspectorInstrumentationObject::isEnabled):
+        (JSC::InspectorInstrumentationObject::enable):
+        (JSC::InspectorInstrumentationObject::disable):
+        (JSC::inspectorInstrumentationObjectDataLogImpl):
+        * runtime/InspectorInstrumentationObject.h: Added.
+        (JSC::InspectorInstrumentationObject::create):
+        (JSC::InspectorInstrumentationObject::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2015-08-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r188444.
