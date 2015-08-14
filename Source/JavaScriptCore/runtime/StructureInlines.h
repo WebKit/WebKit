@@ -29,6 +29,7 @@
 #include "JSArrayBufferView.h"
 #include "PropertyMapHashTable.h"
 #include "Structure.h"
+#include "StructureChain.h"
 
 namespace JSC {
 

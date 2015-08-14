@@ -33,18 +33,14 @@
 #include "RuntimeFlags.h"
 #include "SpecialPointer.h"
 #include "StringPrototype.h"
-#include "StructureChain.h"
-#include "StructureRareDataInlines.h"
 #include "SymbolPrototype.h"
 #include "TemplateRegistry.h"
 #include "VM.h"
-#include "VariableEnvironment.h"
 #include "Watchpoint.h"
 #include <JavaScriptCore/JSBase.h>
 #include <array>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RandomNumber.h>
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
@@ -76,14 +72,16 @@ class JSStack;
 class LLIntOffsetsExtractor;
 class Microtask;
 class NativeErrorConstructor;
+class NullGetterFunction;
+class NullSetterFunction;
 class ObjectConstructor;
 class ProgramCodeBlock;
 class ProgramExecutable;
 class RegExpConstructor;
 class RegExpPrototype;
 class SourceCode;
-class NullGetterFunction;
-class NullSetterFunction;
+class VariableEnvironment;
+
 enum class ThisTDZMode;
 struct ActivationStackNode;
 struct HashTable;
