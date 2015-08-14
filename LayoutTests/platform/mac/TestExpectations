@@ -1344,20 +1344,5 @@ fast/css/currentColor-value-style-update.html [ Skip ]
 # possibly due to GRID_LAYOUT being disabled.
 [ Debug ] css3/parse-align-self.html [ Skip ]
 
-# rdar://problem/22014672
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.destination-atop.html [ Pass Failure ]
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.destination-in.html [ Pass Failure ]
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.source-in.html [ Pass Failure ]
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.source-out.html [ Pass Failure ]
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.destination-atop.html [ Pass Failure ]
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.destination-in.html [ Pass Failure ]
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.source-in.html [ Pass Failure ]
-[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.source-out.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.fill.source-out.html [ Pass Failure ]
-[ ElCapitan+ ] canvas/philip/tests/2d.composite.uncovered.fill.source-in.html [ Pass Failure ]
+# Started to fail after r188390
+webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Failure ]

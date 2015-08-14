@@ -1,3 +1,9 @@
+2015-08-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Test result gardening. Merged r188488, and unmarked canvas tests that no longer fail.
+
+        * platform/mac/TestExpectations:
+
 2015-08-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r188390. rdar://problem/21367467
