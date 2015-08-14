@@ -1,5 +1,103 @@
 2015-08-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add visual editors for CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=147576
+
+        Added parent class for property editors in the Visual style
+        details panel in the CSS sidebar.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStylePropertyCombiner.js: Added.
+        (WebInspector.VisualStylePropertyCombiner):
+        (WebInspector.VisualStylePropertyCombiner.prototype.get style):
+        (WebInspector.VisualStylePropertyCombiner.prototype.get synthesizedValue):
+        (WebInspector.VisualStylePropertyCombiner.prototype.modifyPropertyText):
+        (WebInspector.VisualStylePropertyCombiner.prototype.update):
+        (WebInspector.VisualStylePropertyCombiner.prototype.updateValuesFromText.updateCompatibleEditor):
+        (WebInspector.VisualStylePropertyCombiner.prototype.updateValuesFromText):
+        (WebInspector.VisualStylePropertyCombiner.prototype.propertyMissing):
+        (WebInspector.VisualStylePropertyCombiner.prototype.resetEditorValues):
+        (WebInspector.VisualStylePropertyCombiner.prototype._markEditors):
+        (WebInspector.VisualStylePropertyCombiner.prototype._handlePropertyEditorValueChanged):
+
+        * UserInterface/Views/VisualStylePropertyEditor.css: Added.
+        (.visual-style-property-container):
+        (.visual-style-property-container > .visual-style-property-title):
+        (.visual-style-property-container > .visual-style-property-title > .property-reference-info):
+        (.visual-style-property-container.disabled > .visual-style-property-title > :not(.property-reference-info)):
+        (.visual-style-property-container > .visual-style-property-value-container):
+        (.visual-style-property-container.disabled > .visual-style-property-value-container):
+        (.visual-style-property-container > .visual-style-property-value-container select):
+        (.visual-style-property-container > .visual-style-property-value-container input):
+        (.visual-style-property-container.disabled > .visual-style-property-value-container input):
+        (.visual-style-property-container.layout-reversed > .visual-style-property-title):
+        (.visual-style-property-container > .visual-style-property-value-container > .visual-style-special-property-placeholder):
+        (.visual-style-property-info-popover):
+        (.visual-style-property-info-popover > h3):
+
+        * UserInterface/Views/VisualStylePropertyEditor.js: Added.
+        (WebInspector.VisualStylePropertyEditor.canonicalizeValues):
+        (WebInspector.VisualStylePropertyEditor):
+        (WebInspector.VisualStylePropertyEditor.prototype.get element):
+        (WebInspector.VisualStylePropertyEditor.prototype.get style):
+        (WebInspector.VisualStylePropertyEditor.prototype.get value):
+        (WebInspector.VisualStylePropertyEditor.prototype.set value):
+        (WebInspector.VisualStylePropertyEditor.prototype.get units):
+        (WebInspector.VisualStylePropertyEditor.prototype.set units):
+        (WebInspector.VisualStylePropertyEditor.prototype.get placeholder):
+        (WebInspector.VisualStylePropertyEditor.prototype.set placeholder):
+        (WebInspector.VisualStylePropertyEditor.prototype.get synthesizedValue):
+        (WebInspector.VisualStylePropertyEditor.prototype.set suppressStyleTextUpdate):
+        (WebInspector.VisualStylePropertyEditor.prototype.set masterProperty):
+        (WebInspector.VisualStylePropertyEditor.prototype.get masterProperty):
+        (WebInspector.VisualStylePropertyEditor.prototype.set optionalProperty):
+        (WebInspector.VisualStylePropertyEditor.prototype.get optionalProperty):
+        (WebInspector.VisualStylePropertyEditor.prototype.set colorProperty):
+        (WebInspector.VisualStylePropertyEditor.prototype.get colorProperty):
+        (WebInspector.VisualStylePropertyEditor.prototype.get propertyReferenceName):
+        (WebInspector.VisualStylePropertyEditor.prototype.set propertyReferenceName):
+        (WebInspector.VisualStylePropertyEditor.prototype.set disabled):
+        (WebInspector.VisualStylePropertyEditor.prototype.get disabled):
+        (WebInspector.VisualStylePropertyEditor.prototype.update):
+        (WebInspector.VisualStylePropertyEditor.prototype.updateEditorValues):
+        (WebInspector.VisualStylePropertyEditor.prototype.resetEditorValues):
+        (WebInspector.VisualStylePropertyEditor.prototype.modifyPropertyText):
+        (WebInspector.VisualStylePropertyEditor.prototype.getValuesFromText):
+        (WebInspector.VisualStylePropertyEditor.prototype.propertyMissing):
+        (WebInspector.VisualStylePropertyEditor.prototype.valueIsCompatible):
+        (WebInspector.VisualStylePropertyEditor.prototype.valueIsSupportedKeyword):
+        (WebInspector.VisualStylePropertyEditor.prototype.valueIsSupportedUnit):
+        (WebInspector.VisualStylePropertyEditor.prototype.get contentElement):
+        (WebInspector.VisualStylePropertyEditor.prototype.get specialPropertyPlaceholderElement):
+        (WebInspector.VisualStylePropertyEditor.prototype.parseValue):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueIsSupportedAdvancedKeyword):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueIsSupportedAdvancedUnit):
+        (WebInspector.VisualStylePropertyEditor.prototype._canonicalizedKeywordForKey):
+        (WebInspector.VisualStylePropertyEditor.prototype._keyForKeyword):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueDidChange):
+        (WebInspector.VisualStylePropertyEditor.prototype._replaceShorthandPropertyWithLonghandProperties):
+        (WebInspector.VisualStylePropertyEditor.prototype._titleElementPrepareForClick):
+        (WebInspector.VisualStylePropertyEditor.prototype._titleElementMouseOver):
+        (WebInspector.VisualStylePropertyEditor.prototype._titleElementMouseOut):
+        (WebInspector.VisualStylePropertyEditor.prototype._titleElementClick):
+        (WebInspector.VisualStylePropertyEditor.prototype._hasMultipleConflictingValues):
+        (WebInspector.VisualStylePropertyEditor.prototype._showPropertyInfoPopover):
+        (WebInspector.VisualStylePropertyEditor.prototype._toggleTabbingOfSelectableElements):
+
+        * UserInterface/Views/VisualStyleTabbedPropertiesRow.css: Added.
+        (.visual-style-tabbed-properties-row ~ :not(.visible)):
+        (.visual-style-tabbed-properties-row > .visual-style-tabbed-properties-row-container):
+        (.visual-style-tabbed-properties-row > .visual-style-tabbed-properties-row-container > button):
+        (.visual-style-tabbed-properties-row > .visual-style-tabbed-properties-row-container > button.selected):
+        (.visual-style-tabbed-properties-row > .visual-style-tabbed-properties-row-container > button:not(.selected):hover):
+
+        * UserInterface/Views/VisualStyleTabbedPropertiesRow.js: Added.
+        (WebInspector.VisualStyleTabbedPropertiesRow):
+        (WebInspector.VisualStyleTabbedPropertiesRow.prototype._handleButtonClicked):
+
+2015-08-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Add Visual editors for CSS properties with comma separated values
         https://bugs.webkit.org/show_bug.cgi?id=147578
 
