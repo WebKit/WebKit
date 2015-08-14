@@ -44,6 +44,7 @@
 #include "MediaTimeAVFoundation.h"
 #include "URL.h"
 #include "Logging.h"
+#include "PlatformCALayerClient.h"
 #include "PlatformCALayerWin.h"
 #include "TimeRanges.h"
 #include "WebCoreAVCFResourceLoader.h"
