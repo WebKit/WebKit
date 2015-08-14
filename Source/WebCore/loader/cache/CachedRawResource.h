@@ -46,6 +46,8 @@ public:
 
     void clear();
 
+    bool canReuse(const ResourceRequest&) const;
+
 private:
     virtual void didAddClient(CachedResourceClient*) override;
     virtual void addDataBuffer(SharedBuffer&) override;
@@ -61,8 +63,6 @@ private:
 
     virtual void switchClientsToRevalidatedResource() override;
     virtual bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
-
-    virtual bool canReuse(const ResourceRequest&) const override;
 
     const char* calculateIncrementalDataChunk(SharedBuffer*, unsigned& incrementalDataLength);
     void notifyClientsDataWasReceived(const char* data, unsigned length);

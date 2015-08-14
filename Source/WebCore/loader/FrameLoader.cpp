@@ -3467,6 +3467,7 @@ void FrameLoader::clearTestingOverrides()
 {
     m_overrideCachePolicyForTesting = Nullopt;
     m_overrideResourceLoadPriorityForTesting = Nullopt;
+    m_isStrictRawResourceValidationPolicyDisabledForTesting = false;
 }
 
 void FrameLoader::applyShouldOpenExternalURLsPolicyToNewDocumentLoader(DocumentLoader& documentLoader, ShouldOpenExternalURLsPolicy propagatedPolicy)

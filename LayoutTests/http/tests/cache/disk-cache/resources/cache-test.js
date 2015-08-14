@@ -73,6 +73,7 @@ function loadResourcesWithOptions(tests, options, completetion)
 {
     if (options["ClearMemoryCache"])
         internals.clearMemoryCache();
+    internals.setStrictRawResourceValidationPolicyDisabled(options["SubresourceValidationPolicy"]);
 
     var pendingCount = tests.length;
     for (var i = 0; i < tests.length; ++i) {
@@ -115,10 +116,14 @@ function runTests(tests, completionHandler)
                 debug("--------Testing loads through memory cache (XHR behavior)--------");
                 loadResourcesWithOptions(tests, { }, function () {
                     printResults(tests);
-                    if (completionHandler)
-                        completionHandler();
-                    else
-                        finishJSTest();
+                    debug("--------Testing loads through memory cache (subresource behavior)--------");
+                    loadResourcesWithOptions(tests, { "SubresourceValidationPolicy": true }, function () {
+                        printResults(tests);
+                        if (completionHandler)
+                            completionHandler();
+                        else
+                            finishJSTest();
+                    });
                 });
             });
         }, 100);

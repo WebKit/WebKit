@@ -43,6 +43,25 @@ response source: Network
 response headers: {"Cache-control":"max-age=100","Content-Type":"audio/mp4"}
 response source: Memory cache
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Cache-control":"max-age=0","Content-Type":"text/plain"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Content-Type":"text/plain"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0","Content-Type":"video/mp4"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Content-Type":"video/mp4"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0","Content-Type":"audio/mp4"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Content-Type":"audio/mp4"}
+response source: Memory cache
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

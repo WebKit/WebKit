@@ -43,6 +43,25 @@ response source: Network
 response headers: {"Cache-control":"max-age=100","Content-Disposition":"attachment; filename=\"f.txt\""}
 response source: Memory cache
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: undefined
+response source: Network
+
+response headers: {"Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Content-Disposition":"attachment; filename=\"f.txt\""}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0","Content-Disposition":"attachment; filename=\"f.txt\""}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Content-Disposition":"attachment; filename=\"f.txt\""}
+response source: Memory cache
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

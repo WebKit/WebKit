@@ -14,6 +14,11 @@ response headers: {"Expires":"now(0)","ETag":"match"}
 response's 'Expires' header is overriden by future date in 304 response
 response source: Memory cache after validation
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Expires":"now(0)","ETag":"match"}
+response's 'Expires' header is overriden by future date in 304 response
+response source: Memory cache after validation
+
 304 response included an 'Expires' header in the future, so we should not need to revalidate this time.
 --------Testing loads from disk cache--------
 response headers: {"Expires":"now(0)","ETag":"match"}
@@ -21,6 +26,11 @@ response's 'Expires' header is overriden by future date in 304 response
 response source: Disk cache
 
 --------Testing loads through memory cache (XHR behavior)--------
+response headers: {"Expires":"now(0)","ETag":"match"}
+response's 'Expires' header is overriden by future date in 304 response
+response source: Memory cache
+
+--------Testing loads through memory cache (subresource behavior)--------
 response headers: {"Expires":"now(0)","ETag":"match"}
 response's 'Expires' header is overriden by future date in 304 response
 response source: Memory cache

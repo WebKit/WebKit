@@ -53,6 +53,31 @@ response headers: {"Cache-control":"max-age=0","Range":"bytes=5-7"}
 response source: Network
 response status: 416
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Cache-control":"max-age=100"}
+response source: Memory cache
+response status: 200
+
+response headers: {"Cache-control":"max-age=0"}
+response source: Network
+response status: 200
+
+response headers: {"Cache-control":"max-age=100","Range":"bytes=2-4"}
+response source: Memory cache
+response status: 206
+
+response headers: {"Cache-control":"max-age=0","Range":"bytes=2-4"}
+response source: Network
+response status: 206
+
+response headers: {"Cache-control":"max-age=100","Range":"bytes=5-7"}
+response source: Memory cache
+response status: 416
+
+response headers: {"Cache-control":"max-age=0","Range":"bytes=5-7"}
+response source: Network
+response status: 416
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

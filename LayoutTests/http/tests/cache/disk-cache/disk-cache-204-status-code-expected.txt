@@ -25,6 +25,16 @@ response source: Memory cache
 response headers: {"Status":"204","Last-Modified":"now(-1000)"}
 response source: Memory cache
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Status":"204","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"204","Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Status":"204","Last-Modified":"now(-1000)"}
+response source: Memory cache
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

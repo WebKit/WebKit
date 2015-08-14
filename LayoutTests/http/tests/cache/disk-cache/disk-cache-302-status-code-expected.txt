@@ -19,6 +19,13 @@ response source: Network
 response headers: {"Status":"302","Location":"/","Cache-control":"max-age=100"}
 response source: Network
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Status":"302","Location":"/","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"302","Location":"/","Cache-control":"max-age=100"}
+response source: Network
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -12,6 +12,10 @@ response source: Disk cache
 response headers: {"Cache-control":"max-age=100"}
 response source: Memory cache
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Cache-control":"max-age=100"}
+response source: Memory cache
+
 Disabling cache
 --------Testing loads from disk cache--------
 response headers: {"Cache-control":"max-age=100"}
@@ -21,12 +25,20 @@ response source: Network
 response headers: {"Cache-control":"max-age=100"}
 response source: Memory cache
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Cache-control":"max-age=100"}
+response source: Memory cache
+
 Re-enabling cache
 --------Testing loads from disk cache--------
 response headers: {"Cache-control":"max-age=100"}
 response source: Disk cache
 
 --------Testing loads through memory cache (XHR behavior)--------
+response headers: {"Cache-control":"max-age=100"}
+response source: Memory cache
+
+--------Testing loads through memory cache (subresource behavior)--------
 response headers: {"Cache-control":"max-age=100"}
 response source: Memory cache
 

@@ -195,6 +195,101 @@ response headers: {"Cache-control":"max-age=100"}
 request headers: {"Cache-control":"no-cache, no-store, max-age=100"}
 response source: Memory cache
 
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-cache"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-cache"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-store"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-store"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-cache, no-store"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-cache, no-store"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-age=0"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-cache, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-cache, max-age=0"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-store, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-store, max-age=0"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-cache, no-store, max-age=0"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-cache, no-store, max-age=0"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-cache, max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-cache, max-age=100"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-store, max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-store, max-age=100"}
+response source: Memory cache
+
+response headers: {"Cache-control":"max-age=0"}
+request headers: {"Cache-control":"no-cache, no-store, max-age=100"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100"}
+request headers: {"Cache-control":"no-cache, no-store, max-age=100"}
+response source: Memory cache
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

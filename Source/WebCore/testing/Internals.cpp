@@ -514,6 +514,11 @@ void Internals::setOverrideResourceLoadPriority(const String& priority)
     frame()->loader().setOverrideResourceLoadPriorityForTesting(stringToResourceLoadPriority(priority));
 }
 
+void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
+{
+    frame()->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
+}
+
 void Internals::clearMemoryCache()
 {
     MemoryCache::singleton().evictResources();
