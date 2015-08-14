@@ -1,3 +1,16 @@
+2015-08-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r188428.
+        https://bugs.webkit.org/show_bug.cgi?id=148015
+
+        broke cmake build (Requested by alexchristensen on #webkit).
+
+        Reverted changeset:
+
+        "Move some commands from ./CMakeLists.txt to Source/cmake"
+        https://bugs.webkit.org/show_bug.cgi?id=148003
+        http://trac.webkit.org/changeset/188428
+
 2015-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Move some commands from ./CMakeLists.txt to Source/cmake
