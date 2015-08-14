@@ -7,7 +7,7 @@ function test()
 {
     ProtocolTest.importScript("console-test.js");
 
-    let suite = new ProtocolTest.AsyncTestSuite("Console.XFrameOptionsMessages");
+    let suite = ProtocolTest.createAsyncSuite("Console.XFrameOptionsMessages");
 
     ProtocolTest.Console.addTestCase(suite, {
         name: "XFrameOptionsDeny",

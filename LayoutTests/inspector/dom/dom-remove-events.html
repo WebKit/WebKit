@@ -47,15 +47,15 @@ function test()
     function onChildNodeRemoved(response)
     {
         var nodeId = response.params.nodeId;
-        ProtocolTest.assert(getNodeIdentifier(nodeId) === "target_element", "onChildNodeRemoved called for #target_element");
+        ProtocolTest.expectThat(getNodeIdentifier(nodeId) === "target_element", "onChildNodeRemoved called for #target_element");
         delete nodesById[nodeId];
     }
 
     function onChildNodeInserted(response)
     {
         collectNode(response.params.node);
-        ProtocolTest.assert(getNodeIdentifier(response.params.parentNodeId) === "final_container", "onChildNodeInserted called for parent node #final_container");
-        ProtocolTest.assert(getNodeIdentifier(response.params.node.nodeId) === "target_element", "onChildNodeInserted called for child node #target_element");
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.parentNodeId) === "final_container", "onChildNodeInserted called for parent node #final_container");
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.node.nodeId) === "target_element", "onChildNodeInserted called for child node #target_element");
     }
 
     InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);

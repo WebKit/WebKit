@@ -6,20 +6,27 @@
 function test()
 {
     try {
-        new ProtocolTest.AsyncTestSuite();
+        let result = new InjectedTestHarness.AsyncTestSuite(this);
         ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires name argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating AsyncTestSuite requires name argument.");
     }
 
     try {
-        new ProtocolTest.AsyncTestSuite({});
+        let result = new InjectedTestHarness.AsyncTestSuite(this, {});
         ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires string name argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating AsyncTestSuite requires string name argument.");
     }
 
-    var badArgsSuite = new ProtocolTest.AsyncTestSuite("dummy");
+    try {
+        let result = new InjectedTestHarness.AsyncTestSuite("something", {});
+        ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires test harness argument.");
+    } catch (e) {
+        ProtocolTest.log("PASS: instantiating AsyncTestSuite requires test harness argument.");
+    }
+
+    var badArgsSuite = ProtocolTest.createAsyncSuite("dummy");
     try {
         badArgsSuite.addTestCase();
         ProtocolTest.log("FAIL: should not be able to add empty test case.");
@@ -51,7 +58,7 @@ function test()
         ProtocolTest.log("PASS: test case should require test function.");
     }
 
-    var runEmptySuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.RunEmptySuite");
+    var runEmptySuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.RunEmptySuite");
     try {
         runEmptySuite.runTestCases();
         ProtocolTest.log("FAIL: should not be able to run empty test suite.");
@@ -59,7 +66,7 @@ function test()
         ProtocolTest.log("PASS: should not be able to run empty test suite.");
     }
 
-    var runTwiceSuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.RunTwiceSuite");
+    var runTwiceSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.RunTwiceSuite");
     runTwiceSuite.addTestCase({
         name: "DummyTest0",
         description: "Check that a suite can't run more than once.",
@@ -81,7 +88,7 @@ function test()
     var rejectToken = {"token": 666};
     var thrownError = new Error(rejectToken);
 
-    var sequentialExecutionSuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.SequentialExecution");
+    var sequentialExecutionSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.SequentialExecution");
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest1",
         description: "Check test case execution order.",
@@ -111,7 +118,7 @@ function test()
         }
     });
 
-    var abortOnFailureSuite = new ProtocolTest.AsyncTestSuite("AsyncTestSuite.AbortOnFailure");
+    var abortOnFailureSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AbortOnFailure");
     abortOnFailureSuite.addTestCase({
         name: "PassingTest5",
         description: "This test is a dummy.",
@@ -136,7 +143,7 @@ function test()
 
     result = result.then(function() {
         var promise = sequentialExecutionSuite.runTestCases();
-        ProtocolTest.assert(result instanceof Promise, "AsyncTestSuite.RunTestCases() should return a Promise.");
+        ProtocolTest.expectThat(result instanceof Promise, "AsyncTestSuite.RunTestCases() should return a Promise.");
         return promise;
     });
     result = result.then(function resolved() {
@@ -144,12 +151,12 @@ function test()
         return Promise.resolve(); // Continue this test.
     }, function rejected(e) {
         ProtocolTest.log("PASS: Promise from sequentialExecutionSuite.runTestCases() should reject when a test case fails.");
-        ProtocolTest.assert(e === thrownError, "Promise from sequentialExecutionSuite.runTestCases() should reject without altering its result value.");
+        ProtocolTest.expectThat(e === thrownError, "Promise from sequentialExecutionSuite.runTestCases() should reject without altering its result value.");
 
-        ProtocolTest.assert(sequentialExecutionSuite.runCount === 4, "sequentialExecutionSuite should have executed four tests.");
-        ProtocolTest.assert(sequentialExecutionSuite.passCount === 3, "sequentialExecutionSuite should have passed three tests.");
-        ProtocolTest.assert(sequentialExecutionSuite.failCount === 1, "sequentialExecutionSuite should have failed 1 test.");
-        ProtocolTest.assert(sequentialExecutionSuite.skipCount === 0, "sequentialExecutionSuite should have skipped zero tests.");
+        ProtocolTest.expectThat(sequentialExecutionSuite.runCount === 4, "sequentialExecutionSuite should have executed four tests.");
+        ProtocolTest.expectThat(sequentialExecutionSuite.passCount === 3, "sequentialExecutionSuite should have passed three tests.");
+        ProtocolTest.expectThat(sequentialExecutionSuite.failCount === 1, "sequentialExecutionSuite should have failed 1 test.");
+        ProtocolTest.expectThat(sequentialExecutionSuite.skipCount === 0, "sequentialExecutionSuite should have skipped zero tests.");
         return Promise.resolve(); // Continue this test.
     });
 
@@ -160,11 +167,11 @@ function test()
         return Promise.resolve(); // Continue this test.
     }, function rejected(e) {
         ProtocolTest.log("PASS: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.");
-        ProtocolTest.assert(e === rejectToken, "Promise from abortOnFailureSuite.runTestCases() should reject without altering its result value.");
-        ProtocolTest.assert(abortOnFailureSuite.runCount === 2, "abortOnFailureSuite should have executed two tests.");
-        ProtocolTest.assert(abortOnFailureSuite.passCount === 1, "abortOnFailureSuite should have passed one test.");
-        ProtocolTest.assert(abortOnFailureSuite.failCount === 1, "abortOnFailureSuite should have failed one test.");
-        ProtocolTest.assert(abortOnFailureSuite.skipCount === 1, "abortOnFailureSuite should have skipped one test.");
+        ProtocolTest.expectThat(e === rejectToken, "Promise from abortOnFailureSuite.runTestCases() should reject without altering its result value.");
+        ProtocolTest.expectThat(abortOnFailureSuite.runCount === 2, "abortOnFailureSuite should have executed two tests.");
+        ProtocolTest.expectThat(abortOnFailureSuite.passCount === 1, "abortOnFailureSuite should have passed one test.");
+        ProtocolTest.expectThat(abortOnFailureSuite.failCount === 1, "abortOnFailureSuite should have failed one test.");
+        ProtocolTest.expectThat(abortOnFailureSuite.skipCount === 1, "abortOnFailureSuite should have skipped one test.");
 
         return Promise.resolve(); // Continue this test.
     });

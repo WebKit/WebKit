@@ -32,7 +32,7 @@ ProtocolTest.Console.sanitizeConsoleMessage = function(messageObject)
 
 ProtocolTest.Console.addTestCase = function(suite, args)
 {
-    if (!(suite instanceof ProtocolTest.AsyncTestSuite))
+    if (!(suite instanceof InjectedTestHarness.AsyncTestSuite))
         throw new Error("Console test cases must be added to an async test suite.");
 
     var {name, description, expression, expected} = args;
@@ -46,17 +46,17 @@ ProtocolTest.Console.addTestCase = function(suite, args)
             .then(function(messageObject) {
                 var consoleMessage = messageObject.params.message;
                 var {source, level, text, parameters} = consoleMessage;
-                ProtocolTest.assert(source === expected.source, "ConsoleMessage type should be '" + expected.source + "'.");
-                ProtocolTest.assert(level === expected.level, "ConsoleMessage level should be '" + expected.level + "'.");
+                ProtocolTest.expectThat(source === expected.source, "ConsoleMessage type should be '" + expected.source + "'.");
+                ProtocolTest.expectThat(level === expected.level, "ConsoleMessage level should be '" + expected.level + "'.");
 
                 if (expected.text)
-                    ProtocolTest.assert(text === expected.text, "ConsoleMessage text should be '" + expected.text + "'.");
+                    ProtocolTest.expectThat(text === expected.text, "ConsoleMessage text should be '" + expected.text + "'.");
 
                 if (expected.parameters) {
-                    ProtocolTest.assert(parameters.length === expected.parameters.length, "ConsoleMessage parameters.length === " + expected.parameters.length);
+                    ProtocolTest.expectThat(parameters.length === expected.parameters.length, "ConsoleMessage parameters.length === " + expected.parameters.length);
                     for (var i = 0; i < parameters.length; ++i) {
                         var expectedType = expected.parameters[i];
-                        ProtocolTest.assert(parameters[i].type === expectedType, "ConsoleMessage parameter " + i + " should have type '" + expectedType + "'.");
+                        ProtocolTest.expectThat(parameters[i].type === expectedType, "ConsoleMessage parameter " + i + " should have type '" + expectedType + "'.");
                     }
                 }
 
