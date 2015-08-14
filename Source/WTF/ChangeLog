@@ -1,3 +1,16 @@
+2015-08-14  Keith Miller  <keith_miller@apple.com>
+
+        cryptographicallyRandomValuesFromOS should use arc4random_buf on Darwin.
+        https://bugs.webkit.org/show_bug.cgi?id=148038
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, we open a file descriptor to /dev/urandom, which can sometimes
+        fail to open. Using arc4random_buf instead should get around this issue.
+
+        * wtf/OSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+
 2015-08-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r188444.

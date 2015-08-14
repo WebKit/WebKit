@@ -29,7 +29,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if OS(UNIX)
+#if !OS(DARWIN) && OS(UNIX)
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -42,6 +42,7 @@
 
 namespace WTF {
 
+#if !OS(DARWIN) && OS(UNIX)
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashUnableToOpenURandom()
 {
     CRASH();
@@ -51,10 +52,13 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashUnableToReadFromURandom()
 {
     CRASH();
 }
+#endif
     
 void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
 {
-#if OS(UNIX)
+#if OS(DARWIN)
+    return arc4random_buf(buffer, length);
+#elif OS(UNIX)
     int fd = open("/dev/urandom", O_RDONLY, 0);
     if (fd < 0)
         crashUnableToOpenURandom(); // We need /dev/urandom for this API to work...
