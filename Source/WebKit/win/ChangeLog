@@ -1,3 +1,9 @@
+2015-08-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Windows build fix.
+
+        * FullscreenVideoController.cpp:
+
 2015-08-12  Anders Carlsson  <andersca@apple.com>
 
         Use WTF::Optional in WindowFeatures
