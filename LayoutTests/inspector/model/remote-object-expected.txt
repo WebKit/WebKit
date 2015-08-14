@@ -843,6 +843,33 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
 }
 
 -----------------------------------------------------
+EXPRESSION: arr = []; arr[0] = arr; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: arr = []; arr.length = 100; arr
 {
   "_type": "object",
@@ -2260,7 +2287,7 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_size": 2,
     "_properties": [],
@@ -2469,6 +2496,49 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
 }
 
 -----------------------------------------------------
+EXPRESSION: map = new Map; map.set(map, map); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "object",
+          "_subtype": "map",
+          "_description": "Map",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
+        },
+        "_value": {
+          "_type": "object",
+          "_subtype": "map",
+          "_description": "Map",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); map
 {
   "_type": "object",
@@ -2609,7 +2679,7 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_size": 3,
     "_properties": [],
@@ -2759,6 +2829,39 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
           "_overflow": false,
           "_properties": null,
           "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; set.add(set); set
+{
+  "_type": "object",
+  "_subtype": "set",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "set",
+          "_description": "Set",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
         }
       }
     ]

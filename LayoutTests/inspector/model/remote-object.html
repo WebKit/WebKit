@@ -79,6 +79,7 @@ function test()
         {expression: "[[undefined]]"},
         {expression: "[{a:1}, {b:2}, {c:2}]"},
         {expression: "[[{a:1}, {b:2}, {c:2}]]"},
+        {expression: "arr = []; arr[0] = arr; arr"}, // cyclic
         {expression: "arr = []; arr.length = 100; arr"}, // 100 empty elements
         {expression: "arr = []; arr.length = 100; arr.fill(1)"}, // 100 full elements
         {expression: "arr = []; arr.length = 100; arr[10] = 1; arr"}, // sparse
@@ -94,7 +95,7 @@ function test()
         {expression: "({a: 1})"},
         {expression: "({a: 1, b: 0, c: -0})"},
         {expression: "({a: 1, b: \"string\", c: /regex/, d: Symbol('sym')})"},
-        {expression: "o = {a:1}; o.b = o; o"}, // Cyclic.
+        {expression: "o = {a:1}; o.b = o; o"}, // cyclic
         {expression: "({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})"},
         {expression: "function Foo() {}; new Foo"},
         {expression: "var Foo2 = function() {}; new Foo2"},
@@ -132,6 +133,7 @@ function test()
         {expression: "map = new Map; map.set(1, 2); map.set('key', 'value'); map"},
         {expression: "map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]); map"},
         {expression: "map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map"},
+        {expression: "map = new Map; map.set(map, map); map"},
         {expression: "map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); map"},
 
         // Set / WeakSet
@@ -139,6 +141,7 @@ function test()
         {expression: "set = new Set; set.add(1); set.add(2); set.add('key'); set"},
         {expression: "set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set"},
         {expression: "set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set"},
+        {expression: "set = new Set; set.add(set); set"},
         {expression: "set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set"},
 
         // Iterators
