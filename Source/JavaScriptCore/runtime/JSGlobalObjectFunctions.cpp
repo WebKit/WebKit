@@ -874,6 +874,9 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!value.isObject() && !value.isNull())
         return JSValue::encode(jsUndefined());
 
+    if (thisObject->prototype() == value)
+        return JSValue::encode(jsUndefined());
+
     if (!thisObject->isExtensible())
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 

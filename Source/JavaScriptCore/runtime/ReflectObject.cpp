@@ -168,6 +168,9 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
     if (!checkProtoSetterAccessAllowed(exec, object))
         return JSValue::encode(jsBoolean(false));
 
+    if (object->prototype() == proto)
+        return JSValue::encode(jsBoolean(true));
+
     if (!object->isExtensible())
         return JSValue::encode(jsBoolean(false));
 
