@@ -2240,7 +2240,6 @@ sub GenerateImplementation
                     push(@implContent, "        return throwGetterTypeError(*exec, \"$interfaceName\", \"$name\");\n");
                     push(@implContent, "    }\n");
                 }
-                $implIncludes{"ScriptExecutionContext.h"} = 1;
             }
 
             my @arguments = ();

@@ -22,7 +22,6 @@
 #include "JSTestException.h"
 
 #include "JSDOMBinding.h"
-#include "ScriptExecutionContext.h"
 #include "TestException.h"
 #include "URL.h"
 #include <runtime/JSString.h>

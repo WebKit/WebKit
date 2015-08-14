@@ -24,7 +24,6 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSNode.h"
-#include "ScriptExecutionContext.h"
 #include "TestActiveDOMObject.h"
 #include <runtime/Error.h>
 #include <wtf/GetPtr.h>

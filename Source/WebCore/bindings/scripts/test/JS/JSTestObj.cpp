@@ -45,7 +45,6 @@
 #include "SVGDocument.h"
 #include "SVGPoint.h"
 #include "SVGStaticPropertyTearOff.h"
-#include "ScriptExecutionContext.h"
 #include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"

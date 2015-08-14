@@ -31,7 +31,6 @@
 #include "JSTestEventTarget.h"
 #include "JSTestSubObj.h"
 #include "SVGPoint.h"
-#include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TestTypedefs.h"
 #include "URL.h"

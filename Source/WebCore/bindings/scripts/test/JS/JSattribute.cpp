@@ -22,7 +22,6 @@
 #include "JSattribute.h"
 
 #include "JSDOMBinding.h"
-#include "ScriptExecutionContext.h"
 #include "URL.h"
 #include "attribute.h"
 #include <runtime/JSString.h>
