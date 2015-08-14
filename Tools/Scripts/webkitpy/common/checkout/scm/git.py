@@ -321,9 +321,7 @@ class Git(SCM, SVNRepository):
         command += ["--"]
         if changed_files:
             command += changed_files
-        return self.fix_changelog_patch(
-                self.prepend_svn_revision(
-                    self.run(command, decode_output=False, cwd=self.checkout_root)))
+        return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))
 
     def _run_git_svn_find_rev(self, revision_or_treeish, branch=None):
         # git svn find-rev requires SVN revisions to begin with the character 'r'.
