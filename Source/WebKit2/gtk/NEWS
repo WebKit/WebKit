@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 2.9.90
+=================
+
+What's new in WebKitGTK+ 2.9.90?
+
+  - Add API to request permission before showing PackageKit codec installation notifications.
+  - Fix a crash closing a page when a context menu is open.
+  - Fix DNS prefetch when using the network process.
+  - Improve image quality when using newer versions of cairo/pixman.
+  - Fix a crash when the web view is destroyed while the screensaver DBus proxy is being created.
+
+=================
 WebKitGTK+  2.9.5
 =================
 

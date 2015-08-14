@@ -1,5 +1,11 @@
 2015-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.90 release.
+
+        * gtk/NEWS: Add release notes for 2.9.90.
+
+2015-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build after r188386.
 
         * UIProcess/API/gtk/WebKitWindowProperties.cpp:
