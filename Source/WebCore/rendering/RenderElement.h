@@ -25,6 +25,7 @@
 
 #include "AnimationController.h"
 #include "RenderObject.h"
+#include "StyleInheritedData.h"
 
 namespace WebCore {
 

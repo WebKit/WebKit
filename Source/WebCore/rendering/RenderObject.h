@@ -27,7 +27,6 @@
 #define RenderObject_h
 
 #include "CachedImageClient.h"
-#include "DocumentStyleSheetCollection.h"
 #include "Element.h"
 #include "FloatQuad.h"
 #include "Frame.h"
@@ -35,18 +34,18 @@
 #include "PaintPhase.h"
 #include "RenderStyle.h"
 #include "ScrollBehavior.h"
-#include "StyleInheritedData.h"
+#include "StyleImage.h"
 #include "TextAffinity.h"
-#include <wtf/HashSet.h>
-#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
 class AffineTransform;
 class AnimationController;
+class Color;
 class Cursor;
 class Document;
 class HitTestLocation;
+class HitTestRequest;
 class HitTestResult;
 class InlineBox;
 class Path;
@@ -60,12 +59,14 @@ class RenderFlowThread;
 class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
+class RenderNamedFlowFragment;
 class RenderNamedFlowThread;
 class RenderRegion;
 class RenderTheme;
 class SelectionSubtreeRoot;
 class TransformState;
 class VisiblePosition;
+
 #if PLATFORM(IOS)
 class SelectionRect;
 #endif
