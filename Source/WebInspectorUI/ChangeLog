@@ -1,5 +1,79 @@
 2015-08-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add Visual editors for CSS properties with comma separated values
+        https://bugs.webkit.org/show_bug.cgi?id=147578
+
+        Reviewed by Timothy Hatcher.
+
+        Displays comma separated CSS property values as a tree outline list.
+
+        * UserInterface/Images/Minus.svg: Added.
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline.prototype.get selectedTreeElementIndex):
+        (WebInspector.TreeOutline):
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css: Added.
+        (.visual-style-property-container.comma-separated-keyword-editor):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item:nth-child(odd)):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.selected):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > :matches(button, img)):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.visual-style-font-family-list-item.selected:not(.editor-hidden) > .titles > *):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.visual-style-font-family-list-item > .visual-style-comma-separated-keyword-item-editor):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.visual-style-font-family-list-item.editor-hidden > .visual-style-comma-separated-keyword-item-editor):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item:not(.no-value) > .titles > .subtitle):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-controls):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-controls > div):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-controls > .visual-style-remove-comma-separated-keyword):
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js: Added.
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.set selectedTreeElementValue):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.get value):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.set value):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._treeElementSelected):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._treeItemIsEmpty):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._addEmptyCommaSeparatedKeyword):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._removeSelectedCommaSeparatedKeyword):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._removeEmptyCommaSeparatedKeywords):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._addCommaSeparatedKeyword):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._removeCommaSeparatedKeyword):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._createNewTreeElement):
+
+        * UserInterface/Views/VisualStyleFontFamilyListEditor.js: Added.
+        (WebInspector.VisualStyleFontFamilyListEditor):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype.visualStyleCompletionsControllerCustomizeCompletionElement):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype.get hasCompletions):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype.set completions):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._modifyCommaSeparatedKeyword):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._addCommaSeparatedKeyword):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._addEmptyCommaSeparatedKeyword):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._completionClicked):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._treeElementKeyDown):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._treeElementKeywordChanged):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._hideCompletions):
+        (WebInspector.VisualStyleFontFamilyListEditor.prototype._createNewTreeElement):
+
+        * UserInterface/Views/VisualStyleFontFamilyTreeElement.js: Added.
+        (WebInspector.VisualStyleFontFamilyTreeElement):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.editorBounds):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.updateMainTitle):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.showKeywordEditor):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.hideKeywordEditor):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.get keywordEditorHidden):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.onattach):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.ondeselect):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype._keywordEditorKeyDown):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype._keywordEditorKeyUp):
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype._keywordEditorBlurred):
+
+2015-08-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Add autocomplete controller for Visual property editors
         https://bugs.webkit.org/show_bug.cgi?id=147579
 
