@@ -210,8 +210,12 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         }
 
         for (var record of records) {
-            if (record.type === WebInspector.RenderingFrameTimelineRecord && !record.children.length)
-                continue;
+            if (record.type === WebInspector.TimelineRecord.Type.RenderingFrame) {
+                if (!record.children.length)
+                    continue;
+                record.setupFrameIndex();
+            }
+
             this._addRecord(record);
         }
     }

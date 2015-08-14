@@ -306,6 +306,7 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
     {
         var renderingFrameTimelineRecord = event.data.record;
         console.assert(renderingFrameTimelineRecord instanceof WebInspector.RenderingFrameTimelineRecord);
+        console.assert(renderingFrameTimelineRecord.children.length, "Missing child records for rendering frame.");
 
         this._pendingRecords.push(renderingFrameTimelineRecord);
 
