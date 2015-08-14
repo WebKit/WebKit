@@ -165,3 +165,12 @@
     background-color: hsla(53, 83%, 53%, 0.2);
     border-bottom: 1px solid hsl(47, 82%, 60%);
 }
+
+@keyframes node-state-changed {
+    from { background-color: hsla(212, 92%, 54%, 0.5); }
+}
+
+.node-state-changed {
+    animation: node-state-changed 1s cubic-bezier(0, 0, 0.25, 1);
+    border-radius: 3px;
+}
