@@ -37,8 +37,8 @@ WebInspector.VisualStyleRelativeNumberSlider = class VisualStyleRelativeNumberSl
         this._sliderElement.addEventListener("input", this._sliderChanged.bind(this));
         this._element.appendChild(this._sliderElement);
 
-        this._startingValue = null;
-        this._scale = 100;
+        this._startingValue = 0;
+        this._scale = 200;
     }
 
     // Public
@@ -62,15 +62,16 @@ WebInspector.VisualStyleRelativeNumberSlider = class VisualStyleRelativeNumberSl
         if (isNaN(this._startingValue))
             this._startingValue = parseFloat(this.placeholder) || 0;
 
-        let origin = this._scale / 2;
-        if (this._allowNegativeValues || this._startingValue > origin) {
-            this._sliderElement.min = -origin;
-            this._sliderElement.max = origin;
+        let midpoint = this._scale / 2;
+        if (this._allowNegativeValues || this._startingValue > midpoint) {
+            this._sliderElement.min = -midpoint;
+            this._sliderElement.max = midpoint;
             this._sliderElement.value = 0;
         } else {
             this._sliderElement.min = 0;
             this._sliderElement.max = this._scale;
             this._sliderElement.value = this._startingValue;
+            this._startingValue = 0;
         }
     }
 

@@ -134,8 +134,18 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     {
         let contextMenu = new WebInspector.ContextMenu(event);
 
+        if (this.representedObject.ownerRule) {
+            contextMenu.appendItem(WebInspector.UIString("Show Source"), function() {
+                if (event.metaKey)
+                    WebInspector.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation);
+                else
+                    WebInspector.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation);
+            }.bind(this));
+        }
+
         contextMenu.appendItem(WebInspector.UIString("Copy Rule"), function() {
-            InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString());
+            let selectorText = !this.representedObject.ownerRule ? this.representedObject.node.appropriateSelectorFor(true) : null;
+            InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString(selectorText));
         }.bind(this));
 
         contextMenu.appendItem(WebInspector.UIString("Reset"), function() {
@@ -162,6 +172,9 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
     _handleMainTitleMouseDown(event)
     {
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
         this._listItemNode.classList.toggle("editable", this.selected);
     }
 

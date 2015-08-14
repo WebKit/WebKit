@@ -34,7 +34,7 @@
 
 .item.visual-style-selector-item.selected {
     background-color: hsl(213, 92%, 55%) !important;
-    color: hsl(0, 100%, 100%);
+    color: white;
 }
 
 .item.visual-style-selector-item > .disclosure-button {
@@ -42,7 +42,19 @@
 }
 
 .item.visual-style-selector-item > input[type="checkbox"] {
+    position: relative;
     margin: 4.5px 0 4px 5px;
+}
+
+.item.visual-style-selector-item.selected > input[type="checkbox"]::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 1px solid white;
+    border-radius: 3px;
+    content: "";
 }
 
 .item.visual-style-selector-item > .icon {
@@ -52,7 +64,7 @@
 }
 
 .item.visual-style-selector-item.modified > .icon {
-    -webkit-filter: brightness(0.75);
+    filter: brightness(0.75);
 }
 
 .item.visual-style-selector-item.selector-invalid > .icon {
@@ -96,7 +108,7 @@
 
 .item.visual-style-selector-item:not(.dom-element-icon).editable > .titles > .title:focus {
     color: black;
-    background-color: hsl(0, 100%, 100%);
+    background-color: white;
     border-radius: 2px;
     box-shadow: hsla(0, 0%, 0%, 0.15) 0 1px 0, 0 0 0 3px hsla(0, 100%, 100%, 0.3);
 }

@@ -29,13 +29,20 @@
 }
 
 .visual-style-property-container.keyword-checkbox > .visual-style-property-value-container > input {
-    order: 1;
-    position: absolute;
-    top: 4px;
     width: auto;
 }
 
-.visual-style-property-container.keyword-checkbox > .visual-style-property-value-container > div {
-    width: 18px;
-    margin: 0 2px;
+/* Font Variant */
+.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input {
+    margin-left: 47px;
+}
+
+.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input::before {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    font-size: 9px;
+    font-variant: small-caps;
+    word-spacing: -2px;
+    content: "Small Caps";
 }

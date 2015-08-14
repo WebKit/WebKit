@@ -1,5 +1,62 @@
 2015-08-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Style changes to Visual sidebar editors
+        https://bugs.webkit.org/show_bug.cgi?id=148021
+
+        Reviewed by Brian Burg.
+
+        Various style fixes and feature enhancements in some of the Visual style property editors.
+
+        * UserInterface/Views/VisualStyleColorPicker.css:
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > input):
+        (.visual-style-property-container.input-color-picker.multiple > .visual-style-property-value-container > .visual-style-multiple-property-placeholder):
+
+        * UserInterface/Views/VisualStyleKeywordCheckbox.css:
+        (.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input):
+        (.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input::before):
+        (.visual-style-property-container.keyword-checkbox > .visual-style-property-value-container > input): Deleted.
+        (.visual-style-property-container.keyword-checkbox > .visual-style-property-value-container > div): Deleted.
+        Replaced the SVG image before the checkbox with a :before pseudo-element with content.
+
+        * UserInterface/Views/VisualStyleKeywordCheckbox.js:
+        (WebInspector.VisualStyleKeywordCheckbox):
+        Removed the SVG image before the checkbox.
+
+        * UserInterface/Views/VisualStyleKeywordPicker.js:
+        (WebInspector.VisualStyleKeywordPicker.prototype.get value):
+        (WebInspector.VisualStyleKeywordPicker.prototype.set value):
+        (WebInspector.VisualStyleKeywordPicker.prototype.set placeholder):
+        (WebInspector.VisualStyleKeywordPicker.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleKeywordPicker.prototype._getValue):
+        (WebInspector.VisualStyleKeywordPicker.prototype._setValue):
+        (WebInspector.VisualStyleKeywordPicker.prototype._generateSynthesizedValue):
+        (WebInspector.VisualStyleKeywordPicker.prototype._handleKeywordChanged):
+        Due to a current bug (https://webkit.org/b/147064), you cannot extend ES6 getters/setters.  In order to work
+        around this, a member function was added that performs the same action as the getter/setter, but can be extended.
+
+        * UserInterface/Views/VisualStylePropertyEditorLink.css:
+        (.visual-style-property-editor-link.linked > .visual-style-property-editor-link-border):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon > .unlinked-icon):
+
+        * UserInterface/Views/VisualStyleRelativeNumberSlider.js:
+        (WebInspector.VisualStyleRelativeNumberSlider):
+        (WebInspector.VisualStyleRelativeNumberSlider.prototype._resetSlider):
+        (WebInspector.VisualStyleRelativeNumberSlider.prototype._sliderChanged):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (.item.visual-style-selector-item > input[type="checkbox"]):
+        (.item.visual-style-selector-item.selected > input[type="checkbox"]::before):
+        (.item.visual-style-selector-item.modified > .icon):
+        (.item.visual-style-selector-item:not(.dom-element-icon).editable > .titles > .title:focus):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleMainTitleMouseDown):
+        Added another context menu item to show the source location for the selected rule.
+
+2015-08-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Add visual editors for CSS properties
         https://bugs.webkit.org/show_bug.cgi?id=147576
 
