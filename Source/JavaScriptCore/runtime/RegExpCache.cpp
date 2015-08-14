@@ -60,7 +60,6 @@ void RegExpCache::finalize(Handle<Unknown> handle, void*)
 {
     RegExp* regExp = static_cast<RegExp*>(handle.get().asCell());
     weakRemove(m_weakCache, regExp->key(), regExp);
-    regExp->deleteCode();
 }
 
 void RegExpCache::addToStrongCache(RegExp* regExp)
