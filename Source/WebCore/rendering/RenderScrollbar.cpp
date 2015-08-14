@@ -269,7 +269,7 @@ IntRect RenderScrollbar::buttonRect(ScrollbarPart partType)
     partRenderer->layout();
     
     bool isHorizontal = orientation() == HorizontalScrollbar;
-    IntSize pixelSnappedIntSize = partRenderer->pixelSnappedSize();
+    IntSize pixelSnappedIntSize = snappedIntRect(partRenderer->frameRect()).size();
     if (partType == BackButtonStartPart)
         return IntRect(location(), IntSize(isHorizontal ? pixelSnappedIntSize.width() : width(), isHorizontal ? height() : pixelSnappedIntSize.height()));
     if (partType == ForwardButtonEndPart)

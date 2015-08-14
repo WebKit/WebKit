@@ -54,7 +54,7 @@ void RenderMediaVolumeSliderContainer::layout()
 
     // If the slider would be rendered outside the page, it should be moved below the controls.
     if (UNLIKELY(absoluteOffsetTop < 0))
-        setY(buttonBox.offsetTop() + theme().volumeSliderOffsetFromMuteButton(buttonBox, pixelSnappedSize()).y());
+        setY(buttonBox.offsetTop() + theme().volumeSliderOffsetFromMuteButton(buttonBox, size()).y());
 }
 
 // ----------------------------

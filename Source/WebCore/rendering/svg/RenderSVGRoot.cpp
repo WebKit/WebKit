@@ -224,7 +224,7 @@ bool RenderSVGRoot::shouldApplyViewportClip() const
 void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // An empty viewport disables rendering.
-    if (pixelSnappedBorderBoxRect().isEmpty())
+    if (borderBoxRect().isEmpty())
         return;
 
     // Don't paint, if the context explicitly disabled it.
@@ -357,7 +357,7 @@ void RenderSVGRoot::computeFloatRectForRepaint(const RenderLayerModelObject* rep
 
     // Apply initial viewport clip
     if (shouldApplyViewportClip())
-        repaintRect.intersect(pixelSnappedBorderBoxRect());
+        repaintRect.intersect(snappedIntRect(borderBoxRect()));
 
     if (m_hasBoxDecorations || hasRenderOverflow()) {
         // The selectionRect can project outside of the overflowRect, so take their union

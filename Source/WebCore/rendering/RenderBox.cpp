@@ -571,30 +571,6 @@ LayoutUnit RenderBox::clientHeight() const
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
 
-int RenderBox::pixelSnappedClientWidth() const
-{
-    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
-    return roundToInt(clientWidth());
-}
-
-int RenderBox::pixelSnappedClientHeight() const
-{
-    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
-    return roundToInt(clientHeight());
-}
-
-int RenderBox::pixelSnappedOffsetWidth() const
-{
-    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
-    return roundToInt(offsetWidth());
-}
-
-int RenderBox::pixelSnappedOffsetHeight() const
-{
-    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
-    return roundToInt(offsetHeight());
-}
-
 int RenderBox::scrollWidth() const
 {
     if (hasOverflowClip())

@@ -95,13 +95,13 @@ void RenderFileUploadControl::updateFromElement()
 
 static int nodeWidth(Node* node)
 {
-    return (node && node->renderBox()) ? node->renderBox()->pixelSnappedSize().width() : 0;
+    return (node && node->renderBox()) ? roundToInt(node->renderBox()->size().width()) : 0;
 }
 
 #if PLATFORM(IOS)
 static int nodeHeight(Node* node)
 {
-    return (node && node->renderBox()) ? node->renderBox()->pixelSnappedSize().height() : 0;
+    return (node && node->renderBox()) ? roundToInt(node->renderBox()->size().height()) : 0;
 }
 #endif
 
@@ -110,7 +110,7 @@ int RenderFileUploadControl::maxFilenameWidth() const
 #if PLATFORM(IOS)
     int iconWidth = nodeHeight(uploadButton());
 #endif
-    return std::max(0, contentBoxRect().pixelSnappedSize().width() - nodeWidth(uploadButton()) - afterButtonSpacing
+    return std::max(0, snappedIntRect(contentBoxRect()).width() - nodeWidth(uploadButton()) - afterButtonSpacing
         - (inputElement().icon() ? iconWidth + iconFilenameSpacing : 0));
 }
 

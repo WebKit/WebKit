@@ -925,7 +925,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
             continue;
         }
         if (is<RenderBox>(*o)) {
-            if (downcast<RenderBox>(*o).pixelSnappedLogicalHeight())
+            if (roundToInt(downcast<RenderBox>(*o).logicalHeight()))
                 return true;
             continue;
         }

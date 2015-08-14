@@ -55,8 +55,6 @@ public:
     LayoutPoint location() const { return m_location; }
     LayoutSize size() const { return m_size; }
 
-    IntSize pixelSnappedSize() const { return snappedIntSize(m_size, m_location); }
-
     void setLocation(const LayoutPoint& location) { m_location = location; }
     void setSize(const LayoutSize& size) { m_size = size; }
 

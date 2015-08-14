@@ -735,7 +735,7 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
 void FrameView::applyPaginationToViewport()
 {
     Document* document = frame().document();
-    auto documentElement = document->documentElement();
+    auto* documentElement = document->documentElement();
     RenderElement* documentRenderer = documentElement ? documentElement->renderer() : nullptr;
     RenderElement* documentOrBodyRenderer = documentRenderer;
     auto* body = document->body();
@@ -784,7 +784,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     if (!document)
         return;
 
-    auto documentElement = document->documentElement();
+    auto* documentElement = document->documentElement();
     if (!documentElement)
         return;
 
@@ -2858,8 +2858,8 @@ FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() c
     if (!document)
         return ExtendedBackgroundModeNone;
 
-    auto documentElement = document->documentElement();
-    auto documentElementRenderer = documentElement ? documentElement->renderer() : nullptr;
+    auto* documentElement = document->documentElement();
+    auto* documentElementRenderer = documentElement ? documentElement->renderer() : nullptr;
     if (!documentElementRenderer)
         return ExtendedBackgroundModeNone;
 
@@ -4174,7 +4174,8 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
 
     // Require the document to grow a bit.
     static const int documentHeightThreshold = 200;
-    if (documentElement->renderBox()->layoutOverflowRect().pixelSnappedSize().height() < documentHeightThreshold)
+    LayoutRect overflowRect = documentElement->renderBox()->layoutOverflowRect();
+    if (snappedIntRect(overflowRect).height() < documentHeightThreshold)
         return false;
 
     // The first few hundred characters rarely contain the interesting content of the page.

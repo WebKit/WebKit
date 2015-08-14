@@ -155,8 +155,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     info.context->setStrokeThickness(m_lineThickness);
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
-    
-    info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + denominatorWrapper->pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
+    info.context->drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + denominatorWrapper->offsetWidth(), adjustedPaintOffset.y())));
 }
 
 Optional<int> RenderMathMLFraction::firstLineBaseline() const

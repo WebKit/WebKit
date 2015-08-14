@@ -90,9 +90,6 @@ public:
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, LayoutUnit intrinsicContentHeight) const;
     LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, LayoutUnit intrinsicContentHeight) const;
 
-    int pixelSnappedLogicalHeight() const { return style().isHorizontalWritingMode() ? pixelSnappedSize().height() : pixelSnappedSize().width(); }
-    int pixelSnappedLogicalWidth() const { return style().isHorizontalWritingMode() ? pixelSnappedSize().width() : pixelSnappedSize().height(); }
-
     void setLogicalLeft(LayoutUnit left)
     {
         if (style().isHorizontalWritingMode())
@@ -139,7 +136,6 @@ public:
     LayoutPoint location() const { return m_frameRect.location(); }
     LayoutSize locationOffset() const { return LayoutSize(x(), y()); }
     LayoutSize size() const { return m_frameRect.size(); }
-    IntSize pixelSnappedSize() const { return m_frameRect.pixelSnappedSize(); }
 
     void setLocation(const LayoutPoint& location) { m_frameRect.setLocation(location); }
     
@@ -157,8 +153,7 @@ public:
     }
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
     LayoutRect paddingBoxRect() const { return LayoutRect(borderLeft(), borderTop(), contentWidth() + paddingLeft() + paddingRight(), contentHeight() + paddingTop() + paddingBottom()); }
-    IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), pixelSnappedSize()); }
-    virtual IntRect borderBoundingBox() const override final { return pixelSnappedBorderBoxRect(); }
+    virtual IntRect borderBoundingBox() const override final { return enclosingIntRect(borderBoxRect()); }
 
     WEBCORE_EXPORT RoundedRect::Radii borderRadii() const;
 
@@ -224,9 +219,6 @@ public:
     virtual LayoutUnit offsetWidth() const override { return width(); }
     virtual LayoutUnit offsetHeight() const override { return height(); }
 
-    virtual int pixelSnappedOffsetWidth() const override final;
-    virtual int pixelSnappedOffsetHeight() const override final;
-
     // More IE extensions.  clientWidth and clientHeight represent the interior of an object
     // excluding border and scrollbar.  clientLeft/Top are just the borderLeftWidth and borderTopWidth.
     LayoutUnit clientLeft() const { return borderLeft(); }
@@ -237,9 +229,6 @@ public:
     LayoutUnit clientLogicalHeight() const { return style().isHorizontalWritingMode() ? clientHeight() : clientWidth(); }
     LayoutUnit clientLogicalBottom() const { return borderBefore() + clientLogicalHeight(); }
     LayoutRect clientBoxRect() const { return LayoutRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
-
-    int pixelSnappedClientWidth() const;
-    int pixelSnappedClientHeight() const;
 
     // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
     // object has overflow:hidden/scroll/auto specified and also has overflow.

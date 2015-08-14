@@ -337,7 +337,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     // The preferred width of the radical is sometimes incorrect, so we draw a slightly longer line to ensure it touches the radical symbol (https://bugs.webkit.org/show_bug.cgi?id=130326).
     LayoutUnit sizeError = radical->trailingSpaceError();
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + base->location() + LayoutPoint(-sizeError, -(m_verticalGap + m_ruleThickness / 2)));
-    info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + base->pixelSnappedOffsetWidth() + sizeError, adjustedPaintOffset.y()));
+    info.context->drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + base->offsetWidth() + sizeError, adjustedPaintOffset.y())));
 }
 
 RenderPtr<RenderMathMLRootWrapper> RenderMathMLRootWrapper::createAnonymousWrapper(RenderMathMLRoot* renderObject)

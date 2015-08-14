@@ -201,7 +201,7 @@ void RenderTableCell::computeIntrinsicPadding(int rowHeight)
 {
     int oldIntrinsicPaddingBefore = intrinsicPaddingBefore();
     int oldIntrinsicPaddingAfter = intrinsicPaddingAfter();
-    int logicalHeightWithoutIntrinsicPadding = pixelSnappedLogicalHeight() - oldIntrinsicPaddingBefore - oldIntrinsicPaddingAfter;
+    int logicalHeightWithoutIntrinsicPadding = roundToInt(logicalHeight()) - oldIntrinsicPaddingBefore - oldIntrinsicPaddingAfter;
 
     int intrinsicPaddingBefore = 0;
     switch (style().verticalAlign()) {
@@ -1194,7 +1194,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     LayoutRect localRepaintRect = paintInfo.rect;
     localRepaintRect.inflate(maximalOutlineSize(paintInfo.phase));
 
-    LayoutRect paintRect = LayoutRect(paintOffset + location(), pixelSnappedSize());
+    LayoutRect paintRect = LayoutRect(paintOffset + location(), snappedIntRect(frameRect()).size());
     if (paintRect.y() - table()->outerBorderTop() >= localRepaintRect.maxY())
         return;
 
@@ -1281,7 +1281,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Lay
                 width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
             paintInfo.context->clip(clipRect);
         }
-        paintFillLayers(paintInfo, c, bgLayer, LayoutRect(adjustedPaintOffset, pixelSnappedSize()), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
+        paintFillLayers(paintInfo, c, bgLayer, LayoutRect(adjustedPaintOffset, snappedIntRect(frameRect()).size()), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
     }
 }
 
@@ -1294,7 +1294,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
     if (!tableElt->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
         return;
 
-    LayoutRect paintRect = LayoutRect(paintOffset, pixelSnappedSize());
+    LayoutRect paintRect = LayoutRect(paintOffset, snappedIntRect(frameRect()).size());
     paintBoxShadow(paintInfo, paintRect, style(), Normal);
     
     // Paint our cell background.
@@ -1317,7 +1317,7 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (!tableElt->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
         return;
    
-    paintMaskImages(paintInfo, LayoutRect(paintOffset, pixelSnappedSize()));
+    paintMaskImages(paintInfo, LayoutRect(paintOffset, snappedIntRect(frameRect()).size()));
 }
 
 bool RenderTableCell::boxShadowShouldBeAppliedToBackground(const LayoutPoint&, BackgroundBleedAvoidance, InlineFlowBox*) const
