@@ -1,5 +1,37 @@
 2015-08-13  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Flash DOM node attribute on change
+        https://bugs.webkit.org/show_bug.cgi?id=147973
+
+        Reviewed by Timothy Hatcher.
+
+        Whenever an attribute on a DOM node changes, flash the attribute value.
+        If that value doesn't exist, flash the attribute name instead.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement):
+        (WebInspector.DOMTreeElement.prototype.nodeChanged):
+        (WebInspector.DOMTreeElement.prototype._buildAttributeDOM):
+        If the node has been marked with a general change, mark the attribute element for animation.
+        (WebInspector.DOMTreeElement.prototype._markNodeChanged.animationEnd):
+        (WebInspector.DOMTreeElement.prototype._markNodeChanged):
+        Adds a class to the given element that applies a simple background flash animation.
+        (WebInspector.DOMTreeElement.prototype._fireDidChange):
+        Add the animation class once all building of the represented DOM object for that node is done.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (@keyframes node-state-changed):
+        Applies a semi-transparent background that fades to default.
+        (.node-state-changed):
+
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WebInspector.DOMTreeUpdater.prototype._attributesUpdated):
+        Now passes along the name of the modified attribute.
+        (WebInspector.DOMTreeUpdater.prototype._updateModifiedNodes):
+        If the modified node object has an attribute member, mark the node as being generally changed.
+
+2015-08-13  Devin Rousso  <drousso@apple.com>
+
         REGRESSION (r184000): Web Inspector: Stripped whitespace after editing CSS in Styles sidebar
         https://bugs.webkit.org/show_bug.cgi?id=145679
 
