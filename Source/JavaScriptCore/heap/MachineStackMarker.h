@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,9 +23,9 @@
 #define MachineThreads_h
 
 #include <setjmp.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSpecific.h>
-#include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {
 
@@ -52,14 +52,14 @@ namespace JSC {
         void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters);
 
         void tryCopyOtherThreadStack(Thread*, void*, size_t capacity, size_t*);
-        bool tryCopyOtherThreadStacks(MutexLocker&, void*, size_t capacity, size_t*);
+        bool tryCopyOtherThreadStacks(LockHolder&, void*, size_t capacity, size_t*);
 
         static void removeThread(void*);
 
         template<typename PlatformThread>
         void removeThreadIfFound(PlatformThread);
 
-        Mutex m_registeredThreadsMutex;
+        Lock m_registeredThreadsMutex;
         Thread* m_registeredThreads;
         WTF::ThreadSpecificKey m_threadSpecific;
 #if !ASSERT_DISABLED

@@ -69,12 +69,12 @@ CopyVisitor* GCThread::copyVisitor()
 
 GCPhase GCThread::waitForNextPhase()
 {
-    std::unique_lock<std::mutex> lock(m_shared.m_phaseMutex);
+    std::unique_lock<Lock> lock(m_shared.m_phaseMutex);
     m_shared.m_phaseConditionVariable.wait(lock, [this] { return !m_shared.m_gcThreadsShouldWait; });
 
     m_shared.m_numberOfActiveGCThreads--;
     if (!m_shared.m_numberOfActiveGCThreads)
-        m_shared.m_activityConditionVariable.notify_one();
+        m_shared.m_activityConditionVariable.notifyOne();
 
     m_shared.m_phaseConditionVariable.wait(lock, [this] { return m_shared.m_currentPhase != NoPhase; });
     m_shared.m_numberOfActiveGCThreads++;
@@ -90,7 +90,7 @@ void GCThread::gcThreadMain()
     // Wait for the main thread to finish creating and initializing us. The main thread grabs this lock before 
     // creating this thread. We aren't guaranteed to have a valid threadID until the main thread releases this lock.
     {
-        std::lock_guard<std::mutex> lock(m_shared.m_phaseMutex);
+        std::lock_guard<Lock> lock(m_shared.m_phaseMutex);
     }
     {
         ParallelModeEnabler enabler(*m_slotVisitor);

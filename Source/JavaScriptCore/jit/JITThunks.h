@@ -63,10 +63,6 @@ public:
     void clearHostFunctionStubs();
 
 private:
-    // Main thread can hold this lock for a while, so use an adaptive mutex.
-    typedef Mutex Lock;
-    typedef MutexLocker Locker;
-
     void finalize(Handle<Unknown>, void* context) override;
     
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;

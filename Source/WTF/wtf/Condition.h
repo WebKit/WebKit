@@ -109,5 +109,7 @@ private:
 
 } // namespace WTF
 
+using WTF::Condition;
+
 #endif // WTF_Condition_h
 

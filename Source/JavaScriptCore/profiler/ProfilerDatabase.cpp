@@ -57,7 +57,7 @@ Database::~Database()
 
 Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 {
-    Locker locker(m_lock);
+    LockHolder locker(m_lock);
     
     codeBlock = codeBlock->baselineVersion();
     
@@ -75,7 +75,7 @@ Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 
 void Database::notifyDestruction(CodeBlock* codeBlock)
 {
-    Locker locker(m_lock);
+    LockHolder locker(m_lock);
     
     m_bytecodesMap.remove(codeBlock);
 }
