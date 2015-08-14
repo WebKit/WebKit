@@ -1,5 +1,34 @@
 2015-08-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add autocomplete controller for Visual property editors
+        https://bugs.webkit.org/show_bug.cgi?id=147579
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/VisualStyleCompletionsController.js: Added.
+        (WebInspector.VisualStyleCompletionsController):
+        Takes in a CSSCompletions and displays a list of suggestions based on a given prefix in a popover.
+        (WebInspector.VisualStyleCompletionsController.prototype.get visible):
+        (WebInspector.VisualStyleCompletionsController.prototype.get hasCompletions):
+        (WebInspector.VisualStyleCompletionsController.prototype.get currentCompletion):
+        (WebInspector.VisualStyleCompletionsController.prototype.set completions):
+        (WebInspector.VisualStyleCompletionsController.prototype.completionSuggestionsViewCustomizeCompletionElement):
+        (WebInspector.VisualStyleCompletionsController.prototype.previous):
+        (WebInspector.VisualStyleCompletionsController.prototype.next):
+        (WebInspector.VisualStyleCompletionsController.prototype.update):
+        (WebInspector.VisualStyleCompletionsController.prototype.show):
+        (WebInspector.VisualStyleCompletionsController.prototype.hide):
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.forProperty):
+        Make sure that the cssNameCompletions exist before trying to add them.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WebInspector.CompletionSuggestionsView.prototype.update):
+        Allow the delegate to modify the newly created completion suggestion item.
+
+2015-08-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Add a visual editor for timing functions
         https://bugs.webkit.org/show_bug.cgi?id=148022
 
