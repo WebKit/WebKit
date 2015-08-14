@@ -546,3 +546,5 @@ media/session [ Skip ]
 
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
+
+webkit.org/b/148026 [ Debug ] animations/restart-after-scroll.html [ Skip ]
