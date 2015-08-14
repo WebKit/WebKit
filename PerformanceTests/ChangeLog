@@ -1,3 +1,18 @@
+2015-08-14  Chris Dumez  <cdumez@apple.com>
+
+        Add performance tests for NodeList and HTMLCollection traversal
+        https://bugs.webkit.org/show_bug.cgi?id=148043
+
+        Reviewed by Gavin Barraclough.
+
+        Add performance tests for NodeList and HTMLCollection traversal.
+        Ideally, those 2 tests should be as fast. However, due to inefficiencies
+        in our HTMLCollection bindings code, the HTMLCollection tests is ~30%
+        slower. This will be addressed in the near future.
+
+        * Bindings/childNodes-traversal.html: Added.
+        * Bindings/children-traversal.html: Added.
+
 2015-08-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add a second font-fallback performance test
