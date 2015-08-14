@@ -114,7 +114,7 @@ TEST(WTF_WordLock, ManyContendedShortSections)
 
 TEST(WTF_WordLock, ManyContendedLongSections)
 {
-    runLockTest<WordLock>(10, 10, 10000, 1000);
+    runLockTest<WordLock>(10, 10, 10000, 500);
 }
 
 TEST(WTF_Lock, UncontendedShortSection)

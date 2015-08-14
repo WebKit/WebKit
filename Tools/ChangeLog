@@ -1,3 +1,10 @@
+2015-08-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, shorten another test that is timing out.
+
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-08-13  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, shorten another test. It's timing out in debug on some bot.
