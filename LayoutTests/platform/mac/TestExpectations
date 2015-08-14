@@ -1294,3 +1294,6 @@ webkit.org/b/147390 [ Mavericks Yosemite ElCapitan ] fast/text/fallback-language
 
 # This test relies on iOS-specific font fallback.
 [ Mavericks Yosemite ElCapitan ] fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+
+# Started to fail after r188390
+webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Failure ]

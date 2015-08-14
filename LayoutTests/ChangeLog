@@ -1,3 +1,10 @@
+2015-08-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] video-buffered-range-contains-currentTime.html is flakey after r188390
+        https://bugs.webkit.org/show_bug.cgi?id=148042
+
+        * platform/mac/TestExpectations: Mark the test as flakey.
+
 2015-08-14  Alexey Proskuryakov  <ap@apple.com>
 
         Frequent assertions on animations/restart-after-scroll.html
