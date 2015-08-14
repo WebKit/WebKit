@@ -27,6 +27,7 @@
 #define PlatformCALayerWin_h
 
 #include "PlatformCALayer.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
