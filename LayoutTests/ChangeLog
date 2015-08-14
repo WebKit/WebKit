@@ -1,5 +1,14 @@
 2015-08-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        iOS test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator-wk1/fast/forms/indeterminate-progress-inline-height-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/forms/input-appearance-spinbutton-up-expected.txt: Added.
+
+2015-08-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Rebaseline some iOS simulator test results for font changes.
 
         Rubber-stamped by Sam Weinig.

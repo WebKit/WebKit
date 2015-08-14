@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 439x19
+          text run at (0,0) width 439: "Test appearances of outer-spin-button with its up button highlighted."
+      RenderBlock {DIV} at (0,36) size 784x0
+      RenderBlock (anonymous) at (0,36) size 784x36
+        RenderTextControl {INPUT} at (2,2) size 221x33 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (20,51) size 200x22
+  RenderBlock {DIV} at (10,4) size 201x23
+    RenderText {#text} at (0,0) size 11x22
+      text run at (0,0) width 11: "0"
+caret: position 1 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body
