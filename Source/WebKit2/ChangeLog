@@ -1,3 +1,25 @@
+2015-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r188386.
+
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        (webkitWindowPropertiesUpdateFromWebWindowFeatures):
+
+2015-08-12  Anders Carlsson  <andersca@apple.com>
+
+        Use WTF::Optional in WindowFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=147956
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WindowFeatures>::encode): Deleted.
+        (IPC::ArgumentCoder<WindowFeatures>::decode): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKWindowFeatures.mm:
+        (-[WKWindowFeatures _initWithWindowFeatures:]):
+
 2015-08-12  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] WebKit processes should have access to com.apple.nesessionmanager.flow-divert-token
