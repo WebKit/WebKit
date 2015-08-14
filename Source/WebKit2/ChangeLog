@@ -1,3 +1,14 @@
+2015-08-13  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Downloads do not start if policy decision is made asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=147985
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/Network/WebResourceLoader.cpp: Updated to include SubresourceLoader.h.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::convertMainResourceLoadToDownload): Started a new download if the main resource loader is not calling didReceiveResponse.
+
 2015-08-14  Simon Fraser  <simon.fraser@apple.com>
 
         Speculative fix for iOS build failure.

@@ -58,6 +58,8 @@ public:
     virtual const ResourceRequest& iOSOriginalRequest() const override { return m_iOSOriginalRequest; }
 #endif
 
+    bool callingDidReceiveResponse() const { return m_callingDidReceiveResponse; }
+
 private:
     SubresourceLoader(Frame*, CachedResource*, const ResourceLoaderOptions&);
 
@@ -124,6 +126,7 @@ private:
     bool m_loadingMultipartContent;
     SubresourceLoaderState m_state;
     std::unique_ptr<RequestCountTracker> m_requestCountTracker;
+    bool m_callingDidReceiveResponse { false };
 };
 
 }

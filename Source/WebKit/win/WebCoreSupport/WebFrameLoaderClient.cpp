@@ -79,9 +79,9 @@
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RenderWidget.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebCore/ResourceLoader.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SubresourceLoader.h>
 
 using namespace WebCore;
 using namespace HTMLNames;

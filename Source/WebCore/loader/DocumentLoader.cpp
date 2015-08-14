@@ -154,7 +154,7 @@ FrameLoader* DocumentLoader::frameLoader() const
     return &m_frame->loader();
 }
 
-ResourceLoader* DocumentLoader::mainResourceLoader() const
+SubresourceLoader* DocumentLoader::mainResourceLoader() const
 {
     return m_mainResource ? m_mainResource->loader() : 0;
 }
@@ -729,7 +729,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
         // It might have gone missing
         if (mainResourceLoader())
-            mainResourceLoader()->didFail(interruptedForPolicyChangeError());
+            static_cast<ResourceLoader*>(mainResourceLoader())->didFail(interruptedForPolicyChangeError());
         return;
     }
     case PolicyIgnore:
