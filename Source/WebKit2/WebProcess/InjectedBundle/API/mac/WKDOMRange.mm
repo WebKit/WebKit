@@ -142,7 +142,7 @@
 {
     _impl->ownerDocument().updateLayoutIgnorePendingStylesheets();
     Vector<WebCore::IntRect> rects;
-    _impl->textRects(rects);
+    _impl->absoluteTextRects(rects);
     return WebKit::toNSArray(rects);
 }
 

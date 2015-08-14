@@ -596,7 +596,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     Ref<Range> range = rangeOfContents(*coreNode);
 
     const float margin = 4 / coreNode->document().page()->pageScaleFactor();
-    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, TextIndicatorPresentationTransition::None, margin);
+    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::None, margin);
 
     if (textIndicator) {
         if (Image* image = textIndicator->contentImage())
@@ -647,7 +647,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     core(self)->ownerDocument().updateLayoutIgnorePendingStylesheets();
-    return core(self)->boundingBox();
+    return core(self)->absoluteBoundingBox();
 }
 
 #if !PLATFORM(IOS)
@@ -680,7 +680,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     Vector<WebCore::IntRect> rects;
     core(self)->ownerDocument().updateLayoutIgnorePendingStylesheets();
-    core(self)->textRects(rects);
+    core(self)->absoluteTextRects(rects);
     return kit(rects);
 }
 

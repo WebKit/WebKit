@@ -750,6 +750,29 @@ static bool decodeImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
     return true;
 }
 
+static void encodeOptionalImage(ArgumentEncoder& encoder, Image* image)
+{
+    bool hasImage = !!image;
+    encoder << hasImage;
+
+    if (hasImage)
+        encodeImage(encoder, image);
+}
+
+static bool decodeOptionalImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
+{
+    image = nullptr;
+
+    bool hasImage;
+    if (!decoder.decode(hasImage))
+        return false;
+
+    if (!hasImage)
+        return true;
+
+    return decodeImage(decoder, image);
+}
+
 #if !PLATFORM(IOS)
 void ArgumentCoder<Cursor>::encode(ArgumentEncoder& encoder, const Cursor& cursor)
 {
@@ -2116,18 +2139,12 @@ void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const Te
     encoder << textIndicatorData.textBoundingRectInRootViewCoordinates;
     encoder << textIndicatorData.textRectsInBoundingRectCoordinates;
     encoder << textIndicatorData.contentImageScaleFactor;
-    encoder << textIndicatorData.wantsMargin;
+    encoder << textIndicatorData.indicatesCurrentSelection;
     encoder.encodeEnum(textIndicatorData.presentationTransition);
+    encoder << static_cast<uint64_t>(textIndicatorData.options);
 
-    bool hasImage = textIndicatorData.contentImage;
-    encoder << hasImage;
-    if (hasImage)
-        encodeImage(encoder, textIndicatorData.contentImage.get());
-
-    bool hasImageWithHighlight = textIndicatorData.contentImageWithHighlight;
-    encoder << hasImageWithHighlight;
-    if (hasImageWithHighlight)
-        encodeImage(encoder, textIndicatorData.contentImageWithHighlight.get());
+    encodeOptionalImage(encoder, textIndicatorData.contentImage.get());
+    encodeOptionalImage(encoder, textIndicatorData.contentImageWithHighlight.get());
 }
 
 bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndicatorData& textIndicatorData)
@@ -2144,26 +2161,21 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
     if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
         return false;
 
-    if (!decoder.decode(textIndicatorData.wantsMargin))
+    if (!decoder.decode(textIndicatorData.indicatesCurrentSelection))
         return false;
 
     if (!decoder.decodeEnum(textIndicatorData.presentationTransition))
         return false;
 
-    bool hasImage;
-    if (!decoder.decode(hasImage))
+    uint64_t options;
+    if (!decoder.decode(options))
         return false;
-    if (!hasImage)
-        textIndicatorData.contentImage = nullptr;
-    if (hasImage && !decodeImage(decoder, textIndicatorData.contentImage))
+    textIndicatorData.options = static_cast<TextIndicatorOptions>(options);
+
+    if (!decodeOptionalImage(decoder, textIndicatorData.contentImage))
         return false;
 
-    bool hasImageWithHighlight;
-    if (!decoder.decode(hasImageWithHighlight))
-        return false;
-    if (!hasImageWithHighlight)
-        textIndicatorData.contentImageWithHighlight = nullptr;
-    if (hasImageWithHighlight && !decodeImage(decoder, textIndicatorData.contentImageWithHighlight))
+    if (!decodeOptionalImage(decoder, textIndicatorData.contentImageWithHighlight))
         return false;
 
     return true;

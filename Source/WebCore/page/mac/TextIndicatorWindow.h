@@ -26,18 +26,37 @@
 #ifndef TextIndicatorWindow_h
 #define TextIndicatorWindow_h
 
-#if PLATFORM(MAC)
-
 #import "TextIndicator.h"
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-@class NSView;
-@class WebTextIndicatorView;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
+#else
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
+#endif
+
+OBJC_CLASS NSView;
+OBJC_CLASS WebTextIndicatorView;
 
 namespace WebCore {
+
+enum class TextIndicatorWindowLifetime : uint8_t {
+    // The TextIndicator should indicate the text until dismissed.
+    Permanent,
+
+    // The TextIndicator should briefly indicate the text and then automatically dismiss.
+    Temporary
+};
+
+enum class TextIndicatorWindowDismissalAnimation : uint8_t {
+    None,
+    FadeOut
+};
+
+#if PLATFORM(MAC)
 
 class TextIndicatorWindow {
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
@@ -46,8 +65,8 @@ public:
     WEBCORE_EXPORT explicit TextIndicatorWindow(NSView *);
     WEBCORE_EXPORT ~TextIndicatorWindow();
 
-    WEBCORE_EXPORT void setTextIndicator(Ref<TextIndicator>, CGRect contentRect, TextIndicatorLifetime);
-    WEBCORE_EXPORT void clearTextIndicator(TextIndicatorDismissalAnimation);
+    WEBCORE_EXPORT void setTextIndicator(Ref<TextIndicator>, CGRect contentRect, TextIndicatorWindowLifetime);
+    WEBCORE_EXPORT void clearTextIndicator(TextIndicatorWindowDismissalAnimation);
 
     WEBCORE_EXPORT void setAnimationProgress(float);
 
@@ -64,8 +83,8 @@ private:
     RunLoop::Timer<TextIndicatorWindow> m_temporaryTextIndicatorTimer;
 };
 
+#endif // PLATFORM(MAC)
+
 } // namespace WebKit
 
 #endif // TextIndicatorWindow_h
-
-#endif // PLATFORM(MAC)

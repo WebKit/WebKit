@@ -97,7 +97,7 @@ Range* InjectedBundleRangeHandle::coreRange() const
 
 WebCore::IntRect InjectedBundleRangeHandle::boundingRectInWindowCoordinates() const
 {
-    FloatRect boundingRect = m_range->boundingRect();
+    FloatRect boundingRect = m_range->absoluteBoundingRect();
     Frame* frame = m_range->ownerDocument().frame();
     return frame->view()->contentsToWindow(enclosingIntRect(boundingRect));
 }
@@ -117,7 +117,7 @@ PassRefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions op
     frame->selection().setSelection(VisibleSelection(*m_range));
 
     float scaleFactor = (options & SnapshotOptionsExcludeDeviceScaleFactor) ? 1 : frame->page()->deviceScaleFactor();
-    IntRect paintRect = enclosingIntRect(m_range->boundingRect());
+    IntRect paintRect = enclosingIntRect(m_range->absoluteBoundingRect());
     IntSize backingStoreSize = paintRect.size();
     backingStoreSize.scale(scaleFactor);
 

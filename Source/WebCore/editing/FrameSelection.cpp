@@ -2088,7 +2088,7 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
     FloatRect visibleContentRect = m_frame->view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 
     Vector<FloatQuad> quads;
-    range->textQuads(quads, textRectHeight == TextRectangleHeight::SelectionHeight);
+    range->absoluteTextQuads(quads, textRectHeight == TextRectangleHeight::SelectionHeight);
 
     size_t size = quads.size();
     for (size_t i = 0; i < size; ++i) {

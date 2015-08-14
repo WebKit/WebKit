@@ -93,7 +93,7 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
     [actionContext setMainResult:mainResult];
 
     Vector<FloatQuad> quads;
-    mainResultRange->textQuads(quads);
+    mainResultRange->absoluteTextQuads(quads);
     detectedDataBoundingBox = FloatRect();
     FrameView* frameView = mainResultRange->ownerDocument().view();
     for (const auto& quad : quads)

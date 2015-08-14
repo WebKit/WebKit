@@ -1987,7 +1987,7 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
     // if the rectangle spans lines and contains multiple text chars, use the range's bounding box intead
     if (rect1.maxY() != rect2.maxY()) {
         RefPtr<Range> dataRange = makeRange(range.start, range.end);
-        LayoutRect boundingBox = dataRange->boundingBox();
+        LayoutRect boundingBox = dataRange->absoluteBoundingBox();
         String rangeString = plainText(dataRange.get());
         if (rangeString.length() > 1 && !boundingBox.isEmpty())
             ourrect = boundingBox;

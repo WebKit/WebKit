@@ -83,7 +83,7 @@ public:
     static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB, ExceptionCode&);
     static short compareBoundaryPoints(const RangeBoundaryPoint& boundaryA, const RangeBoundaryPoint& boundaryB, ExceptionCode&);
     WEBCORE_EXPORT bool boundaryPointsValid() const;
-    bool intersectsNode(Node* refNode, ExceptionCode&);
+    bool intersectsNode(Node* refNode, ExceptionCode&) const;
     void deleteContents(ExceptionCode&);
     PassRefPtr<DocumentFragment> extractContents(ExceptionCode&);
     PassRefPtr<DocumentFragment> cloneContents(ExceptionCode&);
@@ -123,13 +123,12 @@ public:
     };
 
     // Not transform-friendly
-    WEBCORE_EXPORT void textRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
-    WEBCORE_EXPORT IntRect boundingBox() const;
+    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
+    WEBCORE_EXPORT IntRect absoluteBoundingBox() const;
 
     // Transform-friendly
-    WEBCORE_EXPORT void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
-    void getBorderAndTextQuads(Vector<FloatQuad>&) const;
-    WEBCORE_EXPORT FloatRect boundingRect() const;
+    WEBCORE_EXPORT void absoluteTextQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
+    WEBCORE_EXPORT FloatRect absoluteBoundingRect() const;
 #if PLATFORM(IOS)
     WEBCORE_EXPORT void collectSelectionRects(Vector<SelectionRect>&);
 #endif
@@ -174,6 +173,10 @@ private:
     static void processNodes(ActionType, Vector<RefPtr<Node>>&, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode&);
     enum ContentsProcessDirection { ProcessContentsForward, ProcessContentsBackward };
     static PassRefPtr<Node> processAncestorsAndTheirSiblings(ActionType, Node* container, ContentsProcessDirection, PassRefPtr<Node> clonedContainer, Node* commonRoot, ExceptionCode&);
+
+    enum class CoordinateSpace { Absolute, Client };
+    void getBorderAndTextQuads(Vector<FloatQuad>&, CoordinateSpace) const;
+    FloatRect boundingRectInternal(CoordinateSpace) const;
 
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;

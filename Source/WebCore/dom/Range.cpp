@@ -575,7 +575,7 @@ void Range::deleteContents(ExceptionCode& ec)
     processContents(Delete, ec);
 }
 
-bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
+bool Range::intersectsNode(Node* refNode, ExceptionCode& ec) const
 {
     // http://developer.mozilla.org/en/docs/DOM:range.intersectsNode
     // Returns a bool if the node intersects the range.
@@ -1573,18 +1573,18 @@ Node* Range::pastLastNode() const
     return NodeTraversal::nextSkippingChildren(*m_end.container());
 }
 
-IntRect Range::boundingBox() const
+IntRect Range::absoluteBoundingBox() const
 {
     IntRect result;
     Vector<IntRect> rects;
-    textRects(rects);
+    absoluteTextRects(rects);
     const size_t n = rects.size();
     for (size_t i = 0; i < n; ++i)
         result.unite(rects[i]);
     return result;
 }
 
-void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed) const
+void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed) const
 {
     Node* startContainer = m_start.container();
     Node* endContainer = m_end.container();
@@ -1620,7 +1620,7 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFi
         *inFixed = allFixed ? EntirelyFixedPosition : (someFixed ? PartiallyFixedPosition : NotFixedPosition);
 }
 
-void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeInFixedPosition* inFixed) const
+void Range::absoluteTextQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeInFixedPosition* inFixed) const
 {
     Node* startContainer = m_start.container();
     Node* endContainer = m_end.container();
@@ -2181,17 +2181,17 @@ Ref<ClientRectList> Range::getClientRects() const
     ownerDocument().updateLayoutIgnorePendingStylesheets();
 
     Vector<FloatQuad> quads;
-    getBorderAndTextQuads(quads);
+    getBorderAndTextQuads(quads, CoordinateSpace::Client);
 
     return ClientRectList::create(quads);
 }
 
 Ref<ClientRect> Range::getBoundingClientRect() const
 {
-    return ClientRect::create(boundingRect());
+    return ClientRect::create(boundingRectInternal(CoordinateSpace::Client));
 }
 
-void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
+void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads, CoordinateSpace space) const
 {
     Node* startContainer = m_start.container();
     Node* endContainer = m_end.container();
@@ -2213,7 +2213,9 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
             if (RenderBoxModelObject* renderBoxModelObject = downcast<Element>(*node).renderBoxModelObject()) {
                 Vector<FloatQuad> elementQuads;
                 renderBoxModelObject->absoluteQuads(elementQuads);
-                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject->style());
+
+                if (space == CoordinateSpace::Client)
+                    ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject->style());
 
                 quads.appendVector(elementQuads);
             }
@@ -2223,7 +2225,9 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 int endOffset = (node == endContainer) ? m_end.offset() : INT_MAX;
                 
                 auto textQuads = renderText->absoluteQuadsForRange(startOffset, endOffset);
-                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText->style());
+
+                if (space == CoordinateSpace::Client)
+                    ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText->style());
 
                 quads.appendVector(textQuads);
             }
@@ -2231,7 +2235,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
     }
 }
 
-FloatRect Range::boundingRect() const
+FloatRect Range::boundingRectInternal(CoordinateSpace space) const
 {
     if (!m_start.container())
         return FloatRect();
@@ -2239,7 +2243,7 @@ FloatRect Range::boundingRect() const
     ownerDocument().updateLayoutIgnorePendingStylesheets();
 
     Vector<FloatQuad> quads;
-    getBorderAndTextQuads(quads);
+    getBorderAndTextQuads(quads, space);
     if (quads.isEmpty())
         return FloatRect();
 
@@ -2248,6 +2252,11 @@ FloatRect Range::boundingRect() const
         result.unite(quads[i].boundingBox());
 
     return result;
+}
+
+FloatRect Range::absoluteBoundingRect() const
+{
+    return boundingRectInternal(CoordinateSpace::Absolute);
 }
 
 } // namespace WebCore

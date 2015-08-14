@@ -195,7 +195,7 @@ void ServicesOverlayController::Highlight::didFinishFadeOutAnimation()
 static IntRect textQuadsToBoundingRectForRange(Range& range)
 {
     Vector<FloatQuad> textQuads;
-    range.textQuads(textQuads);
+    range.absoluteTextQuads(textQuads);
     FloatRect boundingRect;
     for (auto& quad : textQuads)
         boundingRect.unite(quad.boundingBox());

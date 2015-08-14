@@ -451,21 +451,6 @@ RefPtr<WebColorPicker> WebView::createColorPicker(WebPageProxy*, const WebCore::
 }
 #endif
 
-void WebView::setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime)
-{
-    notImplemented();
-}
-
-void WebView::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation)
-{
-    notImplemented();
-}
-
-void WebView::setTextIndicatorAnimationProgress(float)
-{
-    notImplemented();
-}
-
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     setActive(true);

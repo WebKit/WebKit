@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Editor.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"
@@ -36,19 +37,32 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "Range.h"
+#include "RenderObject.h"
 
 using namespace WebCore;
 
 namespace WebCore {
+
+static bool initializeIndicator(TextIndicatorData&, Frame&, const Range&, unsigned margin);
+
+TextIndicator::TextIndicator(const TextIndicatorData& data)
+    : m_data(data)
+{
+}
+
+TextIndicator::~TextIndicator()
+{
+}
 
 Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
 {
     return adoptRef(*new TextIndicator(data));
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
+RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
 {
     Frame* frame = range.startContainer()->document().frame();
 
@@ -63,68 +77,133 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(range);
 
-    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*frame, presentationTransition, margin);
+    TextIndicatorData data;
+
+    data.presentationTransition = presentationTransition;
+    data.indicatesCurrentSelection = !areRangesEqual(&range, oldSelection.toNormalizedRange().get());
+    data.options = options;
+
+    if (!initializeIndicator(data, *frame, range, margin))
+        return nullptr;
+
+    RefPtr<TextIndicator> indicator = TextIndicator::create(data);
 
     frame->selection().setSelection(oldSelection);
-
-    if (indicator)
-        indicator->setWantsMargin(!areRangesEqual(&range, oldSelection.toNormalizedRange().get()));
 
 #if PLATFORM(IOS)
     frame->editor().setIgnoreCompositionSelectionChange(false, Editor::RevealSelection::No);
     frame->selection().setUpdateAppearanceEnabled(false);
 #endif
 
-    return indicator.release();
+    return indicator;
 }
 
-// FIXME (138889): Ideally the FrameSnapshotting functions would be more flexible
-// and we wouldn't have to implement this here.
-static RefPtr<Image> snapshotSelectionWithHighlight(Frame& frame)
+RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
 {
-    auto& selection = frame.selection();
-
-    if (!selection.isRange())
+    RefPtr<Range> range = frame.selection().toNormalizedRange();
+    if (!range)
         return nullptr;
 
-    FloatRect selectionBounds = selection.selectionBounds();
+    TextIndicatorData data;
 
-    // It is possible for the selection bounds to be empty; see https://bugs.webkit.org/show_bug.cgi?id=56645.
-    if (selectionBounds.isEmpty())
+    data.presentationTransition = presentationTransition;
+    data.indicatesCurrentSelection = true;
+    data.options = options;
+
+    if (!initializeIndicator(data, frame, *range, margin))
         return nullptr;
 
-    std::unique_ptr<ImageBuffer> snapshot = snapshotFrameRect(frame, enclosingIntRect(selectionBounds), 0);
-
-    if (!snapshot)
-        return nullptr;
-
-    return snapshot->copyImage(CopyBackingStore, Unscaled);
+    return TextIndicator::create(data);
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
+static bool hasNonInlineOrReplacedElements(const Range& range)
+{
+    Node* stopNode = range.pastLastNode();
+    for (Node* node = range.firstNode(); node != stopNode; node = NodeTraversal::next(*node)) {
+        if (!node)
+            continue;
+        RenderObject* renderer = node->renderer();
+        if (!renderer)
+            continue;
+        if ((!renderer->isInline() || renderer->isReplaced()) && range.intersectsNode(node, ASSERT_NO_EXCEPTION))
+            return true;
+    }
+
+    return false;
+}
+
+static SnapshotOptions snapshotOptionsForTextIndicatorOptions(TextIndicatorOptions options)
+{
+    SnapshotOptions snapshotOptions = SnapshotOptionsNone;
+    if (!(options & TextIndicatorOptionRespectTextColor))
+        snapshotOptions |= SnapshotOptionsForceBlackText;
+
+    if (!(options & TextIndicatorOptionPaintAllContent)) {
+        if (options & TextIndicatorOptionPaintBackgrounds)
+            snapshotOptions |= SnapshotOptionsPaintSelectionAndBackgroundsOnly;
+        else
+            snapshotOptions |= SnapshotOptionsPaintSelectionOnly;
+    } else
+        snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
+
+    return snapshotOptions;
+}
+
+static RefPtr<Image> takeSnapshot(Frame& frame, IntRect rect, SnapshotOptions options, float& scaleFactor)
+{
+    std::unique_ptr<ImageBuffer> buffer = snapshotFrameRect(frame, rect, options);
+    if (!buffer)
+        return nullptr;
+    scaleFactor = buffer->resolutionScale();
+    return buffer->copyImage(CopyBackingStore, Unscaled);
+}
+
+static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapshotRect)
+{
+    SnapshotOptions snapshotOptions = snapshotOptionsForTextIndicatorOptions(data.options);
+
+    data.contentImage = takeSnapshot(frame, snapshotRect, snapshotOptions, data.contentImageScaleFactor);
+    if (!data.contentImage)
+        return false;
+
+    if (data.options & TextIndicatorOptionIncludeSnapshotWithSelectionHighlight) {
+        float snapshotScaleFactor;
+        data.contentImageWithHighlight = takeSnapshot(frame, snapshotRect, SnapshotOptionsNone, snapshotScaleFactor);
+        ASSERT(!data.contentImageWithHighlight || data.contentImageScaleFactor == snapshotScaleFactor);
+    }
+    
+    return true;
+}
+
+static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Range& range, unsigned margin)
 {
     Vector<FloatRect> textRects;
 
-    // On iOS, we don't need to expand the TextIndicator to cover the whole selection height.
-    // FIXME: Ideally, on Mac, there are times when we don't need to (if we don't have a selection),
-    // and using TextHeight would provide a more sensible appearance.
-#if PLATFORM(IOS)
-    FrameSelection::TextRectangleHeight textRectHeight = FrameSelection::TextRectangleHeight::TextHeight;
-#else
-    FrameSelection::TextRectangleHeight textRectHeight = FrameSelection::TextRectangleHeight::SelectionHeight;
-#endif
-    frame.selection().getClippedVisibleTextRectangles(textRects, textRectHeight);
+    FrameSelection::TextRectangleHeight textRectHeight = (data.options & TextIndicatorOptionTightlyFitContent) ? FrameSelection::TextRectangleHeight::TextHeight : FrameSelection::TextRectangleHeight::SelectionHeight;
 
-    // The bounding rect of all the text rects can be different than the selection
-    // rect when the selection spans multiple lines; the indicator doesn't actually
-    // care where the selection highlight goes, just where the text actually is.
+    if ((data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges) && hasNonInlineOrReplacedElements(range))
+        data.options |= TextIndicatorOptionPaintAllContent;
+    else
+        frame.selection().getClippedVisibleTextRectangles(textRects, textRectHeight);
+
+    if (textRects.isEmpty()) {
+        RenderView* renderView = frame.contentRenderer();
+        if (!renderView)
+            return false;
+        // Clip to the visible rect, just like getClippedVisibleTextRectangles does.
+        // FIXME: We really want to clip to the unobscured rect in both cases, I think.
+        // (this seems to work on Mac, but maybe not iOS?)
+        FloatRect visibleContentRect = frame.view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+        FloatRect boundingRect = range.absoluteBoundingRect();
+        textRects.append(intersection(visibleContentRect, boundingRect));
+    }
+
     FloatRect textBoundingRectInRootViewCoordinates;
     FloatRect textBoundingRectInDocumentCoordinates;
     Vector<FloatRect> textRectsInRootViewCoordinates;
     for (const FloatRect& textRect : textRects) {
         FloatRect textRectInDocumentCoordinatesIncludingMargin = textRect;
         textRectInDocumentCoordinatesIncludingMargin.inflate(margin);
-
         textBoundingRectInDocumentCoordinates.unite(textRectInDocumentCoordinatesIncludingMargin);
 
         FloatRect textRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(textRectInDocumentCoordinatesIncludingMargin));
@@ -138,114 +217,13 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
         textRectsInBoundingRectCoordinates.append(rect);
     }
 
-    // FIXME: We should have TextIndicator options instead of this being platform-specific.
-#if PLATFORM(IOS)
-    SnapshotOptions snapshotOptions = SnapshotOptionsPaintSelectionAndBackgroundsOnly;
-#else
-    SnapshotOptions snapshotOptions = SnapshotOptionsForceBlackText | SnapshotOptionsPaintSelectionOnly;
-#endif
-
-    std::unique_ptr<ImageBuffer> indicatorBuffer = snapshotFrameRect(frame, enclosingIntRect(textBoundingRectInDocumentCoordinates), snapshotOptions);
-    if (!indicatorBuffer)
-        return nullptr;
-    RefPtr<Image> indicatorBitmap = indicatorBuffer->copyImage(CopyBackingStore, Unscaled);
-    if (!indicatorBitmap)
-        return nullptr;
-
-    RefPtr<Image> indicatorBitmapWithHighlight;
-    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
-        indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(frame);
-
-    TextIndicatorData data;
-
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
     data.selectionRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(frame.selection().selectionBounds()));
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
     data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
-    data.contentImageScaleFactor = indicatorBuffer->resolutionScale();
-    data.contentImage = indicatorBitmap;
-    data.contentImageWithHighlight = indicatorBitmapWithHighlight;
-    data.presentationTransition = presentationTransition;
-    data.wantsMargin = true;
 
-    return TextIndicator::create(data);
-}
-
-TextIndicator::TextIndicator(const TextIndicatorData& data)
-    : m_data(data)
-{
-}
-
-TextIndicator::~TextIndicator()
-{
-}
-    
-bool TextIndicator::wantsBounce() const
-{
-    switch (m_data.presentationTransition) {
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::Bounce:
-        return true;
-        
-    case TextIndicatorPresentationTransition::FadeIn:
-    case TextIndicatorPresentationTransition::None:
-        return false;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool TextIndicator::wantsContentCrossfade() const
-{
-    if (!m_data.contentImageWithHighlight)
-        return false;
-    
-    switch (m_data.presentationTransition) {
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-        return true;
-        
-    case TextIndicatorPresentationTransition::Bounce:
-    case TextIndicatorPresentationTransition::FadeIn:
-    case TextIndicatorPresentationTransition::None:
-        return false;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool TextIndicator::wantsFadeIn() const
-{
-    switch (m_data.presentationTransition) {
-    case TextIndicatorPresentationTransition::FadeIn:
-        return true;
-        
-    case TextIndicatorPresentationTransition::Bounce:
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::None:
-        return false;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool TextIndicator::wantsManualAnimation() const
-{
-    switch (m_data.presentationTransition) {
-    case TextIndicatorPresentationTransition::FadeIn:
-        return true;
-
-    case TextIndicatorPresentationTransition::Bounce:
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::None:
-        return false;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
+    return takeSnapshots(data, frame, enclosingIntRect(textBoundingRectInDocumentCoordinates));
 }
 
 } // namespace WebCore

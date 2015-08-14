@@ -49,6 +49,8 @@ namespace WebCore {
 class Cursor;
 class TextIndicator;
 class WebMediaSessionManager;
+enum class TextIndicatorWindowLifetime : uint8_t;
+enum class TextIndicatorWindowDismissalAnimation : uint8_t;
 struct Highlight;
 struct ViewportAttributes;
 }
@@ -224,9 +226,11 @@ public:
     virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;
 #endif
 
-    virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime = WebCore::TextIndicatorLifetime::Permanent) = 0;
-    virtual void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation = WebCore::TextIndicatorDismissalAnimation::FadeOut) = 0;
+#if PLATFORM(COCOA)
+    virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorWindowLifetime) = 0;
+    virtual void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) = 0;
     virtual void setTextIndicatorAnimationProgress(float) = 0;
+#endif
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;

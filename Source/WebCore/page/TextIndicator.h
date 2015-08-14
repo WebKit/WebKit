@@ -32,18 +32,13 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
-#else
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
-#endif
-
 namespace WebCore {
 
 class Frame;
 class GraphicsContext;
 class Range;
 
+// FIXME: Move PresentationTransition to TextIndicatorWindow, because it's about presentation.
 enum class TextIndicatorPresentationTransition {
     None,
 
@@ -55,18 +50,32 @@ enum class TextIndicatorPresentationTransition {
     FadeIn,
 };
 
-enum class TextIndicatorLifetime {
-    // The TextIndicator should indicate the text until dismissed.
-    Permanent,
+// Make sure to keep these in sync with the ones in Internals.idl.
+enum TextIndicatorOption : uint8_t {
+    TextIndicatorOptionDefault = 0,
 
-    // The TextIndicator should briefly indicate the text and then automatically dismiss.
-    Temporary
-};
+    // Use the styled text color instead of forcing black text (the default)
+    TextIndicatorOptionRespectTextColor = 1 << 0,
 
-enum class TextIndicatorDismissalAnimation {
-    None,
-    FadeOut
+    // Paint backgrounds, even if they're not part of the Range
+    TextIndicatorOptionPaintBackgrounds = 1 << 1,
+
+    // Don't restrict painting to the given Range
+    TextIndicatorOptionPaintAllContent = 1 << 2,
+
+    // Take two snapshots:
+    //    - one including the selection highlight and ignoring other painting-related options
+    //    - one respecting the other painting-related options
+    TextIndicatorOptionIncludeSnapshotWithSelectionHighlight = 1 << 3,
+
+    // Tightly fit the content instead of expanding to cover the bounds of the selection highlight
+    TextIndicatorOptionTightlyFitContent = 1 << 4,
+
+    // If there are any non-inline or replaced elements in the Range, indicate the bounding rect
+    // of the range instead of the individual subrects, and don't restrict painting to the given Range
+    TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges = 1 << 5
 };
+typedef uint8_t TextIndicatorOptions;
 
 struct TextIndicatorData {
     FloatRect selectionRectInRootViewCoordinates;
@@ -76,14 +85,15 @@ struct TextIndicatorData {
     RefPtr<Image> contentImageWithHighlight;
     RefPtr<Image> contentImage;
     TextIndicatorPresentationTransition presentationTransition;
-    bool wantsMargin;
+    bool indicatesCurrentSelection;
+    TextIndicatorOptions options;
 };
 
 class TextIndicator : public RefCounted<TextIndicator> {
 public:
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
-    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, TextIndicatorPresentationTransition, unsigned margin = 0);
-    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const Range&, TextIndicatorPresentationTransition, unsigned margin = 0);
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, TextIndicatorOptions, TextIndicatorPresentationTransition, unsigned margin = 0);
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const Range&, TextIndicatorOptions, TextIndicatorPresentationTransition, unsigned margin = 0);
 
     WEBCORE_EXPORT ~TextIndicator();
 
@@ -98,14 +108,8 @@ public:
     void setPresentationTransition(TextIndicatorPresentationTransition transition) { m_data.presentationTransition = transition; }
 
     TextIndicatorData data() const { return m_data; }
-    
-    bool wantsBounce() const;
-    bool wantsContentCrossfade() const;
-    bool wantsFadeIn() const;
-    bool wantsManualAnimation() const;
 
-    void setWantsMargin(bool wantsMargin) { m_data.wantsMargin = wantsMargin; }
-    bool wantsMargin() const { return m_data.wantsMargin; }
+    bool indicatesCurrentSelection() const { return m_data.indicatesCurrentSelection; }
 
 private:
     TextIndicator(const TextIndicatorData&);

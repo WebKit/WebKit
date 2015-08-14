@@ -462,7 +462,7 @@ HRESULT AccessibleText::scrollSubstringTo(long startIndex, long endIndex, enum I
     if (textRange.start.isNull() || textRange.end.isNull())
         return S_FALSE;
 
-    IntRect boundingBox = makeRange(textRange.start, textRange.end)->boundingBox();
+    IntRect boundingBox = makeRange(textRange.start, textRange.end)->absoluteBoundingBox();
     switch (scrollType) {
     case IA2_SCROLL_TYPE_TOP_LEFT:
         m_object->scrollToGlobalPoint(boundingBox.minXMinYCorner());

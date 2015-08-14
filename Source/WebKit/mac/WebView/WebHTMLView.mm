@@ -5689,13 +5689,13 @@ static BOOL writingDirectionKeyBindingsEnabled()
     DictionaryPopupInfo info;
     info.attributedString = attrString;
     info.origin = coreFrame->view()->contentsToWindow(enclosingIntRect(rect)).location();
-    info.textIndicator = TextIndicator::createWithSelectionInFrame(*coreFrame, TextIndicatorPresentationTransition::BounceAndCrossfade);
+    info.textIndicator = TextIndicator::createWithSelectionInFrame(*coreFrame, TextIndicatorOptionIncludeSnapshotWithSelectionHighlight, TextIndicatorPresentationTransition::BounceAndCrossfade);
     [[self _webView] _showDictionaryLookupPopup:info];
 }
 
 - (void)quickLookWithEvent:(NSEvent *)event
 {
-    [[self _webView] _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
+    [[self _webView] _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
     [super quickLookWithEvent:event];
 }
 #endif // !PLATFORM(IOS)

@@ -436,7 +436,7 @@ FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) co
     if (!view)
         return FloatRect();
     Vector<FloatQuad> textQuads;
-    range->textQuads(textQuads);
+    range->absoluteTextQuads(textQuads);
     FloatRect boundingRect;
     size_t size = textQuads.size();
     for (size_t i = 0; i < size; ++i)

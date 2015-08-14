@@ -41,6 +41,7 @@
 #import <WebCore/NSPopoverSPI.h>
 #import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/URL.h>
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
@@ -477,7 +478,7 @@ using namespace WebKit;
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
     if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
         RefPtr<TextIndicator> indicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
-        [_wkView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
+        [_wkView _setTextIndicator:*indicator withLifetime:TextIndicatorWindowLifetime::Permanent];
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
         return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     }

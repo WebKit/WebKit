@@ -145,7 +145,7 @@ using namespace WebCore;
         // Adjust pos and give it an appropriate affinity.
         VisiblePosition pos;
         Vector<IntRect> intRects;
-        markedTextRange->textRects(intRects, NO);
+        markedTextRange->absoluteTextRects(intRects, NO);
         unsigned size = intRects.size();
         CGRect firstRect = intRects[0];
         CGRect lastRect  = intRects[size-1];

@@ -1,3 +1,14 @@
+2015-08-13  Tim Horton  <timothy_horton@apple.com>
+
+        Refactor and improve TextIndicator to prepare for tests
+        https://bugs.webkit.org/show_bug.cgi?id=147622
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame closestCaretRectInMarkedTextRangeForPoint:]):
+        Adjust to Range method renames.
+
 2015-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/187972.

@@ -223,21 +223,6 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, con
     return WebColorPickerGtk::create(*page, color, rect);
 }
 
-void PageClientImpl::setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime)
-{
-    notImplemented();
-}
-
-void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation)
-{
-    notImplemented();
-}
-
-void PageClientImpl::setTextIndicatorAnimationProgress(float)
-{
-    notImplemented();
-}
-
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     webkitWebViewBaseEnterAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));

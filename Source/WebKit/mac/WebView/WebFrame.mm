@@ -1102,7 +1102,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     
     
     Vector<IntRect> intRects;
-    range->textRects(intRects, NO);
+    range->absoluteTextRects(intRects, NO);
     unsigned size = intRects.size();
     
     NSMutableArray *rectArray = [NSMutableArray arrayWithCapacity:size];

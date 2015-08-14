@@ -49,6 +49,8 @@ namespace WebCore {
 class Image;
 class SharedBuffer;
 class TextIndicator;
+enum class TextIndicatorWindowLifetime : uint8_t;
+enum class TextIndicatorWindowDismissalAnimation : uint8_t;
 struct KeypressCommand;
 }
 
@@ -86,8 +88,8 @@ struct EditorState;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
 - (void)_setTextIndicator:(WebCore::TextIndicator&)textIndicator;
-- (void)_setTextIndicator:(WebCore::TextIndicator&)textIndicator withLifetime:(WebCore::TextIndicatorLifetime)lifetime;
-- (void)_clearTextIndicatorWithAnimation:(WebCore::TextIndicatorDismissalAnimation)animation;
+- (void)_setTextIndicator:(WebCore::TextIndicator&)textIndicator withLifetime:(WebCore::TextIndicatorWindowLifetime)lifetime;
+- (void)_clearTextIndicatorWithAnimation:(WebCore::TextIndicatorWindowDismissalAnimation)animation;
 - (void)_setTextIndicatorAnimationProgress:(float)progress;
 - (void)_selectionChanged;
 

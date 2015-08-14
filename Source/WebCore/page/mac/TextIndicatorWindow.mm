@@ -124,6 +124,73 @@ static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
     return false;
 }
 
+static bool indicatorWantsBounce(const TextIndicator& indicator)
+{
+    switch (indicator.presentationTransition()) {
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::Bounce:
+        return true;
+
+    case TextIndicatorPresentationTransition::FadeIn:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static bool indicatorWantsContentCrossfade(const TextIndicator& indicator)
+{
+    if (!indicator.data().contentImageWithHighlight)
+        return false;
+
+    switch (indicator.presentationTransition()) {
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::FadeIn:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static bool indicatorWantsFadeIn(const TextIndicator& indicator)
+{
+    switch (indicator.presentationTransition()) {
+    case TextIndicatorPresentationTransition::FadeIn:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
+{
+    switch (indicator.presentationTransition()) {
+    case TextIndicatorPresentationTransition::FadeIn:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 - (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin offset:(NSPoint)offset
 {
     if (!(self = [super initWithFrame:frame]))
@@ -138,7 +205,7 @@ static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
     FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
     contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
     RetainPtr<CGImageRef> contentsImage;
-    if (_textIndicator->wantsContentCrossfade())
+    if (indicatorWantsContentCrossfade(*_textIndicator))
         contentsImage = _textIndicator->contentImageWithHighlight()->getCGImageRef();
     else
         contentsImage = _textIndicator->contentImage()->getCGImageRef();
@@ -177,7 +244,7 @@ static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
         FloatRect yellowHighlightRect(FloatPoint(), bounceLayerRect.size());
         // FIXME (138888): Ideally we wouldn't remove the margin in this case, but we need to
         // ensure that the yellow highlight and contentImageWithHighlight overlap precisely.
-        if (!_textIndicator->wantsMargin()) {
+        if (!_textIndicator->indicatesCurrentSelection()) {
             yellowHighlightRect.inflateX(-horizontalBorder);
             yellowHighlightRect.inflateY(-verticalBorder);
         }
@@ -288,8 +355,8 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
 
 - (CFTimeInterval)_animationDuration
 {
-    if (_textIndicator->wantsBounce()) {
-        if (_textIndicator->wantsContentCrossfade())
+    if (indicatorWantsBounce(*_textIndicator)) {
+        if (indicatorWantsContentCrossfade(*_textIndicator))
             return bounceWithCrossfadeAnimationDuration;
         return bounceAnimationDuration;
     }
@@ -304,9 +371,9 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
 
 - (void)present
 {
-    bool wantsBounce = _textIndicator->wantsBounce();
-    bool wantsCrossfade = _textIndicator->wantsContentCrossfade();
-    bool wantsFadeIn = _textIndicator->wantsFadeIn();
+    bool wantsBounce = indicatorWantsBounce(*_textIndicator);
+    bool wantsCrossfade = indicatorWantsContentCrossfade(*_textIndicator);
+    bool wantsFadeIn = indicatorWantsFadeIn(*_textIndicator);
     CFTimeInterval animationDuration = [self _animationDuration];
 
     _hasCompletedAnimation = false;
@@ -326,7 +393,7 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
 
     [CATransaction begin];
     for (CALayer *bounceLayer in _bounceLayers.get()) {
-        if (_textIndicator->wantsManualAnimation())
+        if (indicatorWantsManualAnimation(*_textIndicator))
             bounceLayer.speed = 0;
 
         if (!wantsFadeIn)
@@ -398,7 +465,7 @@ TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
 
 TextIndicatorWindow::~TextIndicatorWindow()
 {
-    clearTextIndicator(TextIndicatorDismissalAnimation::FadeOut);
+    clearTextIndicator(TextIndicatorWindowDismissalAnimation::FadeOut);
 }
 
 void TextIndicatorWindow::setAnimationProgress(float progress)
@@ -409,14 +476,14 @@ void TextIndicatorWindow::setAnimationProgress(float progress)
     [m_textIndicatorView setAnimationProgress:progress];
 }
 
-void TextIndicatorWindow::clearTextIndicator(TextIndicatorDismissalAnimation animation)
+void TextIndicatorWindow::clearTextIndicator(TextIndicatorWindowDismissalAnimation animation)
 {
     RefPtr<TextIndicator> textIndicator = WTF::move(m_textIndicator);
 
     if ([m_textIndicatorView isFadingOut])
         return;
 
-    if (textIndicator && textIndicator->wantsManualAnimation() && [m_textIndicatorView hasCompletedAnimation] && animation == TextIndicatorDismissalAnimation::FadeOut) {
+    if (textIndicator && indicatorWantsManualAnimation(*textIndicator) && [m_textIndicatorView hasCompletedAnimation] && animation == TextIndicatorWindowDismissalAnimation::FadeOut) {
         startFadeOut();
         return;
     }
@@ -424,7 +491,7 @@ void TextIndicatorWindow::clearTextIndicator(TextIndicatorDismissalAnimation ani
     closeWindow();
 }
 
-void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGRect textBoundingRectInScreenCoordinates, TextIndicatorLifetime lifetime)
+void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGRect textBoundingRectInScreenCoordinates, TextIndicatorWindowLifetime lifetime)
 {
     if (m_textIndicator == textIndicator.ptr())
         return;
@@ -436,7 +503,7 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     CGFloat horizontalMargin = dropShadowBlurRadius * 2 + horizontalBorder;
     CGFloat verticalMargin = dropShadowBlurRadius * 2 + verticalBorder;
     
-    if (m_textIndicator->wantsBounce()) {
+    if (indicatorWantsBounce(*m_textIndicator)) {
         horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (midBounceScale - 1) + horizontalMargin);
         verticalMargin = std::max(verticalMargin, textBoundingRectInScreenCoordinates.size.height * (midBounceScale - 1) + verticalMargin);
     }
@@ -463,7 +530,7 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None)
         [m_textIndicatorView present];
 
-    if (lifetime == TextIndicatorLifetime::Temporary)
+    if (lifetime == TextIndicatorWindowLifetime::Temporary)
         m_temporaryTextIndicatorTimer.startOneShot(timeBeforeFadeStarts);
 }
 
