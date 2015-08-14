@@ -76,26 +76,24 @@ BuildbotQueueView.prototype = {
         if (!latestProductiveIteration)
             return;
 
-        var webkitTrac = Dashboard.Repository.OpenSource.trac;
-        var internalTrac = Dashboard.Repository.Internal.trac;
-        var latestRecordedOpenSourceRevisionNumber = webkitTrac.latestRecordedRevisionNumber;
-        if (!latestRecordedOpenSourceRevisionNumber || webkitTrac.oldestRecordedRevisionNumber > latestProductiveIteration.revision[Dashboard.Repository.OpenSource.name]) {
-            webkitTrac.loadMoreHistoricalData();
-            return;
-        }
+        var totalRevisionsBehind = 0;
 
         // FIXME: To be 100% correct, we should also filter out changes that are ignored by
         // the queue, see _should_file_trigger_build in wkbuild.py.
-        var totalRevisionsBehind = webkitTrac.commitsOnBranch(queue.branch.openSource, function(commit) { return commit.revisionNumber > latestProductiveIteration.revision[Dashboard.Repository.OpenSource.name]; }).length;
-
-        if (latestProductiveIteration.revision[Dashboard.Repository.Internal.name]) {
-            var latestRecordedInternalRevisionNumber = internalTrac.latestRecordedRevisionNumber;
-            if (!latestRecordedInternalRevisionNumber || internalTrac.oldestRecordedRevisionNumber > latestProductiveIteration.revision[Dashboard.Repository.Internal.name]) {
-                internalTrac.loadMoreHistoricalData();
+        var sortedRepositories = Dashboard.sortedRepositories;
+        for (var i = 0; i < sortedRepositories.length; i++) {
+            var repository = sortedRepositories[i];
+            var trac = repository.trac;
+            var repositoryName = repository.name;
+            var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
+            if (!latestProductiveRevisionNumber)
+                continue;
+            if (!trac.latestRecordedRevisionNumber || trac.oldestRecordedRevisionNumber > latestProductiveRevisionNumber) {
+                trac.loadMoreHistoricalData();
                 return;
             }
 
-            totalRevisionsBehind += internalTrac.commitsOnBranch(queue.branch.internal, function(commit) { return commit.revisionNumber > latestProductiveIteration.revision[Dashboard.Repository.Internal.name]; }).length;
+            totalRevisionsBehind += trac.commitsOnBranch(queue.branch[repositoryName], function(commit) { return commit.revisionNumber > latestProductiveRevisionNumber; }).length;
         }
 
         if (!totalRevisionsBehind)
