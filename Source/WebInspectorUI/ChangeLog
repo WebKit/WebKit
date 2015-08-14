@@ -1,3 +1,15 @@
+2015-08-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r188396): Rendering Frames timeline ruler dividers are off by 1px
+        https://bugs.webkit.org/show_bug.cgi?id=148040
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview.frames > .timeline-ruler > .markers > .divider):
+        (.timeline-overview.frames > .timeline-ruler > .header > .divider): Deleted.
+        All ruler dividers should be translated by the same amount.
+
 2015-08-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Style changes to Visual sidebar editors

@@ -53,7 +53,8 @@
     right: 0;
 }
 
-.timeline-overview.frames > .timeline-ruler > .header > .divider {
+.timeline-overview.frames > .timeline-ruler > .header > .divider,
+.timeline-overview.frames > .timeline-ruler > .markers > .divider {
     -webkit-transform: translateX(0px);
 }
 
@@ -61,7 +62,6 @@
     -webkit-transform: translateX(5px);
 }
 
-.timeline-overview.frames > .timeline-ruler > .markers > .divider,
 .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right {
     -webkit-transform: translateX(1px);
 }
