@@ -77,20 +77,6 @@ static void webkitUserMediaPermissionRequestAllow(WebKitPermissionRequest* reque
     priv->request->allow(videoDevice, audioDevice);
 }
 
-static void webkitUserMediaPermissionRequestAllow(WebKitPermissionRequest* request, const char* videoDeviceUID, const char* audioDeviceUID)
-{
-    ASSERT(WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request));
-
-    WebKitUserMediaPermissionRequestPrivate* priv = WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request)->priv;
-
-    // Only one decision at a time.
-    if (priv->madeDecision)
-        return;
-
-    priv->madeDecision = true;
-    priv->request->allow(String::fromUTF8(videoDeviceUID), String::fromUTF8(audioDeviceUID));
-}
-
 static void webkitUserMediaPermissionRequestDeny(WebKitPermissionRequest* request)
 {
     ASSERT(WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request));

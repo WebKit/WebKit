@@ -1,3 +1,10 @@
+2015-08-14  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, remove dead code after r188385.
+
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp:
+        (webkitUserMediaPermissionRequestAllow): Deleted.
+
 2015-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build with !ENABLE(MEDIA_STREAM) after r188385.
