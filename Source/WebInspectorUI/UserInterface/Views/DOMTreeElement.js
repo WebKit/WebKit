@@ -41,7 +41,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             this._canAddAttributes = true;
         this._searchQuery = null;
         this._expandedChildrenLimit = WebInspector.DOMTreeElement.InitialChildrenLimit;
+
         this._nodeStateChanges = [];
+        this._boundNodeChangedAnimationEnd = this._nodeChangedAnimationEnd.bind(this);
     }
 
     isCloseTag()
@@ -1462,22 +1464,27 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _markNodeChanged()
     {
-        function animationEnd() {
-            this.classList.remove("node-state-changed");
-            this.removeEventListener("animationEnd", animationEnd);
-        }
-
         for (let change of this._nodeStateChanges) {
             let element = change.element;
             if (!element)
                 continue;
 
             element.classList.remove("node-state-changed");
-            element.addEventListener("animationEnd", animationEnd);
+            element.addEventListener("animationend", this._boundNodeChangedAnimationEnd);
             element.classList.add("node-state-changed");
         }
+    }
 
-        this._nodeStateChanges = [];
+    _nodeChangedAnimationEnd(event)
+    {
+        let element = event.target;
+        element.classList.remove("node-state-changed");
+        element.removeEventListener("animationend", this._boundNodeChangedAnimationEnd);
+
+        for (let i = this._nodeStateChanges.length - 1; i >= 0; --i) {
+            if (this._nodeStateChanges[i].element === element)
+                this._nodeStateChanges.splice(i, 1);
+        }
     }
 
     _fireDidChange()

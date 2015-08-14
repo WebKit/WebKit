@@ -1,3 +1,15 @@
+2015-08-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Highlight DOM node attribute changes in parallel, not sequentially
+        https://bugs.webkit.org/show_bug.cgi?id=148019
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._markNodeChanged):
+        (WebInspector.DOMTreeElement.prototype._nodeChangedAnimationEnd):
+        Now removes the animated element from the updated list once the animation ends.
+
 2015-08-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Long delay when row selection changes in timeline data grids
