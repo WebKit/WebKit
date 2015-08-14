@@ -78,7 +78,7 @@ public:
     const Identifier& inferredName() const { return m_inferredName; }
     JSString* nameValue() const { return m_nameValue.get(); }
     unsigned parameterCount() const { return m_parameterCount; };
-    FunctionParseMode parseMode() const { return m_parseMode; };
+    SourceParseMode parseMode() const { return m_parseMode; };
     bool isInStrictContext() const { return m_isInStrictContext; }
     FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
@@ -146,7 +146,7 @@ private:
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount;
-    FunctionParseMode m_parseMode;
+    SourceParseMode m_parseMode;
 
     CodeFeatures m_features;
 

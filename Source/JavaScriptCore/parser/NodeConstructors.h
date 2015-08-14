@@ -738,7 +738,7 @@ namespace JSC {
     {
     }
 
-    inline ModuleSpecifierNode::ModuleSpecifierNode(const JSTokenLocation& location, const Identifier& moduleName)
+    inline ModuleNameNode::ModuleNameNode(const JSTokenLocation& location, const Identifier& moduleName)
         : Node(location)
         , m_moduleName(moduleName)
     {
@@ -751,16 +751,16 @@ namespace JSC {
     {
     }
 
-    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName)
         : ModuleDeclarationNode(location)
         , m_specifierList(importSpecifierList)
-        , m_moduleSpecifier(moduleSpecifier)
+        , m_moduleName(moduleName)
     {
     }
 
-    inline ExportAllDeclarationNode::ExportAllDeclarationNode(const JSTokenLocation& location, ModuleSpecifierNode* moduleSpecifier)
+    inline ExportAllDeclarationNode::ExportAllDeclarationNode(const JSTokenLocation& location, ModuleNameNode* moduleName)
         : ModuleDeclarationNode(location)
-        , m_moduleSpecifier(moduleSpecifier)
+        , m_moduleName(moduleName)
     {
     }
 
@@ -777,10 +777,10 @@ namespace JSC {
     {
     }
 
-    inline ExportNamedDeclarationNode::ExportNamedDeclarationNode(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+    inline ExportNamedDeclarationNode::ExportNamedDeclarationNode(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleNameNode* moduleName)
         : ModuleDeclarationNode(location)
         , m_specifierList(exportSpecifierList)
-        , m_moduleSpecifier(moduleSpecifier)
+        , m_moduleName(moduleName)
     {
     }
 

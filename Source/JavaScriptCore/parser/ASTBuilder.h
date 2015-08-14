@@ -112,7 +112,7 @@ public:
 #if ENABLE(ES6_CLASS_SYNTAX)
     typedef ClassExprNode* ClassExpression;
 #endif
-    typedef ModuleSpecifierNode* ModuleSpecifier;
+    typedef ModuleNameNode* ModuleName;
     typedef ImportSpecifierNode* ImportSpecifier;
     typedef ImportSpecifierListNode* ImportSpecifierList;
     typedef ExportSpecifierNode* ExportSpecifier;
@@ -361,7 +361,7 @@ public:
         const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, 
         unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
         int functionNameStart, int parametersStart, bool inStrictContext, 
-        ConstructorKind constructorKind, unsigned parameterCount, FunctionParseMode mode)
+        ConstructorKind constructorKind, unsigned parameterCount, SourceParseMode mode)
     {
         return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, 
@@ -619,9 +619,9 @@ public:
         return result;
     }
 
-    ModuleSpecifierNode* createModuleSpecifier(const JSTokenLocation& location, const Identifier& moduleName)
+    ModuleNameNode* createModuleName(const JSTokenLocation& location, const Identifier& moduleName)
     {
-        return new (m_parserArena) ModuleSpecifierNode(location, moduleName);
+        return new (m_parserArena) ModuleNameNode(location, moduleName);
     }
 
     ImportSpecifierNode* createImportSpecifier(const JSTokenLocation& location, const Identifier& importedName, const Identifier& localName)
@@ -639,14 +639,14 @@ public:
         specifierList->append(specifier);
     }
 
-    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName)
     {
-        return new (m_parserArena) ImportDeclarationNode(location, importSpecifierList, moduleSpecifier);
+        return new (m_parserArena) ImportDeclarationNode(location, importSpecifierList, moduleName);
     }
 
-    StatementNode* createExportAllDeclaration(const JSTokenLocation& location, ModuleSpecifierNode* moduleSpecifier)
+    StatementNode* createExportAllDeclaration(const JSTokenLocation& location, ModuleNameNode* moduleName)
     {
-        return new (m_parserArena) ExportAllDeclarationNode(location, moduleSpecifier);
+        return new (m_parserArena) ExportAllDeclarationNode(location, moduleName);
     }
 
     StatementNode* createExportDefaultDeclaration(const JSTokenLocation& location, StatementNode* declaration, const Identifier& localName)
@@ -659,9 +659,9 @@ public:
         return new (m_parserArena) ExportLocalDeclarationNode(location, declaration);
     }
 
-    StatementNode* createExportNamedDeclaration(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleSpecifierNode* moduleSpecifier)
+    StatementNode* createExportNamedDeclaration(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleNameNode* moduleName)
     {
-        return new (m_parserArena) ExportNamedDeclarationNode(location, exportSpecifierList, moduleSpecifier);
+        return new (m_parserArena) ExportNamedDeclarationNode(location, exportSpecifierList, moduleName);
     }
 
     ExportSpecifierNode* createExportSpecifier(const JSTokenLocation& location, const Identifier& localName, const Identifier& exportedName)

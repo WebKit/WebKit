@@ -151,7 +151,7 @@ FunctionMetadataNode::FunctionMetadataNode(
     ParserArena&, const JSTokenLocation& startLocation, 
     const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, 
     int functionKeywordStart, int functionNameStart, int parametersStart, bool isInStrictContext, 
-    ConstructorKind constructorKind, unsigned parameterCount, FunctionParseMode mode)
+    ConstructorKind constructorKind, unsigned parameterCount, SourceParseMode mode)
         : Node(endLocation)
         , m_startColumn(startColumn)
         , m_endColumn(endColumn)

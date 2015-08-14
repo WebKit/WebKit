@@ -203,6 +203,7 @@ namespace JSC {
         virtual bool isContinue() const { return false; }
         virtual bool isBlock() const { return false; }
         virtual bool isFuncDeclNode() const { return false; }
+        virtual bool isModuleDeclarationNode() const { return false; }
 
     protected:
         StatementNode* m_next;
@@ -1641,9 +1642,9 @@ namespace JSC {
         unsigned m_endColumn;
     };
 
-    class ModuleSpecifierNode : public Node {
+    class ModuleNameNode : public Node {
     public:
-        ModuleSpecifierNode(const JSTokenLocation&, const Identifier& moduleName);
+        ModuleNameNode(const JSTokenLocation&, const Identifier& moduleName);
 
         const Identifier& moduleName() { return m_moduleName; }
 
@@ -1680,6 +1681,7 @@ namespace JSC {
     class ModuleDeclarationNode : public StatementNode {
     public:
         virtual void analyzeModule(ModuleAnalyzer&) = 0;
+        virtual bool isModuleDeclarationNode() const { return true; }
 
     protected:
         ModuleDeclarationNode(const JSTokenLocation&);
@@ -1687,30 +1689,30 @@ namespace JSC {
 
     class ImportDeclarationNode : public ModuleDeclarationNode {
     public:
-        ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleSpecifierNode*);
+        ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleNameNode*);
 
         ImportSpecifierListNode* specifierList() const { return m_specifierList; }
-        ModuleSpecifierNode* moduleSpecifier() const { return m_moduleSpecifier; }
+        ModuleNameNode* moduleName() const { return m_moduleName; }
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
         virtual void analyzeModule(ModuleAnalyzer&) override;
 
         ImportSpecifierListNode* m_specifierList;
-        ModuleSpecifierNode* m_moduleSpecifier;
+        ModuleNameNode* m_moduleName;
     };
 
     class ExportAllDeclarationNode : public ModuleDeclarationNode {
     public:
-        ExportAllDeclarationNode(const JSTokenLocation&, ModuleSpecifierNode*);
+        ExportAllDeclarationNode(const JSTokenLocation&, ModuleNameNode*);
 
-        ModuleSpecifierNode* moduleSpecifier() const { return m_moduleSpecifier; }
+        ModuleNameNode* moduleName() const { return m_moduleName; }
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
         virtual void analyzeModule(ModuleAnalyzer&) override;
 
-        ModuleSpecifierNode* m_moduleSpecifier;
+        ModuleNameNode* m_moduleName;
     };
 
     class ExportDefaultDeclarationNode : public ModuleDeclarationNode {
@@ -1767,16 +1769,16 @@ namespace JSC {
 
     class ExportNamedDeclarationNode : public ModuleDeclarationNode {
     public:
-        ExportNamedDeclarationNode(const JSTokenLocation&, ExportSpecifierListNode*, ModuleSpecifierNode*);
+        ExportNamedDeclarationNode(const JSTokenLocation&, ExportSpecifierListNode*, ModuleNameNode*);
 
         ExportSpecifierListNode* specifierList() const { return m_specifierList; }
-        ModuleSpecifierNode* moduleSpecifier() const { return m_moduleSpecifier; }
+        ModuleNameNode* moduleName() const { return m_moduleName; }
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
         virtual void analyzeModule(ModuleAnalyzer&) override;
         ExportSpecifierListNode* m_specifierList;
-        ModuleSpecifierNode* m_moduleSpecifier { nullptr };
+        ModuleNameNode* m_moduleName { nullptr };
     };
 
     class FunctionParameters : public ParserArenaDeletable {
@@ -1807,7 +1809,7 @@ namespace JSC {
             ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
             unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
             int functionNameStart, int parametersStart, bool isInStrictContext, 
-            ConstructorKind, unsigned, FunctionParseMode);
+            ConstructorKind, unsigned, SourceParseMode);
 
         void finishParsing(const SourceCode&, const Identifier&, FunctionMode);
         
@@ -1824,7 +1826,7 @@ namespace JSC {
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
         unsigned parameterCount() const { return m_parameterCount; }
-        FunctionParseMode parseMode() const { return m_parseMode; }
+        SourceParseMode parseMode() const { return m_parseMode; }
 
         void setEndPosition(JSTextPosition);
 
@@ -1855,7 +1857,7 @@ namespace JSC {
         int m_startStartOffset;
         unsigned m_parameterCount;
         int m_lastLine;
-        FunctionParseMode m_parseMode;
+        SourceParseMode m_parseMode;
         unsigned m_isInStrictContext : 1;
         unsigned m_constructorKind : 2;
     };

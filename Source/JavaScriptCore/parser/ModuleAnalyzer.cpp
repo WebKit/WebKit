@@ -100,10 +100,10 @@ void ModuleAnalyzer::exportVariable(const RefPtr<UniquedStringImpl>& localName, 
 Ref<ModuleRecord> ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
 {
     // Traverse the module AST and collect
-    // 1. Import entries
-    // 2. Export entries that have FromClause (e.g. export { a } from "mod")
-    // 3. Export entries that have star (e.g. export * from "mod")
-    // 4. Aliased export names (e.g. export { a as b })
+    // * Import entries
+    // * Export entries that have FromClause (e.g. export { a } from "mod")
+    // * Export entries that have star (e.g. export * from "mod")
+    // * Aliased export names (e.g. export { a as b })
     moduleProgramNode.analyzeModule(*this);
 
     // Based on the collected information, categorize export entries into 3 types.

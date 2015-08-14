@@ -54,9 +54,9 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(
 {
     JSParserBuiltinMode builtinMode = executable->isBuiltinFunction() ? JSParserBuiltinMode::Builtin : JSParserBuiltinMode::NotBuiltin;
     JSParserStrictMode strictMode = executable->isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
+    ASSERT(isFunctionParseMode(executable->parseMode()));
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
-        &vm, source, executable->name(), builtinMode, strictMode, 
-        JSParserCodeType::Function, error, nullptr, executable->parseMode());
+        &vm, source, executable->name(), builtinMode, strictMode, executable->parseMode(), error, nullptr);
 
     if (!function) {
         ASSERT(error.isValid());
