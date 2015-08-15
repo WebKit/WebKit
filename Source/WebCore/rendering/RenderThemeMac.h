@@ -196,6 +196,7 @@ private:
 
     // Helpers for adjusting appearance and for painting
 
+    void paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell*, const RenderObject&, const PaintInfo&, const FloatRect&);
     void setPopupButtonCellState(const RenderObject&, const IntSize&);
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;

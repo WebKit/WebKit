@@ -437,9 +437,9 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
 
         [toggleButtonCell _renderCurrentAnimationFrameInContext:context->platformContext() atLocation:NSMakePoint(0, 0)];
         if (![toggleButtonCell _stateAnimationRunning] && isCellFocused)
-            needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell, context, inflatedRect, view, false, true, useImageBuffer, deviceScaleFactor);
+            needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, false, true, useImageBuffer, deviceScaleFactor);
     } else
-        needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell, context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
+        needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
 #else
     needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell, context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
 #endif
@@ -664,7 +664,7 @@ void ThemeMac::setFocusRingClipRect(const FloatRect& rect)
 
 const float buttonFocusRectOutlineWidth = 3.0f;
 
-bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(RetainPtr<NSCell> cell, GraphicsContext* context, const FloatRect& inflatedRect, NSView* view, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor)
+bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell* cell, GraphicsContext* context, const FloatRect& inflatedRect, NSView* view, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor)
 {
     ASSERT(drawButtonCell || drawFocusRing);
     bool needsRepaint = false;
@@ -677,7 +677,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(RetainPtr<NSCell> cell, Gr
                 [cell drawWithFrame:imageBufferDrawRect inView:view];
             
             if (drawFocusRing)
-                needsRepaint = drawCellFocusRing(cell.get(), imageBufferDrawRect, view);
+                needsRepaint = drawCellFocusRing(cell, imageBufferDrawRect, view);
         }
         context->drawImageBuffer(imageBuffer.get(), ColorSpaceSRGB, inflatedRect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
         return needsRepaint;
@@ -686,7 +686,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(RetainPtr<NSCell> cell, Gr
         [cell drawWithFrame:NSRect(inflatedRect) inView:view];
     
     if (drawFocusRing)
-        needsRepaint = drawCellFocusRing(cell.get(), NSRect(inflatedRect), view);
+        needsRepaint = drawCellFocusRing(cell, NSRect(inflatedRect), view);
     
     return needsRepaint;
 }

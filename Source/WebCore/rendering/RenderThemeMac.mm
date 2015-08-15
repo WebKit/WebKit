@@ -946,16 +946,7 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
         paintInfo.context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
-    NSView *view = documentViewFor(renderer);
-    Page* page = renderer.document().page();
-    float pageScaleFactor = page->pageScaleFactor();
-    float deviceScaleFactor = page->deviceScaleFactor();
-    bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto();
-    bool shouldUseImageBuffer = zoomLevel != 1.0f || pageScaleFactor != 1.0f;
-    bool shouldDrawCell = true;
-    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(popupButton, paintInfo.context, inflatedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor))
-        page->focusController().setFocusedElementNeedsRepaint();
-
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(popupButton, renderer, paintInfo, inflatedRect);
     [popupButton setControlView:nil];
 
     return false;
@@ -1464,6 +1455,16 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
     updatePressedState(popupButton, o);
 }
 
+void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell* cell, const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    Page* page = renderer.document().page();
+    bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto();
+    bool shouldUseImageBuffer = renderer.style().effectiveZoom() != 1 || page->pageScaleFactor() != 1;
+    bool shouldDrawCell = true;
+    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context, rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, page->deviceScaleFactor()))
+        page->focusController().setFocusedElementNeedsRepaint();
+}
+
 const IntSize* RenderThemeMac::menuListSizes() const
 {
     static const IntSize sizes[3] = { IntSize(9, 0), IntSize(5, 0), IntSize(0, 0) };
@@ -1616,17 +1617,10 @@ bool RenderThemeMac::paintSearchField(const RenderObject& o, const PaintInfo& pa
     // Set the search button to nil before drawing.  Then reset it so we can draw it later.
     [search setSearchButtonCell:nil];
 
-    NSView *documentView = documentViewFor(o);
-    [search drawWithFrame:NSRect(unzoomedRect) inView:documentView];
-
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(search, o, paintInfo, unzoomedRect);
     [search setControlView:nil];
     [search resetSearchButtonCell];
 
-    if (isFocused(o) && o.style().outlineStyleIsAuto()) {
-        if (wkDrawCellFocusRingWithFrameAtTime(search, NSRect(unzoomedRect), documentView, std::numeric_limits<double>::max()))
-            o.document().page()->focusController().setFocusedElementNeedsRepaint();
-    }
-    
     return false;
 }
 
