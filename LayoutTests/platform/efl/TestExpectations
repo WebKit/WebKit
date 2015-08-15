@@ -404,6 +404,9 @@ webkit.org/b/85465 compositing/filters [ Skip ]
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 
+# Some CSS properties not supported on EFL
+fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
+
 # Perf tests are really slow in debug builds and there are few benefits in running them.
 [ Debug ] perf [ WontFix ]
 

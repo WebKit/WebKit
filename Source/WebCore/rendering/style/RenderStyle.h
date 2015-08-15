@@ -113,7 +113,6 @@ class StyleImage;
 class StyleInheritedData;
 class StyleResolver;
 class TransformationMatrix;
-class WillChangeData;
 
 struct ScrollSnapPoints;
 
@@ -1801,6 +1800,14 @@ public:
 
     WillChangeData* willChange() const { return rareNonInheritedData->m_willChange.get(); }
     void setWillChange(PassRefPtr<WillChangeData>);
+
+    bool willChangeCreatesStackingContext() const
+    {
+        if (!willChange())
+            return false;
+        
+        return willChange()->createsStackingContext();
+    }
 
     const AtomicString& hyphenString() const;
 

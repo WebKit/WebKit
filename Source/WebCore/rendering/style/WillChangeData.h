@@ -53,6 +53,7 @@ public:
     bool containsScrollPosition() const;
     bool containsContents() const;
     bool containsProperty(CSSPropertyID) const;
+    bool createsStackingContext() const;
 
     enum Feature {
         ScrollPosition,
