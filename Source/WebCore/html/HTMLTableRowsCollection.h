@@ -29,14 +29,14 @@
 #ifndef HTMLTableRowsCollection_h
 #define HTMLTableRowsCollection_h
 
-#include "CachedHTMLCollection.h"
+#include "HTMLCollection.h"
 #include "HTMLTableElement.h"
 
 namespace WebCore {
 
 class HTMLTableRowElement;
 
-class HTMLTableRowsCollection final : public CachedHTMLCollection<HTMLTableRowsCollection, CollectionTypeTraits<TableRows>::traversalType> {
+class HTMLTableRowsCollection final : public HTMLCollection {
 public:
     static Ref<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
 
@@ -46,11 +46,10 @@ public:
     static HTMLTableRowElement* rowAfter(HTMLTableElement&, HTMLTableRowElement*);
     static HTMLTableRowElement* lastRow(HTMLTableElement&);
 
-    // For CachedHTMLCollection.
-    Element* customElementAfter(Element*) const;
-
 private:
     explicit HTMLTableRowsCollection(HTMLTableElement&);
+
+    virtual Element* customElementAfter(Element*) const override;
 };
 
 } // namespace WebCore

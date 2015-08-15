@@ -113,6 +113,7 @@ class HTMLIFrameElement;
 class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
+class HTMLNameCollection;
 class HTMLScriptElement;
 class HitTestRequest;
 class HitTestResult;
@@ -1344,8 +1345,7 @@ private:
 
     Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint = nullptr);
 
-    template <CollectionType collectionType>
-    Ref<HTMLCollection> ensureCachedCollection();
+    Ref<HTMLCollection> ensureCachedCollection(CollectionType);
 
 #if ENABLE(FULLSCREEN_API)
     void dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomicString& eventName, bool shouldNotifyMediaElement);

@@ -23,20 +23,18 @@
 #ifndef HTMLNameCollection_h
 #define HTMLNameCollection_h
 
-#include "CachedHTMLCollection.h"
-#include "NodeRareData.h"
+#include "HTMLCollection.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
 class Document;
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-class HTMLNameCollection : public CachedHTMLCollection<HTMLCollectionClass, traversalType> {
+class HTMLNameCollection : public HTMLCollection {
 public:
     virtual ~HTMLNameCollection();
 
-    Document& document() { return downcast<Document>(this->ownerNode()); }
+    Document& document() { return downcast<Document>(ownerNode()); }
 
 protected:
     HTMLNameCollection(Document&, CollectionType, const AtomicString& name);
@@ -44,29 +42,13 @@ protected:
     AtomicString m_name;
 };
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-HTMLNameCollection<HTMLCollectionClass, traversalType>::HTMLNameCollection(Document& document, CollectionType type, const AtomicString& name)
-    : CachedHTMLCollection<HTMLCollectionClass, traversalType>(document, type)
-    , m_name(name)
-{
-}
-
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-HTMLNameCollection<HTMLCollectionClass, traversalType>::~HTMLNameCollection()
-{
-    ASSERT(this->type() == WindowNamedItems || this->type() == DocumentNamedItems);
-
-    document().nodeLists()->removeCachedCollection(this, m_name);
-}
-
-class WindowNameCollection final : public HTMLNameCollection<WindowNameCollection, CollectionTraversalType::Descendants> {
+class WindowNameCollection final : public HTMLNameCollection {
 public:
     static Ref<WindowNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {
         return adoptRef(*new WindowNameCollection(document, type, name));
     }
 
-    // For CachedHTMLCollection.
     bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
     static bool elementMatchesIfIdAttributeMatch(const Element&) { return true; }
@@ -75,13 +57,13 @@ public:
 
 private:
     WindowNameCollection(Document& document, CollectionType type, const AtomicString& name)
-        : HTMLNameCollection<WindowNameCollection, CollectionTraversalType::Descendants>(document, type, name)
+        : HTMLNameCollection(document, type, name)
     {
         ASSERT(type == WindowNamedItems);
     }
 };
 
-class DocumentNameCollection final : public HTMLNameCollection<DocumentNameCollection, CollectionTraversalType::Descendants> {
+class DocumentNameCollection final : public HTMLNameCollection {
 public:
     static Ref<DocumentNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {
@@ -90,15 +72,13 @@ public:
 
     static bool elementMatchesIfIdAttributeMatch(const Element&);
     static bool elementMatchesIfNameAttributeMatch(const Element&);
-
-    // For CachedHTMLCollection.
     bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
     static bool elementMatches(const Element&, const AtomicStringImpl*);
 
 private:
     DocumentNameCollection(Document& document, CollectionType type, const AtomicString& name)
-        : HTMLNameCollection<DocumentNameCollection, CollectionTraversalType::Descendants>(document, type, name)
+        : HTMLNameCollection(document, type, name)
     {
         ASSERT(type == DocumentNamedItems);
     }

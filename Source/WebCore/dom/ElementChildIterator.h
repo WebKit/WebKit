@@ -41,7 +41,6 @@ public:
 
     ElementChildIterator(const ContainerNode& parent);
     ElementChildIterator(const ContainerNode& parent, ElementType* current);
-    ElementChildIterator& operator--();
     ElementChildIterator& operator++();
 };
 
@@ -56,7 +55,6 @@ public:
 
     ElementChildConstIterator(const ContainerNode& parent);
     ElementChildConstIterator(const ContainerNode& parent, const ElementType* current);
-    ElementChildConstIterator& operator--();
     ElementChildConstIterator& operator++();
 };
 
@@ -110,12 +108,6 @@ inline ElementChildIterator<ElementType>::ElementChildIterator(const ContainerNo
 }
 
 template <typename ElementType>
-inline ElementChildIterator<ElementType>& ElementChildIterator<ElementType>::operator--()
-{
-    return static_cast<ElementChildIterator<ElementType>&>(ElementIterator<ElementType>::traversePreviousSibling());
-}
-
-template <typename ElementType>
 inline ElementChildIterator<ElementType>& ElementChildIterator<ElementType>::operator++()
 {
     return static_cast<ElementChildIterator<ElementType>&>(ElementIterator<ElementType>::traverseNextSibling());
@@ -134,13 +126,6 @@ inline ElementChildConstIterator<ElementType>::ElementChildConstIterator(const C
     : ElementConstIterator<ElementType>(&parent, current)
 {
 }
-
-template <typename ElementType>
-inline ElementChildConstIterator<ElementType>& ElementChildConstIterator<ElementType>::operator--()
-{
-    return static_cast<ElementChildConstIterator<ElementType>&>(ElementConstIterator<ElementType>::traversePreviousSibling());
-}
-
 
 template <typename ElementType>
 inline ElementChildConstIterator<ElementType>& ElementChildConstIterator<ElementType>::operator++()

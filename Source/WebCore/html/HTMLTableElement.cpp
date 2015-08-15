@@ -31,14 +31,12 @@
 #include "CSSValuePool.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
-#include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableRowsCollection.h"
 #include "HTMLTableSectionElement.h"
-#include "NodeRareData.h"
 #include "RenderTable.h"
 #include "StyleProperties.h"
 #include <wtf/Ref.h>
@@ -553,12 +551,12 @@ bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
 
 Ref<HTMLCollection> HTMLTableElement::rows()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(*this, TableRows);
+    return ensureCachedHTMLCollection(TableRows);
 }
 
 Ref<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<TableTBodies>::traversalType>>(*this, TableTBodies);
+    return ensureCachedHTMLCollection(TableTBodies);
 }
 
 const AtomicString& HTMLTableElement::rules() const

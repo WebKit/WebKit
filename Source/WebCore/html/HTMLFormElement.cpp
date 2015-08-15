@@ -37,12 +37,11 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "HTMLFormControlsCollection.h"
+#include "HTMLCollection.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "NodeRareData.h"
 #include "Page.h"
 #include "RenderTextControl.h"
 #include "ScriptController.h"
@@ -639,7 +638,7 @@ void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 
 Ref<HTMLCollection> HTMLFormElement::elements()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, FormControls);
+    return ensureCachedHTMLCollection(FormControls);
 }
 
 String HTMLFormElement::name() const

@@ -33,10 +33,8 @@
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
 
-#include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
 #include "IdTargetObserverRegistry.h"
-#include "NodeRareData.h"
 
 namespace WebCore {
 
@@ -52,7 +50,7 @@ Ref<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagNam
 
 Ref<HTMLCollection> HTMLDataListElement::options()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<DataListOptions>::traversalType>>(*this, DataListOptions);
+    return ensureCachedHTMLCollection(DataListOptions);
 }
 
 void HTMLDataListElement::optionElementChildrenChanged()

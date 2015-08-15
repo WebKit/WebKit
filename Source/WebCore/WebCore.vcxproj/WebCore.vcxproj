@@ -16121,7 +16121,6 @@
     <ClCompile Include="..\html\FormController.cpp" />
     <ClCompile Include="..\html\FormDataList.cpp" />
     <ClCompile Include="..\html\FTPDirectoryDocument.cpp" />
-    <ClCompile Include="..\html\GenericCachedHTMLCollection.cpp" />
     <ClCompile Include="..\html\HiddenInputType.cpp" />
     <ClCompile Include="..\html\HTMLAllCollection.cpp" />
     <ClCompile Include="..\html\HTMLAnchorElement.cpp">

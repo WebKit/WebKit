@@ -53,42 +53,6 @@ enum CollectionType {
     FormControls
 };
 
-enum class CollectionTraversalType { Descendants, ChildrenOnly, CustomForwardOnly };
-template<CollectionType collectionType>
-struct CollectionTypeTraits {
-    static const CollectionTraversalType traversalType = CollectionTraversalType::Descendants;
-};
-
-template<>
-struct CollectionTypeTraits<NodeChildren> {
-    static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
-};
-
-template<>
-struct CollectionTypeTraits<TRCells> {
-    static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
-};
-
-template<>
-struct CollectionTypeTraits<TSectionRows> {
-    static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
-};
-
-template<>
-struct CollectionTypeTraits<TableTBodies> {
-    static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
-};
-
-template<>
-struct CollectionTypeTraits<TableRows> {
-    static const CollectionTraversalType traversalType = CollectionTraversalType::CustomForwardOnly;
-};
-
-template<>
-struct CollectionTypeTraits<FormControls> {
-    static const CollectionTraversalType traversalType = CollectionTraversalType::CustomForwardOnly;
-};
-
-} // namespace WebCore
+} // namespace
 
 #endif

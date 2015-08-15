@@ -26,13 +26,11 @@
 #include "HTMLTableSectionElement.h"
 
 #include "ExceptionCode.h"
-#include "GenericCachedHTMLCollection.h"
 #include "HTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableElement.h"
 #include "NodeList.h"
-#include "NodeRareData.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -149,7 +147,7 @@ void HTMLTableSectionElement::setVAlign(const AtomicString& value)
 
 Ref<HTMLCollection> HTMLTableSectionElement::rows()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<TSectionRows>::traversalType>>(*this, TSectionRows);
+    return ensureCachedHTMLCollection(TSectionRows);
 }
 
 }

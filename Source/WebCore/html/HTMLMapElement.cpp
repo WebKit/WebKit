@@ -25,12 +25,11 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "ElementIterator.h"
-#include "GenericCachedHTMLCollection.h"
 #include "HTMLAreaElement.h"
+#include "HTMLCollection.h"
 #include "HTMLImageElement.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
-#include "NodeRareData.h"
 
 namespace WebCore {
 
@@ -113,7 +112,7 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 
 Ref<HTMLCollection> HTMLMapElement::areas()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<MapAreas>::traversalType>>(*this, MapAreas);
+    return ensureCachedHTMLCollection(MapAreas);
 }
 
 Node::InsertionNotificationRequest HTMLMapElement::insertedInto(ContainerNode& insertionPoint)

@@ -26,13 +26,12 @@
 #include "HTMLTableRowElement.h"
 
 #include "ExceptionCode.h"
-#include "GenericCachedHTMLCollection.h"
+#include "HTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableSectionElement.h"
 #include "NodeList.h"
-#include "NodeRareData.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -157,7 +156,7 @@ void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
 
 Ref<HTMLCollection> HTMLTableRowElement::cells()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<TRCells>::traversalType>>(*this, TRCells);
+    return ensureCachedHTMLCollection(TRCells);
 }
 
 void HTMLTableRowElement::setCells(HTMLCollection*, ExceptionCode& ec)

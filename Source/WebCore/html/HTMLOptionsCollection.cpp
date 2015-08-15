@@ -27,7 +27,7 @@
 namespace WebCore {
 
 HTMLOptionsCollection::HTMLOptionsCollection(HTMLSelectElement& select)
-    : CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>(select, SelectOptions)
+    : HTMLCollection(select, SelectOptions)
 {
 }
 
