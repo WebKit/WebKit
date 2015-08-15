@@ -68,12 +68,13 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
         this._computedStyleDetailsPanel = new WebInspector.ComputedStyleDetailsPanel(this);
         this._rulesStyleDetailsPanel = new WebInspector.RulesStyleDetailsPanel(this);
+        this._visualStyleDetailsPanel = new WebInspector.VisualStyleDetailsPanel(this);
 
         this._computedStyleDetailsPanel.addEventListener(WebInspector.StyleDetailsPanel.Event.Refreshed, this._filterDidChange, this);
         this._rulesStyleDetailsPanel.addEventListener(WebInspector.StyleDetailsPanel.Event.Refreshed, this._filterDidChange, this);
 
-        this._panels = [this._computedStyleDetailsPanel, this._rulesStyleDetailsPanel];
-        this._panelNavigationInfo = [this._computedStyleDetailsPanel.navigationInfo, this._rulesStyleDetailsPanel.navigationInfo];
+        this._panels = [this._computedStyleDetailsPanel, this._rulesStyleDetailsPanel, this._visualStyleDetailsPanel];
+        this._panelNavigationInfo = [this._computedStyleDetailsPanel.navigationInfo, this._rulesStyleDetailsPanel.navigationInfo, this._visualStyleDetailsPanel.navigationInfo];
 
         this._lastSelectedSectionSetting = new WebInspector.Setting("last-selected-style-details-panel", this._rulesStyleDetailsPanel.navigationInfo.identifier);
 

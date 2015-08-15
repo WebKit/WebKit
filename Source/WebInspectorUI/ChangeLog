@@ -1,5 +1,85 @@
 2015-08-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add VisualStyleDetailsPanel
+        https://bugs.webkit.org/show_bug.cgi?id=147570
+
+        Reviewed by Timothy Hatcher.
+
+        Added VisualStyleDetailsPanel and inclusions to forthcoming classes
+        that will be used in this visual sidebar panel.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        Added files for all new classes used in the VisualStyleDetailsPanel.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        * UserInterface/Views/DetailsSection.js:
+        (WebInspector.DetailsSection):
+        (WebInspector.DetailsSection.prototype.set collapsed):
+        (WebInspector.DetailsSection.prototype.get expandedByUser):
+        (WebInspector.DetailsSection.prototype._headerElementClicked):
+        Track whether or not the expanded state was caused by the user.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css: Added.
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > .visual-style-section-clear):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section:not(.modified) > .header > .visual-style-section-clear):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > span):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section.modified > .header > span::after):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row:last-child):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row.visual-style-separated-row):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row > .visual-style-property-container > .visual-style-property-title):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row > .visual-style-property-container:not(.layout-reversed):last-child):
+        (.sidebar > .panel.details.css-style .visual.disabled > .details-section:not(.visual-style-selector-section)):
+        (.sidebar > .panel.details.css-style .visual.disabled > .details-section:not(.visual-style-selector-section) input):
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js: Added.
+        (WebInspector.VisualStyleDetailsPanel):
+        (WebInspector.VisualStyleDetailsPanel.prototype.refresh):
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateSection.replaceDashWithCapital):
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateSection.createOptionsElement):
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._prepareForChange):
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateSections):
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateProperties):
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateAutocompleteCompatiblePropertyEditor):
+        (WebInspector.VisualStyleDetailsPanel.prototype._sectionModified):
+        (WebInspector.VisualStyleDetailsPanel.prototype._clearModifiedSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype.get _initialTextList):
+        (WebInspector.VisualStyleDetailsPanel.prototype._initialPropertyTextModified):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateDisplaySection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateMetricSectionRows):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populatePositionSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateFloatSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners.onEditorMouseover):
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners.onEditorMouseout):
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateDimensionsSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateMarginSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populatePaddingSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateFlexboxSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTextStyleSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateFontSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTextSpacingSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTextShadowSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBackgroundStyleSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBorderSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateOutlineSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection.noRemainingTreeItems):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection.selectedBoxShadowItemValueChanged):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection.boxShadowItemSelected):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection.noRemainingTreeItems):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection.selectedtransitionItemValueChanged):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection.transitionItemSelected):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection):
+
+2015-08-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Highlight DOM node attribute changes in parallel, not sequentially
         https://bugs.webkit.org/show_bug.cgi?id=148019
 

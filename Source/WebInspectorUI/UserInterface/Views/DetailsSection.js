@@ -61,6 +61,7 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
 
         this._collapsedSetting = new WebInspector.Setting(identifier + "-details-section-collapsed", !!defaultCollapsedSettingValue);
         this.collapsed = this._collapsedSetting.value;
+        this._expandedByUser = false;
     }
 
     // Public
@@ -115,6 +116,11 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
             this._contentElement.appendChild(this._groups[i].element);
     }
 
+    get expandedByUser()
+    {
+        return this._expandedByUser;
+    }
+
     // Private
 
     _headerElementClicked(event)
@@ -122,7 +128,9 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
         if (event.target.isSelfOrDescendant(this._optionsElement))
             return;
 
-        this.collapsed = !this.collapsed;
+        var collapsed = this.collapsed;
+        this.collapsed = !collapsed;
+        this._expandedByUser = collapsed;
 
         this._element.scrollIntoViewIfNeeded(false);
     }
