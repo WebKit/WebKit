@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/Spectrum.h>
 #include <wtf/Threading.h>
@@ -338,7 +339,7 @@ namespace JSC {
         unsigned m_opcodeSamplesInCTIFunctions[numOpcodeIDs];
         
 #if ENABLE(CODEBLOCK_SAMPLING)
-        Mutex m_scriptSampleMapMutex;
+        Lock m_scriptSampleMapMutex;
         std::unique_ptr<ScriptSampleRecordMap> m_scopeSampleMap;
 #endif
     };

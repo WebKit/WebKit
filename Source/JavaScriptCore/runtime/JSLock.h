@@ -24,6 +24,7 @@
 #include <mutex>
 #include <thread>
 #include <wtf/Assertions.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -60,10 +61,8 @@ class GlobalJSLock {
 public:
     JS_EXPORT_PRIVATE GlobalJSLock();
     JS_EXPORT_PRIVATE ~GlobalJSLock();
-
-    static void initialize();
 private:
-    static std::mutex* s_sharedInstanceMutex;
+    static StaticLock s_sharedInstanceMutex;
 };
 
 class JSLockHolder {
@@ -133,7 +132,7 @@ private:
     unsigned dropAllLocks(DropAllLocks*);
     void grabAllLocks(DropAllLocks*, unsigned lockCount);
 
-    std::mutex m_lock;
+    Lock m_lock;
     std::thread::id m_ownerThreadID;
     intptr_t m_lockCount;
     unsigned m_lockDropDepth;

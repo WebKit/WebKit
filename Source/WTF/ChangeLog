@@ -1,3 +1,21 @@
+2015-08-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Use WTF::Lock and WTF::Condition instead of WTF::Mutex, WTF::ThreadCondition, std::mutex, and std::condition_variable
+        https://bugs.webkit.org/show_bug.cgi?id=147999
+
+        Reviewed by Geoffrey Garen.
+
+        Relanding after fixing a deadlock on Linux.
+
+        * wtf/Condition.h: "using WTF::Condition".
+        * wtf/Lock.h:
+        (WTF::LockBase::lock):
+        (WTF::LockBase::tryLock): Add tryLock() because it turns out that we use it sometimes.
+        (WTF::LockBase::try_lock): unique_lock needs this.
+        (WTF::LockBase::unlock):
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionally): Work around a Linux C++ bug where wait_until with time_point::max() immediately returns and doesn't flash the lock.
+
 2015-08-14  Keith Miller  <keith_miller@apple.com>
 
         cryptographicallyRandomValuesFromOS should use arc4random_buf on Darwin.

@@ -31,13 +31,13 @@
 #include "TinyBloomFilter.h"
 #include <wtf/Assertions.h>
 #include <wtf/CheckedBoolean.h>
+#include <wtf/Condition.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/OSAllocator.h>
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {
 
@@ -138,8 +138,8 @@ private:
     bool m_inCopyingPhase;
     bool m_shouldDoCopyPhase;
 
-    Mutex m_loanedBlocksLock; 
-    ThreadCondition m_loanedBlocksCondition;
+    Lock m_loanedBlocksLock; 
+    Condition m_loanedBlocksCondition;
     size_t m_numberOfLoanedBlocks;
     
     size_t m_bytesRemovedFromOldSpaceDueToReallocation;

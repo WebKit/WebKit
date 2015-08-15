@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,20 +39,19 @@
 
 namespace Inspector {
 
-static std::mutex* rwiQueueMutex;
+static StaticLock rwiQueueMutex;
 static CFRunLoopSourceRef rwiRunLoopSource;
 static RemoteInspectorQueue* rwiQueue;
 
 static void RemoteInspectorHandleRunSourceGlobal(void*)
 {
     ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
-    ASSERT(rwiQueueMutex);
     ASSERT(rwiRunLoopSource);
     ASSERT(rwiQueue);
 
     RemoteInspectorQueue queueCopy;
     {
-        std::lock_guard<std::mutex> lock(*rwiQueueMutex);
+        std::lock_guard<StaticLock> lock(rwiQueueMutex);
         queueCopy = *rwiQueue;
         rwiQueue->clear();
     }
@@ -63,12 +62,11 @@ static void RemoteInspectorHandleRunSourceGlobal(void*)
 
 static void RemoteInspectorQueueTaskOnGlobalQueue(void (^task)())
 {
-    ASSERT(rwiQueueMutex);
     ASSERT(rwiRunLoopSource);
     ASSERT(rwiQueue);
 
     {
-        std::lock_guard<std::mutex> lock(*rwiQueueMutex);
+        std::lock_guard<StaticLock> lock(rwiQueueMutex);
         rwiQueue->append(RemoteInspectorBlock(task));
     }
 
@@ -81,7 +79,6 @@ static void RemoteInspectorInitializeGlobalQueue()
     static dispatch_once_t pred;
     dispatch_once(&pred, ^{
         rwiQueue = new RemoteInspectorQueue;
-        rwiQueueMutex = std::make_unique<std::mutex>().release();
 
         CFRunLoopSourceContext runLoopSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSourceGlobal};
         rwiRunLoopSource = CFRunLoopSourceCreate(kCFAllocatorDefault, 1, &runLoopSourceContext);
@@ -98,7 +95,7 @@ static void RemoteInspectorHandleRunSourceWithInfo(void* info)
 
     RemoteInspectorQueue queueCopy;
     {
-        std::lock_guard<std::mutex> lock(debuggableConnection->queueMutex());
+        std::lock_guard<Lock> lock(debuggableConnection->queueMutex());
         queueCopy = debuggableConnection->queue();
         debuggableConnection->clearQueue();
     }
@@ -152,7 +149,7 @@ void RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable(void (^block
 
 bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection, bool automaticallyPause)
 {
-    std::lock_guard<std::mutex> lock(m_debuggableMutex);
+    std::lock_guard<Lock> lock(m_debuggableMutex);
 
     if (!m_debuggable)
         return false;
@@ -160,7 +157,7 @@ bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection, bool
     ref();
     dispatchAsyncOnDebuggable(^{
         {
-            std::lock_guard<std::mutex> lock(m_debuggableMutex);
+            std::lock_guard<Lock> lock(m_debuggableMutex);
             if (!m_debuggable || !m_debuggable->remoteDebuggingAllowed() || m_debuggable->hasLocalDebugger()) {
                 RemoteInspector::singleton().setupFailed(identifier());
                 m_debuggable = nullptr;
@@ -180,7 +177,7 @@ bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection, bool
 
 void RemoteInspectorDebuggableConnection::closeFromDebuggable()
 {
-    std::lock_guard<std::mutex> lock(m_debuggableMutex);
+    std::lock_guard<Lock> lock(m_debuggableMutex);
 
     m_debuggable = nullptr;
 }
@@ -190,7 +187,7 @@ void RemoteInspectorDebuggableConnection::close()
     ref();
     dispatchAsyncOnDebuggable(^{
         {
-            std::lock_guard<std::mutex> lock(m_debuggableMutex);
+            std::lock_guard<Lock> lock(m_debuggableMutex);
 
             if (m_debuggable) {
                 if (m_connected)
@@ -210,7 +207,7 @@ void RemoteInspectorDebuggableConnection::sendMessageToBackend(NSString *message
         {
             RemoteInspectorDebuggable* debuggable = nullptr;
             {
-                std::lock_guard<std::mutex> lock(m_debuggableMutex);
+                std::lock_guard<Lock> lock(m_debuggableMutex);
                 if (!m_debuggable)
                     return;
                 debuggable = m_debuggable;
@@ -263,7 +260,7 @@ void RemoteInspectorDebuggableConnection::queueTaskOnPrivateRunLoop(void (^block
     ASSERT(m_runLoop);
 
     {
-        std::lock_guard<std::mutex> lock(m_queueMutex);
+        std::lock_guard<Lock> lock(m_queueMutex);
         m_queue.append(RemoteInspectorBlock(block));
     }
 

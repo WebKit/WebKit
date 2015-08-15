@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,6 @@ void initializeThreading()
     std::call_once(initializeThreadingOnceFlag, []{
         WTF::double_conversion::initialize();
         WTF::initializeThreading();
-        GlobalJSLock::initialize();
         Options::initialize();
         if (Options::recordGCPauseTimes())
             HeapStatistics::initialize();
@@ -66,7 +65,6 @@ void initializeThreading()
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator::initializeAllocator();
 #endif
-        JSStack::initializeThreading();
         LLInt::initialize();
 #ifndef NDEBUG
         DisallowGC::initialize();
