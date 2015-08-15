@@ -1,3 +1,18 @@
+2015-08-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: NavigationBar.updateLayoutSoon should use requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=148010
+
+        Reviewed by Brian Burg.
+
+        NavigationBar.updateLayoutSoon now uses requestAnimationFrame instead of setTimeout.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar):
+        (WebInspector.NavigationBar.prototype.updateLayoutSoon.update):
+        (WebInspector.NavigationBar.prototype.updateLayoutSoon):
+        (WebInspector.NavigationBar.prototype.updateLayout):
+
 2015-08-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add VisualStyleDetailsPanel

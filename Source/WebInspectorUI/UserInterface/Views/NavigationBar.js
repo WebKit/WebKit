@@ -122,27 +122,27 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.Object
 
     updateLayoutSoon()
     {
-        if (this._updateLayoutTimeout)
+        if (this._updateLayoutIdentifier)
             return;
 
         this._needsLayout = true;
 
         function update()
         {
-            delete this._updateLayoutTimeout;
+            this._updateLayoutIdentifier = undefined;
 
             if (this._needsLayout || this._needsStyleUpdated)
                 this.updateLayout();
         }
 
-        this._updateLayoutTimeout = setTimeout(update.bind(this), 0);
+        this._updateLayoutIdentifier = requestAnimationFrame(update.bind(this));
     }
 
     updateLayout()
     {
-        if (this._updateLayoutTimeout) {
-            clearTimeout(this._updateLayoutTimeout);
-            delete this._updateLayoutTimeout;
+        if (this._updateLayoutIdentifier) {
+            cancelAnimationFrame(this._updateLayoutIdentifier);
+            this._updateLayoutIdentifier = undefined;
         }
 
         if (this._needsStyleUpdated)
