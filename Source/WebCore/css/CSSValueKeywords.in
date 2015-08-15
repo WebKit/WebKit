@@ -1127,3 +1127,7 @@ from-intrinsic
 // font-synthesis
 weight
 style
+
+// will-change
+scroll-position
+contents

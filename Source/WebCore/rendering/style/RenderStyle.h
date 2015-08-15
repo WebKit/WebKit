@@ -113,6 +113,7 @@ class StyleImage;
 class StyleInheritedData;
 class StyleResolver;
 class TransformationMatrix;
+class WillChangeData;
 
 struct ScrollSnapPoints;
 
@@ -1778,7 +1779,7 @@ public:
     }
     ClipPathOperation* clipPath() const { return rareNonInheritedData->m_clipPath.get(); }
 
-    static ClipPathOperation* initialClipPath() { return 0; }
+    static ClipPathOperation* initialClipPath() { return nullptr; }
 
     bool hasContent() const { return contentData(); }
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
@@ -1797,6 +1798,9 @@ public:
 
     QuotesData* quotes() const { return rareInheritedData->quotes.get(); }
     void setQuotes(PassRefPtr<QuotesData>);
+
+    WillChangeData* willChange() const { return rareNonInheritedData->m_willChange.get(); }
+    void setWillChange(PassRefPtr<WillChangeData>);
 
     const AtomicString& hyphenString() const;
 
@@ -2002,6 +2006,8 @@ public:
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
     static QuotesData* initialQuotes() { return nullptr; }
     static const AtomicString& initialContentAltText() { return emptyAtom; }
+
+    static WillChangeData* initialWillChange() { return nullptr; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType() { return ScrollSnapType::None; }

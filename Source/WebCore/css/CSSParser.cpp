@@ -2797,6 +2797,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
     // End of CSS3 properties
 
+    case CSSPropertyWillChange: // auto | [scroll-position | contents | <custom-ident>]#
+        if (id == CSSValueAuto)
+            validPrimitive = true;
+        else
+            return parseWillChange(important);
+        break;
+
     // Apple specific properties.  These will never be standardized and are purely to
     // support custom WebKit-based Apple applications.
     case CSSPropertyWebkitLineClamp:
@@ -5229,7 +5236,7 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
-static inline bool isValidCustomIdent(const CSSParserValue& value)
+static inline bool isValidGridPositionCustomIdent(const CSSParserValue& value)
 {
     return value.unit == CSSPrimitiveValue::CSS_IDENT && value.id != CSSValueSpan && value.id != CSSValueAuto;
 }
@@ -5241,14 +5248,14 @@ bool CSSParser::parseIntegerOrCustomIdentFromGridPosition(RefPtr<CSSPrimitiveVal
     if (validateUnit(valueWithCalculation, FInteger) && valueWithCalculation.value().fValue) {
         numericValue = createPrimitiveNumericValue(valueWithCalculation);
         CSSParserValue* nextValue = m_valueList->next();
-        if (nextValue && isValidCustomIdent(*nextValue)) {
+        if (nextValue && isValidGridPositionCustomIdent(*nextValue)) {
             gridLineName = createPrimitiveStringValue(*nextValue);
             m_valueList->next();
         }
         return true;
     }
 
-    if (isValidCustomIdent(valueWithCalculation)) {
+    if (isValidGridPositionCustomIdent(valueWithCalculation)) {
         gridLineName = createPrimitiveStringValue(valueWithCalculation);
         if (CSSParserValue* nextValue = m_valueList->next()) {
             ValueWithCalculation nextValueWithCalculation(*nextValue);
@@ -6685,6 +6692,12 @@ private:
     CSSValueList& m_list;
 };
 
+static bool valueIsCSSKeyword(const CSSParserValue& value)
+{
+    // FIXME: when we add "unset", we should handle it here.
+    return value.id == CSSValueInitial || value.id == CSSValueInherit || value.id == CSSValueDefault;
+}
+
 RefPtr<CSSValueList> CSSParser::parseFontFamily()
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
@@ -6701,7 +6714,7 @@ RefPtr<CSSValueList> CSSParser::parseFontFamily()
             ((nextValue->id >= CSSValueSerif && nextValue->id <= CSSValueWebkitBody) ||
             (nextValue->unit == CSSPrimitiveValue::CSS_STRING || nextValue->unit == CSSPrimitiveValue::CSS_IDENT));
 
-        bool valueIsKeyword = value->id == CSSValueInitial || value->id == CSSValueInherit || value->id == CSSValueDefault;
+        bool valueIsKeyword = valueIsCSSKeyword(*value);
         if (valueIsKeyword && !inFamily) {
             if (nextValBreaksFont)
                 value = m_valueList->next();
@@ -10459,6 +10472,59 @@ bool CSSParser::parseFontVariantLigatures(bool important)
         return false;
 
     addProperty(CSSPropertyWebkitFontVariantLigatures, ligatureValues.release(), important);
+    return true;
+}
+
+static inline bool isValidWillChangeAnimatableFeature(const CSSParserValue& value)
+{
+    if (value.id == CSSValueNone || value.id == CSSValueAuto || value.id == CSSValueAll)
+        return false;
+
+    if (valueIsCSSKeyword(value))
+        return false;
+
+    if (cssPropertyID(value.string) == CSSPropertyWillChange)
+        return false;
+
+    return true;
+}
+
+bool CSSParser::parseWillChange(bool important)
+{
+    RefPtr<CSSValueList> willChangePropertyValues = CSSValueList::createCommaSeparated();
+
+    bool expectComma = false;
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (expectComma) {
+            if (!isComma(value))
+                return false;
+            
+            expectComma = false;
+            continue;
+        }
+
+        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+
+        if (!isValidWillChangeAnimatableFeature(*value))
+            return false;
+
+        RefPtr<CSSValue> cssValue;
+        if (value->id == CSSValueScrollPosition || value->id == CSSValueContents)
+            cssValue = cssValuePool().createIdentifierValue(value->id);
+        else {
+            CSSPropertyID propertyID = cssPropertyID(value->string);
+            if (propertyID != CSSPropertyInvalid)
+                cssValue = cssValuePool().createIdentifierValue(propertyID);
+            else // This might be a property we don't support.
+                cssValue = createPrimitiveStringValue(*value);
+        }
+
+        willChangePropertyValues->append(cssValue.releaseNonNull());
+        expectComma = true;
+    }
+
+    addProperty(CSSPropertyWillChange, willChangePropertyValues.release(), important);
     return true;
 }
 

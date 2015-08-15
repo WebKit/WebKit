@@ -48,6 +48,7 @@
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "StyleResolver.h"
+#include "WillChangeData.h"
 
 namespace WebCore {
 
@@ -133,6 +134,7 @@ public:
     static void applyInitialWebkitScrollSnapPointsY(StyleResolver&);
     static void applyInheritWebkitScrollSnapPointsY(StyleResolver&);
 #endif
+    static void applyValueWillChange(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1716,6 +1718,37 @@ inline void StyleBuilderCustom::applyInheritWebkitScrollSnapPointsY(StyleResolve
     styleResolver.style()->setScrollSnapPointsY(styleResolver.parentStyle()->scrollSnapPointsY() ? std::make_unique<ScrollSnapPoints>(*styleResolver.parentStyle()->scrollSnapPointsY()) : nullptr);
 }
 #endif
+
+inline void StyleBuilderCustom::applyValueWillChange(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto);
+        styleResolver.style()->setWillChange(nullptr);
+        return;
+    }
+
+    Ref<WillChangeData> willChange = WillChangeData::create();
+    for (auto& item : downcast<CSSValueList>(value)) {
+        if (!is<CSSPrimitiveValue>(item.get()))
+            continue;
+
+        const auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+        switch (primitiveValue.getValueID()) {
+        case CSSValueScrollPosition:
+            willChange->addFeature(WillChangeData::Feature::ScrollPosition);
+            break;
+        case CSSValueContents:
+            willChange->addFeature(WillChangeData::Feature::Contents);
+            break;
+        default:
+            if (primitiveValue.isPropertyID())
+                willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.getPropertyID());
+            break;
+        }
+    }
+
+    styleResolver.style()->setWillChange(WTF::move(willChange));
+}
 
 } // namespace WebCore
 

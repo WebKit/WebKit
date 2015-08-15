@@ -67,6 +67,7 @@
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
+#include "WillChangeData.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -1160,6 +1161,33 @@ static Ref<CSSValue> scrollSnapCoordinates(RenderStyle& style, const Vector<Leng
     return WTF::move(list);
 }
 #endif
+
+static Ref<CSSValue> getWillChangePropertyValue(const WillChangeData* willChangeData)
+{
+    if (!willChangeData || !willChangeData->numFeatures())
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
+
+    auto list = CSSValueList::createCommaSeparated();
+    for (size_t i = 0; i < willChangeData->numFeatures(); ++i) {
+        WillChangeData::FeaturePropertyPair feature = willChangeData->featureAt(i);
+        switch (feature.first) {
+        case WillChangeData::ScrollPosition:
+            list.get().append(cssValuePool().createIdentifierValue(CSSValueScrollPosition));
+            break;
+        case WillChangeData::Contents:
+            list.get().append(cssValuePool().createIdentifierValue(CSSValueContents));
+            break;
+        case WillChangeData::Property:
+            list.get().append(cssValuePool().createIdentifierValue(feature.second));
+            break;
+        case WillChangeData::Invalid:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    return WTF::move(list);
+}
 
 static Ref<CSSValueList> getDelayValue(const AnimationList* animList)
 {
@@ -2650,6 +2678,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 return zoomAdjustedPixelValue(sizingBox(*renderer).width(), *style);
             }
             return zoomAdjustedPixelValueForLength(style->width(), *style);
+        case CSSPropertyWillChange:
+            return getWillChangePropertyValue(style->willChange());
+            break;
         case CSSPropertyWordBreak:
             return cssValuePool().createValue(style->wordBreak());
         case CSSPropertyWordSpacing:
