@@ -32,6 +32,7 @@
 #include "Editor.h"
 #include "FloatRect.h"
 #include "FrameView.h"
+#include "GenericCachedHTMLCollection.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLTableRowsCollection.h"
@@ -902,7 +903,7 @@ RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
 
 Ref<HTMLCollection> ContainerNode::children()
 {
-    return ensureCachedHTMLCollection(NodeChildren);
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<NodeChildren>::traversalType>>(*this, NodeChildren);
 }
 
 Element* ContainerNode::firstElementChild() const
@@ -937,22 +938,6 @@ void ContainerNode::prepend(Vector<NodeOrString>&& nodeOrStringVector, Exception
         return;
 
     insertBefore(node.release(), firstChild(), ec);
-}
-
-Ref<HTMLCollection> ContainerNode::ensureCachedHTMLCollection(CollectionType type)
-{
-    if (HTMLCollection* collection = cachedHTMLCollection(type))
-        return *collection;
-
-    if (type == TableRows)
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(downcast<HTMLTableElement>(*this), type);
-    else if (type == SelectOptions)
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLOptionsCollection>(downcast<HTMLSelectElement>(*this), type);
-    else if (type == FormControls) {
-        ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, type);
-    }
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLCollection>(*this, type);
 }
 
 HTMLCollection* ContainerNode::cachedHTMLCollection(CollectionType type)

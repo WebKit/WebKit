@@ -24,7 +24,7 @@
 #ifndef HTMLOptionsCollection_h
 #define HTMLOptionsCollection_h
 
-#include "HTMLCollection.h"
+#include "CachedHTMLCollection.h"
 #include "HTMLSelectElement.h"
 
 namespace WebCore {
@@ -33,7 +33,7 @@ class HTMLOptionElement;
 
 typedef int ExceptionCode;
 
-class HTMLOptionsCollection final : public HTMLCollection {
+class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType> {
 public:
     static Ref<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 
@@ -50,9 +50,17 @@ public:
 
     void setLength(unsigned, ExceptionCode&);
 
+    // For CachedHTMLCollection.
+    bool elementMatches(Element&) const;
+
 private:
     explicit HTMLOptionsCollection(HTMLSelectElement&);
 };
+
+inline bool HTMLOptionsCollection::elementMatches(Element& element) const
+{
+    return element.hasTagName(HTMLNames::optionTag);
+}
 
 } // namespace WebCore
 

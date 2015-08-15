@@ -38,6 +38,7 @@
 #include "FormController.h"
 #include "FormDataList.h"
 #include "Frame.h"
+#include "GenericCachedHTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
@@ -46,6 +47,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NodeRareData.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderListBox.h"
@@ -374,12 +376,12 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
 
 Ref<HTMLCollection> HTMLSelectElement::selectedOptions()
 {
-    return ensureCachedHTMLCollection(SelectedOptions);
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<SelectedOptions>::traversalType>>(*this, SelectedOptions);
 }
 
 Ref<HTMLOptionsCollection> HTMLSelectElement::options()
 {
-    return downcast<HTMLOptionsCollection>(ensureCachedHTMLCollection(SelectOptions).get());
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLOptionsCollection>(*this, SelectOptions);
 }
 
 void HTMLSelectElement::updateListItemSelectedStates()
