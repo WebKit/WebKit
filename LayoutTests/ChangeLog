@@ -1,3 +1,10 @@
+2015-08-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Removed an expectation for http/tests/media/video-buffered-range-contains-currentTime.html,
+        which no longer times out. This expectation was conflicting with a correct one.
+
+        * platform/mac/TestExpectations:
+
 2015-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         Have will-change create stacking context when necessary
