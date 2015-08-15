@@ -5515,6 +5515,11 @@ private:
         LValue structureDiscriminant, const FormattedValue& formattedValue, ExitKind exitKind,
         const StructureSet& set, const Functor& weakStructureDiscriminant)
     {
+        if (set.isEmpty()) {
+            terminate(exitKind);
+            return;
+        }
+
         if (set.size() == 1) {
             speculate(
                 exitKind, formattedValue, 0,

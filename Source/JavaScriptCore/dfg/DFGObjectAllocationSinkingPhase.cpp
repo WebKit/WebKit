@@ -921,14 +921,67 @@ private:
             }
             break;
 
-        case MultiGetByOffset:
-            target = m_heap.onlyLocalAllocation(node->child1().node());
-            if (target && target->isObjectAllocation()) {
-                unsigned identifierNumber = node->multiGetByOffsetData().identifierNumber;
-                exactRead = PromotedLocationDescriptor(NamedPropertyPLoc, identifierNumber);
+        case MultiGetByOffset: {
+            Allocation* allocation = m_heap.onlyLocalAllocation(node->child1().node());
+            if (allocation && allocation->isObjectAllocation()) {
+                MultiGetByOffsetData& data = node->multiGetByOffsetData();
+                StructureSet validStructures;
+                bool hasInvalidStructures = false;
+                for (const auto& multiGetByOffsetCase : data.cases) {
+                    if (!allocation->structures().overlaps(multiGetByOffsetCase.set()))
+                        continue;
+
+                    switch (multiGetByOffsetCase.method().kind()) {
+                    case GetByOffsetMethod::LoadFromPrototype: // We need to escape those
+                    case GetByOffsetMethod::Constant: // We don't really have a way of expressing this
+                        hasInvalidStructures = true;
+                        break;
+
+                    case GetByOffsetMethod::Load: // We're good
+                        validStructures.merge(multiGetByOffsetCase.set());
+                        break;
+
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                }
+                if (hasInvalidStructures) {
+                    m_heap.escape(node->child1().node());
+                    break;
+                }
+                unsigned identifierNumber = data.identifierNumber;
+                PromotedHeapLocation location(NamedPropertyPLoc, allocation->identifier(), identifierNumber);
+                if (Node* value = heapResolve(location)) {
+                    if (allocation->structures().isSubsetOf(validStructures))
+                        node->replaceWith(value);
+                    else {
+                        Node* structure = heapResolve(PromotedHeapLocation(allocation->identifier(), StructurePLoc));
+                        ASSERT(structure);
+                        allocation->filterStructures(validStructures);
+                        node->convertToCheckStructure(m_graph.addStructureSet(allocation->structures()));
+                        node->convertToCheckStructureImmediate(structure);
+                        node->setReplacement(value);
+                    }
+                } else if (!allocation->structures().isSubsetOf(validStructures)) {
+                    // Even though we don't need the result here, we still need
+                    // to make the call to tell our caller that we could need
+                    // the StructurePLoc.
+                    // The reason for this is that when we decide not to sink a
+                    // node, we will still lower any read to its fields before
+                    // it escapes (which are usually reads across a function
+                    // call that DFGClobberize can't handle) - but we only do
+                    // this for PromotedHeapLocations that we have seen read
+                    // during the analysis!
+                    heapResolve(PromotedHeapLocation(allocation->identifier(), StructurePLoc));
+                    allocation->filterStructures(validStructures);
+                }
+                Node* identifier = allocation->get(location.descriptor());
+                if (identifier)
+                    m_heap.newPointer(node, identifier);
             } else
                 m_heap.escape(node->child1().node());
             break;
+        }
 
         case PutByOffset:
             target = m_heap.onlyLocalAllocation(node->child2().node());

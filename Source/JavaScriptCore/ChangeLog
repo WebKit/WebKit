@@ -1,3 +1,26 @@
+2015-08-14  Basile Clement  <basile_clement@apple.com>
+
+        Occasional failure in v8-v6/v8-raytrace.js.ftl-eager
+        https://bugs.webkit.org/show_bug.cgi?id=147165
+
+        Reviewed by Saam Barati.
+
+        The object allocation sinking phase was not properly checking that a
+        MultiGetByOffset was safe to lower before lowering it.
+        This makes it so that we only lower MultiGetByOffset if it only loads
+        from direct properties of the object, and considers it as an escape in
+        any other case (e.g. a load from the prototype).
+
+        It also ensure proper conversion of MultiGetByOffset into
+        CheckStructureImmediate when needed.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::checkStructure):
+            We were not compiling properly CheckStructure and
+            CheckStructureImmediate nodes with an empty StructureSet.
+        * tests/stress/sink-multigetbyoffset.js: Regression test.
+
 2015-08-14  Filip Pizlo  <fpizlo@apple.com>
 
         Use WTF::Lock and WTF::Condition instead of WTF::Mutex, WTF::ThreadCondition, std::mutex, and std::condition_variable
