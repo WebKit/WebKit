@@ -2,6 +2,13 @@
 
         iOS test gardening.
 
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/js/dom/constructor-length-expected.txt:
+
+2015-08-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        iOS test gardening.
+
         * platform/ios-simulator-wk2/fast/ruby/bopomofo-expected.txt: Removed.
         * platform/ios-simulator-wk2/fast/ruby/bopomofo-letter-spacing-expected.txt: Removed.
         * platform/ios-simulator-wk2/fast/ruby/bopomofo-rl-expected.txt: Removed.

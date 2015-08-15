@@ -230,7 +230,6 @@ fast/harness/use-page-cache.html
 # JavaScript tests that fail:
 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 js/dom/global-constructors-attributes.html [ Failure ]
-js/dom/constructor-length.html [ Failure ]
 
 # JavaScript tests that time out:
 js/dom/dfg-inline-resolve.html
