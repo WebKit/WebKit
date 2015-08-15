@@ -1,8 +1,5 @@
 Tests that the scroll-snap feature works properly in overflow regions.
- PASS successfullyParsed is true
-
-TEST COMPLETE
-Testing scroll-snap glide for horizontalTarget:
+ Testing scroll-snap glide for horizontalTarget:
 PASS div scrolled to next window.
 Testing scroll-snap snap for horizontalTarget:
 PASS div honored snap points.

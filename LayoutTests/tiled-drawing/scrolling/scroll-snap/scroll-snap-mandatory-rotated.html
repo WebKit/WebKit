@@ -43,8 +43,10 @@
             #itemH4, #itemV4 { background-color: yellow; }
             #itemH5, #itemV5 { background-color: fuchsia; }
         </style>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
+        window.jsTestIsAsync = true;
+
         var divScrollPositionBeforeGlide;
         var divScrollPositionBeforeSnap;
 
@@ -66,12 +68,6 @@
             return position;
         }
 
-        function finishTest()
-        {
-            finishJSTest();
-            testRunner.notifyDone();            
-        }
-
         function checkForScrollSnap(targetLabel)
         {
             var divTarget = document.getElementById(targetLabel);
@@ -89,7 +85,7 @@
             if (targetLabel == 'horizontalTarget')
                 setTimeout(function() { scrollGlideTest('verticalTarget') }, 0);
             else   
-                finishTest();
+                finishJSTest();
         }
 
         function scrollSnapTest(targetLabel)
@@ -176,10 +172,6 @@
         function onLoad()
         {
             if (window.eventSender) {
-                window.jsTestIsAsync = true;
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-
                 eventSender.monitorWheelEvents();
                 setTimeout(function() { scrollGlideTest('horizontalTarget') }, 0);
             } else {
@@ -226,6 +218,5 @@
             </div>
             <div id="console"></div>
         </div>
-        <script src="../../../resources/js-test-post.js"></script>
     </body>
 </html>

@@ -35,24 +35,21 @@
                 margin-top: 0px;
             }
         </style>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
+        window.jsTestIsAsync = true;
+
         var divTarget;
         var divScrollPositionBeforeGlide;
         var divScrollPositionBeforeSnap;
         var divScrollPositionBeforeSingleAxisGlide;
-
-        function finishTest() {
-            finishJSTest();
-            testRunner.notifyDone();
-        }
 
         function checkForSingleAxisGlide() {
             if (divTarget.scrollTop == divScrollPositionBeforeSingleAxisGlide.y + 400 && divTarget.scrollLeft == divScrollPositionBeforeSingleAxisGlide.x)
                 testPassed("div successfully snapped after dragging along one axis and then scrolling in the other.");
             else
                 testFailed("div did not honor 2D snap points. (single axis scroll followed by flick on other axis)");
-            finishTest();
+            finishJSTest();
         }
 
         function scrollAndGlideInSingleAxisTest() {
@@ -132,10 +129,6 @@
 
         function onLoad() {
             if (window.eventSender) {
-                window.jsTestIsAsync = true;
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-
                 eventSender.monitorWheelEvents();
                 setTimeout(scrollGlideTest, 0);
             } else {
@@ -161,6 +154,5 @@
             <div class="cell"></div><div class="cell" id="green"></div><div class="cell"></div><br/>
             <div class="cell"></div><div class="cell" id="green"></div><div class="cell"></div>
         </div>
-        <script src="../../../resources/js-test-post.js"></script>
     </body>
 </html>

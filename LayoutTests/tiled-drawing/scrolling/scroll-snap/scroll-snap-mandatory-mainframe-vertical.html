@@ -22,8 +22,10 @@
             #item4 { background-color: yellow; }
             #item5 { background-color: fuchsia; }
         </style>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
+        window.jsTestIsAsync = true;
+
         var divTarget;
         var divScrollPositionBeforeGlide;
         var divScrollPositionBeforeSnap;
@@ -35,7 +37,7 @@
             else
                 testPassed("div honored snap points.");
 
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         function scrollSnapTest() {
@@ -91,8 +93,6 @@
         function onLoad() {
 
             if (window.eventSender) {
-                testRunner.waitUntilDone();
-
                 eventSender.monitorWheelEvents();
                 setTimeout(scrollGlideTest, 0);
             } else {
@@ -118,6 +118,5 @@
         <div id="item3" class="colorBox"></div>
         <div id="item4" class="colorBox"></div>
         <div id="item5" class="colorBox"></div>
-        <script src="../../../resources/js-test-post.js"></script>
     </body>
 </html>

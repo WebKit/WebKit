@@ -18,8 +18,10 @@
                 margin: 2px;
             }
         </style>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
+        window.jsTestIsAsync = true;
+
         var iframeScrollPositionBeforeGlide;
         var divScrollPositionBeforeSnap;
 
@@ -41,12 +43,6 @@
             return position;
         }
 
-        function finishTest()
-        {
-            finishJSTest();
-            testRunner.notifyDone();            
-        }
-
         function checkForScrollSnap(targetLabel)
         {
             var iframeTarget = document.getElementById(targetLabel);
@@ -64,7 +60,7 @@
             if (targetLabel == 'horizontalTarget')
                 setTimeout(function() { scrollGlideTest('verticalTarget') }, 0);
             else   
-                finishTest();
+                finishJSTest();
         }
 
         function scrollSnapTest(targetLabel)
@@ -153,10 +149,6 @@
         function onLoad()
         {
             if (window.eventSender) {
-                window.jsTestIsAsync = true;
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-
                 eventSender.monitorWheelEvents();
                 setTimeout(function() { scrollGlideTest('horizontalTarget') }, 0);
             }
@@ -170,6 +162,5 @@
             <iframe id="verticalTarget" class="verticalGallery" src="resources/vertical-mainframe.html"  style="height: 300px; width: 300px"></iframe>
             <div id="console"></div>
         </div>
-        <script src="../../../resources/js-test-post.js"></script>
     </body>
 </html>

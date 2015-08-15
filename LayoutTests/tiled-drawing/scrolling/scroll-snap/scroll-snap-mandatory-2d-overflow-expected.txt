@@ -1,6 +1,3 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS div successfully scrolled diagonally.
 PASS div successfully snapped diagonally.
 PASS div successfully snapped after dragging along one axis and then scrolling in the other.

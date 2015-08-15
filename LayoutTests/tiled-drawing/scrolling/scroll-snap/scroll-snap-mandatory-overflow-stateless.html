@@ -18,13 +18,9 @@
             #item0, #item2 { background-color: red; }
             #item1 { background-color: green; }
         </style>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
-        function finishTest()
-        {
-            finishJSTest();
-            testRunner.notifyDone();
-        }
+        window.jsTestIsAsync = true;
 
         function locationInWindowCoordinates(element)
         {
@@ -63,7 +59,7 @@
                 else
                     testPassed("div honored snap points.");
 
-                finishTest();
+                finishJSTest();
             }, 2000);
         }
 
@@ -71,10 +67,6 @@
         function onLoad()
         {
             if (window.eventSender) {
-                window.jsTestIsAsync = true;
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-
                 eventSender.monitorWheelEvents();
                 setTimeout(scrollSnapTest, 0);
             } else {
@@ -102,6 +94,5 @@
             </div>
             <div id="console"></div>
         </div>
-        <script src="../../../resources/js-test-post.js"></script>
     </body>
 </html>
