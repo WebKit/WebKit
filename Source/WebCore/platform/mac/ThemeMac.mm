@@ -441,7 +441,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
     } else
         needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
 #else
-    needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell, context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
+    needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
 #endif
 
     [toggleButtonCell setControlView:nil];
