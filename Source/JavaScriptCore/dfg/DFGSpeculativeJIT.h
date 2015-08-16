@@ -162,7 +162,11 @@ public:
     // and its machine registers may be reused.
     bool canReuse(Node* node)
     {
-        return generationInfo(node).canReuse();
+        return generationInfo(node).useCount() == 1;
+    }
+    bool canReuse(Node* nodeA, Node* nodeB)
+    {
+        return nodeA == nodeB && generationInfo(nodeA).useCount() == 2;
     }
     bool canReuse(Edge nodeUse)
     {
@@ -2717,6 +2721,8 @@ public:
             m_gpr = m_jit->reuse(op1.gpr());
         else if (m_jit->canReuse(op2.node()))
             m_gpr = m_jit->reuse(op2.gpr());
+        else if (m_jit->canReuse(op1.node(), op2.node()) && op1.gpr() == op2.gpr())
+            m_gpr = m_jit->reuse(op1.gpr());
         else
             m_gpr = m_jit->allocate();
     }

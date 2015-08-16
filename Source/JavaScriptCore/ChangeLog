@@ -1,3 +1,48 @@
+2015-08-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Use (x + x) instead of (x * 2) when possible
+        https://bugs.webkit.org/show_bug.cgi?id=148051
+
+        Reviewed by Michael Saboff.
+
+        When multiplying a number by 2, JSC was loading a constant "2"
+        in register and multiplying it with the first number:
+
+            mov $0x4000000000000000, %rcx
+            movd %rcx, %xmm0
+            mulsd %xmm0, %xmm1
+
+        This is a problem for a few reasons.
+        1) "movd %rcx, %xmm0" only set half of XMM0. This instruction
+           has to wait for any preceding instruction on XMM0 to finish
+           before executing.
+        2) The load and transform itself is large and unecessary.
+
+        To fix that, I added a StrengthReductionPhase to transform
+        multiplications by 2 into a addition.
+
+        Unfortunately, that turned the code into:
+            movsd %xmm0 %xmm1
+            mulsd %xmm1 %xmm0
+
+        The reason is GenerationInfo::canReuse() was not accounting
+        for nodes using other nodes multiple times.
+
+        After fixing that too, we now have the multiplications by 2
+        done as:
+            addsd %xmm0 %xmm0
+
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::useCount):
+        (JSC::DFG::GenerationInfo::canReuse): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::canReuse):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2015-08-14  Basile Clement  <basile_clement@apple.com>
 
         Occasional failure in v8-v6/v8-raytrace.js.ftl-eager

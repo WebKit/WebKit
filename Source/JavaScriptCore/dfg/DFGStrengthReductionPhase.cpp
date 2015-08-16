@@ -114,10 +114,36 @@ private:
             }
             break;
             
-        case ArithMul:
+        case ArithMul: {
             handleCommutativity();
+            Edge& child2 = m_node->child2();
+            if (child2->isNumberConstant() && child2->asNumber() == 2) {
+                switch (m_node->binaryUseKind()) {
+                case DoubleRepUse:
+                    // It is always valuable to get rid of a double multiplication by 2.
+                    // We won't have half-register dependencies issues on x86 and we won't have to load the constants.
+                    m_node->setOp(ArithAdd);
+                    child2.setNode(m_node->child1().node());
+                    m_changed = true;
+                    break;
+#if USE(JSVALUE64)
+                case Int52RepUse:
+#endif
+                case Int32Use:
+                    // For integers, we can only convert compatible modes.
+                    // ArithAdd does handle do negative zero check for example.
+                    if (m_node->arithMode() == Arith::CheckOverflow || m_node->arithMode() == Arith::Unchecked) {
+                        m_node->setOp(ArithAdd);
+                        child2.setNode(m_node->child1().node());
+                        m_changed = true;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
             break;
-            
+        }
         case ArithSub:
             if (m_node->child2()->isInt32Constant()
                 && m_node->isBinaryUseKind(Int32Use)) {

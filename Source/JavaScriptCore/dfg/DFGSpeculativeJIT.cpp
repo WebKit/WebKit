@@ -1186,6 +1186,8 @@ FPRTemporary::FPRTemporary(SpeculativeJIT* jit, SpeculateDoubleOperand& op1, Spe
         m_fpr = m_jit->reuse(op1.fpr());
     else if (m_jit->canReuse(op2.node()))
         m_fpr = m_jit->reuse(op2.fpr());
+    else if (m_jit->canReuse(op1.node(), op2.node()) && op1.fpr() == op2.fpr())
+        m_fpr = m_jit->reuse(op1.fpr());
     else
         m_fpr = m_jit->fprAllocate();
 }

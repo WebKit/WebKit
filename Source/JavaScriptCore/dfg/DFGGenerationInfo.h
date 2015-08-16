@@ -189,10 +189,10 @@ public:
     // Used to check the operands of operations to see if they are on
     // their last use; in some cases it may be safe to reuse the same
     // machine register for the result of the operation.
-    bool canReuse()
+    uint32_t useCount()
     {
         ASSERT(m_useCount);
-        return m_useCount == 1;
+        return m_useCount;
     }
 
     // Get the format of the value in machine registers (or 'none').
