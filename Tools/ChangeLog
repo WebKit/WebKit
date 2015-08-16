@@ -1,3 +1,27 @@
+2015-08-11  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add redirect support to CustomProtocolManager
+        https://bugs.webkit.org/show_bug.cgi?id=147871
+
+        Reviewed by Dan Bernstein.
+
+        Updated WebKit2CustomProtocolsTest.MainResource to generate a redirect response.
+
+        * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm:
+        (TestWebKitAPI::TEST): Unregesitered TestProtocol.
+        * TestWebKitAPI/Tests/WebKit2/custom-protocol-sync-xhr.html: Changed scheme to http.
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm:
+        (-[CustomProtocolsLoadDelegate browsingContextControllerDidStartProvisionalLoad:]): Expected a certain provisional URL.
+        (-[CustomProtocolsLoadDelegate browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:]): Ditto.
+        (-[CustomProtocolsLoadDelegate browsingContextControllerDidCommitLoad:]): Expected a certain committed URL.
+        (-[CustomProtocolsLoadDelegate browsingContextControllerDidFinishLoad:]): Expected isLoading to be false.
+        (TestWebKitAPI::TEST): Used the new load delegate and unregistered TestProtocol.
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing.mm:
+        (TestWebKitAPI::TEST): Unregistered TestProtocol.
+        * TestWebKitAPI/mac/TestProtocol.mm: Changed scheme to http.
+        (+[TestProtocol canInitWithRequest:]): Changed to use property syntax.
+        (-[TestProtocol startLoading]): Taught to handle redirect responses.
+
 2015-08-13  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Downloads do not start if policy decision is made asynchronously

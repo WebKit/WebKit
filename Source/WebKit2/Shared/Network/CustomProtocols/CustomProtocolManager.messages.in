@@ -25,6 +25,7 @@ messages -> CustomProtocolManager {
     DidLoadData(uint64_t customProtocolID, IPC::DataReference data)
     DidReceiveResponse(uint64_t customProtocolID, WebCore::ResourceResponse response, uint32_t cacheStoragePolicy)
     DidFinishLoading(uint64_t customProtocolID)
+    WasRedirectedToRequest(uint64_t customProtocolID, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse);
 
     RegisterScheme(String name)
     UnregisterScheme(String name)
