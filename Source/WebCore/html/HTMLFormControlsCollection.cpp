@@ -36,7 +36,7 @@ using namespace HTMLNames;
 // calculation every time if anything has changed.
 
 HTMLFormControlsCollection::HTMLFormControlsCollection(ContainerNode& ownerNode)
-    : HTMLCollection(ownerNode, FormControls, CustomForwardOnlyTraversal)
+    : CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>(ownerNode, FormControls)
     , m_cachedElement(nullptr)
     , m_cachedElementOffsetInArray(0)
 {
@@ -177,9 +177,9 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
     setNamedItemCache(WTF::move(cache));
 }
 
-void HTMLFormControlsCollection::invalidateCache(Document& document) const
+void HTMLFormControlsCollection::invalidateCache(Document& document)
 {
-    HTMLCollection::invalidateCache(document);
+    CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>::invalidateCache(document);
     m_cachedElement = nullptr;
     m_cachedElementOffsetInArray = 0;
 }

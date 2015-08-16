@@ -36,7 +36,7 @@ Ref<HTMLAllCollection> HTMLAllCollection::create(Document& document, CollectionT
 }
 
 inline HTMLAllCollection::HTMLAllCollection(Document& document, CollectionType type)
-    : HTMLCollection(document, type)
+    : CachedHTMLCollection<HTMLAllCollection, CollectionTypeTraits<DocAll>::traversalType>(document, type)
 {
 }
 

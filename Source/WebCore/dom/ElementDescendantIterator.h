@@ -47,6 +47,8 @@ public:
     bool operator==(const ElementDescendantIterator& other) const;
     bool operator!=(const ElementDescendantIterator& other) const;
 
+    void dropAssertions();
+
 private:
     Element* m_current;
     Vector<Element*, 16> m_ancestorSiblingStack;
@@ -68,6 +70,8 @@ public:
 
     bool operator==(const ElementDescendantConstIterator& other) const;
     bool operator!=(const ElementDescendantConstIterator& other) const;
+
+    void dropAssertions();
 
 private:
     const Element* m_current;
@@ -112,8 +116,18 @@ inline ElementDescendantIterator::ElementDescendantIterator()
 
 inline ElementDescendantIterator::ElementDescendantIterator(Element* current)
     : m_current(current)
+#if !ASSERT_DISABLED
+    , m_assertions(current)
+#endif
 {
     m_ancestorSiblingStack.uncheckedAppend(nullptr);
+}
+
+inline void ElementDescendantIterator::dropAssertions()
+{
+#if !ASSERT_DISABLED
+    m_assertions.clear();
+#endif
 }
 
 ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator++()
@@ -215,8 +229,18 @@ inline ElementDescendantConstIterator::ElementDescendantConstIterator()
 
 inline ElementDescendantConstIterator::ElementDescendantConstIterator(const Element* current)
     : m_current(current)
+#if !ASSERT_DISABLED
+    , m_assertions(current)
+#endif
 {
     m_ancestorSiblingStack.uncheckedAppend(nullptr);
+}
+
+inline void ElementDescendantConstIterator::dropAssertions()
+{
+#if !ASSERT_DISABLED
+    m_assertions.clear();
+#endif
 }
 
 ALWAYS_INLINE ElementDescendantConstIterator& ElementDescendantConstIterator::operator++()

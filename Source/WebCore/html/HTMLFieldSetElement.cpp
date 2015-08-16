@@ -26,10 +26,11 @@
 #include "HTMLFieldSetElement.h"
 
 #include "ElementIterator.h"
-#include "HTMLCollection.h"
+#include "HTMLFormControlsCollection.h"
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "NodeRareData.h"
 #include "RenderFieldset.h"
 #include <wtf/StdLibExtras.h>
 
@@ -161,7 +162,7 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
 
 Ref<HTMLCollection> HTMLFieldSetElement::elements()
 {
-    return ensureCachedHTMLCollection(FormControls);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, FormControls);
 }
 
 void HTMLFieldSetElement::refreshElementsIfNeeded() const

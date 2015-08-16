@@ -23,7 +23,7 @@
 #ifndef HTMLFormControlsCollection_h
 #define HTMLFormControlsCollection_h
 
-#include "HTMLCollection.h"
+#include "CachedHTMLCollection.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -34,21 +34,23 @@ class HTMLImageElement;
 // This class is just a big hack to find form elements even in malformed HTML elements.
 // The famous <table><tr><form><td> problem.
 
-class HTMLFormControlsCollection final : public HTMLCollection {
+class HTMLFormControlsCollection final : public CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType> {
 public:
     static Ref<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
     virtual ~HTMLFormControlsCollection();
+
+    // For CachedHTMLCollection.
+    Element* customElementAfter(Element*) const;
 
 private:
     explicit HTMLFormControlsCollection(ContainerNode&);
 
     virtual HTMLElement* namedItem(const AtomicString& name) const override;
-    virtual void invalidateCache(Document&) const override;
+    virtual void invalidateCache(Document&) override;
     virtual void updateNamedElementCache() const override;
 
     const Vector<FormAssociatedElement*>& formControlElements() const;
     const Vector<HTMLImageElement*>& formImageElements() const;
-    virtual Element* customElementAfter(Element*) const override;
 
     mutable Element* m_cachedElement;
     mutable unsigned m_cachedElementOffsetInArray;

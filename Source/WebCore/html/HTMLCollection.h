@@ -60,57 +60,39 @@ private:
 
 class HTMLCollection : public ScriptWrappable, public RefCounted<HTMLCollection> {
 public:
-    static Ref<HTMLCollection> create(ContainerNode& base, CollectionType);
     virtual ~HTMLCollection();
 
     // DOM API
-    unsigned length() const;
-    Element* item(unsigned offset) const;
-    virtual Element* namedItem(const AtomicString& name) const;
+    virtual unsigned length() const = 0;
+    virtual Element* item(unsigned offset) const = 0;
+    virtual Element* namedItem(const AtomicString& name) const = 0;
     PassRefPtr<NodeList> tags(const String&);
 
     // Non-DOM API
     bool hasNamedItem(const AtomicString& name) const;
     Vector<Ref<Element>> namedItems(const AtomicString& name) const;
-    size_t memoryCost() const;
+    virtual size_t memoryCost() const;
 
     bool isRootedAtDocument() const;
     NodeListInvalidationType invalidationType() const;
     CollectionType type() const;
     ContainerNode& ownerNode() const;
-    void invalidateCache(const QualifiedName* attributeName) const;
-    virtual void invalidateCache(Document&) const;
-
-    // For CollectionIndexCache; do not use elsewhere.
-    Element* collectionBegin() const;
-    Element* collectionLast() const;
-    Element* collectionEnd() const;
-    void collectionTraverseForward(Element*&, unsigned count, unsigned& traversedCount) const;
-    void collectionTraverseBackward(Element*&, unsigned count) const;
-    bool collectionCanTraverseBackward() const;
-    void willValidateIndexCache() const;
+    ContainerNode& rootNode() const;
+    void invalidateCache(const QualifiedName* attributeName);
+    virtual void invalidateCache(Document&);
 
     bool hasNamedElementCache() const;
 
 protected:
-    enum ElementTraversalType { NormalTraversal, CustomForwardOnlyTraversal };
-    HTMLCollection(ContainerNode& base, CollectionType, ElementTraversalType = NormalTraversal);
+    HTMLCollection(ContainerNode& base, CollectionType);
 
     virtual void updateNamedElementCache() const;
+    Element* namedItemSlow(const AtomicString& name) const;
 
     void setNamedItemCache(std::unique_ptr<CollectionNamedElementCache>) const;
     const CollectionNamedElementCache& namedItemCaches() const;
 
-private:
     Document& document() const;
-    ContainerNode& rootNode() const;
-    bool usesCustomForwardOnlyTraversal() const;
-
-    Element* iterateForPreviousElement(Element*) const;
-    Element* firstElement(ContainerNode& root) const;
-    Element* traverseForward(Element&, unsigned count, unsigned& traversedCount, ContainerNode& root) const;
-
-    virtual Element* customElementAfter(Element*) const;
 
     void invalidateNamedElementCache(Document&) const;
 
@@ -119,15 +101,20 @@ private:
 
     Ref<ContainerNode> m_ownerNode;
 
-    mutable CollectionIndexCache<HTMLCollection, Element*> m_indexCache;
     mutable std::unique_ptr<CollectionNamedElementCache> m_namedElementCache;
 
     const unsigned m_collectionType : 5;
     const unsigned m_invalidationType : 4;
     const unsigned m_rootType : 1;
-    const unsigned m_shouldOnlyIncludeDirectChildren : 1;
-    const unsigned m_usesCustomForwardOnlyTraversal : 1;
 };
+
+inline ContainerNode& HTMLCollection::rootNode() const
+{
+    if (isRootedAtDocument() && ownerNode().inDocument())
+        return ownerNode().document();
+
+    return ownerNode();
+}
 
 inline const Vector<Element*>* CollectionNamedElementCache::findElementsWithId(const AtomicString& id) const
 {
@@ -177,7 +164,7 @@ inline void CollectionNamedElementCache::append(StringToElementsMap& map, const 
 
 inline size_t HTMLCollection::memoryCost() const
 {
-    return m_indexCache.memoryCost() + (m_namedElementCache ? m_namedElementCache->memoryCost() : 0);
+    return m_namedElementCache ? m_namedElementCache->memoryCost() : 0;
 }
 
 inline bool HTMLCollection::isRootedAtDocument() const
@@ -205,27 +192,12 @@ inline Document& HTMLCollection::document() const
     return m_ownerNode->document();
 }
 
-inline void HTMLCollection::invalidateCache(const QualifiedName* attributeName) const
+inline void HTMLCollection::invalidateCache(const QualifiedName* attributeName)
 {
     if (!attributeName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attributeName))
         invalidateCache(document());
     else if (hasNamedElementCache() && (*attributeName == HTMLNames::idAttr || *attributeName == HTMLNames::nameAttr))
         invalidateNamedElementCache(document());
-}
-
-inline Element* HTMLCollection::collectionEnd() const
-{
-    return nullptr;
-}
-
-inline bool HTMLCollection::collectionCanTraverseBackward() const
-{
-    return !m_usesCustomForwardOnlyTraversal;
-}
-
-inline void HTMLCollection::willValidateIndexCache() const
-{
-    document().registerCollection(const_cast<HTMLCollection&>(*this));
 }
 
 inline bool HTMLCollection::hasNamedElementCache() const

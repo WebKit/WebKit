@@ -25,6 +25,7 @@
 #define LiveNodeList_h
 
 #include "CollectionIndexCache.h"
+#include "CollectionTraversal.h"
 #include "CollectionType.h"
 #include "Document.h"
 #include "ElementDescendantIterator.h"
@@ -80,25 +81,28 @@ class CachedLiveNodeList : public LiveNodeList {
 public:
     virtual ~CachedLiveNodeList();
 
-    virtual unsigned length() const override final;
-    virtual Node* item(unsigned offset) const override final;
+    unsigned length() const override final { return m_indexCache.nodeCount(nodeList()); }
+    Node* item(unsigned offset) const override final { return m_indexCache.nodeAt(nodeList(), offset); }
 
     // For CollectionIndexCache
-    ElementDescendantIterator collectionBegin() const;
-    ElementDescendantIterator collectionLast() const;
+    ElementDescendantIterator collectionBegin() const { return CollectionTraversal<CollectionTraversalType::Descendants>::begin(nodeList(), rootNode()); }
+    ElementDescendantIterator collectionLast() const { return CollectionTraversal<CollectionTraversalType::Descendants>::last(nodeList(), rootNode()); }
     ElementDescendantIterator collectionEnd() const { return ElementDescendantIterator(); }
-    void collectionTraverseForward(ElementDescendantIterator&, unsigned count, unsigned& traversedCount) const;
-    void collectionTraverseBackward(ElementDescendantIterator&, unsigned count) const;
+    void collectionTraverseForward(ElementDescendantIterator& current, unsigned count, unsigned& traversedCount) const { CollectionTraversal<CollectionTraversalType::Descendants>::traverseForward(nodeList(), current, count, traversedCount); }
+    void collectionTraverseBackward(ElementDescendantIterator& current, unsigned count) const { CollectionTraversal<CollectionTraversalType::Descendants>::traverseBackward(nodeList(), current, count); }
     bool collectionCanTraverseBackward() const { return true; }
-    void willValidateIndexCache() const;
+    void willValidateIndexCache() const { document().registerNodeListForInvalidation(const_cast<CachedLiveNodeList<NodeListType>&>(*this)); }
 
     virtual void invalidateCache(Document&) const override final;
-    virtual size_t memoryCost() const override final;
+    virtual size_t memoryCost() const override final { return m_indexCache.memoryCost(); }
 
 protected:
     CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);
 
 private:
+    NodeListType& nodeList() { return static_cast<NodeListType&>(*this); }
+    const NodeListType& nodeList() const { return static_cast<const NodeListType&>(*this); }
+
     ContainerNode& rootNode() const;
 
     mutable CollectionIndexCache<NodeListType, ElementDescendantIterator> m_indexCache;
@@ -131,115 +135,33 @@ ALWAYS_INLINE bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationTyp
 template <class NodeListType>
 CachedLiveNodeList<NodeListType>::CachedLiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType)
     : LiveNodeList(ownerNode, invalidationType)
-    , m_indexCache(static_cast<NodeListType&>(*this))
+    , m_indexCache(nodeList())
 {
 }
 
 template <class NodeListType>
 CachedLiveNodeList<NodeListType>::~CachedLiveNodeList()
 {
-    auto& nodeList = static_cast<const NodeListType&>(*this);
-    if (m_indexCache.hasValidCache(nodeList))
+    if (m_indexCache.hasValidCache(nodeList()))
         document().unregisterNodeListForInvalidation(*this);
 }
 
 template <class NodeListType>
 inline ContainerNode& CachedLiveNodeList<NodeListType>::rootNode() const
 {
-    if (static_cast<const NodeListType&>(*this).isRootedAtDocument() && ownerNode().inDocument())
+    if (nodeList().isRootedAtDocument() && ownerNode().inDocument())
         return ownerNode().document();
 
     return ownerNode();
 }
 
 template <class NodeListType>
-ElementDescendantIterator CachedLiveNodeList<NodeListType>::collectionBegin() const
-{
-    auto& nodeList = static_cast<const NodeListType&>(*this);
-    auto descendants = elementDescendants(rootNode());
-    auto end = descendants.end();
-    for (auto it = descendants.begin(); it != end; ++it) {
-        if (nodeList.elementMatches(*it))
-            return it;
-    }
-    return end;
-}
-
-template <class NodeListType>
-ElementDescendantIterator CachedLiveNodeList<NodeListType>::collectionLast() const
-{
-    auto& nodeList = static_cast<const NodeListType&>(*this);
-    auto descendants = elementDescendants(rootNode());
-    auto end = descendants.end();
-    for (auto it = descendants.last(); it != end; --it) {
-        if (nodeList.elementMatches(*it))
-            return it;
-    }
-    return end;
-}
-
-template <class NodeListType>
-void CachedLiveNodeList<NodeListType>::collectionTraverseForward(ElementDescendantIterator& current, unsigned count, unsigned& traversedCount) const
-{
-    auto& nodeList = static_cast<const NodeListType&>(*this);
-    ASSERT(nodeList.elementMatches(*current));
-    auto end = collectionEnd();
-    for (traversedCount = 0; traversedCount < count; ++traversedCount) {
-        do {
-            ++current;
-            if (current == end)
-                return;
-        } while (!nodeList.elementMatches(*current));
-    }
-}
-
-template <class NodeListType>
-void CachedLiveNodeList<NodeListType>::collectionTraverseBackward(ElementDescendantIterator& current, unsigned count) const
-{
-    auto& nodeList = static_cast<const NodeListType&>(*this);
-    ASSERT(nodeList.elementMatches(*current));
-    auto end = collectionEnd();
-    for (; count; --count) {
-        do {
-            --current;
-            if (current == end)
-                return;
-        } while (!nodeList.elementMatches(*current));
-    }
-}
-
-template <class NodeListType>
-void CachedLiveNodeList<NodeListType>::willValidateIndexCache() const
-{
-    document().registerNodeListForInvalidation(const_cast<NodeListType&>(static_cast<const NodeListType&>(*this)));
-}
-
-template <class NodeListType>
 void CachedLiveNodeList<NodeListType>::invalidateCache(Document& document) const
 {
-    auto& nodeList = static_cast<const NodeListType&>(*this);
-    if (!m_indexCache.hasValidCache(nodeList))
+    if (!m_indexCache.hasValidCache(nodeList()))
         return;
-    document.unregisterNodeListForInvalidation(const_cast<NodeListType&>(nodeList));
-    m_indexCache.invalidate(nodeList);
-}
-
-template <class NodeListType>
-unsigned CachedLiveNodeList<NodeListType>::length() const
-{
-    return m_indexCache.nodeCount(static_cast<const NodeListType&>(*this));
-}
-
-template <class NodeListType>
-Node* CachedLiveNodeList<NodeListType>::item(unsigned offset) const
-{
-    return m_indexCache.nodeAt(static_cast<const NodeListType&>(*this), offset);
-}
-
-template <class NodeListType>
-size_t CachedLiveNodeList<NodeListType>::memoryCost() const
-{
-    return m_indexCache.memoryCost();
+    document.unregisterNodeListForInvalidation(const_cast<NodeListType&>(nodeList()));
+    m_indexCache.invalidate(nodeList());
 }
 
 } // namespace WebCore

@@ -36,19 +36,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLNameCollection::HTMLNameCollection(Document& document, CollectionType type, const AtomicString& name)
-    : HTMLCollection(document, type)
-    , m_name(name)
-{
-}
-
-HTMLNameCollection::~HTMLNameCollection()
-{
-    ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
-
-    document().nodeLists()->removeCachedCollection(this, m_name);
-}
-
 bool WindowNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {
     return is<HTMLImageElement>(element) || is<HTMLFormElement>(element) || is<HTMLAppletElement>(element)
