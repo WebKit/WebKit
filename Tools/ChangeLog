@@ -1,3 +1,46 @@
+2015-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Simplify how PlatformWebViews are created when view options change
+        https://bugs.webkit.org/show_bug.cgi?id=148093
+
+        Reviewed by Sam Weinig.
+
+        Instead of letting each port dictate when the PlatformWebView should be recreated we now do the following:
+
+        TestController::ensureViewSupportsOptionsForTest gets the view options for a test by calling
+        TestController::viewOptionsForTest, which returns a filled in ViewOptions struct for a given test. It also allows
+        ports to add/override settings by calling TestController::updatePlatformSpecificViewOptionsForTest.
+
+        If the current PlatformWebView doesn't support the given view options, delete the web view and create a new one.
+
+        Also, get rid of the first call to TestController::createWebViewWithOptions in TestController::initialize and
+        always rely on TestController::ensureViewSupportsOptionsForTest creating a PlatformWebView for us.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        (WTR::shouldUseFixedLayout):
+        (WTR::TestController::viewOptionsForTest):
+        (WTR::TestController::updateWebViewSizeForTest):
+        (WTR::TestController::updateWindowScaleForTest):
+        (WTR::TestController::configureViewForTest):
+        (WTR::TestController::initialize): Deleted.
+        (WTR::TestController::ensureViewSupportsOptions): Deleted.
+        (WTR::TestController::updateLayoutTypeForTest): Deleted.
+        (WTR::TestController::platformConfigureViewForTest): Deleted.
+        (WTR::TestController::platformResetPreferencesToConsistentValues): Deleted.
+        (WTR::TestController::run): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::shouldUseFixedLayout):
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest):
+        (WTR::TestController::platformConfigureViewForTest):
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest):
+        (WTR::TestController::platformConfigureViewForTest):
+
 2015-08-17  Sam Weinig  <sam@webkit.org>
 
         API::PageConfiguration's sessionID needs to be set whenever the API::WebsiteDataStore is set

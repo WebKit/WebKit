@@ -21,6 +21,7 @@
 #include "TestController.h"
 
 #include "PlatformWebView.h"
+#include "TestInvocation.h"
 #include <Ecore.h>
 #include <Evas.h>
 #include <stdio.h>
@@ -130,6 +131,28 @@ void TestController::runModal(PlatformWebView*)
 const char* TestController::platformLibraryPathForTesting()
 {
     return 0;
+}
+
+static bool shouldUseFixedLayout(const TestInvocation& test)
+{
+#if USE(COORDINATED_GRAPHICS)
+    if (test.urlContains("sticky/") || test.urlContains("sticky\\"))
+        return true;
+#endif
+    return false;
+}
+
+void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions& viewOptions, const TestInvocation& test) const
+{
+    viewOptions.useFixedLayout = shouldUseFixedLayout(test);
+}
+
+void TestController::platformConfigureViewForTest(const TestInvocation&)
+{
+}
+
+void TestController::platformResetPreferencesToConsistentValues()
+{
 }
 
 } // namespace WTR

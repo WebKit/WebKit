@@ -98,6 +98,10 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     }
 }
 
+void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions&, const TestInvocation&) const
+{
+}
+
 void TestController::platformRunUntil(bool& done, double timeout)
 {
     NSDate *endDate = (timeout > 0) ? [NSDate dateWithTimeIntervalSinceNow:timeout] : [NSDate distantFuture];

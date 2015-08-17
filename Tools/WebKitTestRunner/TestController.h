@@ -68,7 +68,6 @@ public:
 
     EventSenderProxy* eventSenderProxy() { return m_eventSenderProxy.get(); }
 
-    void ensureViewSupportsOptions(const ViewOptions&);
     bool shouldUseRemoteLayerTree() const { return m_shouldUseRemoteLayerTree; }
     
     // Runs the run loop until `done` is true or the timeout elapses.
@@ -142,9 +141,12 @@ private:
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
 
+    void ensureViewSupportsOptionsForTest(const TestInvocation&);
+    ViewOptions viewOptionsForTest(const TestInvocation&) const;
+    void updatePlatformSpecificViewOptionsForTest(ViewOptions&, const TestInvocation&) const;
+
     void updateWebViewSizeForTest(const TestInvocation&);
     void updateWindowScaleForTest(PlatformWebView*, const TestInvocation&);
-    void updateLayoutTypeForTest(const TestInvocation&);
 
     void decidePolicyForGeolocationPermissionRequestIfPossible();
     void decidePolicyForUserMediaPermissionRequestIfPossible();

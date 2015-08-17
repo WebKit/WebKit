@@ -96,16 +96,15 @@ void TestController::platformResetPreferencesToConsistentValues()
 #endif
 }
 
-void TestController::platformConfigureViewForTest(const TestInvocation& test)
+void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions& viewOptions, const TestInvocation& test) const
 {
-    ViewOptions viewOptions;
-
     viewOptions.useThreadedScrolling = shouldUseThreadedScrolling(test);
     viewOptions.useRemoteLayerTree = shouldUseRemoteLayerTree();
     viewOptions.shouldShowWebView = shouldShowWebView();
+}
 
-    ensureViewSupportsOptions(viewOptions);
-
+void TestController::platformConfigureViewForTest(const TestInvocation& test)
+{
 #if WK_API_ENABLED
     if (!test.urlContains("contentextensions/"))
         return;
