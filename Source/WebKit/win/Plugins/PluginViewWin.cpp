@@ -617,47 +617,46 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (event->shiftKey())
         npEvent.wParam |= MK_SHIFT;
 
-    if (event->type() == eventNames().mousemoveEvent ||
-        event->type() == eventNames().mouseoutEvent || 
-        event->type() == eventNames().mouseoverEvent) {
+    if (event->type() == eventNames().mousemoveEvent
+        || event->type() == eventNames().mouseoutEvent
+        || event->type() == eventNames().mouseoverEvent) {
         npEvent.event = WM_MOUSEMOVE;
         if (event->buttonDown())
             switch (event->button()) {
-                case LeftButton:
-                    npEvent.wParam |= MK_LBUTTON;
-                    break;
-                case MiddleButton:
-                    npEvent.wParam |= MK_MBUTTON;
-                    break;
-                case RightButton:
-                    npEvent.wParam |= MK_RBUTTON;
+            case LeftButton:
+                npEvent.wParam |= MK_LBUTTON;
+                break;
+            case MiddleButton:
+                npEvent.wParam |= MK_MBUTTON;
+                break;
+            case RightButton:
+                npEvent.wParam |= MK_RBUTTON;
                 break;
             }
-    }
-    else if (event->type() == eventNames().mousedownEvent) {
+    } else if (event->type() == eventNames().mousedownEvent) {
         focusPluginElement();
         switch (event->button()) {
-            case 0:
-                npEvent.event = WM_LBUTTONDOWN;
-                break;
-            case 1:
-                npEvent.event = WM_MBUTTONDOWN;
-                break;
-            case 2:
-                npEvent.event = WM_RBUTTONDOWN;
-                break;
+        case LeftButton:
+            npEvent.event = WM_LBUTTONDOWN;
+            break;
+        case MiddleButton:
+            npEvent.event = WM_MBUTTONDOWN;
+            break;
+        case RightButton:
+            npEvent.event = WM_RBUTTONDOWN;
+            break;
         }
     } else if (event->type() == eventNames().mouseupEvent) {
         switch (event->button()) {
-            case 0:
-                npEvent.event = WM_LBUTTONUP;
-                break;
-            case 1:
-                npEvent.event = WM_MBUTTONUP;
-                break;
-            case 2:
-                npEvent.event = WM_RBUTTONUP;
-                break;
+        case LeftButton:
+            npEvent.event = WM_LBUTTONUP;
+            break;
+        case MiddleButton:
+            npEvent.event = WM_MBUTTONUP;
+            break;
+        case RightButton:
+            npEvent.event = WM_RBUTTONUP;
+            break;
         }
     } else
         return;
