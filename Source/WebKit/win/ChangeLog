@@ -1,3 +1,25 @@
+2015-08-17  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Accelerated compositing does not respect device scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=148085
+
+        Reviewed by Brent Fulgham.
+
+        Scale root layer's transformation matrix with device scale factor.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+        (AcceleratedCompositingContext::startedAnimation):
+        (AcceleratedCompositingContext::applyDeviceScaleFactor):
+        (AcceleratedCompositingContext::compositeLayersToContext):
+        (AcceleratedCompositingContext::resizeRootLayer):
+        (AcceleratedCompositingContext::flushAndRenderLayers):
+        (AcceleratedCompositingContext::paintContents):
+        (AcceleratedCompositingContext::deviceScaleFactor):
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        * WebView.cpp:
+        (WebView::repaint):
+
 2015-08-17  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         [Win] Cleanups to PluginView::handleMouseEvent().

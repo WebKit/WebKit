@@ -838,7 +838,7 @@ void WebView::repaint(const WebCore::IntRect& logicalWindowRect, bool contentCha
     if (isAcceleratedCompositing()) {
         // The contentChanged, immediate, and repaintContentOnly parameters are all based on a non-
         // compositing painting/scrolling model.
-        addToDirtyRegion(windowRect);
+        addToDirtyRegion(logicalWindowRect);
         return;
     }
 
