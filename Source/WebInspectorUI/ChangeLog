@@ -1,3 +1,46 @@
+2015-08-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorTest should be a subclass of TestHarness
+        https://bugs.webkit.org/show_bug.cgi?id=148079
+
+        Reviewed by Timothy Hatcher.
+
+        Extract the frontend test harness into a subclass. Delete some code that
+        is now redundant. Sprinkle some ES6 syntax where possible.
+
+        Rewrite the code that redirects the Inspector page's console messages to
+        the test page, since it didn't appear to work any more.
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/FrontendTestHarness.js: Added.
+        (FrontendTestHarness):
+        (FrontendTestHarness.prototype.completeTest):
+        (FrontendTestHarness.prototype.addResult):
+        (FrontendTestHarness.prototype.debugLog):
+        (FrontendTestHarness.prototype.evaluateInPage):
+        (FrontendTestHarness.prototype.expectNoError):
+        (FrontendTestHarness.prototype.testPageDidLoad):
+        (FrontendTestHarness.prototype.reloadPage):
+        (FrontendTestHarness.prototype.redirectConsoleToTestOutput.createProxyConsoleHandler):
+        (FrontendTestHarness.prototype.redirectConsoleToTestOutput):
+        (FrontendTestHarness.prototype.reportUncaughtException):
+        (FrontendTestHarness.prototype._resendResults):
+        * UserInterface/Test/Test.js:
+        (InspectorTest.EventDispatcher.prototype.dispatchEvent): Deleted.
+        (InspectorTest.EventDispatcher): Deleted.
+        (InspectorTest.log): Deleted.
+        (InspectorTest.assert): Deleted.
+        (InspectorTest.expectThat): Deleted.
+        (InspectorTest.debugLog): Deleted.
+        (InspectorTest.expectNoError): Deleted.
+        (InspectorTest.completeTest): Deleted.
+        (InspectorTest.evaluateInPage): Deleted.
+        (InspectorTest.addResult): Deleted.
+        (InspectorTest._resendResults): Deleted.
+        (InspectorTest.testPageDidLoad): Deleted.
+        (InspectorTest.reloadPage): Deleted.
+        (InspectorTest.reportUncaughtException): Deleted.
+
 2015-08-17  Saam barati  <sbarati@apple.com>
 
         Web Inspector: Type profiler return types aren't showing up

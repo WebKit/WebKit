@@ -15,13 +15,13 @@ function installTimer()
 
 function add(a, b)
 {
-    InspectorTestProxy.addResult("Calling add(): " + a + " + " + b);
+    TestPage.addResult("Calling add(): " + a + " + " + b);
     return a + b;
 }
 
 function mul(a, b)
 {
-    InspectorTestProxy.addResult("Calling mul(): " + a + " * " + b);
+    TestPage.addResult("Calling mul(): " + a + " * " + b);
     return a * b;
 }
 

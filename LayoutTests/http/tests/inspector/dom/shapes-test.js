@@ -1,4 +1,4 @@
-InspectorTestProxy.registerInitializer(function() {
+TestPage.registerInitializer(function() {
 
 InspectorTest.Shapes = {
     getShapeOutsideInfoForSelector: function(selector, callback)

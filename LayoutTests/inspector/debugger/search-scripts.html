@@ -44,7 +44,7 @@ function test()
         });
     });
 
-    InspectorTest.eventDispatcher.addEventListener(InspectorTest.EventDispatcher.Event.TestPageDidLoad, function() {
+    InspectorTest.addEventListener(FrontendTestHarness.Event.TestPageDidLoad, function() {
         InspectorTest.evaluateInPage("performEvals()");
     });
 

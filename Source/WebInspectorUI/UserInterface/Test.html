@@ -32,6 +32,10 @@
     <script src="Base/WebInspector.js"></script>
     <script src="Base/Object.js"></script>
 
+    <script src="Test/TestHarness.js"></script>
+    <script src="Test/FrontendTestHarness.js"></script>
+    <script src="Test/TestSuite.js"></script>
+
     <script src="Test/Test.js"></script>
 
     <script src="Base/DOMUtilities.js"></script>
@@ -142,6 +146,12 @@
 
     <script type="text/javascript">
         WebInspector.loaded();
+
+        // Not reliable unless console messages are dumped to stderr. See wiki for details.
+        InspectorBackend.dumpInspectorProtocolMessages = false;
+
+        // Synchronous logging may produce more output prior to a timeout.
+        InspectorTest.forceSyncDebugLogging = false;
     </script>
 </head>
 <body>
