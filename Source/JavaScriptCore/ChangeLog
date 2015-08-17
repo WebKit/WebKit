@@ -1,3 +1,25 @@
+2015-08-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=147929
+
+        Reviewed by Geoffrey Garen.
+
+        Implement Reflect.getOwnPropertyDescriptor.
+        The difference from the Object.getOwnPropertyDescriptor is
+        Reflect.getOwnPropertyDescriptor does not perform ToObject onto
+        the first argument. If the first argument is not an Object, it
+        immediately raises the TypeError.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        * runtime/ObjectConstructor.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectGetOwnPropertyDescriptor):
+        * tests/stress/reflect-get-own-property.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2015-08-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Use (x + x) instead of (x * 2) when possible

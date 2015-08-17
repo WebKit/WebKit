@@ -222,19 +222,13 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     return JSValue::encode(objectValue);
 }
 
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
+JSValue objectConstructorGetOwnPropertyDescriptor(ExecState* exec, JSObject* object, const Identifier& propertyName)
 {
-    JSObject* object = exec->argument(0).toObject(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsNull());
-    auto propertyName = exec->argument(1).toPropertyKey(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsNull());
     PropertyDescriptor descriptor;
     if (!object->getOwnPropertyDescriptor(exec, propertyName, descriptor))
-        return JSValue::encode(jsUndefined());
+        return jsUndefined();
     if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+        return jsUndefined();
 
     JSObject* description = constructEmptyObject(exec);
     if (!descriptor.isAccessorDescriptor()) {
@@ -250,7 +244,18 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState
     description->putDirect(exec->vm(), exec->propertyNames().enumerable, jsBoolean(descriptor.enumerable()), 0);
     description->putDirect(exec->vm(), exec->propertyNames().configurable, jsBoolean(descriptor.configurable()), 0);
 
-    return JSValue::encode(description);
+    return description;
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
+{
+    JSObject* object = exec->argument(0).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    auto propertyName = exec->argument(1).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(objectConstructorGetOwnPropertyDescriptor(exec, object, propertyName));
 }
 
 // FIXME: Use the enumeration cache.

@@ -92,6 +92,7 @@ inline JSObject* constructEmptyObject(ExecState* exec)
 
 JSObject* objectConstructorFreeze(ExecState*, JSObject*);
 JSValue objectConstructorGetPrototypeOf(ExecState*, JSObject*);
+JSValue objectConstructorGetOwnPropertyDescriptor(ExecState*, JSObject*, const Identifier&);
 JSArray* ownPropertyKeys(ExecState*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
 bool toPropertyDescriptor(ExecState*, JSValue, PropertyDescriptor&);
 
