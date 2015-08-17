@@ -1,3 +1,10 @@
+2015-08-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove failing expectations for some WK2 tests that have passed for the
+        last 15 builds.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2015-08-17  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Implement ES6 arrow function syntax. Arrow function specific features. Lexical bind of this
