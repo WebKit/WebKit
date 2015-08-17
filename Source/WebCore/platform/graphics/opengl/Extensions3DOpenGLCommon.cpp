@@ -58,7 +58,6 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
     , m_isAMD(false)
     , m_isIntel(false)
     , m_isImagination(false)
-    , m_maySupportMultisampling(true)
     , m_requiresBuiltInFunctionEmulation(false)
     , m_requiresRestrictedMaximumTextureSize(false)
 {
@@ -80,17 +79,8 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
     if (m_isAMD || m_isIntel)
         m_requiresBuiltInFunctionEmulation = true;
 
-    // Currently in Mac we only allow multisampling if the vendor is NVIDIA,
-    // or if the vendor is AMD/ATI and the system is 10.7.2 and above.
-
-    bool systemSupportsMultisampling = true;
-
-    if (m_isAMD && !systemSupportsMultisampling)
-        m_maySupportMultisampling = false;
-
     // Intel HD 3000 devices have problems with large textures. <rdar://problem/16649140>
-    if (m_isIntel)
-        m_requiresRestrictedMaximumTextureSize = m_renderer.startsWith("Intel HD Graphics 3000");
+    m_requiresRestrictedMaximumTextureSize = m_renderer.startsWith("Intel HD Graphics 3000");
 #endif
 }
 

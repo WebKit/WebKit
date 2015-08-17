@@ -255,13 +255,6 @@ public:
     virtual bool isImagination() = 0;
     virtual String vendor() = 0;
 
-    // If this method returns false then the system *definitely* does not support multisampling.
-    // It does not necessarily say the system does support it - callers must attempt to construct
-    // multisampled renderbuffers and check framebuffer completeness.
-    // Ports should implement this to return false on configurations where it is known
-    // that multisampling is not available.
-    virtual bool maySupportMultisampling() = 0;
-
     // Some configurations have bugs regarding built-in functions in their OpenGL drivers
     // that must be avoided. Ports should implement these flags on such configurations.
     virtual bool requiresBuiltInFunctionEmulation() = 0;

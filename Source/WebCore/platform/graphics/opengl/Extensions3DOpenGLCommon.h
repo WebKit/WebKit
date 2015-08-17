@@ -65,7 +65,6 @@ public:
     virtual bool isImagination() { return m_isImagination; }
     virtual String vendor() { return m_vendor; }
 
-    virtual bool maySupportMultisampling() { return m_maySupportMultisampling; }
     virtual bool requiresBuiltInFunctionEmulation() { return m_requiresBuiltInFunctionEmulation; }
     virtual bool requiresRestrictedMaximumTextureSize() { return m_requiresRestrictedMaximumTextureSize; }
 
@@ -87,7 +86,6 @@ protected:
     bool m_isAMD;
     bool m_isIntel;
     bool m_isImagination;
-    bool m_maySupportMultisampling;
     bool m_requiresBuiltInFunctionEmulation;
     bool m_requiresRestrictedMaximumTextureSize;
 

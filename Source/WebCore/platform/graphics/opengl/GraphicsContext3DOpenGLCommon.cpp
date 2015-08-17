@@ -133,7 +133,7 @@ void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExten
             m_attrs.stencil = false;
     }
     if (m_attrs.antialias) {
-        if (!extensions->maySupportMultisampling() || !extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
+        if (!extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
             m_attrs.antialias = false;
         else
             extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
