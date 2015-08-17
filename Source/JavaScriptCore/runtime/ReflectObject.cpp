@@ -36,6 +36,7 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState*);
+static EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectGetOwnPropertyDescriptor(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState*);
@@ -59,6 +60,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
     defineProperty           reflectObjectDefineProperty           DontEnum|Function 3
     deleteProperty           reflectObjectDeleteProperty           DontEnum|Function 2
     enumerate                reflectObjectEnumerate                DontEnum|Function 1
+    get                      reflectObjectGet                      DontEnum|Function 2
     getOwnPropertyDescriptor reflectObjectGetOwnPropertyDescriptor DontEnum|Function 2
     getPrototypeOf           reflectObjectGetPrototypeOf           DontEnum|Function 1
     has                      reflectObjectHas                      DontEnum|Function 2
@@ -116,6 +118,25 @@ EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState* exec)
     if (!target.isObject())
         return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.enumerate requires the first argument be an object")));
     return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), asObject(target)));
+}
+
+// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.get
+EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.get requires the first argument be an object")));
+
+    const Identifier propertyName = exec->argument(1).toPropertyKey(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
+
+    JSValue receiver = target;
+    if (exec->argumentCount() >= 3)
+        receiver = exec->argument(2);
+
+    PropertySlot slot(receiver);
+    return JSValue::encode(target.get(exec, propertyName, slot));
 }
 
 // http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.getownpropertydescriptor

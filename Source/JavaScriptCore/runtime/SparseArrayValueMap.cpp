@@ -142,17 +142,6 @@ void SparseArrayEntry::get(PropertyDescriptor& descriptor) const
     descriptor.setDescriptor(Base::get(), attributes);
 }
 
-JSValue SparseArrayEntry::get(ExecState* exec, JSObject* array) const
-{
-    JSValue value = Base::get();
-    ASSERT(value);
-
-    if (LIKELY(!value.isGetterSetter()))
-        return value;
-
-    return callGetter(exec, array, jsCast<GetterSetter*>(value));
-}
-
 void SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueMap* map, JSValue value, bool shouldThrow)
 {
     if (!(attributes & Accessor)) {

@@ -1,3 +1,29 @@
+2015-08-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.get
+        https://bugs.webkit.org/show_bug.cgi?id=147925
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements Reflect.get API.
+        It can take the receiver object as the third argument.
+        When the receiver is specified and there's a getter for the given property name,
+        we call the getter with the receiver as the |this| value.
+
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectGet):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::get): Deleted.
+        * runtime/SparseArrayValueMap.h:
+        * tests/stress/reflect-get.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (.get shouldThrow):
+        (.get var):
+        (get var.object.get hello):
+        (.get shouldBe):
+        (get var.object.set hello):
+
 2015-08-17  Simon Fraser  <simon.fraser@apple.com>
 
         will-change should sometimes trigger compositing
