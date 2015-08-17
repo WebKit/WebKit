@@ -97,6 +97,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_switch_char);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_switch_string);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_func);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_func_exp);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_arrow_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_size_frame_for_varargs);

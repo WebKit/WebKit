@@ -2798,6 +2798,9 @@
     <ClInclude Include="..\runtime\JSArray.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\JSArrowFunction.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\JSBoundFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>

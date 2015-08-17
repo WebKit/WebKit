@@ -2373,3 +2373,12 @@ _llint_op_profile_type:
 
 .opProfileTypeDone:
     dispatch(6)
+
+_llint_op_load_arrowfunction_this:
+    traceExecution()
+    loadi Callee + PayloadOffset[cfr], t0
+    loadi JSArrowFunction::m_boundThis[t0], t0
+    loadisFromInstruction(1, t1)
+    storei CellTag, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+    dispatch(2)

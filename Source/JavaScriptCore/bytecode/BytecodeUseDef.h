@@ -55,6 +55,7 @@ void computeUsesForBytecodeOffset(
     case op_create_out_of_band_arguments:
         return;
     case op_get_scope:
+    case op_load_arrowfunction_this:
     case op_to_this:
     case op_check_tdz:
     case op_profile_will_call:
@@ -119,6 +120,7 @@ void computeUsesForBytecodeOffset(
     case op_get_property_enumerator:
     case op_get_enumerable_length:
     case op_new_func_exp:
+    case op_new_arrow_func_exp:
     case op_to_index_string:
     case op_create_lexical_environment:
     case op_resolve_scope:
@@ -309,6 +311,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_regexp:
     case op_new_func:
     case op_new_func_exp:
+    case op_new_arrow_func_exp:
     case op_call_varargs:
     case op_construct_varargs:
     case op_get_from_scope:
@@ -362,6 +365,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_to_this:
     case op_check_tdz:
     case op_get_scope:
+    case op_load_arrowfunction_this:
     case op_create_direct_arguments:
     case op_create_scoped_arguments:
     case op_create_out_of_band_arguments:

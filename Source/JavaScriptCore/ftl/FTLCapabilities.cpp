@@ -105,6 +105,7 @@ inline CapabilityLevel canCompile(Node* node)
     case LoopHint:
     case SkipScope:
     case CreateActivation:
+    case NewArrowFunction:
     case NewFunction:
     case GetClosureVar:
     case PutClosureVar:
@@ -141,6 +142,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CountExecution:
     case GetExecutable:
     case GetScope:
+    case LoadArrowFunctionThis:
     case GetCallee:
     case GetArgumentCount:
     case ToString:

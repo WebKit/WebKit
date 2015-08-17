@@ -193,6 +193,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_switch_char:
     case op_in:
     case op_get_scope:
+    case op_load_arrowfunction_this:
     case op_get_from_scope:
     case op_get_enumerable_length:
     case op_has_generic_property:
@@ -205,6 +206,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_to_index_string:
     case op_new_func:
     case op_new_func_exp:
+    case op_new_arrow_func_exp:
     case op_create_lexical_environment:
     case op_get_parent_scope:
         return CanCompileAndInline;

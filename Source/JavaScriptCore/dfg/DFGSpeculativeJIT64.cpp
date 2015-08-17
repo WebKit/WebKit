@@ -3729,7 +3729,11 @@ void SpeculativeJIT::compile(Node* node)
     case GetScope:
         compileGetScope(node);
         break;
-        
+            
+    case LoadArrowFunctionThis:
+        compileLoadArrowFunctionThis(node);
+        break;
+            
     case SkipScope:
         compileSkipScope(node);
         break;
@@ -4336,11 +4340,12 @@ void SpeculativeJIT::compile(Node* node)
         compileCreateClonedArguments(node);
         break;
     }
-        
+
     case NewFunction:
+    case NewArrowFunction:
         compileNewFunction(node);
         break;
-        
+
     case In:
         compileIn(node);
         break;

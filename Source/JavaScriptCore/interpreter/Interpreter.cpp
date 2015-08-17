@@ -45,6 +45,7 @@
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
 #include "JSArray.h"
+#include "JSArrowFunction.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"

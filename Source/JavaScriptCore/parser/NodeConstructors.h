@@ -890,11 +890,17 @@ namespace JSC {
     {
     }
 
-    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
+    
+    inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
         : ExpressionNode(location)
         , m_metadata(m_metadata)
     {
         m_metadata->finishParsing(source, ident, FunctionExpression);
+    }
+
+    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
+        : BaseFuncExprNode(location, ident, m_metadata, source)
+    {
     }
 
     inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
@@ -902,6 +908,11 @@ namespace JSC {
         , m_metadata(m_metadata)
     {
         m_metadata->finishParsing(source, ident, FunctionDeclaration);
+    }
+
+    inline ArrowFuncExprNode::ArrowFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* m_metadata, const SourceCode& source)
+        : BaseFuncExprNode(location, ident, m_metadata, source)
+    {
     }
 
 #if ENABLE(ES6_CLASS_SYNTAX)

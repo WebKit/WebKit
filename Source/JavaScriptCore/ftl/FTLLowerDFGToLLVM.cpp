@@ -44,6 +44,7 @@
 #include "FTLOutput.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
+#include "JSArrowFunction.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "OperandsInlines.h"
@@ -593,6 +594,7 @@ private:
             compileCreateActivation();
             break;
         case NewFunction:
+        case NewArrowFunction:
             compileNewFunction();
             break;
         case CreateDirectArguments:
@@ -677,6 +679,9 @@ private:
             break;
         case GetScope:
             compileGetScope();
+            break;
+        case LoadArrowFunctionThis:
+            compileLoadArrowFunctionThis();
             break;
         case SkipScope:
             compileSkipScope();
@@ -3093,38 +3098,55 @@ private:
     
     void compileNewFunction()
     {
+        ASSERT(m_node->op() == NewFunction || m_node->op() == NewArrowFunction);
+        
+        bool isArrowFunction = m_node->op() == NewArrowFunction;
+        
         LValue scope = lowCell(m_node->child1());
+        LValue thisValue = isArrowFunction ? lowCell(m_node->child2()) : nullptr;
+        
         FunctionExecutable* executable = m_node->castOperand<FunctionExecutable*>();
         if (executable->singletonFunction()->isStillValid()) {
-            LValue callResult = vmCall(
-                m_out.operation(operationNewFunction), m_callFrame, scope, weakPointer(executable));
+            LValue callResult = isArrowFunction
+                ? vmCall(m_out.operation(operationNewArrowFunction), m_callFrame, scope, weakPointer(executable), thisValue)
+                : vmCall(m_out.operation(operationNewFunction), m_callFrame, scope, weakPointer(executable));
             setJSValue(callResult);
             return;
         }
         
-        Structure* structure = m_graph.globalObjectFor(m_node->origin.semantic)->functionStructure();
+        Structure* structure = isArrowFunction
+            ? m_graph.globalObjectFor(m_node->origin.semantic)->arrowFunctionStructure()
+            : m_graph.globalObjectFor(m_node->origin.semantic)->functionStructure();
         
         LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("NewFunction slow path"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NewFunction continuation"));
         
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
-        LValue fastObject = allocateObject<JSFunction>(
-            structure, m_out.intPtrZero, slowPath);
+        LValue fastObject = isArrowFunction
+            ? allocateObject<JSArrowFunction>(structure, m_out.intPtrZero, slowPath)
+            : allocateObject<JSFunction>(structure, m_out.intPtrZero, slowPath);
+        
         
         // We don't need memory barriers since we just fast-created the function, so it
         // must be young.
-        m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
-        m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
-        m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
+        m_out.storePtr(scope, fastObject, isArrowFunction ? m_heaps.JSArrowFunction_scope : m_heaps.JSFunction_scope);
+        m_out.storePtr(weakPointer(executable), fastObject, isArrowFunction ?  m_heaps.JSArrowFunction_executable : m_heaps.JSFunction_executable);
+        
+        if (isArrowFunction)
+            m_out.storePtr(thisValue, fastObject, m_heaps.JSArrowFunction_this);
+        
+        m_out.storePtr(m_out.intPtrZero, fastObject, isArrowFunction ?  m_heaps.JSArrowFunction_rareData : m_heaps.JSFunction_rareData);
         
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
         
         m_out.appendTo(slowPath, continuation);
-        LValue callResult = vmCall(
-            m_out.operation(operationNewFunctionWithInvalidatedReallocationWatchpoint),
-            m_callFrame, scope, weakPointer(executable));
+        
+        LValue callResult = isArrowFunction
+            ? vmCall(m_out.operation(operationNewArrowFunctionWithInvalidatedReallocationWatchpoint), m_callFrame, scope, weakPointer(executable), thisValue)
+            : vmCall(m_out.operation(operationNewFunctionWithInvalidatedReallocationWatchpoint), m_callFrame, scope, weakPointer(executable));
+        
         ValueFromBlock slowResult = m_out.anchor(callResult);
         m_out.jump(continuation);
         
@@ -4054,6 +4076,11 @@ private:
     void compileGetScope()
     {
         setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSFunction_scope));
+    }
+    
+    void compileLoadArrowFunctionThis()
+    {
+        setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSArrowFunction_this));
     }
     
     void compileSkipScope()

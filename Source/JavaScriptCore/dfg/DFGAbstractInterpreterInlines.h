@@ -1682,7 +1682,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CreateClonedArguments:
         forNode(node).setType(m_graph, SpecObjectOther);
         break;
-        
+            
+    case NewArrowFunction:
+        forNode(node).set(
+            m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->arrowFunctionStructure());
+        break;
+            
     case NewFunction:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->functionStructure());
@@ -1743,6 +1748,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(m_graph, SpecObjectOther);
         break;
 
+    case LoadArrowFunctionThis:
+        if (JSValue base = forNode(node->child1()).m_value) {
+            JSArrowFunction* function = jsDynamicCast<JSArrowFunction*>(base);
+            setConstant(node, *m_graph.freeze(function->boundThis()));
+            break;
+        }
+        forNode(node).setType(m_graph, SpecFinalObject);
+        break;
+            
     case SkipScope: {
         JSValue child = forNode(node->child1()).value();
         if (child) {

@@ -757,6 +757,11 @@ void CodeBlock::dumpBytecode(
             printLocationOpAndRegisterOperand(out, exec, location, it, "get_scope", r0);
             break;
         }
+        case op_load_arrowfunction_this: {
+            int r0 = (++it)->u.operand;
+            printLocationOpAndRegisterOperand(out, exec, location, it, "load_arrowfunction_this", r0);
+            break;
+        }
         case op_create_direct_arguments: {
             int r0 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "create_direct_arguments");
@@ -1287,6 +1292,15 @@ void CodeBlock::dumpBytecode(
             int f0 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "new_func");
             out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
+            break;
+        }
+        case op_new_arrow_func_exp: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int f0 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "op_new_arrow_func_exp");
+            out.printf("%s, %s, f%d, %s", registerName(r0).data(), registerName(r1).data(), f0, registerName(r2).data());
             break;
         }
         case op_new_func_exp: {

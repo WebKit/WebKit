@@ -1,0 +1,22 @@
+Tests for ES6 arrow function lexical bind of this
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS d.getName() is d.name
+PASS d.getNameHard() is d.name
+PASS d.getNameNesting()()() is d.name
+PASS obj.method()('correct') is 'objCode-name-correct'
+PASS obj.method()('correct') is 'newObjCode-name-correct'
+PASS deepObj.internalObject.method()('correct') is 'internalObject-name-correct'
+PASS deepObj.internalObject.method()('correct') is 'newInternalObject-name-correct'
+PASS instance.func() === instance is true
+PASS ownerObj.method()() === ownerObj is true
+PASS fake.steal() === ownerObj is true
+PASS real.borrow()() === real is true
+PASS arrowFunction('-this') is "right-this"
+PASS hostObj.func('-this') is "right-this"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

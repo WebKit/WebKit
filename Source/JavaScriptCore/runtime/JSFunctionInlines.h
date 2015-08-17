@@ -44,6 +44,13 @@ inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* s
     , m_rareData()
 {
 }
+    
+inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+    : Base(vm, scope, structure)
+    , m_executable(vm, this, executable)
+    , m_rareData()
+{
+}
 
 inline FunctionExecutable* JSFunction::jsExecutable() const
 {

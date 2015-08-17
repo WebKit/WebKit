@@ -2226,3 +2226,11 @@ _llint_op_profile_type:
 
 .opProfileTypeDone:
     dispatch(6)
+
+_llint_op_load_arrowfunction_this:
+    traceExecution()
+    loadp Callee[cfr], t0
+    loadp JSArrowFunction::m_boundThis[t0], t0
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+    dispatch(2)

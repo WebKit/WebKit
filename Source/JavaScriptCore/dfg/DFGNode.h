@@ -580,7 +580,7 @@ struct Node {
 
     void convertToPhantomNewFunction()
     {
-        ASSERT(m_op == NewFunction);
+        ASSERT(m_op == NewFunction || m_op == NewArrowFunction);
         m_op = PhantomNewFunction;
         m_flags |= NodeMustGenerate;
         m_opInfo = 0;
@@ -1280,6 +1280,7 @@ struct Node {
         switch (op()) {
         case CheckCell:
         case NewFunction:
+        case NewArrowFunction:
         case CreateActivation:
         case MaterializeCreateActivation:
             return true;
@@ -1496,6 +1497,7 @@ struct Node {
     bool isFunctionAllocation()
     {
         switch (op()) {
+        case NewArrowFunction:
         case NewFunction:
             return true;
         default:

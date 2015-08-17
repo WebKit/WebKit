@@ -165,6 +165,7 @@ namespace JSC {
         virtual bool isDotAccessorNode() const { return false; }
         virtual bool isDestructuringNode() const { return false; }
         virtual bool isFuncExprNode() const { return false; }
+        virtual bool isArrowFuncExprNode() const { return false; }
         virtual bool isCommaNode() const { return false; }
         virtual bool isSimpleArray() const { return false; }
         virtual bool isAdd() const { return false; }
@@ -1809,7 +1810,7 @@ namespace JSC {
             ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
             unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
             int functionNameStart, int parametersStart, bool isInStrictContext, 
-            ConstructorKind, unsigned, SourceParseMode);
+            ConstructorKind, unsigned, SourceParseMode, bool isArrowFunction);
 
         void finishParsing(const SourceCode&, const Identifier&, FunctionMode);
         
@@ -1835,6 +1836,7 @@ namespace JSC {
         int startStartOffset() const { return m_startStartOffset; }
         bool isInStrictContext() const { return m_isInStrictContext; }
         ConstructorKind constructorKind() { return static_cast<ConstructorKind>(m_constructorKind); }
+        bool isArrowFunction() const { return m_isArrowFunction; }
 
         void setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)
         {
@@ -1860,6 +1862,7 @@ namespace JSC {
         SourceParseMode m_parseMode;
         unsigned m_isInStrictContext : 1;
         unsigned m_constructorKind : 2;
+        unsigned m_isArrowFunction : 1;
     };
 
     class FunctionNode final : public ScopeNode {
@@ -1889,18 +1892,35 @@ namespace JSC {
         unsigned m_endColumn;
     };
 
-    class FuncExprNode : public ExpressionNode {
+    class BaseFuncExprNode : public ExpressionNode {
     public:
-        FuncExprNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
+        BaseFuncExprNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
 
         FunctionMetadataNode* metadata() { return m_metadata; }
+
+    protected:
+        FunctionMetadataNode* m_metadata;
+    };
+
+
+    class FuncExprNode : public BaseFuncExprNode {
+    public:
+        FuncExprNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         virtual bool isFuncExprNode() const override { return true; }
+    };
 
-        FunctionMetadataNode* m_metadata;
+    class ArrowFuncExprNode : public BaseFuncExprNode {
+    public:
+        ArrowFuncExprNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        virtual bool isArrowFuncExprNode() const override { return true; }
     };
 
 #if ENABLE(ES6_CLASS_SYNTAX)

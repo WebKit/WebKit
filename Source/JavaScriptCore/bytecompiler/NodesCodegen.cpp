@@ -2955,6 +2955,13 @@ RegisterID* FuncExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
     return generator.emitNewFunctionExpression(generator.finalDestination(dst), this);
 }
 
+// ------------------------------ ArrowFuncExprNode ---------------------------------
+
+RegisterID* ArrowFuncExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    return generator.emitNewArrowFunctionExpression(generator.finalDestination(dst), this);
+}
+    
 #if ENABLE(ES6_CLASS_SYNTAX)
 // ------------------------------ ClassDeclNode ---------------------------------
 

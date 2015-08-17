@@ -30,6 +30,7 @@
 
 #include "DirectArguments.h"
 #include "GetterSetter.h"
+#include "JSArrowFunction.h"
 #include "JSEnvironmentRecord.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScope.h"

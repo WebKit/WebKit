@@ -43,6 +43,7 @@
 #include "HostCallReturnValue.h"
 #include "JIT.h"
 #include "JITToDFGDeferredCompilationCallback.h"
+#include "JSArrowFunction.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
@@ -940,6 +941,30 @@ EncodedJSValue JIT_OPERATION operationNewFunctionWithInvalidatedReallocationWatc
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     return JSValue::encode(JSFunction::createWithInvalidatedReallocationWatchpoint(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
+}
+
+EncodedJSValue static operationNewFunctionCommon(ExecState* exec, JSScope* scope, JSCell* functionExecutable, EncodedJSValue thisValue, bool isInvalidated)
+{
+    ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
+    FunctionExecutable* executable = static_cast<FunctionExecutable*>(functionExecutable);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+        
+    JSArrowFunction* arrowFunction  = isInvalidated
+        ? JSArrowFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, scope, JSValue::decode(thisValue))
+        : JSArrowFunction::create(vm, executable, scope, JSValue::decode(thisValue));
+    
+    return JSValue::encode(arrowFunction);
+}
+    
+EncodedJSValue JIT_OPERATION operationNewArrowFunctionWithInvalidatedReallocationWatchpoint(ExecState* exec, JSScope* scope, JSCell* functionExecutable, EncodedJSValue thisValue)
+{
+    return operationNewFunctionCommon(exec, scope, functionExecutable, thisValue, true);
+}
+    
+EncodedJSValue JIT_OPERATION operationNewArrowFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable, EncodedJSValue thisValue)
+{
+    return operationNewFunctionCommon(exec, scope, functionExecutable, thisValue, false);
 }
 
 JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)

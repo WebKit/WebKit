@@ -1,3 +1,192 @@
+2015-08-17 Aleksandr Skachkov   <gskachkov@gmail.com>
+
+        [ES6] Implement ES6 arrow function syntax. Arrow function specific features. Lexical bind of this
+        https://bugs.webkit.org/show_bug.cgi?id=144956
+
+        Reviewed by Saam Barati.
+
+        Added support of ES6 arrow function specific feature, lexical bind of this and no constructor. http://wiki.ecmascript.org/doku.php?id=harmony:arrow_function_syntax
+        In patch were implemented the following cases:
+           this - variable |this| is point to the |this| of the function where arrow function is declared. Lexical bind of |this|
+           constructor - the using of the command |new| for arrow function leads to runtime error
+           call(), apply(), bind()  - methods can only pass in arguments, but has no effect on |this| 
+
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::isArrowFunction):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::isArrowFunction):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionCommon):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitLoadArrowFunctionThis):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrowFuncExprNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewFunction):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::isFunctionAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLoadArrowFunctionThis):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileLoadArrowFunctionThis):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * interpreter/Interpreter.cpp:
+        * interpreter/Interpreter.h:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState): Added 3 arguments version for windows build.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_load_arrowfunction_this):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_arrow_func_exp):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_load_arrowfunction_this):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        (JSC::ASTBuilder::createArrowFunctionExpr):
+        * parser/NodeConstructors.h:
+        (JSC::BaseFuncExprNode::BaseFuncExprNode):
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::ArrowFuncExprNode::ArrowFuncExprNode):
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isArrowFuncExprNode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/Executable.h:
+        * runtime/JSArrowFunction.cpp: Added.
+        (JSC::JSArrowFunction::destroy):
+        (JSC::JSArrowFunction::create):
+        (JSC::JSArrowFunction::JSArrowFunction):
+        (JSC::JSArrowFunction::createWithInvalidatedReallocationWatchpoint):
+        (JSC::JSArrowFunction::visitChildren):
+        (JSC::JSArrowFunction::getConstructData):
+        * runtime/JSArrowFunction.h: Added.
+        (JSC::JSArrowFunction::allocationSize):
+        (JSC::JSArrowFunction::createImpl):
+        (JSC::JSArrowFunction::boundThis):
+        (JSC::JSArrowFunction::createStructure):
+        (JSC::JSArrowFunction::offsetOfThisValue):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrowFunctionStructure):
+        * tests/stress/arrowfunction-activation-sink-osrexit-default-value-tdz-error.js: Added.
+        * tests/stress/arrowfunction-activation-sink-osrexit-default-value.js: Added.
+        * tests/stress/arrowfunction-activation-sink-osrexit.js: Added.
+        * tests/stress/arrowfunction-activation-sink.js: Added.
+        * tests/stress/arrowfunction-bound.js: Added.
+        * tests/stress/arrowfunction-call.js: Added.
+        * tests/stress/arrowfunction-constructor.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-this-1.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-this-2.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-this-3.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-this-4.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-this-5.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-this-6.js: Added.
+        * tests/stress/arrowfunction-lexical-this-activation-sink-osrexit.js: Added.
+        * tests/stress/arrowfunction-lexical-this-activation-sink.js: Added.
+        * tests/stress/arrowfunction-lexical-this-sinking-no-double-allocate.js: Added.
+        * tests/stress/arrowfunction-lexical-this-sinking-osrexit.js: Added.
+        * tests/stress/arrowfunction-lexical-this-sinking-put.js: Added.
+        * tests/stress/arrowfunction-others.js: Added.
+        * tests/stress/arrowfunction-run-10-1.js: Added.
+        * tests/stress/arrowfunction-run-10-2.js: Added.
+        * tests/stress/arrowfunction-run-10000-1.js: Added.
+        * tests/stress/arrowfunction-run-10000-2.js: Added.
+        * tests/stress/arrowfunction-sinking-no-double-allocate.js: Added.
+        * tests/stress/arrowfunction-sinking-osrexit.js: Added.
+        * tests/stress/arrowfunction-sinking-put.js: Added.
+        * tests/stress/arrowfunction-tdz.js: Added.
+        * tests/stress/arrowfunction-typeof.js: Added.
+
 2015-07-28  Sam Weinig  <sam@webkit.org>
 
         Cleanup the builtin JavaScript files

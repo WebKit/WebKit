@@ -1,3 +1,36 @@
+2015-08-17  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Implement ES6 arrow function syntax. Arrow function specific features. Lexical bind of this
+        https://bugs.webkit.org/show_bug.cgi?id=144956
+
+        Reviewed by Saam Barati.
+
+        * js/arrowfunction-bind-expected.txt: Added.
+        * js/arrowfunction-bind.html: Added.
+        * js/arrowfunction-call-expected.txt: Added.
+        * js/arrowfunction-call.html: Added.
+        * js/arrowfunction-constructor-expected.txt: Added.
+        * js/arrowfunction-constructor.html: Added.
+        * js/arrowfunction-lexical-bind-this-expected.txt: Added.
+        * js/arrowfunction-lexical-bind-this.html: Added.
+        * js/arrowfunction-others-expected.txt: Added.
+        * js/arrowfunction-others.html: Added.
+        * js/arrowfunction-tdz-expected.txt: Added.
+        * js/arrowfunction-tdz.html: Added.
+        * js/arrowfunction-typeof-expected.txt: Added.
+        * js/arrowfunction-typeof.html: Added.
+        * js/regress/arrowfunction-call-expected.txt: Added.
+        * js/regress/arrowfunction-call.html: Added.
+        * js/regress/script-tests/arrowfunction-call.js: Added.
+        * js/regress/script-tests/function-call.js: Added.
+        * js/script-tests/arrowfunction-bind.js: Added.
+        * js/script-tests/arrowfunction-call.js: Added.
+        * js/script-tests/arrowfunction-constructor.js: Added.
+        * js/script-tests/arrowfunction-lexical-bind-this.js: Added.
+        * js/script-tests/arrowfunction-others.js: Added.
+        * js/script-tests/arrowfunction-tdz.js: Added.
+        * js/script-tests/arrowfunction-typeof.js: Added.
+
 2015-08-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: split TestStub.js into multiple files and modernize it

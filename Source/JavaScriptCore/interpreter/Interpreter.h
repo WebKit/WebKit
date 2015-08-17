@@ -31,6 +31,7 @@
 #define Interpreter_h
 
 #include "ArgList.h"
+#include "JSArrowFunction.h"
 #include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSObject.h"
@@ -50,6 +51,7 @@ namespace JSC {
     class ExecutableBase;
     class FunctionExecutable;
     class VM;
+    class JSArrowFunction;
     class JSFunction;
     class JSGlobalObject;
     class LLIntOffsetsExtractor;

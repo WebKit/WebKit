@@ -135,7 +135,9 @@ public:
                 case NewRegexp:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
                     break;
-                    
+                case NewArrowFunction:
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->arrowFunctionStructure());
+                    break;
                 case NewFunction:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->functionStructure());
                     break;

@@ -215,6 +215,7 @@ private:
         case GetGetter:
         case GetSetter:
         case GetCallee:
+        case NewArrowFunction:
         case NewFunction: {
             changed |= setPrediction(SpecFunction);
             break;
@@ -585,11 +586,15 @@ private:
             // These don't get inserted until we go into SSA.
             RELEASE_ASSERT_NOT_REACHED();
             break;
-
+    
         case GetScope:
             changed |= setPrediction(SpecObjectOther);
             break;
-            
+
+        case LoadArrowFunctionThis:
+            changed |= setPrediction(SpecFinalObject);
+            break;
+
         case In:
             changed |= setPrediction(SpecBoolean);
             break;

@@ -138,7 +138,7 @@ public:
     // once it is escaped if it still has pointers to it in order to
     // replace any use of those pointers by the corresponding
     // materialization
-    enum class Kind { Escaped, Object, Activation, Function };
+    enum class Kind { Escaped, Object, Activation, Function, NewArrowFunction };
 
     explicit Allocation(Node* identifier = nullptr, Kind kind = Kind::Escaped)
         : m_identifier(identifier)
@@ -232,7 +232,12 @@ public:
 
     bool isFunctionAllocation() const
     {
-        return m_kind == Kind::Function;
+        return m_kind == Kind::Function || m_kind == Kind::NewArrowFunction;
+    }
+    
+    bool isArrowFunctionAllocation() const
+    {
+        return m_kind == Kind::NewArrowFunction;
     }
 
     bool operator==(const Allocation& other) const
@@ -266,6 +271,10 @@ public:
 
         case Kind::Function:
             out.print("Function");
+            break;
+                
+        case Kind::NewArrowFunction:
+            out.print("NewArrowFunction");
             break;
 
         case Kind::Activation:
@@ -840,14 +849,19 @@ private:
             break;
         }
 
-        case NewFunction: {
+        case NewFunction:
+        case NewArrowFunction: {
+            bool isArrowFunction = node->op() == NewArrowFunction;
             if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid()) {
                 m_heap.escape(node->child1().node());
                 break;
             }
-            target = &m_heap.newAllocation(node, Allocation::Kind::Function);
+            
+            target = &m_heap.newAllocation(node, isArrowFunction ? Allocation::Kind::NewArrowFunction : Allocation::Kind::Function);
             writes.add(FunctionExecutablePLoc, LazyNode(node->cellOperand()));
             writes.add(FunctionActivationPLoc, LazyNode(node->child1().node()));
+            if (isArrowFunction)
+                writes.add(ArrowFunctionBoundThisPLoc, LazyNode(node->child2().node()));
             break;
         }
 
@@ -1034,6 +1048,14 @@ private:
                 m_heap.escape(node->child1().node());
             break;
 
+        case LoadArrowFunctionThis:
+            target = m_heap.onlyLocalAllocation(node->child1().node());
+            if (target && target->isArrowFunctionAllocation())
+                exactRead = ArrowFunctionBoundThisPLoc;
+            else
+                m_heap.escape(node->child1().node());
+            break;
+        
         case GetScope:
             target = m_heap.onlyLocalAllocation(node->child1().node());
             if (target && target->isFunctionAllocation())
@@ -1467,11 +1489,14 @@ private:
                 OpInfo(set), OpInfo(data), 0, 0);
         }
 
+        case Allocation::Kind::NewArrowFunction:
         case Allocation::Kind::Function: {
             FrozenValue* executable = allocation.identifier()->cellOperand();
-
+            
+            NodeType nodeType = allocation.kind() == Allocation::Kind::NewArrowFunction ? NewArrowFunction : NewFunction;
+            
             return m_graph.addNode(
-                allocation.identifier()->prediction(), NewFunction,
+                allocation.identifier()->prediction(), nodeType,
                 NodeOrigin(
                     allocation.identifier()->origin.semantic,
                     where->origin.forExit),
@@ -1775,6 +1800,7 @@ private:
                         node->convertToPhantomNewObject();
                         break;
 
+                    case NewArrowFunction:
                     case NewFunction:
                         node->convertToPhantomNewFunction();
                         break;
@@ -2025,18 +2051,27 @@ private:
                 firstChild, m_graph.m_varArgChildren.size() - firstChild);
             break;
         }
-
-        case NewFunction: {
+        
+        case NewFunction:
+        case NewArrowFunction: {
+            bool isArrowFunction = node->op() == NewArrowFunction;
             Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
-            ASSERT(locations.size() == 2);
-
+            ASSERT(locations.size() == (isArrowFunction ? 3 : 2));
+                
             PromotedHeapLocation executable(FunctionExecutablePLoc, allocation.identifier());
             ASSERT_UNUSED(executable, locations.contains(executable));
-
+                
             PromotedHeapLocation activation(FunctionActivationPLoc, allocation.identifier());
             ASSERT(locations.contains(activation));
 
             node->child1() = Edge(resolve(block, activation), KnownCellUse);
+            
+            if (isArrowFunction) {
+                PromotedHeapLocation boundThis(ArrowFunctionBoundThisPLoc, allocation.identifier());
+                ASSERT(locations.contains(boundThis));
+                node->child2() = Edge(resolve(block, boundThis), CellUse);
+            }
+            
             break;
         }
 

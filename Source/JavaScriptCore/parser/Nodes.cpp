@@ -151,7 +151,7 @@ FunctionMetadataNode::FunctionMetadataNode(
     ParserArena&, const JSTokenLocation& startLocation, 
     const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, 
     int functionKeywordStart, int functionNameStart, int parametersStart, bool isInStrictContext, 
-    ConstructorKind constructorKind, unsigned parameterCount, SourceParseMode mode)
+    ConstructorKind constructorKind, unsigned parameterCount, SourceParseMode mode, bool isArrowFunction)
         : Node(endLocation)
         , m_startColumn(startColumn)
         , m_endColumn(endColumn)
@@ -163,6 +163,7 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_parseMode(mode)
         , m_isInStrictContext(isInStrictContext)
         , m_constructorKind(static_cast<unsigned>(constructorKind))
+        , m_isArrowFunction(isArrowFunction)
 {
     ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
 }

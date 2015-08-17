@@ -31,13 +31,14 @@
 namespace JSC {
 
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind)
+    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, bool isArrowFunction)
         : m_needsActivation(needsActivation)
         , m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
         , m_isConstructor(isConstructor)
         , m_isBuiltinFunction(isBuiltinFunction)
         , m_constructorKind(static_cast<unsigned>(constructorKind))
+        , m_isArrowFunction(isArrowFunction)
     {
         ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
     }
@@ -48,6 +49,7 @@ struct ExecutableInfo {
     bool isConstructor() const { return m_isConstructor; }
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
+    bool isArrowFunction() const { return m_isArrowFunction; }
 
 private:
     unsigned m_needsActivation : 1;
@@ -56,6 +58,7 @@ private:
     unsigned m_isConstructor : 1;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructorKind : 2;
+    unsigned m_isArrowFunction : 1;
 };
 
 } // namespace JSC
