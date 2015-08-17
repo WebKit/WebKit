@@ -31,80 +31,72 @@
 #import <WebCore/WindowFeatures.h>
 #import <wtf/RetainPtr.h>
 
-@implementation WKWindowFeatures {
-    RetainPtr<NSNumber> _menuBarVisibility;
-    RetainPtr<NSNumber> _statusBarVisibility;
-    RetainPtr<NSNumber> _toolbarsVisibility;
+@implementation WKWindowFeatures
 
-    RetainPtr<NSNumber> _allowsResizing;
-
-    RetainPtr<NSNumber> _x;
-    RetainPtr<NSNumber> _y;
-    RetainPtr<NSNumber> _width;
-    RetainPtr<NSNumber> _height;
-}
-
-- (instancetype)_initWithWindowFeatures:(const WebCore::WindowFeatures&)windowFeatures
+- (void)dealloc
 {
-    if (!(self = [super init]))
-        return nil;
+    _windowFeatures->API::WindowFeatures::~WindowFeatures();
 
-    // FIXME: These should be set to nil if the features didn't exist in the string.
-    _menuBarVisibility = @(windowFeatures.menuBarVisible);
-    _statusBarVisibility = @(windowFeatures.statusBarVisible);
-    _toolbarsVisibility = @(windowFeatures.toolBarVisible || windowFeatures.locationBarVisible);
-    _allowsResizing = @(windowFeatures.resizable);
-
-    if (windowFeatures.x)
-        _x = @(*windowFeatures.x);
-    if (windowFeatures.y)
-        _y = @(*windowFeatures.y);
-    if (windowFeatures.width)
-        _width = @(*windowFeatures.width);
-    if (windowFeatures.height)
-        _height = @(*windowFeatures.height);
-
-    return self;
+    [super dealloc];
 }
 
 - (NSNumber *)menuBarVisibility
 {
-    return _menuBarVisibility.get();
+    return @(_windowFeatures->windowFeatures().menuBarVisible);
 }
 
 - (NSNumber *)statusBarVisibility
 {
-    return _statusBarVisibility.get();
+    return @(_windowFeatures->windowFeatures().statusBarVisible);
 }
 
 - (NSNumber *)toolbarsVisibility
 {
-    return _toolbarsVisibility.get();
+    return @(_windowFeatures->windowFeatures().toolBarVisible);
 }
 
 - (NSNumber *)allowsResizing
 {
-    return _allowsResizing.get();
+    return @(_windowFeatures->windowFeatures().resizable);
 }
 
 - (NSNumber *)x
 {
-    return _x.get();
+    if (auto x = _windowFeatures->windowFeatures().x)
+        return @(*x);
+
+    return nil;
 }
 
 - (NSNumber *)y
 {
-    return _y.get();
+    if (auto y = _windowFeatures->windowFeatures().y)
+        return @(*y);
+
+    return nil;
 }
 
 - (NSNumber *)width
 {
-    return _width.get();
+    if (auto width = _windowFeatures->windowFeatures().width)
+        return @(*width);
+
+    return nil;
 }
 
 - (NSNumber *)height
 {
-    return _height.get();
+    if (auto height = _windowFeatures->windowFeatures().height)
+        return @(*height);
+
+    return nil;
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_windowFeatures;
 }
 
 @end
