@@ -429,6 +429,8 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
             addReason(WebInspector.UIString("Element has perspective applied"));
         if (compositingReasons.preserve3D)
             addReason(WebInspector.UIString("Element has “transform-style: preserve-3d” style"));
+        if (compositingReasons.willChange)
+            addReason(WebInspector.UIString("Element has “will-change” style with includes opacity, transform, transform-style, perspective, filter or backdrop-filter"));
         if (compositingReasons.root)
             addReason(WebInspector.UIString("Element is the root element"));
         if (compositingReasons.blending)

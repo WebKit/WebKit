@@ -1,3 +1,19 @@
+2015-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        will-change should sometimes trigger compositing
+        https://bugs.webkit.org/show_bug.cgi?id=148072
+
+        Reviewed by Tim Horton.
+        
+        Have the web inspector show a correct compositing reason for will-change.
+        This could be improved to indicate which specific value in will-change triggered
+        the compositing.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._populateListOfCompositingReasons):
+        (WebInspector.LayerTreeDetailsSidebarPanel):
+
 2015-08-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: NavigationBar.updateLayoutSoon should use requestAnimationFrame

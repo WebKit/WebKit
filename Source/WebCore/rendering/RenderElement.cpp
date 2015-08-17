@@ -284,6 +284,11 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
             diff = std::max(diff, StyleDifferenceRepaint);
     }
     
+    if (contextSensitiveProperties & ContextSensitivePropertyWillChange) {
+        if (style().willChange() && style().willChange()->canTriggerCompositing())
+            diff = std::max(diff, StyleDifferenceRecompositeLayer);
+    }
+    
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
         RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         if (!layer->isComposited() || layer->paintsWithFilters())
@@ -1459,6 +1464,16 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
         return false;
     repaint();
     return true;
+}
+
+bool RenderElement::shouldWillChangeCreateStackingContext() const
+{
+    ASSERT(style().willChange());
+    ASSERT(style().willChange()->canCreateStackingContext());
+
+    // On inlines, we only want to trigger RenderLayer creation
+    // if will-change contains a property that applies to inlines.
+    return is<RenderBox>(this) || (is<RenderInline>(this) && style().willChange()->canCreateStackingContextOnInline());
 }
 
 RenderNamedFlowThread* RenderElement::renderNamedFlowThreadWrapper()

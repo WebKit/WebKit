@@ -1806,7 +1806,7 @@ public:
         if (!willChange())
             return false;
         
-        return willChange()->createsStackingContext();
+        return willChange()->canCreateStackingContext();
     }
 
     const AtomicString& hyphenString() const;

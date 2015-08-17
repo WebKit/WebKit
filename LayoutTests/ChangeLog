@@ -1,3 +1,15 @@
+2015-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        will-change should sometimes trigger compositing
+        https://bugs.webkit.org/show_bug.cgi?id=148072
+
+        Reviewed by Tim Horton.
+
+        * compositing/layer-creation/will-change-change-expected.txt: Added.
+        * compositing/layer-creation/will-change-change.html: Added.
+        * compositing/layer-creation/will-change-layer-creation-expected.txt: Added.
+        * compositing/layer-creation/will-change-layer-creation.html: Added.
+
 2015-08-17  Timothy Horton  <timothy_horton@apple.com>
 
         Holes for find matches that span multiple lines are completely wrong

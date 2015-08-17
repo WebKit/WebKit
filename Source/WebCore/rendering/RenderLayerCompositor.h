@@ -80,8 +80,9 @@ enum {
     CompositingReasonBlendingWithCompositedDescendants      = 1 << 20,
     CompositingReasonPerspective                            = 1 << 21,
     CompositingReasonPreserve3D                             = 1 << 22,
-    CompositingReasonRoot                                   = 1 << 23,
-    CompositingReasonIsolatesCompositedBlendingDescendants  = 1 << 24,
+    CompositingReasonWillChange                             = 1 << 23,
+    CompositingReasonRoot                                   = 1 << 24,
+    CompositingReasonIsolatesCompositedBlendingDescendants  = 1 << 25,
 };
 typedef unsigned CompositingReasons;
 
@@ -422,6 +423,7 @@ private:
     bool requiresCompositingForPlugin(RenderLayerModelObject&) const;
     bool requiresCompositingForFrame(RenderLayerModelObject&) const;
     bool requiresCompositingForFilters(RenderLayerModelObject&) const;
+    bool requiresCompositingForWillChange(RenderLayerModelObject&) const;
     bool requiresCompositingForScrollableFrame() const;
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = nullptr) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&) const;

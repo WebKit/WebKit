@@ -307,6 +307,9 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorStrin
     if (reasonsBitmask & CompositingReasonPreserve3D)
         compositingReasons->setPreserve3D(true);
 
+    if (reasonsBitmask & CompositingReasonWillChange)
+        compositingReasons->setWillChange(true);
+
     if (reasonsBitmask & CompositingReasonRoot)
         compositingReasons->setRoot(true);
     
