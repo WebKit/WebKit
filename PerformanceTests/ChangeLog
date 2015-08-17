@@ -1,3 +1,19 @@
+2015-08-17  Chris Dumez  <cdumez@apple.com>
+
+        Add performance tests for traversal of collections returned by getElementsByClassName() / getElementsByTagName()
+        https://bugs.webkit.org/show_bug.cgi?id=148080
+
+        Reviewed by Antti Koivisto.
+
+        Add performance tests for traversal of *uncached* collections returned
+        by getElementsByClassName() / getElementsByTagName(). These methods
+        will soon be updated to return an HTMLCollection instead of a
+        NodeList and we need to make sure we don't regress performance in the
+        process.
+
+        * DOM/get-elements-by-class-name-traversal-uncached.html: Added.
+        * DOM/get-elements-by-tag-name-traversal-uncached.html: Added.
+
 2015-08-14  Chris Dumez  <cdumez@apple.com>
 
         Add performance tests for NodeList and HTMLCollection traversal
