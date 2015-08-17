@@ -111,7 +111,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 
     _hasContent()
     {
-        return !this.element.querySelector("." + WebInspector.IndeterminateProgressSpinner.StyleClassName);
+        return !this.element.querySelector(".indeterminate-progress-spinner");
     }
 
     _issueWasAdded(event)
