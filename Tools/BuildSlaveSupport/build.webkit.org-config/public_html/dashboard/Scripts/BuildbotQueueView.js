@@ -153,21 +153,23 @@ BuildbotQueueView.prototype = {
         var content = document.createElement("div");
         content.className = "commit-history-popover";
 
-        var webkitTrac = Dashboard.Repository.OpenSource.trac;
-        var internalTrac = Dashboard.Repository.Internal.trac;
-        var linesForOpenSource = this._popoverLinesForCommitRange(webkitTrac, queue.branch.openSource, latestProductiveIteration.revision[Dashboard.Repository.OpenSource.name] + 1, webkitTrac.latestRecordedRevisionNumber);
-        for (var i = 0; i != linesForOpenSource.length; ++i)
-            content.appendChild(linesForOpenSource[i]);
-
-        var linesForInternal = [];
-        if (latestProductiveIteration.revision[Dashboard.Repository.Internal.name] && internalTrac.latestRecordedRevisionNumber)
-            var linesForInternal = this._popoverLinesForCommitRange(internalTrac, queue.branch.internal, latestProductiveIteration.revision[Dashboard.Repository.Internal.name] + 1, internalTrac.latestRecordedRevisionNumber);
-
-        if (linesForOpenSource.length && linesForInternal.length)
-            this._addDividerToPopover(content);
-
-        for (var i = 0; i != linesForInternal.length; ++i)
-            content.appendChild(linesForInternal[i]);
+        var shouldAddDivider = false;
+        var sortedRepositories = Dashboard.sortedRepositories;
+        for (var i = 0; i < sortedRepositories.length; ++i) {
+            var repository = sortedRepositories[i];
+            var trac = repository.trac;
+            var repositoryName = repository.name;
+            var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
+            if (!latestProductiveRevisionNumber || !trac.latestRecordedRevisionNumber)
+                continue;
+            var lines = this._popoverLinesForCommitRange(trac, queue.branch[repositoryName], latestProductiveRevisionNumber + 1, trac.latestRecordedRevisionNumber);
+            var length = lines.length;
+            if (length && shouldAddDivider)
+                this._addDividerToPopover(content);
+            for (var i = 0; i < length; ++i)
+                content.appendChild(lines[i]);
+            shouldAddDivider = shouldAddDivider || length > 0;
+        }
 
         var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
         popover.content = content;

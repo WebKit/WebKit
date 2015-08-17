@@ -1,3 +1,15 @@
+2015-08-17  Jason Marcell  <jmarcell@apple.com>
+
+        Refactor BuildbotQueueView._presentPopoverForPendingCommits to work more generically with
+        repositories other than "openSource" and "internal".
+        https://bugs.webkit.org/show_bug.cgi?id=147961
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._presentPopoverForPendingCommits): Refactored to work more
+        generically with repositories other than "openSource" and "internal".
+
 2015-08-17  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard shows yellow when crash-only queues have too many failures
