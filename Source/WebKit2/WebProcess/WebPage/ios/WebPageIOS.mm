@@ -2195,13 +2195,13 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
                         info.image = snapshot->bitmap();
 
-
                     RefPtr<Range> linkRange = rangeOfContents(*linkElement);
                     if (linkRange) {
                         float deviceScaleFactor = corePage()->deviceScaleFactor();
                         const float marginInPoints = 4;
 
-                        RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::None, marginInPoints * deviceScaleFactor);
+                        RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
+                            TextIndicatorOptionIncludeMarginIfRangeMatchesSelection, TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
                         if (textIndicator)
                             info.linkIndicator = textIndicator->data();
                     }

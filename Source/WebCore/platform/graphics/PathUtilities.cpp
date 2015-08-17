@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PathUtilities.h"
 
+#include "AffineTransform.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
@@ -254,16 +255,18 @@ static FloatPointGraph::Polygon edgesForRect(FloatRect rect, FloatPointGraph& gr
     });
 }
 
-Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius)
+Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius)
 {
-    Path path;
+    Vector<Path> paths;
 
     if (rects.isEmpty())
-        return path;
+        return paths;
 
     if (rects.size() > 20) {
+        Path path;
         path.addRoundedRect(unionRect(rects), FloatSize(radius, radius));
-        return path;
+        paths.append(path);
+        return paths;
     }
 
     Vector<FloatRect> sortedRects = rects;
@@ -292,11 +295,14 @@ Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, f
     Vector<FloatPointGraph::Polygon> polys = unitePolygons(rectPolygons, graph);
 
     if (polys.isEmpty()) {
+        Path path;
         path.addRoundedRect(unionRect(sortedRects), FloatSize(radius, radius));
-        return path;
+        paths.append(path);
+        return paths;
     }
 
     for (auto& poly : polys) {
+        Path path;
         for (unsigned i = 0; i < poly.size(); i++) {
             FloatPointGraph::Edge& toEdge = poly[i];
             // Connect the first edge to the last.
@@ -327,9 +333,21 @@ Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, f
         }
 
         path.closeSubpath();
+        paths.append(path);
     }
 
-    return path;
+    return paths;
+}
+
+Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius)
+{
+    Vector<Path> paths = pathsWithShrinkWrappedRects(rects, radius);
+
+    Path unionPath;
+    for (const auto& path : paths)
+        unionPath.addPath(path, AffineTransform());
+
+    return unionPath;
 }
 
 }

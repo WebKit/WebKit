@@ -2139,7 +2139,6 @@ void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const Te
     encoder << textIndicatorData.textBoundingRectInRootViewCoordinates;
     encoder << textIndicatorData.textRectsInBoundingRectCoordinates;
     encoder << textIndicatorData.contentImageScaleFactor;
-    encoder << textIndicatorData.indicatesCurrentSelection;
     encoder.encodeEnum(textIndicatorData.presentationTransition);
     encoder << static_cast<uint64_t>(textIndicatorData.options);
 
@@ -2159,9 +2158,6 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
         return false;
 
     if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
-        return false;
-
-    if (!decoder.decode(textIndicatorData.indicatesCurrentSelection))
         return false;
 
     if (!decoder.decodeEnum(textIndicatorData.presentationTransition))

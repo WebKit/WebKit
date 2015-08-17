@@ -34,6 +34,7 @@ namespace WebCore {
 class PathUtilities {
 public:
     WEBCORE_EXPORT static Path pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius);
+    WEBCORE_EXPORT static Vector<Path> pathsWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius);
 };
 
 }

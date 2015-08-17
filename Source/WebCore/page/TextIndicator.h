@@ -32,6 +32,12 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
+#else
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
+#endif
+
 namespace WebCore {
 
 class Frame;
@@ -73,7 +79,11 @@ enum TextIndicatorOption : uint8_t {
 
     // If there are any non-inline or replaced elements in the Range, indicate the bounding rect
     // of the range instead of the individual subrects, and don't restrict painting to the given Range
-    TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges = 1 << 5
+    TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges = 1 << 5,
+
+    // By default, TextIndicator removes any margin if the given Range matches the
+    // selection Range. If this option is set, maintain the margin in any case.
+    TextIndicatorOptionIncludeMarginIfRangeMatchesSelection = 1 << 6,
 };
 typedef uint8_t TextIndicatorOptions;
 
@@ -85,15 +95,24 @@ struct TextIndicatorData {
     RefPtr<Image> contentImageWithHighlight;
     RefPtr<Image> contentImage;
     TextIndicatorPresentationTransition presentationTransition;
-    bool indicatesCurrentSelection;
     TextIndicatorOptions options;
 };
 
 class TextIndicator : public RefCounted<TextIndicator> {
 public:
+    // FIXME: These are fairly Mac-specific, and they don't really belong here.
+    // But they're needed at TextIndicator creation time, so they can't go in TextIndicatorWindow.
+    // Maybe they can live in some Theme code somewhere?
+#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
+    constexpr static float defaultHorizontalMargin { 3 };
+#else
+    constexpr static float defaultHorizontalMargin { 2 };
+#endif
+    constexpr static float defaultVerticalMargin { 1 };
+
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
-    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, TextIndicatorOptions, TextIndicatorPresentationTransition, unsigned margin = 0);
-    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const Range&, TextIndicatorOptions, TextIndicatorPresentationTransition, unsigned margin = 0);
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, TextIndicatorOptions, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const Range&, TextIndicatorOptions, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
 
     WEBCORE_EXPORT ~TextIndicator();
 
@@ -108,8 +127,6 @@ public:
     void setPresentationTransition(TextIndicatorPresentationTransition transition) { m_data.presentationTransition = transition; }
 
     TextIndicatorData data() const { return m_data; }
-
-    bool indicatesCurrentSelection() const { return m_data.indicatesCurrentSelection; }
 
 private:
     TextIndicator(const TextIndicatorData&);

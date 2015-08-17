@@ -31,6 +31,7 @@
 #import "CoreGraphicsSPI.h"
 #import "GeometryUtilities.h"
 #import "GraphicsContext.h"
+#import "PathUtilities.h"
 #import "QuartzCoreSPI.h"
 #import "TextIndicator.h"
 #import "WebActionDisablingCALayerDelegate.h"
@@ -43,8 +44,6 @@ const CFTimeInterval fadeOutAnimationDuration = 0.3;
 
 #if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
 const CGFloat midBounceScale = 1.5;
-const CGFloat horizontalBorder = 3;
-const CGFloat verticalBorder = 1;
 const CGFloat borderWidth = 1.0;
 const CGFloat cornerRadius = 3;
 const CGFloat dropShadowOffsetX = 0;
@@ -52,8 +51,6 @@ const CGFloat dropShadowOffsetY = 1;
 const CGFloat dropShadowBlurRadius = 1.5;
 #else
 const CGFloat midBounceScale = 1.25;
-const CGFloat horizontalBorder = 2;
-const CGFloat verticalBorder = 1;
 const CGFloat borderWidth = 0;
 const CGFloat cornerRadius = 0;
 const CGFloat dropShadowOffsetX = 0;
@@ -91,38 +88,6 @@ using namespace WebCore;
 @implementation WebTextIndicatorView
 
 @synthesize fadingOut = _fadingOut;
-
-static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
-{
-    FloatRect outsetRect = rect;
-    outsetRect.inflateX(dropShadowBlurRadius + horizontalBorder);
-    outsetRect.inflateY(dropShadowBlurRadius + verticalBorder);
-    return outsetRect;
-}
-
-static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects)
-{
-    size_t count = textRects.size();
-    if (count <= 1)
-        return false;
-
-    Vector<FloatRect> indicatorRects;
-    indicatorRects.reserveInitialCapacity(count);
-
-    for (size_t i = 0; i < count; ++i) {
-        FloatRect indicatorRect = outsetIndicatorRectIncludingShadow(textRects[i]);
-
-        for (size_t j = indicatorRects.size(); j; ) {
-            --j;
-            if (indicatorRect.intersects(indicatorRects[j]))
-                return true;
-        }
-
-        indicatorRects.uncheckedAppend(indicatorRect);
-    }
-
-    return false;
-}
 
 static bool indicatorWantsBounce(const TextIndicator& indicator)
 {
@@ -221,19 +186,22 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
     RetainPtr<CGColorRef> gradientLightColor = [NSColor colorWithDeviceRed:.949 green:.937 blue:0 alpha:1].CGColor;
 
     Vector<FloatRect> textRectsInBoundingRectCoordinates = _textIndicator->textRectsInBoundingRectCoordinates();
-    if (textIndicatorsForTextRectsOverlap(textRectsInBoundingRectCoordinates)) {
-        textRectsInBoundingRectCoordinates[0] = unionRect(textRectsInBoundingRectCoordinates);
-        textRectsInBoundingRectCoordinates.shrink(1);
-    }
 
-    for (const auto& textRect : textRectsInBoundingRectCoordinates) {
-        FloatRect offsetTextRect = textRect;
+    Vector<Path> paths = PathUtilities::pathsWithShrinkWrappedRects(textRectsInBoundingRectCoordinates, cornerRadius);
+
+    for (const auto& path : paths) {
+        FloatRect pathBoundingRect = path.boundingRect();
+
+        Path translatedPath;
+        AffineTransform transform;
+        transform.translate(-pathBoundingRect.x(), -pathBoundingRect.y());
+        translatedPath.addPath(path, transform);
+
+        FloatRect offsetTextRect = pathBoundingRect;
         offsetTextRect.move(offset.x, offset.y);
 
         FloatRect bounceLayerRect = offsetTextRect;
         bounceLayerRect.move(_margin.width, _margin.height);
-        bounceLayerRect.inflateX(horizontalBorder);
-        bounceLayerRect.inflateY(verticalBorder);
 
         RetainPtr<CALayer> bounceLayer = adoptNS([[CALayer alloc] init]);
         [bounceLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
@@ -242,22 +210,15 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [bounceLayers addObject:bounceLayer.get()];
 
         FloatRect yellowHighlightRect(FloatPoint(), bounceLayerRect.size());
-        // FIXME (138888): Ideally we wouldn't remove the margin in this case, but we need to
-        // ensure that the yellow highlight and contentImageWithHighlight overlap precisely.
-        if (!_textIndicator->indicatesCurrentSelection()) {
-            yellowHighlightRect.inflateX(-horizontalBorder);
-            yellowHighlightRect.inflateY(-verticalBorder);
-        }
 
         RetainPtr<CALayer> dropShadowLayer = adoptNS([[CALayer alloc] init]);
         [dropShadowLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [dropShadowLayer setShadowColor:dropShadowColor.get()];
         [dropShadowLayer setShadowRadius:dropShadowBlurRadius];
         [dropShadowLayer setShadowOffset:CGSizeMake(dropShadowOffsetX, dropShadowOffsetY)];
-        [dropShadowLayer setShadowPathIsBounds:YES];
+        [dropShadowLayer setShadowPath:translatedPath.platformPath()];
         [dropShadowLayer setShadowOpacity:1];
         [dropShadowLayer setFrame:yellowHighlightRect];
-        [dropShadowLayer setCornerRadius:cornerRadius];
         [bounceLayer addSublayer:dropShadowLayer.get()];
         [bounceLayer setValue:dropShadowLayer.get() forKey:dropShadowLayerKey];
 
@@ -267,11 +228,10 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [rimShadowLayer setFrame:yellowHighlightRect];
         [rimShadowLayer setShadowColor:rimShadowColor.get()];
         [rimShadowLayer setShadowRadius:rimShadowBlurRadius];
-        [rimShadowLayer setShadowPathIsBounds:YES];
+        [rimShadowLayer setShadowPath:translatedPath.platformPath()];
         [rimShadowLayer setShadowOffset:CGSizeZero];
         [rimShadowLayer setShadowOpacity:1];
         [rimShadowLayer setFrame:yellowHighlightRect];
-        [rimShadowLayer setCornerRadius:cornerRadius];
         [bounceLayer addSublayer:rimShadowLayer.get()];
         [bounceLayer setValue:rimShadowLayer.get() forKey:rimShadowLayerKey];
 #endif
@@ -288,12 +248,15 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [textLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [textLayer setContents:(id)contentsImage.get()];
 
-        FloatRect imageRect = textRect;
+        RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
+        [maskLayer setPath:translatedPath.platformPath()];
+        [textLayer setMask:maskLayer.get()];
+
+        FloatRect imageRect = pathBoundingRect;
         [textLayer setContentsRect:CGRectMake(imageRect.x() / contentsImageLogicalSize.width(), imageRect.y() / contentsImageLogicalSize.height(), imageRect.width() / contentsImageLogicalSize.width(), imageRect.height() / contentsImageLogicalSize.height())];
         [textLayer setContentsGravity:kCAGravityCenter];
         [textLayer setContentsScale:_textIndicator->contentImageScaleFactor()];
         [textLayer setFrame:yellowHighlightRect];
-        [textLayer setCornerRadius:cornerRadius];
         [bounceLayer setValue:textLayer.get() forKey:textLayerKey];
         [bounceLayer addSublayer:textLayer.get()];
     }
@@ -500,8 +463,8 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
 
     m_textIndicator = textIndicator.ptr();
 
-    CGFloat horizontalMargin = dropShadowBlurRadius * 2 + horizontalBorder;
-    CGFloat verticalMargin = dropShadowBlurRadius * 2 + verticalBorder;
+    CGFloat horizontalMargin = dropShadowBlurRadius * 2 + TextIndicator::defaultHorizontalMargin;
+    CGFloat verticalMargin = dropShadowBlurRadius * 2 + TextIndicator::defaultVerticalMargin;
     
     if (indicatorWantsBounce(*m_textIndicator)) {
         horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (midBounceScale - 1) + horizontalMargin);

@@ -32,12 +32,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
-#else
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
-#endif
-
 OBJC_CLASS NSView;
 OBJC_CLASS WebTextIndicatorView;
 

@@ -596,7 +596,12 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     Ref<Range> range = rangeOfContents(*coreNode);
 
     const float margin = 4 / coreNode->document().page()->pageScaleFactor();
-    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::None, margin);
+    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionTightlyFitContent |
+        TextIndicatorOptionRespectTextColor |
+        TextIndicatorOptionPaintBackgrounds |
+        TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
+        TextIndicatorOptionIncludeMarginIfRangeMatchesSelection,
+        TextIndicatorPresentationTransition::None, FloatSize(margin, margin));
 
     if (textIndicator) {
         if (Image* image = textIndicator->contentImage())

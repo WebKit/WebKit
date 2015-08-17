@@ -46,7 +46,7 @@ using namespace WebCore;
 
 namespace WebCore {
 
-static bool initializeIndicator(TextIndicatorData&, Frame&, const Range&, unsigned margin);
+static bool initializeIndicator(TextIndicatorData&, Frame&, const Range&, FloatSize margin, bool indicatesCurrentSelection);
 
 TextIndicator::TextIndicator(const TextIndicatorData& data)
     : m_data(data)
@@ -62,7 +62,7 @@ Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
     return adoptRef(*new TextIndicator(data));
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
+RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
     Frame* frame = range.startContainer()->document().frame();
 
@@ -80,10 +80,11 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     TextIndicatorData data;
 
     data.presentationTransition = presentationTransition;
-    data.indicatesCurrentSelection = !areRangesEqual(&range, oldSelection.toNormalizedRange().get());
     data.options = options;
 
-    if (!initializeIndicator(data, *frame, range, margin))
+    bool indicatesCurrentSelection = areRangesEqual(&range, oldSelection.toNormalizedRange().get());
+
+    if (!initializeIndicator(data, *frame, range, margin, indicatesCurrentSelection))
         return nullptr;
 
     RefPtr<TextIndicator> indicator = TextIndicator::create(data);
@@ -98,7 +99,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     return indicator;
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
+RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
     RefPtr<Range> range = frame.selection().toNormalizedRange();
     if (!range)
@@ -107,10 +108,9 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
     TextIndicatorData data;
 
     data.presentationTransition = presentationTransition;
-    data.indicatesCurrentSelection = true;
     data.options = options;
 
-    if (!initializeIndicator(data, frame, *range, margin))
+    if (!initializeIndicator(data, frame, *range, margin, true))
         return nullptr;
 
     return TextIndicator::create(data);
@@ -175,9 +175,15 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
     return true;
 }
 
-static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Range& range, unsigned margin)
+static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Range& range, FloatSize margin, bool indicatesCurrentSelection)
 {
     Vector<FloatRect> textRects;
+
+    // FIXME (138888): Ideally we wouldn't remove the margin in this case, but we need to
+    // ensure that the indicator and indicator-with-highlight overlap precisely, and
+    // we can't add a margin to the indicator-with-highlight.
+    if (indicatesCurrentSelection && !(data.options & TextIndicatorOptionIncludeMarginIfRangeMatchesSelection))
+        margin = FloatSize();
 
     FrameSelection::TextRectangleHeight textRectHeight = (data.options & TextIndicatorOptionTightlyFitContent) ? FrameSelection::TextRectangleHeight::TextHeight : FrameSelection::TextRectangleHeight::SelectionHeight;
 
@@ -203,7 +209,8 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
     Vector<FloatRect> textRectsInRootViewCoordinates;
     for (const FloatRect& textRect : textRects) {
         FloatRect textRectInDocumentCoordinatesIncludingMargin = textRect;
-        textRectInDocumentCoordinatesIncludingMargin.inflate(margin);
+        textRectInDocumentCoordinatesIncludingMargin.inflateX(margin.width());
+        textRectInDocumentCoordinatesIncludingMargin.inflateY(margin.height());
         textBoundingRectInDocumentCoordinates.unite(textRectInDocumentCoordinatesIncludingMargin);
 
         FloatRect textRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(textRectInDocumentCoordinatesIncludingMargin));

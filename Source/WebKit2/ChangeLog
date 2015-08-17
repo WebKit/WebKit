@@ -1,3 +1,21 @@
+2015-08-17  Timothy Horton  <timothy_horton@apple.com>
+
+        Adopt shrink-wrapping for TextIndicators on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=148064
+
+        Reviewed by Beth Dakin.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextIndicatorData>::encode): Deleted.
+        (IPC::ArgumentCoder<TextIndicatorData>::decode): Deleted.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        Use the new option, TextIndicatorOptionIncludeMarginIfRangeMatchesSelection,
+        for iOS and FindController, because we can keep the margins in these cases
+        because we don't have to animate to/from the blue highlight.
+
 2015-08-16  Timothy Horton  <timothy_horton@apple.com>
 
         Refactor ViewGestureController swipe snapshot removal to be more platform-independent
