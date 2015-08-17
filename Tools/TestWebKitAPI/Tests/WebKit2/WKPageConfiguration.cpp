@@ -31,6 +31,8 @@
 #include "PlatformWebView.h"
 #include "Test.h"
 
+#include <WebKit/WKWebsiteDataStoreRef.h>
+
 namespace TestWebKitAPI {
 
 TEST(WebKit2, WKPageConfigurationEmpty)
@@ -70,10 +72,58 @@ TEST(WebKit2, WKPageConfigurationBasic)
     
     PlatformWebView webView(configuration.get());
     setPageLoaderClient(webView.page());
+    
+    WKRetainPtr<WKPageConfigurationRef> copiedConfiguration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    ASSERT_EQ(context.get(), WKPageConfigurationGetContext(copiedConfiguration.get()));
 
     WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
+    didFinishLoad = false;
+    Util::run(&didFinishLoad);
+}
+
+TEST(WebKit2, WKPageConfigurationBasicWithDataStore)
+{
+    WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKPageConfigurationSetContext(configuration.get(), context.get());
+    WKRetainPtr<WKWebsiteDataStoreRef> websiteDataStore = WKWebsiteDataStoreGetDefaultDataStore();
+    WKPageConfigurationSetWebsiteDataStore(configuration.get(), websiteDataStore.get());
+    
+    PlatformWebView webView(configuration.get());
+    setPageLoaderClient(webView.page());
+
+    WKRetainPtr<WKPageConfigurationRef> copiedConfiguration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    ASSERT_EQ(context.get(), WKPageConfigurationGetContext(copiedConfiguration.get()));
+    ASSERT_EQ(WKWebsiteDataStoreGetDefaultDataStore(), WKPageConfigurationGetWebsiteDataStore(copiedConfiguration.get()));
+
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
+    WKPageLoadURL(webView.page(), url.get());
+
+    didFinishLoad = false;
+    Util::run(&didFinishLoad);
+}
+
+TEST(WebKit2, WKPageConfigurationBasicWithNonPersistentDataStore)
+{
+    WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKPageConfigurationSetContext(configuration.get(), context.get());
+    WKRetainPtr<WKWebsiteDataStoreRef> websiteDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
+    WKPageConfigurationSetWebsiteDataStore(configuration.get(), websiteDataStore.get());
+    
+    PlatformWebView webView(configuration.get());
+    setPageLoaderClient(webView.page());
+
+    WKRetainPtr<WKPageConfigurationRef> copiedConfiguration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    ASSERT_EQ(context.get(), WKPageConfigurationGetContext(copiedConfiguration.get()));
+    ASSERT_EQ(websiteDataStore.get(), WKPageConfigurationGetWebsiteDataStore(copiedConfiguration.get()));
+
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
+    WKPageLoadURL(webView.page(), url.get());
+
+    didFinishLoad = false;
     Util::run(&didFinishLoad);
 }
 

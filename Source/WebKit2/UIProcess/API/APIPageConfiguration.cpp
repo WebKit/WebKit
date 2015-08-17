@@ -141,6 +141,11 @@ API::WebsiteDataStore* PageConfiguration::websiteDataStore()
 void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataStore)
 {
     m_websiteDataStore = websiteDataStore;
+
+    if (m_websiteDataStore)
+        m_sessionID = m_websiteDataStore->websiteDataStore().sessionID();
+    else
+        m_sessionID = WebCore::SessionID();
 }
 
 WebCore::SessionID PageConfiguration::sessionID()

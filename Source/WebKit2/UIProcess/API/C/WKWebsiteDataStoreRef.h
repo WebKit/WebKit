@@ -34,6 +34,9 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKWebsiteDataStoreGetTypeID();
 
+WK_EXPORT WKWebsiteDataStoreRef WKWebsiteDataStoreGetDefaultDataStore();
+WK_EXPORT WKWebsiteDataStoreRef WKWebsiteDataStoreCreateNonPersistentDataStore();
+
 #ifdef __cplusplus
 }
 #endif

@@ -312,7 +312,6 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     pageConfiguration->setUserContentController([_configuration userContentController]->_userContentControllerProxy.get());
     pageConfiguration->setVisitedLinkProvider([_configuration _visitedLinkProvider]->_visitedLinkProvider.get());
     pageConfiguration->setWebsiteDataStore([_configuration websiteDataStore]->_websiteDataStore.get());
-    pageConfiguration->setSessionID(pageConfiguration->websiteDataStore()->websiteDataStore().sessionID());
     pageConfiguration->setTreatsSHA1SignedCertificatesAsInsecure([_configuration _treatsSHA1SignedCertificatesAsInsecure]);
 
     RefPtr<WebKit::WebPageGroup> pageGroup;

@@ -1,3 +1,32 @@
+2015-08-17  Sam Weinig  <sam@webkit.org>
+
+        API::PageConfiguration's sessionID needs to be set whenever the API::WebsiteDataStore is set
+        https://bugs.webkit.org/show_bug.cgi?id=148097
+
+        Reviewed by Anders Carlsson.
+
+        We were getting an empty SessionID set on the WebPageProxy (and crashing asserting down the line)
+        when using a WKPageConfiguration with a WKWebsiteDataStore set on it.
+
+        Tests:
+            WebKit2.WKPageConfigurationBasicWithDataStore
+            WebKit2.WKPageConfigurationBasicWithNonPersistentDataStore
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::setWebsiteDataStore):
+        Set the sessionID member whenever changing the WebsiteDataStore.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreGetDefaultDataStore):
+        (WKWebsiteDataStoreCreateNonPersistentDataStore):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        Expose functions for getting default and new non-persistent data stores via the C-SPI. Useful
+        for testing and transitioning users of the C-SPI to the new model.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Remove explicit setting of the sessionID. This is handled by the above call to setWebsiteDataStore().
+
 2015-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Cannot change WKWebView scrollView deceleration rate
