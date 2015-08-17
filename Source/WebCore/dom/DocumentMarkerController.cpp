@@ -102,7 +102,7 @@ void DocumentMarkerController::addTextMatchMarker(const Range* range, bool activ
             // matches off-screen are (that haven't been painted yet).
             Node* node = textPiece->startContainer();
             Vector<RenderedDocumentMarker*> markers = markersFor(node);
-            markers[markers.size() - 1]->setRenderedRect(range->absoluteBoundingBox());
+            markers[markers.size() - 1]->addRenderedRect(range->absoluteBoundingBox());
         }
     }
 }
@@ -439,10 +439,7 @@ Vector<IntRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker
             if (marker.type() != markerType)
                 continue;
 
-            if (!marker.isRendered())
-                continue;
-
-            result.append(marker.renderedRect());
+            result.appendVector(marker.renderedRects());
         }
     }
 

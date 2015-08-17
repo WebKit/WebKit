@@ -1104,7 +1104,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
         if (grammar || isDictationMarker) {
             markerRect.move(-boxOrigin.x(), -boxOrigin.y());
             markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-            marker.setRenderedRect(markerRect);
+            marker.addRenderedRect(markerRect);
         }
     }
     
@@ -1132,8 +1132,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
 {
     LayoutUnit selectionHeight = this->selectionHeight();
 
-    int sPos = std::max(marker.startOffset() - m_start, (unsigned)0);
-    int ePos = std::min(marker.endOffset() - m_start, (unsigned)m_len);
+    int sPos = std::max<int>(marker.startOffset() - m_start, 0);
+    int ePos = std::min<int>(marker.endOffset() - m_start, m_len);
     TextRun run = constructTextRun(style, font);
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
@@ -1142,7 +1142,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
     font.adjustSelectionRectForText(run, renderedRect, sPos, ePos);
     IntRect markerRect = enclosingIntRect(renderedRect);
     markerRect = renderer().localToAbsoluteQuad(FloatQuad(markerRect)).enclosingBoundingBox();
-    marker.setRenderedRect(markerRect);
+    marker.addRenderedRect(markerRect);
     
     // Optionally highlight the text
     if (renderer().frame().editor().markedTextMatchesAreHighlighted()) {
@@ -1174,7 +1174,7 @@ void InlineTextBox::computeRectForReplacementMarker(RenderedDocumentMarker& mark
     font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
     IntRect markerRect = enclosingIntRect(selectionRect);
     markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-    marker.setRenderedRect(markerRect);
+    marker.addRenderedRect(markerRect);
 }
     
 void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, bool background)

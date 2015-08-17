@@ -28,39 +28,43 @@
 #define RenderedDocumentMarker_h
 
 #include "DocumentMarker.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class RenderedDocumentMarker : public DocumentMarker {
 public:
-
     explicit RenderedDocumentMarker(const DocumentMarker& marker)
-        : DocumentMarker(marker), m_renderedRect(invalidMarkerRect())
+        : DocumentMarker(marker)
     {
     }
 
-    bool isRendered() const { return invalidMarkerRect() != m_renderedRect; }
-    bool contains(const LayoutPoint& point) const { return isRendered() && m_renderedRect.contains(point); }
-    void setRenderedRect(const LayoutRect& r) { m_renderedRect = r; }
-    const LayoutRect& renderedRect() const { return m_renderedRect; }
-    void invalidate(const LayoutRect&);
-    void invalidate() { m_renderedRect = invalidMarkerRect(); }
+    bool contains(const LayoutPoint& point) const
+    {
+        for (const auto& rect : m_renderedRects) {
+            if (rect.contains(point))
+                return true;
+        }
+        return false;
+    }
+
+    void addRenderedRect(const LayoutRect& r) { m_renderedRects.append(r); }
+    const Vector<LayoutRect, 1>& renderedRects() const { return m_renderedRects; }
+    void invalidate(const LayoutRect& r)
+    {
+        for (const auto& rect : m_renderedRects) {
+            if (rect.intersects(r)) {
+                invalidate();
+                return;
+            }
+        }
+    }
+    void invalidate() { m_renderedRects.clear(); }
 
 private:
-    static const LayoutRect& invalidMarkerRect()
-    {
-        static const LayoutRect rect = LayoutRect(-1, -1, -1, -1);
-        return rect;
-    }
-
-    LayoutRect m_renderedRect;
+    Vector<LayoutRect, 1> m_renderedRects;
 };
 
-inline void RenderedDocumentMarker::invalidate(const LayoutRect& r)
-{
-    if (m_renderedRect.intersects(r))
-        invalidate();
-}
 
 } // namespace
 

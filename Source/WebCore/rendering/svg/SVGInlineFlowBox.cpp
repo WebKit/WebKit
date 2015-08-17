@@ -124,7 +124,7 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
             }
         }
 
-        marker->setRenderedRect(textRenderer->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
+        marker->addRenderedRect(textRenderer->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
     }
 }
 
