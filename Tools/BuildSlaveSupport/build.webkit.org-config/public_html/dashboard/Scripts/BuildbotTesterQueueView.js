@@ -83,7 +83,7 @@ BuildbotTesterQueueView.prototype = {
                     // Currently, only layout tests are supported in such.
                     var layoutTestResults = iteration.layoutTestResults;
                     if (layoutTestResults.tooManyFailures) {
-                        var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, "failure limit exceeded", undefined, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, "failure limit exceeded", undefined, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
                     } else if (layoutTestResults.errorOccurred) {
                         var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
