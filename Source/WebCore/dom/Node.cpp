@@ -28,12 +28,6 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "BeforeLoadEvent.h"
-#include "CSSParser.h"
-#include "CSSRule.h"
-#include "CSSSelector.h"
-#include "CSSSelectorList.h"
-#include "CSSStyleRule.h"
-#include "CSSStyleSheet.h"
 #include "ChildListMutationScope.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -47,7 +41,6 @@
 #include "EventDispatcher.h"
 #include "EventException.h"
 #include "EventHandler.h"
-#include "FlowThreadController.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLElement.h"
@@ -60,8 +53,6 @@
 #include "MutationEvent.h"
 #include "NodeOrString.h"
 #include "NodeRenderStyle.h"
-#include "PlatformMouseEvent.h"
-#include "PlatformWheelEvent.h"
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
 #include "Range.h"
@@ -70,7 +61,6 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
-#include "Settings.h"
 #include "StorageEvent.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
@@ -80,9 +70,6 @@
 #include "TreeScopeAdopter.h"
 #include "WheelEvent.h"
 #include "XMLNames.h"
-#include "htmlediting.h"
-#include <runtime/JSCInlines.h>
-#include <runtime/VM.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
