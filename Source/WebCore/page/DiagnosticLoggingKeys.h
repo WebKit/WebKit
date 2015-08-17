@@ -37,6 +37,7 @@ public:
     WEBCORE_EXPORT static String backNavigationKey();
     WEBCORE_EXPORT static String cacheControlNoStoreKey();
     static String cachedResourceRevalidationKey();
+    static String canCacheKey();
     static String cannotSuspendActiveDOMObjectsKey();
     WEBCORE_EXPORT static String deltaKey();
     static String deniedByClientKey();

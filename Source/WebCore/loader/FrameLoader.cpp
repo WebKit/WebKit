@@ -2993,9 +2993,14 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
 
     setPolicyDocumentLoader(0);
 
-    if (isBackForwardLoadType(type) && history().provisionalItem()->isInPageCache()) {
-        loadProvisionalItemFromCachedPage();
-        return;
+    if (isBackForwardLoadType(type)) {
+        auto& diagnosticLoggingClient = m_frame.mainFrame().diagnosticLoggingClient();
+        if (history().provisionalItem()->isInPageCache()) {
+            diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultPass, ShouldSample::Yes);
+            loadProvisionalItemFromCachedPage();
+            return;
+        }
+        diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
     if (!formState) {

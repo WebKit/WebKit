@@ -298,6 +298,11 @@ String DiagnosticLoggingKeys::backNavigationKey()
     return ASCIILiteral("backNavigation");
 }
 
+String DiagnosticLoggingKeys::canCacheKey()
+{
+    return ASCIILiteral("canCache");
+}
+
 String DiagnosticLoggingKeys::cacheControlNoStoreKey()
 {
     return ASCIILiteral("cacheControlNoStore");
