@@ -267,6 +267,12 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         [self _restoreContentOffsetWithRubberbandAmount:rubberbandAmount];
 }
 
+- (void)setDecelerationRate:(CGFloat)decelerationRate
+{
+    [super setDecelerationRate:decelerationRate];
+    _preferredScrollDecelerationFactor = decelerationRate;
+}
+
 @end
 
 #endif // PLATFORM(IOS)

@@ -1,3 +1,18 @@
+2015-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Cannot change WKWebView scrollView deceleration rate
+        https://bugs.webkit.org/show_bug.cgi?id=148086
+        <rdar://problem/21893685>
+
+        Reviewed by Simon Fraser.
+
+        Updates the preferred scroll deceleration factor when the scrollView's decelerationRate is explicitly set by the
+        user, so when snap scrolling is inactive and [WKWebView scrollViewWillBeginDragging] sets its scrollView's
+        decelerationRate to the preferred decelerationRate, it will be set to the updated value.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView setDecelerationRate:]): Overrides setDecelerationRate to update _preferredScrollDecelerationFactor.
+
 2015-08-17  Timothy Horton  <timothy_horton@apple.com>
 
         Adopt shrink-wrapping for TextIndicators on Mac
