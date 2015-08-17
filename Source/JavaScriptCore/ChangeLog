@@ -1,3 +1,23 @@
+2015-08-17  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Type profiler return types aren't showing up
+        https://bugs.webkit.org/show_bug.cgi?id=147348
+
+        Reviewed by Brian Burg.
+
+        Bug #145995 changed the starting offset of a function to 
+        be the open parenthesis of the function's parameter list.
+        This broke JSC's type profiler protocol of communicating 
+        return types of a function to the web inspector. This
+        is now fixed. The text offset used in the protocol is now
+        the first letter of the function/get/set/method name.
+        So "f" in "function a() {}", "s" in "set foo(){}", etc.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * jsc.cpp:
+        (functionReturnTypeFor):
+
 2015-08-17 Aleksandr Skachkov   <gskachkov@gmail.com>
 
         [ES6] Implement ES6 arrow function syntax. Arrow function specific features. Lexical bind of this

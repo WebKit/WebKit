@@ -1,3 +1,20 @@
+2015-08-17  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Type profiler return types aren't showing up
+        https://bugs.webkit.org/show_bug.cgi?id=147348
+
+        Reviewed by Brian Burg.
+
+        Bug #145995 changed the starting offset of a function to 
+        be the open parenthesis of the function's parameter list.
+        This broke the type profiler's text offset based protocol with JSC.
+        The text offset used in the protocol is now the first letter of the 
+        function/get/set/method name.  So "f" in "function a() {}", "s" in "set foo(){}", etc.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement):
+        (WebInspector.ScriptSyntaxTree.functionReturnDivot):
+
 2015-08-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: REGRESSION: spurious console.assert inside ResourceContentView._contentAvailable
