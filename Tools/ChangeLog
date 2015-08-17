@@ -1,3 +1,35 @@
+2015-08-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: load ProtocolTestStub from the WebInspectorUI bundle
+        https://bugs.webkit.org/show_bug.cgi?id=147955
+
+        Reviewed by Timothy Hatcher.
+
+        To enable sharing of common test code between protocol and model tests,
+        start loading the protocol TestStub.js through the WebInspectorUI bundle.
+
+        This patch adds the read-only getter TestRunner.inspectorTestStubURL, which
+        protocol-test.js uses to load the inspector frontend stub into its iframe
+        from an arbitrary local file URL.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (getInspectorTestStubURLCallback):
+        (TestRunner::staticValues):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (SOFT_LINK_STAGED_FRAMEWORK):
+        (TestRunner::inspectorTestStubURL):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::inspectorTestStubURL):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/InjectedBundle/efl/TestRunnerEfl.cpp:
+        (WTR::TestRunner::inspectorTestStubURL):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::inspectorTestStubURL):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::inspectorTestStubURL):
+
 2015-08-17  Saam barati  <sbarati@apple.com>
 
         Change email address from saambarati1@gmail.com to sbarati@apple.com

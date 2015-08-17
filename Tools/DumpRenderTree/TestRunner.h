@@ -308,6 +308,8 @@ public:
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(JSStringRef script);
+    JSStringRef inspectorTestStubURL();
+
     void evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script);
     void evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script);
 

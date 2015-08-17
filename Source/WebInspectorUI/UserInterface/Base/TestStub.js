@@ -63,24 +63,6 @@ InjectedTestHarness = class InjectedTestHarness
         return new InjectedTestHarness.SyncTestSuite(this, name);
     }
 
-    importScript(scriptName)
-    {
-        var xhr = new XMLHttpRequest();
-        var isAsyncRequest = false;
-        xhr.open("GET", scriptName, isAsyncRequest);
-        xhr.send(null);
-        if (xhr.status !== 0 && xhr.status !== 200)
-            throw new Error("Invalid script URL: " + scriptName);
-        var script = `// From InjectedTestHarness.importScript(${scriptName})
-try {
-    ${xhr.responseText}
-} catch (e) {
-    alert(${JSON.stringify("Error in: " + scriptName)});
-    throw e;
-}`;
-        window.eval(script);
-    }
-
     get logCount()
     {
         return this._logCount;

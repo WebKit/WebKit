@@ -1,3 +1,46 @@
+2015-08-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: load ProtocolTestStub from the WebInspectorUI bundle
+        https://bugs.webkit.org/show_bug.cgi?id=147955
+
+        Reviewed by Timothy Hatcher.
+
+        Since the inspector stub cannot open files that live in the LayoutTests
+        directory, adopt the test helper marshalling approach used by inspector.js.
+        Each helper must register its code for marshalling and explicitly put globals
+        on the window object.
+
+        Use script tags rather than importScript to include helpers in a test.
+
+        * TestExpectations: For now, skip inspector http tests. These should be rewritten
+        to use inspector-test.js, which does not run into cross-origin problems.
+
+        Rebaseline some test results to account for shifted line numbers (yuck).
+
+        * http/tests/inspector/dom/resources/InspectorDOMListener.js:
+        * http/tests/inspector/resources/console-test.js:
+        * http/tests/inspector/resources/probe-test.js:
+        * http/tests/inspector/resources/protocol-test.js:
+        (ProtocolTestProxy.registerInitializer):
+        (log):
+        (runTest.runInitializationMethodsInFrontend):
+        (runTest.runTestMethodInFrontend):
+        (runTest):
+        * inspector/console/console-message.html:
+        * inspector/console/css-source-locations-expected.txt:
+        * inspector/console/css-source-locations.html:
+        * inspector/console/js-source-locations-expected.txt:
+        * inspector/console/js-source-locations.html:
+        * inspector/console/x-frame-options-message-expected.txt:
+        * inspector/console/x-frame-options-message.html:
+        * inspector/debugger/didSampleProbe-multiple-probes.html:
+        * inspector/debugger/setBreakpoint-actions.html:
+        * inspector/debugger/setBreakpoint-options-exception.html:
+        * inspector/dom/dom-search-expected.txt:
+        * inspector/dom/dom-search-with-context.html:
+        * inspector/dom/dom-search.html:
+        * inspector/dom/resources/dom-search-queries.js:
+
 2015-08-17  Simon Fraser  <simon.fraser@apple.com>
 
         will-change should sometimes trigger compositing

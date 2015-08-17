@@ -1,6 +1,8 @@
+ProtocolTestProxy.registerInitializer(function() {
+
 // Having the queries in an external file, so that DOM search will not find the script when searching for values.
 
-var domSearchQueries = [
+window.domSearchQueries = [
     "body",
     "<body",
     "body>",
@@ -29,3 +31,5 @@ var domSearchQueries = [
     "/html/body/@onload",
     "/HTML/BODY"
 ];
+
+});

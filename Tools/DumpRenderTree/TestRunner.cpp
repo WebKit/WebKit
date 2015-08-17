@@ -1790,6 +1790,13 @@ static JSValueRef getTitleTextDirectionCallback(JSContextRef context, JSObjectRe
     return JSValueMakeString(context, titleDirection.get());
 }
 
+static JSValueRef getInspectorTestStubURLCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    JSRetainPtr<JSStringRef> url(Adopt, controller->inspectorTestStubURL());
+    return JSValueMakeString(context, url.get());
+}
+
 static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
@@ -1983,6 +1990,7 @@ JSStaticValue* TestRunner::staticValues()
         { "titleTextDirection", getTitleTextDirectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "databaseDefaultQuota", getDatabaseDefaultQuotaCallback, setDatabaseDefaultQuotaCallback, kJSPropertyAttributeNone },
         { "databaseMaxQuota", getDatabaseMaxQuotaCallback, setDatabaseMaxQuotaCallback, kJSPropertyAttributeNone },
+        { "inspectorTestStubURL", getInspectorTestStubURLCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
     return staticValues;

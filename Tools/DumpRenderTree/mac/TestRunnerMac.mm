@@ -43,6 +43,7 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebCore/GeolocationPosition.h>
+#import <WebCore/SoftLinking.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLInputElementPrivate.h>
@@ -87,6 +88,8 @@
 #import <WebKit/WebCoreThreadMessage.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
 #endif
+
+SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 #if !PLATFORM(IOS)
 @interface CommandValidationTarget : NSObject <NSValidatedUserInterfaceItem>
@@ -778,6 +781,23 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
     RetainPtr<CFStringRef> scriptCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, script));
     NSString *scriptNS = (NSString *)scriptCF.get();
     [[[mainFrame webView] inspector] evaluateInFrontend:nil script:scriptNS];
+}
+
+JSStringRef TestRunner::inspectorTestStubURL()
+{
+    // Call the soft link framework function to dlopen it, then CFBundleGetBundleWithIdentifier will work.
+    WebInspectorUILibrary();
+
+    CFBundleRef inspectorBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebInspectorUI"));
+    if (!inspectorBundle)
+        return nullptr;
+
+    RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(inspectorBundle, CFSTR("TestStub"), CFSTR("html"), NULL));
+    if (!url)
+        return nullptr;
+
+    CFStringRef urlString = CFURLGetString(url.get());
+    return JSStringCreateWithCFString(urlString);
 }
 
 typedef HashMap<unsigned, RetainPtr<WebScriptWorld> > WorldMap;
