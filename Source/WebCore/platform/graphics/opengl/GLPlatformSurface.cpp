@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-static GLPlatformSurface* m_currentDrawable = 0;
-
 std::unique_ptr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceAttributes attributes)
 {
     std::unique_ptr<GLPlatformSurface> surface;
@@ -68,8 +66,6 @@ GLPlatformSurface::GLPlatformSurface(SurfaceAttributes)
 
 GLPlatformSurface::~GLPlatformSurface()
 {
-    if (m_currentDrawable == this)
-        m_currentDrawable = 0;
 }
 
 PlatformBufferHandle GLPlatformSurface::handle() const
@@ -97,14 +93,8 @@ void GLPlatformSurface::swapBuffers()
     notImplemented();
 }
 
-bool GLPlatformSurface::isCurrentDrawable() const
-{
-    return m_currentDrawable == this;
-}
-
 void GLPlatformSurface::onMakeCurrent()
 {
-    m_currentDrawable = this;
 }
 
 void GLPlatformSurface::updateContents(const uint32_t)
@@ -117,8 +107,6 @@ void GLPlatformSurface::setGeometry(const IntRect&)
 
 void GLPlatformSurface::destroy()
 {
-    if (m_currentDrawable == this)
-        m_currentDrawable = 0;
 }
 
 GLPlatformSurface::SurfaceAttributes GLPlatformSurface::attributes() const

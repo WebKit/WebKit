@@ -86,6 +86,11 @@ GLPlatformSurface::SurfaceAttributes EGLTransportSurface::attributes() const
     return m_configSelector->attributes();
 }
 
+bool EGLTransportSurface::isCurrentDrawable() const
+{
+    return m_drawable == eglGetCurrentSurface(EGL_DRAW);
+}
+
 EGLTransportSurface::~EGLTransportSurface()
 {
 }
@@ -136,6 +141,11 @@ EGLOffScreenSurface::~EGLOffScreenSurface()
 GLPlatformSurface::SurfaceAttributes EGLOffScreenSurface::attributes() const
 {
     return m_configSelector->attributes();
+}
+
+bool EGLOffScreenSurface::isCurrentDrawable() const
+{
+    return m_drawable == eglGetCurrentSurface(EGL_DRAW);
 }
 
 PlatformSurfaceConfig EGLOffScreenSurface::configuration()
