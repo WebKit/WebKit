@@ -1,3 +1,20 @@
+2015-07-28  Sam Weinig  <sam@webkit.org>
+
+        Cleanup the builtin JavaScript files
+        https://bugs.webkit.org/show_bug.cgi?id=147382
+
+        Reviewed by Geoffrey Garen.
+
+        * builtins/Array.prototype.js:
+        * builtins/ArrayConstructor.js:
+        * builtins/ArrayIterator.prototype.js:
+        * builtins/Function.prototype.js:
+        * builtins/Iterator.prototype.js:
+        * builtins/ObjectConstructor.js:
+        * builtins/StringConstructor.js:
+        * builtins/StringIterator.prototype.js:
+        Unify the style of the built JavaScript files.
+
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Move some commands from ./CMakeLists.txt to Source/cmake

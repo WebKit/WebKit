@@ -25,6 +25,7 @@
 
 function symbolIterator()
 {
-    'use strict';
+    "use strict";
+
     return this;
 }

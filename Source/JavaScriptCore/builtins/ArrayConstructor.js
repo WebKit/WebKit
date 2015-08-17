@@ -36,7 +36,8 @@ function of(/* items... */)
     return array;
 }
 
-function from(items /*, mapFn, thisArg */) {
+function from(items /*, mapFn, thisArg */)
+{
     "use strict";
 
     var thisObj = this;

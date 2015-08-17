@@ -27,6 +27,7 @@
 function reduce(callback /*, initialValue */)
 {
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.reduce requires that |this| not be null");
 
@@ -64,6 +65,7 @@ function reduce(callback /*, initialValue */)
 function reduceRight(callback /*, initialValue */)
 {
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.reduceRight requires that |this| not be null");
 
@@ -98,8 +100,10 @@ function reduceRight(callback /*, initialValue */)
     return accumulator;
 }
 
-function every(callback /*, thisArg */) {
+function every(callback /*, thisArg */)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.every requires that |this| not be null");
     
@@ -124,8 +128,10 @@ function every(callback /*, thisArg */) {
     return true;
 }
 
-function forEach(callback /*, thisArg */) {
+function forEach(callback /*, thisArg */)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.forEach requires that |this| not be null");
     
@@ -146,8 +152,10 @@ function forEach(callback /*, thisArg */) {
     }
 }
 
-function filter(callback /*, thisArg */) {
+function filter(callback /*, thisArg */)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.filter requires that |this| not be null");
     
@@ -175,8 +183,10 @@ function filter(callback /*, thisArg */) {
     return result;
 }
 
-function map(callback /*, thisArg */) {
+function map(callback /*, thisArg */)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.map requires that |this| not be null");
     
@@ -202,8 +212,10 @@ function map(callback /*, thisArg */) {
     return result;
 }
 
-function some(callback /*, thisArg */) {
+function some(callback /*, thisArg */)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.some requires that |this| not be null");
     
@@ -229,6 +241,7 @@ function some(callback /*, thisArg */) {
 function fill(value /* [, start [, end]] */)
 {
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.fill requires that |this| not be null");
     
@@ -267,8 +280,10 @@ function fill(value /* [, start [, end]] */)
     return O;
 }
 
-function find(callback /*, thisArg */) {
+function find(callback /*, thisArg */)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.find requires that |this| not be null");
     
@@ -290,8 +305,10 @@ function find(callback /*, thisArg */) {
     return undefined;
 }
 
-function findIndex(callback /*, thisArg */) {
+function findIndex(callback /*, thisArg */)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.findIndex requires that |this| not be null");
     
@@ -312,8 +329,10 @@ function findIndex(callback /*, thisArg */) {
     return -1;
 }
 
-function includes(searchElement /*, fromIndex*/) {
+function includes(searchElement /*, fromIndex*/)
+{
     "use strict";
+
     if (this === null)
         throw new @TypeError("Array.prototype.includes requires that |this| not be null");
 

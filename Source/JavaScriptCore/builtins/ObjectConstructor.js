@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function assign(target/*[*/, /*...*/sources/*] */) {
+function assign(target/*[*/, /*...*/sources/*] */)
+{
     "use strict";
 
     if (target == null)

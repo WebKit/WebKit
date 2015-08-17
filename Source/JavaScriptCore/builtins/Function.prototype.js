@@ -23,12 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function call(thisArgument) {
+function call(thisArgument)
+{
     "use strict";
+
     return this.@call(...arguments);
 }
 
-function apply(thisValue, argumentValues) {
+function apply(thisValue, argumentValues)
+{
     "use strict";
+
     return this.@apply(thisValue, argumentValues);
 }

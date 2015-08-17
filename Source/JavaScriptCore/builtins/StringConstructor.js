@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function raw(template) {
+function raw(template)
+{
     "use strict";
 
     if (template === null || template === undefined)
