@@ -1,4 +1,4 @@
-include(OptionsWindows)
+include(OptionsWin)
 
 set(USE_CG 1)
 set(USE_CA 1)

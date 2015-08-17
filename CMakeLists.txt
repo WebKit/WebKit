@@ -1,28 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(WebKit)
 
-# -----------------------------------------------------------------------------
-# Default library type
-# -----------------------------------------------------------------------------
-set(BMALLOC_DIR "${CMAKE_SOURCE_DIR}/Source/bmalloc")
-set(WTF_DIR "${CMAKE_SOURCE_DIR}/Source/WTF")
-set(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/Source/JavaScriptCore")
-set(WEBCORE_DIR "${CMAKE_SOURCE_DIR}/Source/WebCore")
-set(WEBKIT_DIR "${CMAKE_SOURCE_DIR}/Source/WebKit")
-set(WEBKIT2_DIR "${CMAKE_SOURCE_DIR}/Source/WebKit2")
-set(THIRDPARTY_DIR "${CMAKE_SOURCE_DIR}/Source/ThirdParty")
-
-set(TOOLS_DIR "${CMAKE_SOURCE_DIR}/Tools")
-
-set(DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources")
-set(DERIVED_SOURCES_JAVASCRIPTCORE_DIR "${CMAKE_BINARY_DIR}/DerivedSources/JavaScriptCore")
-set(DERIVED_SOURCES_WEBCORE_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebCore")
-set(DERIVED_SOURCES_WEBKITLEGACY_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKitLegacy")
-set(DERIVED_SOURCES_WEBKIT_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit")
-set(DERIVED_SOURCES_WEBKIT2_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit2")
-set(DERIVED_SOURCES_WEBINSPECTORUI_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebInspectorUI")
-set(DERIVED_SOURCES_WTF_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WTF")
-
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")
 
 if (NOT DEFINED ENABLE_WEBKIT)

@@ -1,6 +1,6 @@
 set(WTF_PLATFORM_WIN_CAIRO 1)
 
-include(OptionsWindows)
+include(OptionsWin)
 
 set(USE_CF 1)
 set(USE_CURL 1)
