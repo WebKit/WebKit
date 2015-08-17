@@ -463,6 +463,9 @@
     <ClInclude Include="..\wtf\HashCountedSet.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\Hasher.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\HashFunctions.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -620,9 +623,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\StringExtras.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\StringHasher.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\StringPrintStream.h">

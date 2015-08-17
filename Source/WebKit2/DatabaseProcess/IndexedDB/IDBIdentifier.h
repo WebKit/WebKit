@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 #include <wtf/HashTraits.h>
-#include <wtf/StringHasher.h>
+#include <wtf/Hasher.h>
 
 namespace WebKit {
 

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef WTF_StringHasher_h
-#define WTF_StringHasher_h
+#ifndef WTF_Hasher_h
+#define WTF_Hasher_h
 
 #include <unicode/utypes.h>
 #include <wtf/text/LChar.h>
@@ -290,8 +290,25 @@ private:
     UChar m_pendingCharacter;
 };
 
+class IntegerHasher {
+public:
+    void add(unsigned integer)
+    {
+        m_underlyingHasher.addCharactersAssumingAligned(integer, integer >> 16);
+    }
+
+    unsigned hash() const
+    {
+        return m_underlyingHasher.hash();
+    }
+
+private:
+    StringHasher m_underlyingHasher;
+};
+
 } // namespace WTF
 
+using WTF::IntegerHasher;
 using WTF::StringHasher;
 
-#endif // WTF_StringHasher_h
+#endif // WTF_Hasher_h

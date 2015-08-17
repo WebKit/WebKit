@@ -45,8 +45,6 @@ public:
     int value() const { return m_value; }
     bool enabled() const { return value(); }
 
-    unsigned hash() const;
-
 private:
     AtomicString m_tag;
     const int m_value { 0 };

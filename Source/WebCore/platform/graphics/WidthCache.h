@@ -30,8 +30,8 @@
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
+#include <wtf/Hasher.h>
 #include <wtf/RefPtr.h>
-#include <wtf/StringHasher.h>
 
 namespace WebCore {
 

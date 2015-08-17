@@ -28,7 +28,7 @@
 #include "UTF8.h"
 
 #include "ASCIICType.h"
-#include <wtf/StringHasher.h>
+#include <wtf/Hasher.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WTF {

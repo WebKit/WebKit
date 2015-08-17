@@ -216,6 +216,7 @@
     <ClInclude Include="..\wtf\glib\GUniquePtr.h" />
     <ClInclude Include="..\wtf\GregorianDateTime.h" />
     <ClInclude Include="..\wtf\HashCountedSet.h" />
+    <ClInclude Include="..\wtf\Hasher.h" />
     <ClInclude Include="..\wtf\HashFunctions.h" />
     <ClInclude Include="..\wtf\HashIterators.h" />
     <ClInclude Include="..\wtf\HashMap.h" />
@@ -276,7 +277,6 @@
     <ClInclude Include="..\wtf\StdLibExtras.h" />
     <ClInclude Include="..\wtf\Stopwatch.h" />
     <ClInclude Include="..\wtf\StringExtras.h" />
-    <ClInclude Include="..\wtf\StringHasher.h" />
     <ClInclude Include="..\wtf\StringPrintStream.h" />
     <ClInclude Include="..\wtf\TemporaryChange.h" />
     <ClInclude Include="..\wtf\text\ASCIIFastPath.h" />

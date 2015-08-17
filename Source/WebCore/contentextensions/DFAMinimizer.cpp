@@ -33,7 +33,7 @@
 #include "MutableRangeList.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/StringHasher.h>
+#include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -1,3 +1,22 @@
+2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement IntegerHasher
+        https://bugs.webkit.org/show_bug.cgi?id=147866
+
+        Reviewed by Darin Adler and Anders Carlsson.
+
+        Rename StringHasher.h to Hasher.h, and include an IntegerHasher class.
+
+        * WTF.vcxproj/WTF.vcxproj: Update to target new file.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * WTF.xcodeproj/project.pbxproj: Ditto.
+        * wtf/CMakeLists.txt: Ditto.
+        * wtf/Hasher.h: Renamed from Source/WTF/wtf/StringHasher.h.
+        * wtf/text/CString.cpp: Use new #include
+        * wtf/text/StringHash.h: Ditto.
+        * wtf/text/StringImpl.h: Ditto.
+        * wtf/unicode/UTF8.cpp: Ditto.
+
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Move some commands from ./CMakeLists.txt to Source/cmake

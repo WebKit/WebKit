@@ -31,6 +31,7 @@ set(WTF_HEADERS
     GetPtr.h
     GregorianDateTime.h
     HashCountedSet.h
+    Hasher.h
     HashFunctions.h
     HashIterators.h
     HashMap.h
@@ -90,7 +91,6 @@ set(WTF_HEADERS
     StdLibExtras.h
     Stopwatch.h
     StringExtras.h
-    StringHasher.h
     StringPrintStream.h
     ThreadIdentifierDataPthreads.h
     ThreadSafeRefCounted.h

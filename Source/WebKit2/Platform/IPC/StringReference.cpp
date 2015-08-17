@@ -29,7 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
-#include <wtf/StringHasher.h>
+#include <wtf/Hasher.h>
 #include <wtf/text/CString.h>
 
 namespace IPC {

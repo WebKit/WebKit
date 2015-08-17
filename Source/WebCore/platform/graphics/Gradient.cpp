@@ -30,7 +30,7 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include <wtf/HashFunctions.h>
-#include <wtf/StringHasher.h>
+#include <wtf/Hasher.h>
 
 using WTF::pairIntHash;
 

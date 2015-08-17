@@ -1,3 +1,14 @@
+2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement IntegerHasher
+        https://bugs.webkit.org/show_bug.cgi?id=147866
+
+        Reviewed by Darin Adler and Anders Carlsson.
+
+        Update comment.
+
+        * UserInterface/Base/Utilities.js:
+
 2015-08-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorTest should be a subclass of TestHarness
