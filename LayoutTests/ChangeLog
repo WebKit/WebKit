@@ -1,3 +1,19 @@
+2015-08-17  Chris Dumez  <cdumez@apple.com>
+
+        Accessing HTMLCollection.length is slow
+        https://bugs.webkit.org/show_bug.cgi?id=148039
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/htmlcollection-getownproperty-expected.txt: Added.
+        * fast/dom/htmlcollection-getownproperty.html: Added.
+        Add new layout test covering the expected behavior of HTMLCollection's
+        [[GetOwnProperty]]. A few checks are still failing as we don't entirely
+        match the specification yet.
+
+        * fast/dom/wrapper-classes-expected.txt:
+        Rebaseline test as a few more checks are now passing.
+
 2015-08-15  Alexey Proskuryakov  <ap@apple.com>
 
         Removed an expectation for http/tests/media/video-buffered-range-contains-currentTime.html,

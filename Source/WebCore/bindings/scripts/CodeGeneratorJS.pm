@@ -381,12 +381,6 @@ sub GenerateGetOwnPropertySlotBody
 
     my @getOwnPropertySlotImpl = ();
 
-    if ($interfaceName eq "NamedNodeMap" or $interfaceName =~ /^HTML\w*Collection$/) {
-        push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValue proto = thisObject->prototype();\n");
-        push(@getOwnPropertySlotImpl, "    if (proto.isObject() && jsCast<${namespaceMaybe}JSObject*>(proto)->hasProperty(exec, propertyName))\n");
-        push(@getOwnPropertySlotImpl, "        return false;\n\n");
-    }
-
     my $manualLookupGetterGeneration = sub {
         my $requiresManualLookup = $indexedGetterFunction || $namedGetterFunction;
         if ($requiresManualLookup) {
@@ -397,10 +391,6 @@ sub GenerateGetOwnPropertySlotBody
             push(@getOwnPropertySlotImpl, "    }\n");
         }
     };
-
-    if (!$interface->extendedAttributes->{"CustomNamedGetter"} and InstanceAttributeCount($interface) > 0) {
-        &$manualLookupGetterGeneration();
-    }
 
     if ($indexedGetterFunction) {
         push(@getOwnPropertySlotImpl, "    Optional<uint32_t> optionalIndex = parseIndex(propertyName);\n");
@@ -422,6 +412,17 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject, attributes, " . GetIndexedGetterExpression($indexedGetterFunction) . ");\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
         push(@getOwnPropertySlotImpl, "    }\n");
+    }
+
+    if (!$interface->extendedAttributes->{"CustomNamedGetter"} and InstanceAttributeCount($interface) > 0) {
+        &$manualLookupGetterGeneration();
+    }
+
+    # FIXME: We should do this for every interface for every interface that has a named getter.
+    if ($interfaceName eq "NamedNodeMap" or $interfaceName =~ /^HTML\w*Collection$/) {
+        push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValue proto = thisObject->prototype();\n");
+        push(@getOwnPropertySlotImpl, "    if (proto.isObject() && jsCast<${namespaceMaybe}JSObject*>(proto)->hasProperty(exec, propertyName))\n");
+        push(@getOwnPropertySlotImpl, "        return false;\n\n");
     }
 
     if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
@@ -446,6 +447,7 @@ sub GenerateGetOwnPropertySlotBody
     }
 
     if ($hasAttributes) {
+        # FIXME: We are supposed to check for own properties *before* calling the named getter.
         if ($inlined) {
             push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, *info()->staticPropHashTable, thisObject, propertyName, slot);\n");
         } else {
