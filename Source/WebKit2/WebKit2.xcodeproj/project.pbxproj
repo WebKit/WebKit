@@ -661,6 +661,7 @@
 		2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */; };
 		2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */; };
 		2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */; };
+		2DAF4FFB1B636181006013D6 /* ViewGestureController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF4FFA1B636181006013D6 /* ViewGestureController.cpp */; };
 		2DB9C4AC1B3251BD0070F27F /* SafariServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB9C4AB1B3251BD0070F27F /* SafariServicesSPI.h */; };
 		2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */; };
 		2DC6D9C418C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */; };
@@ -2806,6 +2807,7 @@
 		2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartMagnificationController.h; path = ios/SmartMagnificationController.h; sourceTree = "<group>"; };
 		2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SmartMagnificationController.mm; path = ios/SmartMagnificationController.mm; sourceTree = "<group>"; };
 		2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = SmartMagnificationController.messages.in; path = ios/SmartMagnificationController.messages.in; sourceTree = "<group>"; };
+		2DAF4FFA1B636181006013D6 /* ViewGestureController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureController.cpp; sourceTree = "<group>"; };
 		2DB9C4AB1B3251BD0070F27F /* SafariServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafariServicesSPI.h; sourceTree = "<group>"; };
 		2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewContentProviderRegistry.h; sourceTree = "<group>"; };
 		2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewContentProviderRegistry.mm; sourceTree = "<group>"; };
@@ -6107,6 +6109,7 @@
 				4A410F3A19AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.h */,
 				4A410F3B19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.cpp */,
 				4A410F3C19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.h */,
+				2DAF4FFA1B636181006013D6 /* ViewGestureController.cpp */,
 				1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */,
 				1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */,
 				1A60224918C16B0800C3E8C9 /* VisitedLinkProvider.messages.in */,
@@ -9442,6 +9445,7 @@
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
 				5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */,
 				8CFECE941490F140002AAA32 /* EditorState.cpp in Sources */,
+				2DAF4FFB1B636181006013D6 /* ViewGestureController.cpp in Sources */,
 				51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */,
 				1A7C6CDA1378950800B9C04D /* EnvironmentVariables.cpp in Sources */,
 				1AA575FA1496B52600A4EE06 /* EventDispatcher.cpp in Sources */,

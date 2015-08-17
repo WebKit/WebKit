@@ -47,7 +47,7 @@
 
 using namespace WebCore;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
 #define ENABLE_LEGACY_SWIPE_SHADOW_STYLE 1
 #else
 #define ENABLE_LEGACY_SWIPE_SHADOW_STYLE 0
@@ -78,9 +78,6 @@ static const CGFloat minimumHorizontalSwipeDistance = 15;
 static const float minimumScrollEventRatioForSwipe = 0.5;
 
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
-static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 5_s;
-static const std::chrono::seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration = 3_s;
-static const std::chrono::milliseconds swipeSnapshotRemovalActiveLoadMonitoringInterval = 250_ms;
 
 @interface WKSwipeCancellationTracker : NSObject {
 @private
@@ -97,16 +94,7 @@ static const std::chrono::milliseconds swipeSnapshotRemovalActiveLoadMonitoringI
 
 namespace WebKit {
 
-ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
-    : m_webPageProxy(webPageProxy)
-    , m_swipeWatchdogTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
-    , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::activeLoadMonitoringTimerFired)
-    , m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
-{
-    m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
-}
-
-ViewGestureController::~ViewGestureController()
+void ViewGestureController::platformTeardown()
 {
     if (m_swipeCancellationTracker)
         [m_swipeCancellationTracker setIsCancelled:YES];
@@ -118,8 +106,6 @@ ViewGestureController::~ViewGestureController()
         Block_release(m_didMoveSwipeSnapshotCallback);
         m_didMoveSwipeSnapshotCallback = nullptr;
     }
-
-    m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID());
 }
 
 static double resistanceForDelta(double deltaScale, double currentScale)
@@ -535,7 +521,6 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     m_webPageProxy.navigationGestureDidBegin();
 
     m_activeGestureType = ViewGestureType::Swipe;
-    m_swipeInProgress = true;
 
     CALayer *rootContentLayer = m_webPageProxy.acceleratedCompositingRootLayer();
 
@@ -752,8 +737,6 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_swipeCancellationTracker = nullptr;
 
-    m_swipeInProgress = false;
-
     CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
 
     [rootLayer setShadowOpacity:0];
@@ -771,110 +754,47 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction), m_webPageProxy.pageID());
 
-    m_swipeWaitingForVisuallyNonEmptyLayout = true;
-    m_swipeWaitingForRenderTreeSizeThreshold = true;
-
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(targetItem);
 
+    // FIXME: We should be able to include scroll position restoration here,
+    // and then can address the FIXME in didFirstVisuallyNonEmptyLayoutForMainFrame.
+    m_snapshotRemovalTracker.start(SnapshotRemovalTracker::VisuallyNonEmptyLayout
+        | SnapshotRemovalTracker::RenderTreeSizeThreshold
+        | SnapshotRemovalTracker::MainFrameLoad
+        | SnapshotRemovalTracker::SubresourceLoads, [this] {
+            this->forceRepaintIfNeeded();
+        });
+
     // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
-    // we never show the old page content, instead showing white (or the snapshot background color).
-    m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
+    // we never show the old page content, instead showing the snapshot background color.
 
     if (ViewSnapshot* snapshot = targetItem->snapshot())
         m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
 }
 
-void ViewGestureController::didHitRenderTreeSizeThreshold()
+void ViewGestureController::forceRepaintIfNeeded()
 {
-    if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
+    if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
-    m_swipeWaitingForRenderTreeSizeThreshold = false;
-
-    if (!m_swipeWaitingForVisuallyNonEmptyLayout) {
-        // FIXME: Ideally we would call removeSwipeSnapshotAfterRepaint() here, but sometimes
-        // scroll position isn't done restoring until didFinishLoadForFrame, so we flash the wrong content.
-    }
-}
-
-void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
-{
-    if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
+    if (m_hasOutstandingRepaintRequest)
         return;
 
-    m_swipeWaitingForVisuallyNonEmptyLayout = false;
+    m_hasOutstandingRepaintRequest = true;
 
-    if (!m_swipeWaitingForRenderTreeSizeThreshold) {
-        // FIXME: Ideally we would call removeSwipeSnapshotAfterRepaint() here, but sometimes
-        // scroll position isn't done restoring until didFinishLoadForFrame, so we flash the wrong content.
-    } else {
-        m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer.startOneShot(swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration.count());
-        m_swipeWatchdogTimer.stop();
-    }
-}
-
-void ViewGestureController::mainFrameLoadDidReachTerminalState()
-{
-    if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
-        return;
-
-    if (m_webPageProxy.pageLoadState().isLoading()) {
-        m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
-        return;
-    }
-
-    removeSwipeSnapshotAfterRepaint();
-}
-
-void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
-{
-    if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
-        return;
-
-    if (type != SameDocumentNavigationSessionStateReplace && type != SameDocumentNavigationSessionStatePop)
-        return;
-
-    m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
-}
-
-void ViewGestureController::activeLoadMonitoringTimerFired()
-{
-    if (m_webPageProxy.pageLoadState().isLoading())
-        return;
-
-    removeSwipeSnapshotAfterRepaint();
-}
-
-void ViewGestureController::swipeSnapshotWatchdogTimerFired()
-{
-    removeSwipeSnapshotAfterRepaint();
-}
-
-void ViewGestureController::removeSwipeSnapshotAfterRepaint()
-{
-    m_swipeActiveLoadMonitoringTimer.stop();
-
-    if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
-        return;
-
-    if (m_swipeWaitingForRepaint)
-        return;
-
-    m_swipeWaitingForRepaint = true;
-
-    WebPageProxy* webPageProxy = &m_webPageProxy;
-    m_webPageProxy.forceRepaint(VoidCallback::create([webPageProxy] (CallbackBase::Error error) {
-        webPageProxy->removeNavigationGestureSnapshot();
+    uint64_t pageID = m_webPageProxy.pageID();
+    m_webPageProxy.forceRepaint(VoidCallback::create([this, pageID] (CallbackBase::Error error) {
+        if (auto gestureController = gestureControllerForPage(pageID))
+            gestureController->removeSwipeSnapshot();
     }));
 }
 
 void ViewGestureController::removeSwipeSnapshot()
 {
-    m_swipeWaitingForRepaint = false;
+    m_snapshotRemovalTracker.reset();
 
-    m_swipeWatchdogTimer.stop();
-    m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer.stop();
+    m_hasOutstandingRepaintRequest = false;
 
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
@@ -921,4 +841,4 @@ double ViewGestureController::magnification() const
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

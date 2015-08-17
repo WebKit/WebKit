@@ -1,3 +1,87 @@
+2015-08-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Refactor ViewGestureController swipe snapshot removal to be more platform-independent
+        https://bugs.webkit.org/show_bug.cgi?id=148062
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/Logging.h:
+        Add a ViewGestures logging channel.
+
+        * UIProcess/ViewGestureController.cpp: Added.
+        (viewGestureControllersForAllPages):
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::ViewGestureController::gestureControllerForPage):
+        (WebKit::ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        (WebKit::ViewGestureController::didRepaintAfterNavigation):
+        (WebKit::ViewGestureController::didHitRenderTreeSizeThreshold):
+        (WebKit::ViewGestureController::didRestoreScrollPosition):
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        (WebKit::ViewGestureController::checkForActiveLoads):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::eventsDescription):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::SnapshotRemovalTracker):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::log):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::start):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::reset):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::eventOccurred):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::cancelOutstandingEvent):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackIfPossible):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediately):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::startWatchdog):
+        Build a platform-independent SnapshotRemovalTracker, which keeps track of
+        various events that we wait for before removing the snapshot. This
+        is constructed from the union of ViewGestureController{IOS, Mac}'s snapshot
+        removal code, and each platform ViewGestureController can specify which
+        events to wait for (because this currently differs slightly).
+
+        Add logging to SnapshotRemovalTracker to make debugging snapshot removal
+        issues much easier.
+
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::backgroundColorForCurrentSnapshot):
+        (WebKit::ViewGestureController::didFinishLoadForMainFrame):
+        (WebKit::ViewGestureController::didFailLoadForMainFrame):
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::platformTeardown):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::setRenderTreeSize):
+        (WebKit::ViewGestureController::willCommitPostSwipeTransitionLayerTree):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        (viewGestureControllersForAllPages): Deleted.
+        (WebKit::ViewGestureController::ViewGestureController): Deleted.
+        (WebKit::ViewGestureController::~ViewGestureController): Deleted.
+        (WebKit::ViewGestureController::didRestoreScrollPosition): Deleted.
+        (WebKit::ViewGestureController::mainFrameLoadDidReachTerminalState): Deleted.
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame): Deleted.
+        (WebKit::ViewGestureController::activeLoadMonitoringTimerFired): Deleted.
+        (WebKit::ViewGestureController::swipeSnapshotWatchdogTimerFired): Deleted.
+        (WebKit::ViewGestureController::removeSwipeSnapshotIfReady): Deleted.
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::platformTeardown):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::forceRepaintIfNeeded):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        (WebKit::ViewGestureController::ViewGestureController): Deleted.
+        (WebKit::ViewGestureController::~ViewGestureController): Deleted.
+        (WebKit::ViewGestureController::beginSwipeGesture): Deleted.
+        (WebKit::ViewGestureController::didHitRenderTreeSizeThreshold): Deleted.
+        (WebKit::ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame): Deleted.
+        (WebKit::ViewGestureController::mainFrameLoadDidReachTerminalState): Deleted.
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame): Deleted.
+        (WebKit::ViewGestureController::activeLoadMonitoringTimerFired): Deleted.
+        (WebKit::ViewGestureController::swipeSnapshotWatchdogTimerFired): Deleted.
+        (WebKit::ViewGestureController::removeSwipeSnapshotAfterRepaint): Deleted.
+        Move shareable snapshot removal code to a new platform-independent ViewGestureController file.
+        Move the ViewGestureController constructor/destructor to the platform-independent file.
+
+        * UIProcess/mac/ViewGestureController.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-08-11  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add redirect support to CustomProtocolManager
