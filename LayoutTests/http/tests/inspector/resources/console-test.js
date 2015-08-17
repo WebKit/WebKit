@@ -1,4 +1,4 @@
-ProtocolTestProxy.registerInitializer(function() {
+TestPage.registerInitializer(function() {
 
 ProtocolTest.Console = {};
 
@@ -34,7 +34,7 @@ ProtocolTest.Console.sanitizeConsoleMessage = function(messageObject)
 
 ProtocolTest.Console.addTestCase = function(suite, args)
 {
-    if (!(suite instanceof InjectedTestHarness.AsyncTestSuite))
+    if (!(suite instanceof AsyncTestSuite))
         throw new Error("Console test cases must be added to an async test suite.");
 
     var {name, description, expression, expected} = args;

@@ -1,4 +1,4 @@
-ProtocolTestProxy.registerInitializer(function() {
+TestPage.registerInitializer(function() {
 
 ProtocolTest.Probe = {};
 

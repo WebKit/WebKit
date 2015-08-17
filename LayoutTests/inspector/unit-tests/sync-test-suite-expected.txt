@@ -1,9 +1,11 @@
 PASS: instantiating SyncTestSuite requires name argument.
 PASS: instantiating SyncTestSuite requires string name argument.
+PASS: instantiating AsyncTestSuite requires non-whitespace name argument.
 PASS: instantiating SyncTestSuite requires test harness argument.
 PASS: should not be able to add empty test case.
 PASS: should not be able to add non-object test case.
 PASS: test case should require string name.
+PASS: test case should require non-whitespace name.
 PASS: test case should require test function.
 PASS: should not be able to run empty test suite.
 

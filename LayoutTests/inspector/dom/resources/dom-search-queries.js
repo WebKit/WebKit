@@ -1,4 +1,4 @@
-ProtocolTestProxy.registerInitializer(function() {
+TestPage.registerInitializer(function() {
 
 // Having the queries in an external file, so that DOM search will not find the script when searching for values.
 

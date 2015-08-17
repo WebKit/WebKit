@@ -27,7 +27,7 @@
  * SUCH DAMAGE.
  */
 
-ProtocolTestProxy.registerInitializer(function(){
+TestPage.registerInitializer(function(){
 
 window.createDOMListener = function()
 {
