@@ -1,3 +1,9 @@
+2015-08-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Unreviewed internal build fix attempt after r188539.
+
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+
 2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the build
