@@ -244,6 +244,19 @@ private:
 #endif
 };
 
+#if USE(APPKIT)
+// NSFonts and CTFontRefs are toll-free-bridged.
+inline CTFontRef toCTFont(NSFont *font)
+{
+    return (CTFontRef)font;
+}
+
+inline NSFont *toNSFont(CTFontRef font)
+{
+    return (NSFont *)font;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // FontPlatformData_h

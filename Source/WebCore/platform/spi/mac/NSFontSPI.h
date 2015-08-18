@@ -34,7 +34,7 @@
 
 #else
 
-@interface NSFont (Private)
+@interface NSFont ()
 + (NSFont *)systemFontOfSize:(CGFloat)size weight:(CGFloat)weight;
 @end
 

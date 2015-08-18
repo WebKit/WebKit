@@ -474,10 +474,10 @@ static FallbackDedupSet& fallbackDedupSet()
 
 void FontCache::platformPurgeInactiveFontData()
 {
-    Vector<RetainPtr<CTFontRef>> toRemove;
+    Vector<CTFontRef> toRemove;
     for (auto& font : fallbackDedupSet()) {
         if (CFGetRetainCount(font.get()) == 1)
-            toRemove.append(font);
+            toRemove.append(font.get());
     }
     for (auto& font : toRemove)
         fallbackDedupSet().remove(font);
@@ -489,7 +489,7 @@ static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1090
     UNUSED_PARAM(locale);
     if (!font) {
-        font = reinterpret_cast<CTFontRef>([NSFont userFontOfSize:fontSize]);
+        font = toCTFont([NSFont userFontOfSize:fontSize]);
         bool acceptable = true;
         
         RetainPtr<CFCharacterSetRef> characterSet = adoptCF(CTFontCopyCharacterSet(font));
@@ -527,7 +527,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     // FontCascade::drawGlyphBuffer() requires that there are no duplicate Font objects which refer to the same thing. This is enforced in
     // FontCache::fontForPlatformData(), where our equality check is based on hashing the FontPlatformData, whose hash includes the raw CoreText
     // font pointer.
-    NSFont *substituteFont = reinterpret_cast<NSFont *>(const_cast<__CTFont*>(fallbackDedupSet().add(result).iterator->get()));
+    NSFont *substituteFont = toNSFont(fallbackDedupSet().add(result).iterator->get());
 
     // Use the family name from the AppKit-supplied substitute font, requesting the
     // traits, weight, and size we want. One way this does better than the original
@@ -575,7 +575,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     substituteFontTraits = [fontManager traitsOfFont:substituteFont];
     substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
-    FontPlatformData alternateFont(reinterpret_cast<CTFontRef>(substituteFont), platformData.size(),
+    FontPlatformData alternateFont(toCTFont(substituteFont), platformData.size(),
         !isPlatformFont && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
         !isPlatformFont && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
         platformData.m_orientation);
@@ -703,7 +703,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && isAppKitFontWeightBold(toAppKitFontWeight(fontDescription.weight())) && !isAppKitFontWeightBold(actualWeight);
     bool syntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
-    return std::make_unique<FontPlatformData>(reinterpret_cast<CTFontRef>(platformFont), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
+    return std::make_unique<FontPlatformData>(toCTFont(platformFont), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
 }
 
 } // namespace WebCore

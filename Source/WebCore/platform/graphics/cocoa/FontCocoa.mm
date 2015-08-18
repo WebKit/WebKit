@@ -324,7 +324,7 @@ PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float sc
 #if USE(APPKIT)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    FontPlatformData scaledFontData(reinterpret_cast<CTFontRef>([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size]), size, false, false, m_platformData.orientation());
+    FontPlatformData scaledFontData(toCTFont([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size]), size, false, false, m_platformData.orientation());
 
     if (scaledFontData.font()) {
         NSFontManager *fontManager = [NSFontManager sharedFontManager];
