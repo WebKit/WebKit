@@ -112,7 +112,7 @@ extern "C" {
 #endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-@interface CAOpenGLLayer ()
+@interface CAOpenGLLayer (WebDetails)
 @property CGColorSpaceRef colorspace;
 @end
 #endif
