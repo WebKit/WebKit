@@ -232,3 +232,7 @@ file(COPY
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
 )
+
+set(WebCore_OUTPUT_NAME
+    WebCore${DEBUG_SUFFIX}
+)

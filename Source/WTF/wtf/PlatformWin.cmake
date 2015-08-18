@@ -21,7 +21,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 else ()
     list(APPEND WTF_LIBRARIES
-        CoreFoundation
+        CoreFoundation${DEBUG_SUFFIX}
     )
 endif ()
 
@@ -36,3 +36,5 @@ add_custom_command(
     WORKING_DIRECTORY "${DERIVED_SOURCES_WTF_DIR}"
     COMMAND echo /* No Legible Output Support Found */ > WTFHeaderDetection.h
     VERBATIM)
+
+set(WTF_OUTPUT_NAME WTF${DEBUG_SUFFIX})

@@ -1,5 +1,15 @@
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
+        Build Debug Suffix on Windows with CMake
+        https://bugs.webkit.org/show_bug.cgi?id=148083
+
+        Reviewed by Brent Fulgham.
+
+        * Source/cmake/OptionsWin.cmake:
+        Use debug libraries in debug suffix builds.
+
+2015-08-17  Alex Christensen  <achristensen@webkit.org>
+
         Move some commands from ./CMakeLists.txt to Source/cmake
         https://bugs.webkit.org/show_bug.cgi?id=148003
 

@@ -1,17 +1,17 @@
 set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
 set(test_wtf_LIBRARIES
-    WTF
+    WTF${DEBUG_SUFFIX}
     gtest
 )
 
 set(test_webcore_LIBRARIES
-    WTF
-    WebCore
+    WTF${DEBUG_SUFFIX}
+    WebCore${DEBUG_SUFFIX}
     gtest
 )
 
 set(TestWebKitAPI_LIBRARIES
-    WTF
+    WTF${DEBUG_SUFFIX}
 )
 
 if (ENABLE_WEBKIT2)
@@ -27,7 +27,7 @@ if (ENABLE_WEBKIT2)
     )
 else ()
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKit
+        WebKit${DEBUG_SUFFIX}
     )
 endif ()
 

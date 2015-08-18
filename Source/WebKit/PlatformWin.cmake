@@ -22,7 +22,28 @@ else ()
         win/WebURLAuthenticationChallengeSenderCFNet.cpp
     )
     list(APPEND WebKit_LIBRARIES
-        PRIVATE WebKitSystemInterface
+        PRIVATE ASL${DEBUG_SUFFIX}
+        PRIVATE AVFoundationCF${DEBUG_SUFFIX}
+        PRIVATE CFNetwork${DEBUG_SUFFIX}
+        PRIVATE CoreAudioToolbox${DEBUG_SUFFIX}
+        PRIVATE CoreFoundation${DEBUG_SUFFIX}
+        PRIVATE CoreGraphics${DEBUG_SUFFIX}
+        PRIVATE CoreMedia${DEBUG_SUFFIX}
+        PRIVATE CoreText${DEBUG_SUFFIX}
+        PRIVATE CoreVideo${DEBUG_SUFFIX}
+        PRIVATE MediaAccessibility${DEBUG_SUFFIX}
+        PRIVATE MediaToolbox${DEBUG_SUFFIX}
+        PRIVATE QuartzCore${DEBUG_SUFFIX}
+        PRIVATE SQLite3${DEBUG_SUFFIX}
+        PRIVATE WebKitSystemInterface${DEBUG_SUFFIX}
+        PRIVATE WebKitQuartzCoreAdditions${DEBUG_SUFFIX}
+        PRIVATE libdispatch${DEBUG_SUFFIX}
+        PRIVATE libexslt${DEBUG_SUFFIX}
+        PRIVATE libicuin${DEBUG_SUFFIX}
+        PRIVATE libicuuc${DEBUG_SUFFIX}
+        PRIVATE libxml2${DEBUG_SUFFIX}
+        PRIVATE libxslt${DEBUG_SUFFIX}
+        PRIVATE zdll${DEBUG_SUFFIX}
     )
 endif ()
 
@@ -418,6 +439,7 @@ add_library(WebKitGUID STATIC
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleText_i.c"
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleText2_i.c"
 )
+set_target_properties(WebKitGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
 set_target_properties(WebKitGUID PROPERTIES FOLDER "WebKit")
 
 list(APPEND WebKit_LIBRARIES
@@ -429,14 +451,15 @@ list(APPEND WebKit_LIBRARIES
     PRIVATE Shlwapi
     PRIVATE Usp10
     PRIVATE Version
-    PRIVATE WebKitGUID
+    PRIVATE Winmm
+    PRIVATE WebKitGUID${DEBUG_SUFFIX}
 )
 
 if (ENABLE_GRAPHICS_CONTEXT_3D)
     list(APPEND WebKit_LIBRARIES
-        libANGLE
-        libEGL
-        libGLESv2
+        libANGLE${DEBUG_SUFFIX}
+        libEGL${DEBUG_SUFFIX}
+        libGLESv2${DEBUG_SUFFIX}
     )
 endif ()
 

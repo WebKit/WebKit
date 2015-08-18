@@ -668,7 +668,7 @@ set(JavaScriptCore_LUT_FILES
 )
 
 set(JavaScriptCore_LIBRARIES
-    WTF
+    WTF${DEBUG_SUFFIX}
     ${ICU_I18N_LIBRARIES}
 )
 

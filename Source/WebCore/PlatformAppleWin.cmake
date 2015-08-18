@@ -101,30 +101,3 @@ list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/spi/cf
     platform/spi/cg
 )
-
-list(APPEND WebCore_LIBRARIES
-    ASL
-    AVFoundationCF
-    CFNetwork
-    CoreAudioToolbox
-    CoreFoundation
-    CoreGraphics
-    CoreMedia
-    CoreText
-    CoreVideo
-    MediaAccessibility
-    MediaToolbox
-    QuartzCore
-    SQLite3
-    SafariTheme
-    WebKitQuartzCoreAdditions
-    icuin
-    icuuc
-    libdispatch
-    libexslt
-    libicuin
-    libicuuc
-    libxml2
-    libxslt
-    zdll
-)

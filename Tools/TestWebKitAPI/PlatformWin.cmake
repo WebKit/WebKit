@@ -19,8 +19,8 @@ set(test_webcore_LIBRARIES
     Iphlpapi
     Shlwapi
     Usp10
-    WebCore
-    WebKit
+    WebCore${DEBUG_SUFFIX}
+    WebKit${DEBUG_SUFFIX}
     gtest
 )
 
