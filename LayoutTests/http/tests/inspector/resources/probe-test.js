@@ -1,3 +1,5 @@
+ProtocolTestProxy.registerInitializer(function() {
+
 ProtocolTest.Probe = {};
 
 ProtocolTest.Probe.sanitizeProbeSample = function(messageObject)
@@ -125,3 +127,5 @@ ProtocolTest.Probe.installTracingListeners = function()
         InspectorTest.log("Probe set's probe count: " + probeSet.probes.length);
     });
 }
+
+});

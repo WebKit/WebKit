@@ -1,3 +1,5 @@
+ProtocolTestProxy.registerInitializer(function() {
+
 ProtocolTest.Console = {};
 
 ProtocolTest.Console.sanitizeConsoleMessage = function(messageObject)
@@ -73,3 +75,5 @@ ProtocolTest.Console.addTestCase = function(suite, args)
         }
     });
 }
+
+});

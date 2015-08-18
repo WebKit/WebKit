@@ -1093,6 +1093,15 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
     inspectorPrivate->evaluateInFrontend(bstrT(script).GetBSTR());
 }
 
+JSStringRef TestRunner::inspectorTestStubURL()
+{
+    // FIXME: Implement this to support Web Inspector tests using `protocol-test.js`.
+    // See https://bugs.webkit.org/show_bug.cgi?id=148025.
+    printf("ERROR: TestRunner::inspectorTestStubURL() not implemented\n");
+
+    return nullptr;
+}
+
 typedef HashMap<unsigned, COMPtr<IWebScriptWorld> > WorldMap;
 static WorldMap& worldMap()
 {

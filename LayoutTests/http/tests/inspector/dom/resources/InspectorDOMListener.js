@@ -27,7 +27,9 @@
  * SUCH DAMAGE.
  */
 
-function createDOMListener()
+ProtocolTestProxy.registerInitializer(function(){
+
+window.createDOMListener = function()
 {
     var nodesById = {};
 
@@ -101,3 +103,5 @@ function createDOMListener()
         collectNode: collectNode
     };
 }
+
+});

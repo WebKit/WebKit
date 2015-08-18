@@ -1,3 +1,15 @@
+2015-08-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: load ProtocolTestStub from the WebInspectorUI bundle
+        https://bugs.webkit.org/show_bug.cgi?id=147955
+
+        Reviewed by Timothy Hatcher.
+
+        Move ProtocolTestStub.{html,js} into the actual WebInspectorUI project.
+
+        * UserInterface/Base/TestStub.js: Renamed from LayoutTests/http/tests/inspector/resources/ProtocolTestStub.js.
+        * UserInterface/TestStub.html: Renamed from LayoutTests/http/tests/inspector/resources/ProtocolTestStub.html.
+
 2015-08-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Better keyboard shortcut to focus on the console prompt

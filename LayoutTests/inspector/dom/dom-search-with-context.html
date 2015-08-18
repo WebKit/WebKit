@@ -1,11 +1,11 @@
 <html>
 <head>
 <script type="text/javascript" src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/dom/resources/InspectorDOMListener.js"></script>
 <script>
 function test()
 {
     // Create a DOM listener to convert nodeIds to tag names.
-    ProtocolTest.importScript("../dom/resources/InspectorDOMListener.js");
     var dom = createDOMListener();
 
     // Caching the output to avoid searching through the log.

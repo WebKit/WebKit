@@ -23,7 +23,9 @@
 #include "InjectedBundle.h"
 #include <Ecore.h>
 #include <JavaScriptCore/OpaqueJSString.h>
+#include <WebCore/EflInspectorUtilities.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
@@ -80,6 +82,16 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
     String fullPathToUrl = "file://" + resourceRoot + requestedUrl.substring(indexOfSeparatorAfterRoot);
 
     return JSStringCreateWithUTF8CString(fullPathToUrl.utf8().data());
+}
+
+JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
+{
+    StringBuilder builder;
+    builder.append("file://");
+    builder.append(WebCore::inspectorResourcePath());
+    builder.appendLiteral("/TestStub.html");
+
+    return JSStringCreateWithUTF8CString(builder.toString().utf8().data());
 }
 
 } // namespace WTR

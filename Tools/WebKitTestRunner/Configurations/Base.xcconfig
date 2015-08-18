@@ -56,7 +56,7 @@ SDKROOT = macosx.internal;
 WEBKIT_UMBRELLA_FRAMEWORKS_DIR = $(SDKROOT)$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 WEBCORE_PRIVATE_HEADERS_DIR = $(WEBKIT_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
 
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 
 WEBKIT_SYSTEM_INTERFACE_LIBRARY = WebKitSystemInterface
 
