@@ -84,7 +84,6 @@
 		5DB9ACA00F722C3600684641 /* WebKitWeightWatcher900.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */; };
 		80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */; };
 		8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */; };
-		8CCDA82A151A72D10003F937 /* SampleFont.sfont in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 8CCDA81F151A56550003F937 /* SampleFont.sfont */; };
 		9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */; };
 		A1158D581892740C0088C17B /* DumpRenderTreeBrowserView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */; };
 		A1158D59189274360088C17B /* PixelDumpSupportIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D57189273EB0088C17B /* PixelDumpSupportIOS.mm */; };
@@ -184,7 +183,6 @@
 			dstSubfolderSpec = 7;
 			files = (
 				5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */,
-				8CCDA82A151A72D10003F937 /* SampleFont.sfont in Copy Font Files */,
 				5DB9AC980F722C3600684641 /* WebKitWeightWatcher100.ttf in Copy Font Files */,
 				5DB9AC990F722C3600684641 /* WebKitWeightWatcher200.ttf in Copy Font Files */,
 				5DB9AC9A0F722C3600684641 /* WebKitWeightWatcher300.ttf in Copy Font Files */,
@@ -271,7 +269,6 @@
 		80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccessibilityNotificationHandler.h; path = mac/AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
 		80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = mac/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
 		8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
-		8CCDA81F151A56550003F937 /* SampleFont.sfont */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = SampleFont.sfont; path = fonts/SampleFont.sfont; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DumpRenderTreeCommon.cpp; sourceTree = "<group>"; };
@@ -612,7 +609,6 @@
 			isa = PBXGroup;
 			children = (
 				AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */,
-				8CCDA81F151A56550003F937 /* SampleFont.sfont */,
 				375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */,
 				375F09720DAC3CB600C8B4E5 /* WebKitWeightWatcher200.ttf */,
 				375F09730DAC3CB600C8B4E5 /* WebKitWeightWatcher300.ttf */,

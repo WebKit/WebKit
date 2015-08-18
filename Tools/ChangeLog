@@ -1,3 +1,25 @@
+2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Remove support for composite fonts
+        https://bugs.webkit.org/show_bug.cgi?id=147920
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/fonts/SampleFont.sfont: Removed.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet): Deleted.
+        (activateTestingFonts): Deleted.
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::allowedFontFamilySet): Deleted.
+        (WTR::activateFonts): Deleted.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/fonts/SampleFont.sfont: Removed.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet): Deleted.
+
 2015-08-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Unreviewed internal build fix attempt after r188539.

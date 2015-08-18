@@ -202,7 +202,6 @@ static NSSet *allowedFontFamilySet()
         @"Hiragino Kaku Gothic ProN",
         @"Hiragino Kaku Gothic Std",
         @"Hiragino Kaku Gothic StdN",
-        @"Hiragino Maru Gothic Monospaced",
         @"Hiragino Maru Gothic Pro",
         @"Hiragino Maru Gothic ProN",
         @"Hiragino Mincho Pro",

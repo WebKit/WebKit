@@ -47,7 +47,6 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
     ASSERT_ARG(font, font);
     m_font = font;
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontTraitColorGlyphs;
-    m_isCompositeFontReference = CTFontGetSymbolicTraits(font) & kCTFontCompositeTrait;
 }
 
 FontPlatformData::~FontPlatformData()
@@ -113,7 +112,6 @@ void FontPlatformData::setFont(CTFontRef font)
 
     CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(m_font.get());
     m_isColorBitmapFont = traits & kCTFontTraitColorGlyphs;
-    m_isCompositeFontReference = traits & kCTFontCompositeTrait;
     
     m_ctFont = nullptr;
 }

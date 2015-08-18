@@ -1,5 +1,24 @@
 2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [OS X] Remove support for composite fonts
+        https://bugs.webkit.org/show_bug.cgi?id=147920
+
+        Reviewed by Dan Bernstein.
+
+        * fast/text/international/text-spliced-font.html: Removed.
+        * platform/efl/fast/text/international/text-spliced-font-expected.png: Removed.
+        * platform/efl/fast/text/international/text-spliced-font-expected.txt: Removed.
+        * platform/gtk/fast/text/international/text-spliced-font-expected.png: Removed.
+        * platform/gtk/fast/text/international/text-spliced-font-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/text/international/text-spliced-font-expected.txt: Removed.
+        * platform/ios-simulator/fast/text/international/text-spliced-font-expected.txt: Removed.
+        * platform/mac/fast/text/international/text-spliced-font-expected.png: Removed.
+        * platform/mac/fast/text/international/text-spliced-font-expected.txt: Removed.
+        * platform/win/fast/text/international/text-spliced-font-expected.png: Removed.
+        * platform/win/fast/text/international/text-spliced-font-expected.txt: Removed.
+
+2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Win] Test gardening
 
         Unreviewed.
