@@ -1332,8 +1332,147 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
     toImpl(pageRef)->setPolicyClient(std::make_unique<PolicyClient>(wkClient));
 }
 
+static void fixUpBotchedPageUIClient(WKPageRef pageRef, const WKPageUIClientBase& wkClient)
+{
+    struct BotchedWKPageUIClientV4 {
+        WKPageUIClientBase                                                  base;
+
+        // Version 0.
+        WKPageCreateNewPageCallback_deprecatedForUseWithV0                  createNewPage_deprecatedForUseWithV0;
+        WKPageUIClientCallback                                              showPage;
+        WKPageUIClientCallback                                              close;
+        WKPageTakeFocusCallback                                             takeFocus;
+        WKPageFocusCallback                                                 focus;
+        WKPageUnfocusCallback                                               unfocus;
+        WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV0             runJavaScriptAlert_deprecatedForUseWithV0;
+        WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV0           runJavaScriptConfirm_deprecatedForUseWithV0;
+        WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV0            runJavaScriptPrompt_deprecatedForUseWithV0;
+        WKPageSetStatusTextCallback                                         setStatusText;
+        WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0        mouseDidMoveOverElement_deprecatedForUseWithV0;
+        WKPageMissingPluginButtonClickedCallback_deprecatedForUseWithV0     missingPluginButtonClicked_deprecatedForUseWithV0;
+        WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
+        WKPageDidNotHandleWheelEventCallback                                didNotHandleWheelEvent;
+        WKPageGetToolbarsAreVisibleCallback                                 toolbarsAreVisible;
+        WKPageSetToolbarsAreVisibleCallback                                 setToolbarsAreVisible;
+        WKPageGetMenuBarIsVisibleCallback                                   menuBarIsVisible;
+        WKPageSetMenuBarIsVisibleCallback                                   setMenuBarIsVisible;
+        WKPageGetStatusBarIsVisibleCallback                                 statusBarIsVisible;
+        WKPageSetStatusBarIsVisibleCallback                                 setStatusBarIsVisible;
+        WKPageGetIsResizableCallback                                        isResizable;
+        WKPageSetIsResizableCallback                                        setIsResizable;
+        WKPageGetWindowFrameCallback                                        getWindowFrame;
+        WKPageSetWindowFrameCallback                                        setWindowFrame;
+        WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+        WKPageUIClientCallback                                              didDraw;
+        WKPageUIClientCallback                                              pageDidScroll;
+        WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
+        WKPageRunOpenPanelCallback                                          runOpenPanel;
+        WKPageDecidePolicyForGeolocationPermissionRequestCallback           decidePolicyForGeolocationPermissionRequest;
+        WKPageHeaderHeightCallback                                          headerHeight;
+        WKPageFooterHeightCallback                                          footerHeight;
+        WKPageDrawHeaderCallback                                            drawHeader;
+        WKPageDrawFooterCallback                                            drawFooter;
+        WKPagePrintFrameCallback                                            printFrame;
+        WKPageUIClientCallback                                              runModal;
+        void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
+        WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
+        void*                                                               shouldInterruptJavaScript_unavailable;
+
+        // Version 1.
+        WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage;
+        WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
+        WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
+        WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
+
+        // Version 2.
+        WKPageShowColorPickerCallback                                       showColorPicker;
+        WKPageHideColorPickerCallback                                       hideColorPicker;
+        WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
+
+        // Version 3.
+        WKPagePinnedStateDidChangeCallback                                  pinnedStateDidChange;
+
+        // Version 4.
+        WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
+        WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
+        WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
+    };
+
+    const auto& botchedPageUIClient = reinterpret_cast<const BotchedWKPageUIClientV4&>(wkClient);
+
+    WKPageUIClientV5 fixedPageUIClient = {
+        { 5, botchedPageUIClient.base.clientInfo },
+        botchedPageUIClient.createNewPage_deprecatedForUseWithV0,
+        botchedPageUIClient.showPage,
+        botchedPageUIClient.close,
+        botchedPageUIClient.takeFocus,
+        botchedPageUIClient.focus,
+        botchedPageUIClient.unfocus,
+        botchedPageUIClient.runJavaScriptAlert_deprecatedForUseWithV0,
+        botchedPageUIClient.runJavaScriptConfirm_deprecatedForUseWithV0,
+        botchedPageUIClient.runJavaScriptPrompt_deprecatedForUseWithV0,
+        botchedPageUIClient.setStatusText,
+        botchedPageUIClient.mouseDidMoveOverElement_deprecatedForUseWithV0,
+        botchedPageUIClient.missingPluginButtonClicked_deprecatedForUseWithV0,
+        botchedPageUIClient.didNotHandleKeyEvent,
+        botchedPageUIClient.didNotHandleWheelEvent,
+        botchedPageUIClient.toolbarsAreVisible,
+        botchedPageUIClient.setToolbarsAreVisible,
+        botchedPageUIClient.menuBarIsVisible,
+        botchedPageUIClient.setMenuBarIsVisible,
+        botchedPageUIClient.statusBarIsVisible,
+        botchedPageUIClient.setStatusBarIsVisible,
+        botchedPageUIClient.isResizable,
+        botchedPageUIClient.setIsResizable,
+        botchedPageUIClient.getWindowFrame,
+        botchedPageUIClient.setWindowFrame,
+        botchedPageUIClient.runBeforeUnloadConfirmPanel,
+        botchedPageUIClient.didDraw,
+        botchedPageUIClient.pageDidScroll,
+        botchedPageUIClient.exceededDatabaseQuota,
+        botchedPageUIClient.runOpenPanel,
+        botchedPageUIClient.decidePolicyForGeolocationPermissionRequest,
+        botchedPageUIClient.headerHeight,
+        botchedPageUIClient.footerHeight,
+        botchedPageUIClient.drawHeader,
+        botchedPageUIClient.drawFooter,
+        botchedPageUIClient.printFrame,
+        botchedPageUIClient.runModal,
+        botchedPageUIClient.unused1,
+        botchedPageUIClient.saveDataToFileInDownloadsFolder,
+        botchedPageUIClient.shouldInterruptJavaScript_unavailable,
+        botchedPageUIClient.createNewPage,
+        botchedPageUIClient.mouseDidMoveOverElement,
+        botchedPageUIClient.decidePolicyForNotificationPermissionRequest,
+        botchedPageUIClient.unavailablePluginButtonClicked_deprecatedForUseWithV1,
+        botchedPageUIClient.showColorPicker,
+        botchedPageUIClient.hideColorPicker,
+        botchedPageUIClient.unavailablePluginButtonClicked,
+        botchedPageUIClient.pinnedStateDidChange,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        botchedPageUIClient.runJavaScriptAlert,
+        botchedPageUIClient.runJavaScriptConfirm,
+        botchedPageUIClient.runJavaScriptPrompt,
+        nullptr,
+    };
+
+    WKPageSetPageUIClient(pageRef, &fixedPageUIClient.base);
+}
+
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient)
 {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101100
+    if (wkClient && wkClient->version == 4) {
+        fixUpBotchedPageUIClient(pageRef, *wkClient);
+        return;
+    }
+#endif
+
     class UIClient : public API::Client<WKPageUIClientBase>, public API::UIClient {
     public:
         explicit UIClient(const WKPageUIClientBase* client)
