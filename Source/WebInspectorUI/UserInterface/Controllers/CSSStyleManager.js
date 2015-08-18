@@ -43,8 +43,8 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         this._colorFormatSetting = new WebInspector.Setting("default-color-format", WebInspector.Color.Format.Original);
 
-        this._styleSheetIdentifierMap = {};
-        this._styleSheetFrameURLMap = {};
+        this._styleSheetIdentifierMap = new Map;
+        this._styleSheetFrameURLMap = new Map;
         this._nodeStylesMap = {};
     }
 
@@ -95,11 +95,12 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     styleSheetForIdentifier(id)
     {
-        if (id in this._styleSheetIdentifierMap)
-            return this._styleSheetIdentifierMap[id];
+        let styleSheet = this._styleSheetIdentifierMap.get(id);
+        if (styleSheet)
+            return styleSheet;
 
-        var styleSheet = new WebInspector.CSSStyleSheet(id);
-        this._styleSheetIdentifierMap[id] = styleSheet;
+        styleSheet = new WebInspector.CSSStyleSheet(id);
+        this._styleSheetIdentifierMap.set(id, styleSheet);
         return styleSheet;
     }
 
@@ -172,8 +173,8 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         // Clear our maps when the main frame navigates.
 
-        this._styleSheetIdentifierMap = {};
-        this._styleSheetFrameURLMap = {};
+        this._styleSheetIdentifierMap.clear();
+        this._styleSheetFrameURLMap.clear();
         this._nodeStylesMap = {};
     }
 
@@ -206,8 +207,8 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         // Clear known stylesheets for this URL and frame. This will cause the stylesheets to
         // be updated next time _fetchInfoForAllStyleSheets is called.
         // COMPATIBILITY (iOS 6): The frame's id was not available for the key, so delete just the url too.
-        delete this._styleSheetFrameURLMap[this._frameURLMapKey(resource.parentFrame, resource.url)];
-        delete this._styleSheetFrameURLMap[resource.url];
+        this._styleSheetIdentifierMap.delete(this._frameURLMapKey(resource.parentFrame, resource.url));
+        this._styleSheetIdentifierMap.delete(resource.url);
     }
 
     _frameURLMapKey(frame, url)
@@ -224,18 +225,19 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     {
         console.assert(frame instanceof WebInspector.Frame);
 
-        function syleSheetsFetched()
+        let key = this._frameURLMapKey(frame, url);
+
+        function styleSheetsFetched()
         {
-            callback(this._styleSheetFrameURLMap[key] || this._styleSheetFrameURLMap[url] || null);
+            callback(this._styleSheetFrameURLMap.get(key) || this._styleSheetFrameURLMap.get(url) || null);
         }
 
-        var key = this._frameURLMapKey(frame, url);
-
         // COMPATIBILITY (iOS 6): The frame's id was not available for the key, so check for just the url too.
-        if (key in this._styleSheetFrameURLMap || url in this._styleSheetFrameURLMap)
-            callback(this._styleSheetFrameURLMap[key] || this._styleSheetFrameURLMap[url] || null);
+        let styleSheet = this._styleSheetFrameURLMap.get(key) || this._styleSheetFrameURLMap.get(url) || null;
+        if (styleSheet)
+            callback(styleSheet);
         else
-            this._fetchInfoForAllStyleSheets(syleSheetsFetched.bind(this));
+            this._fetchInfoForAllStyleSheets(styleSheetsFetched.bind(this));
     }
 
     _fetchInfoForAllStyleSheets(callback)
@@ -244,7 +246,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         function processStyleSheets(error, styleSheets)
         {
-            this._styleSheetFrameURLMap = {};
+            this._styleSheetFrameURLMap.clear();
 
             if (error) {
                 callback();
@@ -259,7 +261,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame);
 
                 var key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
-                this._styleSheetFrameURLMap[key] = styleSheet;
+                this._styleSheetFrameURLMap.set(key, styleSheet);
             }
 
             callback();
@@ -282,7 +284,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         {
             function styleSheetFound(styleSheet)
             {
-                delete resource.__pendingChangeTimeout;
+                resource.__pendingChangeTimeout = undefined;
 
                 console.assert(styleSheet);
                 if (!styleSheet)
@@ -312,7 +314,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             var styleSheet = parameters.sourceCode;
             var content = parameters.content;
 
-            delete styleSheet.__pendingChangeTimeout;
+            styleSheet.__pendingChangeTimeout = undefined;
 
             console.assert(styleSheet.url);
             if (!styleSheet.url)
@@ -336,13 +338,13 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 return;
 
             if (resource.__ignoreNextUpdateResourceContent) {
-                delete resource.__ignoreNextUpdateResourceContent;
+                resource.__ignoreNextUpdateResourceContent = false;
                 return;
             }
 
             this._ignoreResourceContentDidChangeEventForResource = resource;
             WebInspector.branchManager.currentBranch.revisionForRepresentedObject(resource).content = content;
-            delete this._ignoreResourceContentDidChangeEventForResource;
+            this._ignoreResourceContentDidChangeEventForResource = null;
         }
 
         function styleSheetReady()
