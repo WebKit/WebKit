@@ -1,3 +1,10 @@
+2015-08-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove failing expectations for some WK1 tests that have passed recent
+        builds.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2015-08-18  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Do not stretch always grid items with auto width
