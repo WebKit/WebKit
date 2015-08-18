@@ -68,6 +68,7 @@
 #if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
