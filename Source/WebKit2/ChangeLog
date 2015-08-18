@@ -1,5 +1,12 @@
 2015-08-18  Anders Carlsson  <andersca@apple.com>
 
+        Fix build, and fix the version check.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+
+2015-08-18  Anders Carlsson  <andersca@apple.com>
+
         REGRESSION: Playing audio causes near-instant crash
         https://bugs.webkit.org/show_bug.cgi?id=148059
         rdar://problem/22282680
