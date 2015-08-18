@@ -1,3 +1,10 @@
+2015-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Speculative GTK build fix after r188553
+
+        * CMakeLists.txt:
+        Added new files.
+
 2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement IntegerHasher
