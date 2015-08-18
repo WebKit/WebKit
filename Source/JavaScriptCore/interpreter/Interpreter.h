@@ -181,7 +181,7 @@ namespace JSC {
         Interpreter(VM &);
         ~Interpreter();
         
-        void initialize(bool canUseJIT);
+        void initialize();
 
         JSStack& stack() { return m_stack; }
         

@@ -292,10 +292,8 @@ Interpreter::~Interpreter()
 {
 }
 
-void Interpreter::initialize(bool canUseJIT)
+void Interpreter::initialize()
 {
-    UNUSED_PARAM(canUseJIT);
-
 #if ENABLE(COMPUTED_GOTO_OPCODES)
     m_opcodeTable = LLInt::opcodeMap();
     for (int i = 0; i < numOpcodeIDs; ++i)

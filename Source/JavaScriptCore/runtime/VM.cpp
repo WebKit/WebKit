@@ -252,7 +252,7 @@ VM::VM(VMType vmType, HeapType heapType)
     ftlThunks = std::make_unique<FTL::Thunks>();
 #endif // ENABLE(FTL_JIT)
     
-    interpreter->initialize(this->canUseJIT());
+    interpreter->initialize();
     
 #if ENABLE(JIT)
     initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
