@@ -1,3 +1,10 @@
+2015-08-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix test failure fallout from r188602 by using a V5 page ui client struct.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPageIsPlayingAudio.cpp:
+        (TestWebKitAPI::setUpClients):
+
 2015-08-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: load ProtocolTestStub from the WebInspectorUI bundle
