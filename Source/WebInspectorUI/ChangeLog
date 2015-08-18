@@ -1,3 +1,14 @@
+2015-08-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: web fonts or unknown fonts show up as Times in visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=148103
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleFontFamilyTreeElement.js:
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.updateMainTitle):
+        Fonts now fall back to sans-serif and -apple-system if they do not exist.
+
 2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement IntegerHasher
