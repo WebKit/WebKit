@@ -41,6 +41,7 @@
 #include "DFGWorklist.h"
 #include "Debugger.h"
 #include "FunctionExecutableDump.h"
+#include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITStubs.h"
