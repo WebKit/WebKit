@@ -31,6 +31,7 @@
 #include <Mfidl.h>
 #include <evr.h>
 
+#include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
