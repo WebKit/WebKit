@@ -1,3 +1,12 @@
+2015-08-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Test gardening after r188591
+        https://bugs.webkit.org/show_bug.cgi?id=148119
+
+        Unreviewed.
+
+        * platform/win/fast/text/trak-optimizeLegibility-expected.txt: Added.
+
 2015-08-18  Chris Dumez  <cdumez@apple.com>
 
         http/tests/navigation/page-cache-iframe-provisional-load.html is flaky
