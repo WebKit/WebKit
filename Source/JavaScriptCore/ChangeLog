@@ -1,3 +1,47 @@
+2015-08-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce non-user-observable Promise functions to use Promises internally
+        https://bugs.webkit.org/show_bug.cgi?id=148118
+
+        Reviewed by Saam Barati.
+
+        To leverage the Promises internally (like ES6 Module Loaders), we add
+        the several non-user-observable private methods, like @then, @all. And
+        refactor the existing Promises implementation to make it easy to use
+        internally.
+
+        But still the trappable part remains. When resolving the promise with
+        the returned value, we look up the "then" function. So users can trap
+        by replacing "then" function of the Promise's prototype.
+        To avoid this situation, we'll introduce completely differnt promise
+        instances called InternalPromise in the subsequent patch[1].
+
+        No behavior change.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=148136
+
+        * builtins/PromiseConstructor.js:
+        (privateAll.newResolveElement):
+        (privateAll):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::promiseConstructor): Deleted.
+        (JSC::JSGlobalObject::promisePrototype): Deleted.
+        (JSC::JSGlobalObject::promiseStructure): Deleted.
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::finishCreation):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::callFunction):
+        (JSC::JSPromiseDeferred::resolve):
+        (JSC::JSPromiseDeferred::reject):
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::create):
+        (JSC::JSPromisePrototype::JSPromisePrototype):
+        * runtime/JSPromisePrototype.h:
+
 2015-08-18  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the CLOOP build.

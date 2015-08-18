@@ -50,6 +50,9 @@ public:
     JSValue resolve() const { return m_resolve.get(); }
     JSValue reject() const { return m_reject.get(); }
 
+    JS_EXPORT_PRIVATE void resolve(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE void reject(ExecState*, JSValue);
+
 private:
     JSPromiseDeferred(VM&);
     void finishCreation(VM&, JSObject*, JSValue, JSValue);

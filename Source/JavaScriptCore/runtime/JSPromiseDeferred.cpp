@@ -72,6 +72,28 @@ JSPromiseDeferred::JSPromiseDeferred(VM& vm)
 {
 }
 
+static inline void callFunction(ExecState* exec, JSValue function, JSValue value)
+{
+    CallData callData;
+    CallType callType = getCallData(function, callData);
+    ASSERT(callType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(value);
+
+    call(exec, function, callType, callData, jsUndefined(), arguments);
+}
+
+void JSPromiseDeferred::resolve(ExecState* exec, JSValue value)
+{
+    callFunction(exec, m_resolve.get(), value);
+}
+
+void JSPromiseDeferred::reject(ExecState* exec, JSValue reason)
+{
+    callFunction(exec, m_reject.get(), reason);
+}
+
 void JSPromiseDeferred::finishCreation(VM& vm, JSObject* promise, JSValue resolve, JSValue reject)
 {
     Base::finishCreation(vm);

@@ -35,7 +35,7 @@ public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static JSPromisePrototype* create(ExecState*, JSGlobalObject*, Structure*);
+    static JSPromisePrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -44,7 +44,7 @@ protected:
     void finishCreation(VM&, Structure*);
 
 private:
-    JSPromisePrototype(ExecState*, Structure*);
+    JSPromisePrototype(VM&, Structure*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 

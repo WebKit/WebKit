@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSPromiseConstructor.h"
 
+#include "BuiltinNames.h"
 #include "Error.h"
 #include "Exception.h"
 #include "IteratorOperations.h"
@@ -81,6 +82,7 @@ void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePro
     Base::finishCreation(vm, ASCIILiteral("Promise"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, promisePrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectBuiltinFunctionWithoutTransition(vm, globalObject(), vm.propertyNames->builtinNames().allPrivateName(), promiseConstructorPrivateAllCodeGenerator(vm), ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)

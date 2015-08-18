@@ -54,10 +54,9 @@ const ClassInfo JSPromisePrototype::s_info = { "PromisePrototype", &JSNonFinalOb
 @end
 */
 
-JSPromisePrototype* JSPromisePrototype::create(ExecState* exec, JSGlobalObject*, Structure* structure)
+JSPromisePrototype* JSPromisePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
-    VM& vm = exec->vm();
-    JSPromisePrototype* object = new (NotNull, allocateCell<JSPromisePrototype>(vm.heap)) JSPromisePrototype(exec, structure);
+    JSPromisePrototype* object = new (NotNull, allocateCell<JSPromisePrototype>(vm.heap)) JSPromisePrototype(vm, structure);
     object->finishCreation(vm, structure);
     return object;
 }
@@ -67,8 +66,8 @@ Structure* JSPromisePrototype::createStructure(VM& vm, JSGlobalObject* globalObj
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSPromisePrototype::JSPromisePrototype(ExecState* exec, Structure* structure)
-    : JSNonFinalObject(exec->vm(), structure)
+JSPromisePrototype::JSPromisePrototype(VM& vm, Structure* structure)
+    : JSNonFinalObject(vm, structure)
 {
 }
 
