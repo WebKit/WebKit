@@ -1,3 +1,10 @@
+2015-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark fast/css/will-change/will-change-creates-stacking-context.html as an image-only
+        failure. Filed webkit.org/b/148144 to track it.
+
+        * platform/win/TestExpectations:
+
 2015-08-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: load ProtocolTestStub from the WebInspectorUI bundle
