@@ -26,21 +26,17 @@ window.addEventListener("pageshow", function(event) {
 }, false);
 
 window.addEventListener("pagehide", function(event) {
-    debug("pagehide");
+    testFailed("pagehide - Page went into PageCache");
 }, false);
 
 function loadSubframeAndNavigateAway()
 {
     // Force a back navigation back to this page.
     window.sessionStorage.page_cache_provisional_load_test_started = true;
-    window.location.href = "resources/page-cache-helper-slow.html";
+    window.location.href = "resources/page-cache-helper.html";
 
     var testFrame = document.getElementById("testFrame");
-    testFrame.src = "http://127.0.0.1:8000/navigation/resources/slow-resource.pl?delay=100";
-
-    // If the page goes into the page cache and the frame keeps loading while in the cache,
-    // the following will cause crashes.
-    testFrame.onload = function() { document.getElementById("testFrame").remove(); };
+    testFrame.src = "http://127.0.0.1:8000/navigation/resources/slow-resource.pl?delay=3000";
 }
 
 window.addEventListener('load', function() {
