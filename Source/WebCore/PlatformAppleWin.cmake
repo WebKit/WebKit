@@ -1,6 +1,6 @@
 list(APPEND WebCore_INCLUDE_DIRECTORIES
-    "$ENV{WEBKIT_LIBRARIES}/include"
-    "$ENV{WEBKIT_LIBRARIES}/include/zlib"
+    "${WEBKIT_LIBRARIES_DIR}/include"
+    "${WEBKIT_LIBRARIES_DIR}/include/zlib"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/platform/graphics/ca"
     "${WEBCORE_DIR}/platform/graphics/ca/win"

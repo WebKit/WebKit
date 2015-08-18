@@ -1,5 +1,18 @@
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
+        [Win CMake] Allow WebKitLibraries directory to be set from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=148112
+
+        Reviewed by Brent Fulgham.
+
+        * Source/cmake/OptionsWin.cmake:
+        Don't use an environment variable for WEBKIT_LIBRARIES_DIR.  
+        Instead, use the default location if nothing is passed in from the command line.
+        This way we can set it from the command line for the AppleInternal build.
+        Also, set the output directories to be consistent between the old and new build systems (and ninja).
+
+2015-08-17  Alex Christensen  <achristensen@webkit.org>
+
         Build Debug Suffix on Windows with CMake
         https://bugs.webkit.org/show_bug.cgi?id=148083
 
