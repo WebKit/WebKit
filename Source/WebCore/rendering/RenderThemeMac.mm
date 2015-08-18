@@ -306,13 +306,6 @@ Color RenderThemeMac::platformFocusRingColor() const
     return systemColor(CSSValueWebkitFocusRingColor);
 }
 
-int RenderThemeMac::platformFocusRingMaxWidth() const
-{
-    // FIXME: Shouldn't this function be named platformFocusRingMinWidth? But also, I'm not sure if this function is needed - looks like
-    // all platforms just used 0 for this before <http://trac.webkit.org/changeset/168397>.
-    return 0;
-}
-
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
 {
     return platformInactiveSelectionBackgroundColor();

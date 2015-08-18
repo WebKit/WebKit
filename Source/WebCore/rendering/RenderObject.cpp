@@ -1917,11 +1917,12 @@ int RenderObject::nextOffset(int current) const
 void RenderObject::adjustRectForOutlineAndShadow(LayoutRect& rect) const
 {
     int outlineSize = outlineStyleForRepaint().outlineSize();
+    if (outlineStyleForRepaint().outlineStyleIsAuto())
+        outlineSize = std::max(theme().platformFocusRingMaxWidth(), outlineSize);
     if (const ShadowData* boxShadow = style().boxShadow()) {
         boxShadow->adjustRectForShadow(rect, outlineSize);
         return;
     }
-
     rect.inflate(outlineSize);
 }
 

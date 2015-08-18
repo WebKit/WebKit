@@ -61,7 +61,6 @@ public:
     virtual Color platformInactiveListBoxSelectionBackgroundColor() const override;
     virtual Color platformInactiveListBoxSelectionForegroundColor() const override;
     virtual Color platformFocusRingColor() const override;
-    virtual int platformFocusRingMaxWidth() const override;
 
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) override { return SmallScrollbar; }
 

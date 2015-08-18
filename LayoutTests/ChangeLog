@@ -1,3 +1,19 @@
+2015-08-17  Zalan Bujtas  <zalan@apple.com>
+
+        Outline with auto style leaves bits behind when the the box is moved.
+        https://bugs.webkit.org/show_bug.cgi?id=148100
+
+        Reviewed by Simon Fraser.
+
+        Due to RenderView::maximalOutlineSize() each outline width need to be tested separately.
+
+        * fast/repaint/outline-with1px-auto-repaint-rect-expected.txt: Added.
+        * fast/repaint/outline-with1px-auto-repaint-rect.html: Added.
+        * fast/repaint/outline-with2px-auto-repaint-rect-expected.txt: Added.
+        * fast/repaint/outline-with2px-auto-repaint-rect.html: Added.
+        * fast/repaint/outline-with3px-auto-repaint-rect-expected.txt: Added.
+        * fast/repaint/outline-with3px-auto-repaint-rect.html: Added.
+
 2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Remove support for composite fonts
