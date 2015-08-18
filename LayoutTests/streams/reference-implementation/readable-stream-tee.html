@@ -16,7 +16,6 @@ test(function() {
 
 var test1 = async_test('ReadableStream teeing: should be able to read one branch to the end without affecting the other');
 test1.step(function() {
-    var closedCalled = false;
     var readCalls = 0;
     const rs = new ReadableStream({
         start: function(c) {
@@ -33,7 +32,8 @@ test1.step(function() {
     var reader2 = branch2.getReader();
 
     reader1.closed.then(test1.step_func(function() {
-        closedCalled = true;
+        assert_equals(readCalls, 4);
+        test1.done();
     })).catch(test1.step_func(function(e) { assert_unreached(e); }));
     reader2.closed.then(test1.step_func(function() { assert_unreached('branch2 should not be closed'); }));
 
@@ -47,9 +47,7 @@ test1.step(function() {
     }));
     reader1.read().then(test1.step_func(function(r) {
         assert_object_equals(r, { value: undefined, done: true }, 'third read() from branch1 should be done');
-        assert_true(closedCalled);
-        assert_equals(++readCalls, 4);
-        test1.done();
+        ++readCalls;
     }));
 
     reader2.read().then(test1.step_func(function(r) {

@@ -240,15 +240,15 @@ test5.step(function() {
 
     reader.closed.catch(test5.step_func(function(e) {
         closed = true;
-        assert_false(read);
+        assert_true(read);
         assert_equals(e, error, 'closed should reject with the thrown error');
+        test5.done();
     }));
 
     reader.read().catch(test5.step_func(function(e) {
         read = true;
-        assert_true(closed);
+        assert_false(closed);
         assert_equals(e, error, 'read() should reject with the thrown error');
-        test5.done();
     }));
 });
 

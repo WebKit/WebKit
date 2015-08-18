@@ -81,12 +81,13 @@ function templatedRSErrored(label, factory, error) {
 
         reader.closed.catch(test1.step_func(function(e) {
             assert_equals(e, error, 'reader.closed should reject with the error');
-            ++promisesCount;
+            if (++promisesCount === 2)
+                test1.done();
         }));
         reader.read().catch(test1.step_func(function(e) {
             assert_equals(e, error, 'reader.read() should reject with the error');
-            assert_equals(++promisesCount, 2);
-            test1.done();
+            if (++promisesCount === 2)
+                test1.done();
         }));
     });
 

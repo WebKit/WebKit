@@ -1,3 +1,17 @@
+2015-08-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Update implementation with the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=147978
+
+        Reviewed by Darin Adler.
+
+        Changed tests about the order of the read and closed promise resolution.
+
+        * streams/readable-stream-reader-read.html:
+        * streams/reference-implementation/readable-stream-tee.html:
+        * streams/reference-implementation/readable-stream-templated.html:
+        * streams/reference-implementation/readable-stream.html:
+
 2015-08-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r188539, r188544, r188552, and
