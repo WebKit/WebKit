@@ -26,6 +26,7 @@
 #ifndef CoreTextSPI_h
 #define CoreTextSPI_h
 
+#include "CoreGraphicsSPI.h"
 #include <CoreText/CoreText.h>
 
 #if USE(APPLE_INTERNAL_SDK)
