@@ -23,14 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "TestRunner.h"
 
 #include "InjectedBundle.h"
-#include <JavaScriptCore/JSStringRefCF.h>
-#include <WebCore/SoftLinking.h>
-
-SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 namespace WTR {
 
@@ -65,23 +60,6 @@ void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
     return JSStringRetain(url); // Do nothing on mac.
-}
-
-JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
-{
-    // Call the soft link framework function to dlopen it, then CFBundleGetBundleWithIdentifier will work.
-    WebInspectorUILibrary();
-
-    CFBundleRef inspectorBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebInspectorUI"));
-    if (!inspectorBundle)
-        return nullptr;
-
-    RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(inspectorBundle, CFSTR("TestStub"), CFSTR("html"), NULL));
-    if (!url)
-        return nullptr;
-
-    CFStringRef urlString = CFURLGetString(url.get());
-    return adopt(JSStringCreateWithCFString(urlString));
 }
 
 } // namespace WTR

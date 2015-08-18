@@ -27,9 +27,7 @@
  * SUCH DAMAGE.
  */
 
-TestPage.registerInitializer(function(){
-
-window.createDOMListener = function()
+function createDOMListener()
 {
     var nodesById = {};
 
@@ -103,5 +101,3 @@ window.createDOMListener = function()
         collectNode: collectNode
     };
 }
-
-});

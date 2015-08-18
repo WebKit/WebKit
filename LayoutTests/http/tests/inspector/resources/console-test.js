@@ -1,5 +1,3 @@
-TestPage.registerInitializer(function() {
-
 ProtocolTest.Console = {};
 
 ProtocolTest.Console.sanitizeConsoleMessage = function(messageObject)
@@ -34,7 +32,7 @@ ProtocolTest.Console.sanitizeConsoleMessage = function(messageObject)
 
 ProtocolTest.Console.addTestCase = function(suite, args)
 {
-    if (!(suite instanceof AsyncTestSuite))
+    if (!(suite instanceof InjectedTestHarness.AsyncTestSuite))
         throw new Error("Console test cases must be added to an async test suite.");
 
     var {name, description, expression, expected} = args;
@@ -75,5 +73,3 @@ ProtocolTest.Console.addTestCase = function(suite, args)
         }
     });
 }
-
-});

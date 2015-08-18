@@ -2,10 +2,11 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
-<script src="../../http/tests/inspector/resources/console-test.js"></script>
 <script>
 function test()
 {
+    ProtocolTest.importScript("console-test.js");
+
     let suite = ProtocolTest.createAsyncSuite("Console.XFrameOptionsMessages");
 
     ProtocolTest.Console.addTestCase(suite, {

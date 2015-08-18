@@ -67,9 +67,4 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
     return JSStringCreateWithUTF8CString(testURI.get());
 }
 
-JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
-{
-    return JSStringCreateWithUTF8CString("resource:///org/webkitgtk/inspector/UserInterface/TestStub.html");
-}
-
 } // namespace WTR

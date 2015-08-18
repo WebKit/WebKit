@@ -1,11 +1,12 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
-<script src="../../http/tests/inspector/resources/probe-test.js"></script>
 <script src="resources/breakpoint.js"></script>
 <script>
 function test()
 {
+    ProtocolTest.importScript("probe-test.js");
+
     InspectorProtocol.sendCommand("Debugger.enable", {});
 
     var samples = [];

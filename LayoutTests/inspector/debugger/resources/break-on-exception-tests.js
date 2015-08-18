@@ -1,4 +1,4 @@
-TestPage.needToSanitizeUncaughtExceptionURLs = true;
+InspectorTestProxy.needToSanitizeUncaughtExceptionURLs = true;
 
 var arr = [ 1, 2, 3 ];
 var mapData = [[ "a", arr ]];

@@ -48,11 +48,9 @@ body.main-frame
 === Query: ".body-inside-iframe" ===
 Count: 0
 === Query: "*" ===
-Count: 14
+Count: 12
 html
 head
-script
-script
 script
 script
 body.main-frame

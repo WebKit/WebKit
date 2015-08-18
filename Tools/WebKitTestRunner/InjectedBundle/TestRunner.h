@@ -199,7 +199,6 @@ public:
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(JSStringRef script);
-    JSRetainPtr<JSStringRef> inspectorTestStubURL();
 
     void setPOSIXLocale(JSStringRef);
 

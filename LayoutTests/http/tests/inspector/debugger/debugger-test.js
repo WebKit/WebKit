@@ -1,4 +1,4 @@
-TestPage.registerInitializer(function() {
+InspectorTestProxy.registerInitializer(function() {
 
 InspectorTest.startTracingBreakpoints = function()
 {

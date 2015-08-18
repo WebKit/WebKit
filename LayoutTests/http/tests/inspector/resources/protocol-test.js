@@ -23,34 +23,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+var outputElement;
 
-// This namespace is injected into every test page. Its functions are invoked by
-// ProtocolTest methods on the inspector page via a TestHarness subclass.
-TestPage = {};
-TestPage._initializers = [];
-
-// Helper scripts like `console-test.js` must register their initialization
-// function with this method so it will be marshalled to the inspector page.
-TestPage.registerInitializer = function(initializer)
-{
-    if (typeof initializer === "function")
-        this._initializers.push(initializer.toString());
-};
-
-let outputElement;
-
-TestPage.debugLog = window.debugLog = function(text)
+/**
+ * Logs message to process stdout via alert (hopefully implemented with immediate flush).
+ * @param {string} text
+ */
+function debugLog(text)
 {
     alert(text);
-};
+}
 
-TestPage.log = window.log = function(text)
+/**
+ * @param {string} text
+ */
+function log(text)
 {
     if (!outputElement) {
-        let intermediate = document.createElement("div");
+        var intermediate = document.createElement("div");
         document.body.appendChild(intermediate);
 
-        let intermediate2 = document.createElement("div");
+        var intermediate2 = document.createElement("div");
         intermediate.appendChild(intermediate2);
 
         outputElement = document.createElement("div");
@@ -61,9 +54,9 @@ TestPage.log = window.log = function(text)
     }
     outputElement.appendChild(document.createTextNode(text));
     outputElement.appendChild(document.createElement("br"));
-};
+}
 
-TestPage.closeTest = window.closeTest = function()
+function closeTest()
 {
     window.internals.closeDummyInspectorFrontend();
 
@@ -72,59 +65,39 @@ TestPage.closeTest = window.closeTest = function()
     setTimeout(function() {
         testRunner.notifyDone();
     }, 0);
-};
+}
 
-TestPage.runTest = window.runTest = function()
+function runTest()
 {
     if (!window.testRunner) {
-        console.error("This test must be run via DumpRenderTree or WebKitTestRunner.");
+        console.error("This test requires DumpRenderTree");
         return;
     }
-
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows(true);
 
-    let testFunction = window.test;
-    if (typeof testFunction !== "function") {
-        alert("Failed to send test() because it is not a function.");
-        testRunner.notifyDone();
-    }
-
-    let url = testRunner.inspectorTestStubURL;
-    if (!url) {
-        alert("Failed to obtain inspector test stub URL.");
-        testRunner.notifyDone();
-    }
-
-    function runInitializationMethodsInFrontend(initializers)
-    {
-        for (let initializer of initializers) {
-            try {
-                initializer();
-            } catch (e) {
-                ProtocolTest.log("Exception in test initialization: " + e, e.stack || "(no stack trace)");
-                ProtocolTest.completeTest();
-            }
+    var scriptTags = document.getElementsByTagName("script");
+    var scriptUrlBasePath = "";
+    for (var i = 0; i < scriptTags.length; ++i) {
+        var index = scriptTags[i].src.lastIndexOf("/protocol-test.js");
+        if (index > -1 ) {
+            scriptUrlBasePath = scriptTags[i].src.slice(0, index);
+            break;
         }
     }
 
-    function runTestMethodInFrontend(testFunction)
-    {
-        try {
-            testFunction();
-        } catch (e) {
-            ProtocolTest.log("Exception during test execution: " + e, e.stack || "(no stack trace)");
-            ProtocolTest.completeTest();
-        }
-    }
-
-    let inspectorFrontend = window.internals.openDummyInspectorFrontend(url);
+    var url = scriptUrlBasePath + "/ProtocolTestStub.html";
+    var inspectorFrontend = window.internals.openDummyInspectorFrontend(url);
     inspectorFrontend.addEventListener("load", function(event) {
-        let initializationCodeString = `(${runInitializationMethodsInFrontend.toString()})([${TestPage._initializers}]);`;
-        let testFunctionCodeString = `(${runTestMethodInFrontend.toString()})(${testFunction.toString()});`;
-
-        inspectorFrontend.postMessage(initializationCodeString, "*");
-        inspectorFrontend.postMessage(testFunctionCodeString, "*");
+        // FIXME: rename this 'test' global field across all tests.
+        var testFunction = window.test;
+        if (typeof testFunction === "function") {
+            inspectorFrontend.postMessage("(" + testFunction.toString() +")();", "*");
+            return;
+        }
+        // Kill waiting process if failed to send.
+        alert("Failed to send test function");
+        testRunner.notifyDone();
     });
-};
+}

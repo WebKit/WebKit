@@ -125,7 +125,6 @@ interface TestRunner {
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(DOMString script);
-    readonly attribute DOMString inspectorTestStubURL;
 
     void setPOSIXLocale(DOMString locale);
 

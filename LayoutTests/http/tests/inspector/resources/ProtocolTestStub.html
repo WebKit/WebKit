@@ -1,4 +1,5 @@
 <!--
+Copyright (C) 2012 Samsung Electronics. All rights reserved.
 Copyright (C) 2015 Apple Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -22,29 +23,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <!--
-    These resources should match the order and groups used in Main.html and Test.html.
-    -->
-    <script src="Base/WebInspector.js"></script>
-    <script src="Base/Object.js"></script>
-
-    <script src="Test/TestSuite.js"></script>
-    <script src="Test/TestHarness.js"></script>
-    <script src="Test/ProtocolTestHarness.js"></script>
-
-    <script src="Test/InspectorProtocol.js"></script>
-
-    <script src="Test/TestStub.js"></script>
-    <script>
-        // Not reliable unless console messages are dumped to console. See wiki for details.
-        ProtocolTest.dumpInspectorProtocolMessages = false;
-
-        // Synchronous logging may produce more output prior to a timeout.
-        ProtocolTest.forceSyncDebugLogging = false;
-    </script>
+    <script type="text/javascript" src="ProtocolTestStub.js"></script>
 </head>
 </html>
