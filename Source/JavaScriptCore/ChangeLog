@@ -1,3 +1,93 @@
+2015-08-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Split InlineCallFrame into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=148131
+
+        Reviewed by Saam Barati.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallLinkStatus.cpp:
+        * bytecode/CodeBlock.h:
+        (JSC::ExecState::r):
+        (JSC::baselineCodeBlockForInlineCallFrame): Deleted.
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock): Deleted.
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::inlineStack):
+        (JSC::CodeOrigin::codeOriginOwner):
+        (JSC::CodeOrigin::stackOffset):
+        (JSC::CodeOrigin::dump):
+        (JSC::CodeOrigin::dumpInContext):
+        (JSC::InlineCallFrame::calleeConstant): Deleted.
+        (JSC::InlineCallFrame::visitAggregate): Deleted.
+        (JSC::InlineCallFrame::calleeForCallFrame): Deleted.
+        (JSC::InlineCallFrame::hash): Deleted.
+        (JSC::InlineCallFrame::hashAsStringIfPossible): Deleted.
+        (JSC::InlineCallFrame::inferredName): Deleted.
+        (JSC::InlineCallFrame::baselineCodeBlock): Deleted.
+        (JSC::InlineCallFrame::dumpBriefFunctionInformation): Deleted.
+        (JSC::InlineCallFrame::dumpInContext): Deleted.
+        (JSC::InlineCallFrame::dump): Deleted.
+        (WTF::printInternal): Deleted.
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::deletedMarker):
+        (JSC::CodeOrigin::hash):
+        (JSC::CodeOrigin::operator==):
+        (JSC::CodeOriginHash::hash):
+        (JSC::CodeOriginHash::equal):
+        (JSC::InlineCallFrame::kindFor): Deleted.
+        (JSC::InlineCallFrame::varargsKindFor): Deleted.
+        (JSC::InlineCallFrame::specializationKindFor): Deleted.
+        (JSC::InlineCallFrame::isVarargs): Deleted.
+        (JSC::InlineCallFrame::InlineCallFrame): Deleted.
+        (JSC::InlineCallFrame::specializationKind): Deleted.
+        (JSC::InlineCallFrame::setStackOffset): Deleted.
+        (JSC::InlineCallFrame::callerFrameOffset): Deleted.
+        (JSC::InlineCallFrame::returnPCOffset): Deleted.
+        (JSC::CodeOrigin::stackOffset): Deleted.
+        (JSC::CodeOrigin::codeOriginOwner): Deleted.
+        * bytecode/InlineCallFrame.cpp: Copied from Source/JavaScriptCore/bytecode/CodeOrigin.cpp.
+        (JSC::InlineCallFrame::calleeConstant):
+        (JSC::CodeOrigin::inlineDepthForCallFrame): Deleted.
+        (JSC::CodeOrigin::inlineDepth): Deleted.
+        (JSC::CodeOrigin::isApproximatelyEqualTo): Deleted.
+        (JSC::CodeOrigin::approximateHash): Deleted.
+        (JSC::CodeOrigin::inlineStack): Deleted.
+        (JSC::CodeOrigin::dump): Deleted.
+        (JSC::CodeOrigin::dumpInContext): Deleted.
+        * bytecode/InlineCallFrame.h: Copied from Source/JavaScriptCore/bytecode/CodeOrigin.h.
+        (JSC::InlineCallFrame::isVarargs):
+        (JSC::InlineCallFrame::InlineCallFrame):
+        (JSC::InlineCallFrame::specializationKind):
+        (JSC::baselineCodeBlockForInlineCallFrame):
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        (JSC::CodeOrigin::CodeOrigin): Deleted.
+        (JSC::CodeOrigin::isSet): Deleted.
+        (JSC::CodeOrigin::operator!): Deleted.
+        (JSC::CodeOrigin::isHashTableDeletedValue): Deleted.
+        (JSC::CodeOrigin::operator!=): Deleted.
+        (JSC::CodeOrigin::deletedMarker): Deleted.
+        (JSC::CodeOrigin::stackOffset): Deleted.
+        (JSC::CodeOrigin::hash): Deleted.
+        (JSC::CodeOrigin::operator==): Deleted.
+        (JSC::CodeOrigin::codeOriginOwner): Deleted.
+        (JSC::CodeOriginHash::hash): Deleted.
+        (JSC::CodeOriginHash::equal): Deleted.
+        (JSC::CodeOriginApproximateHash::hash): Deleted.
+        (JSC::CodeOriginApproximateHash::equal): Deleted.
+        * bytecode/InlineCallFrameSet.cpp:
+        * dfg/DFGCommonData.cpp:
+        * dfg/DFGOSRExitBase.cpp:
+        * dfg/DFGVariableEventStream.cpp:
+        * ftl/FTLOperations.cpp:
+        * interpreter/CallFrame.cpp:
+        * interpreter/StackVisitor.cpp:
+        * jit/AssemblyHelpers.h:
+        * profiler/ProfilerOriginStack.cpp:
+        * runtime/ClonedArguments.cpp:
+
 2015-08-18  Mark Lam  <mark.lam@apple.com>
 
         Removed an unused param in Interpreter::initialize().

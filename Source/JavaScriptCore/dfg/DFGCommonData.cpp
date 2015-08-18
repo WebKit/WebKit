@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGNode.h"
 #include "DFGPlan.h"
+#include "InlineCallFrame.h"
 #include "JSCInlines.h"
 #include "TrackedReferences.h"
 #include "VM.h"

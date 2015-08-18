@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
+#include "InlineCallFrame.h"
 #include "JITCode.h"
 #include "MacroAssembler.h"
 #include "TypeofType.h"

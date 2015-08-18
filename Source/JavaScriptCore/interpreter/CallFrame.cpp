@@ -28,6 +28,7 @@
 
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
+#include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"

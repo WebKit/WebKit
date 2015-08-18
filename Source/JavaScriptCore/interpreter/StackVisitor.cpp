@@ -29,6 +29,7 @@
 #include "CallFrameInlines.h"
 #include "ClonedArguments.h"
 #include "Executable.h"
+#include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include <wtf/DataLog.h>

@@ -1398,6 +1398,9 @@
     <ClCompile Include="..\jit\Repatch.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\InlineCallFrame.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\InlineCallFrameSet.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -3890,6 +3893,9 @@
     </ClInclude>
     <ClInclude Include="..\jit\RegisterSet.h">
       <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\InlineCallFrame.h">
+      <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\InlineCallFrameSet.h">
       <Filter>bytecode</Filter>

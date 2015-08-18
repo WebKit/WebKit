@@ -30,6 +30,7 @@
 
 #include "ClonedArguments.h"
 #include "DirectArguments.h"
+#include "InlineCallFrame.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 

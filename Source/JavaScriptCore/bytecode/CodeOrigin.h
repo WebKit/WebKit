@@ -116,132 +116,6 @@ private:
     }
 };
 
-struct InlineCallFrame {
-    enum Kind {
-        Call,
-        Construct,
-        CallVarargs,
-        ConstructVarargs,
-        
-        // For these, the stackOffset incorporates the argument count plus the true return PC
-        // slot.
-        GetterCall,
-        SetterCall
-    };
-    
-    static Kind kindFor(CodeSpecializationKind kind)
-    {
-        switch (kind) {
-        case CodeForCall:
-            return Call;
-        case CodeForConstruct:
-            return Construct;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return Call;
-    }
-    
-    static Kind varargsKindFor(CodeSpecializationKind kind)
-    {
-        switch (kind) {
-        case CodeForCall:
-            return CallVarargs;
-        case CodeForConstruct:
-            return ConstructVarargs;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return Call;
-    }
-    
-    static CodeSpecializationKind specializationKindFor(Kind kind)
-    {
-        switch (kind) {
-        case Call:
-        case CallVarargs:
-        case GetterCall:
-        case SetterCall:
-            return CodeForCall;
-        case Construct:
-        case ConstructVarargs:
-            return CodeForConstruct;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return CodeForCall;
-    }
-    
-    static bool isVarargs(Kind kind)
-    {
-        switch (kind) {
-        case CallVarargs:
-        case ConstructVarargs:
-            return true;
-        default:
-            return false;
-        }
-    }
-    bool isVarargs() const
-    {
-        return isVarargs(static_cast<Kind>(kind));
-    }
-    
-    Vector<ValueRecovery> arguments; // Includes 'this'.
-    WriteBarrier<ScriptExecutable> executable;
-    ValueRecovery calleeRecovery;
-    CodeOrigin caller;
-
-    signed stackOffset : 28;
-    unsigned kind : 3; // real type is Kind
-    bool isClosureCall : 1; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
-    VirtualRegister argumentCountRegister; // Only set when we inline a varargs call.
-    
-    // There is really no good notion of a "default" set of values for
-    // InlineCallFrame's fields. This constructor is here just to reduce confusion if
-    // we forgot to initialize explicitly.
-    InlineCallFrame()
-        : stackOffset(0)
-        , kind(Call)
-        , isClosureCall(false)
-    {
-    }
-    
-    CodeSpecializationKind specializationKind() const { return specializationKindFor(static_cast<Kind>(kind)); }
-
-    JSFunction* calleeConstant() const;
-    void visitAggregate(SlotVisitor&);
-    
-    // Get the callee given a machine call frame to which this InlineCallFrame belongs.
-    JSFunction* calleeForCallFrame(ExecState*) const;
-    
-    CString inferredName() const;
-    CodeBlockHash hash() const;
-    CString hashAsStringIfPossible() const;
-    
-    CodeBlock* baselineCodeBlock() const;
-    
-    void setStackOffset(signed offset)
-    {
-        stackOffset = offset;
-        RELEASE_ASSERT(static_cast<signed>(stackOffset) == offset);
-    }
-
-    ptrdiff_t callerFrameOffset() const { return stackOffset * sizeof(Register) + CallFrame::callerFrameOffset(); }
-    ptrdiff_t returnPCOffset() const { return stackOffset * sizeof(Register) + CallFrame::returnPCOffset(); }
-
-    void dumpBriefFunctionInformation(PrintStream&) const;
-    void dump(PrintStream&) const;
-    void dumpInContext(PrintStream&, DumpContext*) const;
-
-    MAKE_PRINT_METHOD(InlineCallFrame, dumpBriefFunctionInformation, briefFunctionInformation);
-};
-
-inline int CodeOrigin::stackOffset() const
-{
-    if (!inlineCallFrame)
-        return 0;
-    
-    return inlineCallFrame->stackOffset;
-}
-
 inline unsigned CodeOrigin::hash() const
 {
     return WTF::IntHash<unsigned>::hash(bytecodeIndex) +
@@ -254,13 +128,6 @@ inline bool CodeOrigin::operator==(const CodeOrigin& other) const
         && inlineCallFrame == other.inlineCallFrame;
 }
     
-inline ScriptExecutable* CodeOrigin::codeOriginOwner() const
-{
-    if (!inlineCallFrame)
-        return 0;
-    return inlineCallFrame->executable.get();
-}
-
 struct CodeOriginHash {
     static unsigned hash(const CodeOrigin& key) { return key.hash(); }
     static bool equal(const CodeOrigin& a, const CodeOrigin& b) { return a == b; }
@@ -276,8 +143,6 @@ struct CodeOriginApproximateHash {
 } // namespace JSC
 
 namespace WTF {
-
-void printInternal(PrintStream&, JSC::InlineCallFrame::Kind);
 
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<JSC::CodeOrigin> {

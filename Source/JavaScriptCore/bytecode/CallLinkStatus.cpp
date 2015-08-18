@@ -29,6 +29,7 @@
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
+#include "InlineCallFrame.h"
 #include "LLIntCallLinkInfo.h"
 #include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>
