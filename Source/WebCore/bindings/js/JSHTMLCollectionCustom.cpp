@@ -48,6 +48,8 @@ bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection
 EncodedJSValue JSHTMLCollection::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
     JSHTMLCollection* collection = jsCast<JSHTMLCollection*>(slotBase);
+    ASSERT_WITH_MESSAGE(collection->impl().type() != FormControls, "Should call the subclass' nameGetter");
+    ASSERT_WITH_MESSAGE(collection->impl().type() != SelectOptions, "Should call the subclass' nameGetter");
     const AtomicString& name = propertyNameToAtomicString(propertyName);
     return JSValue::encode(toJS(exec, collection->globalObject(), collection->impl().namedItem(name)));
 }

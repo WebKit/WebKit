@@ -37,6 +37,18 @@ using namespace JSC;
 
 namespace WebCore {
 
+bool JSHTMLOptionsCollection::canGetItemsForName(ExecState*, HTMLOptionsCollection* collection, PropertyName propertyName)
+{
+    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
+}
+
+EncodedJSValue JSHTMLOptionsCollection::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
+{
+    JSHTMLCollection* collection = jsCast<JSHTMLCollection*>(slotBase);
+    const AtomicString& name = propertyNameToAtomicString(propertyName);
+    return JSValue::encode(toJS(exec, collection->globalObject(), collection->impl().namedItem(name)));
+}
+
 void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
 {
     ExceptionCode ec = 0;

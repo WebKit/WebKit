@@ -20,8 +20,8 @@
 
 [
     CustomIsReachable,
+    CustomNamedGetter,
     CustomToJSObject,
-    JSCustomGetOwnPropertySlotAndDescriptor,
     JSCustomHeader,
     SkipVTableValidation,
     ReportExtraMemoryCost,

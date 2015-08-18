@@ -51,13 +51,20 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     return false;
 }
 
-bool JSNodeList::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSNodeList::canGetItemsForName(ExecState*, NodeList* nodeList, PropertyName propertyName)
 {
-    if (Node* item = impl().namedItem(propertyNameToAtomicString(propertyName))) {
-        slot.setValue(this, ReadOnly | DontDelete | DontEnum, toJS(exec, globalObject(), item));
-        return true;
-    }
-    return false;
+    // FIXME: NodeList should not have a named getter. It currently has one because getElementByTagName()
+    // returns a NodeList instead of an HTMLCollection.
+    return nodeList->namedItem(propertyNameToAtomicString(propertyName));
+}
+
+EncodedJSValue JSNodeList::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
+{
+    // FIXME: NodeList should not have a named getter. It currently has one because getElementByTagName()
+    // returns a NodeList instead of an HTMLCollection.
+    JSNodeList* nodeList = jsCast<JSNodeList*>(slotBase);
+    const AtomicString& name = propertyNameToAtomicString(propertyName);
+    return JSValue::encode(toJS(exec, nodeList->globalObject(), nodeList->impl().namedItem(name)));
 }
 
 JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, NodeList& nodeList)

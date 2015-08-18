@@ -1,3 +1,19 @@
+2015-08-18  Chris Dumez  <cdumez@apple.com>
+
+        Make our bindings' GetOwnPropertySlot() behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=148092
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/childnode-item-after-itemname.html:
+        Update the test so the item's id in the NodeList is "testItem"
+        instead of "item". NodeList has a method called item() which now
+        takes priority over the name when accessing Nodelist.item, as per
+        the Web IDL specification.
+
+        * fast/dom/htmlcollection-getownproperty-expected.txt:
+        Rebaseline test. This is a progression.
+
 2015-08-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove failing expectations for some WK1 tests that have passed recent

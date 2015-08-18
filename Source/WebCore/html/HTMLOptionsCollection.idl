@@ -26,7 +26,7 @@
     attribute long selectedIndex;
     [CustomSetter, SetterRaisesException] attribute unsigned long length;
 
-    Node namedItem([Default=Undefined] optional DOMString name);
+    getter Node namedItem([Default=Undefined] optional DOMString name);
 
 #if (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
     [RaisesException] void add(HTMLElement element, [Default=Undefined] optional HTMLElement? before);

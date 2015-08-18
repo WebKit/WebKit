@@ -99,6 +99,7 @@ ObjCPolymorphic
 ObjCProtocol
 ObjCUseDefaultView
 OperationsNotDeletable
+OverrideBuiltins
 PassContext
 RaisesException
 Reflect=*

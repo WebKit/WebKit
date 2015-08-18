@@ -29,6 +29,7 @@
     CustomEnumerateProperty,
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
+    OverrideBuiltins,
     SkipVTableValidation,
 ] interface DOMStringMap {
 };
