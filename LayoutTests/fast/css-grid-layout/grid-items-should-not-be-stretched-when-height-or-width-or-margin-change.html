@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<link href="resources/grid.css" rel="stylesheet">
+<script src="../../resources/check-layout.js"></script>
+<style>
+.grid {
+    -webkit-grid-template: 200px 200px / 200px 200px;
+    width: -webkit-fit-content;
+    position: relative;
+}
+#fromFixedWidth { width: 150px; }
+#fromFixedHeight { height: 100px; }
+#fromMarginAuto { margin: auto; }
+</style>
+<p>The grids below had initially 'stretched' items, but we have changed 'height', 'width' and 'margin' to values which don't allow stretch. This test verifies that the layout algorithm properly detects such changes and clear the override height and width accordingly.</p>
+<div class="grid">
+    <div id="toFixedHeight" class="firstRowFirstColumn" data-expected-width="200" data-expected-height="100"></div>
+    <div class="firstRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
+    <div class="secondRowFirstColumn" data-expected-width="200" data-expected-height="200"></div>
+    <div id="fromFixedHeight" class="secondRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
+</div>
+<div class="grid">
+    <div id="toFixedWidth" class="firstRowFirstColumn" data-expected-width="150" data-expected-height="200"></div>
+    <div class="firstRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
+    <div class="secondRowFirstColumn" data-expected-width="200" data-expected-height="200"></div>
+    <div id="fromFixedWidth" class="secondRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
+</div>
+<div class="grid">
+    <div id="toMarginAuto" class="firstRowFirstColumn" data-expected-width="150" data-expected-height="100">
+        <div style="width: 150px; height: 100px"></div>
+    </div>
+    <div class="firstRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
+    <div class="secondRowFirstColumn" data-expected-width="200" data-expected-height="200"></div>
+    <div id="fromMarginAuto" class="secondRowSecondColumn" data-expected-width="200" data-expected-height="200">
+        <div style="width: 150px; height: 100px"></div>
+    </div>
+</div>
+<script>
+document.body.offsetLeft;
+document.getElementById("fromFixedHeight").style.height = "auto";
+document.getElementById("toFixedHeight").style.height = "100px";
+document.getElementById("fromFixedWidth").style.width = "auto";
+document.getElementById("toFixedWidth").style.width = "150px";
+document.getElementById("fromMarginAuto").style.margin = "0";
+document.getElementById("toMarginAuto").style.margin = "auto";
+checkLayout(".grid");
+</script>

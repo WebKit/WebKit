@@ -1,3 +1,20 @@
+2015-08-18  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Do not stretch always grid items with auto width
+        https://bugs.webkit.org/show_bug.cgi?id=148069
+
+        Reviewed by Darin Adler.
+
+        New Layout tests to verify that grid stretching logic works as expected
+        when aligning both horizontally and vertically.
+
+        * fast/css-grid-layout/grid-align-justify-stretch-expected.txt: Added.
+        * fast/css-grid-layout/grid-align-justify-stretch.html: Added.
+        * fast/css-grid-layout/grid-item-auto-margins-and-stretch-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-auto-margins-and-stretch.html: Added.
+        * fast/css-grid-layout/grid-items-should-not-be-stretched-when-height-or-width-or-margin-change-expected.txt: Added.
+        * fast/css-grid-layout/grid-items-should-not-be-stretched-when-height-or-width-or-margin-change.html: Added.
+
 2015-08-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Update implementation with the latest spec

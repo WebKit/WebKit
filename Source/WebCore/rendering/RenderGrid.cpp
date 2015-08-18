@@ -1190,7 +1190,7 @@ void RenderGrid::layoutGridItems()
         // Stretching logic might force a child layout, so we need to run it before the layoutIfNeeded
         // call to avoid unnecessary relayouts. This might imply that child margins, needed to correctly
         // determine the available space before stretching, are not set yet.
-        applyStretchAlignmentToChildIfNeeded(*child, overrideContainingBlockContentLogicalHeight);
+        applyStretchAlignmentToChildIfNeeded(*child);
 
         child->layoutIfNeeded();
 
@@ -1271,11 +1271,6 @@ static inline LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overfl
     return 0;
 }
 
-bool RenderGrid::allowedToStretchLogicalHeightForChild(const RenderBox& child) const
-{
-    return child.style().logicalHeight().isAuto() && !child.style().marginBeforeUsing(&style()).isAuto() && !child.style().marginAfterUsing(&style()).isAuto();
-}
-
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 bool RenderGrid::needToStretchChildLogicalHeight(const RenderBox& child) const
 {
@@ -1297,27 +1292,46 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
-void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child, LayoutUnit gridAreaBreadthForChild)
+void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
 {
-    if (!allowedToStretchLogicalHeightForChild(child) || RenderStyle::resolveAlignment(style(), child.style(), ItemPositionStretch) != ItemPositionStretch) {
-        child.clearOverrideLogicalContentHeight();
-        return;
+    // We clear both width and height override values because we will decide now whether they
+    // are allowed or not, evaluating the conditions which might have changed since the old
+    // values were set.
+    child.clearOverrideSize();
+
+    auto& gridStyle = style();
+    auto& childStyle = child.style();
+    bool isHorizontalMode = isHorizontalWritingMode();
+    bool hasAutoSizeInRowAxis = isHorizontalMode ? childStyle.width().isAuto() : childStyle.height().isAuto();
+    bool allowedToStretchChildAlongRowAxis = hasAutoSizeInRowAxis && !childStyle.marginStartUsing(&gridStyle).isAuto() && !childStyle.marginEndUsing(&gridStyle).isAuto();
+    if (!allowedToStretchChildAlongRowAxis || RenderStyle::resolveJustification(gridStyle, childStyle, ItemPositionStretch) != ItemPositionStretch) {
+        bool hasAutoMinSizeInRowAxis = isHorizontalMode ? childStyle.minWidth().isAuto() : childStyle.minHeight().isAuto();
+        bool canShrinkToFitInRowAxisForChild = !hasAutoMinSizeInRowAxis || child.minPreferredLogicalWidth() <= child.overrideContainingBlockContentLogicalWidth();
+        // TODO(lajava): how to handle orthogonality in this case ?.
+        // TODO(lajava): grid track sizing and positioning do not support orthogonal modes yet.
+        if (hasAutoSizeInRowAxis && canShrinkToFitInRowAxisForChild) {
+            LayoutUnit childWidthToFitContent = std::max(std::min(child.maxPreferredLogicalWidth(), child.overrideContainingBlockContentLogicalWidth()  - child.marginLogicalWidth()), child.minPreferredLogicalWidth());
+            LayoutUnit desiredLogicalWidth = child.constrainLogicalHeightByMinMax(childWidthToFitContent, -1);
+            child.setOverrideLogicalContentWidth(desiredLogicalWidth - child.borderAndPaddingLogicalWidth());
+            if (desiredLogicalWidth != child.logicalWidth())
+                child.setNeedsLayout();
+        }
     }
 
-    bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
-    // FIXME: If the child has orthogonal flow, then it already has an override height set, so use it.
-    // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
-    if (!hasOrthogonalWritingMode) {
-        LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(gridAreaBreadthForChild, child);
-        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1);
-
-        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
-        bool childNeedsRelayout = desiredLogicalHeight != child.logicalHeight();
-        if (childNeedsRelayout || !child.hasOverrideLogicalContentHeight())
+    bool hasAutoSizeInColumnAxis = isHorizontalMode ? childStyle.height().isAuto() : childStyle.width().isAuto();
+    bool allowedToStretchChildAlongColumnAxis = hasAutoSizeInColumnAxis && !childStyle.marginBeforeUsing(&gridStyle).isAuto() && !childStyle.marginAfterUsing(&gridStyle).isAuto();
+    if (allowedToStretchChildAlongColumnAxis && RenderStyle::resolveAlignment(gridStyle, childStyle, ItemPositionStretch) == ItemPositionStretch) {
+        // TODO (lajava): If the child has orthogonal flow, then it already has an override height set, so use it.
+        // TODO (lajava): grid track sizing and positioning do not support orthogonal modes yet.
+        if (child.isHorizontalWritingMode() == isHorizontalMode) {
+            LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(child.overrideContainingBlockContentLogicalHeight(), child);
+            LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1);
             child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
-        if (childNeedsRelayout) {
-            child.setLogicalHeight(0);
-            child.setNeedsLayout();
+            if (desiredLogicalHeight != child.logicalHeight()) {
+                // TODO (lajava): Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+                child.setLogicalHeight(0);
+                child.setNeedsLayout();
+            }
         }
     }
 }
