@@ -320,14 +320,14 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(const IntSize& size)
 void WebIconDatabase::didRemoveAllIcons()
 {
     // Queueing the empty string is a special way of saying "this queued notification is the didRemoveAllIcons notification"
-    MutexLocker locker(m_notificationMutex);
+    LockHolder locker(m_notificationMutex);
     m_notificationQueue.append(String());
     scheduleNotificationDelivery();
 }
 
 void WebIconDatabase::didImportIconURLForPageURL(const WTF::String& pageURL)
 {
-    MutexLocker locker(m_notificationMutex);
+    LockHolder locker(m_notificationMutex);
     m_notificationQueue.append(pageURL.isolatedCopy());
     scheduleNotificationDelivery();
 }
@@ -403,7 +403,7 @@ void WebIconDatabase::deliverNotifications(void*)
 
     Vector<String> queue;
     {
-        MutexLocker locker(m_sharedWebIconDatabase->m_notificationMutex);
+        LockHolder locker(m_sharedWebIconDatabase->m_notificationMutex);
         queue.swap(m_sharedWebIconDatabase->m_notificationQueue);
         m_sharedWebIconDatabase->m_deliveryRequested = false;
     }

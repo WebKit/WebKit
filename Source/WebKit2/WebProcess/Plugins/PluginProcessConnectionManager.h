@@ -64,7 +64,7 @@ private:
 
     Vector<RefPtr<PluginProcessConnection>> m_pluginProcessConnections;
 
-    Mutex m_tokensAndConnectionsMutex;
+    Lock m_tokensAndConnectionsMutex;
     HashMap<uint64_t, RefPtr<IPC::Connection>> m_tokensAndConnections;
 };
 

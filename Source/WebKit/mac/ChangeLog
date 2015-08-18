@@ -1,3 +1,21 @@
+2015-08-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all remaining uses of WTF::Mutex with WTF::Lock
+        https://bugs.webkit.org/show_bug.cgi?id=148089
+
+        Reviewed by Geoffrey Garen.
+
+        * Storage/WebDatabaseManager.mm:
+        (transactionBackgroundTaskIdentifierLock):
+        (+[WebDatabaseManager startBackgroundTask]):
+        (+[WebDatabaseManager endBackgroundTask]):
+        * WebView/WebView.mm:
+        (-[WebView _synchronizeCustomFixedPositionLayoutRect]):
+        (-[WebView _setCustomFixedPositionLayoutRectInWebThread:synchronize:]):
+        (-[WebView _setCustomFixedPositionLayoutRect:]):
+        (-[WebView _fetchCustomFixedPositionLayoutRect:]):
+        * WebView/WebViewData.h:
+
 2015-08-17  Jeff Miller  <jeffm@apple.com>
 
         Add a method to WebInspector to indicate whether the inspector is open

@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 
 #if PLATFORM(IOS)
+#include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
 #elif OS(LINUX)
 #include "Timer.h"
@@ -137,7 +138,7 @@ private:
     bool m_clearPressureOnMemoryRelease;
     void (^m_releaseMemoryBlock)();
     CFRunLoopObserverRef m_observer;
-    Mutex m_observerMutex;
+    Lock m_observerMutex;
 #elif OS(LINUX)
     int m_eventFD;
     int m_pressureLevelFD;

@@ -1,3 +1,77 @@
+2015-08-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all remaining uses of WTF::Mutex with WTF::Lock
+        https://bugs.webkit.org/show_bug.cgi?id=148089
+
+        Reviewed by Geoffrey Garen.
+
+        This also beefs up and rationalizes the Condition API, so that it can deal with units of time
+        other than just steady_clock. This makes it easier to port ThreadCondition and
+        std::condition_variable code over to Condition. This patch does not take a position on what
+        kind of time is best; from reading a lot of the uses in WebCore, it seems like our use of
+        double to measure seconds is often nicer than the many different classes in std::chrono.
+
+        Also added a Condition speed test, to make sure that all of this is a good idea. And indeed it
+        is. The 1-producer/1-consumer scenario with a 100-element queue runs 36x faster using
+        Lock/Condition than Mutex/ThreadCondition when you use the notifyOne()-per-enqueue style. It
+        runs 58x faster with Lock/Condition when you use the notifyAll()-at-boundary style. Note that
+        I have a bug open for making the notifyOne()-per-enqueue style even faster:
+        https://bugs.webkit.org/show_bug.cgi?id=148090. Also, the 10-consumer/10-producer scenario with
+        a 100-element queue runs 20x faster with Lock/Condition for notifyOne()-per-enqueue and 30x
+        faster with notifyAll()-at-boundary. The only way to tweak the test to get
+        Mutex/ThreadCondition to win is to have one producer, one consumer, a 1-element queue, and use
+        the notifyOne()-per-enqueue style. In that case, one of the two threads is going to be waiting
+        most of the time and the test basically measures wake-up latency and nothing else. Because
+        Condition::wait() does a little bit more work than ThreadCondition::wait(),
+        Mutex/ThreadCondition end up running 3% faster in this test case. But if you vary any of the
+        parameters of the test, Mutex/ThreadCondition ends up losing - all it takes is more threads or
+        a queue size of 5 or more. To my knowledge, we never do producer/consumer with a queue bounded
+        to one element precisely because that approach is the least efficient regardless of locking
+        algorithm. For example, neither WTF::MessageQueue nor DFG::Worklist have any bounds on their
+        queue size. So, it seems that replacing all uses of system mutexes and condition variables with
+        our own thing is a great idea.
+
+        * benchmarks/LockSpeedTest.cpp:
+        * benchmarks/ConditionSpeedTest.cpp: Added.
+        * wtf/Condition.h:
+        (WTF::Condition::Condition):
+        (WTF::Condition::waitUntil):
+        (WTF::Condition::waitFor):
+        (WTF::Condition::wait):
+        (WTF::Condition::waitUntilWallClockSeconds):
+        (WTF::Condition::waitUntilMonotonicClockSeconds):
+        (WTF::Condition::notifyOne):
+        (WTF::Condition::notifyAll):
+        (WTF::Condition::waitForSecondsImpl):
+        (WTF::Condition::waitForImpl):
+        (WTF::Condition::absoluteFromRelative):
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::infiniteTime):
+        (WTF::MessageQueue<DataType>::append):
+        (WTF::MessageQueue<DataType>::appendAndKill):
+        (WTF::MessageQueue<DataType>::appendAndCheckEmpty):
+        (WTF::MessageQueue<DataType>::prepend):
+        (WTF::MessageQueue<DataType>::removeIf):
+        (WTF::MessageQueue<DataType>::isEmpty):
+        (WTF::MessageQueue<DataType>::kill):
+        (WTF::MessageQueue<DataType>::killed):
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::ThreadPrivate::execute):
+        (WTF::ParallelEnvironment::ThreadPrivate::waitForFinish):
+        (WTF::ParallelEnvironment::ThreadPrivate::workerThread):
+        * wtf/ParallelJobsGeneric.h:
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionally):
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::compareAndPark):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+        * wtf/dtoa.cpp:
+        (WTF::pow5mult):
+        * wtf/dtoa.h:
+
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Build Debug Suffix on Windows with CMake

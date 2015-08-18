@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "DatabaseError.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -162,7 +163,7 @@ private:
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
 
     Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
-    Mutex m_transactionInProgressMutex;
+    Lock m_transactionInProgressMutex;
     bool m_transactionInProgress;
     bool m_isTransactionQueueEnabled;
 

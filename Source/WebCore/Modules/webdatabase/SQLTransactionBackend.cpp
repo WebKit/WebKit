@@ -381,7 +381,7 @@ void SQLTransactionBackend::doCleanup()
 
     releaseOriginLockIfNeeded();
 
-    MutexLocker locker(m_statementMutex);
+    LockHolder locker(m_statementMutex);
     m_statementQueue.clear();
 
     if (m_sqliteTransaction) {
@@ -465,7 +465,7 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
 
 void SQLTransactionBackend::enqueueStatementBackend(std::unique_ptr<SQLStatement> statementBackend)
 {
-    MutexLocker locker(m_statementMutex);
+    LockHolder locker(m_statementMutex);
     m_statementQueue.append(WTF::move(statementBackend));
 }
 
@@ -681,7 +681,7 @@ void SQLTransactionBackend::getNextStatement()
 {
     m_currentStatementBackend = nullptr;
 
-    MutexLocker locker(m_statementMutex);
+    LockHolder locker(m_statementMutex);
     if (!m_statementQueue.isEmpty())
         m_currentStatementBackend = m_statementQueue.takeFirst();
 }

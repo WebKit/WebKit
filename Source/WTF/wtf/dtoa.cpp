@@ -3,7 +3,7 @@
  * The author of this software is David M. Gay.
  *
  * Copyright (c) 1991, 2000, 2001 by Lucent Technologies.
- * Copyright (C) 2002, 2005, 2006, 2007, 2008, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2007, 2008, 2010, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose without fee is hereby granted, provided that this entire notice
@@ -36,6 +36,7 @@
 #include "dtoa.h"
 
 #include <stdio.h>
+#include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -54,7 +55,7 @@
 
 namespace WTF {
 
-Mutex* s_dtoaP5Mutex;
+static StaticLock s_dtoaP5Mutex;
 
 typedef union {
     double d;
@@ -375,7 +376,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
     if (!(k >>= 2))
         return;
 
-    s_dtoaP5Mutex->lock();
+    s_dtoaP5Mutex.lock();
     P5Node* p5 = p5s;
 
     if (!p5) {
@@ -388,7 +389,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
     }
 
     int p5sCountLocal = p5sCount;
-    s_dtoaP5Mutex->unlock();
+    s_dtoaP5Mutex.unlock();
     int p5sUsed = 0;
 
     for (;;) {
@@ -399,7 +400,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
             break;
 
         if (++p5sUsed == p5sCountLocal) {
-            s_dtoaP5Mutex->lock();
+            s_dtoaP5Mutex.lock();
             if (p5sUsed == p5sCount) {
                 ASSERT(!p5->next);
                 p5->next = new P5Node;
@@ -410,7 +411,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
             }
 
             p5sCountLocal = p5sCount;
-            s_dtoaP5Mutex->unlock();
+            s_dtoaP5Mutex.unlock();
         }
         p5 = p5->next;
     }

@@ -1,3 +1,27 @@
+2015-08-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all remaining uses of WTF::Mutex with WTF::Lock
+        https://bugs.webkit.org/show_bug.cgi?id=148089
+
+        Reviewed by Geoffrey Garen.
+
+        * Plugins/PluginMainThreadScheduler.cpp:
+        (WebCore::PluginMainThreadScheduler::scheduleCall):
+        (WebCore::PluginMainThreadScheduler::registerPlugin):
+        (WebCore::PluginMainThreadScheduler::unregisterPlugin):
+        (WebCore::PluginMainThreadScheduler::dispatchCallsForPlugin):
+        * Plugins/PluginMainThreadScheduler.h:
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::didRemoveAllIcons):
+        (WebIconDatabase::didImportIconURLForPageURL):
+        (WebIconDatabase::deliverNotifications):
+        * WebIconDatabase.h:
+        * WebLocalizableStrings.cpp:
+        (mainBundleLocStrings):
+        (frameworkLocStringsMutex):
+        (findCachedString):
+        (cacheString):
+
 2015-08-17  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Accelerated compositing does not respect device scale factor.

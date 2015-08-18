@@ -30,6 +30,7 @@
 
 #include "AudioDestinationConsumer.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
@@ -65,7 +66,7 @@ private:
     MediaStreamAudioSource();
 
     String m_deviceId;
-    Mutex m_audioConsumersLock;
+    Lock m_audioConsumersLock;
     Vector<RefPtr<AudioDestinationConsumer>> m_audioConsumers;
     RealtimeMediaSourceStates m_currentStates;
 };

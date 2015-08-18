@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
@@ -44,9 +45,9 @@ static const size_t javaScriptThreadsCount = 4;
 static bool javaScriptThreadsShouldTerminate;
 static JSContextGroupRef javaScriptThreadsGroup;
 
-static Mutex& javaScriptThreadsMutex()
+static Lock& javaScriptThreadsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, staticMutex, ());
     return staticMutex;
 }
 
@@ -70,26 +71,26 @@ void runJavaScriptThread(void*)
 
     JSGlobalContextRef ctx;
     {
-        MutexLocker locker(javaScriptThreadsMutex());
+        LockHolder locker(javaScriptThreadsMutex());
         ctx = JSGlobalContextCreateInGroup(javaScriptThreadsGroup, 0);
     }
 
     JSStringRef scriptRef;
     {
-        MutexLocker locker(javaScriptThreadsMutex());
+        LockHolder locker(javaScriptThreadsMutex());
         scriptRef = JSStringCreateWithUTF8CString(script);
     }
 
     while (true) {
         {
-            MutexLocker locker(javaScriptThreadsMutex());
+            LockHolder locker(javaScriptThreadsMutex());
             JSValueRef exception = 0;
             JSEvaluateScript(ctx, scriptRef, 0, 0, 1, &exception);
             ASSERT(!exception);
         }
 
         {
-            MutexLocker locker(javaScriptThreadsMutex());
+            LockHolder locker(javaScriptThreadsMutex());
             const size_t valuesCount = 1024;
             JSValueRef values[valuesCount];
             for (size_t i = 0; i < valuesCount; ++i)
@@ -97,7 +98,7 @@ void runJavaScriptThread(void*)
         }
 
         {
-            MutexLocker locker(javaScriptThreadsMutex());
+            LockHolder locker(javaScriptThreadsMutex());
             if (javaScriptThreadsShouldTerminate)
                 break;
         }
@@ -106,7 +107,7 @@ void runJavaScriptThread(void*)
         if (rand() % 5)
             continue;
 
-        MutexLocker locker(javaScriptThreadsMutex());
+        LockHolder locker(javaScriptThreadsMutex());
         ThreadIdentifier thread = currentThread();
         detachThread(thread);
         javaScriptThreads().remove(thread);
@@ -114,7 +115,7 @@ void runJavaScriptThread(void*)
         break;
     }
 
-    MutexLocker locker(javaScriptThreadsMutex());
+    LockHolder locker(javaScriptThreadsMutex());
     JSStringRelease(scriptRef);
     JSGarbageCollect(ctx);
     JSGlobalContextRelease(ctx);
@@ -124,7 +125,7 @@ void startJavaScriptThreads()
 {
     javaScriptThreadsGroup = JSContextGroupCreate();
 
-    MutexLocker locker(javaScriptThreadsMutex());
+    LockHolder locker(javaScriptThreadsMutex());
 
     for (size_t i = 0; i < javaScriptThreadsCount; ++i)
         javaScriptThreads().add(createThread(&runJavaScriptThread, 0, 0));
@@ -133,13 +134,13 @@ void startJavaScriptThreads()
 void stopJavaScriptThreads()
 {
     {
-        MutexLocker locker(javaScriptThreadsMutex());
+        LockHolder locker(javaScriptThreadsMutex());
         javaScriptThreadsShouldTerminate = true;
     }
 
     Vector<ThreadIdentifier, javaScriptThreadsCount> threads;
     {
-        MutexLocker locker(javaScriptThreadsMutex());
+        LockHolder locker(javaScriptThreadsMutex());
         copyToVector(javaScriptThreads(), threads);
         ASSERT(threads.size() == javaScriptThreadsCount);
     }
@@ -148,7 +149,7 @@ void stopJavaScriptThreads()
         waitForThreadCompletion(threads[i]);
 
     {
-        MutexLocker locker(javaScriptThreadsMutex());
+        LockHolder locker(javaScriptThreadsMutex());
         javaScriptThreads().clear();
     }
 

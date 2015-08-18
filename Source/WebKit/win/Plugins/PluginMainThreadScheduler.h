@@ -28,6 +28,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
@@ -79,7 +80,7 @@ private:
 
     bool m_callPending;
     CallQueueMap m_callQueueMap;
-    Mutex m_queueMutex;
+    Lock m_queueMutex;
 };
 
 } // namespace WebCore

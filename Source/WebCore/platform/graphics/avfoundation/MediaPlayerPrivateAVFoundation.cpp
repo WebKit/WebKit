@@ -735,7 +735,7 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 
 void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay) const
 {
-    MutexLocker lock(m_queueMutex);
+    LockHolder lock(m_queueMutex);
     if (delay)
         ++m_delayCallbacks;
     else {
@@ -754,7 +754,7 @@ void MediaPlayerPrivateAVFoundation::mainThreadCallback(void* context)
 
 void MediaPlayerPrivateAVFoundation::clearMainThreadPendingFlag()
 {
-    MutexLocker lock(m_queueMutex);
+    LockHolder lock(m_queueMutex);
     m_mainThreadCallPending = false;
 }
 
@@ -820,7 +820,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
 
     Notification notification = Notification();
     {
-        MutexLocker lock(m_queueMutex);
+        LockHolder lock(m_queueMutex);
         
         if (m_queuedNotifications.isEmpty())
             return;

@@ -33,6 +33,7 @@
 #if ENABLE(ICONDATABASE)
 #include "SQLiteDatabase.h"
 #include "Timer.h"
+#include <wtf/Condition.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -141,8 +142,8 @@ private:
     bool m_isEnabled;
     bool m_privateBrowsingEnabled;
 
-    mutable Mutex m_syncLock;
-    ThreadCondition m_syncCondition;
+    mutable Lock m_syncLock;
+    Condition m_syncCondition;
     String m_databaseDirectory;
     // Holding m_syncLock is required when accessing m_completeDatabasePath
     String m_completeDatabasePath;
@@ -153,24 +154,24 @@ private:
     bool m_syncThreadHasWorkToDo;
     std::unique_ptr<SuddenTerminationDisabler> m_disableSuddenTerminationWhileSyncThreadHasWorkToDo;
 
-    Mutex m_urlAndIconLock;
+    Lock m_urlAndIconLock;
     // Holding m_urlAndIconLock is required when accessing any of the following data structures or the objects they contain
     HashMap<String, IconRecord*> m_iconURLToRecordMap;
     HashMap<String, PageURLRecord*> m_pageURLToRecordMap;
     HashSet<String> m_retainedPageURLs;
 
-    Mutex m_pendingSyncLock;
+    Lock m_pendingSyncLock;
     // Holding m_pendingSyncLock is required when accessing any of the following data structures
     HashMap<String, PageURLSnapshot> m_pageURLsPendingSync;
     HashMap<String, IconSnapshot> m_iconsPendingSync;
     
-    Mutex m_pendingReadingLock;    
+    Lock m_pendingReadingLock;    
     // Holding m_pendingSyncLock is required when accessing any of the following data structures - when dealing with IconRecord*s, holding m_urlAndIconLock is also required
     HashSet<String> m_pageURLsPendingImport;
     HashSet<String> m_pageURLsInterestedInIcons;
     HashSet<IconRecord*> m_iconsPendingReading;
 
-    Mutex m_urlsToRetainOrReleaseLock;
+    Lock m_urlsToRetainOrReleaseLock;
     // Holding m_urlsToRetainOrReleaseLock is required when accessing any of the following data structures.
     HashCountedSet<String> m_urlsToRetain;
     HashCountedSet<String> m_urlsToRelease;

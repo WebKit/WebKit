@@ -33,6 +33,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -44,9 +45,9 @@ WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit
 
 typedef HashMap<String, LocalizedString*> LocalizedStringMap;
 
-static Mutex& mainBundleLocStringsMutex()
+static Lock& mainBundleLocStringsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, mutex, ());
     return mutex;
 }
 
@@ -56,9 +57,9 @@ static LocalizedStringMap& mainBundleLocStrings()
     return map;
 }
 
-static Mutex& frameworkLocStringsMutex()
+static Lock& frameworkLocStringsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, mutex, ());
     return mutex;
 }
 
@@ -175,12 +176,12 @@ static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* st
 static LocalizedString* findCachedString(WebLocalizableStringsBundle* stringsBundle, const String& key)
 {
     if (!stringsBundle) {
-        MutexLocker lock(mainBundleLocStringsMutex());
+        LockHolder lock(mainBundleLocStringsMutex());
         return mainBundleLocStrings().get(key);
     }
 
     if (stringsBundle->bundle == WebKitLocalizableStringsBundle.bundle) {
-        MutexLocker lock(frameworkLocStringsMutex());
+        LockHolder lock(frameworkLocStringsMutex());
         return frameworkLocStrings().get(key);
     }
 
@@ -190,12 +191,12 @@ static LocalizedString* findCachedString(WebLocalizableStringsBundle* stringsBun
 static void cacheString(WebLocalizableStringsBundle* stringsBundle, const String& key, LocalizedString* value)
 {
     if (!stringsBundle) {
-        MutexLocker lock(mainBundleLocStringsMutex());
+        LockHolder lock(mainBundleLocStringsMutex());
         mainBundleLocStrings().set(key, value);
         return;
     }
 
-    MutexLocker lock(frameworkLocStringsMutex());
+    LockHolder lock(frameworkLocStringsMutex());
     frameworkLocStrings().set(key, value);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include <functional>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -317,7 +318,7 @@ private:
     std::function<void()> m_pendingSeek;
 
     Vector<Notification> m_queuedNotifications;
-    mutable Mutex m_queueMutex;
+    mutable Lock m_queueMutex;
 
     mutable std::unique_ptr<PlatformTimeRanges> m_cachedLoadedTimeRanges;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ void DatabaseTaskSynchronizer::taskCompleted()
 {
     m_synchronousMutex.lock();
     m_taskCompleted = true;
-    m_synchronousCondition.signal();
+    m_synchronousCondition.notifyOne();
     m_synchronousMutex.unlock();
 }
 

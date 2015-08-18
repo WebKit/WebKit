@@ -126,7 +126,6 @@ void initializeThreading()
     ThreadIdentifierData::initializeOnce();
     StackStats::initialize();
     wtfThreadData();
-    s_dtoaP5Mutex = new Mutex;
     initializeDates();
 }
 

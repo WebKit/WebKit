@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,8 @@
 #include <debugger/Debugger.h>
 #include <heap/Strong.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/NakedPtr.h>
-#include <wtf/Threading.h>
 
 namespace Deprecated {
 class ScriptValue;
@@ -97,7 +97,7 @@ namespace WebCore {
         WorkerGlobalScope* m_workerGlobalScope;
         JSC::Strong<JSWorkerGlobalScope> m_workerGlobalScopeWrapper;
         bool m_executionForbidden;
-        mutable Mutex m_scheduledTerminationMutex;
+        mutable Lock m_scheduledTerminationMutex;
     };
 
 } // namespace WebCore
