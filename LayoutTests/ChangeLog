@@ -1,3 +1,11 @@
+2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Test gardening
+
+        Unreviewed.
+
+        * platform/win/fast/text/system-font-punctuation-expected.txt: Added.
+
 2015-08-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorTest should be a subclass of TestHarness
