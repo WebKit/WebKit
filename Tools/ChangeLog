@@ -1,3 +1,11 @@
+2015-08-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the build
+
+        Unreviewed.
+
+        * TestWebKitAPI/Tests/WTF/StringHasher.cpp:
+
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Build Debug Suffix on Windows with CMake
