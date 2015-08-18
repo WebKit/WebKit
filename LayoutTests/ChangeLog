@@ -1,5 +1,17 @@
 2015-08-18  Simon Fraser  <simon.fraser@apple.com>
 
+        will-change: backface-visibility should not cause stacking context
+        https://bugs.webkit.org/show_bug.cgi?id=148091
+
+        Reviewed by Zalan Bujtas.
+        
+        Test that will-change: -webkit-backface-visibility does not create
+        stacking context.
+
+        * fast/css/will-change/resources/will-change-stacking-helper.js:
+
+2015-08-18  Simon Fraser  <simon.fraser@apple.com>
+
         Mark fast/css/will-change/will-change-creates-stacking-context.html as an image-only
         failure. Filed webkit.org/b/148144 to track it.
 

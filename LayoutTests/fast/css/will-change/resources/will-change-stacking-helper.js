@@ -2,6 +2,7 @@ var willChangeValues = [
     { 'property' : 'auto', 'stacking' : false },
     { 'property' : 'background', 'stacking' : false },
     { 'property' : 'will-change', 'stacking' : false },
+    { 'property' : '-webkit-backface-visibility', 'stacking' : false },
 
     { 'property' : 'clip-path', 'stacking' : true },
     { 'property' : 'mask', 'stacking' : true },
@@ -16,7 +17,6 @@ var willChangeValues = [
 
     { 'property' : '-webkit-filter', 'stacking' : true },
     { 'property' : '-webkit-clip-path', 'stacking' : true },
-    { 'property' : '-webkit-backface-visibility', 'stacking' : true },
     { 'property' : '-webkit-box-reflect', 'stacking' : true },
     { 'property' : '-webkit-backdrop-filter', 'stacking' : true },
     { 'property' : '-webkit-mask', 'stacking' : true },

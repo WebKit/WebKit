@@ -165,10 +165,6 @@ public:
     bool hasClipOrOverflowClip() const { return hasClip() || hasOverflowClip(); }
     bool hasClipPath() const { return style().clipPath(); }
     bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
-    bool willChangeCreatesStackingContext() const
-    {
-        return style().willChange() && style().willChange()->canCreateStackingContext() && shouldWillChangeCreateStackingContext();
-    }
 
     // anchorRect() is conceptually similar to absoluteBoundingBoxRect(), but is intended for scrolling to an anchor.
     // For inline renderers, this gets the logical top left of the first leaf child and the logical bottom right of the
