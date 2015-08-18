@@ -1,3 +1,13 @@
+2015-08-18  Alex Christensen  <achristensen@webkit.org>
+
+        [CMake] REGRESSION(r188540): WebKitTestRunner is not longer built and all the tests (layout and perf) fail.
+        https://bugs.webkit.org/show_bug.cgi?id=148127
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt:
+        TOOLS_DIR hasn't been set yet since its defining has been moved to WebKitFS. 
+
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
         [Win CMake] Allow WebKitLibraries directory to be set from the command line
