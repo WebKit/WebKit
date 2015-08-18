@@ -1,3 +1,21 @@
+2015-08-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Option-Enter should commit console command without erasing the prompt
+        https://bugs.webkit.org/show_bug.cgi?id=148123
+
+        Also, don't append a console command if it's the same as the last one.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        (WebInspector.ConsolePrompt.prototype._handleEnterKey.commitTextOrInsertNewLine):
+        (WebInspector.ConsolePrompt.prototype._handleEnterKey):
+        (WebInspector.ConsolePrompt.prototype._handleOptionEnterKey):
+        (WebInspector.ConsolePrompt.prototype._handleCommandOptionEnterKey):
+
 2015-08-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r188539, r188544, r188552, and
