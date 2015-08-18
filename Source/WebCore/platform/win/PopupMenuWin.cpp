@@ -313,11 +313,9 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     // r is in absolute document coordinates, but we want to be in screen coordinates.
 
     // First, move to WebView coordinates
-    IntRect rScaled = r;
-    Page* page = v->frame().page();
-    if (page)
-        rScaled.scale(page->deviceScaleFactor());
-    IntRect rScreenCoords(v->contentsToWindow(rScaled.location()), rScaled.size());
+    IntRect rScreenCoords(v->contentsToWindow(r.location()), r.size());
+    if (Page* page = v->frame().page())
+        rScreenCoords.scale(page->deviceScaleFactor());
 
     // Then, translate to screen coordinates
     POINT location(rScreenCoords.location());
