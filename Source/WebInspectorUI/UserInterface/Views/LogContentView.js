@@ -45,6 +45,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         this.messagesElement.setAttribute("role", "log");
         this.messagesElement.addEventListener("mousedown", this._mousedown.bind(this));
         this.messagesElement.addEventListener("keydown", this._keyDown.bind(this));
+        this.messagesElement.addEventListener("keypress", this._keyPress.bind(this));
         this.messagesElement.addEventListener("dragstart", this._ondragstart.bind(this), true);
         this.element.appendChild(this.messagesElement);
 
@@ -726,6 +727,13 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             this._leftArrowWasPressed(event);
         else if (event.keyIdentifier === "Right")
             this._rightArrowWasPressed(event);
+    }
+
+    _keyPress(event)
+    {
+        const isCommandC = event.metaKey && event.keyCode === 99;
+        if (!isCommandC)
+            this.prompt.focus();
     }
 
     _commandAWasPressed(event)
