@@ -1296,3 +1296,6 @@ webkit.org/b/147390 [ Mavericks Yosemite ElCapitan ] fast/text/fallback-language
 
 # Started to fail after r188390
 webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Failure ]
+
+# This test tests a particular system font, which is only on iOS and El Capitan.
+webkit.org/b/148119 [ Mavericks Yosemite ] fast/text/trak-optimizeLegibility.html [ Failure ]

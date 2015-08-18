@@ -457,13 +457,9 @@ static inline bool advanceForColorBitmapFont(const FontPlatformData& platformDat
 static inline bool canUseFastGlyphAdvanceGetter(const Font& font, Glyph glyph, CGSize& advance, bool& populatedAdvance)
 {
     const FontPlatformData& platformData = font.platformData();
-    // Fast getter doesn't take custom tracking into account
-    if (font.hasCustomTracking())
+    // Fast getter doesn't doesn't work for emoji, bitmap fonts, or take custom tracking into account
+    if (font.hasCustomTracking() || platformData.isEmoji() || platformData.textRenderingMode() == OptimizeLegibility)
         return false;
-    // Fast getter doesn't work for emoji
-    if (platformData.isEmoji())
-        return false;
-    // ... or for any bitmap fonts in general
     if (advanceForColorBitmapFont(platformData, glyph, advance)) {
         populatedAdvance = true;
         return false;

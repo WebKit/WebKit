@@ -92,7 +92,7 @@ PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescrip
     if (!substituteFont)
         return nullptr;
 
-    substituteFont = applyFontFeatureSettings(substituteFont.get(), description.featureSettings());
+    substituteFont = preparePlatformFont(substituteFont.get(), description.textRenderingMode(), description.featureSettings());
 
     CTFontSymbolicTraits originalTraits = CTFontGetSymbolicTraits(ctFont);
     CTFontSymbolicTraits actualTraits = 0;
@@ -718,7 +718,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (!ctFont)
         return nullptr;
 
-    ctFont = applyFontFeatureSettings(ctFont.get(), fontDescription.featureSettings());
+    ctFont = preparePlatformFont(ctFont.get(), fontDescription.textRenderingMode(), fontDescription.featureSettings());
 
     CTFontSymbolicTraits actualTraits = 0;
     if (isFontWeightBold(fontDescription.weight()) || fontDescription.italic())
@@ -729,7 +729,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && (traits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold) && !isAppleColorEmoji;
     bool syntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (traits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic) && !isAppleColorEmoji;
 
-    auto result = std::make_unique<FontPlatformData>(ctFont.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
+    auto result = std::make_unique<FontPlatformData>(ctFont.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
     if (isAppleColorEmoji)
         result->setIsEmoji(true);
     return result;

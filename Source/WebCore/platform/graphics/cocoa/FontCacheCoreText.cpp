@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FontCache.h"
 
+#include "CoreTextSPI.h"
 #include <CoreText/SFNTLayoutTypes.h>
 
 #include <wtf/NeverDestroyed.h>
@@ -137,19 +138,26 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
 #endif
 }
 
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const FontFeatureSettings* features)
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* features)
 {
-    if (!originalFont || !features || !features->size())
+    if (!originalFont || ((!features || !features->size()) && (textRenderingMode != OptimizeLegibility)))
         return originalFont;
 
-    RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features->size(), &kCFTypeArrayCallBacks));
-    for (size_t i = 0; i < features->size(); ++i) {
-        appendTrueTypeFeature(featureArray.get(), features->at(i));
-        appendOpenTypeFeature(featureArray.get(), features->at(i));
+    RetainPtr<CFMutableDictionaryRef> attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    if (features && features->size()) {
+        RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features->size(), &kCFTypeArrayCallBacks));
+        for (size_t i = 0; i < features->size(); ++i) {
+            appendTrueTypeFeature(featureArray.get(), features->at(i));
+            appendOpenTypeFeature(featureArray.get(), features->at(i));
+        }
+        CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
     }
-    CFArrayRef featureArrayPtr = featureArray.get();
-    RetainPtr<CFDictionaryRef> dictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)&kCTFontFeatureSettingsAttribute, (const void**)&featureArrayPtr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    RetainPtr<CTFontDescriptorRef> descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(dictionary.get()));
+    if (textRenderingMode == OptimizeLegibility) {
+        CGFloat size = CTFontGetSize(originalFont);
+        RetainPtr<CFNumberRef> sizeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &size));
+        CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, sizeNumber.get());
+    }
+    RetainPtr<CTFontDescriptorRef> descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     return adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
 }
 

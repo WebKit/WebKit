@@ -49,6 +49,7 @@ typedef const UniChar* (*CTUniCharProviderCallback)(CFIndex stringIndex, CFIndex
 typedef void (*CTUniCharDisposeCallback)(const UniChar* chars, void* refCon);
 
 extern const CFStringRef kCTFontReferenceURLAttribute;
+extern const CFStringRef kCTFontOpticalSizeAttribute;
 
 #if PLATFORM(COCOA)
 #if !USE(APPLE_INTERNAL_SDK)

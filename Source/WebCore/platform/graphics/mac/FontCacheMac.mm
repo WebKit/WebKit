@@ -264,7 +264,7 @@ static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, F
 // Family name is somewhat of a misnomer here. We first attempt to find an exact match
 // comparing the desiredFamily to the PostScript name of the installed fonts. If that fails
 // we then do a search based on the family names of the installed fonts.
-static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, const FontFeatureSettings* featureSettings, float size)
+static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, const FontFeatureSettings* featureSettings, TextRenderingMode textRenderingMode, float size)
 {
     if (const auto& specialCase = fontWithFamilySpecialCase(family, weight, desiredTraits, size))
         return specialCase.value();
@@ -287,7 +287,7 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 
     NSString *desiredFamily = family;
     RetainPtr<CTFontRef> foundFont = adoptCF(CTFontCreateForCSS((CFStringRef)desiredFamily, toCoreTextFontWeight(weight), requestedTraits, size));
-    foundFont = applyFontFeatureSettings(foundFont.get(), featureSettings);
+    foundFont = preparePlatformFont(foundFont.get(), textRenderingMode, featureSettings);
     if (!foundFont)
         return nil;
     font = CFBridgingRelease(CFRetain(foundFont.get()));
@@ -297,6 +297,7 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 #else
 
     UNUSED_PARAM(featureSettings);
+    UNUSED_PARAM(textRenderingMode);
 
     NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (weight >= FontWeight600 ? NSBoldFontMask : 0);
     if (hasDesiredFamilyToAvailableFamilyMapping(family, desiredTraitsForNameMatch, availableFamily)) {
@@ -520,7 +521,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     const FontPlatformData& platformData = originalFontData->platformData();
     NSFont *nsFont = platformData.nsFont();
     RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), description.locale(), characters, length);
-    result = applyFontFeatureSettings(result.get(), description.featureSettings());
+    result = preparePlatformFont(result.get(), description.textRenderingMode(), description.featureSettings());
     if (!result)
         return nullptr;
 
@@ -679,7 +680,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     NSFontTraitMask traits = fontDescription.italic() ? NSFontItalicTrait : 0;
     float size = fontDescription.computedPixelSize();
 
-    NSFont *nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), size);
+    NSFont *nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
     if (!nsFont) {
         if (!shouldAutoActivateFontIfNeeded(family))
             return nullptr;
@@ -688,7 +689,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         [NSFont fontWithName:family size:size];
 
-        nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), size);
+        nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
         if (!nsFont)
             return nullptr;
     }
@@ -703,7 +704,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && isAppKitFontWeightBold(toAppKitFontWeight(fontDescription.weight())) && !isAppKitFontWeightBold(actualWeight);
     bool syntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
-    return std::make_unique<FontPlatformData>(toCTFont(platformFont), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
+    return std::make_unique<FontPlatformData>(toCTFont(platformFont), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
 }
 
 } // namespace WebCore

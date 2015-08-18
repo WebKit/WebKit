@@ -105,7 +105,8 @@ private:
     static unsigned makeFlagKey(const FontDescription& description)
     {
         static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
-        return static_cast<unsigned>(description.script()) << 9
+        return static_cast<unsigned>(description.script()) << 11
+            | static_cast<unsigned>(description.textRenderingMode()) << 9
             | static_cast<unsigned>(description.smallCaps()) << 8
             | static_cast<unsigned>(description.fontSynthesis()) << 6
             | static_cast<unsigned>(description.widthVariant()) << 4
@@ -215,7 +216,7 @@ private:
 };
 
 #if PLATFORM(COCOA)
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings*);
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, TextRenderingMode, const FontFeatureSettings*);
 #endif
 
 #if !PLATFORM(MAC)

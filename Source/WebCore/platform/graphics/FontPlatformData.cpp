@@ -43,25 +43,26 @@ FontPlatformData::FontPlatformData()
 {
 }
 
-FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
+FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_orientation(orientation)
     , m_size(size)
     , m_widthVariant(widthVariant)
+    , m_textRenderingMode(textRenderingMode)
 {
 }
 
 #if USE(CG)
-FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant)
+FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
+    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
 {
     m_cgFont = cgFont;
 }
 #endif
 
 FontPlatformData::FontPlatformData(const FontPlatformData& source)
-    : FontPlatformData(source.m_size, source.m_syntheticBold, source.m_syntheticOblique, source.m_orientation, source.m_widthVariant)
+    : FontPlatformData(source.m_size, source.m_syntheticBold, source.m_syntheticOblique, source.m_orientation, source.m_widthVariant, source.m_textRenderingMode)
 {
     m_isHashTableDeletedValue = source.m_isHashTableDeletedValue;
     m_isColorBitmapFont = source.m_isColorBitmapFont;
@@ -81,6 +82,7 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
     m_size = other.m_size;
     m_widthVariant = other.m_widthVariant;
     m_isColorBitmapFont = other.m_isColorBitmapFont;
+    m_textRenderingMode = other.m_textRenderingMode;
 
     return platformDataAssign(other);
 }

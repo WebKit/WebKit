@@ -1,3 +1,17 @@
+2015-08-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Honor the 'trak' table by opting in via text-rendering: optimizeLegibility
+        https://bugs.webkit.org/show_bug.cgi?id=148119
+        <rdar://problem/22291561>
+
+        Reviewed by Tim Horton.
+
+        This test will fail until we stop mocking the system font on El Capitan. Until then,
+        this patch will commit the test failure as an expected result.
+
+        * fast/text/trak-optimizeLegibility-expected.html: Added
+        * fast/text/trak-optimizeLegibility.html: Added
+
 2015-08-18  Chris Dumez  <cdumez@apple.com>
 
         Make our bindings' GetOwnPropertySlot() behave according to specification
