@@ -1,5 +1,21 @@
 2015-08-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: delete key should work on multi-values visual sidebar grid sections
+        https://bugs.webkit.org/show_bug.cgi?id=148110
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._listElementKeyDown):
+        If the backspace/delete key is pressed when focus is within the list element, delete
+        the selected list item if it is not currently being edited (if it has an editor).
+
+        * UserInterface/Views/VisualStyleFontFamilyTreeElement.js:
+        (WebInspector.VisualStyleFontFamilyTreeElement.prototype.get currentlyEditing):
+
+2015-08-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: web fonts or unknown fonts show up as Times in visual sidebar
         https://bugs.webkit.org/show_bug.cgi?id=148103
 

@@ -62,6 +62,11 @@ WebInspector.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeE
         this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.KeywordChanged);
     }
 
+    get currentlyEditing()
+    {
+        return !this.keywordEditorHidden;
+    }
+
     showKeywordEditor()
     {
         if (!this.keywordEditorHidden)
