@@ -49,24 +49,7 @@
 
 namespace WebCore {
 
-bool isPositionInRange(const VisiblePosition& position, Range* range)
-{
-    RefPtr<Range> positionRange = makeRange(position, position);
-
-    ExceptionCode ec = 0;
-    range->compareBoundaryPoints(Range::START_TO_START, positionRange.get(), ec);
-    if (ec)
-        return false;
-
-    if (!range->isPointInRange(positionRange->startContainer(), positionRange->startOffset(), ec))
-        return false;
-    if (ec)
-        return false;
-
-    return true;
-}
-
-bool shouldUseSelection(const VisiblePosition& position, const VisibleSelection& selection)
+static bool selectionContainsPosition(const VisiblePosition& position, const VisibleSelection& selection)
 {
     if (!selection.isRange())
         return false;
@@ -75,7 +58,7 @@ bool shouldUseSelection(const VisiblePosition& position, const VisibleSelection&
     if (!selectedRange)
         return false;
 
-    return isPositionInRange(position, selectedRange.get());
+    return selectedRange->contains(position);
 }
 
 PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection& selection, NSDictionary **options)
@@ -127,8 +110,9 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
+    // If we hit the selection, use that instead of letting Lookup decide the range.
     VisibleSelection selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
-    if (shouldUseSelection(position, selection))
+    if (selectionContainsPosition(position, selection))
         return rangeForDictionaryLookupForSelection(selection, options);
 
     VisibleSelection selectionAccountingForLineRules = VisibleSelection(position);

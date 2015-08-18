@@ -37,13 +37,7 @@ namespace WebCore {
 
 class HitTestResult;
 class Range;
-class VisiblePosition;
 class VisibleSelection;
-
-// FIXME: Some of these functions should probably be in a more generic class.
-// https://bugs.webkit.org/show_bug.cgi?id=138567
-bool isPositionInRange(const VisiblePosition&, Range*);
-bool shouldUseSelection(const VisiblePosition&, const VisibleSelection&);
 
 WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, NSDictionary **options);
 WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);

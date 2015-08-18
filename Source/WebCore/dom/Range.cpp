@@ -1960,6 +1960,14 @@ bool Range::contains(const Range& other) const
     return endToEnd >= 0;
 }
 
+bool Range::contains(const VisiblePosition& position) const
+{
+    RefPtr<Range> positionRange = makeRange(position, position);
+    if (!positionRange)
+        return false;
+    return contains(*positionRange);
+}
+
 bool areRangesEqual(const Range* a, const Range* b)
 {
     if (a == b)

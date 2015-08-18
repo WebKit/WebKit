@@ -155,6 +155,7 @@ public:
 #endif
 
     WEBCORE_EXPORT bool contains(const Range&) const;
+    bool contains(const VisiblePosition&) const;
 
 private:
     explicit Range(Document&);
