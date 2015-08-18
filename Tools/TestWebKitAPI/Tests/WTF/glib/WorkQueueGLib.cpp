@@ -28,6 +28,8 @@
 #include "Test.h"
 #include <gio/gio.h>
 #include <thread>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -38,7 +40,7 @@ TEST(WTF_WorkQueue, AsyncIO)
 {
     struct TestingContext {
         Lock m_lock;
-        ThreadCondition m_testCompleted;
+        Condition m_testCompleted;
         GMainContext* m_mainContext;
     } context;
 
@@ -59,7 +61,7 @@ TEST(WTF_WorkQueue, AsyncIO)
                 TestingContext* context = static_cast<TestingContext*>(userData);
                 LockHolder locker(context->m_lock);
                 EXPECT_EQ(g_main_context_get_thread_default(), context->m_mainContext);
-                context->m_testCompleted.signal();
+                context->m_testCompleted.notifyOne();
             }, &context);
     });
 

@@ -1,3 +1,10 @@
+2015-08-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix GTK build.
+
+        * TestWebKitAPI/Tests/WTF/glib/WorkQueueGLib.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-08-17  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all remaining uses of WTF::Mutex with WTF::Lock
