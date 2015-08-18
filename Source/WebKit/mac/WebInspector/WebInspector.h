@@ -61,4 +61,6 @@ extern NSString *WebInspectorDidStopSearchingForNode;
 - (void)toggleProfilingJavaScript:(id)sender;
 - (void)startProfilingJavaScript:(id)sender;
 - (void)stopProfilingJavaScript:(id)sender;
+
+@property (nonatomic, readonly, getter=isOpen) BOOL open;
 @end

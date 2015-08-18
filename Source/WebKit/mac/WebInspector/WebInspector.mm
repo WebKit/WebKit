@@ -150,6 +150,11 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
         [_frontend setTimelineProfilingEnabled:enabled];
 }
 
+- (BOOL)isOpen
+{
+    return !!_frontend;
+}
+
 - (void)close:(id)sender 
 {
     if (Page* page = core(_webView))

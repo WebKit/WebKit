@@ -1,3 +1,17 @@
+2015-08-17  Jeff Miller  <jeffm@apple.com>
+
+        Add a method to WebInspector to indicate whether the inspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=148087
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebInspector/WebInspector.h:
+        Added open property.
+
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector isOpen]):
+        Added, returns YES if we have a frontend.
+
 2015-08-13  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Downloads do not start if policy decision is made asynchronously
