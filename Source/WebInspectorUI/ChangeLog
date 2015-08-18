@@ -1,5 +1,16 @@
 2015-08-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: font-family list is backwards in visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=148101
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._addCommaSeparatedKeyword):
+        Now appends new children if the current index is not set instead of inserting them.
+
+2015-08-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Style changes to Visual sidebar selector items
         https://bugs.webkit.org/show_bug.cgi?id=148114
 
