@@ -1,5 +1,19 @@
 2015-08-17  Alex Christensen  <achristensen@webkit.org>
 
+        Add const to content extension parser
+        https://bugs.webkit.org/show_bug.cgi?id=148044
+
+        Reviewed by Benjamin Poulain.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly):
+        (JSC::JSObject::getDirectIndex):
+        (JSC::JSObject::getIndex):
+        Added a few const keywords.
+
+2015-08-17  Alex Christensen  <achristensen@webkit.org>
+
         Build Debug Suffix on Windows with CMake
         https://bugs.webkit.org/show_bug.cgi?id=148083
 

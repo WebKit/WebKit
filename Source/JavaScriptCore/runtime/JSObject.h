@@ -222,7 +222,7 @@ public:
         }
     }
         
-    JSValue tryGetIndexQuickly(unsigned i)
+    JSValue tryGetIndexQuickly(unsigned i) const
     {
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
@@ -268,7 +268,7 @@ public:
         return JSValue();
     }
         
-    JSValue getIndex(ExecState* exec, unsigned i)
+    JSValue getIndex(ExecState* exec, unsigned i) const
     {
         if (JSValue result = tryGetIndexQuickly(i))
             return result;
