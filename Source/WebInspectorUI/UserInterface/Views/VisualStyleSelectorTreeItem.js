@@ -191,6 +191,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     {
         this._hideDOMNodeHighlight();
         this._listItemNode.classList.remove("editable");
+        this._updateTitleTooltip();
 
         let value = this.selectorText;
         if (value === this._lastValue && this._valid)

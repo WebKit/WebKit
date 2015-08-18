@@ -328,7 +328,29 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._populateSection(group, [displayGroup]);
     }
 
-    _generateMetricSectionRows(group, prefix, allowNegatives)
+    _addMetricsMouseListeners(editor, mode)
+    {
+        function editorMouseover() {
+            if (!this._currentStyle)
+                return;
+
+            if (!this._currentStyle.ownerRule) {
+                WebInspector.domTreeManager.highlightDOMNode(this._currentStyle.node.id, mode);
+                return;
+            }
+
+            WebInspector.domTreeManager.highlightSelector(this._currentStyle.ownerRule.selectorText, this._currentStyle.node.ownerDocument.frameIdentifier, mode);
+        }
+
+        function editorMouseout() {
+            WebInspector.domTreeManager.hideDOMNodeHighlight();
+        }
+
+        editor.element.addEventListener("mouseover", editorMouseover.bind(this));
+        editor.element.addEventListener("mouseout", editorMouseout);
+    }
+
+    _generateMetricSectionRows(group, prefix, allowNegatives, highlightOnHover)
     {
         let properties = group.properties;
 
@@ -363,6 +385,16 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let allLinkRow = new WebInspector.DetailsSectionRow;
         let allLink = new WebInspector.VisualStylePropertyEditorLink([properties[top], properties[bottom], properties[left], properties[right]], "link-all", [verticalLink, horizontalLink]);
         allLinkRow.element.appendChild(allLink.element);
+
+        if (highlightOnHover) {
+            this._addMetricsMouseListeners(properties[top], prefix);
+            this._addMetricsMouseListeners(verticalLink, prefix);
+            this._addMetricsMouseListeners(properties[bottom], prefix);
+            this._addMetricsMouseListeners(allLink, prefix);
+            this._addMetricsMouseListeners(properties[left], prefix);
+            this._addMetricsMouseListeners(horizontalLink, prefix);
+            this._addMetricsMouseListeners(properties[right], prefix);
+        }
 
         return [vertical, allLinkRow, horizontal];
     }
@@ -408,28 +440,6 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let floatGroup = new WebInspector.DetailsSectionGroup([floatRow, clearRow]);
         this._populateSection(group, [floatGroup]);
-    }
-
-    _addMetricsMouseListeners(editor, mode)
-    {
-        function onEditorMouseover() {
-            if (!this._style)
-                return;
-
-            if (!this._style.ownerRule) {
-                WebInspector.domTreeManager.highlightDOMNode(this._style.node.id, mode);
-                return;
-            }
-
-            WebInspector.domTreeManager.highlightSelector(this._style.ownerRule.selectorText, this._style.node.ownerDocument.frameIdentifier, mode);
-        }
-
-        function onEditorMouseout() {
-            WebInspector.domTreeManager.hideDOMNodeHighlight();
-        }
-
-        editor.element.addEventListener("mouseover", onEditorMouseover.bind(editor));
-        editor.element.addEventListener("mouseout", onEditorMouseout.bind(editor));
     }
 
     _populateDimensionsSection()
@@ -504,14 +514,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
     _populateMarginSection()
     {
         let group = this._groups.margin;
-        let rows = this._generateMetricSectionRows(group, "margin", true);
-
-        let highlightMode = "margin";
-        this._addMetricsMouseListeners(group.properties.marginTop, highlightMode);
-        this._addMetricsMouseListeners(group.properties.marginBottom, highlightMode);
-        this._addMetricsMouseListeners(group.properties.marginLeft, highlightMode);
-        this._addMetricsMouseListeners(group.properties.marginRight, highlightMode);
-
+        let rows = this._generateMetricSectionRows(group, "margin", true, true);
         let marginGroup = new WebInspector.DetailsSectionGroup(rows);
         this._populateSection(group, [marginGroup]);
     }
@@ -519,14 +522,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
     _populatePaddingSection()
     {
         let group = this._groups.padding;
-        let rows = this._generateMetricSectionRows(group, "padding");
-
-        let highlightMode = "padding";
-        this._addMetricsMouseListeners(group.properties.paddingTop, highlightMode);
-        this._addMetricsMouseListeners(group.properties.paddingBottom, highlightMode);
-        this._addMetricsMouseListeners(group.properties.paddingLeft, highlightMode);
-        this._addMetricsMouseListeners(group.properties.paddingRight, highlightMode);
-
+        let rows = this._generateMetricSectionRows(group, "padding", false, true);
         let paddingGroup = new WebInspector.DetailsSectionGroup(rows);
         this._populateSection(group, [paddingGroup]);
     }

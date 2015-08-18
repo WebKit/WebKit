@@ -27,7 +27,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
 {
     constructor(propertyNames, text, possibleValues, possibleUnits, allowNegativeValues, layoutReversed)
     {
-        super(propertyNames, text, possibleValues, possibleUnits || [WebInspector.UIString("No Units")], "number-input-box", layoutReversed);
+        super(propertyNames, text, possibleValues, possibleUnits || [WebInspector.UIString("Number")], "number-input-box", layoutReversed);
 
         this._hasUnits = !!possibleUnits;
         this._allowNegativeValues = !!allowNegativeValues || false;

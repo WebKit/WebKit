@@ -1,5 +1,42 @@
 2015-08-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Style changes to Visual sidebar selector items
+        https://bugs.webkit.org/show_bug.cgi?id=148114
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype._updateTitleElements):
+        (WebInspector.GeneralTreeElement.prototype._updateTitleTooltip):
+        Moved the code to update the item tooltip to its own function.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners.editorMouseover):
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners.editorMouseout):
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners):
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateMetricSectionRows):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateMarginSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populatePaddingSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners.onEditorMouseover): Deleted.
+        (WebInspector.VisualStyleDetailsPanel.prototype._addMetricsMouseListeners.onEditorMouseout): Deleted.
+        Added on-hover node/selector highlighting to margin and padding editor links.
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox):
+        Replaced "No Units" with "Number" for better clarity.
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-item.selected > input[type="checkbox"]:checked::before):
+        (.item.visual-style-selector-item.selected > input[type="checkbox"]::before): Deleted.
+        Removes the white border when the window is inactive and when the checkbox is unchecked.
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._commitSelector):
+        Now updates the title of the item when the selector changes.
+
+2015-08-17  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: delete key should work on multi-values visual sidebar grid sections
         https://bugs.webkit.org/show_bug.cgi?id=148110
 
