@@ -1,5 +1,32 @@
 2015-08-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Show the computed value in an overlay for numerical Visual Editors
+        https://bugs.webkit.org/show_bug.cgi?id=148161
+
+        Reviewed by Timothy Hatcher.
+
+        Adds an "Unchanged" option to the number-based Visual editors that shows the
+        computed value if it is not a number (it would therefore be a keyword).
+
+        * UserInterface/Views/VisualStyleNumberInputBox.css:
+        (.visual-style-property-container > .visual-style-property-value-container > .number-input-container):
+        (.visual-style-property-container > .visual-style-property-value-container > .number-input-container:not(.has-value) > span):
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set value):
+        (WebInspector.VisualStyleNumberInputBox.prototype.get units):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set units):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set placeholder):
+        (WebInspector.VisualStyleNumberInputBox.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set _unitsElementTextContent):
+        (WebInspector.VisualStyleNumberInputBox.prototype._markUnitsContainerIfInputHasValue):
+        (WebInspector.VisualStyleNumberInputBox.prototype._keywordChanged):
+        (WebInspector.VisualStyleNumberInputBox.prototype._valueNumberInputKeyDown):
+        (WebInspector.VisualStyleNumberInputBox.prototype._numberInputChanged):
+
+2015-08-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Small Caps variant checkbox should be to the left of the Small Caps label
         https://bugs.webkit.org/show_bug.cgi?id=148102
 
