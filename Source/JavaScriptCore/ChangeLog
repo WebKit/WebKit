@@ -1,3 +1,14 @@
+2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Unexpected node preview format for an element with newlines in className attribute
+        https://bugs.webkit.org/show_bug.cgi?id=148192
+
+        Reviewed by Brian Burg.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._nodePreview):
+        Replace whitespace blocks with single spaces to produce a simpler class string for previews.
+
 2015-08-19  Mark Lam  <mark.lam@apple.com>
 
         Add support for CheckWatchdogTimer as slow path in DFG and FTL.

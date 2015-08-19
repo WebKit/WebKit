@@ -811,7 +811,7 @@ InjectedScript.prototype = {
             if (node.id)
                 return "<" + nodeName + " id=\"" + node.id + "\">";
             if (node.classList.length)
-                return "<" + nodeName + " class=\"" + node.classList.toString() + "\">";
+                return "<" + nodeName + " class=\"" + node.classList.toString().replace(/\s+/, " ") + "\">";
             if (nodeName === "input" && node.type)
                 return "<" + nodeName + " type=\"" + node.type + "\">";
             return "<" + nodeName + ">";
