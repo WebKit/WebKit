@@ -33,22 +33,10 @@ namespace WebCore {
 MediaSessionInterruptionProvider::MediaSessionInterruptionProvider(MediaSessionInterruptionProviderClient& client)
     : m_client(&client)
 {
-    beginListeningForInterruptions();
 }
 
 MediaSessionInterruptionProvider::~MediaSessionInterruptionProvider()
 {
-    stopListeningForInterruptions();
-}
-
-void MediaSessionInterruptionProvider::beginListeningForInterruptions()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void MediaSessionInterruptionProvider::stopListeningForInterruptions()
-{
-    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

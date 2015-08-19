@@ -53,8 +53,8 @@ public:
     virtual ~MediaSessionInterruptionProvider();
 
     // To be overriden by subclasses.
-    virtual void beginListeningForInterruptions();
-    virtual void stopListeningForInterruptions();
+    virtual void beginListeningForInterruptions() = 0;
+    virtual void stopListeningForInterruptions() = 0;
 
     MediaSessionInterruptionProviderClient& client() const { return *m_client; }
 
