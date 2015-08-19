@@ -190,7 +190,10 @@ String WebInspectorProxy::inspectorTestPageURL() const
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    return "file://" + WebCore::inspectorResourcePath();
+    StringBuilder builder;
+    builder.appendLiteral("file://");
+    builder.append(WebCore::inspectorResourcePath());
+    return builder.toString();
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()

@@ -1,3 +1,14 @@
+2015-08-18  Jincheol Jo  <jincheol.jo@navercorp.com>
+
+        [EFL] Web Inspector: make to use StringBuilder in inspectorBaseURL
+        https://bugs.webkit.org/show_bug.cgi?id=148126
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+
 2015-08-18  Anders Carlsson  <andersca@apple.com>
 
         Fix build, and fix the version check.
