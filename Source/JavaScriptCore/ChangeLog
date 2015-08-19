@@ -1,3 +1,49 @@
+2015-08-19  Mark Lam  <mark.lam@apple.com>
+
+        Add ability to save and restore JSC options.
+        https://bugs.webkit.org/show_bug.cgi?id=148125
+
+        Reviewed by Saam Barati.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        - Employ the new options getter/setter to run watchdog tests for each of the
+          execution engine tiers.
+        - Also altered the test scripts to be in a function instead of global code.
+          This is one of 2 changes needed to give them an opportunity to be FTL compiled.
+          The other is to add support for compiling CheckWatchdogTimer in the FTL (which
+          will be addressed in a separate patch).
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/Options.cpp:
+        (JSC::parse):
+        - Add the ability to clear a string option with a nullptr value.
+          This is needed to restore a default string option value which may be null.
+
+        (JSC::OptionRange::init):
+        - Add the ability to clear a range option with a null value.
+          This is needed to restore a default range option value which may be null.
+
+        (JSC::Options::initialize):
+        (JSC::Options::dumpOptionsIfNeeded):
+        - Factor code to dump options out to dumpOptionsIfNeeded() since we will need
+          that logic elsewhere.
+
+        (JSC::Options::setOptions):
+        - Parse an options string and set each of the specified options.
+
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::dumpAllOptionsInALine):
+        (JSC::Options::dumpOption):
+        (JSC::Option::dump):
+        - Refactored so that the underlying dumper dumps to a StringBuilder instead of
+          stderr.  This lets us reuse this code to serialize all the options into a
+          single string for dumpAllOptionsInALine().
+
+        * runtime/Options.h:
+        (JSC::OptionRange::rangeString):
+
 2015-08-18  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all uses of std::mutex/std::condition_variable with WTF::Lock/WTF::Condition
