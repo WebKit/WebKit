@@ -30,6 +30,7 @@
 
 #include "PluginModuleInfo.h"
 #include <mutex>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GMainLoopSource.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -55,7 +56,7 @@ private:
     GUniquePtr<char> m_cachePath;
     GMainLoopSource m_saveToFileIdle;
     bool m_readOnlyMode;
-    std::mutex m_mutex;
+    Lock m_mutex;
 };
 
 } // namespace WebKit

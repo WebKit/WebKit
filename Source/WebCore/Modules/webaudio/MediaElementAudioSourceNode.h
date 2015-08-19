@@ -32,7 +32,7 @@
 #include "HTMLMediaElement.h"
 #include "MultiChannelResampler.h"
 #include <memory>
-#include <mutex>
+#include <wtf/Lock.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -67,7 +67,7 @@ private:
     virtual bool propagatesSilence() const override { return false; }
 
     RefPtr<HTMLMediaElement> m_mediaElement;
-    std::mutex m_processMutex;
+    Lock m_processMutex;
 
     unsigned m_sourceNumberOfChannels;
     double m_sourceSampleRate;

@@ -72,7 +72,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         }
 
         // Synchronize with process().
-        std::lock_guard<std::mutex> lock(m_processMutex);
+        std::lock_guard<Lock> lock(m_processMutex);
 
         m_sourceNumberOfChannels = numberOfChannels;
 
@@ -103,7 +103,7 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
     // Use std::try_to_lock to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the MediaStream must be in the middle of
     // a format change, so we output silence in this case.
-    std::unique_lock<std::mutex> lock(m_processMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
     if (!lock.owns_lock()) {
         // We failed to acquire the lock.
         outputBus->zero();

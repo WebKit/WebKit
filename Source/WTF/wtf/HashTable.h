@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Levin <levin@chromium.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +30,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashTraits.h>
+#include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
@@ -486,7 +487,7 @@ namespace WTF {
         // All access to m_iterators should be guarded with m_mutex.
         mutable const_iterator* m_iterators;
         // Use std::unique_ptr so HashTable can still be memmove'd or memcpy'ed.
-        mutable std::unique_ptr<std::mutex> m_mutex;
+        mutable std::unique_ptr<Lock> m_mutex;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
@@ -542,7 +543,7 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
-        , m_mutex(std::make_unique<std::mutex>())
+        , m_mutex(std::make_unique<Lock>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         , m_stats(std::make_unique<Stats>())
@@ -1218,7 +1219,7 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(nullptr)
-        , m_mutex(std::make_unique<std::mutex>())
+        , m_mutex(std::make_unique<Lock>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         , m_stats(std::make_unique<Stats>(*other.m_stats))
@@ -1276,7 +1277,7 @@ namespace WTF {
     inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable(HashTable&& other)
 #if CHECK_HASHTABLE_ITERATORS
         : m_iterators(nullptr)
-        , m_mutex(std::make_unique<std::mutex>())
+        , m_mutex(std::make_unique<Lock>())
 #endif
     {
         other.invalidateIterators();
@@ -1356,7 +1357,7 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::invalidateIterators()
     {
-        std::lock_guard<std::mutex> lock(*m_mutex);
+        std::lock_guard<Lock> lock(*m_mutex);
         const_iterator* next;
         for (const_iterator* p = m_iterators; p; p = next) {
             next = p->m_next;
@@ -1378,7 +1379,7 @@ namespace WTF {
         if (!table) {
             it->m_next = 0;
         } else {
-            std::lock_guard<std::mutex> lock(*table->m_mutex);
+            std::lock_guard<Lock> lock(*table->m_mutex);
             ASSERT(table->m_iterators != it);
             it->m_next = table->m_iterators;
             table->m_iterators = it;
@@ -1397,7 +1398,7 @@ namespace WTF {
             ASSERT(!it->m_next);
             ASSERT(!it->m_previous);
         } else {
-            std::lock_guard<std::mutex> lock(*it->m_table->m_mutex);
+            std::lock_guard<Lock> lock(*it->m_table->m_mutex);
             if (it->m_next) {
                 ASSERT(it->m_next->m_previous == it);
                 it->m_next->m_previous = it->m_previous;

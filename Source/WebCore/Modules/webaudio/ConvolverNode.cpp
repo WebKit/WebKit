@@ -73,7 +73,7 @@ void ConvolverNode::process(size_t framesToProcess)
     ASSERT(outputBus);
 
     // Synchronize with possible dynamic changes to the impulse response.
-    std::unique_lock<std::mutex> lock(m_processMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
     if (!lock.owns_lock()) {
         // Too bad - the try_lock() failed. We must be in the middle of setting a new impulse response.
         outputBus->zero();
@@ -93,7 +93,7 @@ void ConvolverNode::process(size_t framesToProcess)
 
 void ConvolverNode::reset()
 {
-    std::lock_guard<std::mutex> lock(m_processMutex);
+    std::lock_guard<Lock> lock(m_processMutex);
     if (m_reverb)
         m_reverb->reset();
 }
@@ -145,7 +145,7 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer)
 
     {
         // Synchronize with process().
-        std::lock_guard<std::mutex> lock(m_processMutex);
+        std::lock_guard<Lock> lock(m_processMutex);
         m_reverb = WTF::move(reverb);
         m_buffer = buffer;
     }

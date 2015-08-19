@@ -30,8 +30,8 @@
 #define AudioParamTimeline_h
 
 #include "AudioContext.h"
-#include <mutex>
 #include <runtime/Float32Array.h>
+#include <wtf/Lock.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -107,7 +107,7 @@ private:
 
     Vector<ParamEvent> m_events;
 
-    std::mutex m_eventsMutex;
+    Lock m_eventsMutex;
 };
 
 } // namespace WebCore

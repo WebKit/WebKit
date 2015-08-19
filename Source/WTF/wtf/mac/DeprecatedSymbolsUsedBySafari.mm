@@ -30,6 +30,7 @@
 #include "NeverDestroyed.h"
 #include "StdLibExtras.h"
 #include <mutex>
+#include <wtf/Lock.h>
 
 // This file contains deprecated symbols that the last released version of Safari uses.
 // Once Safari stops using them, we should remove them.
@@ -45,25 +46,16 @@ void callOnMainThread(const Function<void ()>& function)
     callOnMainThread(std::function<void ()>(function));
 }
 
-static std::mutex& atomicallyInitializedStaticMutex()
-{
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<std::mutex> mutex;
-    std::call_once(onceFlag, []{
-        mutex.construct();
-    });
-
-    return mutex;
-}
+static StaticLock atomicallyInitializedStaticMutex;
 
 void lockAtomicallyInitializedStaticMutex()
 {
-    atomicallyInitializedStaticMutex().lock();
+    atomicallyInitializedStaticMutex.lock();
 }
 
 void unlockAtomicallyInitializedStaticMutex()
 {
-    atomicallyInitializedStaticMutex().unlock();
+    atomicallyInitializedStaticMutex.unlock();
 }
 
 } // namespace WTF

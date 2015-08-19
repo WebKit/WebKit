@@ -31,6 +31,7 @@
 #import "RemoteInspectorXPCConnection.h"
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
+#import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDictionary;
@@ -108,7 +109,7 @@ private:
     // Any debuggable can send messages over the XPC connection.
     // So lock access to all maps and state as they can change
     // from any thread.
-    std::mutex m_mutex;
+    Lock m_mutex;
 
     HashMap<unsigned, std::pair<RemoteInspectorDebuggable*, RemoteInspectorDebuggableInfo>> m_debuggableMap;
     HashMap<unsigned, RefPtr<RemoteInspectorDebuggableConnection>> m_connectionMap;

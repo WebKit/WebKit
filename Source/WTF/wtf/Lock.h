@@ -125,9 +125,9 @@ typedef Locker<LockBase> LockHolder;
 
 } // namespace WTF
 
-using WTF::StaticLock;
 using WTF::Lock;
 using WTF::LockHolder;
+using WTF::StaticLock;
 
 #endif // WTF_Lock_h
 

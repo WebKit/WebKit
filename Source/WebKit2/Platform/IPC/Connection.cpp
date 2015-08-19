@@ -86,7 +86,7 @@ private:
     BinarySemaphore m_waitForSyncReplySemaphore;
 
     // Protects m_didScheduleDispatchMessagesWorkSet and m_messagesToDispatchWhileWaitingForSyncReply.
-    std::mutex m_mutex;
+    Lock m_mutex;
 
     // The set of connections for which we've scheduled a call to dispatchMessageAndResetDidScheduleDispatchMessagesForConnection.
     HashSet<RefPtr<Connection>> m_didScheduleDispatchMessagesWorkSet;
@@ -131,7 +131,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     ConnectionAndIncomingMessage connectionAndIncomingMessage { connection, WTF::move(message) };
 
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
         
         if (m_didScheduleDispatchMessagesWorkSet.add(&connection).isNewEntry) {
             RefPtr<Connection> protectedConnection(&connection);
@@ -155,7 +155,7 @@ void Connection::SyncMessageState::dispatchMessages(Connection* allowedConnectio
     Vector<ConnectionAndIncomingMessage> messagesToDispatchWhileWaitingForSyncReply;
 
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
         m_messagesToDispatchWhileWaitingForSyncReply.swap(messagesToDispatchWhileWaitingForSyncReply);
     }
 
@@ -175,7 +175,7 @@ void Connection::SyncMessageState::dispatchMessages(Connection* allowedConnectio
     }
 
     if (!messagesToPutBack.isEmpty()) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
 
         for (auto& message : messagesToPutBack)
             m_messagesToDispatchWhileWaitingForSyncReply.append(WTF::move(message));
@@ -185,7 +185,7 @@ void Connection::SyncMessageState::dispatchMessages(Connection* allowedConnectio
 void Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesForConnection(Connection& connection)
 {
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
         ASSERT(m_didScheduleDispatchMessagesWorkSet.contains(&connection));
         m_didScheduleDispatchMessagesWorkSet.remove(&connection);
     }
@@ -363,7 +363,7 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
 #endif
 
     {
-        std::lock_guard<std::mutex> lock(m_outgoingMessagesMutex);
+        std::lock_guard<Lock> lock(m_outgoingMessagesMutex);
         m_outgoingMessages.append(WTF::move(encoder));
     }
     
@@ -388,7 +388,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
 
     // First, check if this message is already in the incoming messages queue.
     {
-        std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
+        std::lock_guard<Lock> lock(m_incomingMessagesMutex);
 
         for (auto it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
             std::unique_ptr<MessageDecoder>& message = *it;
@@ -414,7 +414,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
     WaitForMessageState waitingForMessage(messageReceiverName, messageName, destinationID, waitForMessageFlags);
 
     {
-        std::lock_guard<std::mutex> lock(m_waitForMessageMutex);
+        std::lock_guard<Lock> lock(m_waitForMessageMutex);
 
         // We don't support having multiple clients waiting for messages.
         ASSERT(!m_waitingForMessage);
@@ -423,8 +423,9 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
     }
 
     // Now wait for it to be set.
+    Condition::Clock::time_point absoluteTimeout = Condition::Clock::now() + timeout;
     while (true) {
-        std::unique_lock<std::mutex> lock(m_waitForMessageMutex);
+        std::unique_lock<Lock> lock(m_waitForMessageMutex);
 
         if (m_waitingForMessage->decoder) {
             auto decoder = WTF::move(m_waitingForMessage->decoder);
@@ -433,9 +434,9 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
         }
 
         // Now we wait.
-        std::cv_status status = m_waitForMessageCondition.wait_for(lock, timeout);
+        bool didTimeout = !m_waitForMessageCondition.waitUntil(lock, absoluteTimeout);
         // We timed out, lost our connection, or a sync message came in with InterruptWaitingIfSyncMessageArrives, so stop waiting.
-        if (status == std::cv_status::timeout || m_waitingForMessage->messageWaitingInterrupted)
+        if (didTimeout || m_waitingForMessage->messageWaitingInterrupted)
             break;
     }
 
@@ -670,7 +671,7 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
 #endif
 
     if (message->isSyncMessage()) {
-        std::lock_guard<std::mutex> lock(m_incomingSyncMessageCallbackMutex);
+        std::lock_guard<Lock> lock(m_incomingSyncMessageCallbackMutex);
 
         for (auto& callback : m_incomingSyncMessageCallbacks.values())
             m_incomingSyncMessageCallbackQueue->dispatch(callback);
@@ -686,18 +687,18 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
 
     // Check if we're waiting for this message.
     {
-        std::lock_guard<std::mutex> lock(m_waitForMessageMutex);
+        std::lock_guard<Lock> lock(m_waitForMessageMutex);
 
         if (m_waitingForMessage && m_waitingForMessage->messageReceiverName == message->messageReceiverName() && m_waitingForMessage->messageName == message->messageName() && m_waitingForMessage->destinationID == message->destinationID()) {
             m_waitingForMessage->decoder = WTF::move(message);
             ASSERT(m_waitingForMessage->decoder);
-            m_waitForMessageCondition.notify_one();
+            m_waitForMessageCondition.notifyOne();
             return;
         }
 
         if (m_waitingForMessage && (m_waitingForMessage->waitForMessageFlags & InterruptWaitingIfSyncMessageArrives) && message->isSyncMessage()) {
             m_waitingForMessage->messageWaitingInterrupted = true;
-            m_waitForMessageCondition.notify_one();
+            m_waitForMessageCondition.notifyOne();
         }
     }
 
@@ -706,7 +707,7 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
 
 uint64_t Connection::installIncomingSyncMessageCallback(std::function<void ()> callback)
 {
-    std::lock_guard<std::mutex> lock(m_incomingSyncMessageCallbackMutex);
+    std::lock_guard<Lock> lock(m_incomingSyncMessageCallbackMutex);
 
     m_nextIncomingSyncMessageCallbackID++;
 
@@ -720,13 +721,13 @@ uint64_t Connection::installIncomingSyncMessageCallback(std::function<void ()> c
 
 void Connection::uninstallIncomingSyncMessageCallback(uint64_t callbackID)
 {
-    std::lock_guard<std::mutex> lock(m_incomingSyncMessageCallbackMutex);
+    std::lock_guard<Lock> lock(m_incomingSyncMessageCallbackMutex);
     m_incomingSyncMessageCallbacks.remove(callbackID);
 }
 
 bool Connection::hasIncomingSyncMessage()
 {
-    std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
+    std::lock_guard<Lock> lock(m_incomingMessagesMutex);
 
     for (auto& message : m_incomingMessages) {
         if (message->isSyncMessage())
@@ -763,11 +764,11 @@ void Connection::connectionDidClose()
     }
 
     {
-        std::lock_guard<std::mutex> lock(m_waitForMessageMutex);
+        std::lock_guard<Lock> lock(m_waitForMessageMutex);
         if (m_waitingForMessage)
             m_waitingForMessage->messageWaitingInterrupted = true;
     }
-    m_waitForMessageCondition.notify_all();
+    m_waitForMessageCondition.notifyAll();
 
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(this);
@@ -803,7 +804,7 @@ void Connection::sendOutgoingMessages()
         std::unique_ptr<MessageEncoder> message;
 
         {
-            std::lock_guard<std::mutex> lock(m_outgoingMessagesMutex);
+            std::lock_guard<Lock> lock(m_outgoingMessagesMutex);
             if (m_outgoingMessages.isEmpty())
                 break;
             message = m_outgoingMessages.takeFirst();
@@ -862,7 +863,7 @@ void Connection::didFailToSendSyncMessage()
 void Connection::enqueueIncomingMessage(std::unique_ptr<MessageDecoder> incomingMessage)
 {
     {
-        std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
+        std::lock_guard<Lock> lock(m_incomingMessagesMutex);
         m_incomingMessages.append(WTF::move(incomingMessage));
     }
 
@@ -918,7 +919,7 @@ void Connection::dispatchOneMessage()
     std::unique_ptr<MessageDecoder> message;
 
     {
-        std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
+        std::lock_guard<Lock> lock(m_incomingMessagesMutex);
         if (m_incomingMessages.isEmpty())
             return;
 

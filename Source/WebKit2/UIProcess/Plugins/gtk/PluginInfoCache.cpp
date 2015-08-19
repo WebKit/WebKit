@@ -79,7 +79,7 @@ PluginInfoCache::~PluginInfoCache()
 
 void PluginInfoCache::saveToFile()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     gsize dataLength;
     GUniquePtr<char> data(g_key_file_to_data(m_cacheFile.get(), &dataLength, nullptr));
@@ -142,7 +142,7 @@ void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginMod
     if (m_cachePath && !m_readOnlyMode) {
         // Save the cache file in an idle to make sure it happens in the main thread and
         // it's done only once when this is called multiple times in a very short time.
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
         if (m_saveToFileIdle.isScheduled())
             return;
 

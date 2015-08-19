@@ -32,7 +32,9 @@
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheFileSystem.h"
 #include "NetworkCacheIOChannel.h"
-#include <condition_variable>
+#include <mutex>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
@@ -119,8 +121,8 @@ public:
     const TraverseFlags flags;
     const TraverseHandler handler;
 
-    std::mutex activeMutex;
-    std::condition_variable activeCondition;
+    Lock activeMutex;
+    Condition activeCondition;
     unsigned activeCount { 0 };
 };
 
@@ -791,7 +793,7 @@ void Storage::traverse(TraverseFlags flags, TraverseHandler&& traverseHandler)
             if (traverseOperation.flags & TraverseFlag::ShareCount)
                 bodyShareCount = m_blobStorage.shareCount(bodyPathForRecordPath(recordPath));
 
-            std::unique_lock<std::mutex> lock(traverseOperation.activeMutex);
+            std::unique_lock<Lock> lock(traverseOperation.activeMutex);
             ++traverseOperation.activeCount;
 
             auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
@@ -814,9 +816,9 @@ void Storage::traverse(TraverseFlags flags, TraverseHandler&& traverseHandler)
                     traverseOperation.handler(&record, info);
                 }
 
-                std::lock_guard<std::mutex> lock(traverseOperation.activeMutex);
+                std::lock_guard<Lock> lock(traverseOperation.activeMutex);
                 --traverseOperation.activeCount;
-                traverseOperation.activeCondition.notify_one();
+                traverseOperation.activeCondition.notifyOne();
             });
 
             const unsigned maximumParallelReadCount = 5;
@@ -825,7 +827,7 @@ void Storage::traverse(TraverseFlags flags, TraverseHandler&& traverseHandler)
             });
         });
         // Wait for all reads to finish.
-        std::unique_lock<std::mutex> lock(traverseOperation.activeMutex);
+        std::unique_lock<Lock> lock(traverseOperation.activeMutex);
         traverseOperation.activeCondition.wait(lock, [&traverseOperation] {
             return !traverseOperation.activeCount;
         });

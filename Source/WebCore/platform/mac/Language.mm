@@ -31,23 +31,14 @@
 #import "WebCoreNSStringExtras.h"
 #import <mutex>
 #import <wtf/Assertions.h>
+#import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static std::mutex& preferredLanguagesMutex()
-{
-    static dispatch_once_t onceToken;
-    static std::mutex* mutex;
-
-    dispatch_once(&onceToken, ^{
-        mutex = std::make_unique<std::mutex>().release();
-    });
-
-    return *mutex;
-}
+static StaticLock preferredLanguagesMutex;
 
 static Vector<String>& preferredLanguages()
 {
@@ -67,7 +58,7 @@ static Vector<String>& preferredLanguages()
     UNUSED_PARAM(notification);
 
     {
-        std::lock_guard<std::mutex> lock(WebCore::preferredLanguagesMutex());
+        std::lock_guard<StaticLock> lock(WebCore::preferredLanguagesMutex);
         WebCore::preferredLanguages().clear();
     }
 
@@ -118,7 +109,7 @@ Vector<String> platformUserPreferredLanguages()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    std::lock_guard<std::mutex> lock(preferredLanguagesMutex());
+    std::lock_guard<StaticLock> lock(preferredLanguagesMutex);
     Vector<String>& userPreferredLanguages = preferredLanguages();
 
     if (userPreferredLanguages.isEmpty()) {

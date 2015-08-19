@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "StdLibExtras.h"
 #include "Threading.h"
 #include <mutex>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
 
@@ -69,12 +70,7 @@ static bool callbacksPaused; // This global variable is only accessed from main 
 static ThreadIdentifier mainThreadIdentifier;
 #endif
 
-static std::mutex& mainThreadFunctionQueueMutex()
-{
-    static NeverDestroyed<std::mutex> mutex;
-    
-    return mutex;
-}
+static StaticLock mainThreadFunctionQueueMutex;
 
 static FunctionQueue& functionQueue()
 {
@@ -94,7 +90,6 @@ void initializeMainThread()
 
     mainThreadIdentifier = currentThread();
 
-    mainThreadFunctionQueueMutex();
     initializeMainThreadPlatform();
     initializeGCThreads();
 }
@@ -105,7 +100,6 @@ static pthread_once_t initializeMainThreadKeyOnce = PTHREAD_ONCE_INIT;
 
 static void initializeMainThreadOnce()
 {
-    mainThreadFunctionQueueMutex();
     initializeMainThreadPlatform();
 }
 
@@ -117,7 +111,6 @@ void initializeMainThread()
 #if !USE(WEB_THREAD)
 static void initializeMainThreadToProcessMainThreadOnce()
 {
-    mainThreadFunctionQueueMutex();
     initializeMainThreadToProcessMainThreadPlatform();
 }
 
@@ -156,7 +149,7 @@ void dispatchFunctionsFromMainThread()
     FunctionWithContext invocation;
     while (true) {
         {
-            std::lock_guard<std::mutex> lock(mainThreadFunctionQueueMutex());
+            std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
             if (!functionQueue().size())
                 break;
             invocation = functionQueue().takeFirst();
@@ -180,7 +173,7 @@ void callOnMainThread(MainThreadFunction* function, void* context)
     ASSERT(function);
     bool needToSchedule = false;
     {
-        std::lock_guard<std::mutex> lock(mainThreadFunctionQueueMutex());
+        std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
         needToSchedule = functionQueue().size() == 0;
         functionQueue().append(FunctionWithContext(function, context));
     }
@@ -192,7 +185,7 @@ void cancelCallOnMainThread(MainThreadFunction* function, void* context)
 {
     ASSERT(function);
 
-    std::lock_guard<std::mutex> lock(mainThreadFunctionQueueMutex());
+    std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
 
     FunctionWithContextFinder pred(FunctionWithContext(function, context));
 

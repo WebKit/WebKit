@@ -94,7 +94,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     }
 
     // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<std::mutex> lock(m_processMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
     if (!lock.owns_lock()) {
         // Too bad - the try_lock() failed. We must be in the middle of changing buffers and were already outputting silence anyway.
         outputBus->zero();
@@ -416,7 +416,7 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     AudioContext::AutoLocker contextLocker(*context());
     
     // This synchronizes with process().
-    std::lock_guard<std::mutex> lock(m_processMutex);
+    std::lock_guard<Lock> lock(m_processMutex);
     
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.

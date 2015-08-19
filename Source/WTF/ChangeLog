@@ -1,3 +1,68 @@
+2015-08-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all uses of std::mutex/std::condition_variable with WTF::Lock/WTF::Condition
+        https://bugs.webkit.org/show_bug.cgi?id=148140
+
+        Reviewed by Geoffrey Garen.
+
+        Also beef up Condition by giving it a StaticCondition variant.
+
+        * wtf/Condition.h:
+        (WTF::ConditionBase::notifyAll):
+        (WTF::ConditionBase::waitForSecondsImpl):
+        (WTF::ConditionBase::absoluteFromRelative):
+        (WTF::Condition::Condition):
+        (WTF::Condition::notifyAll): Deleted.
+        (WTF::Condition::waitForSecondsImpl): Deleted.
+        (WTF::Condition::absoluteFromRelative): Deleted.
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/HashTable.cpp:
+        (WTF::HashTableStats::recordCollisionAtCount):
+        (WTF::HashTableStats::dumpStats):
+        (WTF::hashTableStatsMutex): Deleted.
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::HashTable):
+        (WTF::KeyTraits>::invalidateIterators):
+        (WTF::addIterator):
+        (WTF::removeIterator):
+        * wtf/Lock.h:
+        * wtf/MainThread.cpp:
+        (WTF::functionQueue):
+        (WTF::dispatchFunctionsFromMainThread):
+        (WTF::callOnMainThread):
+        (WTF::cancelCallOnMainThread):
+        (WTF::mainThreadFunctionQueueMutex): Deleted.
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::PerThreadStats::PerThreadStats):
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::LayoutCheckPoint::~LayoutCheckPoint):
+        (WTF::StackStats::initialize): Deleted.
+        * wtf/StackStats.h:
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::initialize): Deleted.
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        (WTF::callOnMainThread):
+        (WTF::lockAtomicallyInitializedStaticMutex):
+        (WTF::unlockAtomicallyInitializedStaticMutex):
+        (WTF::atomicallyInitializedStaticMutex): Deleted.
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::UnderlyingString::UnderlyingString):
+        (WTF::underlyingStrings):
+        (WTF::StringView::invalidate):
+        (WTF::StringView::adoptUnderlyingString):
+        (WTF::StringView::setUnderlyingString):
+        (WTF::underlyingStringsMutex): Deleted.
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+        (WTF::cachedCollatorMutex): Deleted.
+
 2015-08-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] GMainLoopSource should receive the std::function<> objects through rvalue references

@@ -67,7 +67,7 @@ int SocketStreamHandle::platformSend(const char* data, int length)
 
     auto copy = createCopy(data, length);
 
-    std::lock_guard<std::mutex> lock(m_mutexSend);
+    std::lock_guard<Lock> lock(m_mutexSend);
     m_sendData.append(SocketData { WTF::move(copy), length });
 
     return length;
@@ -146,7 +146,7 @@ bool SocketStreamHandle::sendData(CURL* curlHandle)
             const int restLength = sendData.size - totalBytesSent;
             auto copy = createCopy(sendData.data.get() + totalBytesSent, restLength);
 
-            std::lock_guard<std::mutex> lock(m_mutexSend);
+            std::lock_guard<Lock> lock(m_mutexSend);
             m_sendData.prepend(SocketData { WTF::move(copy), restLength });
 
             return false;

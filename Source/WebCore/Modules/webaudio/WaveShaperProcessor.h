@@ -29,8 +29,8 @@
 #include "AudioDSPKernelProcessor.h"
 #include "AudioNode.h"
 #include <memory>
-#include <mutex>
 #include <runtime/Float32Array.h>
+#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -66,7 +66,7 @@ private:
     OverSampleType m_oversample;
 
     // This synchronizes process() with setCurve().
-    mutable std::mutex m_processMutex;
+    mutable Lock m_processMutex;
 };
 
 } // namespace WebCore

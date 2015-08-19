@@ -120,7 +120,7 @@ void PannerNode::process(size_t framesToProcess)
     }
 
     // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<std::mutex> lock(m_pannerMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_pannerMutex, std::try_to_lock);
     if (!lock.owns_lock()) {
         // Too bad - The try_lock() failed. We must be in the middle of changing the panner.
         destination->zero();
@@ -209,7 +209,7 @@ bool PannerNode::setPanningModel(unsigned model)
     case HRTF:
         if (!m_panner.get() || model != m_panningModel) {
             // This synchronizes with process().
-            std::lock_guard<std::mutex> lock(m_pannerMutex);
+            std::lock_guard<Lock> lock(m_pannerMutex);
 
             m_panner = Panner::create(model, sampleRate(), m_hrtfDatabaseLoader.get());
             m_panningModel = model;

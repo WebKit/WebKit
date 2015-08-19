@@ -1,3 +1,41 @@
+2015-08-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace all uses of std::mutex/std::condition_variable with WTF::Lock/WTF::Condition
+        https://bugs.webkit.org/show_bug.cgi?id=148140
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::traverse):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+        (IPC::Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesForConnection):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::installIncomingSyncMessageCallback):
+        (IPC::Connection::uninstallIncomingSyncMessageCallback):
+        (IPC::Connection::hasIncomingSyncMessage):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::sendOutgoingMessages):
+        (IPC::Connection::enqueueIncomingMessage):
+        (IPC::Connection::dispatchOneMessage):
+        * Platform/IPC/Connection.h:
+        * Shared/BlockingResponseMap.h:
+        (BlockingResponseMap::waitForResponse):
+        (BlockingResponseMap::didReceiveResponse):
+        (BlockingResponseMap::cancel):
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::saveToFile):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        * UIProcess/Plugins/gtk/PluginInfoCache.h:
+        * UIProcess/mac/WKPrintingView.h:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (prepareDataForPrintingOnSecondaryThread):
+        (-[WKPrintingView knowsPageRange:]):
+
 2015-08-19  Chris Dumez  <cdumez@apple.com>
 
         WebKit may keep outdated entry in the disk cache after a reload

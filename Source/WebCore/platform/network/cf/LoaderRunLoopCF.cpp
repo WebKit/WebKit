@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,11 @@
 #if USE(CFNETWORK)
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <condition_variable>
 #include <limits>
+#include <mutex>
 #include <wtf/AutodrainedPool.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Threading.h>
@@ -40,19 +42,8 @@ namespace WebCore {
 
 static CFRunLoopRef loaderRunLoopObject = 0;
 
-static std::mutex& loaderRunLoopMutex()
-{
-    static NeverDestroyed<std::mutex> mutex;
-
-    return mutex;
-}
-
-static std::condition_variable& loaderRunLoopConditionVariable()
-{
-    static NeverDestroyed<std::condition_variable> conditionVariable;
-
-    return conditionVariable;
-}
+static StaticLock loaderRunLoopMutex;
+static StaticCondition loaderRunLoopConditionVariable;
 
 static void emptyPerform(void*) 
 {
@@ -61,7 +52,7 @@ static void emptyPerform(void*)
 static void runLoaderThread(void*)
 {
     {
-        std::lock_guard<std::mutex> lock(loaderRunLoopMutex());
+        std::lock_guard<StaticLock> lock(loaderRunLoopMutex);
 
         loaderRunLoopObject = CFRunLoopGetCurrent();
 
@@ -70,7 +61,7 @@ static void runLoaderThread(void*)
         CFRunLoopSourceRef bogusSource = CFRunLoopSourceCreate(0, 0, &ctxt);
         CFRunLoopAddSource(loaderRunLoopObject, bogusSource, kCFRunLoopDefaultMode);
 
-        loaderRunLoopConditionVariable().notify_one();
+        loaderRunLoopConditionVariable.notifyOne();
     }
 
     SInt32 result;
@@ -84,12 +75,12 @@ CFRunLoopRef loaderRunLoop()
 {
     ASSERT(isMainThread());
 
-    std::unique_lock<std::mutex> lock(loaderRunLoopMutex());
+    std::unique_lock<StaticLock> lock(loaderRunLoopMutex);
 
     if (!loaderRunLoopObject) {
         createThread(runLoaderThread, 0, "WebCore: CFNetwork Loader");
 
-        loaderRunLoopConditionVariable().wait(lock, [] { return loaderRunLoopObject; });
+        loaderRunLoopConditionVariable.wait(lock, [] { return loaderRunLoopObject; });
     }
 
     return loaderRunLoopObject;

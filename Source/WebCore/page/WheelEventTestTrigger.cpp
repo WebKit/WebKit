@@ -45,7 +45,7 @@ WheelEventTestTrigger::WheelEventTestTrigger()
 
 void WheelEventTestTrigger::clearAllTestDeferrals()
 {
-    std::lock_guard<std::mutex> lock(m_testTriggerMutex);
+    std::lock_guard<Lock> lock(m_testTriggerMutex);
     m_deferTestTriggerReasons.clear();
     m_testNotificationCallback = std::function<void()>();
     m_testTriggerTimer.stop();
@@ -55,7 +55,7 @@ void WheelEventTestTrigger::clearAllTestDeferrals()
 void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(std::function<void()> functionCallback)
 {
     {
-        std::lock_guard<std::mutex> lock(m_testTriggerMutex);
+        std::lock_guard<Lock> lock(m_testTriggerMutex);
         m_testNotificationCallback = WTF::move(functionCallback);
     }
     
@@ -65,7 +65,7 @@ void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(std::functi
 
 void WheelEventTestTrigger::deferTestsForReason(ScrollableAreaIdentifier identifier, DeferTestTriggerReason reason)
 {
-    std::lock_guard<std::mutex> lock(m_testTriggerMutex);
+    std::lock_guard<Lock> lock(m_testTriggerMutex);
     auto it = m_deferTestTriggerReasons.find(identifier);
     if (it == m_deferTestTriggerReasons.end())
         it = m_deferTestTriggerReasons.add(identifier, std::set<DeferTestTriggerReason>()).iterator;
@@ -76,7 +76,7 @@ void WheelEventTestTrigger::deferTestsForReason(ScrollableAreaIdentifier identif
 
 void WheelEventTestTrigger::removeTestDeferralForReason(ScrollableAreaIdentifier identifier, DeferTestTriggerReason reason)
 {
-    std::lock_guard<std::mutex> lock(m_testTriggerMutex);
+    std::lock_guard<Lock> lock(m_testTriggerMutex);
     auto it = m_deferTestTriggerReasons.find(identifier);
     if (it == m_deferTestTriggerReasons.end())
         return;
@@ -110,7 +110,7 @@ void WheelEventTestTrigger::triggerTestTimerFired()
     std::function<void()> functionCallback;
 
     {
-        std::lock_guard<std::mutex> lock(m_testTriggerMutex);
+        std::lock_guard<Lock> lock(m_testTriggerMutex);
         if (!m_deferTestTriggerReasons.isEmpty()) {
 #if !LOG_DISABLED
             if (isLogChannelEnabled("WheelEventTestTriggers"))
