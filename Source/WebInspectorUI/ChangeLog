@@ -1,3 +1,21 @@
+2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception in inspector page while handling event DOMStorage.domStorageItemRemoved
+        https://bugs.webkit.org/show_bug.cgi?id=148191
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/StorageManager.js:
+        (WebInspector.StorageManager.prototype.itemsCleared):
+        (WebInspector.StorageManager.prototype.itemRemoved):
+        (WebInspector.StorageManager.prototype.itemAdded):
+        (WebInspector.StorageManager.prototype.itemUpdated):
+        Check if the DOMStorage for the identifier actually exists.
+        Due to how the backend emits events, the page may have already
+        navigated when we get a storage update for the previous page.
+        In that case, we don't want to create a DOMStorage for the
+        previous page if it doesn't exist.
+
 2015-08-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: use unprefixed CSS property 'filter' instead of '-webkit-filter'

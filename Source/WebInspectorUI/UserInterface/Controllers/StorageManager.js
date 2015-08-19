@@ -106,22 +106,30 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
     itemsCleared(storageId)
     {
-        this._domStorageForIdentifier(storageId).itemsCleared(storageId);
+        let domStorage = this._domStorageForIdentifier(storageId);
+        if (domStorage)
+            domStorage.itemsCleared(storageId);
     }
 
     itemRemoved(storageId, key)
     {
-        this._domStorageForIdentifier(storageId).itemRemoved(key);
+        let domStorage = this._domStorageForIdentifier(storageId);
+        if (domStorage)
+            domStorage.itemRemoved(key);
     }
 
     itemAdded(storageId, key, value)
     {
-        this._domStorageForIdentifier(storageId).itemAdded(key, value);
+        let domStorage = this._domStorageForIdentifier(storageId);
+        if (domStorage)
+            domStorage.itemAdded(key, value);
     }
 
     itemUpdated(storageId, key, oldValue, value)
     {
-        this._domStorageForIdentifier(storageId).itemUpdated(key, oldValue, value);
+        let domStorage = this._domStorageForIdentifier(storageId);
+        if (domStorage)
+            domStorage.itemUpdated(key, oldValue, value);
     }
 
     inspectDatabase(id)
