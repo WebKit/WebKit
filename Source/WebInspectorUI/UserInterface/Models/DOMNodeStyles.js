@@ -235,6 +235,9 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             this.dispatchEventToListeners(WebInspector.DOMNodeStyles.Event.Refreshed, {significantChange});
         }
 
+        // FIXME: Convert to pushing StyleSheet information to the frontend. <rdar://problem/13213680>
+        WebInspector.cssStyleManager.fetchStyleSheetsIfNeeded();
+
         CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, fetchedMatchedStyles.bind(this));
         CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, fetchedInlineStyles.bind(this));
         CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, fetchedComputedStyle.bind(this));
@@ -727,7 +730,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         var styleSheet = id ? WebInspector.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
         if (styleSheet) {
             if (type === WebInspector.CSSStyleDeclaration.Type.Inline)
-                styleSheet.markAsInlineStyle();
+                styleSheet.markAsInlineStyleAttributeStyleSheet();
             styleSheet.addEventListener(WebInspector.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
         }
 
@@ -810,6 +813,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         if (!style)
             return null;
 
+        var styleSheet = id ? WebInspector.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
+
         // COMPATIBILITY (iOS 6): The payload had 'selectorText' as a property,
         // now it has 'selectorList' with a 'text' property. Support both here.
         var selectorText = payload.selectorList ? payload.selectorList.text : payload.selectorText;
@@ -822,6 +827,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             var sourceCodeLocation = this._createSourceCodeLocation(payload.sourceURL, sourceRange.startLine, sourceRange.startColumn);
         } else
             var sourceCodeLocation = this._createSourceCodeLocation(payload.sourceURL, payload.sourceLine);
+        if (styleSheet)
+            sourceCodeLocation = styleSheet.offsetSourceCodeLocation(sourceCodeLocation);
 
         var type;
         switch (payload.origin) {
@@ -861,6 +868,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
             var mediaText = mediaItem.text;
             var mediaSourceCodeLocation = this._createSourceCodeLocation(mediaItem.sourceURL, mediaItem.sourceLine);
+            if (styleSheet)
+                mediaSourceCodeLocation = styleSheet.offsetSourceCodeLocation(mediaSourceCodeLocation);
 
             mediaList.push(new WebInspector.CSSMedia(mediaType, mediaText, mediaSourceCodeLocation));
         }
@@ -870,7 +879,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             return rule;
         }
 
-        var styleSheet = id ? WebInspector.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
         if (styleSheet)
             styleSheet.addEventListener(WebInspector.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
 

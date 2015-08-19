@@ -34,6 +34,13 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
         this._id = id || null;
         this._url = null;
         this._parentFrame = null;
+        this._startLineNumber = 0;
+        this._startColumnNumber = 0;
+
+        this._inlineStyleAttribute = false;
+        this._inlineStyleTag = false;
+
+        this._hasInfo = false;
     }
 
     // Static
@@ -84,24 +91,64 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
         return WebInspector.UIString("Anonymous StyleSheet %d").format(this._uniqueDisplayNameNumber);
     }
 
-    isInlineStyle()
+    get startLineNumber()
     {
-        return !!this._inlineStyle;
+        return this._startLineNumber;
     }
 
-    markAsInlineStyle()
+    get startColumnNumber()
     {
-        this._inlineStyle = true;
+        return this._startColumnNumber;
+    }
+
+    hasInfo()
+    {
+        return this._hasInfo;
+    }
+
+    isInlineStyleTag()
+    {
+        return this._inlineStyleTag;
+    }
+
+    isInlineStyleAttributeStyleSheet()
+    {
+        return this._inlineStyleAttribute;
+    }
+
+    markAsInlineStyleAttributeStyleSheet()
+    {
+        this._inlineStyleAttribute = true;
+    }
+
+    offsetSourceCodeLocation(sourceCodeLocation)
+    {
+        if (!sourceCodeLocation)
+            return null;
+
+        if (!this._hasInfo)
+            return sourceCodeLocation;
+
+        let sourceCode = sourceCodeLocation.sourceCode;
+        let lineNumber = this._startLineNumber + sourceCodeLocation.lineNumber;
+        let columnNumber = this._startColumnNumber + sourceCodeLocation.columnNumber;
+        return sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
     }
 
     // Protected
 
-    updateInfo(url, parentFrame)
+    updateInfo(url, parentFrame, inlineStyle, startLineNumber, startColumnNumber)
     {
+        this._hasInfo = true;
+
         this._url = url || null;
-        delete this._urlComponents;
+        this._urlComponents = undefined;
 
         this._parentFrame = parentFrame || null;
+
+        this._inlineStyleTag = inlineStyle;
+        this._startLineNumber = startLineNumber;
+        this._startColumnNumber = startColumnNumber;
     }
 
     get revisionForRequestedContent()
@@ -143,7 +190,7 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
     noteContentDidChange()
     {
         if (this._ignoreNextContentDidChangeNotification) {
-            delete this._ignoreNextContentDidChangeNotification;
+            this._ignoreNextContentDidChangeNotification = false;
             return false;
         }
 

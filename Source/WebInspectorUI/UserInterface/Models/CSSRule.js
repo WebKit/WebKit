@@ -84,8 +84,8 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
         this._style = style;
         this._mediaList = mediaList;
 
-        delete this._matchedSelectors;
-        delete this._matchedSelectorText;
+        this._matchedSelectors = null;
+        this._matchedSelectorText = null;
 
         if (this._style)
             this._style.ownerRule = this;

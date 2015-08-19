@@ -43,6 +43,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         this._colorFormatSetting = new WebInspector.Setting("default-color-format", WebInspector.Color.Format.Original);
 
+        this._fetchedInitialStyleSheets = false;
         this._styleSheetIdentifierMap = new Map;
         this._styleSheetFrameURLMap = new Map;
         this._nodeStylesMap = {};
@@ -53,6 +54,11 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     get preferredColorFormat()
     {
         return this._colorFormatSetting.value;
+    }
+
+    get styleSheets()
+    {
+        return [...this._styleSheetIdentifierMap.values()];
     }
 
     canForcePseudoClasses()
@@ -93,6 +99,14 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         return match[1];
     }
 
+    fetchStyleSheetsIfNeeded()
+    {
+        if (this._fetchedInitialStyleSheets)
+            return;
+
+        this._fetchInfoForAllStyleSheets(function() {});
+    }
+
     styleSheetForIdentifier(id)
     {
         let styleSheet = this._styleSheetIdentifierMap.get(id);
@@ -131,7 +145,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         console.assert(styleSheet);
 
         // Do not observe inline styles
-        if (styleSheet.isInlineStyle())
+        if (styleSheet.isInlineStyleAttributeStyleSheet())
             return;
 
         styleSheet.noteContentDidChange();
@@ -173,6 +187,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         // Clear our maps when the main frame navigates.
 
+        this._fetchedInitialStyleSheets = false;
         this._styleSheetIdentifierMap.clear();
         this._styleSheetFrameURLMap.clear();
         this._nodeStylesMap = {};
@@ -253,14 +268,19 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 return;
             }
 
-            for (var styleSheetInfo of styleSheets) {
+            for (let styleSheetInfo of styleSheets) {
                 // COMPATIBILITY (iOS 6): The info did not have 'frameId', so make parentFrame null in that case.
-                var parentFrame = "frameId" in styleSheetInfo ? WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId) : null;
+                let parentFrame = "frameId" in styleSheetInfo ? WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId) : null;
 
-                var styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame);
+                // COMPATIBILITY (iOS 9): The info did not have 'isInline', 'startLine', and 'startColumn', so make false and 0 in these cases.
+                let isInline = styleSheetInfo.isInline || false;
+                let startLine = styleSheetInfo.startLine || 0;
+                let startColumn = styleSheetInfo.startColumn || 0;
 
-                var key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
+                let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
+                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, isInline, startLine, startColumn);
+
+                let key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
                 this._styleSheetFrameURLMap.set(key, styleSheet);
             }
 

@@ -1,3 +1,16 @@
+2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Links for rules in <style> are incorrect, do not account for <style> offset in the document
+        https://bugs.webkit.org/show_bug.cgi?id=148141
+
+        Reviewed by Brian Burg.
+
+        * inspector/css/getAllStyleSheets-expected.txt: Added.
+        * inspector/css/getAllStyleSheets.html: Added.
+        * inspector/css/resources/external.css: Added.
+        (body):
+        Test for style sheet header information for external and inline stylesheets.
+
 2015-08-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Optimize more cases of something-compared-to-null/undefined

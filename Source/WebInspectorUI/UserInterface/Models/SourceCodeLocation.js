@@ -179,7 +179,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
         if (sourceCode === this._sourceCode && lineNumber === this._lineNumber && columnNumber === this._columnNumber)
             return;
-        else if (this._mappedResource && sourceCode === this._mappedResource && lineNumber === this._mappedLineNumber && columnNumber === this._mappedColumnNumber)
+        if (this._mappedResource && sourceCode === this._mappedResource && lineNumber === this._mappedLineNumber && columnNumber === this._mappedColumnNumber)
             return;
 
         var newSourceCodeLocation = sourceCode.createSourceCodeLocation(lineNumber, columnNumber);

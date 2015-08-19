@@ -1,3 +1,53 @@
+2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Links for rules in <style> are incorrect, do not account for <style> offset in the document
+        https://bugs.webkit.org/show_bug.cgi?id=148141
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager):
+        (WebInspector.CSSStyleManager.prototype.get styleSheets):
+        (WebInspector.CSSStyleManager.prototype.fetchStyleSheetsIfNeeded):
+        (WebInspector.CSSStyleManager.prototype.styleSheetForIdentifier):
+        (WebInspector.CSSStyleManager.prototype._mainResourceDidChange):
+        Update more information about a StyleSheet when fetched.
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.update):
+        Eliminate usage of `delete`.
+
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WebInspector.CSSStyleSheet):
+        (WebInspector.CSSStyleSheet.prototype.get startLineNumber):
+        (WebInspector.CSSStyleSheet.prototype.get startColumnNumber):
+        (WebInspector.CSSStyleSheet.prototype.hasInfo):
+        (WebInspector.CSSStyleSheet.prototype.isInlineStyleTag):
+        (WebInspector.CSSStyleSheet.prototype.updateInfo):
+        Include more information about this stylesheet.
+
+        (WebInspector.CSSStyleSheet.prototype.offsetSourceCodeLocation):
+        Include helper API to offset a source code location by the startLine/Column
+        of this stylesheet itself, if it was an inline style.
+
+        (WebInspector.CSSStyleSheet.prototype.isInlineStyleAttributeStyleSheet):
+        (WebInspector.CSSStyleSheet.prototype.markAsInlineStyleAttributeStyleSheet):
+        (WebInspector.CSSStyleSheet.isInlineStyle): Deleted.
+        (WebInspector.CSSStyleSheet.prototype.markAsInlineStyle): Deleted.
+        Rename for clarity.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh):
+        Fetch stylesheet header information eagerly, so we have them early on.
+
+        (WebInspector.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        (WebInspector.DOMNodeStyles.prototype._parseRulePayload):
+        Offset sourceCodeLocations for CSSRules based on the StyleSheet offset.
+
+        * UserInterface/Models/SourceCodeLocation.js:
+        (WebInspector.SourceCodeLocation.prototype.update):
+        Improve coding style.
+
 2015-08-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add proper formatting for editing styles in the Visual Panel
