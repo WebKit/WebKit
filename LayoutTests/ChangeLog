@@ -1,3 +1,18 @@
+2015-08-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix a rare flakiness in svg/animations/svgPreserveAspectRatio-animation-1.html
+        https://bugs.webkit.org/show_bug.cgi?id=148149
+
+        Reviewed by Tim Horton.
+        
+        Do not sample the SVG animation at the middle of the animation period. At
+        that time, the SVG animation test script changes the value of the animated
+        attribute from the from-value to the to-value. It is safer to sample
+        immediately before and after the middle of the animation period.
+
+        * svg/animations/script-tests/svgPreserveAspectRatio-animation-1.js:
+        * svg/animations/svgPreserveAspectRatio-animation-1-expected.txt:
+
 2015-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Search input results and clear icons are misaligned when padding is added

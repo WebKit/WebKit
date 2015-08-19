@@ -51,7 +51,8 @@ function executeTest() {
     const expectedValues = [
         // [animationId, time, sampleCallback]
         ["animation", 0.0,   sample1],
-        ["animation", 2.0,   sample2],
+        ["animation", 1.999, sample2],
+        ["animation", 2.001, sample3],
         ["animation", 3.999, sample3],
         ["animation", 4.001, sample1]
     ];
