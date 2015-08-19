@@ -1,3 +1,9 @@
+2015-08-19  Brian Burg  <bburg@apple.com>
+
+        Unreviewed, add Aleksandr Skachkov to the list of contributors.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-08-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r188548): [GTK] Build broken.
