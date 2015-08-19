@@ -1,3 +1,15 @@
+2015-08-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: round sub-pixel values we get from computed style in visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=148105
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox.prototype.set value):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set placeholder):
+        Now rounds the value and placeholder to the nearest 100th.
+
 2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: transparent color swatches have lopsided checkered background on non-retina

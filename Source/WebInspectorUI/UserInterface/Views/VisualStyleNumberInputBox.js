@@ -105,7 +105,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         if (!isNaN(value)) {
             this._numberInputIsEditable = true;
             this.contentElement.classList.add("number-input-editable");
-            this._valueNumberInputElement.value = value;
+            this._valueNumberInputElement.value = Math.round(value * 100) / 100;
             return;
         }
 
@@ -160,7 +160,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         if (text === this.placeholder)
             return;
 
-        let onlyNumericalText = !isNaN(text) && text;
+        let onlyNumericalText = text && !isNaN(text) && (Math.round(text * 100) / 100);
         this._valueNumberInputElement.setAttribute("placeholder", onlyNumericalText || 0);
     }
 
