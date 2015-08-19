@@ -13,8 +13,8 @@ function runBreakpointActions()
 
 function action(a, b)
 {
-    InspectorTestProxy.addResult("Breakpoint action evaluated. a:(" + a + ") b:(" + b + ")");
-    InspectorTestProxy.completeTest();
+    TestPage.addResult("Breakpoint action evaluated. a:(" + a + ") b:(" + b + ")");
+    TestPage.completeTest();
 }
 
 function test()

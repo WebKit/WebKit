@@ -77,12 +77,12 @@ function dumpNondeterministicState()
 // These functions are called in the previous main frame prior to the initial
 // navigation that begins capturing or replaying. Careful, heap state will be lost.
 function setupPreCapture() {
-    InspectorTestProxy.addResult("Enabling plugins before capture.");
+    TestPage.addResult("Enabling plugins before capture.");
     testRunner.setPluginsEnabled(false);
 }
 
 function setupPreReplay() {
-    InspectorTestProxy.addResult("Disabling plugins before replay.");
+    TestPage.addResult("Disabling plugins before replay.");
     testRunner.setPluginsEnabled(true);
 }
 

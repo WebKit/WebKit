@@ -155,7 +155,6 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
         this._harness.log("== Running test suite: " + this.name);
 
         let priorLogCount = this._harness.logCount;
-        let self = this;
         for (let i = 0; i < this.testcases.length; i++) {
             let testcase = this.testcases[i];
             if (i > 0 && priorLogCount + 1 < this._harness.logCount)
@@ -164,15 +163,15 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
             priorLogCount = this._harness.logCount;
 
             this._harness.log("-- Running test case: " + testcase.name);
-            self.runCount++;
+            this.runCount++;
             try {
                 let result = testcase.test.call(null);
                 if (result === false) {
-                    self.failCount++;
+                    this.failCount++;
                     return false;
                 }
             } catch (e) {
-                self.failCount++;
+                this.failCount++;
                 let message = e;
                 if (e instanceof Error)
                     message = e.message;

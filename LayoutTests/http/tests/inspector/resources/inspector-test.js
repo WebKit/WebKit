@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,13 @@
  */
 
 // This namespace is injected into every test page. Its functions are invoked by
-// InspectorTest methods on the inspector page via RuntimeAgent.evaluate() calls.
-InspectorTestProxy = {};
-InspectorTestProxy._initializers = [];
+// InspectorTest methods on the inspector page via a TestHarness subclass.
+TestPage = {};
+TestPage._initializers = [];
 
 // Helper scripts like `debugger-test.js` must register their initialization
 // function with this method so it will be marshalled to the inspector page.
-InspectorTestProxy.registerInitializer = function(initializer)
+TestPage.registerInitializer = function(initializer)
 {
     if (typeof initializer === "function")
         this._initializers.push(initializer.toString());
@@ -53,6 +53,12 @@ function runTest()
     window.internals.setInspectorIsUnderTest(true);
     testRunner.showWebInspector();
 
+    let testFunction = window.test;
+    if (typeof testFunction !== "function") {
+        alert("Failed to send test() because it is not a function.");
+        testRunner.notifyDone();
+    }
+
     function runInitializationMethodsInFrontend(initializersArray)
     {
         InspectorTest.testPageDidLoad();
@@ -62,7 +68,7 @@ function runTest()
         if (InspectorTest.didInjectTestCode)
             return;
 
-        for (var initializer of initializersArray) {
+        for (let initializer of initializersArray) {
             try {
                 initializer();
             } catch (e) {
@@ -82,43 +88,41 @@ function runTest()
         try {
             testFunction();
         } catch (e) {
+            // FIXME: the redirected console methods do not forward additional arguments.
             console.error("Exception during test execution: " + e, e.stack || "(no stack trace)");
             InspectorTest.completeTest();
         }
     }
 
-    var codeStringToEvaluate = "(" + runInitializationMethodsInFrontend.toString() + ")([" + InspectorTestProxy._initializers + "]);";
-    testRunner.evaluateInWebInspector(codeStringToEvaluate);
+    let initializationCodeString = `(${runInitializationMethodsInFrontend.toString()})([${TestPage._initializers}]);`;
+    let testFunctionCodeString = `(${runTestMethodInFrontend.toString()})(${testFunction.toString()});`;
 
-    // `test` refers to a function defined in global scope in the test HTML page.
-    codeStringToEvaluate = "(" + runTestMethodInFrontend.toString() + ")(" + test.toString() + ");";
-    testRunner.evaluateInWebInspector(codeStringToEvaluate);
+    testRunner.evaluateInWebInspector(initializationCodeString);
+    testRunner.evaluateInWebInspector(testFunctionCodeString);
 }
 
-InspectorTestProxy.completeTest = function()
+TestPage.completeTest = function()
 {
     // Don't try to use testRunner if running through the browser.
     if (!window.testRunner)
         return;
 
     // Close inspector asynchrously in case we want to test tear-down behavior.
-    setTimeout(function() {
+    setTimeout(() => {
         testRunner.closeWebInspector();
-        setTimeout(function() {
-            testRunner.notifyDone();
-        }, 0);
+        setTimeout(() => { testRunner.notifyDone(); }, 0);
     }, 0);
 }
 
 // Logs message to unbuffered process stdout, avoiding timeouts.
 // only be used to debug tests and not to produce normal test output.
-InspectorTestProxy.debugLog = function(message)
+TestPage.debugLog = function(message)
 {
     window.alert(message);
 }
 
 // Add and clear test output from the results window.
-InspectorTestProxy.addResult = function(text)
+TestPage.addResult = function(text)
 {
     // For early errors triggered when loading the test page, write to stderr.
     if (!document.body) {
@@ -135,24 +139,24 @@ InspectorTestProxy.addResult = function(text)
     this._resultElement.append(text, document.createElement("br"));
 }
 
-InspectorTestProxy.needToSanitizeUncaughtExceptionURLs = false;
+TestPage.needToSanitizeUncaughtExceptionURLs = false;
 
-InspectorTestProxy.reportUncaughtException = function(message, url, lineNumber)
+TestPage.reportUncaughtException = function(message, url, lineNumber)
 {
-    if (InspectorTestProxy.needToSanitizeUncaughtExceptionURLs) {
-        if (typeof url == "string") {
-            var lastSlash = url.lastIndexOf("/");
-            var lastBackSlash = url.lastIndexOf("\\");
-            var lastPathSeparator = Math.max(lastSlash, lastBackSlash);
+    if (TestPage.needToSanitizeUncaughtExceptionURLs) {
+        if (typeof url === "string") {
+            let lastSlash = url.lastIndexOf("/");
+            let lastBackSlash = url.lastIndexOf("\\");
+            let lastPathSeparator = Math.max(lastSlash, lastBackSlash);
             if (lastPathSeparator > 0)
                 url = url.substr(lastPathSeparator + 1);
         }
     }
 
-    var result = "Uncaught exception in test page: " + message + " [" + url + ":" + lineNumber + "]";
-    InspectorTestProxy.addResult(result);
-    InspectorTestProxy.completeTest();
+    let result = `Uncaught exception in test page: ${message} [${url}:${lineNumber}]`;
+    TestPage.addResult(result);
+    TestPage.completeTest();
 }
 
 // Catch syntax errors, type errors, and other exceptions. Run this before loading other files.
-window.onerror = InspectorTestProxy.reportUncaughtException;
+window.onerror = TestPage.reportUncaughtException.bind(TestPage);
