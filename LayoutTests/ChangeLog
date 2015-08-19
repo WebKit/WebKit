@@ -1,3 +1,14 @@
+2015-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Attempt to fix the failing search-padding-cancel-results-buttons.html test by making
+        platform-specific versions of the test.
+
+        * TestExpectations: Added search-padding-cancel-results-buttons-expected.txt with a default [ Skip ].
+        * fast/forms/search/search-padding-cancel-results-buttons-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/search/search-padding-cancel-results-buttons-expected.txt.
+        * fast/forms/search/search-padding-cancel-results-buttons.html: Renamed from LayoutTests/platform/mac/fast/forms/search/search-padding-cancel-results-buttons.html.
+        * platform/mac-mavericks/fast/forms/search/search-padding-cancel-results-buttons-expected.txt: Renamed from LayoutTests/platform/mac/fast/forms/search/search-padding-cancel-results-buttons-expected.txt.
+        * platform/mac/TestExpectations: Enable the test only for Mac platforms.
+
 2015-08-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Fix a rare flakiness in svg/animations/svgPreserveAspectRatio-animation-1.html
