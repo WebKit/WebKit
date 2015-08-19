@@ -275,7 +275,7 @@ void SQLTransaction::computeNextStateAndCleanupIfNeeded()
     }
 
     clearCallbackWrappers();
-    m_nextState = SQLTransactionState::CleanupAndTerminate;
+    m_backend->requestTransitToState(SQLTransactionState::CleanupAndTerminate);
 }
 
 void SQLTransaction::clearCallbackWrappers()
