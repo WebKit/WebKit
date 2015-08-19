@@ -372,7 +372,7 @@ void RenderElement::computeMaxOutlineSize() const
         return;
     int maxOutlineSize = m_style->outlineSize();
     if (m_style->outlineStyleIsAuto())
-        maxOutlineSize = std::max(theme().platformFocusRingMaxWidth(), maxOutlineSize);
+        maxOutlineSize = std::max(theme().platformFocusRingWidth(), maxOutlineSize);
 
     if (maxOutlineSize < maximalOutlineSize(PaintPhaseOutline))
         return;
@@ -2041,7 +2041,7 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& pain
     addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
 #if PLATFORM(MAC)
     bool needsRepaint;
-    paintInfo.context->drawFocusRing(focusRingRects, style.outlineWidth(), style.outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+    paintInfo.context->drawFocusRing(focusRingRects, theme().platformFocusRingWidth(), style.outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
     if (needsRepaint)
         document().page()->focusController().setFocusedElementNeedsRepaint();
 #else
@@ -2051,6 +2051,10 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& pain
 
 void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRect)
 {
+    GraphicsContext& graphicsContext = *paintInfo.context;
+    if (graphicsContext.paintingDisabled())
+        return;
+
     if (!hasOutline())
         return;
 
@@ -2082,7 +2086,6 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     EBorderStyle outlineStyle = styleToUse.outlineStyle();
     Color outlineColor = styleToUse.visitedDependentColor(CSSPropertyOutlineColor);
 
-    GraphicsContext& graphicsContext = *paintInfo.context;
     bool useTransparencyLayer = outlineColor.hasAlpha();
     if (useTransparencyLayer) {
         if (outlineStyle == SOLID) {

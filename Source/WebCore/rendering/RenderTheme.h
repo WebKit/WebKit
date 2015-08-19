@@ -163,7 +163,7 @@ public:
     static Color focusRingColor();
     virtual Color platformFocusRingColor() const { return Color(0, 0, 0); }
     static void setCustomFocusRingColor(const Color&);
-    virtual int platformFocusRingMaxWidth() const { return 3; }
+    virtual int platformFocusRingWidth() const { return 3; }
 #if ENABLE(TOUCH_EVENTS)
     static Color tapHighlightColor();
     virtual Color platformTapHighlightColor() const { return RenderTheme::defaultTapHighlightColor; }

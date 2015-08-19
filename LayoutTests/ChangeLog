@@ -1,3 +1,22 @@
+2015-08-19  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup outline-style: auto painting.
+        https://bugs.webkit.org/show_bug.cgi?id=148159
+
+        Reviewed by Simon Fraser.
+
+        Old platform style required the focus ring to be painted with an offset. (https://trac.webkit.org/r5358)
+        (and it has the side effect of growing outline-width adds further, unwanted offset)
+        Default css for :focus is adjusted to remove this offset by setting the outline-width to 5px
+        and the outline-offset to -2px. (https://trac.webkit.org/r13639)
+        This patch removes both the old logic and the workaround for getting rid of the unwanted offset.
+
+        * fast/repaint/outline-auto-with-default-width-and-offset-repaint-expected.txt: Added.
+        * fast/repaint/outline-auto-with-default-width-and-offset-repaint.html: Copied from LayoutTests/fast/repaint/outline-with2px-auto-repaint-rect.html.
+        * fast/repaint/outline-with1px-auto-repaint-rect.html:
+        * fast/repaint/outline-with2px-auto-repaint-rect.html:
+        * fast/repaint/outline-with3px-auto-repaint-rect.html:
+
 2015-08-18  Dean Jackson  <dino@apple.com>
 
         Support CSS filters without webkit prefix
