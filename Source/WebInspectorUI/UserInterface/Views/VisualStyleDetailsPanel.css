@@ -46,7 +46,7 @@
     display: flex;
 }
 
-.sidebar > .panel.details.css-style .visual > .details-section .details-section.modified > .header > span::after {
+.sidebar > .panel.details.css-style .visual > .details-section .details-section.has-set-property > .header > span::after {
     width: 7px;
     height: 7px;
     margin: 4px 6px;

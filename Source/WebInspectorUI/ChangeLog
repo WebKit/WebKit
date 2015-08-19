@@ -1,5 +1,24 @@
 2015-08-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Consider showing style summary on collapsed visual sidebar sections
+        https://bugs.webkit.org/show_bug.cgi?id=148104
+
+        Reviewed by Timothy Hatcher.
+
+        The blue indicator dot on a section now means that that section has at least one set value.
+        If a section has been modified, it will display a trash can that will clear those modifications.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section.has-set-property > .header > span::after):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section.modified > .header > span::after): Deleted.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateProperties):
+        (WebInspector.VisualStyleDetailsPanel.prototype._sectionModified):
+        (WebInspector.VisualStyleDetailsPanel.prototype._groupHasSetProperty):
+
+2015-08-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: round sub-pixel values we get from computed style in visual sidebar
         https://bugs.webkit.org/show_bug.cgi?id=148105
 
