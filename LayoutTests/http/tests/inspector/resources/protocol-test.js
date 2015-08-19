@@ -25,33 +25,26 @@
  */
 
 // This namespace is injected into every test page. Its functions are invoked by
-// ProtocolTest methods on the inspector page via InjectedTestHarness.
-ProtocolTestProxy = {};
-ProtocolTestProxy._initializers = [];
+// ProtocolTest methods on the inspector page via a TestHarness subclass.
+TestPage = {};
+TestPage._initializers = [];
 
 // Helper scripts like `console-test.js` must register their initialization
 // function with this method so it will be marshalled to the inspector page.
-ProtocolTestProxy.registerInitializer = function(initializer)
+TestPage.registerInitializer = function(initializer)
 {
     if (typeof initializer === "function")
         this._initializers.push(initializer.toString());
-}
+};
 
 let outputElement;
 
-/**
- * Logs message to process stdout via alert (hopefully implemented with immediate flush).
- * @param {string} text
- */
-function debugLog(text)
+TestPage.debugLog = window.debugLog = function(text)
 {
     alert(text);
 }
 
-/**
- * @param {string} text
- */
-function log(text)
+TestPage.log = window.log = function(text)
 {
     if (!outputElement) {
         let intermediate = document.createElement("div");
@@ -68,31 +61,30 @@ function log(text)
     }
     outputElement.appendChild(document.createTextNode(text));
     outputElement.appendChild(document.createElement("br"));
-}
+};
 
-function closeTest()
+TestPage.closeTest = window.closeTest = function()
 {
     window.internals.closeDummyInspectorFrontend();
 
     // This code might be executed while the debugger is still running through a stack based EventLoop.
     // Use a setTimeout to defer to a clean stack before letting the testRunner load the next test.
-    setTimeout(function() {
-        testRunner.notifyDone();
-    }, 0);
-}
+    setTimeout(() => { testRunner.notifyDone(); }, 0);
+};
 
-function runTest()
+TestPage.runTest = window.runTest = function()
 {
     if (!window.testRunner) {
-        console.error("This test requires DumpRenderTree");
+        console.error("This test must be run via DumpRenderTree or WebKitTestRunner.");
         return;
     }
+
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows(true);
 
     let testFunction = window.test;
-    if (!(typeof testFunction === "function")) {
+    if (typeof testFunction !== "function") {
         alert("Failed to send test() because it is not a function.");
         testRunner.notifyDone();
     }
@@ -126,11 +118,11 @@ function runTest()
     }
 
     let inspectorFrontend = window.internals.openDummyInspectorFrontend(url);
-    inspectorFrontend.addEventListener("load", function(event) {
-        let initializationCodeString = `(${runInitializationMethodsInFrontend.toString()})([${ProtocolTestProxy._initializers}]);`;
+    inspectorFrontend.addEventListener("load", (event) => {
+        let initializationCodeString = `(${runInitializationMethodsInFrontend.toString()})([${TestPage._initializers}]);`;
         let testFunctionCodeString = `(${runTestMethodInFrontend.toString()})(${testFunction.toString()});`;
 
         inspectorFrontend.postMessage(initializationCodeString, "*");
         inspectorFrontend.postMessage(testFunctionCodeString, "*");
     });
-}
+};

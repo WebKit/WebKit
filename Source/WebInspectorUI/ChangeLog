@@ -1,3 +1,82 @@
+2015-08-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: split TestStub.js into multiple files and modernize it
+        https://bugs.webkit.org/show_bug.cgi?id=148077
+
+        Reviewed by Timothy Hatcher.
+ 
+        Since we want to share files between the two harnesses, split some of the parts
+        into different files so not everything has to be included at once.
+
+        Rename InjectedTestHarness to just TestHarness. Update some code to use
+        ES6 features where appropriate. Put test classes into Test/ directory.
+
+        * UserInterface/Base/TestStub.js: Removed.
+        * UserInterface/Test.html:
+        * UserInterface/Test/InspectorProtocol.js: Added.
+        (InspectorProtocol.sendCommand):
+        (InspectorProtocol.awaitCommand):
+        (InspectorProtocol.awaitEvent.):
+        (InspectorProtocol.awaitEvent):
+        (InspectorProtocol.addEventListener):
+        (InspectorProtocol.sendMessage):
+        (InspectorProtocol.checkForError):
+        (InspectorProtocol.dispatchMessageFromBackend):
+        * UserInterface/Test/ProtocolTestHarness.js: Added.
+        (ProtocolTestHarness.prototype.completeTest):
+        (ProtocolTestHarness.prototype.addResult):
+        (ProtocolTestHarness.prototype.debugLog):
+        (ProtocolTestHarness.prototype.evaluateInPage):
+        (ProtocolTestHarness):
+        * UserInterface/Test/Test.js: Renamed from Source/WebInspectorUI/UserInterface/Base/Test.js.
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        (WebInspector.UIString):
+        (WebInspector.updateDockedState):
+        (WebInspector.updateDockingAvailability):
+        (InspectorTest.EventDispatcher.prototype.dispatchEvent):
+        (InspectorTest.EventDispatcher):
+        (InspectorTest.log):
+        (InspectorTest.assert):
+        (InspectorTest.expectThat):
+        (InspectorTest.debugLog):
+        (InspectorTest.expectNoError):
+        (InspectorTest.completeTest):
+        (InspectorTest.evaluateInPage):
+        (InspectorTest.addResult):
+        (InspectorTest._resendResults):
+        (InspectorTest.testPageDidLoad):
+        (InspectorTest.reloadPage):
+        (InspectorTest.reportUncaughtException):
+        * UserInterface/Test/TestHarness.js: Added.
+        (TestHarness):
+        (TestHarness.prototype.completeTest):
+        (TestHarness.prototype.addResult):
+        (TestHarness.prototype.debugLog):
+        (TestHarness.prototype.evaluateInPage):
+        (TestHarness.prototype.createAsyncSuite):
+        (TestHarness.prototype.createSyncSuite):
+        (TestHarness.prototype.get logCount):
+        (TestHarness.prototype.log):
+        (TestHarness.prototype.assert):
+        (TestHarness.prototype.expectThat):
+        * UserInterface/Test/TestStub.js: Added.
+        * UserInterface/Test/TestSuite.js: Added.
+        (TestSuite):
+        (TestSuite.prototype.runTestCasesAndFinish):
+        (TestSuite.prototype.runTestCases):
+        (TestSuite.prototype.get passCount):
+        (TestSuite.prototype.get skipCount):
+        (TestSuite.prototype.addTestCase):
+        (AsyncTestSuite.prototype.runTestCasesAndFinish.finish):
+        (AsyncTestSuite.prototype.runTestCasesAndFinish):
+        (AsyncTestSuite.prototype.runTestCases):
+        (AsyncTestSuite):
+        (SyncTestSuite.prototype.runTestCasesAndFinish):
+        (SyncTestSuite.prototype.runTestCases):
+        (SyncTestSuite):
+        * UserInterface/TestStub.html:
+
 2015-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Pressing Command-Enter should re-evaluate selected console user command

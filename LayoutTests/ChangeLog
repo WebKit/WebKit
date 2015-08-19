@@ -1,3 +1,34 @@
+2015-08-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: split TestStub.js into multiple files and modernize it
+        https://bugs.webkit.org/show_bug.cgi?id=148077
+
+        Reviewed by Timothy Hatcher.
+
+        Add the prefix 'TestPage' to everything in protocol-test.js. Continue
+        exporting it to the global namespace for backwards compatibility, too.
+
+        Rename some things to match changes in the test harness. Tighten up
+        preconditions for test suite and test case names. Sprinkle some ES6.
+
+        * http/tests/inspector/dom/resources/InspectorDOMListener.js:
+        * http/tests/inspector/resources/console-test.js:
+        * http/tests/inspector/resources/probe-test.js:
+        * http/tests/inspector/resources/protocol-test.js:
+        (TestPage.registerInitializer):
+        (TestPage.debugLog.window.debugLog):
+        (TestPage.log.window.log):
+        (TestPage.closeTest.window.closeTest):
+        (TestPage.runTest.window.runTest):
+        (ProtocolTestProxy.registerInitializer): Deleted.
+        (debugLog): Deleted.
+        (log): Deleted.
+        (closeTest): Deleted.
+        (runTest): Deleted.
+        * inspector/dom/resources/dom-search-queries.js:
+        * inspector/unit-tests/async-test-suite.html:
+        * inspector/unit-tests/sync-test-suite.html:
+
 2015-08-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Punctuation near Hindi text is garbled when styled with the system font

@@ -6,27 +6,34 @@
 function test()
 {
     try {
-        let result = new InjectedTestHarness.AsyncTestSuite(this);
+        let result = new AsyncTestSuite(this);
         ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires name argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating AsyncTestSuite requires name argument.");
     }
 
     try {
-        let result = new InjectedTestHarness.AsyncTestSuite(this, {});
+        let result = new AsyncTestSuite(this, {});
         ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires string name argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating AsyncTestSuite requires string name argument.");
     }
 
     try {
-        let result = new InjectedTestHarness.AsyncTestSuite("something", {});
+        let result = new AsyncTestSuite(this, "      ");
+        ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires non-whitespace name argument.");
+    } catch (e) {
+        ProtocolTest.log("PASS: instantiating AsyncTestSuite requires non-whitespace name argument.");
+    }
+
+    try {
+        let result = new AsyncTestSuite("something", {});
         ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires test harness argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating AsyncTestSuite requires test harness argument.");
     }
 
-    var badArgsSuite = ProtocolTest.createAsyncSuite("dummy");
+    let badArgsSuite = ProtocolTest.createAsyncSuite("dummy");
     try {
         badArgsSuite.addTestCase();
         ProtocolTest.log("FAIL: should not be able to add empty test case.");
@@ -42,11 +49,20 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: {},
-            test: function() {},
+            test: () => {},
         });
         ProtocolTest.log("FAIL: test case should require string name.");
     } catch (e) {
         ProtocolTest.log("PASS: test case should require string name.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "        ",
+            test: () => {},
+        });
+        ProtocolTest.log("FAIL: test case should require non-whitespace name.");
+    } catch (e) {
+        ProtocolTest.log("PASS: test case should require non-whitespace name.");
     }
     try {
         badArgsSuite.addTestCase({
@@ -58,7 +74,7 @@ function test()
         ProtocolTest.log("PASS: test case should require test function.");
     }
 
-    var runEmptySuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.RunEmptySuite");
+    let runEmptySuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.RunEmptySuite");
     try {
         runEmptySuite.runTestCases();
         ProtocolTest.log("FAIL: should not be able to run empty test suite.");
@@ -66,16 +82,14 @@ function test()
         ProtocolTest.log("PASS: should not be able to run empty test suite.");
     }
 
-    var runTwiceSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.RunTwiceSuite");
+    let runTwiceSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.RunTwiceSuite");
     runTwiceSuite.addTestCase({
         name: "DummyTest0",
         description: "Check that a suite can't run more than once.",
-        test: function(resolve, reject) {
-            resolve();
-        }
+        test: (resolve, reject) => { resolve(); }
     });
 
-    var result = runTwiceSuite.runTestCases();
+    let result = runTwiceSuite.runTestCases();
     try {
         // Test cases won't run in this event loop; this call should still throw.
         // Later tests are chained to this suite to avoid nondeterminism.
@@ -85,64 +99,50 @@ function test()
         ProtocolTest.log("PASS: should not be able to run a test suite twice.");
     }
 
-    var rejectToken = {"token": 666};
-    var thrownError = new Error(rejectToken);
+    let rejectToken = {"token": 666};
+    let thrownError = new Error(rejectToken);
 
-    var sequentialExecutionSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.SequentialExecution");
+    let sequentialExecutionSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.SequentialExecution");
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest1",
         description: "Check test case execution order.",
-        test: function(resolve, reject) {
-            resolve();
-        }
+        test: (resolve, reject) => { resolve(); }
     });
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest2",
         description: "Check test case execution order.",
-        test: function(resolve, reject) {
-            resolve();
-        }
+        test: (resolve, reject) => { resolve(); }
     });
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest3",
         description: "Check test case execution order.",
-        test: function(resolve, reject) {
-            resolve();
-        }
+        test: (resolve, reject) => { resolve(); }
     });
     sequentialExecutionSuite.addTestCase({
         name: "FailingTest4",
         description: "Check that test fails by throwing an Error instance.",
-        test: function(resolve, reject) {
-            throw thrownError;
-        }
+        test: (resolve, reject) => { throw thrownError; }
     });
 
-    var abortOnFailureSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AbortOnFailure");
+    let abortOnFailureSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AbortOnFailure");
     abortOnFailureSuite.addTestCase({
         name: "PassingTest5",
         description: "This test is a dummy.",
-        test: function(resolve, reject) {
-            resolve();
-        }
+        test: (resolve, reject) => { resolve(); }
     });
     abortOnFailureSuite.addTestCase({
         name: "FailingTest6",
         description: "This test should fail by explicitly calling the `reject` callback.",
-        test: function(resolve, reject) {
-            reject(rejectToken);
-        }
+        test: (resolve, reject) => { reject(rejectToken); }
     });
     abortOnFailureSuite.addTestCase({
         name: "PassingTest7",
         description: "This test should not executed when the preceding test fails.",
-        test: function(resolve, reject) {
-            resolve();
-        }
+        test: (resolve, reject) => { resolve(); }
     });
 
-    result = result.then(function() {
-        var promise = sequentialExecutionSuite.runTestCases();
+    result = result.then(() => {
+        let promise = sequentialExecutionSuite.runTestCases();
         ProtocolTest.expectThat(result instanceof Promise, "AsyncTestSuite.RunTestCases() should return a Promise.");
         return promise;
     });
@@ -160,7 +160,7 @@ function test()
         return Promise.resolve(); // Continue this test.
     });
 
-    result = result.then(function() {
+    result = result.then(() => {
         return abortOnFailureSuite.runTestCases();
     }).then(function resolved() {
         ProtocolTest.log("FAIL: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.");
@@ -177,7 +177,7 @@ function test()
     });
 
     // This will finish the test whether the chain was resolved or rejected.
-    result = result.then(function() { ProtocolTest.completeTest(); });
+    result = result.then(() => { ProtocolTest.completeTest(); });
 }
 </script>
 </head>

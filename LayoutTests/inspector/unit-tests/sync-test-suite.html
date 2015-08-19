@@ -6,27 +6,34 @@
 function test()
 {
     try {
-        let result = new ProtocolTest.SyncTestSuite(this);
+        let result = new SyncTestSuite(this);
         ProtocolTest.log("FAIL: instantiating SyncTestSuite requires name argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating SyncTestSuite requires name argument.");
     }
 
     try {
-        let result = new ProtocolTest.SyncTestSuite(this, {});
+        let result = new SyncTestSuite(this, {});
         ProtocolTest.log("FAIL: instantiating SyncTestSuite requires string name argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating SyncTestSuite requires string name argument.");
     }
 
     try {
-        let result = new ProtocolTest.SyncTestSuite("something", {});
+        let result = new syncTestSuite(this, "      ");
+        ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires non-whitespace name argument.");
+    } catch (e) {
+        ProtocolTest.log("PASS: instantiating AsyncTestSuite requires non-whitespace name argument.");
+    }
+
+    try {
+        let result = new SyncTestSuite("something", {});
         ProtocolTest.log("FAIL: instantiating SyncTestSuite requires test harness argument.");
     } catch (e) {
         ProtocolTest.log("PASS: instantiating SyncTestSuite requires test harness argument.");
     }
 
-    var badArgsSuite = ProtocolTest.createSyncSuite("dummy");
+    let badArgsSuite = ProtocolTest.createSyncSuite("dummy");
     try {
         badArgsSuite.addTestCase();
         ProtocolTest.log("FAIL: should not be able to add empty test case.");
@@ -42,11 +49,20 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: {},
-            test: function() { return true; },
+            test: () => true,
         });
         ProtocolTest.log("FAIL: test case should require string name.");
     } catch (e) {
         ProtocolTest.log("PASS: test case should require string name.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "        ",
+            test: () => {},
+        });
+        ProtocolTest.log("FAIL: test case should require non-whitespace name.");
+    } catch (e) {
+        ProtocolTest.log("PASS: test case should require non-whitespace name.");
     }
     try {
         badArgsSuite.addTestCase({
@@ -58,7 +74,7 @@ function test()
         ProtocolTest.log("PASS: test case should require test function.");
     }
 
-    var runEmptySuite = ProtocolTest.createSyncSuite("SyncTestSuite.RunEmptySuite");
+    let runEmptySuite = ProtocolTest.createSyncSuite("SyncTestSuite.RunEmptySuite");
     try {
         runEmptySuite.runTestCases();
         ProtocolTest.log("FAIL: should not be able to run empty test suite.");
@@ -66,15 +82,15 @@ function test()
         ProtocolTest.log("PASS: should not be able to run empty test suite.");
     }
 
-    var runTwiceSuite = ProtocolTest.createSyncSuite("SyncTestSuite.RunTwiceSuite");
+    let runTwiceSuite = ProtocolTest.createSyncSuite("SyncTestSuite.RunTwiceSuite");
     runTwiceSuite.addTestCase({
         name: "DummyTest0",
         description: "Check that a suite can't run more than once.",
-        test: function() { return true; }
+        test: () => true,
     });
 
     try {
-        var result = runTwiceSuite.runTestCases();
+        let result = runTwiceSuite.runTestCases();
         ProtocolTest.expectThat(result === true, "Return value of runTwiceSuite.runTestCases() should be true when all tests pass.");
 
         runTwiceSuite.runTestCases(); // Try to trigger an error.
@@ -83,52 +99,52 @@ function test()
         ProtocolTest.log("PASS: should not be able to run a test suite twice.");
     }
 
-    var thrownError = new Error({"token": 666});
+    let thrownError = new Error({"token": 666});
 
-    var sequentialExecutionSuite = ProtocolTest.createSyncSuite("SyncTestSuite.SequentialExecution");
+    let sequentialExecutionSuite = ProtocolTest.createSyncSuite("SyncTestSuite.SequentialExecution");
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest1",
         description: "Check test case execution order.",
-        test: function() { return true; }
+        test: () => true
     });
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest2",
         description: "Check test case execution order.",
-        test: function() { return true; }
+        test: () => true
     });
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest3",
         description: "Check test case execution order.",
-        test: function() { return true; }
+        test: () => true
     });
     sequentialExecutionSuite.addTestCase({
         name: "FailingTest4",
         description: "Check that test fails by throwing an Error instance.",
-        test: function() { throw thrownError; }
+        test: () => { throw thrownError; }
     });
 
-    var result = sequentialExecutionSuite.runTestCases();
+    let result = sequentialExecutionSuite.runTestCases();
     ProtocolTest.expectThat(result === false, "Return value of sequentialExecutionSuite.runTestCases() should be false when a test case fails.");
     ProtocolTest.expectThat(sequentialExecutionSuite.runCount === 4, "sequentialExecutionSuite should have executed four tests.");
     ProtocolTest.expectThat(sequentialExecutionSuite.passCount === 3, "sequentialExecutionSuite should have passed three tests.");
     ProtocolTest.expectThat(sequentialExecutionSuite.failCount === 1, "sequentialExecutionSuite should have failed 1 test.");
     ProtocolTest.expectThat(sequentialExecutionSuite.skipCount === 0, "sequentialExecutionSuite should have skipped zero tests.");
 
-    var abortOnFailureSuite = ProtocolTest.createSyncSuite("SyncTestSuite.AbortOnFailure");
+    let abortOnFailureSuite = ProtocolTest.createSyncSuite("SyncTestSuite.AbortOnFailure");
     abortOnFailureSuite.addTestCase({
         name: "PassingTest5",
         description: "This test is a dummy.",
-        test: function() { return true; }
+        test: () => true
     });
     abortOnFailureSuite.addTestCase({
         name: "FailingTest6",
         description: "This test should fail by explicitly returning `false`.",
-        test: function() { return false; }
+        test: () => false
     });
     abortOnFailureSuite.addTestCase({
         name: "PassingTest7",
         description: "This test should not executed when the preceding test fails.",
-        test: function() { return true; }
+        test: () => true
     });
 
     abortOnFailureSuite.runTestCases();
