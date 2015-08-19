@@ -4640,14 +4640,17 @@ void SpeculativeJIT::compile(Node* node)
         emitInvalidationPoint(node);
         break;
 
-    case CheckWatchdogTimer:
+    case CheckWatchdogTimer: {
         ASSERT(m_jit.vm()->watchdog);
-        speculationCheck(
-            WatchdogTimerFired, JSValueRegs(), 0,
-            m_jit.branchTest8(
-                JITCompiler::NonZero,
-                JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog->timerDidFireAddress())));
+        GPRTemporary unused(this);
+        GPRReg unusedGPR = unused.gpr();
+        
+        JITCompiler::Jump timerDidFire = m_jit.branchTest8(JITCompiler::NonZero,
+            JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog->timerDidFireAddress()));
+        
+        addSlowPathGenerator(slowPathCall(timerDidFire, this, operationHandleWatchdogTimer, unusedGPR));
         break;
+    }
 
     case CountExecution:
         m_jit.add64(TrustedImm32(1), MacroAssembler::AbsoluteAddress(node->executionCounter()->address()));

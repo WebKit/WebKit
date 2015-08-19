@@ -1,5 +1,44 @@
 2015-08-19  Mark Lam  <mark.lam@apple.com>
 
+        Add support for CheckWatchdogTimer as slow path in DFG and FTL.
+        https://bugs.webkit.org/show_bug.cgi?id=147968
+
+        Reviewed by Michael Saboff.
+
+        Re-implement the DFG's CheckWatchdogTimer as a slow path instead of a speculation
+        check.  Since the watchdog timer can fire spuriously, this allows the code to
+        stay optimized if all we have are spurious fires.
+
+        Implement the equivalent slow path for CheckWatchdogTimer in the FTL. 
+
+        The watchdog tests in ExecutionTimeLimitTest.cpp has already been updated in
+        https://bugs.webkit.org/show_bug.cgi?id=148125 to test for the FTL's watchdog
+        implementation.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckWatchdogTimer):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isInlinableSize):
+
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        - Changed operationHandleWatchdogTimer() to return an unused nullptr.  This
+          allows me to reuse the existing DFG slow path generator mechanism.  I didn't
+          think that operationHandleWatchdogTimer() was worth introducing a whole new set
+          of machinery just so we can have a slow path that returns void.
+
+2015-08-19  Mark Lam  <mark.lam@apple.com>
+
         Add ability to save and restore JSC options.
         https://bugs.webkit.org/show_bug.cgi?id=148125
 

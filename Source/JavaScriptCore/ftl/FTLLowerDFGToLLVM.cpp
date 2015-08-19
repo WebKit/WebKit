@@ -51,6 +51,7 @@
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 #include "VirtualRegister.h"
+#include "Watchdog.h"
 #include <atomic>
 #include <dlfcn.h>
 #include <llvm/InitializeLLVM.h>
@@ -828,6 +829,9 @@ private:
             break;
         case MaterializeCreateActivation:
             compileMaterializeCreateActivation();
+            break;
+        case CheckWatchdogTimer:
+            compileCheckWatchdogTimer();
             break;
 
         case PhantomLocal:
@@ -5426,6 +5430,23 @@ private:
         }
 
         setJSValue(activation);
+    }
+
+    void compileCheckWatchdogTimer()
+    {
+        LBasicBlock timerDidFire = FTL_NEW_BLOCK(m_out, ("CheckWatchdogTimer timer did fire"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CheckWatchdogTimer continuation"));
+        
+        LValue state = m_out.load8(m_out.absolute(vm().watchdog->timerDidFireAddress()));
+        m_out.branch(m_out.equal(state, m_out.constInt8(0)),
+            usually(continuation), rarely(timerDidFire));
+
+        LBasicBlock lastNext = m_out.appendTo(timerDidFire, continuation);
+
+        vmCall(m_out.operation(operationHandleWatchdogTimer), m_callFrame);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
     }
 
     bool isInlinableSize(LValue function)

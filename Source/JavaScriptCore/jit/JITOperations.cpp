@@ -988,13 +988,19 @@ EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     return JSValue::encode(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp));
 }
 
-void JIT_OPERATION operationHandleWatchdogTimer(ExecState* exec)
+// The only reason for returning an UnusedPtr (instead of void) is so that we can reuse the
+// existing DFG slow path generator machinery when creating the slow path for CheckWatchdogTimer
+// in the DFG. If a DFG slow path generator that supports a void return type is added in the
+// future, we can switch to using that then.
+UnusedPtr JIT_OPERATION operationHandleWatchdogTimer(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
     if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(exec)))
         vm.throwException(exec, createTerminatedExecutionException(&vm));
+
+    return nullptr;
 }
 
 void JIT_OPERATION operationThrowStaticError(ExecState* exec, EncodedJSValue encodedValue, int32_t referenceErrorFlag)

@@ -119,6 +119,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckBadCell:
     case CheckNotEmpty:
     case CheckIdent:
+    case CheckWatchdogTimer:
     case StringCharCodeAt:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:

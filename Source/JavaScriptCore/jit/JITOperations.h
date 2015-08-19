@@ -51,6 +51,8 @@ class ArrayAllocationProfile;
 
 extern "C" {
 
+typedef char* UnusedPtr;
+
 // These typedefs provide typechecking when generating calls out to helper routines;
 // this helps prevent calling a helper routine with the wrong arguments!
 /*
@@ -293,7 +295,7 @@ EncodedJSValue JIT_OPERATION operationNewArrowFunction(ExecState*, JSScope*, JSC
 EncodedJSValue JIT_OPERATION operationNewArrowFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
-void JIT_OPERATION operationHandleWatchdogTimer(ExecState*) WTF_INTERNAL;
+UnusedPtr JIT_OPERATION operationHandleWatchdogTimer(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationThrowStaticError(ExecState*, EncodedJSValue, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationThrow(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationDebug(ExecState*, int32_t) WTF_INTERNAL;
