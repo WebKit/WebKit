@@ -1339,7 +1339,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (beforePseudoElement)
             visibleChildren.push(beforePseudoElement);
 
-        if (node.childNodeCount)
+        if (node.childNodeCount && node.children)
             visibleChildren = visibleChildren.concat(node.children);
 
         var afterPseudoElement = node.afterPseudoElement();

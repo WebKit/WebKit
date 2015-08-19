@@ -1,3 +1,14 @@
+2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exception while handling event DOM.pseudoElementRemoved reloading twitter pages
+        https://bugs.webkit.org/show_bug.cgi?id=148180
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._visibleChildren):
+        DOMNode.children can be null before it is filled in.
+
 2015-08-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorTest should be a subclass of TestHarness
