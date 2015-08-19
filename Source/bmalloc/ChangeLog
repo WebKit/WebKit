@@ -1,3 +1,20 @@
+2015-08-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Crash @ bmalloc::Environment::computeIsBmallocEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=148183
+
+        Reviewed by NOBODY Michael Saboff.
+
+        CrashTracer says we have some crashes beneath computeIsBmallocEnabled
+        dereferencing null in strstr. We null check getenv but not
+        _dyld_get_image_name, so deduction indicates that _dyld_get_image_name
+        must be returning null. _dyld_get_image_name isn't really documented,
+        so let's assume it can return null.
+
+        * bmalloc/Environment.cpp:
+        (bmalloc::isASanEnabled): Check _dyld_get_image_name's return value for
+        null because we can't prove it won't be null.
+
 2015-07-24  Geoffrey Garen  <ggaren@apple.com>
 
         vmmap crash at JavaScriptCore: 0x31cd12f6 (the JavaScript malloc zone enumerator)
