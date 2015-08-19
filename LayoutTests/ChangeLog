@@ -1,3 +1,20 @@
+2015-08-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Punctuation near Hindi text is garbled when styled with the system font
+        https://bugs.webkit.org/show_bug.cgi?id=148164
+
+        Reviewed by Brian Burg.
+
+        This test is only relevant when the system font is set to Japanese or Simplified Chinese. In these
+        languages, the system font doesn't support punctuation, but CG will erroneously say that it does.
+
+        I intend to implement testing infrastructure which will allow us to mock the system language,
+        thereby allowing this test to be valid on all machines. The tracking bug for this effort is
+        https://bugs.webkit.org/show_bug.cgi?id=148168
+
+        * fast/text/hindi-system-font-punctuation-expected.html: Added.
+        * fast/text/hindi-system-font-punctuation.html: Added.
+
 2015-08-18  Brian Burg  <bburg@apple.com>
 
         [Win] Test Gardening after r188598
