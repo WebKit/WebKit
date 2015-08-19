@@ -372,7 +372,7 @@ void RenderElement::computeMaxOutlineSize() const
         return;
     int maxOutlineSize = m_style->outlineSize();
     if (m_style->outlineStyleIsAuto())
-        maxOutlineSize = std::max(theme().platformFocusRingWidth(), maxOutlineSize);
+        maxOutlineSize = std::max(theme().platformFocusRingWidth() + m_style->outlineOffset(), maxOutlineSize);
 
     if (maxOutlineSize < maximalOutlineSize(PaintPhaseOutline))
         return;
