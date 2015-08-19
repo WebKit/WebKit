@@ -554,15 +554,18 @@ void ScrollController::processWheelEventForScrollSnapOnAxis(ScrollEventAxis axis
     case WheelEventStatus::InertialScrolling:
         // This check for DestinationReached ensures that we don't receive another set of momentum events after ending the last glide.
         if (snapState.m_currentState != ScrollSnapState::Gliding && snapState.m_currentState != ScrollSnapState::DestinationReached) {
-            if (snapState.m_numWheelDeltasTracked < snapState.wheelDeltaWindowSize && wheelDelta)
+            if (snapState.wheelDeltaTrackingIsInProgress() && wheelDelta)
                 snapState.pushInitialWheelDelta(wheelDelta);
             
-            if ((snapState.m_numWheelDeltasTracked == snapState.wheelDeltaWindowSize) && snapState.averageInitialWheelDelta())
+            if (snapState.hasFinishedTrackingWheelDeltas() && snapState.averageInitialWheelDelta())
                 beginScrollSnapAnimation(axis, ScrollSnapState::Gliding);
         }
         break;
         
     case WheelEventStatus::InertialScrollEnd:
+        if (snapState.wheelDeltaTrackingIsInProgress() && snapState.averageInitialWheelDelta())
+            beginScrollSnapAnimation(axis, ScrollSnapState::Gliding);
+
         snapState.clearInitialWheelDeltaWindow();
         snapState.m_shouldOverrideWheelEvent = false;
         break;

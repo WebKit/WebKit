@@ -84,6 +84,16 @@ bool ScrollSnapAnimatorState::canReachTargetWithCurrentInitialScrollDelta() cons
     return m_initialOffset < m_targetOffset ? m_initialScrollDelta > 0 : m_initialScrollDelta < 0;
 }
     
+bool ScrollSnapAnimatorState::wheelDeltaTrackingIsInProgress() const
+{
+    return m_numWheelDeltasTracked && m_numWheelDeltasTracked < wheelDeltaWindowSize;
+}
+
+bool ScrollSnapAnimatorState::hasFinishedTrackingWheelDeltas() const
+{
+    return m_numWheelDeltasTracked == wheelDeltaWindowSize;
+}
+
 float ScrollSnapAnimatorState::interpolatedOffsetAtProgress(float progress) const
 {
     progress = std::max(0.0f, std::min(1.0f, progress));
