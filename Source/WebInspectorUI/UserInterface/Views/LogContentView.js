@@ -727,6 +727,8 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             this._leftArrowWasPressed(event);
         else if (event.keyIdentifier === "Right")
             this._rightArrowWasPressed(event);
+        else if (event.keyIdentifier === "Enter" && event.metaKey)
+            this._commandEnterWasPressed(event);
     }
 
     _keyPress(event)
@@ -822,6 +824,18 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             event.preventDefault();
         } else if (currentMessage.__messageView && currentMessage.__messageView.expandable) {
             currentMessage.__messageView.expand();
+            event.preventDefault();
+        }
+    }
+
+    _commandEnterWasPressed(event)
+    {
+        if (this._selectedMessages.length !== 1)
+            return;
+
+        let message = this._selectedMessages[0];
+        if (message.__commandView && message.__commandView.commandText) {
+            this._logViewController.consolePromptTextCommitted(null, message.__commandView.commandText);
             event.preventDefault();
         }
     }
