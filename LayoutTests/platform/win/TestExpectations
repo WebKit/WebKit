@@ -2358,37 +2358,38 @@ http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 ################################################################################
 
 # Seems that all inspector tests are timing out on Windows. Skip them all.
+# Comment out detailed expectations until the harness is supported on Windows.
 webkit.org/b/137157 inspector [ Skip ]
 
-webkit.org/b/143548 inspector/console [ Skip ]
-webkit.org/b/137157 inspector/css [ Skip ]
-webkit.org/b/147017 inspector/css/get-system-fonts.html [ Skip ]
-webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
-webkit.org/b/137157 inspector/event-listener.html [ Skip ]
-webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
-webkit.org/b/137157 [ Release ] inspector/model/remote-object-get-properties.html [ Pass Timeout ]
-webkit.org/b/137157 [ Debug ] inspector/model/remote-object-get-properties.html [ Skip ] # Debug Assertion
-webkit.org/b/137157 inspector/page/main-frame-resource.html [ Skip ]
-http/tests/inspector/css/bad-mime-type.html [ Skip ]
-inspector/test-harness-trivially-works.html [ Skip ]
-inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
+# webkit.org/b/143548 inspector/console [ Skip ]
+# webkit.org/b/137157 inspector/css [ Skip ]
+# webkit.org/b/147017 inspector/css/get-system-fonts.html [ Skip ]
+# webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
+# webkit.org/b/137157 inspector/event-listener.html [ Skip ]
+# webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
+# webkit.org/b/137157 [ Release ] inspector/model/remote-object-get-properties.html [ Pass Timeout ]
+# webkit.org/b/137157 [ Debug ] inspector/model/remote-object-get-properties.html [ Skip ] # Debug Assertion
+# webkit.org/b/137157 inspector/page/main-frame-resource.html [ Skip ]
+# http/tests/inspector/css/bad-mime-type.html [ Skip ]
+# inspector/test-harness-trivially-works.html [ Skip ]
+# inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 
 # Inspector Protocol
-webkit.org/b/140510 inspector/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]  # Crashing
-inspector/debugger/pause-on-assert.html [ Skip ]
-inspector/debugger/regress-133182.html [ Skip ]  # Crashing
-[ Release ] inspector/debugger/setBreakpoint-actions.html [ Pass Timeout ]
-webkit.org/b/140520 inspector/debugger/setBreakpoint-dfg.html [ Skip ]  # Crashing
-[ Release ] inspector/dom/focus.html [ Pass Timeout ]
-webkit.org/b/128979 [ Release ] inspector/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
-[ Release ] inspector/dom/remove-multiple-nodes.html [ Pass Timeout ]
-[ Release ] inspector/layers/layers-blending-compositing-reasons.html [ Failure ]
-[ Debug ] inspector/layers/layers-blending-compositing-reasons.html [ Skip ]
-[ Release ] inspector/layers/layers-reflected-content.html [ Pass Timeout ]
-[ Release ] inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
-[ Debug ] inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Skip ] # Debug Assertion
-inspector/debugger/removeBreakpoint.html [ Skip ] # Crashing
-inspector/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
+# webkit.org/b/140510 inspector/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]  # Crashing
+# inspector/debugger/pause-on-assert.html [ Skip ]
+# inspector/debugger/regress-133182.html [ Skip ]  # Crashing
+# [ Release ] inspector/debugger/setBreakpoint-actions.html [ Pass Timeout ]
+# webkit.org/b/140520 inspector/debugger/setBreakpoint-dfg.html [ Skip ]  # Crashing
+# [ Release ] inspector/dom/focus.html [ Pass Timeout ]
+# webkit.org/b/128979 [ Release ] inspector/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
+# [ Release ] inspector/dom/remove-multiple-nodes.html [ Pass Timeout ]
+# [ Release ] inspector/layers/layers-blending-compositing-reasons.html [ Failure ]
+# [ Debug ] inspector/layers/layers-blending-compositing-reasons.html [ Skip ]
+# [ Release ] inspector/layers/layers-reflected-content.html [ Pass Timeout ]
+# [ Release ] inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure ]
+# [ Debug ] inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Skip ] # Debug Assertion
+# inspector/debugger/removeBreakpoint.html [ Skip ] # Crashing
+# inspector/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
 
 ################################################################################
 #################        End Inspector Issues               ####################
