@@ -70,6 +70,16 @@
         "category": "css"
     },
     {
+        "name": "CSS Will Change",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://drafts.csswg.org/css-will-change/",
+        "keywords": ["css willchange", "css will-change"],
+        "category": "css"
+    },
+    {
         "name": "DOM",
         "url": "https://dom.spec.whatwg.org",
         "keywords": ["dom", "dom4"],
