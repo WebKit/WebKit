@@ -109,6 +109,7 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         var consoleSession = new WebInspector.ConsoleSession;
 
         this._previousMessageView = null;
+        this._lastCommited = "";
         this._repeatCountWasInterrupted = false;
 
         this._sessions.push(consoleSession);

@@ -1,5 +1,15 @@
 2015-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        REGRESSION (r188581): Web Inspector: Console user command isn't visible after reloading the page
+        https://bugs.webkit.org/show_bug.cgi?id=148166
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.startNewSession):
+
+2015-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION (r188581): Web Inspector: Option-Enter no longer inserts a new line in the console
         https://bugs.webkit.org/show_bug.cgi?id=148165
 
