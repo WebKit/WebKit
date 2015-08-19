@@ -1369,6 +1369,10 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
                 compilePeepHoleObjectToObjectOrOtherEquality(node->child1(), node->child2(), branchNode);
             else if (node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse))
                 compilePeepHoleObjectToObjectOrOtherEquality(node->child2(), node->child1(), branchNode);
+            else if (!needsTypeCheck(node->child1(), SpecOther))
+                nonSpeculativePeepholeBranchNullOrUndefined(node->child2(), branchNode);
+            else if (!needsTypeCheck(node->child2(), SpecOther))
+                nonSpeculativePeepholeBranchNullOrUndefined(node->child1(), branchNode);
             else {
                 nonSpeculativePeepholeBranch(node, branchNode, condition, operation);
                 return true;
@@ -3900,8 +3904,18 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
             compileObjectToObjectOrOtherEquality(node->child2(), node->child1());
             return false;
         }
+
+        if (!needsTypeCheck(node->child1(), SpecOther)) {
+            nonSpeculativeNonPeepholeCompareNullOrUndefined(node->child2());
+            return false;
+        }
+
+        if (!needsTypeCheck(node->child2(), SpecOther)) {
+            nonSpeculativeNonPeepholeCompareNullOrUndefined(node->child1());
+            return false;
+        }
     }
-    
+
     nonSpeculativeNonPeepholeCompare(node, condition, operation);
     return false;
 }

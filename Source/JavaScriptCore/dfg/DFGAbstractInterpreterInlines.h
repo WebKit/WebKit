@@ -1139,8 +1139,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CompareLessEq:
     case CompareGreater:
     case CompareGreaterEq:
-    case CompareEq:
-    case CompareEqConstant: {
+    case CompareEq: {
         JSValue leftConst = forNode(node->child1()).value();
         JSValue rightConst = forNode(node->child2()).value();
         if (leftConst && rightConst) {
@@ -1180,12 +1179,39 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
         
-        if (node->op() == CompareEqConstant || node->op() == CompareEq) {
+        if (node->op() == CompareEq) {
             SpeculatedType leftType = forNode(node->child1()).m_type;
             SpeculatedType rightType = forNode(node->child2()).m_type;
             if (!valuesCouldBeEqual(leftType, rightType)) {
                 setConstant(node, jsBoolean(false));
                 break;
+            }
+
+            if (leftType == SpecOther)
+                std::swap(leftType, rightType);
+            if (rightType == SpecOther) {
+                // Undefined and Null are always equal when compared to eachother.
+                if (!(leftType & ~SpecOther)) {
+                    setConstant(node, jsBoolean(true));
+                    break;
+                }
+
+                // Any other type compared to Null or Undefined is always false
+                // as long as the MasqueradesAsUndefined watchpoint is valid.
+                //
+                // MasqueradesAsUndefined only matters for SpecObjectOther, other
+                // cases are always "false".
+                if (!(leftType & (SpecObjectOther | SpecOther))) {
+                    setConstant(node, jsBoolean(false));
+                    break;
+                }
+
+                if (!(leftType & SpecOther) && m_graph.masqueradesAsUndefinedWatchpointIsStillValid(node->origin.semantic)) {
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    m_graph.watchpoints().addLazily(globalObject->masqueradesAsUndefinedWatchpoint());
+                    setConstant(node, jsBoolean(false));
+                    break;
+                }
             }
         }
         
@@ -1206,7 +1232,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 case CompareLessEq:
                 case CompareGreaterEq:
                 case CompareEq:
-                case CompareEqConstant:
                     setConstant(node, jsBoolean(true));
                     break;
                 default:

@@ -143,7 +143,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case SkipScope:
     case StringCharCodeAt:
     case StringFromCharCode:
-    case CompareEqConstant:
     case CompareStrictEq:
     case IsUndefined:
     case IsBoolean:

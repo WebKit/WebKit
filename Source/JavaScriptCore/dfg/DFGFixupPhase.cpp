@@ -368,10 +368,6 @@ private:
                 fixEdge<StringUse>(node->child1());
             break;
         }
-            
-        case CompareEqConstant: {
-            break;
-        }
 
         case CompareEq:
         case CompareLess:
@@ -424,6 +420,32 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
+
+            // If either child can be proved to be Null or Undefined, comparing them is greatly simplified.
+            bool oneArgumentIsUsedAsSpecOther = false;
+            if (node->child1()->isUndefinedOrNullConstant()) {
+                fixEdge<OtherUse>(node->child1());
+                oneArgumentIsUsedAsSpecOther = true;
+            } else if (node->child1()->shouldSpeculateOther()) {
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), OtherUse));
+                fixEdge<OtherUse>(node->child1());
+                oneArgumentIsUsedAsSpecOther = true;
+            }
+            if (node->child2()->isUndefinedOrNullConstant()) {
+                fixEdge<OtherUse>(node->child2());
+                oneArgumentIsUsedAsSpecOther = true;
+            } else if (node->child2()->shouldSpeculateOther()) {
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child2().node(), OtherUse));
+                fixEdge<OtherUse>(node->child2());
+                oneArgumentIsUsedAsSpecOther = true;
+            }
+            if (oneArgumentIsUsedAsSpecOther) {
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+
             if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObjectOrOther()) {
                 fixEdge<ObjectUse>(node->child1());
                 fixEdge<ObjectOrOtherUse>(node->child2());
@@ -436,6 +458,7 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
+
             break;
         }
             

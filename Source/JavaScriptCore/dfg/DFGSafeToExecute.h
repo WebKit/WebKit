@@ -198,7 +198,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CompareGreater:
     case CompareGreaterEq:
     case CompareEq:
-    case CompareEqConstant:
     case CompareStrictEq:
     case Call:
     case Construct:

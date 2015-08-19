@@ -236,7 +236,6 @@ public:
                 case CompareGreater:
                 case CompareGreaterEq:
                 case CompareEq:
-                case CompareEqConstant:
                 case CompareStrictEq:
                     VALIDATE((node), !!node->child1());
                     VALIDATE((node), !!node->child2());

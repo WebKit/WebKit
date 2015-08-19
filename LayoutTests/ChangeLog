@@ -1,3 +1,15 @@
+2015-08-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Optimize more cases of something-compared-to-null/undefined
+        https://bugs.webkit.org/show_bug.cgi?id=148157
+
+        Reviewed by Geoffrey Garen and Filip Pizlo.
+
+        * js/dom/document-all-watchpoint-covers-eliminated-compare-eq-expected.txt: Added.
+        * js/dom/document-all-watchpoint-covers-eliminated-compare-eq.html: Added.
+        * js/dom/script-tests/document-all-watchpoint-covers-eliminated-compare-eq.js: Added.
+        (compareFunction):
+
 2015-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Attempt to fix the failing search-padding-cancel-results-buttons.html test by making

@@ -192,146 +192,118 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     addSlowPathGenerator(WTF::move(slowPath));
 }
 
-void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool invert)
+void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand)
 {
-    JSValueOperand arg(this, operand);
+    ASSERT_WITH_MESSAGE(!masqueradesAsUndefinedWatchpointIsStillValid() || !isKnownCell(operand.node()), "The Compare should have been eliminated, it is known to be always false.");
+
+    JSValueOperand arg(this, operand, ManualOperandSpeculation);
     GPRReg argGPR = arg.gpr();
     
-    GPRTemporary result(this, Reuse, arg);
+    GPRTemporary result(this);
     GPRReg resultGPR = result.gpr();
-    
-    JITCompiler::Jump notCell;
-    
-    JITCompiler::Jump notMasqueradesAsUndefined;
-    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
-        if (!isKnownCell(operand.node()))
-            notCell = m_jit.branchIfNotCell(JSValueRegs(argGPR));
 
-        m_jit.move(invert ? TrustedImm32(1) : TrustedImm32(0), resultGPR);
-        notMasqueradesAsUndefined = m_jit.jump();
+    m_jit.move(TrustedImm32(0), resultGPR);
+
+    JITCompiler::JumpList done;
+    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+        if (!isKnownNotCell(operand.node()))
+            done.append(m_jit.branchIfCell(JSValueRegs(argGPR)));
     } else {
         GPRTemporary localGlobalObject(this);
         GPRTemporary remoteGlobalObject(this);
         GPRTemporary scratch(this);
 
+        JITCompiler::Jump notCell;
         if (!isKnownCell(operand.node()))
             notCell = m_jit.branchIfNotCell(JSValueRegs(argGPR));
         
-        JITCompiler::Jump isMasqueradesAsUndefined = m_jit.branchTest8(
-            JITCompiler::NonZero, 
+        JITCompiler::Jump isNotMasqueradesAsUndefined = m_jit.branchTest8(
+            JITCompiler::Zero,
             JITCompiler::Address(argGPR, JSCell::typeInfoFlagsOffset()), 
             JITCompiler::TrustedImm32(MasqueradesAsUndefined));
+        done.append(isNotMasqueradesAsUndefined);
 
-        m_jit.move(invert ? TrustedImm32(1) : TrustedImm32(0), resultGPR);
-        notMasqueradesAsUndefined = m_jit.jump();
-
-        isMasqueradesAsUndefined.link(&m_jit);
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
         m_jit.move(JITCompiler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
         m_jit.emitLoadStructure(argGPR, resultGPR, scratch.gpr());
         m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
-        m_jit.comparePtr(invert ? JITCompiler::NotEqual : JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultGPR);
+        m_jit.comparePtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultGPR);
+        done.append(m_jit.jump());
+        if (!isKnownCell(operand.node()))
+            notCell.link(&m_jit);
     }
  
-    if (!isKnownCell(operand.node())) {
-        JITCompiler::Jump done = m_jit.jump();
-        
-        notCell.link(&m_jit);
-        
+    if (!isKnownNotOther(operand.node())) {
         m_jit.move(argGPR, resultGPR);
         m_jit.and64(JITCompiler::TrustedImm32(~TagBitUndefined), resultGPR);
-        m_jit.compare64(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultGPR, JITCompiler::TrustedImm32(ValueNull), resultGPR);
-        
-        done.link(&m_jit);
+        m_jit.compare64(JITCompiler::Equal, resultGPR, JITCompiler::TrustedImm32(ValueNull), resultGPR);
     }
-   
-    notMasqueradesAsUndefined.link(&m_jit);
+
+    done.link(&m_jit);
  
     m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
     jsValueResult(resultGPR, m_currentNode, DataFormatJSBoolean);
 }
 
-void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, Node* branchNode, bool invert)
+void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, Node* branchNode)
 {
+    ASSERT_WITH_MESSAGE(!masqueradesAsUndefinedWatchpointIsStillValid() || !isKnownCell(operand.node()), "The Compare should have been eliminated, it is known to be always false.");
+
     BasicBlock* taken = branchNode->branchData()->taken.block;
     BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
-    
-    if (taken == nextBlock()) {
-        invert = !invert;
-        BasicBlock* tmp = taken;
-        taken = notTaken;
-        notTaken = tmp;
-    }
 
-    JSValueOperand arg(this, operand);
+    JSValueOperand arg(this, operand, ManualOperandSpeculation);
     GPRReg argGPR = arg.gpr();
     
     GPRTemporary result(this, Reuse, arg);
     GPRReg resultGPR = result.gpr();
-    
-    JITCompiler::Jump notCell;
-    
+
+    // First, handle the case where "operand" is a cell.
     if (masqueradesAsUndefinedWatchpointIsStillValid()) {
-        if (!isKnownCell(operand.node()))
-            notCell = m_jit.branchIfNotCell(JSValueRegs(argGPR));
-        
-        jump(invert ? taken : notTaken, ForceJump);
+        if (!isKnownNotCell(operand.node())) {
+            JITCompiler::Jump isCell = m_jit.branchIfCell(JSValueRegs(argGPR));
+            addBranch(isCell, notTaken);
+        }
     } else {
         GPRTemporary localGlobalObject(this);
         GPRTemporary remoteGlobalObject(this);
         GPRTemporary scratch(this);
 
+        JITCompiler::Jump notCell;
         if (!isKnownCell(operand.node()))
             notCell = m_jit.branchIfNotCell(JSValueRegs(argGPR));
         
         branchTest8(JITCompiler::Zero, 
             JITCompiler::Address(argGPR, JSCell::typeInfoFlagsOffset()), 
-            JITCompiler::TrustedImm32(MasqueradesAsUndefined), 
-            invert ? taken : notTaken);
+            JITCompiler::TrustedImm32(MasqueradesAsUndefined), notTaken);
 
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
         m_jit.move(TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
         m_jit.emitLoadStructure(argGPR, resultGPR, scratch.gpr());
         m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
-        branchPtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, invert ? notTaken : taken);
+        branchPtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, taken);
+
+        if (!isKnownCell(operand.node())) {
+            jump(notTaken, ForceJump);
+            notCell.link(&m_jit);
+        }
     }
- 
-    if (!isKnownCell(operand.node())) {
-        jump(notTaken, ForceJump);
-        
-        notCell.link(&m_jit);
-        
+
+    if (isKnownNotOther(operand.node()))
+        jump(notTaken);
+    else {
+        JITCompiler::RelationalCondition condition = JITCompiler::Equal;
+        if (taken == nextBlock()) {
+            condition = JITCompiler::NotEqual;
+            std::swap(taken, notTaken);
+        }
         m_jit.move(argGPR, resultGPR);
         m_jit.and64(JITCompiler::TrustedImm32(~TagBitUndefined), resultGPR);
-        branch64(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultGPR, JITCompiler::TrustedImm64(ValueNull), taken);
+        branch64(condition, resultGPR, JITCompiler::TrustedImm64(ValueNull), taken);
+        jump(notTaken);
     }
-    
-    jump(notTaken);
-}
-
-bool SpeculativeJIT::nonSpeculativeCompareNull(Node* node, Edge operand, bool invert)
-{
-    unsigned branchIndexInBlock = detectPeepHoleBranch();
-    if (branchIndexInBlock != UINT_MAX) {
-        Node* branchNode = m_block->at(branchIndexInBlock);
-
-        DFG_ASSERT(m_jit.graph(), node, node->adjustedRefCount() == 1);
-        
-        nonSpeculativePeepholeBranchNull(operand, branchNode, invert);
-    
-        use(node->child1());
-        use(node->child2());
-        m_indexInBlock = branchIndexInBlock;
-        m_currentNode = branchNode;
-        
-        return true;
-    }
-    
-    nonSpeculativeNonPeepholeCompareNull(operand, invert);
-    
-    return false;
 }
 
 void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, MacroAssembler::RelationalCondition cond, S_JITOperation_EJJ helperFunction)
@@ -2409,12 +2381,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case CompareGreaterEq:
         if (compare(node, JITCompiler::GreaterThanOrEqual, JITCompiler::DoubleGreaterThanOrEqual, operationCompareGreaterEq))
-            return;
-        break;
-        
-    case CompareEqConstant:
-        ASSERT(node->child2()->asJSValue().isNull());
-        if (nonSpeculativeCompareNull(node, node->child1()))
             return;
         break;
 

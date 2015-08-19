@@ -556,6 +556,7 @@ public:
     bool isKnownNotInteger(Node* node) { return !(m_state.forNode(node).m_type & SpecInt32); }
     bool isKnownNotNumber(Node* node) { return !(m_state.forNode(node).m_type & SpecFullNumber); }
     bool isKnownNotCell(Node* node) { return !(m_state.forNode(node).m_type & SpecCell); }
+    bool isKnownNotOther(Node* node) { return !(m_state.forNode(node).m_type & SpecOther); }
     
     UniquedStringImpl* identifierUID(unsigned index)
     {
@@ -701,9 +702,8 @@ public:
     
     void compileBaseValueStoreBarrier(Edge& baseEdge, Edge& valueEdge);
 
-    void nonSpeculativeNonPeepholeCompareNull(Edge operand, bool invert = false);
-    void nonSpeculativePeepholeBranchNull(Edge operand, Node* branchNode, bool invert = false);
-    bool nonSpeculativeCompareNull(Node*, Edge operand, bool invert = false);
+    void nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand);
+    void nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, Node* branchNode);
     
     void nonSpeculativePeepholeBranch(Node*, Node* branchNode, MacroAssembler::RelationalCondition, S_JITOperation_EJJ helperFunction);
     void nonSpeculativeNonPeepholeCompare(Node*, MacroAssembler::RelationalCondition, S_JITOperation_EJJ helperFunction);

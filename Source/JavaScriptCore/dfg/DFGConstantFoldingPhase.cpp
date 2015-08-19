@@ -97,6 +97,14 @@ private:
                     node->child1().setUseKind(BooleanUse);
                 break;
             }
+
+            case CompareEq: {
+                if (!m_interpreter.needsTypeCheck(node->child1(), SpecOther))
+                    node->child1().setUseKind(OtherUse);
+                if (!m_interpreter.needsTypeCheck(node->child2(), SpecOther))
+                    node->child2().setUseKind(OtherUse);
+                break;
+            }
                 
             case CheckStructure:
             case ArrayifyToStructure: {

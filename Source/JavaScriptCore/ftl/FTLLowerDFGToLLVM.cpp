@@ -701,9 +701,6 @@ private:
         case CompareEq:
             compileCompareEq();
             break;
-        case CompareEqConstant:
-            compileCompareEqConstant();
-            break;
         case CompareStrictEq:
             compileCompareStrictEq();
             break;
@@ -4146,16 +4143,20 @@ private:
             nonSpeculativeCompare(LLVMIntEQ, operationCompareEq);
             return;
         }
-        
+
+        if (m_node->child1().useKind() == OtherUse) {
+            ASSERT(!m_interpreter.needsTypeCheck(m_node->child1(), SpecOther));
+            setBoolean(equalNullOrUndefined(m_node->child2(), AllCellsAreFalse, EqualNullOrUndefined, ManualOperandSpeculation));
+            return;
+        }
+
+        if (m_node->child2().useKind() == OtherUse) {
+            ASSERT(!m_interpreter.needsTypeCheck(m_node->child2(), SpecOther));
+            setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualNullOrUndefined, ManualOperandSpeculation));
+            return;
+        }
+
         DFG_CRASH(m_graph, m_node, "Bad use kinds");
-    }
-    
-    void compileCompareEqConstant()
-    {
-        ASSERT(m_node->child2()->asJSValue().isNull());
-        setBoolean(
-            equalNullOrUndefined(
-                m_node->child1(), AllCellsAreFalse, EqualNullOrUndefined));
     }
     
     void compileCompareStrictEq()

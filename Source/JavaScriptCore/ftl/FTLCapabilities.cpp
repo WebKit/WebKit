@@ -96,7 +96,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithFRound:
     case ArithNegate:
     case UInt32ToNumber:
-    case CompareEqConstant:
     case Jump:
     case ForceOSRExit:
     case Phi:
@@ -320,6 +319,8 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse))
             break;
         if (node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse))
+            break;
+        if (node->child1().useKind() == OtherUse || node->child2().useKind() == OtherUse)
             break;
         return CannotCompile;
     case CompareStrictEq:

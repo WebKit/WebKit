@@ -690,7 +690,12 @@ struct Node {
     {
         return constant()->value().asBoolean();
     }
-     
+
+    bool isUndefinedOrNullConstant()
+    {
+        return isConstant() && constant()->value().isUndefinedOrNull();
+    }
+
     bool isCellConstant()
     {
         return isConstant() && constant()->value() && constant()->value().isCell();

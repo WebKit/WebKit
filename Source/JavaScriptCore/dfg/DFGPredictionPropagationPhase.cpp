@@ -371,7 +371,6 @@ private:
         case CompareGreater:
         case CompareGreaterEq:
         case CompareEq:
-        case CompareEqConstant:
         case CompareStrictEq:
         case InstanceOf:
         case IsUndefined:

@@ -1,3 +1,105 @@
+2015-08-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Optimize more cases of something-compared-to-null/undefined
+        https://bugs.webkit.org/show_bug.cgi?id=148157
+
+        Reviewed by Geoffrey Garen and Filip Pizlo.
+
+        CompareEq is fairly trivial if you assert one of the operands is either
+        null or undefined. Under those conditions, the only way to have "true"
+        is to have the other operand be null/undefined or have an object
+        that masquerades to undefined.
+
+        JSC already had a fast path in CompareEqConstant.
+        With this patch, I generalize this fast path to more cases and try
+        to eliminate the checks whenever possible.
+
+        CompareEq now does the job of CompareEqConstant. If any operand can
+        be proved to be undefined/other, its edge is set to OtherUse. Whenever
+        any edge is OtherUse, we generate the fast code we had for CompareEqConstant.
+
+        The AbstractInterpreter has additional checks to reduce the node to a constant
+        whenever possible.
+
+        There are two additional changes in this patch:
+        -The Fixup Phase tries to set edges to OtherUse early. This is done correctly
+         in ConstantFoldingPhase but setting it up early helps the phases relying
+         on Clobberize.
+        -The codegen for CompareEqConstant was improved. The reason is the comparison
+         for ObjectOrOther could be faster just because the codegen was better.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): Deleted.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isUndefinedOrNullConstant):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate): Deleted.
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isKnownNotOther):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull): Deleted.
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull): Deleted.
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate): Deleted.
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareEqConstant): Deleted.
+        * tests/stress/compare-eq-on-null-and-undefined-non-peephole.js: Added.
+        (string_appeared_here.useForMath):
+        (testUseForMath):
+        * tests/stress/compare-eq-on-null-and-undefined-optimized-in-constant-folding.js: Added.
+        (string_appeared_here.unreachableCodeTest):
+        (inlinedCompareToNull):
+        (inlinedComparedToUndefined):
+        (warmupInlineFunctions):
+        (testInlineFunctions):
+        * tests/stress/compare-eq-on-null-and-undefined.js: Added.
+        (string_appeared_here.compareConstants):
+        (opaqueNull):
+        (opaqueUndefined):
+        (compareConstantsAndDynamicValues):
+        (compareDynamicValues):
+        (compareDynamicValueToItself):
+        (arrayTesting):
+        (opaqueCompare1):
+        (testNullComparatorUpdate):
+        (opaqueCompare2):
+        (testUndefinedComparatorUpdate):
+        (opaqueCompare3):
+        (testNullAndUndefinedComparatorUpdate):
+
 2015-08-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce non-user-observable Promise functions to use Promises internally
