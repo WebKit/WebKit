@@ -116,9 +116,7 @@ TextTrack* TextTrack::captionMenuAutomaticItem()
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language, TextTrackType type)
     : TrackBase(TrackBase::TextTrack, id, label, language)
     , m_cues(0)
-#if ENABLE(WEBVTT_REGIONS)
     , m_regions(0)
-#endif
     , m_scriptExecutionContext(context)
     , m_mode(disabledKeyword().string())
     , m_client(client)
@@ -139,12 +137,10 @@ TextTrack::~TextTrack()
 
         for (size_t i = 0; i < m_cues->length(); ++i)
             m_cues->item(i)->setTrack(0);
-#if ENABLE(WEBVTT_REGIONS)
         if (m_regions) {
             for (size_t i = 0; i < m_regions->length(); ++i)
                 m_regions->item(i)->setTrack(0);
         }
-#endif
     }
     clearClient();
 }
@@ -342,7 +338,6 @@ void TextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
         m_client->textTrackRemoveCue(this, cue);
 }
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
 VTTRegionList* TextTrack::ensureVTTRegionList()
 {
     if (!m_regions)
@@ -414,7 +409,6 @@ void TextTrack::removeRegion(VTTRegion* region, ExceptionCode &ec)
 
     region->setTrack(0);
 }
-#endif
 
 void TextTrack::cueWillChange(TextTrackCue* cue)
 {

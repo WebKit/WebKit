@@ -27,7 +27,7 @@
 #include "config.h"
 #include "VTTRegionList.h"
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+#if ENABLE(VIDEO_TRACK)
 
 
 namespace WebCore {

@@ -50,9 +50,9 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
     attribute EventHandler oncuechange;
 
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
-    [Conditional=WEBVTT_REGIONS] readonly attribute VTTRegionList regions;
-    [Conditional=WEBVTT_REGIONS] void addRegion(VTTRegion region);
-    [Conditional=WEBVTT_REGIONS, RaisesException] void removeRegion(VTTRegion region);
+    readonly attribute VTTRegionList regions;
+    void addRegion(VTTRegion region);
+    [RaisesException] void removeRegion(VTTRegion region);
 #endif
 
     // EventTarget interface

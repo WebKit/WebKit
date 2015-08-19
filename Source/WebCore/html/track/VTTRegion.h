@@ -32,7 +32,7 @@
 #ifndef VTTRegion_h
 #define VTTRegion_h
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+#if ENABLE(VIDEO_TRACK)
 
 #include "ContextDestructionObserver.h"
 #include "Document.h"

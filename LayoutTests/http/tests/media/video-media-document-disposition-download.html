@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>'stalled' event test</title>
+        <script src=../../media-resources/media-file.js></script>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-controls></script>
+
+        <script>
+
+        var iframe;
+        var timeline;
+
+        function testElement()
+        {
+            timeline = mediaControlsElement(internals.shadowRoot(mediaElement).firstChild.firstChild, '-webkit-media-controls-timeline');
+            if (!timeline)
+                throw "Failed to find -webkit-media-controls-timeline";
+
+            testExpected("mediaElement.paused", false);
+            testExpected('mediaElement.currentTime', 0, '!=');
+            test("timeline.value > 0");
+
+            consoleWrite("");
+            endTest();
+        }
+
+        function play()
+        {
+            waitForEventOnce('timeupdate', testElement);
+        }
+
+        function start()
+        {
+            mediaElement = iframe.contentDocument.querySelector("video");
+            waitForEvent('play', play);
+            mediaElement.pause();
+            mediaElement.play();
+        }
+
+        function setup()
+        {
+            iframe = document.getElementById("container");
+            iframe.onload = start;
+
+            var mediaFile = findMediaFile("video", "../../../../media/content/test");
+            var mimeType = "&type=" + mimeTypeForFile(mediaFile);
+            var fileExtension = mediaFile.substring(mediaFile.lastIndexOf(".") + 1);
+            var contentDisposition = "&content-disposition" + "attachment;test." + fileExtension
+
+            iframe.src = "http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + mimeType + contentDisposition;
+        }
+        </script>
+    
+    </head>
+    <body onload="setup()">
+        <p>Test that controls in a media document function.<p>
+
+        <iframe style="width: 400px; height: 300px; border: 0px;" id="container"> </iframe>
+    </body>
+</html>
+

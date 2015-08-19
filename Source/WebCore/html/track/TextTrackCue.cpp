@@ -47,12 +47,9 @@
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
 #include "VTTCue.h"
+#include "VTTRegionList.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
-
-#if ENABLE(WEBVTT_REGIONS)
-#include "VTTRegionList.h"
-#endif
 
 namespace WebCore {
 

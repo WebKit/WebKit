@@ -187,12 +187,10 @@ void TextTrackLoader::newCuesParsed()
     m_cueLoadTimer.startOneShot(0);
 }
 
-#if ENABLE(WEBVTT_REGIONS)
 void TextTrackLoader::newRegionsParsed()
 {
     m_client.newRegionsAvailable(this);
 }
-#endif
 
 void TextTrackLoader::fileFailedToParse()
 {
@@ -218,14 +216,13 @@ void TextTrackLoader::getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues)
     }
 }
 
-#if ENABLE(WEBVTT_REGIONS)
 void TextTrackLoader::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
 {
     ASSERT(m_cueParser);
     if (m_cueParser)
         m_cueParser->getNewRegions(outputRegions);
 }
-#endif
+
 }
 
 #endif

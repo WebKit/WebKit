@@ -117,11 +117,9 @@ public:
     PassRefPtr<DocumentFragment> getCueAsHTML();
     PassRefPtr<DocumentFragment> createCueRenderingTree();
 
-#if ENABLE(WEBVTT_REGIONS)
     const String& regionId() const { return m_regionId; }
     void setRegionId(const String&);
     void notifyRegionWhenRemovingDisplayTree(bool);
-#endif
 
     virtual void setIsActive(bool) override;
 
@@ -196,9 +194,7 @@ private:
         Position,
         Size,
         Align,
-#if ENABLE(WEBVTT_REGIONS)
         RegionId
-#endif
     };
     CueSetting settingName(VTTScanner&);
 
@@ -211,9 +207,7 @@ private:
 
     WritingDirection m_writingDirection;
     CueAlignment m_cueAlignment;
-#if ENABLE(WEBVTT_REGIONS)
     String m_regionId;
-#endif
 
     RefPtr<DocumentFragment> m_webVTTNodeTree;
     RefPtr<HTMLSpanElement> m_cueHighlightBox;

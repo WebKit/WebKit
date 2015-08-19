@@ -41,10 +41,8 @@ namespace WebCore {
 class ScriptExecutionContext;
 class TextTrack;
 class TextTrackCueList;
-#if ENABLE(WEBVTT_REGIONS)
 class VTTRegion;
 class VTTRegionList;
-#endif
 
 class TextTrackClient {
 public:
@@ -106,11 +104,9 @@ public:
 
     bool hasCue(TextTrackCue*, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     VTTRegionList* regions();
     void addRegion(PassRefPtr<VTTRegion>);
     void removeRegion(VTTRegion*, ExceptionCode&);
-#endif
 
     void cueWillChange(TextTrackCue*);
     void cueDidChange(TextTrackCue*);
@@ -162,10 +158,8 @@ private:
     virtual void refEventTarget() override final { ref(); }
     virtual void derefEventTarget() override final { deref(); }
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     VTTRegionList* ensureVTTRegionList();
     RefPtr<VTTRegionList> m_regions;
-#endif
 
     TextTrackCueList* ensureTextTrackCueList();
 

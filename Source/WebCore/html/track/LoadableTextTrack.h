@@ -64,9 +64,7 @@ private:
     // TextTrackLoaderClient
     virtual void newCuesAvailable(TextTrackLoader*) override;
     virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) override;
-#if ENABLE(WEBVTT_REGIONS)
     virtual void newRegionsAvailable(TextTrackLoader*) override;
-#endif
 
     LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language);
 

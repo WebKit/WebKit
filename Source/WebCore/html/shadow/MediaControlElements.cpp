@@ -56,10 +56,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrackList.h"
 #endif
-
-#if ENABLE(WEBVTT_REGIONS)
 #include "VTTRegionList.h"
-#endif
 
 namespace WebCore {
 
@@ -1179,7 +1176,6 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         LOG(Media, "MediaControlTextTrackContainerElement::updateDisplay(%p) - adding and positioning cue #%zu: \"%s\", start=%.2f, end=%.2f, line=%.2f", this, i, cue->text().utf8().data(), cue->startTime(), cue->endTime(), cue->line());
 
         RefPtr<VTTCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
-#if ENABLE(WEBVTT_REGIONS)
         if (cue->track()->mode() == TextTrack::disabledKeyword())
             continue;
 
@@ -1188,13 +1184,11 @@ void MediaControlTextTrackContainerElement::updateDisplay()
             // If cue has an empty text track cue region identifier or there is no
             // WebVTT region whose region identifier is identical to cue's text
             // track cue region identifier, run the following substeps:
-#endif
             if (displayBox->hasChildNodes() && !contains(displayBox.get())) {
                 // Note: the display tree of a cue is removed when the active flag of the cue is unset.
                 appendChild(displayBox, ASSERT_NO_EXCEPTION);
                 cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
             }
-#if ENABLE(WEBVTT_REGIONS)
         } else {
             // Let region be the WebVTT region whose region identifier
             // matches the text track cue region identifier of cue.
@@ -1206,7 +1200,6 @@ void MediaControlTextTrackContainerElement::updateDisplay()
 
             region->appendTextTrackCueBox(displayBox);
         }
-#endif
     }
 
     // 11. Return output.

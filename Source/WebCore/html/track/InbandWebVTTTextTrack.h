@@ -48,9 +48,7 @@ private:
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override;
 
     virtual void newCuesParsed() override;
-#if ENABLE(WEBVTT_REGIONS)
     virtual void newRegionsParsed() override;
-#endif
     virtual void fileFailedToParse() override;
 
     std::unique_ptr<WebVTTParser> m_webVTTParser;

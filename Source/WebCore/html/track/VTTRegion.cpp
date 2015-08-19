@@ -32,7 +32,7 @@
 #include "config.h"
 #include "VTTRegion.h"
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+#if ENABLE(VIDEO_TRACK)
 
 #include "ClientRect.h"
 #include "DOMTokenList.h"

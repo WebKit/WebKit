@@ -27,7 +27,7 @@
 #ifndef VTTRegionList_h
 #define VTTRegionList_h
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+#if ENABLE(VIDEO_TRACK)
 
 #include "VTTRegion.h"
 #include <wtf/PassRefPtr.h>

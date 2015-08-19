@@ -38,7 +38,5 @@
     attribute DOMString text;
     DocumentFragment getCueAsHTML();
 
-#if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
     attribute DOMString regionId;
-#endif
 };
