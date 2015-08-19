@@ -1,5 +1,17 @@
 2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: transparent color swatches have lopsided checkered background on non-retina
+        https://bugs.webkit.org/show_bug.cgi?id=148150
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (@media (-webkit-max-device-pixel-ratio: 1)):
+        Make color and bezier widgets slightly smaller, but evenly sized so the
+        checkered background is not lopsided and the curve is a little less blurry.
+
+2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Modernize CSSStyleManager
         https://bugs.webkit.org/show_bug.cgi?id=148143
 
