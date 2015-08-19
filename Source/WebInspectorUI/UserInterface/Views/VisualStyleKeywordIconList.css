@@ -84,5 +84,5 @@
 }
 
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:not(.selected) > div {
-    -webkit-filter: opacity(0.7);
+    filter: opacity(0.7);
 }

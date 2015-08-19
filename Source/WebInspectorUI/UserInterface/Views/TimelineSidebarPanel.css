@@ -59,15 +59,15 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .status-bar {
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
     /* Workaround for background image clipping issue on non-retina machines. See http://webkit.org/b/147346. */
-    -webkit-filter: brightness(100%);
+    filter: brightness(100%);
 }
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
-    -webkit-filter: brightness(95%);
+    filter: brightness(95%);
 }
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:active {
-    -webkit-filter: brightness(80%);
+    filter: brightness(80%);
 }
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {

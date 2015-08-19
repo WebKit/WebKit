@@ -162,7 +162,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         this._svgFiltersElement.append(filterElement);
 
         let styleSheet = this._checkboxStyleElement.sheet;
-        styleSheet.insertRule(".details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]." + id + " { -webkit-filter: grayscale(1) url(#" + id + ") }", 0);
+        styleSheet.insertRule(".details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]." + id + " { filter: grayscale(1) url(#" + id + ") }", 0);
     }
 
     _createLegend()

@@ -1,3 +1,35 @@
+2015-08-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: use unprefixed CSS property 'filter' instead of '-webkit-filter'
+        https://bugs.webkit.org/show_bug.cgi?id=148186
+
+        Reviewed by Dean Jackson.
+
+        * UserInterface/Views/BreakpointActionView.css:
+        (.breakpoint-action-remove-button:active):
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section:not(.invalid-selector) > .header > .icon.toggle-able:hover):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .invalid-warning-marker.clickable:hover):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:hover):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:active):
+        * UserInterface/Views/ChartDetailsSectionRow.css:
+        (body.window-inactive .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]):
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        (WebInspector.ChartDetailsSectionRow.prototype._addCheckboxColorFilter):
+        * UserInterface/Views/NewTabContentView.css:
+        (.new-tab.tab.content-view > .tab-item.disabled):
+        (.new-tab.tab.content-view > .tab-item:not(.disabled):hover > .box):
+        (.new-tab.tab.content-view > .tab-item:not(.disabled):active > .box):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:active):
+        * UserInterface/Views/VisualStyleKeywordIconList.css:
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:not(.selected) > div):
+        * UserInterface/Views/VisualStyleSelectorSection.css:
+        (.details-section.visual-style-selector-section > .header > .controls > .visual-style-selector-section-add-rule):
+
 2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception while handling event DOM.pseudoElementRemoved reloading twitter pages

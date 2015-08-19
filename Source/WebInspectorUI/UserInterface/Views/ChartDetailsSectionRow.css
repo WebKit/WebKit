@@ -82,7 +82,7 @@
 .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]:not(:checked),
 body.window-docked-inactive .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox],
 body.window-inactive .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox] {
-    -webkit-filter: none !important;
+    filter: none !important;
 }
 
 .details-section > .content > .group > .row.chart > .defs-only {

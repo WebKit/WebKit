@@ -73,7 +73,7 @@
 }
 
 .style-declaration-section:not(.invalid-selector) > .header > .icon.toggle-able:hover {
-    -webkit-filter: brightness(0.9);
+    filter: brightness(0.9);
 }
 
 .style-declaration-section:not(.invalid-selector).rule-disabled > .header > .icon {
