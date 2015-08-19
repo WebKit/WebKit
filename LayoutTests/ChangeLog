@@ -1,3 +1,17 @@
+2015-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Search input results and clear icons are misaligned when padding is added
+        https://bugs.webkit.org/show_bug.cgi?id=148146
+        <rdar://problem/22310951>
+
+        Reviewed by Zalan Bujtas.
+
+        Tests that for a search field with -webkit-appearance: textfield; and padding will not clip
+        its cancel and results buttons.
+
+        * platform/mac/fast/forms/search/search-padding-cancel-results-buttons-expected.txt: Added.
+        * platform/mac/fast/forms/search/search-padding-cancel-results-buttons.html: Added.
+
 2015-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         will-change: backface-visibility should not cause stacking context

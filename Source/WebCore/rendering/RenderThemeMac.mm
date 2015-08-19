@@ -1699,7 +1699,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const P
 
     float zoomLevel = o.style().effectiveZoom();
 
-    FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(snappedIntRect(input->renderBox()->borderBoxRect()))];
+    FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(snappedIntRect(input->renderBox()->contentBoxRect()))];
     localBounds = convertToPaintingRect(*input->renderer(), o, localBounds, r);
 
     FloatRect unzoomedRect(localBounds);
@@ -1810,7 +1810,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderObject& o, const 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     float zoomLevel = o.style().effectiveZoom();
 
-    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(snappedIntRect(input->renderBox()->borderBoxRect()))];
+    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(snappedIntRect(input->renderBox()->contentBoxRect()))];
     localBounds = convertToPaintingRect(*input->renderer(), o, localBounds, r);
 
     IntRect unzoomedRect(localBounds);
