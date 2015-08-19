@@ -126,4 +126,8 @@ void TestController::platformResetPreferencesToConsistentValues()
     m_mainWebView->dismissAllPopupMenus();
 }
 
+void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions&, const TestInvocation&) const
+{
+}
+
 } // namespace WTR

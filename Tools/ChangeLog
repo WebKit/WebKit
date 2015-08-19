@@ -1,3 +1,15 @@
+2015-08-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r188548): [GTK] Build broken.
+        https://bugs.webkit.org/show_bug.cgi?id=148154
+
+        Reviewed by Martin Robinson.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest):
+        Even if we don't need to add/override any settings in ViewOptions,
+        we need to define this as an empty function to make it build.
+
 2015-08-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Fix conversion-null warning in conversion.cpp of TestWebKitAPI
