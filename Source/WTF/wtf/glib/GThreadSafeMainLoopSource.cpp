@@ -60,45 +60,45 @@ void GThreadSafeMainLoopSource::cancel()
     GMainLoopSource::cancel();
 }
 
-void GThreadSafeMainLoopSource::schedule(const char* name, std::function<void ()> function, int priority, std::function<void ()> destroyFunction, GMainContext* context)
+void GThreadSafeMainLoopSource::schedule(const char* name, std::function<void ()>&& function, int priority, std::function<void ()>&& destroyFunction, GMainContext* context)
 {
     GMutexLocker<GRecMutex> locker(m_mutex);
-    GMainLoopSource::schedule(name, function, priority, destroyFunction, context);
+    GMainLoopSource::schedule(name, WTF::move(function), priority, WTF::move(destroyFunction), context);
     m_context.cancellable = adoptGRef(g_cancellable_new());
 }
 
-void GThreadSafeMainLoopSource::schedule(const char* name, std::function<bool ()> function, int priority, std::function<void ()> destroyFunction, GMainContext* context)
+void GThreadSafeMainLoopSource::schedule(const char* name, std::function<bool ()>&& function, int priority, std::function<void ()>&& destroyFunction, GMainContext* context)
 {
     GMutexLocker<GRecMutex> locker(m_mutex);
-    GMainLoopSource::schedule(name, function, priority, destroyFunction, context);
+    GMainLoopSource::schedule(name, WTF::move(function), priority, WTF::move(destroyFunction), context);
     m_context.cancellable = adoptGRef(g_cancellable_new());
 }
 
-void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()> function, std::chrono::milliseconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
+void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()>&& function, std::chrono::milliseconds delay, int priority, std::function<void ()>&& destroyFunction, GMainContext* context)
 {
     GMutexLocker<GRecMutex> locker(m_mutex);
-    GMainLoopSource::scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
+    GMainLoopSource::scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
     m_context.cancellable = adoptGRef(g_cancellable_new());
 }
 
-void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()> function, std::chrono::milliseconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
+void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()>&& function, std::chrono::milliseconds delay, int priority, std::function<void ()>&& destroyFunction, GMainContext* context)
 {
     GMutexLocker<GRecMutex> locker(m_mutex);
-    GMainLoopSource::scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
+    GMainLoopSource::scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
     m_context.cancellable = adoptGRef(g_cancellable_new());
 }
 
-void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()> function, std::chrono::seconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
+void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()>&& function, std::chrono::seconds delay, int priority, std::function<void ()>&& destroyFunction, GMainContext* context)
 {
     GMutexLocker<GRecMutex> locker(m_mutex);
-    GMainLoopSource::scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
+    GMainLoopSource::scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
     m_context.cancellable = adoptGRef(g_cancellable_new());
 }
 
-void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()> function, std::chrono::seconds delay, int priority, std::function<void ()> destroyFunction, GMainContext* context)
+void GThreadSafeMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()>&& function, std::chrono::seconds delay, int priority, std::function<void ()>&& destroyFunction, GMainContext* context)
 {
     GMutexLocker<GRecMutex> locker(m_mutex);
-    GMainLoopSource::scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
+    GMainLoopSource::scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
     m_context.cancellable = adoptGRef(g_cancellable_new());
 }
 

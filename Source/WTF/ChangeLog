@@ -1,3 +1,25 @@
+2015-08-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] GMainLoopSource should receive the std::function<> objects through rvalue references
+        https://bugs.webkit.org/show_bug.cgi?id=147981
+
+        Reviewed by Carlos Garcia Campos.
+
+        Scheduling methods on GMainLoopSource and GThreadSafeMainLoopSource should
+        have the std::function<> objects passed through rvalue references, and should
+        move the passed-in objects forward when required.
+
+        * wtf/glib/GMainLoopSource.cpp:
+        (WTF::GMainLoopSource::schedule):
+        (WTF::GMainLoopSource::scheduleAfterDelay):
+        (WTF::GMainLoopSource::scheduleAndDeleteOnDestroy):
+        (WTF::GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy):
+        * wtf/glib/GMainLoopSource.h:
+        * wtf/glib/GThreadSafeMainLoopSource.cpp:
+        (WTF::GThreadSafeMainLoopSource::schedule):
+        (WTF::GThreadSafeMainLoopSource::scheduleAfterDelay):
+        * wtf/glib/GThreadSafeMainLoopSource.h:
+
 2015-08-18  Eric Carlson  <eric.carlson@apple.com>
 
         Remove "platform text track menu"

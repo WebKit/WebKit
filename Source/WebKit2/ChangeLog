@@ -1,3 +1,13 @@
+2015-08-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] GMainLoopSource should receive the std::function<> objects through rvalue references
+        https://bugs.webkit.org/show_bug.cgi?id=147981
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::runTaskInQueue): Move the std::function<> into the scheduling call.
+
 2015-08-18  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Safari’s Web Content process crashes when decoding an NSError containing an identity

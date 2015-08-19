@@ -41,12 +41,12 @@ public:
     WTF_EXPORT_PRIVATE GThreadSafeMainLoopSource();
     WTF_EXPORT_PRIVATE virtual ~GThreadSafeMainLoopSource();
 
-    WTF_EXPORT_PRIVATE virtual void schedule(const char* name, std::function<void()>, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr) override;
-    WTF_EXPORT_PRIVATE virtual void schedule(const char* name, std::function<bool()>, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr) override;
-    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<void()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr) override;
-    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<bool()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr) override;
-    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<void()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr) override;
-    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<bool()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr) override;
+    WTF_EXPORT_PRIVATE virtual void schedule(const char* name, std::function<void()>&&, int priority = G_PRIORITY_DEFAULT, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr) override;
+    WTF_EXPORT_PRIVATE virtual void schedule(const char* name, std::function<bool()>&&, int priority = G_PRIORITY_DEFAULT, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr) override;
+    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<void()>&&, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr) override;
+    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<bool()>&&, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr) override;
+    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<void()>&&, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr) override;
+    WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<bool()>&&, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr) override;
     WTF_EXPORT_PRIVATE virtual void cancel() override;
 
 private:
