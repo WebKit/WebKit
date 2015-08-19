@@ -181,6 +181,11 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         if (!group.section)
             return;
 
+        if (group.links) {
+            for (let key in group.links)
+                group.links[key].linked = false;
+        }
+
         let initialTextList = this._initialTextList;
         if (!initialTextList)
             this._currentStyle[WebInspector.VisualStyleDetailsPanel.InitialPropertySectionTextListSymbol] = initialTextList = new WeakMap;
@@ -363,6 +368,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
     _generateMetricSectionRows(group, prefix, allowNegatives, highlightOnHover)
     {
         let properties = group.properties;
+        let links = group.links = {};
 
         let hasPrefix = prefix && prefix.length;
         let propertyNamePrefix = hasPrefix ? prefix + "-" : "";
@@ -376,33 +382,33 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         properties[top] = new WebInspector.VisualStyleNumberInputBox(propertyNamePrefix + "top", WebInspector.UIString("Top"), this._keywords.boxModel, this._units.defaults, allowNegatives);
         properties[bottom] = new WebInspector.VisualStyleNumberInputBox(propertyNamePrefix + "bottom", WebInspector.UIString("Bottom"), this._keywords.boxModel, this._units.defaults, allowNegatives, true);
-        let verticalLink = new WebInspector.VisualStylePropertyEditorLink([properties[top], properties[bottom]], "link-vertical");
+        links["vertical"] = new WebInspector.VisualStylePropertyEditorLink([properties[top], properties[bottom]], "link-vertical");
 
         vertical.element.appendChild(properties[top].element);
-        vertical.element.appendChild(verticalLink.element);
+        vertical.element.appendChild(links["vertical"].element);
         vertical.element.appendChild(properties[bottom].element);
 
         let horizontal = new WebInspector.DetailsSectionRow;
 
         properties[left] = new WebInspector.VisualStyleNumberInputBox(propertyNamePrefix + "left", WebInspector.UIString("Left"), this._keywords.boxModel, this._units.defaults, allowNegatives);
         properties[right] = new WebInspector.VisualStyleNumberInputBox(propertyNamePrefix + "right", WebInspector.UIString("Right"), this._keywords.boxModel, this._units.defaults, allowNegatives, true);
-        let horizontalLink = new WebInspector.VisualStylePropertyEditorLink([properties[left], properties[right]], "link-horizontal");
+        links["horizontal"] = new WebInspector.VisualStylePropertyEditorLink([properties[left], properties[right]], "link-horizontal");
 
         horizontal.element.appendChild(properties[left].element);
-        horizontal.element.appendChild(horizontalLink.element);
+        horizontal.element.appendChild(links["horizontal"].element);
         horizontal.element.appendChild(properties[right].element);
 
         let allLinkRow = new WebInspector.DetailsSectionRow;
-        let allLink = new WebInspector.VisualStylePropertyEditorLink([properties[top], properties[bottom], properties[left], properties[right]], "link-all", [verticalLink, horizontalLink]);
-        allLinkRow.element.appendChild(allLink.element);
+        links["all"] = new WebInspector.VisualStylePropertyEditorLink([properties[top], properties[bottom], properties[left], properties[right]], "link-all", [links["vertical"], links["horizontal"]]);
+        allLinkRow.element.appendChild(links["all"].element);
 
         if (highlightOnHover) {
             this._addMetricsMouseListeners(properties[top], prefix);
-            this._addMetricsMouseListeners(verticalLink, prefix);
+            this._addMetricsMouseListeners(links["vertical"], prefix);
             this._addMetricsMouseListeners(properties[bottom], prefix);
-            this._addMetricsMouseListeners(allLink, prefix);
+            this._addMetricsMouseListeners(links["all"], prefix);
             this._addMetricsMouseListeners(properties[left], prefix);
-            this._addMetricsMouseListeners(horizontalLink, prefix);
+            this._addMetricsMouseListeners(links["horizontal"], prefix);
             this._addMetricsMouseListeners(properties[right], prefix);
         }
 

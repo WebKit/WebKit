@@ -1,5 +1,24 @@
 2015-08-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Visual editor links should unlink when switching styles
+        https://bugs.webkit.org/show_bug.cgi?id=148153
+
+        Reviewed by Timothy Hatcher.
+
+        Visual editor links are now deactivated when switching rules/nodes.
+
+        * UserInterface/Images/VisualStylePropertyUnlinked.svg:
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateProperties):
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateMetricSectionRows):
+
+        * UserInterface/Views/VisualStylePropertyEditorLink.js:
+        (WebInspector.VisualStylePropertyEditorLink.prototype.set linked):
+        (WebInspector.VisualStylePropertyEditorLink.prototype._iconClicked):
+        (WebInspector.VisualStylePropertyEditorLink):
+
+2015-08-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Consider showing style summary on collapsed visual sidebar sections
         https://bugs.webkit.org/show_bug.cgi?id=148104
 

@@ -78,6 +78,18 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
         return this._element;
     }
 
+    set linked(flag)
+    {
+        this._linked = flag;
+        this._element.classList.toggle("linked", this._linked);
+        this._linkedIcon.hidden = !this._linked;
+        this._unlinkedIcon.hidden = this._linked;
+        this._iconElement.title = this._linked ? WebInspector.UIString("Click to remove link") : WebInspector.UIString("Click to link property values");
+
+        for (let linkToHide of this._linksToHideWhenLinked)
+            linkToHide.disabled = this._linked;
+    }
+
     set disabled(flag)
     {
         this._disabled = flag;
@@ -128,15 +140,7 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
 
     _iconClicked()
     {
-        this._linked = !this._linked;
-        this._element.classList.toggle("linked", this._linked);
-        this._linkedIcon.hidden = !this._linked;
-        this._unlinkedIcon.hidden = this._linked;
-
-        this._iconElement.title = this._linked ? WebInspector.UIString("Click to remove link") : WebInspector.UIString("Click to link property values");
-
+        this.linked = !this._linked;
         this._updateLinkedEditors(this._lastPropertyEdited || this._linkedProperties[0]);
-        for (let linkToHide of this._linksToHideWhenLinked)
-            linkToHide.disabled = this._linked;
     }
 };
