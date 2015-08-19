@@ -177,6 +177,8 @@ CachedFrame::CachedFrame(Frame& frame)
     if (m_isComposited && PageCache::singleton().shouldClearBackingStores())
         frame.view()->clearBackingStores();
 
+    frame.view()->clearScrollableAreas();
+
     // documentWillSuspendForPageCache() can set up a layout timer on the FrameView, so clear timers after that.
     frame.clearTimers();
 
