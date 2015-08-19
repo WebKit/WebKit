@@ -151,6 +151,7 @@ column-width: auto;
 align-content: start;
 align-items: start;
 align-self: start;
+filter: none;
 flex-direction: row;
 flex-wrap: nowrap;
 justify-content: start;

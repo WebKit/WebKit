@@ -1,3 +1,72 @@
+2015-08-18  Dean Jackson  <dino@apple.com>
+
+        Support CSS filters without webkit prefix
+        https://bugs.webkit.org/show_bug.cgi?id=148138
+        <rdar://problem/22331434>
+
+        Reviewed by Sam Weinig.
+
+        Globally change -webkit-filter to filter in as many places as
+        possible. Then add a new test that makes sure the prefixed
+        and unprefixed value resolve to the same computed style.
+
+        * animations/resources/animation-test-helpers.js:
+        (parseCSSImage):
+        * css3/filters/backdrop/effect-hw-expected.html:
+        * css3/filters/effect-blur-hw.html:
+        * css3/filters/effect-blur.html:
+        * css3/filters/effect-brightness-clamping-hw.html:
+        * css3/filters/effect-brightness-clamping.html:
+        * css3/filters/effect-brightness-hw.html:
+        * css3/filters/effect-brightness.html:
+        * css3/filters/effect-combined-hw.html:
+        * css3/filters/effect-combined.html:
+        * css3/filters/effect-contrast-hw.html:
+        * css3/filters/effect-contrast.html:
+        * css3/filters/effect-drop-shadow-hw.html:
+        * css3/filters/effect-drop-shadow.html:
+        * css3/filters/effect-grayscale-hw.html:
+        * css3/filters/effect-grayscale.html:
+        * css3/filters/effect-hue-rotate-hw.html:
+        * css3/filters/effect-hue-rotate.html:
+        * css3/filters/effect-invert-hw.html:
+        * css3/filters/effect-invert.html:
+        * css3/filters/effect-opacity-hw.html:
+        * css3/filters/effect-opacity.html:
+        * css3/filters/effect-reference-composite-hw.html:
+        * css3/filters/effect-reference-composite.html:
+        * css3/filters/effect-reference-hw.html:
+        * css3/filters/effect-reference-ordering-hw.html:
+        * css3/filters/effect-reference-ordering.html:
+        * css3/filters/effect-reference.html:
+        * css3/filters/effect-saturate-hw.html:
+        * css3/filters/effect-saturate.html:
+        * css3/filters/effect-sepia-hw.html:
+        * css3/filters/effect-sepia.html:
+        * css3/filters/filter-property-computed-style-expected.txt:
+        * css3/filters/filter-property-parsing-expected.txt:
+        * css3/filters/script-tests/filter-property-computed-style.js:
+        (testComputedFilterRule):
+        * css3/filters/script-tests/filter-property-parsing.js:
+        (testFilterRule):
+        * css3/filters/script-tests/unprefixed.js: Copied from LayoutTests/css3/filters/script-tests/filter-property-computed-style.js.
+        (testComputedFilterRule):
+        * css3/filters/unprefixed-expected.txt: Copied from LayoutTests/css3/filters/filter-property-computed-style-expected.txt.
+        * css3/filters/unprefixed.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/filter-image/clipped-filter-expected.html:
+        * fast/filter-image/clipped-filter.html:
+        * fast/filter-image/filter-image-animation-expected.txt:
+        * fast/filter-image/filter-image-animation.html:
+        * fast/filter-image/filter-image-blur.html:
+        * fast/filter-image/filter-image-expected.html:
+        * fast/filter-image/filter-image-svg.html:
+        * fast/filter-image/filter-image.html:
+        * fast/filter-image/parse-filter-image-expected.txt:
+        * fast/filter-image/parse-filter-image.html:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2015-08-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorTest should be a subclass of TestHarness

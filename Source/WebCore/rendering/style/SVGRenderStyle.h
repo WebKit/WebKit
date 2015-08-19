@@ -90,7 +90,6 @@ public:
     static Color initialLightingColor() { return Color(255, 255, 255); }
     static ShadowData* initialShadow() { return 0; }
     static String initialClipperResource() { return String(); }
-    static String initialFilterResource() { return String(); }
     static String initialMaskerResource() { return String(); }
     static String initialMarkerStartResource() { return String(); }
     static String initialMarkerMidResource() { return String(); }
@@ -295,12 +294,6 @@ public:
             resources.access()->clipper = obj;
     }
 
-    void setFilterResource(const String& obj)
-    {
-        if (!(resources->filter == obj))
-            resources.access()->filter = obj;
-    }
-
     void setMaskerResource(const String& obj)
     {
         if (!(resources->masker == obj))
@@ -372,7 +365,6 @@ public:
     const Length& x() const { return layout->x; }
     const Length& y() const { return layout->y; }
     String clipperResource() const { return resources->clipper; }
-    String filterResource() const { return resources->filter; }
     String maskerResource() const { return resources->masker; }
     String markerStartResource() const { return inheritedResources->markerStart; }
     String markerMidResource() const { return inheritedResources->markerMid; }
@@ -391,13 +383,12 @@ public:
     // convenience
     bool hasClipper() const { return !clipperResource().isEmpty(); }
     bool hasMasker() const { return !maskerResource().isEmpty(); }
-    bool hasFilter() const { return !filterResource().isEmpty(); }
     bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
     bool hasStroke() const { return strokePaintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
     bool hasVisibleStroke() const { return hasStroke() && !strokeWidth().isZero(); }
     bool hasFill() const { return fillPaintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
     bool isVerticalWritingMode() const { return writingMode() == WM_TBRL || writingMode() == WM_TB; }
-    bool isolatesBlending() const { return hasMasker() || hasFilter() || shadow(); }
+    bool isolatesBlending() const { return hasMasker() || shadow(); }
 
 protected:
     // inherit

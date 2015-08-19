@@ -160,10 +160,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             if (!svgStyle.maskerResource().isEmpty())
                 return CSSPrimitiveValue::create(svgStyle.maskerResource(), CSSPrimitiveValue::CSS_URI);
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-        case CSSPropertyFilter:
-            if (!svgStyle.filterResource().isEmpty())
-                return CSSPrimitiveValue::create(svgStyle.filterResource(), CSSPrimitiveValue::CSS_URI);
-            return CSSPrimitiveValue::createIdentifier(CSSValueNone);
         case CSSPropertyFloodColor:
             return currentColorOrValidColor(style, svgStyle.floodColor());
         case CSSPropertyLightingColor:

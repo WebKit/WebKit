@@ -219,7 +219,6 @@ enable-background [SkipBuilder]
 fill [Inherited, SVG, Custom=All]
 fill-opacity [Inherited, SVG, Converter=Opacity]
 fill-rule [Inherited, SVG]
-filter [SVG, Converter=SVGURIReference, NameForMethods=FilterResource]
 float [NameForMethods=Floating]
 flood-color [SVG, Converter=SVGColor]
 flood-opacity [SVG, Converter=Opacity]
@@ -453,7 +452,8 @@ columns [Longhands=column-width|column-count]
 mix-blend-mode [NameForMethods=BlendMode]
 isolation
 #endif
--webkit-filter [ConditionalConverter=FilterOperations]
+filter [ConditionalConverter=FilterOperations]
+-webkit-filter = filter
 align-content [Initial=initialContentAlignment, Converter=ContentAlignmentData]
 -webkit-align-content = align-content
 align-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]

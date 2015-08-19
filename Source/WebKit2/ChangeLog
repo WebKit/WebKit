@@ -1,3 +1,17 @@
+2015-08-18  Dean Jackson  <dino@apple.com>
+
+        Support CSS filters without webkit prefix
+        https://bugs.webkit.org/show_bug.cgi?id=148138
+        <rdar://problem/22331434>
+
+        Reviewed by Sam Weinig.
+
+        Rename WebkitFilter to Filter.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextureMapperAnimation>::encode):
+        (IPC::ArgumentCoder<TextureMapperAnimation>::decode):
+
 2015-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Build TestWTF on Mac with CMake.

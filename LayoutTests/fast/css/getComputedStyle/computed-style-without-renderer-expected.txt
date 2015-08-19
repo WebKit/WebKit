@@ -150,6 +150,7 @@ column-width: auto
 align-content: auto
 align-items: auto
 align-self: auto
+filter: none
 flex-direction: row
 flex-wrap: nowrap
 justify-content: auto

@@ -1,4 +1,4 @@
-description("Test the parsing of the -webkit-filter property.");
+description("Test the parsing of the filter property.");
 
 function jsWrapperClass(node)
 {
@@ -30,16 +30,16 @@ function testFilterRule(description, rule, expectedLength, expectedValue, expect
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
+    stylesheet.insertRule("body { filter: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
   
     shouldBe("cssRule.type", "1");
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "1");
-    shouldBe("declaration.getPropertyValue('-webkit-filter')", "'" + expectedValue + "'");
+    shouldBe("declaration.getPropertyValue('filter')", "'" + expectedValue + "'");
 
-    filterRule = declaration.getPropertyCSSValue('-webkit-filter');
+    filterRule = declaration.getPropertyCSSValue("filter");
     shouldBeType("filterRule", "CSSValueList");
   
     shouldBe("filterRule.length", "" + expectedLength); // shouldBe expects string arguments

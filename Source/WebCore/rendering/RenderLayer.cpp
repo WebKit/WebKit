@@ -6863,8 +6863,9 @@ void RenderLayer::updateOrRemoveFilterClients()
         FilterInfo::remove(*this);
         return;
     }
-
-    if (renderer().style().filter().hasReferenceFilter())
+    // Add the filter as a client to this renderer, unless we are a RenderLayer accommodating
+    // an SVG. In that case it takes care of its own resource management for filters.
+    if (renderer().style().filter().hasReferenceFilter() && !renderer().isSVGRoot())
         FilterInfo::get(*this).updateReferenceFilterClients(renderer().style().filter());
     else if (FilterInfo* filterInfo = FilterInfo::getIfExists(*this))
         filterInfo->removeReferenceFilterClients();

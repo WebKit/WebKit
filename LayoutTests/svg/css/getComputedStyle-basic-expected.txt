@@ -300,6 +300,8 @@ rect: style.getPropertyValue(align-items) : start
 rect: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 rect: style.getPropertyValue(align-self) : start
 rect: style.getPropertyCSSValue(align-self) : [object CSSValueList]
+rect: style.getPropertyValue(filter) : none
+rect: style.getPropertyCSSValue(filter) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(flex-direction) : row
 rect: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(flex-wrap) : nowrap
@@ -822,6 +824,8 @@ g: style.getPropertyValue(align-items) : start
 g: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 g: style.getPropertyValue(align-self) : start
 g: style.getPropertyCSSValue(align-self) : [object CSSValueList]
+g: style.getPropertyValue(filter) : none
+g: style.getPropertyCSSValue(filter) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(flex-direction) : row
 g: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(flex-wrap) : nowrap

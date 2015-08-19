@@ -1,4 +1,4 @@
-Test the parsing of the -webkit-filter property.
+Test the parsing of the filter property.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -7,7 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Basic reference : url('#a')
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'url(#a)'
+PASS declaration.getPropertyValue('filter') is 'url(#a)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -18,7 +18,7 @@ PASS subRule.cssText is 'url(#a)'
 Bare unquoted reference converting to quoted form : url(#a)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'url(#a)'
+PASS declaration.getPropertyValue('filter') is 'url(#a)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -29,7 +29,7 @@ PASS subRule.cssText is 'url(#a)'
 Multiple references : url('#a') url('#b')
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'url(#a) url(#b)'
+PASS declaration.getPropertyValue('filter') is 'url(#a) url(#b)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -42,7 +42,7 @@ PASS subRule.cssText is 'url(#b)'
 Reference as 2nd value : grayscale(1) url('#a')
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(1) url(#a)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(1) url(#a)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -55,7 +55,7 @@ PASS subRule.cssText is 'url(#a)'
 Integer value : grayscale(1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(1)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -66,7 +66,7 @@ PASS subRule.cssText is 'grayscale(1)'
 Percentage value : grayscale(50%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(50%)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(50%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -77,7 +77,7 @@ PASS subRule.cssText is 'grayscale(50%)'
 Float value converts to integer : grayscale(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(1)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -88,7 +88,7 @@ PASS subRule.cssText is 'grayscale(1)'
 Zero value : grayscale(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(0)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(0)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -99,7 +99,7 @@ PASS subRule.cssText is 'grayscale(0)'
 No values : grayscale()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale()'
+PASS declaration.getPropertyValue('filter') is 'grayscale()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -110,7 +110,7 @@ PASS subRule.cssText is 'grayscale()'
 Multiple values : grayscale(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(0.5) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(0.5) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -123,7 +123,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Integer value : sepia(1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'sepia(1)'
+PASS declaration.getPropertyValue('filter') is 'sepia(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -134,7 +134,7 @@ PASS subRule.cssText is 'sepia(1)'
 Percentage value : sepia(50%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'sepia(50%)'
+PASS declaration.getPropertyValue('filter') is 'sepia(50%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -145,7 +145,7 @@ PASS subRule.cssText is 'sepia(50%)'
 Float value converts to integer : sepia(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'sepia(1)'
+PASS declaration.getPropertyValue('filter') is 'sepia(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -156,7 +156,7 @@ PASS subRule.cssText is 'sepia(1)'
 Zero value : sepia(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'sepia(0)'
+PASS declaration.getPropertyValue('filter') is 'sepia(0)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -167,7 +167,7 @@ PASS subRule.cssText is 'sepia(0)'
 No values : sepia()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'sepia()'
+PASS declaration.getPropertyValue('filter') is 'sepia()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -178,7 +178,7 @@ PASS subRule.cssText is 'sepia()'
 Multiple values : sepia(0.5) sepia(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'sepia(0.5) sepia(0.25)'
+PASS declaration.getPropertyValue('filter') is 'sepia(0.5) sepia(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -191,7 +191,7 @@ PASS subRule.cssText is 'sepia(0.25)'
 Rule combinations : sepia(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'sepia(0.5) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'sepia(0.5) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -204,7 +204,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Integer value : saturate(1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(1)'
+PASS declaration.getPropertyValue('filter') is 'saturate(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -215,7 +215,7 @@ PASS subRule.cssText is 'saturate(1)'
 Percentage value : saturate(50%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(50%)'
+PASS declaration.getPropertyValue('filter') is 'saturate(50%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -226,7 +226,7 @@ PASS subRule.cssText is 'saturate(50%)'
 Percentage value > 1 : saturate(250%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(250%)'
+PASS declaration.getPropertyValue('filter') is 'saturate(250%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -237,7 +237,7 @@ PASS subRule.cssText is 'saturate(250%)'
 Float value converts to integer : saturate(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(1)'
+PASS declaration.getPropertyValue('filter') is 'saturate(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -248,7 +248,7 @@ PASS subRule.cssText is 'saturate(1)'
 Input value > 1 : saturate(5.5)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(5.5)'
+PASS declaration.getPropertyValue('filter') is 'saturate(5.5)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -259,7 +259,7 @@ PASS subRule.cssText is 'saturate(5.5)'
 Zero value : saturate(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(0)'
+PASS declaration.getPropertyValue('filter') is 'saturate(0)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -270,7 +270,7 @@ PASS subRule.cssText is 'saturate(0)'
 No values : saturate()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate()'
+PASS declaration.getPropertyValue('filter') is 'saturate()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -281,7 +281,7 @@ PASS subRule.cssText is 'saturate()'
 Multiple values : saturate(0.5) saturate(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(0.5) saturate(0.25)'
+PASS declaration.getPropertyValue('filter') is 'saturate(0.5) saturate(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -294,7 +294,7 @@ PASS subRule.cssText is 'saturate(0.25)'
 Rule combinations : saturate(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'saturate(0.5) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'saturate(0.5) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -307,7 +307,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Degrees value as integer : hue-rotate(10deg)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate(10deg)'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate(10deg)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -318,7 +318,7 @@ PASS subRule.cssText is 'hue-rotate(10deg)'
 Degrees float value converts to integer : hue-rotate(10.0deg)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate(10deg)'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate(10deg)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -329,7 +329,7 @@ PASS subRule.cssText is 'hue-rotate(10deg)'
 Radians value : hue-rotate(10rad)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate(10rad)'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate(10rad)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -340,7 +340,7 @@ PASS subRule.cssText is 'hue-rotate(10rad)'
 Gradians value : hue-rotate(10grad)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate(10grad)'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate(10grad)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -351,7 +351,7 @@ PASS subRule.cssText is 'hue-rotate(10grad)'
 Turns value : hue-rotate(0.5turn)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate(0.5turn)'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate(0.5turn)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -362,7 +362,7 @@ PASS subRule.cssText is 'hue-rotate(0.5turn)'
 Zero value : hue-rotate(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate(0deg)'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate(0deg)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -373,7 +373,7 @@ PASS subRule.cssText is 'hue-rotate(0deg)'
 No values : hue-rotate()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate()'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -384,7 +384,7 @@ PASS subRule.cssText is 'hue-rotate()'
 Rule combinations : hue-rotate(10deg) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate(10deg) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'hue-rotate(10deg) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -397,7 +397,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Integer value : invert(1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'invert(1)'
+PASS declaration.getPropertyValue('filter') is 'invert(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -408,7 +408,7 @@ PASS subRule.cssText is 'invert(1)'
 Percentage value : invert(50%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'invert(50%)'
+PASS declaration.getPropertyValue('filter') is 'invert(50%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -419,7 +419,7 @@ PASS subRule.cssText is 'invert(50%)'
 Float value converts to integer : invert(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'invert(1)'
+PASS declaration.getPropertyValue('filter') is 'invert(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -430,7 +430,7 @@ PASS subRule.cssText is 'invert(1)'
 Zero value : invert(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'invert(0)'
+PASS declaration.getPropertyValue('filter') is 'invert(0)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -441,7 +441,7 @@ PASS subRule.cssText is 'invert(0)'
 No values : invert()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'invert()'
+PASS declaration.getPropertyValue('filter') is 'invert()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -452,7 +452,7 @@ PASS subRule.cssText is 'invert()'
 Multiple values : invert(0.5) invert(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'invert(0.5) invert(0.25)'
+PASS declaration.getPropertyValue('filter') is 'invert(0.5) invert(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -465,7 +465,7 @@ PASS subRule.cssText is 'invert(0.25)'
 Rule combinations : invert(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'invert(0.5) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'invert(0.5) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -478,7 +478,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Integer value : opacity(1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'opacity(1)'
+PASS declaration.getPropertyValue('filter') is 'opacity(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -489,7 +489,7 @@ PASS subRule.cssText is 'opacity(1)'
 Percentage value : opacity(50%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'opacity(50%)'
+PASS declaration.getPropertyValue('filter') is 'opacity(50%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -500,7 +500,7 @@ PASS subRule.cssText is 'opacity(50%)'
 Float value converts to integer : opacity(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'opacity(1)'
+PASS declaration.getPropertyValue('filter') is 'opacity(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -511,7 +511,7 @@ PASS subRule.cssText is 'opacity(1)'
 Zero value : opacity(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'opacity(0)'
+PASS declaration.getPropertyValue('filter') is 'opacity(0)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -522,7 +522,7 @@ PASS subRule.cssText is 'opacity(0)'
 No values : opacity()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'opacity()'
+PASS declaration.getPropertyValue('filter') is 'opacity()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -533,7 +533,7 @@ PASS subRule.cssText is 'opacity()'
 Multiple values : opacity(0.5) opacity(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'opacity(0.5) opacity(0.25)'
+PASS declaration.getPropertyValue('filter') is 'opacity(0.5) opacity(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -546,7 +546,7 @@ PASS subRule.cssText is 'opacity(0.25)'
 Rule combinations : opacity(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'opacity(0.5) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'opacity(0.5) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -559,7 +559,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Integer value : brightness(1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(1)'
+PASS declaration.getPropertyValue('filter') is 'brightness(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -570,7 +570,7 @@ PASS subRule.cssText is 'brightness(1)'
 Percentage value : brightness(50%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(50%)'
+PASS declaration.getPropertyValue('filter') is 'brightness(50%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -581,7 +581,7 @@ PASS subRule.cssText is 'brightness(50%)'
 Float value converts to integer : brightness(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(1)'
+PASS declaration.getPropertyValue('filter') is 'brightness(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -592,7 +592,7 @@ PASS subRule.cssText is 'brightness(1)'
 Zero value : brightness(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(0)'
+PASS declaration.getPropertyValue('filter') is 'brightness(0)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -603,7 +603,7 @@ PASS subRule.cssText is 'brightness(0)'
 No values : brightness()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness()'
+PASS declaration.getPropertyValue('filter') is 'brightness()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -614,7 +614,7 @@ PASS subRule.cssText is 'brightness()'
 Multiple values : brightness(0.5) brightness(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(0.5) brightness(0.25)'
+PASS declaration.getPropertyValue('filter') is 'brightness(0.5) brightness(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -627,7 +627,7 @@ PASS subRule.cssText is 'brightness(0.25)'
 Rule combinations : brightness(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(0.5) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'brightness(0.5) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -640,7 +640,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Parameter less than -100% : brightness(-1.1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(-1.1)'
+PASS declaration.getPropertyValue('filter') is 'brightness(-1.1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -651,7 +651,7 @@ PASS subRule.cssText is 'brightness(-1.1)'
 Parameter more than 100% : brightness(101%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(101%)'
+PASS declaration.getPropertyValue('filter') is 'brightness(101%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -662,7 +662,7 @@ PASS subRule.cssText is 'brightness(101%)'
 Rule combinations : grayscale(0.25) brightness(0.5)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(0.25) brightness(0.5)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(0.25) brightness(0.5)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -675,7 +675,7 @@ PASS subRule.cssText is 'brightness(0.5)'
 Integer value : contrast(1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(1)'
+PASS declaration.getPropertyValue('filter') is 'contrast(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -686,7 +686,7 @@ PASS subRule.cssText is 'contrast(1)'
 Percentage value : contrast(50%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(50%)'
+PASS declaration.getPropertyValue('filter') is 'contrast(50%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -697,7 +697,7 @@ PASS subRule.cssText is 'contrast(50%)'
 Percentage value > 1 : contrast(250%)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(250%)'
+PASS declaration.getPropertyValue('filter') is 'contrast(250%)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -708,7 +708,7 @@ PASS subRule.cssText is 'contrast(250%)'
 Float value converts to integer : contrast(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(1)'
+PASS declaration.getPropertyValue('filter') is 'contrast(1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -719,7 +719,7 @@ PASS subRule.cssText is 'contrast(1)'
 Zero value : contrast(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(0)'
+PASS declaration.getPropertyValue('filter') is 'contrast(0)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -730,7 +730,7 @@ PASS subRule.cssText is 'contrast(0)'
 No values : contrast()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast()'
+PASS declaration.getPropertyValue('filter') is 'contrast()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -741,7 +741,7 @@ PASS subRule.cssText is 'contrast()'
 Value greater than one : contrast(2)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(2)'
+PASS declaration.getPropertyValue('filter') is 'contrast(2)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -752,7 +752,7 @@ PASS subRule.cssText is 'contrast(2)'
 Multiple values : contrast(0.5) contrast(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(0.5) contrast(0.25)'
+PASS declaration.getPropertyValue('filter') is 'contrast(0.5) contrast(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -765,7 +765,7 @@ PASS subRule.cssText is 'contrast(0.25)'
 Rule combinations : contrast(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'contrast(0.5) grayscale(0.25)'
+PASS declaration.getPropertyValue('filter') is 'contrast(0.5) grayscale(0.25)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -778,7 +778,7 @@ PASS subRule.cssText is 'grayscale(0.25)'
 Rule combinations : grayscale(0.25) contrast(0.5)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(0.25) contrast(0.5)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(0.25) contrast(0.5)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -791,7 +791,7 @@ PASS subRule.cssText is 'contrast(0.5)'
 One zero to px : blur(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'blur(0px)'
+PASS declaration.getPropertyValue('filter') is 'blur(0px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -802,7 +802,7 @@ PASS subRule.cssText is 'blur(0px)'
 One length : blur(10px)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'blur(10px)'
+PASS declaration.getPropertyValue('filter') is 'blur(10px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -813,7 +813,7 @@ PASS subRule.cssText is 'blur(10px)'
 No values : blur()
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'blur()'
+PASS declaration.getPropertyValue('filter') is 'blur()'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -824,7 +824,7 @@ PASS subRule.cssText is 'blur()'
 Color then three values : drop-shadow(red 1px 2px 3px)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(red 1px 2px 3px)'
+PASS declaration.getPropertyValue('filter') is 'drop-shadow(red 1px 2px 3px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -835,7 +835,7 @@ PASS subRule.cssText is 'drop-shadow(red 1px 2px 3px)'
 Three values then color : drop-shadow(1px 2px 3px red)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(red 1px 2px 3px)'
+PASS declaration.getPropertyValue('filter') is 'drop-shadow(red 1px 2px 3px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -846,7 +846,7 @@ PASS subRule.cssText is 'drop-shadow(red 1px 2px 3px)'
 Color then three values with zero length : drop-shadow(#abc 0 0 0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(rgb(170, 187, 204) 0px 0px 0px)'
+PASS declaration.getPropertyValue('filter') is 'drop-shadow(rgb(170, 187, 204) 0px 0px 0px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -857,7 +857,7 @@ PASS subRule.cssText is 'drop-shadow(rgb(170, 187, 204) 0px 0px 0px)'
 Three values with zero length : drop-shadow(0 0 0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(0px 0px 0px)'
+PASS declaration.getPropertyValue('filter') is 'drop-shadow(0px 0px 0px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -868,7 +868,7 @@ PASS subRule.cssText is 'drop-shadow(0px 0px 0px)'
 Two values no color : drop-shadow(1px 2px)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(1px 2px)'
+PASS declaration.getPropertyValue('filter') is 'drop-shadow(1px 2px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -879,7 +879,7 @@ PASS subRule.cssText is 'drop-shadow(1px 2px)'
 Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)'
+PASS declaration.getPropertyValue('filter') is 'grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
