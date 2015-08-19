@@ -40,7 +40,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         }
 
         this._textContainsNameRegExp = new RegExp("(?:(?:^|;)\\s*" + this._propertyName + "\\s*:)");
-        this._replacementRegExp = new RegExp("(^|;)(?:\\s*)(" + this._propertyName + ")(.+?(?:;|$))");
+        this._replacementRegExp = new RegExp("((?:^|;)\\s*)(" + this._propertyName + ")(.+?(?:;|$))");
         this._valueRegExp = /([^\s]+\(.+\)|[^\s]+)(?:;?)/g;
     }
 
@@ -80,12 +80,9 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         let trimmedText = text.trimRight();
         if (this._textContainsNameRegExp.test(text))
             text = text.replace(this._replacementRegExp, value !== null ? "$1$2: " + value + ";" : "$1");
-        else if (value !== null) {
-            if (trimmedText.trimLeft().length && !trimmedText.endsWith(";"))
-                text += ";";
+        else if (value !== null)
+            text += WebInspector.VisualStylePropertyEditor.generateFormattedTextForNewProperty(text, this._propertyName, value);
 
-            text += this._propertyName + ": " + value + ";";
-        }
         return text;
     }
 

@@ -108,7 +108,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
             this._propertyInfoList.push({
                 name,
                 textContainsNameRegExp: new RegExp("(?:(?:^|;)\\s*" + name + "\\s*:)"),
-                replacementRegExp: new RegExp("(^|;)(?:\\s*)(" + name + ")(.+?(?:;|$))")
+                replacementRegExp: new RegExp("((?:^|;)\\s*)(" + name + ")(.+?(?:;|$))")
             })
         }
 
@@ -116,6 +116,40 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._propertyReferenceText = WebInspector.VisualStyleDetailsPanel.propertyReferenceInfo[this._propertyReferenceName];
         this._hasPropertyReference = this._propertyReferenceText && !!this._propertyReferenceText.trim().length;
         this._representedProperty = null;
+    }
+
+    // Static
+
+    static generateFormattedTextForNewProperty(styleText, propertyName, propertyValue) {
+        if (!propertyName || !propertyValue)
+            return "";
+
+        styleText = styleText || "";
+
+        // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+        let linePrefixText = "    ";
+        let lineSuffixWhitespace = "\n";
+        let trimmedText = styleText.trimRight();
+        let textHasNewlines = trimmedText.includes("\n");
+
+        if (trimmedText.trimLeft().length) {
+            let styleTextPrefixWhitespace = trimmedText.match(/^\s*/);
+            if (styleTextPrefixWhitespace) {
+                let linePrefixWhitespaceMatch = styleTextPrefixWhitespace[0].match(/[^\S\n]+$/);
+                if (linePrefixWhitespaceMatch && textHasNewlines)
+                    linePrefixText = linePrefixWhitespaceMatch[0];
+                else {
+                    linePrefixText = "";
+                    lineSuffixWhitespace = styleTextPrefixWhitespace[0];
+                }
+            }
+
+            if (!trimmedText.endsWith(";"))
+                linePrefixText = ";" + linePrefixText;
+        } else
+            linePrefixText = "\n" + linePrefixText;
+
+        return linePrefixText + propertyName + ": " + propertyValue + ";" + lineSuffixWhitespace;
     }
 
     // Public
@@ -297,16 +331,11 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
     modifyPropertyText(text, value)
     {
-        let trimmedText = text.trimRight();
         for (let property of this._propertyInfoList) {
             if (property.textContainsNameRegExp.test(text))
                 text = text.replace(property.replacementRegExp, value !== null ? "$1$2: " + value + ";" : "$1");
-            else if (value !== null) {
-                if (trimmedText.trimLeft().length && !trimmedText.endsWith(";"))
-                    text += ";";
-
-                text += property.name + ": " + value + ";";
-            }
+            else if (value !== null)
+                text += WebInspector.VisualStylePropertyEditor.generateFormattedTextForNewProperty(text, property.name, value);
         }
         return text;
     }
