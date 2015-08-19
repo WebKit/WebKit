@@ -1,3 +1,13 @@
+2015-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        Build TestWTF on Mac with CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=147972
+
+        Reviewed by Tim Horton.
+
+        * PlatformMac.cmake:
+        Make more forwarding headers.
+
 2015-08-18  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all uses of std::mutex/std::condition_variable with WTF::Lock/WTF::Condition

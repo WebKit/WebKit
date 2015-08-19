@@ -1,3 +1,20 @@
+2015-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        Build TestWTF on Mac with CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=147972
+
+        Reviewed by Tim Horton.
+
+        TestWTF only depends on gtest and WTF instead of TestWebKitAPi depending on all of WebKit.
+        Now I can run the WTF API tests after a few seconds of building instead of waiting for all of WebKit to build.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        Added WTF as a dependency for platforms that do not have ForwardingHeadersForTestWebKitAPI_NAME.
+        WTF was already a library that was linked, but having at least one item makes the syntax of add_dependencies work.
+        * TestWebKitAPI/PlatformMac.cmake: Added.
+        * TestWebKitAPI/config.h:
+        Postpone some build fixes until WebKit builds completely on Mac with CMake.
+
 2015-08-19  Brian Burg  <bburg@apple.com>
 
         Unreviewed, add Aleksandr Skachkov to the list of contributors.

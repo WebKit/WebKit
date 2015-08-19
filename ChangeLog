@@ -1,3 +1,13 @@
+2015-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        Build TestWTF on Mac with CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=147972
+
+        Reviewed by Tim Horton.
+
+        * Source/cmake/OptionsMac.cmake:
+        Enable API tests in Mac's CMake build.
+
 2015-08-18  Alex Christensen  <achristensen@webkit.org>
 
         [CMake] REGRESSION(r188540): WebKitTestRunner is not longer built and all the tests (layout and perf) fail.

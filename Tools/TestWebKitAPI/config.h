@@ -83,7 +83,10 @@
 #endif
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
+// FIXME: Get Cocoa tests working with CMake on Mac.
+#if !defined(BUILDING_WITH_CMAKE)
 #import <WebKit/WebKit.h>
+#endif
 #endif
 
 #if !PLATFORM(IOS)

@@ -58,6 +58,7 @@ set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/Cocoa
 
     UIProcess/API/C
+    UIProcess/API/Cocoa
 
     WebProcess/WebPage
 
