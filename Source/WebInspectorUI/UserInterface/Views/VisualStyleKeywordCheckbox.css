@@ -33,14 +33,10 @@
 }
 
 /* Font Variant */
-.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input {
-    margin-left: 47px;
-}
-
-.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input::before {
+.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input::after {
     position: absolute;
     top: 5px;
-    left: 0;
+    left: 15px;
     font-size: 9px;
     font-variant: small-caps;
     word-spacing: -2px;
