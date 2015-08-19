@@ -1,3 +1,16 @@
+2015-08-18  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Safari’s Web Content process crashes when decoding an NSError containing an identity
+        https://bugs.webkit.org/show_bug.cgi?id=148135
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/WebContent-iOS.entitlements: Added the com.apple.identities keychain
+          access group. The Networking process already has it since r169655.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize): Always allow the UI process to decode keys.
+
 2015-08-18  Jincheol Jo  <jincheol.jo@navercorp.com>
 
         [EFL] Web Inspector: make to use StringBuilder in inspectorBaseURL
