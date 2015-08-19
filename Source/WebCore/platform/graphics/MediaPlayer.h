@@ -53,10 +53,6 @@
 #include "PlatformTextTrack.h"
 #endif
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-#include "PlatformTextTrackMenu.h"
-#endif
-
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS NSArray;
@@ -585,11 +581,6 @@ public:
 #endif
 
     static void resetMediaEngines();
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    bool implementsTextTrackControls() const;
-    PassRefPtr<PlatformTextTrackMenuInterface> textTrackMenu();
-#endif
 
 #if USE(GSTREAMER)
     void simulateAudioInterruption();

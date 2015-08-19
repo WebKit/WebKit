@@ -106,9 +106,6 @@ class HTMLMediaElement
     , private TextTrackClient
     , private VideoTrackClient
 #endif
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    , public PlatformTextTrackMenuClient
-#endif
 {
 public:
     MediaPlayer* player() const { return m_player.get(); }
@@ -302,12 +299,6 @@ public:
 
 #if ENABLE(AVF_CAPTIONS)
     virtual Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources() override;
-#endif
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    virtual void setSelectedTextTrack(PassRefPtr<PlatformTextTrack>) override;
-    virtual Vector<RefPtr<PlatformTextTrack>> platformTextTracks() override;
-    PlatformTextTrackMenuInterface* platformTextTrackMenu();
 #endif
 
     struct TrackGroup;
@@ -941,10 +932,6 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     RefPtr<MediaKeys> m_mediaKeys;
-#endif
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    RefPtr<PlatformTextTrackMenuInterface> m_platformMenu;
 #endif
 
     std::unique_ptr<MediaElementSession> m_mediaSession;

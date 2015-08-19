@@ -542,48 +542,6 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
     return false;
 }
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
-{
-    if (m_platformTextTrack)
-        return m_platformTextTrack;
-
-    PlatformTextTrack::TrackKind platformKind = PlatformTextTrack::Caption;
-    if (kind() == subtitlesKeyword())
-        platformKind = PlatformTextTrack::Subtitle;
-    else if (kind() == captionsKeyword())
-        platformKind = PlatformTextTrack::Caption;
-    else if (kind() == descriptionsKeyword())
-        platformKind = PlatformTextTrack::Description;
-    else if (kind() == chaptersKeyword())
-        platformKind = PlatformTextTrack::Chapter;
-    else if (kind() == metadataKeyword())
-        platformKind = PlatformTextTrack::MetaData;
-    else if (kind() == forcedKeyword())
-        platformKind = PlatformTextTrack::Forced;
-
-    PlatformTextTrack::TrackType type = PlatformTextTrack::OutOfBand;
-    if (m_trackType == TrackElement)
-        type = PlatformTextTrack::OutOfBand;
-    else if (m_trackType == AddTrack)
-        type = PlatformTextTrack::Script;
-    else if (m_trackType == InBand)
-        type = PlatformTextTrack::InBand;
-
-    PlatformTextTrack::TrackMode platformMode = PlatformTextTrack::Disabled;
-    if (TextTrack::hiddenKeyword() == mode())
-        platformMode = PlatformTextTrack::Hidden;
-    else if (TextTrack::disabledKeyword() == mode())
-        platformMode = PlatformTextTrack::Disabled;
-    else if (TextTrack::showingKeyword() == mode())
-        platformMode = PlatformTextTrack::Showing;
-
-    m_platformTextTrack = PlatformTextTrack::create(this, label(), language(), platformMode, platformKind, type, uniqueId());
-
-    return m_platformTextTrack;
-}
-#endif
-
 bool TextTrack::isMainProgramContent() const
 {
     // "Main program" content is intrinsic to the presentation of the media file, regardless of locale. Content such as

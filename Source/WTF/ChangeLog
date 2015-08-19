@@ -1,3 +1,12 @@
+2015-08-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Remove "platform text track menu"
+        https://bugs.webkit.org/show_bug.cgi?id=148139
+
+        Reviewed by Jer Noble.
+
+        * wtf/Platform.h: Remove PLATFORM_TEXT_TRACK_MENU.
+
 2015-08-18  Filip Pizlo  <fpizlo@apple.com>
 
         WTF::Condition should have a fast path for notifyOne/notifyAll that avoids calling unparkOne/unparkAll

@@ -36,10 +36,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-#include "PlatformTextTrack.h"
-#endif
-
 namespace WebCore {
 
 class ScriptExecutionContext;
@@ -61,11 +57,7 @@ public:
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
 };
 
-class TextTrack : public TrackBase, public EventTargetWithInlineData
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    , public PlatformTextTrackClient
-#endif
-    {
+class TextTrack : public TrackBase, public EventTargetWithInlineData {
 public:
     static Ref<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language)
     {
@@ -146,10 +138,6 @@ public:
 
     void removeAllCues();
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    PassRefPtr<PlatformTextTrack> platformTextTrack();
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
     virtual void setLanguage(const AtomicString&) override;
 #endif
@@ -177,12 +165,6 @@ private:
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     VTTRegionList* ensureVTTRegionList();
     RefPtr<VTTRegionList> m_regions;
-#endif
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    virtual TextTrack* publicTrack() override { return this; }
-
-    RefPtr<PlatformTextTrack> m_platformTextTrack;
 #endif
 
     TextTrackCueList* ensureTextTrackCueList();

@@ -242,11 +242,6 @@ public:
     virtual void tracksChanged() { };
 #endif
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    virtual bool implementsTextTrackControls() const { return false; }
-    virtual PassRefPtr<PlatformTextTrackMenuInterface> textTrackMenu() { return 0; }
-#endif
-
 #if USE(GSTREAMER)
     virtual void simulateAudioInterruption() { }
 #endif

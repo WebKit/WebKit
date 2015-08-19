@@ -137,10 +137,6 @@
 #include "MediaKeys.h"
 #endif
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-#include "PlatformTextTrack.h"
-#endif
-
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 #include "JSMediaControlsHost.h"
 #include "MediaControlsHost.h"
@@ -803,11 +799,6 @@ void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
         setFlags(m_pendingActionFlags, ConfigureTextTracks);
 #endif
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    if (actionType & TextTrackChangesNotification)
-        setFlags(m_pendingActionFlags, TextTrackChangesNotification);
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (actionType & CheckPlaybackTargetCompatablity)
         setFlags(m_pendingActionFlags, CheckPlaybackTargetCompatablity);
@@ -854,11 +845,6 @@ void HTMLMediaElement::pendingActionTimerFired()
         else
             loadInternal();
     }
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled() && (m_pendingActionFlags & TextTrackChangesNotification))
-        notifyMediaPlayerOfTextTrackChanges();
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_pendingActionFlags & CheckPlaybackTargetCompatablity && m_player && m_player->isCurrentPlaybackTargetWireless() && !m_player->canPlayToWirelessPlaybackTarget()) {
@@ -1667,11 +1653,6 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     if (track->mode() != TextTrack::disabledKeyword() && trackIsLoaded)
         textTrackAddCues(track, track->cues());
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    if (platformTextTrackMenu())
-        platformTextTrackMenu()->trackWasSelected(track->platformTextTrack());
-#endif
-    
     configureTextTrackDisplay(AssumeTextTrackVisibilityChanged);
 
     if (m_textTracks && m_textTracks->contains(track))
@@ -3477,86 +3458,10 @@ void HTMLMediaElement::mediaPlayerDidRemoveVideoTrack(PassRefPtr<VideoTrackPriva
     prpTrack->willBeRemoved();
 }
 
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-void HTMLMediaElement::setSelectedTextTrack(PassRefPtr<PlatformTextTrack> platformTrack)
-{
-    if (!m_textTracks)
-        return;
-
-    TrackDisplayUpdateScope scope(this);
-
-    if (!platformTrack) {
-        setSelectedTextTrack(TextTrack::captionMenuOffItem());
-        return;
-    }
-
-    TextTrack* textTrack;
-    if (platformTrack == PlatformTextTrack::captionMenuOffItem())
-        textTrack = TextTrack::captionMenuOffItem();
-    else if (platformTrack == PlatformTextTrack::captionMenuAutomaticItem())
-        textTrack = TextTrack::captionMenuAutomaticItem();
-    else {
-        size_t i;
-        for (i = 0; i < m_textTracks->length(); ++i) {
-            textTrack = m_textTracks->item(i);
-            
-            if (textTrack->platformTextTrack() == platformTrack)
-                break;
-        }
-        if (i == m_textTracks->length())
-            return;
-    }
-
-    setSelectedTextTrack(textTrack);
-}
-
-Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::platformTextTracks()
-{
-    if (!m_textTracks || !m_textTracks->length())
-        return Vector<RefPtr<PlatformTextTrack>>();
-    
-    Vector<RefPtr<PlatformTextTrack>> platformTracks;
-    for (size_t i = 0; i < m_textTracks->length(); ++i)
-        platformTracks.append(m_textTracks->item(i)->platformTextTrack());
-    
-    return platformTracks;
-}
-
-void HTMLMediaElement::notifyMediaPlayerOfTextTrackChanges()
-{
-    if (!m_textTracks || !m_textTracks->length() || !platformTextTrackMenu())
-        return;
-    
-    m_platformMenu->tracksDidChange();
-}
-
-PlatformTextTrackMenuInterface* HTMLMediaElement::platformTextTrackMenu()
-{
-    if (m_platformMenu)
-        return m_platformMenu.get();
-
-    if (!m_player || !m_player->implementsTextTrackControls())
-        return 0;
-
-    m_platformMenu = m_player->textTrackMenu();
-    if (!m_platformMenu)
-        return 0;
-
-    m_platformMenu->setClient(this);
-
-    return m_platformMenu.get();
-}
-#endif // #if USE(PLATFORM_TEXT_TRACK_MENU)
-    
 void HTMLMediaElement::closeCaptionTracksChanged()
 {
     if (hasMediaControls())
         mediaControls()->closedCaptionTracksChanged();
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    if (m_player && m_player->implementsTextTrackControls())
-        scheduleDelayedAction(TextTrackChangesNotification);
-#endif
 }
 
 void HTMLMediaElement::addAudioTrack(PassRefPtr<AudioTrack> track)
@@ -4924,13 +4829,6 @@ void HTMLMediaElement::userCancelledLoad()
 void HTMLMediaElement::clearMediaPlayer(int flags)
 {
     LOG(Media, "HTMLMediaElement::clearMediaPlayer(%p) - flags = %x", this, (unsigned)flags);
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    if (platformTextTrackMenu()) {
-        m_platformMenu->setClient(nullptr);
-        m_platformMenu = nullptr;
-    }
-#endif
 
 #if ENABLE(VIDEO_TRACK)
     forgetResourceSpecificTracks();

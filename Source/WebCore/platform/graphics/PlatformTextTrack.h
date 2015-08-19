@@ -26,7 +26,7 @@
 #ifndef PlatformTextTrack_h
 #define PlatformTextTrack_h
 
-#if USE(PLATFORM_TEXT_TRACK_MENU) || ENABLE(AVF_CAPTIONS)
+#if ENABLE(AVF_CAPTIONS)
 
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>

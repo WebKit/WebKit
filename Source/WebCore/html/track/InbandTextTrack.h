@@ -85,10 +85,6 @@ private:
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override { ASSERT_NOT_REACHED(); }
 
     virtual MediaTime startTimeVariance() const override;
-
-#if USE(PLATFORM_TEXT_TRACK_MENU)
-    virtual InbandTextTrackPrivate* privateTrack() override { return m_private.get(); }
-#endif
 };
 
 } // namespace WebCore
