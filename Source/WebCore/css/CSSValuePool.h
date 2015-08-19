@@ -47,6 +47,8 @@ enum class FromSystemFontID { No, Yes };
 class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static CSSValuePool& singleton();
+
     PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
     Ref<CSSPrimitiveValue> createFontFamilyValue(const String&, FromSystemFontID = FromSystemFontID::No);
     Ref<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.copyRef(); }
@@ -92,8 +94,6 @@ private:
 
     friend class WTF::NeverDestroyed<CSSValuePool>;
 };
-
-CSSValuePool& cssValuePool() PURE_FUNCTION;
 
 }
 

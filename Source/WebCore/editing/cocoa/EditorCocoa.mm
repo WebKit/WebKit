@@ -78,9 +78,9 @@ void Editor::getTextDecorationAttributesRespectingTypingStyle(RenderStyle& style
         RefPtr<CSSValue> value = typingStyle->style()->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (value && value->isValueList()) {
             CSSValueList& valueList = downcast<CSSValueList>(*value);
-            if (valueList.hasValue(cssValuePool().createIdentifierValue(CSSValueLineThrough).ptr()))
+            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough).ptr()))
                 [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
-            if (valueList.hasValue(cssValuePool().createIdentifierValue(CSSValueUnderline).ptr()))
+            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline).ptr()))
                 [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
         }
     } else {

@@ -746,12 +746,12 @@ void MutableStyleProperties::setPrefixingVariantProperty(const CSSProperty& prop
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
 {
-    return setProperty(CSSProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important));
+    return setProperty(CSSProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important));
 }
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSPropertyID identifier, bool important)
 {
-    return setProperty(CSSProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important));
+    return setProperty(CSSProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important));
 }
 
 void MutableStyleProperties::parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet)

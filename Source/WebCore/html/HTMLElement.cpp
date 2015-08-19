@@ -1150,7 +1150,7 @@ void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSProperty
     if (!parsedColor.isValid())
         parsedColor.setRGB(parseColorStringWithCrazyLegacyRules(colorString));
 
-    style.setProperty(propertyID, cssValuePool().createColorValue(parsedColor.rgb()));
+    style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(parsedColor.rgb()));
 }
 
 bool HTMLElement::willRespondToMouseMoveEvents()

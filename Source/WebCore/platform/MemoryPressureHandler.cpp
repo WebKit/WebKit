@@ -124,7 +124,7 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
 
     {
         ReliefLogger log("Drain CSSValuePool");
-        cssValuePool().drain();
+        CSSValuePool::singleton().drain();
     }
 
     {

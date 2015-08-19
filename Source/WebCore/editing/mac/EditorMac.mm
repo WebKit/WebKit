@@ -688,11 +688,12 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
 
 void Editor::applyFontStyles(const String& fontFamily, double fontSize, unsigned fontTraits)
 {
+    auto& cssValuePool = CSSValuePool::singleton();
     Ref<MutableStyleProperties> style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyFontFamily, cssValuePool().createFontFamilyValue(fontFamily));
+    style->setProperty(CSSPropertyFontFamily, cssValuePool.createFontFamilyValue(fontFamily));
     style->setProperty(CSSPropertyFontStyle, (fontTraits & NSFontItalicTrait) ? CSSValueItalic : CSSValueNormal);
-    style->setProperty(CSSPropertyFontWeight, cssValuePool().createValue(fontTraits & NSFontBoldTrait ? FontWeightBold : FontWeightNormal));
-    style->setProperty(CSSPropertyFontSize, cssValuePool().createValue(fontSize, CSSPrimitiveValue::CSS_PX));
+    style->setProperty(CSSPropertyFontWeight, cssValuePool.createValue(fontTraits & NSFontBoldTrait ? FontWeightBold : FontWeightNormal));
+    style->setProperty(CSSPropertyFontSize, cssValuePool.createValue(fontSize, CSSPrimitiveValue::CSS_PX));
     applyStyleToSelection(style.ptr(), EditActionSetFont);
 }
 

@@ -63,22 +63,23 @@ static Ref<CSSPrimitiveValue> buildSerializablePositionOffset(PassRefPtr<CSSPrim
     } else
         amount = offset;
 
+    auto& cssValuePool = CSSValuePool::singleton();
     if (side == CSSValueCenter) {
         side = defaultSide;
-        amount = cssValuePool().createValue(Length(50, Percent));
+        amount = cssValuePool.createValue(Length(50, Percent));
     } else if ((side == CSSValueRight || side == CSSValueBottom)
         && amount->isPercentage()) {
         side = defaultSide;
-        amount = cssValuePool().createValue(Length(100 - amount->getFloatValue(), Percent));
+        amount = cssValuePool.createValue(Length(100 - amount->getFloatValue(), Percent));
     } else if (amount->isLength() && !amount->getFloatValue()) {
         if (side == CSSValueRight || side == CSSValueBottom)
-            amount = cssValuePool().createValue(Length(100, Percent));
+            amount = cssValuePool.createValue(Length(100, Percent));
         else
-            amount = cssValuePool().createValue(Length(0, Percent));
+            amount = cssValuePool.createValue(Length(0, Percent));
         side = defaultSide;
     }
 
-    return cssValuePool().createValue(Pair::create(cssValuePool().createValue(side), amount.release()));
+    return cssValuePool.createValue(Pair::create(cssValuePool.createValue(side), amount.release()));
 }
 
 static String buildCircleString(const String& radius, const String& centerX, const String& centerY, const String& box)
