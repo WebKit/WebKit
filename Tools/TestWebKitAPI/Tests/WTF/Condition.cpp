@@ -250,7 +250,7 @@ TEST(WTF_Condition, TimeoutTimesOut)
         lock, std::chrono::microseconds(10000), [] () -> bool { return false; });
     lock.unlock();
 
-    EXPECT_EQ(false, result);
+    EXPECT_FALSE(result);
 }
 
 } // namespace TestWebKitAPI
