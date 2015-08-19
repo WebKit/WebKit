@@ -59,9 +59,9 @@ object::-webkit-snapshotted-plugin-content > .snapshot-overlay
     left: 5px;
     background-color: rgba(255, 255, 255, 0.75);
     cursor: pointer;
-    display: -webkit-flex;
-    -webkit-justify-content: center;
-    -webkit-align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label,

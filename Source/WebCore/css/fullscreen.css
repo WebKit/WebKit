@@ -11,13 +11,13 @@
     z-index: auto !important;
     position: static !important;
     opacity: 1 !important;
-    -webkit-transform: none !important;
+    transform: none !important;
     -webkit-mask: none !important;
     clip: none !important;
-    -webkit-filter: none !important;
-    -webkit-transition: none !important;
+    filter: none !important;
+    transition: none !important;
     -webkit-box-reflect: none !important;
-    -webkit-perspective: none !important;
+    perspective: none !important;
     -webkit-transform-style: flat !important;
 }
 
@@ -27,9 +27,9 @@ video:-webkit-full-screen, audio:-webkit-full-screen {
     margin: 0 !important;
     height: 100% !important;
     width: 100% !important;
-    -webkit-flex: 1 !important;
+    flex: 1 !important;
     display: block !important;
-    -webkit-transition: none !important;
+    transition: none !important;
 }
 
 :-webkit-full-screen video,
