@@ -34,9 +34,15 @@
 .visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor {
     width: 23px;
     height: 20px;
-    margin: 0 2px 0 0.5px;
+    margin-right: 2px;
     content: url(../Images/CubicBezier.svg);
     cursor: default;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor {
+        margin-left: 0.5px;
+    }
 }
 
 .visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor:hover {

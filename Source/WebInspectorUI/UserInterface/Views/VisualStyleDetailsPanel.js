@@ -248,6 +248,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         }
 
         this._currentStyle.text = newStyleText;
+        group.section.element.classList.toggle("has-set-property", this._groupHasSetProperty(group));
     }
 
     get _initialTextList()

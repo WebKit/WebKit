@@ -1,5 +1,52 @@
 2015-08-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add support for positioning Visual editors on non-retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=148160
+
+        Reviewed by Timothy Hatcher.
+
+        Cleans up the positioning, dimensions, and widths of the
+        Visual editors on non-retina displays.
+
+        * UserInterface/Views/VisualStyleColorPicker.css:
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > input):
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row.visual-style-separated-row):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._clearModifiedSection):
+
+        * UserInterface/Views/VisualStylePropertyEditorLink.css:
+        (.visual-style-property-editor-link):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-border.left):
+        (.visual-style-property-editor-link.link-all > .visual-style-property-editor-link-border.left):
+        (.visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-border):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon):
+        (.visual-style-property-editor-link:not(.link-all) > .visual-style-property-editor-link-icon):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (.visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-border.left):
+        (.visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-icon:hover + .visual-style-property-editor-link-border.right): Deleted.
+        (.visual-style-property-editor-link.link-all.linked > .visual-style-property-editor-link-border.right): Deleted.
+        (.visual-style-property-editor-link.link-all > .visual-style-property-editor-link-icon): Deleted.
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (.item.visual-style-selector-item > input[type="checkbox"]):
+        (.item.visual-style-selector-item > .icon):
+        (.item.visual-style-selector-item.selector-invalid > .titles > .title::before):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (.item.visual-style-selector-item > .titles):
+        (.item.visual-style-selector-item.selector-invalid > .icon): Deleted.
+
+        * UserInterface/Views/VisualStyleTimingEditor.css:
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+
+
+
+2015-08-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Show the computed value in an overlay for numerical Visual Editors
         https://bugs.webkit.org/show_bug.cgi?id=148161
 

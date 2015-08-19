@@ -69,9 +69,15 @@
 }
 
 .sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row.visual-style-separated-row {
-    border-bottom: 0.5px solid hsl(0, 0%, 83%);
+    border-bottom: 1px solid hsl(0, 0%, 83%);
     margin-bottom: 5px;
     padding-bottom: 2px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row.visual-style-separated-row {
+        border-bottom-width: 0.5px !important;
+    }
 }
 
 .sidebar > .panel.details.css-style .visual > .details-section .details-section > .content .group > .row > .visual-style-property-container > .visual-style-property-title {
