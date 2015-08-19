@@ -51,8 +51,6 @@ WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.Object
             "Ctrl-N": this._handleNextKey.bind(this),
             "Enter": this._handleEnterKey.bind(this),
             "Cmd-Enter": this._handleCommandEnterKey.bind(this),
-            "Alt-Enter": this._handleOptionEnterKey.bind(this),
-            "Cmd-Alt-Enter": this._handleCommandOptionEnterKey.bind(this),
             "Tab": this._handleTabKey.bind(this),
             "Esc": this._handleEscapeKey.bind(this)
         };
@@ -303,16 +301,6 @@ WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.Object
     }
 
     _handleCommandEnterKey(codeMirror)
-    {
-        this._handleEnterKey(codeMirror, true);
-    }
-
-    _handleOptionEnterKey(codeMirror)
-    {
-        this._handleEnterKey(codeMirror, false, true);
-    }
-
-    _handleCommandOptionEnterKey(codeMirror)
     {
         this._handleEnterKey(codeMirror, true, true);
     }

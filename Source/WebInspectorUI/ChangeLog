@@ -1,3 +1,19 @@
+2015-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r188581): Web Inspector: Option-Enter no longer inserts a new line in the console
+        https://bugs.webkit.org/show_bug.cgi?id=148165
+
+        Make Option-Enter insert a new line, as it was before r188581.
+        Make Command-Enter keep executed command in the prompt.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt): Deleted.
+        (WebInspector.ConsolePrompt.prototype._handleCommandEnterKey):
+        (WebInspector.ConsolePrompt.prototype._handleOptionEnterKey): Deleted.
+        (WebInspector.ConsolePrompt.prototype._handleCommandOptionEnterKey): Deleted.
+
 2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Links for rules in <style> are incorrect, do not account for <style> offset in the document
