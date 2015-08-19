@@ -73,7 +73,7 @@ private:
 
     // State Machine functions:
     virtual StateFunction stateFunctionFor(SQLTransactionState) override;
-    bool computeNextStateAndCleanupIfNeeded();
+    void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
     SQLTransactionState deliverTransactionCallback();
@@ -83,9 +83,6 @@ private:
     SQLTransactionState deliverSuccessCallback();
 
     SQLTransactionState unreachableState();
-    SQLTransactionState sendToBackendState();
-
-    SQLTransactionState nextStateForTransactionError();
 
     Ref<Database> m_database;
     RefPtr<SQLTransactionBackend> m_backend;

@@ -515,14 +515,6 @@ void SQLTransactionBackend::performNextStep()
     runStateMachine();
 }
 
-#if PLATFORM(IOS)
-bool SQLTransactionBackend::shouldPerformWhilePaused() const
-{
-    // SQLTransactions should only run-while-paused if they have progressed passed the first transaction step.
-    return m_nextState != SQLTransactionState::AcquireLock;
-}
-#endif
-
 void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatement> statementBackend)
 {
     if (m_database->deleted())
@@ -635,7 +627,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
     }
 
     // If we have no callback to make, skip pass to the state after:
-    return SQLTransactionState::RunStatements;
+    return runStatements();
 }
 
 SQLTransactionState SQLTransactionBackend::runStatements()
@@ -831,7 +823,7 @@ SQLTransactionState SQLTransactionBackend::cleanupAfterTransactionErrorCallback(
 
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
 
-    return SQLTransactionState::CleanupAndTerminate;
+    return cleanupAndTerminate();
 }
 
 // requestTransitToState() can be called from the frontend. Hence, it should
