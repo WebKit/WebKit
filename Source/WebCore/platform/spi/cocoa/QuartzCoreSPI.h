@@ -111,12 +111,6 @@ extern "C" {
 @end
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-@interface CAOpenGLLayer (WebDetails)
-@property CGColorSpaceRef colorspace;
-@end
-#endif
-
 struct CAColorMatrix {
     float m11, m12, m13, m14, m15;
     float m21, m22, m23, m24, m25;
