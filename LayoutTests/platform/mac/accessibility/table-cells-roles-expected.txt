@@ -14,15 +14,15 @@ No	Country	Capital
 
 This test checks the correctness of roles for different cases of table cells.
 
-The table cell at (2,0) currently has role  AXRole: AXColumnHeader .
+The table cell at (2,0) currently has role  AXRole: AXCell .
 The table cell at (1,2) currently has role  AXRole: AXCell .
 The table cell at (2,3) currently has role  AXRole: AXCell .
 The table cell at (1,4) currently has role  AXRole: AXCell .
-The table cell at (0,2) currently has role  AXRole: AXRowHeader .
-The table cell at (0,4) currently has role  AXRole: AXRowHeader .
+The table cell at (0,2) currently has role  AXRole: AXCell .
+The table cell at (0,4) currently has role  AXRole: AXCell .
 
-The table2 cell at (2,0) currently has role  AXRole: AXColumnHeader .
+The table2 cell at (2,0) currently has role  AXRole: AXCell .
 The table2 cell at (1,2) currently has role  AXRole: AXCell .
 The table2 cell at (2,3) currently has role  AXRole: AXCell .
-The table2 cell at (0,2) currently has role  AXRole: AXRowHeader .
+The table2 cell at (0,2) currently has role  AXRole: AXCell .
 

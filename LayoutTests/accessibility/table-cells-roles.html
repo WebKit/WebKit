@@ -1,4 +1,5 @@
 <html>
+<script src="../resources/js-test-pre.js"></script>
 <script>
   if (window.testRunner)
     testRunner.dumpAsText();
@@ -70,7 +71,7 @@
 <br>
 <br>
 <p>This test checks the correctness of roles for different cases of table cells.</p>
-<div id="result"></div>
+<div id="console"></div>
 
 <script>
   if (window.accessibilityController) {
@@ -88,14 +89,13 @@
       var cell6 = table.cellForColumnAndRow(0, 4);
       var role6 = cell6.role;
 
-      result.innerText += "The table cell at (2,0) should have a role  AXRole: AXColumnHeader , currently it has  " + role1 + " .\n";
-      result.innerText += "The table cell at (1,2) should have a role  AXRole: AXCell , currently it has  " + role2 + " .\n";
-      result.innerText += "The table cell at (2,3) should have a role  AXRole: AXCell , currently it has  " + role3 + " .\n";
-      result.innerText += "The table cell at (1,4) should have a role  AXRole: AXCell , currently it has  " + role4 + " .\n";
-      result.innerText += "The table cell at (0,2) should have a role  AXRole: AXRowHeader , currently it has  " + role5 + " .\n";
-      result.innerText += "The table cell at (0,4) should have a role  AXRole: AXRowHeader , currently it has  " + role6 + " .\n";
+      debug("The table cell at (2,0) currently has role  " + role1 + " .");
+      debug("The table cell at (1,2) currently has role  " + role2 + " .");
+      debug("The table cell at (2,3) currently has role  " + role3 + " .");
+      debug("The table cell at (1,4) currently has role  " + role4 + " .");
+      debug("The table cell at (0,2) currently has role  " + role5 + " .");
+      debug("The table cell at (0,4) currently has role  " + role6 + " .\n");
 
-      result.innerText += "\n";
 
       var table2 = accessibilityController.accessibleElementById("table2");
       var cell21 = table2.cellForColumnAndRow(2, 0);
@@ -107,10 +107,10 @@
       var cell25 = table2.cellForColumnAndRow(0, 2);
       var role25 = cell25.role;
 
-      result.innerText += "The table2 cell at (2,0) should have a role  AXRole: AXColumnHeader , currently it has  " + role21 + " .\n";
-      result.innerText += "The table2 cell at (1,2) should have a role  AXRole: AXCell , currently it has  " + role22 + " .\n";
-      result.innerText += "The table2 cell at (2,3) should have a role  AXRole: AXCell , currently it has  " + role23 + " .\n";
-      result.innerText += "The table2 cell at (0,2) should have a role  AXRole: AXRowHeader , currently it has  " + role25 + " .\n";
+      debug("The table2 cell at (2,0) currently has role  " + role21 + " .");
+      debug("The table2 cell at (1,2) currently has role  " + role22 + " .");
+      debug("The table2 cell at (2,3) currently has role  " + role23 + " .");
+      debug("The table2 cell at (0,2) currently has role  " + role25 + " .");
     }
 </script>
 
