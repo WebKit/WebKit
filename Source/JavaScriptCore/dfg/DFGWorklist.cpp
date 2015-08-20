@@ -448,6 +448,14 @@ Worklist* ensureGlobalWorklistFor(CompilationMode mode)
     return 0;
 }
 
+void completeAllPlansForVM(VM& vm)
+{
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
+            worklist->completeAllPlansForVM(vm);
+    }
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

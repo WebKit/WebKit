@@ -203,11 +203,6 @@ template<typename Functor> inline typename Functor::ReturnType Heap::forEachProt
     return forEachProtectedCell(functor);
 }
 
-template<typename Functor> inline void Heap::forEachCodeBlock(Functor& functor)
-{
-    return m_codeBlocks.iterate<Functor>(functor);
-}
-
 inline void* Heap::allocateWithDestructor(size_t bytes)
 {
 #if ENABLE(ALLOCATION_LOGGING)

@@ -185,8 +185,6 @@ private:
 
     void clearDebuggerRequests(JSGlobalObject*);
 
-    template<typename Functor> inline void forEachCodeBlock(Functor&);
-
     VM* m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
 

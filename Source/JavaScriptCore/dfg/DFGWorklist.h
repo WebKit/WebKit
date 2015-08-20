@@ -139,6 +139,8 @@ inline Worklist* worklistForIndexOrNull(unsigned index)
     }
 }
 
+void completeAllPlansForVM(VM&);
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

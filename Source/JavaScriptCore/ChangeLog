@@ -1,3 +1,55 @@
+2015-08-20  Geoffrey Garen  <ggaren@apple.com>
+
+        forEachCodeBlock should wait for all CodeBlocks automatically
+        https://bugs.webkit.org/show_bug.cgi?id=148255
+
+        Reviewed by Saam Barati.
+
+        Previously, all clients needed to wait manually before calling
+        forEachCodeBlock. That's easy to get wrong, and at least one place
+        got it wrong. Let's do this automatically instead.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::toggleBreakpoint): No need to wait manually;
+        forEachCodeBlock will do it automatically now.
+
+        (JSC::Debugger::recompileAllJSFunctions): We still need to wait manually
+        here because this is an iteration of the heap, which does not wait
+        automatically. Use the new helper function for waiting.
+
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::clearDebuggerRequests):
+        (JSC::Debugger::setBreakpointsActivated):
+        (JSC::Debugger::forEachCodeBlock): Deleted. No need to wait manually.
+
+        * debugger/Debugger.h:
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::completeAllPlansForVM):
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::completeAllPlansForVM): Added a helper function that replaces
+        vm.prepareToDeleteCode. This new function is clearer because we need
+        to call it sometimes even if we are not going to delete code.
+
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachCodeBlock): Moved.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::recompileAllJSFunctionsForTypeProfiling): Use the new helper
+        function.
+
+        * runtime/JSCInlines.h:
+        (JSC::Heap::forEachCodeBlock): Do the waiting automatically.
+
+        * runtime/VM.cpp:
+        (JSC::VM::stopSampling):
+        (JSC::VM::deleteAllCode):
+        (JSC::VM::setEnabledProfiler):
+        (JSC::VM::prepareToDeleteCode): Deleted.
+        * runtime/VM.h: No need to wait manually.
+
 2015-08-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r188675.

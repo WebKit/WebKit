@@ -33,6 +33,7 @@
 #include "InspectorRuntimeAgent.h"
 
 #include "Completion.h"
+#include "DFGWorklist.h"
 #include "HeapIterationScope.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
@@ -332,7 +333,9 @@ static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTyp
     bool needsToRecompile = shouldRecompileFromTypeProfiler || shouldRecompileFromControlFlowProfiler;
 
     if (needsToRecompile) {
-        vm.prepareToDeleteCode();
+#if ENABLE(DFG_JIT)
+        DFG::completeAllPlansForVM(vm);
+#endif
         TypeRecompiler recompiler;
         HeapIterationScope iterationScope(vm.heap);
         vm.heap.objectSpace().forEachLiveCell(iterationScope, recompiler);

@@ -38,6 +38,7 @@
 // header that pulls in most (all?) of the interesting things in JSC.
 
 #include "CallFrameInlines.h"
+#include "DFGWorklist.h"
 #include "ExceptionHelpers.h"
 #include "GCIncomingRefCountedInlines.h"
 #include "HeapInlines.h"
@@ -52,5 +53,19 @@
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include "WeakGCMapInlines.h"
+
+namespace JSC {
+
+template<typename Functor> inline void Heap::forEachCodeBlock(Functor& functor)
+{
+    // We don't know the full set of CodeBlocks until compilation has terminated.
+#if ENABLE(DFG_JIT)
+    DFG::completeAllPlansForVM(*m_vm);
+#endif
+
+    return m_codeBlocks.iterate<Functor>(functor);
+}
+
+} // namespace JSC
 
 #endif // JSCInlines_h
