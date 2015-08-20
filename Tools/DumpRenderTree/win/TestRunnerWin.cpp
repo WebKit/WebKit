@@ -262,7 +262,7 @@ size_t TestRunner::webHistoryItemCount()
     if (FAILED(sharedHistory->QueryInterface(&sharedHistoryPrivate)))
         return 0;
 
-    int count;
+    int count = 0;
     if (FAILED(sharedHistoryPrivate->allItems(&count, 0)))
         return 0;
 

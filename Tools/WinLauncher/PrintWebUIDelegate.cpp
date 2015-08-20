@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013-2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009, 2013-2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Brent Fulgham. All Rights Reserved.
  * Copyright (C) 2013 Alex Christensen. All Rights Reserved.
  *
@@ -37,20 +37,23 @@
 
 static const int MARGIN = 20;
 
-HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::runJavaScriptAlertPanelWithMessage(IWebView*, BSTR message)
+HRESULT PrintWebUIDelegate::runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView*, _In_ BSTR message)
 {
     ::MessageBoxW(0, message, L"JavaScript Alert", MB_OK);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::runJavaScriptConfirmPanelWithMessage(IWebView*, BSTR message, BOOL* result)
+HRESULT PrintWebUIDelegate::runJavaScriptConfirmPanelWithMessage(_In_opt_ IWebView*, _In_ BSTR message, _Out_ BOOL* result)
 {
     *result = ::MessageBoxW(0, message, L"JavaScript Confirm", MB_OKCANCEL) == IDOK;
     return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::createWebViewWithRequest(IWebView*, IWebURLRequest* request, IWebView**)
+HRESULT PrintWebUIDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest* request, _COM_Outptr_opt_ IWebView** newWebView)
 {
+    if (!newWebView)
+        return E_POINTER;
+    *newWebView = nullptr;
     if (!request)
         return E_POINTER;
 
@@ -78,9 +81,11 @@ HRESULT PrintWebUIDelegate::createWebViewWithRequest(IWebView*, IWebURLRequest* 
     return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT PrintWebUIDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualIID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebUIDelegate*>(this);
     else if (IsEqualIID(riid, IID_IWebUIDelegate))
@@ -92,12 +97,12 @@ HRESULT PrintWebUIDelegate::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG PrintWebUIDelegate::AddRef(void)
+ULONG PrintWebUIDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG PrintWebUIDelegate::Release(void)
+ULONG PrintWebUIDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -109,7 +114,7 @@ ULONG PrintWebUIDelegate::Release(void)
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
 
-HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(IWebView* view, RECT* rect)
+HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(_In_opt_ IWebView* view, _Out_ RECT* rect)
 {
     if (!view || !rect)
         return E_POINTER;
@@ -134,7 +139,15 @@ HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(IWebView* view, RECT* rect
     return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::webViewHeaderHeight(IWebView* webView, float* height)
+HRESULT PrintWebUIDelegate::willPerformDragSourceAction(_In_opt_ IWebView*, WebDragSourceAction, _In_ LPPOINT, _In_opt_ IDataObject*, _COM_Outptr_opt_ IDataObject** result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT PrintWebUIDelegate::webViewHeaderHeight(_In_opt_ IWebView* webView, _Out_ float* height)
 {
     if (!webView || !height)
         return E_POINTER;
@@ -150,7 +163,7 @@ HRESULT PrintWebUIDelegate::webViewHeaderHeight(IWebView* webView, float* height
     return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::webViewFooterHeight(IWebView* webView, float* height)
+HRESULT PrintWebUIDelegate::webViewFooterHeight(_In_opt_ IWebView* webView, _Out_ float* height)
 {
     if (!webView || !height)
         return E_POINTER;
@@ -166,7 +179,7 @@ HRESULT PrintWebUIDelegate::webViewFooterHeight(IWebView* webView, float* height
     return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::drawHeaderInRect(IWebView* webView, RECT* rect, ULONG_PTR drawingContext)
+HRESULT PrintWebUIDelegate::drawHeaderInRect(_In_opt_ IWebView* webView, _In_ RECT* rect, ULONG_PTR drawingContext)
 {
     if (!webView || !rect)
         return E_POINTER;
@@ -195,7 +208,7 @@ HRESULT PrintWebUIDelegate::drawHeaderInRect(IWebView* webView, RECT* rect, ULON
     return S_OK;
 }
 
-HRESULT PrintWebUIDelegate::drawFooterInRect(IWebView* webView, RECT* rect, ULONG_PTR drawingContext, UINT pageIndex, UINT pageCount)
+HRESULT PrintWebUIDelegate::drawFooterInRect(_In_opt_ IWebView* webView, _In_ RECT* rect, ULONG_PTR drawingContext, UINT pageIndex, UINT pageCount)
 {
     if (!webView || !rect)
         return E_POINTER;
@@ -222,4 +235,12 @@ HRESULT PrintWebUIDelegate::drawFooterInRect(IWebView* webView, RECT* rect, ULON
         return E_FAIL;
 
     return S_OK;
+}
+
+HRESULT PrintWebUIDelegate::createModalDialog(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _COM_Outptr_opt_ IWebView** webView)
+{
+    if (!webView)
+        return E_POINTER;
+    *webView = nullptr;
+    return E_NOTIMPL;
 }

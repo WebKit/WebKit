@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008, 2013-2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2013 Alex Christensen. All rights reserved.
@@ -35,7 +35,7 @@ namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
 }
 
-int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpstrCmdLine, _In_ int nCmdShow)
 {
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);

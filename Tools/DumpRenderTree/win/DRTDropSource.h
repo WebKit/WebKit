@@ -1,4 +1,5 @@
 /*
+* Copyright (C) 2015 Apple Inc.  All rights reserved.
 * Copyright (C) 2012 Baidu Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -31,18 +32,18 @@
 
 class DRTDropSource : public IDropSource {
 public:
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);        
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);        
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
-    virtual HRESULT STDMETHODCALLTYPE QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState);
-    virtual HRESULT STDMETHODCALLTYPE GiveFeedback(DWORD dwEffect);
+    virtual HRESULT STDMETHODCALLTYPE QueryContinueDrag(_In_ BOOL fEscapePressed, _In_ DWORD grfKeyState);
+    virtual HRESULT STDMETHODCALLTYPE GiveFeedback(_In_ DWORD dwEffect);
 
     static HRESULT createInstance(IDropSource** result);
 private:
     DRTDropSource();
     ~DRTDropSource();
-    long m_ref;
-    bool m_dropped;
+    long m_ref { 1 };
+    bool m_dropped { false };
 };
 
 #endif // DRTDropSource_h

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 Apple Inc. All Rights Reserved.
+* Copyright (C) 2014-2015 Apple Inc. All Rights Reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -33,27 +33,27 @@ class WinLauncher;
 class ResourceLoadDelegate : public IWebResourceLoadDelegate {
 public:
     ResourceLoadDelegate(WinLauncher* client)
-        : m_refCount(1), m_client(client) { }
+        : m_client(client) { }
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebResourceLoadDelegate
-    virtual HRESULT STDMETHODCALLTYPE identifierForInitialRequest(IWebView*, IWebURLRequest*, IWebDataSource*, unsigned long identifier);
-    virtual HRESULT STDMETHODCALLTYPE willSendRequest(IWebView*, unsigned long identifier, IWebURLRequest*, IWebURLResponse* redirectResponse, IWebDataSource*, IWebURLRequest** newRequest);
-    virtual HRESULT STDMETHODCALLTYPE didReceiveAuthenticationChallenge(IWebView*, unsigned long identifier, IWebURLAuthenticationChallenge*, IWebDataSource*);
-    virtual HRESULT STDMETHODCALLTYPE didCancelAuthenticationChallenge(IWebView*, unsigned long identifier, IWebURLAuthenticationChallenge*, IWebDataSource*);
-    virtual HRESULT STDMETHODCALLTYPE didReceiveResponse(IWebView*, unsigned long identifier, IWebURLResponse*, IWebDataSource*);
-    virtual HRESULT STDMETHODCALLTYPE didReceiveContentLength(IWebView*, unsigned long identifier, UINT length, IWebDataSource*);
-    virtual HRESULT STDMETHODCALLTYPE didFinishLoadingFromDataSource(IWebView*, unsigned long identifier, IWebDataSource*);
-    virtual HRESULT STDMETHODCALLTYPE didFailLoadingWithError(IWebView*, unsigned long identifier, IWebError*, IWebDataSource*);
-    virtual HRESULT STDMETHODCALLTYPE plugInFailedWithError(IWebView*, IWebError*, IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE identifierForInitialRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _In_opt_ IWebDataSource*, unsigned long identifier);
+    virtual HRESULT STDMETHODCALLTYPE willSendRequest(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLRequest*, _In_opt_ IWebURLResponse* redirectResponse, _In_opt_ IWebDataSource*, _COM_Outptr_opt_ IWebURLRequest** newRequest);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveAuthenticationChallenge(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE didCancelAuthenticationChallenge(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveResponse(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLResponse*, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveContentLength(_In_opt_ IWebView*, unsigned long identifier, UINT length, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE didFinishLoadingFromDataSource(_In_opt_ IWebView*, unsigned long identifier, _In_opt_  IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE didFailLoadingWithError(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebError*, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE plugInFailedWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebDataSource*);
 
 private:
     WinLauncher* m_client;
-    int m_refCount;
+    int m_refCount { 1 };
 };
 
 #endif // ResourceLoadDelegate

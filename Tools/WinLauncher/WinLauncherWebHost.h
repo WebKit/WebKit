@@ -33,18 +33,18 @@ class WinLauncher;
 class WinLauncherWebHost : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate {
 public:
     WinLauncherWebHost(WinLauncher* client, HWND urlBar)
-        : m_refCount(1), m_client(client), m_hURLBarWnd(urlBar) { }
+        : m_client(client), m_hURLBarWnd(urlBar) { }
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebFrameLoadDelegate
-    virtual HRESULT STDMETHODCALLTYPE didStartProvisionalLoadForFrame(IWebView*, IWebFrame*);
-    virtual HRESULT STDMETHODCALLTYPE didReceiveServerRedirectForProvisionalLoadForFrame(IWebView*, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didFailProvisionalLoadWithError(IWebView*, IWebError*, IWebFrame*);
-    virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame(IWebView* webView, IWebFrame*)
+    virtual HRESULT STDMETHODCALLTYPE didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveServerRedirectForProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didFailProvisionalLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame*)
     {
         if (!webView)
             return E_POINTER;
@@ -52,23 +52,23 @@ public:
         return updateAddressBar(*webView);
     }
     
-    virtual HRESULT STDMETHODCALLTYPE didReceiveTitle(IWebView*, BSTR title, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didChangeIcons(IWebView*, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon(IWebView*, HBITMAP, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame(IWebView*, IWebFrame*);   
-    virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError(IWebView*, IWebError*, IWebFrame*);
-    virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame(IWebView*, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE willPerformClientRedirectToURL(IWebView*, BSTR url, double delaySeconds, DATE fireDate, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didCancelClientRedirectForFrame(IWebView*, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE willCloseFrame(IWebView*, IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didReceiveTitle(_In_opt_ IWebView*, _In_ BSTR title, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didChangeIcons(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon(_In_opt_ IWebView*, _In_ HBITMAP, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE willPerformClientRedirectToURL(_In_opt_ IWebView*, _In_ BSTR url, double delaySeconds, DATE fireDate, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didCancelClientRedirectForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE willCloseFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*) { return S_OK; }
     virtual /* [local] */ HRESULT STDMETHODCALLTYPE windowScriptObjectAvailable(IWebView*, JSContextRef, JSObjectRef)  { return S_OK; }
     virtual /* [local] */ HRESULT STDMETHODCALLTYPE didClearWindowObject(IWebView*, JSContextRef, JSObjectRef, IWebFrame*) { return S_OK; }
 
     // IWebFrameLoadDelegatePrivate
-    virtual HRESULT STDMETHODCALLTYPE didFinishDocumentLoadForFrame(IWebView* sender, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didFirstLayoutInFrame(IWebView* sender, IWebFrame*);
-    virtual HRESULT STDMETHODCALLTYPE didHandleOnloadEventsForFrame(IWebView*, IWebFrame*);
-    virtual HRESULT STDMETHODCALLTYPE didFirstVisuallyNonEmptyLayoutInFrame(IWebView* sender, IWebFrame*)  { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didFinishDocumentLoadForFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didFirstLayoutInFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didHandleOnloadEventsForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didFirstVisuallyNonEmptyLayoutInFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*)  { return S_OK; }
 
     void loadURL(_bstr_t&);
 
@@ -79,6 +79,6 @@ private:
     HWND m_hURLBarWnd { 0 };
     HGDIOBJ m_URLBarFont { 0 };
     HGDIOBJ m_oldFont { 0 };
-    ULONG m_refCount { 0 };
+    ULONG m_refCount { 1 };
     WinLauncher* m_client { nullptr };
 };

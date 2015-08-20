@@ -29,7 +29,6 @@
 #include <shlobj.h>
 
 WebDownloadDelegate::WebDownloadDelegate()
-    : m_refCount(1)
 {
 }
 
@@ -37,9 +36,11 @@ WebDownloadDelegate::~WebDownloadDelegate()
 {
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebDownloadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
 
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebDownloadDelegate*>(this);
@@ -52,13 +53,13 @@ HRESULT STDMETHODCALLTYPE WebDownloadDelegate::QueryInterface(REFIID riid, void*
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebDownloadDelegate::AddRef(void)
+ULONG WebDownloadDelegate::AddRef()
 {
     m_refCount++;
     return m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebDownloadDelegate::Release(void)
+ULONG WebDownloadDelegate::Release()
 {
     m_refCount--;
     int refCount = m_refCount;
@@ -67,8 +68,11 @@ ULONG STDMETHODCALLTYPE WebDownloadDelegate::Release(void)
     return refCount;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::decideDestinationWithSuggestedFilename(IWebDownload* download, BSTR filename)
+HRESULT WebDownloadDelegate::decideDestinationWithSuggestedFilename(_In_opt_ IWebDownload* download, _In_ BSTR filename)
 {
+    if (!download)
+        return E_POINTER;
+
     wchar_t desktopDirectory[MAX_PATH];
     if (FAILED(SHGetFolderPathW(0, CSIDL_DESKTOP, 0, 0, desktopDirectory)))
         return E_FAIL;
@@ -82,60 +86,73 @@ HRESULT STDMETHODCALLTYPE WebDownloadDelegate::decideDestinationWithSuggestedFil
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didCancelAuthenticationChallenge(IWebDownload* download, IWebURLAuthenticationChallenge* challenge)
+HRESULT WebDownloadDelegate::didCancelAuthenticationChallenge(_In_opt_ IWebDownload* download, _In_opt_ IWebURLAuthenticationChallenge* challenge)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didCreateDestination(IWebDownload* download, BSTR destination)
+HRESULT WebDownloadDelegate::didCreateDestination(_In_opt_ IWebDownload* download, _In_ BSTR destination)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didFailWithError(IWebDownload* download, IWebError* error)
+HRESULT WebDownloadDelegate::didFailWithError(_In_opt_ IWebDownload* download, _In_opt_ IWebError* error)
 {
+    if (!download)
+        return E_POINTER;
+
     download->Release();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didReceiveAuthenticationChallenge(IWebDownload* download, IWebURLAuthenticationChallenge* challenge)
+HRESULT WebDownloadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebDownload* download, _In_opt_ IWebURLAuthenticationChallenge* challenge)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didReceiveDataOfLength(IWebDownload* download, unsigned length)
+HRESULT WebDownloadDelegate::didReceiveDataOfLength(_In_opt_ IWebDownload* download, unsigned length)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didReceiveResponse(IWebDownload* download, IWebURLResponse* response)
+HRESULT WebDownloadDelegate::didReceiveResponse(_In_opt_ IWebDownload* download, _In_opt_ IWebURLResponse* response)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::shouldDecodeSourceDataOfMIMEType(IWebDownload* download, BSTR encodingType, BOOL* shouldDecode)
+HRESULT WebDownloadDelegate::shouldDecodeSourceDataOfMIMEType(_In_opt_ IWebDownload* download, _In_ BSTR encodingType, _Out_ BOOL* shouldDecode)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::willResumeWithResponse(IWebDownload* download, IWebURLResponse* response, long long fromByte)
+HRESULT WebDownloadDelegate::willResumeWithResponse(_In_opt_ IWebDownload* download, _In_opt_ IWebURLResponse* response, long long fromByte)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::willSendRequest(IWebDownload* download, IWebMutableURLRequest* request, IWebURLResponse* redirectResponse, IWebMutableURLRequest** finalRequest)
+HRESULT WebDownloadDelegate::willSendRequest(_In_opt_ IWebDownload* download, _In_opt_ IWebMutableURLRequest* request,
+    _In_opt_ IWebURLResponse* redirectResponse, _COM_Outptr_opt_ IWebMutableURLRequest** finalRequest)
 {
+    if (!finalRequest)
+        return E_POINTER;
+    *finalRequest = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didBegin(IWebDownload* download)
+HRESULT WebDownloadDelegate::didBegin(_In_opt_ IWebDownload* download)
 {
+    if (!download)
+        return E_POINTER;
+
     download->AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownloadDelegate::didFinish(IWebDownload* download)
+HRESULT WebDownloadDelegate::didFinish(_In_opt_ IWebDownload* download)
 {
+    if (!download)
+        return E_POINTER;
+
     download->Release();
     return S_OK;
 }

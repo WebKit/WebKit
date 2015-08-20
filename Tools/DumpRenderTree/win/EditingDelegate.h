@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,141 +38,57 @@ public:
     void setAcceptsEditing(bool b) { m_acceptsEditing = b; }
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebEditingDelegate
-    virtual HRESULT STDMETHODCALLTYPE shouldBeginEditingInDOMRange( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IDOMRange *range,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldEndEditingInDOMRange( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IDOMRange *range,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldInsertNode(IWebView*, IDOMNode*, IDOMRange*, WebViewInsertAction);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldInsertText( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ BSTR text,
-        /* [in] */ IDOMRange *range,
-        /* [in] */ WebViewInsertAction action,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldDeleteDOMRange( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IDOMRange *range,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldChangeSelectedDOMRange( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IDOMRange *currentRange,
-        /* [in] */ IDOMRange *proposedRange,
-        /* [in] */ WebSelectionAffinity selectionAffinity,
-        /* [in] */ BOOL stillSelecting,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldApplyStyle( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IDOMCSSStyleDeclaration *style,
-        /* [in] */ IDOMRange *range,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldChangeTypingStyle( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IDOMCSSStyleDeclaration *currentStyle,
-        /* [in] */ IDOMCSSStyleDeclaration *proposedStyle,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE doPlatformCommand( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ BSTR command,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE webViewDidBeginEditing( 
-        /* [in] */ IWebNotification *notification);
-    
-    virtual HRESULT STDMETHODCALLTYPE webViewDidChange( 
-        /* [in] */ IWebNotification *notification);
-    
-    virtual HRESULT STDMETHODCALLTYPE webViewDidEndEditing( 
-        /* [in] */ IWebNotification *notification);
-    
-    virtual HRESULT STDMETHODCALLTYPE webViewDidChangeTypingStyle( 
-        /* [in] */ IWebNotification *notification);
-    
-    virtual HRESULT STDMETHODCALLTYPE webViewDidChangeSelection( 
-        /* [in] */ IWebNotification *notification);
-    
-    virtual HRESULT STDMETHODCALLTYPE undoManagerForWebView( 
-        /* [in] */ IWebView *webView,
-        /* [retval][out] */ IWebUndoManager **undoManager) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE shouldBeginEditingInDOMRange(_In_opt_ IWebView*, _In_opt_ IDOMRange*, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE shouldEndEditingInDOMRange(_In_opt_ IWebView*, _In_opt_ IDOMRange*, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE shouldInsertNode(_In_opt_ IWebView*, _In_opt_ IDOMNode*, _In_opt_ IDOMRange*, WebViewInsertAction);
+    virtual HRESULT STDMETHODCALLTYPE shouldInsertText(_In_opt_ IWebView*, _In_ BSTR text, _In_opt_ IDOMRange*, WebViewInsertAction, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE shouldDeleteDOMRange(_In_opt_ IWebView*, _In_opt_ IDOMRange*, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE shouldChangeSelectedDOMRange(_In_opt_ IWebView*, _In_opt_ IDOMRange*, _In_opt_ IDOMRange*,
+        WebSelectionAffinity, BOOL stillSelecting, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE shouldApplyStyle(_In_opt_ IWebView*, _In_opt_ IDOMCSSStyleDeclaration*, _In_opt_ IDOMRange*, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE shouldChangeTypingStyle(_In_opt_ IWebView*, _In_opt_ IDOMCSSStyleDeclaration* currentStyle,
+        _In_opt_ IDOMCSSStyleDeclaration* proposedStyle, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE doPlatformCommand(_In_opt_ IWebView*, _In_ BSTR command, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE webViewDidBeginEditing(_In_opt_ IWebNotification*);
+    virtual HRESULT STDMETHODCALLTYPE webViewDidChange(_In_opt_ IWebNotification*);
+    virtual HRESULT STDMETHODCALLTYPE webViewDidEndEditing(_In_opt_ IWebNotification*);
+    virtual HRESULT STDMETHODCALLTYPE webViewDidChangeTypingStyle(_In_opt_ IWebNotification*);
+    virtual HRESULT STDMETHODCALLTYPE webViewDidChangeSelection(_In_opt_ IWebNotification*);    
+    virtual HRESULT STDMETHODCALLTYPE undoManagerForWebView(_In_opt_ IWebView*, _COM_Outptr_opt_ IWebUndoManager **);
+    virtual HRESULT STDMETHODCALLTYPE ignoreWordInSpellDocument(_In_opt_ IWebView*, _In_ BSTR word) { return E_NOTIMPL; }        
+    virtual HRESULT STDMETHODCALLTYPE learnWord(_In_ BSTR word) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE checkSpellingOfString(_In_opt_ IWebView*, _In_ LPCTSTR text, int length, _Out_ int* misspellingLocation, _Out_ int* misspellingLength);
+    virtual HRESULT STDMETHODCALLTYPE checkGrammarOfString(_In_opt_ IWebView*, _In_ LPCTSTR text, int length, _COM_Outptr_opt_ IEnumWebGrammarDetails**,
+        _Out_ int* badGrammarLocation, _Out_ int* badGrammarLength);       
+    virtual HRESULT STDMETHODCALLTYPE updateSpellingUIWithGrammarString(_In_ BSTR string, int location, int length, _In_ BSTR userDescription,
+        _In_opt_ BSTR* guesses, int guessesCount)
+    {
+        return E_NOTIMPL;
+    }
+        
+    virtual HRESULT STDMETHODCALLTYPE updateSpellingUIWithMisspelledWord(_In_ BSTR) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE showSpellingUI(BOOL) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE spellingUIIsShowing(_Out_ BOOL*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE guessesForWord(_In_ BSTR word, _COM_Outptr_opt_ IEnumSpellingGuesses** guesses);
+    virtual HRESULT STDMETHODCALLTYPE closeSpellDocument(_In_opt_ IWebView*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE sharedSpellCheckerExists(_Out_ BOOL*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE preflightChosenSpellServer() { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE updateGrammar() { return E_NOTIMPL; }
 
-        virtual HRESULT STDMETHODCALLTYPE ignoreWordInSpellDocument( 
-            /* [in] */ IWebView *view,
-            /* [in] */ BSTR word) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE learnWord( 
-            /* [in] */ BSTR word) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE checkSpellingOfString( 
-            /* [in] */ IWebView *view,
-            /* [in] */ LPCTSTR text,
-            /* [in] */ int length,
-            /* [out] */ int *misspellingLocation,
-            /* [out] */ int *misspellingLength);
-        
-        virtual HRESULT STDMETHODCALLTYPE checkGrammarOfString( 
-            /* [in] */ IWebView *view,
-            /* [in] */ LPCTSTR text,
-            /* [in] */ int length,
-            /* [out] */ IEnumWebGrammarDetails **grammarDetails,
-            /* [out] */ int *badGrammarLocation,
-            /* [out] */ int *badGrammarLength) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE updateSpellingUIWithGrammarString( 
-            /* [in] */ BSTR string,
-            /* [in] */ int location,
-            /* [in] */ int length,
-            /* [in] */ BSTR userDescription,
-            /* [in] */ BSTR *guesses,
-            /* [in] */ int guessesCount) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE updateSpellingUIWithMisspelledWord( 
-            /* [in] */ BSTR word) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE showSpellingUI( 
-            /* [in] */ BOOL show) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE spellingUIIsShowing( 
-            /* [retval][out] */ BOOL *result) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE guessesForWord( 
-            /* [in] */ BSTR word,
-            /* [retval][out] */ IEnumSpellingGuesses **guesses) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE closeSpellDocument( 
-            /* [in] */ IWebView *view) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE sharedSpellCheckerExists( 
-            /* [retval][out] */ BOOL *exists) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE preflightChosenSpellServer( void) { return E_NOTIMPL; }
-        
-        virtual HRESULT STDMETHODCALLTYPE updateGrammar( void) { return E_NOTIMPL; }
+    // IWebNotificationObserver
+    virtual HRESULT STDMETHODCALLTYPE onNotify(_In_opt_ IWebNotification*);
 
-        // IWebNotificationObserver
-        virtual HRESULT STDMETHODCALLTYPE onNotify(IWebNotification* notification);
-
-        // IWebEditingDelegate2
-        virtual HRESULT STDMETHODCALLTYPE shouldInsertNode(IWebView*, IDOMNode*, IDOMRange*, WebViewInsertAction, BOOL* result);
+    // IWebEditingDelegate2
+    virtual HRESULT STDMETHODCALLTYPE shouldInsertNode(_In_opt_ IWebView*, _In_opt_ IDOMNode*, _In_opt_ IDOMRange*, WebViewInsertAction, _Out_ BOOL* result);
 
 private:
-    bool m_acceptsEditing;
-    ULONG m_refCount;
+    ULONG m_refCount { 1 };
+    bool m_acceptsEditing { true };
 };
 
 #endif // !defined(EditingDelegate_h)

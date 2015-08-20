@@ -34,38 +34,19 @@ public:
     virtual ~HistoryDelegate();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebHistoryDelegate
-    virtual HRESULT STDMETHODCALLTYPE didNavigateWithNavigationData(
-        /* [in] */ IWebView* webView, 
-        /* [in] */ IWebNavigationData* navigationData, 
-        /* [in] */ IWebFrame* webFrame);
-
-    virtual HRESULT STDMETHODCALLTYPE didPerformClientRedirectFromURL(
-        /* [in] */ IWebView* webView, 
-        /* [in] */ BSTR sourceURL, 
-        /* [in] */ BSTR destinationURL, 
-        /* [in] */ IWebFrame* webFrame);
-    
-    virtual HRESULT STDMETHODCALLTYPE didPerformServerRedirectFromURL(
-        /* [in] */ IWebView* webView, 
-        /* [in] */ BSTR sourceURL, 
-        /* [in] */ BSTR destinationURL, 
-        /* [in] */ IWebFrame* webFrame);
-    
-    virtual HRESULT STDMETHODCALLTYPE updateHistoryTitle(
-        /* [in] */ IWebView* webView, 
-        /* [in] */ BSTR title, 
-        /* [in] */ BSTR url);
-    
-    virtual HRESULT STDMETHODCALLTYPE populateVisitedLinksForWebView(
-        /* [in] */ IWebView* webView);
+    virtual HRESULT STDMETHODCALLTYPE didNavigateWithNavigationData(_In_opt_ IWebView*, _In_opt_ IWebNavigationData*, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didPerformClientRedirectFromURL(_In_opt_ IWebView*, _In_ BSTR sourceURL, _In_ BSTR destinationURL, _In_opt_ IWebFrame*);    
+    virtual HRESULT STDMETHODCALLTYPE didPerformServerRedirectFromURL(_In_opt_ IWebView*, _In_ BSTR sourceURL, _In_ BSTR destinationURL, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE updateHistoryTitle(_In_opt_ IWebView*, _In_ BSTR title, _In_ BSTR url);    
+    virtual HRESULT STDMETHODCALLTYPE populateVisitedLinksForWebView(_In_opt_ IWebView*);
 
 private:
-    ULONG m_refCount;
+    ULONG m_refCount { 1 };
 };
 
 #endif // HistoryDelegate_h

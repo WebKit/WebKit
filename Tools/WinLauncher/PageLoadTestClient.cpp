@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 Apple Inc.  All rights reserved.
+* Copyright (C) 2014-2015 Apple Inc.  All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -36,19 +36,8 @@ static const CFTimeInterval waitForNewResourceLoadDuration = 0.1;
 
 PageLoadTestClient::PageLoadTestClient(WinLauncher* host, bool pageLoadTesting)
     : m_host(host)
-    , m_pageLoadEndTime(0)
-    , m_totalTime(0)
-    , m_totalSquareRootsOfTime(0)
-    , m_longestTime(0)
-    , m_geometricMeanProductSum(1.0)
-    , m_frames(0)
-    , m_onLoadEvents(0)
-    , m_currentURLIndex(0)
-    , m_currentRepetition(0)
-    , m_pagesTimed(0)
     , m_repetitions(pageLoadTesting ? 20 : 1)
     , m_waitForLoadToReallyEnd(this, &PageLoadTestClient::endPageLoad)
-    , m_currentPageLoadFinished(false)
     , m_pageLoadTesting(pageLoadTesting)
 {
 }

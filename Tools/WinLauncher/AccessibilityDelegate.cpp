@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,11 @@
 #include <stdio.h>
 #include <wininet.h>
 
-HRESULT AccessibilityDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT AccessibilityDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualIID(riid, IID_IUnknown))
         *ppvObject = static_cast<IAccessibilityDelegate*>(this);
     else if (IsEqualIID(riid, IID_IAccessibilityDelegate))
@@ -48,12 +50,12 @@ HRESULT AccessibilityDelegate::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG AccessibilityDelegate::AddRef(void)
+ULONG AccessibilityDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG AccessibilityDelegate::Release(void)
+ULONG AccessibilityDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

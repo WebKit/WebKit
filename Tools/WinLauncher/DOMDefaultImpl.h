@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Anthony Johnson. All Rights Reserved.
+* Copyright (C) 2015 Apple Inc. All Rights Reserved.
+* Copyright (C) 2011 Anthony Johnson. All Rights Reserved.
  * Copyright (C) 2011 Brent Fulgham. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +32,7 @@
 
 class WebScriptObject : public IWebScriptObject {
 public:
-    WebScriptObject() : m_refCount(0)
+    WebScriptObject()
     {
     }
 
@@ -40,51 +41,51 @@ public:
     }
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebScriptObject
-    virtual HRESULT STDMETHODCALLTYPE throwException(BSTR, BOOL*) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(BSTR, const VARIANT[], int, VARIANT*) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(BSTR, VARIANT*) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(BSTR) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(BSTR*) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(unsigned int, VARIANT*)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(unsigned int, VARIANT)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE setException(BSTR)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR, _Out_ BOOL*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(_In_ BSTR, __in_ecount(cArgs) const VARIANT[], int cArgs, _Out_ VARIANT*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(_In_ BSTR, _Out_ VARIANT*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(_In_ BSTR) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(__deref_opt_out BSTR*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(unsigned, _Out_ VARIANT*)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(unsigned, VARIANT)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE setException(_In_ BSTR)  { return E_NOTIMPL; }
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 
 class DOMObject : public WebScriptObject, public IDOMObject {
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
 };
 
 
 class DOMEventListener : public DOMObject, public IDOMEventListener {
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebScriptObject
-    virtual HRESULT STDMETHODCALLTYPE throwException(BSTR, BOOL*)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(BSTR, const VARIANT[], int, VARIANT*)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(BSTR, VARIANT*)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(BSTR)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(BSTR*)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(unsigned int, VARIANT*)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(unsigned int, VARIANT)  { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE setException(BSTR) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR, _Out_ BOOL*)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(_In_ BSTR, __in_ecount(cArgs) const VARIANT[], int cArgs, _Out_ VARIANT*)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(_In_ BSTR, _Out_ VARIANT*)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(_In_ BSTR)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(__deref_opt_out BSTR*)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(unsigned, _Out_ VARIANT*)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(unsigned, VARIANT)  { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE setException(_In_ BSTR) { return E_NOTIMPL; }
 
     // IDOMEventListener
-    virtual HRESULT STDMETHODCALLTYPE handleEvent(IDOMEvent*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE handleEvent(_In_opt_ IDOMEvent*) { return E_NOTIMPL; }
 };
 
 #endif

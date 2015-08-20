@@ -34,25 +34,25 @@ public:
     WebDownloadDelegate();
     virtual ~WebDownloadDelegate();
 
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
-    virtual HRESULT STDMETHODCALLTYPE decideDestinationWithSuggestedFilename(IWebDownload*, BSTR filename);
-    virtual HRESULT STDMETHODCALLTYPE didCancelAuthenticationChallenge(IWebDownload*, IWebURLAuthenticationChallenge*);
-    virtual HRESULT STDMETHODCALLTYPE didCreateDestination(IWebDownload*, BSTR destination);
-    virtual HRESULT STDMETHODCALLTYPE didFailWithError(IWebDownload*, IWebError*);
-    virtual HRESULT STDMETHODCALLTYPE didReceiveAuthenticationChallenge(IWebDownload*, IWebURLAuthenticationChallenge*);
-    virtual HRESULT STDMETHODCALLTYPE didReceiveDataOfLength(IWebDownload*, unsigned length);
-    virtual HRESULT STDMETHODCALLTYPE didReceiveResponse(IWebDownload*, IWebURLResponse*);
-    virtual HRESULT STDMETHODCALLTYPE shouldDecodeSourceDataOfMIMEType(IWebDownload*, BSTR encodingType, BOOL* shouldDecode);
-    virtual HRESULT STDMETHODCALLTYPE willResumeWithResponse(IWebDownload*, IWebURLResponse*, long long fromByte);
-    virtual HRESULT STDMETHODCALLTYPE willSendRequest(IWebDownload*, IWebMutableURLRequest*, IWebURLResponse* redirectResponse, IWebMutableURLRequest** finalRequest);
-    virtual HRESULT STDMETHODCALLTYPE didBegin(IWebDownload*);
-    virtual HRESULT STDMETHODCALLTYPE didFinish(IWebDownload*);
+    virtual HRESULT STDMETHODCALLTYPE decideDestinationWithSuggestedFilename(_In_opt_ IWebDownload*, _In_ BSTR filename);
+    virtual HRESULT STDMETHODCALLTYPE didCancelAuthenticationChallenge(_In_opt_ IWebDownload*, _In_opt_ IWebURLAuthenticationChallenge*);
+    virtual HRESULT STDMETHODCALLTYPE didCreateDestination(_In_opt_ IWebDownload*, _In_ BSTR destination);
+    virtual HRESULT STDMETHODCALLTYPE didFailWithError(_In_opt_ IWebDownload*, _In_opt_ IWebError*);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveAuthenticationChallenge(_In_opt_ IWebDownload*, _In_opt_ IWebURLAuthenticationChallenge*);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveDataOfLength(_In_opt_ IWebDownload*, unsigned length);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveResponse(_In_opt_ IWebDownload*, _In_opt_ IWebURLResponse*);
+    virtual HRESULT STDMETHODCALLTYPE shouldDecodeSourceDataOfMIMEType(_In_opt_ IWebDownload*, _In_ BSTR encodingType, _Out_ BOOL* shouldDecode);
+    virtual HRESULT STDMETHODCALLTYPE willResumeWithResponse(_In_opt_ IWebDownload*, _In_opt_ IWebURLResponse*, long long fromByte);
+    virtual HRESULT STDMETHODCALLTYPE willSendRequest(_In_opt_ IWebDownload*, _In_opt_ IWebMutableURLRequest*, _In_opt_ IWebURLResponse* redirectResponse, _COM_Outptr_opt_ IWebMutableURLRequest** finalRequest);
+    virtual HRESULT STDMETHODCALLTYPE didBegin(_In_opt_ IWebDownload*);
+    virtual HRESULT STDMETHODCALLTYPE didFinish(_In_opt_ IWebDownload*);
 
 private:
-    int m_refCount;
+    int m_refCount { 1 };
 };
 
 #endif

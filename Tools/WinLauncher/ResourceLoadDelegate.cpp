@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 Apple Inc. All Rights Reserved.
+* Copyright (C) 2014-2015 Apple Inc. All Rights Reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -35,9 +35,11 @@
 #include <shlwapi.h>
 #include <wininet.h>
 
-HRESULT ResourceLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT ResourceLoadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualIID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebResourceLoadDelegate*>(this);
     else if (IsEqualIID(riid, IID_IWebResourceLoadDelegate))
@@ -49,12 +51,12 @@ HRESULT ResourceLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG ResourceLoadDelegate::AddRef(void)
+ULONG ResourceLoadDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG ResourceLoadDelegate::Release(void)
+ULONG ResourceLoadDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -63,7 +65,7 @@ ULONG ResourceLoadDelegate::Release(void)
     return newRef;
 }
 
-HRESULT ResourceLoadDelegate::identifierForInitialRequest(IWebView*, IWebURLRequest*, IWebDataSource*, unsigned long identifier)
+HRESULT ResourceLoadDelegate::identifierForInitialRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _In_opt_ IWebDataSource*, unsigned long identifier)
 {
     if (!m_client)
         return E_FAIL;
@@ -73,32 +75,35 @@ HRESULT ResourceLoadDelegate::identifierForInitialRequest(IWebView*, IWebURLRequ
     return S_OK;
 }
 
-HRESULT ResourceLoadDelegate::willSendRequest(IWebView*, unsigned long, IWebURLRequest*, IWebURLResponse*, IWebDataSource*, IWebURLRequest**)
+HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLRequest*, _In_opt_ IWebURLResponse*, _In_opt_ IWebDataSource*, _COM_Outptr_opt_ IWebURLRequest** result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(IWebView*, unsigned long, IWebURLAuthenticationChallenge*, IWebDataSource*)
+HRESULT ResourceLoadDelegate::didCancelAuthenticationChallenge(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT ResourceLoadDelegate::didCancelAuthenticationChallenge(IWebView*, unsigned long, IWebURLAuthenticationChallenge*, IWebDataSource*)
+HRESULT ResourceLoadDelegate::didReceiveResponse(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLResponse*, _In_opt_ IWebDataSource*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT ResourceLoadDelegate::didReceiveResponse(IWebView*, unsigned long, IWebURLResponse*, IWebDataSource*)
+HRESULT ResourceLoadDelegate::didReceiveContentLength(_In_opt_ IWebView*, unsigned long, UINT, _In_opt_ IWebDataSource*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT ResourceLoadDelegate::didReceiveContentLength(IWebView*, unsigned long, UINT, IWebDataSource*)
-{
-    return E_NOTIMPL;
-}
-
-HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(IWebView*, unsigned long identifier, IWebDataSource*)
+HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebDataSource*)
 {
     if (!m_client)
         return E_FAIL;
@@ -108,7 +113,7 @@ HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(IWebView*, unsigned
     return S_OK;
 }
 
-HRESULT ResourceLoadDelegate::didFailLoadingWithError(IWebView*, unsigned long identifier, IWebError*, IWebDataSource*)
+HRESULT ResourceLoadDelegate::didFailLoadingWithError(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebError*, _In_opt_ IWebDataSource*)
 {
     if (!m_client)
         return E_FAIL;
@@ -118,7 +123,7 @@ HRESULT ResourceLoadDelegate::didFailLoadingWithError(IWebView*, unsigned long i
     return S_OK;
 }
 
-HRESULT ResourceLoadDelegate::plugInFailedWithError(IWebView*, IWebError*, IWebDataSource*)
+HRESULT ResourceLoadDelegate::plugInFailedWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebDataSource*)
 {
     return E_NOTIMPL;
 }

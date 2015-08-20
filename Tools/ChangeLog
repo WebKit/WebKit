@@ -1,3 +1,54 @@
+2015-08-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update Windows tools for revised MIDL interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=148249
+
+        Reviewed by Dean Jackson.
+
+        This is a follow-up to Bug 148001.
+
+        Revise the testing software to use compatible signatures and
+        implementations to match the requirements of the IDL generated
+        with the SAL annotations.
+
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        * DumpRenderTree/win/DRTDataObject.h:
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp:
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.h:
+        * DumpRenderTree/win/DRTDropSource.cpp:
+        * DumpRenderTree/win/DRTDropSource.h:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        * DumpRenderTree/win/EditingDelegate.h:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        * DumpRenderTree/win/HistoryDelegate.cpp:
+        * DumpRenderTree/win/HistoryDelegate.h:
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        * DumpRenderTree/win/PolicyDelegate.h:
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        * DumpRenderTree/win/ResourceLoadDelegate.h:
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        * DumpRenderTree/win/UIDelegate.h:
+        * WinLauncher/AccessibilityDelegate.cpp:
+        * WinLauncher/AccessibilityDelegate.h:
+        * WinLauncher/Common.cpp:
+        * WinLauncher/DOMDefaultImpl.cpp:
+        * WinLauncher/DOMDefaultImpl.h:
+        * WinLauncher/PageLoadTestClient.cpp:
+        * WinLauncher/PageLoadTestClient.h:
+        * WinLauncher/PrintWebUIDelegate.cpp:
+        * WinLauncher/PrintWebUIDelegate.h:
+        * WinLauncher/ResourceLoadDelegate.cpp:
+        * WinLauncher/ResourceLoadDelegate.h:
+        * WinLauncher/WebDownloadDelegate.cpp:
+        * WinLauncher/WebDownloadDelegate.h:
+        * WinLauncher/WinLauncherWebHost.cpp:
+        * WinLauncher/WinLauncherWebHost.h:
+        * WinLauncher/WinMain.cpp:
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+
 2015-08-20  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, shorten a test that runs too long and times out.

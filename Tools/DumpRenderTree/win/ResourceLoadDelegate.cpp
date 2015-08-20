@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,7 +157,6 @@ wstring ResourceLoadDelegate::descriptionSuitableForTestResult(IWebError* error,
 }
 
 ResourceLoadDelegate::ResourceLoadDelegate()
-    : m_refCount(1)
 {
 }
 
@@ -165,9 +164,11 @@ ResourceLoadDelegate::~ResourceLoadDelegate()
 {
 }
 
-HRESULT ResourceLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT ResourceLoadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebResourceLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebResourceLoadDelegate))
@@ -181,12 +182,12 @@ HRESULT ResourceLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG ResourceLoadDelegate::AddRef(void)
+ULONG ResourceLoadDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG ResourceLoadDelegate::Release(void)
+ULONG ResourceLoadDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -195,7 +196,8 @@ ULONG ResourceLoadDelegate::Release(void)
     return newRef;
 }
 
-HRESULT ResourceLoadDelegate::identifierForInitialRequest(IWebView* webView, IWebURLRequest* request, IWebDataSource* dataSource, unsigned long identifier)
+HRESULT ResourceLoadDelegate::identifierForInitialRequest(_In_opt_ IWebView* webView, _In_opt_ IWebURLRequest* request,
+    _In_opt_ IWebDataSource* dataSource, unsigned long identifier)
 { 
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         _bstr_t urlStr;
@@ -209,9 +211,7 @@ HRESULT ResourceLoadDelegate::identifierForInitialRequest(IWebView* webView, IWe
     return S_OK;
 }
 
-HRESULT ResourceLoadDelegate::removeIdentifierForRequest(
-    /* [in] */ IWebView* webView,
-    /* [in] */ unsigned long identifier)
+HRESULT ResourceLoadDelegate::removeIdentifierForRequest(_In_opt_ IWebView* webView, unsigned long identifier)
 {
     urlMap().remove(identifier);
 
@@ -229,9 +229,14 @@ static bool hostIsUsedBySomeTestsToGenerateError(CFStringRef host)
     return kCFCompareEqualTo == CFStringCompare(host, CFSTR("255.255.255.255"), 0);
 }
 
-HRESULT ResourceLoadDelegate::willSendRequest(IWebView* webView, unsigned long identifier, IWebURLRequest* request,
-    IWebURLResponse* redirectResponse, IWebDataSource* dataSource, IWebURLRequest** newRequest)
+HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView* webView, unsigned long identifier, _In_opt_ IWebURLRequest* request,
+    _In_opt_ IWebURLResponse* redirectResponse, _In_opt_ IWebDataSource* dataSource, _COM_Outptr_opt_ IWebURLRequest** newRequest)
 {
+    if (!newRequest)
+        return E_POINTER;
+
+    *newRequest = nullptr;
+
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - willSendRequest %S redirectResponse %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
@@ -241,28 +246,23 @@ HRESULT ResourceLoadDelegate::willSendRequest(IWebView* webView, unsigned long i
 
     if (!done && !gTestRunner->deferMainResourceDataLoad()) {
         COMPtr<IWebDataSourcePrivate> dataSourcePrivate(Query, dataSource);
-        if (!dataSourcePrivate) {
-            *newRequest = nullptr;
+        if (!dataSourcePrivate)
             return E_FAIL;
-        }
+
         dataSourcePrivate->setDeferMainResourceDataLoad(FALSE);
     }
 
-    if (!done && gTestRunner->willSendRequestReturnsNull()) {
-        *newRequest = nullptr;
+    if (!done && gTestRunner->willSendRequestReturnsNull())
         return S_OK;
-    }
 
     if (!done && gTestRunner->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
         printf("Returning null for this redirect\n");
-        *newRequest = nullptr;
         return S_OK;
     }
 
     _bstr_t urlBstr;
     if (FAILED(request->URL(&urlBstr.GetBSTR()))) {
         printf("Request has no URL\n");
-        *newRequest = nullptr;
         return E_FAIL;
     }
 
@@ -285,7 +285,6 @@ HRESULT ResourceLoadDelegate::willSendRequest(IWebView* webView, unsigned long i
             }
             if (!isLocalhost(host.get()) && !hostIsUsedBySomeTestsToGenerateError(host.get()) && (!testHost || isLocalhost(testHost.get()))) {
                 printf("Blocked access to external URL %s\n", static_cast<const char*>(urlBstr));
-                *newRequest = nullptr;
                 return S_OK;
             }
         }
@@ -303,7 +302,8 @@ HRESULT ResourceLoadDelegate::willSendRequest(IWebView* webView, unsigned long i
     return S_OK;
 }
 
-HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(IWebView* webView, unsigned long identifier, IWebURLAuthenticationChallenge* challenge, IWebDataSource* dataSource)
+HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebView* webView, unsigned long identifier,
+    _In_opt_ IWebURLAuthenticationChallenge* challenge, _In_opt_ IWebDataSource* dataSource)
 {
     COMPtr<IWebURLAuthenticationChallengeSender> sender;
     if (!challenge || FAILED(challenge->sender(&sender)))
@@ -329,11 +329,8 @@ HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(IWebView* webVie
     return S_OK;
 }
 
-HRESULT ResourceLoadDelegate::didReceiveResponse(
-    /* [in] */ IWebView* webView, 
-    /* [in] */ unsigned long identifier, 
-    /* [in] */ IWebURLResponse* response, 
-    /* [in] */ IWebDataSource* dataSource)
+HRESULT ResourceLoadDelegate::didReceiveResponse(_In_opt_ IWebView* webView, unsigned long identifier, 
+    _In_opt_ IWebURLResponse* response, _In_opt_ IWebDataSource* dataSource)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - didReceiveResponse %S\n",
@@ -358,7 +355,7 @@ HRESULT ResourceLoadDelegate::didReceiveResponse(
 }
 
 
-HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(IWebView* webView, unsigned long identifier, IWebDataSource* dataSource)
+HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(_In_opt_ IWebView* webView, unsigned long identifier, _In_opt_ IWebDataSource* dataSource)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - didFinishLoading\n",
@@ -370,7 +367,7 @@ HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(IWebView* webView, 
     return S_OK;
 }
         
-HRESULT ResourceLoadDelegate::didFailLoadingWithError(IWebView* webView, unsigned long identifier, IWebError* error, IWebDataSource* dataSource)
+HRESULT ResourceLoadDelegate::didFailLoadingWithError(_In_opt_ IWebView* webView, unsigned long identifier, _In_opt_ IWebError* error, _In_opt_ IWebDataSource* dataSource)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - didFailLoadingWithError: %S\n", 

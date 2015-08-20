@@ -39,69 +39,33 @@ public:
     virtual ~ResourceLoadDelegate();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebResourceLoadDelegate
-    virtual HRESULT STDMETHODCALLTYPE identifierForInitialRequest( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebURLRequest *request,
-        /* [in] */ IWebDataSource *dataSource,
-        /* [in] */ unsigned long identifier);
+    virtual HRESULT STDMETHODCALLTYPE identifierForInitialRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _In_opt_ IWebDataSource*, unsigned long identifier);        
+    virtual HRESULT STDMETHODCALLTYPE willSendRequest(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLRequest*, _In_opt_ IWebURLResponse*,
+        _In_opt_ IWebDataSource*, _COM_Outptr_opt_ IWebURLRequest**);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveAuthenticationChallenge(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE didCancelAuthenticationChallenge(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource *dataSource)
+    {
+        return E_NOTIMPL;
+    }
         
-    virtual HRESULT STDMETHODCALLTYPE willSendRequest( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier,
-        /* [in] */ IWebURLRequest *request,
-        /* [in] */ IWebURLResponse *redirectResponse,
-        /* [in] */ IWebDataSource *dataSource,
-        /* [retval][out] */ IWebURLRequest **newRequest);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveResponse(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebURLResponse*, _In_opt_ IWebDataSource*);
         
-    virtual HRESULT STDMETHODCALLTYPE didReceiveAuthenticationChallenge( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier,
-        /* [in] */ IWebURLAuthenticationChallenge *challenge,
-        /* [in] */ IWebDataSource *dataSource);
+    virtual HRESULT STDMETHODCALLTYPE didReceiveContentLength(_In_opt_ IWebView*, unsigned long identifier, UINT length, _In_opt_ IWebDataSource*)
+    {
+        return E_NOTIMPL; 
+    }
         
-    virtual HRESULT STDMETHODCALLTYPE didCancelAuthenticationChallenge( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier,
-        /* [in] */ IWebURLAuthenticationChallenge *challenge,
-        /* [in] */ IWebDataSource *dataSource) { return E_NOTIMPL; }
-        
-    virtual HRESULT STDMETHODCALLTYPE didReceiveResponse( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier,
-        /* [in] */ IWebURLResponse *response,
-        /* [in] */ IWebDataSource *dataSource);
-        
-    virtual HRESULT STDMETHODCALLTYPE didReceiveContentLength( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier,
-        /* [in] */ UINT length,
-        /* [in] */ IWebDataSource *dataSource) { return E_NOTIMPL; }
-        
-    virtual HRESULT STDMETHODCALLTYPE didFinishLoadingFromDataSource( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier,
-        /* [in] */ IWebDataSource *dataSource);
-        
-    virtual HRESULT STDMETHODCALLTYPE didFailLoadingWithError( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier,
-        /* [in] */ IWebError *error,
-        /* [in] */ IWebDataSource *dataSource);
-        
-    virtual HRESULT STDMETHODCALLTYPE plugInFailedWithError( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebError *error,
-        /* [in] */ IWebDataSource *dataSource) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE didFinishLoadingFromDataSource(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE didFailLoadingWithError(_In_opt_ IWebView*, unsigned long identifier, _In_opt_ IWebError*, _In_opt_ IWebDataSource*);
+    virtual HRESULT STDMETHODCALLTYPE plugInFailedWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebDataSource*) { return E_NOTIMPL; }
 
     // IWebResourceLoadDelegatePrivate2
-    virtual HRESULT STDMETHODCALLTYPE removeIdentifierForRequest(
-        /* [in] */ IWebView *webView,
-        /* [in] */ unsigned long identifier);
+    virtual HRESULT STDMETHODCALLTYPE removeIdentifierForRequest(_In_opt_ IWebView*, unsigned long identifier);
     
 private:
     static std::wstring descriptionSuitableForTestResult(IWebURLRequest*);
@@ -113,7 +77,7 @@ private:
     IdentifierMap& urlMap() { return m_urlMap; }
     IdentifierMap m_urlMap;
 
-    ULONG m_refCount;
+    ULONG m_refCount { 1 };
 };
 
 #endif // ResourceLoadDelegate_h

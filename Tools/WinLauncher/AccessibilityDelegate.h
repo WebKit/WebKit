@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +30,15 @@
 
 class AccessibilityDelegate : public IAccessibilityDelegate {
 public:
-    AccessibilityDelegate() : m_refCount(1) { }
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    AccessibilityDelegate() { }
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     virtual HRESULT STDMETHODCALLTYPE fireFrameLoadStartedEvents();
     virtual HRESULT STDMETHODCALLTYPE fireFrameLoadFinishedEvents();
 private:
-    int m_refCount;
+    int m_refCount { 1 };
 };
 
 #endif

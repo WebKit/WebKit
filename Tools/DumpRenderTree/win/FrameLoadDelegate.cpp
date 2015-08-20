@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2007, 2009, 2014-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,8 +74,7 @@ string descriptionSuitableForTestResult(IWebFrame* webFrame)
 }
 
 FrameLoadDelegate::FrameLoadDelegate()
-    : m_refCount(1)
-    , m_gcController(std::make_unique<GCController>())
+    : m_gcController(std::make_unique<GCController>())
     , m_accessibilityController(std::make_unique<AccessibilityController>())
     , m_textInputController(std::make_unique<TextInputController>())
 {
@@ -85,9 +84,11 @@ FrameLoadDelegate::~FrameLoadDelegate()
 {
 }
 
-HRESULT FrameLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT FrameLoadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate))
@@ -105,12 +106,12 @@ HRESULT FrameLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG FrameLoadDelegate::AddRef(void)
+ULONG FrameLoadDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG FrameLoadDelegate::Release(void)
+ULONG FrameLoadDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -119,8 +120,7 @@ ULONG FrameLoadDelegate::Release(void)
     return newRef;
 }
 
-
-HRESULT FrameLoadDelegate::didStartProvisionalLoadForFrame(IWebView* /*webView*/, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didStartProvisionalLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -133,7 +133,7 @@ HRESULT FrameLoadDelegate::didStartProvisionalLoadForFrame(IWebView* /*webView*/
     return S_OK; 
 }
 
-HRESULT FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame(IWebView* /*webView*/, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*)
 { 
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didReceiveServerRedirectForProvisionalLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -141,7 +141,7 @@ HRESULT FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame(IW
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didChangeLocationWithinPageForFrame(IWebView* , IWebFrame* frame)
+HRESULT FrameLoadDelegate::didChangeLocationWithinPageForFrame(_In_opt_ IWebView* , _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didChangeLocationWithinPageForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -149,7 +149,7 @@ HRESULT FrameLoadDelegate::didChangeLocationWithinPageForFrame(IWebView* , IWebF
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didFailProvisionalLoadWithError(IWebView* /*webView*/, IWebError* error, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didFailProvisionalLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError* error, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didFailProvisionalLoadWithError\n", descriptionSuitableForTestResult(frame).c_str());
@@ -158,7 +158,7 @@ HRESULT FrameLoadDelegate::didFailProvisionalLoadWithError(IWebView* /*webView*/
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didCommitLoadForFrame(IWebView* webView, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didCommitLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didCommitLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -172,7 +172,7 @@ HRESULT FrameLoadDelegate::didCommitLoadForFrame(IWebView* webView, IWebFrame* f
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didReceiveTitle(IWebView* /*webView*/, BSTR title, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didReceiveTitle(_In_opt_ IWebView*, _In_ BSTR title, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didReceiveTitle: %S\n", descriptionSuitableForTestResult(frame).c_str(), title);
@@ -182,9 +182,7 @@ HRESULT FrameLoadDelegate::didReceiveTitle(IWebView* /*webView*/, BSTR title, IW
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didChangeIcons(
-    /* [in] */ IWebView* webView,
-    /* [in] */ IWebFrame* frame)
+HRESULT FrameLoadDelegate::didChangeIcons(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpIconChanges())
         printf("%s - didChangeIcons\n", descriptionSuitableForTestResult(frame).c_str());
@@ -252,7 +250,7 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
     dump();
 }
 
-HRESULT FrameLoadDelegate::didFinishLoadForFrame(IWebView* /*webView*/, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didFinishLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didFinishLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -261,7 +259,7 @@ HRESULT FrameLoadDelegate::didFinishLoadForFrame(IWebView* /*webView*/, IWebFram
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didFailLoadWithError(IWebView* /*webView*/, IWebError* error, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError* error, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didFailLoadWithError\n", descriptionSuitableForTestResult(frame).c_str());
@@ -270,7 +268,7 @@ HRESULT FrameLoadDelegate::didFailLoadWithError(IWebView* /*webView*/, IWebError
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::willPerformClientRedirectToURL(IWebView* /*webView*/, BSTR url, double /*delaySeconds*/, DATE /*fireDate*/, IWebFrame* frame)
+HRESULT FrameLoadDelegate::willPerformClientRedirectToURL(_In_opt_ IWebView*, _In_ BSTR url, double /*delaySeconds*/, DATE /*fireDate*/, _In_opt_ IWebFrame*)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - willPerformClientRedirectToURL: %S \n", descriptionSuitableForTestResult(frame).c_str(),
@@ -279,7 +277,7 @@ HRESULT FrameLoadDelegate::willPerformClientRedirectToURL(IWebView* /*webView*/,
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didCancelClientRedirectForFrame(IWebView* /*webView*/, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didCancelClientRedirectForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didCancelClientRedirectForFrame\n", descriptionSuitableForTestResult(frame).c_str());
@@ -288,7 +286,7 @@ HRESULT FrameLoadDelegate::didCancelClientRedirectForFrame(IWebView* /*webView*/
 }
 
 
-HRESULT FrameLoadDelegate::willCloseFrame(IWebView* /*webView*/, IWebFrame* /*frame*/)
+HRESULT FrameLoadDelegate::willCloseFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*)
 {
     return E_NOTIMPL;
 }
@@ -308,7 +306,7 @@ HRESULT FrameLoadDelegate::didClearWindowObject(IWebView*, JSContextRef, JSObjec
     return E_NOTIMPL;
 }
 
-HRESULT FrameLoadDelegate::didClearWindowObjectForFrameInScriptWorld(IWebView* webView, IWebFrame* frame, IWebScriptWorld* world)
+HRESULT FrameLoadDelegate::didClearWindowObjectForFrameInScriptWorld(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame, _In_opt_ IWebScriptWorld* world)
 {
     ASSERT_ARG(webView, webView);
     ASSERT_ARG(frame, frame);
@@ -375,7 +373,7 @@ void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* f
     WebCoreTestSupport::injectInternalsObject(context);
 }
 
-HRESULT FrameLoadDelegate::didFinishDocumentLoadForFrame(IWebView* /*sender*/, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didFinishDocumentLoadForFrame(_In_opt_ IWebView* /*sender*/, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didFinishDocumentLoadForFrame\n",
@@ -397,7 +395,7 @@ HRESULT FrameLoadDelegate::didFinishDocumentLoadForFrame(IWebView* /*sender*/, I
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didHandleOnloadEventsForFrame(IWebView* /*sender*/, IWebFrame* frame)
+HRESULT FrameLoadDelegate::didHandleOnloadEventsForFrame(_In_opt_ IWebView* /*sender*/, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didHandleOnloadEventsForFrame\n",
@@ -406,12 +404,12 @@ HRESULT FrameLoadDelegate::didHandleOnloadEventsForFrame(IWebView* /*sender*/, I
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didFirstVisuallyNonEmptyLayoutInFrame(IWebView* /*sender*/, IWebFrame* /*frame*/)
+HRESULT FrameLoadDelegate::didFirstVisuallyNonEmptyLayoutInFrame(_In_opt_ IWebView* /*sender*/, _In_opt_ IWebFrame* /*frame*/)
 {
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didDisplayInsecureContent(IWebView* /*sender*/)
+HRESULT FrameLoadDelegate::didDisplayInsecureContent(_In_opt_ IWebView* /*sender*/)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("didDisplayInsecureContent\n");
@@ -419,7 +417,7 @@ HRESULT FrameLoadDelegate::didDisplayInsecureContent(IWebView* /*sender*/)
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::didRunInsecureContent(IWebView* /*sender*/, IWebSecurityOrigin* /*origin*/)
+HRESULT FrameLoadDelegate::didRunInsecureContent(_In_opt_ IWebView* /*sender*/, _In_opt_ IWebSecurityOrigin* /*origin*/)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("didRunInsecureContent\n");
@@ -427,7 +425,7 @@ HRESULT FrameLoadDelegate::didRunInsecureContent(IWebView* /*sender*/, IWebSecur
     return S_OK;
 }
 
-HRESULT FrameLoadDelegate::onNotify(IWebNotification* notification)
+HRESULT FrameLoadDelegate::onNotify(_In_opt_ IWebNotification* notification)
 {
     _bstr_t notificationName;
     HRESULT hr = notification->name(&notificationName.GetBSTR());

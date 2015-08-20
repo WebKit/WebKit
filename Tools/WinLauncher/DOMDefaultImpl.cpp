@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 Anthony Johnson. All Rights Reserved.
  * Copyright (C) 2011 Brent Fulgham. All Rights Reserved.
  *
@@ -29,9 +29,11 @@
 #include "DOMDefaultImpl.h"
 
 // IUnknown -------------------------------------------------------------------
-HRESULT WebScriptObject::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebScriptObject::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebScriptObject*>(this);
     else if (IsEqualGUID(riid, IID_IWebScriptObject))
@@ -43,12 +45,12 @@ HRESULT WebScriptObject::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG WebScriptObject::AddRef(void)
+ULONG WebScriptObject::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG WebScriptObject::Release(void)
+ULONG WebScriptObject::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -58,9 +60,11 @@ ULONG WebScriptObject::Release(void)
 }
 
 // DOMObject -------------------------------------------------------------------
-HRESULT DOMObject::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMObject::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMObject))
         *ppvObject = static_cast<IDOMObject*>(this);
     else
@@ -72,9 +76,9 @@ HRESULT DOMObject::QueryInterface(REFIID riid, void** ppvObject)
 
 
 // DOMEventListener -------------------------------------------------------------------
-HRESULT DOMEventListener::QueryInterface(const IID &riid, void** ppvObject)
+HRESULT DOMEventListener::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMEventListener))
         *ppvObject = static_cast<IDOMEventListener*>(this);
     else
@@ -84,12 +88,12 @@ HRESULT DOMEventListener::QueryInterface(const IID &riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG DOMEventListener::AddRef(void)
+ULONG DOMEventListener::AddRef()
 {
     return WebScriptObject::AddRef();
 }
 
-ULONG DOMEventListener::Release(void)
+ULONG DOMEventListener::Release()
 {
     return WebScriptObject::Release();
 }

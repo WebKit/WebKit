@@ -181,7 +181,7 @@ static wstring getLastErrorString(HRESULT hr)
 #if USE_CONSOLE_ENTRY_POINT
 int main(int argc, const char* argv[])
 #else
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpstrCmdLine, _In_ int nCmdShow)
 #endif
 {
 #if defined(_M_X64) || defined(__x86_64__)

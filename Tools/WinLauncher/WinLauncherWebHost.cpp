@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013-2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008, 2013-2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2013 Alex Christensen. All rights reserved.
@@ -64,24 +64,24 @@ HRESULT WinLauncherWebHost::updateAddressBar(IWebView& webView)
     IWebFramePtr mainFrame;
     HRESULT hr = webView.mainFrame(&mainFrame.GetInterfacePtr());
     if (FAILED(hr))
-        return 0;
+        return hr;
 
     IWebDataSourcePtr dataSource;
     hr = mainFrame->dataSource(&dataSource.GetInterfacePtr());
     if (FAILED(hr) || !dataSource)
         hr = mainFrame->provisionalDataSource(&dataSource.GetInterfacePtr());
     if (FAILED(hr) || !dataSource)
-        return 0;
+        return hr;
 
     IWebMutableURLRequestPtr request;
     hr = dataSource->request(&request.GetInterfacePtr());
     if (FAILED(hr) || !request)
-        return 0;
+        return hr;
 
     _bstr_t frameURL;
     hr = request->mainDocumentURL(frameURL.GetAddress());
     if (FAILED(hr))
-        return 0;
+        return hr;
 
     if (frameURL.length()) {
         m_client->pageLoadTestClient().setPageURL(frameURL);
@@ -90,7 +90,7 @@ HRESULT WinLauncherWebHost::updateAddressBar(IWebView& webView)
 
     loadURL(frameURL);
 
-    return 0;
+    return S_OK;
 }
 
 void WinLauncherWebHost::loadURL(_bstr_t& url)
@@ -98,10 +98,12 @@ void WinLauncherWebHost::loadURL(_bstr_t& url)
     ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETTEXT), 0, reinterpret_cast<LPARAM>(url.GetBSTR()));
 }
 
-HRESULT WinLauncherWebHost::didFailProvisionalLoadWithError(IWebView*, IWebError *error, IWebFrame*)
+HRESULT WinLauncherWebHost::didFailProvisionalLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError *error, _In_opt_ IWebFrame*)
 {
     _bstr_t errorDescription;
-    HRESULT hr = error->localizedDescription(errorDescription.GetAddress());
+    HRESULT hr = E_POINTER;
+    if (error)
+        hr = error->localizedDescription(errorDescription.GetAddress());
     if (FAILED(hr))
         errorDescription = L"Failed to load page and to localize error description.";
 
@@ -111,9 +113,11 @@ HRESULT WinLauncherWebHost::didFailProvisionalLoadWithError(IWebView*, IWebError
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WinLauncherWebHost::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate))
@@ -144,7 +148,7 @@ typedef _com_ptr_t<_com_IIID<IDOMElement, &__uuidof(IDOMElement)>> IDOMElementPt
 typedef _com_ptr_t<_com_IIID<IDOMEventTarget, &__uuidof(IDOMEventTarget)>> IDOMEventTargetPtr;
 typedef _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> IWebFrame2Ptr;
 
-HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* frame)
+HRESULT WinLauncherWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
 {
     if (!frame || !webView)
         return E_POINTER;
@@ -183,7 +187,7 @@ HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* 
     return hr;
 }
 
-HRESULT WinLauncherWebHost::didStartProvisionalLoadForFrame(IWebView*, IWebFrame* frame)
+HRESULT WinLauncherWebHost::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!frame)
         return E_FAIL;
@@ -192,30 +196,30 @@ HRESULT WinLauncherWebHost::didStartProvisionalLoadForFrame(IWebView*, IWebFrame
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::didFailLoadWithError(IWebView*, IWebError*, IWebFrame*)
+HRESULT WinLauncherWebHost::didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*)
 {
     m_client->pageLoadTestClient().didFailLoad();
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::didHandleOnloadEventsForFrame(IWebView* sender, IWebFrame* frame)
+HRESULT WinLauncherWebHost::didHandleOnloadEventsForFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame* frame)
 {
     IWebDataSourcePtr dataSource;
     HRESULT hr = frame->dataSource(&dataSource.GetInterfacePtr());
     if (FAILED(hr) || !dataSource)
         hr = frame->provisionalDataSource(&dataSource.GetInterfacePtr());
     if (FAILED(hr) || !dataSource)
-        return 0;
+        return hr;
 
     IWebMutableURLRequestPtr request;
     hr = dataSource->request(&request.GetInterfacePtr());
     if (FAILED(hr) || !request)
-        return 0;
+        return hr;
 
     _bstr_t frameURL;
     hr = request->mainDocumentURL(frameURL.GetAddress());
     if (FAILED(hr))
-        return 0;
+        return hr;
 
     if (frameURL.length())
         m_client->pageLoadTestClient().didHandleOnLoadEvents();
@@ -223,7 +227,7 @@ HRESULT WinLauncherWebHost::didHandleOnloadEventsForFrame(IWebView* sender, IWeb
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::didFirstLayoutInFrame(IWebView*, IWebFrame* frame)
+HRESULT WinLauncherWebHost::didFirstLayoutInFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!frame)
         return E_POINTER;

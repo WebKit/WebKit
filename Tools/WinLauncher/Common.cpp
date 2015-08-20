@@ -219,7 +219,7 @@ void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
         && ::GetLastError() != ERROR_ALREADY_EXISTS)
         return;
 
-    std::wstring fileName = directory + L"\\CrashReport.dmp";
+    std::wstring fileName = std::wstring(static_cast<const wchar_t*>(directory)) + L"\\CrashReport.dmp";
     HANDLE miniDumpFile = ::CreateFile(fileName.c_str(), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 
     if (miniDumpFile && miniDumpFile != INVALID_HANDLE_VALUE) {

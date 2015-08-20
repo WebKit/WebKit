@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,6 @@ static inline wstring wstringFromBSTR(BSTR str)
 }
 
 HistoryDelegate::HistoryDelegate()
-    : m_refCount(1)
 {
 }
 
@@ -49,10 +48,12 @@ HistoryDelegate::~HistoryDelegate()
 {
 }
 
-    // IUnknown
-HRESULT HistoryDelegate::QueryInterface(REFIID riid, void** ppvObject)
+// IUnknown
+HRESULT HistoryDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebHistoryDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebHistoryDelegate))
@@ -64,12 +65,12 @@ HRESULT HistoryDelegate::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG HistoryDelegate::AddRef(void)
+ULONG HistoryDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG HistoryDelegate::Release(void)
+ULONG HistoryDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -79,7 +80,7 @@ ULONG HistoryDelegate::Release(void)
 }
 
 // IWebHistoryDelegate
-HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNavigationData* navigationData, IWebFrame* webFrame)
+HRESULT HistoryDelegate::didNavigateWithNavigationData(_In_opt_ IWebView* webView, _In_opt_ IWebNavigationData* navigationData, _In_opt_ IWebFrame* webFrame)
 {
     if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
@@ -150,7 +151,7 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
     return S_OK;
 }
 
-HRESULT HistoryDelegate::didPerformClientRedirectFromURL(IWebView*, BSTR sourceURL, BSTR destinationURL, IWebFrame*)
+HRESULT HistoryDelegate::didPerformClientRedirectFromURL(_In_opt_ IWebView*, _In_ BSTR sourceURL, _In_ BSTR destinationURL, _In_opt_ IWebFrame*)
 {
     if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
@@ -167,7 +168,7 @@ HRESULT HistoryDelegate::didPerformClientRedirectFromURL(IWebView*, BSTR sourceU
     return S_OK;
 }
     
-HRESULT HistoryDelegate::didPerformServerRedirectFromURL(IWebView* webView, BSTR sourceURL, BSTR destinationURL, IWebFrame* webFrame)
+HRESULT HistoryDelegate::didPerformServerRedirectFromURL(_In_opt_ IWebView* webView, _In_ BSTR sourceURL, _In_ BSTR destinationURL, _In_opt_ IWebFrame* webFrame)
 {
     if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
@@ -184,7 +185,7 @@ HRESULT HistoryDelegate::didPerformServerRedirectFromURL(IWebView* webView, BSTR
     return S_OK;
 }
 
-HRESULT HistoryDelegate::updateHistoryTitle(IWebView* webView, BSTR titleBSTR, BSTR urlBSTR)
+HRESULT HistoryDelegate::updateHistoryTitle(_In_opt_ IWebView* webView, _In_ BSTR titleBSTR, _In_ BSTR urlBSTR)
 {
     if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
@@ -197,7 +198,7 @@ HRESULT HistoryDelegate::updateHistoryTitle(IWebView* webView, BSTR titleBSTR, B
     return S_OK;
 }
     
-HRESULT HistoryDelegate::populateVisitedLinksForWebView(IWebView* webView)
+HRESULT HistoryDelegate::populateVisitedLinksForWebView(_In_opt_ IWebView* webView)
 {
     if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;

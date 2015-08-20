@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,29 +37,19 @@ public:
     DRTDesktopNotificationPresenter();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebDesktopNotificationsDelegate
-    virtual HRESULT STDMETHODCALLTYPE showDesktopNotification(
-        /* [in] */ IWebDesktopNotification* notification);
-
-    virtual HRESULT STDMETHODCALLTYPE cancelDesktopNotification(
-        /* [in] */ IWebDesktopNotification* notification);
-
-    virtual HRESULT STDMETHODCALLTYPE notificationDestroyed(
-        /* [in] */ IWebDesktopNotification* notification);
-
-    virtual HRESULT STDMETHODCALLTYPE checkNotificationPermission(
-        /* [in] */ BSTR origin, 
-        /* [out, retval] */ int* result);
-
-    virtual HRESULT STDMETHODCALLTYPE requestNotificationPermission(
-        /* [in] */ BSTR origin);
+    virtual HRESULT STDMETHODCALLTYPE showDesktopNotification(_In_opt_ IWebDesktopNotification*);
+    virtual HRESULT STDMETHODCALLTYPE cancelDesktopNotification(_In_opt_ IWebDesktopNotification*);
+    virtual HRESULT STDMETHODCALLTYPE notificationDestroyed(_In_opt_ IWebDesktopNotification*);
+    virtual HRESULT STDMETHODCALLTYPE checkNotificationPermission(_In_ BSTR origin, _Out_ int* result);
+    virtual HRESULT STDMETHODCALLTYPE requestNotificationPermission(_In_ BSTR origin);
 
 private:
-    ULONG m_refCount;
+    ULONG m_refCount { 1 };
 };
 
 #endif

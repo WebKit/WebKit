@@ -132,10 +132,10 @@ private:
     void dumpRunStatistics();
 
     WinLauncher* m_host;
-    CFAbsoluteTime m_pageLoadEndTime;
-    CFTimeInterval m_totalTime;
-    CFTimeInterval m_totalSquareRootsOfTime;
-    CFTimeInterval m_longestTime;
+    CFAbsoluteTime m_pageLoadEndTime { 0 };
+    CFTimeInterval m_totalTime { 0 };
+    CFTimeInterval m_totalSquareRootsOfTime { 0 };
+    CFTimeInterval m_longestTime { 0 };
     Vector<CFAbsoluteTime> m_startTimes;
     Vector<CFAbsoluteTime> m_endTimes;
     HashSet<uint64_t> m_loadingSubresources;
@@ -143,15 +143,15 @@ private:
 #if OS(WINDOWS)
     _bstr_t m_url;
 #endif
-    double m_geometricMeanProductSum;
-    unsigned m_frames;
-    unsigned m_onLoadEvents;
-    unsigned m_currentURLIndex;
-    unsigned m_currentRepetition;
-    unsigned m_pagesTimed;
+    double m_geometricMeanProductSum { 1.0 };
+    unsigned m_frames { 0 };
+    unsigned m_onLoadEvents { 0 };
+    unsigned m_currentURLIndex { 0 };
+    unsigned m_currentRepetition { 0 };
+    unsigned m_pagesTimed { 0 };
     unsigned m_repetitions;
 
-    bool m_currentPageLoadFinished;
+    bool m_currentPageLoadFinished { false };
     bool m_pageLoadTesting;
 };
 

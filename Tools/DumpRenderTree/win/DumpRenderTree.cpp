@@ -1439,7 +1439,7 @@ int main(int argc, const char* argv[])
     prepareConsistentTestingEnvironment(standardPreferences.get(), standardPreferencesPrivate.get());
 
     if (printSupportedFeatures) {
-        BOOL acceleratedCompositingAvailable;
+        BOOL acceleratedCompositingAvailable = FALSE;
         standardPreferences->acceleratedCompositingEnabled(&acceleratedCompositingAvailable);
 
 #if ENABLE(3D_TRANSFORMS)
