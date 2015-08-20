@@ -1,3 +1,15 @@
+2015-08-19  Jinyoung Hur  <hur.ims@navercorp.com>
+
+        GraphicsContext3D::activeTexture should not be called with zero-based index
+        https://bugs.webkit.org/show_bug.cgi?id=148020
+
+        Reviewed by Alex Christensen.
+
+        Insert WebGLRenderingContext.activeTexture call during the texture complete test to verify
+        a meaningless change of the active texture doesn't make any gl errors.
+
+        * fast/canvas/webgl/texture-complete.html:
+
 2015-08-19  Zalan Bujtas  <zalan@apple.com>
 
         outline-style: auto leaves bits behind on strava's flyby view.

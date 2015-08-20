@@ -4035,10 +4035,10 @@ void WebGLRenderingContextBase::checkTextureCompleteness(const char* functionNam
         if ((m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture(extensions))
             || (m_textureUnits[ii].textureCubeMapBinding && m_textureUnits[ii].textureCubeMapBinding->needToUseBlackTexture(extensions))) {
             if (ii != m_activeTextureUnit) {
-                m_context->activeTexture(ii);
+                m_context->activeTexture(ii + GraphicsContext3D::TEXTURE0);
                 resetActiveUnit = true;
             } else if (resetActiveUnit) {
-                m_context->activeTexture(ii);
+                m_context->activeTexture(ii + GraphicsContext3D::TEXTURE0);
                 resetActiveUnit = false;
             }
             WebGLTexture* tex2D;
@@ -4061,7 +4061,7 @@ void WebGLRenderingContextBase::checkTextureCompleteness(const char* functionNam
         }
     }
     if (resetActiveUnit)
-        m_context->activeTexture(m_activeTextureUnit);
+        m_context->activeTexture(m_activeTextureUnit + GraphicsContext3D::TEXTURE0);
 }
 
 void WebGLRenderingContextBase::createFallbackBlackTextures1x1()
