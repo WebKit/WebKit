@@ -102,7 +102,7 @@ public:
 
     FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNumber = -1);
 
-    void clearCode()
+    void clearCodeForRecompilation()
     {
         m_codeBlockForCall.clear();
         m_codeBlockForConstruct.clear();

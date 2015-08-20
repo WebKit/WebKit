@@ -209,6 +209,7 @@ public:
     size_t sizeAfterLastFullCollection() const { return m_sizeAfterLastFullCollect; }
 
     JS_EXPORT_PRIVATE void deleteAllCompiledCode();
+    void deleteAllUnlinkedFunctionCode();
 
     void didAllocate(size_t);
     void didAbandon(size_t);

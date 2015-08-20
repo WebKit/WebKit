@@ -316,6 +316,7 @@ public:
 
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
         executable->clearCode();
+        executable->clearUnlinkedCodeForRecompilation();
     }
     inline IterationStatus operator()(JSCell* cell)
     {

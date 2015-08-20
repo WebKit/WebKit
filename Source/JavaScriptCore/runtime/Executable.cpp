@@ -557,9 +557,13 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_singletonFunction);
 }
 
+void FunctionExecutable::clearUnlinkedCodeForRecompilation()
+{
+    m_unlinkedExecutable->clearCodeForRecompilation();
+}
+
 void FunctionExecutable::clearCode()
 {
-    m_unlinkedExecutable->clearCode();
     m_codeBlockForCall = nullptr;
     m_codeBlockForConstruct = nullptr;
     Base::clearCode();
