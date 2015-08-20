@@ -201,10 +201,10 @@ test6.step(function() {
     var reason2 = new Error('I have the death sentence on twelve systems.');
 
     var rs = new ReadableStream({
-        cancel: test6.step_func(function(reason) {
+        cancel: function(reason) {
             assert_array_equals(reason, [reason1, reason2], 'the cancel reason should be an array containing those from the branches');
             test6.done();
-        })
+        }
     });
 
     var branch = rs.tee();
@@ -230,7 +230,6 @@ test7.step(function() {
     branch1.cancel().catch(test7.step_func(function(e) {
         assert_equals(e, theError, 'branch1.cancel() should reject with the error');
         cancelRejected = true;
-        test7.done();
     }));
     branch2.cancel().catch(test7.step_func(function(e) {
         assert_equals(e, theError, 'branch2.cancel() should reject with the error');

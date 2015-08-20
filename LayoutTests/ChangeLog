@@ -1,3 +1,29 @@
+2015-08-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Sync tests with upstream reference
+        https://bugs.webkit.org/show_bug.cgi?id=148078
+
+        Synced with the upstream reference tests. This means that we moved
+        some of ours to the reference and brought some new ones. Of course
+        expectations were updated accordingly.
+
+        Reviewed by Darin Adler.
+
+        * streams/readable-stream-controller-error-expected.txt: Expectations.
+        * streams/readable-stream-controller-error.html: Changed test descriptions and moved one test to the reference.
+        * streams/readable-stream-gc-expected.txt: Removed.
+        * streams/readable-stream-gc.html: Moved to the reference.
+        * streams/readable-stream-reader-read-expected.txt: Expectations.
+        * streams/readable-stream-reader-read.html: Moved a test to the reference.
+        * streams/reference-implementation/readable-stream-expected.txt:
+        * streams/reference-implementation/readable-stream-reader-expected.txt: Expectations.
+        * streams/reference-implementation/readable-stream-reader.html: Brought changes from upstream reference and
+        uncomented async pull source test (which had been commented since a long time ago and is working now).
+        * streams/reference-implementation/readable-stream-tee.html: Brought changes from upstream reference.
+        * streams/reference-implementation/readable-stream-templated-expected.txt: Expectations.
+        * streams/reference-implementation/readable-stream-templated.html:
+        * streams/reference-implementation/readable-stream.html: Brought changes from upstream reference.
+
 2015-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Select validation does not correctly work when handling change event

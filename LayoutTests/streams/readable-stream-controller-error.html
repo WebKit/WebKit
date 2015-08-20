@@ -2,7 +2,7 @@
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
 <script>
-var test1 = async_test('Erroring a ReadableStream should reject ReadableStreamReader close promise');
+var test1 = async_test('Erroring a ReadableStream after checking closed should reject ReadableStreamReader closed promise');
 test1.step(function() {
     var controller;
     var rs = new ReadableStream({
@@ -22,7 +22,7 @@ test1.step(function() {
     controller.error(rsError);
 });
 
-var test2 = async_test('Erroring a ReadableStream should reject ReadableStreamReader close promise');
+var test2 = async_test('Erroring a ReadableStream before checking closed should reject ReadableStreamReader closed promise');
 test2.step(function() {
     var controller;
     var rs = new ReadableStream({
@@ -42,24 +42,5 @@ test2.step(function() {
         assert_equals(rsError, err);
         test2.done();
     }));
-});
-
-var test3 = async_test('Erroring a ReadableStream without any value');
-test3.step(function() {
-    var controller;
-    var rs = new ReadableStream({
-        start: function(c) {
-            controller = c;
-        }
-    });
-
-    rs.getReader().closed.then(test3.step_func(function() {
-        assert_unreached("closed promise should not be resolved when stream is errored");
-    }), test3.step_func(function(err) {
-        assert_equals(err, undefined);
-        test3.done();
-    }));
-
-    controller.error();
 });
 </script>

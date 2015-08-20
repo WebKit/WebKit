@@ -312,4 +312,23 @@ test(function() {
 
     assert_throws(new TypeError(), function() { rs.getReader(); }, 'old reader should still be locking the stream even after garbage collection');
 }, 'Garbage-collecting a ReadableStreamReader should not unlock its stream');
+
+var test9 = async_test('ReadableStreamReader closed promise should be rejected with undefined if that is the error');
+test9.step(function() {
+    var controller;
+    var rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        }
+    });
+
+    rs.getReader().closed.then(test9.step_func(function() {
+        assert_unreached("closed promise should not be resolved when stream is errored");
+    }), test9.step_func(function(err) {
+        assert_equals(err, undefined, 'passed error should be undefined as it was');
+        test9.done();
+    }));
+
+    controller.error();
+});
 </script>

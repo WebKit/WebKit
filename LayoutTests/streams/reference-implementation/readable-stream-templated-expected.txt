@@ -19,8 +19,16 @@ PASS cancel() should return a distinct fulfilled promise each time
 PASS locked should be false 
 PASS getReader() should be OK 
 PASS should be able to acquire multiple readers, since they are all auto-released 
-PASS Running templatedRSClosedReader with ReadableStream (closed via call in start) reader 
+PASS Running templatedRSClosedReader with ReadableStream reader (closed before getting reader) 
 PASS read() should fulfill with { value: undefined, done: true } 
+PASS read() multiple times should fulfill with { value: undefined, done: true } 
+PASS read() should work when used within another read() fulfill callback 
+PASS closed should fulfill with undefined 
+PASS cancel() should return a distinct fulfilled promise each time 
+PASS Running templatedRSClosedReader with ReadableStream reader (closed after getting reader) 
+PASS read() should fulfill with { value: undefined, done: true } 
+PASS read() multiple times should fulfill with { value: undefined, done: true } 
+PASS read() should work when used within another read() fulfill callback 
 PASS closed should fulfill with undefined 
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS Running templatedRSClosed with ReadableStream (closed via cancel) 
@@ -28,21 +36,32 @@ PASS cancel() should return a distinct fulfilled promise each time
 PASS locked should be false 
 PASS getReader() should be OK 
 PASS should be able to acquire multiple readers, since they are all auto-released 
-PASS Running templatedRSClosedReader with ReadableStream (closed via cancel) reader 
+PASS Running templatedRSClosedReader with ReadableStream reader (closed via cancel after getting reader) 
 PASS read() should fulfill with { value: undefined, done: true } 
+PASS read() multiple times should fulfill with { value: undefined, done: true } 
+PASS read() should work when used within another read() fulfill callback 
 PASS closed should fulfill with undefined 
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS Running templatedRSErrored with ReadableStream (errored via call in start) 
 PASS getReader() should return a reader that acts errored 
+PASS read() twice should give the error each time 
 PASS locked should be false 
 PASS Running templatedRSErroredSyncOnly with ReadableStream (errored via call in start) 
+PASS should be able to obtain a second reader, with the correct closed promise 
 PASS cancel() should return a distinct rejected promise each time 
 PASS reader cancel() should return a distinct rejected promise each time 
 PASS should be able to acquire multiple readers, since they are all auto-released 
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
 PASS getReader() should return a reader that acts errored 
+PASS read() twice should give the error each time 
 PASS locked should be false 
 PASS Running templatedRSErroredReader with ReadableStream (errored via returning a rejected promise in start) reader 
+PASS closed should reject with the error 
+PASS read() should reject with the error 
+PASS Running templatedRSErroredReader with ReadableStream reader (errored before getting reader) 
+PASS closed should reject with the error 
+PASS read() should reject with the error 
+PASS Running templatedRSErroredReader with ReadableStream reader (errored after getting reader) 
 PASS closed should reject with the error 
 PASS read() should reject with the error 
 PASS Running templatedRSTwoChunksOpenReader with ReadableStream (two chunks enqueued, still open) reader 

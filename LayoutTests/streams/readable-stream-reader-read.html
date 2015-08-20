@@ -135,36 +135,17 @@ test4.step(function() {
     controller.error(myError);
  });
 
-var test5 = async_test('Reading within a read promise resolve callback on a stream that gets closed');
+var test5 = async_test('ReadableStream: if start rejects with no parameter, it should error the stream with an undefined error');
 test5.step(function() {
-    var controller;
-    var rs = new ReadableStream({
-        start: function(c) {
-            controller = c;
-        }
-    });
-
-    var reader = rs.getReader();
-
-    reader.read().then(test5.step_func(function() {
-        reader.read().then(test5.step_func(function() {
-            test5.done();
-        }));
-    }));
-    controller.close();
-});
-
-var test6 = async_test('ReadableStream: if start rejects with no parameter, it should error the stream with an undefined error');
-test6.step(function() {
     var rs = new ReadableStream({
         start: function(c) {
             return Promise.reject();
         }
     });
 
-    rs.getReader().read().catch(test6.step_func(function(e) {
+    rs.getReader().read().catch(test5.step_func(function(e) {
         assert_equals(typeof e, "undefined");
-        test6.done();
+        test5.done();
     }));
 });
 

@@ -18,4 +18,5 @@ PASS Cannot use an already-released reader to unlock a stream again
 PASS cancel() on a released reader is a no-op and does not pass through 
 PASS Getting a second reader after erroring the stream should succeed 
 PASS Garbage-collecting a ReadableStreamReader should not unlock its stream 
+PASS ReadableStreamReader closed promise should be rejected with undefined if that is the error 
 

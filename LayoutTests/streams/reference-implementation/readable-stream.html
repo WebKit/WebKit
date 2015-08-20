@@ -2,6 +2,7 @@
 <script src='../../resources/testharness.js'></script>
 <script src='../../resources/testharnessreport.js'></script>
 <script src='resources/streams-utils.js'></script>
+<script src='../../resources/gc.js'></script>
 <script>
 test(function() {
     new ReadableStream(); // ReadableStream constructed with no parameters.
@@ -765,15 +766,76 @@ test19.step(function() {
     }));
 });
 
-// var test20 = async_test('ReadableStream integration test: adapting an async pull source');
-// test20.step(function() {
-//     var rs = sequentialReadableStream(10, { async: true });
+var test20 = async_test('ReadableStream integration test: adapting an async pull source');
+test20.step(function() {
+    var rs = sequentialReadableStream(10, { async: true });
 
-//     readableStreamToArray(rs).then(test20.step_func(function(chunks) {
-//         assert_true(rs.source.closed, 'source should be closed after all chunks are read');
-//         assert_array_equals(chunks, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'the expected 10 chunks should be read');
+    readableStreamToArray(rs).then(test20.step_func(function(chunks) {
+        assert_true(rs.source.closed, 'source should be closed after all chunks are read');
+        assert_array_equals(chunks, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'the expected 10 chunks should be read');
 
-//         test20.done();
-//     }));
-// });
+        test20.done();
+    }));
+});
+
+function garbageCollectAndDo(task)
+{
+    var timeout = 50;
+    if (window.GCController)
+        window.GCController.collect();
+    else if (window.gc)
+        window.gc();
+    else
+        timeout = 400;
+    setTimeout(task, timeout);
+}
+
+var test21 = async_test('ReadableStreamController methods should continue working properly when scripts lose their reference to the readable stream');
+test21.step(function() {
+    var controller;
+    new ReadableStream({
+        start: function(c) {
+            controller = c;
+        }
+    });
+
+    garbageCollectAndDo(test21.step_func(function() {
+        controller.close();
+        assert_throws(new TypeError(), function() { controller.close(); }, 'close should throw a TypeError the second time');
+        assert_throws(new TypeError(), function() { controller.error(); }), 'error should throw a TypeError on a closed stream';
+        test21.done();
+    }));
+});
+
+var test22 = async_test('ReadableStream closed promise should fulfill even if the stream and reader JS references are lost');
+test22.step(function() {
+    var controller;
+    new ReadableStream({
+        start: function(c) {
+            controller = c;
+        }
+    }).getReader().closed.then(test22.step_func(function() {
+        test22.done('closed promise should be fulfilled');
+    }));
+
+    garbageCollectAndDo(test22.step_func(function() {
+        controller.close();
+    }));
+});
+
+var test23 = async_test('ReadableStream closed promise should reject even if stream and reader JS references are lost');
+test23.step(function() {
+    var controller;
+    new ReadableStream({
+        start: function(c) {
+            controller = c;
+        }
+    }).getReader().closed.catch(test23.step_func(function() {
+        test23.done('closed promise should be rejected');
+    }));
+
+    garbageCollectAndDo(test23.step_func(function() {
+        controller.error();
+    }));
+});
 </script>
