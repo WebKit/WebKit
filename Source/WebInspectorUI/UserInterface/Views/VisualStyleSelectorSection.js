@@ -155,11 +155,14 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             }
         }
 
-        if (!this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol])
-            this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = this._nodeStyles.inlineStyle;
+        if (this._nodeStyles.inlineStyle) {
+            if (!this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol])
+                this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = this._nodeStyles.inlineStyle;
 
-        // Inline Style
-        createSelectorItem.call(this, this._nodeStyles.inlineStyle, WebInspector.UIString("This Element"));
+            // Inline Style
+            createSelectorItem.call(this, this._nodeStyles.inlineStyle, WebInspector.UIString("This Element"));
+        } else if (!this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol])
+            this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = this._nodeStyles.matchedRules[0].style;
 
         // Matched Rules
         for (let rule of uniqueOrderedRules(this._nodeStyles.matchedRules)) {
