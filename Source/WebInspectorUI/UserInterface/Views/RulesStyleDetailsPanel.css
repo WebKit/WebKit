@@ -29,6 +29,10 @@
     padding: 0 8px;
 }
 
+.sidebar > .panel.details.css-style .rules .label:first-child {
+    padding-top: 10px;
+}
+
 .sidebar > .panel.details.css-style .rules .label .go-to-link {
     color: inherit !important;
 }
