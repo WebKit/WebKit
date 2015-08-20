@@ -25,6 +25,7 @@
 
 .item.visual-style-selector-item {
     display: flex;
+    align-items: center;
     width: 100%;
     height: 25px;
     padding: 2px 0;
@@ -42,7 +43,6 @@
 }
 
 .item.visual-style-selector-item > input[type="checkbox"] {
-    align-self: center;
     position: relative;
     margin-left: 5px;
 }
@@ -59,7 +59,6 @@ body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-
 }
 
 .item.visual-style-selector-item > .icon {
-    align-self: center;
     width: 16px;
     height: 16px;
     margin-left: 4px;
@@ -96,7 +95,7 @@ body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-
 }
 
 .item.visual-style-selector-item > .titles {
-    align-self: center;
+    flex: 1;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
