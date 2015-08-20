@@ -78,6 +78,10 @@
         "url": "https://drafts.csswg.org/css-will-change/",
         "keywords": ["css willchange", "css will-change"],
         "category": "css"
+        "contact": {
+            "name": "Simon Fraser",
+            "twitter": "@smfr",
+        }
     },
     {
         "name": "DOM",
