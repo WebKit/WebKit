@@ -488,7 +488,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _capturingStarted(event)
     {
-        this._startUpdatingCurrentTime(event.data.startTime);
+        if (!this._updating)
+            this._startUpdatingCurrentTime(event.data.startTime);
     }
 
     _capturingStopped(event)
@@ -502,7 +503,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (WebInspector.replayManager.sessionState === WebInspector.ReplayManager.SessionState.Replaying)
             return;
 
-        this._stopUpdatingCurrentTime();
+        if (this._updating)
+            this._stopUpdatingCurrentTime();
     }
 
     _debuggerResumed(event)
@@ -510,7 +512,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (WebInspector.replayManager.sessionState === WebInspector.ReplayManager.SessionState.Replaying)
             return;
 
-        this._startUpdatingCurrentTime();
+        if (!this._updating)
+            this._startUpdatingCurrentTime();
     }
 
     _recordingTimesUpdated(event)
