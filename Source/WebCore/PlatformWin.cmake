@@ -260,7 +260,7 @@ file(COPY
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
 )
-if (${WTF_PLATFORM_WIN_CAIRO} AND EXISTS ${WEBKIT_LIBRARIES_DIR}/cacert.pem)
+if (WTF_PLATFORM_WIN_CAIRO AND EXISTS ${WEBKIT_LIBRARIES_DIR}/cacert.pem)
     make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates)
     file(COPY
         ${WEBKIT_LIBRARIES_DIR}/cacert.pem
