@@ -1,5 +1,16 @@
 2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Update Copyright in minified / combined output
+        https://bugs.webkit.org/show_bug.cgi?id=148201
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Include copyright comments from missing 2014 and 2015 contributors
+        in the comment in the minified / combined Main.js.
+
+2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught exception in inspector page while handling event DOMStorage.domStorageItemRemoved
         https://bugs.webkit.org/show_bug.cgi?id=148191
 
