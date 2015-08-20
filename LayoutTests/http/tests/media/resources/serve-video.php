@@ -20,7 +20,6 @@
         "supportRanges" => array_key_exists("ranges", $_GET) ? $_GET["ranges"] : "yes",
         "stallOffset" => array_key_exists("stallOffset", $_GET) ? $_GET["stallOffset"] : 0,
         "stallDuration" => array_key_exists("stallDuration", $_GET) ? $_GET["stallDuration"] : 2,
-        "contentDisposition" => array_key_exists("content-disposition", $_GET) ? dirname($_GET["content-disposition"]) : "",
     );
 
     // 500 on errors
@@ -136,8 +135,6 @@ answering:
         header("Content-Length: " . ($end - $start + 1));
     if (isset($contentRange))
         header("Content-Range: bytes " . $start . "-" . $end . "/" . $fileSize);
-    if ($isset["contentDisposition"])
-        header("Content-Disposition: " . $settings["contentDisposition"]);
 
     $offset = $start;
 
