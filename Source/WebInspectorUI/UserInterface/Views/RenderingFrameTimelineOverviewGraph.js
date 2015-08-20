@@ -74,6 +74,25 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         this._framesPerSecondDividerMap.clear();
     }
 
+    recordWasFiltered(record, filtered)
+    {
+        super.recordWasFiltered(record, filtered);
+
+        if (!(record instanceof WebInspector.RenderingFrameTimelineRecord))
+            return;
+
+        record[WebInspector.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol] = filtered;
+
+        // Set filtered style if the frame element is within the visible range.
+        const startIndex = Math.floor(this.startTime);
+        const endIndex = Math.min(Math.floor(this.endTime), this._renderingFrameTimeline.records.length - 1);
+        if (record.frameIndex < startIndex || record.frameIndex > endIndex)
+            return;
+
+        const frameIndex = record.frameIndex - startIndex;
+        this._timelineRecordFrames[frameIndex].filtered = filtered;
+    }
+
     updateLayout()
     {
         super.updateLayout();
@@ -98,6 +117,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
             if (!timelineRecordFrame.element.parentNode)
                 this.element.appendChild(timelineRecordFrame.element);
 
+            timelineRecordFrame.filtered = record[WebInspector.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol] || false;
             ++recordFrameIndex;
         }
 
@@ -245,6 +265,8 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         this.timelineOverview.selectionDuration = 1;
     }
 };
+
+WebInspector.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol = Symbol("rendering-frame-overview-graph-record-was-filtered");
 
 WebInspector.RenderingFrameTimelineOverviewGraph.MaximumGraphHeightSeconds = 0.037;
 WebInspector.RenderingFrameTimelineOverviewGraph.MinimumGraphHeightSeconds = 0.0185;

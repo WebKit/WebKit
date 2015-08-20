@@ -247,6 +247,14 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this.currentTimelineView.filterDidChange();
     }
 
+    recordWasFiltered(record, filtered)
+    {
+        if (!this.currentTimelineView)
+            return;
+
+        this._currentTimelineOverview.recordWasFiltered(this.currentTimelineView.representedObject, record, filtered);
+    }
+
     matchTreeElementAgainstCustomFilters(treeElement)
     {
         if (this.currentTimelineView && !this.currentTimelineView.matchTreeElementAgainstCustomFilters(treeElement))

@@ -279,6 +279,18 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this.scrollStartTime = marker.time - (this.visibleDuration / 2);
     }
 
+    recordWasFiltered(timeline, record, filtered)
+    {
+        console.assert(this.canShowTimeline(timeline), timeline);
+
+        let overviewGraph = this._timelineOverviewGraphsMap.get(timeline);
+        console.assert(overviewGraph, "Missing overview graph for timeline type " + timeline.type);
+        if (!overviewGraph)
+            return;
+
+        overviewGraph.recordWasFiltered(record, filtered);
+    }
+
     selectRecord(timeline, record)
     {
         console.assert(this.canShowTimeline(timeline), timeline);

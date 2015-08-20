@@ -421,6 +421,11 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     // Protected
 
+    representedObjectWasFiltered(representedObject, filtered)
+    {
+        // Implemented by subclasses if needed.
+    }
+
     pruneStaleResourceTreeElements()
     {
         if (this._checkForStaleResourcesTimeoutIdentifier) {
@@ -525,7 +530,11 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         // Update the whole tree.
         var currentTreeElement = this._contentTreeOutline.children[0];
         while (currentTreeElement && !currentTreeElement.root) {
+            const currentTreeElementWasHidden = currentTreeElement.hidden;
             this.applyFiltersToTreeElement(currentTreeElement);
+            if (currentTreeElementWasHidden !== currentTreeElement.hidden)
+                this.representedObjectWasFiltered(currentTreeElement.representedObject, currentTreeElement.hidden);
+
             currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, dontPopulate);
         }
 

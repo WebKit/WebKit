@@ -1,3 +1,41 @@
+2015-08-20  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Filtered frames should be styled differently in the Rendering Frames overview graph
+        https://bugs.webkit.org/show_bug.cgi?id=147421
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.representedObjectWasFiltered):
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        Inform derived sidebar of tree element filter state changes.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.recordWasFiltered):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.updateLayout):
+        Update filtered frame style when a record's state changes, and during layout.
+
+        * UserInterface/Views/TimelineOverview.js:
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph.prototype.recordWasFiltered):
+        Allow setting a record's filtered state for a given timeline in the overview.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame.filtered > .frame):
+        New filtered frame style.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame.prototype.get filtered):
+        (WebInspector.TimelineRecordFrame.prototype.set filtered):
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.recordWasFiltered):
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.representedObjectWasFiltered):
+        (WebInspector.TimelineSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        Apply task filters to RenderingFrameTimelineRecords and their immediate children.
+
 2015-08-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: console assertion when hitting breakpoint after auto-recording ends
