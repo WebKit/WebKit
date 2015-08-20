@@ -88,7 +88,6 @@ inline void Recompiler::visit(JSCell* cell)
 
     ExecState* exec = function->scope()->globalObject()->JSGlobalObject::globalExec();
     executable->clearCode();
-    executable->clearUnlinkedCodeForRecompilation();
     if (m_debugger == function->scope()->globalObject()->debugger())
         m_sourceProviders.add(executable->source().provider(), exec);
 }

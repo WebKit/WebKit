@@ -485,7 +485,6 @@ void VM::deleteAllCode()
     m_codeCache->clear();
     m_regExpCache->deleteAllCode();
     heap.deleteAllCompiledCode();
-    heap.deleteAllUnlinkedFunctionCode();
     heap.reportAbandonedObjectGraph();
 }
 

@@ -936,15 +936,6 @@ void Heap::deleteAllCompiledCode()
     m_codeBlocks.deleteUnmarkedAndUnreferenced(FullCollection);
 }
 
-void Heap::deleteAllUnlinkedFunctionCode()
-{
-    for (ExecutableBase* current : m_compiledCode) {
-        if (!current->isFunctionExecutable())
-            continue;
-        static_cast<FunctionExecutable*>(current)->clearUnlinkedCodeForRecompilation();
-    }
-}
-
 void Heap::clearUnmarkedExecutables()
 {
     GCPHASE(ClearUnmarkedExecutables);
