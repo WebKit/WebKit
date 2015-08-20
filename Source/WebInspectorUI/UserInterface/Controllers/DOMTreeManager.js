@@ -286,14 +286,14 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
 
         delete this._idToDOMNode[node.id];
 
-        for (var i = 0; node.children && i < node.children.length; ++i)
+        for (let i = 0; node.children && i < node.children.length; ++i)
             this._unbind(node.children[i]);
 
-        if (node.templateContent())
-            this._unbind(node.templateContent());
+        let templateContent = node.templateContent();
+        if (templateContent)
+            this._unbind(templateContent);
 
-        var pseudoElements = node.pseudoElements();
-        for (var pseudoElement of pseudoElements)
+        for (let pseudoElement of node.pseudoElements().values())
             this._unbind(pseudoElement);
 
         // FIXME: Handle shadow roots.

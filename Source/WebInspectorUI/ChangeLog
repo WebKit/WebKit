@@ -1,3 +1,18 @@
+2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exceptions regarding PseudoElements / TemplateContent
+        https://bugs.webkit.org/show_bug.cgi?id=148190
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._unbind):
+        Iterate over the values in the map, not the iterator pairs.
+
+        * UserInterface/Models/DOMNode.js:
+        When removing a pseudo element, don't assume this._children
+        exists, it may be null. So separate the two paths.
+
 2015-08-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: long selectors in the visual editor sidebar can overflow

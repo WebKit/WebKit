@@ -529,13 +529,14 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
     _removeChild(node)
     {
         // FIXME: Handle removal if this is a shadow root.
-        if (node.isPseudoElement())
+        if (node.isPseudoElement()) {
             this._pseudoElements.delete(node.pseudoType());
-        else
+            node.parentNode = null;
+        } else {
             this._children.splice(this._children.indexOf(node), 1);
-
-        node.parentNode = null;
-        this._renumber();
+            node.parentNode = null;
+            this._renumber();
+        }
     }
 
     _setChildrenPayload(payloads)
