@@ -33,6 +33,7 @@
 
 #include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -92,6 +93,7 @@ private:
     HashSet<MediaPlayerListener*> m_listeners;
     Lock m_mutexListeners;
 
+    WeakPtrFactory<MediaPlayerPrivateMediaFoundation> m_weakPtrFactory;
     COMPtr<IMFMediaSession> m_mediaSession;
     COMPtr<IMFSourceResolver> m_sourceResolver;
     COMPtr<IMFMediaSource> m_mediaSource;
@@ -111,8 +113,6 @@ private:
 
     void onCreatedMediaSource();
     void onTopologySet();
-    static void onCreatedMediaSourceCallback(void* context);
-    static void onTopologySetCallback(void* context);
 
     LPCWSTR registerVideoWindowClass();
     void createVideoWindow();
