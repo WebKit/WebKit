@@ -90,7 +90,7 @@ WebDownload* WebDownload::createInstance(const URL& url, IWebDownloadDelegate* d
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebDownload::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
+HRESULT WebDownload::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
     if (!ppvObject)
         return E_POINTER;

@@ -85,7 +85,7 @@ ULONG WebURLProtectionSpace::AddRef()
     return ++m_refCount;
 }
 
-ULONG WebURLProtectionSpace::Release(void)
+ULONG WebURLProtectionSpace::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

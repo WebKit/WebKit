@@ -710,7 +710,7 @@ HRESULT AccessibleText::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE AccessibleText::Release(void)
+ULONG AccessibleText::Release()
 {
     ASSERT(m_refCount > 0);
     if (--m_refCount)

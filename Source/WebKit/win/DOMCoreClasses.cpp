@@ -1011,7 +1011,7 @@ HRESULT DOMElement::boundingBox(_Out_ LPRECT rect)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::lineBoxRects(__inout_ecount_full(cRects) RECT* /*rects*/, int cRects)
+HRESULT DOMElement::lineBoxRects(__inout_ecount_full(cRects) RECT* /*rects*/, int cRects)
 {
     return E_NOTIMPL;
 }

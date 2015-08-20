@@ -74,12 +74,12 @@ HRESULT WebJavaScriptCollector::QueryInterface(_In_ REFIID riid, _COM_Outptr_ vo
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebJavaScriptCollector::AddRef()
+ULONG WebJavaScriptCollector::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebJavaScriptCollector::Release(void)
+ULONG WebJavaScriptCollector::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

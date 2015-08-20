@@ -273,7 +273,7 @@ ULONG WebURLResponse::AddRef()
     return ++m_refCount;
 }
 
-ULONG WebURLResponse::Release(void)
+ULONG WebURLResponse::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

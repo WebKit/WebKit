@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2011, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2011, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,12 +103,12 @@ HRESULT WebEditorUndoTarget::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void*
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebEditorUndoTarget::AddRef()
+ULONG WebEditorUndoTarget::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebEditorUndoTarget::Release(void)
+ULONG WebEditorUndoTarget::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -117,9 +117,7 @@ ULONG STDMETHODCALLTYPE WebEditorUndoTarget::Release(void)
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE WebEditorUndoTarget::invoke( 
-    /* [in] */ BSTR /*actionName*/,
-    /* [in] */ IUnknown *obj)
+HRESULT WebEditorUndoTarget::invoke(/* [in] */ BSTR /*actionName*/, /* [in] */ IUnknown *obj)
 {
     IWebUndoCommand* undoCommand = 0;
     if (SUCCEEDED(obj->QueryInterface(IID_IWebUndoCommand, (void**)&undoCommand))) {
@@ -553,12 +551,12 @@ HRESULT WebEditorUndoCommand::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebEditorUndoCommand::AddRef()
+ULONG WebEditorUndoCommand::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebEditorUndoCommand::Release(void)
+ULONG WebEditorUndoCommand::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

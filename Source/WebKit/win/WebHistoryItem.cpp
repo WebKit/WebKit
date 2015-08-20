@@ -371,7 +371,7 @@ HRESULT WebHistoryItem::redirectURLs(_COM_Outptr_opt_ IEnumVARIANT** urls)
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::visitedWithTitle(_In_ BSTR title, BOOL increaseVisitCount)
+HRESULT WebHistoryItem::visitedWithTitle(_In_ BSTR title, BOOL increaseVisitCount)
 {
     return E_NOTIMPL;
 }
@@ -501,7 +501,7 @@ HRESULT WebHistoryItem::alternateTitle(__deref_opt_out BSTR* title)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::icon(__deref_opt_out HBITMAP* hBitmap)
+HRESULT WebHistoryItem::icon(__deref_opt_out HBITMAP* hBitmap)
 {
     ASSERT_NOT_REACHED();
     if (!hBitmap)

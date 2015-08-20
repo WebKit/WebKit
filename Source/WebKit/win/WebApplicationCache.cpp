@@ -86,7 +86,7 @@ ULONG WebApplicationCache::AddRef()
     return ++m_refCount;
 }
 
-ULONG WebApplicationCache::Release(void)
+ULONG WebApplicationCache::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

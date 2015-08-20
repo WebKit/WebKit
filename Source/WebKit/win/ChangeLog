@@ -1,3 +1,33 @@
+2015-08-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Miscellaneous Windows Cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=148240
+
+        Reviewed by Dean Jackson.
+
+        Correct some C++ style issues in the Windows code.
+
+        * AccessibleBase.cpp:
+        * AccessibleTextImpl.cpp:
+        * CFDictionaryPropertyBag.cpp:
+        * DOMCoreClasses.cpp:
+        * DOMEventsClasses.cpp:
+        * MemoryStream.cpp:
+        * MemoryStream.h:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        * WebCoreSupport/WebEditorClient.cpp:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebDownload.cpp:
+        * WebDownloadCurl.cpp:
+        * WebError.cpp:
+        * WebHistoryItem.cpp:
+        * WebJavaScriptCollector.cpp:
+        * WebNotificationCenter.cpp:
+        * WebPreferences.cpp:
+        * WebURLAuthenticationChallengeSenderCurl.cpp:
+        * WebURLCredential.cpp:
+        * WebView.cpp:
+
 2015-08-19  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Build fix after r188662.

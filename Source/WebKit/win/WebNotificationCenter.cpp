@@ -90,12 +90,12 @@ HRESULT WebNotificationCenter::QueryInterface(_In_ REFIID riid, _COM_Outptr_ voi
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebNotificationCenter::AddRef()
+ULONG WebNotificationCenter::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebNotificationCenter::Release()
+ULONG WebNotificationCenter::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

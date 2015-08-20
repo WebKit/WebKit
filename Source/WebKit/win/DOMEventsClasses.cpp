@@ -207,7 +207,7 @@ HRESULT DOMEvent::stopPropagation()
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMEvent::preventDefault()
+HRESULT DOMEvent::preventDefault()
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;

@@ -58,7 +58,7 @@ ULONG WebWorkersPrivate::AddRef()
     return ++m_refCount;
 }
 
-ULONG WebWorkersPrivate::Release(void)
+ULONG WebWorkersPrivate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

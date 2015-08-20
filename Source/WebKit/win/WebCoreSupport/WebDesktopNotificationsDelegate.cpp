@@ -81,12 +81,12 @@ HRESULT NotificationCOMWrapper::QueryInterface(_In_ REFIID riid, _COM_Outptr_ vo
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE NotificationCOMWrapper::AddRef()
+ULONG NotificationCOMWrapper::AddRef()
 { 
     return ++m_refCount; 
 }
 
-ULONG STDMETHODCALLTYPE NotificationCOMWrapper::Release()
+ULONG NotificationCOMWrapper::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -94,49 +94,49 @@ ULONG STDMETHODCALLTYPE NotificationCOMWrapper::Release()
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::isHTML(BOOL* result)
+HRESULT NotificationCOMWrapper::isHTML(BOOL* result)
 {
     *result = m_inner->isHTML();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::contentsURL(BSTR* result)
+HRESULT NotificationCOMWrapper::contentsURL(BSTR* result)
 {
     *result = BString(m_inner->url()).release();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::iconURL(BSTR* result)
+HRESULT NotificationCOMWrapper::iconURL(BSTR* result)
 {
     *result = BString(m_inner->contents().icon()).release();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::title(BSTR* result)
+HRESULT NotificationCOMWrapper::title(BSTR* result)
 {
     *result = BString(m_inner->contents().title()).release();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::text(BSTR* result)
+HRESULT NotificationCOMWrapper::text(BSTR* result)
 {
     *result = BString(m_inner->contents().body()).release();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::notifyDisplay()
+HRESULT NotificationCOMWrapper::notifyDisplay()
 {
     m_inner->dispatchDisplayEvent();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::notifyError()
+HRESULT NotificationCOMWrapper::notifyError()
 {
     m_inner->dispatchErrorEvent();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::notifyClose(BOOL xplicit)
+HRESULT NotificationCOMWrapper::notifyClose(BOOL xplicit)
 {
     m_inner->dispatchCloseEvent();
     return S_OK;

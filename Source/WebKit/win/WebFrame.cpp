@@ -398,7 +398,7 @@ ULONG WebFrame::AddRef()
     return ++m_refCount;
 }
 
-ULONG WebFrame::Release(void)
+ULONG WebFrame::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -783,7 +783,7 @@ public:
         return ++m_refCount;
     }
 
-    virtual ULONG STDMETHODCALLTYPE Release(void)
+    virtual ULONG STDMETHODCALLTYPE Release()
     {
         ULONG newRef = --m_refCount;
         if (!newRef)

@@ -99,7 +99,7 @@ ULONG WebKitClassFactory::AddRef()
     return ++m_refCount;
 }
 
-ULONG WebKitClassFactory::Release(void)
+ULONG WebKitClassFactory::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef && !gLockCount)

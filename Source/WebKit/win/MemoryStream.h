@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,8 +65,7 @@ public:
         /* [in] */ DWORD dwOrigin,
         /* [out] */ ULARGE_INTEGER* plibNewPosition);
     
-    virtual HRESULT STDMETHODCALLTYPE SetSize( 
-        /* [in] */ ULARGE_INTEGER libNewSize);
+    virtual HRESULT STDMETHODCALLTYPE SetSize(ULARGE_INTEGER libNewSize);
     
     virtual /* [local] */ HRESULT STDMETHODCALLTYPE CopyTo( 
         /* [unique][in] */ IStream* pstm,
@@ -74,32 +73,17 @@ public:
         /* [out] */ ULARGE_INTEGER* pcbRead,
         /* [out] */ ULARGE_INTEGER* pcbWritten);
     
-    virtual HRESULT STDMETHODCALLTYPE Commit( 
-        /* [in] */ DWORD grfCommitFlags);
-    
-    virtual HRESULT STDMETHODCALLTYPE Revert( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE LockRegion( 
-        /* [in] */ ULARGE_INTEGER libOffset,
-        /* [in] */ ULARGE_INTEGER cb,
-        /* [in] */ DWORD dwLockType);
-    
-    virtual HRESULT STDMETHODCALLTYPE UnlockRegion( 
-        /* [in] */ ULARGE_INTEGER libOffset,
-        /* [in] */ ULARGE_INTEGER cb,
-        /* [in] */ DWORD dwLockType);
-    
-    virtual HRESULT STDMETHODCALLTYPE Stat( 
-        /* [out] */ STATSTG* pstatstg,
-        /* [in] */ DWORD grfStatFlag);
-    
-    virtual HRESULT STDMETHODCALLTYPE Clone( 
-        /* [out] */ IStream** ppstm);
+    virtual HRESULT STDMETHODCALLTYPE Commit(DWORD grfCommitFlags);
+    virtual HRESULT STDMETHODCALLTYPE Revert();
+    virtual HRESULT STDMETHODCALLTYPE LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType);
+    virtual HRESULT STDMETHODCALLTYPE UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType);
+    virtual HRESULT STDMETHODCALLTYPE Stat(_Out_ STATSTG*, DWORD grfStatFlag);
+    virtual HRESULT STDMETHODCALLTYPE Clone(_COM_Outptr_ IStream** ppstm);
 
 protected:
-    ULONG m_refCount;
     RefPtr<WebCore::SharedBuffer> m_buffer;
-    size_t m_pos;
+    size_t m_pos { 0 };
+    ULONG m_refCount { 0 };
 };
 
 #endif

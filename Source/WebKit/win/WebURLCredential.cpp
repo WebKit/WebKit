@@ -80,12 +80,12 @@ HRESULT WebURLCredential::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** p
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebURLCredential::AddRef()
+ULONG WebURLCredential::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebURLCredential::Release(void)
+ULONG WebURLCredential::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

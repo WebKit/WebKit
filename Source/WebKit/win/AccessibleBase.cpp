@@ -432,7 +432,7 @@ HRESULT AccessibleBase::get_accValue(VARIANT vChild, __deref_opt_out BSTR* value
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDescription(VARIANT vChild, __deref_opt_out BSTR* description)
+HRESULT AccessibleBase::get_accDescription(VARIANT vChild, __deref_opt_out BSTR* description)
 {
     if (!description)
         return E_POINTER;
@@ -451,7 +451,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDescription(VARIANT vChild, __d
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, _Out_ VARIANT* pvRole)
+HRESULT AccessibleBase::get_accRole(VARIANT vChild, _Out_ VARIANT* pvRole)
 {
     if (!pvRole)
         return E_POINTER;
@@ -615,7 +615,7 @@ HRESULT AccessibleBase::get_accKeyboardShortcut(VARIANT vChild, __deref_opt_out 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long selectionFlags, VARIANT vChild)
+HRESULT AccessibleBase::accSelect(long selectionFlags, VARIANT vChild)
 {
     // According to MSDN, these combinations are invalid.
     if (((selectionFlags & (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION)) == (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION))
@@ -669,12 +669,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long selectionFlags, VARIANT
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accSelection(_Out_ VARIANT*)
+HRESULT AccessibleBase::get_accSelection(_Out_ VARIANT*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(_Out_ VARIANT* pvFocusedChild)
+HRESULT AccessibleBase::get_accFocus(_Out_ VARIANT* pvFocusedChild)
 {
     if (!pvFocusedChild)
         return E_POINTER;
@@ -700,7 +700,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(_Out_ VARIANT* pvFocusedC
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDefaultAction(VARIANT vChild, __deref_opt_out BSTR* action)
+HRESULT AccessibleBase::get_accDefaultAction(VARIANT vChild, __deref_opt_out BSTR* action)
 {
     if (!action)
         return E_POINTER;

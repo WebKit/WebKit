@@ -106,7 +106,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMObject::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMObject::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
@@ -478,7 +478,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
@@ -785,7 +785,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
@@ -1162,7 +1162,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
@@ -1549,7 +1549,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
@@ -1926,7 +1926,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
@@ -2345,7 +2345,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
@@ -2733,7 +2733,7 @@ public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMHTMLElement::AddRef(); }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+    virtual ULONG STDMETHODCALLTYPE Release() { return DOMHTMLElement::Release(); }
 
     // IWebScriptObject
     virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)

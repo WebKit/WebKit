@@ -280,7 +280,7 @@ private:
 
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _Outptr_ void**) { return E_FAIL; }
     virtual ULONG STDMETHODCALLTYPE AddRef() { return 0; }
-    virtual ULONG STDMETHODCALLTYPE Release(void) { return 0; }
+    virtual ULONG STDMETHODCALLTYPE Release() { return 0; }
 
 public:
     // IWebNotificationObserver
@@ -2654,7 +2654,7 @@ ULONG WebView::AddRef()
     return ++m_refCount;
 }
 
-ULONG WebView::Release(void)
+ULONG WebView::Release()
 {
     ASSERT(!m_deletionHasBegun);
 
@@ -3243,7 +3243,7 @@ HRESULT WebView::setTextSizeMultiplier(float multiplier)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::setPageSizeMultiplier(float multiplier)
+HRESULT WebView::setPageSizeMultiplier(float multiplier)
 {
     if (!m_mainFrame)
         return E_UNEXPECTED;
@@ -3273,7 +3273,7 @@ HRESULT WebView::textSizeMultiplier(_Out_ float* multiplier)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::pageSizeMultiplier(_Out_ float* multiplier)
+HRESULT WebView::pageSizeMultiplier(_Out_ float* multiplier)
 {
     if (!multiplier)
         return E_POINTER;
@@ -4063,7 +4063,7 @@ HRESULT WebView::canGoForward(_In_opt_ IUnknown* /*sender*/, _Out_ BOOL* result)
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE WebView::goForward(_In_opt_ IUnknown* /*sender*/)
+HRESULT WebView::goForward(_In_opt_ IUnknown* /*sender*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -5455,10 +5455,9 @@ DragOperation WebView::keyStateToDragOperation(DWORD grfKeyState) const
     return operation;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::DragEnter(
-        IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+HRESULT WebView::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
-    m_dragData = 0;
+    m_dragData = nullptr;
 
     if (m_dropTargetHelper)
         m_dropTargetHelper->DragEnter(m_viewWindow, pDataObject, (POINT*)&pt, *pdwEffect);
@@ -5475,8 +5474,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragEnter(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::DragOver(
-        DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+HRESULT WebView::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
     if (m_dropTargetHelper)
         m_dropTargetHelper->DragOver((POINT*)&pt, *pdwEffect);
@@ -5494,7 +5492,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragOver(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::DragLeave()
+HRESULT WebView::DragLeave()
 {
     if (m_dropTargetHelper)
         m_dropTargetHelper->DragLeave();
@@ -5508,8 +5506,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragLeave()
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::Drop(
-        IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+HRESULT WebView::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
     if (m_dropTargetHelper)
         m_dropTargetHelper->Drop(pDataObject, (POINT*)&pt, *pdwEffect);
@@ -5560,7 +5557,7 @@ HRESULT WebView::standardUserAgentWithApplicationName(_In_ BSTR applicationName,
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::clearFocusNode()
+HRESULT WebView::clearFocusNode()
 {
     if (m_page)
         m_page->focusController().setFocusedElement(0, 0);

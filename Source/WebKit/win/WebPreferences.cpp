@@ -541,12 +541,12 @@ HRESULT WebPreferences::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebPreferences::AddRef()
+ULONG WebPreferences::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebPreferences::Release(void)
+ULONG WebPreferences::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)

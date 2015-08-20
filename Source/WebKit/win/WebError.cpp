@@ -69,7 +69,7 @@ WebError* WebError::createInstance()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebError::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
+HRESULT WebError::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
     if (!ppvObject)
         return E_POINTER;
@@ -164,7 +164,7 @@ HRESULT WebError::localizedRecoveryOptions(__deref_opt_out IEnumVARIANT** result
     return E_NOTIMPL;
 }
         
-HRESULT STDMETHODCALLTYPE WebError::localizedRecoverySuggestion(__deref_opt_out BSTR* result)
+HRESULT WebError::localizedRecoverySuggestion(__deref_opt_out BSTR* result)
 {
     ASSERT_NOT_REACHED();
     if (!result)
@@ -173,7 +173,7 @@ HRESULT STDMETHODCALLTYPE WebError::localizedRecoverySuggestion(__deref_opt_out 
     return E_NOTIMPL;
 }
        
-HRESULT STDMETHODCALLTYPE WebError::recoverAttempter(__deref_opt_out IUnknown** result)
+HRESULT WebError::recoverAttempter(__deref_opt_out IUnknown** result)
 {
     ASSERT_NOT_REACHED();
     if (!result)

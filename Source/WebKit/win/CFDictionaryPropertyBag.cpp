@@ -78,12 +78,12 @@ HRESULT CFDictionaryPropertyBag::QueryInterface(_In_ REFIID riid, _COM_Outptr_ v
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE CFDictionaryPropertyBag::AddRef()
+ULONG CFDictionaryPropertyBag::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE CFDictionaryPropertyBag::Release(void)
+ULONG CFDictionaryPropertyBag::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -154,7 +154,7 @@ static bool ConvertVariantToCFType(VARIANT* pVar, void** cfObj)
     return false;
 }
 
-HRESULT STDMETHODCALLTYPE CFDictionaryPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorLog * /*pErrorLog*/)
+HRESULT CFDictionaryPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorLog * /*pErrorLog*/)
 {
     if (!pszPropName)
         return E_POINTER;
@@ -173,7 +173,7 @@ HRESULT STDMETHODCALLTYPE CFDictionaryPropertyBag::Read(LPCOLESTR pszPropName, V
     return E_FAIL;
 }
         
-HRESULT STDMETHODCALLTYPE CFDictionaryPropertyBag::Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT* pVar)
+HRESULT CFDictionaryPropertyBag::Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT* pVar)
 {
     if (!pszPropName || !pVar)
         return E_POINTER;
