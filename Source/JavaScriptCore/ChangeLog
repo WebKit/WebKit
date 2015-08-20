@@ -1,3 +1,103 @@
+2015-08-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add InternalPromise to use Promises safely in the internals
+        https://bugs.webkit.org/show_bug.cgi?id=148136
+
+        Reviewed by Saam Barati.
+
+        This patch implements InternalPromise.
+        It is completely different instance set (constructor, prototype, instance)
+        but it has the same feature to the Promise.
+
+        In the Promise operations, when resolving the promise with the returned promise
+        from the fulfill handler, we need to look up "then" method.
+
+        e.g.
+            var p3 = p1.then(function handler(...) {
+                return p2;
+            });
+
+        When handler is executed, we retrieve the returned `p2` promise. And to resolve
+        the returned promise by "then" method (that is `p3`), we construct the chain by executing
+        `p2.then(resolving function for p3)`. So if the user modify the Promise.prototype.then,
+        we can observe the internal operations.
+
+        By using InternalPromise, we completely hide InternalPromise.prototype from the users.
+        It allows JSC to use Promises internally; even if the user modify / override
+        the Promise.prototype.then function, it does not effect on InternalPromise.
+
+        One limitation is that the implementation need to take care not to leak the InternalPromise instance
+        to the user space.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/InternalPromiseConstructor.js: Added.
+        (internalAll.newResolveElement):
+        (internalAll):
+        * builtins/Operations.Promise.js:
+        (newPromiseDeferred): Deleted.
+        * builtins/PromiseConstructor.js:
+        (privateAll.newResolveElement): Deleted.
+        (privateAll): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::promiseConstructor):
+        (JSC::JSGlobalObject::internalPromiseConstructor):
+        (JSC::JSGlobalObject::newPromiseCapabilityFunction):
+        (JSC::JSGlobalObject::newPromiseDeferredFunction): Deleted.
+        * runtime/JSInternalPromise.cpp: Copied from Source/JavaScriptCore/runtime/JSPromisePrototype.h.
+        (JSC::JSInternalPromise::create):
+        (JSC::JSInternalPromise::createStructure):
+        (JSC::JSInternalPromise::JSInternalPromise):
+        * runtime/JSInternalPromise.h: Copied from Source/JavaScriptCore/runtime/JSPromise.h.
+        * runtime/JSInternalPromiseConstructor.cpp: Added.
+        (JSC::JSInternalPromiseConstructor::create):
+        (JSC::JSInternalPromiseConstructor::createStructure):
+        (JSC::JSInternalPromiseConstructor::JSInternalPromiseConstructor):
+        (JSC::constructPromise):
+        (JSC::JSInternalPromiseConstructor::getConstructData):
+        (JSC::JSInternalPromiseConstructor::getCallData):
+        (JSC::JSInternalPromiseConstructor::getOwnPropertySlot):
+        * runtime/JSInternalPromiseConstructor.h: Copied from Source/JavaScriptCore/runtime/JSPromiseConstructor.h.
+        * runtime/JSInternalPromiseDeferred.cpp: Added.
+        (JSC::JSInternalPromiseDeferred::create):
+        (JSC::JSInternalPromiseDeferred::JSInternalPromiseDeferred):
+        (JSC::JSInternalPromiseDeferred::promise):
+        * runtime/JSInternalPromiseDeferred.h: Copied from Source/JavaScriptCore/runtime/JSPromisePrototype.h.
+        * runtime/JSInternalPromisePrototype.cpp: Copied from Source/JavaScriptCore/runtime/JSPromisePrototype.cpp.
+        (JSC::JSInternalPromisePrototype::create):
+        (JSC::JSInternalPromisePrototype::createStructure):
+        (JSC::JSInternalPromisePrototype::JSInternalPromisePrototype):
+        * runtime/JSInternalPromisePrototype.h: Copied from Source/JavaScriptCore/runtime/JSPromise.h.
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::create):
+        (JSC::JSPromise::JSPromise):
+        (JSC::JSPromise::initialize):
+        * runtime/JSPromise.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::JSPromiseConstructor):
+        (JSC::constructPromise):
+        (JSC::JSPromiseConstructor::getOwnPropertySlot):
+        (JSC::JSPromiseConstructor::finishCreation): Deleted.
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::newPromiseCapability):
+        (JSC::JSPromiseDeferred::create):
+        (JSC::JSPromiseDeferred::JSPromiseDeferred):
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::getOwnPropertySlot):
+        * runtime/JSPromisePrototype.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2015-08-19  Filip Pizlo  <fpizlo@apple.com>
 
         Remove WTF::SpinLock

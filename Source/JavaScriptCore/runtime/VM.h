@@ -297,6 +297,7 @@ public:
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;
     Strong<Structure> promiseDeferredStructure;
+    Strong<Structure> internalPromiseDeferredStructure;
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;
 

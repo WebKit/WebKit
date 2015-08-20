@@ -282,6 +282,7 @@
     macro(Array) \
     macro(String) \
     macro(Promise) \
+    macro(InternalPromise) \
     macro(abs) \
     macro(floor) \
     macro(isFinite) \

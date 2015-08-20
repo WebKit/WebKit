@@ -59,6 +59,7 @@
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSInternalPromiseDeferred.h"
 #include "JSLexicalEnvironment.h"
 #include "JSLock.h"
 #include "JSNotAnObject.h"
@@ -237,6 +238,7 @@ VM::VM(VMType vmType, HeapType heapType)
     functionRareDataStructure.set(*this, FunctionRareData::createStructure(*this, 0, jsNull()));
     exceptionStructure.set(*this, Exception::createStructure(*this, 0, jsNull()));
     promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
+    internalPromiseDeferredStructure.set(*this, JSInternalPromiseDeferred::createStructure(*this, 0, jsNull()));
     iterationTerminator.set(*this, JSFinalObject::create(*this, JSFinalObject::createStructure(*this, 0, jsNull(), 1)));
     smallStrings.initializeCommonStrings(*this);
 

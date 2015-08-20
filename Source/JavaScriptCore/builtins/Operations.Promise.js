@@ -40,13 +40,6 @@ function newPromiseReaction(capability, handler)
     };
 }
 
-function newPromiseDeferred()
-{
-    "use strict";
-
-    return @newPromiseCapability(@Promise);
-}
-
 function newPromiseCapability(constructor)
 {
     "use strict";

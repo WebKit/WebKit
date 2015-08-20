@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromise_h
-#define JSPromise_h
+#ifndef JSInternalPromiseDeferred_h
+#define JSInternalPromiseDeferred_h
 
-#include "JSObject.h"
+#include "JSPromiseDeferred.h"
 
 namespace JSC {
 
-class JSPromise : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
+class JSInternalPromise;
 
-    static JSPromise* create(VM&, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+class JSInternalPromiseDeferred final : public JSPromiseDeferred {
+public:
+    typedef JSPromiseDeferred Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    JS_EXPORT_PRIVATE static JSInternalPromiseDeferred* create(ExecState*, JSGlobalObject*);
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+    }
 
     DECLARE_EXPORT_INFO;
 
-    enum class Status : unsigned {
-        Pending = 1,
-        Fulfilled,
-        Rejected
-    };
+    JS_EXPORT_PRIVATE JSInternalPromise* promise() const;
 
-    Status status(VM&) const;
-    JSValue result(VM&) const;
-
-    // Initialize the promise with the executor.
-    // This may raise a JS exception.
-    void initialize(ExecState*, JSGlobalObject*, JSValue executor);
-
-protected:
-    JSPromise(VM&, Structure*);
-    void finishCreation(VM&);
+private:
+    JSInternalPromiseDeferred(VM&);
 };
 
 } // namespace JSC
 
-#endif // JSPromise_h
+#endif // JSInternalPromiseDeferred_h

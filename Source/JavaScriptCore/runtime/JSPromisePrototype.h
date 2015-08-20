@@ -40,12 +40,11 @@ public:
 
     DECLARE_INFO;
 
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+
 protected:
     void finishCreation(VM&, Structure*);
-
-private:
     JSPromisePrototype(VM&, Structure*);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC

@@ -775,6 +775,10 @@
     <ClCompile Include="..\runtime\JSFunction.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObject.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObjectFunctions.cpp" />
+    <ClCompile Include="..\runtime\JSInternalPromise.cpp" />
+    <ClCompile Include="..\runtime\JSInternalPromiseConstructor.cpp" />
+    <ClCompile Include="..\runtime\JSInternalPromiseDeferred.cpp" />
+    <ClCompile Include="..\runtime\JSInternalPromisePrototype.cpp" />
     <ClCompile Include="..\runtime\JSJob.cpp" />
     <ClCompile Include="..\runtime\JSLock.cpp" />
     <ClCompile Include="..\runtime\JSMap.cpp" />
@@ -917,6 +921,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorProtocolObjects.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSInternalPromiseConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSONObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromiseConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromisePrototype.lut.h" />
@@ -1620,6 +1625,10 @@
     <ClInclude Include="..\runtime\JSInt16Array.h" />
     <ClInclude Include="..\runtime\JSInt32Array.h" />
     <ClInclude Include="..\runtime\JSInt8Array.h" />
+    <ClInclude Include="..\runtime\JSInternalPromise.h" />
+    <ClInclude Include="..\runtime\JSInternalPromiseConstructor.h" />
+    <ClInclude Include="..\runtime\JSInternalPromiseDeferred.h" />
+    <ClInclude Include="..\runtime\JSInternalPromisePrototype.h" />
     <ClInclude Include="..\runtime\JSLock.h" />
     <ClInclude Include="..\runtime\JSMap.h" />
     <ClInclude Include="..\runtime\JSMapIterator.h" />

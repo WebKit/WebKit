@@ -116,6 +116,7 @@ struct HashTable;
 
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
     FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
+    macro(JSInternalPromise, internalPromise, internalPromise, JSInternalPromise, InternalPromise) \
 
 #define DECLARE_SIMPLE_BUILTIN_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     class JS ## capitalName; \
@@ -185,6 +186,8 @@ protected:
     WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
     WriteBarrier<NativeErrorConstructor> m_URIErrorConstructor;
     WriteBarrier<ObjectConstructor> m_objectConstructor;
+    WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
+    WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -197,7 +200,7 @@ protected:
     WriteBarrier<JSFunction> m_definePropertyFunction;
     WriteBarrier<JSFunction> m_arrayProtoValuesFunction;
     WriteBarrier<JSFunction> m_initializePromiseFunction;
-    WriteBarrier<JSFunction> m_newPromiseDeferredFunction;
+    WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
     WriteBarrier<GetterSetter> m_throwTypeErrorGetterSetter;
 
     WriteBarrier<ObjectPrototype> m_objectPrototype;
@@ -379,6 +382,8 @@ public:
 
     ErrorConstructor* errorConstructor() const { return m_errorConstructor.get(); }
     ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
+    JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
+    JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
     NativeErrorConstructor* evalErrorConstructor() const { return m_evalErrorConstructor.get(); }
     NativeErrorConstructor* rangeErrorConstructor() const { return m_rangeErrorConstructor.get(); }
     NativeErrorConstructor* referenceErrorConstructor() const { return m_referenceErrorConstructor.get(); }
@@ -397,7 +402,7 @@ public:
     JSFunction* definePropertyFunction() const { return m_definePropertyFunction.get(); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(); }
     JSFunction* initializePromiseFunction() const { return m_initializePromiseFunction.get(); }
-    JSFunction* newPromiseDeferredFunction() const { return m_newPromiseDeferredFunction.get(); }
+    JSFunction* newPromiseCapabilityFunction() const { return m_newPromiseCapabilityFunction.get(); }
     GetterSetter* throwTypeErrorGetterSetter(VM& vm)
     {
         if (!m_throwTypeErrorGetterSetter)

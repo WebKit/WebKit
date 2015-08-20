@@ -43,14 +43,15 @@ public:
 
     DECLARE_INFO;
 
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+
 protected:
+    JSPromiseConstructor(VM&, Structure*);
     void finishCreation(VM&, JSPromisePrototype*);
 
 private:
-    JSPromiseConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC

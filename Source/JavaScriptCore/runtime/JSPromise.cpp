@@ -38,9 +38,9 @@ namespace JSC {
 
 const ClassInfo JSPromise::s_info = { "Promise", &Base::s_info, 0, CREATE_METHOD_TABLE(JSPromise) };
 
-JSPromise* JSPromise::create(VM& vm, JSGlobalObject* globalObject)
+JSPromise* JSPromise::create(VM& vm, Structure* structure)
 {
-    JSPromise* promise = new (NotNull, allocateCell<JSPromise>(vm.heap)) JSPromise(vm, globalObject->promiseStructure());
+    JSPromise* promise = new (NotNull, allocateCell<JSPromise>(vm.heap)) JSPromise(vm, structure);
     promise->finishCreation(vm);
     return promise;
 }
@@ -51,7 +51,7 @@ Structure* JSPromise::createStructure(VM& vm, JSGlobalObject* globalObject, JSVa
 }
 
 JSPromise::JSPromise(VM& vm, Structure* structure)
-    : JSNonFinalObject(vm, structure)
+    : Base(vm, structure)
 {
 }
 
@@ -62,6 +62,18 @@ void JSPromise::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->promiseFulfillReactionsPrivateName, jsUndefined());
     putDirect(vm, vm.propertyNames->promiseRejectReactionsPrivateName, jsUndefined());
     putDirect(vm, vm.propertyNames->promiseResultPrivateName, jsUndefined());
+}
+
+void JSPromise::initialize(ExecState* exec, JSGlobalObject* globalObject, JSValue executor)
+{
+    JSFunction* initializePromise = globalObject->initializePromiseFunction();
+    CallData callData;
+    CallType callType = JSC::getCallData(initializePromise, callData);
+    ASSERT(callType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(executor);
+    call(exec, initializePromise, callType, callData, this, arguments);
 }
 
 auto JSPromise::status(VM& vm) const -> Status

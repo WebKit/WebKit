@@ -31,7 +31,9 @@
 
 namespace JSC {
 
-class JSPromiseDeferred final : public JSCell {
+class JSPromiseConstructor;
+
+class JSPromiseDeferred : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
@@ -53,15 +55,20 @@ public:
     JS_EXPORT_PRIVATE void resolve(ExecState*, JSValue);
     JS_EXPORT_PRIVATE void reject(ExecState*, JSValue);
 
-private:
-    JSPromiseDeferred(VM&);
+protected:
+    JSPromiseDeferred(VM&, Structure*);
     void finishCreation(VM&, JSObject*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+private:
+    JSPromiseDeferred(VM&);
 
     WriteBarrier<JSObject> m_promise;
     WriteBarrier<Unknown> m_resolve;
     WriteBarrier<Unknown> m_reject;
 };
+
+JSValue newPromiseCapability(ExecState*, JSGlobalObject*, JSPromiseConstructor*);
 
 } // namespace JSC
 

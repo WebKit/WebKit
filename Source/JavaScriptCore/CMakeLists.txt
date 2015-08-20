@@ -524,6 +524,10 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectDebuggable.cpp
     runtime/JSGlobalObjectFunctions.cpp
+    runtime/JSInternalPromise.cpp
+    runtime/JSInternalPromiseConstructor.cpp
+    runtime/JSInternalPromiseDeferred.cpp
+    runtime/JSInternalPromisePrototype.cpp
     runtime/JSJob.cpp
     runtime/JSLexicalEnvironment.cpp
     runtime/JSLock.cpp
@@ -652,6 +656,7 @@ set(JavaScriptCore_LUT_FILES
     runtime/IntlNumberFormatPrototype.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSGlobalObject.cpp
+    runtime/JSInternalPromiseConstructor.cpp
     runtime/JSONObject.cpp
     runtime/JSPromiseConstructor.cpp
     runtime/JSPromisePrototype.cpp

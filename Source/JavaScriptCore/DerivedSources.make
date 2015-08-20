@@ -51,6 +51,7 @@ all : \
     JSDataViewPrototype.lut.h \
     JSONObject.lut.h \
     JSGlobalObject.lut.h \
+    JSInternalPromiseConstructor.lut.h \
     JSPromisePrototype.lut.h \
     JSPromiseConstructor.lut.h \
     KeywordLookup.h \

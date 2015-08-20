@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromise_h
-#define JSPromise_h
+#ifndef JSInternalPromisePrototype_h
+#define JSInternalPromisePrototype_h
 
-#include "JSObject.h"
+#include "JSPromisePrototype.h"
 
 namespace JSC {
 
-class JSPromise : public JSNonFinalObject {
+class JSInternalPromisePrototype : public JSPromisePrototype {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSPromisePrototype Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
-    static JSPromise* create(VM&, Structure*);
+    static JSInternalPromisePrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    DECLARE_EXPORT_INFO;
+    DECLARE_INFO;
 
-    enum class Status : unsigned {
-        Pending = 1,
-        Fulfilled,
-        Rejected
-    };
-
-    Status status(VM&) const;
-    JSValue result(VM&) const;
-
-    // Initialize the promise with the executor.
-    // This may raise a JS exception.
-    void initialize(ExecState*, JSGlobalObject*, JSValue executor);
-
-protected:
-    JSPromise(VM&, Structure*);
-    void finishCreation(VM&);
+private:
+    JSInternalPromisePrototype(VM&, Structure*);
 };
 
 } // namespace JSC
 
-#endif // JSPromise_h
+#endif // JSInternalPromisePrototype_h

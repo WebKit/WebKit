@@ -49,7 +49,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseConstructor);
 
 namespace JSC {
 
-const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::s_info, &promiseConstructorTable, CREATE_METHOD_TABLE(JSPromiseConstructor) };
+const ClassInfo JSPromiseConstructor::s_info = { "Function", &Base::s_info, &promiseConstructorTable, CREATE_METHOD_TABLE(JSPromiseConstructor) };
 
 /* Source for JSPromiseConstructor.lut.h
 @begin promiseConstructorTable
@@ -73,7 +73,7 @@ Structure* JSPromiseConstructor::createStructure(VM& vm, JSGlobalObject* globalO
 }
 
 JSPromiseConstructor::JSPromiseConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : Base(vm, structure)
 {
 }
 
@@ -82,24 +82,15 @@ void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePro
     Base::finishCreation(vm, ASCIILiteral("Promise"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, promisePrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-    putDirectBuiltinFunctionWithoutTransition(vm, globalObject(), vm.propertyNames->builtinNames().allPrivateName(), promiseConstructorPrivateAllCodeGenerator(vm), ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 {
-    VM& vm = exec->vm();
     JSGlobalObject* globalObject = exec->callee()->globalObject();
+    VM& vm = exec->vm();
 
-    JSPromise* promise = JSPromise::create(vm, globalObject);
-
-    JSFunction* initializePromise = globalObject->initializePromiseFunction();
-    CallData callData;
-    CallType callType = getCallData(initializePromise, callData);
-    ASSERT(callType != CallTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(exec->argument(0));
-    call(exec, initializePromise, callType, callData, promise, arguments);
+    JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+    promise->initialize(exec, globalObject, exec->argument(0));
 
     return JSValue::encode(promise);
 }
@@ -118,7 +109,7 @@ CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
 
 bool JSPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, promiseConstructorTable, jsCast<JSPromiseConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<Base>(exec, promiseConstructorTable, jsCast<JSPromiseConstructor*>(object), propertyName, slot);
 }
 
 } // namespace JSC

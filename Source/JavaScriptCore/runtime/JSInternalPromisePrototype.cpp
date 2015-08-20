@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,61 +24,38 @@
  */
 
 #include "config.h"
-#include "JSPromisePrototype.h"
+#include "JSInternalPromisePrototype.h"
 
 #include "Error.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
-#include "JSPromise.h"
+#include "JSInternalPromise.h"
 #include "Microtask.h"
 #include "StructureInlines.h"
 
 namespace JSC {
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromisePrototype);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSInternalPromisePrototype);
 
-}
+const ClassInfo JSInternalPromisePrototype::s_info = { "InternalPromisePrototype", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSInternalPromisePrototype) };
 
-#include "JSPromisePrototype.lut.h"
-
-namespace JSC {
-
-const ClassInfo JSPromisePrototype::s_info = { "PromisePrototype", &Base::s_info, &promisePrototypeTable, CREATE_METHOD_TABLE(JSPromisePrototype) };
-
-/* Source for JSPromisePrototype.lut.h
-@begin promisePrototypeTable
-  then         JSPromisePrototypeFuncThen             DontEnum|Function 2
-  catch        JSPromisePrototypeFuncCatch            DontEnum|Function 1
-@end
-*/
-
-JSPromisePrototype* JSPromisePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+JSInternalPromisePrototype* JSInternalPromisePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
-    JSPromisePrototype* object = new (NotNull, allocateCell<JSPromisePrototype>(vm.heap)) JSPromisePrototype(vm, structure);
+    JSInternalPromisePrototype* object = new (NotNull, allocateCell<JSInternalPromisePrototype>(vm.heap)) JSInternalPromisePrototype(vm, structure);
     object->finishCreation(vm, structure);
     return object;
 }
 
-Structure* JSPromisePrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+Structure* JSInternalPromisePrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSPromisePrototype::JSPromisePrototype(VM& vm, Structure* structure)
-    : JSNonFinalObject(vm, structure)
+JSInternalPromisePrototype::JSInternalPromisePrototype(VM& vm, Structure* structure)
+    : Base(vm, structure)
 {
-}
-
-void JSPromisePrototype::finishCreation(VM& vm, Structure*)
-{
-    Base::finishCreation(vm);
-}
-
-bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<Base>(exec, promisePrototypeTable, jsCast<JSPromisePrototype*>(object), propertyName, slot);
 }
 
 } // namespace JSC
