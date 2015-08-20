@@ -6688,7 +6688,7 @@ HRESULT WebView::removeAllUserContentFromGroup(_In_ BSTR groupName)
     return E_NOTIMPL;
 }
 
-HRESULT WebView::invalidateBackingStore(_In_opt_ const RECT* rect)
+HRESULT WebView::invalidateBackingStore(_In_ const RECT* rect)
 {
     if (!IsWindow(m_viewWindow))
         return S_OK;

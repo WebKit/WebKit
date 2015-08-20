@@ -205,7 +205,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT unused2();
 
     // If rect is 0, the entire backing store will be invalidated.
-    HRESULT invalidateBackingStore([in, optional] const RECT* rect);
+    HRESULT invalidateBackingStore([in] const RECT* rect);
 
     // Whitelists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
     // - destinationProtocol: The protocol to grant access to.
