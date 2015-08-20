@@ -308,7 +308,7 @@ bool InspectorFrontendHost::isUnderTest()
 void InspectorFrontendHost::unbufferedLog(const String& message)
 {
     // This is used only for debugging inspector tests.
-    WTFLogAlways("InspectorTest: %s", message.utf8().data());
+    WTFLogAlways("%s", message.utf8().data());
 }
 
 void InspectorFrontendHost::beep()

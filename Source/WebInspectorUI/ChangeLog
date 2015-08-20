@@ -1,3 +1,40 @@
+2015-08-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add TestHarness option to tee all commands to system console
+        https://bugs.webkit.org/show_bug.cgi?id=148181
+
+        Reviewed by Joseph Pecoraro.
+
+        It is currently difficult to trace what's going on when a test times out
+        on a buildbot instance. The existing option for forcing debug logging can
+        still drop messages that don't make it from the inspector to the test page.
+
+        This patch adds an option which logs all TestHarness commands directly to
+        stderr in the Inspector instance using InspectorFrontendHost::unbufferedLog.
+
+        Clean up how existing harness logging code calls into each other. Extract
+        the stringifying code that is duplicated everywhere.
+
+        * UserInterface/Test.html: Reorganize options and add new option.
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.completeTest):
+        (FrontendTestHarness.prototype.addResult):
+        (FrontendTestHarness.prototype.debugLog):
+        (FrontendTestHarness.prototype.testPageDidLoad):
+        (FrontendTestHarness.prototype._resendResults):
+        (FrontendTestHarness):
+        * UserInterface/Test/ProtocolTestHarness.js:
+        (ProtocolTestHarness.prototype.completeTest):
+        (ProtocolTestHarness.prototype.addResult):
+        (ProtocolTestHarness.prototype.debugLog):
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.log):
+        (TestHarness.prototype.assert):
+        (TestHarness.prototype.expectThat):
+        (TestHarness.messageAsString):
+        (TestHarness):
+        * UserInterface/TestStub.html: Reorganize options and add new option.
+
 2015-08-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused temporary variable

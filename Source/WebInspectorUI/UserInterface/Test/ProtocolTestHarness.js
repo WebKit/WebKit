@@ -29,20 +29,31 @@ ProtocolTestHarness = class ProtocolTestHarness extends TestHarness
 
     completeTest()
     {
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog("completeTest()");
+
         this.evaluateInPage("TestPage.closeTest();");
     }
 
     addResult(message)
     {
+        let stringifiedMessage = TestHarness.messageAsString(message);
+
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog(stringifiedMessage);
+
         // Unfortunately, every string argument must be escaped because tests are not consistent
         // with respect to escaping with single or double quotes. Some exceptions use single quotes.
-        let stringifiedMessage = typeof message !== "string" ? JSON.stringify(message) : message;
         this.evaluateInPage(`TestPage.log(unescape("${escape(stringifiedMessage)}"));`);
     }
 
     debugLog(message)
     {
-        let stringifiedMessage = typeof message !== "string" ? JSON.stringify(message) : message;
+        let stringifiedMessage = TestHarness.messageAsString(message);
+
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog(stringifiedMessage);
+
         this.evaluateInPage(`TestPage.debugLog(unescape("${escape(stringifiedMessage)}"));`);
     }
 

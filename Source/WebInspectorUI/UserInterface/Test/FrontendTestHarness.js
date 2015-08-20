@@ -37,8 +37,8 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
     completeTest()
     {
-        if (this.forceSyncDebugLogging)
-            InspectorFrontendHost.unbufferedLog("FrontendTestHarness.completeTest()");
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog("completeTest()");
 
         // Wait for results to be resent before requesting completeTest(). Otherwise, messages will be
         // queued after pending dispatches run to zero and the test page will quit before processing them.
@@ -52,18 +52,25 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
     addResult(message)
     {
-        this._results.push(message);
+        let stringifiedMessage = TestHarness.messageAsString(message);
 
-        if (this.forceSyncDebugLogging)
-            InspectorFrontendHost.unbufferedLog("addResult: " + message);
+        // Save the stringified message, since message may be a DOM element that won't survive reload.
+        this._results.push(stringifiedMessage);
+
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog(stringifiedMessage);
 
         if (!this._testPageIsReloading)
-            this.evaluateInPage(`TestPage.addResult(unescape("${escape(message)}"))`);
+            this.evaluateInPage(`TestPage.addResult(unescape("${escape(stringifiedMessage)}"))`);
     }
 
     debugLog(message)
     {
-        let stringifiedMessage = typeof message !== "string" ? JSON.stringify(message) : message;
+        let stringifiedMessage = TestHarness.messageAsString(message);
+
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog(stringifiedMessage);
+
         this.evaluateInPage(`TestPage.debugLog(unescape("${escape(stringifiedMessage)}"));`);
     }
 
@@ -92,6 +99,9 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
     testPageDidLoad()
     {
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog("testPageDidLoad()");
+
         this._testPageIsReloading = false;
         this._resendResults();
 
@@ -162,6 +172,9 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
     {
         console.assert(this._shouldResendResults);
         this._shouldResendResults = false;
+
+        if (this.dumpActivityToSystemConsole)
+            InspectorFrontendHost.unbufferedLog("_resendResults()");
 
         for (let result of this._results)
             this.evaluateInPage(`TestPage.addResult(unescape("${escape(result)}"))`);

@@ -147,12 +147,14 @@
     <script type="text/javascript">
         WebInspector.loaded();
 
-        // Not reliable unless console messages are dumped to stderr.
-        // See wiki for details <https://http://trac.webkit.org/wiki/WebInspectorDebugging>.
-        InspectorBackend.dumpInspectorProtocolMessages = false;
+        // Debug logging is synchronous on the test page.
+        InspectorTest.forceDebugLogging = false;
 
-        // Synchronous logging may produce more output prior to a timeout.
-        InspectorTest.forceSyncDebugLogging = false;
+        // Tee all TestHarness commands to stderr from within the Inspector.
+        InspectorTest.dumpActivityToSystemConsole = false;
+
+        // Best used in combination with dumpActivityToSystemConsole.
+        InspectorBackend.dumpInspectorProtocolMessages = false;
     </script>
 </head>
 <body>

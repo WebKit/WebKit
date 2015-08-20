@@ -71,7 +71,7 @@ TestHarness = class TestHarness extends WebInspector.Object
     {
         ++this._logCount;
 
-        if (this.forceSyncDebugLogging)
+        if (this.forceDebugLogging)
             this.debugLog(message);
         else
             this.addResult(message);
@@ -82,14 +82,24 @@ TestHarness = class TestHarness extends WebInspector.Object
         if (condition)
             return;
 
-        let stringifiedMessage = typeof message !== "object" ? message : JSON.stringify(message);
-        this.addResult("ASSERT: " + stringifiedMessage);
+        let stringifiedMessage = TestHarness.messageAsString(message);
+        this.log("ASSERT: " + stringifiedMessage);
     }
 
     expectThat(condition, message)
     {
         let prefix = condition ? "PASS" : "FAIL";
-        let stringifiedMessage = typeof message !== "object" ? message : JSON.stringify(message);
-        this.addResult(`${prefix}: ${stringifiedMessage}`);
+        let stringifiedMessage = TestHarness.messageAsString(message);
+        this.log(`${prefix}: ${stringifiedMessage}`);
+    }
+
+    // Protected
+
+    static messageAsString(message)
+    {
+        if (message instanceof Element)
+            return message.textContent;
+        
+        return (typeof message !== "string") ? JSON.stringify(message) : message;
     }
 };
