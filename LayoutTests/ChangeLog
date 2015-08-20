@@ -1,3 +1,16 @@
+2015-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Select validation does not correctly work when handling change event
+        https://bugs.webkit.org/show_bug.cgi?id=145869
+
+        Reviewed by Dean Jackson.
+
+        Tests that checkValidity() returns correct results from within the onchange handler of a
+        <select> when the validity of the selected option changes.
+
+        * fast/forms/onchange-select-check-validity-expected.txt: Added.
+        * fast/forms/onchange-select-check-validity.html: Added.
+
 2015-08-19  Jinyoung Hur  <hur.ims@navercorp.com>
 
         GraphicsContext3D::activeTexture should not be called with zero-based index
