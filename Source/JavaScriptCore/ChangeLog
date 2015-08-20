@@ -1,3 +1,64 @@
+2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce put_by_id like IC into put_by_val when the given name is String or Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=147760
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds put_by_id IC to put_by_val by caching the one candidate id,
+        it is the same thing to the get_by_val IC extension.
+        It will encourage the use of ES6 Symbols and ES6 computed properties in the object literals.
+
+        In this patch, we leverage the existing CheckIdent and PutById / PutByVal in DFG,
+        so this patch does not change FTL because the above operations are already supported in FTL.
+
+        And this patch also includes refactoring to leverage byValInfo->slowPathCount in the cached Id path.
+
+        Performance results report there's no regression in the existing tests. And in the synthetic
+        benchmarks created by modifying put-by-id to put-by-val, we can see significant performance
+        improvements up to 13.9x.
+
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdStatus.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JIT.h:
+        (JSC::JIT::compilePutByValWithCachedId):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        (JSC::tryGetByValOptimize):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitIdentifierCheck):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * tests/stress/put-by-val-with-string-break.js: Added.
+        (shouldBe):
+        (assign):
+        * tests/stress/put-by-val-with-string-generated.js: Added.
+        (shouldBe):
+        (gen1):
+        (gen2):
+        (assign):
+        * tests/stress/put-by-val-with-string-generic.js: Added.
+        (shouldBe):
+        (assign):
+        * tests/stress/put-by-val-with-symbol-break.js: Added.
+        (shouldBe):
+        (assign):
+        * tests/stress/put-by-val-with-symbol-generic.js: Added.
+        (shouldBe):
+        (assign):
+
 2015-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CMake build after r188673

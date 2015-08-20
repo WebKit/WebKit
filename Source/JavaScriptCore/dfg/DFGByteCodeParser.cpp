@@ -3431,18 +3431,40 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_val_direct:
         case op_put_by_val: {
             Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
-
-            ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Write);
-            
             Node* property = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* value = get(VirtualRegister(currentInstruction[3].u.operand));
-            
-            addVarArgChild(base);
-            addVarArgChild(property);
-            addVarArgChild(value);
-            addVarArgChild(0); // Leave room for property storage.
-            addVarArgChild(0); // Leave room for length.
-            addToGraph(Node::VarArg, opcodeID == op_put_by_val_direct ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(0));
+            bool isDirect = opcodeID == op_put_by_val_direct;
+            bool compiledAsPutById = false;
+            {
+                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
+                // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
+                // At that time, there is no information.
+                if (byValInfo && byValInfo->stubInfo && !byValInfo->tookSlowPath && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)) {
+                    compiledAsPutById = true;
+                    unsigned identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
+                    UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+
+                    addToGraph(CheckIdent, OpInfo(uid), property);
+
+                    PutByIdStatus putByIdStatus = PutByIdStatus::computeForStubInfo(
+                        locker, m_inlineStackTop->m_profiledBlock,
+                        byValInfo->stubInfo, currentCodeOrigin(), uid);
+
+                    handlePutById(base, identifierNumber, value, putByIdStatus, isDirect);
+                }
+            }
+
+            if (!compiledAsPutById) {
+                ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Write);
+
+                addVarArgChild(base);
+                addVarArgChild(property);
+                addVarArgChild(value);
+                addVarArgChild(0); // Leave room for property storage.
+                addVarArgChild(0); // Leave room for length.
+                addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(0));
+            }
 
             NEXT_OPCODE(op_put_by_val);
         }

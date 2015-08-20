@@ -265,8 +265,8 @@ void JIT_OPERATION operationPutByIdNonStrictBuildList(ExecState*, StructureStubI
 void JIT_OPERATION operationPutByIdDirectStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState*, JSObject*, Structure*, PropertyOffset, EncodedJSValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByVal(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
-void JIT_OPERATION operationDirectPutByVal(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValOptimize(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
+void JIT_OPERATION operationDirectPutByValOptimize(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
 void JIT_OPERATION operationDirectPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCallEval(ExecState*, ExecState*) WTF_INTERNAL;

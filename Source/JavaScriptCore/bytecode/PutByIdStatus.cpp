@@ -134,6 +134,13 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 }
 
 #if ENABLE(JIT)
+PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locker, CodeBlock* baselineBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+{
+    return computeForStubInfo(
+        locker, baselineBlock, stubInfo, uid,
+        CallLinkStatus::computeExitSiteData(locker, baselineBlock, codeOrigin.bytecodeIndex));
+}
+
 PutByIdStatus PutByIdStatus::computeForStubInfo(
     const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
     UniquedStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)

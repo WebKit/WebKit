@@ -233,6 +233,13 @@ namespace JSC {
             jit.privateCompilePutByVal(byValInfo, returnAddress, arrayMode);
         }
 
+        static void compilePutByValWithCachedId(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, PutKind putKind, const Identifier& propertyName)
+        {
+            JIT jit(vm, codeBlock);
+            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.privateCompilePutByValWithCachedId(byValInfo, returnAddress, putKind, propertyName);
+        }
+
         static void compileHasIndexedProperty(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
@@ -263,6 +270,7 @@ namespace JSC {
         void privateCompileGetByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
         void privateCompileGetByValWithCachedId(ByValInfo*, ReturnAddressPtr, const Identifier&);
         void privateCompilePutByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
+        void privateCompilePutByValWithCachedId(ByValInfo*, ReturnAddressPtr, PutKind, const Identifier&);
 
         void privateCompileHasIndexedProperty(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
@@ -367,7 +375,7 @@ namespace JSC {
         JumpList emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badType, TypedArrayType);
         JumpList emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badType, TypedArrayType);
         
-        // Property is in regT0, base is in regT0. regT2 contains indecing type.
+        // Property is in regT1, base is in regT0. regT2 contains indecing type.
         // The value to store is not yet loaded. Property is int-checked and
         // zero-extended. Base is cell checked. Structure is already profiled.
         // returns the slow cases.
@@ -388,7 +396,11 @@ namespace JSC {
         JumpList emitIntTypedArrayPutByVal(Instruction*, PatchableJump& badType, TypedArrayType);
         JumpList emitFloatTypedArrayPutByVal(Instruction*, PatchableJump& badType, TypedArrayType);
 
+        // Identifier check helper for GetByVal and PutByVal.
+        void emitIdentifierCheck(RegisterID cell, RegisterID scratch, const Identifier&, JumpList& slowCases);
+
         JITGetByIdGenerator emitGetByValWithCachedId(Instruction*, const Identifier&, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases);
+        JITPutByIdGenerator emitPutByValWithCachedId(Instruction*, PutKind, const Identifier&, JumpList& doneCases, JumpList& slowCases);
 
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 

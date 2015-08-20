@@ -1,3 +1,65 @@
+2015-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce put_by_id like IC into put_by_val when the given name is String or Symbol
+        https://bugs.webkit.org/show_bug.cgi?id=147760
+
+        Reviewed by Filip Pizlo.
+
+        Add synthetic tests for put-by-val. Just make put-by-id tests using symbol / string.
+
+        * js/regress/fold-put-by-val-with-string-to-multi-put-by-offset-expected.txt: Added.
+        * js/regress/fold-put-by-val-with-string-to-multi-put-by-offset.html: Added.
+        * js/regress/fold-put-by-val-with-symbol-to-multi-put-by-offset-expected.txt: Added.
+        * js/regress/fold-put-by-val-with-symbol-to-multi-put-by-offset.html: Added.
+        * js/regress/inlined-put-by-val-with-string-transition-expected.txt: Added.
+        * js/regress/inlined-put-by-val-with-string-transition.html: Added.
+        * js/regress/inlined-put-by-val-with-symbol-transition-expected.txt: Added.
+        * js/regress/inlined-put-by-val-with-symbol-transition.html: Added.
+        * js/regress/polymorphic-put-by-val-with-string-expected.txt: Added.
+        * js/regress/polymorphic-put-by-val-with-string.html: Added.
+        * js/regress/polymorphic-put-by-val-with-symbol-expected.txt: Added.
+        * js/regress/polymorphic-put-by-val-with-symbol.html: Added.
+        * js/regress/put-by-val-with-string-expected.txt: Added.
+        * js/regress/put-by-val-with-string-replace-and-transition-expected.txt: Added.
+        * js/regress/put-by-val-with-string-replace-and-transition.html: Added.
+        * js/regress/put-by-val-with-string-slightly-polymorphic-expected.txt: Added.
+        * js/regress/put-by-val-with-string-slightly-polymorphic.html: Added.
+        * js/regress/put-by-val-with-string.html: Added.
+        * js/regress/put-by-val-with-symbol-expected.txt: Added.
+        * js/regress/put-by-val-with-symbol-replace-and-transition-expected.txt: Added.
+        * js/regress/put-by-val-with-symbol-replace-and-transition.html: Added.
+        * js/regress/put-by-val-with-symbol-slightly-polymorphic-expected.txt: Added.
+        * js/regress/put-by-val-with-symbol-slightly-polymorphic.html: Added.
+        * js/regress/put-by-val-with-symbol.html: Added.
+        * js/regress/script-tests/fold-put-by-val-with-string-to-multi-put-by-offset.js: Added.
+        (foo):
+        (fu):
+        (bar):
+        * js/regress/script-tests/fold-put-by-val-with-symbol-to-multi-put-by-offset.js: Added.
+        (foo):
+        (fu):
+        (bar):
+        * js/regress/script-tests/inlined-put-by-val-with-string-transition.js: Added.
+        (foo):
+        (Foo):
+        * js/regress/script-tests/inlined-put-by-val-with-symbol-transition.js: Added.
+        (foo):
+        (Foo):
+        * js/regress/script-tests/polymorphic-put-by-val-with-string.js: Added.
+        (foo):
+        * js/regress/script-tests/polymorphic-put-by-val-with-symbol.js: Added.
+        (foo):
+        * js/regress/script-tests/put-by-val-with-string-replace-and-transition.js: Added.
+        * js/regress/script-tests/put-by-val-with-string-slightly-polymorphic.js: Added.
+        * js/regress/script-tests/put-by-val-with-string.js: Added.
+        (foo):
+        (bar):
+        * js/regress/script-tests/put-by-val-with-symbol-replace-and-transition.js: Added.
+        * js/regress/script-tests/put-by-val-with-symbol-slightly-polymorphic.js: Added.
+        * js/regress/script-tests/put-by-val-with-symbol.js: Added.
+        (foo):
+        (bar):
+
 2015-08-20  Chris Dumez  <cdumez@apple.com>
 
         [Cocoa] Treat Epoch as invalid value for "Last-Modified" header
