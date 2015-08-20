@@ -52,27 +52,22 @@ static JSValueRef currentCPUTimeAsJSFunctionCallback(JSContextRef ctx, JSObjectR
 }
 
 bool shouldTerminateCallbackWasCalled = false;
-static bool shouldTerminateCallback(JSContextRef ctx, void* context)
+static bool shouldTerminateCallback(JSContextRef, void*)
 {
-    UNUSED_PARAM(ctx);
-    UNUSED_PARAM(context);
     shouldTerminateCallbackWasCalled = true;
     return true;
 }
 
 bool cancelTerminateCallbackWasCalled = false;
-static bool cancelTerminateCallback(JSContextRef ctx, void* context)
+static bool cancelTerminateCallback(JSContextRef, void*)
 {
-    UNUSED_PARAM(ctx);
-    UNUSED_PARAM(context);
     cancelTerminateCallbackWasCalled = true;
     return false;
 }
 
 int extendTerminateCallbackCalled = 0;
-static bool extendTerminateCallback(JSContextRef ctx, void* context)
+static bool extendTerminateCallback(JSContextRef ctx, void*)
 {
-    UNUSED_PARAM(context);
     extendTerminateCallbackCalled++;
     if (extendTerminateCallbackCalled == 1) {
         JSContextGroupRef contextGroup = JSContextGetGroup(ctx);
