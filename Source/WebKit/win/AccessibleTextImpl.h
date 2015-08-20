@@ -68,9 +68,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAttributes(long startOffset, long endOffset, BSTR* attributes);
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return ++m_refCount; }
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef() { return ++m_refCount; }
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IAccessibleBase
     virtual HRESULT STDMETHODCALLTYPE get_attributes(BSTR* attributes);

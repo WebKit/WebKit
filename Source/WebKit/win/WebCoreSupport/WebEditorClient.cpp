@@ -69,9 +69,9 @@ public:
     WebEditorUndoTarget();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebUndoTarget
     virtual HRESULT STDMETHODCALLTYPE invoke( 
@@ -87,9 +87,11 @@ WebEditorUndoTarget::WebEditorUndoTarget()
 {
 }
 
-HRESULT STDMETHODCALLTYPE WebEditorUndoTarget::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebEditorUndoTarget::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebUndoTarget*>(this);
     else if (IsEqualGUID(riid, IID_IWebUndoTarget))
@@ -101,7 +103,7 @@ HRESULT STDMETHODCALLTYPE WebEditorUndoTarget::QueryInterface(REFIID riid, void*
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebEditorUndoTarget::AddRef(void)
+ULONG STDMETHODCALLTYPE WebEditorUndoTarget::AddRef()
 {
     return ++m_refCount;
 }
@@ -510,9 +512,9 @@ public:
     void execute();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
 private:
     ULONG m_refCount;
@@ -535,9 +537,11 @@ void WebEditorUndoCommand::execute()
         m_step->reapply();
 }
 
-HRESULT STDMETHODCALLTYPE WebEditorUndoCommand::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebEditorUndoCommand::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebUndoCommand*>(this);
     else if (IsEqualGUID(riid, IID_IWebUndoCommand))
@@ -549,7 +553,7 @@ HRESULT STDMETHODCALLTYPE WebEditorUndoCommand::QueryInterface(REFIID riid, void
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebEditorUndoCommand::AddRef(void)
+ULONG STDMETHODCALLTYPE WebEditorUndoCommand::AddRef()
 {
     return ++m_refCount;
 }

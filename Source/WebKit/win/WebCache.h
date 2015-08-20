@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,29 +38,20 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebCache
-    virtual HRESULT STDMETHODCALLTYPE statistics( 
-        /* [in][out] */ int* count,
-        /* [retval][out] */ IPropertyBag **s);
-    
-    virtual HRESULT STDMETHODCALLTYPE empty(void);
-    
-    virtual HRESULT STDMETHODCALLTYPE setDisabled( 
-        /* [in] */ BOOL disabled);
-
-    virtual HRESULT STDMETHODCALLTYPE disabled(
-        /* [out][retval] */ BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE cacheFolder(/* [out, retval] */ BSTR* location);
-
-    virtual HRESULT STDMETHODCALLTYPE setCacheFolder(/* [in] */ BSTR location);
+    virtual HRESULT STDMETHODCALLTYPE statistics(_Inout_ int* count, _Inout_opt_ IPropertyBag**);
+    virtual HRESULT STDMETHODCALLTYPE empty();   
+    virtual HRESULT STDMETHODCALLTYPE setDisabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE disabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE cacheFolder(__deref_out_opt BSTR* location);
+    virtual HRESULT STDMETHODCALLTYPE setCacheFolder(_In_ BSTR location);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif

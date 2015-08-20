@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,6 @@ using namespace WebCore;
 // DefaultDownloadDelegate ----------------------------------------------------------------
 
 DefaultDownloadDelegate::DefaultDownloadDelegate()
-    : m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("DefaultDownloadDelegate");
@@ -75,9 +74,11 @@ DefaultDownloadDelegate* DefaultDownloadDelegate::createInstance()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DefaultDownloadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
     else if (IsEqualGUID(riid, IID_IWebDownloadDelegate))
@@ -89,12 +90,12 @@ HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::QueryInterface(REFIID riid, v
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE DefaultDownloadDelegate::AddRef()
+ULONG DefaultDownloadDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE DefaultDownloadDelegate::Release()
+ULONG DefaultDownloadDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -103,9 +104,12 @@ ULONG STDMETHODCALLTYPE DefaultDownloadDelegate::Release()
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::decideDestinationWithSuggestedFilename(IWebDownload *download, BSTR filename)
+HRESULT DefaultDownloadDelegate::decideDestinationWithSuggestedFilename(_In_opt_ IWebDownload* download, _In_ BSTR filename)
 {
     LOG(Download, "DefaultDownloadDelegate %p - decideDestinationWithSuggestedFilename %s", download, String(filename, SysStringLen(filename)).ascii().data());
+
+    if (!download)
+        return E_POINTER;
 
     WCHAR pathChars[MAX_PATH];
     if (FAILED(SHGetFolderPath(0, CSIDL_DESKTOPDIRECTORY  | CSIDL_FLAG_CREATE, 0, 0, pathChars))) {
@@ -138,93 +142,98 @@ HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::decideDestinationWithSuggeste
     }
     return S_OK;
 }
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didCancelAuthenticationChallenge(IWebDownload* download, IWebURLAuthenticationChallenge* challenge)
+HRESULT DefaultDownloadDelegate::didCancelAuthenticationChallenge(_In_opt_ IWebDownload* download, _In_opt_ IWebURLAuthenticationChallenge* challenge)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didCancelAuthenticationChallenge %p", download, challenge);
-    download = 0;
-    challenge = 0;
+    download = nullptr;
+    challenge = nullptr;
     return S_OK;
 }
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didCreateDestination(IWebDownload* download, BSTR destination)
+HRESULT DefaultDownloadDelegate::didCreateDestination(_In_opt_ IWebDownload* download, _In_ BSTR destination)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didCreateDestination %s", download, String(destination, SysStringLen(destination)).ascii().data());
-    download = 0;
-    destination = 0;
+    download = nullptr;
+    destination = nullptr;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didReceiveAuthenticationChallenge(IWebDownload* download, IWebURLAuthenticationChallenge* challenge)
+HRESULT DefaultDownloadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebDownload* download, _In_opt_ IWebURLAuthenticationChallenge* challenge)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didReceiveAuthenticationChallenge %p", download, challenge);
-    download = 0;
-    challenge = 0;
+    download = nullptr;
+    challenge = nullptr;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didReceiveDataOfLength(IWebDownload* download, unsigned length)
+HRESULT DefaultDownloadDelegate::didReceiveDataOfLength(_In_opt_ IWebDownload* download, unsigned length)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didReceiveDataOfLength %i", download, length);
-    download = 0;
+    download = nullptr;
     length = 0;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didReceiveResponse(IWebDownload* download, IWebURLResponse* response)
+HRESULT DefaultDownloadDelegate::didReceiveResponse(_In_opt_ IWebDownload* download, _In_opt_ IWebURLResponse* response)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didReceiveResponse %p", download, response);
-    download = 0;
+    download = nullptr;
     response = 0;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::shouldDecodeSourceDataOfMIMEType(IWebDownload* download, BSTR encodingType, BOOL* shouldDecode)
+HRESULT DefaultDownloadDelegate::shouldDecodeSourceDataOfMIMEType(_In_opt_ IWebDownload* download, _In_ BSTR encodingType, _Out_ BOOL* shouldDecode)
 {
     LOG(Download, "DefaultDownloadDelegate %p - shouldDecodeSourceDataOfMIMEType %s", download, String(encodingType, SysStringLen(encodingType)).ascii().data());
-    download = 0;
-    encodingType = 0;
+    if (!shouldDecode)
+        return E_POINTER;
+    download = nullptr;
+    encodingType = nullptr;
     *shouldDecode = false;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::willResumeWithResponse(IWebDownload* download, IWebURLResponse* response, long long fromByte)
+HRESULT DefaultDownloadDelegate::willResumeWithResponse(_In_opt_ IWebDownload* download, _In_opt_ IWebURLResponse* response, long long fromByte)
 {
     LOG(Download, "DefaultDownloadDelegate %p - willResumeWithResponse %p, %q", download, response, fromByte);
-    download = 0;
-    response = 0;
+    download = nullptr;
+    response = nullptr;
     fromByte = 0;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::willSendRequest(IWebDownload* download, IWebMutableURLRequest* request,  
-                                                                 IWebURLResponse* redirectResponse, IWebMutableURLRequest** finalRequest)
+HRESULT DefaultDownloadDelegate::willSendRequest(_In_opt_ IWebDownload* download, _In_opt_ IWebMutableURLRequest* request,
+    _In_opt_ IWebURLResponse* redirectResponse, _COM_Outptr_opt_ IWebMutableURLRequest** finalRequest)
 {
     LOG(Download, "DefaultDownloadDelegate %p - willSendRequest %p %p", download, request, redirectResponse);
-    download = 0;
-    redirectResponse = 0;
+    if (!finalRequest)
+        return E_POINTER;
+
+    download = nullptr;
+    redirectResponse = nullptr;
     *finalRequest = request;
     (*finalRequest)->AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didBegin(IWebDownload* download)
+HRESULT DefaultDownloadDelegate::didBegin(_In_opt_ IWebDownload* download)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didBegin", download);
     registerDownload(download);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didFinish(IWebDownload* download)
+HRESULT DefaultDownloadDelegate::didFinish(_In_opt_ IWebDownload* download)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didFinish", download);
     unregisterDownload(download);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultDownloadDelegate::didFailWithError(IWebDownload* download, IWebError* error)
+HRESULT DefaultDownloadDelegate::didFailWithError(_In_opt_ IWebDownload* download, _In_opt_ IWebError* error)
 {
     LOG(Download, "DefaultDownloadDelegate %p - didFailWithError %p", download, error);
     unregisterDownload(download);
-    error = 0;
+    error = nullptr;
     return S_OK;
 }
 

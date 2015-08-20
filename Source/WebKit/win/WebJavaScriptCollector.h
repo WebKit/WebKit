@@ -38,21 +38,17 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebJavaScriptCollector
     virtual HRESULT STDMETHODCALLTYPE collect();
-    
-    virtual HRESULT STDMETHODCALLTYPE collectOnAlternateThread( 
-        /* [in] */ BOOL waitUntilDone);
-
-    virtual HRESULT STDMETHODCALLTYPE objectCount( 
-        /* [retaval][out] */ UINT* count);
+    virtual HRESULT STDMETHODCALLTYPE collectOnAlternateThread(BOOL waitUntilDone);
+    virtual HRESULT STDMETHODCALLTYPE objectCount(_Out_ UINT*);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif

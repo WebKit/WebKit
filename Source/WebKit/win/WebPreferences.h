@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2009, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,457 +40,194 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebPreferences
-    virtual HRESULT STDMETHODCALLTYPE standardPreferences( 
-        /* [retval][out] */ IWebPreferences** standardPreferences);
-    
-    virtual HRESULT STDMETHODCALLTYPE initWithIdentifier( 
-        /* [in] */ BSTR anIdentifier,
-        /* [retval][out] */ IWebPreferences** preferences);
-    
-    virtual HRESULT STDMETHODCALLTYPE identifier( 
-        /* [retval][out] */ BSTR* ident);
-    
-    virtual HRESULT STDMETHODCALLTYPE standardFontFamily( 
-        /* [retval][out] */ BSTR* family);
-    
-    virtual HRESULT STDMETHODCALLTYPE setStandardFontFamily( 
-        /* [in] */ BSTR family);
-    
-    virtual HRESULT STDMETHODCALLTYPE fixedFontFamily( 
-        /* [retval][out] */ BSTR* family);
-    
-    virtual HRESULT STDMETHODCALLTYPE setFixedFontFamily( 
-        /* [in] */ BSTR family);
-    
-    virtual HRESULT STDMETHODCALLTYPE serifFontFamily( 
-        /* [retval][out] */ BSTR* fontFamily);
-    
-    virtual HRESULT STDMETHODCALLTYPE setSerifFontFamily( 
-        /* [in] */ BSTR family);
-    
-    virtual HRESULT STDMETHODCALLTYPE sansSerifFontFamily( 
-        /* [retval][out] */ BSTR* family);
-    
-    virtual HRESULT STDMETHODCALLTYPE setSansSerifFontFamily( 
-        /* [in] */ BSTR family);
-    
-    virtual HRESULT STDMETHODCALLTYPE cursiveFontFamily( 
-        /* [retval][out] */ BSTR* family);
-    
-    virtual HRESULT STDMETHODCALLTYPE setCursiveFontFamily( 
-        /* [in] */ BSTR family);
-    
-    virtual HRESULT STDMETHODCALLTYPE fantasyFontFamily( 
-        /* [retval][out] */ BSTR* family);
-    
-    virtual HRESULT STDMETHODCALLTYPE setFantasyFontFamily( 
-        /* [in] */ BSTR family);
-    
-    virtual HRESULT STDMETHODCALLTYPE pictographFontFamily( 
-        /* [retval][out] */ BSTR* family);
-    
-    virtual HRESULT STDMETHODCALLTYPE setPictographFontFamily( 
-        /* [in] */ BSTR family);
-    
-    virtual HRESULT STDMETHODCALLTYPE defaultFontSize( 
-        /* [retval][out] */ int* fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE setDefaultFontSize( 
-        /* [in] */ int fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE defaultFixedFontSize( 
-        /* [retval][out] */ int* fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE setDefaultFixedFontSize( 
-        /* [in] */ int fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE minimumFontSize( 
-        /* [retval][out] */ int* fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE setMinimumFontSize( 
-        /* [in] */ int fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE minimumLogicalFontSize( 
-        /* [retval][out] */ int* fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE setMinimumLogicalFontSize( 
-        /* [in] */ int fontSize);
-    
-    virtual HRESULT STDMETHODCALLTYPE defaultTextEncodingName( 
-        /* [retval][out] */ BSTR* name);
-    
-    virtual HRESULT STDMETHODCALLTYPE setDefaultTextEncodingName( 
-        /* [in] */ BSTR name);
-    
-    virtual HRESULT STDMETHODCALLTYPE userStyleSheetEnabled( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setUserStyleSheetEnabled( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE userStyleSheetLocation( 
-        /* [retval][out] */ BSTR* location);
-    
-    virtual HRESULT STDMETHODCALLTYPE setUserStyleSheetLocation( 
-        /* [in] */ BSTR location);
-    
-    virtual HRESULT STDMETHODCALLTYPE isJavaEnabled( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setJavaEnabled( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE isJavaScriptEnabled( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setJavaScriptEnabled( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE javaScriptCanOpenWindowsAutomatically( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setJavaScriptCanOpenWindowsAutomatically( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE arePlugInsEnabled( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setPlugInsEnabled( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE isCSSRegionsEnabled(
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setCSSRegionsEnabled(
-        /* [in] */ BOOL);
-    
+    virtual HRESULT STDMETHODCALLTYPE standardPreferences(_COM_Outptr_opt_ IWebPreferences**);
+    virtual HRESULT STDMETHODCALLTYPE initWithIdentifier(_In_ BSTR, _COM_Outptr_opt_ IWebPreferences**);
+    virtual HRESULT STDMETHODCALLTYPE identifier(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE standardFontFamily(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setStandardFontFamily(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE fixedFontFamily(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setFixedFontFamily(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE serifFontFamily(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setSerifFontFamily(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE sansSerifFontFamily(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setSansSerifFontFamily(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE cursiveFontFamily(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setCursiveFontFamily(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE fantasyFontFamily(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setFantasyFontFamily(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE pictographFontFamily(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setPictographFontFamily(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE defaultFontSize(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE setDefaultFontSize(int);
+    virtual HRESULT STDMETHODCALLTYPE defaultFixedFontSize(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE setDefaultFixedFontSize(int);
+    virtual HRESULT STDMETHODCALLTYPE minimumFontSize(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE setMinimumFontSize(int);
+    virtual HRESULT STDMETHODCALLTYPE minimumLogicalFontSize(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE setMinimumLogicalFontSize(int);
+    virtual HRESULT STDMETHODCALLTYPE defaultTextEncodingName(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setDefaultTextEncodingName(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE userStyleSheetEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setUserStyleSheetEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE userStyleSheetLocation(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setUserStyleSheetLocation(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE isJavaEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setJavaEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isJavaScriptEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptCanOpenWindowsAutomatically(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptCanOpenWindowsAutomatically(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE arePlugInsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setPlugInsEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isCSSRegionsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCSSRegionsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE unused7();
     virtual HRESULT STDMETHODCALLTYPE unused8();
-    
-    virtual HRESULT STDMETHODCALLTYPE allowsAnimatedImages( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setAllowsAnimatedImages( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE allowAnimatedImageLooping( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setAllowAnimatedImageLooping( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setLoadsImagesAutomatically( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE loadsImagesAutomatically( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setAutosaves( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE autosaves( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setShouldPrintBackgrounds( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE shouldPrintBackgrounds( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setPrivateBrowsingEnabled( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled( 
-        /* [retval][out] */ BOOL* enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setTabsToLinks( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE tabsToLinks( 
-        /* [retval][out] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE textAreasAreResizable( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setTextAreasAreResizable( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE usesPageCache( 
-        /* [retval][out] */ BOOL *usesPageCache);
-
-    virtual HRESULT STDMETHODCALLTYPE setUsesPageCache( 
-        /* [in] */ BOOL usesPageCache);
-
+    virtual HRESULT STDMETHODCALLTYPE allowsAnimatedImages(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowsAnimatedImages(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE allowAnimatedImageLooping(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowAnimatedImageLooping(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setLoadsImagesAutomatically(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE loadsImagesAutomatically(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAutosaves(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE autosaves(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShouldPrintBackgrounds(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE shouldPrintBackgrounds(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setPrivateBrowsingEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE privateBrowsingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setTabsToLinks(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE tabsToLinks(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE textAreasAreResizable(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setTextAreasAreResizable(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE usesPageCache(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setUsesPageCache(BOOL);
     virtual HRESULT STDMETHODCALLTYPE unused1();
     virtual HRESULT STDMETHODCALLTYPE unused2();
-
-    virtual HRESULT STDMETHODCALLTYPE iconDatabaseLocation(
-        /* [retval][out] */ BSTR* location);
-
-    virtual HRESULT STDMETHODCALLTYPE setIconDatabaseLocation(
-        /* [in] */ BSTR location);
-
-    virtual HRESULT STDMETHODCALLTYPE iconDatabaseEnabled(
-        /* [retval][out] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setIconDatabaseEnabled(
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE fontSmoothing( 
-        /* [retval][out] */ FontSmoothingType* smoothingType);
-    
-    virtual HRESULT STDMETHODCALLTYPE setFontSmoothing( 
-        /* [in] */ FontSmoothingType smoothingType);
-
-    virtual HRESULT STDMETHODCALLTYPE editableLinkBehavior( 
-        /* [retval][out] */ WebKitEditableLinkBehavior* behavior);
-    
-    virtual HRESULT STDMETHODCALLTYPE setEditableLinkBehavior( 
-        /* [in] */ WebKitEditableLinkBehavior behavior);
-
+    virtual HRESULT STDMETHODCALLTYPE iconDatabaseLocation(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setIconDatabaseLocation(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE iconDatabaseEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setIconDatabaseEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE fontSmoothing(_Out_ FontSmoothingType*);
+    virtual HRESULT STDMETHODCALLTYPE setFontSmoothing(FontSmoothingType);
+    virtual HRESULT STDMETHODCALLTYPE editableLinkBehavior(_Out_ WebKitEditableLinkBehavior*);
+    virtual HRESULT STDMETHODCALLTYPE setEditableLinkBehavior(WebKitEditableLinkBehavior);
     virtual HRESULT STDMETHODCALLTYPE unused5();
     virtual HRESULT STDMETHODCALLTYPE unused6();
-
-    virtual HRESULT STDMETHODCALLTYPE cookieStorageAcceptPolicy( 
-        /* [retval][out] */ WebKitCookieStorageAcceptPolicy *acceptPolicy);
-        
-    virtual HRESULT STDMETHODCALLTYPE setCookieStorageAcceptPolicy( 
-        /* [in] */ WebKitCookieStorageAcceptPolicy acceptPolicy);
-
-    virtual HRESULT STDMETHODCALLTYPE continuousSpellCheckingEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setContinuousSpellCheckingEnabled( 
-        /* [in] */ BOOL enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE grammarCheckingEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setGrammarCheckingEnabled( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE allowContinuousSpellChecking( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setAllowContinuousSpellChecking( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE isDOMPasteAllowed( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setDOMPasteAllowed( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE cacheModel(
-     /* [retval][out] */ WebCacheModel* cacheModel);
-
-    virtual HRESULT STDMETHODCALLTYPE setCacheModel(
-     /* [in] */ WebCacheModel cacheModel);
-
+    virtual HRESULT STDMETHODCALLTYPE cookieStorageAcceptPolicy(_Out_ WebKitCookieStorageAcceptPolicy*);
+    virtual HRESULT STDMETHODCALLTYPE setCookieStorageAcceptPolicy(WebKitCookieStorageAcceptPolicy);
+    virtual HRESULT STDMETHODCALLTYPE continuousSpellCheckingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setContinuousSpellCheckingEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE grammarCheckingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setGrammarCheckingEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE allowContinuousSpellChecking(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowContinuousSpellChecking(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isDOMPasteAllowed(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setDOMPasteAllowed(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE cacheModel(_Out_ WebCacheModel*);
+    virtual HRESULT STDMETHODCALLTYPE setCacheModel(WebCacheModel);
     virtual HRESULT STDMETHODCALLTYPE unused3();
     virtual HRESULT STDMETHODCALLTYPE unused4();
-
-    virtual HRESULT STDMETHODCALLTYPE setAVFoundationEnabled(
-    /* [in] */ BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE avFoundationEnabled(
-    /* [retval][out] */ BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE setShouldDisplaySubtitles(
-    /* [in] */ BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldDisplaySubtitles(
-    /* [retval][out] */ BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE setShouldDisplayCaptions(
-    /* [in] */ BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldDisplayCaptions(
-    /* [retval][out] */ BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE setShouldDisplayTextDescriptions(
-    /* [in] */ BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldDisplayTextDescriptions(
-    /* [retval][out] */ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAVFoundationEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE avFoundationEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShouldDisplaySubtitles(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE shouldDisplaySubtitles(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShouldDisplayCaptions(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE shouldDisplayCaptions(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShouldDisplayTextDescriptions(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE shouldDisplayTextDescriptions(_Out_ BOOL*);
 
     // IWebPreferencesPrivate
-    virtual HRESULT STDMETHODCALLTYPE setDeveloperExtrasEnabled(
-        /* [in] */ BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE developerExtrasEnabled(
-        /* [retval][out] */ BOOL*);
-
-     virtual HRESULT STDMETHODCALLTYPE setAutomaticallyDetectsCacheModel(
-         /* [in] */ BOOL automaticallyDetectsCacheModel);
-
-     virtual HRESULT STDMETHODCALLTYPE automaticallyDetectsCacheModel(
-         /* [out, retval] */ BOOL* automaticallyDetectsCacheModel);
-
+    virtual HRESULT STDMETHODCALLTYPE setDeveloperExtrasEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE developerExtrasEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAutomaticallyDetectsCacheModel(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE automaticallyDetectsCacheModel(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setAuthorAndUserStylesEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE authorAndUserStylesEnabled(BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE inApplicationChromeMode( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setApplicationChromeMode( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setOfflineWebApplicationCacheEnabled( 
-        /* [in] */ BOOL enabled);
-        
-    virtual HRESULT STDMETHODCALLTYPE offlineWebApplicationCacheEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setDatabasesEnabled( 
-        /* [in] */ BOOL enabled);
-        
-    virtual HRESULT STDMETHODCALLTYPE databasesEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setLocalStorageEnabled( 
-        /* [in] */ BOOL enabled);
-        
-    virtual HRESULT STDMETHODCALLTYPE localStorageEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE localStorageDatabasePath(
-        /* [out, retval] */ BSTR* location);
-
-    virtual HRESULT STDMETHODCALLTYPE setLocalStorageDatabasePath(
-        /* [in] */ BSTR location);
-
-    virtual HRESULT STDMETHODCALLTYPE experimentalNotificationsEnabled(
-        /* [retval][out] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setExperimentalNotificationsEnabled(
-        /* [in] */ BOOL enabled);
+    virtual HRESULT STDMETHODCALLTYPE authorAndUserStylesEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE inApplicationChromeMode(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setApplicationChromeMode(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setOfflineWebApplicationCacheEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE offlineWebApplicationCacheEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setDatabasesEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE databasesEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setLocalStorageEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE localStorageEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE localStorageDatabasePath(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setLocalStorageDatabasePath(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE experimentalNotificationsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setExperimentalNotificationsEnabled(BOOL);
 
     // These two methods are no-ops, and only retained to keep
     // the Interface consistent. DO NOT USE THEM.
     virtual HRESULT STDMETHODCALLTYPE setShouldPaintNativeControls(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE shouldPaintNativeControls(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE shouldPaintNativeControls(_Out_ BOOL*);
 
-    virtual HRESULT STDMETHODCALLTYPE setZoomsTextOnly( 
-    /* [retval][out] */ BOOL zoomsTextOnly);
-
-    virtual HRESULT STDMETHODCALLTYPE zoomsTextOnly( 
-    /* [retval][out] */ BOOL *zoomsTextOnly);
-
-    virtual HRESULT STDMETHODCALLTYPE fontSmoothingContrast( 
-    /* [retval][out] */ float* contrast);
-
-    virtual HRESULT STDMETHODCALLTYPE setFontSmoothingContrast( 
-    /* [in] */ float contrast);
-
-    virtual HRESULT STDMETHODCALLTYPE isWebSecurityEnabled(
-    /* [retval][out] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setWebSecurityEnabled(
-    /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE allowUniversalAccessFromFileURLs(
-    /* [retval][out] */ BOOL* allowAccess);
-
-    virtual HRESULT STDMETHODCALLTYPE setAllowUniversalAccessFromFileURLs(
-    /* [in] */ BOOL allowAccess);
-
-    virtual HRESULT STDMETHODCALLTYPE allowFileAccessFromFileURLs(
-    /* [retval][out] */ BOOL* allowAccess);
-
-    virtual HRESULT STDMETHODCALLTYPE setAllowFileAccessFromFileURLs(
-    /* [in] */ BOOL allowAccess);
-
-    virtual HRESULT STDMETHODCALLTYPE javaScriptCanAccessClipboard(
-    /* [retval][out] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setJavaScriptCanAccessClipboard(
-    /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE isXSSAuditorEnabled(
-    /* [retval][out] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setXSSAuditorEnabled(
-    /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setShouldUseHighResolutionTimers(
-    /* [in] */ BOOL useHighResolutionTimers);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldUseHighResolutionTimers(
-    /* [retval][out] */ BOOL* useHighResolutionTimers);
-
-    virtual HRESULT STDMETHODCALLTYPE isFrameFlatteningEnabled(
-    /* [retval][out] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setFrameFlatteningEnabled(
-    /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setPreferenceForTest(
-    /* [in] */ BSTR key,
-    /* [in] */ BSTR value);
-
+    virtual HRESULT STDMETHODCALLTYPE setZoomsTextOnly(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE zoomsTextOnly(_Out_ BOOL *);
+    virtual HRESULT STDMETHODCALLTYPE fontSmoothingContrast(_Out_ float*);
+    virtual HRESULT STDMETHODCALLTYPE setFontSmoothingContrast(float);
+    virtual HRESULT STDMETHODCALLTYPE isWebSecurityEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setWebSecurityEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE allowUniversalAccessFromFileURLs(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowUniversalAccessFromFileURLs(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE allowFileAccessFromFileURLs(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowFileAccessFromFileURLs(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptCanAccessClipboard(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptCanAccessClipboard(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isXSSAuditorEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setXSSAuditorEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setShouldUseHighResolutionTimers(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE shouldUseHighResolutionTimers(_Out_  BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE isFrameFlatteningEnabled(_Out_  BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setFrameFlatteningEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setPreferenceForTest(_In_ BSTR key, _In_ BSTR value);
     virtual HRESULT STDMETHODCALLTYPE setAcceleratedCompositingEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE acceleratedCompositingEnabled(BOOL*);
-
+    virtual HRESULT STDMETHODCALLTYPE acceleratedCompositingEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setCustomDragCursorsEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE customDragCursorsEnabled(BOOL*);
-
+    virtual HRESULT STDMETHODCALLTYPE customDragCursorsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShowDebugBorders(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE showDebugBorders(BOOL*);
-
+    virtual HRESULT STDMETHODCALLTYPE showDebugBorders(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShowRepaintCounter(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE showRepaintCounter(BOOL*);
-
+    virtual HRESULT STDMETHODCALLTYPE showRepaintCounter(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setDNSPrefetchingEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE isDNSPrefetchingEnabled(BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE hyperlinkAuditingEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE isDNSPrefetchingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE hyperlinkAuditingEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setHyperlinkAuditingEnabled(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE loadsSiteIconsIgnoringImageLoadingPreference(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE loadsSiteIconsIgnoringImageLoadingPreference(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setLoadsSiteIconsIgnoringImageLoadingPreference(BOOL);
-
     virtual HRESULT STDMETHODCALLTYPE setFullScreenEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE isFullScreenEnabled(BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE hixie76WebSocketProtocolEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE isFullScreenEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE hixie76WebSocketProtocolEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setHixie76WebSocketProtocolEnabled(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE mediaPlaybackRequiresUserGesture(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE mediaPlaybackRequiresUserGesture(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMediaPlaybackRequiresUserGesture(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE mediaPlaybackAllowsInline(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE mediaPlaybackAllowsInline(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMediaPlaybackAllowsInline(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE showsToolTipOverTruncatedText(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE showsToolTipOverTruncatedText(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShowsToolTipOverTruncatedText(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldInvertColors(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE shouldInvertColors(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShouldInvertColors(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE requestAnimationFrameEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE requestAnimationFrameEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setRequestAnimationFrameEnabled(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE mockScrollbarsEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE mockScrollbarsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMockScrollbarsEnabled(BOOL);
 
     // These two methods are no-ops, and only retained to keep
     // the Interface consistent. DO NOT USE THEM.
-    virtual HRESULT STDMETHODCALLTYPE screenFontSubstitutionEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE screenFontSubstitutionEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setScreenFontSubstitutionEnabled(BOOL);
 
-    virtual HRESULT STDMETHODCALLTYPE isInheritURIQueryComponentEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE isInheritURIQueryComponentEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setEnableInheritURIQueryComponent(BOOL);
 
     // IWebPreferencesPrivate2
-    virtual HRESULT STDMETHODCALLTYPE javaScriptRuntimeFlags(unsigned*);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptRuntimeFlags(_Out_ unsigned*);
     virtual HRESULT STDMETHODCALLTYPE setJavaScriptRuntimeFlags(unsigned);
-    virtual HRESULT STDMETHODCALLTYPE allowDisplayAndRunningOfInsecureContent(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE allowDisplayAndRunningOfInsecureContent(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setAllowDisplayAndRunningOfInsecureContent(BOOL);
 
     // WebPreferences
@@ -507,10 +244,10 @@ public:
     static WebPreferences* sharedStandardPreferences();
 
     // From WebHistory.h
-    HRESULT historyItemLimit(int* limit);
-    HRESULT setHistoryItemLimit(int limit);
-    HRESULT historyAgeInDaysLimit(int* limit);
-    HRESULT setHistoryAgeInDaysLimit(int limit);
+    HRESULT historyItemLimit(_Out_ int*);
+    HRESULT setHistoryItemLimit(int);
+    HRESULT historyAgeInDaysLimit(_Out_ int*);
+    HRESULT setHistoryAgeInDaysLimit(int);
 
      void willAddToWebView();
      void didRemoveFromWebView();
@@ -540,12 +277,12 @@ protected:
     void copyWebKitPreferencesToCFPreferences(CFDictionaryRef);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     RetainPtr<CFMutableDictionaryRef> m_privatePrefs;
     WebCore::BString m_identifier;
-    bool m_autoSaves;
-    bool m_automaticallyDetectsCacheModel;
-    unsigned m_numWebViews;
+    bool m_autoSaves { false };
+    bool m_automaticallyDetectsCacheModel { true };
+    unsigned m_numWebViews { 0 };
 };
 
 #endif

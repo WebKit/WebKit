@@ -52,9 +52,9 @@ private:
     WebSerializedJSValue();
     ~WebSerializedJSValue();
 
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void** ppvObject);
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     RefPtr<WebCore::SerializedScriptValue> m_value;
 };
 

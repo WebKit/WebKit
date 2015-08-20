@@ -42,7 +42,7 @@ public:
     static COMEnumVariant* createInstance(const ContainerType&);
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
@@ -50,24 +50,22 @@ public:
     virtual HRESULT STDMETHODCALLTYPE Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched);
     virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
     virtual HRESULT STDMETHODCALLTYPE Reset();
-    virtual HRESULT STDMETHODCALLTYPE Clone(IEnumVARIANT** ppEnum);
+    virtual HRESULT STDMETHODCALLTYPE Clone(_COM_Outptr_opt_ IEnumVARIANT** ppEnum);
 
 private:
     COMEnumVariant()
-        : m_refCount(0)
     {
     }
 
     COMEnumVariant(const ContainerType& container)
-        : m_refCount(0)
-        , m_container(container)       
+        : m_container(container)       
         , m_currentPos(m_container.begin())
     {
     }
 
     ~COMEnumVariant() {}
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 
     ContainerType m_container;
     typename ContainerType::const_iterator m_currentPos;
@@ -94,9 +92,11 @@ COMEnumVariant<typename ContainerType>* COMEnumVariant<ContainerType>::createIns
 
 // IUnknown ------------------------------------------------------------------------
 template<typename ContainerType>
-HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<COMEnumVariant*>(this);
     else if (IsEqualGUID(riid, IID_IEnumVARIANT))
@@ -168,12 +168,12 @@ HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::Reset()
 }
     
 template<typename ContainerType>
-HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::Clone(IEnumVARIANT** ppEnum)
+HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::Clone(_COM_Outptr_opt_ IEnumVARIANT** ppEnum)
 {
     if (!ppEnum)
         return E_POINTER;
 
-    *ppEnum = 0;
+    *ppEnum = nullptr;
     return E_NOTIMPL;
 }
 

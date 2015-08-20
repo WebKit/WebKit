@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,8 +53,7 @@ struct WebNotificationCenterPrivate {
 IWebNotificationCenter* WebNotificationCenter::m_defaultCenter = 0;
 
 WebNotificationCenter::WebNotificationCenter()
-    : m_refCount(0)
-    , d(std::make_unique<WebNotificationCenterPrivate>())
+    : d(std::make_unique<WebNotificationCenterPrivate>())
 {
     gClassCount++;
     gClassNameCount().add("WebNotificationCenter");
@@ -75,9 +74,11 @@ WebNotificationCenter* WebNotificationCenter::createInstance()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebNotificationCenter::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebNotificationCenter::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebNotificationCenter*>(this);
     else if (IsEqualGUID(riid, IID_IWebNotificationCenter))
@@ -89,12 +90,12 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::QueryInterface(REFIID riid, voi
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebNotificationCenter::AddRef(void)
+ULONG STDMETHODCALLTYPE WebNotificationCenter::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebNotificationCenter::Release(void)
+ULONG STDMETHODCALLTYPE WebNotificationCenter::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -132,18 +133,16 @@ void WebNotificationCenter::postNotificationInternal(IWebNotification* notificat
 
 // IWebNotificationCenter -----------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebNotificationCenter::defaultCenter( 
-    /* [retval][out] */ IWebNotificationCenter** center)
+HRESULT WebNotificationCenter::defaultCenter(_COM_Outptr_opt_ IWebNotificationCenter** center)
 {
+    if (!center)
+        return E_POINTER;
     *center = defaultCenterInternal();
     (*center)->AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebNotificationCenter::addObserver( 
-    /* [in] */ IWebNotificationObserver* observer,
-    /* [in] */ BSTR notificationName,
-    /* [in] */ IUnknown* anObject)
+HRESULT WebNotificationCenter::addObserver(_In_opt_ IWebNotificationObserver* observer, _In_ BSTR notificationName, _In_opt_ IUnknown* anObject)
 {
     String name(notificationName, SysStringLen(notificationName));
     MappedObservers::iterator it = d->m_mappedObservers.find(name);
@@ -158,8 +157,7 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::addObserver(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification( 
-    /* [in] */ IWebNotification* notification)
+HRESULT WebNotificationCenter::postNotification(_In_opt_ IWebNotification* notification)
 {
     BString name;
     HRESULT hr = notification->name(&name);
@@ -176,20 +174,14 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification(
     return hr;
 }
 
-HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotificationName( 
-    /* [in] */ BSTR notificationName,
-    /* [in] */ IUnknown* anObject,
-    /* [optional][in] */ IPropertyBag* userInfo)
+HRESULT WebNotificationCenter::postNotificationName(_In_ BSTR notificationName, _In_opt_ IUnknown* anObject, _In_opt_ IPropertyBag* userInfo)
 {
     COMPtr<WebNotification> notification(AdoptCOM, WebNotification::createInstance(notificationName, anObject, userInfo));
     postNotificationInternal(notification.get(), notificationName, anObject);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebNotificationCenter::removeObserver( 
-    /* [in] */ IWebNotificationObserver* anObserver,
-    /* [in] */ BSTR notificationName,
-    /* [optional][in] */ IUnknown* anObject)
+HRESULT WebNotificationCenter::removeObserver(_In_opt_ IWebNotificationObserver* anObserver, _In_ BSTR notificationName, _In_opt_ IUnknown* anObject)
 {
     String name(notificationName, SysStringLen(notificationName));
     MappedObservers::iterator it = d->m_mappedObservers.find(name);

@@ -43,23 +43,17 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IPropertyBag
-    virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read( 
-        /* [in] */ LPCOLESTR pszPropName,
-        /* [out][in] */ VARIANT *pVar,
-        /* [in] */ IErrorLog *pErrorLog);
-        
-    virtual HRESULT STDMETHODCALLTYPE Write( 
-        /* [in] */ LPCOLESTR pszPropName,
-        /* [in] */ VARIANT *pVar);
+    virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read(LPCOLESTR pszPropName, VARIANT* pVar, IErrorLog* pErrorLog);
+    virtual HRESULT STDMETHODCALLTYPE Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT* pVar);
 
 private:
     std::unique_ptr<WebCore::HitTestResult> m_result;
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif // WebElementPropertyBag_H

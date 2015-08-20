@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,34 +40,21 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebKitStatistics
-    virtual HRESULT STDMETHODCALLTYPE webViewCount( 
-        /* [retval][out] */ int *count);
-    
-    virtual HRESULT STDMETHODCALLTYPE frameCount( 
-        /* [retval][out] */ int *count);
-    
-    virtual HRESULT STDMETHODCALLTYPE dataSourceCount( 
-        /* [retval][out] */ int *count);
-    
-    virtual HRESULT STDMETHODCALLTYPE viewCount( 
-        /* [retval][out] */ int *count);
-    
-    virtual HRESULT STDMETHODCALLTYPE HTMLRepresentationCount( 
-        /* [retval][out] */ int *count);
-
-    virtual HRESULT STDMETHODCALLTYPE comClassCount( 
-        /* [retval][out] */ int *classCount);
-
-    virtual HRESULT STDMETHODCALLTYPE comClassNameCounts( 
-        /* [retval][out] */ BSTR *output);
+    virtual HRESULT STDMETHODCALLTYPE webViewCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE frameCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE dataSourceCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE viewCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE HTMLRepresentationCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE comClassCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE comClassNameCounts(__deref_out_opt BSTR*);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif // WebKitStatistics_h

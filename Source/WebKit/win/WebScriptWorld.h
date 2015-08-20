@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,12 +51,12 @@ private:
     WebScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
     ~WebScriptWorld();
 
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
-    virtual HRESULT STDMETHODCALLTYPE standardWorld(IWebScriptWorld**);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE standardWorld(_COM_Outptr_opt_ IWebScriptWorld**);
     virtual HRESULT STDMETHODCALLTYPE scriptWorldForGlobalContext(JSGlobalContextRef, IWebScriptWorld**);
     virtual HRESULT STDMETHODCALLTYPE unregisterWorld();
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     RefPtr<WebCore::DOMWrapperWorld> m_world;
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,38 +46,23 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebArchive
-    virtual HRESULT STDMETHODCALLTYPE initWithMainResource(
-        /* [in] */ IWebResource* mainResource, 
-        /* [in, size_is(cSubResources)] */ IWebResource** subResources, 
-        /* [in] */ int cSubResources, 
-        /* in, size_is(cSubFrameArchives)] */ IWebArchive** subFrameArchives, 
-        /* [in] */ int cSubFrameArchives);
-
-    virtual HRESULT STDMETHODCALLTYPE  initWithData(
-        /* [in] */ IStream*);
-
-    virtual HRESULT STDMETHODCALLTYPE  initWithNode(
-        /* [in] */ IDOMNode*);
-
-    virtual HRESULT STDMETHODCALLTYPE  mainResource(
-        /* [out, retval] */ IWebResource**);
-
-    virtual HRESULT STDMETHODCALLTYPE  subResources(
-        /* [out, retval] */ IEnumVARIANT**);
-
-    virtual HRESULT STDMETHODCALLTYPE  subframeArchives(
-        /* [out, retval] */ IEnumVARIANT**);
-
-    virtual HRESULT STDMETHODCALLTYPE  data(
-        /* [out, retval] */ IStream**);
+    virtual HRESULT STDMETHODCALLTYPE initWithMainResource(_In_opt_ IWebResource* mainResource, 
+        __inout_ecount_full(cSubResources) IWebResource** subResources, int cSubResources, 
+        __inout_ecount_full(cSubFrameArchives) IWebArchive** subFrameArchives, int cSubFrameArchives);
+    virtual HRESULT STDMETHODCALLTYPE  initWithData(_In_opt_ IStream*);
+    virtual HRESULT STDMETHODCALLTYPE  initWithNode(_In_opt_ IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE  mainResource(_COM_Outptr_opt_ IWebResource**);
+    virtual HRESULT STDMETHODCALLTYPE  subResources(_COM_Outptr_opt_ IEnumVARIANT**);
+    virtual HRESULT STDMETHODCALLTYPE  subframeArchives(_COM_Outptr_opt_ IEnumVARIANT**);
+    virtual HRESULT STDMETHODCALLTYPE  data(_COM_Outptr_opt_ IStream**);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     RefPtr<WebCore::LegacyWebArchive> m_archive;
 };
 

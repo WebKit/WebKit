@@ -40,7 +40,7 @@ extern "C" {
 
 // Callers should use this API instead of CoCreateInstance to instantiate WebKit COM classes.
 // This bypasses CoCreateInstance entirely, so registry keys and isolated COM manifests aren't needed.
-HRESULT WEBKIT_API WebKitCreateInstance(REFCLSID, IUnknown* pUnkOuter, REFIID, void** ppvObject);
+HRESULT WEBKIT_API WebKitCreateInstance(REFCLSID, IUnknown* pUnkOuter, REFIID, _COM_Outptr_ void** ppvObject);
 
 }
 

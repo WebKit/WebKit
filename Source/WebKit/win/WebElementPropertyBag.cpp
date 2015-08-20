@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2013, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,6 @@ using namespace WebCore;
 // WebElementPropertyBag -----------------------------------------------
 WebElementPropertyBag::WebElementPropertyBag(const HitTestResult& result)
     : m_result(std::make_unique<HitTestResult>(result))
-    , m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("WebElementPropertyBag");
@@ -66,9 +65,11 @@ WebElementPropertyBag* WebElementPropertyBag::createInstance(const HitTestResult
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebElementPropertyBag::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebElementPropertyBag::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IPropertyBag*>(this);
     else if (IsEqualGUID(riid, IID_IPropertyBag))
@@ -80,12 +81,12 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::QueryInterface(REFIID riid, voi
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebElementPropertyBag::AddRef(void)
+ULONG WebElementPropertyBag::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebElementPropertyBag::Release(void)
+ULONG WebElementPropertyBag::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -195,10 +196,10 @@ HRESULT WebElementPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IError
     return E_INVALIDARG;
 }
 
-HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Write(LPCOLESTR pszPropName, VARIANT* pVar)
+HRESULT WebElementPropertyBag::Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT* pVar)
 {
     if (!pszPropName || !pVar)
         return E_POINTER;
 
-    return E_FAIL;
+    return E_NOTIMPL;
 }

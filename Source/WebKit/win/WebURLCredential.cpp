@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,7 @@ using namespace WebCore;
 // WebURLCredential ----------------------------------------------------------------
 
 WebURLCredential::WebURLCredential(const Credential& credential)
-    : m_refCount(0)
-    , m_credential(credential)
+    : m_credential(credential)
 {
     gClassCount++;
     gClassNameCount().add("WebURLCredential");
@@ -63,9 +62,11 @@ WebURLCredential* WebURLCredential::createInstance(const Credential& credential)
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebURLCredential::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebURLCredential::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
     else if (IsEqualGUID(riid, __uuidof(WebURLCredential)))
@@ -79,7 +80,7 @@ HRESULT STDMETHODCALLTYPE WebURLCredential::QueryInterface(REFIID riid, void** p
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebURLCredential::AddRef(void)
+ULONG STDMETHODCALLTYPE WebURLCredential::AddRef()
 {
     return ++m_refCount;
 }
@@ -94,17 +95,15 @@ ULONG STDMETHODCALLTYPE WebURLCredential::Release(void)
 }
 
 // IWebURLCredential -------------------------------------------------------------------
-HRESULT STDMETHODCALLTYPE WebURLCredential::hasPassword(
-        /* [out, retval] */ BOOL* result)
+HRESULT WebURLCredential::hasPassword(_Out_ BOOL* result)
 {
+    if (!result)
+        return E_POINTER;
     *result = m_credential.hasPassword();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLCredential::initWithUser(
-        /* [in] */ BSTR user, 
-        /* [in] */ BSTR password, 
-        /* [in] */ WebURLCredentialPersistence persistence)
+HRESULT WebURLCredential::initWithUser(_In_ BSTR user, _In_ BSTR password, WebURLCredentialPersistence persistence)
 {
     CredentialPersistence corePersistence = CredentialPersistenceNone;
     switch (persistence) {
@@ -125,17 +124,20 @@ HRESULT STDMETHODCALLTYPE WebURLCredential::initWithUser(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLCredential::password(
-        /* [out, retval] */ BSTR* password)
+HRESULT WebURLCredential::password(__deref_opt_out BSTR* password)
 {
+    if (!password)
+        return E_POINTER;
     BString str = m_credential.password();
     *password = str.release();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLCredential::persistence(
-        /* [out, retval] */ WebURLCredentialPersistence* result)
+HRESULT WebURLCredential::persistence(_Out_ WebURLCredentialPersistence* result)
 {
+    if (!result)
+        return E_POINTER;
+
     switch (m_credential.persistence()) {
     case CredentialPersistenceNone:
         *result = WebURLCredentialPersistenceNone;
@@ -153,9 +155,11 @@ HRESULT STDMETHODCALLTYPE WebURLCredential::persistence(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLCredential::user(
-        /* [out, retval] */ BSTR* result)
+HRESULT WebURLCredential::user(__deref_opt_out BSTR* result)
 {
+    if (!result)
+        return E_POINTER;
+
     BString str = m_credential.user();
     *result = str.release();
     return S_OK;
@@ -165,4 +169,3 @@ const WebCore::Credential& WebURLCredential::credential() const
 {
     return m_credential;
 }
-

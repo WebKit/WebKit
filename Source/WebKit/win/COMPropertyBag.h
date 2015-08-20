@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,36 +47,34 @@ public:
     static COMPropertyBag* adopt(HashMapType&);
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
     // IPropertyBag
     virtual HRESULT STDMETHODCALLTYPE Read(LPCOLESTR pszPropName, VARIANT*, IErrorLog*);
-    virtual HRESULT STDMETHODCALLTYPE Write(LPCOLESTR pszPropName, VARIANT*);
+    virtual HRESULT STDMETHODCALLTYPE Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT*);
 
     // IPropertyBag2
-    virtual HRESULT STDMETHODCALLTYPE Read(ULONG cProperties, PROPBAG2*, IErrorLog*, VARIANT* pvarValue, HRESULT* phrError);
-    virtual HRESULT STDMETHODCALLTYPE Write(ULONG cProperties, PROPBAG2*, VARIANT*);
-    virtual HRESULT STDMETHODCALLTYPE CountProperties(ULONG* pcProperties);
-    virtual HRESULT STDMETHODCALLTYPE GetPropertyInfo(ULONG iProperty, ULONG cProperties, PROPBAG2* pPropBag, ULONG* pcProperties);
-    virtual HRESULT STDMETHODCALLTYPE LoadObject(LPCOLESTR pstrName, DWORD dwHint, IUnknown*, IErrorLog*);
+    virtual HRESULT STDMETHODCALLTYPE Read(ULONG cProperties, __inout_ecount_full(cProperties) PROPBAG2*, _In_opt_ IErrorLog*, __out_ecount_full(cProperties) VARIANT*, __inout_ecount_full_opt(cProperties) HRESULT*);
+    virtual HRESULT STDMETHODCALLTYPE Write(ULONG cProperties, __inout_ecount_full(cProperties) PROPBAG2*, __inout_ecount_full(cProperties) VARIANT*);
+    virtual HRESULT STDMETHODCALLTYPE CountProperties(_Out_ ULONG* pcProperties);
+    virtual HRESULT STDMETHODCALLTYPE GetPropertyInfo(ULONG iProperty, ULONG cProperties, __out_ecount_full(cProperties) PROPBAG2*, _Out_ ULONG* pcProperties);
+    virtual HRESULT STDMETHODCALLTYPE LoadObject(_In_ LPCOLESTR pstrName, DWORD dwHint, _In_opt_ IUnknown*, _In_opt_ IErrorLog*);
 
 private:
     COMPropertyBag()
-        : m_refCount(0)
     {
     }
 
     COMPropertyBag(const HashMapType& hashMap)
-        : m_refCount(0)
-        , m_hashMap(hashMap)
+        : m_hashMap(hashMap)
     {
     }
 
     ~COMPropertyBag() {}
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     HashMapType m_hashMap;
 };
 
@@ -100,9 +98,11 @@ COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<typename ValueType,
 
 // IUnknown ------------------------------------------------------------------------
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IPropertyBag*>(this);
     else if (IsEqualGUID(riid, IID_IPropertyBag))
@@ -156,13 +156,13 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(LPC
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Write(LPCOLESTR pszPropName, VARIANT* pVar)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT* pVar)
 {
     return E_FAIL;
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(ULONG cProperties, PROPBAG2* pPropBag, IErrorLog* pErrorLog, VARIANT* pvarValue, HRESULT* phrError)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(ULONG cProperties, __inout_ecount_full(cProperties) PROPBAG2* pPropBag, _In_opt_ IErrorLog* pErrorLog, __out_ecount_full(cProperties) VARIANT* pvarValue, __inout_ecount_full_opt(cProperties) HRESULT* phrError)
 {
     if (!pPropBag || !pvarValue || !phrError)
         return E_POINTER;
@@ -181,13 +181,13 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(ULO
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Write(ULONG cProperties, PROPBAG2*, VARIANT*)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Write(ULONG cProperties, __inout_ecount_full(cProperties) PROPBAG2*, __inout_ecount_full(cProperties) VARIANT*)
 {
     return E_NOTIMPL;
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::CountProperties(ULONG* pcProperties)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::CountProperties(_Out_ ULONG* pcProperties)
 {
     if (!pcProperties)
         return E_POINTER;
@@ -197,10 +197,12 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::CountPro
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPropertyInfo(ULONG iProperty, ULONG cProperties, PROPBAG2* pPropBag, ULONG* pcProperties)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPropertyInfo(ULONG iProperty, ULONG cProperties, __out_ecount_full(cProperties) PROPBAG2* pPropBag, _Out_ ULONG* pcProperties)
 {
     if (!pPropBag || !pcProperties)
         return E_POINTER;
+
+    *pcProperties = 0;
 
     if (m_hashMap.size() <= iProperty)
         return E_INVALIDARG;
@@ -229,7 +231,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::LoadObject(LPCOLESTR pstrName, DWORD dwHint, IUnknown*, IErrorLog*)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::LoadObject(_In_ LPCOLESTR pstrName, DWORD dwHint, _In_opt_ IUnknown*, _In_opt_ IErrorLog*)
 {
     return E_NOTIMPL;
 }

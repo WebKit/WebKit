@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,39 +37,24 @@ private:
     ~DefaultPolicyDelegate();
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebPolicyDelegate
-    virtual HRESULT STDMETHODCALLTYPE decidePolicyForNavigationAction( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IPropertyBag *actionInformation,
-        /* [in] */ IWebURLRequest *request,
-        /* [in] */ IWebFrame *frame,
-        /* [in] */ IWebPolicyDecisionListener *listener);
+    virtual HRESULT STDMETHODCALLTYPE decidePolicyForNavigationAction(_In_opt_ IWebView*, _In_opt_ IPropertyBag* actionInformation,
+        _In_opt_ IWebURLRequest*, _In_opt_ IWebFrame*, _In_opt_ IWebPolicyDecisionListener*);
     
-    virtual HRESULT STDMETHODCALLTYPE decidePolicyForNewWindowAction( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IPropertyBag *actionInformation,
-        /* [in] */ IWebURLRequest *request,
-        /* [in] */ BSTR frameName,
-        /* [in] */ IWebPolicyDecisionListener *listener);
+    virtual HRESULT STDMETHODCALLTYPE decidePolicyForNewWindowAction(_In_opt_ IWebView*, _In_opt_ IPropertyBag* actionInformation,
+        _In_opt_ IWebURLRequest*, _In_ BSTR frameName, _In_opt_ IWebPolicyDecisionListener*);
     
-    virtual HRESULT STDMETHODCALLTYPE decidePolicyForMIMEType( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ BSTR type,
-        /* [in] */ IWebURLRequest *request,
-        /* [in] */ IWebFrame *frame,
-        /* [in] */ IWebPolicyDecisionListener *listener);
+    virtual HRESULT STDMETHODCALLTYPE decidePolicyForMIMEType(_In_opt_ IWebView*, _In_ BSTR type, _In_opt_ IWebURLRequest*,
+        _In_opt_ IWebFrame*, _In_opt_ IWebPolicyDecisionListener*);
     
-    virtual HRESULT STDMETHODCALLTYPE unableToImplementPolicyWithError( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebError *error,
-        /* [in] */ IWebFrame *frame);
+    virtual HRESULT STDMETHODCALLTYPE unableToImplementPolicyWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif // DefaultPolicyDelegate_h

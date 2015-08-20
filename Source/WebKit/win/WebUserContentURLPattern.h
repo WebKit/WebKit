@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,15 +45,15 @@ private:
     WebUserContentURLPattern();
     ~WebUserContentURLPattern();
 
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
-    virtual HRESULT STDMETHODCALLTYPE parse(BSTR patternString);
-    virtual HRESULT STDMETHODCALLTYPE isValid(BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE scheme(BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE host(BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE matchesSubdomains(BOOL* matches);
-    virtual HRESULT STDMETHODCALLTYPE matchesURL(BSTR, BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE parse(_In_ BSTR patternString);
+    virtual HRESULT STDMETHODCALLTYPE isValid(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE scheme(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE host(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE matchesSubdomains(_Out_ BOOL* matches);
+    virtual HRESULT STDMETHODCALLTYPE matchesURL(_In_ BSTR, _Out_ BOOL*);
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     WebCore::UserContentURLPattern m_pattern;
 };
 

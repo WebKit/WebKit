@@ -40,7 +40,7 @@ public:
     static COMPtr<WebGeolocationPolicyListener> createInstance(PassRefPtr<WebCore::Geolocation>);
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
@@ -52,7 +52,7 @@ private:
     WebGeolocationPolicyListener(PassRefPtr<WebCore::Geolocation>);
     ~WebGeolocationPolicyListener();
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     RefPtr<WebCore::Geolocation> m_geolocation;
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,31 +40,20 @@ private:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebNavigationData
-    virtual HRESULT STDMETHODCALLTYPE url(
-        /* [retval][out] */ BSTR*);
-
-    virtual HRESULT STDMETHODCALLTYPE title(
-        /* [retval][out] */ BSTR*);
-
-    virtual HRESULT STDMETHODCALLTYPE originalRequest(
-        /* [retval][out] */ IWebURLRequest**);
-
-    virtual HRESULT STDMETHODCALLTYPE response(
-        /* [retval][out] */ IWebURLResponse**);
-
-    virtual HRESULT STDMETHODCALLTYPE hasSubstituteData(
-        /* [retval][out] */ BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE clientRedirectSource(
-        /* [retval][out] */ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE url(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE title(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE originalRequest(_COM_Outptr_opt_ IWebURLRequest**);
+    virtual HRESULT STDMETHODCALLTYPE response(_COM_Outptr_opt_ IWebURLResponse**);
+    virtual HRESULT STDMETHODCALLTYPE hasSubstituteData(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE clientRedirectSource(__deref_opt_out BSTR*);
 
 private:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     WebCore::BString m_url;
     WebCore::BString m_title;
     COMPtr<IWebURLRequest> m_request;

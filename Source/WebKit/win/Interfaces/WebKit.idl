@@ -57,6 +57,10 @@ cpp_quote("#endif")
 
 #define DO_NO_IMPORTS
 
+midl_pragma warning(disable: 2111)
+midl_pragma warning(disable: 2392)
+midl_pragma warning(disable: 2402)
+
 import "oaidl.idl";
 import "ocidl.idl";
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,56 +62,27 @@ private:
     ~WebDownload();
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebDownload
-    virtual HRESULT STDMETHODCALLTYPE initWithRequest(
-        /* [in] */ IWebURLRequest* request, 
-        /* [in] */ IWebDownloadDelegate* delegate);
-
-    virtual HRESULT STDMETHODCALLTYPE initToResumeWithBundle(
-        /* [in] */ BSTR bundlePath, 
-        /* [in] */ IWebDownloadDelegate* delegate);
-
-    virtual HRESULT STDMETHODCALLTYPE canResumeDownloadDecodedWithEncodingMIMEType(
-        /* [in] */ BSTR mimeType, 
-        /* [out, retval] */ BOOL* result);
-
+    virtual HRESULT STDMETHODCALLTYPE initWithRequest(_In_opt_ IWebURLRequest*, _In_opt_ IWebDownloadDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE initToResumeWithBundle(_In_ BSTR bundlePath, _In_opt_ IWebDownloadDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE canResumeDownloadDecodedWithEncodingMIMEType(_In_ BSTR mimeType, _Out_ BOOL* result);
     virtual HRESULT STDMETHODCALLTYPE start();
-
     virtual HRESULT STDMETHODCALLTYPE cancel();
-
     virtual HRESULT STDMETHODCALLTYPE cancelForResume();
-
-    virtual HRESULT STDMETHODCALLTYPE deletesFileUponFailure(
-        /* [out, retval] */ BOOL* result);
-
-    virtual HRESULT STDMETHODCALLTYPE bundlePathForTargetPath(
-        /* [in] */ BSTR target, 
-        /* [out, retval] */ BSTR* bundle);
-
-    virtual HRESULT STDMETHODCALLTYPE request(
-        /* [out, retval] */ IWebURLRequest** request);
-
-    virtual HRESULT STDMETHODCALLTYPE setDeletesFileUponFailure(
-        /* [in] */ BOOL deletesFileUponFailure);
-
-    virtual HRESULT STDMETHODCALLTYPE setDestination(
-        /* [in] */ BSTR path, 
-        /* [in] */ BOOL allowOverwrite);
+    virtual HRESULT STDMETHODCALLTYPE deletesFileUponFailure(_Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE bundlePathForTargetPath(_In_ BSTR target, __deref_out_opt BSTR* bundle);
+    virtual HRESULT STDMETHODCALLTYPE request(_COM_Outptr_opt_ IWebURLRequest**);
+    virtual HRESULT STDMETHODCALLTYPE setDeletesFileUponFailure(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setDestination(_In_ BSTR path, BOOL allowOverwrite);
 
     // IWebURLAuthenticationChallengeSender
-    virtual HRESULT STDMETHODCALLTYPE cancelAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge* challenge);
-
-    virtual HRESULT STDMETHODCALLTYPE continueWithoutCredentialForAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge* challenge);
-
-    virtual HRESULT STDMETHODCALLTYPE useCredential(
-        /* [in] */ IWebURLCredential* credential, 
-        /* [in] */ IWebURLAuthenticationChallenge* challenge);
+    virtual HRESULT STDMETHODCALLTYPE cancelAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge*);
+    virtual HRESULT STDMETHODCALLTYPE continueWithoutCredentialForAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge*);
+    virtual HRESULT STDMETHODCALLTYPE useCredential(_In_opt_ IWebURLCredential*, _In_opt_ IWebURLAuthenticationChallenge*);
 
 #if USE(CFNETWORK)
     // CFURLDownload Callbacks
@@ -134,7 +105,7 @@ public:
 #endif
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 
     WTF::String m_destination;
     WTF::String m_bundlePath;

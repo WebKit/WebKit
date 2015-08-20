@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ using namespace WebCore;
 // WebJavaScriptCollector ---------------------------------------------------------------------------
 
 WebJavaScriptCollector::WebJavaScriptCollector()
-: m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("WebJavaScriptCollector");
@@ -59,9 +58,11 @@ WebJavaScriptCollector* WebJavaScriptCollector::createInstance()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebJavaScriptCollector::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebJavaScriptCollector*>(this);
     else if (IsEqualGUID(riid, IID_IWebJavaScriptCollector))
@@ -73,7 +74,7 @@ HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::QueryInterface(REFIID riid, vo
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebJavaScriptCollector::AddRef(void)
+ULONG STDMETHODCALLTYPE WebJavaScriptCollector::AddRef()
 {
     return ++m_refCount;
 }
@@ -89,21 +90,19 @@ ULONG STDMETHODCALLTYPE WebJavaScriptCollector::Release(void)
 
 // IWebJavaScriptCollector ------------------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collect()
+HRESULT WebJavaScriptCollector::collect()
 {
     GCController::singleton().garbageCollectNow();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collectOnAlternateThread( 
-    /* [in] */ BOOL waitUntilDone)
+HRESULT WebJavaScriptCollector::collectOnAlternateThread(BOOL waitUntilDone)
 {
     GCController::singleton().garbageCollectOnAlternateThreadForDebugging(!!waitUntilDone);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::objectCount( 
-    /* [retval][out] */ UINT* count)
+HRESULT WebJavaScriptCollector::objectCount(_Out_ UINT* count)
 {
     if (!count) {
         ASSERT_NOT_REACHED();

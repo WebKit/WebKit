@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,83 +42,66 @@ public:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMObject::AddRef(); }
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef() { return DOMObject::AddRef(); }
     virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
 
     // IWebScriptObject
-    virtual HRESULT STDMETHODCALLTYPE throwException( 
-        /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result) { return DOMObject::throwException(exceptionMessage, result); }
+    virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
+    {
+        return DOMObject::throwException(exceptionMessage, result);
+    }
     
-    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
-        /* [in] */ BSTR name,
-        /* [size_is][in] */ const VARIANT args[  ],
-        /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::callWebScriptMethod(name, args, cArgs, result); }
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(_In_ BSTR name, __in_ecount_opt(cArgs) const VARIANT args[], int cArgs, _Out_ VARIANT* result)
+    {
+        return DOMObject::callWebScriptMethod(name, args, cArgs, result);
+    }
     
-    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
-        /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::evaluateWebScript(script, result); }
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(_In_ BSTR script, _Out_ VARIANT* result)
+    {
+        return DOMObject::evaluateWebScript(script, result);
+    }
     
-    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name) { return DOMObject::removeWebScriptKey(name); }
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(_In_ BSTR name)
+    {
+        return DOMObject::removeWebScriptKey(name);
+    }
     
-    virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation) { return DOMObject::stringRepresentation(stringRepresentation); }
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(__deref_opt_out BSTR* stringRepresentation)
+    {
+        return DOMObject::stringRepresentation(stringRepresentation);
+    }
     
-    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
-        /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result) { return DOMObject::webScriptValueAtIndex(index, result); }
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(unsigned index, _Out_ VARIANT* result)
+    {
+        return DOMObject::webScriptValueAtIndex(index, result);
+    }
     
-    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
-        /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val) { return DOMObject::setWebScriptValueAtIndex(index, val); }
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(unsigned index, VARIANT val)
+    {
+        return DOMObject::setWebScriptValueAtIndex(index, val);
+    }
     
-    virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description) { return DOMObject::setException(description); }
+    virtual HRESULT STDMETHODCALLTYPE setException(_In_ BSTR description)
+    {
+        return DOMObject::setException(description);
+    }
 
     // IDOMCSSStyleDeclaration
-    virtual HRESULT STDMETHODCALLTYPE cssText( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE setCssText( 
-        /* [in] */ BSTR cssText);
-    
-    virtual HRESULT STDMETHODCALLTYPE getPropertyValue( 
-        /* [in] */ BSTR propertyName,
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE getPropertyCSSValue( 
-        /* [in] */ BSTR propertyName,
-        /* [retval][out] */ IDOMCSSValue **result);
-    
-    virtual HRESULT STDMETHODCALLTYPE removeProperty( 
-        /* [in] */ BSTR propertyName,
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE getPropertyPriority( 
-        /* [in] */ BSTR propertyName,
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE setProperty( 
-        /* [in] */ BSTR propertyName,
-        /* [in] */ BSTR value,
-        /* [in] */ BSTR priority);
-    
-    virtual HRESULT STDMETHODCALLTYPE length( 
-        /* [retval][out] */ UINT *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE item( 
-        /* [in] */ UINT index,
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE parentRule( 
-        /* [retval][out] */ IDOMCSSRule **result);
+    virtual HRESULT STDMETHODCALLTYPE cssText(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setCssText(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE getPropertyValue(_In_ BSTR propertyName, __deref_opt_out BSTR *result);
+    virtual HRESULT STDMETHODCALLTYPE getPropertyCSSValue(_In_ BSTR propertyName, _COM_Outptr_opt_ IDOMCSSValue **result);
+    virtual HRESULT STDMETHODCALLTYPE removeProperty(_In_ BSTR propertyName, __deref_opt_out BSTR *result);
+    virtual HRESULT STDMETHODCALLTYPE getPropertyPriority(_In_ BSTR propertyName, __deref_opt_out BSTR *result);
+    virtual HRESULT STDMETHODCALLTYPE setProperty(_In_ BSTR propertyName, _In_ BSTR value, _In_ BSTR priority);
+    virtual HRESULT STDMETHODCALLTYPE length(_Out_ UINT* result);
+    virtual HRESULT STDMETHODCALLTYPE item(UINT index, __deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE parentRule(_COM_Outptr_opt_ IDOMCSSRule* *result);
 
 protected:
-    ULONG m_refCount;
-    WebCore::CSSStyleDeclaration* m_style;
+    ULONG m_refCount { 0 };
+    WebCore::CSSStyleDeclaration* m_style { nullptr };
 };
 
 #endif

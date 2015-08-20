@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,53 +41,30 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebError
-    virtual HRESULT STDMETHODCALLTYPE init( 
-        /* [in] */ BSTR domain,
-        /* [in] */ int code,
-        /* [in] */ BSTR url);
-
-    virtual HRESULT STDMETHODCALLTYPE code( 
-        /* [retval][out] */ int *result);
-        
-    virtual HRESULT STDMETHODCALLTYPE domain( 
-        /* [retval][out] */ BSTR *result);
-        
-    virtual HRESULT STDMETHODCALLTYPE localizedDescription( 
-        /* [retval][out] */ BSTR *result);
-        
-    virtual HRESULT STDMETHODCALLTYPE localizedFailureReason( 
-        /* [retval][out] */ BSTR *result);
-        
-    virtual HRESULT STDMETHODCALLTYPE localizedRecoveryOptions( 
-        /* [retval][out] */ IEnumVARIANT **result);
-        
-    virtual HRESULT STDMETHODCALLTYPE localizedRecoverySuggestion( 
-        /* [retval][out] */ BSTR *result);
-       
-    virtual HRESULT STDMETHODCALLTYPE recoverAttempter( 
-        /* [retval][out] */ IUnknown **result);
-        
-    virtual HRESULT STDMETHODCALLTYPE userInfo( 
-        /* [retval][out] */ IPropertyBag **result);
-
-    virtual HRESULT STDMETHODCALLTYPE failingURL( 
-        /* [retval][out] */ BSTR *result);
-
-    virtual HRESULT STDMETHODCALLTYPE isPolicyChangeError( 
-        /* [retval][out] */ BOOL *result);
+    virtual HRESULT STDMETHODCALLTYPE init(_In_ BSTR domain, int code, _In_ BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE code(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE domain(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE localizedDescription(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE localizedFailureReason(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE localizedRecoveryOptions(__deref_opt_out IEnumVARIANT** result);
+    virtual HRESULT STDMETHODCALLTYPE localizedRecoverySuggestion(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE recoverAttempter(__deref_opt_out IUnknown** result);
+    virtual HRESULT STDMETHODCALLTYPE userInfo(_COM_Outptr_opt_ IPropertyBag **result);
+    virtual HRESULT STDMETHODCALLTYPE failingURL(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE isPolicyChangeError(_Out_ BOOL*);
 
     // IWebErrorPrivate
-    virtual HRESULT STDMETHODCALLTYPE sslPeerCertificate(/* [retval][out] */ ULONG_PTR* result);
+    virtual HRESULT STDMETHODCALLTYPE sslPeerCertificate(_Out_ ULONG_PTR*);
 
     const WebCore::ResourceError& resourceError() const;
 
 private:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     COMPtr<IPropertyBag> m_userInfo;
 #if USE(CFNETWORK)
     RetainPtr<CFDictionaryRef> m_cfErrorUserInfoDict;

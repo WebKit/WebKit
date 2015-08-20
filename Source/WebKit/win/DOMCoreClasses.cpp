@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2009, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,9 +71,11 @@ using WTF::String;
 
 // DOMObject - IUnknown -------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMObject::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMObject::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMObject))
         *ppvObject = static_cast<IDOMObject*>(this);
     else
@@ -85,9 +87,11 @@ HRESULT STDMETHODCALLTYPE DOMObject::QueryInterface(REFIID riid, void** ppvObjec
 
 // DOMNode - IUnknown ---------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMNode::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMNode::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMNode))
         *ppvObject = static_cast<IDOMNode*>(this);
     else if (IsEqualGUID(riid, __uuidof(DOMNode)))
@@ -103,12 +107,11 @@ HRESULT STDMETHODCALLTYPE DOMNode::QueryInterface(REFIID riid, void** ppvObject)
 
 // DOMNode --------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMNode::nodeName( 
-    /* [retval][out] */ BSTR* result)
+HRESULT DOMNode::nodeName(__deref_opt_out BSTR* result)
 {
     if (!result)
         return E_POINTER;
-
+    *result = nullptr;
     if (!m_node)
         return E_FAIL;
 
@@ -116,9 +119,11 @@ HRESULT STDMETHODCALLTYPE DOMNode::nodeName(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::nodeValue( 
-    /* [retval][out] */ BSTR* result)
+HRESULT DOMNode::nodeValue(__deref_opt_out BSTR* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_node)
         return E_FAIL;
     WTF::String nodeValueStr = m_node->nodeValue();
@@ -128,33 +133,34 @@ HRESULT STDMETHODCALLTYPE DOMNode::nodeValue(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::setNodeValue( 
-    /* [in] */ BSTR /*value*/)
+HRESULT DOMNode::setNodeValue(_In_ BSTR /*value*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::nodeType( 
-    /* [retval][out] */ unsigned short* /*result*/)
+HRESULT DOMNode::nodeType(_Out_ unsigned short* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::parentNode( 
-    /* [retval][out] */ IDOMNode** result)
+HRESULT DOMNode::parentNode(_COM_Outptr_opt_ IDOMNode** result)
 {
-    *result = 0;
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_node || !m_node->parentNode())
         return E_FAIL;
     *result = DOMNode::createInstance(m_node->parentNode());
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::childNodes( 
-    /* [retval][out] */ IDOMNodeList** result)
+HRESULT DOMNode::childNodes(_COM_Outptr_opt_ IDOMNodeList** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_node)
         return E_FAIL;
 
@@ -165,67 +171,70 @@ HRESULT STDMETHODCALLTYPE DOMNode::childNodes(
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::firstChild( 
-    /* [retval][out] */ IDOMNode** /*result*/)
+HRESULT DOMNode::firstChild(_COM_Outptr_opt_ IDOMNode** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::lastChild( 
-    /* [retval][out] */ IDOMNode** /*result*/)
+HRESULT DOMNode::lastChild(_COM_Outptr_opt_ IDOMNode** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::previousSibling( 
-    /* [retval][out] */ IDOMNode** /*result*/)
+HRESULT DOMNode::previousSibling(_COM_Outptr_opt_ IDOMNode** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::nextSibling( 
-    /* [retval][out] */ IDOMNode** result)
+HRESULT DOMNode::nextSibling(_COM_Outptr_opt_ IDOMNode** result)
 {
     if (!result)
         return E_POINTER;
-    *result = 0;
+    *result = nullptr;
     if (!m_node)
         return E_FAIL;
     *result = DOMNode::createInstance(m_node->nextSibling());
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::attributes( 
-    /* [retval][out] */ IDOMNamedNodeMap** /*result*/)
+HRESULT DOMNode::attributes(_COM_Outptr_opt_ IDOMNamedNodeMap** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::ownerDocument( 
-    /* [retval][out] */ IDOMDocument** result)
+HRESULT DOMNode::ownerDocument(_COM_Outptr_opt_ IDOMDocument** result)
 {
     if (!result)
         return E_POINTER;
-    *result = 0;
+    *result = nullptr;
     if (!m_node)
         return E_FAIL;
     *result = DOMDocument::createInstance(m_node->ownerDocument());
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::insertBefore( 
-    /* [in] */ IDOMNode* newChild,
-    /* [in] */ IDOMNode* refChild,
-    /* [retval][out] */ IDOMNode** result)
+HRESULT DOMNode::insertBefore(_In_opt_ IDOMNode* newChild, _In_opt_ IDOMNode* refChild, _COM_Outptr_opt_ IDOMNode** result)
 {
     if (!result)
         return E_POINTER;
 
-    *result = 0;
+    *result = nullptr;
 
     if (!m_node)
         return E_FAIL;
@@ -245,23 +254,21 @@ HRESULT STDMETHODCALLTYPE DOMNode::insertBefore(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::replaceChild( 
-    /* [in] */ IDOMNode* /*newChild*/,
-    /* [in] */ IDOMNode* /*oldChild*/,
-    /* [retval][out] */ IDOMNode** /*result*/)
+HRESULT DOMNode::replaceChild(_In_opt_ IDOMNode* /*newChild*/, _In_opt_ IDOMNode* /*oldChild*/, _COM_Outptr_opt_ IDOMNode** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::removeChild( 
-    /* [in] */ IDOMNode* oldChild,
-    /* [retval][out] */ IDOMNode** result)
+HRESULT DOMNode::removeChild(_In_opt_ IDOMNode* oldChild, _COM_Outptr_opt_ IDOMNode** result)
 {
     if (!result)
         return E_POINTER;
 
-    *result = 0;
+    *result = nullptr;
 
     if (!m_node)
         return E_FAIL;
@@ -279,82 +286,82 @@ HRESULT STDMETHODCALLTYPE DOMNode::removeChild(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::appendChild( 
-    /* [in] */ IDOMNode* /*oldChild*/,
-    /* [retval][out] */ IDOMNode** /*result*/)
+HRESULT DOMNode::appendChild(_In_opt_ IDOMNode* /*oldChild*/, _COM_Outptr_opt_ IDOMNode** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT DOMNode::hasChildNodes(_Out_ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::hasChildNodes( 
-    /* [retval][out] */ BOOL* /*result*/)
+HRESULT DOMNode::cloneNode(BOOL /*deep*/, _COM_Outptr_opt_ IDOMNode** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT DOMNode::normalize()
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::cloneNode( 
-    /* [in] */ BOOL /*deep*/,
-    /* [retval][out] */ IDOMNode** /*result*/)
+HRESULT DOMNode::isSupported(_In_ BSTR /*feature*/, _In_ BSTR /*version*/, _Out_ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::normalize( void)
+HRESULT DOMNode::namespaceURI(__deref_opt_out BSTR* result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT DOMNode::prefix(__deref_opt_out BSTR* result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT DOMNode::setPrefix(_In_ BSTR /*prefix*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::isSupported( 
-    /* [in] */ BSTR /*feature*/,
-    /* [in] */ BSTR /*version*/,
-    /* [retval][out] */ BOOL* /*result*/)
+HRESULT DOMNode::localName(__deref_opt_out BSTR* result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT DOMNode::hasAttributes(_Out_ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::namespaceURI( 
-    /* [retval][out] */ BSTR* /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE DOMNode::prefix( 
-    /* [retval][out] */ BSTR* /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE DOMNode::setPrefix( 
-    /* [in] */ BSTR /*prefix*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE DOMNode::localName( 
-    /* [retval][out] */ BSTR* /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE DOMNode::hasAttributes( 
-    /* [retval][out] */ BOOL* /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE DOMNode::isSameNode( 
-    /* [in] */ IDOMNode* other,
-    /* [retval][out] */ BOOL* result)
+HRESULT DOMNode::isSameNode(_In_opt_ IDOMNode* other, _Out_ BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -375,16 +382,13 @@ HRESULT STDMETHODCALLTYPE DOMNode::isSameNode(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::isEqualNode( 
-    /* [in] */ IDOMNode* /*other*/,
-    /* [retval][out] */ BOOL* /*result*/)
+HRESULT DOMNode::isEqualNode(_In_opt_ IDOMNode* /*other*/, _Out_ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::textContent( 
-    /* [retval][out] */ BSTR* result)
+HRESULT DOMNode::textContent(__deref_opt_out BSTR* result)
 {
     if (!result)
         return E_POINTER;
@@ -394,8 +398,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::textContent(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::setTextContent( 
-    /* [in] */ BSTR /*text*/)
+HRESULT DOMNode::setTextContent(_In_ BSTR /*text*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -403,10 +406,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::setTextContent(
 
 // DOMNode - IDOMEventTarget --------------------------------------------------
 
-HRESULT DOMNode::addEventListener(
-    /* [in] */ BSTR type,
-    /* [in] */ IDOMEventListener* listener,
-    /* [in] */ BOOL useCapture)
+HRESULT DOMNode::addEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* listener, BOOL useCapture)
 {
     RefPtr<WebEventListener> webListener = WebEventListener::create(listener);
     m_node->addEventListener(type, webListener, useCapture);
@@ -414,10 +414,7 @@ HRESULT DOMNode::addEventListener(
     return S_OK;
 }
 
-HRESULT DOMNode::removeEventListener(
-    /* [in] */ BSTR type,
-    /* [in] */ IDOMEventListener* listener,
-    /* [in] */ BOOL useCapture)
+HRESULT DOMNode::removeEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* listener, BOOL useCapture)
 {
     if (!listener || !type)
         return E_POINTER;
@@ -428,9 +425,7 @@ HRESULT DOMNode::removeEventListener(
     return S_OK;
 }
 
-HRESULT DOMNode::dispatchEvent(
-    /* [in] */ IDOMEvent* evt,
-    /* [retval][out] */ BOOL* result)
+HRESULT DOMNode::dispatchEvent(_In_opt_ IDOMEvent* evt, _Out_ BOOL* result)
 {
     if (!evt || !result)
         return E_POINTER;
@@ -450,7 +445,6 @@ HRESULT DOMNode::dispatchEvent(
 // DOMNode - DOMNode ----------------------------------------------------------
 
 DOMNode::DOMNode(WebCore::Node* n)
-: m_node(0)
 {
     if (n)
         n->ref();
@@ -467,10 +461,10 @@ DOMNode::~DOMNode()
 IDOMNode* DOMNode::createInstance(WebCore::Node* n)
 {
     if (!n)
-        return 0;
+        return nullptr;
 
     HRESULT hr = S_OK;
-    IDOMNode* domNode = 0;
+    IDOMNode* domNode = nullptr;
     WebCore::Node::NodeType nodeType = n->nodeType();
 
     switch (nodeType) {
@@ -501,16 +495,18 @@ IDOMNode* DOMNode::createInstance(WebCore::Node* n)
     }
 
     if (FAILED(hr))
-        return 0;
+        return nullptr;
 
     return domNode;
 }
 
 // DOMNodeList - IUnknown -----------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMNodeList::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMNodeList::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMNodeList))
         *ppvObject = static_cast<IDOMNodeList*>(this);
     else
@@ -522,11 +518,11 @@ HRESULT STDMETHODCALLTYPE DOMNodeList::QueryInterface(REFIID riid, void** ppvObj
 
 // IDOMNodeList ---------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMNodeList::item( 
-    /* [in] */ UINT index,
-    /* [retval][out] */ IDOMNode **result)
+HRESULT DOMNodeList::item(UINT index, _COM_Outptr_opt_ IDOMNode** result)
 {
-    *result = 0;
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_nodeList)
         return E_FAIL;
 
@@ -538,9 +534,10 @@ HRESULT STDMETHODCALLTYPE DOMNodeList::item(
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNodeList::length( 
-        /* [retval][out] */ UINT *result)
+HRESULT DOMNodeList::length(_Out_ UINT* result)
 {
+    if (!result)
+        return E_POINTER;
     *result = 0;
     if (!m_nodeList)
         return E_FAIL;
@@ -551,7 +548,6 @@ HRESULT STDMETHODCALLTYPE DOMNodeList::length(
 // DOMNodeList - DOMNodeList --------------------------------------------------
 
 DOMNodeList::DOMNodeList(WebCore::NodeList* l)
-: m_nodeList(0)
 {
     if (l)
         l->ref();
@@ -568,21 +564,23 @@ DOMNodeList::~DOMNodeList()
 IDOMNodeList* DOMNodeList::createInstance(WebCore::NodeList* l)
 {
     if (!l)
-        return 0;
+        return nullptr;
 
-    IDOMNodeList* domNodeList = 0;
+    IDOMNodeList* domNodeList = nullptr;
     DOMNodeList* newNodeList = new DOMNodeList(l);
     if (FAILED(newNodeList->QueryInterface(IID_IDOMNodeList, (void**)&domNodeList)))
-        return 0;
+        return nullptr;
 
     return domNodeList;
 }
 
 // DOMDocument - IUnknown -----------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMDocument::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMDocument::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMDocument))
         *ppvObject = static_cast<IDOMDocument*>(this);
     else if (IsEqualGUID(riid, IID_IDOMViewCSS))
@@ -598,31 +596,37 @@ HRESULT STDMETHODCALLTYPE DOMDocument::QueryInterface(REFIID riid, void** ppvObj
 
 // DOMDocument ----------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMDocument::doctype( 
-    /* [retval][out] */ IDOMDocumentType** /*result*/)
+HRESULT DOMDocument::doctype(_COM_Outptr_opt_ IDOMDocumentType** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::implementation( 
-    /* [retval][out] */ IDOMImplementation** /*result*/)
+HRESULT DOMDocument::implementation(_COM_Outptr_opt_ IDOMImplementation** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::documentElement( 
-    /* [retval][out] */ IDOMElement** result)
+HRESULT DOMDocument::documentElement(_COM_Outptr_opt_ IDOMElement** result)
 {
+    if (!result)
+        return E_POINTER;
     *result = DOMElement::createInstance(m_document->documentElement());
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createElement( 
-    /* [in] */ BSTR tagName,
-    /* [retval][out] */ IDOMElement** result)
+HRESULT DOMDocument::createElement(_In_ BSTR tagName, _COM_Outptr_opt_ IDOMElement** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_document)
         return E_FAIL;
 
@@ -632,66 +636,74 @@ HRESULT STDMETHODCALLTYPE DOMDocument::createElement(
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createDocumentFragment( 
-    /* [retval][out] */ IDOMDocumentFragment** /*result*/)
+HRESULT DOMDocument::createDocumentFragment(_COM_Outptr_opt_ IDOMDocumentFragment** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createTextNode( 
-    /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDOMText** /*result*/)
+HRESULT STDMETHODCALLTYPE DOMDocument::createTextNode(_In_ BSTR /*data*/, _COM_Outptr_opt_ IDOMText** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createComment( 
-    /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDOMComment** /*result*/)
+HRESULT DOMDocument::createComment(_In_ BSTR /*data*/, _COM_Outptr_opt_ IDOMComment** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createCDATASection( 
-    /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDOMCDATASection** /*result*/)
+HRESULT DOMDocument::createCDATASection(_In_ BSTR /*data*/, _COM_Outptr_opt_ IDOMCDATASection** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createProcessingInstruction( 
-    /* [in] */ BSTR /*target*/,
-    /* [in] */ BSTR /*data*/,
-    /* [retval][out] */ IDOMProcessingInstruction** /*result*/)
+HRESULT DOMDocument::createProcessingInstruction(_In_ BSTR /*target*/, _In_ BSTR /*data*/, _COM_Outptr_opt_ IDOMProcessingInstruction** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createAttribute( 
-    /* [in] */ BSTR /*name*/,
-    /* [retval][out] */ IDOMAttr** /*result*/)
+HRESULT DOMDocument::createAttribute(_In_ BSTR /*name*/, _COM_Outptr_opt_ IDOMAttr** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createEntityReference( 
-    /* [in] */ BSTR /*name*/,
-    /* [retval][out] */ IDOMEntityReference** /*result*/)
+HRESULT DOMDocument::createEntityReference(_In_ BSTR /*name*/, _COM_Outptr_opt_ IDOMEntityReference** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::getElementsByTagName( 
-    /* [in] */ BSTR tagName,
-    /* [retval][out] */ IDOMNodeList** result)
+HRESULT DOMDocument::getElementsByTagName(_In_ BSTR tagName, _COM_Outptr_opt_ IDOMNodeList** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_document)
         return E_FAIL;
 
@@ -700,38 +712,38 @@ HRESULT STDMETHODCALLTYPE DOMDocument::getElementsByTagName(
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::importNode( 
-    /* [in] */ IDOMNode* /*importedNode*/,
-    /* [in] */ BOOL /*deep*/,
-    /* [retval][out] */ IDOMNode** /*result*/)
+HRESULT DOMDocument::importNode(_In_opt_ IDOMNode* /*importedNode*/, BOOL /*deep*/, _COM_Outptr_opt_ IDOMNode** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createElementNS( 
-    /* [in] */ BSTR /*namespaceURI*/,
-    /* [in] */ BSTR /*qualifiedName*/,
-    /* [retval][out] */ IDOMElement** /*result*/)
+HRESULT DOMDocument::createElementNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*qualifiedName*/, _COM_Outptr_opt_ IDOMElement** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createAttributeNS( 
-    /* [in] */ BSTR /*namespaceURI*/,
-    /* [in] */ BSTR /*qualifiedName*/,
-    /* [retval][out] */ IDOMAttr** /*result*/)
+HRESULT DOMDocument::createAttributeNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*qualifiedName*/, _COM_Outptr_opt_ IDOMAttr** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::getElementsByTagNameNS( 
-    /* [in] */ BSTR namespaceURI,
-    /* [in] */ BSTR localName,
-    /* [retval][out] */ IDOMNodeList** result)
+HRESULT DOMDocument::getElementsByTagNameNS(_In_ BSTR namespaceURI, _In_ BSTR localName, _COM_Outptr_opt_ IDOMNodeList** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_document)
         return E_FAIL;
 
@@ -741,10 +753,11 @@ HRESULT STDMETHODCALLTYPE DOMDocument::getElementsByTagNameNS(
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMDocument::getElementById( 
-    /* [in] */ BSTR elementId,
-    /* [retval][out] */ IDOMElement** result)
+HRESULT DOMDocument::getElementById(_In_ BSTR elementId, _COM_Outptr_opt_ IDOMElement** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_document)
         return E_FAIL;
 
@@ -755,12 +768,12 @@ HRESULT STDMETHODCALLTYPE DOMDocument::getElementById(
 
 // DOMDocument - IDOMViewCSS --------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMDocument::getComputedStyle( 
-    /* [in] */ IDOMElement* elt,
-    /* [in] */ BSTR pseudoElt,
-    /* [retval][out] */ IDOMCSSStyleDeclaration** result)
+HRESULT DOMDocument::getComputedStyle(_In_opt_ IDOMElement* elt, _In_ BSTR pseudoElt, _COM_Outptr_opt_ IDOMCSSStyleDeclaration** result)
 {
-    if (!elt || !result)
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    if (!elt)
         return E_POINTER;
 
     COMPtr<DOMElement> domEle;
@@ -781,10 +794,12 @@ HRESULT STDMETHODCALLTYPE DOMDocument::getComputedStyle(
 
 // DOMDocument - IDOMDocumentEvent --------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMDocument::createEvent( 
-    /* [in] */ BSTR eventType,
-    /* [retval][out] */ IDOMEvent **result)
+HRESULT DOMDocument::createEvent(_In_ BSTR eventType, _COM_Outptr_opt_ IDOMEvent** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+
     String eventTypeString(eventType, SysStringLen(eventType));
     WebCore::ExceptionCode ec = 0;
     *result = DOMEvent::createInstance(m_document->createEvent(eventTypeString, ec));
@@ -794,8 +809,8 @@ HRESULT STDMETHODCALLTYPE DOMDocument::createEvent(
 // DOMDocument - DOMDocument --------------------------------------------------
 
 DOMDocument::DOMDocument(WebCore::Document* d)
-: DOMNode(d)
-, m_document(d)
+    : DOMNode(d)
+    , m_document(d)
 {
 }
 
@@ -806,10 +821,10 @@ DOMDocument::~DOMDocument()
 IDOMDocument* DOMDocument::createInstance(WebCore::Document* d)
 {
     if (!d)
-        return 0;
+        return nullptr;
 
     HRESULT hr;
-    IDOMDocument* domDocument = 0;
+    IDOMDocument* domDocument = nullptr;
 
     if (d->isHTMLDocument()) {
         DOMHTMLDocument* newDocument = new DOMHTMLDocument(d);
@@ -820,16 +835,18 @@ IDOMDocument* DOMDocument::createInstance(WebCore::Document* d)
     }
 
     if (FAILED(hr))
-        return 0;
+        return nullptr;
 
     return domDocument;
 }
 
 // DOMWindow - IUnknown ------------------------------------------------------
 
-HRESULT DOMWindow::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMWindow::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMWindow))
         *ppvObject = static_cast<IDOMWindow*>(this);
     else if (IsEqualGUID(riid, IID_IDOMEventTarget))
@@ -843,8 +860,7 @@ HRESULT DOMWindow::QueryInterface(REFIID riid, void** ppvObject)
 
 // DOMWindow - IDOMWindow ------------------------------------------------------
 
-HRESULT DOMWindow::document(
-    /* [out, retval] */ IDOMDocument** result)
+HRESULT DOMWindow::document(_COM_Outptr_opt_ IDOMDocument** result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -855,26 +871,22 @@ HRESULT DOMWindow::document(
     return *result ? S_OK : E_FAIL;
 }
 
-HRESULT DOMWindow::getComputedStyle(
-    /* [in] */ IDOMElement* element, 
-    /* [in] */ BSTR pseudoElement)
+HRESULT DOMWindow::getComputedStyle(_In_opt_ IDOMElement* element, _In_ BSTR pseudoElement)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMWindow::getMatchedCSSRules(
-    /* [in] */ IDOMElement* element, 
-    /* [in] */ BSTR pseudoElement, 
-    /* [in] */ BOOL authorOnly, 
-    /* [out, retval] */ IDOMCSSRuleList** result)
+HRESULT DOMWindow::getMatchedCSSRules(_In_opt_ IDOMElement* element, _In_ BSTR pseudoElement, BOOL authorOnly, _COM_Outptr_opt_ IDOMCSSRuleList** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT DOMWindow::devicePixelRatio(
-    /* [out, retval] */ double* result)
+HRESULT DOMWindow::devicePixelRatio(_Out_ double* result)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -882,10 +894,7 @@ HRESULT DOMWindow::devicePixelRatio(
 
 // DOMWindow - IDOMEventTarget ------------------------------------------------------
 
-HRESULT DOMWindow::addEventListener(
-    /* [in] */ BSTR type,
-    /* [in] */ IDOMEventListener* listener,
-    /* [in] */ BOOL useCapture)
+HRESULT DOMWindow::addEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* listener, BOOL useCapture)
 {
     if (!type || !listener)
         return E_POINTER;
@@ -896,10 +905,7 @@ HRESULT DOMWindow::addEventListener(
     return S_OK;
 }
 
-HRESULT DOMWindow::removeEventListener(
-    /* [in] */ BSTR type,
-    /* [in] */ IDOMEventListener* listener,
-    /* [in] */ BOOL useCapture)
+HRESULT DOMWindow::removeEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* listener, BOOL useCapture)
 {
     if (!type || !listener)
         return E_POINTER;
@@ -910,9 +916,7 @@ HRESULT DOMWindow::removeEventListener(
     return S_OK;
 }
 
-HRESULT DOMWindow::dispatchEvent(
-    /* [in] */ IDOMEvent* evt,
-    /* [retval][out] */ BOOL* result)
+HRESULT DOMWindow::dispatchEvent(_In_opt_ IDOMEvent* evt, _Out_ BOOL* result)
 {
     if (!result || !evt)
         return E_POINTER;
@@ -933,7 +937,7 @@ HRESULT DOMWindow::dispatchEvent(
 // DOMWindow - DOMWindow --------------------------------------------------
 
 DOMWindow::DOMWindow(WebCore::DOMWindow* w)
-: m_window(w)
+    : m_window(w)
 {
 }
 
@@ -944,24 +948,26 @@ DOMWindow::~DOMWindow()
 IDOMWindow* DOMWindow::createInstance(WebCore::DOMWindow* w)
 {
     if (!w)
-        return 0;
+        return nullptr;
 
     DOMWindow* newWindow = new DOMWindow(w);
 
-    IDOMWindow* domWindow = 0;
+    IDOMWindow* domWindow = nullptr;
     HRESULT hr = newWindow->QueryInterface(IID_IDOMWindow, reinterpret_cast<void**>(&domWindow));
 
     if (FAILED(hr))
-        return 0;
+        return nullptr;
 
     return domWindow;
 }
 
 // DOMElement - IUnknown ------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMElement::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMElement::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMElement))
         *ppvObject = static_cast<IDOMElement*>(this);
     else if (IsEqualGUID(riid, IID_DOMElement))
@@ -983,9 +989,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::QueryInterface(REFIID riid, void** ppvObje
 
 // DOMElement - IDOMNodeExtensions---------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMElement::boundingBox( 
-    /* [retval][out] */ LPRECT rect)
+HRESULT DOMElement::boundingBox(_Out_ LPRECT rect)
 {
+    if (!rect)
+        return E_POINTER;
+
     ::SetRectEmpty(rect);
 
     if (!m_element)
@@ -1003,32 +1011,30 @@ HRESULT STDMETHODCALLTYPE DOMElement::boundingBox(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::lineBoxRects( 
-    /* [size_is][in] */ RECT* /*rects*/,
-    /* [in] */ int /*cRects*/)
+HRESULT STDMETHODCALLTYPE DOMElement::lineBoxRects(__inout_ecount_full(cRects) RECT* /*rects*/, int cRects)
 {
     return E_NOTIMPL;
 }
 
 // IDOMElement ----------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMElement::tagName( 
-        /* [retval][out] */ BSTR* result)
+HRESULT DOMElement::tagName(__deref_opt_out BSTR* result)
 {
-    if (!m_element)
-        return E_FAIL;
-
     if (!result)
         return E_POINTER;
+    *result = nullptr;
+    if (!m_element)
+        return E_FAIL;
 
     *result = BString(m_element->tagName()).release();
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::getAttribute( 
-        /* [in] */ BSTR name,
-        /* [retval][out] */ BSTR* result)
+HRESULT DOMElement::getAttribute(_In_ BSTR name, __deref_opt_out BSTR* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     if (!m_element)
         return E_FAIL;
     WTF::String nameString(name, SysStringLen(name));
@@ -1039,9 +1045,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::getAttribute(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::setAttribute( 
-        /* [in] */ BSTR name,
-        /* [in] */ BSTR value)
+HRESULT DOMElement::setAttribute(_In_ BSTR name, _In_ BSTR value)
 {
     if (!m_element)
         return E_FAIL;
@@ -1053,115 +1057,109 @@ HRESULT STDMETHODCALLTYPE DOMElement::setAttribute(
     return ec ? E_FAIL : S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::removeAttribute( 
-        /* [in] */ BSTR /*name*/)
+HRESULT DOMElement::removeAttribute(_In_ BSTR /*name*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::getAttributeNode( 
-        /* [in] */ BSTR /*name*/,
-        /* [retval][out] */ IDOMAttr** /*result*/)
+HRESULT DOMElement::getAttributeNode(_In_ BSTR /*name*/, _COM_Outptr_opt_ IDOMAttr** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::setAttributeNode(_In_opt_ IDOMAttr* /*newAttr*/, _COM_Outptr_opt_ IDOMAttr** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::removeAttributeNode(_In_opt_ IDOMAttr* /*oldAttr*/, _COM_Outptr_opt_ IDOMAttr** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::getElementsByTagName(_In_ BSTR /*name*/, _COM_Outptr_opt_ IDOMNodeList** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::getAttributeNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*localName*/, __deref_opt_out BSTR* result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::setAttributeNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*qualifiedName*/, _In_ BSTR /*value*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::setAttributeNode( 
-        /* [in] */ IDOMAttr* /*newAttr*/,
-        /* [retval][out] */ IDOMAttr** /*result*/)
+HRESULT DOMElement::removeAttributeNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*localName*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::removeAttributeNode( 
-        /* [in] */ IDOMAttr* /*oldAttr*/,
-        /* [retval][out] */ IDOMAttr** /*result*/)
+HRESULT DOMElement::getAttributeNodeNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*localName*/, _COM_Outptr_opt_ IDOMAttr** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::setAttributeNodeNS(_In_opt_ IDOMAttr* /*newAttr*/, _COM_Outptr_opt_ IDOMAttr** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::getElementsByTagNameNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*localName*/, _COM_Outptr_opt_ IDOMNodeList** result)
+{
+    ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+}
+    
+HRESULT DOMElement::hasAttribute(_In_ BSTR /*name*/, _Out_ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE DOMElement::getElementsByTagName( 
-        /* [in] */ BSTR /*name*/,
-        /* [retval][out] */ IDOMNodeList** /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::getAttributeNS( 
-        /* [in] */ BSTR /*namespaceURI*/,
-        /* [in] */ BSTR /*localName*/,
-        /* [retval][out] */ BSTR* /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::setAttributeNS( 
-        /* [in] */ BSTR /*namespaceURI*/,
-        /* [in] */ BSTR /*qualifiedName*/,
-        /* [in] */ BSTR /*value*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::removeAttributeNS( 
-        /* [in] */ BSTR /*namespaceURI*/,
-        /* [in] */ BSTR /*localName*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::getAttributeNodeNS( 
-        /* [in] */ BSTR /*namespaceURI*/,
-        /* [in] */ BSTR /*localName*/,
-        /* [retval][out] */ IDOMAttr** /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::setAttributeNodeNS( 
-        /* [in] */ IDOMAttr* /*newAttr*/,
-        /* [retval][out] */ IDOMAttr** /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::getElementsByTagNameNS( 
-        /* [in] */ BSTR /*namespaceURI*/,
-        /* [in] */ BSTR /*localName*/,
-        /* [retval][out] */ IDOMNodeList** /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::hasAttribute( 
-        /* [in] */ BSTR /*name*/,
-        /* [retval][out] */ BOOL* /*result*/)
-{
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
-}
-    
-HRESULT STDMETHODCALLTYPE DOMElement::hasAttributeNS( 
-        /* [in] */ BSTR /*namespaceURI*/,
-        /* [in] */ BSTR /*localName*/,
-        /* [retval][out] */ BOOL* /*result*/)
+HRESULT DOMElement::hasAttributeNS(_In_ BSTR /*namespaceURI*/, _In_ BSTR /*localName*/, _Out_ BOOL* /*result*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::focus( void)
+HRESULT DOMElement::focus()
 {
     if (!m_element)
         return E_FAIL;
@@ -1169,7 +1167,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::focus( void)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::blur( void)
+HRESULT DOMElement::blur()
 {
     if (!m_element)
         return E_FAIL;
@@ -1179,7 +1177,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::blur( void)
 
 // IDOMElementPrivate ---------------------------------------------------------
 
-HRESULT DOMElement::coreElement(void **element)
+HRESULT DOMElement::coreElement(__deref_opt_out void **element)
 {
     if (!m_element)
         return E_FAIL;
@@ -1187,13 +1185,14 @@ HRESULT DOMElement::coreElement(void **element)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::isEqual( 
-    /* [in] */ IDOMElement *other,
-    /* [retval][out] */ BOOL *result)
+HRESULT DOMElement::isEqual(_In_opt_ IDOMElement* other, _Out_ BOOL* result)
 {
+    if (!result)
+        return E_POINTER;
+
     *result = FALSE;
 
-    if (!other || !result)
+    if (!other)
         return E_POINTER;
 
     IDOMElementPrivate* otherPriv;
@@ -1211,9 +1210,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::isEqual(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::isFocused( 
-    /* [retval][out] */ BOOL *result)
+HRESULT DOMElement::isFocused(_Out_ BOOL* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = FALSE;
     if (!m_element)
         return E_FAIL;
 
@@ -1225,13 +1226,14 @@ HRESULT STDMETHODCALLTYPE DOMElement::isFocused(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::innerText(
-    /* [retval][out] */ BSTR* result)
+HRESULT DOMElement::innerText(__deref_opt_out BSTR* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
         return E_POINTER;
     }
+
+    *result = nullptr;
 
     if (!m_element) {
         ASSERT_NOT_REACHED();
@@ -1242,7 +1244,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::innerText(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::font(WebFontDescription* webFontDescription)
+HRESULT DOMElement::font(_Out_ WebFontDescription* webFontDescription)
 {
     if (!webFontDescription) {
         ASSERT_NOT_REACHED();
@@ -1271,13 +1273,13 @@ HRESULT STDMETHODCALLTYPE DOMElement::font(WebFontDescription* webFontDescriptio
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::renderedImage(HBITMAP* image)
+HRESULT DOMElement::renderedImage(__deref_opt_out HBITMAP* image)
 {
     if (!image) {
         ASSERT_NOT_REACHED();
         return E_POINTER;
     }
-    *image = 0;
+    *image = nullptr;
 
     ASSERT(m_element);
 
@@ -1292,8 +1294,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::renderedImage(HBITMAP* image)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::markerTextForListItem(
-    /* [retval][out] */ BSTR* markerText)
+HRESULT DOMElement::markerTextForListItem(__deref_opt_out BSTR* markerText)
 {
     if (!markerText)
         return E_POINTER;
@@ -1304,8 +1305,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::markerTextForListItem(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::shadowPseudoId(
-    /* [retval][out] */ BSTR* result)
+HRESULT DOMElement::shadowPseudoId(__deref_opt_out BSTR* result)
 {
     if (!result)
         return E_POINTER;
@@ -1318,11 +1318,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::shadowPseudoId(
 
 // IDOMElementCSSInlineStyle --------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMElement::style( 
-    /* [retval][out] */ IDOMCSSStyleDeclaration** result)
+HRESULT DOMElement::style(_COM_Outptr_opt_ IDOMCSSStyleDeclaration** result)
 {
     if (!result)
         return E_POINTER;
+    *result = nullptr;
     if (!m_element)
         return E_FAIL;
 
@@ -1336,9 +1336,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::style(
 
 // IDOMElementExtensions ------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMElement::offsetLeft( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::offsetLeft(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1346,9 +1348,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::offsetLeft(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::offsetTop( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::offsetTop(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1356,9 +1360,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::offsetTop(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::offsetWidth( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::offsetWidth(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1366,9 +1372,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::offsetWidth(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::offsetHeight( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::offsetHeight(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1376,17 +1384,21 @@ HRESULT STDMETHODCALLTYPE DOMElement::offsetHeight(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::offsetParent( 
-    /* [retval][out] */ IDOMElement** /*result*/)
+HRESULT DOMElement::offsetParent(_COM_Outptr_opt_ IDOMElement** result)
 {
     // FIXME
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::clientWidth( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::clientWidth(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1394,9 +1406,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::clientWidth(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::clientHeight( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::clientHeight(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1404,9 +1418,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::clientHeight(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::scrollLeft( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::scrollLeft(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1414,17 +1430,18 @@ HRESULT STDMETHODCALLTYPE DOMElement::scrollLeft(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::setScrollLeft( 
-    /* [in] */ int /*newScrollLeft*/)
+HRESULT DOMElement::setScrollLeft(int /*newScrollLeft*/)
 {
     // FIXME
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::scrollTop( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::scrollTop(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1432,17 +1449,18 @@ HRESULT STDMETHODCALLTYPE DOMElement::scrollTop(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::setScrollTop( 
-    /* [in] */ int /*newScrollTop*/)
+HRESULT DOMElement::setScrollTop(int /*newScrollTop*/)
 {
     // FIXME
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::scrollWidth( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::scrollWidth(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1450,9 +1468,11 @@ HRESULT STDMETHODCALLTYPE DOMElement::scrollWidth(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::scrollHeight( 
-    /* [retval][out] */ int* result)
+HRESULT DOMElement::scrollHeight(_Out_ int* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     if (!m_element)
         return E_FAIL;
 
@@ -1460,8 +1480,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::scrollHeight(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::scrollIntoView( 
-    /* [in] */ BOOL alignWithTop)
+HRESULT DOMElement::scrollIntoView(BOOL alignWithTop)
 {
     if (!m_element)
         return E_FAIL;
@@ -1470,8 +1489,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::scrollIntoView(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMElement::scrollIntoViewIfNeeded( 
-    /* [in] */ BOOL centerIfNeeded)
+HRESULT DOMElement::scrollIntoViewIfNeeded(BOOL centerIfNeeded)
 {
     if (!m_element)
         return E_FAIL;
@@ -1483,8 +1501,8 @@ HRESULT STDMETHODCALLTYPE DOMElement::scrollIntoViewIfNeeded(
 // DOMElement -----------------------------------------------------------------
 
 DOMElement::DOMElement(WebCore::Element* e)
-: DOMNode(e)
-, m_element(e)
+    : DOMNode(e)
+    , m_element(e)
 {
 }
 
@@ -1498,7 +1516,7 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
         return nullptr;
 
     HRESULT hr;
-    IDOMElement* domElement = 0;
+    IDOMElement* domElement = nullptr;
 
     if (is<WebCore::HTMLFormElement>(*e)) {
         DOMHTMLFormElement* newElement = new DOMHTMLFormElement(e);
@@ -1527,15 +1545,17 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
     }
 
     if (FAILED(hr))
-        return 0;
+        return nullptr;
 
     return domElement;
 }
 
 // DOMRange - IUnknown -----------------------------------------------------
 
-HRESULT DOMRange::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMRange::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
+    if (!ppvObject)
+        return E_POINTER;
     *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMRange))
         *ppvObject = static_cast<IDOMRange*>(this);
@@ -1571,11 +1591,11 @@ IDOMRange* DOMRange::createInstance(WebCore::Range* range)
     return newRange;
 }
 
-HRESULT DOMRange::startContainer(IDOMNode** node)
+HRESULT DOMRange::startContainer(_COM_Outptr_opt_ IDOMNode** node)
 {
     if (!node)
         return E_POINTER;
-
+    *node = nullptr;
     if (!m_range)
         return E_UNEXPECTED;
 
@@ -1584,11 +1604,11 @@ HRESULT DOMRange::startContainer(IDOMNode** node)
     return S_OK;
 }
 
-HRESULT DOMRange::startOffset(int* offset)
+HRESULT DOMRange::startOffset(_Out_ int* offset)
 {
     if (!offset)
         return E_POINTER;
-
+    *offset = 0;
     if (!m_range)
         return E_UNEXPECTED;
 
@@ -1597,11 +1617,11 @@ HRESULT DOMRange::startOffset(int* offset)
     return S_OK;
 }
 
-HRESULT DOMRange::endContainer(IDOMNode** node)
+HRESULT DOMRange::endContainer(_COM_Outptr_opt_ IDOMNode** node)
 {
     if (!node)
         return E_POINTER;
-
+    *node = nullptr;
     if (!m_range)
         return E_UNEXPECTED;
 
@@ -1610,11 +1630,11 @@ HRESULT DOMRange::endContainer(IDOMNode** node)
     return S_OK;
 }
 
-HRESULT DOMRange::endOffset(int* offset)
+HRESULT DOMRange::endOffset(_Out_ int* offset)
 {
     if (!offset)
         return E_POINTER;
-
+    *offset = 0;
     if (!m_range)
         return E_UNEXPECTED;
 
@@ -1623,11 +1643,11 @@ HRESULT DOMRange::endOffset(int* offset)
     return S_OK;
 }
 
-HRESULT DOMRange::collapsed(BOOL* result)
+HRESULT DOMRange::collapsed(_Out_ BOOL* result)
 {
     if (!result)
         return E_POINTER;
-
+    *result = FALSE;
     if (!m_range)
         return E_UNEXPECTED;
 
@@ -1637,96 +1657,125 @@ HRESULT DOMRange::collapsed(BOOL* result)
     return S_OK;
 }
 
-HRESULT DOMRange::commonAncestorContainer(IDOMNode** container)
+HRESULT DOMRange::commonAncestorContainer(_COM_Outptr_opt_ IDOMNode** container)
 {
+    ASSERT_NOT_REACHED();
+    if (!container)
+        return E_POINTER;
+    *container = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::setStart(IDOMNode* refNode, int offset)
+HRESULT DOMRange::setStart(_In_opt_ IDOMNode* refNode, int offset)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::setEnd(IDOMNode* refNode, int offset)
+HRESULT DOMRange::setEnd(_In_opt_ IDOMNode* refNode, int offset)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::setStartBefore(IDOMNode* refNode)
+HRESULT DOMRange::setStartBefore(_In_opt_ IDOMNode* refNode)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::setStartAfter(IDOMNode* refNode)
+HRESULT DOMRange::setStartAfter(_In_opt_ IDOMNode* refNode)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::setEndBefore(IDOMNode* refNode)
+HRESULT DOMRange::setEndBefore(_In_opt_  IDOMNode* refNode)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::setEndAfter(IDOMNode* refNode)
+HRESULT DOMRange::setEndAfter(_In_opt_  IDOMNode* refNode)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
 HRESULT DOMRange::collapse(BOOL toStart)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::selectNode(IDOMNode* refNode)
+HRESULT DOMRange::selectNode(_In_opt_ IDOMNode* refNode)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::selectNodeContents(IDOMNode* refNode)
+HRESULT DOMRange::selectNodeContents(_In_opt_ IDOMNode* refNode)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::compareBoundaryPoints(unsigned short how, IDOMRange* sourceRange)
+HRESULT DOMRange::compareBoundaryPoints(unsigned short how, _In_opt_ IDOMRange* sourceRange)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
 HRESULT DOMRange::deleteContents()
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::extractContents(IDOMDocumentFragment** fragment)
+HRESULT DOMRange::extractContents(_COM_Outptr_opt_ IDOMDocumentFragment** fragment)
 {
+    ASSERT_NOT_REACHED();
+    if (!fragment)
+        return E_POINTER;
+    *fragment = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::cloneContents(IDOMDocumentFragment** fragment)
+HRESULT DOMRange::cloneContents(_COM_Outptr_opt_ IDOMDocumentFragment** fragment)
 {
+    ASSERT_NOT_REACHED();
+    if (!fragment)
+        return E_POINTER;
+    *fragment = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::insertNode(IDOMNode* newNode)
+HRESULT DOMRange::insertNode(_In_opt_ IDOMNode* newNode)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::surroundContents(IDOMNode* newParent)
+HRESULT DOMRange::surroundContents(_In_opt_ IDOMNode* newParent)
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::cloneRange(IDOMRange** range)
+HRESULT DOMRange::cloneRange(_COM_Outptr_opt_ IDOMRange** range)
 {
+    ASSERT_NOT_REACHED();
+    if (!range)
+        return E_POINTER;
+    *range = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT DOMRange::toString(BSTR* str)
+HRESULT DOMRange::toString(__deref_opt_out BSTR* str)
 {
     if (!str)
         return E_POINTER;
-
+    *str = nullptr;
     if (!m_range)
         return E_UNEXPECTED;
 
@@ -1738,5 +1787,6 @@ HRESULT DOMRange::toString(BSTR* str)
 
 HRESULT DOMRange::detach()
 {
+    ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }

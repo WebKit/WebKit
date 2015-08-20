@@ -22,6 +22,14 @@
       <DllDataFileName>dlldata.c</DllDataFileName>
       <TypeLibraryName>$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\WebKit.tlb</TypeLibraryName>
       <ValidateAllParameters>true</ValidateAllParameters>
+      <EnableErrorChecks>All</EnableErrorChecks>
+      <ErrorCheckAllocations>true</ErrorCheckAllocations>
+      <ErrorCheckBounds>true</ErrorCheckBounds>
+      <ErrorCheckEnumRange>true</ErrorCheckEnumRange>
+      <ErrorCheckRefPointers>true</ErrorCheckRefPointers>
+      <ErrorCheckStubData>true</ErrorCheckStubData>
+      <WarnAsError>false</WarnAsError>
+      <AdditionalOptions>/sal %(AdditionalOptions)</AdditionalOptions>
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup />

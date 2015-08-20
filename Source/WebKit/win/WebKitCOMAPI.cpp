@@ -63,8 +63,11 @@ static COMPtr<IClassFactory> classFactory(const CLSID& clsid)
     return factory;
 }
 
-HRESULT WebKitCreateInstance(REFCLSID rclsid, IUnknown* pUnkOuter, REFIID riid, void** ppvObject)
+HRESULT WebKitCreateInstance(REFCLSID rclsid, IUnknown* pUnkOuter, REFIID riid, _COM_Outptr_ void** ppvObject)
 {
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     COMPtr<IClassFactory> factory = classFactory(rclsid);
     if (!factory)
         return REGDB_E_CLASSNOTREG;

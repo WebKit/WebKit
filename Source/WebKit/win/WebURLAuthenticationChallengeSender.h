@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,26 +45,19 @@ private:
     ~WebURLAuthenticationChallengeSender();
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebURLAuthenticationChallengeSender
-    virtual HRESULT STDMETHODCALLTYPE cancelAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge* challenge);
-
-    virtual HRESULT STDMETHODCALLTYPE continueWithoutCredentialForAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge* challenge);
-
-    virtual HRESULT STDMETHODCALLTYPE useCredential(
-        /* [in] */ IWebURLCredential* credential, 
-        /* [in] */ IWebURLAuthenticationChallenge* challenge);
+    virtual HRESULT STDMETHODCALLTYPE cancelAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge*);
+    virtual HRESULT STDMETHODCALLTYPE continueWithoutCredentialForAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge*);
+    virtual HRESULT STDMETHODCALLTYPE useCredential(_In_opt_ IWebURLCredential*, _In_opt_ IWebURLAuthenticationChallenge*);
 
     WebCore::AuthenticationClient* authenticationClient() const;
 
 private:
-    ULONG m_refCount;
-
+    ULONG m_refCount { 0 };
     RefPtr<WebCore::AuthenticationClient> m_client;
 };
 

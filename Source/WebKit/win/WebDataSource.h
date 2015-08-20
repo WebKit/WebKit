@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,78 +45,39 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebDataSource
-    virtual HRESULT STDMETHODCALLTYPE initWithRequest( 
-        /* [in] */ IWebURLRequest *request);
-    
-    virtual HRESULT STDMETHODCALLTYPE data( 
-        /* [retval][out] */ IStream **stream);
-    
-    virtual HRESULT STDMETHODCALLTYPE representation( 
-        /* [retval][out] */ IWebDocumentRepresentation **rep);
-    
-    virtual HRESULT STDMETHODCALLTYPE webFrame( 
-        /* [retval][out] */ IWebFrame **frame);
-    
-    virtual HRESULT STDMETHODCALLTYPE initialRequest( 
-        /* [retval][out] */ IWebURLRequest **request);
-    
-    virtual HRESULT STDMETHODCALLTYPE request( 
-        /* [retval][out] */ IWebMutableURLRequest **request);
-    
-    virtual HRESULT STDMETHODCALLTYPE response( 
-        /* [retval][out] */ IWebURLResponse **response);
-    
-    virtual HRESULT STDMETHODCALLTYPE textEncodingName( 
-        /* [retval][out] */ BSTR *name);
-    
-    virtual HRESULT STDMETHODCALLTYPE isLoading( 
-        /* [retval][out] */ BOOL *loading);
-    
-    virtual HRESULT STDMETHODCALLTYPE pageTitle( 
-        /* [retval][out] */ BSTR *title);
-    
-    virtual HRESULT STDMETHODCALLTYPE unreachableURL( 
-        /* [retval][out] */ BSTR *url);
-    
-    virtual HRESULT STDMETHODCALLTYPE webArchive( 
-        /* [retval][out] */ IWebArchive **archive);
-    
-    virtual HRESULT STDMETHODCALLTYPE mainResource( 
-        /* [retval][out] */ IWebResource **resource);
-    
-    virtual HRESULT STDMETHODCALLTYPE subresources( 
-        /* [retval][out] */ IEnumVARIANT **enumResources);
-    
-    virtual HRESULT STDMETHODCALLTYPE subresourceForURL( 
-        /* [in] */ BSTR url,
-        /* [retval][out] */ IWebResource **resource);
-    
-    virtual HRESULT STDMETHODCALLTYPE addSubresource( 
-        /* [in] */ IWebResource *subresource);
+    virtual HRESULT STDMETHODCALLTYPE initWithRequest(_In_opt_ IWebURLRequest*);
+    virtual HRESULT STDMETHODCALLTYPE data(_COM_Outptr_opt_ IStream**);
+    virtual HRESULT STDMETHODCALLTYPE representation(_COM_Outptr_opt_ IWebDocumentRepresentation**);
+    virtual HRESULT STDMETHODCALLTYPE webFrame(_COM_Outptr_opt_ IWebFrame**);
+    virtual HRESULT STDMETHODCALLTYPE initialRequest(_COM_Outptr_opt_ IWebURLRequest**);
+    virtual HRESULT STDMETHODCALLTYPE request(_COM_Outptr_opt_ IWebMutableURLRequest**);
+    virtual HRESULT STDMETHODCALLTYPE response(_COM_Outptr_opt_ IWebURLResponse**);
+    virtual HRESULT STDMETHODCALLTYPE textEncodingName(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE isLoading(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE pageTitle(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE unreachableURL(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE webArchive(_COM_Outptr_opt_ IWebArchive**);
+    virtual HRESULT STDMETHODCALLTYPE mainResource(_COM_Outptr_opt_ IWebResource**);
+    virtual HRESULT STDMETHODCALLTYPE subresources(_COM_Outptr_opt_ IEnumVARIANT** enumResources);
+    virtual HRESULT STDMETHODCALLTYPE subresourceForURL(_In_ BSTR url, _COM_Outptr_opt_ IWebResource**);
+    virtual HRESULT STDMETHODCALLTYPE addSubresource(_In_opt_ IWebResource*);
 
     // IWebDataSourcePrivate
-
-    virtual HRESULT STDMETHODCALLTYPE overrideEncoding( 
-        /* [retval][out] */ BSTR *encoding);
-    
-    virtual HRESULT STDMETHODCALLTYPE setOverrideEncoding( 
-        /* [in] */ BSTR encoding);
-
-    virtual HRESULT STDMETHODCALLTYPE mainDocumentError(
-        /* [retval][out] */ IWebError** error);
-
-    virtual HRESULT STDMETHODCALLTYPE setDeferMainResourceDataLoad(
-        /* [in] */ BOOL flag);
+    virtual HRESULT STDMETHODCALLTYPE overrideEncoding(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setOverrideEncoding(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE mainDocumentError(_COM_Outptr_opt_ IWebError**);
+    virtual HRESULT STDMETHODCALLTYPE setDeferMainResourceDataLoad(BOOL);
 
     // WebDataSource
     WebDocumentLoader* documentLoader() const;
+
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     RefPtr<WebDocumentLoader> m_loader;
     COMPtr<IWebDocumentRepresentation> m_representation;
 };

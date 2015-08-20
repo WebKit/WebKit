@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2011, 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2007, 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/URL.h>
+#include <sal.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -85,207 +86,86 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     //IWebFrame
-    virtual HRESULT STDMETHODCALLTYPE name( 
-        /* [retval][out] */ BSTR *frameName);
-    
-    virtual HRESULT STDMETHODCALLTYPE webView( 
-        /* [retval][out] */ IWebView **view);
-
-    virtual HRESULT STDMETHODCALLTYPE frameView(
-        /* [retval][out] */ IWebFrameView **view);
-
-    virtual HRESULT STDMETHODCALLTYPE DOMDocument( 
-        /* [retval][out] */ IDOMDocument** document);
-
-    virtual HRESULT STDMETHODCALLTYPE DOMWindow(/* [retval][out] */ IDOMWindow**);
-    
-    virtual HRESULT STDMETHODCALLTYPE frameElement( 
-        /* [retval][out] */ IDOMHTMLElement **frameElement);
-    
-    virtual HRESULT STDMETHODCALLTYPE loadRequest( 
-        /* [in] */ IWebURLRequest *request);
-    
-    virtual HRESULT STDMETHODCALLTYPE loadData( 
-        /* [in] */ IStream *data,
-        /* [in] */ BSTR mimeType,
-        /* [in] */ BSTR textEncodingName,
-        /* [in] */ BSTR url);
-    
-    virtual HRESULT STDMETHODCALLTYPE loadHTMLString( 
-        /* [in] */ BSTR string,
-        /* [in] */ BSTR baseURL);
-    
-    virtual HRESULT STDMETHODCALLTYPE loadAlternateHTMLString( 
-        /* [in] */ BSTR str,
-        /* [in] */ BSTR baseURL,
-        /* [in] */ BSTR unreachableURL);
-    
-    virtual HRESULT STDMETHODCALLTYPE loadArchive( 
-        /* [in] */ IWebArchive *archive);
-    
-    virtual HRESULT STDMETHODCALLTYPE dataSource( 
-        /* [retval][out] */ IWebDataSource **source);
-    
-    virtual HRESULT STDMETHODCALLTYPE provisionalDataSource( 
-        /* [retval][out] */ IWebDataSource **source);
-    
-    virtual HRESULT STDMETHODCALLTYPE stopLoading( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE reload( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE findFrameNamed( 
-        /* [in] */ BSTR name,
-        /* [retval][out] */ IWebFrame **frame);
-    
-    virtual HRESULT STDMETHODCALLTYPE parentFrame( 
-        /* [retval][out] */ IWebFrame **frame);
-    
-    virtual HRESULT STDMETHODCALLTYPE childFrames( 
-        /* [retval][out] */ IEnumVARIANT **enumFrames);
-
-    virtual HRESULT STDMETHODCALLTYPE currentForm( 
-        /* [retval][out] */ IDOMElement **formElement);
-
+    virtual HRESULT STDMETHODCALLTYPE name(_Deref_opt_out_ BSTR* frameName);
+    virtual HRESULT STDMETHODCALLTYPE webView(_COM_Outptr_opt_ IWebView**);
+    virtual HRESULT STDMETHODCALLTYPE frameView(_COM_Outptr_opt_ IWebFrameView**);
+    virtual HRESULT STDMETHODCALLTYPE DOMDocument(_COM_Outptr_opt_ IDOMDocument**);
+    virtual HRESULT STDMETHODCALLTYPE DOMWindow(_COM_Outptr_opt_ IDOMWindow**);
+    virtual HRESULT STDMETHODCALLTYPE frameElement(_COM_Outptr_opt_ IDOMHTMLElement** frameElement);
+    virtual HRESULT STDMETHODCALLTYPE loadRequest(_In_opt_ IWebURLRequest*);
+    virtual HRESULT STDMETHODCALLTYPE loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR textEncodingName, _In_ BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE loadHTMLString(_In_ BSTR, _In_ BSTR baseURL);
+    virtual HRESULT STDMETHODCALLTYPE loadAlternateHTMLString(_In_ BSTR, _In_ BSTR baseURL, _In_ BSTR unreachableURL);
+    virtual HRESULT STDMETHODCALLTYPE loadArchive(_In_opt_ IWebArchive*);
+    virtual HRESULT STDMETHODCALLTYPE dataSource(_COM_Outptr_opt_ IWebDataSource**);
+    virtual HRESULT STDMETHODCALLTYPE provisionalDataSource(_COM_Outptr_opt_ IWebDataSource**);
+    virtual HRESULT STDMETHODCALLTYPE stopLoading();
+    virtual HRESULT STDMETHODCALLTYPE reload();
+    virtual HRESULT STDMETHODCALLTYPE findFrameNamed(_In_ BSTR name, _COM_Outptr_opt_ IWebFrame**);
+    virtual HRESULT STDMETHODCALLTYPE parentFrame(_COM_Outptr_opt_ IWebFrame**);
+    virtual HRESULT STDMETHODCALLTYPE childFrames(_COM_Outptr_opt_ IEnumVARIANT** enumFrames);
+    virtual HRESULT STDMETHODCALLTYPE currentForm(_COM_Outptr_opt_ IDOMElement**);
     virtual /* [local] */ JSGlobalContextRef STDMETHODCALLTYPE globalContext();
 
     // IWebFramePrivate
     virtual HRESULT STDMETHODCALLTYPE unused1() { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(BOOL forPrinting, BSTR *result);
-
-    virtual HRESULT STDMETHODCALLTYPE pageNumberForElementById(
-        /* [in] */ BSTR id,
-        /* [in] */ float pageWidthInPixels,
-        /* [in] */ float pageHeightInPixels,
-        /* [retval][out] */ int* result);
-
-    virtual HRESULT STDMETHODCALLTYPE numberOfPages(
-        /* [in] */ float pageWidthInPixels,
-        /* [in] */ float pageHeightInPixels,
-        /* [retval][out] */ int* result);
-
-    virtual HRESULT STDMETHODCALLTYPE scrollOffset(
-        /* [retval][out] */ SIZE* offset);
-
+    virtual HRESULT STDMETHODCALLTYPE renderTreeAsExternalRepresentation(BOOL forPrinting, _Deref_opt_out_ BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE pageNumberForElementById(_In_ BSTR id, float pageWidthInPixels, float pageHeightInPixels, _Out_ int* pageNumber);
+    virtual HRESULT STDMETHODCALLTYPE numberOfPages(float pageWidthInPixels, float pageHeightInPixels, _Out_ int* pageCount);
+    virtual HRESULT STDMETHODCALLTYPE scrollOffset(_Out_ SIZE*);
     virtual HRESULT STDMETHODCALLTYPE layout();
-
-    virtual HRESULT STDMETHODCALLTYPE firstLayoutDone(
-        /* [retval][out] */ BOOL* result);
-
+    virtual HRESULT STDMETHODCALLTYPE firstLayoutDone(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE unused2() { return E_NOTIMPL; }
-
-    virtual HRESULT STDMETHODCALLTYPE pendingFrameUnloadEventCount( 
-        /* [retval][out] */ UINT* result);
-
+    virtual HRESULT STDMETHODCALLTYPE pendingFrameUnloadEventCount(_Out_ UINT*);
     virtual HRESULT STDMETHODCALLTYPE unused3() { return E_NOTIMPL; }
-    
-    virtual HRESULT STDMETHODCALLTYPE setInPrintingMode( 
-        /* [in] */ BOOL value,
-        /* [in] */ HDC printDC);
-        
-    virtual HRESULT STDMETHODCALLTYPE getPrintedPageCount( 
-        /* [in] */ HDC printDC,
-        /* [retval][out] */ UINT *pageCount);
-    
-    virtual HRESULT STDMETHODCALLTYPE spoolPages( 
-        /* [in] */ HDC printDC,
-        /* [in] */ UINT startPage,
-        /* [in] */ UINT endPage,
-        /* [retval][out] */ void* ctx);
-
-    virtual HRESULT STDMETHODCALLTYPE isFrameSet( 
-        /* [retval][out] */ BOOL* result);
-
-    virtual HRESULT STDMETHODCALLTYPE string( 
-        /* [retval][out] */ BSTR* result);
-
-    virtual HRESULT STDMETHODCALLTYPE size( 
-        /* [retval][out] */ SIZE *size);
-
-    virtual HRESULT STDMETHODCALLTYPE hasScrollBars( 
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE contentBounds( 
-        /* [retval][out] */ RECT *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE frameBounds( 
-        /* [retval][out] */ RECT *result);
-
-    virtual HRESULT STDMETHODCALLTYPE isDescendantOfFrame( 
-        /* [in] */ IWebFrame *ancestor,
-        /* [retval][out] */ BOOL *result);
-
-    virtual HRESULT STDMETHODCALLTYPE setAllowsScrolling(
-        /* [in] */ BOOL flag);
-
-    virtual HRESULT STDMETHODCALLTYPE allowsScrolling(
-        /* [retval][out] */ BOOL *flag);
-
-    virtual HRESULT STDMETHODCALLTYPE setIsDisconnected(
-        /* [in] */ BOOL flag);
-
-    virtual HRESULT STDMETHODCALLTYPE setExcludeFromTextSearch(
-        /* [in] */ BOOL flag);
-
+    virtual HRESULT STDMETHODCALLTYPE setInPrintingMode(BOOL value, _In_ HDC printDC);
+    virtual HRESULT STDMETHODCALLTYPE getPrintedPageCount(_In_ HDC printDC, _Out_ UINT* pageCount);
+    virtual HRESULT STDMETHODCALLTYPE spoolPages(HDC printDC, UINT startPage, UINT endPage, void* ctx);
+    virtual HRESULT STDMETHODCALLTYPE isFrameSet(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE string(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE size(_Out_ SIZE*);
+    virtual HRESULT STDMETHODCALLTYPE hasScrollBars(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE contentBounds(_Out_ RECT*);
+    virtual HRESULT STDMETHODCALLTYPE frameBounds(_Out_ RECT*);
+    virtual HRESULT STDMETHODCALLTYPE isDescendantOfFrame(_In_opt_ IWebFrame* ancestor, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE setAllowsScrolling(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE allowsScrolling(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setIsDisconnected(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setExcludeFromTextSearch(BOOL);
     virtual HRESULT STDMETHODCALLTYPE reloadFromOrigin();
-
-    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(/* [in] */ RECT rect, /* [in] */ HDC deviceContext);
-
-    virtual HRESULT STDMETHODCALLTYPE paintScrollViewRectToContextAtPoint(/* [in] */ RECT rect, /* [in] */ POINT pt, /* [in] */ HDC deviceContext);
-
-    virtual HRESULT STDMETHODCALLTYPE elementDoesAutoComplete(
-        /* [in] */ IDOMElement* element, 
-        /* [retval][out] */ BOOL* result);
-
-    virtual HRESULT STDMETHODCALLTYPE pauseAnimation(BSTR animationName, IDOMNode*, double secondsFromNow, BOOL* animationWasRunning);
-    virtual HRESULT STDMETHODCALLTYPE pauseTransition(BSTR propertyName, IDOMNode*, double secondsFromNow, BOOL* transitionWasRunning);
-    virtual HRESULT STDMETHODCALLTYPE numberOfActiveAnimations(UINT*);
-    virtual HRESULT STDMETHODCALLTYPE loadPlainTextString(BSTR string, BSTR url);
-
-    virtual HRESULT STDMETHODCALLTYPE isDisplayingStandaloneImage(BOOL*);
-
-    virtual HRESULT STDMETHODCALLTYPE allowsFollowingLink(
-        /* [in] */ BSTR url,
-        /* [retval][out] */ BOOL* result);
-
-    virtual HRESULT STDMETHODCALLTYPE stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld*, JSObjectRef globalObjectRef, BSTR script, BSTR* evaluationResult);
+    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(RECT, _In_ HDC);
+    virtual HRESULT STDMETHODCALLTYPE paintScrollViewRectToContextAtPoint(RECT, POINT, _In_ HDC);
+    virtual HRESULT STDMETHODCALLTYPE elementDoesAutoComplete(_In_opt_ IDOMElement*, _Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE pauseAnimation(_In_ BSTR animationName, _In_opt_ IDOMNode*, double secondsFromNow, _Out_ BOOL* animationWasRunning);
+    virtual HRESULT STDMETHODCALLTYPE pauseTransition(_In_ BSTR propertyName, _In_opt_ IDOMNode*, double secondsFromNow, _Out_ BOOL* transitionWasRunning);
+    virtual HRESULT STDMETHODCALLTYPE numberOfActiveAnimations(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE loadPlainTextString(_In_ BSTR, _In_ BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE isDisplayingStandaloneImage(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE allowsFollowingLink(_In_ BSTR, _Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld*, JSObjectRef, BSTR script, BSTR* evaluationResult);
     virtual JSGlobalContextRef STDMETHODCALLTYPE globalContextForScriptWorld(IWebScriptWorld*);
-
-    virtual HRESULT STDMETHODCALLTYPE visibleContentRect(RECT*);
-
-    virtual HRESULT STDMETHODCALLTYPE layerTreeAsText(BSTR*);
-
-    virtual HRESULT STDMETHODCALLTYPE hasSpellingMarker(
-        /* [in] */ UINT from,
-        /* [in] */ UINT length,
-        /* [retval][out] */ BOOL *result);
-
+    virtual HRESULT STDMETHODCALLTYPE visibleContentRect(_Out_ RECT*);
+    virtual HRESULT STDMETHODCALLTYPE layerTreeAsText(_Deref_out_opt_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE hasSpellingMarker(UINT from, UINT length, BOOL* result);
     virtual HRESULT STDMETHODCALLTYPE clearOpener();
-
-    virtual HRESULT STDMETHODCALLTYPE setTextDirection(BSTR);
-
+    virtual HRESULT STDMETHODCALLTYPE setTextDirection(_In_ BSTR);
     virtual HRESULT STDMETHODCALLTYPE unused4() { return E_NOTIMPL; }
-
     virtual HRESULT STDMETHODCALLTYPE resumeAnimations();
-
     virtual HRESULT STDMETHODCALLTYPE suspendAnimations();
 
     // IWebDocumentText
-    virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
-        /* [retval][out] */ BOOL* result);
-    
-    virtual HRESULT STDMETHODCALLTYPE selectedString( 
-        /* [retval][out] */ BSTR* result);
-    
-    virtual HRESULT STDMETHODCALLTYPE selectAll();
-    
+    virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE selectedString(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE selectAll();    
     virtual HRESULT STDMETHODCALLTYPE deselectAll();
 
-    virtual HRESULT STDMETHODCALLTYPE isMainFrame(BOOL*);
+    // IWebFrame2:
+    virtual HRESULT STDMETHODCALLTYPE isMainFrame(_Out_ BOOL*);
     
     // FrameLoaderClient
     virtual void frameLoaderDestroyed();
@@ -319,7 +199,7 @@ public:
     COMPtr<IAccessible> accessible() const;
 
 protected:
-    void loadHTMLString(BSTR string, BSTR baseURL, BSTR unreachableURL);
+    void loadHTMLString(_In_ BSTR string, _In_ BSTR baseURL, _In_ BSTR unreachableURL);
     void loadData(PassRefPtr<WebCore::SharedBuffer>, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL);
     const Vector<WebCore::IntRect>& computePageRects(HDC printDC);
     void setPrinting(bool printing, const WebCore::FloatSize& pageSize, const WebCore::FloatSize& originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSizeOrNot);
@@ -330,14 +210,15 @@ protected:
     void drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate*, const WebCore::IntRect& pageRect, UINT page, UINT pageCount, float headerHeight, float footerHeight);
 
 protected:
-    ULONG               m_refCount;
+    ULONG m_refCount { 0 };
     class WebFramePrivate;
-    WebFramePrivate*    d;
-    bool                m_quickRedirectComing;
-    WebCore::URL       m_originalRequestURL;
-    bool                m_inPrintingMode;
+    WebFramePrivate* d;
+    bool m_quickRedirectComing { false };
+    WebCore::URL m_originalRequestURL;
+    bool m_inPrintingMode { false };
+
     Vector<WebCore::IntRect> m_pageRects;
-    int m_pageHeight;   // height of the page adjusted by margins
+    int m_pageHeight { 0 }; // height of the page adjusted by margins
     mutable COMPtr<AccessibleDocument> m_accessible;
 };
 

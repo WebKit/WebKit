@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2010, 2013, 2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Serotek Corporation. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,6 @@ using namespace WebCore;
 AccessibleBase::AccessibleBase(AccessibilityObject* obj, HWND window)
     : AccessibilityObjectWrapper(obj)
     , m_window(window)
-    , m_refCount(0)
 {
     ASSERT_ARG(obj, obj);
     m_object->setWrapper(this);
@@ -84,7 +83,7 @@ AccessibleBase* AccessibleBase::createInstance(AccessibilityObject* obj, HWND wi
     return new AccessibleBase(obj, window);
 }
 
-HRESULT AccessibleBase::QueryService(REFGUID guidService, REFIID riid, void **ppvObject)
+HRESULT AccessibleBase::QueryService(_In_ REFGUID guidService, _In_ REFIID riid, _COM_Outptr_ void **ppvObject)
 {
     if (!IsEqualGUID(guidService, SID_AccessibleComparable)
         && !IsEqualGUID(guidService, IID_IAccessible2_2)
@@ -94,15 +93,17 @@ HRESULT AccessibleBase::QueryService(REFGUID guidService, REFIID riid, void **pp
         && !IsEqualGUID(guidService, IID_IAccessibleText)
         && !IsEqualGUID(guidService, IID_IAccessibleText2)
         && !IsEqualGUID(guidService, IID_IAccessibleEditableText)) {
-        *ppvObject = 0;
+        *ppvObject = nullptr;
         return E_INVALIDARG;
     }
     return QueryInterface(riid, ppvObject);
 }
 
 // IUnknown
-HRESULT STDMETHODCALLTYPE AccessibleBase::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT AccessibleBase::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
+    if (!ppvObject)
+        return E_POINTER;
     if (IsEqualGUID(riid, __uuidof(IAccessible)))
         *ppvObject = static_cast<IAccessible*>(this);
     else if (IsEqualGUID(riid, __uuidof(IDispatch)))
@@ -120,14 +121,14 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::QueryInterface(REFIID riid, void** ppv
     else if (IsEqualGUID(riid, __uuidof(AccessibleBase)))
         *ppvObject = static_cast<AccessibleBase*>(this);
     else {
-        *ppvObject = 0;
+        *ppvObject = nullptr;
         return E_NOINTERFACE;
     }
     AddRef();
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE AccessibleBase::Release(void)
+ULONG AccessibleBase::Release()
 {
     ASSERT(m_refCount > 0);
     if (--m_refCount)
@@ -137,7 +138,7 @@ ULONG STDMETHODCALLTYPE AccessibleBase::Release(void)
 }
 
 // IAccessible2_2
-HRESULT AccessibleBase::get_attribute(BSTR key, VARIANT* value)
+HRESULT AccessibleBase::get_attribute(_In_ BSTR key, _Out_ VARIANT* value)
 {
     if (!value)
         return E_POINTER;
@@ -149,20 +150,24 @@ HRESULT AccessibleBase::get_attribute(BSTR key, VARIANT* value)
     return S_OK;
 }
 
-HRESULT AccessibleBase::get_accessibleWithCaret(IUnknown** accessible, long* caretOffset)
+HRESULT AccessibleBase::get_accessibleWithCaret(_COM_Outptr_opt_ IUnknown** accessible, _Out_ long* caretOffset)
 {
+    if (!accessible || !caretOffset)
+        return E_POINTER;
+    *accessible = nullptr;
+    *caretOffset = 0;
     notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::get_relationTargetsOfType(BSTR type, long maxTargets, IUnknown*** targets, long* nTargets)
+HRESULT AccessibleBase::get_relationTargetsOfType(_In_ BSTR type, long maxTargets, __deref_out_ecount_full_opt(*nTargets) IUnknown*** targets, _Out_ long* nTargets)
 {
     notImplemented();
     return E_NOTIMPL;
 }
 
 // IAccessible2
-HRESULT AccessibleBase::get_nRelations(long* nRelations)
+HRESULT AccessibleBase::get_nRelations(_Out_ long* nRelations)
 {
     if (!nRelations)
         return E_POINTER;
@@ -174,29 +179,33 @@ HRESULT AccessibleBase::get_nRelations(long* nRelations)
     return S_OK;
 }
 
-HRESULT AccessibleBase::get_relation(long relationIndex, IAccessibleRelation** relation)
+HRESULT AccessibleBase::get_relation(long relationIndex, _COM_Outptr_opt_ IAccessibleRelation** relation)
 {
     if (!relation)
         return E_POINTER;
 
+    *relation = nullptr;
+
     notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::get_relations(long maxRelations, IAccessibleRelation** relations, long* nRelations)
+HRESULT AccessibleBase::get_relations(long maxRelations, __out_ecount_part(maxRelations, *nRelations)  IAccessibleRelation** relations, _Out_ long* nRelations)
 {
     if (!relations || !nRelations)
         return E_POINTER;
 
+    *relations = nullptr;
+
     notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::role(long* role)
+HRESULT AccessibleBase::role(_Out_ long* role)
 {
     if (!role)
         return E_POINTER;
-
+    *role = 0;
     if (!m_object)
         return E_FAIL;
 
@@ -218,13 +227,13 @@ HRESULT AccessibleBase::scrollToPoint(IA2CoordinateType coordinateType, long x, 
     return S_FALSE;
 }
 
-HRESULT AccessibleBase::get_groupPosition(long* groupLevel, long* similarItemsInGroup, long* positionInGroup)
+HRESULT AccessibleBase::get_groupPosition(_Out_ long* groupLevel, _Out_ long* similarItemsInGroup, _Out_ long* positionInGroup)
 {
     notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::get_states(AccessibleStates* states)
+HRESULT AccessibleBase::get_states(_Out_ AccessibleStates* states)
 {
     if (!states)
         return E_POINTER;
@@ -237,11 +246,11 @@ HRESULT AccessibleBase::get_states(AccessibleStates* states)
     return S_OK;
 }
 
-HRESULT AccessibleBase::get_extendedRole(BSTR* extendedRole)
+HRESULT AccessibleBase::get_extendedRole(__deref_opt_out BSTR* extendedRole)
 {
     if (!extendedRole)
         return E_POINTER;
-
+    *extendedRole = nullptr;
     if (!m_object)
         return E_FAIL;
 
@@ -249,11 +258,11 @@ HRESULT AccessibleBase::get_extendedRole(BSTR* extendedRole)
     return S_FALSE;
 }
 
-HRESULT AccessibleBase::get_localizedExtendedRole(BSTR* localizedExtendedRole)
+HRESULT AccessibleBase::get_localizedExtendedRole(__deref_opt_out BSTR* localizedExtendedRole)
 {
     if (!localizedExtendedRole)
         return E_POINTER;
-
+    *localizedExtendedRole = nullptr;
     if (!m_object)
         return E_FAIL;
 
@@ -261,7 +270,7 @@ HRESULT AccessibleBase::get_localizedExtendedRole(BSTR* localizedExtendedRole)
     return S_FALSE;
 }
 
-HRESULT AccessibleBase::get_nExtendedStates(long* nExtendedStates)
+HRESULT AccessibleBase::get_nExtendedStates(_Out_ long* nExtendedStates)
 {
     if (!nExtendedStates)
         return E_POINTER;
@@ -274,19 +283,19 @@ HRESULT AccessibleBase::get_nExtendedStates(long* nExtendedStates)
     return S_OK;
 }
 
-HRESULT AccessibleBase::get_extendedStates(long maxExtendedStates, BSTR** extendedStates, long* nExtendedStates)
+HRESULT AccessibleBase::get_extendedStates(long maxExtendedStates, __deref_out_ecount_part_opt(maxExtendedStates, *nExtendedStates) BSTR** extendedStates, _Out_ long* nExtendedStates)
 {
     notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::get_localizedExtendedStates(long maxLocalizedExtendedStates, BSTR** localizedExtendedStates, long* nLocalizedExtendedStates)
+HRESULT AccessibleBase::get_localizedExtendedStates(long maxLocalizedExtendedStates, __deref_out_ecount_part_opt(maxLocalizedExtendedStates, *nLocalizedExtendedStates) BSTR** localizedExtendedStates, _Out_ long* nLocalizedExtendedStates)
 {
     notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::get_uniqueID(long* uniqueID)
+HRESULT AccessibleBase::get_uniqueID(_Out_ long* uniqueID)
 {
     if (!uniqueID)
         return E_POINTER;
@@ -298,18 +307,18 @@ HRESULT AccessibleBase::get_uniqueID(long* uniqueID)
     return S_OK;
 }
 
-HRESULT AccessibleBase::get_windowHandle(HWND* windowHandle)
+HRESULT AccessibleBase::get_windowHandle(_Out_ HWND* windowHandle)
 {
     *windowHandle = m_window;
     return S_OK;
 }
 
-HRESULT AccessibleBase::get_indexInParent(long* indexInParent)
+HRESULT AccessibleBase::get_indexInParent(_Out_ long* indexInParent)
 {
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::get_locale(IA2Locale* locale)
+HRESULT AccessibleBase::get_locale(_Out_ IA2Locale* locale)
 {
     if (!locale)
         return E_POINTER;
@@ -322,18 +331,25 @@ HRESULT AccessibleBase::get_locale(IA2Locale* locale)
     return S_OK;
 }
 
-HRESULT AccessibleBase::get_attributes(BSTR* attributes)
+HRESULT AccessibleBase::get_attributes(__deref_opt_out BSTR* attributes)
 {
+    if (!attributes)
+        return E_POINTER;
+    *attributes = nullptr;
     if (!m_object)
         return E_FAIL;
+
     notImplemented();
     return S_FALSE;
 }
 
 // IAccessible
-HRESULT AccessibleBase::get_accParent(IDispatch** parent)
+HRESULT AccessibleBase::get_accParent(_COM_Outptr_opt_ IDispatch** parent)
 {
-    *parent = 0;
+    if (!parent)
+        return E_POINTER;
+
+    *parent = nullptr;
 
     if (!m_object)
         return E_FAIL;
@@ -352,7 +368,7 @@ HRESULT AccessibleBase::get_accParent(IDispatch** parent)
         OBJID_WINDOW, __uuidof(IAccessible), reinterpret_cast<void**>(parent));
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChildCount(long* count)
+HRESULT AccessibleBase::get_accChildCount(_Out_ long* count)
 {
     if (!m_object)
         return E_FAIL;
@@ -362,12 +378,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChildCount(long* count)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChild(VARIANT vChild, IDispatch** ppChild)
+HRESULT AccessibleBase::get_accChild(VARIANT vChild, _COM_Outptr_opt_ IDispatch** ppChild)
 {
     if (!ppChild)
         return E_POINTER;
 
-    *ppChild = 0;
+    *ppChild = nullptr;
 
     AccessibilityObject* childObj;
 
@@ -380,12 +396,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChild(VARIANT vChild, IDispatch
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accName(VARIANT vChild, BSTR* name)
+HRESULT AccessibleBase::get_accName(VARIANT vChild, __deref_opt_out BSTR* name)
 {
     if (!name)
         return E_POINTER;
 
-    *name = 0;
+    *name = nullptr;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -398,12 +414,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accName(VARIANT vChild, BSTR* name
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accValue(VARIANT vChild, BSTR* value)
+HRESULT AccessibleBase::get_accValue(VARIANT vChild, __deref_opt_out BSTR* value)
 {
     if (!value)
         return E_POINTER;
 
-    *value = 0;
+    *value = nullptr;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -416,12 +432,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accValue(VARIANT vChild, BSTR* val
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDescription(VARIANT vChild, BSTR* description)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDescription(VARIANT vChild, __deref_opt_out BSTR* description)
 {
     if (!description)
         return E_POINTER;
 
-    *description = 0;
+    *description = nullptr;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -435,7 +451,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDescription(VARIANT vChild, BST
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, VARIANT* pvRole)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, _Out_ VARIANT* pvRole)
 {
     if (!pvRole)
         return E_POINTER;
@@ -524,7 +540,7 @@ long AccessibleBase::state() const
     return state;
 }
 
-HRESULT AccessibleBase::get_accState(VARIANT vChild, VARIANT* pvState)
+HRESULT AccessibleBase::get_accState(VARIANT vChild, _Out_ VARIANT* pvState)
 {
     if (!pvState)
         return E_POINTER;
@@ -543,12 +559,12 @@ HRESULT AccessibleBase::get_accState(VARIANT vChild, VARIANT* pvState)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accHelp(VARIANT vChild, BSTR* helpText)
+HRESULT AccessibleBase::get_accHelp(VARIANT vChild, __deref_opt_out BSTR* helpText)
 {
     if (!helpText)
         return E_POINTER;
 
-    *helpText = 0;
+    *helpText = nullptr;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -561,12 +577,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accHelp(VARIANT vChild, BSTR* help
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT vChild, BSTR* shortcut)
+HRESULT AccessibleBase::get_accKeyboardShortcut(VARIANT vChild, __deref_opt_out BSTR* shortcut)
 {
     if (!shortcut)
         return E_POINTER;
 
-    *shortcut = 0;
+    *shortcut = nullptr;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -653,12 +669,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long selectionFlags, VARIANT
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accSelection(VARIANT*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accSelection(_Out_ VARIANT*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(VARIANT* pvFocusedChild)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(_Out_ VARIANT* pvFocusedChild)
 {
     if (!pvFocusedChild)
         return E_POINTER;
@@ -684,12 +700,12 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(VARIANT* pvFocusedChild)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDefaultAction(VARIANT vChild, BSTR* action)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDefaultAction(VARIANT vChild, __deref_opt_out BSTR* action)
 {
     if (!action)
         return E_POINTER;
 
-    *action = 0;
+    *action = nullptr;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -702,7 +718,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDefaultAction(VARIANT vChild, B
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accLocation(long* left, long* top, long* width, long* height, VARIANT vChild)
+HRESULT AccessibleBase::accLocation(_Out_ long* left, _Out_ long* top, _Out_ long* width, _Out_ long* height, VARIANT vChild)
 {
     if (!left || !top || !width || !height)
         return E_POINTER;
@@ -726,14 +742,14 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accLocation(long* left, long* top, lon
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accNavigate(long direction, VARIANT vFromChild, VARIANT* pvNavigatedTo)
+HRESULT AccessibleBase::accNavigate(long direction, VARIANT vFromChild, _Out_ VARIANT* pvNavigatedTo)
 {
     if (!pvNavigatedTo)
         return E_POINTER;
 
     ::VariantInit(pvNavigatedTo);
 
-    AccessibilityObject* childObj = 0;
+    AccessibilityObject* childObj = nullptr;
 
     switch (direction) {
         case NAVDIR_DOWN:
@@ -783,7 +799,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accNavigate(long direction, VARIANT vF
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long x, long y, VARIANT* pvChildAtPoint)
+HRESULT AccessibleBase::accHitTest(long x, long y, _Out_ VARIANT* pvChildAtPoint)
 {
     if (!pvChildAtPoint)
         return E_POINTER;
@@ -815,7 +831,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long x, long y, VARIANT* pv
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT vChild)
+HRESULT AccessibleBase::accDoDefaultAction(VARIANT vChild)
 {
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -1039,8 +1055,11 @@ AccessibleBase* AccessibleBase::wrapper(AccessibilityObject* obj) const
     return result;
 }
 
-HRESULT AccessibleBase::isSameObject(IAccessibleComparable* other, BOOL* result)
+HRESULT AccessibleBase::isSameObject(_In_opt_ IAccessibleComparable* other, _Out_ BOOL* result)
 {
+    if (!result || !other)
+        return E_POINTER;
+
     COMPtr<AccessibleBase> otherAccessibleBase(Query, other);
     *result = (otherAccessibleBase == this || otherAccessibleBase->m_object == m_object);
     return S_OK;

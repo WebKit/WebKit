@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,9 +121,7 @@ void WebDownload::init(const URL& url, IWebDownloadDelegate* delegate)
 
 // IWebDownload -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
-        /* [in] */ IWebURLRequest* request, 
-        /* [in] */ IWebDownloadDelegate* delegate)
+HRESULT WebDownload::initWithRequest(_In_opt_ IWebURLRequest* request, _In_opt_ IWebDownloadDelegate* delegate)
 {
     COMPtr<WebMutableURLRequest> webRequest;
     if (!request || FAILED(request->QueryInterface(&webRequest))) {
@@ -147,7 +145,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
     // If for some reason the download failed to create, 
     // we have particular cleanup to do
     if (!m_download) {
-        m_request = 0;    
+        m_request = nullptr;    
         return E_FAIL;
     }
 
@@ -158,9 +156,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
-        /* [in] */ BSTR bundlePath, 
-        /* [in] */ IWebDownloadDelegate* delegate)
+HRESULT WebDownload::initToResumeWithBundle(_In_ BSTR bundlePath, _In_opt_ IWebDownloadDelegate* delegate)
 {
     LOG(Download, "Attempting resume of download bundle %s", String(bundlePath, SysStringLen(bundlePath)).ascii().data());
 
@@ -208,7 +204,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::start()
+HRESULT WebDownload::start()
 {
     LOG(Download, "WebDownload - Starting download (%p)", this);
     if (!m_download)
@@ -222,18 +218,18 @@ HRESULT STDMETHODCALLTYPE WebDownload::start()
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::cancel()
+HRESULT WebDownload::cancel()
 {
     LOG(Download, "WebDownload - Cancelling download (%p)", this);
     if (!m_download)
         return E_FAIL;
 
     CFURLDownloadCancel(m_download.get());
-    m_download = 0;
+    m_download = nullptr;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
+HRESULT WebDownload::cancelForResume()
 {
     LOG(Download, "WebDownload - Cancelling download (%p), writing resume information to file if possible", this);
     ASSERT(m_download);
@@ -261,21 +257,22 @@ HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
     DownloadBundle::appendResumeData(resumeBytes, resumeLength, m_bundlePath);
 
 exit:
-    m_download = 0;
+    m_download = nullptr;
     return hr;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::deletesFileUponFailure(
-        /* [out, retval] */ BOOL* result)
+HRESULT WebDownload::deletesFileUponFailure(_Out_ BOOL* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = FALSE;
     if (!m_download)
         return E_FAIL;
     *result = CFURLDownloadDeletesUponFailure(m_download.get());
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::setDeletesFileUponFailure(
-        /* [in] */ BOOL deletesFileUponFailure)
+HRESULT WebDownload::setDeletesFileUponFailure(BOOL deletesFileUponFailure)
 {
     if (!m_download)
         return E_FAIL;
@@ -283,9 +280,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::setDeletesFileUponFailure(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
-        /* [in] */ BSTR path, 
-        /* [in] */ BOOL allowOverwrite)
+HRESULT WebDownload::setDestination(_In_ BSTR path, BOOL allowOverwrite)
 {
     if (!m_download)
         return E_FAIL;
@@ -304,12 +299,11 @@ HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
 
 // IWebURLAuthenticationChallengeSender -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebDownload::cancelAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge*)
+HRESULT WebDownload::cancelAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge*)
 {
     if (m_download) {
         CFURLDownloadCancel(m_download.get());
-        m_download = 0;
+        m_download = nullptr;
     }
 
     // FIXME: Do we need a URL or description for this error code?
@@ -320,8 +314,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::cancelAuthenticationChallenge(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::continueWithoutCredentialForAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge* challenge)
+HRESULT WebDownload::continueWithoutCredentialForAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge* challenge)
 {
     COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
     if (!webChallenge)
@@ -332,9 +325,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::continueWithoutCredentialForAuthenticatio
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDownload::useCredential(
-        /* [in] */ IWebURLCredential* credential, 
-        /* [in] */ IWebURLAuthenticationChallenge* challenge)
+HRESULT WebDownload::useCredential(_In_opt_ IWebURLCredential* credential, _In_opt_ IWebURLAuthenticationChallenge* challenge)
 {
     COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
     if (!webChallenge)

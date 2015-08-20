@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,28 +38,19 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebNotification
-    virtual HRESULT STDMETHODCALLTYPE notificationWithName( 
-        /* [in] */ BSTR aName,
-        /* [in] */ IUnknown *anObject,
-        /* [optional][in] */ IPropertyBag *userInfo);
-    
-    virtual HRESULT STDMETHODCALLTYPE name( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE getObject( 
-        /* [retval][out] */ IUnknown **result);
-    
-    virtual HRESULT STDMETHODCALLTYPE userInfo( 
-        /* [retval][out] */ IPropertyBag **result);
+    virtual HRESULT STDMETHODCALLTYPE notificationWithName(_In_ BSTR aName, _In_opt_ IUnknown* anObject, _In_opt_ IPropertyBag* userInfo);    
+    virtual HRESULT STDMETHODCALLTYPE name(__deref_out_opt BSTR* result);    
+    virtual HRESULT STDMETHODCALLTYPE getObject(_COM_Outptr_opt_ IUnknown** result);
+    virtual HRESULT STDMETHODCALLTYPE userInfo(_COM_Outptr_opt_ IPropertyBag ** result);
 
 protected:
-    ULONG m_refCount;
-    BSTR m_name;
+    ULONG m_refCount { 0 };
+    BSTR m_name { nullptr };
     IUnknown* m_anObject;
     IPropertyBag* m_userInfo;
 };

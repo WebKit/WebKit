@@ -44,7 +44,7 @@ public:
     static NotificationCOMWrapper* create(Notification* inner) { return new NotificationCOMWrapper(inner); }
    
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
@@ -65,9 +65,11 @@ private:
     Notification* m_inner;
 };
 
-HRESULT STDMETHODCALLTYPE NotificationCOMWrapper::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT NotificationCOMWrapper::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<NotificationCOMWrapper*>(this);
     else if (IsEqualGUID(riid, IID_IWebDesktopNotification))

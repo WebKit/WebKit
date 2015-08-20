@@ -212,7 +212,6 @@ static String localizedShortDescriptionForStatusCode(int statusCode)
 // IWebURLResponse ----------------------------------------------------------------
 
 WebURLResponse::WebURLResponse()
-    :m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("WebURLResponse");
@@ -247,9 +246,11 @@ WebURLResponse* WebURLResponse::createInstance(const ResourceResponse& response)
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebURLResponse::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebURLResponse*>(this);
     else if (IsEqualGUID(riid, __uuidof(this)))
@@ -267,12 +268,12 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::QueryInterface(REFIID riid, void** ppv
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebURLResponse::AddRef(void)
+ULONG WebURLResponse::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebURLResponse::Release(void)
+ULONG WebURLResponse::Release(void)
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -283,26 +284,25 @@ ULONG STDMETHODCALLTYPE WebURLResponse::Release(void)
 
 // IWebURLResponse --------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::expectedContentLength( 
-    /* [retval][out] */ long long* result)
+HRESULT WebURLResponse::expectedContentLength(_Out_ long long* result)
 {
+    if (!result)
+        return E_POINTER;
     *result = m_response.expectedContentLength();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::initWithURL( 
-    /* [in] */ BSTR url,
-    /* [in] */ BSTR mimeType,
-    /* [in] */ int expectedContentLength,
-    /* [in] */ BSTR textEncodingName)
+HRESULT WebURLResponse::initWithURL(_In_ BSTR url, _In_ BSTR mimeType, int expectedContentLength, _In_ BSTR textEncodingName)
 {
     m_response = ResourceResponse(MarshallingHelpers::BSTRToKURL(url), String(mimeType), expectedContentLength, String(textEncodingName));
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::MIMEType( 
-    /* [retval][out] */ BSTR* result)
+HRESULT WebURLResponse::MIMEType(__deref_opt_out BSTR* result)
 {
+    if (!result)
+        return E_POINTER;
+
     BString mimeType(m_response.mimeType());
     *result = mimeType.release();
     if (!m_response.mimeType().isNull() && !*result)
@@ -311,15 +311,14 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::MIMEType(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::suggestedFilename( 
-    /* [retval][out] */ BSTR* result)
+HRESULT WebURLResponse::suggestedFilename(__deref_opt_out BSTR* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
         return E_POINTER;
     }
 
-    *result = 0;
+    *result = nullptr;
 
     if (m_response.url().isEmpty())
         return E_FAIL;
@@ -328,8 +327,7 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::suggestedFilename(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::textEncodingName( 
-    /* [retval][out] */ BSTR* result)
+HRESULT WebURLResponse::textEncodingName(__deref_opt_out BSTR* result)
 {
     if (!result)
         return E_INVALIDARG;
@@ -342,8 +340,7 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::textEncodingName(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::URL( 
-    /* [retval][out] */ BSTR* result)
+HRESULT WebURLResponse::URL(__deref_opt_out BSTR* result)
 {
     if (!result)
         return E_INVALIDARG;
@@ -358,10 +355,12 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::URL(
 
 // IWebHTTPURLResponse --------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::allHeaderFields( 
-    /* [retval][out] */ IPropertyBag** headerFields)
+HRESULT WebURLResponse::allHeaderFields(_COM_Outptr_opt_ IPropertyBag** headerFields)
 {
     ASSERT(m_response.isHTTP());
+
+    if (!headerFields)
+        return E_POINTER;
 
     HashMap<String, String, CaseFoldingHash> fields;
     for (const auto& keyValuePair : m_response.httpHeaderFields())
@@ -371,23 +370,21 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::allHeaderFields(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::localizedStringForStatusCode( 
-    /* [in] */ int statusCode,
-    /* [retval][out] */ BSTR* statusString)
+HRESULT WebURLResponse::localizedStringForStatusCode(int statusCode, __deref_opt_out BSTR* statusString)
 {
     ASSERT(m_response.isHTTP());
-    if (statusString)
-        *statusString = 0;
+    if (!statusString)
+        return E_POINTER;
+
+    *statusString = nullptr;
     const String& statusText = localizedShortDescriptionForStatusCode(statusCode);
     if (!statusText)
         return E_FAIL;
-    if (statusString)
-        *statusString = BString(statusText).release();
+    *statusString = BString(statusText).release();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::statusCode( 
-    /* [retval][out] */ int* statusCode)
+HRESULT WebURLResponse::statusCode(_Out_ int* statusCode)
 {
     ASSERT(m_response.isHTTP());
     if (statusCode)
@@ -395,15 +392,15 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::statusCode(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::isAttachment( 
-    /* [retval][out] */ BOOL *attachment)
+HRESULT WebURLResponse::isAttachment(_Out_ BOOL* attachment)
 {
+    if (!attachment)
+        return E_POINTER;
     *attachment = m_response.isAttachment();
     return S_OK;
 }
 
-
-HRESULT WebURLResponse::sslPeerCertificate(/* [retval][out] */ ULONG_PTR* result)
+HRESULT WebURLResponse::sslPeerCertificate(_Out_ ULONG_PTR* result)
 {
     if (!result)
         return E_POINTER;
@@ -424,12 +421,12 @@ HRESULT WebURLResponse::sslPeerCertificate(/* [retval][out] */ ULONG_PTR* result
 
 // WebURLResponse -------------------------------------------------------------
 
-HRESULT WebURLResponse::suggestedFileExtension(BSTR *result)
+HRESULT WebURLResponse::suggestedFileExtension(BSTR* result)
 {
     if (!result)
         return E_POINTER;
 
-    *result = 0;
+    *result = nullptr;
 
     if (m_response.mimeType().isEmpty())
         return E_FAIL;
@@ -486,7 +483,7 @@ CFDictionaryRef WebURLResponse::certificateDictionary() const
 
     CFURLResponseRef cfResponse = m_response.cfURLResponse();
     if (!cfResponse)
-        return 0;
+        return nullptr;
     m_SSLCertificateInfo = wkGetSSLCertificateInfo(cfResponse);
     return m_SSLCertificateInfo.get();
 }

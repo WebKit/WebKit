@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,18 +41,18 @@ WebCore::PlatformMouseEvent generateMouseEvent(WebView*, bool isDrag);
 class WebDropSource : public IDropSource
 {
 public:
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);        
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
-    virtual HRESULT STDMETHODCALLTYPE QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState);
-    virtual HRESULT STDMETHODCALLTYPE GiveFeedback(DWORD dwEffect);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);        
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
+    virtual HRESULT STDMETHODCALLTYPE QueryContinueDrag(_In_ BOOL fEscapePressed, _In_ DWORD grfKeyState);
+    virtual HRESULT STDMETHODCALLTYPE GiveFeedback(_In_ DWORD dwEffect);
 
     static HRESULT createInstance(WebView* webView, IDropSource** result);
 private:
     WebDropSource(WebView* webView);
     ~WebDropSource();
-    long m_ref;
-    bool m_dropped;
+    long m_ref { 1 };
+    bool m_dropped { false };
     COMPtr<WebView> m_webView;
 
 };

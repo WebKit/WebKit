@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,6 @@ int WebFrameViewCount;
 // WebKitStatistics ---------------------------------------------------------------------------
 
 WebKitStatistics::WebKitStatistics()
-    : m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("WebKitStatistics");
@@ -65,9 +64,11 @@ WebKitStatistics* WebKitStatistics::createInstance()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebKitStatistics::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebKitStatistics::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<WebKitStatistics*>(this);
     else if (IsEqualGUID(riid, IID_IWebKitStatistics))
@@ -79,12 +80,12 @@ HRESULT STDMETHODCALLTYPE WebKitStatistics::QueryInterface(REFIID riid, void** p
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebKitStatistics::AddRef(void)
+ULONG WebKitStatistics::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebKitStatistics::Release(void)
+ULONG WebKitStatistics::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -95,50 +96,59 @@ ULONG STDMETHODCALLTYPE WebKitStatistics::Release(void)
 
 // IWebKitStatistics ------------------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebKitStatistics::webViewCount( 
-    /* [retval][out] */ int *count)
+HRESULT WebKitStatistics::webViewCount(_Out_ int* count)
 {
+    if (!count)
+        return E_POINTER;
     *count = WebViewCount;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebKitStatistics::frameCount( 
-    /* [retval][out] */ int *count)
+HRESULT WebKitStatistics::frameCount(_Out_ int* count)
 {
+    if (!count)
+        return E_POINTER;
     *count = WebFrameCount;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebKitStatistics::dataSourceCount( 
-    /* [retval][out] */ int *count)
+HRESULT WebKitStatistics::dataSourceCount(_Out_ int* count)
 {
+    if (!count)
+        return E_POINTER;
     *count = WebDataSourceCount;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebKitStatistics::viewCount( 
-    /* [retval][out] */ int *count)
+HRESULT WebKitStatistics::viewCount(_Out_ int* count)
 {
+    if (!count)
+        return E_POINTER;
     *count = WebFrameViewCount;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebKitStatistics::HTMLRepresentationCount( 
-    /* [retval][out] */ int *count)
+HRESULT WebKitStatistics::HTMLRepresentationCount(_Out_ int* count)
 {
+    if (!count)
+        return E_POINTER;
     *count = WebHTMLRepresentationCount;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebKitStatistics::comClassCount( 
-    /* [retval][out] */ int *classCount)
+HRESULT WebKitStatistics::comClassCount(_Out_ int *classCount)
 {
+    if (!classCount)
+        return E_POINTER;
     *classCount = gClassCount;
     return S_OK;
 }
 
-HRESULT WebKitStatistics::comClassNameCounts(BSTR* output)
+HRESULT WebKitStatistics::comClassNameCounts(__deref_out_opt BSTR* output)
 {
+    if (!output)
+        return E_POINTER;
+
     StringBuilder builder;
     for (auto& slot : gClassNameCount()) {
         builder.appendNumber(slot.value);

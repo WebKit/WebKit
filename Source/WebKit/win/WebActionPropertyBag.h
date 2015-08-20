@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,22 +41,16 @@ private:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
     // IPropertyBag
-    virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read( 
-        /* [in] */ LPCOLESTR pszPropName,
-        /* [out][in] */ VARIANT *pVar,
-        /* [in] */ IErrorLog *pErrorLog);
-        
-    virtual HRESULT STDMETHODCALLTYPE Write( 
-        /* [in] */ LPCOLESTR pszPropName,
-        /* [in] */ VARIANT *pVar);
+    virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read(/* [in] */ LPCOLESTR pszPropName, /* [out][in] */ VARIANT*, /* [in] */ IErrorLog*);   
+    virtual HRESULT STDMETHODCALLTYPE Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT* pVar);
 
 private:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     WebCore::NavigationAction m_action;
     RefPtr<WebCore::HTMLFormElement> m_form;
     RefPtr<WebCore::Frame> m_frame;

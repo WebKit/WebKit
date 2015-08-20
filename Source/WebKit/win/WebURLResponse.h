@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,48 +40,26 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebURLResponse
-    virtual HRESULT STDMETHODCALLTYPE expectedContentLength( 
-        /* [retval][out] */ long long *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE initWithURL( 
-        /* [in] */ BSTR url,
-        /* [in] */ BSTR mimeType,
-        /* [in] */ int expectedContentLength,
-        /* [in] */ BSTR textEncodingName);
-    
-    virtual HRESULT STDMETHODCALLTYPE MIMEType( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE suggestedFilename( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE textEncodingName( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE URL( 
-        /* [retval][out] */ BSTR *result);
+    virtual HRESULT STDMETHODCALLTYPE expectedContentLength(_Out_ long long*);    
+    virtual HRESULT STDMETHODCALLTYPE initWithURL(_In_ BSTR url, _In_ BSTR mimeType, int expectedContentLength, _In_ BSTR textEncodingName);    
+    virtual HRESULT STDMETHODCALLTYPE MIMEType(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE suggestedFilename(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE textEncodingName(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE URL(__deref_opt_out BSTR* result);
 
     // IWebHTTPURLResponse
-    virtual HRESULT STDMETHODCALLTYPE allHeaderFields( 
-        /* [retval][out] */ IPropertyBag **headerFields);
-    
-    virtual HRESULT STDMETHODCALLTYPE localizedStringForStatusCode( 
-        /* [in] */ int statusCode,
-        /* [retval][out] */ BSTR *statusString);
-    
-    virtual HRESULT STDMETHODCALLTYPE statusCode( 
-        /* [retval][out] */ int *statusCode);
-
-    virtual HRESULT STDMETHODCALLTYPE isAttachment( 
-        /* [retval][out] */ BOOL *attachment);
+    virtual HRESULT STDMETHODCALLTYPE allHeaderFields(_COM_Outptr_opt_ IPropertyBag** headerFields);    
+    virtual HRESULT STDMETHODCALLTYPE localizedStringForStatusCode(int statusCode, __deref_opt_out BSTR* statusString);    
+    virtual HRESULT STDMETHODCALLTYPE statusCode(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE isAttachment(_Out_ BOOL*);
 
     // IWebURLResponsePrivate
-    virtual HRESULT STDMETHODCALLTYPE sslPeerCertificate(/* [retval][out] */ ULONG_PTR* result);
+    virtual HRESULT STDMETHODCALLTYPE sslPeerCertificate(_Out_ ULONG_PTR* result);
     
     const WebCore::ResourceResponse& resourceResponse() const;
 
@@ -93,7 +71,7 @@ protected:
 #endif
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     WebCore::ResourceResponse m_response;
 
 #if USE(CFNETWORK)

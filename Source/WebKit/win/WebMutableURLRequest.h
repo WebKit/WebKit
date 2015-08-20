@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,104 +59,43 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebURLRequest
-    virtual HRESULT STDMETHODCALLTYPE requestWithURL( 
-        /* [in] */ BSTR theURL,
-        /* [optional][in] */ WebURLRequestCachePolicy cachePolicy,
-        /* [optional][in] */ double timeoutInterval);
-    
-    virtual HRESULT STDMETHODCALLTYPE allHTTPHeaderFields( 
-        /* [retval][out] */ IPropertyBag **result);
-    
-    virtual HRESULT STDMETHODCALLTYPE cachePolicy( 
-        /* [retval][out] */ WebURLRequestCachePolicy *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE HTTPBody( 
-        /* [retval][out] */ IStream **result);
-    
-    virtual HRESULT STDMETHODCALLTYPE HTTPBodyStream( 
-        /* [retval][out] */ IStream **result);
-    
-    virtual HRESULT STDMETHODCALLTYPE HTTPMethod( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE HTTPShouldHandleCookies( 
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE initWithURL( 
-        /* [in] */ BSTR url,
-        /* [optional][in] */ WebURLRequestCachePolicy cachePolicy,
-        /* [optional][in] */ double timeoutInterval);
-    
-    virtual HRESULT STDMETHODCALLTYPE mainDocumentURL( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE timeoutInterval( 
-        /* [retval][out] */ double *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE URL( 
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE valueForHTTPHeaderField( 
-        /* [in] */ BSTR field,
-        /* [retval][out] */ BSTR *result);
-
-    virtual HRESULT STDMETHODCALLTYPE isEmpty(
-    /* [retval][out] */ BOOL* result);
-
-    virtual HRESULT STDMETHODCALLTYPE mutableCopy(
-        /* [out, retval] */ IWebMutableURLRequest** result);
-
-    virtual HRESULT STDMETHODCALLTYPE isEqual(
-        /* [in] */ IWebURLRequest* other,
-        /* [out, retval] */ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE requestWithURL(_In_ BSTR theURL, WebURLRequestCachePolicy, double timeoutInterval);
+    virtual HRESULT STDMETHODCALLTYPE allHTTPHeaderFields(_COM_Outptr_opt_ IPropertyBag** result);
+    virtual HRESULT STDMETHODCALLTYPE cachePolicy(_Out_ WebURLRequestCachePolicy*);
+    virtual HRESULT STDMETHODCALLTYPE HTTPBody(_COM_Outptr_opt_ IStream** result);
+    virtual HRESULT STDMETHODCALLTYPE HTTPBodyStream(_COM_Outptr_opt_ IStream** result);
+    virtual HRESULT STDMETHODCALLTYPE HTTPMethod(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE HTTPShouldHandleCookies(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE initWithURL(_In_ BSTR url, WebURLRequestCachePolicy, double timeoutInterval);
+    virtual HRESULT STDMETHODCALLTYPE mainDocumentURL(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE timeoutInterval(_Out_ double*);
+    virtual HRESULT STDMETHODCALLTYPE URL(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE valueForHTTPHeaderField(_In_ BSTR field, __deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE isEmpty(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE mutableCopy(_COM_Outptr_opt_ IWebMutableURLRequest**);
+    virtual HRESULT STDMETHODCALLTYPE isEqual(_In_opt_ IWebURLRequest* other, _Out_ BOOL* result);
 
     // IWebMutableURLRequest
-    virtual HRESULT STDMETHODCALLTYPE addValue( 
-        /* [in] */ BSTR value,
-        /* [in] */ BSTR field);
-    
-    virtual HRESULT STDMETHODCALLTYPE setAllHTTPHeaderFields( 
-        /* [in] */ IPropertyBag *headerFields);
-    
-    virtual HRESULT STDMETHODCALLTYPE setCachePolicy( 
-        /* [in] */ WebURLRequestCachePolicy policy);
-    
-    virtual HRESULT STDMETHODCALLTYPE setHTTPBody( 
-        /* [in] */ IStream *data);
-    
-    virtual HRESULT STDMETHODCALLTYPE setHTTPBodyStream( 
-        /* [in] */ IStream *data);
-    
-    virtual HRESULT STDMETHODCALLTYPE setHTTPMethod( 
-        /* [in] */ BSTR method);
-    
-    virtual HRESULT STDMETHODCALLTYPE setHTTPShouldHandleCookies( 
-        /* [in] */ BOOL handleCookies);
-    
-    virtual HRESULT STDMETHODCALLTYPE setMainDocumentURL( 
-        /* [in] */ BSTR theURL);
-    
-    virtual HRESULT STDMETHODCALLTYPE setTimeoutInterval( 
-        /* [in] */ double timeoutInterval);
-    
-    virtual HRESULT STDMETHODCALLTYPE setURL( 
-        /* [in] */ BSTR theURL);
-    
-    virtual HRESULT STDMETHODCALLTYPE setValue( 
-        /* [in] */ BSTR value,
-        /* [in] */ BSTR field);
-
-    virtual HRESULT STDMETHODCALLTYPE setAllowsAnyHTTPSCertificate(void);
+    virtual HRESULT STDMETHODCALLTYPE addValue(_In_ BSTR value, _In_ BSTR field);
+    virtual HRESULT STDMETHODCALLTYPE setAllHTTPHeaderFields(_In_opt_ IPropertyBag*);
+    virtual HRESULT STDMETHODCALLTYPE setCachePolicy(WebURLRequestCachePolicy);
+    virtual HRESULT STDMETHODCALLTYPE setHTTPBody(_In_opt_ IStream*);
+    virtual HRESULT STDMETHODCALLTYPE setHTTPBodyStream(_In_opt_ IStream*);
+    virtual HRESULT STDMETHODCALLTYPE setHTTPMethod(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE setHTTPShouldHandleCookies(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setMainDocumentURL(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE setTimeoutInterval(double);
+    virtual HRESULT STDMETHODCALLTYPE setURL(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE setValue(_In_ BSTR value, _In_ BSTR field);
+    virtual HRESULT STDMETHODCALLTYPE setAllowsAnyHTTPSCertificate();
 
     // IWebMutableURLRequestPrivate
-
     virtual HRESULT STDMETHODCALLTYPE setClientCertificate(ULONG_PTR);
-
     virtual /* [local] */ CFURLRequestRef STDMETHODCALLTYPE cfRequest();
 
     // WebMutableURLRequest
@@ -167,7 +106,7 @@ public:
 
     const WebCore::ResourceRequest& resourceRequest() const;
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     bool m_isMutable;
     WebCore::ResourceRequest m_request;
 };

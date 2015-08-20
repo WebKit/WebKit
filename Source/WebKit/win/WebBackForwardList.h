@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,68 +47,32 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebBackForwardList
-    virtual HRESULT STDMETHODCALLTYPE addItem( 
-        /* [in] */ IWebHistoryItem *item);
-    
-    virtual HRESULT STDMETHODCALLTYPE goBack( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE goForward( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE goToItem( 
-        /* [in] */ IWebHistoryItem *item);
-    
-    virtual HRESULT STDMETHODCALLTYPE backItem( 
-        /* [retval][out] */ IWebHistoryItem **item);
-    
-    virtual HRESULT STDMETHODCALLTYPE currentItem( 
-        /* [retval][out] */ IWebHistoryItem **item);
-    
-    virtual HRESULT STDMETHODCALLTYPE forwardItem( 
-        /* [retval][out] */ IWebHistoryItem **item);
-    
-    virtual HRESULT STDMETHODCALLTYPE backListWithLimit( 
-        /* [in] */ int limit,
-        /* [out] */ int *listCount,
-        /* [in] */ IWebHistoryItem **list);
-    
-    virtual HRESULT STDMETHODCALLTYPE forwardListWithLimit( 
-        /* [in] */ int limit,
-        /* [out] */ int *listCount,
-        /* [in] */ IWebHistoryItem **list);
-    
-    virtual HRESULT STDMETHODCALLTYPE capacity( 
-        /* [retval][out] */ int *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE setCapacity( 
-        /* [in] */ int size);
-    
-    virtual HRESULT STDMETHODCALLTYPE backListCount( 
-        /* [retval][out] */ int *count);
-    
-    virtual HRESULT STDMETHODCALLTYPE forwardListCount( 
-        /* [retval][out] */ int *sizecount);
-    
-    virtual HRESULT STDMETHODCALLTYPE containsItem( 
-        /* [in] */ IWebHistoryItem *item,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE itemAtIndex( 
-        /* [in] */ int index,
-        /* [retval][out] */ IWebHistoryItem **item);
+    virtual HRESULT STDMETHODCALLTYPE addItem(_In_opt_ IWebHistoryItem*);    
+    virtual HRESULT STDMETHODCALLTYPE goBack();
+    virtual HRESULT STDMETHODCALLTYPE goForward();    
+    virtual HRESULT STDMETHODCALLTYPE goToItem(_In_opt_ IWebHistoryItem*);
+    virtual HRESULT STDMETHODCALLTYPE backItem(_COM_Outptr_opt_ IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE currentItem(_COM_Outptr_opt_ IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE forwardItem(_COM_Outptr_opt_ IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE backListWithLimit(int limit, _Out_ int* listCount, __deref_inout_opt IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE forwardListWithLimit(int limit, _Out_ int *listCount, __deref_inout_opt IWebHistoryItem **list);
+    virtual HRESULT STDMETHODCALLTYPE capacity(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE setCapacity(int);
+    virtual HRESULT STDMETHODCALLTYPE backListCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE forwardListCount(_Out_ int*);   
+    virtual HRESULT STDMETHODCALLTYPE containsItem(_In_opt_ IWebHistoryItem*, _Out_ BOOL* result);   
+    virtual HRESULT STDMETHODCALLTYPE itemAtIndex(int index, _COM_Outptr_opt_ IWebHistoryItem**);
     
     // IWebBackForwardListPrivate
-    virtual HRESULT STDMETHODCALLTYPE removeItem( 
-        /* [in] */ IWebHistoryItem* item);
-
-    // WebBackForwardList
+    virtual HRESULT STDMETHODCALLTYPE removeItem(_In_opt_ IWebHistoryItem*);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     RefPtr<WebCore::BackForwardList> m_backForwardList;
 };
 

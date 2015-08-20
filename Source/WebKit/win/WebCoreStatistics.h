@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2014-2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,56 +37,39 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebCoreStatistics
-    virtual HRESULT STDMETHODCALLTYPE javaScriptObjectsCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE javaScriptGlobalObjectsCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE javaScriptProtectedObjectsCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE javaScriptProtectedGlobalObjectsCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE javaScriptProtectedObjectTypeCounts( 
-        /* [retval][out] */ IPropertyBag2** typeNamesAndCounts);
-    virtual HRESULT STDMETHODCALLTYPE iconPageURLMappingCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE iconRetainedPageURLCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE iconRecordCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE iconsWithDataCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE cachedFontDataCount( 
-        /* [retval][out] */ UINT *count);
-    virtual HRESULT STDMETHODCALLTYPE cachedFontDataInactiveCount( 
-        /* [retval][out] */ UINT *count);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptObjectsCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptGlobalObjectsCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptProtectedObjectsCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptProtectedGlobalObjectsCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptProtectedObjectTypeCounts(_COM_Outptr_opt_ IPropertyBag2** typeNamesAndCounts);
+    virtual HRESULT STDMETHODCALLTYPE iconPageURLMappingCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE iconRetainedPageURLCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE iconRecordCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE iconsWithDataCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE cachedFontDataCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE cachedFontDataInactiveCount(_Out_ UINT*);
     virtual HRESULT STDMETHODCALLTYPE purgeInactiveFontData();
-    virtual HRESULT STDMETHODCALLTYPE glyphPageCount( 
-        /* [retval][out] */ UINT *count);
-
-    virtual HRESULT STDMETHODCALLTYPE javaScriptObjectTypeCounts(/* [retval][out] */ IPropertyBag2** typeNamesAndCounts);
+    virtual HRESULT STDMETHODCALLTYPE glyphPageCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE javaScriptObjectTypeCounts(_COM_Outptr_opt_ IPropertyBag2** typeNamesAndCounts);
     virtual HRESULT STDMETHODCALLTYPE garbageCollectJavaScriptObjects();
     virtual HRESULT STDMETHODCALLTYPE garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(BOOL waitUntilDone);
     virtual HRESULT STDMETHODCALLTYPE setJavaScriptGarbageCollectorTimerEnabled(BOOL);
-
-    virtual HRESULT STDMETHODCALLTYPE shouldPrintExceptions(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE shouldPrintExceptions(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShouldPrintExceptions(BOOL);
-
     virtual HRESULT STDMETHODCALLTYPE startIgnoringWebCoreNodeLeaks();
     virtual HRESULT STDMETHODCALLTYPE stopIgnoringWebCoreNodeLeaks();
-
-    virtual HRESULT STDMETHODCALLTYPE memoryStatistics(/* [retval][out] */ IPropertyBag** statistics);
+    virtual HRESULT STDMETHODCALLTYPE memoryStatistics(_COM_Outptr_opt_ IPropertyBag** statistics);
     virtual HRESULT STDMETHODCALLTYPE returnFreeMemoryToSystem();
-
-    virtual HRESULT STDMETHODCALLTYPE cachedPageCount(/* [retval][out] */ INT *count);
-    virtual HRESULT STDMETHODCALLTYPE cachedFrameCount(/* [retval][out] */ INT *count);
+    virtual HRESULT STDMETHODCALLTYPE cachedPageCount(_Out_ INT*);
+    virtual HRESULT STDMETHODCALLTYPE cachedFrameCount(_Out_ INT*);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif

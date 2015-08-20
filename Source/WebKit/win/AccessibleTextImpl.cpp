@@ -678,8 +678,10 @@ HRESULT AccessibleText::get_attributes(BSTR* attributes)
 }
 
 // IUnknown
-HRESULT STDMETHODCALLTYPE AccessibleText::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT AccessibleText::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
+    if (!ppvObject)
+        return E_POINTER;
     if (IsEqualGUID(riid, __uuidof(IAccessibleText)))
         *ppvObject = static_cast<IAccessibleText*>(this);
     else if (IsEqualGUID(riid, __uuidof(IAccessibleEditableText)))
@@ -701,7 +703,7 @@ HRESULT STDMETHODCALLTYPE AccessibleText::QueryInterface(REFIID riid, void** ppv
     else if (IsEqualGUID(riid, __uuidof(AccessibleBase)))
         *ppvObject = static_cast<AccessibleBase*>(this);
     else {
-        *ppvObject = 0;
+        *ppvObject = nullptr;
         return E_NOINTERFACE;
     }
     AddRef();

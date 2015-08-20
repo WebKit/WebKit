@@ -35,8 +35,7 @@ using namespace WebCore;
 // WebResource ---------------------------------------------------------------------
 
 WebResource::WebResource(IStream* data, const WebCore::URL& url, const WTF::String& mimeType, const WTF::String& textEncodingName, const WTF::String& frameName)
-    : m_refCount(0)
-    , m_data(data)
+    : m_data(data)
     , m_url(url)
     , m_mimeType(mimeType)
     , m_textEncodingName(textEncodingName)
@@ -63,9 +62,11 @@ WebResource* WebResource::createInstance(PassRefPtr<WebCore::SharedBuffer> data,
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebResource::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebResource::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
     else if (IsEqualGUID(riid, IID_IWebResource))
@@ -77,12 +78,12 @@ HRESULT STDMETHODCALLTYPE WebResource::QueryInterface(REFIID riid, void** ppvObj
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebResource::AddRef(void)
+ULONG WebResource::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebResource::Release(void)
+ULONG WebResource::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -93,12 +94,7 @@ ULONG STDMETHODCALLTYPE WebResource::Release(void)
 
 // WebResource ------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebResource::initWithData( 
-    /* [in] */ IStream *data,
-    /* [in] */ BSTR url,
-    /* [in] */ BSTR mimeType,
-    /* [in] */ BSTR textEncodingName,
-    /* [in] */ BSTR frameName)
+HRESULT WebResource::initWithData(_In_opt_ IStream* data, _In_ BSTR url, _In_ BSTR mimeType, _In_ BSTR textEncodingName, _In_ BSTR frameName)
 {
     m_data = data;
     m_url = MarshallingHelpers::BSTRToKURL(url);
@@ -109,15 +105,15 @@ HRESULT STDMETHODCALLTYPE WebResource::initWithData(
     return S_OK;
 }
 
-    
-HRESULT STDMETHODCALLTYPE WebResource::data( 
-    /* [retval][out] */ IStream **data)
+HRESULT WebResource::data(_COM_Outptr_opt_ IStream** data)
 {
+    if (!data)
+        return E_POINTER;
+    *data = nullptr;
     return m_data.copyRefTo(data);
 }
    
-HRESULT STDMETHODCALLTYPE WebResource::URL( 
-    /* [retval][out] */ BSTR *url)
+HRESULT WebResource::URL(__deref_opt_out BSTR* url)
 {
     if (!url) {
         ASSERT_NOT_REACHED();
@@ -128,8 +124,7 @@ HRESULT STDMETHODCALLTYPE WebResource::URL(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE WebResource::MIMEType( 
-    /* [retval][out] */ BSTR *mime)
+HRESULT WebResource::MIMEType(__deref_opt_out BSTR* mime)
 {
     if (!mime) {
         ASSERT_NOT_REACHED();
@@ -140,8 +135,7 @@ HRESULT STDMETHODCALLTYPE WebResource::MIMEType(
     return S_OK;
 }
    
-HRESULT STDMETHODCALLTYPE WebResource::textEncodingName( 
-    /* [retval][out] */ BSTR *encodingName)
+HRESULT WebResource::textEncodingName(__deref_opt_out BSTR* encodingName)
 {
     if (!encodingName) {
         ASSERT_NOT_REACHED();
@@ -152,8 +146,7 @@ HRESULT STDMETHODCALLTYPE WebResource::textEncodingName(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE WebResource::frameName( 
-    /* [retval][out] */ BSTR *name)
+HRESULT WebResource::frameName(__deref_opt_out BSTR* name)
 {
     if (!name) {
         ASSERT_NOT_REACHED();

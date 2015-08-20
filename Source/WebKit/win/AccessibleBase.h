@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2010, 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,90 +38,98 @@ public:
     static AccessibleBase* createInstance(WebCore::AccessibilityObject*, HWND);
 
     // IServiceProvider
-    virtual HRESULT STDMETHODCALLTYPE QueryService(REFGUID guidService, REFIID riid, void **ppv);
+    virtual HRESULT STDMETHODCALLTYPE QueryService(_In_ REFGUID guidService, _In_ REFIID riid, _COM_Outptr_ void **ppv);
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return ++m_refCount; }
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef() { return ++m_refCount; }
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IAccessible2_2
-    virtual HRESULT STDMETHODCALLTYPE get_attribute(BSTR name, VARIANT* attribute);
-    virtual HRESULT STDMETHODCALLTYPE get_accessibleWithCaret(IUnknown** accessible, long* caretOffset);
-    virtual HRESULT STDMETHODCALLTYPE get_relationTargetsOfType(BSTR type, long maxTargets, IUnknown*** targets, long* nTargets);
+    virtual HRESULT STDMETHODCALLTYPE get_attribute(_In_ BSTR name, _Out_ VARIANT* attribute);
+    virtual HRESULT STDMETHODCALLTYPE get_accessibleWithCaret(_COM_Outptr_opt_ IUnknown** accessible, _Out_ long* caretOffset);
+    virtual HRESULT STDMETHODCALLTYPE get_relationTargetsOfType(_In_ BSTR type, long maxTargets, __deref_out_ecount_full_opt(*nTargets) IUnknown*** targets, _Out_ long* nTargets);
 
     // IAccessible2
-    virtual HRESULT STDMETHODCALLTYPE get_nRelations(long*);
-    virtual HRESULT STDMETHODCALLTYPE get_relation(long relationIndex, IAccessibleRelation**);
-    virtual HRESULT STDMETHODCALLTYPE get_relations(long maxRelations, IAccessibleRelation** relations, long* nRelations);
-    virtual HRESULT STDMETHODCALLTYPE role(long*);
+    virtual HRESULT STDMETHODCALLTYPE get_nRelations(_Out_ long*);
+    virtual HRESULT STDMETHODCALLTYPE get_relation(long relationIndex, _COM_Outptr_opt_ IAccessibleRelation**);
+    virtual HRESULT STDMETHODCALLTYPE get_relations(long maxRelations, __out_ecount_part(maxRelations, *nRelations) IAccessibleRelation**, _Out_ long* nRelations);
+    virtual HRESULT STDMETHODCALLTYPE role(_Out_ long*);
     virtual HRESULT STDMETHODCALLTYPE scrollTo(IA2ScrollType);
     virtual HRESULT STDMETHODCALLTYPE scrollToPoint(IA2CoordinateType, long x, long y);
-    virtual HRESULT STDMETHODCALLTYPE get_groupPosition(long* groupLevel, long* similarItemsInGroup, long* positionInGroup);
-    virtual HRESULT STDMETHODCALLTYPE get_states(AccessibleStates*);
-    virtual HRESULT STDMETHODCALLTYPE get_extendedRole(BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_localizedExtendedRole(BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_nExtendedStates(long*);
-    virtual HRESULT STDMETHODCALLTYPE get_extendedStates(long maxExtendedStates, BSTR** extendedStates, long* nExtendedStates);
-    virtual HRESULT STDMETHODCALLTYPE get_localizedExtendedStates(long maxLocalizedExtendedStates, BSTR** localizedExtendedStates, long* nLocalizedExtendedStates);
-    virtual HRESULT STDMETHODCALLTYPE get_uniqueID(long*);
-    virtual HRESULT STDMETHODCALLTYPE get_windowHandle(HWND*);
-    virtual HRESULT STDMETHODCALLTYPE get_indexInParent(long*);
-    virtual HRESULT STDMETHODCALLTYPE get_locale(IA2Locale*);
-    virtual HRESULT STDMETHODCALLTYPE get_attributes(BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_groupPosition(_Out_ long* groupLevel, _Out_ long* similarItemsInGroup, _Out_ long* positionInGroup);
+    virtual HRESULT STDMETHODCALLTYPE get_states(_Out_ AccessibleStates*);
+    virtual HRESULT STDMETHODCALLTYPE get_extendedRole(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_localizedExtendedRole(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_nExtendedStates(_Out_ long*);
+    virtual HRESULT STDMETHODCALLTYPE get_extendedStates(long maxExtendedStates, __deref_out_ecount_part_opt(maxExtendedStates, *nExtendedStates) BSTR** extendedStates, _Out_ long* nExtendedStates);
+    virtual HRESULT STDMETHODCALLTYPE get_localizedExtendedStates(long maxLocalizedExtendedStates, __deref_out_ecount_part_opt(maxLocalizedExtendedStates, *nLocalizedExtendedStates) BSTR** localizedExtendedStates, _Out_ long* nLocalizedExtendedStates);
+    virtual HRESULT STDMETHODCALLTYPE get_uniqueID(_Out_ long*);
+    virtual HRESULT STDMETHODCALLTYPE get_windowHandle(_Out_ HWND*);
+    virtual HRESULT STDMETHODCALLTYPE get_indexInParent(_Out_ long*);
+    virtual HRESULT STDMETHODCALLTYPE get_locale(_Out_ IA2Locale*);
+    virtual HRESULT STDMETHODCALLTYPE get_attributes(__deref_opt_out BSTR*);
 
     // IAccessible
-    virtual HRESULT STDMETHODCALLTYPE get_accParent(IDispatch**);
-    virtual HRESULT STDMETHODCALLTYPE get_accChildCount(long*);
-    virtual HRESULT STDMETHODCALLTYPE get_accChild(VARIANT vChild, IDispatch** ppChild);
-    virtual HRESULT STDMETHODCALLTYPE get_accName(VARIANT vChild, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accValue(VARIANT vChild, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accDescription(VARIANT, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accRole(VARIANT vChild, VARIANT* pvRole);
-    virtual HRESULT STDMETHODCALLTYPE get_accState(VARIANT vChild, VARIANT* pvState);
-    virtual HRESULT STDMETHODCALLTYPE get_accHelp(VARIANT vChild, BSTR* helpText);
-    virtual HRESULT STDMETHODCALLTYPE get_accKeyboardShortcut(VARIANT vChild, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accFocus(VARIANT* pvFocusedChild);
-    virtual HRESULT STDMETHODCALLTYPE get_accSelection(VARIANT* pvSelectedChild);
-    virtual HRESULT STDMETHODCALLTYPE get_accDefaultAction(VARIANT vChild, BSTR* actionDescription);
+    virtual HRESULT STDMETHODCALLTYPE get_accParent(_COM_Outptr_opt_ IDispatch**);
+    virtual HRESULT STDMETHODCALLTYPE get_accChildCount(_Out_ long*);
+    virtual HRESULT STDMETHODCALLTYPE get_accChild(VARIANT vChild, _COM_Outptr_opt_ IDispatch** ppChild);
+    virtual HRESULT STDMETHODCALLTYPE get_accName(VARIANT vChild, __deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accValue(VARIANT vChild, __deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accDescription(VARIANT, __deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accRole(VARIANT vChild, _Out_ VARIANT* pvRole);
+    virtual HRESULT STDMETHODCALLTYPE get_accState(VARIANT vChild, _Out_ VARIANT* pvState);
+    virtual HRESULT STDMETHODCALLTYPE get_accHelp(VARIANT vChild, __deref_opt_out BSTR* helpText);
+    virtual HRESULT STDMETHODCALLTYPE get_accKeyboardShortcut(VARIANT vChild, __deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accFocus(_Out_ VARIANT* pvFocusedChild);
+    virtual HRESULT STDMETHODCALLTYPE get_accSelection(_Out_ VARIANT* pvSelectedChild);
+    virtual HRESULT STDMETHODCALLTYPE get_accDefaultAction(VARIANT vChild, __deref_opt_out BSTR* actionDescription);
     virtual HRESULT STDMETHODCALLTYPE accSelect(long selectionFlags, VARIANT vChild);
-    virtual HRESULT STDMETHODCALLTYPE accLocation(long* left, long* top, long* width, long* height, VARIANT vChild);
-    virtual HRESULT STDMETHODCALLTYPE accNavigate(long direction, VARIANT vFromChild, VARIANT* pvNavigatedTo);
-    virtual HRESULT STDMETHODCALLTYPE accHitTest(long x, long y, VARIANT* pvChildAtPoint);
+    virtual HRESULT STDMETHODCALLTYPE accLocation(_Out_ long* left, _Out_ long* top, _Out_ long* width, _Out_ long* height, VARIANT vChild);
+    virtual HRESULT STDMETHODCALLTYPE accNavigate(long direction, VARIANT vFromChild, _Out_ VARIANT* pvNavigatedTo);
+    virtual HRESULT STDMETHODCALLTYPE accHitTest(long x, long y, _Out_ VARIANT* pvChildAtPoint);
     virtual HRESULT STDMETHODCALLTYPE accDoDefaultAction(VARIANT vChild);
 
     // IAccessible - Not to be implemented.
-    virtual HRESULT STDMETHODCALLTYPE put_accName(VARIANT, BSTR) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE put_accValue(VARIANT, BSTR) { return E_NOTIMPL; }
-    virtual HRESULT STDMETHODCALLTYPE get_accHelpTopic(BSTR* helpFile, VARIANT, long* topicID)
+    virtual HRESULT STDMETHODCALLTYPE put_accName(VARIANT, _In_ BSTR) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE put_accValue(VARIANT, _In_ BSTR) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE get_accHelpTopic(BSTR* helpFile, VARIANT, _Out_ long* topicID)
     {
-        *helpFile = 0;
+        if (!helpFile || !topicID)
+            return E_POINTER;
+
+        *helpFile = nullptr;
         *topicID = 0;
         return E_NOTIMPL;
     }
 
     // IDispatch - Not to be implemented.
-    virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(UINT* count)
+    virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(_Out_ UINT* count)
     {
+        if (!count)
+            return E_POINTER;
         *count = 0;
         return E_NOTIMPL;
     }
-    virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT, LCID, ITypeInfo** ppTInfo)
+    virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT, LCID, __deref_out_opt ITypeInfo** ppTInfo)
     {
-        *ppTInfo = 0;
+        if (!ppTInfo)
+            return E_POINTER;
+        *ppTInfo = nullptr;
         return E_NOTIMPL;
     }
-    virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID, LPOLESTR*, UINT, LCID, DISPID*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(_In_ REFIID, LPOLESTR*, UINT, LCID, DISPID*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE Invoke(DISPID, REFIID, LCID, WORD, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*) { return E_NOTIMPL; }
 
     // WebCore::AccessibilityObjectWrapper
-    virtual void detach() {
+    virtual void detach()
+    {
         ASSERT(m_object);
-        m_object = 0;
+        m_object = nullptr;
     }
 
     // IAccessibleComparable
-    virtual HRESULT STDMETHODCALLTYPE isSameObject(IAccessibleComparable* other, BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE isSameObject(_In_opt_ IAccessibleComparable* other, _Out_ BOOL* result);
 
 protected:
     AccessibleBase(WebCore::AccessibilityObject*, HWND);
@@ -137,7 +145,7 @@ protected:
     AccessibleBase* wrapper(WebCore::AccessibilityObject*) const;
 
     HWND m_window;
-    int m_refCount;
+    int m_refCount { 0 };
 
 private:
     AccessibleBase() { }

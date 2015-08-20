@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,8 +50,7 @@ WebArchive* WebArchive::createInstance(PassRefPtr<LegacyWebArchive> coreArchive)
 }
 
 WebArchive::WebArchive(PassRefPtr<LegacyWebArchive> coreArchive)
-    : m_refCount(0)
-    , m_archive(coreArchive)
+    : m_archive(coreArchive)
 {
     gClassCount++;
     gClassNameCount().add("WebArchive");
@@ -63,9 +62,11 @@ WebArchive::~WebArchive()
     gClassNameCount().remove("WebArchive");
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebArchive::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebArchive*>(this);
     else if (IsEqualGUID(riid, __uuidof(IWebArchive)))
@@ -77,12 +78,12 @@ HRESULT STDMETHODCALLTYPE WebArchive::QueryInterface(REFIID riid, void** ppvObje
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebArchive::AddRef()
+ULONG WebArchive::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebArchive::Release()
+ULONG WebArchive::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -91,24 +92,19 @@ ULONG STDMETHODCALLTYPE WebArchive::Release()
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::initWithMainResource(
-        /* [in] */ IWebResource*, 
-        /* [in, size_is(cSubResources)] */ IWebResource**, 
-        /* [in] */ int, 
-        /* in, size_is(cSubFrameArchives)] */ IWebArchive**, 
-        /* [in] */ int)
+HRESULT WebArchive::initWithMainResource(_In_opt_ IWebResource*, 
+    __inout_ecount_full(cSubResources) IWebResource**, int cSubResources,
+    __inout_ecount_full(cSubFrameArchives) IWebArchive**, int cSubFrameArchives)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::initWithData(
-        /* [in] */ IStream*)
+HRESULT WebArchive::initWithData(_In_opt_ IStream*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::initWithNode(
-        /* [in] */ IDOMNode* node)
+HRESULT WebArchive::initWithNode(_In_opt_ IDOMNode* node)
 {
     if (!node)
         return E_POINTER;
@@ -122,27 +118,36 @@ HRESULT STDMETHODCALLTYPE WebArchive::initWithNode(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::mainResource(
-        /* [out, retval] */ IWebResource**)
+HRESULT WebArchive::mainResource(_COM_Outptr_opt_ IWebResource** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::subResources(
-        /* [out, retval] */ IEnumVARIANT**)
+HRESULT WebArchive::subResources(_COM_Outptr_opt_ IEnumVARIANT** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::subframeArchives(
-        /* [out, retval] */ IEnumVARIANT**)
+HRESULT WebArchive::subframeArchives(_COM_Outptr_opt_ IEnumVARIANT** result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebArchive::data(
-        /* [out, retval] */ IStream** stream)
+HRESULT WebArchive::data(_COM_Outptr_opt_ IStream** stream)
 {
+    if (!stream)
+        return E_POINTER;
+
+    *stream = nullptr;
     RetainPtr<CFDataRef> cfData = m_archive->rawDataRepresentation();
     if (!cfData)
         return E_FAIL;

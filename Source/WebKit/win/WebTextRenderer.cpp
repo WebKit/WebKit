@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ WebTextRenderer* WebTextRenderer::createInstance()
 }
 
 WebTextRenderer::WebTextRenderer()
-    : m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("WebTextRenderer");
@@ -50,9 +49,9 @@ WebTextRenderer::~WebTextRenderer()
     gClassNameCount().remove("WebTextRenderer");
 }
 
-HRESULT STDMETHODCALLTYPE WebTextRenderer::QueryInterface(const IID &riid, void** ppvObject)
+HRESULT WebTextRenderer::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebTextRenderer*>(this);
     else if (IsEqualGUID(riid, IID_IWebTextRenderer))
@@ -64,12 +63,12 @@ HRESULT STDMETHODCALLTYPE WebTextRenderer::QueryInterface(const IID &riid, void*
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebTextRenderer::AddRef()
+ULONG WebTextRenderer::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebTextRenderer::Release()
+ULONG WebTextRenderer::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -78,10 +77,9 @@ ULONG STDMETHODCALLTYPE WebTextRenderer::Release()
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE WebTextRenderer::registerPrivateFont(
-    /* [in] */ LPCOLESTR fontFilePath)
+HRESULT WebTextRenderer::registerPrivateFont(_In_ LPCOLESTR fontFilePath)
 {
-    if (!AddFontResourceEx(fontFilePath, FR_PRIVATE, 0))
+    if (!AddFontResourceEx(fontFilePath, FR_PRIVATE, nullptr))
         return E_FAIL;
 
     return S_OK;

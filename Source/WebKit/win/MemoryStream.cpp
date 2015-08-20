@@ -53,9 +53,11 @@ COMPtr<MemoryStream> MemoryStream::createInstance(PassRefPtr<SharedBuffer> buffe
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE MemoryStream::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT MemoryStream::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
     else if (IsEqualGUID(riid, IID_ISequentialStream))
@@ -69,7 +71,7 @@ HRESULT STDMETHODCALLTYPE MemoryStream::QueryInterface(REFIID riid, void** ppvOb
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE MemoryStream::AddRef(void)
+ULONG STDMETHODCALLTYPE MemoryStream::AddRef()
 {
     return ++m_refCount;
 }

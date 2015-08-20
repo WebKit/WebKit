@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 // DOMCSSStyleDeclaration - DOMCSSStyleDeclaration ----------------------------
 
 DOMCSSStyleDeclaration::DOMCSSStyleDeclaration(WebCore::CSSStyleDeclaration* s)
-: m_style(0)
 {
     if (s)
         s->ref();
@@ -49,7 +48,7 @@ DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration()
 IDOMCSSStyleDeclaration* DOMCSSStyleDeclaration::createInstance(WebCore::CSSStyleDeclaration* s)
 {
     if (!s)
-        return 0;
+        return nullptr;
 
     HRESULT hr;
     IDOMCSSStyleDeclaration* domStyle = 0;
@@ -58,16 +57,18 @@ IDOMCSSStyleDeclaration* DOMCSSStyleDeclaration::createInstance(WebCore::CSSStyl
     hr = newStyle->QueryInterface(IID_IDOMCSSStyleDeclaration, (void**)&domStyle);
 
     if (FAILED(hr))
-        return 0;
+        return nullptr;
 
     return domStyle;
 }
 
 // DOMCSSStyleDeclaration - IUnknown ------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DOMCSSStyleDeclaration::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IDOMCSSStyleDeclaration))
         *ppvObject = static_cast<IDOMCSSStyleDeclaration*>(this);
     else
@@ -79,15 +80,16 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::QueryInterface(REFIID riid, vo
 
 // DOMCSSStyleDeclaration - IDOMCSSStyleDeclaration ---------------------------
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::cssText( 
-    /* [retval][out] */ BSTR* /*result*/)
+HRESULT DOMCSSStyleDeclaration::cssText(__deref_opt_out BSTR* result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setCssText( 
-    /* [in] */ BSTR cssText)
+HRESULT DOMCSSStyleDeclaration::setCssText(_In_ BSTR cssText)
 {
     WTF::String cssTextString(cssText);
     // FIXME: <rdar://5148045> return DOM exception info
@@ -96,10 +98,12 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setCssText(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyValue( 
-    /* [in] */ BSTR propertyName,
-    /* [retval][out] */ BSTR* result)
+HRESULT DOMCSSStyleDeclaration::getPropertyValue(_In_ BSTR propertyName, __deref_opt_out BSTR* result)
 {
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+
     WTF::String propertyNameString(propertyName);
     WTF::String value = m_style->getPropertyValue(propertyNameString);
     *result = WebCore::BString(value).release();
@@ -108,34 +112,34 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyValue(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyCSSValue( 
-    /* [in] */ BSTR /*propertyName*/,
-    /* [retval][out] */ IDOMCSSValue** /*result*/)
+HRESULT DOMCSSStyleDeclaration::getPropertyCSSValue(_In_ BSTR /*propertyName*/, _COM_Outptr_opt_ IDOMCSSValue** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::removeProperty( 
-    /* [in] */ BSTR /*propertyName*/,
-    /* [retval][out] */ BSTR* /*result*/)
+HRESULT DOMCSSStyleDeclaration::removeProperty(_In_ BSTR /*propertyName*/, __deref_opt_out BSTR* result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyPriority( 
-    /* [in] */ BSTR /*propertyName*/,
-    /* [retval][out] */ BSTR* /*result*/)
+HRESULT DOMCSSStyleDeclaration::getPropertyPriority(_In_ BSTR /*propertyName*/, __deref_opt_out BSTR* result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setProperty( 
-    /* [in] */ BSTR propertyName,
-    /* [in] */ BSTR value,
-    /* [in] */ BSTR priority)
+HRESULT DOMCSSStyleDeclaration::setProperty(_In_ BSTR propertyName, _In_ BSTR value, _In_ BSTR priority)
 {
     WTF::String propertyNameString(propertyName);
     WTF::String valueString(value);
@@ -146,24 +150,29 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::setProperty(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::length( 
-    /* [retval][out] */ UINT* /*result*/)
+HRESULT DOMCSSStyleDeclaration::length(_Out_ UINT* result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = 0;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::item( 
-    /* [in] */ UINT /*index*/,
-    /* [retval][out] */ BSTR* /*result*/)
+HRESULT DOMCSSStyleDeclaration::item(UINT /*index*/, __deref_opt_out BSTR* result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::parentRule( 
-    /* [retval][out] */ IDOMCSSRule** /*result*/)
+HRESULT DOMCSSStyleDeclaration::parentRule(_COM_Outptr_opt_ IDOMCSSRule** result)
 {
     ASSERT_NOT_REACHED();
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
     return E_NOTIMPL;
 }

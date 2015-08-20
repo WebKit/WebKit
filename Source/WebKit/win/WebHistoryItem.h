@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,66 +50,51 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebHistoryItem
-    virtual HRESULT STDMETHODCALLTYPE initWithURLString( 
-        /* [in] */ BSTR urlString,
-        /* [in] */ BSTR title,
-        /* [in] */ DATE lastVisited);
-    
-    virtual HRESULT STDMETHODCALLTYPE originalURLString( 
-        /* [retval][out] */ BSTR *url);
-    
-    virtual HRESULT STDMETHODCALLTYPE URLString( 
-        /* [retval][out] */ BSTR *url);
-    
-    virtual HRESULT STDMETHODCALLTYPE title( 
-        /* [retval][out] */ BSTR *pageTitle);
-    
-    virtual HRESULT STDMETHODCALLTYPE lastVisitedTimeInterval( 
-        /* [retval][out] */ DATE *lastVisited);
-    
-    virtual HRESULT STDMETHODCALLTYPE setAlternateTitle( 
-        /* [in] */ BSTR title);
-    
-    virtual HRESULT STDMETHODCALLTYPE alternateTitle( 
-        /* [retval][out] */ BSTR* title);
-    
-    virtual HRESULT STDMETHODCALLTYPE icon(/* [out, retval] */ HBITMAP* hBitmap);
+    virtual HRESULT STDMETHODCALLTYPE initWithURLString(_In_ BSTR urlString, _In_ BSTR title, DATE lastVisited);
+    virtual HRESULT STDMETHODCALLTYPE originalURLString(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE URLString(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE title(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE lastVisitedTimeInterval(_Out_ DATE*);
+    virtual HRESULT STDMETHODCALLTYPE setAlternateTitle(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE alternateTitle(__deref_opt_out BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE icon(__deref_opt_out HBITMAP*);
 
     // IWebHistoryItemPrivate
-    virtual HRESULT STDMETHODCALLTYPE initFromDictionaryRepresentation(void* dictionary);
-    virtual HRESULT STDMETHODCALLTYPE dictionaryRepresentation(void** dictionary);
-    virtual HRESULT STDMETHODCALLTYPE visitCount(int *count);
-    virtual HRESULT STDMETHODCALLTYPE setVisitCount(int count);
-    virtual HRESULT STDMETHODCALLTYPE hasURLString(BOOL* hasURL);
-    virtual HRESULT STDMETHODCALLTYPE mergeAutoCompleteHints(IWebHistoryItem* otherItem);
+    virtual HRESULT STDMETHODCALLTYPE initFromDictionaryRepresentation(_In_opt_ void* dictionary);
+    virtual HRESULT STDMETHODCALLTYPE dictionaryRepresentation(__deref_out_opt void** dictionary);
+    virtual HRESULT STDMETHODCALLTYPE visitCount(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE setVisitCount(int);
+    virtual HRESULT STDMETHODCALLTYPE hasURLString(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE mergeAutoCompleteHints(_In_opt_ IWebHistoryItem*);
     virtual HRESULT STDMETHODCALLTYPE setLastVisitedTimeInterval(DATE time);
-    virtual HRESULT STDMETHODCALLTYPE setTitle(BSTR title);
-    virtual HRESULT STDMETHODCALLTYPE RSSFeedReferrer(BSTR* url);
-    virtual HRESULT STDMETHODCALLTYPE setRSSFeedReferrer(BSTR url);
-    virtual HRESULT STDMETHODCALLTYPE hasPageCache(BOOL *hasCache);
-    virtual HRESULT STDMETHODCALLTYPE setHasPageCache(BOOL hasCache);
-    virtual HRESULT STDMETHODCALLTYPE target(BSTR* target);
-    virtual HRESULT STDMETHODCALLTYPE isTargetItem(BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE setTitle(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE RSSFeedReferrer(__deref_out_opt BSTR* url);
+    virtual HRESULT STDMETHODCALLTYPE setRSSFeedReferrer(_In_ BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE hasPageCache(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setHasPageCache(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE target(__deref_out_opt BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE isTargetItem(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE children(unsigned* childCount, SAFEARRAY** children);
-    virtual HRESULT STDMETHODCALLTYPE lastVisitWasFailure(BOOL* wasFailure);
-    virtual HRESULT STDMETHODCALLTYPE setLastVisitWasFailure(BOOL wasFailure);
-    virtual HRESULT STDMETHODCALLTYPE lastVisitWasHTTPNonGet(BOOL* HTTPNonGet);
-    virtual HRESULT STDMETHODCALLTYPE setLastVisitWasHTTPNonGet(BOOL HTTPNonGet);
-    virtual HRESULT STDMETHODCALLTYPE redirectURLs(IEnumVARIANT**);
-    virtual HRESULT STDMETHODCALLTYPE visitedWithTitle(BSTR title, BOOL increaseVisitCount);
-    virtual HRESULT STDMETHODCALLTYPE getDailyVisitCounts(int* number, int** counts);
-    virtual HRESULT STDMETHODCALLTYPE getWeeklyVisitCounts(int* number, int** counts);
+    virtual HRESULT STDMETHODCALLTYPE lastVisitWasFailure(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setLastVisitWasFailure(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE lastVisitWasHTTPNonGet(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setLastVisitWasHTTPNonGet(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE redirectURLs(_COM_Outptr_opt_ IEnumVARIANT**);
+    virtual HRESULT STDMETHODCALLTYPE visitedWithTitle(_In_ BSTR title, BOOL increaseVisitCount);
+    virtual HRESULT STDMETHODCALLTYPE getDailyVisitCounts(_Out_ int* number, __deref_out_opt int** counts);
+    virtual HRESULT STDMETHODCALLTYPE getWeeklyVisitCounts(_Out_ int* number, __deref_out_opt int** counts);
     virtual HRESULT STDMETHODCALLTYPE recordInitialVisit();
+
     // WebHistoryItem
     WebCore::HistoryItem* historyItem() const;
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 
     RefPtr<WebCore::HistoryItem> m_historyItem;
     WTF::String m_alternateTitle;

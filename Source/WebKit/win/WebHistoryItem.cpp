@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,8 +47,7 @@ static HashMap<HistoryItem*, WebHistoryItem*>& historyItemWrappers()
 }
 
 WebHistoryItem::WebHistoryItem(PassRefPtr<HistoryItem> historyItem)
-: m_refCount(0)
-, m_historyItem(historyItem)
+    : m_historyItem(historyItem)
 {
     ASSERT(!historyItemWrappers().contains(m_historyItem.get()));
     historyItemWrappers().set(m_historyItem.get(), this);
@@ -93,7 +92,7 @@ static CFStringRef titleKey = CFSTR("title");
 static CFStringRef lastVisitWasFailureKey = CFSTR("lastVisitWasFailure");
 static CFStringRef redirectURLsKey = CFSTR("redirectURLs");
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void* dictionary)
+HRESULT WebHistoryItem::initFromDictionaryRepresentation(_In_opt_ void* dictionary)
 {
     CFDictionaryRef dictionaryRef = (CFDictionaryRef) dictionary;
 
@@ -131,27 +130,30 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictionary)
+HRESULT WebHistoryItem::dictionaryRepresentation(__deref_out_opt void** dictionary)
 {
     CFDictionaryRef* dictionaryRef = (CFDictionaryRef*) dictionary;
 
-    int keyCount = 0;
+    size_t keyCount = 0;
     CFTypeRef keys[9];
     CFTypeRef values[9];
 
     if (!m_historyItem->urlString().isEmpty()) {
         keys[keyCount] = urlKey;
-        values[keyCount++] = m_historyItem->urlString().createCFString().leakRef();
+        values[keyCount] = m_historyItem->urlString().createCFString().leakRef();
+        ++keyCount;
     }
 
     if (!m_historyItem->title().isEmpty()) {
         keys[keyCount] = titleKey;
-        values[keyCount++] = m_historyItem->title().createCFString().leakRef();
+        values[keyCount] = m_historyItem->title().createCFString().leakRef();
+        ++keyCount;
     }
 
     if (m_historyItem->lastVisitWasFailure()) {
         keys[keyCount] = lastVisitWasFailureKey;
-        values[keyCount++] = CFRetain(kCFBooleanTrue);
+        values[keyCount] = CFRetain(kCFBooleanTrue);
+        ++keyCount;
     }
 
     if (Vector<String>* redirectURLs = m_historyItem->redirectURLs()) {
@@ -166,7 +168,8 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
         delete[] items;
 
         keys[keyCount] = redirectURLsKey;
-        values[keyCount++] = result;
+        values[keyCount] = result;
+        ++keyCount;
     }
 
     *dictionaryRef = CFDictionaryCreate(0, keys, values, keyCount, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
@@ -177,73 +180,84 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::hasURLString(BOOL *hasURL)
+HRESULT WebHistoryItem::hasURLString(_Out_ BOOL* hasURL)
 {
+    if (!hasURL)
+        return E_POINTER;
     *hasURL = m_historyItem->urlString().isEmpty() ? FALSE : TRUE;
     return S_OK;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::visitCount(int *count)
+HRESULT WebHistoryItem::visitCount(_Out_ int* count)
+{
+    if (!count)
+        return E_POINTER;
+    return E_NOTIMPL;
+}
+
+// FIXME: This function should be removed from the IWebHistoryItem interface.
+HRESULT WebHistoryItem::setVisitCount(int count)
+{
+    return E_NOTIMPL;
+
+}
+
+// FIXME: This function should be removed from the IWebHistoryItem interface.
+HRESULT WebHistoryItem::mergeAutoCompleteHints(_In_opt_ IWebHistoryItem*)
 {
     return E_NOTIMPL;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setVisitCount(int count)
-{
-    return E_NOTIMPL;
-
-}
-
-// FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::mergeAutoCompleteHints(IWebHistoryItem* otherItem)
+HRESULT WebHistoryItem::setLastVisitedTimeInterval(DATE time)
 {
     return E_NOTIMPL;
 }
 
-// FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setLastVisitedTimeInterval(DATE time)
-{
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setTitle(BSTR title)
+HRESULT WebHistoryItem::setTitle(_In_ BSTR title)
 {
     m_historyItem->setTitle(String(title, SysStringLen(title)));
 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::RSSFeedReferrer(BSTR* url)
+HRESULT WebHistoryItem::RSSFeedReferrer(__deref_out_opt BSTR* url)
 {
+    if (!url)
+        return E_POINTER;
+
     BString str(m_historyItem->referrer());
     *url = str.release();
 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setRSSFeedReferrer(BSTR url)
+HRESULT WebHistoryItem::setRSSFeedReferrer(_In_ BSTR url)
 {
     m_historyItem->setReferrer(String(url, SysStringLen(url)));
 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::hasPageCache(BOOL* /*hasCache*/)
+HRESULT WebHistoryItem::hasPageCache(_Out_ BOOL* hasCache)
+{
+    // FIXME - TODO
+    ASSERT_NOT_REACHED();
+    if (!hasCache)
+        return E_POINTER;
+    *hasCache = FALSE;
+    return E_NOTIMPL;
+}
+
+HRESULT WebHistoryItem::setHasPageCache(BOOL /*hasCache*/)
 {
     // FIXME - TODO
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setHasPageCache(BOOL /*hasCache*/)
-{
-    // FIXME - TODO
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE WebHistoryItem::target(BSTR* target)
+HRESULT WebHistoryItem::target(__deref_out_opt BSTR* target)
 {
     if (!target) {
         ASSERT_NOT_REACHED();
@@ -254,7 +268,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::target(BSTR* target)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::isTargetItem(BOOL* result)
+HRESULT WebHistoryItem::isTargetItem(_Out_ BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -265,7 +279,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::isTargetItem(BOOL* result)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::children(unsigned* outChildCount, SAFEARRAY** outChildren)
+HRESULT WebHistoryItem::children(unsigned* outChildCount, SAFEARRAY** outChildren)
 {
     if (!outChildCount || !outChildren) {
         ASSERT_NOT_REACHED();
@@ -305,7 +319,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::children(unsigned* outChildCount, SAFE
 
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitWasFailure(BOOL* wasFailure)
+HRESULT WebHistoryItem::lastVisitWasFailure(_Out_ BOOL* wasFailure)
 {
     if (!wasFailure) {
         ASSERT_NOT_REACHED();
@@ -316,25 +330,28 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitWasFailure(BOOL* wasFailure)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setLastVisitWasFailure(BOOL wasFailure)
+HRESULT WebHistoryItem::setLastVisitWasFailure(BOOL wasFailure)
 {
     m_historyItem->setLastVisitWasFailure(wasFailure);
     return S_OK;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitWasHTTPNonGet(BOOL* HTTPNonGet)
+HRESULT WebHistoryItem::lastVisitWasHTTPNonGet(_Out_ BOOL* HTTPNonGet)
 {
+    if (!HTTPNonGet)
+        return E_POINTER;
+    *HTTPNonGet = FALSE;
     return E_NOTIMPL;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setLastVisitWasHTTPNonGet(BOOL HTTPNonGet)
+HRESULT WebHistoryItem::setLastVisitWasHTTPNonGet(BOOL)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::redirectURLs(IEnumVARIANT** urls)
+HRESULT WebHistoryItem::redirectURLs(_COM_Outptr_opt_ IEnumVARIANT** urls)
 {
     if (!urls) {
         ASSERT_NOT_REACHED();
@@ -354,25 +371,29 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::redirectURLs(IEnumVARIANT** urls)
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::visitedWithTitle(BSTR title, BOOL increaseVisitCount)
+HRESULT STDMETHODCALLTYPE WebHistoryItem::visitedWithTitle(_In_ BSTR title, BOOL increaseVisitCount)
 {
     return E_NOTIMPL;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::getDailyVisitCounts(int* number, int** counts)
+HRESULT WebHistoryItem::getDailyVisitCounts(_Out_ int* number, __deref_out_opt int** counts)
 {
+    if (!number || !counts)
+        return E_POINTER;
     return E_NOTIMPL;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::getWeeklyVisitCounts(int* number, int** counts)
+HRESULT WebHistoryItem::getWeeklyVisitCounts(_Out_ int* number, __deref_out_opt int** counts)
 {
+    if (!number || !counts)
+        return E_POINTER;
     return E_NOTIMPL;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::recordInitialVisit()
+HRESULT WebHistoryItem::recordInitialVisit()
 {
     // FIXME: This function should be removed from the IWebHistoryItem interface.
     return E_NOTIMPL;
@@ -380,9 +401,11 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::recordInitialVisit()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebHistoryItem::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, __uuidof(WebHistoryItem)))
         *ppvObject = this;
     else if (IsEqualGUID(riid, IID_IUnknown))
@@ -398,12 +421,12 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::QueryInterface(REFIID riid, void** ppv
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebHistoryItem::AddRef(void)
+ULONG WebHistoryItem::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebHistoryItem::Release(void)
+ULONG WebHistoryItem::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -414,10 +437,7 @@ ULONG STDMETHODCALLTYPE WebHistoryItem::Release(void)
 
 // IWebHistoryItem -------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::initWithURLString(
-    /* [in] */ BSTR urlString,
-    /* [in] */ BSTR title,
-    /* [in] */ DATE lastVisited)
+HRESULT WebHistoryItem::initWithURLString(_In_ BSTR urlString, _In_ BSTR title, DATE lastVisited)
 {
     historyItemWrappers().remove(m_historyItem.get());
     m_historyItem = HistoryItem::create(String(urlString, SysStringLen(urlString)), String(title, SysStringLen(title)));
@@ -426,8 +446,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initWithURLString(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::originalURLString( 
-    /* [retval][out] */ BSTR* url)
+HRESULT WebHistoryItem::originalURLString(__deref_opt_out BSTR* url)
 {
     if (!url)
         return E_POINTER;
@@ -437,8 +456,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::originalURLString(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::URLString( 
-    /* [retval][out] */ BSTR* url)
+HRESULT WebHistoryItem::URLString(__deref_opt_out BSTR* url)
 {
     if (!url)
         return E_POINTER;
@@ -448,8 +466,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::URLString(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::title( 
-    /* [retval][out] */ BSTR* pageTitle)
+HRESULT WebHistoryItem::title(__deref_opt_out BSTR* pageTitle)
 {
     if (!pageTitle)
         return E_POINTER;
@@ -460,21 +477,20 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::title(
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.
-HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitedTimeInterval( 
-    /* [retval][out] */ DATE* lastVisited)
+HRESULT WebHistoryItem::lastVisitedTimeInterval(_Out_ DATE* lastVisited)
 {
+    if (!lastVisited)
+        return E_POINTER;
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::setAlternateTitle( 
-    /* [in] */ BSTR title)
+HRESULT WebHistoryItem::setAlternateTitle(_In_ BSTR title)
 {
     m_alternateTitle = String(title, SysStringLen(title));
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::alternateTitle( 
-    /* [retval][out] */ BSTR* title)
+HRESULT WebHistoryItem::alternateTitle(__deref_opt_out BSTR* title)
 {
     if (!title) {
         ASSERT_NOT_REACHED();
@@ -485,9 +501,11 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::alternateTitle(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::icon(/* [out, retval] */ HBITMAP* /*hBitmap*/)
+HRESULT STDMETHODCALLTYPE WebHistoryItem::icon(__deref_opt_out HBITMAP* hBitmap)
 {
     ASSERT_NOT_REACHED();
+    if (!hBitmap)
+        return E_POINTER;
     return E_NOTIMPL;
 }
 

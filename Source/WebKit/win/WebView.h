@@ -107,754 +107,288 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebView
-
-    virtual HRESULT STDMETHODCALLTYPE canShowMIMEType( 
-        /* [in] */ BSTR mimeType,
-        /* [retval][out] */ BOOL *canShow);
-
-    virtual HRESULT STDMETHODCALLTYPE canShowMIMETypeAsHTML( 
-        /* [in] */ BSTR mimeType,
-        /* [retval][out] */ BOOL *canShow);
-
-    virtual HRESULT STDMETHODCALLTYPE MIMETypesShownAsHTML( 
-        /* [retval][out] */ IEnumVARIANT **enumVariant);
-    
-    virtual HRESULT STDMETHODCALLTYPE setMIMETypesShownAsHTML( 
-        /* [size_is][in] */ BSTR *mimeTypes,
-        /* [in] */ int cMimeTypes);
-    
-    virtual HRESULT STDMETHODCALLTYPE URLFromPasteboard( 
-        /* [in] */ IDataObject *pasteboard,
-        /* [retval][out] */ BSTR *url);
-    
-    virtual HRESULT STDMETHODCALLTYPE URLTitleFromPasteboard( 
-        /* [in] */ IDataObject *pasteboard,
-        /* [retval][out] */ BSTR *urlTitle);
-    
-    virtual HRESULT STDMETHODCALLTYPE initWithFrame( 
-        /* [in] */ RECT frame,
-        /* [in] */ BSTR frameName,
-        /* [in] */ BSTR groupName);
-
-    virtual HRESULT STDMETHODCALLTYPE setAccessibilityDelegate(
-        /* [in] */ IAccessibilityDelegate *d);
-
-    virtual HRESULT STDMETHODCALLTYPE accessibilityDelegate(
-        /* [out][retval] */ IAccessibilityDelegate **d);
-
-    virtual HRESULT STDMETHODCALLTYPE setUIDelegate( 
-        /* [in] */ IWebUIDelegate *d);
-    
-    virtual HRESULT STDMETHODCALLTYPE uiDelegate( 
-        /* [out][retval] */ IWebUIDelegate **d);
-    
-    virtual HRESULT STDMETHODCALLTYPE setResourceLoadDelegate( 
-        /* [in] */ IWebResourceLoadDelegate *d);
-    
-    virtual HRESULT STDMETHODCALLTYPE resourceLoadDelegate( 
-        /* [out][retval] */ IWebResourceLoadDelegate **d);
-    
-    virtual HRESULT STDMETHODCALLTYPE setDownloadDelegate( 
-        /* [in] */ IWebDownloadDelegate *d);
-    
-    virtual HRESULT STDMETHODCALLTYPE downloadDelegate( 
-        /* [out][retval] */ IWebDownloadDelegate **d);
-    
-    virtual HRESULT STDMETHODCALLTYPE setFrameLoadDelegate( 
-        /* [in] */ IWebFrameLoadDelegate *d);
-    
-    virtual HRESULT STDMETHODCALLTYPE frameLoadDelegate( 
-        /* [out][retval] */ IWebFrameLoadDelegate **d);
-    
-    virtual HRESULT STDMETHODCALLTYPE setPolicyDelegate( 
-        /* [in] */ IWebPolicyDelegate *d);
-    
-    virtual HRESULT STDMETHODCALLTYPE policyDelegate( 
-        /* [out][retval] */ IWebPolicyDelegate **d);
-    
-    virtual HRESULT STDMETHODCALLTYPE mainFrame( 
-        /* [out][retval] */ IWebFrame **frame);
-
-    virtual HRESULT STDMETHODCALLTYPE focusedFrame( 
-        /* [out][retval] */ IWebFrame **frame);
-    
-    virtual HRESULT STDMETHODCALLTYPE backForwardList( 
-        /* [out][retval] */ IWebBackForwardList **list);
-    
-    virtual HRESULT STDMETHODCALLTYPE setMaintainsBackForwardList( 
-        /* [in] */ BOOL flag);
-    
-    virtual HRESULT STDMETHODCALLTYPE goBack( 
-        /* [retval][out] */ BOOL *succeeded);
-    
-    virtual HRESULT STDMETHODCALLTYPE goForward( 
-        /* [retval][out] */ BOOL *succeeded);
-    
-    virtual HRESULT STDMETHODCALLTYPE goToBackForwardItem( 
-        /* [in] */ IWebHistoryItem *item,
-        /* [retval][out] */ BOOL *succeeded);
-    
-    virtual HRESULT STDMETHODCALLTYPE setTextSizeMultiplier( 
-        /* [in] */ float multiplier);
-    
-    virtual HRESULT STDMETHODCALLTYPE textSizeMultiplier( 
-        /* [retval][out] */ float *multiplier);
-    
-    virtual HRESULT STDMETHODCALLTYPE setApplicationNameForUserAgent( 
-        /* [in] */ BSTR applicationName);
-    
-    virtual HRESULT STDMETHODCALLTYPE applicationNameForUserAgent( 
-        /* [retval][out] */ BSTR *applicationName);
-    
-    virtual HRESULT STDMETHODCALLTYPE setCustomUserAgent( 
-        /* [in] */ BSTR userAgentString);
-    
-    virtual HRESULT STDMETHODCALLTYPE customUserAgent( 
-        /* [retval][out] */ BSTR *userAgentString);
-    
-    virtual HRESULT STDMETHODCALLTYPE userAgentForURL( 
-        /* [in] */ BSTR url,
-        /* [retval][out] */ BSTR *userAgent);
-    
-    virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
-        /* [retval][out] */ BOOL *supports);
-    
-    virtual HRESULT STDMETHODCALLTYPE setCustomTextEncodingName( 
-        /* [in] */ BSTR encodingName);
-    
-    virtual HRESULT STDMETHODCALLTYPE customTextEncodingName( 
-        /* [retval][out] */ BSTR *encodingName);
-    
-    virtual HRESULT STDMETHODCALLTYPE setMediaStyle( 
-        /* [in] */ BSTR media);
-    
-    virtual HRESULT STDMETHODCALLTYPE mediaStyle( 
-        /* [retval][out] */ BSTR *media);
-    
-    virtual HRESULT STDMETHODCALLTYPE stringByEvaluatingJavaScriptFromString( 
-        /* [in] */ BSTR script,
-        /* [retval][out] */ BSTR *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE windowScriptObject( 
-        /* [retval][out] */ IWebScriptObject **webScriptObject);
-    
-    virtual HRESULT STDMETHODCALLTYPE setPreferences( 
-        /* [in] */ IWebPreferences *prefs);
-    
-    virtual HRESULT STDMETHODCALLTYPE preferences( 
-        /* [retval][out] */ IWebPreferences **prefs);
-    
-    virtual HRESULT STDMETHODCALLTYPE setPreferencesIdentifier( 
-        /* [in] */ BSTR anIdentifier);
-    
-    virtual HRESULT STDMETHODCALLTYPE preferencesIdentifier( 
-        /* [retval][out] */ BSTR *anIdentifier);
-    
-    virtual HRESULT STDMETHODCALLTYPE setHostWindow(HWND);
-    
-    virtual HRESULT STDMETHODCALLTYPE hostWindow(HWND*);
-    
-    virtual HRESULT STDMETHODCALLTYPE searchFor( 
-        /* [in] */ BSTR str,
-        /* [in] */ BOOL forward,
-        /* [in] */ BOOL caseFlag,
-        /* [in] */ BOOL wrapFlag,
-        /* [retval][out] */ BOOL *found);
-    
-    virtual HRESULT STDMETHODCALLTYPE registerViewClass( 
-        /* [in] */ IWebDocumentView *view,
-        /* [in] */ IWebDocumentRepresentation *representation,
-        /* [in] */ BSTR forMIMEType);
-
-    virtual HRESULT STDMETHODCALLTYPE setGroupName( 
-        /* [in] */ BSTR groupName);
-    
-    virtual HRESULT STDMETHODCALLTYPE groupName( 
-        /* [retval][out] */ BSTR *groupName);
-    
-    virtual HRESULT STDMETHODCALLTYPE estimatedProgress( 
-        /* [retval][out] */ double *estimatedProgress);
-    
-    virtual HRESULT STDMETHODCALLTYPE isLoading( 
-        /* [retval][out] */ BOOL *isLoading);
-    
-    virtual HRESULT STDMETHODCALLTYPE elementAtPoint( 
-        /* [in] */ LPPOINT point,
-        /* [retval][out] */ IPropertyBag **elementDictionary);
-    
-    virtual HRESULT STDMETHODCALLTYPE pasteboardTypesForSelection( 
-        /* [retval][out] */ IEnumVARIANT **enumVariant);
-    
-    virtual HRESULT STDMETHODCALLTYPE writeSelectionWithPasteboardTypes( 
-        /* [size_is][in] */ BSTR *types,
-        /* [in] */ int cTypes,
-        /* [in] */ IDataObject *pasteboard);
-    
-    virtual HRESULT STDMETHODCALLTYPE pasteboardTypesForElement( 
-        /* [in] */ IPropertyBag *elementDictionary,
-        /* [retval][out] */ IEnumVARIANT **enumVariant);
-    
-    virtual HRESULT STDMETHODCALLTYPE writeElement( 
-        /* [in] */ IPropertyBag *elementDictionary,
-        /* [size_is][in] */ BSTR *withPasteboardTypes,
-        /* [in] */ int cWithPasteboardTypes,
-        /* [in] */ IDataObject *pasteboard);
-    
-    virtual HRESULT STDMETHODCALLTYPE selectedText(
-        /* [out, retval] */ BSTR* str);
-
-    virtual HRESULT STDMETHODCALLTYPE centerSelectionInVisibleArea(
-        /* [in] */ IUnknown* sender);
-
-    virtual HRESULT STDMETHODCALLTYPE moveDragCaretToPoint( 
-        /* [in] */ LPPOINT point);
-    
-    virtual HRESULT STDMETHODCALLTYPE removeDragCaret( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE setDrawsBackground( 
-        /* [in] */ BOOL drawsBackground);
-    
-    virtual HRESULT STDMETHODCALLTYPE drawsBackground( 
-        /* [retval][out] */ BOOL *drawsBackground);
-    
-    virtual HRESULT STDMETHODCALLTYPE setMainFrameURL( 
-        /* [in] */ BSTR urlString);
-    
-    virtual HRESULT STDMETHODCALLTYPE mainFrameURL( 
-        /* [retval][out] */ BSTR *urlString);
-    
-    virtual HRESULT STDMETHODCALLTYPE mainFrameDocument( 
-        /* [retval][out] */ IDOMDocument **document);
-    
-    virtual HRESULT STDMETHODCALLTYPE mainFrameTitle( 
-        /* [retval][out] */ BSTR *title);
-    
-    virtual HRESULT STDMETHODCALLTYPE mainFrameIcon(/* [retval][out] */ HBITMAP* hBitmap);
-
-    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsLocal( 
-        /* [in] */ BSTR scheme);
-
+    virtual HRESULT STDMETHODCALLTYPE canShowMIMEType(_In_ BSTR mimeType, _Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE canShowMIMETypeAsHTML(_In_ BSTR mimeType, _Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE MIMETypesShownAsHTML(_COM_Outptr_opt_ IEnumVARIANT**);
+    virtual HRESULT STDMETHODCALLTYPE setMIMETypesShownAsHTML(__inout_ecount_full(cMimeTypes) BSTR* mimeTypes, int cMimeTypes); 
+    virtual HRESULT STDMETHODCALLTYPE URLFromPasteboard(_In_opt_ IDataObject* pasteboard, _Deref_opt_out_ BSTR* url);
+    virtual HRESULT STDMETHODCALLTYPE URLTitleFromPasteboard(_In_opt_ IDataObject* pasteboard, _Deref_opt_out_ BSTR* urlTitle);
+    virtual HRESULT STDMETHODCALLTYPE initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupName);
+    virtual HRESULT STDMETHODCALLTYPE setAccessibilityDelegate(_In_opt_ IAccessibilityDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE accessibilityDelegate(_COM_Outptr_opt_ IAccessibilityDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE setUIDelegate(_In_opt_ IWebUIDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE uiDelegate(_COM_Outptr_opt_ IWebUIDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE setResourceLoadDelegate(_In_opt_ IWebResourceLoadDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE resourceLoadDelegate(_COM_Outptr_opt_ IWebResourceLoadDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE setDownloadDelegate(_In_opt_ IWebDownloadDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE downloadDelegate(_COM_Outptr_opt_ IWebDownloadDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE setFrameLoadDelegate(_In_opt_ IWebFrameLoadDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE frameLoadDelegate(_COM_Outptr_opt_ IWebFrameLoadDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE setPolicyDelegate(_In_opt_ IWebPolicyDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE policyDelegate(_COM_Outptr_opt_ IWebPolicyDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE mainFrame(_COM_Outptr_opt_ IWebFrame**);
+    virtual HRESULT STDMETHODCALLTYPE focusedFrame(_COM_Outptr_opt_ IWebFrame**);
+    virtual HRESULT STDMETHODCALLTYPE backForwardList(_COM_Outptr_opt_ IWebBackForwardList**);
+    virtual HRESULT STDMETHODCALLTYPE setMaintainsBackForwardList(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE goBack(_Out_ BOOL* succeeded);
+    virtual HRESULT STDMETHODCALLTYPE goForward(_Out_ BOOL* succeeded);
+    virtual HRESULT STDMETHODCALLTYPE goToBackForwardItem(_In_opt_ IWebHistoryItem*, _Out_ BOOL* succeeded);
+    virtual HRESULT STDMETHODCALLTYPE setTextSizeMultiplier(float);
+    virtual HRESULT STDMETHODCALLTYPE textSizeMultiplier(_Out_ float*);
+    virtual HRESULT STDMETHODCALLTYPE setApplicationNameForUserAgent(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE applicationNameForUserAgent(_Deref_opt_out_ BSTR*);  
+    virtual HRESULT STDMETHODCALLTYPE setCustomUserAgent(_In_ BSTR); 
+    virtual HRESULT STDMETHODCALLTYPE customUserAgent(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE userAgentForURL(_In_ BSTR url, _Deref_opt_out_ BSTR* userAgent); 
+    virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCustomTextEncodingName(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE customTextEncodingName(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setMediaStyle(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE mediaStyle(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE stringByEvaluatingJavaScriptFromString(_In_ BSTR script, _Deref_opt_out_ BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE windowScriptObject(_COM_Outptr_opt_ IWebScriptObject**);
+    virtual HRESULT STDMETHODCALLTYPE setPreferences(_In_opt_ IWebPreferences*);
+    virtual HRESULT STDMETHODCALLTYPE preferences(_COM_Outptr_opt_ IWebPreferences**);
+    virtual HRESULT STDMETHODCALLTYPE setPreferencesIdentifier(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE preferencesIdentifier(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE setHostWindow(_In_ HWND);
+    virtual HRESULT STDMETHODCALLTYPE hostWindow(_Deref_opt_out_ HWND*);
+    virtual HRESULT STDMETHODCALLTYPE searchFor(_In_ BSTR, BOOL forward, BOOL caseFlag, BOOL wrapFlag, _Out_ BOOL *found);
+    virtual HRESULT STDMETHODCALLTYPE registerViewClass(_In_opt_ IWebDocumentView*, _In_opt_ IWebDocumentRepresentation*, _In_ BSTR forMIMEType);
+    virtual HRESULT STDMETHODCALLTYPE setGroupName(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE groupName(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE estimatedProgress(_Out_ double*);
+    virtual HRESULT STDMETHODCALLTYPE isLoading(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE elementAtPoint(_In_ LPPOINT, _COM_Outptr_opt_ IPropertyBag** elementDictionary);
+    virtual HRESULT STDMETHODCALLTYPE pasteboardTypesForSelection(_COM_Outptr_opt_ IEnumVARIANT**);
+    virtual HRESULT STDMETHODCALLTYPE writeSelectionWithPasteboardTypes(__inout_ecount_full(cTypes) BSTR* types, int cTypes, _In_opt_ IDataObject* pasteboard);
+    virtual HRESULT STDMETHODCALLTYPE pasteboardTypesForElement(_In_opt_ IPropertyBag* elementDictionary, _COM_Outptr_opt_ IEnumVARIANT**);
+    virtual HRESULT STDMETHODCALLTYPE writeElement(_In_opt_ IPropertyBag* elementDictionary, __inout_ecount_full(cWithPasteboardTypes) BSTR* withPasteboardTypes, int cWithPasteboardTypes, _In_opt_ IDataObject* pasteboard);
+    virtual HRESULT STDMETHODCALLTYPE selectedText(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE centerSelectionInVisibleArea(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE moveDragCaretToPoint(_In_ LPPOINT);
+    virtual HRESULT STDMETHODCALLTYPE removeDragCaret();
+    virtual HRESULT STDMETHODCALLTYPE setDrawsBackground(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE drawsBackground(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setMainFrameURL(_In_ BSTR urlString);
+    virtual HRESULT STDMETHODCALLTYPE mainFrameURL(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE mainFrameDocument(_COM_Outptr_opt_ IDOMDocument**);
+    virtual HRESULT STDMETHODCALLTYPE mainFrameTitle(_Deref_opt_out_ BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE mainFrameIcon(_Deref_opt_out_ HBITMAP*);
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsLocal(_In_ BSTR scheme);
     virtual HRESULT STDMETHODCALLTYPE close();
 
     // IWebIBActions
-
-    virtual HRESULT STDMETHODCALLTYPE takeStringURLFrom( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE stopLoading( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE reload( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE canGoBack( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE goBack( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE canGoForward( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE goForward( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE canMakeTextLarger( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE makeTextLarger( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE canMakeTextSmaller( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE makeTextSmaller( 
-        /* [in] */ IUnknown *sender);
-
-    virtual HRESULT STDMETHODCALLTYPE canMakeTextStandardSize( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE makeTextStandardSize( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE toggleContinuousSpellChecking( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE toggleSmartInsertDelete( 
-        /* [in] */ IUnknown *sender);
-
-    virtual HRESULT STDMETHODCALLTYPE toggleGrammarChecking( 
-        /* [in] */ IUnknown *sender);
-
-    virtual HRESULT STDMETHODCALLTYPE reloadFromOrigin( 
-        /* [in] */ IUnknown *sender);
+    virtual HRESULT STDMETHODCALLTYPE takeStringURLFrom(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE stopLoading(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE reload(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE canGoBack(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE goBack(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE canGoForward(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE goForward(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE canMakeTextLarger(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE makeTextLarger(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE canMakeTextSmaller(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE makeTextSmaller(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE canMakeTextStandardSize(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE makeTextStandardSize(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE toggleContinuousSpellChecking(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE toggleSmartInsertDelete(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE toggleGrammarChecking(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE reloadFromOrigin(_In_opt_ IUnknown* sender);
 
     // IWebViewCSS
-
-    virtual HRESULT STDMETHODCALLTYPE computedStyleForElement( 
-        /* [in] */ IDOMElement *element,
-        /* [in] */ BSTR pseudoElement,
-        /* [retval][out] */ IDOMCSSStyleDeclaration **style);
+    virtual HRESULT STDMETHODCALLTYPE computedStyleForElement(_In_opt_ IDOMElement*, _In_ BSTR pseudoElement, _COM_Outptr_opt_ IDOMCSSStyleDeclaration**);
 
     // IWebViewEditing
-
-    virtual HRESULT STDMETHODCALLTYPE editableDOMRangeForPoint( 
-        /* [in] */ LPPOINT point,
-        /* [retval][out] */ IDOMRange **range);
-    
-    virtual HRESULT STDMETHODCALLTYPE setSelectedDOMRange( 
-        /* [in] */ IDOMRange *range,
-        /* [in] */ WebSelectionAffinity affinity);
-    
-    virtual HRESULT STDMETHODCALLTYPE selectedDOMRange( 
-        /* [retval][out] */ IDOMRange **range);
-    
-    virtual HRESULT STDMETHODCALLTYPE selectionAffinity( 
-        /* [retval][out][retval][out] */ WebSelectionAffinity *affinity);
-    
-    virtual HRESULT STDMETHODCALLTYPE setEditable( 
-        /* [in] */ BOOL flag);
-    
-    virtual HRESULT STDMETHODCALLTYPE isEditable( 
-        /* [retval][out] */ BOOL *isEditable);
-    
-    virtual HRESULT STDMETHODCALLTYPE setTypingStyle( 
-        /* [in] */ IDOMCSSStyleDeclaration *style);
-    
-    virtual HRESULT STDMETHODCALLTYPE typingStyle( 
-        /* [retval][out] */ IDOMCSSStyleDeclaration **style);
-    
-    virtual HRESULT STDMETHODCALLTYPE setSmartInsertDeleteEnabled( 
-        /* [in] */ BOOL flag);
-    
-    virtual HRESULT STDMETHODCALLTYPE smartInsertDeleteEnabled( 
-        /* [in] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setSelectTrailingWhitespaceEnabled( 
-        /* [in] */ BOOL flag);
-    
-    virtual HRESULT STDMETHODCALLTYPE isSelectTrailingWhitespaceEnabled( 
-        /* [in] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setContinuousSpellCheckingEnabled( 
-        /* [in] */ BOOL flag);
-    
-    virtual HRESULT STDMETHODCALLTYPE isContinuousSpellCheckingEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE spellCheckerDocumentTag( 
-        /* [retval][out] */ int *tag);
-    
-    virtual HRESULT STDMETHODCALLTYPE undoManager( 
-        /* [retval][out] */ IWebUndoManager **manager);
-    
-    virtual HRESULT STDMETHODCALLTYPE setEditingDelegate( 
-        /* [in] */ IWebEditingDelegate *d);
-    
-    virtual HRESULT STDMETHODCALLTYPE editingDelegate( 
-        /* [retval][out] */ IWebEditingDelegate **d);
-    
-    virtual HRESULT STDMETHODCALLTYPE styleDeclarationWithText( 
-        /* [in] */ BSTR text,
-        /* [retval][out] */ IDOMCSSStyleDeclaration **style);
-    
-    virtual HRESULT STDMETHODCALLTYPE hasSelectedRange( 
-        /* [retval][out] */ BOOL *hasSelectedRange);
-    
-    virtual HRESULT STDMETHODCALLTYPE cutEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE copyEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE pasteEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE deleteEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE editingEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE isGrammarCheckingEnabled( 
-        /* [retval][out] */ BOOL *enabled);
-    
-    virtual HRESULT STDMETHODCALLTYPE setGrammarCheckingEnabled( 
-        BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setPageSizeMultiplier( 
-        /* [in] */ float multiplier);
-    
-    virtual HRESULT STDMETHODCALLTYPE pageSizeMultiplier( 
-        /* [retval][out] */ float *multiplier);
-
-    virtual HRESULT STDMETHODCALLTYPE canZoomPageIn( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE zoomPageIn( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE canZoomPageOut( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE zoomPageOut( 
-        /* [in] */ IUnknown *sender);
-
-    virtual HRESULT STDMETHODCALLTYPE canResetPageZoom( 
-        /* [in] */ IUnknown *sender,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE resetPageZoom( 
-        /* [in] */ IUnknown *sender);
+    virtual HRESULT STDMETHODCALLTYPE editableDOMRangeForPoint(_In_ LPPOINT, _COM_Outptr_opt_ IDOMRange**);
+    virtual HRESULT STDMETHODCALLTYPE setSelectedDOMRange(_In_opt_ IDOMRange*, WebSelectionAffinity);
+    virtual HRESULT STDMETHODCALLTYPE selectedDOMRange(_COM_Outptr_opt_ IDOMRange**);
+    virtual HRESULT STDMETHODCALLTYPE selectionAffinity(_Out_ WebSelectionAffinity*);
+    virtual HRESULT STDMETHODCALLTYPE setEditable(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isEditable(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setTypingStyle(_In_opt_ IDOMCSSStyleDeclaration*);
+    virtual HRESULT STDMETHODCALLTYPE typingStyle(_COM_Outptr_opt_ IDOMCSSStyleDeclaration**);
+    virtual HRESULT STDMETHODCALLTYPE setSmartInsertDeleteEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE smartInsertDeleteEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setSelectTrailingWhitespaceEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isSelectTrailingWhitespaceEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setContinuousSpellCheckingEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE isContinuousSpellCheckingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE spellCheckerDocumentTag(_Out_ int* tag);
+    virtual HRESULT STDMETHODCALLTYPE undoManager(_COM_Outptr_opt_ IWebUndoManager**);
+    virtual HRESULT STDMETHODCALLTYPE setEditingDelegate(_In_opt_ IWebEditingDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE editingDelegate(_COM_Outptr_opt_ IWebEditingDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE styleDeclarationWithText(_In_ BSTR text, _COM_Outptr_opt_ IDOMCSSStyleDeclaration**);
+    virtual HRESULT STDMETHODCALLTYPE hasSelectedRange(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE cutEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE copyEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE pasteEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE deleteEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE editingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE isGrammarCheckingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setGrammarCheckingEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setPageSizeMultiplier(float);
+    virtual HRESULT STDMETHODCALLTYPE pageSizeMultiplier(_Out_ float*);
+    virtual HRESULT STDMETHODCALLTYPE canZoomPageIn(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE zoomPageIn(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE canZoomPageOut(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE zoomPageOut(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE canResetPageZoom(_In_opt_ IUnknown* sender, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE resetPageZoom(_In_opt_ IUnknown* sender);
 
     // IWebViewUndoableEditing
-
-    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithNode( 
-        /* [in] */ IDOMNode *node);
-    
-    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithText( 
-        /* [in] */ BSTR text);
-    
-    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithMarkupString( 
-        /* [in] */ BSTR markupString);
-    
-    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithArchive( 
-        /* [in] */ IWebArchive *archive);
-    
-    virtual HRESULT STDMETHODCALLTYPE deleteSelection( void);
-
-    virtual HRESULT STDMETHODCALLTYPE clearSelection(void);
-    
-    virtual HRESULT STDMETHODCALLTYPE applyStyle( 
-        /* [in] */ IDOMCSSStyleDeclaration *style);
+    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithNode(_In_opt_ IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithText(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithMarkupString(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE replaceSelectionWithArchive(_In_opt_ IWebArchive*);
+    virtual HRESULT STDMETHODCALLTYPE deleteSelection();
+    virtual HRESULT STDMETHODCALLTYPE clearSelection();
+    virtual HRESULT STDMETHODCALLTYPE applyStyle(_In_opt_ IDOMCSSStyleDeclaration*);
 
     // IWebViewEditingActions
-
-    virtual HRESULT STDMETHODCALLTYPE copy( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE cut( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE paste( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE copyURL( 
-        /* [in] */ BSTR url);
-
-    virtual HRESULT STDMETHODCALLTYPE copyFont( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE pasteFont( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE delete_( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE pasteAsPlainText( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE pasteAsRichText( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE changeFont( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE changeAttributes( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE changeDocumentBackgroundColor( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE changeColor( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE alignCenter( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE alignJustified( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE alignLeft( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE alignRight( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE checkSpelling( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE showGuessPanel( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE performFindPanelAction( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE startSpeaking( 
-        /* [in] */ IUnknown *sender);
-    
-    virtual HRESULT STDMETHODCALLTYPE stopSpeaking( 
-        /* [in] */ IUnknown *sender);
+    virtual HRESULT STDMETHODCALLTYPE copy(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE cut(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE paste(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE copyURL(_In_ BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE copyFont(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE pasteFont(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE delete_(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE pasteAsPlainText(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE pasteAsRichText(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE changeFont(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE changeAttributes(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE changeDocumentBackgroundColor(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE changeColor(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE alignCenter(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE alignJustified(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE alignLeft(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE alignRight(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE checkSpelling(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE showGuessPanel(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE performFindPanelAction(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE startSpeaking(_In_opt_ IUnknown* sender);
+    virtual HRESULT STDMETHODCALLTYPE stopSpeaking(_In_opt_ IUnknown* sender);
 
     // IWebNotificationObserver
-
-    virtual HRESULT STDMETHODCALLTYPE onNotify( 
-        /* [in] */ IWebNotification *notification);
+    virtual HRESULT STDMETHODCALLTYPE onNotify(_In_opt_ IWebNotification*);
 
     // IWebViewPrivate
-    virtual HRESULT STDMETHODCALLTYPE MIMETypeForExtension(
-        /* [in] */ BSTR extension,
-        /* [retval][out] */ BSTR *mimeType);
-
-    virtual HRESULT STDMETHODCALLTYPE setCustomDropTarget(
-        /* [in] */ IDropTarget* dt);
-
+    virtual HRESULT STDMETHODCALLTYPE MIMETypeForExtension(_In_ BSTR extension, _Deref_opt_out_ BSTR *mimeType);
+    virtual HRESULT STDMETHODCALLTYPE setCustomDropTarget(_In_opt_ IDropTarget*);
     virtual HRESULT STDMETHODCALLTYPE removeCustomDropTarget();
-
-    virtual HRESULT STDMETHODCALLTYPE setInViewSourceMode( 
-        /* [in] */ BOOL flag);
-    
-    virtual HRESULT STDMETHODCALLTYPE inViewSourceMode( 
-        /* [retval][out] */ BOOL* flag);
-
-    virtual HRESULT STDMETHODCALLTYPE viewWindow(/* [retval][out] */ HWND* window);
-
-    virtual HRESULT STDMETHODCALLTYPE setFormDelegate( 
-        /* [in] */ IWebFormDelegate *formDelegate);
-
-    virtual HRESULT STDMETHODCALLTYPE formDelegate( 
-        /* [retval][out] */ IWebFormDelegate **formDelegate);
-
-    virtual HRESULT STDMETHODCALLTYPE setFrameLoadDelegatePrivate( 
-        /* [in] */ IWebFrameLoadDelegatePrivate *frameLoadDelegatePrivate);
-
-    virtual HRESULT STDMETHODCALLTYPE frameLoadDelegatePrivate( 
-        /* [retval][out] */ IWebFrameLoadDelegatePrivate **frameLoadDelegatePrivate);
-
-    virtual HRESULT STDMETHODCALLTYPE scrollOffset( 
-        /* [retval][out] */ LPPOINT offset);
-
-    virtual HRESULT STDMETHODCALLTYPE scrollBy( 
-        /* [in] */ LPPOINT offset);
-
-    virtual HRESULT STDMETHODCALLTYPE visibleContentRect( 
-        /* [retval][out] */ LPRECT rect);
-
+    virtual HRESULT STDMETHODCALLTYPE setInViewSourceMode(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE inViewSourceMode(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE viewWindow(_Deref_opt_out_ HWND*);
+    virtual HRESULT STDMETHODCALLTYPE setFormDelegate(_In_opt_ IWebFormDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE formDelegate(_COM_Outptr_opt_ IWebFormDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE setFrameLoadDelegatePrivate(_In_opt_ IWebFrameLoadDelegatePrivate*);
+    virtual HRESULT STDMETHODCALLTYPE frameLoadDelegatePrivate(_COM_Outptr_opt_ IWebFrameLoadDelegatePrivate**);
+    virtual HRESULT STDMETHODCALLTYPE scrollOffset(_Out_ LPPOINT);
+    virtual HRESULT STDMETHODCALLTYPE scrollBy(_In_ LPPOINT);
+    virtual HRESULT STDMETHODCALLTYPE visibleContentRect(_Out_ LPRECT);
     virtual HRESULT STDMETHODCALLTYPE updateFocusedAndActiveState();
-
-    virtual HRESULT STDMETHODCALLTYPE executeCoreCommandByName(BSTR name, BSTR value);
-
+    virtual HRESULT STDMETHODCALLTYPE executeCoreCommandByName(_In_ BSTR name, _In_ BSTR value);
     virtual HRESULT STDMETHODCALLTYPE clearMainFrameName();
-
-    virtual HRESULT STDMETHODCALLTYPE markAllMatchesForText(
-        BSTR search, BOOL caseSensitive, BOOL highlight, UINT limit, UINT* matches);
-
+    virtual HRESULT STDMETHODCALLTYPE markAllMatchesForText(_In_ BSTR search, BOOL caseSensitive, BOOL highlight, UINT limit, _Out_ UINT* matches);
     virtual HRESULT STDMETHODCALLTYPE unmarkAllTextMatches();
-
-    virtual HRESULT STDMETHODCALLTYPE rectsForTextMatches(
-        IEnumTextMatches** pmatches);
-
-    virtual HRESULT STDMETHODCALLTYPE generateSelectionImage(BOOL forceWhiteText, HBITMAP* hBitmap);
-
-    virtual HRESULT STDMETHODCALLTYPE selectionRect(
-        RECT* rc);
-    
-    virtual HRESULT STDMETHODCALLTYPE DragEnter(
-        IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
-
-    virtual HRESULT STDMETHODCALLTYPE DragOver(
-        DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
-    
+    virtual HRESULT STDMETHODCALLTYPE rectsForTextMatches(_COM_Outptr_opt_ IEnumTextMatches**);
+    virtual HRESULT STDMETHODCALLTYPE generateSelectionImage(BOOL forceWhiteText, _Deref_opt_out_ HBITMAP* hBitmap);
+    virtual HRESULT STDMETHODCALLTYPE selectionRect(_Inout_ RECT*);
+    virtual HRESULT STDMETHODCALLTYPE DragEnter(IDataObject*, DWORD grfKeyState, POINTL, DWORD* pdwEffect);
+    virtual HRESULT STDMETHODCALLTYPE DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
     virtual HRESULT STDMETHODCALLTYPE DragLeave();
-    
-    virtual HRESULT STDMETHODCALLTYPE Drop(
-        IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
-
-    virtual HRESULT STDMETHODCALLTYPE canHandleRequest( 
-        IWebURLRequest *request,
-        BOOL *result);
-
-    virtual HRESULT STDMETHODCALLTYPE standardUserAgentWithApplicationName( 
-        /* [in] */ BSTR applicationName,
-        /* [retval][out] */ BSTR *groupName);
-
+    virtual HRESULT STDMETHODCALLTYPE Drop(IDataObject*, DWORD grfKeyState, POINTL, DWORD* pdwEffect);
+    virtual HRESULT STDMETHODCALLTYPE canHandleRequest(_In_opt_ IWebURLRequest*, _Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE standardUserAgentWithApplicationName(_In_ BSTR applicationName, _Deref_opt_out_ BSTR *groupName);
     virtual HRESULT STDMETHODCALLTYPE clearFocusNode();
-
-    virtual HRESULT STDMETHODCALLTYPE setInitialFocus(
-        /* [in] */ BOOL forward);
-    
-    virtual HRESULT STDMETHODCALLTYPE setTabKeyCyclesThroughElements( 
-        /* [in] */ BOOL cycles);
-    
-    virtual HRESULT STDMETHODCALLTYPE tabKeyCyclesThroughElements( 
-        /* [retval][out] */ BOOL *result);
-
-    virtual HRESULT STDMETHODCALLTYPE setAllowSiteSpecificHacks(
-        /* [in] */ BOOL allows);
-
-    virtual HRESULT STDMETHODCALLTYPE addAdditionalPluginDirectory( 
-        /* [in] */ BSTR directory);    
-
-    virtual HRESULT STDMETHODCALLTYPE loadBackForwardListFromOtherView( 
-        /* [in] */ IWebView *otherView);
-        
-    virtual HRESULT STDMETHODCALLTYPE inspector(
-        /* [retval][out] */ IWebInspector**);
-
+    virtual HRESULT STDMETHODCALLTYPE setInitialFocus(BOOL forward);
+    virtual HRESULT STDMETHODCALLTYPE setTabKeyCyclesThroughElements(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE tabKeyCyclesThroughElements(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowSiteSpecificHacks(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE addAdditionalPluginDirectory(_In_ BSTR);    
+    virtual HRESULT STDMETHODCALLTYPE loadBackForwardListFromOtherView(_In_opt_ IWebView*);
+    virtual HRESULT STDMETHODCALLTYPE inspector(_COM_Outptr_opt_ IWebInspector**);
     virtual HRESULT STDMETHODCALLTYPE clearUndoRedoOperations( void);
-    virtual HRESULT STDMETHODCALLTYPE shouldClose( 
-        /* [retval][out] */ BOOL* result);
-
+    virtual HRESULT STDMETHODCALLTYPE shouldClose(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setProhibitsMainFrameScrolling(BOOL);
     virtual HRESULT STDMETHODCALLTYPE setShouldApplyMacFontAscentHack(BOOL);
-
     virtual HRESULT STDMETHODCALLTYPE windowAncestryDidChange();
-
-    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(RECT, HDC);
-
-    virtual HRESULT STDMETHODCALLTYPE paintScrollViewRectToContextAtPoint(RECT, POINT, HDC);
-
-    virtual HRESULT STDMETHODCALLTYPE reportException(
-        /* [in] */ JSContextRef context,
-        /* [in] */ JSValueRef exception);
-
-    virtual HRESULT STDMETHODCALLTYPE elementFromJS(
-        /* [in] */ JSContextRef context,
-        /* [in] */ JSValueRef nodeObject,
-        /* [retval][out] */ IDOMElement **element);
-
-    virtual HRESULT STDMETHODCALLTYPE setCustomHTMLTokenizerTimeDelay(
-        /* [in] */ double timeDelay);
-
-    virtual HRESULT STDMETHODCALLTYPE setCustomHTMLTokenizerChunkSize(
-        /* [in] */ int chunkSize);
-
-    virtual HRESULT STDMETHODCALLTYPE backingStore(/* [out, retval] */ HBITMAP* hBitmap);
-
-    virtual HRESULT STDMETHODCALLTYPE setTransparent(
-        /* [in] */ BOOL transparent);
-
-    virtual HRESULT STDMETHODCALLTYPE transparent(
-        /* [out, retval] */ BOOL* transparent);
-
-    virtual HRESULT STDMETHODCALLTYPE setDefersCallbacks(
-        /* [in] */ BOOL defersCallbacks);
-
-    virtual HRESULT STDMETHODCALLTYPE defersCallbacks(
-        /* [out, retval] */ BOOL* defersCallbacks);
-
-    virtual HRESULT STDMETHODCALLTYPE globalHistoryItem(
-        /* [out, retval] */ IWebHistoryItem** item);
-
-    virtual HRESULT STDMETHODCALLTYPE setAlwaysUsesComplexTextCodePath(
-        /* [in] */ BOOL complex);
-
-    virtual HRESULT STDMETHODCALLTYPE alwaysUsesComplexTextCodePath(
-        /* [out, retval] */ BOOL* complex);
-
-    virtual HRESULT STDMETHODCALLTYPE setCookieEnabled(
-        /* [in] */ BOOL enable);
-
-    virtual HRESULT STDMETHODCALLTYPE cookieEnabled(
-        /* [out, retval] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setMediaVolume(
-        /* [in] */ float volume);
-
-    virtual HRESULT STDMETHODCALLTYPE mediaVolume(
-        /* [out, retval] */ float* volume);
-
-    virtual HRESULT STDMETHODCALLTYPE registerEmbeddedViewMIMEType( 
-        /* [in] */ BSTR mimeType);
-
-    virtual HRESULT STDMETHODCALLTYPE setMemoryCacheDelegateCallsEnabled( 
-        /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setJavaScriptURLsAreAllowed(
-        /* [in] */ BOOL areAllowed);
-
-    virtual HRESULT STDMETHODCALLTYPE setCanStartPlugins(
-        /* [in] */ BOOL canStartPlugins);
-
-    virtual HRESULT STDMETHODCALLTYPE addUserScriptToGroup(BSTR groupName, IWebScriptWorld*, BSTR source, BSTR url,
-                                                           unsigned whitelistCount, BSTR* whitelist, 
-                                                           unsigned blacklistCount, BSTR* blacklist,
-                                                           WebUserScriptInjectionTime);
-    virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld*, BSTR source, BSTR url,
-                                                               unsigned whitelistCount, BSTR* whitelist, 
-                                                               unsigned blacklistCount, BSTR* blacklist);
-    virtual HRESULT STDMETHODCALLTYPE removeUserScriptFromGroup(BSTR groupName, IWebScriptWorld*, BSTR url);
-    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetFromGroup(BSTR groupName, IWebScriptWorld*, BSTR url);
-    virtual HRESULT STDMETHODCALLTYPE removeUserScriptsFromGroup(BSTR groupName, IWebScriptWorld*);
-    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetsFromGroup(BSTR groupName, IWebScriptWorld*);
-    virtual HRESULT STDMETHODCALLTYPE removeAllUserContentFromGroup(BSTR groupName);
-
+    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(RECT, _In_ HDC);
+    virtual HRESULT STDMETHODCALLTYPE paintScrollViewRectToContextAtPoint(RECT, POINT, _In_ HDC);
+    virtual HRESULT STDMETHODCALLTYPE reportException(_In_ JSContextRef, _In_ JSValueRef exception);
+    virtual HRESULT STDMETHODCALLTYPE elementFromJS(_In_ JSContextRef, _In_ JSValueRef nodeObject, _COM_Outptr_opt_ IDOMElement**);
+    virtual HRESULT STDMETHODCALLTYPE setCustomHTMLTokenizerTimeDelay(double);
+    virtual HRESULT STDMETHODCALLTYPE setCustomHTMLTokenizerChunkSize(int);
+    virtual HRESULT STDMETHODCALLTYPE backingStore(_Deref_opt_out_ HBITMAP*);
+    virtual HRESULT STDMETHODCALLTYPE setTransparent(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE transparent(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setDefersCallbacks(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE defersCallbacks(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE globalHistoryItem(_COM_Outptr_opt_ IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE setAlwaysUsesComplexTextCodePath(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE alwaysUsesComplexTextCodePath(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCookieEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE cookieEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setMediaVolume(float);
+    virtual HRESULT STDMETHODCALLTYPE mediaVolume(_Out_ float* volume);
+    virtual HRESULT STDMETHODCALLTYPE registerEmbeddedViewMIMEType(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE setMemoryCacheDelegateCallsEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptURLsAreAllowed(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setCanStartPlugins(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
+        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount,
+        __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserScriptInjectionTime);
+    virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
+        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist);
+    virtual HRESULT STDMETHODCALLTYPE removeUserScriptFromGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetFromGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR url);
+    virtual HRESULT STDMETHODCALLTYPE removeUserScriptsFromGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*);
+    virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetsFromGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*);
+    virtual HRESULT STDMETHODCALLTYPE removeAllUserContentFromGroup(_In_ BSTR groupName);
     virtual HRESULT STDMETHODCALLTYPE unused1();
     virtual HRESULT STDMETHODCALLTYPE unused2();
-
-    virtual HRESULT STDMETHODCALLTYPE invalidateBackingStore(const RECT*);
-
-    virtual HRESULT STDMETHODCALLTYPE addOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains);
-    virtual HRESULT STDMETHODCALLTYPE removeOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains);
+    virtual HRESULT STDMETHODCALLTYPE invalidateBackingStore(_In_opt_ const RECT*);
+    virtual HRESULT STDMETHODCALLTYPE addOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains);
+    virtual HRESULT STDMETHODCALLTYPE removeOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains);
     virtual HRESULT STDMETHODCALLTYPE resetOriginAccessWhitelists();
-
-    virtual HRESULT STDMETHODCALLTYPE setHistoryDelegate(IWebHistoryDelegate* historyDelegate);
-    virtual HRESULT STDMETHODCALLTYPE historyDelegate(IWebHistoryDelegate** historyDelegate);
-    virtual HRESULT STDMETHODCALLTYPE addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount);
-
+    virtual HRESULT STDMETHODCALLTYPE setHistoryDelegate(_In_ IWebHistoryDelegate*);
+    virtual HRESULT STDMETHODCALLTYPE historyDelegate(_COM_Outptr_opt_ IWebHistoryDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE addVisitedLinks(__inout_ecount_full(visitedURLCount) BSTR* visitedURLs, unsigned visitedURLCount);
     virtual HRESULT STDMETHODCALLTYPE unused3();
     virtual HRESULT STDMETHODCALLTYPE unused4();
     virtual HRESULT STDMETHODCALLTYPE unused5();
-
-    virtual HRESULT STDMETHODCALLTYPE setGeolocationProvider(IWebGeolocationProvider* locationProvider);
-    virtual HRESULT STDMETHODCALLTYPE geolocationProvider(IWebGeolocationProvider** locationProvider);
-    virtual HRESULT STDMETHODCALLTYPE geolocationDidChangePosition(IWebGeolocationPosition* position);
-    virtual HRESULT STDMETHODCALLTYPE geolocationDidFailWithError(IWebError* error);
-
-    virtual HRESULT STDMETHODCALLTYPE setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme);
-    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsSecure(BSTR);
-    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(BSTR);
-    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(BSTR);
-
+    virtual HRESULT STDMETHODCALLTYPE setGeolocationProvider(_In_opt_ IWebGeolocationProvider*);
+    virtual HRESULT STDMETHODCALLTYPE geolocationProvider(_COM_Outptr_opt_ IWebGeolocationProvider**);
+    virtual HRESULT STDMETHODCALLTYPE geolocationDidChangePosition(_In_opt_ IWebGeolocationPosition* position);
+    virtual HRESULT STDMETHODCALLTYPE geolocationDidFailWithError(_In_opt_ IWebError* error);
+    virtual HRESULT STDMETHODCALLTYPE setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, _In_ BSTR scheme);
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsSecure(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(_In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(_In_ BSTR);
     virtual HRESULT STDMETHODCALLTYPE nextDisplayIsSynchronous();
-
-    virtual HRESULT STDMETHODCALLTYPE defaultMinimumTimerInterval(
-        /* [retval][out] */ double *interval);
-
-    virtual HRESULT STDMETHODCALLTYPE setMinimumTimerInterval(
-        /* [in] */ double);
-
-    virtual HRESULT STDMETHODCALLTYPE httpPipeliningEnabled(
-        /* [out, retval] */ BOOL* enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE setHTTPPipeliningEnabled(
-        /* [in] */ BOOL);
-
+    virtual HRESULT STDMETHODCALLTYPE defaultMinimumTimerInterval(_Out_ double*);
+    virtual HRESULT STDMETHODCALLTYPE setMinimumTimerInterval(double);
+    virtual HRESULT STDMETHODCALLTYPE httpPipeliningEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setHTTPPipeliningEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE setUsesLayeredWindow(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE usesLayeredWindow(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE usesLayeredWindow(_Out_ BOOL*);
 
     // IWebViewPrivate2
     HRESULT STDMETHODCALLTYPE setLoadResourcesSerially(BOOL);
     HRESULT STDMETHODCALLTYPE scaleWebView(double scale, POINT origin);
     HRESULT STDMETHODCALLTYPE dispatchPendingLoadRequests();
     virtual HRESULT STDMETHODCALLTYPE setCustomBackingScaleFactor(double);
-    virtual HRESULT STDMETHODCALLTYPE backingScaleFactor(double*);
-    virtual HRESULT STDMETHODCALLTYPE addUserScriptToGroup(BSTR groupName, IWebScriptWorld*, BSTR source, BSTR url,
-        unsigned whitelistCount, BSTR* whitelist, unsigned blacklistCount, BSTR* blacklist, WebUserScriptInjectionTime, WebUserContentInjectedFrames);
-    virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld*, BSTR source, BSTR url,
-        unsigned whitelistCount, BSTR* whitelist, unsigned blacklistCount, BSTR* blacklist, WebUserContentInjectedFrames);
+    virtual HRESULT STDMETHODCALLTYPE backingScaleFactor(_Out_ double*);
+    virtual HRESULT STDMETHODCALLTYPE addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
+        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserScriptInjectionTime, WebUserContentInjectedFrames);
+    virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
+        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserContentInjectedFrames);
 
     // WebView
     bool shouldUseEmbeddedView(const WTF::String& mimeType) const;
@@ -979,24 +513,12 @@ public:
     bool canShowMIMETypeAsHTML(const String& mimeType);
 
     // Used by TextInputController in DumpRenderTree
-
-    HRESULT STDMETHODCALLTYPE setCompositionForTesting(
-        /* [in] */ BSTR composition, 
-        /* [in] */ UINT from, 
-        /* [in] */ UINT length);
-
-    HRESULT STDMETHODCALLTYPE hasCompositionForTesting(/* [out, retval] */ BOOL* result);
-
-    HRESULT STDMETHODCALLTYPE confirmCompositionForTesting(/* [in] */ BSTR composition);
-
-    HRESULT STDMETHODCALLTYPE compositionRangeForTesting(/* [out] */ UINT* startPosition, /* [out] */ UINT* length);
-
-    HRESULT STDMETHODCALLTYPE firstRectForCharacterRangeForTesting(
-    /* [in] */ UINT location, 
-    /* [in] */ UINT length, 
-    /* [out, retval] */ RECT* resultRect);
-
-    HRESULT STDMETHODCALLTYPE selectedRangeForTesting(/* [out] */ UINT* location, /* [out] */ UINT* length);
+    HRESULT STDMETHODCALLTYPE setCompositionForTesting(_In_ BSTR composition, UINT from, UINT length);
+    HRESULT STDMETHODCALLTYPE hasCompositionForTesting(_Out_ BOOL*);
+    HRESULT STDMETHODCALLTYPE confirmCompositionForTesting(_In_ BSTR composition);
+    HRESULT STDMETHODCALLTYPE compositionRangeForTesting(_Out_ UINT* startPosition, _Out_ UINT* length);
+    HRESULT STDMETHODCALLTYPE firstRectForCharacterRangeForTesting(UINT location, UINT length, _Out_ RECT* resultRect);
+    HRESULT STDMETHODCALLTYPE selectedRangeForTesting(_Out_ UINT* location, _Out_ UINT* length);
 
     float deviceScaleFactor() const;
 
@@ -1026,7 +548,7 @@ private:
     // We set this variable in DragEnter and DragOver so that it can be used in Drop to set the correct drop effect. 
     // Thus, on return from DoDragDrop we have the correct pdwEffect for the drag-and-drop operation.
     // (see https://bugs.webkit.org/show_bug.cgi?id=29264)
-    DWORD m_lastDropEffect;
+    DWORD m_lastDropEffect { 0 };
 
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
@@ -1036,7 +558,7 @@ private:
     // CACFLayerTreeHostClient
     virtual void flushPendingGraphicsLayerChanges();
 
-    bool m_shouldInvertColors;
+    bool m_shouldInvertColors { false };
     void setShouldInvertColors(bool);
 
 protected:
@@ -1078,15 +600,15 @@ protected:
     virtual void fullScreenClientRestoreScrollPosition();
 #endif
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 #if !ASSERT_DISABLED
-    bool m_deletionHasBegun;
+    bool m_deletionHasBegun { false };
 #endif
-    HWND m_hostWindow;
-    HWND m_viewWindow;
-    WebFrame* m_mainFrame;
-    WebCore::Page* m_page;
-    WebInspectorClient* m_inspectorClient;
+    HWND m_hostWindow { nullptr };
+    HWND m_viewWindow { nullptr };
+    WebFrame* m_mainFrame { nullptr };
+    WebCore::Page* m_page { nullptr };
+    WebInspectorClient* m_inspectorClient { nullptr };
 
     RefPtr<WebCore::SharedGDIObject<HBITMAP>> m_backingStoreBitmap;
     SIZE m_backingStoreSize;
@@ -1107,48 +629,48 @@ protected:
     COMPtr<WebInspector> m_webInspector;
     COMPtr<IWebGeolocationProvider> m_geolocationProvider;
 
-    bool m_userAgentOverridden;
-    bool m_useBackForwardList;
+    bool m_userAgentOverridden { false };
+    bool m_useBackForwardList { true };
     WTF::String m_userAgentCustom;
     WTF::String m_userAgentStandard;
-    float m_zoomMultiplier;
+    float m_zoomMultiplier { 1.0f };
     float m_customDeviceScaleFactor { 0 };
-    bool m_zoomsTextOnly;
+    bool m_zoomsTextOnly { false };
     WTF::String m_overrideEncoding;
     WTF::String m_applicationName;
-    bool m_mouseActivated;
+    bool m_mouseActivated { false };
     // WebCore dragging logic needs to be able to inspect the drag data
     // this is updated in DragEnter/Leave/Drop
     COMPtr<IDataObject> m_dragData;
     COMPtr<IDropTargetHelper> m_dropTargetHelper;
-    UChar m_currentCharacterCode;
-    bool m_isBeingDestroyed;
-    unsigned m_paintCount;
-    bool m_hasSpellCheckerDocumentTag;
-    bool m_didClose;
-    bool m_hasCustomDropTarget;
-    unsigned m_inIMEComposition;
-    HWND m_toolTipHwnd;
+    UChar m_currentCharacterCode { 0 };
+    bool m_isBeingDestroyed { false };
+    unsigned m_paintCount { 0 };
+    bool m_hasSpellCheckerDocumentTag { false };
+    bool m_didClose { false };
+    bool m_hasCustomDropTarget { false };
+    unsigned m_inIMEComposition { 0 };
+    HWND m_toolTipHwnd { nullptr };
     WTF::String m_toolTip;
-    bool m_deleteBackingStoreTimerActive;
+    bool m_deleteBackingStoreTimerActive { false };
 
-    bool m_transparent;
+    bool m_transparent { false };
 
     static bool s_allowSiteSpecificHacks;
 
-    WebCore::SuspendableTimer* m_closeWindowTimer;
+    WebCore::SuspendableTimer* m_closeWindowTimer { nullptr };
     std::unique_ptr<TRACKMOUSEEVENT> m_mouseOutTracker;
 
-    HWND m_topLevelParent;
+    HWND m_topLevelParent { nullptr };
 
     std::unique_ptr<HashSet<WTF::String>> m_embeddedViewMIMETypes;
 
     //Variables needed to store gesture information
     RefPtr<WebCore::Node> m_gestureTargetNode;
-    long m_lastPanX;
-    long m_lastPanY;
-    long m_xOverpan;
-    long m_yOverpan;
+    long m_lastPanX { 0 };
+    long m_lastPanY { 0 };
+    long m_xOverpan { 0 };
+    long m_yOverpan { 0 };
 
 #if ENABLE(VIDEO)
     std::unique_ptr<FullscreenVideoController> m_fullScreenVideoController;
@@ -1162,13 +684,13 @@ protected:
 #elif USE(TEXTURE_MAPPER_GL)
     std::unique_ptr<AcceleratedCompositingContext> m_acceleratedCompositingContext;
 #endif
-    bool m_isAcceleratedCompositing;
+    bool m_isAcceleratedCompositing { false };
 
-    bool m_nextDisplayIsSynchronous;
-    bool m_usesLayeredWindow;
-    bool m_needsDisplay;
+    bool m_nextDisplayIsSynchronous { false };
+    bool m_usesLayeredWindow { false };
+    bool m_needsDisplay { false };
 
-    HCURSOR m_lastSetCursor;
+    HCURSOR m_lastSetCursor { nullptr };
 
     RefPtr<WebCore::HistoryItem> m_globalHistoryItem;
 

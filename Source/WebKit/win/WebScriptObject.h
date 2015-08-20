@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,44 +35,22 @@ public:
     virtual ~WebScriptObject();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebScriptObject
-    virtual HRESULT STDMETHODCALLTYPE throwException( 
-        /* [in] */ BSTR exceptionMessage,
-        /* [retval][out] */ BOOL *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
-        /* [in] */ BSTR name,
-        /* [size_is][in] */ const VARIANT args[  ],
-        /* [in] */ int cArgs,
-        /* [retval][out] */ VARIANT *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
-        /* [in] */ BSTR script,
-        /* [retval][out] */ VARIANT *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
-        /* [in] */ BSTR name);
-    
-    virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
-        /* [retval][out] */ BSTR* stringRepresentation);
-    
-    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
-        /* [in] */ unsigned int index,
-        /* [retval][out] */ VARIANT *result);
-    
-    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
-        /* [in] */ unsigned int index,
-        /* [in] */ VARIANT val);
-    
-    virtual HRESULT STDMETHODCALLTYPE setException( 
-        /* [in] */ BSTR description);
+    virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(_In_ BSTR name, __in_ecount_opt(cArgs) const VARIANT args[], int cArgs, _Out_ VARIANT* result);
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(_In_ BSTR script, _Out_ VARIANT* result);
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(_In_ BSTR name);
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(__deref_opt_out BSTR* stringRepresentation);
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(unsigned index, _Out_ VARIANT* result);
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(unsigned index, VARIANT val);
+    virtual HRESULT STDMETHODCALLTYPE setException(_In_ BSTR description);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif

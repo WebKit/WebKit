@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,38 +40,23 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebNotificationCenter
-    virtual HRESULT STDMETHODCALLTYPE defaultCenter( 
-        /* [retval][out] */ IWebNotificationCenter **center);
-    
-    virtual HRESULT STDMETHODCALLTYPE addObserver( 
-        /* [in] */ IWebNotificationObserver *observer,
-        /* [in] */ BSTR notificationName,
-        /* [in] */ IUnknown *anObject);
-    
-    virtual HRESULT STDMETHODCALLTYPE postNotification( 
-        /* [in] */ IWebNotification *notification);
-    
-    virtual HRESULT STDMETHODCALLTYPE postNotificationName( 
-        /* [in] */ BSTR notificationName,
-        /* [in] */ IUnknown *anObject,
-        /* [optional][in] */ IPropertyBag *userInfo);
-    
-    virtual HRESULT STDMETHODCALLTYPE removeObserver( 
-        /* [in] */ IWebNotificationObserver *anObserver,
-        /* [in] */ BSTR notificationName,
-        /* [optional][in] */ IUnknown *anObject);
+    virtual HRESULT STDMETHODCALLTYPE defaultCenter(_COM_Outptr_opt_ IWebNotificationCenter**);
+    virtual HRESULT STDMETHODCALLTYPE addObserver(_In_opt_ IWebNotificationObserver*, _In_ BSTR notificationName, _In_opt_ IUnknown* anObject);
+    virtual HRESULT STDMETHODCALLTYPE postNotification(_In_opt_ IWebNotification*);
+    virtual HRESULT STDMETHODCALLTYPE postNotificationName(_In_ BSTR notificationName, _In_opt_ IUnknown* anObject, _In_opt_ IPropertyBag* userInfo);
+    virtual HRESULT STDMETHODCALLTYPE removeObserver(_In_opt_ IWebNotificationObserver*, _In_ BSTR notificationName, _In_opt_ IUnknown* anObject);
 
     // WebNotificationCenter
     static IWebNotificationCenter* defaultCenterInternal();
     void postNotificationInternal(IWebNotification* notification, BSTR notificationName, IUnknown* anObject);
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     std::unique_ptr<WebNotificationCenterPrivate> d;
     static IWebNotificationCenter* m_defaultCenter;
 };

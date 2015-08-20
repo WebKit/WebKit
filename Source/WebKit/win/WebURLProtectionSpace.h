@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,55 +39,27 @@ private:
     ~WebURLProtectionSpace();
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebURLProtectionSpace
-    virtual HRESULT STDMETHODCALLTYPE authenticationMethod(
-        /* [out, retval] */ BSTR* result);
-
-    virtual HRESULT STDMETHODCALLTYPE host(
-        /* [out, retval] */ BSTR* result);
-
-    virtual HRESULT STDMETHODCALLTYPE initWithHost(
-        /* [in] */ BSTR host, 
-        /* [in] */ int port, 
-        /* [in] */ BSTR protocol, 
-        /* [in] */ BSTR realm, 
-        /* [in] */ BSTR authenticationMethod);
-
-    virtual HRESULT STDMETHODCALLTYPE initWithProxyHost(
-        /* [in] */ BSTR host, 
-        /* [in] */ int port, 
-        /* [in] */ BSTR proxyType, 
-        /* [in] */ BSTR realm, 
-        /* [in] */ BSTR authenticationMethod);
-
-    virtual HRESULT STDMETHODCALLTYPE isProxy(
-        /* [out, retval] */ BOOL* result);
-
-    virtual HRESULT STDMETHODCALLTYPE port(
-        /* [out, retval] */ int* result);
-
-    virtual HRESULT STDMETHODCALLTYPE protocol(
-        /* [out, retval] */ BSTR* result);
-
-    virtual HRESULT STDMETHODCALLTYPE proxyType(
-        /* [out, retval] */ BSTR* result);
-
-    virtual HRESULT STDMETHODCALLTYPE realm(
-        /* [out, retval] */ BSTR* result);
-
-    virtual HRESULT STDMETHODCALLTYPE receivesCredentialSecurely(
-        /* [out, retval] */ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE authenticationMethod(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE host(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE initWithHost(_In_ BSTR host, int port, _In_ BSTR protocol, _In_ BSTR realm, _In_ BSTR authenticationMethod);
+    virtual HRESULT STDMETHODCALLTYPE initWithProxyHost(_In_ BSTR host, int port, _In_ BSTR proxyType, _In_ BSTR realm, _In_ BSTR authenticationMethod);
+    virtual HRESULT STDMETHODCALLTYPE isProxy(_Out_ BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE port(_Out_ int* result);
+    virtual HRESULT STDMETHODCALLTYPE protocol(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE proxyType(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE realm(__deref_opt_out BSTR* result);
+    virtual HRESULT STDMETHODCALLTYPE receivesCredentialSecurely(_Out_ BOOL* result);
 
     // WebURLProtectionSpace
     const WebCore::ProtectionSpace& protectionSpace() const;
 
 protected:
-    ULONG m_refCount;
-
+    ULONG m_refCount { 0 };
     WebCore::ProtectionSpace m_protectionSpace;
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 using namespace WebCore;
 
 inline WebUserContentURLPattern::WebUserContentURLPattern()
-    : m_refCount(0)
 {
     ++gClassCount;
     gClassNameCount().add("WebUserContentURLPattern");
@@ -63,11 +62,11 @@ ULONG WebUserContentURLPattern::Release()
     return newRefCount;
 }
 
-HRESULT WebUserContentURLPattern::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebUserContentURLPattern::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
     if (!ppvObject)
         return E_POINTER;
-    *ppvObject = 0;
+    *ppvObject = nullptr;
 
     if (IsEqualIID(riid, __uuidof(WebUserContentURLPattern)))
         *ppvObject = this;
@@ -82,13 +81,13 @@ HRESULT WebUserContentURLPattern::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-HRESULT WebUserContentURLPattern::parse(BSTR patternString)
+HRESULT WebUserContentURLPattern::parse(_In_ BSTR patternString)
 {
     m_pattern = UserContentURLPattern(String(patternString, SysStringLen(patternString)));
     return S_OK;
 }
 
-HRESULT WebUserContentURLPattern::isValid(BOOL* isValid)
+HRESULT WebUserContentURLPattern::isValid(_Out_ BOOL* isValid)
 {
     if (!isValid)
         return E_POINTER;
@@ -96,7 +95,7 @@ HRESULT WebUserContentURLPattern::isValid(BOOL* isValid)
     return S_OK;
 }
 
-HRESULT WebUserContentURLPattern::scheme(BSTR* scheme)
+HRESULT WebUserContentURLPattern::scheme(_Deref_opt_out_ BSTR* scheme)
 {
     if (!scheme)
         return E_POINTER;
@@ -104,7 +103,7 @@ HRESULT WebUserContentURLPattern::scheme(BSTR* scheme)
     return S_OK;
 }
 
-HRESULT WebUserContentURLPattern::host(BSTR* host)
+HRESULT WebUserContentURLPattern::host(_Deref_opt_out_ BSTR* host)
 {
     if (!host)
         return E_POINTER;
@@ -112,7 +111,7 @@ HRESULT WebUserContentURLPattern::host(BSTR* host)
     return S_OK;
 }
 
-HRESULT WebUserContentURLPattern::matchesSubdomains(BOOL* matches)
+HRESULT WebUserContentURLPattern::matchesSubdomains(_Out_ BOOL* matches)
 {
     if (!matches)
         return E_POINTER;
@@ -120,7 +119,7 @@ HRESULT WebUserContentURLPattern::matchesSubdomains(BOOL* matches)
     return S_OK;
 }
 
-HRESULT WebUserContentURLPattern::matchesURL(BSTR url, BOOL* matches)
+HRESULT WebUserContentURLPattern::matchesURL(_In_ BSTR url, _Out_ BOOL* matches)
 {
     if (!matches)
         return E_POINTER;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,8 +154,6 @@ static inline WebHistory::DateKey dateKey(DATE date)
 // WebHistory -----------------------------------------------------------------
 
 WebHistory::WebHistory()
-: m_refCount(0)
-, m_preferences(0)
 {
     gClassCount++;
     gClassNameCount().add("WebHistory");
@@ -202,9 +200,11 @@ BSTR WebHistory::getNotificationString(NotificationType notifyType)
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebHistory::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebHistory::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, CLSID_WebHistory))
         *ppvObject = this;
     else if (IsEqualGUID(riid, IID_IUnknown))
@@ -220,12 +220,12 @@ HRESULT STDMETHODCALLTYPE WebHistory::QueryInterface(REFIID riid, void** ppvObje
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebHistory::AddRef(void)
+ULONG WebHistory::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebHistory::Release(void)
+ULONG WebHistory::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -247,17 +247,17 @@ WebHistory* WebHistory::sharedHistory()
     return sharedHistoryStorage().get();
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::optionalSharedHistory( 
-    /* [retval][out] */ IWebHistory** history)
+HRESULT WebHistory::optionalSharedHistory(_COM_Outptr_opt_ IWebHistory** history)
 {
+    if (!history)
+        return E_POINTER;
     *history = sharedHistory();
     if (*history)
         (*history)->AddRef();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::setOptionalSharedHistory( 
-    /* [in] */ IWebHistory* history)
+HRESULT WebHistory::setOptionalSharedHistory(_In_opt_ IWebHistory* history)
 {
     if (sharedHistoryStorage() == history)
         return S_OK;
@@ -267,21 +267,19 @@ HRESULT STDMETHODCALLTYPE WebHistory::setOptionalSharedHistory(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::unused1()
+HRESULT WebHistory::unused1()
 {
     ASSERT_NOT_REACHED();
     return E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::unused2()
+HRESULT WebHistory::unused2()
 {
     ASSERT_NOT_REACHED();
     return E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::addItems( 
-    /* [in] */ int itemCount,
-    /* [in] */ IWebHistoryItem** items)
+HRESULT WebHistory::addItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem** items)
 {
     // There is no guarantee that the incoming entries are in any particular
     // order, but if this is called with a set of entries that were created by
@@ -299,9 +297,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::addItems(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::removeItems( 
-    /* [in] */ int itemCount,
-    /* [in] */ IWebHistoryItem** items)
+HRESULT WebHistory::removeItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem** items)
 {
     HRESULT hr;
     for (int i = 0; i < itemCount; ++i) {
@@ -313,7 +309,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeItems(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
+HRESULT WebHistory::removeAllItems()
 {
     Vector<IWebHistoryItem*> itemsVector;
     itemsVector.reserveInitialCapacity(m_entriesByURL.size());
@@ -329,25 +325,18 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
 }
 
 // FIXME: This function should be removed from the IWebHistory interface.
-HRESULT STDMETHODCALLTYPE WebHistory::orderedLastVisitedDays( 
-    /* [out][in] */ int* count,
-    /* [in] */ DATE* calendarDates)
+HRESULT WebHistory::orderedLastVisitedDays(_Inout_ int* count, _In_ DATE* calendarDates)
 {
     return E_NOTIMPL;
 }
 
 // FIXME: This function should be removed from the IWebHistory interface.
-HRESULT STDMETHODCALLTYPE WebHistory::orderedItemsLastVisitedOnDay( 
-    /* [out][in] */ int* count,
-    /* [in] */ IWebHistoryItem** items,
-    /* [in] */ DATE calendarDate)
+HRESULT WebHistory::orderedItemsLastVisitedOnDay(_Inout_ int* count, __deref_in_opt IWebHistoryItem** items, DATE calendarDate)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::allItems( 
-    /* [out][in] */ int* count,
-    /* [out][retval] */ IWebHistoryItem** items)
+HRESULT WebHistory::allItems(_Inout_ int* count, __deref_opt_out IWebHistoryItem** items)
 {
     int entriesByURLCount = m_entriesByURL.size();
 
@@ -358,7 +347,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::allItems(
 
     if (*count < entriesByURLCount) {
         *count = entriesByURLCount;
-        return E_FAIL;
+        return E_NOT_SUFFICIENT_BUFFER;
     }
 
     *count = entriesByURLCount;
@@ -383,33 +372,35 @@ HRESULT WebHistory::removeAllVisitedLinks()
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::setHistoryItemLimit( 
-    /* [in] */ int limit)
+HRESULT WebHistory::setHistoryItemLimit(int limit)
 {
     if (!m_preferences)
         return E_FAIL;
     return m_preferences->setHistoryItemLimit(limit);
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::historyItemLimit( 
-    /* [retval][out] */ int* limit)
+HRESULT WebHistory::historyItemLimit(_Out_ int* limit)
 {
+    if (!limit)
+        return E_POINTER;
+    *limit = 0;
     if (!m_preferences)
         return E_FAIL;
     return m_preferences->historyItemLimit(limit);
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::setHistoryAgeInDaysLimit( 
-    /* [in] */ int limit)
+HRESULT WebHistory::setHistoryAgeInDaysLimit(int limit)
 {
     if (!m_preferences)
         return E_FAIL;
     return m_preferences->setHistoryAgeInDaysLimit(limit);
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::historyAgeInDaysLimit( 
-    /* [retval][out] */ int* limit)
+HRESULT WebHistory::historyAgeInDaysLimit(_Out_ int* limit)
 {
+    if (!limit)
+        return E_POINTER;
+    *limit = 0;
     if (!m_preferences)
         return E_FAIL;
     return m_preferences->historyAgeInDaysLimit(limit);
@@ -538,11 +529,11 @@ void WebHistory::visitedURL(const URL& url, const String& title, const String& h
     postNotification(kWebHistoryItemsAddedNotification, userInfo.get());
 }
 
-HRESULT WebHistory::itemForURL(BSTR urlBStr, IWebHistoryItem** item)
+HRESULT WebHistory::itemForURL(_In_ BSTR urlBStr, _COM_Outptr_opt_ IWebHistoryItem** item)
 {
     if (!item)
-        return E_FAIL;
-    *item = 0;
+        return E_POINTER;
+    *item = nullptr;
 
     String urlString(urlBStr, SysStringLen(urlBStr));
     if (urlString.isEmpty())

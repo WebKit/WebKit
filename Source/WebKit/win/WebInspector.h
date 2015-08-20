@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ public:
 
     void webViewClosed();
 
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
@@ -54,18 +54,18 @@ public:
     virtual HRESULT STDMETHODCALLTYPE attach();
     virtual HRESULT STDMETHODCALLTYPE detach();
 
-    virtual HRESULT STDMETHODCALLTYPE isDebuggingJavaScript(BOOL* isDebugging);
+    virtual HRESULT STDMETHODCALLTYPE isDebuggingJavaScript(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE toggleDebuggingJavaScript();
 
-    virtual HRESULT STDMETHODCALLTYPE isProfilingJavaScript(BOOL* isProfiling);
+    virtual HRESULT STDMETHODCALLTYPE isProfilingJavaScript(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE toggleProfilingJavaScript();
 
-    virtual HRESULT STDMETHODCALLTYPE isJavaScriptProfilingEnabled(BOOL* isProfilingEnabled);
+    virtual HRESULT STDMETHODCALLTYPE isJavaScriptProfilingEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setJavaScriptProfilingEnabled(BOOL);
 
-    virtual HRESULT STDMETHODCALLTYPE evaluateInFrontend(BSTR script);
+    virtual HRESULT STDMETHODCALLTYPE evaluateInFrontend(_In_ BSTR script);
 
-    virtual HRESULT STDMETHODCALLTYPE isTimelineProfilingEnabled(BOOL* isEnabled);
+    virtual HRESULT STDMETHODCALLTYPE isTimelineProfilingEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setTimelineProfilingEnabled(BOOL);
 
 private:
@@ -74,7 +74,7 @@ private:
 
     WebInspectorFrontendClient* frontendClient();
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     WebView* m_webView;
     WebInspectorClient* m_inspectorClient;
 };

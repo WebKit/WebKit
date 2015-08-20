@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@ COMPtr<WebGeolocationPosition> WebGeolocationPosition::createInstance()
 }
 
 WebGeolocationPosition::WebGeolocationPosition()
-    : m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("WebGeolocationPosition");
@@ -48,9 +47,11 @@ WebGeolocationPosition::~WebGeolocationPosition()
     gClassNameCount().remove("WebGeolocationPosition");
 }
 
-HRESULT WebGeolocationPosition::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebGeolocationPosition::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualIID(riid, __uuidof(WebGeolocationPosition)))
         *ppvObject = this;
     else if (IsEqualIID(riid, __uuidof(IUnknown)))

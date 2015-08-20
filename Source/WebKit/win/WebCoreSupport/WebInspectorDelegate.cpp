@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "WebInspectorDelegate.h"
 
 WebInspectorDelegate::WebInspectorDelegate()
-    :m_refCount(0)
 {
 }
 
@@ -41,12 +40,20 @@ WebInspectorDelegate* WebInspectorDelegate::createInstance()
     return instance;
 }
 
-ULONG STDMETHODCALLTYPE WebInspectorDelegate::AddRef()
+HRESULT WebInspectorDelegate::QueryInterface(_In_ REFIID, _COM_Outptr_ void** result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = nullptr;
+    return E_NOTIMPL;
+};
+
+ULONG WebInspectorDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebInspectorDelegate::Release()
+ULONG WebInspectorDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -55,12 +62,44 @@ ULONG STDMETHODCALLTYPE WebInspectorDelegate::Release()
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE WebInspectorDelegate::dragDestinationActionMaskForDraggingInfo(
-    /* [in] */ IWebView*,
-    /* [in] */ IDataObject*,
-    /* [retval][out] */ WebDragDestinationAction* action)
+HRESULT WebInspectorDelegate::dragDestinationActionMaskForDraggingInfo(_In_opt_ IWebView*, _In_opt_ IDataObject*, _Out_ WebDragDestinationAction* action)
 {
+    if (!action)
+        return E_POINTER;
+
     *action = WebDragDestinationActionNone;
 
     return S_OK;
+}
+
+HRESULT WebInspectorDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _COM_Outptr_opt_ IWebView** webView)
+{
+    if (!webView)
+        return E_POINTER;
+    *webView = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT WebInspectorDelegate::willPerformDragSourceAction(_In_opt_ IWebView*, WebDragSourceAction, _In_ LPPOINT, _In_opt_ IDataObject*, _COM_Outptr_opt_ IDataObject** dataObject)
+{
+    if (!dataObject)
+        return E_POINTER;
+    *dataObject = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT WebInspectorDelegate::createModalDialog(_In_opt_ IWebView*, _In_opt_ IWebURLRequest*, _COM_Outptr_opt_ IWebView** dialog)
+{
+    if (!dialog)
+        return E_POINTER;
+    *dialog = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT WebInspectorDelegate::desktopNotificationsDelegate(_COM_Outptr_opt_ IWebDesktopNotificationsDelegate** notificationDelegate)
+{
+    if (!notificationDelegate)
+        return E_POINTER;
+    *notificationDelegate = nullptr;
+    return E_NOTIMPL;
 }

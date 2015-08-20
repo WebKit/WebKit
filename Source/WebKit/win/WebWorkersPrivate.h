@@ -42,15 +42,15 @@ private:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebWorkersPrivate
-    virtual HRESULT STDMETHODCALLTYPE workerThreadCount(UINT*);
+    virtual HRESULT STDMETHODCALLTYPE workerThreadCount(_Out_ UINT*);
 
 private:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 #endif // WebWorkersPrivate_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,62 +51,29 @@ private:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebHistory
-    virtual HRESULT STDMETHODCALLTYPE optionalSharedHistory( 
-        /* [retval][out] */ IWebHistory** history);
-    
-    virtual HRESULT STDMETHODCALLTYPE setOptionalSharedHistory( 
-        /* [in] */ IWebHistory* history);
-    
+    virtual HRESULT STDMETHODCALLTYPE optionalSharedHistory(_COM_Outptr_opt_ IWebHistory**);
+    virtual HRESULT STDMETHODCALLTYPE setOptionalSharedHistory(_In_opt_ IWebHistory*);
     virtual HRESULT STDMETHODCALLTYPE unused1() override;
     virtual HRESULT STDMETHODCALLTYPE unused2() override;
-    
-    virtual HRESULT STDMETHODCALLTYPE addItems( 
-        /* [in] */ int itemCount,
-        /* [in] */ IWebHistoryItem** items);
-    
-    virtual HRESULT STDMETHODCALLTYPE removeItems( 
-        /* [in] */ int itemCount,
-        /* [in] */ IWebHistoryItem** items);
-    
-    virtual HRESULT STDMETHODCALLTYPE removeAllItems( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE orderedLastVisitedDays( 
-        /* [out][in] */ int* count,
-        /* [in] */ DATE* calendarDates);
-    
-    virtual HRESULT STDMETHODCALLTYPE orderedItemsLastVisitedOnDay( 
-        /* [out][in] */ int* count,
-        /* [in] */ IWebHistoryItem** items,
-        /* [in] */ DATE calendarDate);
-
-    virtual HRESULT STDMETHODCALLTYPE itemForURL( 
-        /* [in] */ BSTR url,
-        /* [retval][out] */ IWebHistoryItem** item);
-    
-    virtual HRESULT STDMETHODCALLTYPE setHistoryItemLimit( 
-        /* [in] */ int limit);
-    
-    virtual HRESULT STDMETHODCALLTYPE historyItemLimit( 
-        /* [retval][out] */ int* limit);
-    
-    virtual HRESULT STDMETHODCALLTYPE setHistoryAgeInDaysLimit( 
-        /* [in] */ int limit);
-    
-    virtual HRESULT STDMETHODCALLTYPE historyAgeInDaysLimit( 
-        /* [retval][out] */ int* limit);
+    virtual HRESULT STDMETHODCALLTYPE addItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE removeItems(int itemCount, __deref_in_ecount_opt(itemCount) IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE removeAllItems();
+    virtual HRESULT STDMETHODCALLTYPE orderedLastVisitedDays(_Inout_ int* count, _In_ DATE* calendarDates);
+    virtual HRESULT STDMETHODCALLTYPE orderedItemsLastVisitedOnDay(_Inout_ int* count, __deref_in_opt IWebHistoryItem** items, DATE calendarDate);
+    virtual HRESULT STDMETHODCALLTYPE itemForURL(_In_ BSTR url, _COM_Outptr_opt_ IWebHistoryItem**);
+    virtual HRESULT STDMETHODCALLTYPE setHistoryItemLimit(int);
+    virtual HRESULT STDMETHODCALLTYPE historyItemLimit(_Out_ int*);
+    virtual HRESULT STDMETHODCALLTYPE setHistoryAgeInDaysLimit(int);
+    virtual HRESULT STDMETHODCALLTYPE historyAgeInDaysLimit(_Out_ int*);
 
     // IWebHistoryPrivate
-
-    virtual HRESULT STDMETHODCALLTYPE allItems( 
-        /* [out][in] */ int* count,
-        /* [retval][out] */ IWebHistoryItem** items);
-
-    virtual HRESULT STDMETHODCALLTYPE setVisitedLinkTrackingEnabled(BOOL visitedLinkTrackingEnable);
+    virtual HRESULT STDMETHODCALLTYPE allItems(_Inout_ int* count, __deref_opt_out IWebHistoryItem** items);
+    virtual HRESULT STDMETHODCALLTYPE setVisitedLinkTrackingEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE removeAllVisitedLinks();
 
     // WebHistory
@@ -138,7 +105,7 @@ private:
     HRESULT removeItemForURLString(const WTF::String& urlString);
     BSTR getNotificationString(NotificationType notifyType);
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     URLToEntriesMap m_entriesByURL;
     COMPtr<WebPreferences> m_preferences;
 };

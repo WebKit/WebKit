@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,35 +43,20 @@ protected:
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebResource
-    virtual HRESULT STDMETHODCALLTYPE initWithData( 
-        /* [in] */ IStream *data,
-        /* [in] */ BSTR url,
-        /* [in] */ BSTR mimeType,
-        /* [in] */ BSTR textEncodingName,
-        /* [in] */ BSTR frameName);
-        
-    virtual HRESULT STDMETHODCALLTYPE data( 
-        /* [retval][out] */ IStream **data);
-       
-    virtual HRESULT STDMETHODCALLTYPE URL( 
-        /* [retval][out] */ BSTR *url);
-        
-    virtual HRESULT STDMETHODCALLTYPE MIMEType( 
-        /* [retval][out] */ BSTR *mime);
-        
-    virtual HRESULT STDMETHODCALLTYPE textEncodingName( 
-        /* [retval][out] */ BSTR *encodingName);
-        
-    virtual HRESULT STDMETHODCALLTYPE frameName( 
-        /* [retval][out] */ BSTR *name);
+    virtual HRESULT STDMETHODCALLTYPE initWithData(_In_opt_ IStream* data, _In_ BSTR url, _In_ BSTR mimeType, _In_ BSTR textEncodingName, _In_ BSTR frameName);
+    virtual HRESULT STDMETHODCALLTYPE data(_COM_Outptr_opt_ IStream** data);
+    virtual HRESULT STDMETHODCALLTYPE URL(__deref_opt_out BSTR* url);
+    virtual HRESULT STDMETHODCALLTYPE MIMEType(__deref_opt_out BSTR* mime);
+    virtual HRESULT STDMETHODCALLTYPE textEncodingName(__deref_opt_out BSTR* encodingName);
+    virtual HRESULT STDMETHODCALLTYPE frameName(__deref_opt_out BSTR* name);
 
 private:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
     COMPtr<IStream> m_data;
     WebCore::URL m_url;
     WTF::String m_mimeType;

@@ -53,9 +53,11 @@ WebGeolocationPolicyListener::~WebGeolocationPolicyListener()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebGeolocationPolicyListener::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebGeolocationPolicyListener::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualIID(riid, __uuidof(IUnknown)))
         *ppvObject = static_cast<IWebGeolocationPolicyListener*>(this);
     else if (IsEqualIID(riid, __uuidof(IWebGeolocationPolicyListener)))
@@ -67,12 +69,12 @@ HRESULT STDMETHODCALLTYPE WebGeolocationPolicyListener::QueryInterface(REFIID ri
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebGeolocationPolicyListener::AddRef()
+ULONG WebGeolocationPolicyListener::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebGeolocationPolicyListener::Release()
+ULONG WebGeolocationPolicyListener::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -83,13 +85,13 @@ ULONG STDMETHODCALLTYPE WebGeolocationPolicyListener::Release()
 
 // IWebPolicyDecisionListener ------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebGeolocationPolicyListener::allow()
+HRESULT WebGeolocationPolicyListener::allow()
 {
     m_geolocation->setIsAllowed(true);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebGeolocationPolicyListener::deny()
+HRESULT WebGeolocationPolicyListener::deny()
 {
     m_geolocation->setIsAllowed(false);
     return S_OK;

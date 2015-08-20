@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,42 +37,19 @@ public:
     static WebDatabaseManager* createInstance();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
-        /* [in] */ REFIID riid,
-        /* [iid_is][out] */ void** ppvObject);
-
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
-
     virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebDatabaseManager
-    virtual HRESULT STDMETHODCALLTYPE sharedWebDatabaseManager( 
-        /* [retval][out] */ IWebDatabaseManager** result);
-        
-    virtual HRESULT STDMETHODCALLTYPE origins( 
-        /* [retval][out] */ IEnumVARIANT** result);
-        
-    virtual HRESULT STDMETHODCALLTYPE databasesWithOrigin( 
-        /* [in] */ IWebSecurityOrigin* origin,
-        /* [retval][out] */ IEnumVARIANT** result);
-        
-    virtual HRESULT STDMETHODCALLTYPE detailsForDatabase( 
-        /* [in] */ BSTR databaseName,
-        /* [in] */ IWebSecurityOrigin* origin,
-        /* [retval][out] */ IPropertyBag** result);
-        
-    virtual HRESULT STDMETHODCALLTYPE deleteAllDatabases();
-        
-    virtual HRESULT STDMETHODCALLTYPE deleteOrigin( 
-        /* [in] */ IWebSecurityOrigin* origin);
-        
-    virtual HRESULT STDMETHODCALLTYPE deleteDatabase( 
-        /* [in] */ BSTR databaseName,
-        /* [in] */ IWebSecurityOrigin* origin);
-
-    virtual HRESULT STDMETHODCALLTYPE setQuota(
-        /* [in] */ BSTR origin,
-        /* [in] */ unsigned long long quota);
+    virtual HRESULT STDMETHODCALLTYPE sharedWebDatabaseManager(_COM_Outptr_opt_ IWebDatabaseManager** result);
+    virtual HRESULT STDMETHODCALLTYPE origins(_COM_Outptr_opt_ IEnumVARIANT** result);
+    virtual HRESULT STDMETHODCALLTYPE databasesWithOrigin(_In_opt_ IWebSecurityOrigin*, _COM_Outptr_opt_ IEnumVARIANT** result);   
+    virtual HRESULT STDMETHODCALLTYPE detailsForDatabase(_In_ BSTR databaseName, _In_opt_ IWebSecurityOrigin*, _COM_Outptr_opt_ IPropertyBag** result);
+    virtual HRESULT STDMETHODCALLTYPE deleteAllDatabases();        
+    virtual HRESULT STDMETHODCALLTYPE deleteOrigin(_In_opt_ IWebSecurityOrigin*);       
+    virtual HRESULT STDMETHODCALLTYPE deleteDatabase(_In_ BSTR databaseName, _In_opt_ IWebSecurityOrigin*);
+    virtual HRESULT STDMETHODCALLTYPE setQuota(_In_ BSTR origin, unsigned long long quota);
 
     // DatabaseManagerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
@@ -82,7 +59,7 @@ private:
     WebDatabaseManager();
     ~WebDatabaseManager();
 
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 };
 
 void WebKitInitializeWebDatabasesIfNecessary();

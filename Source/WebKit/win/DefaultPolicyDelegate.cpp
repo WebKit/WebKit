@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,6 @@ typedef enum WebExtraNavigationType {
 // DefaultPolicyDelegate ----------------------------------------------------------------
 
 DefaultPolicyDelegate::DefaultPolicyDelegate()
-    : m_refCount(0)
 {
     gClassCount++;
     gClassNameCount().add("DefaultPolicyDelegate");
@@ -70,9 +69,11 @@ DefaultPolicyDelegate* DefaultPolicyDelegate::createInstance()
 
 // IUnknown -------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DefaultPolicyDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
     else if (IsEqualGUID(riid, IID_IWebPolicyDelegate))
@@ -84,12 +85,12 @@ HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::QueryInterface(REFIID riid, voi
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE DefaultPolicyDelegate::AddRef()
+ULONG DefaultPolicyDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE DefaultPolicyDelegate::Release()
+ULONG DefaultPolicyDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -98,8 +99,8 @@ ULONG STDMETHODCALLTYPE DefaultPolicyDelegate::Release()
     return newRef;
 }
 
-HRESULT DefaultPolicyDelegate::decidePolicyForNavigationAction(IWebView* webView, IPropertyBag* actionInformation, 
-    IWebURLRequest* request, IWebFrame* /*frame*/, IWebPolicyDecisionListener* listener)
+HRESULT DefaultPolicyDelegate::decidePolicyForNavigationAction(_In_opt_ IWebView* webView, _In_opt_ IPropertyBag* actionInformation,
+    _In_opt_ IWebURLRequest* request, _In_opt_ IWebFrame* /*frame*/, _In_opt_ IWebPolicyDecisionListener* listener)
 {
     int navType = 0;
     _variant_t var;
@@ -128,23 +129,18 @@ HRESULT DefaultPolicyDelegate::decidePolicyForNavigationAction(IWebView* webView
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::decidePolicyForNewWindowAction(
-    /*[in]*/ IWebView* /*webView*/, 
-    /*[in]*/ IPropertyBag* /*actionInformation*/, 
-    /*[in]*/ IWebURLRequest* /*request*/, 
-    /*[in]*/ BSTR /*frameName*/, 
-    /*[in]*/ IWebPolicyDecisionListener* listener)
+HRESULT DefaultPolicyDelegate::decidePolicyForNewWindowAction(_In_opt_ IWebView* /*webView*/, _In_opt_ IPropertyBag* /*actionInformation*/,
+    _In_opt_ IWebURLRequest* /*request*/, _In_ BSTR /*frameName*/, _In_opt_ IWebPolicyDecisionListener* listener)
 {
+    if (!listener)
+        return E_POINTER;
+
     listener->use();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::decidePolicyForMIMEType(
-    /*[in]*/ IWebView* webView, 
-    /*[in]*/ BSTR type, 
-    /*[in]*/ IWebURLRequest* request, 
-    /*[in]*/ IWebFrame* /*frame*/, 
-    /*[in]*/ IWebPolicyDecisionListener* listener)
+HRESULT DefaultPolicyDelegate::decidePolicyForMIMEType(_In_opt_ IWebView* webView, _In_ BSTR type, _In_opt_ IWebURLRequest* request,
+    _In_opt_ IWebFrame* /*frame*/, _In_opt_ IWebPolicyDecisionListener* listener)
 {
     BOOL canShowMIMEType;
     if (FAILED(webView->canShowMIMEType(type, &canShowMIMEType)))
@@ -172,11 +168,11 @@ HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::decidePolicyForMIMEType(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::unableToImplementPolicyWithError(
-    /*[in]*/ IWebView* /*webView*/, 
-    /*[in]*/ IWebError* error, 
-    /*[in]*/ IWebFrame* frame)
+HRESULT DefaultPolicyDelegate::unableToImplementPolicyWithError(_In_opt_ IWebView* /*webView*/, _In_opt_ IWebError* error, _In_opt_ IWebFrame* frame)
 {
+    if (!error || !frame)
+        return E_POINTER;
+
     BString errorStr;
     error->localizedDescription(&errorStr);
 

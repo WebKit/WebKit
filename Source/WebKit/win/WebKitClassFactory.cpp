@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2007, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,8 +62,7 @@
 
 // WebKitClassFactory ---------------------------------------------------------
 WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
-: m_targetClass(targetClass)
-, m_refCount(0)
+    : m_targetClass(targetClass)
 {
     JSC::initializeThreading();
     WTF::initializeMainThread();
@@ -79,9 +78,11 @@ WebKitClassFactory::~WebKitClassFactory()
 }
 
 // IUnknown -------------------------------------------------------------------
-HRESULT WebKitClassFactory::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebKitClassFactory::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+    *ppvObject = nullptr;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
     else if (IsEqualGUID(riid, IID_IClassFactory))
@@ -93,7 +94,7 @@ HRESULT WebKitClassFactory::QueryInterface(REFIID riid, void** ppvObject)
     return S_OK;
 }
 
-ULONG WebKitClassFactory::AddRef(void)
+ULONG WebKitClassFactory::AddRef()
 {
     return ++m_refCount;
 }
@@ -121,10 +122,13 @@ static T* leakRefFromCreateInstance(COMPtr<T> object)
 }
 
 // IClassFactory --------------------------------------------------------------
-HRESULT WebKitClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppvObject)
+HRESULT WebKitClassFactory::CreateInstance(_In_opt_ IUnknown* pUnkOuter, _In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
-    IUnknown* unknown = 0;
-    *ppvObject = 0;
+    if (!ppvObject)
+        return E_POINTER;
+
+    IUnknown* unknown = nullptr;
+    *ppvObject = nullptr;
     
     if (pUnkOuter)
         return CLASS_E_NOAGGREGATION;

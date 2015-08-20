@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,46 +39,26 @@ private:
     ~WebURLAuthenticationChallenge();
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebURLAuthenticationChallenge
-    virtual HRESULT STDMETHODCALLTYPE initWithProtectionSpace(
-        /* [in] */ IWebURLProtectionSpace* space, 
-        /* [in] */ IWebURLCredential* proposedCredential, 
-        /* [in] */ int previousFailureCount, 
-        /* [in] */ IWebURLResponse* failureResponse, 
-        /* [in] */ IWebError* error, 
-        /* [in] */ IWebURLAuthenticationChallengeSender* sender);
-
-    virtual HRESULT STDMETHODCALLTYPE initWithAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge* challenge, 
-        /* [in] */ IWebURLAuthenticationChallengeSender* sender);
-
-    virtual HRESULT STDMETHODCALLTYPE error(
-        /* [out, retval] */ IWebError** result);
-
-    virtual HRESULT STDMETHODCALLTYPE failureResponse(
-        /* [out, retval] */ IWebURLResponse** result);
-
-    virtual HRESULT STDMETHODCALLTYPE previousFailureCount(
-        /* [out, retval] */ UINT* result);
-
-    virtual HRESULT STDMETHODCALLTYPE proposedCredential(
-        /* [out, retval] */ IWebURLCredential** result);
-
-    virtual HRESULT STDMETHODCALLTYPE protectionSpace(
-        /* [out, retval] */ IWebURLProtectionSpace** result);
-
-    virtual HRESULT STDMETHODCALLTYPE sender(
-        /* [out, retval] */ IWebURLAuthenticationChallengeSender** sender);
+    virtual HRESULT STDMETHODCALLTYPE initWithProtectionSpace(_In_opt_ IWebURLProtectionSpace*, _In_opt_ IWebURLCredential*, 
+        int previousFailureCount, _In_opt_ IWebURLResponse* failureResponse, _In_opt_ IWebError*, _In_opt_ IWebURLAuthenticationChallengeSender*);
+    virtual HRESULT STDMETHODCALLTYPE initWithAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebURLAuthenticationChallengeSender*);
+    virtual HRESULT STDMETHODCALLTYPE error(_COM_Outptr_opt_ IWebError**);
+    virtual HRESULT STDMETHODCALLTYPE failureResponse(_COM_Outptr_opt_ IWebURLResponse**);
+    virtual HRESULT STDMETHODCALLTYPE previousFailureCount(_Out_ UINT*);
+    virtual HRESULT STDMETHODCALLTYPE proposedCredential(_COM_Outptr_opt_ IWebURLCredential**);
+    virtual HRESULT STDMETHODCALLTYPE protectionSpace(_COM_Outptr_opt_ IWebURLProtectionSpace**);
+    virtual HRESULT STDMETHODCALLTYPE sender(_COM_Outptr_opt_ IWebURLAuthenticationChallengeSender**);
 
     // WebURLAuthenticationChallenge
     const WebCore::AuthenticationChallenge& authenticationChallenge() const;
 
 protected:
-    ULONG m_refCount;
+    ULONG m_refCount { 0 };
 
     WebCore::AuthenticationChallenge m_authenticationChallenge;
     COMPtr<IWebURLAuthenticationChallengeSender> m_sender;
