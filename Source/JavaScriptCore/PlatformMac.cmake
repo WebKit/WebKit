@@ -34,6 +34,7 @@ add_custom_command(
     VERBATIM)
 
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
+    ${WTF_DIR}
     ${JAVASCRIPTCORE_DIR}/disassembler/udis86
     ${JAVASCRIPTCORE_DIR}/icu
 )

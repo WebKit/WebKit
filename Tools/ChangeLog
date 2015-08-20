@@ -1,5 +1,17 @@
 2015-08-19  Alex Christensen  <achristensen@webkit.org>
 
+        CMake Windows build should not include files directly from other Source directories
+        https://bugs.webkit.org/show_bug.cgi?id=148198
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/DumpRenderTreePrefix.h:
+        Include cmakeconfig.h to properly define all enabled features.
+        * DumpRenderTree/PlatformWin.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+
+2015-08-19  Alex Christensen  <achristensen@webkit.org>
+
         Build TestWTF on Mac with CMake.
         https://bugs.webkit.org/show_bug.cgi?id=147972
 

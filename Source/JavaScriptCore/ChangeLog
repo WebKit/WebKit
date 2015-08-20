@@ -1,3 +1,18 @@
+2015-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        CMake Windows build should not include files directly from other Source directories
+        https://bugs.webkit.org/show_bug.cgi?id=148198
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        JavaScriptCore_FORWARDING_HEADERS_FILES is no longer necessary because all the headers
+        that used to be in it are now in JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+
 2015-08-19  Eric Carlson  <eric.carlson@apple.com>
 
         Remove ENABLE_WEBVTT_REGIONS

@@ -10,6 +10,7 @@ include_directories(
     ${DERIVED_SOURCES_DIR}
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders
     ${TESTWEBKITAPI_DIR}/win
+    ${DERIVED_SOURCES_DIR}/WebKit/Interfaces
 )
 
 add_definitions(-DWEBCORE_EXPORT=)
@@ -49,9 +50,27 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 else ()
     list(APPEND test_webcore_LIBRARIES
-        CFNetwork
-        CoreMedia
-        WebKitSystemInterface
+        ASL${DEBUG_SUFFIX}
+        AVFoundationCF${DEBUG_SUFFIX}
+        CFNetwork${DEBUG_SUFFIX}
+        CoreAudioToolbox${DEBUG_SUFFIX}
+        CoreFoundation${DEBUG_SUFFIX}
+        CoreGraphics${DEBUG_SUFFIX}
+        CoreMedia${DEBUG_SUFFIX}
+        CoreText${DEBUG_SUFFIX}
+        CoreVideo${DEBUG_SUFFIX}
+        MediaAccessibility${DEBUG_SUFFIX}
+        QuartzCore${DEBUG_SUFFIX}
+        SQLite3${DEBUG_SUFFIX}
+        WebKitSystemInterface${DEBUG_SUFFIX}
+        WebKitQuartzCoreAdditions${DEBUG_SUFFIX}
+        libdispatch${DEBUG_SUFFIX}
+        libexslt${DEBUG_SUFFIX}
+        libicuin${DEBUG_SUFFIX}
+        libicuuc${DEBUG_SUFFIX}
+        libxml2${DEBUG_SUFFIX}
+        libxslt${DEBUG_SUFFIX}
+        zdll${DEBUG_SUFFIX}
     )
 endif ()
 

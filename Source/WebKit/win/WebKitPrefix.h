@@ -43,6 +43,10 @@
 #define __STDC_LIMIT_MACROS
 #endif
 
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKit/WebKit.h>
 #include "config.h"

@@ -32,7 +32,6 @@ else ()
         PRIVATE CoreText${DEBUG_SUFFIX}
         PRIVATE CoreVideo${DEBUG_SUFFIX}
         PRIVATE MediaAccessibility${DEBUG_SUFFIX}
-        PRIVATE MediaToolbox${DEBUG_SUFFIX}
         PRIVATE QuartzCore${DEBUG_SUFFIX}
         PRIVATE SQLite3${DEBUG_SUFFIX}
         PRIVATE WebKitSystemInterface${DEBUG_SUFFIX}
@@ -54,34 +53,10 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     win/WebCoreSupport
     WebCoreSupport
     WebKit.vcxproj/WebKit
+    "${WEBKIT_DIR}/.."
     "${DERIVED_SOURCES_WEBKIT_DIR}/include"
-    "${CMAKE_SOURCE_DIR}/Source"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/include/WebCore"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
-    "${DERIVED_SOURCES_WEBCORE_DIR}"
-    "${DERIVED_SOURCES_DIR}"
-    "${JAVASCRIPTCORE_DIR}/dfg"
-    "${WEBCORE_DIR}/style"
-    "${WEBCORE_DIR}/loader/archive"
-    "${WEBCORE_DIR}/loader/archive/cf"
-    "${WEBCORE_DIR}/page/scrolling"
-    "${WEBCORE_DIR}/platform/cf"
-    "${WEBCORE_DIR}/platform/graphics/win"
-    "${WEBCORE_DIR}/platform/graphics/filters"
-    "${WEBCORE_DIR}/platform/audio"
-    "${WEBCORE_DIR}/platform/win"
-    "${WEBCORE_DIR}/rendering/line"
-    "${WEBCORE_DIR}/rendering/shapes"
-    "${WEBCORE_DIR}/html/shadow"
-    "${WEBCORE_DIR}/html/track"
-    "${WEBCORE_DIR}/modules/websockets"
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
-    "${THIRDPARTY_DIR}"
-    "${THIRDPARTY_DIR}/ANGLE"
-    "${THIRDPARTY_DIR}/ANGLE/include"
-    "${THIRDPARTY_DIR}/ANGLE/include/egl"
-    "${THIRDPARTY_DIR}/ANGLE/include/khr"
+    "${DERIVED_SOURCES_DIR}"
 )
 
 list(APPEND WebKit_INCLUDES
@@ -480,10 +455,7 @@ endif ()
 file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces)
 
-set(WebKit_FORWARDING_HEADERS
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/WebKit.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/win/WebKitCOMAPI.h"
-    "win/CFDictionaryPropertyBag.h"
-)
-
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit_FORWARDING_HEADERS})
+set(WebKitGUID_POST_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebKit/postBuild.cmd")
+file(WRITE "${WebKitGUID_POST_BUILD_COMMAND}" "@xcopy /y /d /f \"${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/WebKit.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit\" >nul 2>nul\n@xcopy /y /d /f \"${CMAKE_CURRENT_SOURCE_DIR}/win/WebKitCOMAPI.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit\" >nul 2>nul\n@xcopy /y /d /f \"${CMAKE_CURRENT_SOURCE_DIR}/win/CFDictionaryPropertyBag.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit\" >nul 2>nul\n")
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit)
+add_custom_command(TARGET WebKitGUID POST_BUILD COMMAND ${WebKitGUID_POST_BUILD_COMMAND} VERBATIM)

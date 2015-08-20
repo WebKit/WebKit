@@ -12,9 +12,6 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy"
-    "${JAVASCRIPTCORE_DIR}"
-    "${JAVASCRIPTCORE_DIR}/disassembler"
-    "${WTF_DIR}"
 )
 
 set(WebKit_SYSTEM_INCLUDE_DIRECTORIES "")

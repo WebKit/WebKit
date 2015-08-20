@@ -1,6 +1,25 @@
 add_definitions(/bigobj)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/ForwardingHeaders"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/API"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/assembler"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/bytecode"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/bytecompiler"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/dfg"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/disassembler"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/heap"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/debugger"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/interpreter"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/jit"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/llint"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/parser"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/profiler"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/runtime"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/yarr"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WTF"
+    "${WEBCORE_DIR}/ForwardingHeaders"
     "${WEBCORE_DIR}/accessibility/win"
     "${WEBCORE_DIR}/page/win"
     "${WEBCORE_DIR}/platform/cf"
@@ -132,6 +151,7 @@ list(APPEND WebCore_SOURCES
 )
 
 set(WebCore_FORWARDING_HEADERS_DIRECTORIES
+    .
     accessibility
     bindings
     bridge
@@ -147,6 +167,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     plugins
     rendering
     storage
+    style
     svg
     websockets
     workers
@@ -169,6 +190,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     html/forms
     html/parser
+    html/shadow
+    html/track
 
     loader/appcache
     loader/archive
@@ -178,9 +201,11 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     loader/archive/cf
 
     page/animation
+    page/scrolling
     page/win
 
     platform/animation
+    platform/audio
     platform/cf
     platform/graphics
     platform/mock
@@ -191,6 +216,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     platform/cf/win
 
+    platform/graphics/filters
     platform/graphics/opengl
     platform/graphics/opentype
     platform/graphics/texmap
@@ -199,6 +225,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     platform/text/transcoder
 
+    rendering/line
+    rendering/shapes
     rendering/style
     rendering/svg
 
@@ -215,8 +243,6 @@ else ()
     include(PlatformAppleWin.cmake)
 endif ()
 
-WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES})
-
 # FIXME: This should test if AVF headers are available.
 # https://bugs.webkit.org/show_bug.cgi?id=135861
 add_custom_command(
@@ -232,6 +258,24 @@ file(COPY
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
 )
+
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore)
+
+foreach (_directory ${WebCore_FORWARDING_HEADERS_DIRECTORIES})
+    file(GLOB _files "${WEBCORE_DIR}/${_directory}/*.h")
+    foreach (_file ${_files})
+        file(COPY ${_file} DESTINATION "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore")
+    endforeach ()
+endforeach ()
+
+# These forwarding headers need to keep their directory structure.
+set(WebCore_POST_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebCore/postBuild.cmd")
+file(WRITE "${WebCore_POST_BUILD_COMMAND}" "@xcopy /y /s /d /f \"${WEBCORE_DIR}/ForwardingHeaders/*.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore\" >nul 2>nul\n@xcopy /y /s /d /f \"${DERIVED_SOURCES_WEBCORE_DIR}/*.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore\" >nul 2>nul\n")
+
+file(GLOB_RECURSE _files "${WEBCORE_DIR}/ForwardingHeaders/*.h")
+foreach (_file ${_files})
+    file(COPY ${_file} DESTINATION "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore")
+endforeach ()
 
 set(WebCore_OUTPUT_NAME
     WebCore${DEBUG_SUFFIX}
