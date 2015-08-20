@@ -1,3 +1,26 @@
+2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOMTree leaks on main resource changes
+        https://bugs.webkit.org/show_bug.cgi?id=148158
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMTree.js:
+        (WebInspector.DOMTree.prototype.disconnect):
+        Add a way to disconnect the DOMTree and allow it to get garbage collected.
+
+        (WebInspector.DOMTree.prototype.invalidate.performInvalidate):
+        (WebInspector.DOMTree.prototype.invalidate):
+        (WebInspector.DOMTree.prototype._requestRootDOMNode):
+        (WebInspector.DOMTree.prototype._framePageExecutionContextChanged):
+        Remove some uses of the delete operator.
+
+        * UserInterface/Models/Frame.js:
+        (WebInspector.Frame.prototype.removeChildFrame):
+        (WebInspector.Frame.prototype.removeAllChildFrames):
+        (WebInspector.Frame.prototype._detachFromParentFrame):
+        When a frame gets removed from its parent, disconnect its DOMTree.
+
 2015-08-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: The first style in the Rules panel for pseudo-elements needs padding

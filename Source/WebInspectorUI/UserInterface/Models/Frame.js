@@ -331,7 +331,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         this._childFrames.remove(childFrame);
         delete this._childFrameIdentifierMap[childFrame._id];
 
-        childFrame._parentFrame = null;
+        childFrame._detachFromParentFrame();
 
         this.dispatchEventToListeners(WebInspector.Frame.Event.ChildFrameWasRemoved, {childFrame});
     }
@@ -341,8 +341,8 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         if (!this._childFrames.length)
             return;
 
-        for (var i = 0; i < this._childFrames.length; ++i)
-            this._childFrames[i]._parentFrame = null;
+        for (let childFrame of this._childFrames)
+            childFrame._detachFromParentFrame();
 
         this._childFrames = [];
         this._childFrameIdentifierMap = {};
@@ -445,6 +445,16 @@ WebInspector.Frame = class Frame extends WebInspector.Object
     }
 
     // Private
+
+    _detachFromParentFrame()
+    {
+        if (this._domTree) {
+            this._domTree.disconnect();
+            this._domTree = null;
+        }
+
+        this._parentFrame = null;
+    }
 
     _isProvisionalResource(resource)
     {
