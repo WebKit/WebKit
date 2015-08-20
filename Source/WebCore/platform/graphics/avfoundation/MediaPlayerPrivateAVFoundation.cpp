@@ -86,7 +86,6 @@ MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation(%p)", this);
     setIgnoreLoadStateChanges(true);
-    cancelCallOnMainThread(mainThreadCallback, this);
 }
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::currentRenderingMode() const
@@ -744,12 +743,12 @@ void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay) const
     }
 }
 
-void MediaPlayerPrivateAVFoundation::mainThreadCallback(void* context)
+void MediaPlayerPrivateAVFoundation::mainThreadCallback()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::mainThreadCallback(%p)", context);
-    MediaPlayerPrivateAVFoundation* player = static_cast<MediaPlayerPrivateAVFoundation*>(context);
-    player->clearMainThreadPendingFlag();
-    player->dispatchNotification();
+    LOG(Media, "MediaPlayerPrivateAVFoundation::mainThreadCallback(%p)", this);
+
+    clearMainThreadPendingFlag();
+    dispatchNotification();
 }
 
 void MediaPlayerPrivateAVFoundation::clearMainThreadPendingFlag()
@@ -800,7 +799,14 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
 #endif
     if (delayDispatch && !m_mainThreadCallPending) {
         m_mainThreadCallPending = true;
-        callOnMainThread(mainThreadCallback, this);
+
+        auto weakThis = createWeakPtr();
+        callOnMainThread([weakThis] {
+            if (!weakThis)
+                return;
+
+            weakThis->mainThreadCallback();
+        });
     }
 
     m_queueMutex.unlock();
@@ -831,8 +837,15 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
             m_queuedNotifications.remove(0);
         }
         
-        if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending)
-            callOnMainThread(mainThreadCallback, this);
+        if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending) {
+            auto weakThis = createWeakPtr();
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+
+                weakThis->mainThreadCallback();
+            });
+        }
 
         if (!notification.isValid())
             return;

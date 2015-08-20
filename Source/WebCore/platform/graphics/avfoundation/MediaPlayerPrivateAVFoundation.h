@@ -288,7 +288,7 @@ protected:
     virtual void tearDownVideoRendering();
     bool hasSetUpVideoRendering() const;
 
-    static void mainThreadCallback(void*);
+    void mainThreadCallback();
     
     void invalidateCachedDuration();
 
@@ -308,7 +308,7 @@ protected:
     void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;
 
-virtual URL resolvedURL() const;
+    virtual URL resolvedURL() const;
 
 private:
     MediaPlayer* m_player;
