@@ -1,3 +1,26 @@
+2015-08-20  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Treat Epoch as invalid value for "Last-Modified" header
+        https://bugs.webkit.org/show_bug.cgi?id=148162
+        rdar://problem/22330837
+
+        Reviewed by Antti Koivisto.
+
+        Add better layout test coverage for using the "Last-Modified" header to
+        compute heuristic freshness. In particular, it adds coverage for the
+        following values: Epoch, malformed date.
+
+        * http/tests/cache/disk-cache/disk-cache-last-modified-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-last-modified.html: Added.
+        New test.
+
+        * http/tests/cache/disk-cache/resources/cache-test.js:
+        (makeHeaderValue):
+        makeHeaderValue() was not resolving 'now(-1000)' into a date. This means that the
+        tests using it would end up sending an invalid "Last-Modified" header which our
+        networking code was translating to Epoch. We now ignore Epoch as Last-Modified
+        value for computing heuristic freshness to not cache due to malformed headers.
+
 2015-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         Revert accidental commit of a new test that isn't ready for prime time.
