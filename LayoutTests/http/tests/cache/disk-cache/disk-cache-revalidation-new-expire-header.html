@@ -13,8 +13,11 @@ description("Test that the 'Expires' header is updated upon successful validatio
 debug("");
 
 runTests(tests, function() {
-    debug("304 response included an 'Expires' header in the future, so we should not need to revalidate this time.");
-    runTests(tests);
+    // Wait for things to settle down in the cache.
+    setTimeout(function() {
+        debug("304 response included an 'Expires' header in the future, so we should not need to revalidate this time.");
+        runTests(tests);
+    }, 200);
 });
 
 </script>
