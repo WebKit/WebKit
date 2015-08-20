@@ -116,10 +116,6 @@ struct PrintInfo;
 
 - (WKPageRef)_pageForTesting;
 
-#if ENABLE(VIDEO)
-- (void)_mediaDocumentNaturalSizeChanged:(CGSize)newSize;
-#endif
-
 @end
 
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);

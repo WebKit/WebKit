@@ -1,3 +1,68 @@
+2015-08-20  Beth Dakin  <bdakin@apple.com>
+
+        Standalone image documents should send their size to the UIClient just like 
+        standalone media documents
+        https://bugs.webkit.org/show_bug.cgi?id=148195
+        -and corresponding-
+        rdar://problem/21951253
+
+        Reviewed by Tim Horton.
+
+        This patch re-names mediaDocumentNaturalSizeChanged() to 
+        imageOrMediaDocumentSizeChanged(), and, as the new name implies, uses the 
+        function for both media documents and images.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didClickAutoFillButton):
+        (API::UIClient::imageOrMediaDocumentSizeChanged):
+        (API::UIClient::mediaDocumentNaturalSizeChanged): Deleted.
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        The WKWebView and PageClient implementations of this function were actually 
+        not being used, so this patch removes them and just keeps the UIClient stuff.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView performDragOperation:]):
+        (-[WKWebView _mediaDocumentNaturalSizeChanged:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+
+        More re-naming.
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::UIClient):
+        (WebKit::UIDelegate::UIClient::didNotHandleTapAsClick):
+        (WebKit::UIDelegate::UIClient::imageOrMediaDocumentSizeChanged):
+        (WebKit::UIDelegate::UIClient::mediaDocumentNaturalSizeChanged): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::installViewStateChangeCompletionHandler):
+        (WebKit::WebPageProxy::imageOrMediaDocumentSizeChanged):
+        (WebKit::WebPageProxy::setShouldDispatchFakeMouseMoveEvents):
+        (WebKit::WebPageProxy::mediaDocumentNaturalSizeChanged): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::useFixedLayoutDidChange):
+        (WebKit::WebPageProxy::fixedLayoutSizeDidChange):
+        * UIProcess/WebPageProxy.messages.in:
+
+        The WKWebView and PageClient implementations of this function were actually 
+        not being used, so this patch removes them and just keeps the UIClient stuff.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged): Deleted.
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged): Deleted.
+
+        More re-naming.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::imageOrMediaDocumentSizeChanged):
+        (WebKit::WebChromeClient::mediaDocumentNaturalSizeChanged): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::imageOrMediaDocumentSizeChanged):
+        (WebKit::WebPage::mediaDocumentNaturalSizeChanged): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2015-08-19  Eric Carlson  <eric.carlson@apple.com>
 
         Remove ENABLE_WEBVTT_REGIONS

@@ -54,7 +54,8 @@ struct UIEdgeInsets;
 - (void)_webViewFullscreenMayReturnToInline:(WKWebView *)webView;
 - (void)_webViewDidEnterFullscreen:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, 8_3);
 - (void)_webViewDidExitFullscreen:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, 8_3);
-- (void)_webView:(WKWebView *)webView mediaDocumentNaturalSizeChanged:(CGSize)size;
+
+- (void)_webView:(WKWebView *)webView imageOrMediaDocumentSizeChanged:(CGSize)size WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #if TARGET_OS_IPHONE
 - (BOOL)_webView:(WKWebView *)webView shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element WK_AVAILABLE(NA, WK_IOS_TBA);

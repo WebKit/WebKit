@@ -270,7 +270,7 @@ void MediaDocument::mediaElementNaturalSizeChanged(const IntSize& newSize)
         return;
 
     if (page())
-        page()->chrome().client().mediaDocumentNaturalSizeChanged(newSize);
+        page()->chrome().client().imageOrMediaDocumentSizeChanged(newSize);
 }
 
 }

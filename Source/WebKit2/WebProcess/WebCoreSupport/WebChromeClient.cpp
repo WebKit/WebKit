@@ -1163,12 +1163,12 @@ void WebChromeClient::playbackTargetPickerClientStateDidChange(uint64_t contextI
 }
 #endif
 
-#if ENABLE(VIDEO)
-void WebChromeClient::mediaDocumentNaturalSizeChanged(const WebCore::IntSize& newSize)
+void WebChromeClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)
 {
-    m_page->mediaDocumentNaturalSizeChanged(newSize);
+    m_page->imageOrMediaDocumentSizeChanged(newSize);
 }
 
+#if ENABLE(VIDEO)
 #if USE(GSTREAMER)
 void WebChromeClient::requestInstallMissingMediaPlugins(const String& details, const String& description, WebCore::MediaPlayerRequestInstallMissingPluginsCallback& callback)
 {

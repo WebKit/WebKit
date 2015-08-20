@@ -325,8 +325,8 @@ private:
     virtual void playbackTargetPickerClientStateDidChange(uint64_t, WebCore::MediaProducer::MediaStateFlags) override;
 #endif
 
+    virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) override;
 #if ENABLE(VIDEO)
-    virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) override;
 #if USE(GSTREAMER)
     virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&) override;
 #endif

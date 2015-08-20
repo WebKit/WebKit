@@ -168,9 +168,7 @@ public:
 
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, API::Object*) { }
 
-#if ENABLE(VIDEO)
-    virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) { }
-#endif
+    virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
 };
 
 } // namespace API

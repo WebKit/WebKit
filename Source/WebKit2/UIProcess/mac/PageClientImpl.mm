@@ -845,15 +845,6 @@ WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 }
 #endif
 
-#if ENABLE(VIDEO)
-void PageClientImpl::mediaDocumentNaturalSizeChanged(const IntSize& newSize)
-{
-#if WK_API_ENABLED
-    [m_webView _mediaDocumentNaturalSizeChanged:newSize];
-#endif
-}
-#endif
-
 void PageClientImpl::refView()
 {
     CFRetain(m_wkView);

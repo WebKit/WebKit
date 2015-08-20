@@ -445,9 +445,7 @@ messages -> WebPageProxy {
     PlaybackTargetPickerClientStateDidChange(uint64_t contextId, unsigned mediaState)
 #endif
 
-#if ENABLE(VIDEO)
-    MediaDocumentNaturalSizeChanged(WebCore::IntSize newSize)
-#endif
+    ImageOrMediaDocumentSizeChanged(WebCore::IntSize newSize)
 
     UseFixedLayoutDidChange(bool useFixedLayout)
     FixedLayoutSizeDidChange(WebCore::IntSize fixedLayoutSize)

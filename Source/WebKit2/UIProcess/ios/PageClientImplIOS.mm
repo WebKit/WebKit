@@ -739,14 +739,6 @@ void PageClientImpl::didChangeBackgroundColor()
     [m_webView _updateScrollViewBackground];
 }
 
-#if ENABLE(VIDEO)
-void PageClientImpl::mediaDocumentNaturalSizeChanged(const IntSize& newSize)
-{
-    [m_webView _mediaDocumentNaturalSizeChanged:newSize];
-}
-#endif
-
-
 void PageClientImpl::refView()
 {
     [m_contentView retain];

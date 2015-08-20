@@ -5052,11 +5052,9 @@ void WebPage::setUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
     m_page->setUserContentExtensionsEnabled(userContentExtensionsEnabled);
 }
 
-#if ENABLE(VIDEO)
-void WebPage::mediaDocumentNaturalSizeChanged(const IntSize& newSize)
+void WebPage::imageOrMediaDocumentSizeChanged(const IntSize& newSize)
 {
-    send(Messages::WebPageProxy::MediaDocumentNaturalSizeChanged(newSize));
+    send(Messages::WebPageProxy::ImageOrMediaDocumentSizeChanged(newSize));
 }
-#endif
 
 } // namespace WebKit
