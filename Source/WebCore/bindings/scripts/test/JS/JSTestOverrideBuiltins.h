@@ -70,8 +70,7 @@ protected:
     }
 
 private:
-    static bool canGetItemsForName(JSC::ExecState*, TestOverrideBuiltins*, JSC::PropertyName);
-    static JSC::EncodedJSValue nameGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+    bool nameGetter(JSC::ExecState*, JSC::PropertyName, JSC::JSValue&);
 };
 
 class JSTestOverrideBuiltinsOwner : public JSC::WeakHandleOwner {

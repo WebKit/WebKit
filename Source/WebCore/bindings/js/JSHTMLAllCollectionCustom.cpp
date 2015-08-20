@@ -88,15 +88,14 @@ CallType JSHTMLAllCollection::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool JSHTMLAllCollection::canGetItemsForName(ExecState*, HTMLAllCollection* collection, PropertyName propertyName)
+bool JSHTMLAllCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
-}
+    JSValue items = namedItems(exec, this, propertyName);
+    if (items.isUndefined())
+        return false;
 
-EncodedJSValue JSHTMLAllCollection::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSHTMLAllCollection* thisObj = jsCast<JSHTMLAllCollection*>(slotBase);
-    return JSValue::encode(namedItems(exec, thisObj, propertyName));
+    value = items;
+    return true;
 }
 
 JSValue JSHTMLAllCollection::item(ExecState* exec)

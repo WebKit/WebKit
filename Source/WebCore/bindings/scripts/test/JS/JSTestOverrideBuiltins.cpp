@@ -166,9 +166,12 @@ bool JSTestOverrideBuiltins::getOwnPropertySlot(JSObject* object, ExecState* exe
 {
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
-        return true;
+    if (thisObject->classInfo() == info()) {
+        JSValue value;
+        if (thisObject->nameGetter(exec, propertyName, value)) {
+            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            return true;
+        }
     }
     if (getStaticValueSlot<JSTestOverrideBuiltins, Base>(exec, JSTestOverrideBuiltinsTable, thisObject, propertyName, slot))
         return true;
@@ -180,9 +183,12 @@ bool JSTestOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecSta
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Identifier propertyName = Identifier::from(exec, index);
-    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
-        return true;
+    if (thisObject->classInfo() == info()) {
+        JSValue value;
+        if (thisObject->nameGetter(exec, propertyName, value)) {
+            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            return true;
+        }
     }
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }

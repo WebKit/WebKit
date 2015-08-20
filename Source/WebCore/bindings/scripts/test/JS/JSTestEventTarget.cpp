@@ -189,9 +189,12 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
     if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(exec, propertyName))
         return false;
 
-    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
-        return true;
+    if (thisObject->classInfo() == info()) {
+        JSValue value;
+        if (thisObject->nameGetter(exec, propertyName, value)) {
+            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            return true;
+        }
     }
     return false;
 }
@@ -206,9 +209,12 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* e
         return true;
     }
     Identifier propertyName = Identifier::from(exec, index);
-    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
-        return true;
+    if (thisObject->classInfo() == info()) {
+        JSValue value;
+        if (thisObject->nameGetter(exec, propertyName, value)) {
+            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            return true;
+        }
     }
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }

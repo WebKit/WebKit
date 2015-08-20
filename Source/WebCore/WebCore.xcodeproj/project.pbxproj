@@ -1683,6 +1683,7 @@
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
 		4634592E1AC2273C00ECB71C /* SharedTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592D1AC2273C00ECB71C /* SharedTimerCF.cpp */; };
+		4669B2871B852A0B000F905F /* JSDOMNamedFlowCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
 		46C83EFD1A9BBE2900A79A41 /* GeoNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */; };
 		46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8935,6 +8936,7 @@
 		46DB7D591B20FE58005651B2 /* VNodeTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VNodeTracker.h; sourceTree = "<group>"; };
 		46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerObserverMac.h; sourceTree = "<group>"; };
 		46EBEA011B7D4D5D00BE4941 /* CollectionTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionTraversal.h; sourceTree = "<group>"; };
+		46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMNamedFlowCollectionCustom.cpp; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
@@ -21363,6 +21365,7 @@
 				E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */,
 				7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */,
 				7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */,
+				46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */,
 				E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */,
 				E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */,
 				BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */,
@@ -30011,6 +30014,7 @@
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
 				6ED878C4147493F4004C3597 /* RenderTableCaption.cpp in Sources */,
 				A8DF4AEA0980C42C0052981B /* RenderTableCell.cpp in Sources */,
+				4669B2871B852A0B000F905F /* JSDOMNamedFlowCollectionCustom.cpp in Sources */,
 				A8DF4AE80980C42C0052981B /* RenderTableCol.cpp in Sources */,
 				A8DF4AF00980C42C0052981B /* RenderTableRow.cpp in Sources */,
 				A8DF4AED0980C42C0052981B /* RenderTableSection.cpp in Sources */,

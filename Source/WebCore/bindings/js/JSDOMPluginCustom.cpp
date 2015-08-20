@@ -27,15 +27,14 @@ namespace WebCore {
 
 using namespace JSC;
 
-bool JSDOMPlugin::canGetItemsForName(ExecState*, DOMPlugin* plugin, PropertyName propertyName)
+bool JSDOMPlugin::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    return plugin->canGetItemsForName(propertyNameToAtomicString(propertyName));
-}
+    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    if (!item)
+        return false;
 
-EncodedJSValue JSDOMPlugin::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSDOMPlugin* thisObj = jsCast<JSDOMPlugin*>(slotBase);
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
+    value = toJS(exec, globalObject(), item);
+    return true;
 }
 
 } // namespace WebCore

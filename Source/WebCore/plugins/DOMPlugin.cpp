@@ -74,19 +74,7 @@ PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
     return 0;
 }
 
-bool DOMPlugin::canGetItemsForName(const AtomicString& propertyName)
-{
-    Vector<MimeClassInfo> mimes;
-    Vector<size_t> mimePluginIndices;
-    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
-    for (auto& mime : mimes) {
-        if (mime.type == propertyName)
-            return true;
-    }
-    return false;
-}
-
-PassRefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
+RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
 {
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
@@ -94,7 +82,7 @@ PassRefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
     for (unsigned i = 0; i < mimes.size(); ++i)
         if (mimes[i].type == propertyName)
             return DOMMimeType::create(m_pluginData.get(), m_frame, i);
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

@@ -170,9 +170,12 @@ bool JSTestCustomNamedGetter::getOwnPropertySlot(JSObject* object, ExecState* ex
     if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(exec, propertyName))
         return false;
 
-    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
-        return true;
+    if (thisObject->classInfo() == info()) {
+        JSValue value;
+        if (thisObject->nameGetter(exec, propertyName, value)) {
+            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            return true;
+        }
     }
     return false;
 }
@@ -182,9 +185,12 @@ bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecSt
     auto* thisObject = jsCast<JSTestCustomNamedGetter*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Identifier propertyName = Identifier::from(exec, index);
-    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
-        return true;
+    if (thisObject->classInfo() == info()) {
+        JSValue value;
+        if (thisObject->nameGetter(exec, propertyName, value)) {
+            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+            return true;
+        }
     }
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }

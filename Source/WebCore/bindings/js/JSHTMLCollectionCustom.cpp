@@ -40,18 +40,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection, PropertyName propertyName)
+bool JSHTMLCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
-}
+    ASSERT_WITH_MESSAGE(impl().type() != FormControls, "Should call the subclass' nameGetter");
+    ASSERT_WITH_MESSAGE(impl().type() != SelectOptions, "Should call the subclass' nameGetter");
 
-EncodedJSValue JSHTMLCollection::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSHTMLCollection* collection = jsCast<JSHTMLCollection*>(slotBase);
-    ASSERT_WITH_MESSAGE(collection->impl().type() != FormControls, "Should call the subclass' nameGetter");
-    ASSERT_WITH_MESSAGE(collection->impl().type() != SelectOptions, "Should call the subclass' nameGetter");
-    const AtomicString& name = propertyNameToAtomicString(propertyName);
-    return JSValue::encode(toJS(exec, collection->globalObject(), collection->impl().namedItem(name)));
+    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    if (!item)
+        return false;
+
+    value = toJS(exec, globalObject(), item);
+    return true;
 }
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, HTMLCollection* collection)

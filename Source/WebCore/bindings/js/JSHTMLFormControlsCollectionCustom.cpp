@@ -44,15 +44,14 @@ static JSValue namedItems(ExecState* exec, JSHTMLFormControlsCollection* collect
     return toJS(exec, collection->globalObject(), collection->impl().ownerNode().radioNodeList(name).get());
 }
 
-bool JSHTMLFormControlsCollection::canGetItemsForName(ExecState*, HTMLFormControlsCollection* collection, PropertyName propertyName)
+bool JSHTMLFormControlsCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
-}
+    auto items = namedItems(exec, this, propertyName);
+    if (items.isUndefined())
+        return false;
 
-EncodedJSValue JSHTMLFormControlsCollection::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSHTMLFormControlsCollection* thisObj = jsCast<JSHTMLFormControlsCollection*>(slotBase);
-    return JSValue::encode(namedItems(exec, thisObj, propertyName));
+    value = items;
+    return true;
 }
 
 JSValue JSHTMLFormControlsCollection::namedItem(ExecState* exec)

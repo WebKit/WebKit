@@ -49,9 +49,7 @@ public:
 
     unsigned long length() const;
     PassRefPtr<WebKitNamedFlow> item(unsigned long index) const;
-    PassRefPtr<WebKitNamedFlow> namedItem(const AtomicString& name) const;
-
-    bool hasNamedItem(const AtomicString& name) const;
+    RefPtr<WebKitNamedFlow> namedItem(const AtomicString& name) const;
 
 private:
     struct DOMNamedFlowHashFunctions;

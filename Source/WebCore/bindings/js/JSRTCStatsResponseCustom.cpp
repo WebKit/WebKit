@@ -36,15 +36,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSRTCStatsResponse::canGetItemsForName(ExecState*, RTCStatsResponse* response, PropertyName propertyName)
+bool JSRTCStatsResponse::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    return response->canGetItemsForName(propertyNameToAtomicString(propertyName));
-}
+    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    if (!item)
+        return false;
 
-EncodedJSValue JSRTCStatsResponse::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSRTCStatsResponse* thisObj = jsCast<JSRTCStatsResponse*>(slotBase);
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
+    value = toJS(exec, globalObject(), item);
+    return true;
 }
 
 } // namespace WebCore

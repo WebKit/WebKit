@@ -51,20 +51,16 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     return false;
 }
 
-bool JSNodeList::canGetItemsForName(ExecState*, NodeList* nodeList, PropertyName propertyName)
+// FIXME: NodeList should not have a named getter. It currently has one because getElementByTagName()
+// returns a NodeList instead of an HTMLCollection.
+bool JSNodeList::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    // FIXME: NodeList should not have a named getter. It currently has one because getElementByTagName()
-    // returns a NodeList instead of an HTMLCollection.
-    return nodeList->namedItem(propertyNameToAtomicString(propertyName));
-}
+    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    if (!item)
+        return false;
 
-EncodedJSValue JSNodeList::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    // FIXME: NodeList should not have a named getter. It currently has one because getElementByTagName()
-    // returns a NodeList instead of an HTMLCollection.
-    JSNodeList* nodeList = jsCast<JSNodeList*>(slotBase);
-    const AtomicString& name = propertyNameToAtomicString(propertyName);
-    return JSValue::encode(toJS(exec, nodeList->globalObject(), nodeList->impl().namedItem(name)));
+    value = toJS(exec, globalObject(), item);
+    return true;
 }
 
 JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, NodeList& nodeList)

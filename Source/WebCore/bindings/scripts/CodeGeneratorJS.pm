@@ -432,10 +432,13 @@ sub GenerateGetOwnPropertySlotBody
             &$prototypeCheck();
         }
 
-        # The first condition is to make sure we use the subclass' named getter instead of the base class one when possible.
-        push(@getOwnPropertySlotImpl, "    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {\n");
-        push(@getOwnPropertySlotImpl, "        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);\n");
-        push(@getOwnPropertySlotImpl, "        return true;\n");
+        # This condition is to make sure we use the subclass' named getter instead of the base class one when possible.
+        push(@getOwnPropertySlotImpl, "    if (thisObject->classInfo() == info()) {\n");
+        push(@getOwnPropertySlotImpl, "        JSValue value;\n");
+        push(@getOwnPropertySlotImpl, "        if (thisObject->nameGetter(exec, propertyName, value)) {\n");
+        push(@getOwnPropertySlotImpl, "            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);\n");
+        push(@getOwnPropertySlotImpl, "            return true;\n");
+        push(@getOwnPropertySlotImpl, "        }\n");
         push(@getOwnPropertySlotImpl, "    }\n");
         if ($inlined) {
             $headerIncludes{"wtf/text/AtomicString.h"} = 1;
@@ -1162,8 +1165,7 @@ sub GenerateHeader
     # Name getter
     if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@headerContent, "private:\n");
-        push(@headerContent, "    static bool canGetItemsForName(JSC::ExecState*, $interfaceName*, JSC::PropertyName);\n");
-        push(@headerContent, "    static JSC::EncodedJSValue nameGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+        push(@headerContent, "    bool nameGetter(JSC::ExecState*, JSC::PropertyName, JSC::JSValue&);\n");
     }
 
     push(@headerContent, "};\n\n");
@@ -2185,10 +2187,13 @@ sub GenerateImplementation
             if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
                 &$propertyNameGeneration();
 
-                # The first condition is to make sure we use the subclass' named getter instead of the base class one when possible.
-                push(@implContent, "    if (thisObject->classInfo() == info() && canGetItemsForName(exec, &thisObject->impl(), propertyName)) {\n");
-                push(@implContent, "        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);\n");
-                push(@implContent, "        return true;\n");
+                # This condition is to make sure we use the subclass' named getter instead of the base class one when possible.
+                push(@implContent, "    if (thisObject->classInfo() == info()) {\n");
+                push(@implContent, "        JSValue value;\n");
+                push(@implContent, "        if (thisObject->nameGetter(exec, propertyName, value)) {\n");
+                push(@implContent, "            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);\n");
+                push(@implContent, "            return true;\n");
+                push(@implContent, "        }\n");
                 push(@implContent, "    }\n");
                 $implIncludes{"wtf/text/AtomicString.h"} = 1;
             }
@@ -2923,20 +2928,6 @@ sub GenerateImplementation
         if ($interfaceName =~ /^HTML\w*Collection$/ or $interfaceName eq "RadioNodeList") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
-        }
-    }
-
-    if ($interfaceName eq "DOMNamedFlowCollection") {
-        if ($namedGetterFunction) {
-            push(@implContent, "bool ${className}::canGetItemsForName(ExecState*, $interfaceName* collection, PropertyName propertyName)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));\n");
-            push(@implContent, "}\n\n");
-            push(@implContent, "EncodedJSValue ${className}::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    auto* thisObject = jsCast<$className*>(slotBase);\n");
-            push(@implContent, "    return JSValue::encode(toJS(exec, thisObject->globalObject(), thisObject->impl().namedItem(propertyNameToAtomicString(propertyName))));\n");
-            push(@implContent, "}\n\n");
         }
     }
 

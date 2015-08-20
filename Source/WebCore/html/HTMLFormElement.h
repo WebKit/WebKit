@@ -51,7 +51,6 @@ public:
     virtual ~HTMLFormElement();
 
     Ref<HTMLCollection> elements();
-    bool hasNamedElement(const AtomicString&);
     Vector<Ref<Element>> namedElements(const AtomicString&);
 
     unsigned length() const;

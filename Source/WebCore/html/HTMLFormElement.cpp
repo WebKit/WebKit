@@ -794,11 +794,6 @@ bool HTMLFormElement::matchesInvalidPseudoClass() const
     return !m_invalidAssociatedFormControls.isEmpty();
 }
 
-bool HTMLFormElement::hasNamedElement(const AtomicString& name)
-{
-    return elements()->hasNamedItem(name) || elementFromPastNamesMap(name);
-}
-
 // FIXME: Use Ref<HTMLElement> for the function result since there are no non-HTML elements returned here.
 Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomicString& name)
 {

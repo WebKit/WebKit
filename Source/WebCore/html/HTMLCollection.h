@@ -69,7 +69,6 @@ public:
     PassRefPtr<NodeList> tags(const String&);
 
     // Non-DOM API
-    bool hasNamedItem(const AtomicString& name) const;
     Vector<Ref<Element>> namedItems(const AtomicString& name) const;
     virtual size_t memoryCost() const;
 

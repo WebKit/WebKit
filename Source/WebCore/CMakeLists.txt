@@ -1108,6 +1108,7 @@ set(WebCore_SOURCES
     bindings/js/JSDOMGlobalObject.cpp
     bindings/js/JSDOMGlobalObjectTask.cpp
     bindings/js/JSDOMMimeTypeArrayCustom.cpp
+    bindings/js/JSDOMNamedFlowCollectionCustom.cpp
     bindings/js/JSDOMPluginArrayCustom.cpp
     bindings/js/JSDOMPluginCustom.cpp
     bindings/js/JSDOMPromise.cpp

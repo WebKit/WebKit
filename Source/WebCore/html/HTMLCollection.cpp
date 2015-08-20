@@ -173,12 +173,6 @@ void HTMLCollection::updateNamedElementCache() const
     setNamedItemCache(WTF::move(cache));
 }
 
-bool HTMLCollection::hasNamedItem(const AtomicString& name) const
-{
-    // FIXME: We can do better when there are multiple elements of the same name.
-    return namedItem(name);
-}
-
 Vector<Ref<Element>> HTMLCollection::namedItems(const AtomicString& name) const
 {
     // FIXME: This non-virtual function can't possibly be doing the correct thing for

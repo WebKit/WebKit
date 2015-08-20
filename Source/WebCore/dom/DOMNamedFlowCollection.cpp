@@ -53,17 +53,12 @@ PassRefPtr<WebKitNamedFlow> DOMNamedFlowCollection::item(unsigned long index) co
     return *it;
 }
 
-PassRefPtr<WebKitNamedFlow> DOMNamedFlowCollection::namedItem(const AtomicString& name) const
+RefPtr<WebKitNamedFlow> DOMNamedFlowCollection::namedItem(const AtomicString& name) const
 {
     DOMNamedFlowSet::const_iterator it = m_namedFlows.find<String, DOMNamedFlowHashTranslator>(name);
     if (it != m_namedFlows.end())
         return *it;
     return nullptr;
-}
-
-bool DOMNamedFlowCollection::hasNamedItem(const AtomicString& name) const
-{
-    return namedItem(name);
 }
 
 // The HashFunctions object used by the HashSet to compare between RefPtr<NamedFlows>.

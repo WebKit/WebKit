@@ -29,17 +29,14 @@ namespace WebCore {
 
 using namespace JSC;
 
-bool JSDOMMimeTypeArray::canGetItemsForName(ExecState*, DOMMimeTypeArray* mimeTypeArray, PropertyName propertyName)
+bool JSDOMMimeTypeArray::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    return mimeTypeArray->canGetItemsForName(propertyNameToAtomicString(propertyName));
-}
+    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    if (!item)
+        return false;
 
-EncodedJSValue JSDOMMimeTypeArray::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSDOMMimeTypeArray* thisObj = jsDynamicCast<JSDOMMimeTypeArray*>(slotBase);
-    if (!thisObj)
-        return throwVMTypeError(exec);
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
+    value = toJS(exec, globalObject(), item);
+    return true;
 }
 
 } // namespace WebCore

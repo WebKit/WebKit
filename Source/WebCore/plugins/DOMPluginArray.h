@@ -39,8 +39,7 @@ public:
 
     unsigned length() const;
     PassRefPtr<DOMPlugin> item(unsigned index);
-    bool canGetItemsForName(const AtomicString& propertyName);
-    PassRefPtr<DOMPlugin> namedItem(const AtomicString& propertyName);
+    RefPtr<DOMPlugin> namedItem(const AtomicString& propertyName);
 
     void refresh(bool reload);
 

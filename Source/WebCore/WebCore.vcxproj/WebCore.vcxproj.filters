@@ -4308,6 +4308,9 @@
     <ClCompile Include="..\bindings\js\JSDOMMimeTypeArrayCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSDOMNamedFlowCollectionCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSDOMPluginArrayCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
