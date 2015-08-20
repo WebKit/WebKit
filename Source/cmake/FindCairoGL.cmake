@@ -31,6 +31,7 @@
 find_package(PkgConfig)
 pkg_check_modules(CAIROGL cairo-gl)
 
+if (CAIROGL_FOUND)
 # At the moment CairoGL does not add any extra cflags and libraries, so we can
 # safely ignore CAIROGL_LIBRARIES and CAIROGL_INCLUDE_DIRS for the moment.
 foreach (_component ${CairoGL_FIND_COMPONENTS})
@@ -47,4 +48,4 @@ endforeach ()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(CairoGL DEFAULT_MSG CAIROGL_INCLUDE_DIRS CAIROGL_LIBRARIES)
-
+endif ()
