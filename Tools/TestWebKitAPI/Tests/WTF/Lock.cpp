@@ -149,7 +149,7 @@ TEST(WTF_Lock, ManyContendedLongSections)
 
 TEST(WTF_Lock, ManyContendedLongerSections)
 {
-    runLockTest<Lock>(10, 10, 100000, 100);
+    runLockTest<Lock>(10, 10, 100000, 10);
 }
 
 TEST(WTF_Lock, SectionAddressCollision)

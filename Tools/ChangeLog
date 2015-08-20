@@ -1,3 +1,10 @@
+2015-08-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, shorten a test that runs too long and times out.
+
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CMake build after r188673
