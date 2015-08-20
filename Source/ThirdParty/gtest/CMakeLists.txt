@@ -26,12 +26,16 @@ set(GTEST_SOURCES
 
 if (WIN32)
     # MSVC 2015 requires this definition for INTMAX_MAX to be defined.
-    add_definitions(-D__STDC_LIMIT_MACROS)
+    add_definitions(-D__STDC_LIMIT_MACROS -DGTEST_CREATE_SHARED_LIBRARY=0)
+    # gtest crashes on exit on Windows if it is a dll.
+    add_library(gtest STATIC ${GTEST_SOURCES})
+else ()
+    add_definitions(-DGTEST_CREATE_SHARED_LIBRARY=1)
+    add_library(gtest SHARED ${GTEST_SOURCES})
 endif ()
 
-add_library(gtest SHARED ${GTEST_SOURCES})
 include_directories(${GTEST_INCLUDE_DIRECTORIES})
-add_definitions(-DGTEST_CREATE_SHARED_LIBRARY=1 -DGTEST_HAS_RTTI=0)
+add_definitions(-DGTEST_HAS_RTTI=0)
 
 # FIXME: This works around compatibility problems in the old version of the third-pary
 # googletest source code checkout. It should be removed once we upgrade to a newer version.

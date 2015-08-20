@@ -44,6 +44,10 @@ list(APPEND TestNetscapePlugin_SOURCES
     TestNetscapePlugin/win/WindowedPluginTest.cpp
 )
 
+if (${WTF_PLATFORM_WIN_CAIRO})
+    add_definitions(-DWIN_CAIRO)
+endif ()
+
 list(APPEND TestNetscapePlugin_LIBRARIES
     Msimg32
     Shlwapi

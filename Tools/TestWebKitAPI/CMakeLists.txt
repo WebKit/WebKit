@@ -146,7 +146,13 @@ if (ENABLE_WEBKIT2)
     get_property(TestWebKitAPIInjectedBundle_PATH TARGET TestWebKitAPIInjectedBundle PROPERTY LOCATION)
 endif ()
 
-add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1 -DGTEST_HAS_RTTI=0
+if (WIN32)
+    add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=0)
+else ()
+    add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1)
+endif ()
+
+add_definitions(-DGTEST_HAS_RTTI=0
     -DTEST_WEBKIT2_RESOURCES_DIR=\"${TESTWEBKITAPI_DIR}/Tests/WebKit2\"
     -DTEST_INJECTED_BUNDLE_PATH=\"${TestWebKitAPIInjectedBundle_PATH}\"
 )

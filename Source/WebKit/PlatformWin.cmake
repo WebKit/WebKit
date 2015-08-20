@@ -57,6 +57,10 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBKIT_DIR}/include"
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"
     "${DERIVED_SOURCES_DIR}"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/egl"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/khr"
 )
 
 list(APPEND WebKit_INCLUDES

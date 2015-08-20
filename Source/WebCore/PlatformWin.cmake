@@ -1,6 +1,8 @@
 add_definitions(/bigobj)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/KHR"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/API"
@@ -258,6 +260,14 @@ file(COPY
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
 )
+if (${WTF_PLATFORM_WIN_CAIRO} AND EXISTS ${WEBKIT_LIBRARIES_DIR}/cacert.pem)
+    make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates)
+    file(COPY
+        ${WEBKIT_LIBRARIES_DIR}/cacert.pem
+        DESTINATION
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates
+    )
+endif ()
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore)
 
