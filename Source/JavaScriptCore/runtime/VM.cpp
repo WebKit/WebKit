@@ -479,6 +479,7 @@ void VM::deleteAllCode()
     DFG::completeAllPlansForVM(*this);
 #endif
     heap.deleteAllCompiledCode();
+    heap.deleteAllUnlinkedFunctionCode();
     heap.reportAbandonedObjectGraph();
 }
 
