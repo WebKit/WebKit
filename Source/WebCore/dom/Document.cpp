@@ -1694,23 +1694,13 @@ Ref<Range> Document::createRange()
     return Range::create(*this);
 }
 
-RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned whatToShow, 
-    PassRefPtr<NodeFilter> filter, bool expandEntityReferences, ExceptionCode& ec)
+RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
 {
-    if (!root) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
     return NodeIterator::create(root, whatToShow, filter, expandEntityReferences);
 }
 
-RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned whatToShow, 
-    PassRefPtr<NodeFilter> filter, bool expandEntityReferences, ExceptionCode& ec)
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
 {
-    if (!root) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
     return TreeWalker::create(root, whatToShow, filter, expandEntityReferences);
 }
 

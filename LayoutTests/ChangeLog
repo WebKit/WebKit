@@ -1,3 +1,18 @@
+2015-08-20  Chris Dumez  <cdumez@apple.com>
+
+        Default value for createNodeIterator() / createTreeWalker()'s whatToShow parameter should be 0xFFFFFFFF
+        https://bugs.webkit.org/show_bug.cgi?id=148238
+
+        Reviewed by Ryosuke Niwa.
+
+        Add tests for createNodeIterator() / createTreeWalker() parameters.
+        Some of the checks are still failing.
+
+        * fast/dom/createNodeIterator-parameters-expected.txt: Added.
+        * fast/dom/createNodeIterator-parameters.html: Added.
+        * fast/dom/createTreeWalker-parameters-expected.txt: Added.
+        * fast/dom/createTreeWalker-parameters.html: Added.
+
 2015-08-20  Nan Wang  <n_wang@apple.com>
 
         AX: Re-enable aria-checked-mixed-value.html test for mac

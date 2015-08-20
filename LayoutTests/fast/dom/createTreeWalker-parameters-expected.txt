@@ -1,0 +1,32 @@
+Tests parameters of document.createTreeWalker() API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* No parameters
+PASS document.createTreeWalker() threw exception TypeError: Not enough arguments.
+
+Default parameters
+walker = document.createTreeWalker(document)
+PASS walker.root is document
+PASS walker.currentNode is document
+PASS walker.whatToShow is 0xFFFFFFFF
+PASS walker.filter is null
+
+Passing null for optional parameters
+walker = document.createTreeWalker(document, null, null)
+PASS walker.root is document
+PASS walker.currentNode is document
+PASS walker.whatToShow is 0
+FAIL walker.filter should be null. Was [object NodeFilter].
+
+Passing undefined for optional parameters
+walker = document.createTreeWalker(document, undefined, undefined)
+PASS walker.root is document
+PASS walker.currentNode is document
+FAIL walker.whatToShow should be 4294967295. Was 0.
+FAIL walker.filter should be null. Was [object NodeFilter].
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
