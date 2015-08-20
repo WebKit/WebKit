@@ -51,8 +51,6 @@ accessibility/children-changed-sends-notification.html
 accessibility/menu-list-sends-change-notification.html
 accessibility/multiselect-list-reports-active-option.html
 
-# isIndeterminate is not implemented in mac
-webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
 # Missing implementation of some functions in mac.
 webkit.org/b/129039 accessibility/select-element-at-index.html [ Skip ]
 

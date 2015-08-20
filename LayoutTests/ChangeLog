@@ -1,5 +1,16 @@
 2015-08-20  Nan Wang  <n_wang@apple.com>
 
+        AX: Re-enable aria-checked-mixed-value.html test for mac
+        https://bugs.webkit.org/show_bug.cgi?id=148235
+
+        Reviewed by Chris Fleizach.
+
+        isIndeterminate is already implemented in mac, re-enable the test.
+
+        * platform/mac/TestExpectations:
+
+2015-08-20  Nan Wang  <n_wang@apple.com>
+
         AX: Mac doesn't have expectation for LayoutTests/accessibility/table-cells-roles.html test
         https://bugs.webkit.org/show_bug.cgi?id=148236
 
