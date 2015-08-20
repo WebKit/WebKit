@@ -264,8 +264,8 @@ int testExecutionTimeLimit()
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, extendTerminateCallback, 0);
         {
             unsigned timeBeforeExtendedDeadline = 200 + tierAdjustmentMillis;
-            unsigned timeAfterExtendedDeadline = 350 + tierAdjustmentMillis;
-            unsigned maxBusyLoopTime = 500 + tierAdjustmentMillis;
+            unsigned timeAfterExtendedDeadline = 400 + tierAdjustmentMillis;
+            unsigned maxBusyLoopTime = 600 + tierAdjustmentMillis;
 
             StringBuilder scriptBuilder;
             scriptBuilder.append("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
