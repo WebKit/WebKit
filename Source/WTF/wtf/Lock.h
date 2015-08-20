@@ -38,10 +38,10 @@ struct LockInspector;
 namespace WTF {
 
 // This is a fully adaptive mutex that only requires 1 byte of storage. It has fast paths that are
-// competetive to SpinLock (uncontended locking is inlined and is just a CAS, microcontention is
-// handled by spinning and yielding), and a slow path that is competetive to Mutex (if a lock cannot
-// be acquired in a short period of time, the thread is put to sleep until the lock is available
-// again). It uses less memory than either SpinLock or Mutex.
+// competetive to a spinlock (uncontended locking is inlined and is just a CAS, microcontention is
+// handled by spinning and yielding), and a slow path that is competetive to std::mutex (if a lock
+// cannot be acquired in a short period of time, the thread is put to sleep until the lock is available
+// again). It uses less memory than a std::mutex.
 
 // This is a struct without a constructor or destructor so that it can be statically initialized.
 // Use Lock in instance variables.

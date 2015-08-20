@@ -271,7 +271,6 @@
     <ClInclude Include="..\wtf\SHA1.h" />
     <ClInclude Include="..\wtf\SinglyLinkedList.h" />
     <ClInclude Include="..\wtf\SixCharacterHash.h" />
-    <ClInclude Include="..\wtf\SpinLock.h" />
     <ClInclude Include="..\wtf\StackBounds.h" />
     <ClInclude Include="..\wtf\StaticConstructors.h" />
     <ClInclude Include="..\wtf\StdLibExtras.h" />

@@ -31,13 +31,41 @@
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Lock.h>
-#include <wtf/SpinLock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WordLock.h>
 
 namespace {
+
+// This is the old WTF::SpinLock class, included here so that we can still compare our new locks to a
+// spinlock baseline.
+class SpinLock {
+public:
+    SpinLock()
+    {
+        m_lock.store(0, std::memory_order_relaxed);
+    }
+
+    void lock()
+    {
+        while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire))
+            std::this_thread::yield();
+    }
+
+    void unlock()
+    {
+        m_lock.store(0, std::memory_order_release);
+    }
+
+    bool isLocked() const
+    {
+        return m_lock.load(std::memory_order_acquire);
+    }
+
+private:
+    Atomic<unsigned> m_lock;
+};
 
 unsigned numThreadGroups;
 unsigned numThreadsPerGroup;

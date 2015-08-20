@@ -1,3 +1,15 @@
+2015-08-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove WTF::SpinLock
+        https://bugs.webkit.org/show_bug.cgi?id=148208
+
+        Reviewed by Geoffrey Garen.
+
+        Remove the one remaining use of SpinLock.
+
+        * API/JSValue.mm:
+        (handerForStructTag):
+
 2015-08-19  Geoffrey Garen  <ggaren@apple.com>
 
         clearCode() should clear code

@@ -84,7 +84,6 @@ set(WTF_HEADERS
     SHA1.h
     SaturatedArithmetic.h
     SegmentedVector.h
-    SpinLock.h
     StackBounds.h
     StackStats.h
     StaticConstructors.h
