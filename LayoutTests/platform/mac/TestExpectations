@@ -490,7 +490,6 @@ webkit.org/b/96828 webgl/1.0.2/conformance/extensions/oes-vertex-array-object.ht
 
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
-accessibility/mac/selection-value-changes-for-aria-textbox.html [ Failure ]
 
 accessibility/mac/search-with-frames.html [ Pass Failure ]
 

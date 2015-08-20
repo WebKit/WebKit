@@ -1,3 +1,16 @@
+2015-08-20  Nan Wang  <n_wang@apple.com>
+
+        AX: Fix accessibility/mac/selection-value-changes-for-aria-textbox.html test
+        https://bugs.webkit.org/show_bug.cgi?id=148247
+
+        Reviewed by Chris Fleizach.
+
+        Fixed the test by adding the notification listener before executing the commands.
+
+        * accessibility/mac/selection-value-changes-for-aria-textbox-expected.txt:
+        * accessibility/mac/selection-value-changes-for-aria-textbox.html:
+        * platform/mac/TestExpectations:
+
 2015-08-20  Chris Dumez  <cdumez@apple.com>
 
         Default value for createNodeIterator() / createTreeWalker()'s whatToShow parameter should be 0xFFFFFFFF

@@ -36,6 +36,9 @@ content inside
         textbox.focus();
 
         var axTextbox = accessibilityController.focusedElement;
+        
+        var addedNotification = axTextbox.addNotificationListener(notificationCallback);
+        shouldBe("addedNotification", "true");
 
         // Trigger selection changes.
         var s = window.getSelection();
@@ -46,9 +49,6 @@ content inside
 
         // Trigger value change.
         document.execCommand("InsertText", false, "hello ");
-
-        var addedNotification = axTextbox.addNotificationListener(notificationCallback);
-        shouldBe("addedNotification", "true");
     }
 
 </script>
