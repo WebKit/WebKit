@@ -56,6 +56,7 @@
 #include "JSDOMGlobalObject.cpp"
 #include "JSDOMGlobalObjectTask.cpp"
 #include "JSDOMMimeTypeArrayCustom.cpp"
+#include "JSDOMNamedFlowCollectionCustom.cpp"
 #include "JSDOMPluginArrayCustom.cpp"
 #include "JSDOMPluginCustom.cpp"
 #include "JSDOMPromise.cpp"
