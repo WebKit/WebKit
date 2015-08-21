@@ -4451,6 +4451,12 @@ bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
     return m_scrollableAreas && m_scrollableAreas->contains(scrollableArea);
 }
 
+void FrameView::clearScrollableAreas()
+{
+    if (m_scrollableAreas)
+        m_scrollableAreas->clear();
+}
+
 void FrameView::scrollableAreaSetChanged()
 {
     if (auto* page = frame().page()) {

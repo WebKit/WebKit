@@ -462,6 +462,7 @@ public:
     WEBCORE_EXPORT bool removeScrollableArea(ScrollableArea*);
     bool containsScrollableArea(ScrollableArea*) const;
     const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
+    void clearScrollableAreas();
 
     virtual void removeChild(Widget&) override;
 

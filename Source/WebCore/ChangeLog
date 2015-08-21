@@ -1,5 +1,25 @@
 2015-08-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188659.
+
+    2015-08-19  Brent Fulgham  <bfulgham@apple.com>
+
+            Scrollable area container is not properly cleared when page is going into the PageCache
+            https://bugs.webkit.org/show_bug.cgi?id=148182
+            <rdar://problem/21969170>
+
+            Reviewed by Dean Jackson.
+
+            Must be tested manually going back and forth in history several times.
+
+            * history/CachedFrame.cpp:
+            (WebCore::CachedFrame::CachedFrame): Clear the cached ScrollableAreas from the FrameView.
+            * page/FrameView.cpp:
+            (WebCore::FrameView::clearScrollableAreas): Added.
+            * page/FrameView.h:
+
+2015-08-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188370.
 
     2015-08-12  Brent Fulgham  <bfulgham@apple.com>
