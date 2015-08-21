@@ -40,31 +40,6 @@
 
 namespace WTF {
 
-struct FunctionWithContext {
-    MainThreadFunction* function;
-    void* context;
-
-    FunctionWithContext(MainThreadFunction* function = nullptr, void* context = nullptr)
-        : function(function)
-        , context(context)
-    {
-    }
-    bool operator == (const FunctionWithContext& o)
-    {
-        return function == o.function && context == o.context;
-    }
-};
-
-class FunctionWithContextFinder {
-public:
-    FunctionWithContextFinder(const FunctionWithContext& m) : m(m) {}
-    bool operator() (FunctionWithContext& o) { return o == m; }
-    FunctionWithContext m;
-};
-
-
-typedef Deque<FunctionWithContext> FunctionQueue;
-
 static bool callbacksPaused; // This global variable is only accessed from main thread.
 #if !OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)
 static ThreadIdentifier mainThreadIdentifier;
@@ -72,12 +47,11 @@ static ThreadIdentifier mainThreadIdentifier;
 
 static StaticLock mainThreadFunctionQueueMutex;
 
-static FunctionQueue& functionQueue()
+static Deque<std::function<void ()>>& functionQueue()
 {
-    static NeverDestroyed<FunctionQueue> functionQueue;
+    static NeverDestroyed<Deque<std::function<void ()>>> functionQueue;
     return functionQueue;
 }
-
 
 #if !OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)
 
@@ -146,16 +120,18 @@ void dispatchFunctionsFromMainThread()
 
     auto startTime = std::chrono::steady_clock::now();
 
-    FunctionWithContext invocation;
+    std::function<void ()> function;
+
     while (true) {
         {
             std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
             if (!functionQueue().size())
                 break;
-            invocation = functionQueue().takeFirst();
+
+            function = functionQueue().takeFirst();
         }
 
-        invocation.function(invocation.context);
+        function();
 
         // If we are running accumulated functions for too long so UI may become unresponsive, we need to
         // yield so the user input can be processed. Otherwise user may not be able to even close the window.
@@ -168,46 +144,20 @@ void dispatchFunctionsFromMainThread()
     }
 }
 
-void callOnMainThread(MainThreadFunction* function, void* context)
+void callOnMainThread(std::function<void ()> function)
 {
     ASSERT(function);
+
     bool needToSchedule = false;
+
     {
         std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
         needToSchedule = functionQueue().size() == 0;
-        functionQueue().append(FunctionWithContext(function, context));
+        functionQueue().append(WTF::move(function));
     }
+
     if (needToSchedule)
         scheduleDispatchFunctionsOnMainThread();
-}
-
-void cancelCallOnMainThread(MainThreadFunction* function, void* context)
-{
-    ASSERT(function);
-
-    std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
-
-    FunctionWithContextFinder pred(FunctionWithContext(function, context));
-
-    while (true) {
-        // We must redefine 'i' each pass, because the itererator's operator= 
-        // requires 'this' to be valid, and remove() invalidates all iterators
-        FunctionQueue::iterator i(functionQueue().findIf(pred));
-        if (i == functionQueue().end())
-            break;
-        functionQueue().remove(i);
-    }
-}
-
-static void callFunctionObject(void* context)
-{
-    auto function = std::unique_ptr<std::function<void ()>>(static_cast<std::function<void ()>*>(context));
-    (*function)();
-}
-
-void callOnMainThread(std::function<void ()> function)
-{
-    callOnMainThread(callFunctionObject, std::make_unique<std::function<void ()>>(WTF::move(function)).release());
 }
 
 void setMainThreadCallbacksPaused(bool paused)

@@ -1,5 +1,51 @@
 2015-08-21  Anders Carlsson  <andersca@apple.com>
 
+        Deprecate the old school callOnMainThread/cancelCallOnMainThread functions
+        https://bugs.webkit.org/show_bug.cgi?id=148327
+
+        Reviewed by Sam Weinig.
+
+        * wtf/MainThread.cpp:
+        (WTF::functionQueue):
+        (WTF::dispatchFunctionsFromMainThread):
+        (WTF::callOnMainThread):
+        Change the function queue to be a queue of std::function<void ()> and get rid of dead code.
+
+        * wtf/MainThread.h:
+        Conditionalize callOnMainThread and cancelCallOnMainThread because Safari on Mavericks still expects to them to be
+        declared in MainThread.h under 10.9.
+
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        Add a MainThreadFunctionTracker singleton that keeps track of scheduled functions so we can ensure that they're not
+        called if they're cancelled.
+
+        (WTF::MainThreadFunctionTracker::singleton):
+        Return the singleton.
+
+        (WTF::MainThreadFunctionTracker::callOnMainThread):
+        Add the function/context pair to our map and schedule the function to be run on the main thread.
+        If the function has been removed, don't call it.
+
+        (WTF::MainThreadFunctionTracker::cancelCallOnMainThread):
+        Remove all entries with the given function/context pair.
+
+        (WTF::MainThreadFunctionTracker::addFunction):
+        Add the function/context pair to the map and return the unique identifier.
+
+        (WTF::MainThreadFunctionTracker::removeIdentifier):
+        Look up the identifier and remove it if it still exists. If it exists we know that it hasn't been canceled and that we can call it.
+
+        (WTF::MainThreadFunctionTracker::removeFunctions):
+        Remove all function identifiers matched by the function/context pair.
+
+        (WTF::callOnMainThread):
+        Implement using MainThreadFunctionTracker.
+
+        (WTF::cancelCallOnMainThread):
+        Implement using MainThreadFunctionTracker.
+
+2015-08-21  Anders Carlsson  <andersca@apple.com>
+
         Get rid of uses of the old callOnMainThread function that takes a function ptr + context
         https://bugs.webkit.org/show_bug.cgi?id=148324
 
