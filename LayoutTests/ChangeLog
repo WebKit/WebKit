@@ -1,3 +1,20 @@
+2015-08-21  Doug Russell  <d_russell@apple.com>
+
+        AX: Table with CSS that makes a row anonymous can return NULL from cellForColumnAndRow
+        https://bugs.webkit.org/show_bug.cgi?id=148293
+
+        Reviewed by Chris Fleizach.
+
+        When RenderTableRows are anonymous, they may not be added to the accessible data 
+        table's internal row list. However, when calculating the row range for a cell, 
+        we were still accounting for those anonymous sections.
+        Change how the row range is calculated to directly ask the accessible parent row 
+        for its index. This will ensure it’s more inline with what’s being represented to 
+        the accessibility API.
+
+        * accessibility/aria-table-content-expected.txt: Added.
+        * accessibility/aria-table-content.html: Added.
+
 2015-08-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION(173684): Edit as HTML not working
