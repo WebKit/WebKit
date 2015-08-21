@@ -930,6 +930,17 @@ def defaultRunLayoutTest
     end
 end
 
+def noNoLLIntRunLayoutTest
+    runLayoutTestDefault
+    if $jitTests
+        runLayoutTestNoCJIT
+        runLayoutTestDFGEagerNoCJIT
+        runLayoutTestDefaultFTL
+        runLayoutTestFTLNoCJIT
+        runLayoutTestFTLEagerNoCJIT
+    end
+end
+
 def prepareExtraRelativeFiles(extraFiles, destination)
     Dir.chdir($outputDir) {
         extraFiles.each {

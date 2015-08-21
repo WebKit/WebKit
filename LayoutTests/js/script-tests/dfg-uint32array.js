@@ -1,3 +1,6 @@
+// put_by_val IC uses more executable memory than before.
+// https://bugs.webkit.org/show_bug.cgi?id=148273
+//@ noNoLLIntRunLayoutTest if $architecture == "arm" and $hostOS == "darwin"
 description(
 "This tests that uint32 arrays work in the DFG."
 );

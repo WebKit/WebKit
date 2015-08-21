@@ -1,3 +1,6 @@
+// put_by_val IC uses more executable memory than before.
+// https://bugs.webkit.org/show_bug.cgi?id=148273
+//@ noNoLLIntRunLayoutTest if $architecture == "arm" and $hostOS == "darwin"
 description("Regression test for https://webkit.org/b/141098. Make sure eval() properly handles running out of stack space. This test should run without crashing.");
 
 // The tiering up to test higher levels of optimization will only test the DFG

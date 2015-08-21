@@ -1,3 +1,31 @@
+2015-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Skip no-llint tests that fail due to running out of executable memory after r188969
+        https://bugs.webkit.org/show_bug.cgi?id=148273
+
+        Reviewed by Michael Saboff.
+
+        r188969 is causing the "no-llint" variation of some tests to fail due to "ran out of executable memory".
+        These failures are caused because put_by_val and get_by_val aggressively generate the ICs even if the op is executed only once.
+        The failing tests call eval("contains byVal ops") with the different strings repeatedly under the "no-llint" variation.
+        In those cases, each eval call creates byId IC for byVal and exhausts executable memory.
+
+        We will fix this issue by generating the IC in the second call[1]. In the meantime, we skip these tests.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=148288
+
+        * js/script-tests/dfg-float32array.js:
+        * js/script-tests/dfg-int16array.js:
+        * js/script-tests/dfg-int32array-overflow-values.js:
+        * js/script-tests/dfg-int32array.js:
+        * js/script-tests/dfg-int8array.js:
+        * js/script-tests/dfg-uint16array.js:
+        * js/script-tests/dfg-uint32array-overflow-values.js:
+        * js/script-tests/dfg-uint32array.js:
+        * js/script-tests/dfg-uint8array.js:
+        * js/script-tests/dfg-uint8clampedarray.js:
+        * js/script-tests/regress-141098.js:
+
 2015-08-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: inspector/css/modify-rule-selector.html is flaky on some bots

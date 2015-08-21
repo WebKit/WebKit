@@ -1,3 +1,12 @@
+2015-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Skip no-llint tests that fail due to running out of executable memory after r188969
+        https://bugs.webkit.org/show_bug.cgi?id=148273
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-08-21  Nan Wang  <n_wang@apple.com>
 
         [Mac] accessibility/selection-states.html fails
