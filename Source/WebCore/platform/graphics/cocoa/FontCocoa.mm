@@ -225,49 +225,17 @@ void Font::platformInit()
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? ceilf(m_platformData.size()  / 24.0f) : 0.f;
     m_spaceGlyph = 0;
     m_spaceWidth = 0;
-    unsigned unitsPerEm;
-    float ascent;
-    float descent;
-    float capHeight;
-    float lineGap;
-    float lineSpacing;
-    float xHeight;
-    RetainPtr<CFStringRef> familyName;
-    if (CTFontRef ctFont = m_platformData.font()) {
-        FontServicesIOS fontService(ctFont);
-        ascent = ceilf(fontService.ascent());
-        descent = ceilf(fontService.descent());
-        lineSpacing = fontService.lineSpacing();
-        lineGap = fontService.lineGap();
-        xHeight = fontService.xHeight();
-        capHeight = fontService.capHeight();
-        unitsPerEm = fontService.unitsPerEm();
-        familyName = adoptCF(CTFontCopyFamilyName(ctFont));
-    } else {
-        // FIXME: This else block is dead code. Remove it.
-        CGFontRef cgFont = m_platformData.cgFont();
 
-        unitsPerEm = CGFontGetUnitsPerEm(cgFont);
-
-        float pointSize = m_platformData.size();
-        ascent = lroundf(scaleEmToUnits(CGFontGetAscent(cgFont), unitsPerEm) * pointSize);
-        descent = lroundf(-scaleEmToUnits(-abs(CGFontGetDescent(cgFont)), unitsPerEm) * pointSize);
-        lineGap = lroundf(scaleEmToUnits(CGFontGetLeading(cgFont), unitsPerEm) * pointSize);
-        xHeight = scaleEmToUnits(CGFontGetXHeight(cgFont), unitsPerEm) * pointSize;
-        capHeight = scaleEmToUnits(CGFontGetCapHeight(cgFont), unitsPerEm) * pointSize;
-
-        lineSpacing = ascent + descent + lineGap;
-        familyName = adoptCF(CGFontCopyFamilyName(cgFont));
-    }
-
-    m_fontMetrics.setUnitsPerEm(unitsPerEm);
-    m_fontMetrics.setAscent(ascent);
-    m_fontMetrics.setDescent(descent);
-    m_fontMetrics.setLineGap(lineGap);
-    m_fontMetrics.setLineSpacing(lineSpacing);
-    m_fontMetrics.setXHeight(xHeight);
-    m_fontMetrics.setCapHeight(capHeight);
-    m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
+    CTFontRef ctFont = m_platformData.font();
+    FontServicesIOS fontService(ctFont);
+    m_fontMetrics.setUnitsPerEm(fontService.unitsPerEm());
+    m_fontMetrics.setAscent(ceilf(fontService.ascent()));
+    m_fontMetrics.setDescent(ceilf(fontService.descent()));
+    m_fontMetrics.setLineGap(fontService.lineGap());
+    m_fontMetrics.setLineSpacing(fontService.lineSpacing());
+    m_fontMetrics.setXHeight(fontService.xHeight());
+    m_fontMetrics.setCapHeight(fontService.capHeight());
+    m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(adoptCF(CTFontCopyFamilyName(ctFont)).get());
 
     if (platformData().orientation() == Vertical && !isTextOrientationFallback())
         m_hasVerticalGlyphs = fontHasVerticalGlyphs(m_platformData.ctFont());
