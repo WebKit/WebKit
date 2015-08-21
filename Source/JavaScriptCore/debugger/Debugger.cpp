@@ -79,8 +79,8 @@ private:
     Debugger& m_debugger;
 };
 
-Debugger::Debugger(bool isInWorkerThread)
-    : m_vm(nullptr)
+Debugger::Debugger(VM& vm, bool isInWorkerThread)
+    : m_vm(vm)
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pauseOnNextStatement(false)
     , m_isPaused(false)
@@ -108,16 +108,12 @@ Debugger::~Debugger()
 void Debugger::attach(JSGlobalObject* globalObject)
 {
     ASSERT(!globalObject->debugger());
-    if (!m_vm)
-        m_vm = &globalObject->vm();
-    else
-        ASSERT(m_vm == &globalObject->vm());
     globalObject->setDebugger(this);
     m_globalObjects.add(globalObject);
 
     // Call sourceParsed() because it will execute JavaScript in the inspector.
-    for (size_t i = 0; i < m_vm->heap.compiledCode().size(); ++i) {
-        ExecutableBase* base = m_vm->heap.compiledCode()[i];
+    for (size_t i = 0; i < m_vm.heap.compiledCode().size(); ++i) {
+        ExecutableBase* base = m_vm.heap.compiledCode()[i];
         if (!base->isFunctionExecutable())
             continue;
         FunctionExecutable* executable = static_cast<FunctionExecutable*>(base);
@@ -146,8 +142,6 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
         clearDebuggerRequests(globalObject);
 
     globalObject->setDebugger(0);
-    if (!m_globalObjects.size())
-        m_vm = nullptr;
 }
 
 bool Debugger::isAttached(JSGlobalObject* globalObject)
@@ -181,12 +175,12 @@ private:
 
 void Debugger::setSteppingMode(SteppingMode mode)
 {
-    if (mode == m_steppingMode || !m_vm)
+    if (mode == m_steppingMode)
         return;
 
     m_steppingMode = mode;
     SetSteppingModeFunctor functor(this, mode);
-    m_vm->heap.forEachCodeBlock(functor);
+    m_vm.heap.forEachCodeBlock(functor);
 }
 
 void Debugger::registerCodeBlock(CodeBlock* codeBlock)
@@ -271,15 +265,13 @@ private:
 
 void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointState enabledOrNot)
 {
-    if (!m_vm)
-        return;
     ToggleBreakpointFunctor functor(this, breakpoint, enabledOrNot);
-    m_vm->heap.forEachCodeBlock(functor);
+    m_vm.heap.forEachCodeBlock(functor);
 }
 
-void Debugger::recompileAllJSFunctions(VM* vm)
+void Debugger::recompileAllJSFunctions()
 {
-    vm->deleteAllCode();
+    m_vm.deleteAllCode();
 }
 
 BreakpointID Debugger::setBreakpoint(Breakpoint breakpoint, unsigned& actualLine, unsigned& actualColumn)
@@ -444,10 +436,8 @@ void Debugger::clearBreakpoints()
     m_breakpointIDToBreakpoint.clear();
     m_sourceIDToBreakpoints.clear();
 
-    if (!m_vm)
-        return;
     ClearCodeBlockDebuggerRequestsFunctor functor(this);
-    m_vm->heap.forEachCodeBlock(functor);
+    m_vm.heap.forEachCodeBlock(functor);
 }
 
 class Debugger::ClearDebuggerRequestsFunctor {
@@ -470,9 +460,8 @@ private:
 
 void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 {
-    ASSERT(m_vm);
     ClearDebuggerRequestsFunctor functor(globalObject);
-    m_vm->heap.forEachCodeBlock(functor);
+    m_vm.heap.forEachCodeBlock(functor);
 }
 
 void Debugger::setBreakpointsActivated(bool activated)
@@ -499,7 +488,7 @@ void Debugger::breakProgram()
 
     m_pauseOnNextStatement = true;
     setSteppingMode(SteppingModeEnabled);
-    m_currentCallFrame = m_vm->topCallFrame;
+    m_currentCallFrame = m_vm.topCallFrame;
     ASSERT(m_currentCallFrame);
     pauseIfNeeded(m_currentCallFrame);
 }
@@ -537,7 +526,7 @@ void Debugger::stepOutOfFunction()
     if (!m_isPaused)
         return;
 
-    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
     m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topVMEntryFrame) : 0;
     notifyDoneProcessingDebuggerEvents();
 }
@@ -661,11 +650,11 @@ void Debugger::returnEvent(CallFrame* callFrame)
 
     // Treat stepping over a return statement like stepping out.
     if (m_currentCallFrame == m_pauseOnCallFrame) {
-        VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+        VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
         m_pauseOnCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
     }
 
-    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
     m_currentCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 }
 
@@ -696,12 +685,12 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
     if (m_currentCallFrame == m_pauseOnCallFrame) {
-        VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+        VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
         m_pauseOnCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
         if (!m_currentCallFrame)
             return;
     }
-    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
     m_currentCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 }
 

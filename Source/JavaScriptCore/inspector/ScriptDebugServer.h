@@ -44,6 +44,7 @@
 namespace JSC {
 class ExecState;
 class JSGlobalObject;
+class VM;
 }
 
 namespace Inspector {
@@ -55,8 +56,6 @@ public:
     JSC::BreakpointID setBreakpoint(JSC::SourceID, const ScriptBreakpoint&, unsigned* actualLineNumber, unsigned* actualColumnNumber);
     void removeBreakpoint(JSC::BreakpointID);
     void clearBreakpoints();
-
-    virtual void recompileAllJSFunctions() = 0;
 
     const BreakpointActions& getActionsForBreakpoint(JSC::BreakpointID);
 
@@ -71,7 +70,7 @@ protected:
     typedef HashSet<ScriptDebugListener*> ListenerSet;
     typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);
 
-    ScriptDebugServer(bool isInWorkerThread = false);
+    ScriptDebugServer(JSC::VM&, bool isInWorkerThread = false);
     ~ScriptDebugServer();
 
     virtual ListenerSet& getListeners() = 0;

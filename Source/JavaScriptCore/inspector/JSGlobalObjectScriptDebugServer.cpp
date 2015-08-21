@@ -35,7 +35,7 @@ using namespace JSC;
 namespace Inspector {
 
 JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer(JSGlobalObject& globalObject)
-    : ScriptDebugServer(false)
+    : ScriptDebugServer(globalObject.vm(), false)
     , m_globalObject(globalObject)
 {
 }
@@ -68,11 +68,6 @@ void JSGlobalObjectScriptDebugServer::removeListener(ScriptDebugListener* listen
         if (!isBeingDestroyed)
             recompileAllJSFunctions();
     }
-}
-
-void JSGlobalObjectScriptDebugServer::recompileAllJSFunctions()
-{
-    JSC::Debugger::recompileAllJSFunctions(&m_globalObject.vm());
 }
 
 void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()

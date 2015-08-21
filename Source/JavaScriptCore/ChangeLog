@@ -1,3 +1,48 @@
+2015-08-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Debugger's VM should never be null
+        https://bugs.webkit.org/show_bug.cgi?id=148341
+
+        Reviewed by Joseph Pecoraro.
+
+        It doesn't make sense for a Debugger's VM to be null, and code related
+        to maintaining that illusion just caused the Web Inspector to crash on
+        launch (https://bugs.webkit.org/show_bug.cgi?id=148312). So, let's stop
+        doing that.
+
+        Now, Debugger requires its subclass to provide a never-null VM&.
+
+        Also took the opportunity, based on review feedback, to remove some
+        confusion in the virtual recompileAllJSFunctions hierarchy, by eliminating
+        the pure virtual in ScriptDebugServer and the unnecessary override in
+        JSGlobalObjectScriptDebugServer.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::attach):
+        (JSC::Debugger::detach):
+        (JSC::Debugger::isAttached):
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::registerCodeBlock):
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::recompileAllJSFunctions):
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::clearDebuggerRequests):
+        (JSC::Debugger::setBreakpointsActivated):
+        (JSC::Debugger::breakProgram):
+        (JSC::Debugger::stepOutOfFunction):
+        (JSC::Debugger::returnEvent):
+        (JSC::Debugger::didExecuteProgram):
+        * debugger/Debugger.h:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        (Inspector::JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer):
+        (Inspector::JSGlobalObjectScriptDebugServer::recompileAllJSFunctions):
+        (Inspector::JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::ScriptDebugServer):
+        * inspector/ScriptDebugServer.h:
+
 2015-08-21  Basile Clement  <basile_clement@apple.com>
 
         Remove unused code relative to allocation sinking

@@ -45,7 +45,7 @@ using namespace Inspector;
 namespace WebCore {
 
 WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope* context, const String& mode)
-    : ScriptDebugServer(true)
+    : ScriptDebugServer(context->script()->vm(), true)
     , m_workerGlobalScope(context)
     , m_debuggerTaskMode(mode)
 {
@@ -82,10 +82,8 @@ void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener, bool
 
 void WorkerScriptDebugServer::recompileAllJSFunctions()
 {
-    JSC::VM& vm = m_workerGlobalScope->script()->vm();
-
-    JSC::JSLockHolder lock(vm);
-    JSC::Debugger::recompileAllJSFunctions(&vm);
+    JSC::JSLockHolder lock(vm());
+    JSC::Debugger::recompileAllJSFunctions();
 }
 
 void WorkerScriptDebugServer::runEventLoopWhilePaused()
