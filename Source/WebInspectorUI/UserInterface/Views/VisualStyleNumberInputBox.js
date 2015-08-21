@@ -120,15 +120,17 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
 
         this.specialPropertyPlaceholderElement.hidden = true;
 
+        if (!value) {
+            this._valueNumberInputElement.value = null;
+            this._markUnitsContainerIfInputHasValue();
+            return;
+        }
+
         if (!isNaN(value)) {
             this._numberInputIsEditable = true;
             this.contentElement.classList.add("number-input-editable");
             this._valueNumberInputElement.value = Math.round(value * 100) / 100;
-            return;
-        }
-
-        if (!value) {
-            this._valueNumberInputElement.value = null;
+            this._markUnitsContainerIfInputHasValue();
             return;
         }
 
