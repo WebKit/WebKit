@@ -63,6 +63,7 @@ WK_EXPORT WKTypeID WKMediaSessionFocusManagerGetTypeID();
 WK_EXPORT void WKMediaSessionFocusManagerSetClient(WKMediaSessionFocusManagerRef manager, const WKMediaSessionFocusManagerClientBase* client);
 
 WK_EXPORT bool WKMediaSessionFocusManagerValueForPlaybackAttribute(WKMediaSessionFocusManagerRef, WKMediaSessionFocusManagerPlaybackAttribute);
+WK_EXPORT void WKMediaSessionFocusManagerSetVolumeOfFocusedMediaElement(WKMediaSessionFocusManagerRef, double);
 
 #ifdef __cplusplus
 }

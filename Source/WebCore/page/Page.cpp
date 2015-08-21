@@ -1224,6 +1224,12 @@ void Page::handleMediaEvent(MediaEventType eventType)
         break;
     }
 }
+
+void Page::setVolumeOfMediaElement(double volume, uint64_t elementID)
+{
+    if (HTMLMediaElement* element = HTMLMediaElement::elementWithID(elementID))
+        element->setVolume(volume, ASSERT_NO_EXCEPTION);
+}
 #endif
 
 #if !ASSERT_DISABLED

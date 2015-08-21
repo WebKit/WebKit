@@ -3890,6 +3890,14 @@ void WebPageProxy::handleMediaEvent(MediaEventType eventType)
     
     m_process->send(Messages::WebPage::HandleMediaEvent(eventType), m_pageID);
 }
+
+void WebPageProxy::setVolumeOfMediaElement(double volume, uint64_t elementID)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetVolumeOfMediaElement(volume, elementID), m_pageID);
+}
 #endif
 
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)

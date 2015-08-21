@@ -1,3 +1,25 @@
+2015-08-20  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: let UI clients change the volume of the focused media element
+        https://bugs.webkit.org/show_bug.cgi?id=148289
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKMediaSessionFocusManager.cpp:
+        (WKMediaSessionFocusManagerSetVolumeOfFocusedMediaElement):
+        * UIProcess/API/C/WKMediaSessionFocusManager.h:
+        * UIProcess/WebMediaSessionFocusManager.cpp:
+        (WebKit::WebMediaSessionFocusManager::updatePlaybackAttribute):
+        (WebKit::WebMediaSessionFocusManager::setVolumeOfFocusedMediaElement):
+        * UIProcess/WebMediaSessionFocusManager.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setVolumeOfMediaElement):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setVolumeOfMediaElement):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-08-21  Anders Carlsson  <andersca@apple.com>
 
         Get rid of uses of the old callOnMainThread function that takes a function ptr + context

@@ -4064,6 +4064,11 @@ void WebPage::handleMediaEvent(uint32_t eventType)
 {
     m_page->handleMediaEvent(static_cast<MediaEventType>(eventType));
 }
+
+void WebPage::setVolumeOfMediaElement(double volume, uint64_t elementID)
+{
+    m_page->setVolumeOfMediaElement(volume, elementID);
+}
 #endif
 
 void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)

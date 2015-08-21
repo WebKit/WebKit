@@ -80,6 +80,15 @@ void WebMediaSessionFocusManager::updatePlaybackAttribute(WKMediaSessionFocusMan
     m_client.didChangePlaybackAttribute(this, attribute, value);
 }
 
+void WebMediaSessionFocusManager::setVolumeOfFocusedMediaElement(double volume)
+{
+    if (!m_focusedMediaElement)
+        return;
+
+    if (WebPageProxy* proxy = m_focusedMediaElement->first)
+        proxy->setVolumeOfMediaElement(volume, m_focusedMediaElement->second);
+}
+
 void WebMediaSessionFocusManager::updatePlaybackAttributesFromMediaState(WebPageProxy* proxy, uint64_t elementID, WebCore::MediaProducer::MediaStateFlags flags)
 {
     if (m_focusedMediaElement) {

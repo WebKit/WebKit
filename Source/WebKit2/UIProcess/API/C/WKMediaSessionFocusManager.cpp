@@ -60,3 +60,13 @@ bool WKMediaSessionFocusManagerValueForPlaybackAttribute(WKMediaSessionFocusMana
     return false;
 #endif
 }
+
+void WKMediaSessionFocusManagerSetVolumeOfFocusedMediaElement(WKMediaSessionFocusManagerRef manager, double volume)
+{
+#if ENABLE(MEDIA_SESSION)
+    toImpl(manager)->setVolumeOfFocusedMediaElement(volume);
+#else
+    UNUSED_PARAM(manager);
+    UNUSED_PARAM(volume);
+#endif
+}

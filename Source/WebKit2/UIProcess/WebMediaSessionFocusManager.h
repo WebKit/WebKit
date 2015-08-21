@@ -47,6 +47,7 @@ public:
 
     bool valueForPlaybackAttribute(WKMediaSessionFocusManagerPlaybackAttribute) const;
     void updatePlaybackAttributesFromMediaState(WebPageProxy*, uint64_t, WebCore::MediaProducer::MediaStateFlags);
+    void setVolumeOfFocusedMediaElement(double);
 
     void setFocusedMediaElement(WebPageProxy&, uint64_t);
     void clearFocusedMediaElement();
