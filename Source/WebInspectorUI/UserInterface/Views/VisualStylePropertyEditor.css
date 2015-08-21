@@ -82,6 +82,7 @@
     border-radius: 4px;
     background-color: white;
     color: hsl(0, 0%, 50%);
+    font-size: 11px;
     pointer-events: none;
     overflow: hidden;
     white-space: nowrap;
