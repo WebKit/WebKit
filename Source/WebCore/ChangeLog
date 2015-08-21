@@ -1,5 +1,26 @@
 2015-08-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188340.
+
+    2015-08-12  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION(r185606): ASSERT in WebCore::RenderElement::styleWillChange
+            https://bugs.webkit.org/show_bug.cgi?id=147596
+            <rdar://problem/21963355>
+
+            Reviewed by Jon Honeycutt.
+
+            Only add (or remove) a RenderElement from the container of RenderBoxes with
+            scroll snap coordinates if the element actually is a RenderBox.
+
+            Tested by css3/scroll-snap/improper-snap-points-crash.html.
+
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::styleWillChange):
+            (WebCore::RenderElement::willBeRemovedFromTree):
+
+2015-08-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188014.
 
     2015-08-05  Chris Dumez  <cdumez@apple.com>
