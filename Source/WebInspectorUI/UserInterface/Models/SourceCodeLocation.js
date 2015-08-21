@@ -333,8 +333,9 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
         case WebInspector.SourceCodeLocation.NameStyle.Short:
         case WebInspector.SourceCodeLocation.NameStyle.Full:
-            var lineSuffix = sourceCode.url ? ":" + lineString : WebInspector.UIString(" (line %s)").format(lineString);
-            return prefix + (nameStyle === WebInspector.SourceCodeLocation.NameStyle.Full && sourceCode.url ? sourceCode.url : sourceCode.displayName) + lineSuffix;
+            const displayURL = sourceCode.displayURL;
+            const lineSuffix = displayURL ? ":" + lineString : WebInspector.UIString(" (line %s)").format(lineString);
+            return prefix + (nameStyle === WebInspector.SourceCodeLocation.NameStyle.Full && displayURL ? displayURL : sourceCode.displayName) + lineSuffix;
 
         default:
             console.error("Unknown nameStyle: " + nameStyle);

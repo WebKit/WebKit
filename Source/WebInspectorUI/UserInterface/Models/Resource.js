@@ -135,6 +135,13 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         return WebInspector.displayNameForURL(this._url, this.urlComponents);
     }
 
+    get displayURL()
+    {
+        const isMultiLine = true;
+        const dataURIMaxSize = 64;
+        return WebInspector.truncateURL(this._url, isMultiLine, dataURIMaxSize);
+    }
+
     get initiatorSourceCodeLocation()
     {
         return this._initiatorSourceCodeLocation;

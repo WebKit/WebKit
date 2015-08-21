@@ -1,3 +1,30 @@
+2015-08-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Truncate data URIs
+        https://bugs.webkit.org/show_bug.cgi?id=148212
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/URLUtilities.js:
+        (parseURL):
+        Exit early to avoid an expensive RegExp match on a potentially very large data URI.
+
+        (parseQueryString):
+        Fix typo.
+
+        (WebInspector.displayNameForURL):
+        (WebInspector.truncateURL):
+        By default, only show first and last 3 characters of data URIs.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.get displayURL):
+        For tooltips, show first and last 32 characters of data URIs.
+
+        * UserInterface/Models/SourceCodeLocation.js:
+        (WebInspector.SourceCodeLocation.prototype._locationString):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateToolTip):
+
 2015-08-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add flex alignment section to Visual sidebar
