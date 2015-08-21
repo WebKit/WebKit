@@ -1296,3 +1296,6 @@ webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.h
 
 # This test tests a particular system font, which is only on iOS and El Capitan.
 webkit.org/b/148119 [ Mavericks Yosemite ] fast/text/trak-optimizeLegibility.html [ Failure ]
+
+# These operating systems do not have language-sensitive font fallback.
+[ Mavericks Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]

@@ -1,3 +1,21 @@
+2015-08-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening after r188167
+        https://bugs.webkit.org/show_bug.cgi?id=148276
+
+        Unreviewed.
+
+        The tests in css3/line-break require non-language-sensitive font fallback. This patch adds
+        slightly modified tests which test line-breaking with language-sensitive font fallback.
+        This patch also marks all operating systems which do not support language-sensitive font
+        fallback to ignore the results of these new tests.
+
+        * css3/line-break-language-sensitive: Added
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-08-20  Filip Pizlo  <fpizlo@apple.com>
 
         Overflow check elimination fails for a simple test case

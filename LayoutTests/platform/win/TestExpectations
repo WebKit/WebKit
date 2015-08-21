@@ -3177,3 +3177,6 @@ media/video-seek-to-current-time.html [ Skip ]
 
 # Weird black image sometimes
 webkit.org/b/148144 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
+
+# This operating system does not have language-sensitive font fallback.
+css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
