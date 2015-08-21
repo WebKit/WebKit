@@ -70,8 +70,9 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._generateSection("margin", WebInspector.UIString("Margin"));
         this._generateSection("padding", WebInspector.UIString("Padding"));
         this._generateSection("flexbox", WebInspector.UIString("Flexbox"));
+        this._generateSection("alignment", WebInspector.UIString("Alignment"));
 
-        this._sections.layout = new WebInspector.DetailsSection("layout", WebInspector.UIString("Layout"), [this._groups.display.section, this._groups.position.section, this._groups.float.section, this._groups.dimensions.section, this._groups.margin.section, this._groups.padding.section, this._groups.flexbox.section]);
+        this._sections.layout = new WebInspector.DetailsSection("layout", WebInspector.UIString("Layout"), [this._groups.display.section, this._groups.position.section, this._groups.float.section, this._groups.dimensions.section, this._groups.margin.section, this._groups.padding.section, this._groups.flexbox.section, this._groups.alignment.section]);
         this._element.appendChild(this._sections.layout.element);
 
         // Text Section
@@ -558,8 +559,8 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let flexSizeRow = new WebInspector.DetailsSectionRow;
 
-        properties.flexGrow = new WebInspector.VisualStyleNumberInputBox("flex-grow", WebInspector.UIString("Grow"), this._keywords.defaults, null);
-        properties.flexShrink = new WebInspector.VisualStyleNumberInputBox("flex-shrink", WebInspector.UIString("Shrink"), this._keywords.defaults, null);
+        properties.flexGrow = new WebInspector.VisualStyleNumberInputBox("flex-grow", WebInspector.UIString("Grow"), this._keywords.defaults);
+        properties.flexShrink = new WebInspector.VisualStyleNumberInputBox("flex-shrink", WebInspector.UIString("Shrink"), this._keywords.defaults);
 
         flexSizeRow.element.appendChild(properties.flexGrow.element);
         flexSizeRow.element.appendChild(properties.flexShrink.element);
@@ -574,6 +575,41 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let flexboxGroup = new WebInspector.DetailsSectionGroup([flexOrderRow, flexSizeRow, flexFlowRow]);
         this._populateSection(group, [flexboxGroup]);
+    }
+
+    _populateAlignmentSection()
+    {
+        let group = this._groups.alignment;
+        let properties = group.properties;
+        let alignmentKeywords = ["Initial", "Auto", "Flex Start", "Flex End", "Center", "Stretch"];
+        let advancedAlignmentKeywords = ["Start", "End", "Left", "Right", "Baseline", "Last Baseline"];
+
+        let contentRow = new WebInspector.DetailsSectionRow;
+        let contentKeywords = {
+            basic: alignmentKeywords.concat(["Space Between", "Space Around"]),
+            advanced: advancedAlignmentKeywords.concat(["Space Evenly"])
+        };
+
+        properties.justifyContent = new WebInspector.VisualStyleKeywordPicker("justify-content", WebInspector.UIString("Horizontal"), contentKeywords);
+        properties.alignContent = new WebInspector.VisualStyleKeywordPicker("align-content", WebInspector.UIString("Vertical"), contentKeywords);
+
+        contentRow.element.appendChild(properties.justifyContent.element);
+        contentRow.element.appendChild(properties.alignContent.element);
+
+        let itemsRow = new WebInspector.DetailsSectionRow;
+        let itemKeywords = {
+            basic: alignmentKeywords,
+            advanced: ["Self Start", "Self End"].concat(advancedAlignmentKeywords)
+        };
+
+        properties.alignItems = new WebInspector.VisualStyleKeywordPicker("align-items", WebInspector.UIString("Children"), itemKeywords);
+        properties.alignSelf = new WebInspector.VisualStyleKeywordPicker("align-self", WebInspector.UIString("Self"), itemKeywords);
+
+        itemsRow.element.appendChild(properties.alignItems.element);
+        itemsRow.element.appendChild(properties.alignSelf.element);
+
+        let alignmentGroup = new WebInspector.DetailsSectionGroup([contentRow, itemsRow]);
+        this._populateSection(group, [alignmentGroup]);
     }
 
     _populateTextStyleSection()
