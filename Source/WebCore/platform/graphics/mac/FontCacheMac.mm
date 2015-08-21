@@ -579,7 +579,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     FontPlatformData alternateFont(toCTFont(substituteFont), platformData.size(),
         !isPlatformFont && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
         !isPlatformFont && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
-        platformData.m_orientation);
+        platformData.m_orientation, platformData.m_widthVariant, platformData.m_textRenderingMode);
 
     return fontForPlatformData(alternateFont);
 }
