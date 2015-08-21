@@ -1,3 +1,12 @@
+2015-08-20  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix build error since r188693
+        https://bugs.webkit.org/show_bug.cgi?id=148279
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/efl/WebViewEfl.h:
+
 2015-08-20  Anders Carlsson  <andersca@apple.com>
 
         Use WKPageConfigurationRef in WebKitTestRunner
