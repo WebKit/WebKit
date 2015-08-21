@@ -364,7 +364,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
         return false;
 
     switch (mediaEventType) {
-    case MESessionTopologySet:
+    case MESessionTopologySet: {
         auto weakPtr = m_weakPtrFactory.createWeakPtr();
         callOnMainThread([weakPtr] {
             if (!weakPtr)
@@ -372,6 +372,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
             weakPtr->onTopologySet();
         });
         break;
+    }
 
     case MESessionClosed:
         break;
