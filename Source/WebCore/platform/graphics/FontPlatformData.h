@@ -151,8 +151,7 @@ public:
 #if PLATFORM(WIN) && !USE(CAIRO)
         return m_font ? m_font->hash() : 0;
 #elif OS(DARWIN)
-        ASSERT(m_font || !m_cgFont || isEmoji());
-        uintptr_t flags = static_cast<uintptr_t>(m_isHashTableDeletedValue << 6 | m_textRenderingMode << 4 | isEmoji() << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique);
+        uintptr_t flags = static_cast<uintptr_t>(m_isHashTableDeletedValue << 5 | m_textRenderingMode << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique);
 #if USE(APPKIT)
         uintptr_t fontHash = (uintptr_t)m_font.get();
 #else
@@ -191,14 +190,6 @@ public:
 
 #ifndef NDEBUG
     String description() const;
-#endif
-
-#if PLATFORM(IOS)
-    bool isEmoji() const { return m_isEmoji; }
-    void setIsEmoji(bool isEmoji) { m_isEmoji = isEmoji; }
-#elif PLATFORM(MAC)
-    bool isEmoji() const { return false; }
-    void setIsEmoji(bool) { }
 #endif
 
 private:

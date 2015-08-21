@@ -57,7 +57,6 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 {
     m_font = f.m_font;
 
-    setIsEmoji(f.isEmoji());
     m_cgFont = f.m_cgFont;
     m_ctFont = f.m_ctFont;
 }
@@ -65,7 +64,6 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& f)
 {
     m_cgFont = f.m_cgFont;
-    setIsEmoji(f.isEmoji());
     if (m_font && f.m_font && CFEqual(m_font.get(), f.m_font.get()))
         return *this;
     m_font = f.m_font;
@@ -83,10 +81,8 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 #else
         result = m_font == other.m_font;
 #endif
-        ASSERT(!result || isEmoji() == other.isEmoji());
         return result;
     }
-    ASSERT(m_cgFont != other.m_cgFont || isEmoji() == other.isEmoji());
     return m_cgFont == other.m_cgFont;
 }
 
@@ -165,12 +161,6 @@ static CTFontDescriptorRef cascadeToLastResortFontDescriptor()
     return descriptor;
 }
 
-CGFloat FontPlatformData::ctFontSize() const
-{
-    // On iOS, Apple Color Emoji size is adjusted (and then re-adjusted by Core Text) and capped.
-    return !isEmoji() ? m_size : m_size <= 15 ? 4 * (m_size + 2) / static_cast<CGFloat>(5) : 16;
-}
-
 CTFontRef FontPlatformData::ctFont() const
 {
     if (m_ctFont)
@@ -182,12 +172,12 @@ CTFontRef FontPlatformData::ctFont() const
         CTFontDescriptorRef fontDescriptor;
         RetainPtr<CFStringRef> postScriptName = adoptCF(CTFontCopyPostScriptName(m_ctFont.get()));
         fontDescriptor = cascadeToLastResortFontDescriptor();
-        m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), ctFontSize(), 0, fontDescriptor));
+        m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), m_size, 0, fontDescriptor));
     } else {
 #if CORETEXT_WEB_FONTS
         ASSERT_NOT_REACHED();
 #endif
-        m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), ctFontSize(), 0, cascadeToLastResortFontDescriptor()));
+        m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
     }
 
     if (m_widthVariant != RegularWidth) {

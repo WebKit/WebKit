@@ -604,7 +604,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         unsigned glyphCount = complexTextRun.glyphCount();
         const Font& font = complexTextRun.font();
-        bool isEmoji = font.platformData().isEmoji();
 
         // Represent the initial advance for a text run by adjusting the advance
         // of the last glyph of the previous text run in the glyph buffer.
@@ -652,8 +651,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             bool treatAsSpace = FontCascade::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? font.spaceGlyph() : glyphs[i];
             CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
-            if (isEmoji && advance.width)
-                advance.width = font.widthForGlyph(glyph);
 
             if (ch == '\t' && m_run.allowTabs())
                 advance.width = m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);

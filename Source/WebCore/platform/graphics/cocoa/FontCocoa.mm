@@ -239,13 +239,6 @@ void Font::platformInit()
 
     if (platformData().orientation() == Vertical && !isTextOrientationFallback())
         m_hasVerticalGlyphs = fontHasVerticalGlyphs(m_platformData.ctFont());
-
-    if (m_platformData.isEmoji()) {
-        int thirdOfSize = m_platformData.size() / 3;
-        m_fontMetrics.setAscent(thirdOfSize);
-        m_fontMetrics.setDescent(thirdOfSize);
-        m_fontMetrics.setLineGap(thirdOfSize);
-    }
 #endif
 }
 
@@ -431,7 +424,7 @@ static inline bool canUseFastGlyphAdvanceGetter(const Font& font, Glyph glyph, C
 {
     const FontPlatformData& platformData = font.platformData();
     // Fast getter doesn't doesn't work for emoji, bitmap fonts, or take custom tracking into account
-    if (font.hasCustomTracking() || platformData.isEmoji() || platformData.textRenderingMode() == OptimizeLegibility)
+    if (font.hasCustomTracking() || platformData.textRenderingMode() == OptimizeLegibility)
         return false;
     if (advanceForColorBitmapFont(platformData, glyph, advance)) {
         populatedAdvance = true;

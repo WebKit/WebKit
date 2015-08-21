@@ -246,48 +246,6 @@ static CGSize dilationSizeForTextColor(const Color& color)
 }
 #endif
 
-static inline bool isOnOrAfterIOS6()
-{
-#if PLATFORM(IOS)
-    return iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0);
-#else
-    ASSERT_NOT_REACHED();
-    return false;
-#endif
-}
-
-static FloatPoint pointAdjustedForEmoji(const FontPlatformData& platformData, FloatPoint point)
-{
-    if (!platformData.isEmoji())
-        return point;
-
-    // Mimic the positioining of non-bitmap glyphs, which are not subpixel-positioned.
-    point.setY(ceilf(point.y()));
-
-    // Emoji glyphs snap to the CSS pixel grid.
-    point.setX(floorf(point.x()));
-
-    // Emoji glyphs are offset one CSS pixel to the right.
-    point.move(1, 0);
-
-    // Emoji glyphs are offset vertically based on font size.
-    float fontSize = platformData.size();
-    float y = point.y();
-    if (fontSize <= 15) {
-        // Undo Core Text's y adjustment.
-        static float yAdjustmentFactor = isOnOrAfterIOS6() ? .19 : .1;
-        point.setY(floorf(y - yAdjustmentFactor * (fontSize + 2) + 2));
-    } else {
-        if (fontSize < 26)
-            y -= .35f * fontSize - 10;
-
-        // Undo Core Text's y adjustment.
-        static float yAdjustment = isOnOrAfterIOS6() ? 3.8 : 2;
-        point.setY(floorf(y - yAdjustment));
-    }
-    return point;
-}
-
 void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint) const
 {
     const FontPlatformData& platformData = font->platformData();
@@ -362,7 +320,7 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     CGContextSetFont(cgContext, platformData.cgFont());
 
     bool useLetterpressEffect = shouldUseLetterpressEffect(*context);
-    FloatPoint point = pointAdjustedForEmoji(platformData, anchorPoint);
+    FloatPoint point = anchorPoint;
 
 #if PLATFORM(IOS)
     float fontSize = platformData.size();
@@ -422,7 +380,7 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + shadowOffset.height() * (context->shadowsIgnoreTransforms() ? -1 : 1);
         showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
-        if (syntheticBoldOffset && !platformData.isEmoji())
+        if (syntheticBoldOffset)
             showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
         context->setFillColor(fillColor, fillColorSpace);
     }
@@ -431,7 +389,7 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
         showLetterpressedGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
     else
         showGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
-    if (syntheticBoldOffset && !platformData.isEmoji())
+    if (syntheticBoldOffset)
         showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
 
     if (hasSimpleShadow)
