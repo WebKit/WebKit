@@ -416,13 +416,15 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
     return font;
 }
 
-// The "void*" parameter makes the function match the prototype for callbacks from callOnMainThread.
-static void invalidateFontCache(void*)
+static void invalidateFontCache()
 {
     if (!isMainThread()) {
-        callOnMainThread(&invalidateFontCache, nullptr);
+        callOnMainThread([] {
+            invalidateFontCache();
+        });
         return;
     }
+
     FontCache::singleton().invalidate();
 
 #if !ENABLE(PLATFORM_FONT_LOOKUP)
@@ -434,7 +436,8 @@ static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCe
 {
     ASSERT_UNUSED(observer, observer == &FontCache::singleton());
     ASSERT_UNUSED(name, CFEqual(name, kCTFontManagerRegisteredFontsChangedNotification));
-    invalidateFontCache(0);
+
+    invalidateFontCache();
 }
 
 void FontCache::platformInit()

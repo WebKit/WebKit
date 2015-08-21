@@ -644,29 +644,31 @@ void BlobResourceHandle::notifyFail(int errorCode)
         client()->didFail(this, ResourceError(webKitBlobResourceDomain, errorCode, firstRequest().url(), String()));
 }
 
-static void doNotifyFinish(void* context)
+static void doNotifyFinish(BlobResourceHandle& handle)
 {
-    BlobResourceHandle* handle = static_cast<BlobResourceHandle*>(context);
-    if (!handle->aborted() && handle->client())
-        handle->client()->didFinishLoading(handle, 0);
+    if (handle.aborted())
+        return;
 
-    // Balance the ref() in BlobResourceHandle::notfyFinish().
-    handle->deref();
+    if (!handle.client())
+        return;
+
+    handle.client()->didFinishLoading(&handle, 0);
 }
 
 void BlobResourceHandle::notifyFinish()
 {
-    // Balanced in doNotifyFinish().
-    ref();
-
-    if (m_async) {
-        // Schedule to notify the client from a standalone function because the client might dispose the handle immediately from the callback function
-        // while we still have BlobResourceHandle calls in the stack.
-        callOnMainThread(doNotifyFinish, this);
+    if (!m_async) {
+        doNotifyFinish(*this);
         return;
     }
 
-    doNotifyFinish(this);
+    // Schedule to notify the client from a standalone function because the client might dispose the handle immediately from the callback function
+    // while we still have BlobResourceHandle calls in the stack.
+    RefPtr<BlobResourceHandle> handle(this);
+    callOnMainThread([handle] {
+        doNotifyFinish(*handle);
+    });
+
 }
 
 } // namespace WebCore

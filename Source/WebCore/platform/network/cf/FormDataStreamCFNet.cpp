@@ -207,20 +207,15 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     return newInfo;
 }
 
-static void formFinishFinalizationOnMainThread(void* context)
-{
-    auto* form = static_cast<FormStreamFields*>(context);
-
-    closeCurrentStream(form);
-    delete form;
-}
-
 static void formFinalize(CFReadStreamRef stream, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
     ASSERT_UNUSED(stream, form->formStream == stream);
 
-    callOnMainThread(formFinishFinalizationOnMainThread, form);
+    callOnMainThread([form] {
+        closeCurrentStream(form);
+        delete form;
+    });
 }
 
 static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void* context)

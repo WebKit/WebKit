@@ -210,24 +210,17 @@ void ScriptProcessorNode::process(size_t framesToProcess)
             // Fire the event on the main thread, not this one (which is the realtime audio thread).
             m_doubleBufferIndexForEvent = m_doubleBufferIndex;
             m_isRequestOutstanding = true;
-            callOnMainThread(fireProcessEventDispatch, this);
+
+            callOnMainThread([this] {
+                fireProcessEvent();
+
+                // De-reference to match the ref() call in process().
+                deref();
+            });
         }
 
         swapBuffers();
     }
-}
-
-void ScriptProcessorNode::fireProcessEventDispatch(void* userData)
-{
-    ScriptProcessorNode* jsAudioNode = static_cast<ScriptProcessorNode*>(userData);
-    ASSERT(jsAudioNode);
-    if (!jsAudioNode)
-        return;
-
-    jsAudioNode->fireProcessEvent();
-
-    // De-reference to match the ref() call in process().
-    jsAudioNode->deref();
 }
 
 void ScriptProcessorNode::fireProcessEvent()

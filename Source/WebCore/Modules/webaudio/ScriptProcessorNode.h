@@ -71,7 +71,6 @@ private:
 
     ScriptProcessorNode(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 
-    static void fireProcessEventDispatch(void* userData);
     void fireProcessEvent();
 
     bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;

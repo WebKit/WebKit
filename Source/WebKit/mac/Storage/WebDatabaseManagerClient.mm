@@ -104,7 +104,10 @@ public:
     static void dispatchToMainThread(WebDatabaseManagerClient* client, SecurityOrigin* origin)
     {
         DidModifyOriginData* context = new DidModifyOriginData(client, origin->isolatedCopy());
-        callOnMainThread(&DidModifyOriginData::dispatchDidModifyOriginOnMainThread, context);
+        callOnMainThread([context] {
+            context->client->dispatchDidModifyOrigin(context->origin.get());
+            delete context;
+        });
     }
 
 private:
@@ -112,14 +115,6 @@ private:
         : client(client)
         , origin(origin)
     {
-    }
-
-    static void dispatchDidModifyOriginOnMainThread(void* context)
-    {
-        ASSERT(isMainThread());
-        DidModifyOriginData* info = static_cast<DidModifyOriginData*>(context);
-        info->client->dispatchDidModifyOrigin(info->origin.get());
-        delete info;
     }
 
     WebDatabaseManagerClient* client;

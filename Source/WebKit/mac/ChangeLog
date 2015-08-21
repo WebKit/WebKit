@@ -1,3 +1,18 @@
+2015-08-21  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of uses of the old callOnMainThread function that takes a function ptr + context
+        https://bugs.webkit.org/show_bug.cgi?id=148324
+
+        Reviewed by Tim Horton.
+
+        * Storage/WebDatabaseManagerClient.mm:
+        (DidModifyOriginData::dispatchToMainThread):
+        (DidModifyOriginData::dispatchDidModifyOriginOnMainThread): Deleted.
+        * Storage/WebStorageTrackerClient.h:
+        * Storage/WebStorageTrackerClient.mm:
+        (WebStorageTrackerClient::dispatchDidModifyOrigin):
+        (WebStorageTrackerClient::dispatchDidModifyOriginOnMainThread): Deleted.
+
 2015-08-19  Eric Carlson  <eric.carlson@apple.com>
 
         Remove ENABLE_WEBVTT_REGIONS

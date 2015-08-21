@@ -105,17 +105,9 @@ void AsyncAudioDecoder::DecodingTask::decode()
     m_audioBuffer = AudioBuffer::createFromAudioFileData(m_audioData->data(), m_audioData->byteLength(), false, sampleRate());
     
     // Decoding is finished, but we need to do the callbacks on the main thread.
-    callOnMainThread(notifyCompleteDispatch, this);
-}
-
-void AsyncAudioDecoder::DecodingTask::notifyCompleteDispatch(void* userData)
-{
-    AsyncAudioDecoder::DecodingTask* task = reinterpret_cast<AsyncAudioDecoder::DecodingTask*>(userData);
-    ASSERT(task);
-    if (!task)
-        return;
-
-    task->notifyComplete();
+    callOnMainThread([this] {
+        notifyComplete();
+    });
 }
 
 void AsyncAudioDecoder::DecodingTask::notifyComplete()

@@ -352,11 +352,10 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
     return YES;
 }
 
-static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
+static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
 {
     ASSERT(RunLoop::isMain());
 
-    WKPrintingView *view = static_cast<WKPrintingView *>(untypedContext);
     std::lock_guard<Lock> lock(view->_printingCallbackMutex);
 
     // We may have received page rects while a message to call this function traveled from secondary thread to main one.
@@ -396,7 +395,11 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     else if (!RunLoop::isMain()) {
         ASSERT(![self _isPrintingPreview]);
         std::unique_lock<Lock> lock(_printingCallbackMutex);
-        callOnMainThread(prepareDataForPrintingOnSecondaryThread, self);
+
+        RunLoop::main().dispatch([self] {
+            prepareDataForPrintingOnSecondaryThread(self);
+        });
+
         _printingCallbackCondition.wait(lock);
         *range = NSMakeRange(1, _printingPageRects.size());
     } else {

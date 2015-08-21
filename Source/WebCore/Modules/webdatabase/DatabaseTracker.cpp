@@ -1359,12 +1359,14 @@ void DatabaseTracker::scheduleForNotification()
     ASSERT(!notificationMutex().tryLock());
 
     if (!notificationScheduled) {
-        callOnMainThread(DatabaseTracker::notifyDatabasesChanged, 0);
+        callOnMainThread([] {
+            notifyDatabasesChanged();
+        });
         notificationScheduled = true;
     }
 }
 
-void DatabaseTracker::notifyDatabasesChanged(void*)
+void DatabaseTracker::notifyDatabasesChanged()
 {
     // Note that if DatabaseTracker ever becomes non-singleton, we'll have to amend this notification
     // mechanism to include which tracker the notification goes out on as well.

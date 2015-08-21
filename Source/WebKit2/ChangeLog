@@ -1,3 +1,14 @@
+2015-08-21  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of uses of the old callOnMainThread function that takes a function ptr + context
+        https://bugs.webkit.org/show_bug.cgi?id=148324
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (prepareDataForPrintingOnSecondaryThread):
+        (-[WKPrintingView knowsPageRange:]):
+
 2015-08-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r188698): http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header.html is very flaky

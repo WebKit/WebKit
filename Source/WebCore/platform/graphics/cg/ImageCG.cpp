@@ -78,14 +78,12 @@ static void drawPatternCallback(void* info, CGContextRef context)
     CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), height)), image);
 }
 
-static void patternReleaseOnMainThreadCallback(void* info)
-{
-    CGImageRelease((CGImageRef)info);
-}
-
 static void patternReleaseCallback(void* info)
 {
-    callOnMainThread(patternReleaseOnMainThreadCallback, info);
+    auto image = static_cast<CGImageRef>(info);
+    callOnMainThread([image] {
+        CGImageRelease(image);
+    });
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,

@@ -184,7 +184,7 @@ private:
     void doneDeletingOrigin(SecurityOrigin*);
 
     static void scheduleForNotification();
-    static void notifyDatabasesChanged(void*);
+    static void notifyDatabasesChanged();
 };
 
 } // namespace WebCore
