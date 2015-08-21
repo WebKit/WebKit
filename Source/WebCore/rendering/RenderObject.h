@@ -764,7 +764,7 @@ public:
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
     // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
-    int maximalOutlineSize(PaintPhase) const;
+    void adjustRectWithMaximumOutline(PaintPhase, LayoutRect&) const;
 
     enum SelectionState {
         SelectionNone, // The object is not selected.

@@ -1192,7 +1192,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
         return;
 
     LayoutRect localRepaintRect = paintInfo.rect;
-    localRepaintRect.inflate(maximalOutlineSize(paintInfo.phase));
+    adjustRectWithMaximumOutline(paintInfo.phase, localRepaintRect);
 
     LayoutRect paintRect = LayoutRect(paintOffset + location(), snappedIntRect(frameRect()).size());
     if (paintRect.y() - table()->outerBorderTop() >= localRepaintRect.maxY())

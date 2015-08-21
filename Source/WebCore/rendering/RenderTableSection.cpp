@@ -1228,11 +1228,9 @@ static BoxSide physicalBorderForDirection(RenderStyle* styleForCellFlow, Collaps
 
 void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    PaintPhase paintPhase = paintInfo.phase;
-
     LayoutRect localRepaintRect = paintInfo.rect;
+    adjustRectWithMaximumOutline(paintInfo.phase, localRepaintRect);
     localRepaintRect.moveBy(-paintOffset);
-    localRepaintRect.inflate(maximalOutlineSize(paintPhase));
 
     LayoutRect tableAlignedRect = logicalRectForWritingModeAndDirection(localRepaintRect);
 

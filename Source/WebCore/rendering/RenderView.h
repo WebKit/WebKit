@@ -98,7 +98,7 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    void setMaximalOutlineSize(int o);
+    void setMaximalOutlineSize(int);
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
     LayoutRect viewRect() const;
@@ -345,7 +345,8 @@ private:
     LegacyPrinting m_legacyPrinting;
     // End deprecated members.
 
-    int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
+    // Used to inflate compositing layers and repaint rects.
+    int m_maximalOutlineSize { 0 };
 
     bool shouldUsePrintingLayout() const;
 

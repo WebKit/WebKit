@@ -5612,7 +5612,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         // If the region does not clip its overflow, inflate the outline rect.
         if (namedFlowFragment) {
             if (!(namedFlowFragment->parent()->hasOverflowClip() && (&namedFlowFragment->fragmentContainerLayer() != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)))
-                outlineRect.inflate(renderer().maximalOutlineSize(PaintPhaseOutline));
+                outlineRect.inflate(renderer().view().maximalOutlineSize());
         }
     }
 
@@ -5830,7 +5830,7 @@ LayoutRect RenderLayer::localBoundingBox(CalculateLayerBoundsFlags flags) const
         }
     }
 
-    result.inflate(renderer().view().maximalOutlineSize()); // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
+    result.inflate(renderer().view().maximalOutlineSize());
     return result;
 }
 

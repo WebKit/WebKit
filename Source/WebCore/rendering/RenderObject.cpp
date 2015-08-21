@@ -1878,11 +1878,11 @@ void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions
 }
 #endif
 
-int RenderObject::maximalOutlineSize(PaintPhase p) const
+void RenderObject::adjustRectWithMaximumOutline(PaintPhase phase, LayoutRect& rect) const
 {
-    if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline && p != PaintPhaseChildOutlines)
-        return 0;
-    return view().maximalOutlineSize();
+    if (phase != PaintPhaseOutline && phase != PaintPhaseSelfOutline && phase != PaintPhaseChildOutlines)
+        return;
+    rect.inflate(view().maximalOutlineSize());
 }
 
 int RenderObject::caretMinOffset() const

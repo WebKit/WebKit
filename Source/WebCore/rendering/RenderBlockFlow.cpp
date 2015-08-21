@@ -561,7 +561,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         else
             repaintRect = LayoutRect(repaintLogicalTop, repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft);
 
-        repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
+        repaintRect.inflate(view().maximalOutlineSize());
         
         if (hasOverflowClip()) {
             // Adjust repaint rect for scroll offset
