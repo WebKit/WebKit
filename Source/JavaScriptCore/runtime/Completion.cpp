@@ -28,11 +28,12 @@
 #include "Debugger.h"
 #include "Exception.h"
 #include "Interpreter.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "JSCInlines.h"
+#include "JSModuleRecord.h"
 #include "ModuleAnalyzer.h"
-#include "ModuleRecord.h"
+#include "ModuleLoaderObject.h"
 #include "Parser.h"
 #include <wtf/WTFThreadData.h>
 
@@ -63,8 +64,9 @@ bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
         JSParserStrictMode::NotStrict, SourceParseMode::ProgramMode, error);
 }
 
-bool checkModuleSyntax(VM& vm, const SourceCode& source, ParserError& error)
+bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& error)
 {
+    VM& vm = exec->vm();
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
@@ -73,7 +75,8 @@ bool checkModuleSyntax(VM& vm, const SourceCode& source, ParserError& error)
     if (!moduleProgramNode)
         return false;
 
-    ModuleAnalyzer moduleAnalyzer(vm, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
+    PrivateName privateName(PrivateName::Description, "EntryPointModule");
+    ModuleAnalyzer moduleAnalyzer(exec, Identifier::fromUid(privateName), moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
     moduleAnalyzer.analyze(*moduleProgramNode);
     return true;
 }
@@ -106,6 +109,45 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, N
 
     RELEASE_ASSERT(result);
     return result;
+}
+
+void evaluateModule(ExecState* exec, const SourceCode& source, NakedPtr<Exception>& returnedException)
+{
+    JSLockHolder lock(exec);
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
+    RELEASE_ASSERT(!exec->vm().isCollectorBusy());
+
+    CodeProfiling profile(source);
+
+    JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
+
+    // Generate the unique key for the source-provided module.
+    PrivateName privateName(PrivateName::Description, "EntryPointModule");
+    Symbol* key = Symbol::create(exec->vm(), *privateName.uid());
+
+    ModuleLoaderObject* moduleLoader = globalObject->moduleLoader();
+
+    // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
+    moduleLoader->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.toString());
+    if (exec->hadException()) {
+        returnedException = exec->exception();
+        exec->clearException();
+        return;
+    }
+
+    // FIXME: Now, we don't implement the linking phase yet.
+    // So here, we just call requestInstantiateAll to only perform the module loading.
+    // At last, it should be replaced with requestReady.
+    // https://bugs.webkit.org/show_bug.cgi?id=148172
+    moduleLoader->requestInstantiateAll(exec, key);
+
+    // FIXME: We should also handle the asynchronous Syntax Errors that will be delivered by the rejected promise.
+    // https://bugs.webkit.org/show_bug.cgi?id=148173
+    if (exec->hadException()) {
+        returnedException = exec->exception();
+        exec->clearException();
+        return;
+    }
 }
 
 } // namespace JSC

@@ -389,7 +389,6 @@ set(JavaScriptCore_SOURCES
 
     parser/Lexer.cpp
     parser/ModuleAnalyzer.cpp
-    parser/ModuleRecord.cpp
     parser/Nodes.cpp
     parser/NodesAnalyzeModule.cpp
     parser/Parser.cpp
@@ -533,6 +532,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSLock.cpp
     runtime/JSMap.cpp
     runtime/JSMapIterator.cpp
+    runtime/JSModuleRecord.cpp
     runtime/JSNotAnObject.cpp
     runtime/JSONObject.cpp
     runtime/JSObject.cpp
@@ -567,6 +567,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/MathCommon.cpp
     runtime/MathObject.cpp
     runtime/MemoryStatistics.cpp
+    runtime/ModuleLoaderObject.cpp
     runtime/NativeErrorConstructor.cpp
     runtime/NativeErrorPrototype.cpp
     runtime/NullGetterFunction.cpp
@@ -660,6 +661,7 @@ set(JavaScriptCore_LUT_FILES
     runtime/JSONObject.cpp
     runtime/JSPromiseConstructor.cpp
     runtime/JSPromisePrototype.cpp
+    runtime/ModuleLoaderObject.cpp
     runtime/NumberConstructor.cpp
     runtime/NumberPrototype.cpp
     runtime/ObjectConstructor.cpp

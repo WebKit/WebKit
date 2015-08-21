@@ -459,9 +459,6 @@
     <ClCompile Include="..\parser\ModuleAnalyzer.cpp">
       <Filter>parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\parser\ModuleRecord.cpp">
-      <Filter>parser</Filter>
-    </ClCompile>
     <ClCompile Include="..\parser\Nodes.cpp">
       <Filter>parser</Filter>
     </ClCompile>
@@ -724,6 +721,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSMap.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\JSModuleRecord.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSNotAnObject.cpp">
@@ -1710,6 +1710,9 @@
     <ClCompile Include="..\runtime\MemoryStatistics.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\ModuleLoaderObject.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\ComplexGetStatus.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -2510,9 +2513,6 @@
     <ClInclude Include="..\parser\ModuleAnalyzer.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="..\parser\ModuleRecord.h">
-      <Filter>parser</Filter>
-    </ClInclude>
     <ClInclude Include="..\parser\NodeConstructors.h">
       <Filter>parser</Filter>
     </ClInclude>
@@ -3225,6 +3225,9 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\Lexer.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ModuleLoaderObject.lut.h">
+      <Filter>Derived Sources</Filter>
+    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberConstructor.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
@@ -3475,6 +3478,9 @@
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSMap.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSModuleRecord.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSSet.h">
@@ -4271,6 +4277,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\MemoryStatistics.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ModuleLoaderObject.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\ComplexGetStatus.h">

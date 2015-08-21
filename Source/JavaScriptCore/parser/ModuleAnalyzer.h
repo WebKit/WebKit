@@ -26,20 +26,22 @@
 #ifndef ModuleAnalyzer_h
 #define ModuleAnalyzer_h
 
-#include "ModuleRecord.h"
 #include "Nodes.h"
 
 namespace JSC {
 
-class ModuleAnalyzer {
-public:
-    ModuleAnalyzer(VM&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables);
+class JSModuleRecord;
 
-    Ref<ModuleRecord> analyze(ModuleProgramNode&);
+class ModuleAnalyzer {
+    WTF_MAKE_NONCOPYABLE(ModuleAnalyzer);
+public:
+    ModuleAnalyzer(ExecState*, const Identifier& moduleKey, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables);
+
+    JSModuleRecord* analyze(ModuleProgramNode&);
 
     VM& vm() { return *m_vm; }
 
-    ModuleRecord& moduleRecord() { return *m_moduleRecord; }
+    JSModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
     void declareExportAlias(const Identifier& localName, const Identifier& exportName);
 
@@ -51,7 +53,7 @@ private:
     Identifier exportedBinding(const RefPtr<UniquedStringImpl>& ident);
 
     VM* m_vm;
-    RefPtr<ModuleRecord> m_moduleRecord;
+    Strong<JSModuleRecord> m_moduleRecord;
     VariableEnvironment m_declaredVariables;
     VariableEnvironment m_lexicalVariables;
     IdentifierAliasMap m_aliasMap;

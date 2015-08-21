@@ -331,6 +331,8 @@ typedef const char* optionString;
     v(unsigned, watchdog, 0, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
     \
     v(bool, dumpModuleRecord, false, nullptr) \
+    v(bool, dumpModuleLoadingState, false, nullptr) \
+    v(bool, exposeInternalModuleLoader, false, "expose the internal module loader object to the global space for debugging") \
 
 class Options {
 public:

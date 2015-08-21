@@ -79,8 +79,6 @@ namespace JSC {
     };
     inline FallThroughMode invert(FallThroughMode fallThroughMode) { return static_cast<FallThroughMode>(!fallThroughMode); }
 
-    typedef HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
-
     namespace DeclarationStacks {
         typedef Vector<FunctionMetadataNode*> FunctionStack;
     }

@@ -1,3 +1,161 @@
+2015-08-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] prototyping module loader in JSC shell
+        https://bugs.webkit.org/show_bug.cgi?id=147876
+
+        Reviewed by Saam Barati.
+
+        This patch implements ES6 Module Loader part. The implementation is based on
+        the latest draft[1, 2]. The naive implementation poses several problems.
+        This patch attempts to solve the spec issues and proposes the fix[3, 4, 5].
+
+        We construct the JSC internal module loader based on the ES6 Promises.
+        The chain of the promises represents the dependency graph of the modules and
+        it automatically enables asynchronous module fetching.
+        To leverage the Promises internally, we use the InternalPromise landed in r188681.
+
+        The loader has several platform-dependent hooks. The platform can implement
+        these hooks to provide the functionality missing in the module loaders, like
+        "how to fetch the resources". The method table of the JSGlobalObject is extended
+        to accept these hooks from the platform.
+
+        This patch focus on the loading part. So we don't create the module environment
+        and don't link the modules yet.
+
+        To test the current module progress easily, we add the `-m` option to the JSC shell.
+        When this option is specified, we load the given script as the module. And to use
+        the module loading inside the JSC shell, we added the simple loader hook for fetching.
+        It fetches the module content from the file system.
+
+        And to use the ES6 Map in the Loader implementation, we added @get and @set methods to the Map.
+        But it conflicts with the existing `getPrivateName` method. Rename it to `lookUpPrivateName`.
+
+        [1]: https://whatwg.github.io/loader/
+        [2]: https://github.com/whatwg/loader/commit/214c7a6625b445bdf411c39984f36f01139a24be
+        [3]: https://github.com/whatwg/loader/pull/66
+        [4]: https://github.com/whatwg/loader/pull/67
+        [5]: https://github.com/whatwg/loader/issues/68
+        [6]: https://bugs.webkit.org/show_bug.cgi?id=148136
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::lookUpPrivateName):
+        (JSC::BuiltinNames::lookUpPublicName):
+        (JSC::BuiltinNames::getPrivateName): Deleted.
+        (JSC::BuiltinNames::getPublicName): Deleted.
+        * builtins/ModuleLoaderObject.js: Added.
+        (setStateToMax):
+        (newRegistryEntry):
+        (forceFulfillPromise):
+        (fulfillFetch):
+        (fulfillTranslate):
+        (fulfillInstantiate):
+        (instantiation):
+        (requestFetch):
+        (requestTranslate):
+        (requestInstantiate):
+        (requestResolveDependencies.resolveDependenciesPromise.this.requestInstantiate.then.):
+        (requestResolveDependencies.resolveDependenciesPromise.this.requestInstantiate.then):
+        (requestResolveDependencies):
+        (requestInstantiateAll):
+        (provide):
+        * jsc.cpp:
+        (stringFromUTF):
+        (jscSource):
+        (GlobalObject::moduleLoaderFetch):
+        (functionCheckModuleSyntax):
+        (dumpException):
+        (runWithScripts):
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (jscmain):
+        (CommandLine::CommandLine): Deleted.
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::ModuleAnalyzer):
+        (JSC::ModuleAnalyzer::exportVariable):
+        (JSC::ModuleAnalyzer::analyze):
+        * parser/ModuleAnalyzer.h:
+        (JSC::ModuleAnalyzer::moduleRecord):
+        * parser/ModuleRecord.cpp:
+        (JSC::printableName): Deleted.
+        (JSC::ModuleRecord::dump): Deleted.
+        * parser/ModuleRecord.h:
+        (JSC::ModuleRecord::ImportEntry::isNamespace): Deleted.
+        (JSC::ModuleRecord::create): Deleted.
+        (JSC::ModuleRecord::appendRequestedModule): Deleted.
+        (JSC::ModuleRecord::addImportEntry): Deleted.
+        (JSC::ModuleRecord::addExportEntry): Deleted.
+        (JSC::ModuleRecord::addStarExportEntry): Deleted.
+        * parser/Nodes.h:
+        * parser/NodesAnalyzeModule.cpp:
+        (JSC::ImportDeclarationNode::analyzeModule):
+        (JSC::ExportAllDeclarationNode::analyzeModule):
+        (JSC::ExportNamedDeclarationNode::analyzeModule):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::lookUpPrivateName):
+        (JSC::CommonIdentifiers::lookUpPublicName):
+        (JSC::CommonIdentifiers::getPrivateName): Deleted.
+        (JSC::CommonIdentifiers::getPublicName): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/Completion.cpp:
+        (JSC::checkModuleSyntax):
+        (JSC::evaluateModule):
+        * runtime/Completion.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/Identifier.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::moduleLoader):
+        (JSC::JSGlobalObject::moduleRecordStructure):
+        * runtime/JSModuleRecord.cpp: Renamed from Source/JavaScriptCore/parser/ModuleRecord.cpp.
+        (JSC::JSModuleRecord::destroy):
+        (JSC::JSModuleRecord::finishCreation):
+        (JSC::printableName):
+        (JSC::JSModuleRecord::dump):
+        * runtime/JSModuleRecord.h: Renamed from Source/JavaScriptCore/parser/ModuleRecord.h.
+        (JSC::JSModuleRecord::ImportEntry::isNamespace):
+        (JSC::JSModuleRecord::createStructure):
+        (JSC::JSModuleRecord::create):
+        (JSC::JSModuleRecord::requestedModules):
+        (JSC::JSModuleRecord::JSModuleRecord):
+        (JSC::JSModuleRecord::appendRequestedModule):
+        (JSC::JSModuleRecord::addImportEntry):
+        (JSC::JSModuleRecord::addExportEntry):
+        (JSC::JSModuleRecord::addStarExportEntry):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/ModuleLoaderObject.cpp: Added.
+        (JSC::ModuleLoaderObject::ModuleLoaderObject):
+        (JSC::ModuleLoaderObject::finishCreation):
+        (JSC::ModuleLoaderObject::getOwnPropertySlot):
+        (JSC::printableModuleKey):
+        (JSC::ModuleLoaderObject::provide):
+        (JSC::ModuleLoaderObject::requestInstantiateAll):
+        (JSC::ModuleLoaderObject::resolve):
+        (JSC::ModuleLoaderObject::fetch):
+        (JSC::ModuleLoaderObject::translate):
+        (JSC::ModuleLoaderObject::instantiate):
+        (JSC::moduleLoaderObjectParseModule):
+        (JSC::moduleLoaderObjectRequestedModules):
+        (JSC::moduleLoaderObjectResolve):
+        (JSC::moduleLoaderObjectFetch):
+        (JSC::moduleLoaderObjectTranslate):
+        (JSC::moduleLoaderObjectInstantiate):
+        * runtime/ModuleLoaderObject.h: Added.
+        (JSC::ModuleLoaderObject::create):
+        (JSC::ModuleLoaderObject::createStructure):
+        * runtime/Options.h:
+
 2015-08-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have a KnownBooleanUse for cases where we are required to know that the child is a boolean and it's not OK to speculate

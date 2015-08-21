@@ -935,7 +935,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
                 return ERRORTOK;
             }
             if (isPrivateName)
-                ident = m_vm->propertyNames->getPrivateName(*ident);
+                ident = m_vm->propertyNames->lookUpPrivateName(*ident);
             else if (*ident == m_vm->propertyNames->undefinedKeyword)
                 tokenData->ident = &m_vm->propertyNames->undefinedPrivateName;
             if (!ident)
@@ -1012,7 +1012,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
                 return ERRORTOK;
             }
             if (isPrivateName)
-                ident = m_vm->propertyNames->getPrivateName(*ident);
+                ident = m_vm->propertyNames->lookUpPrivateName(*ident);
             else if (*ident == m_vm->propertyNames->undefinedKeyword)
                 tokenData->ident = &m_vm->propertyNames->undefinedPrivateName;
             if (!ident)

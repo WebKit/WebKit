@@ -56,6 +56,7 @@ all : \
     JSPromiseConstructor.lut.h \
     KeywordLookup.h \
     Lexer.lut.h \
+    ModuleLoaderObject.lut.h \
     NumberConstructor.lut.h \
     NumberPrototype.lut.h \
     ObjectConstructor.lut.h \

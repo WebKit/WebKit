@@ -67,8 +67,8 @@ public:
     bool isPrivateName(SymbolImpl& uid) const;
     bool isPrivateName(UniquedStringImpl& uid) const;
     bool isPrivateName(const Identifier&) const;
-    const Identifier* getPrivateName(const Identifier&) const;
-    const Identifier& getPublicName(const Identifier&) const;
+    const Identifier* lookUpPrivateName(const Identifier&) const;
+    const Identifier& lookUpPublicName(const Identifier&) const;
     
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
@@ -110,7 +110,7 @@ inline bool BuiltinNames::isPrivateName(const Identifier& ident) const
     return isPrivateName(*ident.impl());
 }
 
-inline const Identifier* BuiltinNames::getPrivateName(const Identifier& ident) const
+inline const Identifier* BuiltinNames::lookUpPrivateName(const Identifier& ident) const
 {
     auto iter = m_publicToPrivateMap.find(ident.impl());
     if (iter != m_publicToPrivateMap.end())
@@ -118,7 +118,7 @@ inline const Identifier* BuiltinNames::getPrivateName(const Identifier& ident) c
     return 0;
 }
 
-inline const Identifier& BuiltinNames::getPublicName(const Identifier& ident) const
+inline const Identifier& BuiltinNames::lookUpPublicName(const Identifier& ident) const
 {
     auto iter = m_privateToPublicMap.find(ident.impl());
     if (iter != m_privateToPublicMap.end())

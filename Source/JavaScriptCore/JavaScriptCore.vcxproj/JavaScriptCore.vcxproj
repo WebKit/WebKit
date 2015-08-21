@@ -662,7 +662,6 @@
     <ClCompile Include="..\llvm\LLVMAPI.cpp" />
     <ClCompile Include="..\parser\Lexer.cpp" />
     <ClCompile Include="..\parser\ModuleAnalyzer.cpp" />
-    <ClCompile Include="..\parser\ModuleRecord.cpp" />
     <ClCompile Include="..\parser\Nodes.cpp" />
     <ClCompile Include="..\parser\NodesAnalyzeModule.cpp" />
     <ClCompile Include="..\parser\Parser.cpp" />
@@ -783,6 +782,7 @@
     <ClCompile Include="..\runtime\JSLock.cpp" />
     <ClCompile Include="..\runtime\JSMap.cpp" />
     <ClCompile Include="..\runtime\JSMapIterator.cpp" />
+    <ClCompile Include="..\runtime\JSModuleRecord.cpp" />
     <ClCompile Include="..\runtime\JSNotAnObject.cpp" />
     <ClCompile Include="..\runtime\JSONObject.cpp" />
     <ClCompile Include="..\runtime\JSObject.cpp" />
@@ -818,6 +818,7 @@
     <ClCompile Include="..\runtime\MathCommon.cpp" />
     <ClCompile Include="..\runtime\MathObject.cpp" />
     <ClCompile Include="..\runtime\MemoryStatistics.cpp" />
+    <ClCompile Include="..\runtime\ModuleLoaderObject.cpp" />
     <ClCompile Include="..\runtime\NativeErrorConstructor.cpp" />
     <ClCompile Include="..\runtime\NativeErrorPrototype.cpp" />
     <ClCompile Include="..\runtime\NullGetterFunction.cpp" />
@@ -930,6 +931,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ModuleLoaderObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ReflectObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpJitTables.h" />
@@ -1462,7 +1464,6 @@
     <ClInclude Include="..\parser\ASTBuilder.h" />
     <ClInclude Include="..\parser\Lexer.h" />
     <ClInclude Include="..\parser\ModuleAnalyzer.h" />
-    <ClInclude Include="..\parser\ModuleRecord.h" />
     <ClInclude Include="..\parser\NodeConstructors.h" />
     <ClInclude Include="..\parser\Nodes.h" />
     <ClInclude Include="..\parser\Parser.h" />
@@ -1632,6 +1633,7 @@
     <ClInclude Include="..\runtime\JSLock.h" />
     <ClInclude Include="..\runtime\JSMap.h" />
     <ClInclude Include="..\runtime\JSMapIterator.h" />
+    <ClInclude Include="..\runtime\JSModuleRecord.h" />
     <ClInclude Include="..\runtime\JSNotAnObject.h" />
     <ClInclude Include="..\runtime\JSONObject.h" />
     <ClInclude Include="..\runtime\JSObject.h" />
@@ -1677,6 +1679,7 @@
     <ClInclude Include="..\runtime\MathCommon.h" />
     <ClInclude Include="..\runtime\MathObject.h" />
     <ClInclude Include="..\runtime\MemoryStatistics.h" />
+    <ClInclude Include="..\runtime\ModuleLoaderObject.h" />
     <ClInclude Include="..\runtime\Microtask.h" />
     <ClInclude Include="..\runtime\NativeErrorConstructor.h" />
     <ClInclude Include="..\runtime\NativeErrorPrototype.h" />

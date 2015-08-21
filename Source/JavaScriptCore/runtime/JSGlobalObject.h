@@ -70,11 +70,14 @@ class GetterSetter;
 class GlobalCodeBlock;
 class InputCursor;
 class JSGlobalObjectDebuggable;
+class JSPromise;
 class JSPromiseConstructor;
 class JSPromisePrototype;
+class JSInternalPromise;
 class JSStack;
 class LLIntOffsetsExtractor;
 class Microtask;
+class ModuleLoaderObject;
 class NativeErrorConstructor;
 class ObjectConstructor;
 class ProgramCodeBlock;
@@ -152,6 +155,18 @@ struct GlobalObjectMethodTable {
 
     typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);
     ShouldInterruptScriptBeforeTimeoutPtr shouldInterruptScriptBeforeTimeout;
+
+    typedef JSInternalPromise* (*ModuleLoaderResolvePtr)(JSGlobalObject*, ExecState*, JSValue, JSValue);
+    ModuleLoaderResolvePtr moduleLoaderResolve;
+
+    typedef JSInternalPromise* (*ModuleLoaderFetchPtr)(JSGlobalObject*, ExecState*, JSValue);
+    ModuleLoaderFetchPtr moduleLoaderFetch;
+
+    typedef JSInternalPromise* (*ModuleLoaderTranslatePtr)(JSGlobalObject*, ExecState*, JSValue, JSValue);
+    ModuleLoaderTranslatePtr moduleLoaderTranslate;
+
+    typedef JSInternalPromise* (*ModuleLoaderInstantiatePtr)(JSGlobalObject*, ExecState*, JSValue, JSValue);
+    ModuleLoaderInstantiatePtr moduleLoaderInstantiate;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {
@@ -203,6 +218,8 @@ protected:
     WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
     WriteBarrier<GetterSetter> m_throwTypeErrorGetterSetter;
 
+    WriteBarrier<ModuleLoaderObject> m_moduleLoader;
+
     WriteBarrier<ObjectPrototype> m_objectPrototype;
     WriteBarrier<FunctionPrototype> m_functionPrototype;
     WriteBarrier<ArrayPrototype> m_arrayPrototype;
@@ -244,6 +261,7 @@ protected:
     WriteBarrier<Structure> m_internalFunctionStructure;
     WriteBarrier<Structure> m_iteratorResultStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
+    WriteBarrier<Structure> m_moduleRecordStructure;
 #if ENABLE(WEBASSEMBLY)
     WriteBarrier<Structure> m_wasmModuleStructure;
 #endif
@@ -410,6 +428,8 @@ public:
         return m_throwTypeErrorGetterSetter.get();
     }
 
+    ModuleLoaderObject* moduleLoader() const { return m_moduleLoader.get(); }
+
     ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
     FunctionPrototype* functionPrototype() const { return m_functionPrototype.get(); }
     ArrayPrototype* arrayPrototype() const { return m_arrayPrototype.get(); }
@@ -478,6 +498,7 @@ public:
     Structure* iteratorResultStructure() const { return m_iteratorResultStructure.get(); }
     static ptrdiff_t iteratorResultStructureOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_iteratorResultStructure); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
+    Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(); }
 #if ENABLE(WEBASSEMBLY)
     Structure* wasmModuleStructure() const { return m_wasmModuleStructure.get(); }
 #endif

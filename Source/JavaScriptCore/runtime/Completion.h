@@ -37,13 +37,14 @@ class VM;
 
 JS_EXPORT_PRIVATE bool checkSyntax(VM&, const SourceCode&, ParserError&);
 JS_EXPORT_PRIVATE bool checkSyntax(ExecState*, const SourceCode&, JSValue* exception = 0);
-JS_EXPORT_PRIVATE bool checkModuleSyntax(VM&, const SourceCode&, ParserError&);
+JS_EXPORT_PRIVATE bool checkModuleSyntax(ExecState*, const SourceCode&, ParserError&);
 JS_EXPORT_PRIVATE JSValue evaluate(ExecState*, const SourceCode&, JSValue thisValue, NakedPtr<Exception>& returnedException);
 inline JSValue evaluate(ExecState* exec, const SourceCode& sourceCode, JSValue thisValue = JSValue())
 {
     NakedPtr<Exception> unused;
     return evaluate(exec, sourceCode, thisValue, unused);
 }
+JS_EXPORT_PRIVATE void evaluateModule(ExecState*, const SourceCode&, NakedPtr<Exception>& returnedException);
 
 } // namespace JSC
 

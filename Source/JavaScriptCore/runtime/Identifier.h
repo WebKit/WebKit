@@ -292,6 +292,7 @@ struct IdentifierMapIndexHashTraits : HashTraits<int> {
     static const bool emptyValueIsZero = false;
 };
 
+typedef HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
 typedef HashMap<RefPtr<UniquedStringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, IdentifierMapIndexHashTraits> IdentifierMap;
 typedef HashMap<UniquedStringImpl*, int, IdentifierRepHash, HashTraits<UniquedStringImpl*>, IdentifierMapIndexHashTraits> BorrowedIdentifierMap;
 
