@@ -186,7 +186,14 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         if (this._text === text)
             return;
 
-        var modified = text !== this._initialText;
+        let trimmedText = text.trim();
+        if (this._text === trimmedText)
+            return;
+
+        if (!trimmedText.length || this._type === WebInspector.CSSStyleDeclaration.Type.Inline)
+            text = trimmedText;
+
+        let modified = text !== this._initialText;
         if (modified !== this._hasModifiedInitialText) {
             this._hasModifiedInitialText = modified;
             this.dispatchEventToListeners(WebInspector.CSSStyleDeclaration.Event.InitialTextModified);

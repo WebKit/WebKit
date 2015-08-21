@@ -77,7 +77,6 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
 
     modifyPropertyText(text, value)
     {
-        let trimmedText = text.trimRight();
         if (this._textContainsNameRegExp.test(text))
             text = text.replace(this._replacementRegExp, value !== null ? "$1$2: " + value + ";" : "$1");
         else if (value !== null)
