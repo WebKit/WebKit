@@ -338,11 +338,10 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
     removeAllChildFrames()
     {
-        if (!this._childFrames.length)
-            return;
+        this._detachFromParentFrame();
 
         for (let childFrame of this._childFrames)
-            childFrame._detachFromParentFrame();
+            childFrame.removeAllChildFrames();
 
         this._childFrames = [];
         this._childFrameIdentifierMap = {};

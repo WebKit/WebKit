@@ -1,3 +1,22 @@
+2015-08-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add a regression test for the fix introduced in r188679
+        https://bugs.webkit.org/show_bug.cgi?id=148223
+
+        Reviewed by Joseph Pecoraro.
+
+        Turns out that we were possibly leaking a single DOMTree on reload.
+        Always clear the main frame's DOMTree as well as those of sub-frames.
+
+        * UserInterface/Base/Object.js: Add back single-fire listeners.
+        (WebInspector.Object.singleFireEventListener.let.wrappedCallback):
+        (WebInspector.Object.singleFireEventListener):
+        (WebInspector.Object.retainedObjectsWithPrototype):
+        (WebInspector.Object.prototype.singleFireEventListener):
+        (WebInspector.Object.prototype.retainedObjectsWithPrototype):
+        * UserInterface/Models/Frame.js:
+        (WebInspector.Frame.prototype.removeAllChildFrames): Clear own tree too.
+
 2015-08-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better Remember open tab types and order if using JSContext inspector
