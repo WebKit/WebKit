@@ -350,7 +350,7 @@ void Debugger::recompileAllJSFunctions(VM* vm)
     }
 
 #if ENABLE(DFG_JIT)
-    DFG::completeAllPlansForVM(*m_vm);
+    DFG::completeAllPlansForVM(*vm);
 #endif
 
     Recompiler recompiler(this);
