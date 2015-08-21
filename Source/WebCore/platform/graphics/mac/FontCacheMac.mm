@@ -518,17 +518,10 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     // font pointer.
     NSFont *substituteFont = toNSFont(fallbackDedupSet().add(result).iterator->get());
 
-    // Use the family name from the AppKit-supplied substitute font, requesting the
-    // traits, weight, and size we want. One way this does better than the original
-    // AppKit request is that it takes synthetic bold and oblique into account.
-    // But it does create the possibility that we could end up with a font that
-    // doesn't actually cover the characters we need.
-
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
     NSFontTraitMask traits = 0;
     NSInteger weight;
-    CGFloat size;
 
     if (nsFont) {
         if (description.italic())
@@ -538,31 +531,14 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         if (platformData.m_syntheticOblique)
             traits |= NSFontItalicTrait;
         weight = [fontManager weightOfFont:nsFont];
-        size = [nsFont pointSize];
     } else {
-        // For custom fonts nsFont is nil.
+        ASSERT(!CORETEXT_WEB_FONTS);
         traits = description.italic() ? NSFontItalicTrait : 0;
         weight = toAppKitFontWeight(description.weight());
-        size = description.computedPixelSize();
     }
 
     NSFontTraitMask substituteFontTraits = [fontManager traitsOfFont:substituteFont];
     NSInteger substituteFontWeight = [fontManager weightOfFont:substituteFont];
-
-    if (traits != substituteFontTraits || weight != substituteFontWeight || !nsFont) {
-        if (NSFont *bestVariation = [fontManager fontWithFamily:[substituteFont familyName] traits:traits weight:weight size:size]) {
-            UChar32 character;
-            U16_GET(characters, 0, 0, length, character);
-            if (!nsFont || (([fontManager traitsOfFont:bestVariation] != substituteFontTraits || [fontManager weightOfFont:bestVariation] != substituteFontWeight)
-                && [[bestVariation coveredCharacterSet] longCharacterIsMember:character]))
-                substituteFont = bestVariation;
-        }
-    }
-
-    substituteFont = [substituteFont printerFont];
-
-    substituteFontTraits = [fontManager traitsOfFont:substituteFont];
-    substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
     FontPlatformData alternateFont(toCTFont(substituteFont), platformData.size(),
         !isPlatformFont && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
