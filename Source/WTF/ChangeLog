@@ -1,5 +1,14 @@
 2015-08-21  Anders Carlsson  <andersca@apple.com>
 
+        Address review feedback from Darin.
+
+        * wtf/MainThread.h:
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        (WTF::callOnMainThread):
+        (WTF::cancelCallOnMainThread):
+
+2015-08-21  Anders Carlsson  <andersca@apple.com>
+
         Deprecate the old school callOnMainThread/cancelCallOnMainThread functions
         https://bugs.webkit.org/show_bug.cgi?id=148327
 
