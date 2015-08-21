@@ -1,3 +1,24 @@
+2015-08-20  Chris Dumez  <cdumez@apple.com>
+
+        getElementsByClassName() should return an HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=147980
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/getElementsByClassName/dumpHTMLCollection-expected.txt: Renamed from LayoutTests/fast/dom/getElementsByClassName/dumpNodeList-expected.txt.
+        * fast/dom/getElementsByClassName/dumpHTMLCollection.html: Renamed from LayoutTests/fast/dom/getElementsByClassName/dumpNodeList.html.
+        Rename test now that getElementsByClassName returns an HTMLCollection
+        and update the test to update the HTMLCollection prototype instead
+        of the NodeList one.
+
+        * fast/dom/getElementsByClassName/return-type-expected.txt: Added.
+        * fast/dom/getElementsByClassName/return-type.html: Added.
+        New test that checks that getElementsByClassName() returns an
+        HTMLCollection.
+
+        * inspector/model/remote-object-expected.txt:
+        Rebaseline.
+
 2015-08-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r188167

@@ -46,6 +46,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     case DocumentNamedItems:
     case FormControls:
         return HTMLCollection::IsRootedAtDocument;
+    case ByClass:
     case NodeChildren:
     case TableTBodies:
     case TSectionRows:
@@ -82,6 +83,8 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case DataListOptions:
         // FIXME: We can do better some day.
         return InvalidateOnAnyAttrChange;
+    case ByClass:
+        return InvalidateOnClassAttrChange;
     case DocAnchors:
         return InvalidateOnNameAttrChange;
     case DocLinks:
@@ -113,9 +116,16 @@ HTMLCollection::~HTMLCollection()
     if (hasNamedElementCache())
         document().collectionWillClearIdNameMap(*this);
 
-    // HTMLNameCollection removes cache by itself.
-    if (type() != WindowNamedItems && type() != DocumentNamedItems)
+    // HTMLNameCollection & ClassCollection remove cache by themselves.
+    // FIXME: We need a cleaner way to handle this.
+    switch (type()) {
+    case ByClass:
+    case WindowNamedItems:
+    case DocumentNamedItems:
+        break;
+    default:
         ownerNode().nodeLists()->removeCachedCollection(this);
+    }
 }
 
 void HTMLCollection::invalidateCache(Document& document)

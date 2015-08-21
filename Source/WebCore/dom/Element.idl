@@ -107,7 +107,11 @@
     void scrollByPages([Default=Undefined] optional long pages);
 
     // HTML 5
-    NodeList getElementsByClassName([Default=Undefined] optional DOMString name);
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName([Default=Undefined] optional DOMString name);
+#else
+    HTMLCollection getElementsByClassName([Default=Undefined] optional DOMString name);
+#endif
     [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerHTML;
     [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerHTML;
              

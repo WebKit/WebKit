@@ -13603,7 +13603,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\dom\ClassNodeList.cpp">
+    <ClCompile Include="..\dom\ClassCollection.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -22020,7 +22020,7 @@
     <ClInclude Include="..\dom\CheckedRadioButtons.h" />
     <ClInclude Include="..\dom\ChildListMutationScope.h" />
     <ClInclude Include="..\dom\ChildNodeList.h" />
-    <ClInclude Include="..\dom\ClassNodeList.h" />
+    <ClInclude Include="..\dom\ClassCollection.h" />
     <ClInclude Include="..\dom\ClientRect.h" />
     <ClInclude Include="..\dom\ClientRectList.h" />
     <ClInclude Include="..\dom\ClipboardEvent.h" />

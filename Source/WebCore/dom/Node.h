@@ -43,7 +43,7 @@
 namespace WebCore {
 
 class Attribute;
-class ClassNodeList;
+class ClassCollection;
 class ContainerNode;
 class DOMSettableTokenList;
 class Document;

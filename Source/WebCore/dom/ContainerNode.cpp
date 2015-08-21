@@ -27,7 +27,7 @@
 #include "ChildListMutationScope.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ClassNodeList.h"
+#include "ClassCollection.h"
 #include "ContainerNodeAlgorithms.h"
 #include "Editor.h"
 #include "FloatRect.h"
@@ -890,9 +890,14 @@ RefPtr<NodeList> ContainerNode::getElementsByName(const String& elementName)
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, elementName);
 }
 
-RefPtr<NodeList> ContainerNode::getElementsByClassName(const AtomicString& classNames)
+RefPtr<HTMLCollection> ContainerNode::getElementsByClassName(const AtomicString& classNames)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<ClassNodeList>(*this, classNames);
+    return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, ByClass, classNames);
+}
+
+RefPtr<NodeListBase> ContainerNode::getElementsByClassNameForObjC(const AtomicString& classNames)
+{
+    return getElementsByClassName(classNames);
 }
 
 RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)

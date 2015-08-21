@@ -23,7 +23,7 @@
 #define NodeRareData_h
 
 #include "ChildNodeList.h"
-#include "ClassNodeList.h"
+#include "ClassCollection.h"
 #include "DOMSettableTokenList.h"
 #include "HTMLCollection.h"
 #include "HTMLNames.h"
@@ -47,12 +47,11 @@ class RadioNodeList;
 class TreeScope;
 
 template <class ListType> struct NodeListTypeIdentifier;
-template <> struct NodeListTypeIdentifier<ClassNodeList> { static int value() { return 0; } };
-template <> struct NodeListTypeIdentifier<NameNodeList> { static int value() { return 1; } };
-template <> struct NodeListTypeIdentifier<TagNodeList> { static int value() { return 2; } };
-template <> struct NodeListTypeIdentifier<HTMLTagNodeList> { static int value() { return 3; } };
-template <> struct NodeListTypeIdentifier<RadioNodeList> { static int value() { return 4; } };
-template <> struct NodeListTypeIdentifier<LabelsNodeList> { static int value() { return 5; } };
+template <> struct NodeListTypeIdentifier<NameNodeList> { static int value() { return 0; } };
+template <> struct NodeListTypeIdentifier<TagNodeList> { static int value() { return 1; } };
+template <> struct NodeListTypeIdentifier<HTMLTagNodeList> { static int value() { return 2; } };
+template <> struct NodeListTypeIdentifier<RadioNodeList> { static int value() { return 3; } };
+template <> struct NodeListTypeIdentifier<LabelsNodeList> { static int value() { return 4; } };
 
 class NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;

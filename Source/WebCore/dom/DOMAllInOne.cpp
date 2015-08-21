@@ -35,7 +35,7 @@
 #include "CheckedRadioButtons.cpp"
 #include "ChildListMutationScope.cpp"
 #include "ChildNodeList.cpp"
-#include "ClassNodeList.cpp"
+#include "ClassCollection.cpp"
 #include "ClientRect.cpp"
 #include "ClientRectList.cpp"
 #include "ClipboardEvent.cpp"

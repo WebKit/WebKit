@@ -210,7 +210,11 @@
 #endif
 
     // HTML 5
-    NodeList getElementsByClassName([Default=Undefined] optional DOMString classNames);
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName([Default=Undefined] optional DOMString classNames);
+#else
+    HTMLCollection getElementsByClassName([Default=Undefined] optional DOMString classNames);
+#endif
 
     readonly attribute Element activeElement;
     boolean hasFocus();

@@ -50,7 +50,8 @@ enum CollectionType {
     SelectedOptions,
     DataListOptions,
     MapAreas,
-    FormControls
+    FormControls,
+    ByClass,
 };
 
 enum class CollectionTraversalType { Descendants, ChildrenOnly, CustomForwardOnly };

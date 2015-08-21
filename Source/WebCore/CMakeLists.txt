@@ -1357,7 +1357,7 @@ set(WebCore_SOURCES
     dom/CheckedRadioButtons.cpp
     dom/ChildListMutationScope.cpp
     dom/ChildNodeList.cpp
-    dom/ClassNodeList.cpp
+    dom/ClassCollection.cpp
     dom/ClientRect.cpp
     dom/ClientRectList.cpp
     dom/ClipboardEvent.cpp

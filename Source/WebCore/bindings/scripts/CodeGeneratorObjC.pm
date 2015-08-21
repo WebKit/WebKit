@@ -420,6 +420,7 @@ sub GetImplClassName
 {
     my $name = shift;
 
+    return "NodeListBase" if $name eq "NodeList";
     return "DOMWindow" if $name eq "AbstractView";
     return $name;
 }

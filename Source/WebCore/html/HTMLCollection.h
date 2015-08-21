@@ -58,13 +58,12 @@ private:
 #endif
 };
 
-class HTMLCollection : public ScriptWrappable, public RefCounted<HTMLCollection> {
+class HTMLCollection : public NodeListBase, public ScriptWrappable {
 public:
     virtual ~HTMLCollection();
 
     // DOM API
-    virtual unsigned length() const = 0;
-    virtual Element* item(unsigned offset) const = 0;
+    virtual Element* item(unsigned index) const = 0; // Tighten return type from NodeListBase::item().
     virtual Element* namedItem(const AtomicString& name) const = 0;
     PassRefPtr<NodeList> tags(const String&);
 
