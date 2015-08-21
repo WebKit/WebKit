@@ -72,6 +72,7 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
 
@@ -1044,31 +1045,29 @@ void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata(%p) - requesting metadata loading", this);
 
-    dispatch_group_t metadataLoadingGroup = dispatch_group_create();
-    dispatch_group_enter(metadataLoadingGroup);
+    OSObjectPtr<dispatch_group_t> metadataLoadingGroup = adoptOSObject(dispatch_group_create());
+    dispatch_group_enter(metadataLoadingGroup.get());
     auto weakThis = createWeakPtr();
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:assetMetadataKeyNames() completionHandler:^{
 
         callOnMainThread([weakThis, metadataLoadingGroup] {
             if (weakThis && [weakThis->m_avAsset.get() statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
                 for (AVAssetTrack *track in [weakThis->m_avAsset.get() tracks]) {
-                    dispatch_group_enter(metadataLoadingGroup);
+                    dispatch_group_enter(metadataLoadingGroup.get());
                     [track loadValuesAsynchronouslyForKeys:assetTrackMetadataKeyNames() completionHandler:^{
-                        dispatch_group_leave(metadataLoadingGroup);
+                        dispatch_group_leave(metadataLoadingGroup.get());
                     }];
                 }
             }
-            dispatch_group_leave(metadataLoadingGroup);
+            dispatch_group_leave(metadataLoadingGroup.get());
         });
     }];
 
-    dispatch_group_notify(metadataLoadingGroup, dispatch_get_main_queue(), ^{
+    dispatch_group_notify(metadataLoadingGroup.get(), dispatch_get_main_queue(), ^{
         callOnMainThread([weakThis] {
             if (weakThis)
                 [weakThis->m_objcObserver.get() metadataLoaded];
         });
-
-        dispatch_release(metadataLoadingGroup);
     });
 }
 
