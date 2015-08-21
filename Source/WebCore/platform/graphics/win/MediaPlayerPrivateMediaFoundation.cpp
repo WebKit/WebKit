@@ -335,7 +335,7 @@ bool MediaPlayerPrivateMediaFoundation::endCreatedMediaSource(IMFAsyncResult* as
     hr = asyncResult->GetStatus();
     m_loadingProgress = SUCCEEDED(hr);
 
-    auto weakPtr = m_weakFactory.createWeakPtr();
+    auto weakPtr = m_weakPtrFactory.createWeakPtr();
     callOnMainThread([weakPtr] {
         if (!weakPtr)
             return;
@@ -365,7 +365,7 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
 
     switch (mediaEventType) {
     case MESessionTopologySet:
-        auto weakPtr = m_weakFactory.createWeakPtr();
+        auto weakPtr = m_weakPtrFactory.createWeakPtr();
         callOnMainThread([weakPtr] {
             if (!weakPtr)
                 return;
