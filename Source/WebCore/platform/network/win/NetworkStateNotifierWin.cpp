@@ -80,11 +80,6 @@ void NetworkStateNotifier::addressChanged()
     notifyNetworkStateChange();
 }
 
-void NetworkStateNotifier::callAddressChanged(void* context)
-{
-    static_cast<NetworkStateNotifier*>(context)->addressChanged();
-}
-
 void CALLBACK NetworkStateNotifier::addrChangeCallback(void* context, BOOLEAN timedOut)
 {
     NetworkStateNotifier* notifier = static_cast<NetworkStateNotifier*>(context);
@@ -95,7 +90,7 @@ void CALLBACK NetworkStateNotifier::addrChangeCallback(void* context, BOOLEAN ti
 
     callOnMainThread([notifier] {
         notifier->addressChanged();
-    }
+    });
 }
 
 void NetworkStateNotifier::registerForAddressChange()
