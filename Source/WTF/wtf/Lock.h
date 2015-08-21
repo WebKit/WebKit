@@ -43,7 +43,9 @@ namespace WTF {
 // cannot be acquired in a short period of time, the thread is put to sleep until the lock is available
 // again). It uses less memory than a std::mutex.
 
-struct Lock {
+// This is a struct without a constructor or destructor so that it can be statically initialized.
+// Use Lock in instance variables.
+struct LockBase {
     void lock()
     {
         if (LIKELY(m_byte.compareExchangeWeak(0, isHeldBit, std::memory_order_acquire))) {
@@ -106,13 +108,20 @@ protected:
         return !m_byte.load();
     }
 
-    Atomic<uint8_t> m_byte { 0 };
+    Atomic<uint8_t> m_byte;
 };
 
-typedef Locker<Lock> LockHolder;
+class Lock : public LockBase {
+    WTF_MAKE_NONCOPYABLE(Lock);
+public:
+    Lock()
+    {
+        m_byte.store(0, std::memory_order_relaxed);
+    }
+};
 
-// FIXME: Once all clients have been moved from StaticLock to Lock we can get rid of this typedef.
-typedef Lock StaticLock;
+typedef LockBase StaticLock;
+typedef Locker<LockBase> LockHolder;
 
 } // namespace WTF
 

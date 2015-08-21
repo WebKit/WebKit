@@ -43,7 +43,7 @@ namespace WebCore {
 static CFRunLoopRef loaderRunLoopObject = 0;
 
 static StaticLock loaderRunLoopMutex;
-static Condition loaderRunLoopConditionVariable;
+static StaticCondition loaderRunLoopConditionVariable;
 
 static void emptyPerform(void*) 
 {

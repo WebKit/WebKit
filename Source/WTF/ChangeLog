@@ -1,3 +1,20 @@
+2015-08-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r188717 and r188719.
+        https://bugs.webkit.org/show_bug.cgi?id=148272
+
+        Broke the Mavericks build (Requested by andersca on #webkit).
+
+        Reverted changesets:
+
+        "Merge Lock and LockBase"
+        https://bugs.webkit.org/show_bug.cgi?id=148266
+        http://trac.webkit.org/changeset/188717
+
+        "Merge ConditionBase and Condition"
+        https://bugs.webkit.org/show_bug.cgi?id=148270
+        http://trac.webkit.org/changeset/188719
+
 2015-08-20  Anders Carlsson  <andersca@apple.com>
 
         Merge ConditionBase and Condition

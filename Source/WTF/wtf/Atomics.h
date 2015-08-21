@@ -81,12 +81,6 @@ namespace WTF {
 
 template<typename T>
 struct Atomic {
-    Atomic() = default;
-    CONSTEXPR Atomic(T value)
-        : value(value)
-    {
-    }
-
     // Don't pass a non-default value for the order parameter unless you really know
     // what you are doing and have thought about it very hard. The cost of seq_cst
     // is usually not high enough to justify the risk.

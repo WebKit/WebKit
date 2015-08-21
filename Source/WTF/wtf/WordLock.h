@@ -45,7 +45,10 @@ namespace WTF {
 class WordLock {
     WTF_MAKE_NONCOPYABLE(WordLock);
 public:
-    CONSTEXPR WordLock() = default;
+    WordLock()
+    {
+        m_word.store(0, std::memory_order_relaxed);
+    }
 
     void lock()
     {
@@ -93,7 +96,7 @@ private:
         return !m_word.load();
     }
 
-    Atomic<uintptr_t> m_word { 0 };
+    Atomic<uintptr_t> m_word;
 };
 
 typedef Locker<WordLock> WordLockHolder;

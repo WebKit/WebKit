@@ -43,7 +43,9 @@ namespace WTF {
 // case where no thread is waiting. This condition variable, when used with WTF::Lock, can
 // outperform a system condition variable and lock by up to 58x.
 
-struct Condition {
+// This is a struct without a constructor or destructor so that it can be statically initialized.
+// Use Lock in instance variables.
+struct ConditionBase {
     typedef ParkingLot::Clock Clock;
     
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
@@ -226,12 +228,24 @@ protected:
         return Clock::now() + myRelativeTimeout;
     }
 
-    Atomic<bool> m_hasWaiters { false };
+    Atomic<bool> m_hasWaiters;
 };    
+
+class Condition : public ConditionBase {
+    WTF_MAKE_NONCOPYABLE(Condition);
+public:
+    Condition()
+    {
+        m_hasWaiters.store(false);
+    }
+};
+
+typedef ConditionBase StaticCondition;
 
 } // namespace WTF
 
 using WTF::Condition;
+using WTF::StaticCondition;
 
 #endif // WTF_Condition_h
 
