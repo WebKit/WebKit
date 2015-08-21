@@ -43,8 +43,6 @@ namespace WTF {
 // cannot be acquired in a short period of time, the thread is put to sleep until the lock is available
 // again). It uses less memory than a std::mutex.
 
-// This is a struct without a constructor or destructor so that it can be statically initialized.
-// Use Lock in instance variables.
 struct Lock {
     void lock()
     {
