@@ -1,3 +1,19 @@
+2015-08-20  Anders Carlsson  <andersca@apple.com>
+
+        Use WKPageConfigurationRef in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=147996
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+        (WTR::TestController::createWebViewWithOptions):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[TestRunnerWKView initWithFrame:configurationRef:useThreadedScrolling:]):
+        (WTR::PlatformWebView::PlatformWebView):
+        (-[TestRunnerWKView initWithFrame:contextRef:pageGroupRef:relatedToPage:useThreadedScrolling:]): Deleted.
+
 2015-08-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update Windows tools for revised MIDL interfaces

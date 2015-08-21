@@ -35,6 +35,7 @@
 #import "WKAPICast.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKContentView.h"
+#import "WKPageConfigurationRef.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKScrollView.h"
 #import "WebPageGroup.h"
@@ -86,7 +87,12 @@ using namespace WebKit;
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    [self _commonInitializationWithContextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:relatedView ? [relatedView pageRef] : nullptr];
+    auto configuration = API::PageConfiguration::create();
+    configuration->setProcessPool(toImpl(processGroup._contextRef));
+    configuration->setPageGroup(toImpl(browsingContextGroup._pageGroupRef));
+    configuration->setRelatedPage(relatedView ? toImpl([relatedView pageRef]) : nullptr);
+
+    [self _commonInitializationWithConfigurationRef:toAPI(configuration.ptr())];
     return self;
 }
 
@@ -214,7 +220,7 @@ using namespace WebKit;
 
 #pragma mark Internal
 
-- (void)_commonInitializationWithContextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
+- (void)_commonInitializationWithConfigurationRef:(WKPageConfigurationRef)configurationRef
 {
     ASSERT(!_scrollView);
     ASSERT(!_contentView);
@@ -226,12 +232,9 @@ using namespace WebKit;
 
     [self addSubview:_scrollView.get()];
 
-    auto configuration = API::PageConfiguration::create();
-    configuration->setProcessPool(toImpl(contextRef));
-    configuration->setPageGroup(toImpl(pageGroupRef));
-    configuration->setRelatedPage(toImpl(relatedPage));
+    auto configuration = toImpl(configurationRef)->copy();
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:*toImpl(contextRef) configuration:WTF::move(configuration) wkView:self]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:*configuration->processPool() configuration:WTF::move(configuration) wkView:self]);
 
     [[_contentView layer] setAnchorPoint:CGPointZero];
     [_contentView setFrame:bounds];
@@ -326,10 +329,20 @@ using namespace WebKit;
 
 - (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
 {
+    auto configuration = API::PageConfiguration::create();
+    configuration->setProcessPool(toImpl(contextRef));
+    configuration->setPageGroup(toImpl(pageGroupRef));
+    configuration->setRelatedPage(toImpl(relatedPage));
+
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nil];
+}
+
+- (id)initWithFrame:(CGRect)frame configurationRef:(WKPageConfigurationRef)configuration
+{
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    [self _commonInitializationWithContextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage];
+    [self _commonInitializationWithConfigurationRef:configuration];
     return self;
 }
 

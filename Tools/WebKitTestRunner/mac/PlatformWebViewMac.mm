@@ -50,8 +50,6 @@ enum {
     BOOL _useThreadedScrolling;
 }
 
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup relatedToPage:(WKPageRef)relatedPage useThreadedScrolling:(BOOL)useThreadedScrolling;
-
 @property (nonatomic, assign) BOOL useThreadedScrolling;
 @end
 
@@ -59,10 +57,13 @@ enum {
 
 @synthesize useThreadedScrolling = _useThreadedScrolling;
 
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup relatedToPage:(WKPageRef)relatedPage useThreadedScrolling:(BOOL)useThreadedScrolling
+- (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configuration useThreadedScrolling:(BOOL)useThreadedScrolling
 {
+    if (!(self = [super initWithFrame:frame configurationRef:configuration]))
+        return nil;
+
     _useThreadedScrolling = useThreadedScrolling;
-    return [super initWithFrame:frame contextRef:context pageGroupRef:pageGroup relatedToPage:relatedPage];
+    return self;
 }
 
 - (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
@@ -119,10 +120,12 @@ enum {
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKPageRef relatedPage, const ViewOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
+    WKPageGroupRef pageGroupRef = WKPageConfigurationGetPageGroup(configuration);
+
     // The tiled drawing specific tests also depend on threaded scrolling.
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroupRef);
     WKPreferencesSetThreadedScrollingEnabled(preferences, m_options.useThreadedScrolling);
@@ -132,7 +135,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
         [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
 
     NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useThreadedScrolling:m_options.useThreadedScrolling];
+    m_view = [[TestRunnerWKView alloc] initWithFrame:rect configurationRef:configuration useThreadedScrolling:options.useThreadedScrolling];
     [m_view setWindowOcclusionDetectionEnabled:NO];
 
     NSScreen *firstScreen = [[NSScreen screens] objectAtIndex:0];

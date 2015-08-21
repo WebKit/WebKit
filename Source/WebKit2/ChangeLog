@@ -1,3 +1,17 @@
+2015-08-20  Anders Carlsson  <andersca@apple.com>
+
+        Use WKPageConfigurationRef in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=147996
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _commonInitializationWithConfigurationRef:]):
+        (-[WKView initWithFrame:configurationRef:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:configurationRef:]):
+        Make sure to copy the configuration, matching what we do in the modern API.
+        
 2015-08-20  Beth Dakin  <bdakin@apple.com>
 
         Standalone image documents should send their size to the UIClient just like 

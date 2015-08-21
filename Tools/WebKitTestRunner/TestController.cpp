@@ -197,17 +197,17 @@ static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef, WKS
     TestController::singleton().handleUserMediaPermissionRequest(permissionRequest);
 }
 
-WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
+WKPageRef TestController::createOtherPage(WKPageRef oldPpage, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     PlatformWebView* parentView = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
 
-    PlatformWebView* view = new PlatformWebView(WKPageGetContext(oldPage), WKPageGetPageGroup(oldPage), oldPage, parentView->options());
+    PlatformWebView* view = new PlatformWebView(configuration, parentView->options());
     WKPageRef newPage = view->page();
 
     view->resizeTo(800, 600);
 
-    WKPageUIClientV5 otherPageUIClient = {
-        { 5, view },
+    WKPageUIClientV6 otherPageUIClient = {
+        { 6, view },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         closeOtherPage,
@@ -247,7 +247,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
-        createOtherPage,
+        0, // createNewPage_deprecatedForUseWithV1
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
@@ -265,6 +265,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
+        createOtherPage,
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
     
@@ -430,15 +431,19 @@ void TestController::initialize(int argc, const char* argv[])
     if (m_forceComplexText)
         WKContextSetAlwaysUsesComplexTextCodePath(m_context.get(), true);
 
+    m_configuration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(m_configuration.get(), m_context.get());
+    WKPageConfigurationSetPageGroup(m_configuration.get(), m_pageGroup.get());
+
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     resetPreferencesToConsistentValues();
 }
 
 void TestController::createWebViewWithOptions(const ViewOptions& options)
 {
-    m_mainWebView = std::make_unique<PlatformWebView>(m_context.get(), m_pageGroup.get(), nullptr, options);
-    WKPageUIClientV5 pageUIClient = {
-        { 5, m_mainWebView.get() },
+    m_mainWebView = std::make_unique<PlatformWebView>(m_configuration.get(), options);
+    WKPageUIClientV6 pageUIClient = {
+        { 6, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -478,7 +483,7 @@ void TestController::createWebViewWithOptions(const ViewOptions& options)
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
-        createOtherPage,
+        0, // createNewPage_deprecatedForUseWithV1
         0, // mouseDidMoveOverElement
         decidePolicyForNotificationPermissionRequest, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
@@ -496,6 +501,7 @@ void TestController::createWebViewWithOptions(const ViewOptions& options)
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
+        createOtherPage,
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

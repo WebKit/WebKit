@@ -4004,7 +4004,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configurationRef
 {
-    Ref<API::PageConfiguration> configuration = *toImpl(configurationRef);
+    Ref<API::PageConfiguration> configuration = toImpl(configurationRef)->copy();
     auto& processPool = *configuration->processPool();
 
     return [self initWithFrame:frame processPool:processPool configuration:WTF::move(configuration) webView:nil];

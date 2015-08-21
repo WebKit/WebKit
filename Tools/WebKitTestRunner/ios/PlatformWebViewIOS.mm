@@ -44,8 +44,6 @@
     BOOL _useTiledDrawing;
 }
 
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage useTiledDrawing:(BOOL)useTiledDrawing;
-
 @property (nonatomic, assign) BOOL useTiledDrawing;
 @end
 
@@ -53,10 +51,13 @@
 
 @synthesize useTiledDrawing = _useTiledDrawing;
 
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage useTiledDrawing:(BOOL)useTiledDrawing
+- (id)initWithFrame:(CGRect)frame configurationRef:(WKPageConfigurationRef)configuration useTiledDrawing:(BOOL)useTiledDrawing
 {
+    if (!(self = [super initWithFrame:frame configurationRef:configuration]))
+        return nil;
+
     _useTiledDrawing = useTiledDrawing;
-    return [super initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef];
+    return self;
 }
 
 - (BOOL)_shouldUseTiledDrawingArea
@@ -121,12 +122,14 @@
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKPageRef relatedPage, const ViewOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
     CGRect rect = CGRectMake(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useTiledDrawing:m_options.useTiledDrawing];
+    m_view = [[TestRunnerWKView alloc] initWithFrame:rect configurationRef:configuration useTiledDrawing:m_options.useTiledDrawing];
+
+    WKPageGroupRef pageGroupRef = WKPageConfigurationGetPageGroup(configuration);
 
     WKPreferencesSetCompositingBordersVisible(WKPageGroupGetPreferences(pageGroupRef), YES);
     WKPreferencesSetCompositingRepaintCountersVisible(WKPageGroupGetPreferences(pageGroupRef), YES);
