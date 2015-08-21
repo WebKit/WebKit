@@ -258,12 +258,12 @@ private:
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif
 
-    Glyph m_spaceGlyph;
-    float m_spaceWidth;
-    Glyph m_zeroGlyph;
-    float m_adjustedSpaceWidth;
+    Glyph m_spaceGlyph { 0 };
+    float m_spaceWidth { 0 };
+    Glyph m_zeroGlyph { 0 };
+    float m_adjustedSpaceWidth { 0 };
 
-    Glyph m_zeroWidthSpaceGlyph;
+    Glyph m_zeroWidthSpaceGlyph { 0 };
 
     struct DerivedFontData {
 #if !COMPILER(MSVC)

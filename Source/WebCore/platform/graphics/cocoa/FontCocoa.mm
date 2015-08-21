@@ -152,38 +152,33 @@ void Font::platformInit()
 
     m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
     // Work around <rdar://problem/19433490>
     CGGlyph dummyGlyphs[] = {0, 0};
     CGSize dummySize[] = { CGSizeMake(0, 0), CGSizeMake(0, 0) };
     CTFontTransformGlyphs(m_platformData.ctFont(), dummyGlyphs, dummySize, 2, kCTFontTransformApplyPositioning | kCTFontTransformApplyShaping);
-    
-    int iAscent;
-    int iDescent;
-    int iCapHeight;
-    int iLineGap;
-    unsigned unitsPerEm;
-    iAscent = CGFontGetAscent(m_platformData.cgFont());
+#endif
+
+    unsigned unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
+
     // Some fonts erroneously specify a positive descender value. We follow Core Text in assuming that
     // such fonts meant the same distance, but in the reverse direction.
-    iDescent = -abs(CGFontGetDescent(m_platformData.cgFont()));
-    iCapHeight = CGFontGetCapHeight(m_platformData.cgFont());
-    iLineGap = CGFontGetLeading(m_platformData.cgFont());
-    unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
-
     float pointSize = m_platformData.m_size;
-    float ascent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
-    float descent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
-    float capHeight = scaleEmToUnits(iCapHeight, unitsPerEm) * pointSize;
+    float ascent = scaleEmToUnits(CGFontGetAscent(m_platformData.cgFont()), unitsPerEm) * pointSize;
+    float descent = -scaleEmToUnits(-abs(CGFontGetDescent(m_platformData.cgFont())), unitsPerEm) * pointSize;
+    float capHeight = scaleEmToUnits(CGFontGetCapHeight(m_platformData.cgFont()), unitsPerEm) * pointSize;
     
-    float lineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
+    float lineGap = scaleEmToUnits(CGFontGetLeading(m_platformData.cgFont()), unitsPerEm) * pointSize;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
     // vertical metrics of their Microsoft counterparts that are the de facto
     // web standard. The AppKit adjustment of 20% is too big and is
     // incorrectly added to line spacing, so we use a 15% adjustment instead
     // and add it to the ascent.
-    NSString *familyName = [m_platformData.nsFont() familyName];
-    if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
+    RetainPtr<CFStringRef> familyName = adoptCF(CTFontCopyFamilyName(m_platformData.font()));
+    if (familyName && (CFStringCompare(familyName.get(), CFSTR("Times"), kCFCompareCaseInsensitive) == kCFCompareEqualTo
+        || CFStringCompare(familyName.get(), CFSTR("Helvetica"), kCFCompareCaseInsensitive) == kCFCompareEqualTo
+        || CFStringCompare(familyName.get(), CFSTR("Courier"), kCFCompareCaseInsensitive) == kCFCompareEqualTo))
         ascent += floorf(((ascent + descent) * 0.15f) + 0.5f);
 
     // Compute and store line spacing, before the line metrics hacks are applied.
@@ -191,7 +186,7 @@ void Font::platformInit()
 
     // Hack Hiragino line metrics to allow room for marked text underlines.
     // <rdar://problem/5386183>
-    if (descent < 3 && lineGap >= 3 && [familyName hasPrefix:@"Hiragino"]) {
+    if (descent < 3 && lineGap >= 3 && familyName && CFStringHasPrefix(familyName.get(), CFSTR("Hiragino"))) {
         lineGap -= 3 - descent;
         descent = 3;
     }
@@ -223,8 +218,6 @@ void Font::platformInit()
 
     m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? ceilf(m_platformData.size()  / 24.0f) : 0.f;
-    m_spaceGlyph = 0;
-    m_spaceWidth = 0;
 
     CTFontRef ctFont = m_platformData.font();
     FontServicesIOS fontService(ctFont);

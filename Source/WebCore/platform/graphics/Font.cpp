@@ -118,12 +118,7 @@ void Font::platformGlyphInit()
 {
     auto* glyphPageZero = glyphPage(0);
     if (!glyphPageZero) {
-        m_spaceGlyph = 0;
-        m_spaceWidth = 0;
-        m_zeroGlyph = 0;
-        m_adjustedSpaceWidth = 0;
         determinePitch();
-        m_zeroWidthSpaceGlyph = 0;
         return;
     }
 
