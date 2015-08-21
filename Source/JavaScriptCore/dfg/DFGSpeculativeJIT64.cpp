@@ -1139,6 +1139,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 {
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
+    ASSERT(edge.useKind() != KnownBooleanUse || !(value.m_type & ~SpecBoolean));
 
     m_interpreter.filter(value, SpecBoolean);
     if (value.isClear()) {
@@ -1617,7 +1618,8 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         return;
     }
     
-    case BooleanUse: {
+    case BooleanUse:
+    case KnownBooleanUse: {
         if (!needsTypeCheck(node->child1(), SpecBoolean)) {
             SpeculateBooleanOperand value(this, node->child1());
             GPRTemporary result(this, Reuse, value);
@@ -1769,11 +1771,12 @@ void SpeculativeJIT::emitBranch(Node* node)
     }
 
     case UntypedUse:
-    case BooleanUse: {
+    case BooleanUse:
+    case KnownBooleanUse: {
         JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
         GPRReg valueGPR = value.gpr();
         
-        if (node->child1().useKind() == BooleanUse) {
+        if (node->child1().useKind() == BooleanUse || node->child1().useKind() == KnownBooleanUse) {
             if (!needsTypeCheck(node->child1(), SpecBoolean)) {
                 MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
                 

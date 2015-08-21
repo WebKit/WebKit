@@ -1033,6 +1033,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 {
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
+    ASSERT(edge.useKind() != KnownBooleanUse || !(value.m_type & ~SpecBoolean));
 
     m_interpreter.filter(value, SpecBoolean);
     if (value.isClear()) {
@@ -1463,7 +1464,8 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
 void SpeculativeJIT::compileLogicalNot(Node* node)
 {
     switch (node->child1().useKind()) {
-    case BooleanUse: {
+    case BooleanUse:
+    case KnownBooleanUse: {
         SpeculateBooleanOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value);
         m_jit.xor32(TrustedImm32(1), value.gpr(), result.gpr());
@@ -1582,7 +1584,8 @@ void SpeculativeJIT::emitBranch(Node* node)
     BasicBlock* notTaken = node->branchData()->notTaken.block;
 
     switch (node->child1().useKind()) {
-    case BooleanUse: {
+    case BooleanUse:
+    case KnownBooleanUse: {
         SpeculateBooleanOperand value(this, node->child1());
         MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
 

@@ -356,9 +356,19 @@ private:
         }
             
         case LogicalNot: {
-            if (node->child1()->shouldSpeculateBoolean())
-                fixEdge<BooleanUse>(node->child1());
-            else if (node->child1()->shouldSpeculateObjectOrOther())
+            if (node->child1()->shouldSpeculateBoolean()) {
+                if (node->child1()->result() == NodeResultBoolean) {
+                    // This is necessary in case we have a bytecode instruction implemented by:
+                    //
+                    // a: CompareEq(...)
+                    // b: LogicalNot(@a)
+                    //
+                    // In that case, CompareEq might have a side-effect. Then, we need to make
+                    // sure that we know that Branch does not exit.
+                    fixEdge<KnownBooleanUse>(node->child1());
+                } else
+                    fixEdge<BooleanUse>(node->child1());
+            } else if (node->child1()->shouldSpeculateObjectOrOther())
                 fixEdge<ObjectOrOtherUse>(node->child1());
             else if (node->child1()->shouldSpeculateInt32OrBoolean())
                 fixIntOrBooleanEdge(node->child1());
@@ -819,9 +829,19 @@ private:
         }
             
         case Branch: {
-            if (node->child1()->shouldSpeculateBoolean())
-                fixEdge<BooleanUse>(node->child1());
-            else if (node->child1()->shouldSpeculateObjectOrOther())
+            if (node->child1()->shouldSpeculateBoolean()) {
+                if (node->child1()->result() == NodeResultBoolean) {
+                    // This is necessary in case we have a bytecode instruction implemented by:
+                    //
+                    // a: CompareEq(...)
+                    // b: Branch(@a)
+                    //
+                    // In that case, CompareEq might have a side-effect. Then, we need to make
+                    // sure that we know that Branch does not exit.
+                    fixEdge<KnownBooleanUse>(node->child1());
+                } else
+                    fixEdge<BooleanUse>(node->child1());
+            } else if (node->child1()->shouldSpeculateObjectOrOther())
                 fixEdge<ObjectOrOtherUse>(node->child1());
             else if (node->child1()->shouldSpeculateInt32OrBoolean())
                 fixIntOrBooleanEdge(node->child1());
@@ -1777,6 +1797,7 @@ private:
         VariableAccessData* variable = node->variableAccessData();
         switch (useKind) {
         case Int32Use:
+        case KnownInt32Use:
             if (alwaysUnboxSimplePrimitives()
                 || isInt32Speculation(variable->prediction()))
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
@@ -1789,6 +1810,7 @@ private:
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
         case BooleanUse:
+        case KnownBooleanUse:
             if (alwaysUnboxSimplePrimitives()
                 || isBooleanSpeculation(variable->prediction()))
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);

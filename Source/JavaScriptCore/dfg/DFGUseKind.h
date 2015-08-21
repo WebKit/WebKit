@@ -48,6 +48,7 @@ enum UseKind {
     NumberUse,
     RealNumberUse,
     BooleanUse,
+    KnownBooleanUse,
     CellUse,
     KnownCellUse,
     ObjectUse,
@@ -101,6 +102,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case DoubleRepMachineIntUse:
         return SpecInt52AsDouble;
     case BooleanUse:
+    case KnownBooleanUse:
         return SpecBoolean;
     case CellUse:
     case KnownCellUse:
@@ -145,6 +147,7 @@ inline bool shouldNotHaveTypeCheck(UseKind kind)
     case KnownInt32Use:
     case KnownCellUse:
     case KnownStringUse:
+    case KnownBooleanUse:
     case Int52RepUse:
     case DoubleRepUse:
         return true;

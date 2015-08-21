@@ -5908,6 +5908,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case BooleanUse:
         speculateBoolean(edge);
         break;
+    case KnownBooleanUse:
+        ASSERT(!needsTypeCheck(edge, SpecBoolean));
+        break;
     case CellUse:
         speculateCell(edge);
         break;

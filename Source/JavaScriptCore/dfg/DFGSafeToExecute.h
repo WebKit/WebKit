@@ -74,6 +74,11 @@ public:
             if (m_state.forNode(edge).m_type & ~SpecInt32)
                 m_result = false;
             return;
+
+        case KnownBooleanUse:
+            if (m_state.forNode(edge).m_type & ~SpecBoolean)
+                m_result = false;
+            return;
             
         case KnownCellUse:
             if (m_state.forNode(edge).m_type & ~SpecCell)

@@ -6130,6 +6130,7 @@ private:
     {
         switch (edge.useKind()) {
         case BooleanUse:
+        case KnownBooleanUse:
             return lowBoolean(edge);
         case Int32Use:
             return m_out.notZero32(lowInt32(edge));
@@ -7120,7 +7121,7 @@ private:
     
     LValue lowBoolean(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BooleanUse);
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BooleanUse || edge.useKind() == KnownBooleanUse);
         
         if (edge->hasConstant()) {
             JSValue value = edge->asJSValue();

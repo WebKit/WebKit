@@ -412,6 +412,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case DoubleRepUse:
                 case DoubleRepRealUse:
                 case BooleanUse:
+                case KnownBooleanUse:
                 case CellUse:
                 case KnownCellUse:
                 case ObjectUse:
