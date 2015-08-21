@@ -166,8 +166,8 @@ BuildbotQueueView.prototype = {
             var length = lines.length;
             if (length && shouldAddDivider)
                 this._addDividerToPopover(content);
-            for (var i = 0; i < length; ++i)
-                content.appendChild(lines[i]);
+            for (var j = 0; j < length; ++j)
+                content.appendChild(lines[j]);
             shouldAddDivider = shouldAddDivider || length > 0;
         }
 
