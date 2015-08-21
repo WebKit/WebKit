@@ -1,5 +1,18 @@
 2015-08-21  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::PutStackSinkingPhase doesn't need to emit KillStack nodes
+        https://bugs.webkit.org/show_bug.cgi?id=148331
+
+        Reviewed by Geoffrey Garen.
+
+        PutStackSinkingPhase previously emitted a KillStack node when it sank a PutStack. This
+        isn't necessary because KillStack is only interesting for OSR exit, and PutStack nodes
+        that are relevant to OSR will already be preceded by a KillStack/MovHint pair.
+
+        * dfg/DFGPutStackSinkingPhase.cpp:
+
+2015-08-21  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::NodeOrigin should have a flag determining if exiting is OK right now
         https://bugs.webkit.org/show_bug.cgi?id=148323
 

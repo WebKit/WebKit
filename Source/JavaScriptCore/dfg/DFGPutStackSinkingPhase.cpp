@@ -516,8 +516,7 @@ public:
         }
         
         // Finally eliminate the sunken PutStacks by turning them into Checks. This keeps whatever
-        // type check they were doing. Also prepend KillStacks to them to ensure that we know that
-        // the relevant value was *not* stored to the stack.
+        // type check they were doing.
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
@@ -525,8 +524,6 @@ public:
                 if (!putLocalsToSink.contains(node))
                     continue;
                 
-                insertionSet.insertNode(
-                    nodeIndex, SpecNone, KillStack, node->origin, OpInfo(node->stackAccessData()->local.offset()));
                 node->remove();
             }
             
