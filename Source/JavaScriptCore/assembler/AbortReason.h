@@ -62,6 +62,7 @@ enum AbortReason {
     JITGetByValResultIsNotEmpty                       = 250,
     JITNotSupported                                   = 260,
     JITOffsetIsNotOutOfLine                           = 270,
+    JITUncoughtExceptionAfterCall                     = 275,
     JITUnreasonableLoopHintJumpTarget                 = 280,
     RPWUnreasonableJumpTarget                         = 290,
     RepatchIneffectiveWatchpoint                      = 300,

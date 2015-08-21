@@ -76,6 +76,7 @@ protected:
         GPRReg canTrample = SpeculativeJIT::pickCanTrample(extractResult(m_resultRegs));
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i], canTrample);
+        jit->m_jit.exceptionCheck();
         
         jumpTo(jit);
     }

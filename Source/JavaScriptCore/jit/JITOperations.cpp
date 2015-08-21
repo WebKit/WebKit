@@ -2014,10 +2014,11 @@ void JIT_OPERATION operationVMHandleException(ExecState* exec)
 // ourselves to play some gnarly ABI tricks just to simplify the calling convention. This is
 // particularly safe here since this is never called on the critical path - it's only for
 // testing.
-void JIT_OPERATION operationExceptionFuzz()
+void JIT_OPERATION operationExceptionFuzz(ExecState* exec)
 {
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
 #if COMPILER(GCC_OR_CLANG)
-    ExecState* exec = static_cast<ExecState*>(__builtin_frame_address(1));
     void* returnPC = __builtin_return_address(0);
     doExceptionFuzzing(exec, "JITOperations", returnPC);
 #endif // COMPILER(GCC_OR_CLANG)

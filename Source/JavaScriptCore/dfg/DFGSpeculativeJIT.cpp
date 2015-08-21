@@ -993,6 +993,7 @@ void SpeculativeJIT::compileIn(Node* node)
     callOperation(
         operationGenericIn, extractResult(JSValueRegs::payloadOnly(resultGPR)),
         baseGPR, regs);
+    m_jit.exceptionCheck();
     blessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
@@ -1501,6 +1502,8 @@ void SpeculativeJIT::compileCurrentBlock()
             dataLog("\n");
         }
         
+        m_jit.jitAssertNoException();
+
         compile(m_currentNode);
         
         if (belongsInMinifiedGraph(m_currentNode->op()))
@@ -1993,6 +1996,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             silentSpillAllRegisters(resultGpr);
             callOperation(toInt32, resultGpr, fpr);
             silentFillAllRegisters(resultGpr);
+            m_jit.exceptionCheck();
 
             converted.append(m_jit.jump());
 
@@ -2052,6 +2056,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 silentSpillAllRegisters(resultGpr);
                 callOperation(toInt32, resultGpr, fpr);
                 silentFillAllRegisters(resultGpr);
+                m_jit.exceptionCheck();
 
                 converted.append(m_jit.jump());
 
@@ -3724,6 +3729,7 @@ void SpeculativeJIT::compileArithRound(Node* node)
     FPRResult roundedResultAsDouble(this);
     FPRReg resultFPR = roundedResultAsDouble.fpr();
     callOperation(jsRound, resultFPR, valueFPR);
+    m_jit.exceptionCheck();
     if (producesInteger(node->arithRoundingMode())) {
         GPRTemporary roundedResultAsInt32(this);
         FPRTemporary scratch(this);
@@ -4666,7 +4672,7 @@ void SpeculativeJIT::compileNewFunction(Node* node)
             callOperation(operationNewArrowFunction, resultGPR, scopeGPR, executable, thisValueGPR);
         else
             callOperation(operationNewFunction, resultGPR, scopeGPR, executable);
-        
+        m_jit.exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -4788,6 +4794,7 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
         callOperation(operationCreateActivationDirect,
             resultGPR, structure, scopeGPR, table, TrustedImm32(initializationValue.tag()), TrustedImm32(initializationValue.payload()));
 #endif
+        m_jit.exceptionCheck();
         cellResult(resultGPR, node);
         return;
     }
@@ -5038,7 +5045,8 @@ void SpeculativeJIT::compileCreateScopedArguments(Node* node)
         });
     m_jit.setupArgument(0, [&] (GPRReg destGPR) { m_jit.move(GPRInfo::callFrameRegister, destGPR); });
     
-    appendCallWithExceptionCheckSetResult(operationCreateScopedArguments, resultGPR);
+    appendCallSetResult(operationCreateScopedArguments, resultGPR);
+    m_jit.exceptionCheck();
     
     cellResult(resultGPR, node);
 }
@@ -5065,7 +5073,8 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
         });
     m_jit.setupArgument(0, [&] (GPRReg destGPR) { m_jit.move(GPRInfo::callFrameRegister, destGPR); });
     
-    appendCallWithExceptionCheckSetResult(operationCreateClonedArguments, resultGPR);
+    appendCallSetResult(operationCreateClonedArguments, resultGPR);
+    m_jit.exceptionCheck();
     
     cellResult(resultGPR, node);
 }
@@ -5080,7 +5089,7 @@ void SpeculativeJIT::compileNotifyWrite(Node* node)
         TrustedImm32(IsInvalidated));
     
     addSlowPathGenerator(
-        slowPathCall(slowCase, this, operationNotifyWrite, NoResult, set));
+        slowPathCall(slowCase, this, operationNotifyWrite, NoResult, set, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded));
     
     noResult(node);
 }
@@ -5112,6 +5121,7 @@ bool SpeculativeJIT::compileRegExpExec(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
     callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
+    m_jit.exceptionCheck();
 
     branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, result.gpr(), taken);
     jump(notTaken);
@@ -5247,6 +5257,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 
         GPRFlushedCallResult result(this);
         callOperation(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, result.gpr(), baseGPR);
+        m_jit.exceptionCheck();
         
         storageResult(result.gpr(), node);
         return;
@@ -5290,6 +5301,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
 
         GPRFlushedCallResult result(this);
         callOperation(operationReallocateButterflyToGrowPropertyStorage, result.gpr(), baseGPR, newSize / sizeof(JSValue));
+        m_jit.exceptionCheck();
 
         storageResult(result.gpr(), node);
         return;
@@ -5397,6 +5409,7 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOnCell(Node* node)
             ASSERT(node->op() == CallStringConstructor);
             callOperation(operationCallStringConstructorOnCell, resultGPR, op1GPR);
         }
+        m_jit.exceptionCheck();
         if (done.isSet())
             done.link(&m_jit);
         cellResult(resultGPR, node);
@@ -6019,6 +6032,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
         silentSpillAllRegisters(scratch);
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs, data->switchTableIndex);
         silentFillAllRegisters(scratch);
+
         m_jit.jump(scratch);
 #endif
         noResult(node, UseChildrenCalledExplicitly);
@@ -6278,6 +6292,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
         flushRegisters();
         callOperation(
             operationSwitchString, string, data->switchTableIndex, string);
+        m_jit.exceptionCheck();
         m_jit.jump(string);
         return;
     }
@@ -6315,6 +6330,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     silentSpillAllRegisters(string);
     callOperation(operationSwitchString, string, data->switchTableIndex, string);
     silentFillAllRegisters(string);
+    m_jit.exceptionCheck();
     m_jit.jump(string);
 }
 

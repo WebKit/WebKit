@@ -1,3 +1,100 @@
+2015-08-21  Saam barati  <sbarati@apple.com>
+
+        DFG callOperations should not implicitly emit an exception check. At callOperation call sites, we should explicitly emit exception checks
+        https://bugs.webkit.org/show_bug.cgi?id=147988
+
+        Reviewed by Geoffrey Garen.
+
+        This is in preparation for the DFG being able to handle exceptions. 
+        To do this, we need more control over when we emit exception checks.
+        Specifically, we want to be able to silentFill before emitting an exception check.
+        This patch does that. This patch also allows us to easily see which
+        operations do and do not emit exception checks. Finding this information
+        out before was a pain.
+
+        * assembler/AbortReason.h:
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        * dfg/DFGCallCreateDirectArgumentsSlowPathGenerator.h:
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendCall):
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        * dfg/DFGSaneStringGetByValSlowPathGenerator.h:
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::CallSlowPathGenerator::CallSlowPathGenerator):
+        (JSC::DFG::CallSlowPathGenerator::tearDown):
+        (JSC::DFG::CallResultAndNoArgumentsSlowPathGenerator::CallResultAndNoArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndOneArgumentSlowPathGenerator::CallResultAndOneArgumentSlowPathGenerator):
+        (JSC::DFG::CallResultAndTwoArgumentsSlowPathGenerator::CallResultAndTwoArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndThreeArgumentsSlowPathGenerator::CallResultAndThreeArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndFourArgumentsSlowPathGenerator::CallResultAndFourArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndFiveArgumentsSlowPathGenerator::CallResultAndFiveArgumentsSlowPathGenerator):
+        (JSC::DFG::slowPathCall):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileArithRound):
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCreateScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileCreateClonedArguments):
+        (JSC::DFG::SpeculativeJIT::compileNotifyWrite):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnCell):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::callOperationWithCallFrameRollbackOnException):
+        (JSC::DFG::SpeculativeJIT::prepareForExternalCall):
+        (JSC::DFG::SpeculativeJIT::appendCall):
+        (JSC::DFG::SpeculativeJIT::appendCallWithCallFrameRollbackOnException):
+        (JSC::DFG::SpeculativeJIT::appendCallWithCallFrameRollbackOnExceptionSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck): Deleted.
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheckSetResult): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertArgumentCountSane):
+        (JSC::AssemblyHelpers::jitAssertNoException):
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::jitAssertIsInt32):
+        (JSC::AssemblyHelpers::jitAssertIsJSInt32):
+        (JSC::AssemblyHelpers::jitAssertIsNull):
+        (JSC::AssemblyHelpers::jitAssertTagsInPlace):
+        (JSC::AssemblyHelpers::jitAssertArgumentCountSane):
+        (JSC::AssemblyHelpers::jitAssertNoException):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/VM.h:
+        (JSC::VM::scratchBufferForSize):
+        (JSC::VM::exceptionFuzzingBuffer):
+
 2015-08-21  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION (r188714): RELEASE_ASSERT in JSC::Heap::incrementDeferralDepth() opening Web Inspector on daringfireball.net

@@ -165,11 +165,6 @@ public:
         return functionCall;
     }
     
-    void exceptionCheck(Jump jumpToHandler)
-    {
-        m_exceptionChecks.append(jumpToHandler);
-    }
-    
     void exceptionCheck()
     {
         m_exceptionChecks.append(emitExceptionCheck());

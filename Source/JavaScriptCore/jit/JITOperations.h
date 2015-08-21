@@ -343,7 +343,7 @@ void JIT_OPERATION operationOSRWriteBarrier(ExecState*, JSCell*);
 
 void JIT_OPERATION operationInitGlobalConst(ExecState*, Instruction*);
 
-void JIT_OPERATION operationExceptionFuzz();
+void JIT_OPERATION operationExceptionFuzz(ExecState*);
 
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
 EncodedJSValue JIT_OPERATION operationHasIndexedProperty(ExecState*, JSCell*, int32_t);
