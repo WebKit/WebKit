@@ -59,28 +59,28 @@
     margin-top: 8px;
 }
 
-.sidebar > .panel.details.css-style > .content.filter-in-progress .label {
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label {
     padding-top: 15px;
 }
 
-.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) ~ .label {
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label:not(.filter-section-non-matching) ~ .label {
     padding-top: 0;
 }
 
-.sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label {
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label.filter-matching-label {
     padding-bottom: 5px;
     border-bottom: 1px solid hsla(0, 0%, 0%, 0.3);
 }
 
-.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) + .label.filter-matching-label:not(.filter-section-non-matching) {
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label:not(.filter-section-non-matching) + .label.filter-matching-label:not(.filter-section-non-matching) {
     padding-top: 0;
 }
 
-.sidebar > .panel.details.css-style > .content.filter-in-progress .new-rule {
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .new-rule {
     display: none;
 }
 
-.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-non-matching) ~ .label:not(.filter-section-non-matching) {
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .style-declaration-section:not(.filter-section-non-matching) ~ .label:not(.filter-section-non-matching) {
     padding-top: 15px;
 }
 
@@ -139,7 +139,7 @@
 
 @media (-webkit-min-device-pixel-ratio: 2) {
     .sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .label,
-    .sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label,
+    .sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label.filter-matching-label,
     .no-filter-results-message {
         border-width: 0.5px !important;
     }

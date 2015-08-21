@@ -1,5 +1,29 @@
 2015-08-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Labels in the computed panel are shifted when a filter is applieds
+        https://bugs.webkit.org/show_bug.cgi?id=148250
+
+        Reviewed by Timothy Hatcher.
+
+        Added to the selectors for filtering to ensure they only apply to the rules panel.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label:not(.filter-section-non-matching) ~ .label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label.filter-matching-label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label:not(.filter-section-non-matching) + .label.filter-matching-label:not(.filter-section-non-matching)):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .new-rule):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .style-declaration-section:not(.filter-section-non-matching) ~ .label:not(.filter-section-non-matching)):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) ~ .label): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) + .label.filter-matching-label:not(.filter-section-non-matching)): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .new-rule): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-non-matching) ~ .label:not(.filter-section-non-matching)): Deleted.
+
+2015-08-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Fix "attempted to assign to readonly property" in Visual editor links
         https://bugs.webkit.org/show_bug.cgi?id=148264
 
