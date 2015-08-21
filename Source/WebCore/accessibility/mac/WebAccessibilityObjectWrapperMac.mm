@@ -229,6 +229,10 @@ using namespace HTMLNames;
 #define NSAccessibilityExpandedTextValueAttribute @"AXExpandedTextValue"
 #endif
 
+#ifndef NSAccessibilityIsMultiSelectableAttribute
+#define NSAccessibilityIsMultiSelectableAttribute @"AXIsMultiSelectable"
+#endif
+
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
@@ -3038,6 +3042,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->isWebArea() && [attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
         return [NSNumber numberWithBool:m_object->caretBrowsingEnabled()];
+    
+    // Multi-selectable
+    if ([attributeName isEqualToString:NSAccessibilityIsMultiSelectableAttribute])
+        return [NSNumber numberWithBool:m_object->isMultiSelectable()];
     
     return nil;
 }

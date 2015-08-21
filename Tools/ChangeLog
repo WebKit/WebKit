@@ -1,3 +1,21 @@
+2015-08-21  Nan Wang  <n_wang@apple.com>
+
+        [Mac] accessibility/selection-states.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116637
+
+        Reviewed by Chris Fleizach.
+
+        Implemented isSelectable() and isMultiSelectable().
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isSelectable):
+        (AccessibilityUIElement::isMultiSelectable):
+        (AccessibilityUIElement::isSelectedOptionActive):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isSelectable):
+        (WTR::AccessibilityUIElement::isMultiSelectable):
+        (WTR::AccessibilityUIElement::isVisible):
+
 2015-08-21  Jason Marcell  <jmarcell@apple.com>
 
         Fix iteration over repositories on bot watcher's dashboard.

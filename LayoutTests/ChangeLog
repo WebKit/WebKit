@@ -1,3 +1,12 @@
+2015-08-21  Nan Wang  <n_wang@apple.com>
+
+        [Mac] accessibility/selection-states.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116637
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/TestExpectations:
+
 2015-08-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add a regression test for the fix introduced in r188679

@@ -1463,14 +1463,22 @@ bool AccessibilityUIElement::isFocusable() const
 
 bool AccessibilityUIElement::isSelectable() const
 {
-    // FIXME: implement
-    return false;
+    bool result = false;
+    BEGIN_AX_OBJC_EXCEPTIONS
+    result = [m_element accessibilityIsAttributeSettable:NSAccessibilitySelectedAttribute];
+    END_AX_OBJC_EXCEPTIONS
+    return result;
 }
 
 bool AccessibilityUIElement::isMultiSelectable() const
 {
-    // FIXME: implement
-    return false;
+    BOOL result = NO;
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:@"AXIsMultiSelectable"];
+    if ([value isKindOfClass:[NSNumber class]])
+        result = [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+    return result;
 }
 
 bool AccessibilityUIElement::isSelectedOptionActive() const
