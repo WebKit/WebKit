@@ -1,3 +1,25 @@
+2015-08-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: clean up uses of `new` with zero-argument constructors and factory methods
+        https://bugs.webkit.org/show_bug.cgi?id=148311
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/InspectorFrontendHostStub.js:
+        * UserInterface/Views/ClusterContentView.js:
+        (WebInspector.ClusterContentView):
+        * UserInterface/Views/ColorPicker.js:
+        (WebInspector.ColorPicker):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject): This was causing a console assertion
+        when a breakpoint tree element was selected and the inspector tried to restore the view state
+        after a reload or back/forward navigation.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+
 2015-08-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add a regression test for the fix introduced in r188679

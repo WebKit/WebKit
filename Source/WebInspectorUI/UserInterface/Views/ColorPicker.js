@@ -29,15 +29,15 @@ WebInspector.ColorPicker = class ColorPicker extends WebInspector.Object
     {
         super();
 
-        this._colorWheel = new WebInspector.ColorWheel();
+        this._colorWheel = new WebInspector.ColorWheel;
         this._colorWheel.delegate = this;
         this._colorWheel.dimension = 200;
 
-        this._brightnessSlider = new WebInspector.Slider();
+        this._brightnessSlider = new WebInspector.Slider;
         this._brightnessSlider.delegate = this;
         this._brightnessSlider.element.classList.add("brightness");
 
-        this._opacitySlider = new WebInspector.Slider();
+        this._opacitySlider = new WebInspector.Slider;
         this._opacitySlider.delegate = this;
         this._opacitySlider.element.classList.add("opacity");
 

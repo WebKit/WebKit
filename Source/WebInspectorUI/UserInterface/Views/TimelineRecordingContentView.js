@@ -48,7 +48,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._currentTimelineOverview = this._linearTimelineOverview;
         this.element.appendChild(this._currentTimelineOverview.element);
 
-        this._contentViewContainer = new WebInspector.ContentViewContainer();
+        this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
         this.element.appendChild(this._contentViewContainer.element);
 

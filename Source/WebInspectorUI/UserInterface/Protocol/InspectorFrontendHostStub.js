@@ -172,7 +172,7 @@ if (!window.InspectorFrontendHost) {
         }
     };
 
-    InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
+    InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub;
 
     WebInspector.dontLocalizeUserInterface = true;
 }
