@@ -287,9 +287,7 @@ private:
         data.preHeader->insertBeforeTerminal(node);
         node->owner = data.preHeader;
         NodeOrigin originalOrigin = node->origin;
-        node->origin.forExit = data.preHeader->terminal()->origin.forExit;
-        if (!node->origin.semantic.isSet())
-            node->origin.semantic = node->origin.forExit;
+        node->origin = data.preHeader->terminal()->origin.withSemantic(node->origin.semantic);
         
         // Modify the states at the end of the preHeader of the loop we hoisted to,
         // and all pre-headers inside the loop.

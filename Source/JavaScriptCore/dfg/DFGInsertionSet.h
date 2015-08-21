@@ -71,12 +71,6 @@ public:
             index, speculationFromValue(value->value()), op, origin, OpInfo(value));
     }
     
-    Node* insertConstant(
-        size_t index, CodeOrigin origin, FrozenValue* value, NodeType op = JSConstant)
-    {
-        return insertConstant(index, NodeOrigin(origin), value, op);
-    }
-    
     Edge insertConstantForUse(
         size_t index, NodeOrigin origin, FrozenValue* value, UseKind useKind)
     {
@@ -90,18 +84,7 @@ public:
         return Edge(insertConstant(index, origin, value, op), useKind);
     }
     
-    Edge insertConstantForUse(
-        size_t index, CodeOrigin origin, FrozenValue* value, UseKind useKind)
-    {
-        return insertConstantForUse(index, NodeOrigin(origin), value, useKind);
-    }
-
     Node* insertConstant(size_t index, NodeOrigin origin, JSValue value, NodeType op = JSConstant)
-    {
-        return insertConstant(index, origin, m_graph.freeze(value), op);
-    }
-    
-    Node* insertConstant(size_t index, CodeOrigin origin, JSValue value, NodeType op = JSConstant)
     {
         return insertConstant(index, origin, m_graph.freeze(value), op);
     }
@@ -109,11 +92,6 @@ public:
     Edge insertConstantForUse(size_t index, NodeOrigin origin, JSValue value, UseKind useKind)
     {
         return insertConstantForUse(index, origin, m_graph.freeze(value), useKind);
-    }
-    
-    Edge insertConstantForUse(size_t index, CodeOrigin origin, JSValue value, UseKind useKind)
-    {
-        return insertConstantForUse(index, NodeOrigin(origin), value, useKind);
     }
     
     Edge insertBottomConstantForUse(size_t index, NodeOrigin origin, UseKind useKind)

@@ -35,22 +35,28 @@ namespace JSC { namespace DFG {
 struct NodeOrigin {
     NodeOrigin() { }
     
-    explicit NodeOrigin(CodeOrigin codeOrigin)
-        : semantic(codeOrigin)
-        , forExit(codeOrigin)
-    {
-    }
-    
-    NodeOrigin(CodeOrigin semantic, CodeOrigin forExit)
+    NodeOrigin(CodeOrigin semantic, CodeOrigin forExit, bool exitOK)
         : semantic(semantic)
         , forExit(forExit)
+        , exitOK(exitOK)
     {
     }
-    
+
     bool isSet() const
     {
         ASSERT(semantic.isSet() == forExit.isSet());
         return semantic.isSet();
+    }
+    
+    NodeOrigin withSemantic(CodeOrigin semantic)
+    {
+        if (!isSet())
+            return NodeOrigin();
+        
+        NodeOrigin result = *this;
+        if (semantic.isSet())
+            result.semantic = semantic;
+        return result;
     }
     
     // Used for determining what bytecode this came from. This is important for
@@ -58,6 +64,8 @@ struct NodeOrigin {
     CodeOrigin semantic;
     // Code origin for where the node exits to.
     CodeOrigin forExit;
+    // Whether or not it is legal to exit here.
+    bool exitOK { false };
 };
 
 } } // namespace JSC::DFG

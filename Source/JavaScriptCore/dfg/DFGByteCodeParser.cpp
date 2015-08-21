@@ -653,9 +653,13 @@ private:
     {
         // FIXME: We should set the forExit origin only on those nodes that can exit.
         // https://bugs.webkit.org/show_bug.cgi?id=145204
+        CodeOrigin semantic;
         if (m_currentSemanticOrigin.isSet())
-            return NodeOrigin(m_currentSemanticOrigin, currentCodeOrigin());
-        return NodeOrigin(currentCodeOrigin());
+            semantic = m_currentSemanticOrigin;
+        else
+            semantic = currentCodeOrigin();
+        
+        return NodeOrigin(semantic, currentCodeOrigin(), true);
     }
     
     BranchData* branchData(unsigned taken, unsigned notTaken)

@@ -1483,9 +1483,7 @@ private:
 
             return m_graph.addNode(
                 allocation.identifier()->prediction(), Node::VarArg, MaterializeNewObject,
-                NodeOrigin(
-                    allocation.identifier()->origin.semantic,
-                    where->origin.forExit),
+                where->origin.withSemantic(allocation.identifier()->origin.semantic),
                 OpInfo(set), OpInfo(data), 0, 0);
         }
 
@@ -1497,9 +1495,8 @@ private:
             
             return m_graph.addNode(
                 allocation.identifier()->prediction(), nodeType,
-                NodeOrigin(
-                    allocation.identifier()->origin.semantic,
-                    where->origin.forExit),
+                where->origin.withSemantic(
+                    allocation.identifier()->origin.semantic),
                 OpInfo(executable));
             break;
         }
@@ -1510,9 +1507,8 @@ private:
 
             return m_graph.addNode(
                 allocation.identifier()->prediction(), Node::VarArg, MaterializeCreateActivation,
-                NodeOrigin(
-                    allocation.identifier()->origin.semantic,
-                    where->origin.forExit),
+                where->origin.withSemantic(
+                    allocation.identifier()->origin.semantic),
                 OpInfo(symbolTable), OpInfo(data), 0, 0);
         }
 
@@ -2093,11 +2089,7 @@ private:
 
         if (base->isPhantomAllocation()) {
             return PromotedHeapLocation(base, location.descriptor()).createHint(
-                m_graph,
-                NodeOrigin(
-                    base->origin.semantic,
-                    where->origin.forExit),
-                value);
+                m_graph, where->origin.withSemantic(base->origin.semantic), value);
         }
 
         switch (location.kind()) {
@@ -2160,9 +2152,7 @@ private:
             return m_graph.addNode(
                 SpecNone,
                 MultiPutByOffset,
-                NodeOrigin(
-                    base->origin.semantic,
-                    where->origin.forExit),
+                where->origin.withSemantic(base->origin.semantic),
                 OpInfo(data),
                 Edge(base, KnownCellUse),
                 value->defaultEdge());
@@ -2173,9 +2163,7 @@ private:
             return m_graph.addNode(
                 SpecNone,
                 PutClosureVar,
-                NodeOrigin(
-                    base->origin.semantic,
-                    where->origin.forExit),
+                where->origin.withSemantic(base->origin.semantic),
                 OpInfo(location.info()),
                 Edge(base, KnownCellUse),
                 value->defaultEdge());

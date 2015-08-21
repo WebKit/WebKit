@@ -233,18 +233,15 @@ private:
             
             // Do the hoisting.
             if (!range.m_hoisted) {
+                NodeOrigin minOrigin = node->origin.withSemantic(range.m_minOrigin);
+                NodeOrigin maxOrigin = node->origin.withSemantic(range.m_maxOrigin);
+                
                 switch (data.m_key.m_kind) {
                 case Addition: {
-                    if (range.m_minBound < 0) {
-                        insertAdd(
-                            nodeIndex, NodeOrigin(range.m_minOrigin, node->origin.forExit),
-                            data.m_key.m_source, range.m_minBound);
-                    }
-                    if (range.m_maxBound > 0) {
-                        insertAdd(
-                            nodeIndex, NodeOrigin(range.m_maxOrigin, node->origin.forExit),
-                            data.m_key.m_source, range.m_maxBound);
-                    }
+                    if (range.m_minBound < 0)
+                        insertAdd(nodeIndex, minOrigin, data.m_key.m_source, range.m_minBound);
+                    if (range.m_maxBound > 0)
+                        insertAdd(nodeIndex, maxOrigin, data.m_key.m_source, range.m_maxBound);
                     break;
                 }
                 
@@ -255,14 +252,14 @@ private:
                     if (!data.m_key.m_source) {
                         minNode = 0;
                         maxNode = m_insertionSet.insertConstant(
-                            nodeIndex, range.m_maxOrigin, jsNumber(range.m_maxBound));
+                            nodeIndex, maxOrigin, jsNumber(range.m_maxBound));
                     } else {
                         minNode = insertAdd(
-                            nodeIndex, NodeOrigin(range.m_minOrigin, node->origin.forExit),
-                            data.m_key.m_source, range.m_minBound, Arith::Unchecked);
+                            nodeIndex, minOrigin, data.m_key.m_source, range.m_minBound,
+                            Arith::Unchecked);
                         maxNode = insertAdd(
-                            nodeIndex, NodeOrigin(range.m_maxOrigin, node->origin.forExit),
-                            data.m_key.m_source, range.m_maxBound, Arith::Unchecked);
+                            nodeIndex, maxOrigin, data.m_key.m_source, range.m_maxBound,
+                            Arith::Unchecked);
                     }
                     
                     if (minNode) {
