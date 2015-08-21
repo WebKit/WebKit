@@ -11,7 +11,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 iframe.isEqual(newIframe): true
-scrollarea.isEqual(newScrollarea): false
+scrollarea.isEqual(newScrollarea): true
 subwebarea.isEqual(newSubwebarea): false
 PASS newSubwebarea.childrenCount > 0 is true
 

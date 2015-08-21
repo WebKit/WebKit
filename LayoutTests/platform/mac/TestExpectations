@@ -35,9 +35,6 @@ fast/notifications
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
-# This test fails on release and crashes on debug because of trying to use isEqual() with undefined objects
-webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html [ Failure Crash ]
-
 webkit.org/b/116636 accessibility/document-attributes.html [ Failure ]
 
 # Accessibility tests with missing AccessibilityController functionality.
