@@ -1,3 +1,56 @@
+2015-08-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Unify code paths for manually deleting all code
+        https://bugs.webkit.org/show_bug.cgi?id=148280
+
+        Reviewed by Saam Barati.
+
+        We used to have three paths for manually deleting all code. Now we have
+        one shared path.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::attach): Notify the debugger of all previous code when
+        it attaches. We used to do this when recompiling, which was only correct
+        by accident.
+
+        (JSC::Debugger::recompileAllJSFunctions): Switch to the shared path.
+
+        * heap/Heap.h:
+        (JSC::Heap::compiledCode):
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::InspectorRuntimeAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorRuntimeAgent::setTypeProfilerEnabledState):
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks):
+        (Inspector::TypeRecompiler::visit): Deleted.
+        (Inspector::TypeRecompiler::operator()): Deleted.
+        (Inspector::recompileAllJSFunctionsForTypeProfiling): Deleted. Switch
+        to the shared path.
+
+        * runtime/VM.cpp:
+        (JSC::VM::afterVMExit): Added a helper for scheduling an activity after
+        VM exit. We can't delete code while it's on the stack, and we can't
+        delete auxiliary profiling data while profiling code is on the stack,
+        so in those cases, we schedule the deletion for the next time we exit.
+
+        (JSC::VM::deleteAllCode): Use afterVMExit because we might have code
+        on the stack when debugger, profiler, or watchdog state changes.
+
+        * runtime/VM.h:
+
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::addDidPopListener):
+        (JSC::VMEntryScope::~VMEntryScope):
+        (JSC::VMEntryScope::setEntryScopeDidPopListener): Deleted.
+        * runtime/VMEntryScope.h:
+        (JSC::VMEntryScope::globalObject): Removed the uniquing feature from
+        the scope pop listener list because we don't have a client that wants
+        it, and it's not convenient to use correctly since you can't take
+        the address of a member function, a lambda, or an std::function. We can
+        add this feature back if we discover that we want it.
+
 2015-08-21  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement WebAssembly function parser

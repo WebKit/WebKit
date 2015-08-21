@@ -35,72 +35,6 @@
 #include "Protect.h"
 #include "VMEntryScope.h"
 
-namespace {
-
-using namespace JSC;
-
-class Recompiler : public MarkedBlock::VoidFunctor {
-public:
-    Recompiler(JSC::Debugger*);
-    ~Recompiler();
-    IterationStatus operator()(JSCell*);
-
-private:
-    typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
-    typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
-    
-    void visit(JSCell*);
-    
-    JSC::Debugger* m_debugger;
-    FunctionExecutableSet m_functionExecutables;
-    SourceProviderMap m_sourceProviders;
-};
-
-inline Recompiler::Recompiler(JSC::Debugger* debugger)
-    : m_debugger(debugger)
-{
-}
-
-inline Recompiler::~Recompiler()
-{
-    // Call sourceParsed() after reparsing all functions because it will execute
-    // JavaScript in the inspector.
-    SourceProviderMap::const_iterator end = m_sourceProviders.end();
-    for (SourceProviderMap::const_iterator iter = m_sourceProviders.begin(); iter != end; ++iter)
-        m_debugger->sourceParsed(iter->value, iter->key, -1, String());
-}
-
-inline void Recompiler::visit(JSCell* cell)
-{
-    if (!cell->inherits(JSFunction::info()))
-        return;
-
-    JSFunction* function = jsCast<JSFunction*>(cell);
-    if (function->executable()->isHostFunction())
-        return;
-
-    FunctionExecutable* executable = function->jsExecutable();
-
-    // Check if the function is already in the set - if so,
-    // we've already retranslated it, nothing to do here.
-    if (!m_functionExecutables.add(executable).isNewEntry)
-        return;
-
-    ExecState* exec = function->scope()->globalObject()->JSGlobalObject::globalExec();
-    executable->clearCode();
-    executable->clearUnlinkedCodeForRecompilation();
-    if (m_debugger == function->scope()->globalObject()->debugger())
-        m_sourceProviders.add(executable->source().provider(), exec);
-}
-
-inline IterationStatus Recompiler::operator()(JSCell* cell)
-{
-    visit(cell);
-    return IterationStatus::Continue;
-}
-
-} // namespace
-
 namespace JSC {
 
 class DebuggerPausedScope {
@@ -180,6 +114,15 @@ void Debugger::attach(JSGlobalObject* globalObject)
         ASSERT(m_vm == &globalObject->vm());
     globalObject->setDebugger(this);
     m_globalObjects.add(globalObject);
+
+    // Call sourceParsed() because it will execute JavaScript in the inspector.
+    for (size_t i = 0; i < m_vm->heap.compiledCode().size(); ++i) {
+        ExecutableBase* base = m_vm->heap.compiledCode()[i];
+        if (!base->isFunctionExecutable())
+            continue;
+        FunctionExecutable* executable = static_cast<FunctionExecutable*>(base);
+        sourceParsed(globalObject->globalExec(), executable->source().provider(), -1, String());
+    }
 }
 
 void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
@@ -336,26 +279,7 @@ void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointStat
 
 void Debugger::recompileAllJSFunctions(VM* vm)
 {
-    // If JavaScript is running, it's not safe to recompile, since we'll end
-    // up throwing away code that is live on the stack.
-    if (vm->entryScope) {
-        auto listener = [] (VM& vm, JSGlobalObject* globalObject) 
-        {
-            if (Debugger* debugger = globalObject->debugger())
-                debugger->recompileAllJSFunctions(&vm);
-        };
-
-        vm->entryScope->setEntryScopeDidPopListener(this, listener);
-        return;
-    }
-
-#if ENABLE(DFG_JIT)
-    DFG::completeAllPlansForVM(*vm);
-#endif
-
-    Recompiler recompiler(this);
-    HeapIterationScope iterationScope(vm->heap);
-    vm->heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
+    vm->deleteAllCode();
 }
 
 BreakpointID Debugger::setBreakpoint(Breakpoint breakpoint, unsigned& actualLine, unsigned& actualColumn)
