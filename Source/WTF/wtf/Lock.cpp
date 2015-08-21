@@ -36,7 +36,7 @@ namespace WTF {
 
 static const bool verbose = false;
 
-void LockBase::lockSlow()
+void Lock::lockSlow()
 {
     unsigned spinCount = 0;
 
@@ -74,7 +74,7 @@ void LockBase::lockSlow()
     }
 }
 
-void LockBase::unlockSlow()
+void Lock::unlockSlow()
 {
     // We could get here because the weak CAS in unlock() failed spuriously, or because there is
     // someone parked. So, we need a CAS loop: even if right now the lock is just held, it could

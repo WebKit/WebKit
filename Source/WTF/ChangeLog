@@ -1,3 +1,26 @@
+2015-08-20  Anders Carlsson  <andersca@apple.com>
+
+        Merge Lock and LockBase
+        https://bugs.webkit.org/show_bug.cgi?id=148266
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Atomics.h:
+        (WTF::Atomic::Atomic):
+        Add a default constructor as well as a constexpr constructor that takes a value.
+
+        * wtf/Lock.cpp:
+        (WTF::Lock::lockSlow):
+        (WTF::Lock::unlockSlow):
+        Rename LockBase to Lock.
+
+        * wtf/Lock.h:
+        Rename LockBase to Lock and direct-initialize Atomic to 0. Since the Atomic constructor is constexpr,
+        Lock also gets a constexpr constructor. Change the LockBase -> StaticLock typedef and add a fixme.
+
+        * wtf/WordLock.h:
+        Direct initialize m_word to 0.
+
 2015-08-19  Filip Pizlo  <fpizlo@apple.com>
 
         Remove WTF::SpinLock

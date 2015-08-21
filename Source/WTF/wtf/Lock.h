@@ -45,7 +45,7 @@ namespace WTF {
 
 // This is a struct without a constructor or destructor so that it can be statically initialized.
 // Use Lock in instance variables.
-struct LockBase {
+struct Lock {
     void lock()
     {
         if (LIKELY(m_byte.compareExchangeWeak(0, isHeldBit, std::memory_order_acquire))) {
@@ -108,20 +108,13 @@ protected:
         return !m_byte.load();
     }
 
-    Atomic<uint8_t> m_byte;
+    Atomic<uint8_t> m_byte { 0 };
 };
 
-class Lock : public LockBase {
-    WTF_MAKE_NONCOPYABLE(Lock);
-public:
-    Lock()
-    {
-        m_byte.store(0, std::memory_order_relaxed);
-    }
-};
+typedef Locker<Lock> LockHolder;
 
-typedef LockBase StaticLock;
-typedef Locker<LockBase> LockHolder;
+// FIXME: Once all clients have been moved from StaticLock to Lock we can get rid of this typedef.
+typedef Lock StaticLock;
 
 } // namespace WTF
 
