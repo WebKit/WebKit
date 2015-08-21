@@ -54,9 +54,10 @@ private:
     void parseFunctionDeclarationSection();
     void parseFunctionPointerTableSection();
     void parseFunctionDefinitionSection();
-    void parseFunctionDefinition();
+    void parseFunctionDefinition(size_t functionIndex);
     void parseExportSection();
 
+    const SourceCode& m_source;
     WASMReader m_reader;
     Strong<JSWASMModule> m_module;
     String m_errorMessage;

@@ -1841,6 +1841,9 @@
     <ClCompile Include="..\wasm\JSWASMModule.cpp">
       <Filter>wasm</Filter>
     </ClCompile>
+    <ClCompile Include="..\wasm\WASMFunctionParser.cpp">
+      <Filter>wasm</Filter>
+    </ClCompile>
     <ClCompile Include="..\wasm\WASMModuleParser.cpp">
       <Filter>wasm</Filter>
     </ClCompile>
@@ -4420,10 +4423,16 @@
     <ClInclude Include="..\wasm\JSWASMModule.h">
       <Filter>wasm</Filter>
     </ClInclude>
+    <ClInclude Include="..\wasm\WASMConstants.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
     <ClInclude Include="..\wasm\WASMFormat.h">
       <Filter>wasm</Filter>
     </ClInclude>
-    <ClInclude Include="..\wasm\WASMMagicNumber.h">
+    <ClInclude Include="..\wasm\WASMFunctionParser.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wasm\WASMFunctionSyntaxChecker.h">
       <Filter>wasm</Filter>
     </ClInclude>
     <ClInclude Include="..\wasm\WASMModuleParser.h">

@@ -31,7 +31,8 @@
 #include "JSCInlines.h"
 #include "JSWASMModule.h"
 #include "StrongInlines.h"
-#include "WASMMagicNumber.h"
+#include "WASMConstants.h"
+#include "WASMFunctionParser.h"
 #include <wtf/MathExtras.h>
 
 #define FAIL_WITH_MESSAGE(errorMessage) do { m_errorMessage = errorMessage; return; } while (0)
@@ -49,7 +50,8 @@
 namespace JSC {
 
 WASMModuleParser::WASMModuleParser(const SourceCode& source)
-    : m_reader(static_cast<WebAssemblySourceProvider*>(source.provider())->data())
+    : m_source(source)
+    , m_reader(static_cast<WebAssemblySourceProvider*>(source.provider())->data())
 {
 }
 
@@ -247,25 +249,22 @@ void WASMModuleParser::parseFunctionPointerTableSection()
 
 void WASMModuleParser::parseFunctionDefinitionSection()
 {
-    for (size_t i = 0; i < m_module->functionDeclarations().size(); ++i) {
-        parseFunctionDefinition();
+    for (size_t functionIndex = 0; functionIndex < m_module->functionDeclarations().size(); ++functionIndex) {
+        parseFunctionDefinition(functionIndex);
         PROPAGATE_ERROR();
     }
 }
 
-void WASMModuleParser::parseFunctionDefinition()
+void WASMModuleParser::parseFunctionDefinition(size_t functionIndex)
 {
-    // FIXME: Support any functions. https://bugs.webkit.org/show_bug.cgi?id=147738
-    // Currently, we only support functions that have "return 0;" as their only statement.
-    // These functions consist of exactly 4 bytes, i.e.
-    // 1. The number of local variables (0) [0x80]
-    // 2. The number of statements (1) [0x01]
-    // 3. The return statement [0x0f]
-    // 4. The immediate expression (0) [0xa0]
-    uint32_t functionDefinitionBytes;
-    READ_UINT32_OR_FAIL(functionDefinitionBytes, "Cannot read the function definition.");
-    FAIL_IF_FALSE(functionDefinitionBytes == 0xa00f0180, "Only functions that have \"return 0;\" "
-        "as their only statement are supported at the moment.");
+    unsigned startOffsetInSource = m_reader.offset();
+    unsigned endOffsetInSource;
+    String errorMessage;
+    if (!WASMFunctionParser::checkSyntax(m_module.get(), m_source, functionIndex, startOffsetInSource, endOffsetInSource, errorMessage)) {
+        m_errorMessage = errorMessage;
+        return;
+    }
+    m_reader.setOffset(endOffsetInSource);
 }
 
 void WASMModuleParser::parseExportSection()

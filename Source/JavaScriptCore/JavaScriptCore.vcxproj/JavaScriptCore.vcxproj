@@ -892,6 +892,7 @@
     <ClCompile Include="..\tools\JSDollarVM.cpp" />
     <ClCompile Include="..\tools\JSDollarVMPrototype.cpp" />
     <ClCompile Include="..\wasm\JSWASMModule.cpp" />
+    <ClCompile Include="..\wasm\WASMFunctionParser.cpp" />
     <ClCompile Include="..\wasm\WASMModuleParser.cpp" />
     <ClCompile Include="..\wasm\WASMReader.cpp" />
     <ClCompile Include="..\yarr\RegularExpression.cpp" />
@@ -1786,8 +1787,10 @@
     <ClInclude Include="..\tools\ProfileTreeNode.h" />
     <ClInclude Include="..\tools\TieredMMapArray.h" />
     <ClInclude Include="..\wasm\JSWASMModule.h" />
+    <ClInclude Include="..\wasm\WASMConstants.h" />
     <ClInclude Include="..\wasm\WASMFormat.h" />
-    <ClInclude Include="..\wasm\WASMMagicNumber.h" />
+    <ClInclude Include="..\wasm\WASMFunctionParser.h" />
+    <ClInclude Include="..\wasm\WASMFunctionSyntaxChecker.h" />
     <ClInclude Include="..\wasm\WASMModuleParser.h" />
     <ClInclude Include="..\wasm\WASMReader.h" />
     <ClInclude Include="..\yarr\RegularExpression.h" />

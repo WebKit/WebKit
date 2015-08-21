@@ -21,6 +21,23 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * =========================================================================
+ *
+ * Copyright (c) 2015 by the repository authors of
+ * WebAssembly/polyfill-prototype-1.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "config.h"
@@ -113,17 +130,17 @@ bool WASMReader::readString(String& result)
 
 bool WASMReader::readType(WASMType& result)
 {
-    return readByte<WASMType>(result, (uint8_t)WASMType::NumberOfTypes);
+    return readByte<WASMType>(result, static_cast<uint8_t>(WASMType::NumberOfTypes));
 }
 
 bool WASMReader::readExpressionType(WASMExpressionType& result)
 {
-    return readByte<WASMExpressionType>(result, (uint8_t)WASMExpressionType::NumberOfExpressionTypes);
+    return readByte<WASMExpressionType>(result, static_cast<uint8_t>(WASMExpressionType::NumberOfExpressionTypes));
 }
 
 bool WASMReader::readExportFormat(WASMExportFormat& result)
 {
-    return readByte<WASMExportFormat>(result, (uint8_t)WASMExportFormat::NumberOfExportFormats);
+    return readByte<WASMExportFormat>(result, static_cast<uint8_t>(WASMExportFormat::NumberOfExportFormats));
 }
 
 template <class T> bool WASMReader::readByte(T& result, uint8_t numberOfValues)
@@ -133,6 +150,50 @@ template <class T> bool WASMReader::readByte(T& result, uint8_t numberOfValues)
     if (byte >= numberOfValues)
         return false;
     result = T(byte);
+    return true;
+}
+
+bool WASMReader::readOpStatement(bool& hasImmediate, WASMOpStatement& op, WASMOpStatementWithImmediate& opWithImmediate, uint8_t& immediate)
+{
+    return readOp(hasImmediate, op, opWithImmediate, immediate,
+        static_cast<uint8_t>(WASMOpStatement::NumberOfWASMOpStatements),
+        static_cast<uint8_t>(WASMOpStatementWithImmediate::NumberOfWASMOpStatementWithImmediates));
+}
+
+bool WASMReader::readOpExpressionI32(bool& hasImmediate, WASMOpExpressionI32& op, WASMOpExpressionI32WithImmediate& opWithImmediate, uint8_t& immediate)
+{
+    return readOp(hasImmediate, op, opWithImmediate, immediate,
+        static_cast<uint8_t>(WASMOpExpressionI32::NumberOfWASMOpExpressionI32s),
+        static_cast<uint8_t>(WASMOpExpressionI32WithImmediate::NumberOfWASMOpExpressionI32WithImmediates));
+}
+
+bool WASMReader::readVariableTypes(bool& hasImmediate, WASMVariableTypes& variableTypes, WASMVariableTypesWithImmediate& variableTypesWithImmediate, uint8_t& immediate)
+{
+    return readOp(hasImmediate, variableTypes, variableTypesWithImmediate, immediate,
+        static_cast<uint8_t>(WASMVariableTypes::NumberOfVariableTypes),
+        static_cast<uint8_t>(WASMVariableTypesWithImmediate::NumberOfVariableTypesWithImmediates));
+}
+
+template <class T, class TWithImmediate>
+bool WASMReader::readOp(bool& hasImmediate, T& op, TWithImmediate& opWithImmediate, uint8_t& immediate, uint8_t numberOfValues, uint8_t numberOfValuesWithImmediate)
+{
+    CHECK_READ(1);
+    uint8_t byte = *m_cursor++;
+
+    if (!(byte & hasImmediateInOpFlag)) {
+        if (byte >= numberOfValues)
+            return false;
+        hasImmediate = false;
+        op = T(byte);
+        return true;
+    }
+
+    uint8_t byteWithoutImmediate = (byte >> immediateBits) & (opWithImmediateLimit - 1);
+    if (byteWithoutImmediate >= numberOfValuesWithImmediate)
+        return false;
+    hasImmediate = true;
+    opWithImmediate = TWithImmediate(byteWithoutImmediate);
+    immediate = byte & (immediateLimit - 1);
     return true;
 }
 

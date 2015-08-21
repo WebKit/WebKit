@@ -1,3 +1,54 @@
+2015-08-21  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement WebAssembly function parser
+        https://bugs.webkit.org/show_bug.cgi?id=147738
+
+        Reviewed by Filip Pizlo.
+
+        Implement WebAssembly function parser for WebAssembly files produced by pack-asmjs
+        <https://github.com/WebAssembly/polyfill-prototype-1>. This patch parses only
+        some instructions on statements and int32 expressions. Parsing of the rest
+        will be implemented in subsequent patches. The instruction lists in WASMConstants.h
+        are slightly modified from
+        <https://github.com/WebAssembly/polyfill-prototype-1/blob/master/src/shared.h>.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/WASMConstants.h: Added.
+        * wasm/WASMFormat.h:
+        * wasm/WASMFunctionParser.cpp: Added.
+        (JSC::WASMFunctionParser::checkSyntax):
+        (JSC::WASMFunctionParser::parseFunction):
+        (JSC::WASMFunctionParser::parseLocalVariables):
+        (JSC::WASMFunctionParser::parseStatement):
+        (JSC::WASMFunctionParser::parseSetLocalStatement):
+        (JSC::WASMFunctionParser::parseReturnStatement):
+        (JSC::WASMFunctionParser::parseBlockStatement):
+        (JSC::WASMFunctionParser::parseExpression):
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseImmediateExpressionI32):
+        * wasm/WASMFunctionParser.h: Added.
+        (JSC::WASMFunctionParser::WASMFunctionParser):
+        * wasm/WASMFunctionSyntaxChecker.h: Renamed from Source/JavaScriptCore/wasm/WASMMagicNumber.h.
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::WASMModuleParser):
+        (JSC::WASMModuleParser::parseFunctionDefinitionSection):
+        (JSC::WASMModuleParser::parseFunctionDefinition):
+        * wasm/WASMModuleParser.h:
+        * wasm/WASMReader.cpp:
+        (JSC::WASMReader::readType):
+        (JSC::WASMReader::readExpressionType):
+        (JSC::WASMReader::readExportFormat):
+        (JSC::WASMReader::readOpStatement):
+        (JSC::WASMReader::readOpExpressionI32):
+        (JSC::WASMReader::readVariableTypes):
+        (JSC::WASMReader::readOp):
+        * wasm/WASMReader.h:
+        (JSC::WASMReader::offset):
+        (JSC::WASMReader::setOffset):
+
 2015-08-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::PutStackSinkingPhase doesn't need to emit KillStack nodes

@@ -23,17 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WASMMagicNumber_h
-#define WASMMagicNumber_h
+#ifndef WASMFunctionSyntaxChecker_h
+#define WASMFunctionSyntaxChecker_h
 
 #if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 
-static const uint32_t wasmMagicNumber = 0x6d736177;
+class WASMFunctionSyntaxChecker {
+public:
+    typedef int Expression;
+    typedef int Statement;
+};
 
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)
 
-#endif // WASMMagicNumber_h
+#endif // WASMFunctionSyntaxChecker_h

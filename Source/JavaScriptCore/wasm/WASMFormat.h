@@ -65,12 +65,6 @@ enum class WASMExpressionType : uint8_t {
     NumberOfExpressionTypes
 };
 
-enum class WASMExportFormat : uint8_t {
-    Default,
-    Record,
-    NumberOfExportFormats
-};
-
 struct WASMSignature {
     WASMExpressionType returnType;
     Vector<WASMType> arguments;

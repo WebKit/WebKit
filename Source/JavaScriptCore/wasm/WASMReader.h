@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WASMConstants.h"
 #include "WASMFormat.h"
 #include <wtf/Vector.h>
 
@@ -41,6 +42,9 @@ public:
     {
     }
 
+    unsigned offset() const { return m_cursor - m_buffer.data(); }
+    void setOffset(unsigned offset) { m_cursor = m_buffer.data() + offset; }
+
     bool readUInt32(uint32_t& result);
     bool readFloat(float& result);
     bool readDouble(double& result);
@@ -49,11 +53,15 @@ public:
     bool readType(WASMType& result);
     bool readExpressionType(WASMExpressionType& result);
     bool readExportFormat(WASMExportFormat& result);
+    bool readOpStatement(bool& hasImmediate, WASMOpStatement&, WASMOpStatementWithImmediate&, uint8_t& immediate);
+    bool readOpExpressionI32(bool& hasImmediate, WASMOpExpressionI32&, WASMOpExpressionI32WithImmediate&, uint8_t& immediate);
+    bool readVariableTypes(bool& hasImmediate, WASMVariableTypes&, WASMVariableTypesWithImmediate&, uint8_t& immediate);
 
 private:
     static const uint32_t firstSevenBitsMask = 0x7f;
 
     template <class T> bool readByte(T& result, uint8_t numberOfValues);
+    template <class T, class TWithImmediate> bool readOp(bool& hasImmediate, T&, TWithImmediate&, uint8_t& immediate, uint8_t numberOfValues, uint8_t numberOfValuesWithImmediate);
 
     const Vector<uint8_t>& m_buffer;
     const uint8_t* m_cursor;
