@@ -55,9 +55,6 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this.contentTreeOutline.onselect = this._treeElementSelected.bind(this);
-
-        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
-            this._resourcesContentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     }
 
     // Public

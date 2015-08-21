@@ -1,3 +1,15 @@
+2015-08-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Uncaught Exception opening Search Tab
+        https://bugs.webkit.org/show_bug.cgi?id=148284
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel):
+        This is copied / pasted code that shouldn't apply to the Search tab.
+        We want to show results under Resources in the Search tab.
+
 2015-08-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Truncate data URIs
