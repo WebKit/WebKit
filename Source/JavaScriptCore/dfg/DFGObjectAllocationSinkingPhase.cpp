@@ -834,21 +834,6 @@ private:
                 StructurePLoc, LazyNode(m_graph.freeze(node->structure())));
             break;
 
-        case MaterializeNewObject: {
-            target = &m_heap.newAllocation(node, Allocation::Kind::Object);
-            target->setStructures(node->structureSet());
-            writes.add(
-                StructurePLoc, LazyNode(m_graph.varArgChild(node, 0).node()));
-            for (unsigned i = 0; i < node->objectMaterializationData().m_properties.size(); ++i) {
-                writes.add(
-                    PromotedLocationDescriptor(
-                        NamedPropertyPLoc,
-                        node->objectMaterializationData().m_properties[i].m_identifierNumber),
-                    LazyNode(m_graph.varArgChild(node, i + 1).node()));
-            }
-            break;
-        }
-
         case NewFunction:
         case NewArrowFunction: {
             bool isArrowFunction = node->op() == NewArrowFunction;
@@ -882,23 +867,6 @@ private:
                         PromotedLocationDescriptor(ClosureVarPLoc, iter->value.scopeOffset().offset()),
                         initialValue);
                 }
-            }
-            break;
-        }
-
-        case MaterializeCreateActivation: {
-            // We have sunk this once already - there is no way the
-            // watchpoint is still valid.
-            ASSERT(!node->castOperand<SymbolTable*>()->singletonScope()->isStillValid());
-            target = &m_heap.newAllocation(node, Allocation::Kind::Activation);
-            writes.add(ActivationSymbolTablePLoc, LazyNode(m_graph.varArgChild(node, 0).node()));
-            writes.add(ActivationScopePLoc, LazyNode(m_graph.varArgChild(node, 1).node()));
-            for (unsigned i = 0; i < node->objectMaterializationData().m_properties.size(); ++i) {
-                writes.add(
-                    PromotedLocationDescriptor(
-                        ClosureVarPLoc,
-                        node->objectMaterializationData().m_properties[i].m_identifierNumber),
-                    LazyNode(m_graph.varArgChild(node, i + 2).node()));
             }
             break;
         }
@@ -1792,7 +1760,6 @@ private:
                 if (m_sinkCandidates.contains(node) || doLower) {
                     switch (node->op()) {
                     case NewObject:
-                    case MaterializeNewObject:
                         node->convertToPhantomNewObject();
                         break;
 
@@ -1802,7 +1769,6 @@ private:
                         break;
 
                     case CreateActivation:
-                    case MaterializeCreateActivation:
                         node->convertToPhantomCreateActivation();
                         break;
 

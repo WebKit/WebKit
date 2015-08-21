@@ -482,7 +482,6 @@
 		0FA7A8EB18B413C80052371D /* Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FA7A8E918B413C80052371D /* Reg.cpp */; };
 		0FA7A8EC18B413C80052371D /* Reg.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA7A8EA18B413C80052371D /* Reg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FA7A8EE18CE4FD80052371D /* ScratchRegisterAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FA7A8ED18CE4FD80052371D /* ScratchRegisterAllocator.cpp */; };
-		0FAA3E0919D0C2CB00FAC9E2 /* DFGPromoteHeapAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FAA3E0819D0C2CB00FAC9E2 /* DFGPromoteHeapAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FAF7EFD165BA91B000C8455 /* JITDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */; };
 		0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FAF7EFB165BA919000C8455 /* JITDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB105821675480C00F8AB6E /* ExitKind.cpp */; };
@@ -2293,7 +2292,6 @@
 		0FA7A8E918B413C80052371D /* Reg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reg.cpp; sourceTree = "<group>"; };
 		0FA7A8EA18B413C80052371D /* Reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reg.h; sourceTree = "<group>"; };
 		0FA7A8ED18CE4FD80052371D /* ScratchRegisterAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScratchRegisterAllocator.cpp; sourceTree = "<group>"; };
-		0FAA3E0819D0C2CB00FAC9E2 /* DFGPromoteHeapAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPromoteHeapAccess.h; path = dfg/DFGPromoteHeapAccess.h; sourceTree = "<group>"; };
 		0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITDisassembler.cpp; sourceTree = "<group>"; };
 		0FAF7EFB165BA919000C8455 /* JITDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITDisassembler.h; sourceTree = "<group>"; };
 		0FB105821675480C00F8AB6E /* ExitKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExitKind.cpp; sourceTree = "<group>"; };
@@ -5287,7 +5285,6 @@
 				0F3E01A919D353A500F61B7F /* DFGPrePostNumbering.h */,
 				0F2B9CE019D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.cpp */,
 				0F2B9CE119D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.h */,
-				0FAA3E0819D0C2CB00FAC9E2 /* DFGPromoteHeapAccess.h */,
 				0FB1765E196B8F9E0091052A /* DFGPureValue.cpp */,
 				0FB1765F196B8F9E0091052A /* DFGPureValue.h */,
 				0F3A1BF71A9ECB7D000DE01A /* DFGPutStackSinkingPhase.cpp */,
@@ -6174,7 +6171,6 @@
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
 				0F2BDC481522802900CD8910 /* DFGValueSource.h in Headers */,
 				0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */,
-				0FAA3E0919D0C2CB00FAC9E2 /* DFGPromoteHeapAccess.h in Headers */,
 				0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */,
 				0F2BDC491522809600CD8910 /* DFGVariableEvent.h in Headers */,
 				0F2BDC4B1522809D00CD8910 /* DFGVariableEventStream.h in Headers */,

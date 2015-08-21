@@ -1,3 +1,28 @@
+2015-08-21  Basile Clement  <basile_clement@apple.com>
+
+        Remove unused code relative to allocation sinking
+        https://bugs.webkit.org/show_bug.cgi?id=148342
+
+        Reviewed by Mark Lam.
+
+        This removes two things:
+
+         - The DFGPromoteHeapAccess.h file which is a relic of the old sinking
+           phase and is no longer used (it has been subsumed by
+           ObjectAllocationSinking::promoteLocalHeap)
+
+         - Code in the allocation sinking phase for sinking
+           MaterializeCreateActivation and MaterializeNewObject. Handling those
+           is no longer necessary since the phase no longer runs in a fixpoint
+           and thus will never see those nodes, since no other phase creates
+           them.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPromoteHeapAccess.h: Removed.
+
 2015-08-21  Geoffrey Garen  <ggaren@apple.com>
 
         Unify code paths for manually deleting all code

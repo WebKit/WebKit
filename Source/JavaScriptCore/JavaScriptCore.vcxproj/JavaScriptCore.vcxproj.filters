@@ -4369,9 +4369,6 @@
     <ClInclude Include="..\dfg\DFGPromotedHeapLocation.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGPromoteHeapAccess.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\ftl\FTLExitPropertyValue.h">
       <Filter>ftl</Filter>
     </ClInclude>
