@@ -43,15 +43,11 @@ namespace WebCore {
 
 static CookieChangeCallbackPtr cookieChangeCallback;
 
-static void notifyCookiesChangedOnMainThread(void*)
-{
-    ASSERT(isMainThread());
-    cookieChangeCallback();
-}
-
 static void notifyCookiesChanged(CFHTTPCookieStorageRef, void *)
 {
-    callOnMainThread(notifyCookiesChangedOnMainThread, 0);
+    callOnMainThread([] {
+        cookieChangeCallback();
+    });
 }
 
 static inline CFRunLoopRef cookieStorageObserverRunLoop()

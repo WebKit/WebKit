@@ -350,7 +350,9 @@ void WebIconDatabase::scheduleNotificationDelivery()
 
     if (!m_deliveryRequested) {
         m_deliveryRequested = true;
-        callOnMainThread(deliverNotifications, 0);
+        callOnMainThread([] {
+            deliverNotifications(0);
+        });
     }
 }
 

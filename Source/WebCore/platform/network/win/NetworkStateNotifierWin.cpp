@@ -87,11 +87,15 @@ void NetworkStateNotifier::callAddressChanged(void* context)
 
 void CALLBACK NetworkStateNotifier::addrChangeCallback(void* context, BOOLEAN timedOut)
 {
+    NetworkStateNotifier* notifier = static_cast<NetworkStateNotifier*>(context);
+
     // NotifyAddrChange only notifies us of a single address change. Now that we've been notified,
     // we need to call it again so we'll get notified the *next* time.
-    static_cast<NetworkStateNotifier*>(context)->registerForAddressChange();
+    notifier->registerForAddressChange();
 
-    callOnMainThread(callAddressChanged, context);
+    callOnMainThread([notifier] {
+        notifier->addressChanged();
+    }
 }
 
 void NetworkStateNotifier::registerForAddressChange()

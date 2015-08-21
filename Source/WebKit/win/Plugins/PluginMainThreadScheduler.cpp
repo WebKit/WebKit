@@ -51,7 +51,9 @@ void PluginMainThreadScheduler::scheduleCall(NPP npp, MainThreadFunction functio
     it->value.append(Call(function, userData));
 
     if (!m_callPending) {
-        callOnMainThread(mainThreadCallback, this);
+        callOnMainThread([this] {
+            dispatchCalls();
+        });
         m_callPending = true;
     }
 }
@@ -100,11 +102,6 @@ void PluginMainThreadScheduler::dispatchCalls()
 
     for (auto& entry : copy)
         dispatchCallsForPlugin(entry.key, entry.value);
-}
-
-void PluginMainThreadScheduler::mainThreadCallback(void* context)
-{
-    static_cast<PluginMainThreadScheduler*>(context)->dispatchCalls();
 }
 
 } // namespace WebCore

@@ -1,3 +1,19 @@
+2015-08-21  Anders Carlsson  <andersca@apple.com>
+
+        Stop using the old callOnMainThread variant on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=148332
+
+        Reviewed by Tim Horton.
+
+        * Plugins/PluginMainThreadScheduler.cpp:
+        (WebCore::PluginMainThreadScheduler::scheduleCall):
+        (WebCore::PluginMainThreadScheduler::mainThreadCallback): Deleted.
+        * Plugins/PluginMainThreadScheduler.h:
+        * WebDatabaseManager.cpp:
+        (DidModifyOriginData::dispatchToMainThread):
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::scheduleNotificationDelivery):
+
 2015-08-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Miscellaneous Windows Cleanups

@@ -58,8 +58,6 @@ private:
     void dispatchCallsForPlugin(NPP, const Deque<Call>& calls);
     typedef HashMap<NPP, Deque<Call>> CallQueueMap;
 
-    static void mainThreadCallback(void* context);
-
     class Call {
     public:
         Call(MainThreadFunction* function, void* userData)

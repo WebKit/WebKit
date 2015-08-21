@@ -333,7 +333,9 @@ public:
     static void dispatchToMainThread(WebDatabaseManager* databaseManager, SecurityOrigin* origin)
     {
         DidModifyOriginData* context = new DidModifyOriginData(databaseManager, origin->isolatedCopy());
-        callOnMainThread(&DidModifyOriginData::dispatchDidModifyOriginOnMainThread, context);
+        callOnMainThread([context] {
+            dispatchDidModifyOriginOnMainThread(context);
+        });
     }
 
 private:
