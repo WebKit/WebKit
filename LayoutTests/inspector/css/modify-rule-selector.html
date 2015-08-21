@@ -7,6 +7,10 @@
 <script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function test() {
+    // FIXME: remove this once we know why this test is sometimes flaky.
+    // See <https://www.webkit.org/b/148321> for more details.
+    InspectorTest.dumpActivityToSystemConsole = true;
+
     var nodeStyles;
     var selectors = ["span.foo", "body > .foo"];
     var index = 0;

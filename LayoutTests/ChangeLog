@@ -1,3 +1,13 @@
+2015-08-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: inspector/css/modify-rule-selector.html is flaky on some bots
+        https://bugs.webkit.org/show_bug.cgi?id=148321
+
+        Unreviewed, enable extra logging to stderr so we can hopefully see
+        why the test is occasionally timing out with no output to the test page.
+
+        * inspector/css/modify-rule-selector.html:
+
 2015-08-21  Nan Wang  <n_wang@apple.com>
 
         [Mac] accessibility/selection-states.html fails
