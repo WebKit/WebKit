@@ -1,3 +1,11 @@
+2015-08-20  Lucas Forschler  <lforschler@apple.com>
+
+        Check in LLVM 3.6.2 binary drops for OS X Mavericks.
+        Check in drops built from the LLVM 3.6.2 open source release. 
+
+        * LLVMIncludesMavericks.tar.bz2:
+        * LLVMLibrariesMavericks.tar.bz2:
+
 2015-08-12  Lucas Forschler  <lforschler@apple.com>
 
         Check in LLVM 3.6.2 binary drops for OS X Yosemite
