@@ -31,49 +31,69 @@ function log(message)
     document.getElementById("console").innerHTML += message + "<br>";
 }
 
-function centerMouseOn(elementId)
+function centerMouseOn(element)
 {
-    var element = document.getElementById(elementId);
     eventSender.mouseMoveTo(element.offsetLeft + element.offsetWidth / 2,
         element.offsetTop + element.offsetHeight / 2);
 }
 
+function testRTL()
+{
+    var rtl = document.getElementById("rtl");
+    centerMouseOn(rtl);
+    var offsetBefore = rtl.scrollLeft;
+
+    rtl.onscroll = function() {
+        var offsetAfter = rtl.scrollLeft;
+        if (offsetBefore > offsetAfter)
+            log("rtl: PASS");
+        else {
+            log("rtl: FAIL");
+            log("scrollLeft before: " + offsetBefore);
+            log("scrollLeft after: " + offsetAfter);
+        }
+        testBT();
+    }
+
+    eventSender.mouseScrollBy(1, 0);
+}
+
+function testBT()
+{
+    var bt = document.getElementById("bt");
+    centerMouseOn(bt);
+    offsetBefore = bt.scrollTop;
+    bt.onscroll = function() {
+        offsetAfter = bt.scrollTop;
+        if (offsetBefore > offsetAfter)
+            log("bt: PASS");
+        else {
+            log("bt: FAIL");
+            log("scrollTop before: " + offsetBefore);
+            log("scrollTop after: " + offsetAfter);
+        }
+
+        document.body.removeChild(document.getElementById("rtl"));
+        document.body.removeChild(document.getElementById("bt"));
+        testRunner.notifyDone();
+    }
+
+    eventSender.mouseScrollBy(0, 1);
+}
+
 function test()
 {
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
 
     if (!window.eventSender || !window.eventSender.mouseScrollBy) {
         log("This test requires DumpRenderTree with eventSender.mouseScrollBy.");
         return;
     }
 
-    centerMouseOn("rtl");
-    var offsetBefore = document.getElementById("rtl").scrollLeft;
-    eventSender.mouseScrollBy(1, 0);
-    var offsetAfter = document.getElementById("rtl").scrollLeft;
-    if (offsetBefore > offsetAfter)
-        log("rtl: PASS");
-    else {
-        log("rtl: FAIL");
-        log("scrollLeft before: " + offsetBefore);
-        log("scrollLeft after: " + offsetAfter);
-    }
-
-    centerMouseOn("bt");
-    offsetBefore = document.getElementById("bt").scrollTop;
-    eventSender.mouseScrollBy(0, 1);
-    offsetAfter = document.getElementById("bt").scrollTop;
-    if (offsetBefore > offsetAfter)
-        log("bt: PASS");
-    else {
-        log("bt: FAIL");
-        log("scrollTop before: " + offsetBefore);
-        log("scrollTop after: " + offsetAfter);
-    }
-
-    document.body.removeChild(document.getElementById("rtl"));
-    document.body.removeChild(document.getElementById("bt"));
+    testRTL();
 }
 
 test();

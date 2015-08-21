@@ -49,9 +49,9 @@
             var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
             eventSender.mouseMoveTo(startPosX, startPosY);
             // Each unit of stateless scroll is scaled by 10 pixels.
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none", false);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none");
             // Wait for the snapping to finish.
             setTimeout(function() {
                 if (divTarget.scrollTop != 400)

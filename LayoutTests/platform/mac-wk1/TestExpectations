@@ -112,6 +112,9 @@ scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar
 scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html
 
+# This test times out.
+webkit.org/b/147683 fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]
+
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
 
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]

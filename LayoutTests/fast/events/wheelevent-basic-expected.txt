@@ -18,14 +18,16 @@ PASS WheelEvent.DOM_DELTA_PAGE is 0x02
 PASS window.onwheel is null
 PASS document.onwheel is null
 PASS testDiv.onwheel is null
+Wheel event fired
 PASS testEvent.__proto__ is WheelEvent.prototype
 PASS testEvent.__proto__.__proto__ is MouseEvent.prototype
+PASS testEvent.deltaX > 0 is true
+PASS testEvent.deltaY > 0 is true
 PASS testEvent.deltaZ is 0
 PASS testEvent.deltaMode is WheelEvent.DOM_DELTA_PIXEL
-PASS deltaX > 0 is true
-PASS deltaX is expectedDeltaX
-PASS deltaY > 0 is true
-PASS deltaY is expectedDeltaY
+Scroll event fired
+PASS eventDeltaX is scrollDeltaX
+PASS eventDeltaY is scrollDeltaY
 PASS successfullyParsed is true
 
 TEST COMPLETE

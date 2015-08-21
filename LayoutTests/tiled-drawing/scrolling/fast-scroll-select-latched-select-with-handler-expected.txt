@@ -13,17 +13,16 @@ TEST COMPLETE
 div display height = 111
 Mouse moved to (30, 238)
 PASS Page did not receive wheel events.
-Document was initial target for 8 of the wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 2008.00 2311.00)
+  (bounds 2008.00 2296.00)
   (visible rect 0.00, 0.00 785.00 x 585.00)
   (coverage rect 0.00, 0.00 785.00 x 585.00)
   (intersects coverage rect 1)
   (contentsScale 1.00)
   (children 1
     (GraphicsLayer
-      (bounds 2008.00 2311.00)
+      (bounds 2008.00 2296.00)
       (contentsOpaque 1)
       (visible rect 0.00, 0.00 785.00 x 585.00)
       (coverage rect 0.00, 0.00 1570.00 x 1755.00)

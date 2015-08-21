@@ -56,9 +56,13 @@ public:
     void setShouldDispatchMessageWhenWaitingForSyncReply(bool);
     bool shouldDispatchMessageWhenWaitingForSyncReply() const;
 
+    void setFullySynchronousModeForTesting();
+
 #if HAVE(DTRACE)
     const uuid_t& UUID() const { return m_UUID; }
 #endif
+
+    void wrapForTesting(std::unique_ptr<MessageEncoder>);
 
 private:
     void encodeHeader();

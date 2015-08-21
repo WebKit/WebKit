@@ -349,6 +349,14 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
     if (!isValid())
         return false;
 
+    if (m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting && !encoder->isSyncMessage() && !(encoder->messageReceiverName() == "IPC")) {
+        uint64_t syncRequestID;
+        auto wrappedMessage = createSyncMessageEncoder("IPC", "WrappedAsyncMessageForTesting", encoder->destinationID(), syncRequestID);
+        wrappedMessage->setFullySynchronousModeForTesting();
+        wrappedMessage->wrapForTesting(WTF::move(encoder));
+        return static_cast<bool>(sendSyncMessage(syncRequestID, WTF::move(wrappedMessage), std::chrono::milliseconds::max()));
+    }
+
     if (messageSendFlags & DispatchMessageEvenWhenWaitingForSyncReply
         && (!m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
             || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
@@ -832,8 +840,20 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
     auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
 #endif
 
-    // Hand off both the decoder and encoder to the client.
-    m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
+    if (decoder.messageReceiverName() == "IPC" && decoder.messageName() == "WrappedAsyncMessageForTesting") {
+        if (!m_fullySynchronousModeIsAllowedForTesting) {
+            decoder.markInvalid();
+            return;
+        }
+        std::unique_ptr<MessageDecoder> unwrappedDecoder = MessageDecoder::unwrapForTesting(decoder);
+        RELEASE_ASSERT(unwrappedDecoder);
+        processIncomingMessage(WTF::move(unwrappedDecoder));
+
+        SyncMessageState::singleton().dispatchMessages(nullptr);
+    } else {
+        // Hand off both the decoder and encoder to the client.
+        m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
+    }
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
     ASSERT(!decoder.isInvalid());
@@ -887,6 +907,14 @@ void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
     if (!m_client)
         return;
 
+    if (message->shouldUseFullySynchronousModeForTesting()) {
+        if (!m_fullySynchronousModeIsAllowedForTesting) {
+            m_client->didReceiveInvalidMessage(*this, message->messageReceiverName(), message->messageName());
+            return;
+        }
+        m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting++;
+    }
+
     m_inDispatchMessageCount++;
 
     if (message->shouldDispatchMessageWhenWaitingForSyncReply())
@@ -907,6 +935,9 @@ void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
     // Otherwise, we would deadlock if processing the message results in a sync message back after we exit this function.
     if (message->shouldDispatchMessageWhenWaitingForSyncReply())
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount--;
+
+    if (message->shouldUseFullySynchronousModeForTesting())
+        m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting--;
 
     if (m_didReceiveInvalidMessage && m_client)
         m_client->didReceiveInvalidMessage(*this, message->messageReceiverName(), message->messageName());

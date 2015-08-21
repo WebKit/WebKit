@@ -2,3 +2,10 @@ This test ensures we clear the drag state at the end of each drag. To test manua
 
 Drag me down twice!
 PASS
+
+span:span:dragenter
+span:div:dragenter
+div:div:dragenter
+span:span:dragleave
+span:div:dragleave
+

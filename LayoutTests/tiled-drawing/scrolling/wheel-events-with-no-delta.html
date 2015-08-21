@@ -19,15 +19,11 @@ function mouseWheelFired(e) {
 function scrollTest()
 {
     eventSender.mouseMoveTo(20, 20);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'began', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'begin');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
 }
 

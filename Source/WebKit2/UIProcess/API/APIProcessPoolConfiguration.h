@@ -87,6 +87,9 @@ public:
     const Vector<WTF::String>& cachePartitionedURLSchemes() { return m_cachePartitionedURLSchemes; }
     void setCachePartitionedURLSchemes(Vector<WTF::String>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTF::move(cachePartitionedURLSchemes); }
 
+    bool fullySynchronousModeIsAllowedForTesting() const { return m_fullySynchronousModeIsAllowedForTesting; }
+    void setFullySynchronousModeIsAllowedForTesting(bool allowed) { m_fullySynchronousModeIsAllowedForTesting = allowed; }
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -104,6 +107,7 @@ private:
     WTF::String m_webSQLDatabaseDirectory;
     WTF::String m_mediaKeysStorageDirectory;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
+    bool m_fullySynchronousModeIsAllowedForTesting { false };
 };
 
 } // namespace API

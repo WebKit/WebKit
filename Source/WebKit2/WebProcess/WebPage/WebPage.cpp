@@ -2049,34 +2049,6 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
 }
 
-void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& handled)
-{
-#if ENABLE(DRAG_SUPPORT)
-    if (m_isStartingDrag)
-        messageSenderConnection()->waitForAndDispatchImmediately<Messages::WebPage::DidStartDrag>(messageSenderDestinationID(), std::chrono::seconds(60));
-#endif
-
-    handled = false;
-#if !PLATFORM(IOS)
-    if (!handled && m_headerBanner)
-        handled = m_headerBanner->mouseEvent(mouseEvent);
-    if (!handled && m_footerBanner)
-        handled = m_footerBanner->mouseEvent(mouseEvent);
-#endif // !PLATFORM(IOS)
-
-    if (!handled) {
-        CurrentEvent currentEvent(mouseEvent);
-
-        // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
-        // button is currently pressed. It is possible that neither of those things will be true since on 
-        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one 
-        // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
-        // efficient scrollbars-only version of the event.
-        bool onlyUpdateScrollbars = !(m_page->focusController().isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
-        handled = handleMouseEvent(mouseEvent, this, onlyUpdateScrollbars);
-    }
-}
-
 static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
 {
     Frame& frame = page->mainFrame();
@@ -2099,16 +2071,6 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
         handled = handleWheelEvent(wheelEvent, m_page.get());
     }
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
-}
-
-void WebPage::wheelEventSyncForTesting(const WebWheelEvent& wheelEvent, bool& handled)
-{
-    CurrentEvent currentEvent(wheelEvent);
-
-    if (ScrollingCoordinator* scrollingCoordinator = m_page->scrollingCoordinator())
-        scrollingCoordinator->commitTreeStateIfNeeded();
-
-    handled = handleWheelEvent(wheelEvent, m_page.get());
 }
 
 static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
@@ -2136,18 +2098,6 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
             handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
     }
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
-}
-
-void WebPage::keyEventSyncForTesting(const WebKeyboardEvent& keyboardEvent, bool& handled)
-{
-    CurrentEvent currentEvent(keyboardEvent);
-
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    frame.document()->updateStyleIfNeeded();
-
-    handled = handleKeyEvent(keyboardEvent, m_page.get());
-    if (!handled)
-        handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 }
 
 void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
@@ -2218,12 +2168,6 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
         handled = handleTouchEvent(touchEvent, m_page.get());
     }
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(touchEvent.type()), handled));
-}
-
-void WebPage::touchEventSyncForTesting(const WebTouchEvent& touchEvent, bool& handled)
-{
-    CurrentEvent currentEvent(touchEvent);
-    handled = handleTouchEvent(touchEvent, m_page.get());
 }
 #endif
 
@@ -5022,12 +4966,12 @@ void WebPage::postMessage(const String& messageName, API::Object* messageBody)
     send(Messages::WebPageProxy::HandleMessage(messageName, UserData(WebProcess::singleton().transformObjectsToHandles(messageBody))));
 }
 
-void WebPage::postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void WebPage::postSynchronousMessageForTesting(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
 {
     UserData returnUserData;
 
     auto& webProcess = WebProcess::singleton();
-    if (!sendSync(Messages::WebPageProxy::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), Messages::WebPageProxy::HandleSynchronousMessage::Reply(returnUserData)))
+    if (!sendSync(Messages::WebPageProxy::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), Messages::WebPageProxy::HandleSynchronousMessage::Reply(returnUserData), std::chrono::milliseconds::max(), IPC::SyncMessageSendFlags::UseFullySynchronousModeForTesting))
         returnData = nullptr;
     else
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());

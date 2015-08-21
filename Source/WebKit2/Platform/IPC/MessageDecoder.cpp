@@ -74,11 +74,33 @@ bool MessageDecoder::shouldDispatchMessageWhenWaitingForSyncReply() const
     return m_messageFlags & DispatchMessageWhenWaitingForSyncReply;
 }
 
+bool MessageDecoder::shouldUseFullySynchronousModeForTesting() const
+{
+    return m_messageFlags & UseFullySynchronousModeForTesting;
+}
+
 #if PLATFORM(MAC)
 void MessageDecoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion> assertion)
 {
     m_importanceAssertion = WTF::move(assertion);
 }
 #endif
+
+std::unique_ptr<MessageDecoder> MessageDecoder::unwrapForTesting(MessageDecoder& decoder)
+{
+    ASSERT(decoder.isSyncMessage());
+
+    Vector<Attachment> attachments;
+    Attachment attachment;
+    while (decoder.removeAttachment(attachment))
+        attachments.append(WTF::move(attachment));
+    attachments.reverse();
+
+    DataReference wrappedMessage;
+    if (!decoder.decode(wrappedMessage))
+        return nullptr;
+
+    return std::make_unique<MessageDecoder>(wrappedMessage, WTF::move(attachments));
+}
 
 } // namespace IPC

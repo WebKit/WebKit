@@ -58,19 +58,16 @@
                 y: divTarget.scrollTop
             };
             eventSender.mouseMoveTo(100, 100);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "begin", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end", false);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
             eventSender.callAfterScrollingCompletes(checkForSingleAxisGlide);
         }
 
@@ -89,10 +86,10 @@
             };
 
             eventSender.mouseMoveTo(100, 100);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "began", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none", false);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
             eventSender.callAfterScrollingCompletes(checkForScrollSnap);
         }
 
@@ -113,17 +110,14 @@
             };
 
             eventSender.mouseMoveTo(100, 100);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "began", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "begin", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "continue", false);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end", false);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
             eventSender.callAfterScrollingCompletes(checkForScrollGlide);
         }
 

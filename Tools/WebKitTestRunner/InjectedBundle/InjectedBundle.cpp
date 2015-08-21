@@ -381,7 +381,7 @@ void InjectedBundle::postSetWindowIsKey(bool isKey)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetWindowIsKey"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(isKey));
-    WKBundlePagePostSynchronousMessage(page()->page(), messageName.get(), messageBody.get(), 0);
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), messageBody.get(), 0);
 }
 
 void InjectedBundle::postSimulateWebNotificationClick(uint64_t notificationID)
@@ -468,7 +468,7 @@ bool InjectedBundle::isGeolocationProviderActive() const
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("IsGeolocationClientActive"));
     WKTypeRef resultToPass = 0;
-    WKBundlePagePostSynchronousMessage(page()->page(), messageName.get(), 0, &resultToPass);
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), 0, &resultToPass);
     WKRetainPtr<WKBooleanRef> isActive(AdoptWK, static_cast<WKBooleanRef>(resultToPass));
 
     return WKBooleanGetValue(isActive.get());
@@ -524,7 +524,7 @@ bool InjectedBundle::shouldProcessWorkQueue() const
 
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("IsWorkQueueEmpty"));
     WKTypeRef resultToPass = 0;
-    WKBundlePagePostSynchronousMessage(page()->page(), messageName.get(), 0, &resultToPass);
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), 0, &resultToPass);
     WKRetainPtr<WKBooleanRef> isEmpty(AdoptWK, static_cast<WKBooleanRef>(resultToPass));
 
     return !WKBooleanGetValue(isEmpty.get());

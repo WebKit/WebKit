@@ -2283,11 +2283,6 @@ void WKPageEndPrinting(WKPageRef page)
 }
 #endif
 
-void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync)
-{
-    toImpl(page)->setShouldSendEventsSynchronously(sync);
-}
-
 bool WKPageGetAllowsRemoteInspection(WKPageRef page)
 {
 #if ENABLE(REMOTE_INSPECTOR)

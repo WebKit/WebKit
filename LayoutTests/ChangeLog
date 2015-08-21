@@ -1,3 +1,94 @@
+2015-08-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve how UI events are dispatched by WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=148326
+
+        Reviewed by Anders Carlsson.
+
+        * fast/events/clear-drag-state-expected.txt:
+        * fast/events/clear-drag-state.html:
+        * platform/mac-wk2/TestExpectations:
+        This test used to accidentally pass in WebKit2, but it didn't actually check
+        for the problem. This patch improves WK2 behavior, which makes the test fail.
+        Changed the test to not pass accidentally, and added it to WK2 test expectations.
+        
+        * fast/events/scroll-in-scaled-page-with-overflow-hidden-expected.txt:
+        * fast/events/scroll-in-scaled-page-with-overflow-hidden.html:
+        Updated the test to be fully async.
+
+        * fast/events/wheelevent-basic-expected.txt:
+        * fast/events/wheelevent-basic.html:
+        Updated the test to be fully async, got rid of tab characters.
+
+        * fast/events/wheelevent-mousewheel-interaction.html: 
+        * fast/forms/search/search-scroll-hidden-decoration-container-crash.html:
+        * fast/frames/flattening/scrolling-in-object.html:
+        Updated these tests to be fully async. Since they check for something that happens
+        asynchronously, and doesn't have an end event, they have to use setTimeout.
+
+        * fast/scrolling/latching/iframe_in_iframe.html:
+        * fast/scrolling/latching/scroll-div-latched-div.html:
+        * fast/scrolling/latching/scroll-div-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-div-no-latching.html:
+        * fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html:
+        * fast/scrolling/latching/scroll-iframe-fragment.html:
+        * fast/scrolling/latching/scroll-iframe-latched-iframe.html:
+        * fast/scrolling/latching/scroll-iframe-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-iframe-webkit1-latching-bug.html:
+        * fast/scrolling/latching/scroll-latched-nested-div.html:
+        * fast/scrolling/latching/scroll-nested-iframe.html:
+        * fast/scrolling/latching/scroll-select-bottom-test.html:
+        * fast/scrolling/latching/scroll-select-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-select-latched-select.html:
+        Removed extra testRunner.mouseScrollByWithWheelAndMomentumPhases() calls.
+        We no longer need multiple events for scroll snap animation to start, and due to
+        the way we coalesce events, having multiple events resulted in getting too high velocity.
+        Removed async scrolling argument form the function calls, because it's now always async.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        Moved fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html
+        to WK1 expectations, because the test needn't be skipped on WK2.
+
+        * scrollbars/scroll-rtl-or-bt-layer.html: Made the test fully async, and refactored
+        it for clarity.
+
+        * tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-div.html:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-select.html:
+        * tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-select.html:
+        * tiled-drawing/scrolling/iframe_in_iframe.html:
+        * tiled-drawing/scrolling/overflow-scroll-reduced-content.html:
+        * tiled-drawing/scrolling/overflow-scroll-zero-delta-wheel-events.html:
+        * tiled-drawing/scrolling/root-overflow-with-mousewheel.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow-stateless.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html:
+        * tiled-drawing/scrolling/wheel-events-with-no-delta.html:
+        Same testRunner.mouseScrollByWithWheelAndMomentumPhases changes as in fast/scrolling/latching.
+
+        * tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler.html:
+        Removed debug output about how many events are received. The number may vary due
+        to coalescing.
+
 2015-08-21  Nan Wang  <n_wang@apple.com>
 
         AX: Fix accessibility/mac/search-with-frames.html test

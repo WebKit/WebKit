@@ -54,6 +54,7 @@ public:
 
     bool isSyncMessage() const;
     bool shouldDispatchMessageWhenWaitingForSyncReply() const;
+    bool shouldUseFullySynchronousModeForTesting() const;
 
 #if PLATFORM(MAC)
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
@@ -68,6 +69,8 @@ public:
 
     const uuid_t& UUID() const { return m_UUID; }
 #endif
+
+    static std::unique_ptr<MessageDecoder> unwrapForTesting(MessageDecoder&);
 
 private:
     uint8_t m_messageFlags;

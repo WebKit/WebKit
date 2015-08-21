@@ -427,7 +427,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_sessionRestorationRenderTreeSize(0)
     , m_wantsSessionRestorationRenderTreeSizeThresholdEvent(false)
     , m_hitRenderTreeSizeThreshold(false)
-    , m_shouldSendEventsSynchronously(false)
     , m_suppressVisibilityUpdates(false)
     , m_autoSizingShouldExpandToViewHeight(false)
     , m_mediaVolume(1)
@@ -1686,12 +1685,7 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     if (event.type() == WebEvent::MouseDown)
         m_currentlyProcessedMouseDownEvent = std::make_unique<NativeWebMouseEvent>(event);
 
-    if (m_shouldSendEventsSynchronously) {
-        bool handled = false;
-        m_process->sendSync(Messages::WebPage::MouseEventSyncForTesting(event), Messages::WebPage::MouseEventSyncForTesting::Reply(handled), m_pageID);
-        didReceiveEvent(event.type(), handled);
-    } else
-        m_process->send(Messages::WebPage::MouseEvent(event), m_pageID);
+    m_process->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
 #if MERGE_WHEEL_EVENTS
@@ -1798,13 +1792,6 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
     m_process->responsivenessTimer()->start();
 
-    if (m_shouldSendEventsSynchronously) {
-        bool handled = false;
-        m_process->sendSync(Messages::WebPage::WheelEventSyncForTesting(event), Messages::WebPage::WheelEventSyncForTesting::Reply(handled), m_pageID);
-        didReceiveEvent(event.type(), handled);
-        return;
-    }
-
     m_process->send(
         Messages::EventDispatcher::WheelEvent(
             m_pageID,
@@ -1826,11 +1813,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     m_keyEventQueue.append(event);
 
     m_process->responsivenessTimer()->start();
-    if (m_shouldSendEventsSynchronously) {
-        bool handled = false;
-        m_process->sendSync(Messages::WebPage::KeyEventSyncForTesting(event), Messages::WebPage::KeyEventSyncForTesting::Reply(handled), m_pageID);
-        didReceiveEvent(event.type(), handled);
-    } else if (m_keyEventQueue.size() == 1) // Otherwise, sent from DidReceiveEvent message handler.
+    if (m_keyEventQueue.size() == 1) // Otherwise, sent from DidReceiveEvent message handler.
         m_process->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
 
@@ -1973,12 +1956,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     if (!m_isPageSuspended) {
         m_touchEventQueue.append(event);
         m_process->responsivenessTimer()->start();
-        if (m_shouldSendEventsSynchronously) {
-            bool handled = false;
-            m_process->sendSync(Messages::WebPage::TouchEventSyncForTesting(event), Messages::WebPage::TouchEventSyncForTesting::Reply(handled), m_pageID);
-            didReceiveEvent(event.type(), handled);
-        } else
-            m_process->send(Messages::WebPage::TouchEvent(event), m_pageID);
+        m_process->send(Messages::WebPage::TouchEvent(event), m_pageID);
     } else {
         if (m_touchEventQueue.isEmpty()) {
             bool isEventHandled = false;

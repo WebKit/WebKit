@@ -901,7 +901,7 @@ public:
     void setPageActivityState(WebCore::PageActivityState::Flags);
 
     void postMessage(const String& messageName, API::Object* messageBody);
-    void postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData);
+    void postSynchronousMessageForTesting(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData);
 
 #if PLATFORM(GTK)
     void setInputMethodState(bool);
@@ -990,15 +990,11 @@ private:
     void updateUserActivity();
 
     void mouseEvent(const WebMouseEvent&);
-    void mouseEventSyncForTesting(const WebMouseEvent&, bool&);
-    void wheelEventSyncForTesting(const WebWheelEvent&, bool&);
     void keyEvent(const WebKeyboardEvent&);
-    void keyEventSyncForTesting(const WebKeyboardEvent&, bool&);
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEventSync(const WebTouchEvent&, bool& handled);
 #elif ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
-    void touchEventSyncForTesting(const WebTouchEvent&, bool& handled);
 #endif
 #if ENABLE(CONTEXT_MENUS)
     void contextMenuHidden() { m_isShowingContextMenu = false; }

@@ -831,7 +831,7 @@ bool TestRunner::secureEventInputIsEnabled() const
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SecureEventInputIsEnabled"));
     WKTypeRef returnData = 0;
 
-    WKBundlePagePostSynchronousMessage(InjectedBundle::singleton().page()->page(), messageName.get(), 0, &returnData);
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), 0, &returnData);
     return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
 }
 

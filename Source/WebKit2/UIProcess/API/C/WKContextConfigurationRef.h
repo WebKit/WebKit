@@ -55,6 +55,9 @@ WK_EXPORT void WKContextConfigurationSetWebSQLDatabaseDirectory(WKContextConfigu
 WK_EXPORT WKStringRef WKContextConfigurationCopyMediaKeysStorageDirectory(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetMediaKeysStorageDirectory(WKContextConfigurationRef configuration, WKStringRef mediaKeysStorageDirectory);
 
+WK_EXPORT bool WKContextConfigurationFullySynchronousModeIsAllowedForTesting(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(WKContextConfigurationRef configuration, bool allowed);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,67 @@
+2015-08-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve how UI events are dispatched by WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=148326
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        Removed asyncScrolling from mouseScrollByWithWheelAndMomentumPhases, it's now always
+        asynchronous (and really, it has always been for the most part).
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseDown): Updated for WKBundlePagePostSynchronousMessage renaming.
+        (WTR::EventSendingController::mouseUp): Ditto.
+        (WTR::EventSendingController::mouseMoveTo): Ditto.
+        (WTR::EventSendingController::mouseForceDown): Ditto.
+        (WTR::EventSendingController::mouseForceUp): Ditto.
+        (WTR::EventSendingController::mouseForceChanged): Ditto.
+        (WTR::EventSendingController::leapForward): Ditto.
+        (WTR::EventSendingController::scheduleAsynchronousClick): Ditto.
+        (WTR::EventSendingController::keyDown): Ditto.
+        (WTR::EventSendingController::scheduleAsynchronousKeyDown): Ditto.
+        (WTR::EventSendingController::mouseScrollBy): Force a scrolling tree commit. It used
+        to be done in custom WebKit2 code for test wheel event handling.
+        (WTR::EventSendingController::mouseScrollByWithWheelAndMomentumPhases): Got rid of sync version.
+        (WTR::EventSendingController::continuousMouseScrollBy): Added a FIXME. This one is weird.
+        (WTR::EventSendingController::contextClick): Updated for WKBundlePagePostSynchronousMessage renaming.
+        (WTR::EventSendingController::addTouchPoint): Ditto.
+        (WTR::EventSendingController::updateTouchPoint): Ditto.
+        (WTR::EventSendingController::setTouchModifier): Ditto.
+        (WTR::EventSendingController::setTouchPointRadius): Ditto.
+        (WTR::EventSendingController::touchStart): Ditto.
+        (WTR::EventSendingController::touchMove): Ditto.
+        (WTR::EventSendingController::touchEnd): Ditto.
+        (WTR::EventSendingController::touchCancel): Ditto.
+        (WTR::EventSendingController::clearTouchPoints): Ditto.
+        (WTR::EventSendingController::releaseTouchPoint): Ditto.
+        (WTR::EventSendingController::cancelTouchPoint): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::postSetWindowIsKey):
+        (WTR::InjectedBundle::postSimulateWebNotificationClick):
+        (WTR::InjectedBundle::isGeolocationProviderActive):
+        (WTR::InjectedBundle::shouldProcessWorkQueue):
+        Updated for WKBundlePagePostSynchronousMessage renaming.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::secureEventInputIsEnabled): Ditto.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Allow handling the new test style messages.
+        (WTR::TestController::didReceiveKeyDownMessageFromInjectedBundle): Removed calls
+        to WKPageSetShouldSendEventsSynchronously, which we no longer need.
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle): Moved
+        "MouseScrollBy" to async section, and got rid of WKPageSetShouldSendEventsSynchronously.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseMoveTo): Got rid of WKPageSetShouldSendEventsSynchronously.
+        (WTR::EventSenderProxy::keyDown): Ditto.
+        (WTR::EventSenderProxy::mouseScrollBy): Ditto.
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases): Ditto.
+
 2015-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Skip no-llint tests that fail due to running out of executable memory after r188969

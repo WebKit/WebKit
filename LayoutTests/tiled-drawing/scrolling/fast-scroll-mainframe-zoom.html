@@ -45,9 +45,9 @@
                 var startPosX = Math.round(selectTarget.offsetLeft) + 20;
                 var startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the target div
                 eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the target div
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
                 for (var i = 0; i < 40; ++i) {
-                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none', true);
+                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
                 }
                 eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
                  

@@ -911,8 +911,6 @@ public:
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
 
-    void setShouldSendEventsSynchronously(bool sync) { m_shouldSendEventsSynchronously = sync; };
-
     void printMainFrame();
     
     void setMediaVolume(float);
@@ -1723,8 +1721,6 @@ private:
     uint64_t m_sessionRestorationRenderTreeSize;
     bool m_wantsSessionRestorationRenderTreeSizeThresholdEvent;
     bool m_hitRenderTreeSizeThreshold;
-
-    bool m_shouldSendEventsSynchronously;
 
     bool m_suppressVisibilityUpdates;
     bool m_autoSizingShouldExpandToViewHeight;

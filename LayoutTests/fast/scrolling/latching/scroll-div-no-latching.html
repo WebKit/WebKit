@@ -65,19 +65,19 @@ function scrollTest() {
     //debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
 
     //debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'none', 'none', true);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'none', 'none');
 
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none', true);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
 
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none', true);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
 
     setTimeout(checkForScroll, 100);
 }

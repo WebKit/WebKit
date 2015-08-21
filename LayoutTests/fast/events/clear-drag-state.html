@@ -60,7 +60,7 @@ if (window.eventSender) {
     dragSpan();
     var firstLog = setLog('');
     dragSpan();
-    var secondLog = setLog('PASS');
+    var secondLog = setLog('PASS\n\n' + firstLog);
     if (firstLog != secondLog)
         setLog('FAIL:\nFirst drag:\n' + firstLog + '\nSecond drag:\n' + secondLog);
 }

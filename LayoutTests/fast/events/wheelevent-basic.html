@@ -4,10 +4,12 @@
 <link rel="help" href="http://www.w3.org/TR/DOM-Level-3-Events/#events-WheelEvent">
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-var deltaX = 0;
-var deltaY = 0;
-var expectedDeltaX;
-var expectedDeltaY;
+var eventDeltaX = 0;
+var eventDeltaY = 0;
+var scrollDeltaX;
+var scrollDeltaY;
+
+jsTestIsAsync = true;
 
 var testDiv;
 function runTest() {
@@ -25,12 +27,6 @@ function runTest() {
     if (window.eventSender) {
         eventSender.mouseMoveTo(testDiv.offsetLeft + 5, testDiv.offsetTop + 5);
         eventSender.mouseScrollBy(-1, -2);
-	expectedDeltaX = testDiv.scrollLeft;
-	expectedDeltaY = testDiv.scrollTop;
-	shouldBeTrue("deltaX > 0");
-	shouldBe("deltaX", "expectedDeltaX");
-	shouldBeTrue("deltaY > 0");
-	shouldBe("deltaY", "expectedDeltaY");
     } else {
         debug("FAIL: This test requires window.eventSender.");
     }
@@ -38,22 +34,34 @@ function runTest() {
 
 var testEvent;
 function wheelHandler(e) {
+    debug("Wheel event fired");
     testEvent = e;
     shouldBe("testEvent.__proto__", "WheelEvent.prototype");
     shouldBe("testEvent.__proto__.__proto__", "MouseEvent.prototype");
-    if (e.deltaX)
-        deltaX = e.deltaX;
-    if (e.deltaY)
-        deltaY = e.deltaY;
+    shouldBeTrue("testEvent.deltaX > 0");
+    shouldBeTrue("testEvent.deltaY > 0");
     shouldBe("testEvent.deltaZ", "0");
     shouldBe("testEvent.deltaMode", "WheelEvent.DOM_DELTA_PIXEL")
+    eventDeltaX = e.deltaX;
+    eventDeltaY = e.deltaY;
+}
+
+function scrollHandler()
+{
+    debug("Scroll event fired");
+    scrollDeltaX = testDiv.scrollLeft;
+    scrollDeltaY = testDiv.scrollTop;
+    shouldBe("eventDeltaX", "scrollDeltaX");
+    shouldBe("eventDeltaY", "scrollDeltaY");
+
+    finishJSTest();
 }
 
 </script>
 </head>
 <body>
 <span id="parent">
-    <div id="target" style="border:solid 1px green; width:100px; height:70px; overflow:scroll; white-space:nowrap;">
+    <div id="target" style="border:solid 1px green; width:100px; height:70px; overflow:scroll; white-space:nowrap;" onscroll="scrollHandler()">
         TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP<br/>
         Scroll mouse wheel over here<br/>
         Scroll mouse wheel over here<br/>

@@ -2,7 +2,7 @@
     <style>
         html, body { margin:0; overflow: hidden; }
     </style>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
 </head>
 
 <div>This tests that a usually overflow: hidden viewport should be scrollable when scaled. Otherwise, you can't get to content
@@ -19,6 +19,8 @@
             return;
         }
         
+        jsTestIsAsync = true;
+
         // Force a layout.
         document.body.offsetLeft;
 
@@ -27,11 +29,14 @@
 
         shouldBe("window.document.body.scrollTop", "0");
 
+        document.body.onscroll = function() {
+            shouldBe("window.document.body.scrollTop", "100");
+            finishJSTest();
+        }
+
         if (window.eventSender) {
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollBy(0, -5);
         }
-
-        shouldBe("window.document.body.scrollTop", "100");
     })();
 </script>

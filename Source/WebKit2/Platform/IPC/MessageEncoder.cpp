@@ -27,6 +27,7 @@
 #include "MessageEncoder.h"
 
 #include "ArgumentCoders.h"
+#include "DataReference.h"
 #include "MessageFlags.h"
 #include "MessageRecorder.h"
 #include "StringReference.h"
@@ -98,6 +99,26 @@ void MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply(bool should
         *buffer() |= DispatchMessageWhenWaitingForSyncReply;
     else
         *buffer() &= ~DispatchMessageWhenWaitingForSyncReply;
+}
+
+void MessageEncoder::setFullySynchronousModeForTesting()
+{
+    *buffer() |= UseFullySynchronousModeForTesting;
+}
+
+void MessageEncoder::wrapForTesting(std::unique_ptr<MessageEncoder> original)
+{
+    ASSERT(isSyncMessage());
+    ASSERT(!original->isSyncMessage());
+
+    original->setShouldDispatchMessageWhenWaitingForSyncReply(true);
+
+    encodeVariableLengthByteArray(DataReference(original->buffer(), original->bufferSize()));
+
+    Vector<Attachment> attachments = original->releaseAttachments();
+    reserve(attachments.size());
+    for (Attachment& attachment : attachments)
+        addAttachment(WTF::move(attachment));
 }
 
 } // namespace IPC

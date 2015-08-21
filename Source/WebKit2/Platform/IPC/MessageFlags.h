@@ -31,6 +31,7 @@ namespace IPC {
 enum MessageFlags {
     SyncMessage = 1 << 0,
     DispatchMessageWhenWaitingForSyncReply = 1 << 1,
+    UseFullySynchronousModeForTesting = 1 << 2,
 };
 
 } // namespace IPC

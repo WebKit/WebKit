@@ -1,3 +1,94 @@
+2015-08-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve how UI events are dispatched by WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=148326
+
+        Reviewed by Anders Carlsson.
+
+        Added "fully synchronous mode for testing", in which all messages are dispatched
+        synchronously.
+
+        When an async message is sent in this mode, it is wrapped into a sync one automatically.
+
+        A client must opt in, either by using WKBundlePagePostSynchronousMessageForTesting(),
+        or by calling WKContextConfigurationAllowFullySynchronousModeForTesting().
+        This makes sure that we don't increase potential for IPC misuse.
+
+        * WebProcess/WebPage/WebPage.messages.in: Yay, fewer messages!
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetShouldSendEventsSynchronously): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+        We no longer need WKPageSetShouldSendEventsSynchronously and associated custom messages.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::updateWheelEventTestTriggersIfNeeded): Deleted.
+        Removed code that was only needed to support pseudo-syncronous scrolling in tests.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::dispatchSyncMessage):
+        (IPC::Connection::dispatchMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::allowFullySynchronousModeForTesting):
+        (IPC::Connection::sendSync):
+        * Platform/IPC/MessageDecoder.cpp:
+        (IPC::MessageDecoder::shouldDispatchMessageWhenWaitingForSyncReply):
+        (IPC::MessageDecoder::shouldUseFullySynchronousModeForTesting):
+        (IPC::MessageDecoder::setImportanceAssertion):
+        (IPC::MessageDecoder::unwrapForTesting):
+        * Platform/IPC/MessageDecoder.h:
+        (IPC::MessageDecoder::UUID):
+        * Platform/IPC/MessageEncoder.cpp:
+        (IPC::MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply):
+        (IPC::MessageEncoder::setFullySynchronousModeForTesting):
+        (IPC::MessageEncoder::wrapForTesting):
+        * Platform/IPC/MessageEncoder.h:
+        (IPC::MessageEncoder::UUID):
+        * Platform/IPC/MessageFlags.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationSetMediaKeysStorageDirectory):
+        (WKContextConfigurationAllowFullySynchronousModeForTesting):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::handleMouseEvent):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::handleKeyboardEvent):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::renderTreeSize):
+        (WebKit::WebPageProxy::setShouldSendEventsSynchronously): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processDidFinishLaunching):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePagePostMessage):
+        (WKBundlePagePostSynchronousMessageForTesting):
+        (WKBundlePagePostSynchronousMessage): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::handleWheelEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::handleKeyEvent):
+        (WebKit::WebPage::keyEvent):
+        (WebKit::WebPage::validateCommand):
+        (WebKit::WebPage::touchEvent):
+        (WebKit::WebPage::scroll):
+        (WebKit::WebPage::postMessage):
+        (WebKit::WebPage::postSynchronousMessageForTesting):
+        (WebKit::WebPage::mouseEventSyncForTesting): Deleted.
+        (WebKit::WebPage::wheelEventSyncForTesting): Deleted.
+        (WebKit::WebPage::keyEventSyncForTesting): Deleted.
+        (WebKit::WebPage::touchEventSyncForTesting): Deleted.
+        (WebKit::WebPage::postSynchronousMessage): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2015-08-20  Matt Rajca  <mrajca@apple.com>
 
         Media Session: let UI clients change the volume of the focused media element

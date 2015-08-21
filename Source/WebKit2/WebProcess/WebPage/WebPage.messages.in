@@ -38,10 +38,7 @@ messages -> WebPage LegacyReceiver {
     ViewWillEndLiveResize()
 
     KeyEvent(WebKit::WebKeyboardEvent event)
-    KeyEventSyncForTesting(WebKit::WebKeyboardEvent event) -> (bool handled)
     MouseEvent(WebKit::WebMouseEvent event)
-    MouseEventSyncForTesting(WebKit::WebMouseEvent event) -> (bool handled)
-    WheelEventSyncForTesting(WebKit::WebWheelEvent event) -> (bool handled)
 #if PLATFORM(IOS)
     SetViewportConfigurationMinimumLayoutSize(WebCore::FloatSize size)
     SetMaximumUnobscuredSize(WebCore::FloatSize size)
@@ -107,7 +104,6 @@ messages -> WebPage LegacyReceiver {
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
-    TouchEventSyncForTesting(WebKit::WebTouchEvent event) -> (bool handled)
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

@@ -115,7 +115,9 @@ typedef void (*WKBundlePageTestNotificationCallback)(void* context);
 WK_EXPORT void WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef, WKBundlePageTestNotificationCallback, void* context);
 
 WK_EXPORT void WKBundlePagePostMessage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody);
-WK_EXPORT void WKBundlePagePostSynchronousMessage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);
+
+// Switches a connection into a fully synchronous mode, so all messages become synchronous until we get a response.
+WK_EXPORT void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);
 
 #ifdef __cplusplus
 }

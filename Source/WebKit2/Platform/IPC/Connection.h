@@ -68,6 +68,7 @@ enum SyncMessageSendFlags {
     // Some platform accessibility clients can't suspend gracefully and need to spin the run loop so WebProcess doesn't hang.
     // FIXME (126021): Remove when no platforms need to support this.
     SpinRunLoopWhileWaitingForReply = 1 << 1,
+    UseFullySynchronousModeForTesting = 1 << 2,
 };
 
 enum WaitForMessageFlags {
@@ -205,6 +206,8 @@ public:
     void uninstallIncomingSyncMessageCallback(uint64_t);
     bool hasIncomingSyncMessage();
 
+    void allowFullySynchronousModeForTesting() { m_fullySynchronousModeIsAllowedForTesting = true; }
+
 private:
     Connection(Identifier, bool isServer, Client&);
     void platformInitialize(Identifier);
@@ -256,6 +259,8 @@ private:
     unsigned m_inSendSyncCount;
     unsigned m_inDispatchMessageCount;
     unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
+    unsigned m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting { 0 };
+    bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_didReceiveInvalidMessage;
 
     // Incoming messages.
@@ -368,7 +373,12 @@ template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& 
 
     uint64_t syncRequestID = 0;
     std::unique_ptr<MessageEncoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);
-    
+
+    if (syncSendFlags & SyncMessageSendFlags::UseFullySynchronousModeForTesting) {
+        encoder->setFullySynchronousModeForTesting();
+        m_fullySynchronousModeIsAllowedForTesting = true;
+    }
+
     // Encode the rest of the input arguments.
     encoder->encode(message.arguments());
 

@@ -782,6 +782,9 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
         process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
     }
 
+    if (m_configuration->fullySynchronousModeIsAllowedForTesting())
+        process->connection()->allowFullySynchronousModeForTesting();
+
     m_connectionClient.didCreateConnection(this, process->webConnection());
 }
 

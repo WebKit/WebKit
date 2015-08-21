@@ -14,7 +14,9 @@
                     var startY = element.offsetTop + element.offsetHeight / 2;
                     eventSender.mouseMoveTo(startX, startY);
                     eventSender.mouseScrollBy(0, -4);
-                    testRunner.notifyDone();
+                    setTimeout(function() {
+                        testRunner.notifyDone();
+                    }, 100);
                 }
             }
         </script>
