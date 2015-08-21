@@ -895,7 +895,7 @@ RefPtr<HTMLCollection> ContainerNode::getElementsByClassName(const AtomicString&
     return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, ByClass, classNames);
 }
 
-RefPtr<NodeListBase> ContainerNode::getElementsByClassNameForObjC(const AtomicString& classNames)
+RefPtr<NodeList> ContainerNode::getElementsByClassNameForObjC(const AtomicString& classNames)
 {
     return getElementsByClassName(classNames);
 }

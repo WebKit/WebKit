@@ -24,19 +24,21 @@
 #ifndef NodeList_h
 #define NodeList_h
 
-#include "NodeListBase.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Node;
 
-class NodeList : public NodeListBase, public ScriptWrappable {
+class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
 public:
     virtual ~NodeList() { }
 
     // DOM methods & attributes for NodeList
+    virtual unsigned length() const = 0;
+    virtual Node* item(unsigned index) const = 0;
     virtual Node* namedItem(const AtomicString&) const = 0;
 
     // Other methods (not part of DOM)

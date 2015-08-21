@@ -58,18 +58,19 @@ private:
 #endif
 };
 
-class HTMLCollection : public NodeListBase, public ScriptWrappable {
+// HTMLCollection subclasses NodeList to maintain legacy ObjC API compatibility.
+class HTMLCollection : public NodeList {
 public:
     virtual ~HTMLCollection();
 
     // DOM API
-    virtual Element* item(unsigned index) const = 0; // Tighten return type from NodeListBase::item().
-    virtual Element* namedItem(const AtomicString& name) const = 0;
+    virtual Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
+    virtual Element* namedItem(const AtomicString& name) const override = 0; // Tighten return type from NodeList::namedItem().
     PassRefPtr<NodeList> tags(const String&);
 
     // Non-DOM API
     Vector<Ref<Element>> namedItems(const AtomicString& name) const;
-    virtual size_t memoryCost() const;
+    virtual size_t memoryCost() const override;
 
     bool isRootedAtDocument() const;
     NodeListInvalidationType invalidationType() const;
