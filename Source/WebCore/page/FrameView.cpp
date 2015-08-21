@@ -267,13 +267,7 @@ FrameView::~FrameView()
         m_postLayoutTasksTimer.stop();
     
     removeFromAXObjectCache();
-
-    // FIXME: This is a safe fix for rdar://problem/22356782. We won't resetScrollbars() for a FrameView that is in
-    // the PageCache because resetting scrollbars can re-enter layout for the Frame's new FrameView, which leads to
-    // updating pages in the page cache, which leads to a crash because we're in the process of destroying something
-    // in the page cache. We should not be able to get into this mess at all.
-    if (frame().view() == this)
-        resetScrollbars();
+    resetScrollbars();
 
     // Custom scrollbars should already be destroyed at this point
     ASSERT(!horizontalScrollbar() || !horizontalScrollbar()->isCustomScrollbar());
