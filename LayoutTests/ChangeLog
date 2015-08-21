@@ -1,3 +1,10 @@
+2015-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        Re-mark accessibility/mac/search-with-frames.html flaky
+
+        * platform/mac/TestExpectations:
+        It's still not 100%.
+
 2015-08-21  Alexey Proskuryakov  <ap@apple.com>
 
         Improve how UI events are dispatched by WebKitTestRunner
