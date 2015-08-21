@@ -1,3 +1,11 @@
+2015-08-20  Alex Christensen  <achristensen@webkit.org>
+
+        GTK build fix after r188693.
+
+        * UIProcess/API/gtk/PageClientImpl.h:
+        Delete mediaDocumentNaturalSizeChanged which could be renamed to imageOrMediaDocumentSizeChanged, 
+        but there's no reason to have an empty function overriding another virtual function that is also empty.
+
 2015-08-20  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix build error since r188693
