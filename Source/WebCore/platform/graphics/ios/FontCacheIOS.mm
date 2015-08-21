@@ -108,7 +108,12 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
             return getSystemFontFallbackForCharacters(description, originalFontData, characters, length);
     }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(originalFontData->getCTFont(), characters, length, nullptr, nullptr));
+#else
+    RetainPtr<CTFontRef> fallbackFont = adoptCF(CTFontCreateForCharactersWithLanguage(originalFontData->getCTFont(), characters, length, nullptr, nullptr));
+    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCopyFontDescriptor(fallbackFont.get()));
+#endif
     if (auto foundFontName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontNameAttribute)))) {
         if (c >= 0x0600 && c <= 0x06ff) { // Arabic
             auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontFamilyNameAttribute)));
