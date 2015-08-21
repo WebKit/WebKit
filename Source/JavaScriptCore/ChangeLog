@@ -1,3 +1,34 @@
+2015-08-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Overflow check elimination fails for a simple test case
+        https://bugs.webkit.org/show_bug.cgi?id=147387
+
+        Reviewed by Benjamin Poulain.
+
+        Overflow check elimination was having issues when things got constant-folded, because whereas an
+        Add or LessThan operation teaches us about relationships between the things being added or
+        compared, we don't do that when we see a JSConstant. We don't create a relationship between every
+        JSConstant and every other JSConstant. So, if we constant-fold an Add, we forget the relationships
+        that it would have had with its inputs.
+
+        One solution would be to have every JSConstant create a relationship with every other JSConstant.
+        This is dangerous, since it would create O(n^2) explosion of relationships.
+
+        Instead, this patch teaches filtration and merging how to behave "as if" there were inter-constant
+        relationships. Normally those operations only work on two relationships involving the same node
+        pair. But now, if we have @x op @c and @x op @d, where @c and @d are different nodes but both are
+        constants, we will do merging or filtering by grokking the constant values.
+
+        This speeds up lots of tests in JSRegress, because it enables overflow check elimination on things
+        like:
+
+        for (var i = 0; i < 100; ++i)
+
+        Previously, the fact that this was all constants would throw off the analysis because the analysis
+        wouldn't "know" that 0 < 100.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
 2015-08-20  Geoffrey Garen  <ggaren@apple.com>
 
         forEachCodeBlock should wait for all CodeBlocks automatically
