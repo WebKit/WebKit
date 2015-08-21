@@ -1,5 +1,11 @@
 2015-08-21  Saam barati  <sbarati@apple.com>
 
+        Edit a resource for type profiler and code coverage profiler blog post.
+
+        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere.png:
+
+2015-08-21  Saam barati  <sbarati@apple.com>
+
         Add resources for type profiler and code coverage profiler blog post.
 
         * blog-files/type-profiler-and-code-coverage-profiler: Added.
