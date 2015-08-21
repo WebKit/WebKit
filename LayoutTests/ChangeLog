@@ -1,3 +1,15 @@
+2015-08-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION(173684): Edit as HTML not working
+        https://bugs.webkit.org/show_bug.cgi?id=148268
+
+        Reviewed by Chris Dumez.
+
+        * inspector/dom/getOuterHTML-expected.txt: Added.
+        * inspector/dom/getOuterHTML.html: Added.
+        * inspector/dom/setOuterHTML-expected.txt: Added.
+        * inspector/dom/setOuterHTML.html: Added.
+
 2015-08-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Skip no-llint tests that fail due to running out of executable memory after r188969
