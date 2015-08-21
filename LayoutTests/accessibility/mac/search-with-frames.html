@@ -45,7 +45,8 @@ var successfullyParsed = false;
           this.contentDocument.childNodes[0].childNodes[1].appendChild(ifrm); 
           if (e.target.id == "frame3") {
              ifrm.onload = function() {
-                 runTest();
+                 // runTest() might run on the same call stack and the frame is not actually finished loading.
+                 setTimeout("runTest()", 0);
              };
           }
        };
@@ -65,36 +66,36 @@ function runTest() {
 
         // Search for the buttons. This tests searching through the frames.
         searchKey = "AXButtonSearchKey";
-        resultElement = body.uiElementForSearchPredicate("", true, searchKey, "");
+        resultElement = body.uiElementForSearchPredicate("", true, searchKey, "", false);
         shouldBe("resultElement.role", "'AXRole: AXButton'");
         shouldBe("resultElement.title", "'AXTitle: button1'");
 
-        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "", false);
         shouldBe("resultElement.role", "'AXRole: AXButton'");
         shouldBe("resultElement.title", "'AXTitle: button2'");
 
-        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "", false);
         shouldBe("resultElement.role", "'AXRole: AXButton'");
         shouldBe("resultElement.title", "'AXTitle: button3'");
 
         // Now search backwards.
-        resultElement = body.uiElementForSearchPredicate(resultElement, false, searchKey, "");
+        resultElement = body.uiElementForSearchPredicate(resultElement, false, searchKey, "", false);
         shouldBe("resultElement.role", "'AXRole: AXButton'");
         shouldBe("resultElement.title", "'AXTitle: button2'");
 
         // Search for the frames. First one is frame1
         searchKey = "AXFrameSearchKey";
-        resultElement = body.uiElementForSearchPredicate("", true, searchKey, "");
+        resultElement = body.uiElementForSearchPredicate("", true, searchKey, "", false);
         shouldBe("resultElement.role", "'AXRole: AXWebArea'");
         shouldBe("resultElement.description", "'AXDescription: frame1'");
 
         // Next we should find the frame inside of frame1.
-        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "", false);
         shouldBe("resultElement.role", "'AXRole: AXWebArea'");
         shouldBe("resultElement.description", "'AXDescription: frame1a'");
 
         // Then we should find the frame after frame1.
-        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "", false);
         shouldBe("resultElement.role", "'AXRole: AXWebArea'");
         shouldBe("resultElement.description", "'AXDescription: frame2'");
     }

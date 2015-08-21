@@ -1,3 +1,15 @@
+2015-08-21  Nan Wang  <n_wang@apple.com>
+
+        AX: Fix accessibility/mac/search-with-frames.html test
+        https://bugs.webkit.org/show_bug.cgi?id=148313
+
+        Reviewed by Chris Fleizach.
+
+        uiElementForSearchPredicate function needs five parameters for DumpRenderTree.
+
+        * accessibility/mac/search-with-frames.html:
+        * platform/mac/TestExpectations:
+
 2015-08-21  Doug Russell  <d_russell@apple.com>
 
         AX: Table with CSS that makes a row anonymous can return NULL from cellForColumnAndRow
