@@ -867,7 +867,7 @@ RefPtr<NodeList> ContainerNode::querySelectorAll(const String& selectors, Except
 RefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& localName)
 {
     if (localName.isNull())
-        return 0;
+        return nullptr;
 
     if (document().isHTMLDocument())
         return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, localName);
@@ -877,7 +877,7 @@ RefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& localNa
 RefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     if (localName.isNull())
-        return 0;
+        return nullptr;
 
     if (namespaceURI == starAtom)
         return getElementsByTagName(localName);
@@ -885,22 +885,22 @@ RefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& names
     return ensureRareData().ensureNodeLists().addCacheWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
-RefPtr<NodeList> ContainerNode::getElementsByName(const String& elementName)
+Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)
 {
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, elementName);
 }
 
-RefPtr<HTMLCollection> ContainerNode::getElementsByClassName(const AtomicString& classNames)
+Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomicString& classNames)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, ByClass, classNames);
 }
 
-RefPtr<NodeList> ContainerNode::getElementsByClassNameForObjC(const AtomicString& classNames)
+Ref<NodeList> ContainerNode::getElementsByClassNameForObjC(const AtomicString& classNames)
 {
     return getElementsByClassName(classNames);
 }
 
-RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
+Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);
