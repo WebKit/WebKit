@@ -1,3 +1,16 @@
+2015-08-21  Saam barati  <sbarati@apple.com>
+
+        Add resources for type profiler and code coverage profiler blog post.
+
+        * blog-files/type-profiler-and-code-coverage-profiler: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-video.mp4: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/types-changing.mov: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere.png: Added.
+
 2015-08-06  Brent Fulgham  <bfulgham@apple.com>
 
         Correct a typo in the explanatory text.
