@@ -114,21 +114,6 @@ static bool betterChoice(NSFontTraitMask desiredTraits, int desiredWeight, NSFon
 
 #endif
 
-static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSInteger appKitWeight)
-{
-    return static_cast<FontTraitsMask>(((appKitTraits & NSFontItalicTrait) ? FontStyleItalicMask : FontStyleNormalMask)
-        | FontVariantNormalMask
-        | (appKitWeight == 1 ? FontWeight100Mask :
-            appKitWeight == 2 ? FontWeight200Mask :
-            appKitWeight <= 4 ? FontWeight300Mask :
-            appKitWeight == 5 ? FontWeight400Mask :
-            appKitWeight == 6 ? FontWeight500Mask :
-            appKitWeight <= 8 ? FontWeight600Mask :
-            appKitWeight == 9 ? FontWeight700Mask :
-            appKitWeight <= 11 ? FontWeight800Mask :
-                FontWeight900Mask));
-}
-
 #if !ENABLE(PLATFORM_FONT_LOOKUP)
 // Keep a cache for mapping desired font families to font families actually available on the system for performance.
 using AvailableFamilyMap = HashMap<std::pair<AtomicString, NSFontTraitMask>, AtomicString>;
@@ -607,26 +592,6 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription& description)
-{
-    // Attempt to find an appropriate font using a match based on 
-    // the presence of keywords in the the requested names.  For example, we'll
-    // match any name that contains "Arabic" to Geeza Pro.
-    RefPtr<Font> font;
-    for (unsigned i = 0; i < description.familyCount(); ++i) {
-        const AtomicString& family = description.familyAt(i);
-        if (family.isEmpty())
-            continue;
-        static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
-        for (unsigned j = 0; j < 3 && !font; ++j) {
-            if (family.contains(*matchWords[j], false))
-                font = fontForFamily(description, geezaStr);
-        }
-    }
-    return font.release();
-}
-
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times", AtomicString::ConstructFromLiteral));
@@ -643,39 +608,6 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     // to avoid a crash at least.
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, lucidaGrandeStr, ("Lucida Grande", AtomicString::ConstructFromLiteral));
     return *fontForFamily(fontDescription, lucidaGrandeStr, false);
-}
-
-void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
-{
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-
-    NSString *availableFamily;
-    for (availableFamily in [fontManager availableFontFamilies]) {
-        if ([familyName caseInsensitiveCompare:availableFamily] == NSOrderedSame)
-            break;
-    }
-
-    if (!availableFamily) {
-        // Match by PostScript name.
-        for (NSString *availableFont in [fontManager availableFonts]) {
-            if ([familyName caseInsensitiveCompare:availableFont] == NSOrderedSame) {
-                NSFont *font = [NSFont fontWithName:availableFont size:10];
-                NSInteger weight = [fontManager weightOfFont:font];
-                traitsMasks.append(toTraitsMask([fontManager traitsOfFont:font], weight));
-                break;
-            }
-        }
-        return;
-    }
-
-    NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];
-    traitsMasks.reserveCapacity([fonts count]);
-    for (NSArray *fontInfo in fonts) {
-        // Array indices must be hard coded because of lame AppKit API.
-        NSInteger fontWeight = [[fontInfo objectAtIndex:2] intValue];
-        NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
-        traitsMasks.uncheckedAppend(toTraitsMask(fontTraits, fontWeight));
-    }
 }
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

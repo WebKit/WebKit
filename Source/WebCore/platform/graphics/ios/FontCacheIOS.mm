@@ -150,48 +150,6 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription& description)
-{
-    // Attempt to find an appropriate font using a match based on the presence of keywords in
-    // the requested names. For example, we'll match any name that contains "Arabic" to Geeza Pro.
-    RefPtr<Font> font;
-    for (unsigned i = 0; i < description.familyCount(); ++i) {
-        const AtomicString& family = description.familyAt(i);
-        if (family.isEmpty())
-            continue;
-
-        // Substitute the default monospace font for well-known monospace fonts.
-        static NeverDestroyed<AtomicString> monaco("monaco", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> menlo("menlo", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
-        if (equalIgnoringCase(family, monaco) || equalIgnoringCase(family, menlo)) {
-            font = fontForFamily(description, courier);
-            continue;
-        }
-
-        // Substitute Verdana for Lucida Grande.
-        static NeverDestroyed<AtomicString> lucidaGrande("lucida grande", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> verdana("verdana", AtomicString::ConstructFromLiteral);
-        if (equalIgnoringCase(family, lucidaGrande)) {
-            font = fontForFamily(description, verdana);
-            continue;
-        }
-
-        static NeverDestroyed<String> arabic(ASCIILiteral("Arabic"));
-        static NeverDestroyed<String> pashto(ASCIILiteral("Pashto"));
-        static NeverDestroyed<String> urdu(ASCIILiteral("Urdu"));
-        static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
-        static NeverDestroyed<AtomicString> geezaPlain("GeezaPro", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
-        for (unsigned j = 0; j < 3 && !font; ++j) {
-            if (family.contains(*matchWords[j], false))
-                font = fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
-        }
-    }
-
-    return font.release();
-}
-
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     static NeverDestroyed<AtomicString> fallbackFontFamily(".PhoneFallback", AtomicString::ConstructFromLiteral);
@@ -225,37 +183,6 @@ FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDes
     if (!family)
         return nullptr;
     return getCachedFontPlatformData(description, *family);
-}
-
-static inline FontTraitsMask toTraitsMask(CTFontSymbolicTraits ctFontTraits)
-{
-    return static_cast<FontTraitsMask>(((ctFontTraits & kCTFontTraitItalic) ? FontStyleItalicMask : FontStyleNormalMask)
-        | FontVariantNormalMask
-        // FontWeight600 or higher is bold for CTFonts, so choose middle values for
-        // bold (600-900) and non-bold (100-500)
-        | ((ctFontTraits & kCTFontTraitBold) ? FontWeight700Mask : FontWeight300Mask));
-}
-
-void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
-{
-    RetainPtr<CFStringRef> familyNameStr = familyName.string().createCFString();
-    NSDictionary *attributes = @{ (id)kCTFontFamilyNameAttribute: (NSString*)familyNameStr.get() };
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attributes));
-    RetainPtr<NSArray> matchedDescriptors = adoptNS((NSArray *)CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptor.get(), nullptr));
-
-    NSInteger numMatches = [matchedDescriptors.get() count];
-    if (!matchedDescriptors || !numMatches)
-        return;
-
-    for (NSInteger i = 0; i < numMatches; ++i) {
-        RetainPtr<CFDictionaryRef> traits = adoptCF((CFDictionaryRef)CTFontDescriptorCopyAttribute((CTFontDescriptorRef)[matchedDescriptors.get() objectAtIndex:i], kCTFontTraitsAttribute));
-        CFNumberRef resultRef = (CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait);
-        if (resultRef) {
-            CTFontSymbolicTraits symbolicTraits;
-            CFNumberGetValue(resultRef, kCFNumberIntType, &symbolicTraits);
-            traitsMasks.append(toTraitsMask(symbolicTraits));
-        }
-    }
 }
 
 float FontCache::weightOfCTFont(CTFontRef font)
