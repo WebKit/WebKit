@@ -82,8 +82,13 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
     {
         this._linked = flag;
         this._element.classList.toggle("linked", this._linked);
-        this._linkedIcon.hidden = !this._linked;
-        this._unlinkedIcon.hidden = this._linked;
+
+        if (this._linkedIcon)
+            this._linkedIcon.hidden = !this._linked;
+
+        if (this._unlinkedIcon)
+            this._unlinkedIcon.hidden = this._linked;
+
         this._iconElement.title = this._linked ? WebInspector.UIString("Click to remove link") : WebInspector.UIString("Click to link property values");
 
         for (let linkToHide of this._linksToHideWhenLinked)
