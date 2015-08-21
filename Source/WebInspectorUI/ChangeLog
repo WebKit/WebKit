@@ -1,3 +1,21 @@
+2015-08-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better Remember open tab types and order if using JSContext inspector
+        https://bugs.webkit.org/show_bug.cgi?id=148285
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.activateExtraDomains):
+        Save and restore extra domain related tabs at the expected saved index.
+
+        (WebInspector._rememberOpenTabs):
+        Keep unsupported tab types in the setting so when they are supported they open.
+
+        * UserInterface/Base/Utilities.js:
+        Add a helper for inserting a single object into an array.
+
 2015-08-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: inline errors/warnings are taller than the line height

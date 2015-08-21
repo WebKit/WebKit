@@ -433,6 +433,14 @@ Object.defineProperty(Array.prototype, "remove",
     }
 });
 
+Object.defineProperty(Array.prototype, "insertAtIndex",
+{
+    value: function(value, index)
+    {
+        this.splice(index, 0, value);
+    }
+});
+
 Object.defineProperty(Array.prototype, "keySet",
 {
     value: function()
