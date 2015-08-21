@@ -1,3 +1,12 @@
+2015-08-20  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Revise PlatformWebView ctor according to r188718
+        https://bugs.webkit.org/show_bug.cgi?id=148282
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+
 2015-08-20  Alex Christensen  <achristensen@webkit.org>
 
         GTK build fix after r188693.

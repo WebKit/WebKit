@@ -1,3 +1,16 @@
+2015-08-20  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Revise PlatformWebView ctor according to r188718
+        https://bugs.webkit.org/show_bug.cgi?id=148282
+
+        This patch change PlatformWebView ctor's argument to use WKPageConfigurationRef
+        instead of WKContextRef and WKPageGroupRef respectively.
+
+        Reviewed by Gyuyoung Kim.
+
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2015-08-20  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Unreviewed, changed Devin Rousso's email.
