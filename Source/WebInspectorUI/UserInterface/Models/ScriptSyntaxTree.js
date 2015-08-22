@@ -731,9 +731,14 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 kind: node.kind,
                 static: node.static
             };
+            if (result.kind === "get" || result.kind === "set") {
+                const length = result.key.range[1] - result.key.range[0];
+                result.value.getterOrSetterRange = node.range;
+                result.value.getterOrSetterRange[1] = node.range[0] + length;
+            } else
+                result.value.getterOrSetterRange = result.key.range;
             // FIXME: <https://webkit.org/b/143171> Web Inspector: Improve Type Profiler Support for ES6 Syntax
             result.value.isGetterOrSetter = true;
-            result.value.getterOrSetterRange = result.key.range;
             break;
         case "NewExpression":
             result = {

@@ -1,3 +1,16 @@
+2015-08-21  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Type profiler shows 'Undefined' annotation for functions with no return statements
+        https://bugs.webkit.org/show_bug.cgi?id=146882
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeToken):
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+
 2015-08-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: WebInspector.domTreeManager.regionLayoutUpdated does not exist
