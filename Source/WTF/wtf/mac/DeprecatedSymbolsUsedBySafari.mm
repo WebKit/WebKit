@@ -70,7 +70,7 @@ class MainThreadFunctionTracker {
 public:
     static MainThreadFunctionTracker& singleton()
     {
-        std::once_flag onceFlag;
+        static std::once_flag onceFlag;
 
         static LazyNeverDestroyed<MainThreadFunctionTracker> tracker;
 

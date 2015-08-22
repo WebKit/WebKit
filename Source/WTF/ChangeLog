@@ -1,3 +1,10 @@
+2015-08-22  Anders Carlsson  <andersca@apple.com>
+
+        std::once_flag needs to be static.
+
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        (WTF::MainThreadFunctionTracker::singleton):
+
 2015-08-21  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
