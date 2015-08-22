@@ -57,9 +57,9 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     vm.clearLastException();
 }
 
-void VMEntryScope::addDidPopListener(std::function<void ()> listener)
+void VMEntryScope::setEntryScopeDidPopListener(void* key, EntryScopeDidPopListener listener)
 {
-    m_didPopListeners.append(listener);
+    m_allEntryScopeDidPopListeners.set(key, listener);
 }
 
 VMEntryScope::~VMEntryScope()
@@ -72,8 +72,8 @@ VMEntryScope::~VMEntryScope()
 
     m_vm.entryScope = nullptr;
 
-    for (auto& listener : m_didPopListeners)
-        listener();
+    for (auto& listener : m_allEntryScopeDidPopListeners.values())
+        listener(m_vm, m_globalObject);
 }
 
 } // namespace JSC

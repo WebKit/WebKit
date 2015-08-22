@@ -35,6 +35,72 @@
 #include "Protect.h"
 #include "VMEntryScope.h"
 
+namespace {
+
+using namespace JSC;
+
+class Recompiler : public MarkedBlock::VoidFunctor {
+public:
+    Recompiler(JSC::Debugger*);
+    ~Recompiler();
+    IterationStatus operator()(JSCell*);
+
+private:
+    typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
+    typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
+    
+    void visit(JSCell*);
+    
+    JSC::Debugger* m_debugger;
+    FunctionExecutableSet m_functionExecutables;
+    SourceProviderMap m_sourceProviders;
+};
+
+inline Recompiler::Recompiler(JSC::Debugger* debugger)
+    : m_debugger(debugger)
+{
+}
+
+inline Recompiler::~Recompiler()
+{
+    // Call sourceParsed() after reparsing all functions because it will execute
+    // JavaScript in the inspector.
+    SourceProviderMap::const_iterator end = m_sourceProviders.end();
+    for (SourceProviderMap::const_iterator iter = m_sourceProviders.begin(); iter != end; ++iter)
+        m_debugger->sourceParsed(iter->value, iter->key, -1, String());
+}
+
+inline void Recompiler::visit(JSCell* cell)
+{
+    if (!cell->inherits(JSFunction::info()))
+        return;
+
+    JSFunction* function = jsCast<JSFunction*>(cell);
+    if (function->executable()->isHostFunction())
+        return;
+
+    FunctionExecutable* executable = function->jsExecutable();
+
+    // Check if the function is already in the set - if so,
+    // we've already retranslated it, nothing to do here.
+    if (!m_functionExecutables.add(executable).isNewEntry)
+        return;
+
+    ExecState* exec = function->scope()->globalObject()->JSGlobalObject::globalExec();
+    executable->clearCode();
+    executable->clearUnlinkedCodeForRecompilation();
+    if (m_debugger == function->scope()->globalObject()->debugger())
+        m_sourceProviders.add(executable->source().provider(), exec);
+}
+
+inline IterationStatus Recompiler::operator()(JSCell* cell)
+{
+    visit(cell);
+    return IterationStatus::Continue;
+}
+
+} // namespace
+
 namespace JSC {
 
 class DebuggerPausedScope {
@@ -79,8 +145,8 @@ private:
     Debugger& m_debugger;
 };
 
-Debugger::Debugger(VM& vm, bool isInWorkerThread)
-    : m_vm(vm)
+Debugger::Debugger(bool isInWorkerThread)
+    : m_vm(nullptr)
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pauseOnNextStatement(false)
     , m_isPaused(false)
@@ -108,17 +174,12 @@ Debugger::~Debugger()
 void Debugger::attach(JSGlobalObject* globalObject)
 {
     ASSERT(!globalObject->debugger());
+    if (!m_vm)
+        m_vm = &globalObject->vm();
+    else
+        ASSERT(m_vm == &globalObject->vm());
     globalObject->setDebugger(this);
     m_globalObjects.add(globalObject);
-
-    // Call sourceParsed() because it will execute JavaScript in the inspector.
-    for (size_t i = 0; i < m_vm.heap.compiledCode().size(); ++i) {
-        ExecutableBase* base = m_vm.heap.compiledCode()[i];
-        if (!base->isFunctionExecutable())
-            continue;
-        FunctionExecutable* executable = static_cast<FunctionExecutable*>(base);
-        sourceParsed(globalObject->globalExec(), executable->source().provider(), -1, String());
-    }
 }
 
 void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
@@ -142,6 +203,8 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
         clearDebuggerRequests(globalObject);
 
     globalObject->setDebugger(0);
+    if (!m_globalObjects.size())
+        m_vm = nullptr;
 }
 
 bool Debugger::isAttached(JSGlobalObject* globalObject)
@@ -175,12 +238,12 @@ private:
 
 void Debugger::setSteppingMode(SteppingMode mode)
 {
-    if (mode == m_steppingMode)
+    if (mode == m_steppingMode || !m_vm)
         return;
 
     m_steppingMode = mode;
     SetSteppingModeFunctor functor(this, mode);
-    m_vm.heap.forEachCodeBlock(functor);
+    m_vm->heap.forEachCodeBlock(functor);
 }
 
 void Debugger::registerCodeBlock(CodeBlock* codeBlock)
@@ -265,13 +328,34 @@ private:
 
 void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointState enabledOrNot)
 {
+    if (!m_vm)
+        return;
     ToggleBreakpointFunctor functor(this, breakpoint, enabledOrNot);
-    m_vm.heap.forEachCodeBlock(functor);
+    m_vm->heap.forEachCodeBlock(functor);
 }
 
-void Debugger::recompileAllJSFunctions()
+void Debugger::recompileAllJSFunctions(VM* vm)
 {
-    m_vm.deleteAllCode();
+    // If JavaScript is running, it's not safe to recompile, since we'll end
+    // up throwing away code that is live on the stack.
+    if (vm->entryScope) {
+        auto listener = [] (VM& vm, JSGlobalObject* globalObject) 
+        {
+            if (Debugger* debugger = globalObject->debugger())
+                debugger->recompileAllJSFunctions(&vm);
+        };
+
+        vm->entryScope->setEntryScopeDidPopListener(this, listener);
+        return;
+    }
+
+#if ENABLE(DFG_JIT)
+    DFG::completeAllPlansForVM(*vm);
+#endif
+
+    Recompiler recompiler(this);
+    HeapIterationScope iterationScope(vm->heap);
+    vm->heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
 }
 
 BreakpointID Debugger::setBreakpoint(Breakpoint breakpoint, unsigned& actualLine, unsigned& actualColumn)
@@ -436,8 +520,10 @@ void Debugger::clearBreakpoints()
     m_breakpointIDToBreakpoint.clear();
     m_sourceIDToBreakpoints.clear();
 
+    if (!m_vm)
+        return;
     ClearCodeBlockDebuggerRequestsFunctor functor(this);
-    m_vm.heap.forEachCodeBlock(functor);
+    m_vm->heap.forEachCodeBlock(functor);
 }
 
 class Debugger::ClearDebuggerRequestsFunctor {
@@ -460,8 +546,9 @@ private:
 
 void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 {
+    ASSERT(m_vm);
     ClearDebuggerRequestsFunctor functor(globalObject);
-    m_vm.heap.forEachCodeBlock(functor);
+    m_vm->heap.forEachCodeBlock(functor);
 }
 
 void Debugger::setBreakpointsActivated(bool activated)
@@ -488,7 +575,7 @@ void Debugger::breakProgram()
 
     m_pauseOnNextStatement = true;
     setSteppingMode(SteppingModeEnabled);
-    m_currentCallFrame = m_vm.topCallFrame;
+    m_currentCallFrame = m_vm->topCallFrame;
     ASSERT(m_currentCallFrame);
     pauseIfNeeded(m_currentCallFrame);
 }
@@ -526,7 +613,7 @@ void Debugger::stepOutOfFunction()
     if (!m_isPaused)
         return;
 
-    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
     m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topVMEntryFrame) : 0;
     notifyDoneProcessingDebuggerEvents();
 }
@@ -650,11 +737,11 @@ void Debugger::returnEvent(CallFrame* callFrame)
 
     // Treat stepping over a return statement like stepping out.
     if (m_currentCallFrame == m_pauseOnCallFrame) {
-        VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+        VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
         m_pauseOnCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
     }
 
-    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
     m_currentCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 }
 
@@ -685,12 +772,12 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
     if (m_currentCallFrame == m_pauseOnCallFrame) {
-        VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+        VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
         m_pauseOnCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
         if (!m_currentCallFrame)
             return;
     }
-    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
     m_currentCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 }
 

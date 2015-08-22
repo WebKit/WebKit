@@ -308,6 +308,40 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
         dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", end - start);
 }
 
+class TypeRecompiler : public MarkedBlock::VoidFunctor {
+public:
+    inline void visit(JSCell* cell)
+    {
+        if (!cell->inherits(FunctionExecutable::info()))
+            return;
+
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
+        executable->clearCode();
+        executable->clearUnlinkedCodeForRecompilation();
+    }
+    inline IterationStatus operator()(JSCell* cell)
+    {
+        visit(cell);
+        return IterationStatus::Continue;
+    }
+};
+
+static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTypeProfiling)
+{
+    bool shouldRecompileFromTypeProfiler = (shouldEnableTypeProfiling ? vm.enableTypeProfiler() : vm.disableTypeProfiler());
+    bool shouldRecompileFromControlFlowProfiler = (shouldEnableTypeProfiling ? vm.enableControlFlowProfiler() : vm.disableControlFlowProfiler());
+    bool needsToRecompile = shouldRecompileFromTypeProfiler || shouldRecompileFromControlFlowProfiler;
+
+    if (needsToRecompile) {
+#if ENABLE(DFG_JIT)
+        DFG::completeAllPlansForVM(vm);
+#endif
+        TypeRecompiler recompiler;
+        HeapIterationScope iterationScope(vm.heap);
+        vm.heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
+    }
+}
+
 void InspectorRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
     if (reason != DisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
@@ -324,21 +358,25 @@ void InspectorRuntimeAgent::disableTypeProfiler(ErrorString&)
     setTypeProfilerEnabledState(false);
 }
 
-void InspectorRuntimeAgent::setTypeProfilerEnabledState(bool isTypeProfilingEnabled)
+void InspectorRuntimeAgent::setTypeProfilerEnabledState(bool shouldEnableTypeProfiling)
 {
-    if (m_isTypeProfilingEnabled == isTypeProfilingEnabled)
+    if (m_isTypeProfilingEnabled == shouldEnableTypeProfiling)
         return;
-    m_isTypeProfilingEnabled = isTypeProfilingEnabled;
+
+    m_isTypeProfilingEnabled = shouldEnableTypeProfiling;
 
     VM& vm = globalVM();
-    vm.whenIdle([&vm, isTypeProfilingEnabled] () {
-        bool shouldRecompileFromTypeProfiler = (isTypeProfilingEnabled ? vm.enableTypeProfiler() : vm.disableTypeProfiler());
-        bool shouldRecompileFromControlFlowProfiler = (isTypeProfilingEnabled ? vm.enableControlFlowProfiler() : vm.disableControlFlowProfiler());
-        bool needsToRecompile = shouldRecompileFromTypeProfiler || shouldRecompileFromControlFlowProfiler;
 
-        if (needsToRecompile)
-            vm.deleteAllCode();
-    });
+    // If JavaScript is running, it's not safe to recompile, since we'll end
+    // up throwing away code that is live on the stack.
+    if (vm.entryScope) {
+        vm.entryScope->setEntryScopeDidPopListener(this,
+            [=] (VM& vm, JSGlobalObject*) {
+                recompileAllJSFunctionsForTypeProfiling(vm, shouldEnableTypeProfiling);
+            }
+        );
+    } else
+        recompileAllJSFunctionsForTypeProfiling(vm, shouldEnableTypeProfiling);
 }
 
 void InspectorRuntimeAgent::getBasicBlocks(ErrorString& errorString, const String& sourceIDAsString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>>& basicBlocks)

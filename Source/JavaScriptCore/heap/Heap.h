@@ -237,8 +237,6 @@ public:
 
     void addLogicallyEmptyWeakBlock(WeakBlock*);
 
-    Vector<ExecutableBase*>& compiledCode() { return m_compiledCode; }
-
 private:
     friend class CodeBlock;
     friend class CopiedBlock;

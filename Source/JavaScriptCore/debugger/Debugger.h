@@ -44,10 +44,8 @@ typedef ExecState CallFrame;
 
 class JS_EXPORT_PRIVATE Debugger {
 public:
-    Debugger(VM&, bool isInWorkerThread = false);
+    Debugger(bool isInWorkerThread = false);
     virtual ~Debugger();
-
-    VM& vm() { return m_vm; }
 
     JSC::DebuggerCallFrame* currentDebuggerCallFrame() const;
     bool hasHandlerForExceptionCallback() const
@@ -120,7 +118,7 @@ public:
     void didExecuteProgram(CallFrame*);
     void didReachBreakpoint(CallFrame*);
 
-    virtual void recompileAllJSFunctions();
+    void recompileAllJSFunctions(VM*);
 
     void registerCodeBlock(CodeBlock*);
 
@@ -187,7 +185,7 @@ private:
 
     void clearDebuggerRequests(JSGlobalObject*);
 
-    VM& m_vm;
+    VM* m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
 
     PauseOnExceptionsState m_pauseOnExceptionsState;

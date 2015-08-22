@@ -86,7 +86,6 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
-#include "VMEntryScope.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapData.h"
@@ -472,28 +471,16 @@ void VM::stopSampling()
     interpreter->stopSampling();
 }
 
-void VM::whenIdle(std::function<void()> callback)
-{
-    if (!entryScope) {
-        callback();
-        return;
-    }
-
-    entryScope->addDidPopListener(callback);
-}
-
 void VM::deleteAllCode()
 {
-    whenIdle([this]() {
-        m_codeCache->clear();
-        m_regExpCache->deleteAllCode();
+    m_codeCache->clear();
+    m_regExpCache->deleteAllCode();
 #if ENABLE(DFG_JIT)
-        DFG::completeAllPlansForVM(*this);
+    DFG::completeAllPlansForVM(*this);
 #endif
-        heap.deleteAllCompiledCode();
-        heap.deleteAllUnlinkedFunctionCode();
-        heap.reportAbandonedObjectGraph();
-    });
+    heap.deleteAllCompiledCode();
+    heap.deleteAllUnlinkedFunctionCode();
+    heap.reportAbandonedObjectGraph();
 }
 
 void VM::dumpSampleData(ExecState* exec)

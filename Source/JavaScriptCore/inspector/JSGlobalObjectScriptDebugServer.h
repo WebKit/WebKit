@@ -42,6 +42,8 @@ public:
 
     JSC::JSGlobalObject& globalObject() const { return m_globalObject; }
 
+    virtual void recompileAllJSFunctions() override;
+
 private:
     virtual ListenerSet& getListeners() override { return m_listeners; }
     virtual void didPause(JSC::JSGlobalObject*) override { }
