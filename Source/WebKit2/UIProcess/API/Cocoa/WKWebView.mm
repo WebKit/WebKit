@@ -3083,6 +3083,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return [_wkView _topContentInset];
 }
 
+- (BOOL)_windowOcclusionDetectionEnabled
+{
+    return [_wkView windowOcclusionDetectionEnabled];
+}
+
+- (void)_setWindowOcclusionDetectionEnabled:(BOOL)flag
+{
+    [_wkView setWindowOcclusionDetectionEnabled:flag];
+}
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets

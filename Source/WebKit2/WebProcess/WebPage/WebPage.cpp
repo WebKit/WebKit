@@ -5006,4 +5006,30 @@ void WebPage::imageOrMediaDocumentSizeChanged(const IntSize& newSize)
     send(Messages::WebPageProxy::ImageOrMediaDocumentSizeChanged(newSize));
 }
 
+void WebPage::addUserScript(const String& source, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserScriptInjectionTime injectionTime)
+{
+    ASSERT(m_userContentController);
+
+    WebCore::UserScript userScript(source, WebCore::blankURL(), Vector<String>(), Vector<String>(), injectionTime, injectedFrames);
+
+    m_userContentController->userContentController().addUserScript(mainThreadNormalWorld(), std::make_unique<WebCore::UserScript>(userScript));
+}
+
+void WebPage::addUserStyleSheet(const String& source, WebCore::UserContentInjectedFrames injectedFrames)
+{
+    ASSERT(m_userContentController);
+
+    WebCore::UserStyleSheet userStyleSheet(source, WebCore::blankURL(), Vector<String>(), Vector<String>(), injectedFrames, UserStyleUserLevel);
+
+    m_userContentController->userContentController().addUserStyleSheet(mainThreadNormalWorld(), std::make_unique<WebCore::UserStyleSheet>(userStyleSheet), InjectInExistingDocuments);
+}
+
+void WebPage::removeAllUserContent()
+{
+    if (!m_userContentController)
+        return;
+
+    m_userContentController->userContentController().removeAllUserContent();
+}
+
 } // namespace WebKit

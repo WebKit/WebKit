@@ -615,3 +615,18 @@ void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef pageRef, WKStr
     if (returnDataRef)
         *returnDataRef = toAPI(returnData.release().leakRef());
 }
+
+void WKBundlePageAddUserScript(WKBundlePageRef pageRef, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames)
+{
+    toImpl(pageRef)->addUserScript(toWTFString(source), toUserContentInjectedFrames(injectedFrames), toUserScriptInjectionTime(injectionTime));
+}
+
+void WKBundlePageAddUserStyleSheet(WKBundlePageRef pageRef, WKStringRef source, WKUserContentInjectedFrames injectedFrames)
+{
+    toImpl(pageRef)->addUserStyleSheet(toWTFString(source), toUserContentInjectedFrames(injectedFrames));
+}
+
+void WKBundlePageRemoveAllUserContent(WKBundlePageRef pageRef)
+{
+    toImpl(pageRef)->removeAllUserContent();
+}

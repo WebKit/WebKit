@@ -1,3 +1,81 @@
+2015-08-22  Timothy Horton  <timothy_horton@apple.com>
+
+        WebKitTestRunner should use WKWebView on OS X and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=143743
+        <rdar://problem/16947123>
+
+        Reviewed by Anders Carlsson.
+        Patch by Enrica Casucci and myself.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::windowSnapshotEnabled): Deleted.
+        Add a PlatformWebView constructor that takes a WKWebViewConfiguration
+        instead of WKContext and WKPageGroup.
+
+        Remove the unused, always-true windowSnapshotEnabled().
+        While technically some platforms don't have window snapshotting,
+        they just return null instead of implementing windowSnapshotEnabled().
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+        (WTR::TestController::createWebViewWithOptions):
+        Delegate to the various platforms for creating PlatformWebView instances,
+        for creating WKContexts, and for accessing WKPreferences,
+        so that they can do special things (like, use WKWebView instead!).
+
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Make explicit WebKitTestRunner's desired default for two preferences
+        which have differing defaults between the antique and modern API,
+        for consistency's sake.
+
+        (WTR::TestController::resetStateToConsistentValues):
+        Add platformResetStateToConsistentValues.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults):
+        Adjust to the aforementioned removal of windowSnapshotEnabled().
+
+        * WebKitTestRunner/ios/TestControllerCocoa.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::TestController::platformPreferences):
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::platformCreateOtherPage):
+        (WTR::TestController::platformInitializeConfiguration):
+        Implement the new platform functions for the Modern WebKit2 API,
+        in a new TestControllerCocoa file that is shared between iOS and Mac.
+        
+        For platformMaybeCreateContext, use the trick that we know we can cast
+        the WKProcessPool to a WKContextRef to retrieve a WKContextRef from
+        WKWebView's configuration.
+
+        Ditto for WKPreferencesRef and WKPreferences.
+
+        Remove user content filters on the WKWebView's userContentController.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        Move code into TestControllerCocoa.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::addUserScript):
+        (WTR::TestRunner::addUserStyleSheet):
+        Adopt WKBundlePage API for user scripts/sheets.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        Make and keep a WKWebView instead of a WKView.
+        
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        Reach inside the WKWebView to the WKView when dispatching events.
+        This is fairly ugly and we should come up with a better solution.
+        Also, fix some flipping and style errors.
+
 2015-08-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, attempt to fix GTK build after r188718

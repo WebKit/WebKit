@@ -29,6 +29,8 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKEvent.h>
 #include <WebKit/WKGeometry.h>
+#include <WebKit/WKUserContentInjectedFrames.h>
+#include <WebKit/WKUserScriptInjectionTime.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,6 +94,11 @@ WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef,
 typedef unsigned WKRenderingSuppressionToken;
 WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef);
 WK_EXPORT void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef, WKRenderingSuppressionToken);
+
+// UserContent API (compatible with Modern API, for WKTR)
+WK_EXPORT void WKBundlePageAddUserScript(WKBundlePageRef page, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
+WK_EXPORT void WKBundlePageAddUserStyleSheet(WKBundlePageRef page, WKStringRef source, WKUserContentInjectedFrames injectedFrames);
+WK_EXPORT void WKBundlePageRemoveAllUserContent(WKBundlePageRef page);
 
 #if TARGET_OS_IPHONE
 WK_EXPORT void WKBundlePageSetUseTestingViewportConfiguration(WKBundlePageRef, bool);

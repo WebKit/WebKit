@@ -40,6 +40,8 @@
 		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
 		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
+		2DCE2CD31B8452F800C7F832 /* TestControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */; };
+		2DCE2CD41B84530A00C7F832 /* TestControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */; };
 		2E34C90018B68808000067BB /* WebKitTestRunnerInjectedBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */; };
 		2E63ED8A1891AD7E002A7AFC /* AccessibilityControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */; };
 		2E63ED8B1891AD7E002A7AFC /* AccessibilityTextMarkerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */; };
@@ -171,6 +173,7 @@
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAccessibilityTextMarkerRange.cpp; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarkerRange.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAccessibilityTextMarkerRange.h; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarkerRange.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
+		2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestControllerCocoa.mm; path = cocoa/TestControllerCocoa.mm; sourceTree = "<group>"; };
 		2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityControllerIOS.mm; sourceTree = "<group>"; };
 		2E63ED761891ACE9002A7AFC /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
 		2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerIOS.mm; sourceTree = "<group>"; };
@@ -397,6 +400,7 @@
 			children = (
 				0FEB90A21905BC6A000FDBF3 /* CrashReporterInfo.h */,
 				0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */,
+				2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -786,6 +790,7 @@
 				2E63ED971891ADC7002A7AFC /* PixelDumpSupport.cpp in Sources */,
 				2E63ED981891ADC7002A7AFC /* TestController.cpp in Sources */,
 				2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */,
+				2DCE2CD31B8452F800C7F832 /* TestControllerCocoa.mm in Sources */,
 				0FEB90A81905C537000FDBF3 /* CrashReporterInfo.mm in Sources */,
 				2E63ED991891ADC7002A7AFC /* TestInvocation.cpp in Sources */,
 				2E63EDA51891BD8E002A7AFC /* TestInvocationCG.cpp in Sources */,
@@ -805,6 +810,7 @@
 				E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */,
 				E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */,
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
+				2DCE2CD41B84530A00C7F832 /* TestControllerCocoa.mm in Sources */,
 				26D758E7160BECDD00268472 /* GeolocationProviderMock.cpp in Sources */,
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */,

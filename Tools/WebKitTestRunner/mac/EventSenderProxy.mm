@@ -33,6 +33,7 @@
 #import <Carbon/Carbon.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>
+#import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSApplication (Details)
@@ -268,7 +269,17 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     // FIXME: Silly hack to teach WKTR to respect capturing mouse events outside the WKView.
     // The right solution is just to use NSApplication's built-in event sending methods, 
     // instead of rolling our own algorithm for selecting an event target.
-    targetView = targetView ? targetView : m_testController->mainWebView()->platformView();
+    // FIXME: This is even worse now, because we need to hit the WKWebView's inner WKView
+    // when using the modern API, so the level of fakery and horror increases.
+    if (!targetView) {
+        targetView = m_testController->mainWebView()->platformView();
+        for (NSView *wkWebViewChild in targetView.subviews) {
+            if ([wkWebViewChild isKindOfClass:[WKView class]]) {
+                targetView = wkWebViewChild;
+                break;
+            }
+        }
+    }
     ASSERT(targetView);
     [NSApp _setCurrentEvent:event];
     [targetView mouseUp:event];
@@ -401,28 +412,27 @@ void EventSenderProxy::mouseForceChanged(float)
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {
     NSView *view = m_testController->mainWebView()->platformView();
-    NSPoint position = [view convertPoint:NSMakePoint(x, y) toView:nil];
+    NSPoint position = [view convertPoint:NSMakePoint(x, view.frame.size.height - y) toView:nil];
     m_position.x = position.x;
     m_position.y = position.y;
     NSEvent *event = [NSEvent mouseEventWithType:(m_leftMouseButtonDown ? NSLeftMouseDragged : NSMouseMoved)
                                         location:position
                                    modifierFlags:0 
                                        timestamp:absoluteTimeForEventTime(currentEventTime())
-                                    windowNumber:[[view window] windowNumber] 
+                                    windowNumber:view.window.windowNumber
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
                                       clickCount:(m_leftMouseButtonDown ? m_clickCount : 0) 
-                                        pressure:0.0];
+                                        pressure:0];
 
-    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    NSPoint windowLocation = event.locationInWindow;
+    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:windowLocation];
     if (targetView) {
         [NSApp _setCurrentEvent:event];
         [targetView mouseMoved:event];
         [NSApp _setCurrentEvent:nil];
-    } else {
-        NSPoint windowLocation = [event locationInWindow];
+    } else
         WTFLogAlways("mouseMoveTo failed to find a target view at %f,%f\n", windowLocation.x, windowLocation.y);
-    }
 }
 
 void EventSenderProxy::leapForward(int milliseconds)

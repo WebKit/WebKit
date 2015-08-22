@@ -1,3 +1,37 @@
+2015-08-22  Timothy Horton  <timothy_horton@apple.com>
+
+        WebKitTestRunner should use WKWebView on OS X and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=143743
+        <rdar://problem/16947123>
+
+        Reviewed by Anders Carlsson.
+        Patch by Enrica Casucci and myself.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _windowOcclusionDetectionEnabled]):
+        (-[WKWebView _setWindowOcclusionDetectionEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Add SPI to disable window occlusion detection, for WebKitTestRunner's use.
+
+        * Shared/WebPreferencesDefinitions.h:
+        Remove a completely unused WebPreference. It is a WebCore Setting,
+        but in the API it's exposed as a WKPage setter and WKView and WKWebView property
+        instead of as a WKPreference, so there's no need for the WebPreference.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageAddUserScript):
+        (WKBundlePageAddUserStyleSheet):
+        (WKBundlePageRemoveAllUserContent):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addUserScript):
+        (WebKit::WebPage::addUserStyleSheet):
+        (WebKit::WebPage::removeAllUserContent):
+        * WebProcess/WebPage/WebPage.h:
+        Add WKBundlePage functions for user script and style sheet manipulation.
+        These use the WebPage's WebUserContentController instead of the WebPageGroupProxy's
+        (used by the WKBundle functions), so they work correctly with the modern API.
+
 2015-08-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, attempt to fix GTK build after r188718
