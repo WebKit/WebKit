@@ -117,8 +117,7 @@
             var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
             eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, 2*dy, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
             eventSender.callAfterScrollingCompletes(function() { return checkForScrollSnap(targetLabel); });
         }
@@ -164,12 +163,10 @@
             var startPosY = windowPosition.y + 50;
             eventSender.mouseMoveTo(startPosX, startPosY);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, 3*dy, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'begin');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'continue');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, 2*dy, 'none', 'continue');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
             eventSender.callAfterScrollingCompletes(function() { return checkForScrollGlide(targetLabel); });
         }
