@@ -1,3 +1,12 @@
+2015-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        Stop building WebKitTestRunner for 32-bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=143743
+        <rdar://problem/16947123>
+
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        This is a restriction on the valid set, not the desired set.
+
 2015-08-21  Jason Marcell  <jmarcell@apple.com>
 
         Make Dashboard.Branches be objects of the form (repository, "branch name") and update existing code
