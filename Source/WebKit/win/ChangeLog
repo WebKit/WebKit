@@ -1,3 +1,16 @@
+2015-08-21  Chris Dumez  <cdumez@apple.com>
+
+        document.getElementsByTagName should return an HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=110611
+
+        Reviewed by Darin Adler.
+
+        * DOMCoreClasses.cpp:
+        (DOMDocument::getElementsByTagName):
+        (DOMDocument::getElementsByTagNameNS):
+        Add null checks for localName() before calling
+        ContainerNode::getElementsByTagName*().
+
 2015-08-21  Anders Carlsson  <andersca@apple.com>
 
         Stop using the old callOnMainThread variant on Windows

@@ -11,9 +11,9 @@ shouldBeTrue("window.document.body.constructor.prototype === window.HTMLBodyElem
 shouldBeTrue("window.document.body.constructor.prototype.__proto__ === window.HTMLBodyElement.prototype.__proto__");
 shouldBeTrue("window.document.body.constructor.prototype.__proto__ === window.HTMLElement.prototype");
 
-var nodeList = document.getElementsByTagName('script');
-shouldBeTrue("nodeList.constructor === window.NodeList");
-shouldBeTrue("nodeList.constructor.prototype === window.NodeList.prototype");
+var htmlCollection = document.getElementsByTagName('script');
+shouldBeTrue("htmlCollection.constructor === window.HTMLCollection");
+shouldBeTrue("htmlCollection.constructor.prototype === window.HTMLCollection.prototype");
 
 var mutationEvent = document.createEvent("MutationEvent");
 shouldBeTrue("mutationEvent.constructor === window.MutationEvent");

@@ -864,25 +864,39 @@ RefPtr<NodeList> ContainerNode::querySelectorAll(const String& selectors, Except
     return nullptr;
 }
 
-RefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& localName)
+Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& localName)
 {
-    if (localName.isNull())
-        return nullptr;
+    ASSERT(!localName.isNull());
 
     if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, localName);
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, localName);
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTagCollection>(*this, ByHTMLTag, localName);
+    return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, ByTag, localName);
 }
 
-RefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
+RefPtr<NodeList> ContainerNode::getElementsByTagNameForObjC(const AtomicString& localName)
 {
     if (localName.isNull())
         return nullptr;
+
+    return getElementsByTagName(localName);
+}
+
+Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
+{
+    ASSERT(!localName.isNull());
 
     if (namespaceURI == starAtom)
         return getElementsByTagName(localName);
 
-    return ensureRareData().ensureNodeLists().addCacheWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
+    return ensureRareData().ensureNodeLists().addCachedCollectionWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
+}
+
+RefPtr<NodeList> ContainerNode::getElementsByTagNameNSForObjC(const AtomicString& namespaceURI, const AtomicString& localName)
+{
+    if (localName.isNull())
+        return nullptr;
+
+    return getElementsByTagNameNS(namespaceURI, localName);
 }
 
 Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)

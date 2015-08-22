@@ -9,7 +9,7 @@ PASS querySelectorAllList[Symbol()] === undefined is true
 PASS querySelectorAllList[Symbol('div')] === undefined is true
 PASS querySelectorAllList['Symbol(div)'] instanceof HTMLDivElement is true
 
-[object NodeList]
+[object HTMLCollection]
 PASS getElementsByTagNameList.length === 4 is true
 PASS getElementsByTagNameList[Symbol()] === undefined is true
 PASS getElementsByTagNameList[Symbol('div')] === undefined is true

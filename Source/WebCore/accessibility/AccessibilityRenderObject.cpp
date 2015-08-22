@@ -956,16 +956,10 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
                 linkedUIElements.append(object);        
         } 
     } else {
-        RefPtr<NodeList> list = node->document().getElementsByTagName(inputTag.localName());
-        unsigned length = list->length();
-        for (unsigned i = 0; i < length; ++i) {
-            Node* item = list->item(i);
-            if (is<HTMLInputElement>(*item)) {
-                HTMLInputElement& associateElement = downcast<HTMLInputElement>(*item);
-                if (associateElement.isRadioButton() && associateElement.name() == input.name()) {
-                    if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement))
-                        linkedUIElements.append(object);
-                }
+        for (auto& associateElement : descendantsOfType<HTMLInputElement>(node->document())) {
+            if (associateElement.isRadioButton() && associateElement.name() == input.name()) {
+                if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement))
+                    linkedUIElements.append(object);
             }
         }
     }

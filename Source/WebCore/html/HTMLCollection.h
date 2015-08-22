@@ -66,7 +66,7 @@ public:
     // DOM API
     virtual Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
     virtual Element* namedItem(const AtomicString& name) const override = 0; // Tighten return type from NodeList::namedItem().
-    PassRefPtr<NodeList> tags(const String&);
+    RefPtr<NodeList> tags(const String&);
 
     // Non-DOM API
     Vector<Ref<Element>> namedItems(const AtomicString& name) const;
@@ -77,7 +77,7 @@ public:
     CollectionType type() const;
     ContainerNode& ownerNode() const;
     ContainerNode& rootNode() const;
-    void invalidateCache(const QualifiedName* attributeName);
+    void invalidateCacheForAttribute(const QualifiedName* attributeName);
     virtual void invalidateCache(Document&);
 
     bool hasNamedElementCache() const;
@@ -191,7 +191,7 @@ inline Document& HTMLCollection::document() const
     return m_ownerNode->document();
 }
 
-inline void HTMLCollection::invalidateCache(const QualifiedName* attributeName)
+inline void HTMLCollection::invalidateCacheForAttribute(const QualifiedName* attributeName)
 {
     if (!attributeName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attributeName))
         invalidateCache(document());

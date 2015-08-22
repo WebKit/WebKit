@@ -15020,7 +15020,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\dom\TagNodeList.cpp">
+    <ClCompile Include="..\dom\TagCollection.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -22145,7 +22145,7 @@
     <ClInclude Include="..\dom\StaticNodeList.h" />
     <ClInclude Include="..\dom\StringCallback.h" />
     <ClInclude Include="..\dom\StyledElement.h" />
-    <ClInclude Include="..\dom\TagNodeList.h" />
+    <ClInclude Include="..\dom\TagCollection.h" />
     <ClInclude Include="..\dom\TemplateContentDocumentFragment.h" />
     <ClInclude Include="..\dom\Text.h" />
     <ClInclude Include="..\dom\TextEvent.h" />

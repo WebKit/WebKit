@@ -72,6 +72,8 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
     case DocAnchors:
         return element.hasTagName(aTag) && element.fastHasAttribute(nameAttr);
     case ByClass:
+    case ByTag:
+    case ByHTMLTag:
     case DocAll:
     case DocumentNamedItems:
     case FormControls:

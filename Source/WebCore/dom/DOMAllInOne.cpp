@@ -144,7 +144,7 @@
 #include "StaticNodeList.cpp"
 #include "StringCallback.cpp"
 #include "StyledElement.cpp"
-#include "TagNodeList.cpp"
+#include "TagCollection.cpp"
 #include "Text.cpp"
 #include "TextEvent.cpp"
 #include "TextNodeTraversal.cpp"

@@ -27,7 +27,6 @@
 #include "Element.h"
 #include "ElementTraversal.h"
 #include "HTMLCollection.h"
-#include "TagNodeList.h"
 
 namespace WebCore {
 

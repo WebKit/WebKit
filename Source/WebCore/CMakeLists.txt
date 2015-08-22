@@ -1464,7 +1464,7 @@ set(WebCore_SOURCES
     dom/StaticNodeList.cpp
     dom/StringCallback.cpp
     dom/StyledElement.cpp
-    dom/TagNodeList.cpp
+    dom/TagCollection.cpp
     dom/Text.cpp
     dom/TextEvent.cpp
     dom/TextNodeTraversal.cpp

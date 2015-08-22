@@ -3333,7 +3333,7 @@
     <ClCompile Include="..\dom\StyledElement.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\TagNodeList.cpp">
+    <ClCompile Include="..\dom\TagCollection.cpp">
       <Filter>dom</Filter>
     </ClCompile>
     <ClCompile Include="..\dom\Text.cpp">
@@ -10460,7 +10460,7 @@
     <ClInclude Include="..\dom\StyledElement.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\TagNodeList.h">
+    <ClInclude Include="..\dom\TagCollection.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\TemplateContentDocumentFragment.h">

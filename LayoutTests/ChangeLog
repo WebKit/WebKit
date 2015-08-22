@@ -1,3 +1,32 @@
+2015-08-21  Chris Dumez  <cdumez@apple.com>
+
+        document.getElementsByTagName should return an HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=110611
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/getElementsByTagName-return-type-expected.txt: Added.
+        * fast/dom/getElementsByTagName-return-type.html: Added.
+        New test checking that getElementsByTagName*() returns an HTMLcollection.
+
+        * fast/dom/NodeList/script-tests/nodelist-item-call-as-function.js:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/named-items-with-symbol-name-expected.txt:
+        * fast/dom/script-tests/domListEnumeration.js:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * js/dom/constructor-expected.txt:
+        * js/dom/script-tests/constructor.js:
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+        Rebaseline / update.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        One of the checks is now failing because HTMLCollection.item()'s
+        parameter is optional. The specification says the parameter should
+        be mandatory so I did not update the test. It was previously passing
+        because NodeList.item()'s parameter is mandatory.
+
 2015-08-21  Tim Horton  <timothy_horton@apple.com>
 
         Re-mark accessibility/mac/search-with-frames.html flaky

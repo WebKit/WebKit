@@ -59,6 +59,7 @@
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "TextIterator.h"
+#include "TypedElementDescendantIterator.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
@@ -672,29 +673,29 @@ String createMarkup(const Range& range, Vector<Node*>* nodes, EAnnotateForInterc
     return createMarkupInternal(range.ownerDocument(), range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
 }
 
-PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document& document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
+Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
 {
     // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
-    RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
+    auto fakeBody = HTMLBodyElement::create(document);
+    auto fragment = DocumentFragment::create(document);
 
-    fragment->parseHTML(markup, fakeBody.get(), parserContentPolicy);
+    fragment->parseHTML(markup, fakeBody.ptr(), parserContentPolicy);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     // When creating a fragment we must strip the webkit-attachment-path attribute after restoring the File object.
-    RefPtr<NodeList> nodes = fragment->getElementsByTagName("attachment");
-    for (size_t i = 0; i < nodes->length(); ++i) {
-        if (!is<HTMLAttachmentElement>(*nodes->item(i)))
-            continue;
-        HTMLAttachmentElement& element = downcast<HTMLAttachmentElement>(*nodes->item(i));
-        element.setFile(File::create(element.fastGetAttribute(webkitattachmentpathAttr)).ptr());
-        element.removeAttribute(webkitattachmentpathAttr);
+    Vector<Ref<HTMLAttachmentElement>> attachments;
+    for (auto& attachment : descendantsOfType<HTMLAttachmentElement>(fragment))
+        attachments.append(attachment);
+
+    for (auto& attachment : attachments) {
+        attachment->setFile(File::create(attachment->fastGetAttribute(webkitattachmentpathAttr)).ptr());
+        attachment->removeAttribute(webkitattachmentpathAttr);
     }
 #endif
     if (!baseURL.isEmpty() && baseURL != blankURL() && baseURL != document.baseURL())
-        completeURLs(fragment.get(), baseURL);
+        completeURLs(fragment.ptr(), baseURL);
 
-    return fragment.release();
+    return fragment;
 }
 
 String createMarkup(const Node& node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, Vector<QualifiedName>* tagNamesToSkip, EFragmentSerialization fragmentSerialization)

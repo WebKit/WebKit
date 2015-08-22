@@ -40,6 +40,7 @@
 #include <WebCore/Font.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/Frame.h>
+#include <WebCore/HTMLCollection.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
@@ -708,7 +709,10 @@ HRESULT DOMDocument::getElementsByTagName(_In_ BSTR tagName, _COM_Outptr_opt_ ID
         return E_FAIL;
 
     String tagNameString(tagName);
-    *result = DOMNodeList::createInstance(m_document->getElementsByTagName(tagNameString).get());
+    RefPtr<WebCore::NodeList> elements;
+    if (!tagNameString.isNull())
+        elements = m_document->getElementsByTagName(tagNameString);
+    *result = DOMNodeList::createInstance(elements.get());
     return *result ? S_OK : E_FAIL;
 }
 
@@ -749,7 +753,10 @@ HRESULT DOMDocument::getElementsByTagNameNS(_In_ BSTR namespaceURI, _In_ BSTR lo
 
     String namespaceURIString(namespaceURI);
     String localNameString(localName);
-    *result = DOMNodeList::createInstance(m_document->getElementsByTagNameNS(namespaceURIString, localNameString).get());
+    RefPtr<WebCore::NodeList> elements;
+    if (!localNameString.isNull())
+        elements = m_document->getElementsByTagNameNS(namespaceURIString, localNameString);
+    *result = DOMNodeList::createInstance(elements.get());
     return *result ? S_OK : E_FAIL;
 }
 

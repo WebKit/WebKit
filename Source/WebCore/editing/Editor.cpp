@@ -51,6 +51,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLCollection.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
@@ -3051,10 +3052,10 @@ void Editor::textDidChangeInTextArea(Element* e)
 
 void Editor::applyEditingStyleToBodyElement() const
 {
-    RefPtr<NodeList> list = document().getElementsByTagName("body");
-    unsigned len = list->length();
-    for (unsigned i = 0; i < len; i++)
-        applyEditingStyleToElement(downcast<Element>(list->item(i)));
+    auto collection = document().getElementsByTagName(HTMLNames::bodyTag.localName());
+    unsigned length = collection->length();
+    for (unsigned i = 0; i < length; ++i)
+        applyEditingStyleToElement(collection->item(i));
 }
 
 void Editor::applyEditingStyleToElement(Element* element) const

@@ -11,7 +11,7 @@ PASS objCWrapperClass(document.createDocumentFragment()) is 'DOMDocumentFragment
 PASS objCWrapperClass(document.implementation) is 'DOMImplementation'
 PASS objCWrapperClass(root.attributes) is 'DOMNamedNodeMap'
 PASS objCWrapperClass(document.createNodeIterator(root, 0, null, false)) is 'DOMNodeIterator'
-PASS objCWrapperClass(document.getElementsByTagName('div')) is 'DOMNodeList'
+PASS objCWrapperClass(document.getElementsByTagName('div')) is 'DOMHTMLCollection'
 PASS objCWrapperClass(document.createRange()) is 'DOMRange'
 PASS objCWrapperClass(document.createTextNode()) is 'DOMText'
 PASS objCWrapperClass(document.createTreeWalker(root, 0, null, false)) is 'DOMTreeWalker'

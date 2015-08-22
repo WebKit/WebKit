@@ -47,6 +47,8 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     case FormControls:
         return HTMLCollection::IsRootedAtDocument;
     case ByClass:
+    case ByTag:
+    case ByHTMLTag:
     case NodeChildren:
     case TableTBodies:
     case TSectionRows:
@@ -65,6 +67,8 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
 static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(CollectionType type)
 {
     switch (type) {
+    case ByTag:
+    case ByHTMLTag:
     case DocImages:
     case DocEmbeds:
     case DocForms:
@@ -120,6 +124,8 @@ HTMLCollection::~HTMLCollection()
     // FIXME: We need a cleaner way to handle this.
     switch (type()) {
     case ByClass:
+    case ByTag:
+    case ByHTMLTag:
     case WindowNamedItems:
     case DocumentNamedItems:
         break;
@@ -213,8 +219,11 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomicString& name) const
     return elements;
 }
 
-PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
+RefPtr<NodeList> HTMLCollection::tags(const String& name)
 {
+    if (name.isNull())
+        return nullptr;
+
     return ownerNode().getElementsByTagName(name);
 }
 

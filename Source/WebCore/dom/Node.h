@@ -73,7 +73,7 @@ class RenderObject;
 class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
-class TagNodeList;
+class TagCollection;
 
 #if ENABLE(INDIE_UI)
 class UIRequestEvent;

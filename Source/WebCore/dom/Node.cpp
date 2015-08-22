@@ -818,7 +818,7 @@ void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrNa
         list->invalidateCacheForAttribute(attrName);
     HashSet<HTMLCollection*> collections = WTF::move(m_collectionsInvalidatedAtDocument);
     for (auto* collection : collections)
-        collection->invalidateCache(attrName);
+        collection->invalidateCacheForAttribute(attrName);
 #if !ASSERT_DISABLED
     m_inInvalidateNodeListAndCollectionCaches = false;
 #endif
@@ -1768,13 +1768,13 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
         atomicName.value->invalidateCacheForAttribute(attrName);
 
     for (auto& collection : m_cachedCollections)
-        collection.value->invalidateCache(attrName);
+        collection.value->invalidateCacheForAttribute(attrName);
 
     if (attrName)
         return;
 
-    for (auto& tagNodeList : m_tagNodeListCacheNS)
-        tagNodeList.value->invalidateCacheForAttribute(nullptr);
+    for (auto& tagCollection : m_tagCollectionCacheNS)
+        tagCollection.value->invalidateCacheForAttribute(nullptr);
 }
 
 void Node::getSubresourceURLs(ListHashSet<URL>& urls) const

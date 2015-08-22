@@ -34,7 +34,12 @@
     Attr getAttributeNode([Default=Undefined] optional DOMString name);
     [RaisesException] Attr setAttributeNode([Default=Undefined] optional Attr newAttr);
     [RaisesException] Attr removeAttributeNode([Default=Undefined] optional Attr oldAttr);
-    NodeList getElementsByTagName([Default=Undefined] optional DOMString name);
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName([Default=Undefined] optional DOMString name);
+#else
+    HTMLCollection getElementsByTagName([Default=Undefined] optional DOMString name);
+#endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
     // For ObjC this is defined on Node for legacy support.
@@ -51,8 +56,12 @@
                                        [Default=Undefined] optional DOMString value);
     [ObjCLegacyUnnamedParameters] void removeAttributeNS([TreatNullAs=NullString] DOMString namespaceURI,
                                           DOMString localName);
-    [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
-                                                   [Default=Undefined] optional DOMString localName);
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, [Default=Undefined] optional DOMString localName);
+#else
+    HTMLCollection getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, [Default=Undefined] optional DOMString localName);
+#endif
     [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                            [Default=Undefined] optional DOMString localName);
     [RaisesException] Attr setAttributeNodeNS([Default=Undefined] optional Attr newAttr);

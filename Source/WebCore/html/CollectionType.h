@@ -52,6 +52,8 @@ enum CollectionType {
     MapAreas,
     FormControls,
     ByClass,
+    ByTag,
+    ByHTMLTag,
 };
 
 enum class CollectionTraversalType { Descendants, ChildrenOnly, CustomForwardOnly };
