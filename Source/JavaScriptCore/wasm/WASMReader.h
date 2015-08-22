@@ -48,6 +48,7 @@ public:
     bool readUInt32(uint32_t& result);
     bool readFloat(float& result);
     bool readDouble(double& result);
+    bool readCompactInt32(uint32_t& result);
     bool readCompactUInt32(uint32_t& result);
     bool readString(String& result);
     bool readType(WASMType& result);
@@ -56,6 +57,7 @@ public:
     bool readOpStatement(bool& hasImmediate, WASMOpStatement&, WASMOpStatementWithImmediate&, uint8_t& immediate);
     bool readOpExpressionI32(bool& hasImmediate, WASMOpExpressionI32&, WASMOpExpressionI32WithImmediate&, uint8_t& immediate);
     bool readVariableTypes(bool& hasImmediate, WASMVariableTypes&, WASMVariableTypesWithImmediate&, uint8_t& immediate);
+    bool readSwitchCase(WASMSwitchCase& result);
 
 private:
     static const uint32_t firstSevenBitsMask = 0x7f;

@@ -95,6 +95,28 @@ bool WASMReader::readDouble(double& result)
     return true;
 }
 
+bool WASMReader::readCompactInt32(uint32_t& result)
+{
+    uint32_t sum = 0;
+    unsigned shift = 0;
+    do {
+        CHECK_READ(1);
+        uint8_t byte = *m_cursor++;
+        if (byte < 0x80) {
+            sum |= byte << shift;
+            int signExtend = (32 - 7) - shift;
+            if (signExtend > 0)
+                result = int32_t(sum) << signExtend >> signExtend;
+            else
+                result = int32_t(sum);
+            return true;
+        }
+        sum |= (byte & firstSevenBitsMask) << shift;
+        shift += 7;
+    } while (shift < 35);
+    return false;
+}
+
 bool WASMReader::readCompactUInt32(uint32_t& result)
 {
     uint32_t sum = 0;
@@ -195,6 +217,11 @@ bool WASMReader::readOp(bool& hasImmediate, T& op, TWithImmediate& opWithImmedia
     opWithImmediate = TWithImmediate(byteWithoutImmediate);
     immediate = byte & (immediateLimit - 1);
     return true;
+}
+
+bool WASMReader::readSwitchCase(WASMSwitchCase& result)
+{
+    return readByte<WASMSwitchCase>(result, static_cast<uint8_t>(WASMSwitchCase::NumberOfSwitchCases));
 }
 
 } // namespace JSC

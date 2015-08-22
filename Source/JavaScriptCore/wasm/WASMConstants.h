@@ -182,6 +182,16 @@ enum class WASMVariableTypesWithImmediate : uint8_t {
     NumberOfVariableTypesWithImmediates
 };
 
+enum class WASMSwitchCase : uint8_t {
+    CaseWithNoStatements,
+    CaseWithStatement,
+    CaseWithBlockStatement,
+    DefaultWithNoStatements,
+    DefaultWithStatement,
+    DefaultWithBlockStatement,
+    NumberOfSwitchCases
+};
+
 enum class WASMExportFormat : uint8_t {
     Default,
     Record,

@@ -33,10 +33,12 @@
 
 #define PROPAGATE_ERROR() do { if (!m_errorMessage.isNull()) return 0; } while (0)
 #define FAIL_WITH_MESSAGE(errorMessage) do {  m_errorMessage = errorMessage; return 0; } while (0)
+#define READ_COMPACT_INT32_OR_FAIL(result, errorMessage) do { if (!m_reader.readCompactInt32(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_COMPACT_UINT32_OR_FAIL(result, errorMessage) do { if (!m_reader.readCompactUInt32(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_STATEMENT_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpStatement(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_EXPRESSION_I32_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpExpressionI32(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_VARIABLE_TYPES_OR_FAIL(hasImmediate, variableTypes, variableTypesWithImmediate, immediate, errorMessage) do { if (!m_reader.readVariableTypes(hasImmediate, variableTypes, variableTypesWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
+#define READ_SWITCH_CASE_OR_FAIL(result, errorMessage) do { if (!m_reader.readSwitchCase(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define FAIL_IF_FALSE(condition, errorMessage) do { if (!(condition)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 
 #define UNUSED 0
@@ -123,17 +125,37 @@ ContextStatement WASMFunctionParser::parseStatement(Context& context)
         case WASMOpStatement::Block:
             parseBlockStatement(context);
             break;
-        case WASMOpStatement::SetGlobal:
         case WASMOpStatement::If:
+            parseIfStatement(context);
+            break;
         case WASMOpStatement::IfElse:
+            parseIfElseStatement(context);
+            break;
         case WASMOpStatement::While:
+            parseWhileStatement(context);
+            break;
         case WASMOpStatement::Do:
+            parseDoStatement(context);
+            break;
         case WASMOpStatement::Label:
+            parseLabelStatement(context);
+            break;
         case WASMOpStatement::Break:
+            parseBreakStatement(context);
+            break;
         case WASMOpStatement::BreakLabel:
+            parseBreakLabelStatement(context);
+            break;
         case WASMOpStatement::Continue:
+            parseContinueStatement(context);
+            break;
         case WASMOpStatement::ContinueLabel:
+            parseContinueLabelStatement(context);
+            break;
         case WASMOpStatement::Switch:
+            parseSwitchStatement(context);
+            break;
+        case WASMOpStatement::SetGlobal:
         case WASMOpStatement::I32Store8:
         case WASMOpStatement::I32StoreWithOffset8:
         case WASMOpStatement::I32Store16:
@@ -203,6 +225,155 @@ ContextStatement WASMFunctionParser::parseBlockStatement(Context& context)
         parseStatement(context);
         PROPAGATE_ERROR();
     }
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseIfStatement(Context& context)
+{
+    parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    parseStatement(context);
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseIfElseStatement(Context& context)
+{
+    parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    parseStatement(context);
+    PROPAGATE_ERROR();
+    parseStatement(context);
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseWhileStatement(Context& context)
+{
+    parseExpressionI32(context);
+    PROPAGATE_ERROR();
+
+    m_breakScopeDepth++;
+    m_continueScopeDepth++;
+    parseStatement(context);
+    PROPAGATE_ERROR();
+    m_continueScopeDepth--;
+    m_breakScopeDepth--;
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseDoStatement(Context& context)
+{
+    m_breakScopeDepth++;
+    m_continueScopeDepth++;
+    parseStatement(context);
+    PROPAGATE_ERROR();
+    m_continueScopeDepth--;
+    m_breakScopeDepth--;
+
+    parseExpressionI32(context);
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseLabelStatement(Context& context)
+{
+    m_labelDepth++;
+    parseStatement(context);
+    PROPAGATE_ERROR();
+    m_labelDepth--;
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseBreakStatement(Context&)
+{
+    FAIL_IF_FALSE(m_breakScopeDepth, "'break' is only valid inside a switch or loop statement.");
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseBreakLabelStatement(Context&)
+{
+    uint32_t labelIndex;
+    READ_COMPACT_UINT32_OR_FAIL(labelIndex, "Cannot read the label index.");
+    FAIL_IF_FALSE(labelIndex < m_labelDepth, "The label index is incorrect.");
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseContinueStatement(Context&)
+{
+    FAIL_IF_FALSE(m_continueScopeDepth, "'continue' is only valid inside a loop statement.");
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseContinueLabelStatement(Context&)
+{
+    uint32_t labelIndex;
+    READ_COMPACT_UINT32_OR_FAIL(labelIndex, "Cannot read the label index.");
+    FAIL_IF_FALSE(labelIndex < m_labelDepth, "The label index is incorrect.");
+    // FIXME: Implement this instruction.
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseSwitchStatement(Context& context)
+{
+    uint32_t numberOfCases;
+    READ_COMPACT_UINT32_OR_FAIL(numberOfCases, "Cannot read the number of cases.");
+    parseExpressionI32(context);
+    PROPAGATE_ERROR();
+
+    m_breakScopeDepth++;
+    for (uint32_t i = 0; i < numberOfCases; ++i) {
+        WASMSwitchCase switchCase;
+        READ_SWITCH_CASE_OR_FAIL(switchCase, "Cannot read the switch case.");
+        switch (switchCase) {
+        case WASMSwitchCase::CaseWithNoStatements:
+        case WASMSwitchCase::CaseWithStatement:
+        case WASMSwitchCase::CaseWithBlockStatement: {
+            uint32_t value;
+            READ_COMPACT_INT32_OR_FAIL(value, "Cannot read the value of the switch case.");
+            if (switchCase == WASMSwitchCase::CaseWithStatement) {
+                parseStatement(context);
+                PROPAGATE_ERROR();
+            } else if (switchCase == WASMSwitchCase::CaseWithBlockStatement) {
+                parseBlockStatement(context);
+                PROPAGATE_ERROR();
+            }
+            break;
+        }
+        case WASMSwitchCase::DefaultWithNoStatements:
+        case WASMSwitchCase::DefaultWithStatement:
+        case WASMSwitchCase::DefaultWithBlockStatement: {
+            FAIL_IF_FALSE(i == numberOfCases - 1, "The default case must be the last case.");
+            if (switchCase == WASMSwitchCase::DefaultWithStatement) {
+                parseStatement(context);
+                PROPAGATE_ERROR();
+            } else if (switchCase == WASMSwitchCase::DefaultWithBlockStatement) {
+                parseBlockStatement(context);
+                PROPAGATE_ERROR();
+            }
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+    m_breakScopeDepth--;
+    // FIXME: Implement this instruction.
     return UNUSED;
 }
 
