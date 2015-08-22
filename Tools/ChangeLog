@@ -1,3 +1,15 @@
+2015-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test correction after r188709.
+
+        I removed a function argument that happened to be mirrored by a global
+        value with the same name. This prevented a compile error, but testing
+        showed that the wrong value was being used in the function.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::willPerformClientRedirectToURL): Put function argument
+        back
+
 2015-08-21  Timothy Horton  <timothy_horton@apple.com>
 
         WebKitTestRunner should use WKWebView on OS X and iOS
