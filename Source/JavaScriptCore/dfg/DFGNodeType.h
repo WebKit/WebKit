@@ -160,6 +160,9 @@ namespace JSC { namespace DFG {
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate) \
     \
+    /* Add of values that always convers its inputs to strings. May have two or three kids. */\
+    macro(StrCat, NodeResultJS | NodeMustGenerate) \
+    \
     /* Property access. */\
     /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
     /* Since a put to 'length' may invalidate optimizations here, */\

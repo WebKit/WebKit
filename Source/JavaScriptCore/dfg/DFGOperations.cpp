@@ -1108,6 +1108,49 @@ JSCell* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
     return JSRopeString::create(vm, a, b, c);
 }
 
+JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, EncodedJSValue b)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSString* str1 = JSValue::decode(a).toString(exec);
+    if (exec->hadException())
+        return nullptr;
+    JSString* str2 = JSValue::decode(b).toString(exec);
+    if (exec->hadException())
+        return nullptr;
+
+    if (sumOverflows<int32_t>(str1->length(), str2->length())) {
+        throwOutOfMemoryError(exec);
+        return nullptr;
+    }
+
+    return JSRopeString::create(vm, str1, str2);
+}
+    
+JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, EncodedJSValue b, EncodedJSValue c)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSString* str1 = JSValue::decode(a).toString(exec);
+    if (exec->hadException())
+        return nullptr;
+    JSString* str2 = JSValue::decode(b).toString(exec);
+    if (exec->hadException())
+        return nullptr;
+    JSString* str3 = JSValue::decode(c).toString(exec);
+    if (exec->hadException())
+        return nullptr;
+
+    if (sumOverflows<int32_t>(str1->length(), str2->length(), str3->length())) {
+        throwOutOfMemoryError(exec);
+        return nullptr;
+    }
+
+    return JSRopeString::create(vm, str1, str2, str3);
+}
+
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(
     ExecState* exec, EncodedJSValue encodedValue, size_t tableIndex)
 {

@@ -78,6 +78,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetGlobalVar:
     case PutGlobalVar:
     case ValueAdd:
+    case StrCat:
     case ArithAdd:
     case ArithClz32:
     case ArithSub:

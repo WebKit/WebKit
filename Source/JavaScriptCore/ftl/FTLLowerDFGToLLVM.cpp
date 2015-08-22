@@ -454,6 +454,9 @@ private:
         case ValueAdd:
             compileValueAdd();
             break;
+        case StrCat:
+            compileStrCat();
+            break;
         case ArithAdd:
         case ArithSub:
             compileArithAddOrSub();
@@ -1313,6 +1316,22 @@ private:
         setJSValue(vmCall(
             m_out.operation(operation), m_callFrame,
             lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
+    }
+    
+    void compileStrCat()
+    {
+        LValue result;
+        if (m_node->child3()) {
+            result = vmCall(
+                m_out.operation(operationStrCat3), m_callFrame,
+                lowJSValue(m_node->child1()), lowJSValue(m_node->child2()),
+                lowJSValue(m_node->child3()));
+        } else {
+            result = vmCall(
+                m_out.operation(operationStrCat2), m_callFrame,
+                lowJSValue(m_node->child1()), lowJSValue(m_node->child2()));
+        }
+        setJSValue(result);
     }
     
     void compileArithAddOrSub()

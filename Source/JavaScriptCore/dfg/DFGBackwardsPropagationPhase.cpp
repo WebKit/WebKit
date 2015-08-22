@@ -246,7 +246,7 @@ private:
             node->child2()->mergeFlags(flags);
             break;
         }
-            
+
         case ArithAdd: {
             if (isNotNegZero(node->child1().node()) || isNotNegZero(node->child2().node()))
                 flags &= ~NodeBytecodeNeedsNegZero;

@@ -495,7 +495,8 @@ private:
         case StringCharAt:
         case CallStringConstructor:
         case ToString:
-        case MakeRope: {
+        case MakeRope:
+        case StrCat: {
             changed |= setPrediction(SpecString);
             break;
         }

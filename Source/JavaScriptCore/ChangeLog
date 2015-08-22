@@ -1,3 +1,71 @@
+2015-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG string concatenation shouldn't be playing fast and loose with effects and OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=148338
+
+        Reviewed by Michael Saboff and Saam Barati.
+
+        Prior to this change, DFG string concatenation appeared to have various different ways of
+        creating an OSR exit right after a side effect. That's bad, because the exit will cause
+        us to reexecute the side effect. The code appears to have some hacks for avoiding this,
+        but some cases are basically unavoidable, like the OOM case of string concatenation: in
+        trunk that could cause two executions of the toString operation.
+
+        This changes the string concatenation code to either be speculative or effectful but
+        never both. It's already the case that when this code needs to be effectful, it also
+        needs to be slow (it does int->string conversions, calls JS functions, etc). So, this is
+        a small price to pay for sanity.
+
+        The biggest part of this change is the introduction of StrCat, which is like MakeRope but
+        does toString conversions on its own instead of relying on separate nodes. StrCat can
+        take either 2 or 3 children. It's the effectful but not speculative version of MakeRope.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertStringAddUse):
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        (JSC::DFG::JSValueOperand::~JSValueOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStrCat):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        * jit/JITOperations.h:
+        * tests/stress/exception-effect-strcat.js: Added. This test previously failed.
+        * tests/stress/exception-in-strcat-string-overflow.js: Added. An earlier version of this patch made this fail.
+        * tests/stress/exception-in-strcat.js: Added.
+
 2015-08-22  Andreas Kling  <akling@apple.com>
 
         [JSC] Static hash tables should be 100% compile-time constant.

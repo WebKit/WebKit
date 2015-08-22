@@ -3289,37 +3289,31 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int startOperand = currentInstruction[2].u.operand;
             int numOperands = currentInstruction[3].u.operand;
 #if CPU(X86)
-            // X86 doesn't have enough registers to compile MakeRope with three arguments.
-            // Rather than try to be clever, we just make MakeRope dumber on this processor.
-            const unsigned maxRopeArguments = 2;
+            // X86 doesn't have enough registers to compile MakeRope with three arguments. The
+            // StrCat we emit here may be turned into a MakeRope. Rather than try to be clever,
+            // we just make StrCat dumber on this processor.
+            const unsigned maxArguments = 2;
 #else
-            const unsigned maxRopeArguments = 3;
+            const unsigned maxArguments = 3;
 #endif
-            auto toStringNodes = std::make_unique<Node*[]>(numOperands);
-            for (int i = 0; i < numOperands; i++)
-                toStringNodes[i] = addToGraph(ToString, get(VirtualRegister(startOperand - i)));
-
-            for (int i = 0; i < numOperands; i++)
-                addToGraph(Phantom, toStringNodes[i]);
-
             Node* operands[AdjacencyList::Size];
             unsigned indexInOperands = 0;
             for (unsigned i = 0; i < AdjacencyList::Size; ++i)
                 operands[i] = 0;
             for (int operandIdx = 0; operandIdx < numOperands; ++operandIdx) {
-                if (indexInOperands == maxRopeArguments) {
-                    operands[0] = addToGraph(MakeRope, operands[0], operands[1], operands[2]);
+                if (indexInOperands == maxArguments) {
+                    operands[0] = addToGraph(StrCat, operands[0], operands[1], operands[2]);
                     for (unsigned i = 1; i < AdjacencyList::Size; ++i)
                         operands[i] = 0;
                     indexInOperands = 1;
                 }
                 
                 ASSERT(indexInOperands < AdjacencyList::Size);
-                ASSERT(indexInOperands < maxRopeArguments);
-                operands[indexInOperands++] = toStringNodes[operandIdx];
+                ASSERT(indexInOperands < maxArguments);
+                operands[indexInOperands++] = get(VirtualRegister(startOperand - operandIdx));
             }
             set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(MakeRope, operands[0], operands[1], operands[2]));
+                addToGraph(StrCat, operands[0], operands[1], operands[2]));
             NEXT_OPCODE(op_strcat);
         }
 

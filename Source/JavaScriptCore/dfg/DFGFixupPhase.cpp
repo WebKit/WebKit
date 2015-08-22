@@ -151,29 +151,16 @@ private:
                 break;
             }
             
-            // FIXME: Optimize for the case where one of the operands is the
-            // empty string. Also consider optimizing for the case where we don't
-            // believe either side is the emtpy string. Both of these things should
-            // be easy.
-            
-            if (node->child1()->shouldSpeculateString()
-                && attemptToMakeFastStringAdd<StringUse>(node, node->child1(), node->child2()))
+            if (attemptToMakeFastStringAdd(node))
                 break;
-            if (node->child2()->shouldSpeculateString()
-                && attemptToMakeFastStringAdd<StringUse>(node, node->child2(), node->child1()))
-                break;
-            if (node->child1()->shouldSpeculateStringObject()
-                && attemptToMakeFastStringAdd<StringObjectUse>(node, node->child1(), node->child2()))
-                break;
-            if (node->child2()->shouldSpeculateStringObject()
-                && attemptToMakeFastStringAdd<StringObjectUse>(node, node->child2(), node->child1()))
-                break;
-            if (node->child1()->shouldSpeculateStringOrStringObject()
-                && attemptToMakeFastStringAdd<StringOrStringObjectUse>(node, node->child1(), node->child2()))
-                break;
-            if (node->child2()->shouldSpeculateStringOrStringObject()
-                && attemptToMakeFastStringAdd<StringOrStringObjectUse>(node, node->child2(), node->child1()))
-                break;
+
+            // We could attempt to turn this into a StrCat here. But for now, that wouldn't
+            // significantly reduce the number of branches required.
+            break;
+        }
+
+        case StrCat: {
+            attemptToMakeFastStringAdd(node);
             break;
         }
             
@@ -1432,8 +1419,6 @@ private:
             return;
         }
         
-        // FIXME: We ought to be able to have a ToPrimitiveToString node.
-        
         observeUseKindOnNode<useKind>(edge.node());
         createToString<useKind>(node, edge);
     }
@@ -1524,47 +1509,44 @@ private:
             return;
         }
     }
-    
-    template<UseKind leftUseKind>
-    bool attemptToMakeFastStringAdd(Node* node, Edge& left, Edge& right)
+
+    bool attemptToMakeFastStringAdd(Node* node)
     {
-        ASSERT(leftUseKind == StringUse || leftUseKind == StringObjectUse || leftUseKind == StringOrStringObjectUse);
-        
-        if (isStringObjectUse<leftUseKind>() && !canOptimizeStringObjectAccess(node->origin.semantic))
+        bool goodToGo = true;
+        m_graph.doToChildren(
+            node,
+            [&] (Edge& edge) {
+                if (edge->shouldSpeculateString())
+                    return;
+                if (canOptimizeStringObjectAccess(node->origin.semantic)) {
+                    if (edge->shouldSpeculateStringObject())
+                        return;
+                    if (edge->shouldSpeculateStringOrStringObject())
+                        return;
+                }
+                goodToGo = false;
+            });
+        if (!goodToGo)
             return false;
-        
-        convertStringAddUse<leftUseKind>(node, left);
-        
-        if (right->shouldSpeculateString())
-            convertStringAddUse<StringUse>(node, right);
-        else if (right->shouldSpeculateStringObject() && canOptimizeStringObjectAccess(node->origin.semantic))
-            convertStringAddUse<StringObjectUse>(node, right);
-        else if (right->shouldSpeculateStringOrStringObject() && canOptimizeStringObjectAccess(node->origin.semantic))
-            convertStringAddUse<StringOrStringObjectUse>(node, right);
-        else {
-            // At this point we know that the other operand is something weird. The semantically correct
-            // way of dealing with this is:
-            //
-            // MakeRope(@left, ToString(ToPrimitive(@right)))
-            //
-            // So that's what we emit. NB, we need to do all relevant type checks on @left before we do
-            // anything to @right, since ToPrimitive may be effectful.
-            
-            Node* toPrimitive = m_insertionSet.insertNode(
-                m_indexInBlock, resultOfToPrimitive(right->prediction()), ToPrimitive,
-                node->origin, Edge(right.node()));
-            Node* toString = m_insertionSet.insertNode(
-                m_indexInBlock, SpecString, ToString, node->origin, Edge(toPrimitive));
-            
-            fixupToPrimitive(toPrimitive);
 
-            // Don't fix up ToString. ToString and ToPrimitive are originated from the same bytecode and
-            // ToPrimitive may have an observable side effect. ToString should not be converted into Check
-            // with speculative type check because OSR exit reproduce an observable side effect done in
-            // ToPrimitive.
-
-            right.setNode(toString);
-        }
+        m_graph.doToChildren(
+            node,
+            [&] (Edge& edge) {
+                if (edge->shouldSpeculateString()) {
+                    convertStringAddUse<StringUse>(node, edge);
+                    return;
+                }
+                ASSERT(canOptimizeStringObjectAccess(node->origin.semantic));
+                if (edge->shouldSpeculateStringObject()) {
+                    convertStringAddUse<StringObjectUse>(node, edge);
+                    return;
+                }
+                if (edge->shouldSpeculateStringOrStringObject()) {
+                    convertStringAddUse<StringOrStringObjectUse>(node, edge);
+                    return;
+                }
+                RELEASE_ASSERT_NOT_REACHED();
+            });
         
         convertToMakeRope(node);
         return true;
@@ -1600,11 +1582,15 @@ private:
             return false;
         
         Structure* stringObjectStructure = m_graph.globalObjectFor(codeOrigin)->stringObjectStructure();
+        m_graph.registerStructure(stringObjectStructure);
         ASSERT(stringObjectStructure->storedPrototype().isObject());
         ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo() == StringPrototype::info());
-        
-        JSObject* stringPrototypeObject = asObject(stringObjectStructure->storedPrototype());
-        Structure* stringPrototypeStructure = stringPrototypeObject->structure();
+
+        FrozenValue* stringPrototypeObjectValue =
+            m_graph.freeze(stringObjectStructure->storedPrototype());
+        StringPrototype* stringPrototypeObject =
+            stringPrototypeObjectValue->dynamicCast<StringPrototype*>();
+        Structure* stringPrototypeStructure = stringPrototypeObjectValue->structure();
         if (m_graph.registerStructure(stringPrototypeStructure) != StructureRegisteredAndWatched)
             return false;
         

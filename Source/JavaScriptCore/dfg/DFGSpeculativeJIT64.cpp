@@ -2189,6 +2189,32 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case StrCat: {
+        JSValueOperand op1(this, node->child1());
+        JSValueOperand op2(this, node->child2());
+        JSValueOperand op3(this, node->child3());
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRReg op3GPR;
+        if (node->child3())
+            op3GPR = op3.gpr();
+        else
+            op3GPR = InvalidGPRReg;
+        
+        flushRegisters();
+
+        GPRFlushedCallResult result(this);
+        if (node->child3())
+            callOperation(operationStrCat3, result.gpr(), op1GPR, op2GPR, op3GPR);
+        else
+            callOperation(operationStrCat2, result.gpr(), op1GPR, op2GPR);
+        m_jit.exceptionCheck();
+        
+        cellResult(result.gpr(), node);
+        break;
+    }
+
     case ArithAdd:
         compileAdd(node);
         break;

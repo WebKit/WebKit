@@ -125,6 +125,8 @@ JSCell* JIT_OPERATION operationCallStringConstructorOnCell(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationCallStringConstructor(ExecState*, EncodedJSValue);
 JSCell* JIT_OPERATION operationMakeRope2(ExecState*, JSString*, JSString*);
 JSCell* JIT_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSString*);
+JSCell* JIT_OPERATION operationStrCat2(ExecState*, EncodedJSValue, EncodedJSValue);
+JSCell* JIT_OPERATION operationStrCat3(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(ExecState*, EncodedJSValue, size_t tableIndex);
 char* JIT_OPERATION operationSwitchString(ExecState*, size_t tableIndex, JSString*);
 int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState*, size_t tableIndex, JSString*);

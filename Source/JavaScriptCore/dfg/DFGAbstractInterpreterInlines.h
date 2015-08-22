@@ -418,6 +418,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(m_graph, SpecString | SpecBytecodeNumber);
         break;
     }
+
+    case StrCat: {
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).setType(m_graph, SpecString);
+        break;
+    }
         
     case ArithAdd: {
         JSValue left = forNode(node->child1()).value();

@@ -239,6 +239,7 @@ bool doesGC(Graph& graph, Node* node)
     case ToIndexString:
     case MaterializeNewObject:
     case MaterializeCreateActivation:
+    case StrCat:
         return true;
         
     case MultiPutByOffset:
