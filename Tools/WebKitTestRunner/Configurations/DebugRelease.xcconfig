@@ -24,7 +24,7 @@
 #include "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 #include "Base.xcconfig"
 
-ARCHS = $(ARCHS_STANDARD_32_64_BIT);
+ARCHS[sdk=macosx*] = $(ARCHS_STANDARD_64_BIT);
 
 ONLY_ACTIVE_ARCH = YES;
 
