@@ -1,3 +1,20 @@
+2015-08-22  Saam barati  <sbarati@apple.com>
+
+        Add 1x/2x resources for type profiler and code coverage profiler blog post.
+
+        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-1x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-2x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage.png: Removed.
+        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug-1x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug-2x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug.png: Removed.
+        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view-1x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view-2x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view.png: Removed.
+        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere-1x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere-2x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere.png: Removed.
+
 2015-08-21  Saam barati  <sbarati@apple.com>
 
         Edit a resource for type profiler and code coverage profiler blog post.
