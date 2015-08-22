@@ -3180,3 +3180,6 @@ webkit.org/b/148144 fast/css/will-change/will-change-creates-stacking-context.ht
 
 # This operating system does not have language-sensitive font fallback.
 css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
+
+# TestRunner::cellForColumnAndRow() not implemented
+webkit.org/b/148354 accessibility/aria-table-content.html [ Skip ]
