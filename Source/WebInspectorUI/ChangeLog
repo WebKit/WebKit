@@ -1,3 +1,14 @@
+2015-08-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: WebInspector.domTreeManager.regionLayoutUpdated does not exist
+        https://bugs.webkit.org/show_bug.cgi?id=148348
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/CSSObserver.js:
+        (WebInspector.CSSObserver.prototype.regionLayoutUpdated):
+        Just do the same as the new event name.
+
 2015-08-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: clean up uses of `new` with zero-argument constructors and factory methods
