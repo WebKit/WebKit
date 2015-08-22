@@ -65,8 +65,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
 
-    UIProcess/API/C/WKPageConfigurationRef.cpp
-
     UIProcess/API/C/CoordinatedGraphics/WKView.cpp
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp

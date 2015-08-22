@@ -1,3 +1,10 @@
+2015-08-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, attempt to fix GTK build after r188718
+
+        * CMakeLists.txt: Build WKPageConfigurationRef.cpp
+        * PlatformEfl.cmake: Don't build WKPageConfigurationRef.cpp
+
 2015-08-22  Antti Koivisto  <antti@apple.com>
 
         Decode data URLs in web process

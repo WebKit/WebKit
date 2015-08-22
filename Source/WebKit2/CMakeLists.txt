@@ -440,6 +440,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKOpenPanelResultListener.cpp
     UIProcess/API/C/WKOriginDataManager.cpp
     UIProcess/API/C/WKPage.cpp
+    UIProcess/API/C/WKPageConfigurationRef.cpp
     UIProcess/API/C/WKPageGroup.cpp
     UIProcess/API/C/WKPluginSiteDataManager.cpp
     UIProcess/API/C/WKPreferences.cpp
