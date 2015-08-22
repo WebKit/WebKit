@@ -77,7 +77,7 @@ WebKitBuildbot.prototype = {
 
     get defaultBranches()
     {
-        return { openSource: "trunk" };
+        return [{ repository: Dashboard.Repository.OpenSource, name: "trunk" }];
     },
 
     layoutTestResultsDirectoryURLForIteration: function(iteration)

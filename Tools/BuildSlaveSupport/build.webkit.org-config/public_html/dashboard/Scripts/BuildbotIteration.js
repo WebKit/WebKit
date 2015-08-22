@@ -196,20 +196,23 @@ BuildbotIteration.prototype = {
         var revisionProperty = data.properties.findFirst(function(property) {
             return property[0] === "got_revision";
         });
-        for (repository in this.queue.branch) {
+        var branches = this.queue.branches;
+        for (var i = 0; i < branches.length; ++i) {
+            var repository = branches[i].repository;
+            var repositoryName = repository.name;
             var key;
             var fallbackKey;
-            if (repository === Dashboard.Repository.OpenSource.name) {
+            if (repository === Dashboard.Repository.OpenSource) {
                 key = "WebKit";
                 fallbackKey = "opensource";
-            } else if (repository === Dashboard.Repository.Internal.name) {
+            } else if (repository === Dashboard.Repository.Internal) {
                 key = "Internal";
                 fallbackKey = "internal";
             } else {
-                key = repository;
+                key = repositoryName;
                 fallbackKey = null;
             }
-            this.revision[repository] = parseRevisionProperty(revisionProperty, key, fallbackKey);
+            this.revision[repositoryName] = parseRevisionProperty(revisionProperty, key, fallbackKey);
         }
 
         function sourceStampChanges(sourceStamp) {

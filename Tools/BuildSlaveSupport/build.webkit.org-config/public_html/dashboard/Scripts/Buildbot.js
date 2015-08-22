@@ -103,7 +103,7 @@ Buildbot.prototype = {
     _normalizeQueueInfo: function(queueInfo)
     {
         if (!queueInfo.combinedQueues)
-            queueInfo.branch = queueInfo.branch || this.defaultBranches;
+            queueInfo.branches = queueInfo.branches || this.defaultBranches;
         queueInfo.debug = queueInfo.debug || false;
         queueInfo.builder = queueInfo.builder || false;
         queueInfo.tester = queueInfo.tester || false;

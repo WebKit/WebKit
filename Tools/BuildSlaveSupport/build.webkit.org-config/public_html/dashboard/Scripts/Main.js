@@ -35,7 +35,7 @@ for (var i = 0; i < buildbots.length; ++i) {
             var info = buildbot.queuesInfo[id];
             var queue = {
                 id: id,
-                branch: info.branch,
+                branches: info.branches,
                 platform: info.platform.name,
                 heading: info.heading,
                 builder: info.builder,

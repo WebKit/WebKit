@@ -34,7 +34,7 @@ BuildbotQueue = function(buildbot, id, info)
     this.id = id;
 
     // FIXME: Some of these are presentation only, and should be handled above BuildbotQueue level.
-    this.branch = info.branch;
+    this.branches = info.branches;
     this.platform = info.platform.name;
     this.debug = info.debug;
     this.builder = info.builder;

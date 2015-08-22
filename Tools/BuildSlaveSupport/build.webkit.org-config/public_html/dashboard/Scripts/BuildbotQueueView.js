@@ -80,11 +80,12 @@ BuildbotQueueView.prototype = {
 
         // FIXME: To be 100% correct, we should also filter out changes that are ignored by
         // the queue, see _should_file_trigger_build in wkbuild.py.
-        var sortedRepositories = Dashboard.sortedRepositories;
-        for (var i = 0; i < sortedRepositories.length; i++) {
-            var repository = sortedRepositories[i];
-            var trac = repository.trac;
+        var branches = queue.branches;
+        for (var i = 0; i < branches.length; ++i) {
+            var branch = branches[i];
+            var repository = branch.repository;
             var repositoryName = repository.name;
+            var trac = repository.trac;
             var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
             if (!latestProductiveRevisionNumber)
                 continue;
@@ -93,7 +94,7 @@ BuildbotQueueView.prototype = {
                 return;
             }
 
-            totalRevisionsBehind += trac.commitsOnBranch(queue.branch[repositoryName], function(commit) { return commit.revisionNumber > latestProductiveRevisionNumber; }).length;
+            totalRevisionsBehind += trac.commitsOnBranch(branch.name, function(commit) { return commit.revisionNumber > latestProductiveRevisionNumber; }).length;
         }
 
         if (!totalRevisionsBehind)
@@ -154,15 +155,16 @@ BuildbotQueueView.prototype = {
         content.className = "commit-history-popover";
 
         var shouldAddDivider = false;
-        var sortedRepositories = Dashboard.sortedRepositories;
-        for (var i = 0; i < sortedRepositories.length; ++i) {
-            var repository = sortedRepositories[i];
-            var trac = repository.trac;
+        var branches = queue.branches;
+        for (var i = 0; i < branches.length; ++i) {
+            var branch = branches[i];
+            var repository = branch.repository;
             var repositoryName = repository.name;
+            var trac = repository.trac;
             var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
             if (!latestProductiveRevisionNumber || !trac.latestRecordedRevisionNumber)
                 continue;
-            var lines = this._popoverLinesForCommitRange(trac, queue.branch[repositoryName], latestProductiveRevisionNumber + 1, trac.latestRecordedRevisionNumber);
+            var lines = this._popoverLinesForCommitRange(trac, branch.name, latestProductiveRevisionNumber + 1, trac.latestRecordedRevisionNumber);
             var length = lines.length;
             if (length && shouldAddDivider)
                 this._addDividerToPopover(content);
@@ -208,8 +210,9 @@ BuildbotQueueView.prototype = {
         return true;
     },
 
-    _revisionContentWithPopoverForIteration: function(iteration, previousIteration, repository)
+    _revisionContentWithPopoverForIteration: function(iteration, previousIteration, branch)
     {
+        var repository = branch.repository;
         var repositoryName = repository.name;
         console.assert(iteration.revision[repositoryName]);
         var content = document.createElement("span");
@@ -220,7 +223,7 @@ BuildbotQueueView.prototype = {
             console.assert(previousIteration.revision[repositoryName]);
             var context = {
                 trac: repository.trac,
-                branch: iteration.queue.branch[repositoryName],
+                branch: branch.name,
                 firstRevision: previousIteration.revision[repositoryName] + 1,
                 lastRevision: iteration.revision[repositoryName]
             };
@@ -269,12 +272,12 @@ BuildbotQueueView.prototype = {
     {
         var fragment = document.createDocumentFragment();
         var shouldAddPlusSign = false;
-        var sortedRepositories = Dashboard.sortedRepositories;
-        for (var i = 0; i < sortedRepositories.length; ++i) {
-            var repository = sortedRepositories[i];
-            if (!iteration.revision[repository.name])
+        var branches = iteration.queue.branches;
+        for (var i = 0; i < branches.length; ++i) {
+            var branch = branches[i];
+            if (!iteration.revision[branch.repository.name])
                 continue;
-            var content = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration, repository);
+            var content = this._revisionContentWithPopoverForIteration(iteration, previousDisplayedIteration, branch);
             if (shouldAddPlusSign)
                 fragment.appendChild(document.createTextNode(" \uff0b "));
             fragment.appendChild(content);

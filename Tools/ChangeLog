@@ -1,3 +1,31 @@
+2015-08-21  Jason Marcell  <jmarcell@apple.com>
+
+        Make Dashboard.Branches be objects of the form (repository, "branch name") and update existing code
+        to work with these new objects.
+        https://bugs.webkit.org/show_bug.cgi?id=148188
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype._normalizeQueueInfo): Renamed BuildbotQueue.branch to BuildbotQueue.branches.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView): Changed to work with new branch objects which represent a
+        (repository, "branch name")-pair.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue): Renamed BuildbotQueue.branch to BuildbotQueue.branches.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._appendPendingRevisionCount): Changed to work with new branch
+        objects which represent a (repository, "branch name")-pair.
+        (BuildbotQueueView.prototype._presentPopoverForPendingCommits): Ditto.
+        (BuildbotQueueView.prototype._revisionContentWithPopoverForIteration): Ditto.
+        (BuildbotQueueView.prototype._addDividerToPopover): Ditto.
+        (BuildbotQueueView.prototype.revisionContentForIteration): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js: Renamed
+        BuildbotQueue.branch to BuildbotQueue.branches.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.get defaultBranches): Changed to new (repository, "branch name") format.
+
 2015-08-21  Tim Horton  <timothy_horton@apple.com>
 
         Stop building WebKitTestRunner for 32-bit platforms
