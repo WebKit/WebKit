@@ -8820,6 +8820,7 @@
     <ClCompile Include="..\platform\network\CredentialBase.cpp" />
     <ClCompile Include="..\platform\network\CredentialStorage.cpp" />
     <ClCompile Include="..\platform\network\DataURL.cpp" />
+    <ClCompile Include="..\platform\network\DataURLDecoder.cpp" />
     <ClCompile Include="..\platform\network\DNSResolveQueue.cpp" />
     <ClCompile Include="..\platform\network\FormData.cpp" />
     <ClCompile Include="..\platform\network\FormDataBuilder.cpp" />
@@ -21331,6 +21332,7 @@
     <ClInclude Include="..\platform\network\CredentialBase.h" />
     <ClInclude Include="..\platform\network\CredentialStorage.h" />
     <ClInclude Include="..\platform\network\DataURL.h" />
+    <ClInclude Include="..\platform\network\DataURLDecoder.h" />
     <ClInclude Include="..\platform\network\DNSResolveQueue.h" />
     <ClInclude Include="..\platform\network\FormData.h" />
     <ClInclude Include="..\platform\network\FormDataBuilder.h" />

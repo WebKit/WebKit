@@ -67,7 +67,8 @@ private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader*);
     void internallyFailedLoadTimerFired();
-    
+    void startLocalLoad(WebCore::ResourceLoader&);
+
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebResourceLoadScheduler> m_internallyFailedLoadTimer;
     

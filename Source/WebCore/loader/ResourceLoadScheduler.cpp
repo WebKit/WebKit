@@ -195,17 +195,6 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     scheduleServePendingRequests();
 }
 
-#if USE(QUICK_LOOK)
-bool ResourceLoadScheduler::maybeLoadQuickLookResource(ResourceLoader& loader)
-{
-    if (!loader.request().url().protocolIs(QLPreviewProtocol()))
-        return false;
-
-    loader.start();
-    return true;
-}
-#endif
-
 void ResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);

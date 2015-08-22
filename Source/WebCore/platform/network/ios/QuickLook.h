@@ -72,7 +72,7 @@ WEBCORE_EXPORT RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL 
 
 const URL safeQLURLForDocumentURLAndResourceURL(const URL& documentURL, const String& resourceURL);
 
-const char* QLPreviewProtocol();
+WEBCORE_EXPORT const char* QLPreviewProtocol();
 
 WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
 
