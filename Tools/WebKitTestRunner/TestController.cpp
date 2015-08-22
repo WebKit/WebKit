@@ -197,11 +197,11 @@ static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef, WKS
     TestController::singleton().handleUserMediaPermissionRequest(permissionRequest);
 }
 
-WKPageRef TestController::createOtherPage(WKPageRef oldPpage, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
+WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     PlatformWebView* parentView = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
 
-    PlatformWebView* view = new PlatformWebView(configuration, parentView->options());
+    PlatformWebView* view = platformCreateOtherPage(parentView, configuration, parentView->options());
     WKPageRef newPage = view->page();
 
     view->resizeTo(800, 600);
@@ -310,7 +310,6 @@ const char* TestController::libraryPathForTesting()
     return platformLibraryPathForTesting();
 }
 
-
 void TestController::initialize(int argc, const char* argv[])
 {
     platformInitialize();
@@ -372,8 +371,8 @@ void TestController::initialize(int argc, const char* argv[])
         WKContextConfigurationSetWebSQLDatabaseDirectory(configuration.get(), toWK(temporaryFolder + separator + "Databases" + separator + "WebSQL").get());
         WKContextConfigurationSetMediaKeysStorageDirectory(configuration.get(), toWK(temporaryFolder + separator + "MediaKeys").get());
     }
+    m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(configuration.get())).get(), configuration.get());
 
-    m_context = adoptWK(WKContextCreateWithConfiguration(configuration.get()));
     m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
 #if PLATFORM(EFL)
@@ -435,6 +434,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(m_configuration.get(), m_context.get());
     WKPageConfigurationSetPageGroup(m_configuration.get(), m_pageGroup.get());
+    WKPageConfigurationSetUserContentController(m_configuration.get(), adoptWK(WKUserContentControllerCreate()).get());
 
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     resetPreferencesToConsistentValues();
@@ -442,7 +442,7 @@ void TestController::initialize(int argc, const char* argv[])
 
 void TestController::createWebViewWithOptions(const ViewOptions& options)
 {
-    m_mainWebView = std::make_unique<PlatformWebView>(m_configuration.get(), options);
+    platformCreateWebView(m_configuration.get(), options);
     WKPageUIClientV6 pageUIClient = {
         { 6, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
@@ -568,7 +568,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
 void TestController::resetPreferencesToConsistentValues()
 {
     // Reset preferences
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());
+    WKPreferencesRef preferences = platformPreferences();
     WKPreferencesResetTestRunnerOverrides(preferences);
     WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, false);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
@@ -622,6 +622,8 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
 
     WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing);
+    // FIXME: We should be testing the default.
+    WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
 
     WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
 
@@ -633,6 +635,11 @@ bool TestController::resetStateToConsistentValues()
     m_state = Resetting;
 
     m_beforeUnloadReturnValue = true;
+
+    // This setting differs between the antique and modern Mac WebKit2 API.
+    // For now, maintain the antique behavior, because some tests depend on it!
+    // FIXME: We should be testing the default.
+    WKPageSetBackgroundExtendsBeyondPage(m_mainWebView->page(), false);
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
     WKRetainPtr<WKMutableDictionaryRef> resetMessageBody = adoptWK(WKMutableDictionaryCreate());
@@ -668,7 +675,7 @@ bool TestController::resetStateToConsistentValues()
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
 #endif
 
-    // in the case that a test using the chrome input field failed, be sure to clean up for the next test
+    // In the case that a test using the chrome input field failed, be sure to clean up for the next test.
     m_mainWebView->removeChromeInputField();
     m_mainWebView->focus();
 
@@ -710,9 +717,9 @@ bool TestController::resetStateToConsistentValues()
 
     m_shouldLogHistoryClientCallbacks = false;
 
-    WKPageGroupRemoveAllUserContentFilters(WKPageGetPageGroup(m_mainWebView->page()));
-
     setHidden(false);
+
+    platformResetStateToConsistentValues();
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -1592,5 +1599,37 @@ void TestController::didUpdateHistoryTitle(WKStringRef title, WKURLRef URL, WKFr
     WKRetainPtr<WKStringRef> urlStringWK(AdoptWK, WKURLCopyString(URL));
     m_currentInvocation->outputText(String::format("WebView updated the title for history URL \"%s\" to \"%s\".\n", toSTD(urlStringWK).c_str(), toSTD(title).c_str()));
 }
+
+#if !PLATFORM(COCOA)
+void TestController::platformWillRunTest(const TestInvocation&)
+{
+}
+
+WKPreferencesRef TestController::platformPreferences()
+{
+    WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageCopyPageConfiguration(m_mainWebView->page())); 
+    return WKPageConfigurationGetPreferences(configuration.get());
+}
+
+void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
+{
+    m_mainWebView = std::make_unique<PlatformWebView>(configuration, options);
+}
+
+PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const ViewOptions& options)
+{
+    return new PlatformWebView(configuration, options);
+}
+
+WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
+{
+    return context;
+}
+
+void TestController::platformResetStateToConsistentValues()
+{
+
+}
+#endif
 
 } // namespace WTR

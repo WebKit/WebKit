@@ -63,6 +63,8 @@
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/UserActivity.h>
+#include <WebCore/UserContentTypes.h>
+#include <WebCore/UserScriptTypes.h>
 #include <WebCore/ViewState.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
@@ -913,6 +915,10 @@ public:
     void requestInstallMissingMediaPlugins(const String& details, const String& description, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&);
 #endif
 #endif
+
+    void addUserScript(const String& source, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
+    void addUserStyleSheet(const String& source, WebCore::UserContentInjectedFrames);
+    void removeAllUserContent();
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
