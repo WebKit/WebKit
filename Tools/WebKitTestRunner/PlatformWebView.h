@@ -29,14 +29,15 @@
 #include "ViewOptions.h"
 #include <WebKit/WKRetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS NSView;
-OBJC_CLASS UIView;
-OBJC_CLASS WKWebView;
-OBJC_CLASS WKWebViewConfiguration;
-OBJC_CLASS WebKitTestRunnerWindow;
-
-typedef WKWebView* PlatformWKView;
+#if defined(__APPLE__) && __APPLE__
+#ifdef __OBJC__
+@class WKView;
+@class WebKitTestRunnerWindow;
+#else
+class WKView;
+class WebKitTestRunnerWindow;
+#endif
+typedef WKView* PlatformWKView;
 typedef WebKitTestRunnerWindow* PlatformWindow;
 #elif defined(BUILDING_GTK__)
 typedef struct _GtkWidget GtkWidget;
@@ -51,11 +52,7 @@ namespace WTR {
 
 class PlatformWebView {
 public:
-#if PLATFORM(COCOA)
-    PlatformWebView(WKWebViewConfiguration*, const ViewOptions&);
-#else
     PlatformWebView(WKPageConfigurationRef, const ViewOptions&);
-#endif
     ~PlatformWebView();
 
     WKPageRef page();
@@ -63,6 +60,9 @@ public:
     PlatformWindow platformWindow() { return m_window; }
     void resizeTo(unsigned width, unsigned height);
     void focus();
+
+    // Window snapshot is always enabled by default on all other platform.
+    static bool windowSnapshotEnabled() { return true; }
 
     WKRect windowFrame();
     void setWindowFrame(WKRect);

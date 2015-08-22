@@ -26,16 +26,12 @@
 #import "config.h"
 #import "TestController.h"
 
+#import "CrashReporterInfo.h"
+#import <Foundation/Foundation.h>
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
-#import <Foundation/Foundation.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
-#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
-#import <WebKit/WKUserContentControllerPrivate.h>
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/MainThread.h>
 
 namespace WTR {
@@ -74,6 +70,11 @@ void TestController::initializeTestPluginDirectory()
     m_testPluginDirectory.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
+void TestController::platformWillRunTest(const TestInvocation& testInvocation)
+{
+    setCrashReportApplicationSpecificInformationToURL(testInvocation.url());
+}
+
 static bool shouldMakeViewportFlexible(const TestInvocation& test)
 {
     return test.urlContains("viewport/");
@@ -81,7 +82,7 @@ static bool shouldMakeViewportFlexible(const TestInvocation& test)
 
 void TestController::platformResetPreferencesToConsistentValues()
 {
-    WKPreferencesRef preferences = platformPreferences();
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());
     // Note that WKPreferencesSetTextAutosizingEnabled has no effect on iOS.
     WKPreferencesSetMinimumZoomFontSize(preferences, 0);
 }
@@ -99,6 +100,14 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 
 void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions&, const TestInvocation&) const
 {
+}
+
+void TestController::platformRunUntil(bool& done, double timeout)
+{
+    NSDate *endDate = (timeout > 0) ? [NSDate dateWithTimeIntervalSinceNow:timeout] : [NSDate distantFuture];
+
+    while (!done && [endDate compare:[NSDate date]] == NSOrderedDescending)
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];
 }
 
 void TestController::platformInitializeContext()

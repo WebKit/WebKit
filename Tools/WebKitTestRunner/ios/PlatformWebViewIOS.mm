@@ -28,14 +28,9 @@
 #include "TestController.h"
 
 #import <WebKit/WKImageCG.h>
+#import <WebKit/WKViewPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
-
-@interface WKWebView (Details)
-- (WKPageRef)_pageForTesting;
-@end
 
 @interface WebKitTestRunnerWindow : UIWindow {
     WTR::PlatformWebView* _platformWebView;
@@ -43,6 +38,33 @@
     BOOL _initialized;
 }
 @property (nonatomic, assign) WTR::PlatformWebView* platformWebView;
+@end
+
+@interface TestRunnerWKView : WKView {
+    BOOL _useTiledDrawing;
+}
+
+@property (nonatomic, assign) BOOL useTiledDrawing;
+@end
+
+@implementation TestRunnerWKView
+
+@synthesize useTiledDrawing = _useTiledDrawing;
+
+- (id)initWithFrame:(CGRect)frame configurationRef:(WKPageConfigurationRef)configuration useTiledDrawing:(BOOL)useTiledDrawing
+{
+    if (!(self = [super initWithFrame:frame configurationRef:configuration]))
+        return nil;
+
+    _useTiledDrawing = useTiledDrawing;
+    return self;
+}
+
+- (BOOL)_shouldUseTiledDrawingArea
+{
+    return _useTiledDrawing;
+}
+
 @end
 
 @implementation WebKitTestRunnerWindow
@@ -100,12 +122,17 @@
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const ViewOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
     CGRect rect = CGRectMake(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[WKWebView alloc] initWithFrame:rect configuration:configuration];
+    m_view = [[TestRunnerWKView alloc] initWithFrame:rect configurationRef:configuration useTiledDrawing:m_options.useTiledDrawing];
+
+    WKPageGroupRef pageGroupRef = WKPageConfigurationGetPageGroup(configuration);
+
+    WKPreferencesSetCompositingBordersVisible(WKPageGroupGetPreferences(pageGroupRef), YES);
+    WKPreferencesSetCompositingRepaintCountersVisible(WKPageGroupGetPreferences(pageGroupRef), YES);
 
     CGRect windowRect = rect;
     m_window = [[WebKitTestRunnerWindow alloc] initWithFrame:windowRect];
@@ -126,18 +153,19 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
 PlatformWebView::~PlatformWebView()
 {
     m_window.platformWebView = 0;
+//    [m_window close];
     [m_view release];
     [m_window release];
 }
 
 WKPageRef PlatformWebView::page()
 {
-    return [m_view _pageForTesting];
+    return [m_view pageRef];
 }
 
 void PlatformWebView::focus()
 {
-    makeWebViewFirstResponder();
+//    [m_window makeFirstResponder:m_view]; // FIXME: iOS equivalent?
     setWindowIsKey(true);
 }
 
@@ -156,7 +184,7 @@ WKRect PlatformWebView::windowFrame()
 void PlatformWebView::setWindowFrame(WKRect frame)
 {
     [m_window setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
-    [platformView() setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    [m_view setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 }
 
 void PlatformWebView::didInitializeClients()
@@ -187,8 +215,7 @@ void PlatformWebView::removeChromeInputField()
 
 void PlatformWebView::makeWebViewFirstResponder()
 {
-    // FIXME: iOS equivalent?
-    // [m_window makeFirstResponder:m_view];
+//    [m_window makeFirstResponder:m_view];
 }
 
 void PlatformWebView::changeWindowScaleIfNeeded(float)
@@ -198,12 +225,14 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
 
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
-    // FIXME: Need an implementation of this, or we're depending on software paints!
-    return nullptr;
+    return 0; // FIXME for iOS?
 }
 
 bool PlatformWebView::viewSupportsOptions(const ViewOptions& options) const
 {
+    if (m_options.useTiledDrawing != options.useTiledDrawing)
+        return false;
+
     return true;
 }
 

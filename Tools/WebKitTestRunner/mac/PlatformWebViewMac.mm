@@ -30,13 +30,8 @@
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
-
-@interface WKWebView (Details)
-- (WKPageRef)_pageForTesting;
-@end
 
 using namespace WTR;
 
@@ -51,10 +46,25 @@ enum {
 @property (nonatomic, assign) PlatformWebView* platformWebView;
 @end
 
-@interface TestRunnerWKWebView : WKWebView
+@interface TestRunnerWKView : WKView {
+    BOOL _useThreadedScrolling;
+}
+
+@property (nonatomic, assign) BOOL useThreadedScrolling;
 @end
 
-@implementation TestRunnerWKWebView
+@implementation TestRunnerWKView
+
+@synthesize useThreadedScrolling = _useThreadedScrolling;
+
+- (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configuration useThreadedScrolling:(BOOL)useThreadedScrolling
+{
+    if (!(self = [super initWithFrame:frame configurationRef:configuration]))
+        return nil;
+
+    _useThreadedScrolling = useThreadedScrolling;
+    return self;
+}
 
 - (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
 {
@@ -110,20 +120,23 @@ enum {
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const ViewOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
+    WKPageGroupRef pageGroupRef = WKPageConfigurationGetPageGroup(configuration);
+
+    // The tiled drawing specific tests also depend on threaded scrolling.
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroupRef);
+    WKPreferencesSetThreadedScrollingEnabled(preferences, m_options.useThreadedScrolling);
+
     // FIXME: Not sure this is the best place for this; maybe we should have API to set this so we can do it from TestController?
     if (m_options.useRemoteLayerTree)
         [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
 
-    RetainPtr<WKWebViewConfiguration> copiedConfiguration = adoptNS([configuration copy]);
-    WKPreferencesSetThreadedScrollingEnabled((WKPreferencesRef)[copiedConfiguration preferences], m_options.useThreadedScrolling);
-
     NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[TestRunnerWKWebView alloc] initWithFrame:rect configuration:copiedConfiguration.get()];
-    [m_view _setWindowOcclusionDetectionEnabled:NO];
+    m_view = [[TestRunnerWKView alloc] initWithFrame:rect configurationRef:configuration useThreadedScrolling:options.useThreadedScrolling];
+    [m_view setWindowOcclusionDetectionEnabled:NO];
 
     NSScreen *firstScreen = [[NSScreen screens] objectAtIndex:0];
     NSRect windowRect = m_options.shouldShowWebView ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
@@ -157,12 +170,12 @@ PlatformWebView::~PlatformWebView()
 
 WKPageRef PlatformWebView::page()
 {
-    return [m_view _pageForTesting];
+    return [m_view pageRef];
 }
 
 void PlatformWebView::focus()
 {
-    [m_window makeFirstResponder:platformView()];
+    [m_window makeFirstResponder:m_view];
     setWindowIsKey(true);
 }
 
@@ -181,7 +194,7 @@ WKRect PlatformWebView::windowFrame()
 void PlatformWebView::setWindowFrame(WKRect frame)
 {
     [m_window setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
-    [platformView() setFrame:NSMakeRect(0, 0, frame.size.width, frame.size.height)];
+    [m_view setFrame:NSMakeRect(0, 0, frame.size.width, frame.size.height)];
 }
 
 void PlatformWebView::didInitializeClients()
@@ -192,19 +205,18 @@ void PlatformWebView::didInitializeClients()
 
 void PlatformWebView::addChromeInputField()
 {
-    NSTextField *textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
+    NSTextField* textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
     textField.tag = 1;
     [[m_window contentView] addSubview:textField];
     [textField release];
 
-    NSView *view = platformView();
-    [textField setNextKeyView:view];
-    [view setNextKeyView:textField];
+    [textField setNextKeyView:m_view];
+    [m_view setNextKeyView:textField];
 }
 
 void PlatformWebView::removeChromeInputField()
 {
-    NSView *textField = [[m_window contentView] viewWithTag:1];
+    NSView* textField = [[m_window contentView] viewWithTag:1];
     if (textField) {
         [textField removeFromSuperview];
         makeWebViewFirstResponder();
@@ -213,12 +225,12 @@ void PlatformWebView::removeChromeInputField()
 
 void PlatformWebView::makeWebViewFirstResponder()
 {
-    [m_window makeFirstResponder:platformView()];
+    [m_window makeFirstResponder:m_view];
 }
 
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
-    [platformView() display];
+    [m_view display];
     CGWindowImageOption options = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
 
     if ([m_window backingScaleFactor] == 1)

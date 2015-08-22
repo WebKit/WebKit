@@ -34,8 +34,6 @@
 #include <vector>
 #include <wtf/Vector.h>
 
-OBJC_CLASS WKWebViewConfiguration;
-
 namespace WTR {
 
 class TestInvocation;
@@ -134,17 +132,12 @@ private:
 
     void platformInitialize();
     void platformDestroy();
-    WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
-    void platformCreateWebView(WKPageConfigurationRef, const ViewOptions&);
-    static PlatformWebView* platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const ViewOptions&);
     void platformResetPreferencesToConsistentValues();
-    void platformResetStateToConsistentValues();
     void platformConfigureViewForTest(const TestInvocation&);
     void platformWillRunTest(const TestInvocation&);
     void platformRunUntil(bool& done, double timeout);
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
-    WKPreferencesRef platformPreferences();
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
 

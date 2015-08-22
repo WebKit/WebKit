@@ -173,9 +173,6 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 // Default value is 0. A value of 0 means the window's backing scale factor will be used and automatically update when the window moves screens.
 @property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(WK_MAC_TBA, NA);
-
-@property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
-
 #endif
 
 - (void)_killWebContentProcessAndResetState;

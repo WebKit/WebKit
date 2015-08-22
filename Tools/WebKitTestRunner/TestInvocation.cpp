@@ -268,13 +268,15 @@ void TestInvocation::dumpResults()
         dumpAudio(m_audioResult.get());
 
     if (m_dumpPixels && m_pixelResult) {
-        m_gotRepaint = false;
-        WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
-        TestController::singleton().runUntil(m_gotRepaint, TestController::shortTimeout);
-        if (!m_gotRepaint) {
-            m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
-            m_webProcessIsUnresponsive = true;
-            return;
+        if (PlatformWebView::windowSnapshotEnabled()) {
+            m_gotRepaint = false;
+            WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
+            TestController::singleton().runUntil(m_gotRepaint, TestController::shortTimeout);
+            if (!m_gotRepaint) {
+                m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
+                m_webProcessIsUnresponsive = true;
+                return;
+            }
         }
         dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get());
     }

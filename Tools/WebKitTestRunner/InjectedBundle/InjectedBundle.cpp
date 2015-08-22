@@ -261,7 +261,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetPluginsEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
 
-    WKBundlePageRemoveAllUserContent(page()->page());
+    WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
     m_testRunner->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
     m_testRunner->setUserStyleSheetEnabled(false);

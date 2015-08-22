@@ -172,8 +172,10 @@ void TestRunner::notifyDone()
 void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);
+    WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
 
-    WKBundlePageAddUserScript(InjectedBundle::singleton().page()->page(), sourceWK.get(),
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleAddUserScript(injectedBundle.bundle(), injectedBundle.pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
         (runAtStart ? kWKInjectAtDocumentStart : kWKInjectAtDocumentEnd),
         (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
 }
@@ -181,8 +183,10 @@ void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFram
 void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);
+    WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
 
-    WKBundlePageAddUserStyleSheet(InjectedBundle::singleton().page()->page(), sourceWK.get(),
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleAddUserStyleSheet(injectedBundle.bundle(), injectedBundle.pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
         (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
 }
 
