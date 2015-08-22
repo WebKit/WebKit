@@ -117,8 +117,8 @@ RenderObject::RenderObject(Node& node)
 #endif
     , m_bitfields(node)
 {
-    if (!node.isDocumentNode())
-        view().didCreateRenderer();
+    if (RenderView* renderView = node.document().renderView())
+        renderView->didCreateRenderer();
 #ifndef NDEBUG
     renderObjectCounter.increment();
 #endif
@@ -126,11 +126,11 @@ RenderObject::RenderObject(Node& node)
 
 RenderObject::~RenderObject()
 {
+    view().didDestroyRenderer();
 #ifndef NDEBUG
     ASSERT(!m_hasAXObject);
     renderObjectCounter.decrement();
 #endif
-    view().didDestroyRenderer();
     ASSERT(!hasRareData());
 }
 

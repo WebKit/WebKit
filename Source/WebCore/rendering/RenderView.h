@@ -323,7 +323,8 @@ private:
     int m_selectionUnsplitStartPos;
     int m_selectionUnsplitEndPos;
 
-    uint64_t m_rendererCount;
+    // Include this RenderView.
+    uint64_t m_rendererCount { 1 };
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
 
