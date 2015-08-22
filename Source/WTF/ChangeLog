@@ -1,5 +1,11 @@
 2015-08-21  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * wtf/MainThread.h:
+
+2015-08-21  Anders Carlsson  <andersca@apple.com>
+
         Address review feedback from Darin.
 
         * wtf/MainThread.h:
