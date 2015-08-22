@@ -51,18 +51,6 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     return false;
 }
 
-// FIXME: NodeList should not have a named getter. It currently has one because getElementByTagName()
-// returns a NodeList instead of an HTMLCollection.
-bool JSNodeList::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
-{
-    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
-    if (!item)
-        return false;
-
-    value = toJS(exec, globalObject(), item);
-    return true;
-}
-
 JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, NodeList& nodeList)
 {
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.

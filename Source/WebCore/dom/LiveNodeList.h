@@ -45,8 +45,6 @@ public:
     LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType);
     virtual ~LiveNodeList();
 
-    virtual Node* namedItem(const AtomicString&) const override final;
-
     virtual bool elementMatches(Element&) const = 0;
     virtual bool isRootedAtDocument() const = 0;
 

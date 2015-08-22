@@ -1,3 +1,15 @@
+2015-08-22  Chris Dumez  <cdumez@apple.com>
+
+        NodeList should not have a named getter
+        https://bugs.webkit.org/show_bug.cgi?id=148117
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/childnode-item-after-itemname-expected.txt: Removed.
+        * fast/dom/childnode-item-after-itemname.html: Removed.
+        Drop test as it is no longer relevant now that NodeList no longer
+        has a named property getter.
+
 2015-08-22  Alexey Proskuryakov  <ap@apple.com>
 
         Tweak a test that became flaky on some machines after r188793.

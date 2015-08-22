@@ -50,35 +50,4 @@ ContainerNode& LiveNodeList::rootNode() const
     return ownerNode();
 }
 
-Node* LiveNodeList::namedItem(const AtomicString& elementId) const
-{
-    // FIXME: Why doesn't this look into the name attribute like HTMLCollection::namedItem does?
-    Node& rootNode = this->rootNode();
-
-    if (rootNode.inDocument()) {
-        Element* element = rootNode.treeScope().getElementById(elementId);
-        if (element && elementMatches(*element) && element->isDescendantOf(&rootNode))
-            return element;
-        if (!element)
-            return nullptr;
-        // In the case of multiple nodes with the same name, just fall through.
-    }
-
-    if (elementId.isEmpty())
-        return nullptr;
-
-    unsigned length = this->length();
-    for (unsigned i = 0; i < length; i++) {
-        Node* node = item(i);
-        if (!is<Element>(*node))
-            continue;
-        Element& element = downcast<Element>(*node);
-        // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
-        if (element.hasID() && element.idForStyleResolution() == elementId)
-            return node;
-    }
-
-    return nullptr;
-}
-
 } // namespace WebCore

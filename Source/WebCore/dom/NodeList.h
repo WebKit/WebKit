@@ -39,7 +39,6 @@ public:
     // DOM methods & attributes for NodeList
     virtual unsigned length() const = 0;
     virtual Node* item(unsigned index) const = 0;
-    virtual Node* namedItem(const AtomicString&) const = 0;
 
     // Other methods (not part of DOM)
     virtual bool isLiveNodeList() const { return false; }

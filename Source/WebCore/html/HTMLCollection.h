@@ -65,7 +65,7 @@ public:
 
     // DOM API
     virtual Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
-    virtual Element* namedItem(const AtomicString& name) const override = 0; // Tighten return type from NodeList::namedItem().
+    virtual Element* namedItem(const AtomicString& name) const = 0;
     RefPtr<NodeList> tags(const String&);
 
     // Non-DOM API

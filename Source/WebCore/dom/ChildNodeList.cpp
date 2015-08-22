@@ -81,23 +81,6 @@ void ChildNodeList::collectionTraverseBackward(Node*& current, unsigned count) c
         current = current->previousSibling();
 }
 
-Node* ChildNodeList::namedItem(const AtomicString& name) const
-{
-    // FIXME: According to the spec child node list should not have namedItem().
-    if (m_parent.get().inDocument()) {
-        Element* element = m_parent.get().treeScope().getElementById(name);
-        if (element && element->parentNode() == m_parent.ptr())
-            return element;
-        if (!element || !m_parent.get().treeScope().containsMultipleElementsWithId(name))
-            return nullptr;
-    }
-    for (auto& element : childrenOfType<Element>(m_parent)) {
-        if (element.hasID() && element.idForStyleResolution() == name)
-            return const_cast<Element*>(&element);
-    }
-    return nullptr;
-}
-
 void ChildNodeList::invalidateCache()
 {
     m_indexCache.invalidate(*this);
