@@ -101,7 +101,7 @@ static const HashTableValue JSTestOverrideBuiltinsTableValues[] =
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestOverrideBuiltinsTable = { 1, 1, true, JSTestOverrideBuiltinsTableValues, 0, JSTestOverrideBuiltinsTableIndex };
+static const HashTable JSTestOverrideBuiltinsTable = { 1, 1, true, JSTestOverrideBuiltinsTableValues, JSTestOverrideBuiltinsTableIndex };
 const ClassInfo JSTestOverrideBuiltinsConstructor::s_info = { "TestOverrideBuiltinsConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsConstructor) };
 
 JSTestOverrideBuiltinsConstructor::JSTestOverrideBuiltinsConstructor(Structure* structure, JSDOMGlobalObject* globalObject)

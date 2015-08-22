@@ -86,7 +86,6 @@ class Identifier;
 class Interpreter;
 class JSGlobalObject;
 class JSObject;
-class Keywords;
 class LLIntOffsetsExtractor;
 class LegacyProfiler;
 class NativeExecutable;
@@ -349,7 +348,6 @@ public:
 
     typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;
-    std::unique_ptr<Keywords> keywords;
     Interpreter* interpreter;
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;

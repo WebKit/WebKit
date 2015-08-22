@@ -1,3 +1,55 @@
+2015-08-22  Andreas Kling  <akling@apple.com>
+
+        [JSC] Static hash tables should be 100% compile-time constant.
+        <https://webkit.org/b/148359>
+
+        Reviewed by Michael Saboff.
+
+        We were dirtying the memory pages containing static hash tables the
+        first time they were used, when a dynamically allocated index-to-key
+        table was built and cached in the HashTable struct.
+
+        It turns out that this "optimization" was completely useless, since
+        we've long since decoupled static hash tables from the JSC::VM and
+        we can get the key for an index via HashTable::values[index].m_key!
+
+        We also get rid of VM::keywords which was a little wrapper around
+        a VM-specific copy of JSC::mainTable. There was nothing VM-specific
+        about it at all, so clients now use JSC::mainTable directly.
+
+        After this change all fooHashTable structs end up in __DATA __const
+        and no runtime initialization/allocation takes place.
+
+        * create_hash_table:
+        * jsc.cpp:
+        * parser/Lexer.cpp:
+        (JSC::isLexerKeyword):
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        (JSC::Lexer<CharacterType>::parseIdentifierSlowCase):
+        (JSC::Keywords::Keywords): Deleted.
+        * parser/Lexer.h:
+        (JSC::Keywords::isKeyword): Deleted.
+        (JSC::Keywords::getKeyword): Deleted.
+        (JSC::Keywords::~Keywords): Deleted.
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::tryJSONPParse):
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable): Deleted.
+        (JSC::HashTable::deleteTable): Deleted.
+        * runtime/Lookup.h:
+        (JSC::HashTable::entry):
+        (JSC::HashTable::ConstIterator::key):
+        (JSC::HashTable::ConstIterator::skipInvalidKeys):
+        (JSC::HashTable::copy): Deleted.
+        (JSC::HashTable::initializeIfNeeded): Deleted.
+        (JSC::HashTable::begin): Deleted.
+        (JSC::HashTable::end): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Deleted.
+        * runtime/VM.h:
+        * testRegExp.cpp:
+
 2015-08-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r188792 and r188803.

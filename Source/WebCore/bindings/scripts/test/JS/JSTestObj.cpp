@@ -394,7 +394,7 @@ static const HashTableValue JSTestObjTableValues[] =
     { "contentDocument", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjContentDocument), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestObjTable = { 6, 15, true, JSTestObjTableValues, 0, JSTestObjTableIndex };
+static const HashTable JSTestObjTable = { 6, 15, true, JSTestObjTableValues, JSTestObjTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =

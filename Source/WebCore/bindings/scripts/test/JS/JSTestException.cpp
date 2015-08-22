@@ -95,7 +95,7 @@ static const HashTableValue JSTestExceptionTableValues[] =
     { "name", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionName), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestExceptionTable = { 1, 1, true, JSTestExceptionTableValues, 0, JSTestExceptionTableIndex };
+static const HashTable JSTestExceptionTable = { 1, 1, true, JSTestExceptionTableValues, JSTestExceptionTableIndex };
 const ClassInfo JSTestExceptionConstructor::s_info = { "TestExceptionConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
 
 JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSDOMGlobalObject* globalObject)

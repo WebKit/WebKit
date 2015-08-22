@@ -4228,7 +4228,7 @@ sub GenerateHashTable
     my $packedSize = scalar @{$keys};
 
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, $nameEntries, 0, $nameIndex };\n");
+    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, $nameEntries, $nameIndex };\n");
 }
 
 sub WriteData

@@ -135,7 +135,7 @@ static const HashTableValue JSTestTypedefsTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestTypedefsTable = { 0, 1, false, JSTestTypedefsTableValues, 0, JSTestTypedefsTableIndex };
+static const HashTable JSTestTypedefsTable = { 0, 1, false, JSTestTypedefsTableValues, JSTestTypedefsTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestTypedefsConstructorTableValues[] =

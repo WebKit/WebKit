@@ -104,7 +104,7 @@ static const HashTableValue JSTestActiveDOMObjectTableValues[] =
     { "excitingAttr", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestActiveDOMObjectExcitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-static const HashTable JSTestActiveDOMObjectTable = { 2, 3, true, JSTestActiveDOMObjectTableValues, 0, JSTestActiveDOMObjectTableIndex };
+static const HashTable JSTestActiveDOMObjectTable = { 2, 3, true, JSTestActiveDOMObjectTableValues, JSTestActiveDOMObjectTableIndex };
 const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObjectConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
 
 JSTestActiveDOMObjectConstructor::JSTestActiveDOMObjectConstructor(Structure* structure, JSDOMGlobalObject* globalObject)

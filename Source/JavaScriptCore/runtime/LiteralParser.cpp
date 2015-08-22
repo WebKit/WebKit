@@ -70,7 +70,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
             entry.m_pathEntryName = Identifier::fromString(&m_exec->vm(), m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
             path.append(entry);
         }
-        if (m_exec->vm().keywords->isKeyword(entry.m_pathEntryName))
+        if (isLexerKeyword(entry.m_pathEntryName))
             return false;
         TokenType tokenType = m_lexer.next();
         if (entry.m_type == JSONPPathEntryTypeDeclare && tokenType != TokAssign)

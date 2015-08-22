@@ -194,7 +194,7 @@ static const HashTableValue JSTestInterfaceTableValues[] =
 #endif
 };
 
-static const HashTable JSTestInterfaceTable = { 2, 3, true, JSTestInterfaceTableValues, 0, JSTestInterfaceTableIndex };
+static const HashTable JSTestInterfaceTable = { 2, 3, true, JSTestInterfaceTableValues, JSTestInterfaceTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestInterfaceConstructorTableValues[] =
