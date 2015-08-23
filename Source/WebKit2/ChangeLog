@@ -1,3 +1,36 @@
+2015-08-22  Tim Horton  <timothy_horton@apple.com>
+
+        Factor out and add logging to swipe-start hysteresis code
+        https://bugs.webkit.org/show_bug.cgi?id=148361
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::ViewGestureController):
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::wheelEventWasNotHandledByWebCore):
+        (WebKit::ViewGestureController::shouldIgnorePinnedState):
+        (WebKit::ViewGestureController::setShouldIgnorePinnedState):
+        (WebKit::ViewGestureController::PendingSwipeTracker::PendingSwipeTracker):
+        (WebKit::ViewGestureController::PendingSwipeTracker::shouldIgnorePinnedState):
+        (WebKit::ViewGestureController::PendingSwipeTracker::setShouldIgnorePinnedState):
+        Move pending-swipe members into PendingSwipeTracker.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::scrollEventCanInfluenceSwipe):
+        (WebKit::deltaShouldCancelSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe):
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        (WebKit::ViewGestureController::PendingSwipeTracker::handleEvent):
+        (WebKit::ViewGestureController::PendingSwipeTracker::eventWasNotHandledByWebCore):
+        (WebKit::ViewGestureController::PendingSwipeTracker::tryToStartSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::reset):
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        (WebKit::ViewGestureController::setDidMoveSwipeSnapshotCallback):
+        Move pending-swipe methods into PendingSwipeTracker.
+        Clean up the logic a bit.
+        Add some logging.
+
 2015-08-22  Timothy Horton  <timothy_horton@apple.com>
 
         WebKitTestRunner should use WKWebView on OS X and iOS

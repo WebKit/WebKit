@@ -89,12 +89,6 @@ public:
         Forward
     };
 
-    enum class PendingSwipeReason {
-        None,
-        WebCoreMayScroll,
-        InsufficientMagnitude
-    };
-    
 #if PLATFORM(MAC)
     double magnification() const;
 
@@ -104,15 +98,15 @@ public:
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
 
     bool handleScrollWheelEvent(NSEvent *);
-    void wheelEventWasNotHandledByWebCore(NSEvent *);
+    void wheelEventWasNotHandledByWebCore(NSEvent *event) { m_pendingSwipeTracker.eventWasNotHandledByWebCore(event); }
 
     void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTF::move(views); }
     void setCustomSwipeViewsTopContentInset(float topContentInset) { m_customSwipeViewsTopContentInset = topContentInset; }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
     void setDidMoveSwipeSnapshotCallback(void(^)(CGRect));
 
-    bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
-    void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
+    bool shouldIgnorePinnedState() { return m_pendingSwipeTracker.shouldIgnorePinnedState(); }
+    void setShouldIgnorePinnedState(bool ignore) { m_pendingSwipeTracker.setShouldIgnorePinnedState(ignore); }
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     void setAlternateBackForwardListSourceView(WKWebView *);
@@ -195,8 +189,6 @@ private:
     void handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection);
     void willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled);
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
-    bool deltaIsSufficientToBeginSwipe(NSEvent *);
-    bool scrollEventCanBecomeSwipe(NSEvent *, SwipeDirection&);
     bool shouldUseSnapshotForSize(ViewSnapshot&, WebCore::FloatSize swipeLayerSize, float topContentInset);
 
     CALayer *determineSnapshotLayerParent() const;
@@ -205,6 +197,37 @@ private:
     void didMoveSwipeSnapshotLayer();
 
     void forceRepaintIfNeeded();
+
+    class PendingSwipeTracker {
+    public:
+        PendingSwipeTracker(WebPageProxy&, std::function<void(NSEvent *, SwipeDirection)> trackSwipeCallback);
+        bool handleEvent(NSEvent *);
+        void eventWasNotHandledByWebCore(NSEvent *);
+
+        void reset(const char* resetReasonForLogging);
+
+        bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
+        void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
+
+    private:
+        bool tryToStartSwipe(NSEvent *);
+        bool scrollEventCanBecomeSwipe(NSEvent *, SwipeDirection&);
+
+        enum class State {
+            None,
+            WaitingForWebCore,
+            InsufficientMagnitude
+        };
+
+        State m_state { State::None };
+        SwipeDirection m_direction;
+        WebCore::FloatSize m_cumulativeDelta;
+
+        bool m_shouldIgnorePinnedState { false };
+
+        std::function<void(NSEvent *, SwipeDirection)> m_trackSwipeCallback;
+        WebPageProxy& m_webPageProxy;
+    };
 #endif
 
     WebPageProxy& m_webPageProxy;
@@ -240,15 +263,9 @@ private:
     float m_customSwipeViewsTopContentInset { 0 };
     WebCore::FloatRect m_currentSwipeCustomViewBounds;
 
-    // If we need to wait for content to decide if it is going to consume
-    // the scroll event that would have started a swipe, we'll fill these in.
-    PendingSwipeReason m_pendingSwipeReason { PendingSwipeReason::None };
-    SwipeDirection m_pendingSwipeDirection;
-    WebCore::FloatSize m_cumulativeDeltaForPendingSwipe;
+    PendingSwipeTracker m_pendingSwipeTracker;
 
     void (^m_didMoveSwipeSnapshotCallback)(CGRect) { nullptr };
-
-    bool m_shouldIgnorePinnedState { false };
 
     bool m_hasOutstandingRepaintRequest { false };
 #else    
