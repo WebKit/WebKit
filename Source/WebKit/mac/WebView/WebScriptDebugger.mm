@@ -72,7 +72,8 @@ static WebFrame *toWebFrame(JSGlobalObject* globalObject)
 }
 
 WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
-    : m_callingDelegate(false)
+    : Debugger(globalObject->vm())
+    , m_callingDelegate(false)
     , m_globalObject(globalObject->vm(), globalObject)
 {
     setPauseOnExceptionsState(PauseOnAllExceptions);

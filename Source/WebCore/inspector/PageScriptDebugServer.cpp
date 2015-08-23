@@ -52,7 +52,7 @@ using namespace Inspector;
 namespace WebCore {
 
 PageScriptDebugServer::PageScriptDebugServer(Page& page)
-    : ScriptDebugServer(false)
+    : ScriptDebugServer(WebCore::JSDOMWindowBase::commonVM(), false)
     , m_page(page)
 {
 }
@@ -87,8 +87,8 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, bool i
 
 void PageScriptDebugServer::recompileAllJSFunctions()
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    Debugger::recompileAllJSFunctions(&JSDOMWindow::commonVM());
+    JSLockHolder lock(vm());
+    Debugger::recompileAllJSFunctions();
 }
 
 void PageScriptDebugServer::didPause(JSGlobalObject*)
@@ -109,7 +109,7 @@ void PageScriptDebugServer::runEventLoopWhilePaused()
     // we need to gracefully handle releasing and reacquiring the lock.
     if (WebThreadIsEnabled()) {
         ASSERT(WebThreadIsLockedOrDisabled());
-        JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM());
+        JSC::JSLock::DropAllLocks dropAllLocks(vm());
         WebRunLoopEnableNested();
 
         runEventLoopWhilePausedInternal();

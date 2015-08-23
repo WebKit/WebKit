@@ -1,3 +1,39 @@
+2015-08-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling back in r188803.
+
+        "Debugger's VM should never be null"
+        https://bugs.webkit.org/show_bug.cgi?id=148341
+        http://trac.webkit.org/changeset/188803
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::attach):
+        (JSC::Debugger::detach):
+        (JSC::Debugger::isAttached):
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::registerCodeBlock):
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::recompileAllJSFunctions):
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::clearDebuggerRequests):
+        (JSC::Debugger::setBreakpointsActivated):
+        (JSC::Debugger::breakProgram):
+        (JSC::Debugger::stepOutOfFunction):
+        (JSC::Debugger::returnEvent):
+        (JSC::Debugger::didExecuteProgram):
+        * debugger/Debugger.h:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        (Inspector::JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer):
+        (Inspector::JSGlobalObjectScriptDebugServer::removeListener):
+        (Inspector::JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused):
+        (Inspector::JSGlobalObjectScriptDebugServer::recompileAllJSFunctions): Deleted.
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::ScriptDebugServer):
+        * inspector/ScriptDebugServer.h:
+
 2015-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG string concatenation shouldn't be playing fast and loose with effects and OSR exit
