@@ -75,6 +75,10 @@ static inline ::testing::AssertionResult assertWKStringEqual(const char* expecte
 #define EXPECT_WK_STREQ(expected, actual) \
     EXPECT_PRED_FORMAT2(TestWebKitAPI::Util::assertWKStringEqual, expected, actual)
 
+#if WK_API_ENABLED
+extern NSString * const TestPlugInClassNameParameter;
+#endif
+
 } // namespace Util
 } // namespace TestWebKitAPI
 

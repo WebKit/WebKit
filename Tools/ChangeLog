@@ -1,3 +1,41 @@
+2015-08-22  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] API tests using the Modern WebKit API should be able to create web process plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=148317
+
+        Reviewed by Dan Bernstein.
+
+        Added the ability for Modern WebKit API tests to create WKWebProcessPlugIns. A test can create a plug-in by
+        creating a class that conforms to WKWebProcessPlugIn, adding it to the WebProcessPlugIn target, and using the
+        WKWebViewConfiguration returned by +[WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:]
+        when creating WKWebViews.
+
+        Since TestWebKitAPI relies on a bundle parameter to know which test class to instantiate in the plug-in, I also
+        added a new API test for bundle parameters.
+
+        * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Added. Named the bundle TestWebKitAPI.wkbundle and
+        named its executable TestWebKitAPI.bundle.
+        * TestWebKitAPI/PlatformUtilities.h: Declared TestPlugInClassNameParameter.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added the WebProcessPlugIn target.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleParameters.mm: Added.
+        (TEST): Tested bundle parameters by verifying that parameter changes in the UI process are observed in the bundle.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleParametersPlugIn.mm: Added.
+        (-[BundleParametersPlugIn webProcessPlugIn:didCreateBrowserContextController:]): Started observing changes to a
+        bundle parameter and asked for an initial notification.
+        (-[BundleParametersPlugIn dealloc]): Stopped observing changes to a bundle parameter.
+        (-[BundleParametersPlugIn observeValueForKeyPath:ofObject:change:context:]): When a bundle parameter changes,
+        mirror its value in the main frame's JSContext.
+        * TestWebKitAPI/WKWebViewConfigurationExtras.h: Added.
+        * TestWebKitAPI/WKWebViewConfigurationExtras.mm: Added.
+        (+[WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:]): Created a configuration with
+        TestWebKitAPI's bundle URL and set a bundle parameter indicating the test plug-in's class name.
+        * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm: Defined TestPlugInClassNameParameter.
+        * TestWebKitAPI/cocoa/WebProcessPlugIn/Info.plist: Added. Set the principal class to WebProcessPlugIn.
+        * TestWebKitAPI/cocoa/WebProcessPlugIn/WebProcessPlugIn.mm: Added.
+        (-[WebProcessPlugIn webProcessPlugIn:initializeWithObject:]): Forwarded to a newly-created test class instance.
+        (-[WebProcessPlugIn respondsToSelector:]): Returned YES if the test class instance response.
+        (-[WebProcessPlugIn forwardingTargetForSelector:]): Forwarded unimplemented methods to the test class instance.
+
 2015-08-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r188828.

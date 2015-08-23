@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
-
-#include <wtf/RetainPtr.h>
-#include <wtf/StdLibExtras.h>
-
-namespace TestWebKitAPI {
-namespace Util {
-
-void run(bool* done)
-{
-    while (!*done)
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-}
-
-void sleep(double seconds)
-{
-    usleep(seconds * 1000000);
-}
-
-std::string toSTD(NSString *string)
-{
-    if (!string)
-        return std::string();
-
-    size_t bufferSize = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    auto buffer = std::make_unique<char[]>(bufferSize);
-    NSUInteger stringLength;
-    [string getBytes:buffer.get() maxLength:bufferSize usedLength:&stringLength encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [string length]) remainingRange:0];
-    return std::string(buffer.get(), stringLength);
-}
-
-#if WK_API_ENABLED
-NSString * const TestPlugInClassNameParameter = @"TestPlugInPrincipalClassName";
-#endif
-} // namespace Util
-} // namespace TestWebKitAPI
+@interface WKWebViewConfiguration (TestWebKitAPIExtras)
++ (instancetype)testwebkitapi_configurationWithTestPlugInClassName:(NSString *)className;
+@end

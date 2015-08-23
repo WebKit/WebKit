@@ -264,6 +264,11 @@
 		93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */; };
 		9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */; };
 		9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B4F8FA6159D52CA002D9F94 /* HTMLCollectionNamedItem.html */; };
+		A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */; };
+		A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
+		A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */; };
+		A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAC1B87436F00097110 /* BundleParameters.mm */; };
+		A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */; };
 		A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */; };
 		A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */; };
 		B55AD1D5179F3B3000AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D3179F3ABF00AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp */; };
@@ -323,6 +328,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7CCE7E8B1A41144E00447C4C;
 			remoteInfo = TestWebKitAPILibrary;
+		};
+		A13EBBB21B87441900097110 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A13EBB481B87339E00097110;
+			remoteInfo = WebProcessPlugIn;
 		};
 		BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -619,6 +631,14 @@
 		9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = HTMLFormCollectionNamedItem.html; sourceTree = "<group>"; };
 		9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HTMLCollectionNamedItem.mm; sourceTree = "<group>"; };
 		9B4F8FA6159D52CA002D9F94 /* HTMLCollectionNamedItem.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = HTMLCollectionNamedItem.html; sourceTree = "<group>"; };
+		A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPI.wkbundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcessPlugIn.xcconfig; sourceTree = "<group>"; };
+		A13EBB541B8734E000097110 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPlugIn.mm; sourceTree = "<group>"; };
+		A13EBBAC1B87436F00097110 /* BundleParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParameters.mm; sourceTree = "<group>"; };
+		A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParametersPlugIn.mm; sourceTree = "<group>"; };
+		A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfigurationExtras.mm; sourceTree = "<group>"; };
+		A14FC5841B89739100D107EB /* WKWebViewConfigurationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfigurationExtras.h; sourceTree = "<group>"; };
 		A1A4FE5D18DD3DB700B5EA8A /* Download.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Download.mm; sourceTree = "<group>"; };
 		A1FDFD2E19C288BB005148A4 /* WKImageCreateCGImageCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKImageCreateCGImageCrash.cpp; sourceTree = "<group>"; };
 		A57A34EF16AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageVisibilityStateWithWindowChanges.mm; sourceTree = "<group>"; };
@@ -836,7 +856,10 @@
 		0F139E711A423A1D00F590F5 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				A13EBB441B87332B00097110 /* WebProcessPlugIn */,
 				0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */,
+				A14FC5841B89739100D107EB /* WKWebViewConfigurationExtras.h */,
+				A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -855,6 +878,7 @@
 				8DD76FA10486AA7600D96B5E /* TestWebKitAPI */,
 				BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */,
 				7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */,
+				A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -863,6 +887,8 @@
 			isa = PBXGroup;
 			children = (
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
+				A13EBBAC1B87436F00097110 /* BundleParameters.mm */,
+				A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */,
 				A1A4FE5D18DD3DB700B5EA8A /* Download.mm */,
 				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
 				37D36ED61AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm */,
@@ -931,6 +957,16 @@
 			path = darwin;
 			sourceTree = "<group>";
 		};
+		A13EBB441B87332B00097110 /* WebProcessPlugIn */ = {
+			isa = PBXGroup;
+			children = (
+				A13EBB541B8734E000097110 /* Info.plist */,
+				A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */,
+			);
+			name = WebProcessPlugIn;
+			path = cocoa/WebProcessPlugIn;
+			sourceTree = "<group>";
+		};
 		BC029B1A1486B23800817DA9 /* ns */ = {
 			isa = PBXGroup;
 			children = (
@@ -975,6 +1011,7 @@
 				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
 				BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */,
 				7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */,
+				A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -1378,6 +1415,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A13EBBB31B87441900097110 /* PBXTargetDependency */,
 				BC575A96126E74E7006F0F12 /* PBXTargetDependency */,
 				7CCE7F511A4124DB00447C4C /* PBXTargetDependency */,
 			);
@@ -1386,6 +1424,21 @@
 			productName = TestWebKitAPI;
 			productReference = 8DD76FA10486AA7600D96B5E /* TestWebKitAPI */;
 			productType = "com.apple.product-type.tool";
+		};
+		A13EBB481B87339E00097110 /* WebProcessPlugIn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A13EBB4C1B87339E00097110 /* Build configuration list for PBXNativeTarget "WebProcessPlugIn" */;
+			buildPhases = (
+				A13EBB451B87339E00097110 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WebProcessPlugIn;
+			productName = WebProcessPlugIn;
+			productReference = A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */;
+			productType = "com.apple.product-type.bundle";
 		};
 		BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */ = {
 			isa = PBXNativeTarget;
@@ -1416,6 +1469,9 @@
 					7CCE7E8B1A41144E00447C4C = {
 						CreatedOnToolsVersion = 6.3;
 					};
+					A13EBB481B87339E00097110 = {
+						CreatedOnToolsVersion = 7.0;
+					};
 				};
 			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */;
@@ -1435,6 +1491,7 @@
 				8DD76F960486AA7600D96B5E /* TestWebKitAPI */,
 				BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */,
 				7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */,
+				A13EBB481B87339E00097110 /* WebProcessPlugIn */,
 			);
 		};
 /* End PBXProject section */
@@ -1530,6 +1587,7 @@
 				7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */,
 				7CCE7F061A411AE600447C4C /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */,
 				7CCE7EDF1A411A9200447C4C /* LayoutUnit.cpp in Sources */,
+				A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */,
 				7CCE7F381A411B8E00447C4C /* ListHashSet.cpp in Sources */,
 				37D36ED71AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm in Sources */,
 				7CCE7EFE1A411AE600447C4C /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */,
@@ -1598,6 +1656,7 @@
 				7CCE7ECE1A411A7E00447C4C /* StopLoadingFromDidFinishLoading.mm in Sources */,
 				7CCE7ECF1A411A7E00447C4C /* StopLoadingFromDidReceiveResponse.mm in Sources */,
 				7CCE7F441A411B8E00447C4C /* StringBuilder.cpp in Sources */,
+				A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */,
 				7CB184C61AA3F2100066EDFD /* ContentExtensions.cpp in Sources */,
 				7CCE7ED01A411A7E00447C4C /* StringByEvaluatingJavaScriptFromString.mm in Sources */,
 				7CCE7F451A411B8E00447C4C /* StringHasher.cpp in Sources */,
@@ -1670,6 +1729,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A13EBB451B87339E00097110 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */,
+				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
+				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC57597D126E74AF006F0F12 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1720,6 +1789,11 @@
 			isa = PBXTargetDependency;
 			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
 			targetProxy = 7CCE7F501A4124DB00447C4C /* PBXContainerItemProxy */;
+		};
+		A13EBBB31B87441900097110 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A13EBB481B87339E00097110 /* WebProcessPlugIn */;
+			targetProxy = A13EBBB21B87441900097110 /* PBXContainerItemProxy */;
 		};
 		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1773,6 +1847,20 @@
 			};
 			name = Release;
 		};
+		A13EBB4D1B87339E00097110 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A13EBB4E1B87339E00097110 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		BC575984126E74AF006F0F12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */;
@@ -1813,6 +1901,15 @@
 			buildConfigurations = (
 				7CCE7E9D1A41144E00447C4C /* Debug */,
 				7CCE7E9E1A41144E00447C4C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A13EBB4C1B87339E00097110 /* Build configuration list for PBXNativeTarget "WebProcessPlugIn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A13EBB4D1B87339E00097110 /* Debug */,
+				A13EBB4E1B87339E00097110 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
