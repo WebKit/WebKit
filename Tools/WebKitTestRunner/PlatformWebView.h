@@ -27,10 +27,10 @@
 #define PlatformWebView_h
 
 #include "ViewOptions.h"
-#include <WebKit/WKFoundation.h>
 #include <WebKit/WKRetainPtr.h>
 
 #if PLATFORM(COCOA)
+#include <WebKit/WKFoundation.h>
 OBJC_CLASS NSView;
 OBJC_CLASS UIView;
 OBJC_CLASS WKWebView;

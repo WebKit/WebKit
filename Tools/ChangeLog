@@ -1,3 +1,9 @@
+2015-08-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r188828.
+
+        * WebKitTestRunner/PlatformWebView.h:
+
 2015-08-23  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Combined queues don't turn orange on internal failure
