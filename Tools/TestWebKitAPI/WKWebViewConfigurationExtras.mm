@@ -30,7 +30,6 @@
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
-#import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 

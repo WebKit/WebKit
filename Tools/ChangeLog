@@ -1,3 +1,10 @@
+2015-08-23  Andy Estes  <aestes@apple.com>
+
+        Fixed the 32-bit Mac build after r188844.
+
+        * TestWebKitAPI/WKWebViewConfigurationExtras.h:
+        * TestWebKitAPI/WKWebViewConfigurationExtras.mm:
+
 2015-08-22  Andy Estes  <aestes@apple.com>
 
         [Cocoa] API tests using the Modern WebKit API should be able to create web process plug-ins
