@@ -1,5 +1,12 @@
 2015-08-22  Saam barati  <sbarati@apple.com>
 
+        Change image for type profiler and code coverage profiler blog post.
+
+        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-1x.png:
+        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-2x.png:
+
+2015-08-22  Saam barati  <sbarati@apple.com>
+
         Change video for type profiler and code coverage profiler blog post.
 
         * blog-files/type-profiler-and-code-coverage-profiler/types-changing.mov:
