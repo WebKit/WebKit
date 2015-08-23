@@ -1,3 +1,20 @@
+2015-08-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove style checking rule regarding OwnPtr and PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=148360
+
+        Reviewed by Darin Adler.
+
+        OwnPtr and PassOwnPtr were totally removed though, style rule is still alive.
+        Removed it.
+
+        * Scripts/do-webcore-rename:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (PassPtrTest.test_pass_own_ptr_in_function): Deleted.
+        (PassPtrTest.test_pass_ref_ptr_return_value): Deleted.
+        (PassPtrTest.test_own_ptr_parameter_value): Deleted.
+        (WebKitStyleTest.test_names): Deleted.
+
 2015-08-22  Timothy Horton  <timothy_horton@apple.com>
 
         WebKitTestRunner should use WKWebView on OS X and iOS
