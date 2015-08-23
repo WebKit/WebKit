@@ -243,7 +243,7 @@ BuildbotIteration.prototype = {
 
         this.failedTestSteps = [];
         data.steps.forEach(function(step) {
-            if (!step.isFinished || !(step.name in BuildbotIteration.TestSteps))
+            if (!step.isFinished || step.hidden || !(step.name in BuildbotIteration.TestSteps))
                 return;
             var results = new BuildbotTestResults(step);
             if (step.name === "layout-test")
@@ -263,7 +263,7 @@ BuildbotIteration.prototype = {
 
         this.loaded = true;
 
-        this._firstFailedStep = data.steps.findFirst(function(step) { return step.results[0] === BuildbotIteration.FAILURE; });
+        this._firstFailedStep = data.steps.findFirst(function(step) { return !step.hidden && step.results[0] === BuildbotIteration.FAILURE; });
 
         console.assert(data.results === null || typeof data.results === "number");
         this._result = data.results;
