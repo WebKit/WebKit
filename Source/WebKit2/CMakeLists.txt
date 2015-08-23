@@ -302,7 +302,6 @@ set(WebKit2_SOURCES
     Shared/API/c/WKURL.cpp
     Shared/API/c/WKURLRequest.cpp
     Shared/API/c/WKURLResponse.cpp
-    Shared/API/c/WKUserContentControllerRef.cpp
     Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/Authentication/AuthenticationManager.cpp
@@ -449,6 +448,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKResourceCacheManager.cpp
     UIProcess/API/C/WKSessionStateRef.cpp
     UIProcess/API/C/WKTextChecker.cpp
+    UIProcess/API/C/WKUserContentControllerRef.cpp
     UIProcess/API/C/WKUserMediaPermissionRequest.cpp
     UIProcess/API/C/WKVibration.cpp
     UIProcess/API/C/WKViewportAttributes.cpp

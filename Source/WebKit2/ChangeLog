@@ -1,5 +1,11 @@
 2015-08-23  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Typo fix after r188842.
+
+        * CMakeLists.txt:
+
+2015-08-23  Csaba Osztrogonác  <ossy@webkit.org>
+
         Speculative buildfix after r188828.
 
         * CMakeLists.txt:
