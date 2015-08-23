@@ -106,14 +106,15 @@ BuildbotCombinedQueueView.prototype = {
                 if (firstRecentUnsuccessfulIteration && firstRecentUnsuccessfulIteration.loaded && mostRecentFinishedIteration && mostRecentFinishedIteration.loaded) {
                     console.assert(!mostRecentFinishedIteration.successful);
                     var message = this.revisionContentForIteration(mostRecentFinishedIteration, mostRecentFinishedIteration.productive ? mostRecentSuccessfulIteration : null);
-                    if (mostRecentFinishedIteration.failed) {
+                    if (!mostRecentFinishedIteration.productive)
+                        var status = StatusLineView.Status.Danger;
+                    else {
                         // Direct links to some common logs.
                         var url = mostRecentFinishedIteration.failureLogURL("build log");
                         if (!url)
                             url = mostRecentFinishedIteration.failureLogURL("stdio");
                         var status = StatusLineView.Status.Bad;
-                    } else
-                        var status = StatusLineView.Status.Danger;
+                    }
 
                     // Show a popover when the URL is not a main build page one, because there are usually multiple logs, and it's good to provide a choice.
                     var needsPopover = !url;
