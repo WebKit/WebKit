@@ -694,7 +694,8 @@ JSStringRef AccessibilityUIElement::stringValue()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityValueAttribute], m_element);
-    return concatenateAttributeAndValue(@"AXValue", description);
+    if (description)
+        return concatenateAttributeAndValue(@"AXValue", description);
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

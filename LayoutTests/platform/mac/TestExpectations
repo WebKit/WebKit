@@ -1255,9 +1255,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 [ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
 [ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
 
-# <rdar://problem/20417352>
-[ ElCapitan+ ] accessibility/deleting-iframe-destroys-axcache.html [ Pass Failure ]
-
 # <rdar://problem/20622665> WebKit media doesn't get a canplay event when load stalls
 [ ElCapitan+ ] http/tests/media/video-play-stall.html [ Pass Failure ]
 
