@@ -35,13 +35,13 @@
 }
 
 .details-section.probe-set .data-grid tr.revealed.highlighted {
-    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
     animation-timing-function: ease;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-name: blink-frame-highlight;
+    animation-iteration-count: infinite;
+    animation-name: blink-frame-highlight;
 }
 
-@-webkit-keyframes blink-frame-highlight {
+@keyframes blink-frame-highlight {
     0% {
         background-color: hsla(262, 44%, 60%, 0.8);
     }
@@ -60,11 +60,11 @@
 }
 
 .details-section.probe-set .data-grid > tr.data-updated {
-    -webkit-animation-duration: 0.3s;
-    -webkit-animation-name: blink-probe-frame;
+    animation-duration: 0.3s;
+    animation-name: blink-probe-frame;
 }
 
-@-webkit-keyframes blink-probe-frame {
+@keyframes blink-probe-frame {
     0% {
         background-color: hsl(262, 44%, 60%);
     }

@@ -1,3 +1,70 @@
+2015-08-23  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Drop webkit prefixes from animation, keyframes and transform
+        https://bugs.webkit.org/show_bug.cgi?id=148364
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.breakpoint-generic-line-icon .icon > span):
+        (.data-updated.breakpoint-generic-line-icon .icon > span):
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker > .slider):
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard):
+        (.toolbar .dashboard.slide-out-up):
+        (.toolbar .dashboard.slide-out-down):
+        (.toolbar .dashboard.slide-in-up):
+        (.toolbar .dashboard.slide-in-down):
+        (@keyframes slide-top-edge):
+        (@keyframes slide-bottom-edge):
+        (@-webkit-keyframes slide-top-edge): Deleted.
+        (@-webkit-keyframes slide-bottom-edge): Deleted.
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.dashboard.debugger .navigation-bar .item.button > .glyph):
+        (@keyframes pulse-pause-button):
+        (@-webkit-keyframes pulse-pause-button): Deleted.
+        * UserInterface/Views/DefaultDashboardView.css:
+        (.toolbar .dashboard.default > .item.pulsing):
+        (@keyframes console-item-pulse):
+        (@-webkit-keyframes console-item-pulse): Deleted.
+        * UserInterface/Views/GoToLineDialog.css:
+        (.go-to-line-dialog):
+        * UserInterface/Views/HoverMenu.css:
+        (.hover-menu):
+        * UserInterface/Views/IndeterminateProgressSpinner.css:
+        (@keyframes discrete-spinner):
+        (.indeterminate-progress-spinner):
+        (@-webkit-keyframes discrete-spinner): Deleted.
+        * UserInterface/Views/Main.css:
+        (.bouncy-highlight):
+        (@keyframes bouncy-highlight-animation):
+        (@-webkit-keyframes bouncy-highlight-animation): Deleted.
+        * UserInterface/Views/ProbeSetDataGrid.css:
+        (.details-section.probe-set .data-grid tr.revealed.highlighted):
+        (@keyframes blink-frame-highlight):
+        (.details-section.probe-set .data-grid > tr.data-updated):
+        (@keyframes blink-probe-frame):
+        (@-webkit-keyframes blink-frame-highlight): Deleted.
+        (@-webkit-keyframes blink-probe-frame): Deleted.
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .highlighted):
+        (@keyframes text-editor-highlight-fadeout):
+        (.text-editor > .CodeMirror .hovered-expression-highlight):
+        (@keyframes text-editor-hovered-expression-highlight-fadeout):
+        (@-webkit-keyframes text-editor-highlight-fadeout): Deleted.
+        (@-webkit-keyframes text-editor-hovered-expression-highlight-fadeout): Deleted.
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview.frames > .timeline-ruler > .markers > .divider):
+        (.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right):
+        (.timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right):
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header > .divider):
+        (.timeline-ruler > .markers > .divider):
+        (.timeline-ruler > .markers > .marker):
+        (.timeline-ruler > .selection-handle.left):
+        (.timeline-ruler > .selection-handle.right):
+
 2015-08-21  Saam barati  <sbarati@apple.com>
 
         Web Inspector: Type profiler shows 'Undefined' annotation for functions with no return statements

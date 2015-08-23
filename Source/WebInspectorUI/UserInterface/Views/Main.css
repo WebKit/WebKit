@@ -334,25 +334,25 @@ body.window-inactive #split-content-browser {
     -webkit-user-select: none;
     pointer-events: none;
 
-    -webkit-animation-name: bouncy-highlight-animation;
-    -webkit-animation-duration: 750ms;
-    -webkit-animation-timing-function: ease-in-out;
+    animation-name: bouncy-highlight-animation;
+    animation-duration: 750ms;
+    animation-timing-function: ease-in-out;
 
     opacity: 0;
 }
 
-@-webkit-keyframes bouncy-highlight-animation {
+@keyframes bouncy-highlight-animation {
     0% {
-        -webkit-transform: scale(1);
+        transform: scale(1);
         opacity: 1;
     }
 
     12.5% {
-        -webkit-transform: scale(1.25);
+        transform: scale(1.25);
     }
 
     25% {
-        -webkit-transform: scale(1);
+        transform: scale(1);
     }
 
     62.5% {

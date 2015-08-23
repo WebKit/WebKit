@@ -164,11 +164,11 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
 /* Styles for the pulsing animated state of console items */
 
 .toolbar .dashboard.default > .item.pulsing {
-    -webkit-animation-name: console-item-pulse;
-    -webkit-animation-duration: 0.75s;
+    animation-name: console-item-pulse;
+    animation-duration: 0.75s;
 }
 
-@-webkit-keyframes console-item-pulse {
+@keyframes console-item-pulse {
     50% { opacity: 0.6; }
 }
 

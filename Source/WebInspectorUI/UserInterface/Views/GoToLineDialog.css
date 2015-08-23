@@ -30,7 +30,7 @@
     width: calc(100% - 40px);
     max-width: 452px;
     height: 38px;
-    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     padding: 3px;
     border-radius: 5px;
     background-color: hsla(0, 0%, 90%, 0.95);

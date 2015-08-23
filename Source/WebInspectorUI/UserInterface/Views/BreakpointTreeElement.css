@@ -69,14 +69,14 @@ icon to the icon element's background so animations are layered on top. */
     left: 0;
 
     border-radius: 50%;
-    -webkit-transform: scale(0);
+    transform: scale(0);
     transition: none;
     background-color: hsl(216, 30%, 42%);
 }
 
 .data-updated.breakpoint-generic-line-icon .icon > span {
     border-radius: 0;
-    -webkit-transform: scale(0.85);
+    transform: scale(0.85);
     transition: all .4s ease-out;
     background-color: hsla(216, 30%, 42%, 0.1);
 }
