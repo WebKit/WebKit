@@ -302,6 +302,7 @@ set(WebKit2_SOURCES
     Shared/API/c/WKURL.cpp
     Shared/API/c/WKURLRequest.cpp
     Shared/API/c/WKURLResponse.cpp
+    Shared/API/c/WKUserContentControllerRef.cpp
     Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/Authentication/AuthenticationManager.cpp
