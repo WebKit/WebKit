@@ -35,7 +35,7 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
-static bool isDone = false;
+static bool isDone;
 
 @interface ServerRedirectNavigationDelegate : NSObject <WKNavigationDelegate>
 @end
