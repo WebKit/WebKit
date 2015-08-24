@@ -1,6 +1,25 @@
 2015-08-23  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed, rolling back in r188792.
+        https://bugs.webkit.org/show_bug.cgi?id=148347
+
+        Previously reverted changesets:
+
+        "Unify code paths for manually deleting all code"
+        https://bugs.webkit.org/show_bug.cgi?id=148280
+        http://trac.webkit.org/changeset/188792
+
+        The previous patch caused some inspector tests to hang because it
+        introduced extra calls to sourceParsed, and sourceParsed is
+        pathologically slow in WK1 debug builds. This patch restores pre-existing
+        code to limit calls to sourceParsed, excluding code not being debugged
+        (i.e., inspector code).
+
+2015-08-23  Geoffrey Garen  <ggaren@apple.com>
+
         Unreviewed, rolling back in r188803.
+
+        Previously reverted changesets:
 
         "Debugger's VM should never be null"
         https://bugs.webkit.org/show_bug.cgi?id=148341

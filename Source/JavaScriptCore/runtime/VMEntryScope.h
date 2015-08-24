@@ -27,9 +27,9 @@
 #define VMEntryScope_h
 
 #include "Interpreter.h"
-#include <wtf/HashMap.h>
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -43,13 +43,12 @@ public:
 
     JSGlobalObject* globalObject() const { return m_globalObject; }
 
-    typedef std::function<void (VM&, JSGlobalObject*)> EntryScopeDidPopListener;
-    void setEntryScopeDidPopListener(void*, EntryScopeDidPopListener);
+    void addDidPopListener(std::function<void ()>);
 
 private:
     VM& m_vm;
     JSGlobalObject* m_globalObject;
-    HashMap<void*, EntryScopeDidPopListener> m_allEntryScopeDidPopListeners;
+    Vector<std::function<void ()>> m_didPopListeners;
 };
 
 } // namespace JSC

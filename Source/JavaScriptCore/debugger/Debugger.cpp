@@ -39,65 +39,30 @@ namespace {
 
 using namespace JSC;
 
-class Recompiler : public MarkedBlock::VoidFunctor {
-public:
-    Recompiler(JSC::Debugger*);
-    ~Recompiler();
-    IterationStatus operator()(JSCell*);
-
-private:
-    typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
-    typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
-    
-    void visit(JSCell*);
-    
+struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
+    HashSet<SourceProvider*> sourceProviders;
     JSC::Debugger* m_debugger;
-    FunctionExecutableSet m_functionExecutables;
-    SourceProviderMap m_sourceProviders;
+
+    GatherSourceProviders(JSC::Debugger* debugger)
+        : m_debugger(debugger) { }
+
+    IterationStatus operator()(JSCell* cell)
+    {
+        JSFunction* function = jsDynamicCast<JSFunction*>(cell);
+        if (!function)
+            return IterationStatus::Continue;
+
+        if (function->scope()->globalObject()->debugger() != m_debugger)
+            return IterationStatus::Continue;
+
+        if (!function->executable()->isFunctionExecutable())
+            return IterationStatus::Continue;
+
+        sourceProviders.add(
+            jsCast<FunctionExecutable*>(function->executable())->source().provider());
+        return IterationStatus::Continue;
+    }
 };
-
-inline Recompiler::Recompiler(JSC::Debugger* debugger)
-    : m_debugger(debugger)
-{
-}
-
-inline Recompiler::~Recompiler()
-{
-    // Call sourceParsed() after reparsing all functions because it will execute
-    // JavaScript in the inspector.
-    SourceProviderMap::const_iterator end = m_sourceProviders.end();
-    for (SourceProviderMap::const_iterator iter = m_sourceProviders.begin(); iter != end; ++iter)
-        m_debugger->sourceParsed(iter->value, iter->key, -1, String());
-}
-
-inline void Recompiler::visit(JSCell* cell)
-{
-    if (!cell->inherits(JSFunction::info()))
-        return;
-
-    JSFunction* function = jsCast<JSFunction*>(cell);
-    if (function->executable()->isHostFunction())
-        return;
-
-    FunctionExecutable* executable = function->jsExecutable();
-
-    // Check if the function is already in the set - if so,
-    // we've already retranslated it, nothing to do here.
-    if (!m_functionExecutables.add(executable).isNewEntry)
-        return;
-
-    ExecState* exec = function->scope()->globalObject()->JSGlobalObject::globalExec();
-    executable->clearCode();
-    executable->clearUnlinkedCodeForRecompilation();
-    if (m_debugger == function->scope()->globalObject()->debugger())
-        m_sourceProviders.add(executable->source().provider(), exec);
-}
-
-inline IterationStatus Recompiler::operator()(JSCell* cell)
-{
-    visit(cell);
-    return IterationStatus::Continue;
-}
 
 } // namespace
 
@@ -176,6 +141,15 @@ void Debugger::attach(JSGlobalObject* globalObject)
     ASSERT(!globalObject->debugger());
     globalObject->setDebugger(this);
     m_globalObjects.add(globalObject);
+
+    // Call sourceParsed() because it will execute JavaScript in the inspector.
+    GatherSourceProviders gatherSourceProviders(this);
+    {
+        HeapIterationScope iterationScope(m_vm.heap);
+        m_vm.heap.objectSpace().forEachLiveCell(iterationScope, gatherSourceProviders);
+    }
+    for (auto* sourceProvider : gatherSourceProviders.sourceProviders)
+        sourceParsed(globalObject->globalExec(), sourceProvider, -1, String());
 }
 
 void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
@@ -328,26 +302,7 @@ void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointStat
 
 void Debugger::recompileAllJSFunctions()
 {
-    // If JavaScript is running, it's not safe to recompile, since we'll end
-    // up throwing away code that is live on the stack.
-    if (m_vm.entryScope) {
-        auto listener = [] (VM&, JSGlobalObject* globalObject) 
-        {
-            if (Debugger* debugger = globalObject->debugger())
-                debugger->recompileAllJSFunctions();
-        };
-
-        m_vm.entryScope->setEntryScopeDidPopListener(this, listener);
-        return;
-    }
-
-#if ENABLE(DFG_JIT)
-    DFG::completeAllPlansForVM(m_vm);
-#endif
-
-    Recompiler recompiler(this);
-    HeapIterationScope iterationScope(m_vm.heap);
-    m_vm.heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
+    m_vm.deleteAllCode();
 }
 
 BreakpointID Debugger::setBreakpoint(Breakpoint breakpoint, unsigned& actualLine, unsigned& actualColumn)
