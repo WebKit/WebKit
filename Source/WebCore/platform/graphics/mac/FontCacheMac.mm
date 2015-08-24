@@ -199,6 +199,7 @@ static CGFloat toNSFontWeight(FontWeight fontWeight)
 }
 #endif
 
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
 static NSFontTraitMask toNSFontTraits(CTFontSymbolicTraits traits)
 {
     NSFontTraitMask result = 0;
@@ -208,6 +209,7 @@ static NSFontTraitMask toNSFontTraits(CTFontSymbolicTraits traits)
         result |= NSItalicFontMask;
     return result;
 }
+#endif
 
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, CTFontSymbolicTraits desiredTraits, float size)
 {
