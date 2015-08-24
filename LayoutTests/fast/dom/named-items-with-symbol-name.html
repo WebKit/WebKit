@@ -16,7 +16,7 @@
 description('This tests Symbol property names with a number of named items collections.');
 
 var getElementsByTagNameList = document.getElementsByTagName('div');
-debug("\n" + String(getElementsByTagNameList));
+debug(String(getElementsByTagNameList));
 shouldBeTrue("getElementsByTagNameList.length === 4");
 shouldBeTrue("getElementsByTagNameList[Symbol()] === undefined");
 shouldBeTrue("getElementsByTagNameList[Symbol('div')] === undefined");

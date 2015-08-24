@@ -1,3 +1,12 @@
+2015-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, slight layout test clean up after r188829.
+
+        Remove a useless blank line.
+
+        * fast/dom/named-items-with-symbol-name-expected.txt:
+        * fast/dom/named-items-with-symbol-name.html:
+
 2015-08-23  Nan Wang  <n_wang@apple.com>
 
         AX: Fix accessibility/deleting-iframe-destroys-axcache.html test
