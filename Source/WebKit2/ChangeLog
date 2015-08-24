@@ -1,3 +1,23 @@
+2015-08-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use _NSScrollingPredominantAxisFilter for wheel event filtering on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=147320
+
+        Reviewed by Simon Fraser.
+
+        Refactored to use a predominant axis filter instead of a predominant axis tracker. This allows us to
+        employ AppKit's _NSScrollingPredominantAxisFilter when possible, and use the wheel event delta tracker
+        as a fallback. Here, we refactor EventDispatcher to use the new filters for mainframe scrolling.
+
+        No new tests, since this change does not add new functionality.
+
+        * WebProcess/WebPage/EventDispatcher.cpp: Include WheelEventDeltaFilterMac.h when necessary.
+        (WebKit::EventDispatcher::EventDispatcher): Initialize a WheelEventDeltaFilterMac when possible. Otherwise,
+            fall back to a BasicWheelEventDeltaFilter.
+        (WebKit::EventDispatcher::wheelEvent): Use filtered deltas to initialize the platform wheel event instead
+            of zeroing out non-predominant axes.
+        * WebProcess/WebPage/EventDispatcher.h: Replace m_recentWheelEventDeltaTracker with m_recentWheelEventDeltaFilter.
+
 2015-08-23  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] REGRESSION (r182356): Provisional URL is incorrect in didReceiveServerRedirectForProvisionalLoadForFrame when Content Filtering is enabled

@@ -54,7 +54,7 @@ Ref<EventDispatcher> EventDispatcher::create()
 
 EventDispatcher::EventDispatcher()
     : m_queue(WorkQueue::create("com.apple.WebKit.EventDispatcher", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
-    , m_recentWheelEventDeltaTracker(std::make_unique<WheelEventDeltaTracker>())
+    , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
 {
 }
 
@@ -95,26 +95,19 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 #if PLATFORM(COCOA)
     switch (wheelEvent.phase()) {
     case PlatformWheelEventPhaseBegan:
-        m_recentWheelEventDeltaTracker->beginTrackingDeltas();
+        m_recentWheelEventDeltaFilter->beginFilteringDeltas();
         break;
     case PlatformWheelEventPhaseEnded:
-        m_recentWheelEventDeltaTracker->endTrackingDeltas();
+        m_recentWheelEventDeltaFilter->endFilteringDeltas();
         break;
     default:
         break;
     }
 
-    if (m_recentWheelEventDeltaTracker->isTrackingDeltas()) {
-        m_recentWheelEventDeltaTracker->recordWheelEventDelta(platformWheelEvent);
-
-        DominantScrollGestureDirection dominantDirection = DominantScrollGestureDirection::None;
-        dominantDirection = m_recentWheelEventDeltaTracker->dominantScrollGestureDirection();
-
-        // Workaround for scrolling issues <rdar://problem/14758615>.
-        if (dominantDirection == DominantScrollGestureDirection::Vertical && platformWheelEvent.deltaX())
-            platformWheelEvent = platformWheelEvent.copyIgnoringHorizontalDelta();
-        else if (dominantDirection == DominantScrollGestureDirection::Horizontal && platformWheelEvent.deltaY())
-            platformWheelEvent = platformWheelEvent.copyIgnoringVerticalDelta();
+    if (m_recentWheelEventDeltaFilter->isFilteringDeltas()) {
+        m_recentWheelEventDeltaFilter->updateFromDelta(FloatSize(platformWheelEvent.deltaX(), platformWheelEvent.deltaY()));
+        FloatSize filteredDelta = m_recentWheelEventDeltaFilter->filteredDelta();
+        platformWheelEvent = platformWheelEvent.copyWithDeltas(filteredDelta.width(), filteredDelta.height());
     }
 #endif
 

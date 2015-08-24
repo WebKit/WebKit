@@ -2003,7 +2003,7 @@ set(WebCore_SOURCES
     page/UserContentController.cpp
     page/UserContentURLPattern.cpp
     page/VisitedLinkStore.cpp
-    page/WheelEventDeltaTracker.cpp
+    page/WheelEventDeltaFilter.cpp
     page/WheelEventTestTrigger.cpp
     page/WindowFeatures.cpp
     page/WindowFocusAllowedIndicator.cpp

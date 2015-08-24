@@ -37,7 +37,7 @@
 #include "TextEventInputType.h"
 #include "TextGranularity.h"
 #include "Timer.h"
-#include "WheelEventDeltaTracker.h"
+#include "WheelEventDeltaFilter.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
