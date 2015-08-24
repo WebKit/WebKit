@@ -1,3 +1,24 @@
+2015-08-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r188581): Web Inspector: Console user command isn't visible when it's expected to be
+        https://bugs.webkit.org/show_bug.cgi?id=148283
+
+        One of the improvements of r188581 "Option-Enter should commit console command
+        without erasing the prompt" was not to show a console user command if it's the
+        same as the previous one.
+
+        However, there could be a lot of other messages between the last two user
+        commands - console.log, CSS warnings, etc. In that case we should show a console
+        user command again by resetting _lastCommitted.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        (WebInspector.JavaScriptLogViewController.prototype.startNewSession):
+        (WebInspector.JavaScriptLogViewController.prototype._appendConsoleMessageView):
+        Reset _lastCommitted for all messages except for user commands and use command results.
+
 2015-08-24  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Rendering Frames filter checkboxes all become checked during recording
