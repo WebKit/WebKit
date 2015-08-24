@@ -37,8 +37,8 @@ Dashboard = {
     },
     Branch: {},
     Repository: {
-        OpenSource: { name: "openSource", order: 0 },
-        Internal: { name: "internal", order: 1 },
+        OpenSource: { name: "openSource", isSVN: true, order: 0 },
+        Internal: { name: "internal", isSVN: true, order: 1 },
     },
     get sortedPlatforms()
     {

@@ -109,7 +109,7 @@ function parseRevisionProperty(property, key, fallbackKey)
     // ["got_revision","2468","Source"]
     if (isMultiCodebaseGotRevisionProperty(property))
         value = (key in value) ? value[key] : value[fallbackKey];
-    return parseInt(value);
+    return value;
 }
 
 BuildbotIteration.prototype = {
@@ -212,7 +212,11 @@ BuildbotIteration.prototype = {
                 key = repositoryName;
                 fallbackKey = null;
             }
-            this.revision[repositoryName] = parseRevisionProperty(revisionProperty, key, fallbackKey);
+            var revision = parseRevisionProperty(revisionProperty, key, fallbackKey);
+            if (repository.isSVN)
+                this.revision[repositoryName] = parseInt(revision);
+            else
+                this.revision[repositoryName] = revision;
         }
 
         function sourceStampChanges(sourceStamp) {

@@ -216,7 +216,14 @@ BuildbotQueueView.prototype = {
         var repositoryName = repository.name;
         console.assert(iteration.revision[repositoryName]);
         var content = document.createElement("span");
-        content.textContent = "r" + iteration.revision[repositoryName];
+        var revision = iteration.revision[repositoryName];
+        if (repository.isSVN)
+            content.textContent = "r" + revision;
+        else if (repository.isGit) {
+            // Truncating for display. Git traditionally uses seven characters for a short hash.
+            content.textContent = revision.substr(0, 7);
+        } else
+            console.assert(false, "Should not get here; " + repository.name + " did not specify a known VCS type.");
         content.classList.add("revision-number");
 
         if (previousIteration) {

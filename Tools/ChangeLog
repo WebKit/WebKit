@@ -1,3 +1,17 @@
+2015-08-24  Jason Marcell  <jmarcell@apple.com>
+
+        Add support to dashboard for displaying Git SHA's as revisions.
+        https://bugs.webkit.org/show_bug.cgi?id=148387
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (parseRevisionProperty): Added support to dashboard for displaying Git SHA's as revisions.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._revisionContentWithPopoverForIteration): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js: Added
+        "isSVN" property to Dashboard.Repository.(OpenSource|Internal).
+
 2015-08-24  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r188851): WebKit2.BundleParameters fails on iOS
