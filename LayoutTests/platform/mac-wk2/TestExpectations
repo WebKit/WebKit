@@ -245,6 +245,13 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 webkit.org/b/136554 tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 webkit.org/b/139901 tiled-drawing/scrolling/frames/frameset-frame-scrollability.html [ Pass Failure ]
 
+webkit.org/b/148405 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html [ Pass Failure ]
+
+webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html [ Pass Failure ]
+webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html [ Pass Failure ]
+webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html [ Pass Failure ]
+webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
+
 webkit.org/b/139820 fast/frames/lots-of-objects.html [ Timeout ]
 webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Timeout ]
 
