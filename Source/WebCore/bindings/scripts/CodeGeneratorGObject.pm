@@ -996,12 +996,15 @@ sub GetTransferTypeForReturnType {
 sub GetEffectiveFunctionName {
     my $functionName = shift;
 
-    # Rename webkit_dom_document_get_elements_by_tag_name* and webkit_dom_document_get_elements_by_class_name
+    # Rename webkit_dom_[document|element]_get_elements_by_tag_name* and webkit_dom_[document|element]_get_elements_by_class_name
     # functions since they were changed to return a WebKitDOMHTMLCollection instead of a WebKitDOMNodeList in
     # r188809 and r188735. The old methods are now manually added as deprecated.
     if ($functionName eq "webkit_dom_document_get_elements_by_tag_name"
         || $functionName eq "webkit_dom_document_get_elements_by_tag_name_ns"
-        || $functionName eq "webkit_dom_document_get_elements_by_class_name") {
+        || $functionName eq "webkit_dom_document_get_elements_by_class_name"
+        || $functionName eq "webkit_dom_element_get_elements_by_tag_name"
+        || $functionName eq "webkit_dom_element_get_elements_by_tag_name_ns"
+        || $functionName eq "webkit_dom_element_get_elements_by_class_name") {
         return $functionName . "_as_html_collection";
     }
 

@@ -20,8 +20,10 @@
 #include "WebKitDOMDeprecated.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMDocumentPrivate.h"
+#include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMHTMLElement.h"
 #include "WebKitDOMNodeListPrivate.h"
 #include <wtf/GetPtr.h>
@@ -89,5 +91,39 @@ WebKitDOMNodeList* webkit_dom_document_get_elements_by_class_name(WebKitDOMDocum
     WebCore::JSMainThreadNullState state;
     WebCore::Document* document = WebKit::core(self);
     RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByClassNameForObjC(String::fromUTF8(className)));
+    return WebKit::kit(nodeList.get());
+}
+
+WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name(WebKitDOMElement* self, const gchar* tagName)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), nullptr);
+    g_return_val_if_fail(tagName, nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::Element* element = WebKit::core(self);
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByTagNameForObjC(String::fromUTF8(tagName)));
+    return WebKit::kit(nodeList.get());
+}
+
+WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name_ns(WebKitDOMElement* self, const gchar* namespaceURI, const gchar* tagName)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), nullptr);
+    g_return_val_if_fail(namespaceURI, nullptr);
+    g_return_val_if_fail(tagName, nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::Element* element = WebKit::core(self);
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByTagNameNSForObjC(String::fromUTF8(namespaceURI), String::fromUTF8(tagName)));
+    return WebKit::kit(nodeList.get());
+}
+
+WebKitDOMNodeList* webkit_dom_element_get_elements_by_class_name(WebKitDOMElement* self, const gchar* className)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), nullptr);
+    g_return_val_if_fail(className, nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::Element* element = WebKit::core(self);
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByClassNameForObjC(String::fromUTF8(className)));
     return WebKit::kit(nodeList.get());
 }

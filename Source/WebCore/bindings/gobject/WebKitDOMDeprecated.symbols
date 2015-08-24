@@ -6,3 +6,6 @@ WebKitDOMHTMLCollection* webkit_dom_html_element_get_children(WebKitDOMHTMLEleme
 WebKitDOMNodeList* webkit_dom_document_get_elements_by_class_name(WebKitDOMDocument*, const gchar*)
 WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name(WebKitDOMDocument*, const gchar*)
 WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocument*, const gchar*, const gchar*)
+WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name(WebKitDOMElement*, const gchar*)
+WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name_ns(WebKitDOMElement*, const gchar*, const gchar*)
+WebKitDOMNodeList* webkit_dom_element_get_elements_by_class_name(WebKitDOMElement*, const gchar*)
