@@ -1,3 +1,24 @@
+2015-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Create ById IC for ByVal operation only when the specific Id comes more than once
+        https://bugs.webkit.org/show_bug.cgi?id=148288
+
+        Reviewed by Geoffrey Garen.
+
+        Revert the skip marks introduced in r188767.
+
+        * js/script-tests/dfg-float32array.js:
+        * js/script-tests/dfg-int16array.js:
+        * js/script-tests/dfg-int32array-overflow-values.js:
+        * js/script-tests/dfg-int32array.js:
+        * js/script-tests/dfg-int8array.js:
+        * js/script-tests/dfg-uint16array.js:
+        * js/script-tests/dfg-uint32array-overflow-values.js:
+        * js/script-tests/dfg-uint32array.js:
+        * js/script-tests/dfg-uint8array.js:
+        * js/script-tests/dfg-uint8clampedarray.js:
+        * js/script-tests/regress-141098.js:
+
 2015-08-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, slight layout test clean up after r188829.

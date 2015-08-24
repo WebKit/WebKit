@@ -1,3 +1,29 @@
+2015-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Create ById IC for ByVal operation only when the specific Id comes more than once
+        https://bugs.webkit.org/show_bug.cgi?id=148288
+
+        Reviewed by Geoffrey Garen.
+
+        After introducing byId ICs into byVal ops, byVal ops creates much ICs than before.
+        The failure fixed in r188767 figures out these ICs are created even if this op is executed only once.
+
+        The situation is the following;
+        In the current code, when byVal op is executed with the Id, we immediately set up the byId IC for that byVal op.
+        But setting up JITGetByIdGenerator generates the fast path IC code and consumes executable memory.
+        As a result, if we call eval("contains byVal ops") with the different strings repeatedly under no-llint environment, each eval call creates byId IC for byVal and consumes executable memory.
+
+        To solve it, we will add "seen" flag to ByValInfo.
+        And we will create the IC on the second byVal op call with the same Id.
+
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        * jit/JITOperations.cpp:
+        (JSC::tryGetByValOptimize):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByValWithCachedId): Deleted.
+        (JSC::JIT::privateCompilePutByValWithCachedId): Deleted.
+
 2015-08-23  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Get rid of NodePointerTraits

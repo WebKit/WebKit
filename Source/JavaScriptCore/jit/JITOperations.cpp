@@ -564,6 +564,7 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
 
 enum class OptimizationResult {
     NotOptimized,
+    SeenOnce,
     Optimized,
     GiveUp,
 };
@@ -605,12 +606,23 @@ static OptimizationResult tryPutByValOptimize(ExecState* exec, JSValue baseValue
         if (!subscript.isString() || !parseIndex(propertyName)) {
             ASSERT(exec->locationAsBytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
-            JIT::compilePutByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, NotDirect, propertyName);
-            optimizationResult = OptimizationResult::Optimized;
+            if (byValInfo->seen) {
+                if (byValInfo->cachedId == propertyName) {
+                    JIT::compilePutByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, NotDirect, propertyName);
+                    optimizationResult = OptimizationResult::Optimized;
+                } else {
+                    // Seem like a generic property access site.
+                    optimizationResult = OptimizationResult::GiveUp;
+                }
+            } else {
+                byValInfo->seen = true;
+                byValInfo->cachedId = propertyName;
+                optimizationResult = OptimizationResult::SeenOnce;
+            }
         }
     }
 
-    if (optimizationResult != OptimizationResult::Optimized) {
+    if (optimizationResult != OptimizationResult::Optimized && optimizationResult != OptimizationResult::SeenOnce) {
         // If we take slow path more than 10 times without patching then make sure we
         // never make that mistake again. For cases where we see non-index-intercepting
         // objects, this gives 10 iterations worth of opportunity for us to observe
@@ -674,12 +686,23 @@ static OptimizationResult tryDirectPutByValOptimize(ExecState* exec, JSObject* o
         if (!subscript.isString() || !index) {
             ASSERT(exec->locationAsBytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
-            JIT::compilePutByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, Direct, propertyName);
-            optimizationResult = OptimizationResult::Optimized;
+            if (byValInfo->seen) {
+                if (byValInfo->cachedId == propertyName) {
+                    JIT::compilePutByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, Direct, propertyName);
+                    optimizationResult = OptimizationResult::Optimized;
+                } else {
+                    // Seem like a generic property access site.
+                    optimizationResult = OptimizationResult::GiveUp;
+                }
+            } else {
+                byValInfo->seen = true;
+                byValInfo->cachedId = propertyName;
+                optimizationResult = OptimizationResult::SeenOnce;
+            }
         }
     }
 
-    if (optimizationResult != OptimizationResult::Optimized) {
+    if (optimizationResult != OptimizationResult::Optimized && optimizationResult != OptimizationResult::SeenOnce) {
         // If we take slow path more than 10 times without patching then make sure we
         // never make that mistake again. For cases where we see non-index-intercepting
         // objects, this gives 10 iterations worth of opportunity for us to observe
@@ -1610,12 +1633,24 @@ static OptimizationResult tryGetByValOptimize(ExecState* exec, JSValue baseValue
         if (!subscript.isString() || !parseIndex(propertyName)) {
             ASSERT(exec->locationAsBytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
-            JIT::compileGetByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, propertyName);
-            optimizationResult = OptimizationResult::Optimized;
+            if (byValInfo->seen) {
+                if (byValInfo->cachedId == propertyName) {
+                    JIT::compileGetByValWithCachedId(&vm, exec->codeBlock(), byValInfo, returnAddress, propertyName);
+                    optimizationResult = OptimizationResult::Optimized;
+                } else {
+                    // Seem like a generic property access site.
+                    optimizationResult = OptimizationResult::GiveUp;
+                }
+            } else {
+                byValInfo->seen = true;
+                byValInfo->cachedId = propertyName;
+                optimizationResult = OptimizationResult::SeenOnce;
+            }
+
         }
     }
 
-    if (optimizationResult != OptimizationResult::Optimized) {
+    if (optimizationResult != OptimizationResult::Optimized && optimizationResult != OptimizationResult::SeenOnce) {
         // If we take slow path more than 10 times without patching then make sure we
         // never make that mistake again. For cases where we see non-index-intercepting
         // objects, this gives 10 iterations worth of opportunity for us to observe

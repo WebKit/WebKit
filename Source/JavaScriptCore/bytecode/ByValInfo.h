@@ -216,6 +216,7 @@ struct ByValInfo {
         , slowPathCount(0)
         , stubInfo(nullptr)
         , tookSlowPath(false)
+        , seen(false)
     {
     }
 
@@ -231,7 +232,8 @@ struct ByValInfo {
     RefPtr<JITStubRoutine> stubRoutine;
     Identifier cachedId;
     StructureStubInfo* stubInfo;
-    bool tookSlowPath;
+    bool tookSlowPath : 1;
+    bool seen : 1;
 };
 
 inline unsigned getByValInfoBytecodeIndex(ByValInfo* info)

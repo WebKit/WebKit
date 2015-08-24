@@ -1109,7 +1109,6 @@ void JIT::privateCompileGetByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer,
         ("Baseline get_by_val with cached property name '%s' stub for %s, return point %p", propertyName.impl()->utf8().data(), toCString(*m_codeBlock).data(), returnAddress.value()));
-    byValInfo->cachedId = propertyName;
     byValInfo->stubInfo = gen.stubInfo();
 
     RepatchBuffer repatchBuffer(m_codeBlock);
@@ -1207,7 +1206,6 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer,
         ("Baseline put_by_val%s with cached property name '%s' stub for %s, return point %p", (putKind == Direct) ? "_direct" : "", propertyName.impl()->utf8().data(), toCString(*m_codeBlock).data(), returnAddress.value()));
-    byValInfo->cachedId = propertyName;
     byValInfo->stubInfo = gen.stubInfo();
 
     RepatchBuffer repatchBuffer(m_codeBlock);
