@@ -480,15 +480,10 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         CFRelease(CTFontCreateWithName(family.string().createCFString().get(), size, nullptr));
 
-#if ENABLE(PLATFORM_FONT_LOOKUP)
-        font = platformFontLookupWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
-#else
-        font = platformFontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
-#endif
-        if (!font)
-            return nullptr;
+        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
     }
 #endif
+
     if (!font)
         return nullptr;
 

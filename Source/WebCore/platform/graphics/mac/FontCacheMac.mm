@@ -178,6 +178,16 @@ static inline FontWeight appkitWeightToFontWeight(NSInteger appKitWeight)
     return FontWeight900;
 }
 
+static NSFontTraitMask toNSFontTraits(CTFontSymbolicTraits traits)
+{
+    NSFontTraitMask result = 0;
+    if (traits & kCTFontBoldTrait)
+        result |= NSBoldFontMask;
+    if (traits & kCTFontItalicTrait)
+        result |= NSItalicFontMask;
+    return result;
+}
+
 #endif // PLATFORM_FONT_LOOKUP
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
@@ -196,18 +206,6 @@ static CGFloat toNSFontWeight(FontWeight fontWeight)
     };
     ASSERT(fontWeight >= 0 && fontWeight <= 8);
     return nsFontWeights[fontWeight];
-}
-#endif
-
-#if !ENABLE(PLATFORM_FONT_LOOKUP)
-static NSFontTraitMask toNSFontTraits(CTFontSymbolicTraits traits)
-{
-    NSFontTraitMask result = 0;
-    if (traits & kCTFontBoldTrait)
-        result |= NSBoldFontMask;
-    if (traits & kCTFontItalicTrait)
-        result |= NSItalicFontMask;
-    return result;
 }
 #endif
 
