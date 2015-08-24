@@ -33,6 +33,7 @@
 #include <mutex>
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/PageBlock.h>
@@ -47,6 +48,9 @@
 #if OS(WINDOWS)
 #include "MacroAssemblerX86.h"
 #endif
+
+#define USE_OPTIONS_FILE 0
+#define OPTIONS_FILENAME "/tmp/jsc.options"
 
 namespace JSC {
 
@@ -362,6 +366,31 @@ void Options::initialize()
     
             recomputeDependentOptions();
 
+#if USE(OPTIONS_FILE)
+            {
+                const char* filename = OPTIONS_FILENAME;
+                FILE* optionsFile = fopen(filename, "r");
+                if (!optionsFile) {
+                    dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb?\n", filename);
+                    return;
+                }
+                
+                StringBuilder builder;
+                char* line;
+                char buffer[BUFSIZ];
+                while ((line = fgets(buffer, sizeof(buffer), optionsFile)))
+                    builder.append(buffer);
+                
+                const char* optionsStr = builder.toString().utf8().data();
+                dataLogF("Setting options: %s\n", optionsStr);
+                setOptions(optionsStr);
+                
+                int result = fclose(optionsFile);
+                if (result)
+                    dataLogF("Failed to close file %s: %s\n", filename, strerror(errno));
+            }
+#endif
+
             // Do range checks where needed and make corrections to the options:
             ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
             ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= Options::thresholdForOptimizeSoon());
@@ -410,6 +439,12 @@ bool Options::setOptions(const char* optionsStr)
     char* p = optionsStrCopy;
 
     while (p < end) {
+        // Skip white space.
+        while (p < end && isASCIISpace(*p))
+            p++;
+        if (p == end)
+            break;
+
         char* optionStart = p;
         p = strstr(p, "=");
         if (!p) {
@@ -430,7 +465,9 @@ bool Options::setOptions(const char* optionsStr)
             hasStringValue = true;
         }
 
-        p = strstr(p, " ");
+        // Find next white space.
+        while (p < end && !isASCIISpace(*p))
+            p++;
         if (!p)
             p = end; // No more " " separator. Hence, this is the last arg.
 

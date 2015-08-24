@@ -1,3 +1,29 @@
+2015-08-24  Mark Lam  <mark.lam@apple.com>
+
+        Add support for setting JSC options from a file.
+        https://bugs.webkit.org/show_bug.cgi?id=148394
+
+        Reviewed by Saam Barati.
+
+        This is needed for environments where the JSC executable does not have access to
+        environmental variables.  This is only needed for debugging, and is currently
+        guarded under a #define USE_OPTIONS_FILE in Options.cpp, and is disabled by
+        default.
+
+        Also fixed Options::setOptions() to be allow for whitespace that is not a single
+        ' '.  This makes setOptions() much more flexible and friendlier to use for loading
+        options in general.
+
+        For example, this current use case of loading options from a file may have '\n's
+        in the character stream, and this feature is easier to implement if setOptions()
+        just support more than 1 whitespace char between options, and recognize whitespace
+        characters other than ' '.
+
+        * runtime/Options.cpp:
+        (JSC::parse):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptions):
+
 2015-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::FixupPhase should use the lambda form of m_graph.doToChildren() rather than the old macro
