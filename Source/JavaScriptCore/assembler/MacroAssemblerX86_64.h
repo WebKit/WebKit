@@ -30,7 +30,7 @@
 
 #include "MacroAssemblerX86Common.h"
 
-#define REPTACH_OFFSET_CALL_R11 3
+#define REPATCH_OFFSET_CALL_R11 3
 
 inline bool CAN_SIGN_EXTEND_32_64(int64_t value) { return value == (int64_t)(int32_t)value; }
 
@@ -181,7 +181,7 @@ public:
         load64(Address(X86Registers::eax, sizeof(int64_t)), X86Registers::edx);
         load64(Address(X86Registers::eax), X86Registers::eax);
 
-        ASSERT_UNUSED(label, differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
+        ASSERT_UNUSED(label, differenceBetween(label, result) == REPATCH_OFFSET_CALL_R11);
         return result;
     }
 #endif
@@ -215,7 +215,7 @@ public:
 #if OS(WINDOWS)
         add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
 #endif
-        ASSERT_UNUSED(label, differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
+        ASSERT_UNUSED(label, differenceBetween(label, result) == REPATCH_OFFSET_CALL_R11);
         return result;
     }
 
@@ -230,7 +230,7 @@ public:
     {
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister);
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
-        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
+        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPATCH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
     }
 
@@ -239,7 +239,7 @@ public:
         oldJump.link(this);
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister);
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
-        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
+        ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPATCH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
     }
 
@@ -800,7 +800,7 @@ public:
     
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation()));
+        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPATCH_OFFSET_CALL_R11).dataLocation()));
     }
 
     static bool haveScratchRegisterForBlinding() { return true; }
@@ -861,19 +861,19 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         if (!call.isFlagSet(Call::Near))
-            X86Assembler::linkPointer(code, call.m_label.labelAtOffset(-REPTACH_OFFSET_CALL_R11), function.value());
+            X86Assembler::linkPointer(code, call.m_label.labelAtOffset(-REPATCH_OFFSET_CALL_R11), function.value());
         else
             X86Assembler::linkCall(code, call.m_label, function.value());
     }
 
     static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
     {
-        X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
+        X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPATCH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
     }
 
     static void repatchCall(CodeLocationCall call, FunctionPtr destination)
     {
-        X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
+        X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPATCH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
     }
 };
 

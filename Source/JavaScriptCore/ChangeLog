@@ -1,3 +1,19 @@
+2015-08-24  Basile Clement  <basile_clement@apple.com>
+
+        REPTACH is not a word
+        https://bugs.webkit.org/show_bug.cgi?id=148401
+
+        Reviewed by Saam Barati.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::callWithSlowPathReturnType):
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::readCallTarget):
+        (JSC::MacroAssemblerX86_64::linkCall):
+        (JSC::MacroAssemblerX86_64::repatchCall):
+
 2015-08-24  Mark Lam  <mark.lam@apple.com>
 
         Add support for setting JSC options from a file.
