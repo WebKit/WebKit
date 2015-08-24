@@ -360,7 +360,6 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
     LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? LayoutUnit() : paddingBefore());
     LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? LayoutUnit() : paddingAfter());
     LayoutUnit borderAndPadding = borderAndPaddingBefore + borderAndPaddingAfter;
-    LayoutUnit computedLogicalHeight = 0;
     if (styleLogicalHeight.isFixed()) {
         // HTML tables size as though CSS height includes border/padding, CSS tables do not.
         LayoutUnit borders = LayoutUnit();
@@ -368,14 +367,14 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
         if (is<HTMLTableElement>(element()) || style().boxSizing() == BORDER_BOX) {
             borders = borderAndPadding;
         }
-        computedLogicalHeight = styleLogicalHeight.value() - borders;
+        return styleLogicalHeight.value() - borders;
     } else if (styleLogicalHeight.isPercentOrCalculated())
-        computedLogicalHeight = computePercentageLogicalHeight(styleLogicalHeight);
+        return computePercentageLogicalHeight(styleLogicalHeight).valueOr(0);
     else if (styleLogicalHeight.isIntrinsic())
-        computedLogicalHeight = computeIntrinsicLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding);
+        return computeIntrinsicLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).valueOr(0);
     else
         ASSERT_NOT_REACHED();
-    return std::max<LayoutUnit>(0, computedLogicalHeight);
+    return LayoutUnit();
 }
 
 void RenderTable::layoutCaption(RenderTableCaption* caption)

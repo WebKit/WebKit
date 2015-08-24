@@ -87,8 +87,8 @@ public:
     LayoutUnit logicalHeight() const { return style().isHorizontalWritingMode() ? height() : width(); }
 
     LayoutUnit constrainLogicalWidthInRegionByMinMax(LayoutUnit, LayoutUnit, RenderBlock*, RenderRegion* = nullptr) const;
-    LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, LayoutUnit intrinsicContentHeight) const;
-    LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, LayoutUnit intrinsicContentHeight) const;
+    LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, Optional<LayoutUnit> intrinsicContentHeight) const;
+    LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, Optional<LayoutUnit> intrinsicContentHeight) const;
 
     void setLogicalLeft(LayoutUnit left)
     {
@@ -318,12 +318,12 @@ public:
     void clearOverrideLogicalContentWidth();
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    LayoutUnit overrideContainingBlockContentLogicalWidth() const;
-    LayoutUnit overrideContainingBlockContentLogicalHeight() const;
+    Optional<LayoutUnit> overrideContainingBlockContentLogicalWidth() const;
+    Optional<LayoutUnit> overrideContainingBlockContentLogicalHeight() const;
     bool hasOverrideContainingBlockLogicalWidth() const;
     bool hasOverrideContainingBlockLogicalHeight() const;
-    void setOverrideContainingBlockContentLogicalWidth(LayoutUnit);
-    void setOverrideContainingBlockContentLogicalHeight(LayoutUnit);
+    void setOverrideContainingBlockContentLogicalWidth(Optional<LayoutUnit>);
+    void setOverrideContainingBlockContentLogicalHeight(Optional<LayoutUnit>);
     void clearContainingBlockOverrideSize();
     void clearOverrideContainingBlockContentLogicalHeight();
 #endif
@@ -333,7 +333,7 @@ public:
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit width) const;
     LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const;
     LayoutUnit adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit width) const;
-    LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit height) const;
+    LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(Optional<LayoutUnit> height) const;
 
     struct ComputedMarginValues {
         ComputedMarginValues()
@@ -421,9 +421,9 @@ public:
     LayoutUnit shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock* cb, RenderRegion*) const;
 
     LayoutUnit computeLogicalWidthInRegionUsing(SizeType, Length logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock* containingBlock, RenderRegion*) const;
-    LayoutUnit computeLogicalHeightUsing(const Length& height, LayoutUnit intrinsicContentHeight) const;
-    LayoutUnit computeContentLogicalHeight(const Length& height, LayoutUnit intrinsicContentHeight) const;
-    LayoutUnit computeContentAndScrollbarLogicalHeightUsing(const Length& height, LayoutUnit intrinsicContentHeight) const;
+    Optional<LayoutUnit> computeLogicalHeightUsing(const Length& height, Optional<LayoutUnit> intrinsicContentHeight) const;
+    Optional<LayoutUnit> computeContentLogicalHeight(const Length& height, Optional<LayoutUnit> intrinsicContentHeight) const;
+    Optional<LayoutUnit> computeContentAndScrollbarLogicalHeightUsing(const Length& height, Optional<LayoutUnit> intrinsicContentHeight) const;
     LayoutUnit computeReplacedLogicalWidthUsing(Length width) const;
     LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred  = ComputeActual) const;
     LayoutUnit computeReplacedLogicalHeightUsing(Length height) const;
@@ -435,7 +435,7 @@ public:
     bool hasDefiniteLogicalWidth() const;
     static bool percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool outOfFlowPositioned);
     bool hasDefiniteLogicalHeight() const;
-    LayoutUnit computePercentageLogicalHeight(const Length& height) const;
+    Optional<LayoutUnit> computePercentageLogicalHeight(const Length& height) const;
 
     virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
     virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;
@@ -646,7 +646,7 @@ protected:
     void computePositionedLogicalWidth(LogicalExtentComputedValues&, RenderRegion* = nullptr) const;
 
     LayoutUnit computeIntrinsicLogicalWidthUsing(Length logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
-    LayoutUnit computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, LayoutUnit intrinsicContentHeight, LayoutUnit borderAndPadding) const;
+    Optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, Optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const;
     
     virtual bool shouldComputeSizeAsReplaced() const { return isReplaced() && !isInlineBlockOrInlineTable(); }
 

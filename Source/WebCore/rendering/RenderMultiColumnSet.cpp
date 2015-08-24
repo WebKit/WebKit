@@ -414,11 +414,8 @@ LayoutUnit RenderMultiColumnSet::calculateMaxColumnHeight() const
     const RenderStyle& multicolStyle = multicolBlock->style();
     LayoutUnit availableHeight = multiColumnFlowThread()->columnHeightAvailable();
     LayoutUnit maxColumnHeight = availableHeight ? availableHeight : RenderFlowThread::maxLogicalHeight();
-    if (!multicolStyle.logicalMaxHeight().isUndefined()) {
-        LayoutUnit logicalMaxHeight = multicolBlock->computeContentLogicalHeight(multicolStyle.logicalMaxHeight(), -1);
-        if (logicalMaxHeight != -1 && maxColumnHeight > logicalMaxHeight)
-            maxColumnHeight = logicalMaxHeight;
-    }
+    if (!multicolStyle.logicalMaxHeight().isUndefined())
+        maxColumnHeight = std::min(maxColumnHeight, multicolBlock->computeContentLogicalHeight(multicolStyle.logicalMaxHeight(), Nullopt).valueOr(maxColumnHeight));
     return heightAdjustedForSetOffset(maxColumnHeight);
 }
 

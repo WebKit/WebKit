@@ -469,7 +469,9 @@ LayoutUnit RenderGrid::computeUsedBreadthOfMaxLength(GridTrackSizingDirection di
 LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(GridTrackSizingDirection direction, const Length& trackLength) const
 {
     ASSERT(trackLength.isSpecified());
-    return valueForLength(trackLength, direction == ForColumns ? logicalWidth() : std::max(LayoutUnit(), computeContentLogicalHeight(style().logicalHeight(), -1)));
+    if (direction == ForColumns)
+        return valueForLength(trackLength, logicalWidth());
+    return valueForLength(trackLength, computeContentLogicalHeight(style().logicalHeight(), Nullopt).valueOr(0));
 }
 
 double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, const GridSpan& tracksSpan, GridTrackSizingDirection direction, LayoutUnit spaceToFill) const
@@ -548,9 +550,9 @@ GridTrackSize RenderGrid::gridTrackSize(GridTrackSizingDirection direction, unsi
 
 LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox& child, Vector<GridTrack>& columnTracks)
 {
-    LayoutUnit oldOverrideContainingBlockContentLogicalWidth = child.hasOverrideContainingBlockLogicalWidth() ? child.overrideContainingBlockContentLogicalWidth() : LayoutUnit();
+    Optional<LayoutUnit> oldOverrideContainingBlockContentLogicalWidth = child.hasOverrideContainingBlockLogicalWidth() ? child.overrideContainingBlockContentLogicalWidth() : LayoutUnit();
     LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChild(child, ForColumns, columnTracks);
-    if (child.hasRelativeLogicalHeight() || oldOverrideContainingBlockContentLogicalWidth != overrideContainingBlockContentLogicalWidth) {
+    if (child.hasRelativeLogicalHeight() || !oldOverrideContainingBlockContentLogicalWidth || oldOverrideContainingBlockContentLogicalWidth.value() != overrideContainingBlockContentLogicalWidth) {
         child.setNeedsLayout(MarkOnlyThis);
         // We need to clear the stretched height to properly compute logical height during layout.
         child.clearOverrideLogicalContentHeight();
@@ -558,9 +560,9 @@ LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox& child, Vector<Gri
 
     child.setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
     // If |child| has a relative logical height, we shouldn't let it override its intrinsic height, which is
-    // what we are interested in here. Thus we need to set the override logical height to -1 (no possible resolution).
+    // what we are interested in here. Thus we need to set the override logical height to Nullopt (no possible resolution).
     if (child.hasRelativeLogicalHeight())
-        child.setOverrideContainingBlockContentLogicalHeight(-1);
+        child.setOverrideContainingBlockContentLogicalHeight(Nullopt);
     child.layoutIfNeeded();
     return child.logicalHeight() + child.marginLogicalHeight();
 }
@@ -574,9 +576,9 @@ LayoutUnit RenderGrid::minContentForChild(RenderBox& child, GridTrackSizingDirec
 
     if (direction == ForColumns) {
         // If |child| has a relative logical width, we shouldn't let it override its intrinsic width, which is
-        // what we are interested in here. Thus we need to set the override logical width to -1 (no possible resolution).
+        // what we are interested in here. Thus we need to set the override logical width to Nullopt (no possible resolution).
         if (child.hasRelativeLogicalWidth())
-            child.setOverrideContainingBlockContentLogicalWidth(-1);
+            child.setOverrideContainingBlockContentLogicalWidth(Nullopt);
 
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
@@ -595,9 +597,9 @@ LayoutUnit RenderGrid::maxContentForChild(RenderBox& child, GridTrackSizingDirec
 
     if (direction == ForColumns) {
         // If |child| has a relative logical width, we shouldn't let it override its intrinsic width, which is
-        // what we are interested in here. Thus we need to set the override logical width to -1 (no possible resolution).
+        // what we are interested in here. Thus we need to set the override logical width to Nullopt (no possible resolution).
         if (child.hasRelativeLogicalWidth())
-            child.setOverrideContainingBlockContentLogicalWidth(-1);
+            child.setOverrideContainingBlockContentLogicalWidth(Nullopt);
 
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
@@ -1174,12 +1176,14 @@ void RenderGrid::layoutGridItems()
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         // Because the grid area cannot be styled, we don't need to adjust
         // the grid breadth to account for 'box-sizing'.
-        LayoutUnit oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
-        LayoutUnit oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
+        Optional<LayoutUnit> oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
+        Optional<LayoutUnit> oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
 
         LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChild(*child, ForColumns, sizingData.columnTracks);
         LayoutUnit overrideContainingBlockContentLogicalHeight = gridAreaBreadthForChild(*child, ForRows, sizingData.rowTracks);
-        if (oldOverrideContainingBlockContentLogicalWidth != overrideContainingBlockContentLogicalWidth || (oldOverrideContainingBlockContentLogicalHeight != overrideContainingBlockContentLogicalHeight && child->hasRelativeLogicalHeight()))
+        if (!oldOverrideContainingBlockContentLogicalWidth || oldOverrideContainingBlockContentLogicalWidth.value() != overrideContainingBlockContentLogicalWidth
+            || ((!oldOverrideContainingBlockContentLogicalHeight || oldOverrideContainingBlockContentLogicalHeight.value() != overrideContainingBlockContentLogicalHeight)
+                && child->hasRelativeLogicalHeight()))
             child->setNeedsLayout(MarkOnlyThis);
 
         child->setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
@@ -1306,12 +1310,12 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool allowedToStretchChildAlongRowAxis = hasAutoSizeInRowAxis && !childStyle.marginStartUsing(&gridStyle).isAuto() && !childStyle.marginEndUsing(&gridStyle).isAuto();
     if (!allowedToStretchChildAlongRowAxis || RenderStyle::resolveJustification(gridStyle, childStyle, ItemPositionStretch) != ItemPositionStretch) {
         bool hasAutoMinSizeInRowAxis = isHorizontalMode ? childStyle.minWidth().isAuto() : childStyle.minHeight().isAuto();
-        bool canShrinkToFitInRowAxisForChild = !hasAutoMinSizeInRowAxis || child.minPreferredLogicalWidth() <= child.overrideContainingBlockContentLogicalWidth();
+        bool canShrinkToFitInRowAxisForChild = !hasAutoMinSizeInRowAxis || (child.overrideContainingBlockContentLogicalWidth() && child.minPreferredLogicalWidth() <= child.overrideContainingBlockContentLogicalWidth().value());
         // TODO(lajava): how to handle orthogonality in this case ?.
         // TODO(lajava): grid track sizing and positioning do not support orthogonal modes yet.
         if (hasAutoSizeInRowAxis && canShrinkToFitInRowAxisForChild) {
-            LayoutUnit childWidthToFitContent = std::max(std::min(child.maxPreferredLogicalWidth(), child.overrideContainingBlockContentLogicalWidth()  - child.marginLogicalWidth()), child.minPreferredLogicalWidth());
-            LayoutUnit desiredLogicalWidth = child.constrainLogicalHeightByMinMax(childWidthToFitContent, -1);
+            LayoutUnit childWidthToFitContent = std::max(std::min(child.maxPreferredLogicalWidth(), child.overrideContainingBlockContentLogicalWidth().valueOr(-1) - child.marginLogicalWidth()), child.minPreferredLogicalWidth());
+            LayoutUnit desiredLogicalWidth = child.constrainLogicalHeightByMinMax(childWidthToFitContent, Nullopt);
             child.setOverrideLogicalContentWidth(desiredLogicalWidth - child.borderAndPaddingLogicalWidth());
             if (desiredLogicalWidth != child.logicalWidth())
                 child.setNeedsLayout();
@@ -1324,8 +1328,8 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
         // TODO (lajava): If the child has orthogonal flow, then it already has an override height set, so use it.
         // TODO (lajava): grid track sizing and positioning do not support orthogonal modes yet.
         if (child.isHorizontalWritingMode() == isHorizontalMode) {
-            LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(child.overrideContainingBlockContentLogicalHeight(), child);
-            LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1);
+            LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(child.overrideContainingBlockContentLogicalHeight().valueOr(-1), child);
+            LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, Nullopt);
             child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
             if (desiredLogicalHeight != child.logicalHeight()) {
                 // TODO (lajava): Can avoid laying out here in some cases. See https://webkit.org/b/87905.
