@@ -80,3 +80,14 @@ WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocu
     RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByTagNameNSForObjC(String::fromUTF8(namespaceURI), String::fromUTF8(tagName)));
     return WebKit::kit(nodeList.get());
 }
+
+WebKitDOMNodeList* webkit_dom_document_get_elements_by_class_name(WebKitDOMDocument* self, const gchar* className)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), nullptr);
+    g_return_val_if_fail(className, nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::Document* document = WebKit::core(self);
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByClassNameForObjC(String::fromUTF8(className)));
+    return WebKit::kit(nodeList.get());
+}

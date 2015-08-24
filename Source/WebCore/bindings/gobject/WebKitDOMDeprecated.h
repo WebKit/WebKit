@@ -106,6 +106,19 @@ webkit_dom_document_get_elements_by_tag_name(WebKitDOMDocument* self, const gcha
 WEBKIT_DEPRECATED_FOR(webkit_dom_document_get_elements_by_tag_name_as_html_collection) WebKitDOMNodeList*
 webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocument* self, const gchar* namespace_uri, const gchar* tag_name);
 
+
+/**
+ * webkit_dom_document_get_elements_by_class_name:
+ * @self: A #WebKitDOMDocument
+ * @class_name: a #gchar with the tag name
+ *
+ * Returns: (transfer full): a #WebKitDOMNodeList
+ *
+ * Deprecated: 2.12: Use webkit_dom_document_get_elements_by_class_name_as_html_collection() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_document_get_elements_by_class_name_as_html_collection) WebKitDOMNodeList*
+webkit_dom_document_get_elements_by_class_name(WebKitDOMDocument* self, const gchar* class_name);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */

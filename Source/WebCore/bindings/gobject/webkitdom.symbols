@@ -89,6 +89,7 @@ WebKitDOMHTMLCollection* webkit_dom_document_get_elements_by_tag_name_as_html_co
 WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocument*, const gchar*, const gchar*)
 WebKitDOMHTMLCollection* webkit_dom_document_get_elements_by_tag_name_ns_as_html_collection(WebKitDOMDocument*, const gchar*, const gchar*)@2.12
 WebKitDOMNodeList* webkit_dom_document_get_elements_by_class_name(WebKitDOMDocument*, const gchar*)
+WebKitDOMHTMLCollection* webkit_dom_document_get_elements_by_class_name_as_html_collection(WebKitDOMDocument*, const gchar*)@2.12
 WebKitDOMElement* webkit_dom_document_element_from_point(WebKitDOMDocument*, glong, glong)
 WebKitDOMCSSStyleDeclaration* webkit_dom_document_get_override_style(WebKitDOMDocument*, WebKitDOMElement*, const gchar*)
 gboolean webkit_dom_document_query_command_enabled(WebKitDOMDocument*, const gchar*)
