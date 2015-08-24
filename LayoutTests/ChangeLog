@@ -1,3 +1,16 @@
+2015-08-24  Chris Dumez  <cdumez@apple.com>
+
+        NodeList should not have a named getter
+        https://bugs.webkit.org/show_bug.cgi?id=148117
+
+        Reviewed by Geoffrey Garen.
+
+        Add a layout test to check that NodeList no longer has a named property
+        getter after r188829.
+
+        * fast/dom/NodeList/no-named-getter-expected.txt: Added.
+        * fast/dom/NodeList/no-named-getter.html: Added.
+
 2015-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Create ById IC for ByVal operation only when the specific Id comes more than once
