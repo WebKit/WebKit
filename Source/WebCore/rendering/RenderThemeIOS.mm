@@ -1078,30 +1078,6 @@ bool RenderThemeIOS::shouldHaveCapsLockIndicator(HTMLInputElement&) const
     return false;
 }
 
-static FontWeight fromCTFontWeight(float fontWeight)
-{
-    if (fontWeight <= -0.8)
-        return FontWeight100;
-    else if (fontWeight <= -0.4)
-        return FontWeight200;
-    else if (fontWeight <= -0.2)
-        return FontWeight300;
-    else if (fontWeight <= 0.0)
-        return FontWeight400;
-    else if (fontWeight <= 0.2)
-        return FontWeight500;
-    else if (fontWeight <= 0.3)
-        return FontWeight600;
-    else if (fontWeight <= 0.4)
-        return FontWeight700;
-    else if (fontWeight <= 0.6)
-        return FontWeight800;
-    else if (fontWeight <= 0.8)
-        return FontWeight900;
-
-    return FontWeightNormal;
-}
-
 FontDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID valueID) const
 {
     static NeverDestroyed<FontDescription> systemFont;
@@ -1265,7 +1241,7 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontD
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(textStyle);
     fontDescription.setSpecifiedSize(CTFontGetSize(font.get()));
-    fontDescription.setWeight(fromCTFontWeight(FontCache::weightOfCTFont(font.get())));
+    fontDescription.setWeight(fontWeightFromCoreText(FontCache::weightOfCTFont(font.get())));
     fontDescription.setItalic(FontItalicOff);
 }
 

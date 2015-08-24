@@ -40,120 +40,13 @@
 
 namespace WebCore {
 
-void FontCache::platformInit()
+void platformInvalidateFontCache()
 {
 }
 
-static inline bool isFontWeightBold(NSInteger fontWeight)
-{
-    return fontWeight >= FontWeight600;
-}
-
-static inline bool requiresCustomFallbackFont(const UInt32 character)
+bool requiresCustomFallbackFont(UChar32 character)
 {
     return character == AppleLogo || character == blackCircle || character == narrowNonBreakingSpace;
-}
-
-PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescription& description, const Font* originalFontData, const UChar* characters, unsigned length)
-{
-    const FontPlatformData& platformData = originalFontData->platformData();
-    CTFontRef ctFont = platformData.font();
-
-    RetainPtr<CFStringRef> localeString;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
-    if (!description.locale().isNull())
-        localeString = description.locale().string().createCFString();
-#endif
-
-    CFIndex coveredLength = 0;
-    RetainPtr<CTFontRef> substituteFont = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(ctFont, (const UTF16Char*)characters, (CFIndex)length, localeString.get(), &coveredLength));
-    if (!substituteFont)
-        return nullptr;
-
-    substituteFont = preparePlatformFont(substituteFont.get(), description.textRenderingMode(), description.featureSettings());
-
-    CTFontSymbolicTraits originalTraits = CTFontGetSymbolicTraits(ctFont);
-    CTFontSymbolicTraits actualTraits = 0;
-    if (isFontWeightBold(description.weight()) || description.italic())
-        actualTraits = CTFontGetSymbolicTraits(substituteFont.get());
-
-    bool syntheticBold = (originalTraits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold);
-    bool syntheticOblique = (originalTraits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic);
-
-    FontPlatformData alternateFont(substituteFont.get(), platformData.size(), syntheticBold, syntheticOblique, platformData.m_orientation);
-
-    return fontForPlatformData(alternateFont);
-}
-
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, unsigned length)
-{
-    // Unlike OS X, our fallback font on iPhone is Arial Unicode, which doesn't have some apple-specific glyphs like F8FF.
-    // Fall back to the Apple Fallback font in this case.
-    if (length && requiresCustomFallbackFont(*characters)) {
-        auto* fallback = getCustomFallbackFont(*characters, description);
-        if (!fallback)
-            return nullptr;
-        return fontForPlatformData(*fallback);
-    }
-
-    UChar32 c = *characters;
-    if (length > 1 && U16_IS_LEAD(c) && U16_IS_TRAIL(characters[1]))
-        c = U16_GET_SUPPLEMENTARY(c, characters[1]);
-
-    // For system fonts we use CoreText fallback mechanism.
-    if (length) {
-        RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontCopyFontDescriptor(originalFontData->getCTFont()));
-        if (CTFontDescriptorIsSystemUIFont(fontDescriptor.get()))
-            return getSystemFontFallbackForCharacters(description, originalFontData, characters, length);
-    }
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
-    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(originalFontData->getCTFont(), characters, length, nullptr, nullptr));
-#else
-    RetainPtr<CTFontRef> fallbackFont = adoptCF(CTFontCreateForCharactersWithLanguage(originalFontData->getCTFont(), characters, length, nullptr, nullptr));
-    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCopyFontDescriptor(fallbackFont.get()));
-#endif
-    if (auto foundFontName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontNameAttribute)))) {
-        if (c >= 0x0600 && c <= 0x06ff) { // Arabic
-            auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontFamilyNameAttribute)));
-            if (fontFamilyShouldNotBeUsedForArabic(familyName.get()))
-                foundFontName = isFontWeightBold(description.weight()) ? CFSTR("GeezaPro-Bold") : CFSTR("GeezaPro");
-        }
-        if (RefPtr<Font> font = fontForFamily(description, foundFontName.get(), false))
-            return font;
-    }
-
-    return lastResortFallbackFont(description);
-}
-
-Vector<String> FontCache::systemFontFamilies()
-{
-    // FIXME: <rdar://problem/21890188>
-    Vector<String> fontFamilies;
-    auto emptyFontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes((CFDictionaryRef) @{ }));
-    auto matchedDescriptors = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(emptyFontDescriptor.get(), nullptr));
-    if (!matchedDescriptors)
-        return fontFamilies;
-
-    CFIndex numMatches = CFArrayGetCount(matchedDescriptors.get());
-    if (!numMatches)
-        return fontFamilies;
-
-    HashSet<String> visited;
-    for (CFIndex i = 0; i < numMatches; ++i) {
-        auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matchedDescriptors.get(), i));
-        if (auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontFamilyNameAttribute))))
-            visited.add(familyName.get());
-    }
-
-    copyToVector(visited, fontFamilies);
-    return fontFamilies;
-}
-
-Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
-{
-    static NeverDestroyed<AtomicString> fallbackFontFamily(".PhoneFallback", AtomicString::ConstructFromLiteral);
-    return *fontForFamily(fontDescription, fallbackFontFamily, false);
 }
 
 FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDescription& description)
@@ -185,134 +78,111 @@ FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDes
     return getCachedFontPlatformData(description, *family);
 }
 
+static RetainPtr<CTFontRef> getSystemFontFallbackForCharacters(CTFontRef font, const AtomicString& locale, const UChar* characters, unsigned length)
+{
+    // FIXME: Unify this with platformLookupFallbackFont()
+    RetainPtr<CFStringRef> localeString;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
+    if (!locale.isNull())
+        localeString = locale.string().createCFString();
+#else
+    UNUSED_PARAM(locale);
+#endif
+
+    CFIndex coveredLength = 0;
+    return adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, (const UTF16Char*)characters, (CFIndex)length, localeString.get(), &coveredLength));
+}
+
+RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef font, FontWeight fontWeight, const AtomicString& locale, const UChar* characters, unsigned length)
+{
+    // For system fonts we use CoreText fallback mechanism.
+    if (length && CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
+        return getSystemFontFallbackForCharacters(font, locale, characters, length);
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    RetainPtr<CFStringRef> localeString;
+    if (!locale.isNull())
+        localeString = locale.string().createCFString();
+    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(font, characters, length, localeString.get(), nullptr));
+#else
+    RetainPtr<CTFontRef> fallbackFont = adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, nullptr, nullptr));
+    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCopyFontDescriptor(fallbackFont.get()));
+#endif
+    UChar32 c = *characters;
+    if (length > 1 && U16_IS_LEAD(c) && U16_IS_TRAIL(characters[1]))
+        c = U16_GET_SUPPLEMENTARY(c, characters[1]);
+    // Arabic
+    if (c >= 0x0600 && c <= 0x06ff) {
+        auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontFamilyNameAttribute)));
+        if (fontFamilyShouldNotBeUsedForArabic(familyName.get())) {
+            CFStringRef newFamilyName = isFontWeightBold(fontWeight) ? CFSTR("GeezaPro-Bold") : CFSTR("GeezaPro");
+            CFTypeRef keys[] = { kCTFontFamilyNameAttribute };
+            CFTypeRef values[] = { newFamilyName };
+            RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            fallbackFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fallbackFontDescriptor.get(), attributes.get()));
+        }
+    }
+    return adoptCF(CTFontCreateWithFontDescriptor(fallbackFontDescriptor.get(), CTFontGetSize(font), nullptr));
+}
+
+Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
+{
+    return *fontForFamily(fontDescription, AtomicString(".PhoneFallback", AtomicString::ConstructFromLiteral), false);
+}
+
 float FontCache::weightOfCTFont(CTFontRef font)
 {
-    float result = 0;
     RetainPtr<CFDictionaryRef> traits = adoptCF(CTFontCopyTraits(font));
-    if (!traits)
-        return result;
 
     CFNumberRef resultRef = (CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontWeightTrait);
-    if (resultRef)
-        CFNumberGetValue(resultRef, kCFNumberFloatType, &result);
+    float result = 0;
+    CFNumberGetValue(resultRef, kCFNumberFloatType, &result);
 
     return result;
 }
 
-static CTFontRef createCTFontWithTextStyle(const String& familyName, CTFontSymbolicTraits traits, CGFloat size)
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, CTFontSymbolicTraits traits, float size)
 {
-    if (familyName.isNull())
-        return nullptr;
+    if (family.startsWith("UICTFontTextStyle")) {
+        traits &= (kCTFontBoldTrait | kCTFontItalicTrait);
+        RetainPtr<CFStringRef> familyNameStr = family.string().createCFString();
+        RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(familyNameStr.get(), RenderThemeIOS::contentSizeCategory(), nullptr));
+        if (traits)
+            fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), traits, traits));
 
-    CTFontSymbolicTraits symbolicTraits = 0;
-    if (traits & kCTFontBoldTrait)
-        symbolicTraits |= kCTFontBoldTrait;
-    if (traits & kCTFontTraitItalic)
-        symbolicTraits |= kCTFontTraitItalic;
-    RetainPtr<CFStringRef> familyNameStr = familyName.createCFString();
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(familyNameStr.get(), RenderThemeIOS::contentSizeCategory(), nullptr));
-    if (symbolicTraits)
-        fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), symbolicTraits, symbolicTraits));
-
-    return CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr);
-}
-
-static CTFontRef createCTFontWithFamilyNameAndWeight(const String& familyName, CTFontSymbolicTraits traits, float size, uint16_t weight)
-{
-    if (familyName.isNull())
-        return nullptr;
+        return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+    }
 
     static NeverDestroyed<AtomicString> systemUIFontWithWebKitPrefix("-webkit-system-font", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> systemUIFontWithApplePrefix("-apple-system", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> systemUIFontWithAppleAlternatePrefix("-apple-system-font", AtomicString::ConstructFromLiteral);
-    if (equalIgnoringCase(familyName, systemUIFontWithWebKitPrefix) || equalIgnoringCase(familyName, systemUIFontWithApplePrefix) || equalIgnoringCase(familyName, systemUIFontWithAppleAlternatePrefix)) {
+    if (equalIgnoringCase(family, systemUIFontWithWebKitPrefix) || equalIgnoringCase(family, systemUIFontWithApplePrefix) || equalIgnoringCase(family, systemUIFontWithAppleAlternatePrefix)) {
         CTFontUIFontType fontType = kCTFontUIFontSystem;
-        if (weight > 300) {
+        if (weight > FontWeight300) {
             // The comment below has been copied from CoreText/UIFoundation. However, in WebKit we synthesize the oblique,
             // so we should investigate the result <rdar://problem/14449340>:
             if (traits & kCTFontTraitBold)
                 fontType = kCTFontUIFontEmphasizedSystem;
-        } else if (weight > 250)
+        } else if (weight > FontWeight200)
             fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemLight);
-        else if (weight > 150)
+        else if (weight > FontWeight100)
             fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemThin);
         else
             fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemUltraLight);
         RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(fontType, size, nullptr));
         if (traits & kCTFontTraitItalic)
             fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), kCTFontItalicTrait, kCTFontItalicTrait));
-        return CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr);
+        return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
     }
 
     static NeverDestroyed<AtomicString> systemUIMonospacedNumbersFontWithApplePrefix("-apple-system-monospaced-numbers", AtomicString::ConstructFromLiteral);
-    if (equalIgnoringCase(familyName, systemUIMonospacedNumbersFontWithApplePrefix)) {
+    if (equalIgnoringCase(family, systemUIMonospacedNumbersFontWithApplePrefix)) {
         RetainPtr<CTFontDescriptorRef> systemFontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr));
         RetainPtr<CTFontDescriptorRef> monospaceFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(systemFontDescriptor.get(), (CFNumberRef)@(kNumberSpacingType), (CFNumberRef)@(kMonospacedNumbersSelector)));
-        return CTFontCreateWithFontDescriptor(monospaceFontDescriptor.get(), size, nullptr);
+        return adoptCF(CTFontCreateWithFontDescriptor(monospaceFontDescriptor.get(), size, nullptr));
     }
 
-
-    RetainPtr<CFStringRef> familyNameStr = familyName.createCFString();
-    CTFontSymbolicTraits requestedTraits = (CTFontSymbolicTraits)(traits & (kCTFontBoldTrait | kCTFontItalicTrait));
-    return CTFontCreateForCSS(familyNameStr.get(), weight, requestedTraits, size);
-}
-
-static uint16_t toCTFontWeight(FontWeight fontWeight)
-{
-    switch (fontWeight) {
-    case FontWeight100:
-        return 100;
-    case FontWeight200:
-        return 200;
-    case FontWeight300:
-        return 300;
-    case FontWeight400:
-        return 400;
-    case FontWeight500:
-        return 500;
-    case FontWeight600:
-        return 600;
-    case FontWeight700:
-        return 700;
-    case FontWeight800:
-        return 800;
-    case FontWeight900:
-        return 900;
-    default:
-        return 400;
-    }
-}
-
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
-{
-    CTFontSymbolicTraits traits = 0;
-    if (fontDescription.italic())
-        traits |= kCTFontTraitItalic;
-    if (isFontWeightBold(fontDescription.weight()))
-        traits |= kCTFontTraitBold;
-    float size = fontDescription.computedPixelSize();
-
-    RetainPtr<CTFontRef> ctFont;
-    if (family.startsWith("UICTFontTextStyle"))
-        ctFont = adoptCF(createCTFontWithTextStyle(family, traits, size));
-    else
-        ctFont = adoptCF(createCTFontWithFamilyNameAndWeight(family, traits, size, toCTFontWeight(fontDescription.weight())));
-    if (!ctFont)
-        return nullptr;
-
-    ctFont = preparePlatformFont(ctFont.get(), fontDescription.textRenderingMode(), fontDescription.featureSettings());
-
-    CTFontSymbolicTraits actualTraits = 0;
-    if (isFontWeightBold(fontDescription.weight()) || fontDescription.italic())
-        actualTraits = CTFontGetSymbolicTraits(ctFont.get());
-
-    bool isAppleColorEmoji = CTFontIsAppleColorEmoji(ctFont.get());
-
-    bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && (traits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold) && !isAppleColorEmoji;
-    bool syntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (traits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic) && !isAppleColorEmoji;
-
-    auto result = std::make_unique<FontPlatformData>(ctFont.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
-    return result;
+    return nullptr;
 }
 
 } // namespace WebCore
