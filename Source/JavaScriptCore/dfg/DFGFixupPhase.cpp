@@ -67,7 +67,7 @@ public:
         }
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
-            injectTypeConversionsInBlock(m_graph.block(blockIndex));
+            fixupChecksInBlock(m_graph.block(blockIndex));
 
         m_graph.m_planStage = PlanStage::AfterFixup;
 
@@ -2104,166 +2104,154 @@ private:
         return true;
     }
     
-    void injectTypeConversionsInBlock(BasicBlock* block)
+    void fixupChecksInBlock(BasicBlock* block)
     {
         if (!block)
             return;
         ASSERT(block->isReachable);
         m_block = block;
         for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
-            m_currentNode = block->at(m_indexInBlock);
-            tryToRelaxRepresentation(m_currentNode);
-            DFG_NODE_DO_TO_CHILDREN(m_graph, m_currentNode, injectTypeConversionsForEdge);
+            Node* node = block->at(m_indexInBlock);
+
+            // First, try to relax the representational demands of each node, in order to have
+            // fewer conversions.
+            switch (node->op()) {
+            case MovHint:
+            case Check:
+                m_graph.doToChildren(
+                    node,
+                    [&] (Edge& edge) {
+                        switch (edge.useKind()) {
+                        case DoubleRepUse:
+                        case DoubleRepRealUse:
+                            if (edge->hasDoubleResult())
+                                break;
+            
+                            if (edge->hasInt52Result())
+                                edge.setUseKind(Int52RepUse);
+                            else if (edge.useKind() == DoubleRepUse)
+                                edge.setUseKind(NumberUse);
+                            break;
+            
+                        case Int52RepUse:
+                            // Nothing we can really do.
+                            break;
+            
+                        case UntypedUse:
+                        case NumberUse:
+                            if (edge->hasDoubleResult())
+                                edge.setUseKind(DoubleRepUse);
+                            else if (edge->hasInt52Result())
+                                edge.setUseKind(Int52RepUse);
+                            break;
+            
+                        case RealNumberUse:
+                            if (edge->hasDoubleResult())
+                                edge.setUseKind(DoubleRepRealUse);
+                            else if (edge->hasInt52Result())
+                                edge.setUseKind(Int52RepUse);
+                            break;
+            
+                        default:
+                            break;
+                        }
+                    });
+                break;
+                
+            case ValueToInt32:
+                if (node->child1().useKind() == DoubleRepUse
+                    && !node->child1()->hasDoubleResult()) {
+                    node->child1().setUseKind(NumberUse);
+                    break;
+                }
+                break;
+                
+            default:
+                break;
+            }
+
+            // Now, insert type conversions if necessary.
+            m_graph.doToChildren(
+                node,
+                [&] (Edge& edge) {
+                    Node* result = nullptr;
+        
+                    switch (edge.useKind()) {
+                    case DoubleRepUse:
+                    case DoubleRepRealUse:
+                    case DoubleRepMachineIntUse: {
+                        if (edge->hasDoubleResult())
+                            return;
+            
+                        if (edge->isNumberConstant()) {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecBytecodeDouble, DoubleConstant, node->origin,
+                                OpInfo(m_graph.freeze(jsDoubleNumber(edge->asNumber()))));
+                        } else if (edge->hasInt52Result()) {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
+                                Edge(edge.node(), Int52RepUse));
+                        } else {
+                            UseKind useKind;
+                            if (edge->shouldSpeculateDoubleReal())
+                                useKind = RealNumberUse;
+                            else if (edge->shouldSpeculateNumber())
+                                useKind = NumberUse;
+                            else
+                                useKind = NotCellUse;
+
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecBytecodeDouble, DoubleRep, node->origin,
+                                Edge(edge.node(), useKind));
+                        }
+                        break;
+                    }
+            
+                    case Int52RepUse: {
+                        if (edge->hasInt52Result())
+                            return;
+            
+                        if (edge->isMachineIntConstant()) {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecMachineInt, Int52Constant, node->origin,
+                                OpInfo(edge->constant()));
+                        } else if (edge->hasDoubleResult()) {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
+                                Edge(edge.node(), DoubleRepMachineIntUse));
+                        } else if (edge->shouldSpeculateInt32ForArithmetic()) {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecInt32, Int52Rep, node->origin,
+                                Edge(edge.node(), Int32Use));
+                        } else {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
+                                Edge(edge.node(), MachineIntUse));
+                        }
+                        break;
+                    }
+            
+                    default: {
+                        if (!edge->hasDoubleResult() && !edge->hasInt52Result())
+                            return;
+            
+                        if (edge->hasDoubleResult()) {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecBytecodeDouble, ValueRep, node->origin,
+                                Edge(edge.node(), DoubleRepUse));
+                        } else {
+                            result = m_insertionSet.insertNode(
+                                m_indexInBlock, SpecInt32 | SpecInt52AsDouble, ValueRep,
+                                node->origin, Edge(edge.node(), Int52RepUse));
+                        }
+                        break;
+                    } }
+                    
+                    edge.setNode(result);
+                });
         }
+        
         m_insertionSet.execute(block);
-    }
-    
-    void tryToRelaxRepresentation(Node* node)
-    {
-        // Some operations may be able to operate more efficiently over looser representations.
-        // Identify those here. This avoids inserting a redundant representation conversion.
-        // Also, for some operations, like MovHint, this is a necessary optimization: inserting
-        // an otherwise-dead conversion just for a MovHint would break OSR's understanding of
-        // the IR.
-        
-        switch (node->op()) {
-        case MovHint:
-        case Check:
-            DFG_NODE_DO_TO_CHILDREN(m_graph, m_currentNode, fixEdgeRepresentation);
-            break;
-            
-        case ValueToInt32:
-            if (node->child1().useKind() == DoubleRepUse
-                && !node->child1()->hasDoubleResult()) {
-                node->child1().setUseKind(NumberUse);
-                break;
-            }
-            break;
-            
-        default:
-            break;
-        }
-    }
-    
-    void fixEdgeRepresentation(Node*, Edge& edge)
-    {
-        switch (edge.useKind()) {
-        case DoubleRepUse:
-        case DoubleRepRealUse:
-            if (edge->hasDoubleResult())
-                break;
-            
-            if (edge->hasInt52Result())
-                edge.setUseKind(Int52RepUse);
-            else if (edge.useKind() == DoubleRepUse)
-                edge.setUseKind(NumberUse);
-            break;
-            
-        case Int52RepUse:
-            // Nothing we can really do.
-            break;
-            
-        case UntypedUse:
-        case NumberUse:
-            if (edge->hasDoubleResult())
-                edge.setUseKind(DoubleRepUse);
-            else if (edge->hasInt52Result())
-                edge.setUseKind(Int52RepUse);
-            break;
-            
-        case RealNumberUse:
-            if (edge->hasDoubleResult())
-                edge.setUseKind(DoubleRepRealUse);
-            else if (edge->hasInt52Result())
-                edge.setUseKind(Int52RepUse);
-            break;
-            
-        default:
-            break;
-        }
-    }
-    
-    void injectTypeConversionsForEdge(Node* node, Edge& edge)
-    {
-        ASSERT(node == m_currentNode);
-        Node* result = nullptr;
-        
-        switch (edge.useKind()) {
-        case DoubleRepUse:
-        case DoubleRepRealUse:
-        case DoubleRepMachineIntUse: {
-            if (edge->hasDoubleResult())
-                break;
-            
-            if (edge->isNumberConstant()) {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecBytecodeDouble, DoubleConstant, node->origin,
-                    OpInfo(m_graph.freeze(jsDoubleNumber(edge->asNumber()))));
-            } else if (edge->hasInt52Result()) {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
-                    Edge(edge.node(), Int52RepUse));
-            } else {
-                UseKind useKind;
-                if (edge->shouldSpeculateDoubleReal())
-                    useKind = RealNumberUse;
-                else if (edge->shouldSpeculateNumber())
-                    useKind = NumberUse;
-                else
-                    useKind = NotCellUse;
-
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecBytecodeDouble, DoubleRep, node->origin,
-                    Edge(edge.node(), useKind));
-            }
-
-            edge.setNode(result);
-            break;
-        }
-            
-        case Int52RepUse: {
-            if (edge->hasInt52Result())
-                break;
-            
-            if (edge->isMachineIntConstant()) {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecMachineInt, Int52Constant, node->origin,
-                    OpInfo(edge->constant()));
-            } else if (edge->hasDoubleResult()) {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
-                    Edge(edge.node(), DoubleRepMachineIntUse));
-            } else if (edge->shouldSpeculateInt32ForArithmetic()) {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecInt32, Int52Rep, node->origin,
-                    Edge(edge.node(), Int32Use));
-            } else {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
-                    Edge(edge.node(), MachineIntUse));
-            }
-
-            edge.setNode(result);
-            break;
-        }
-            
-        default: {
-            if (!edge->hasDoubleResult() && !edge->hasInt52Result())
-                break;
-            
-            if (edge->hasDoubleResult()) {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecBytecodeDouble, ValueRep, node->origin,
-                    Edge(edge.node(), DoubleRepUse));
-            } else {
-                result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecInt32 | SpecInt52AsDouble, ValueRep, node->origin,
-                    Edge(edge.node(), Int52RepUse));
-            }
-            
-            edge.setNode(result);
-            break;
-        } }
     }
     
     BasicBlock* m_block;

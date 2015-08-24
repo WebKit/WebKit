@@ -1,3 +1,27 @@
+2015-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::FixupPhase should use the lambda form of m_graph.doToChildren() rather than the old macro
+        https://bugs.webkit.org/show_bug.cgi?id=148397
+
+        Reviewed by Geoffrey Garen.
+
+        We used to iterate the edges of a node by using the DFG_NODE_DO_TO_CHILDREN macro. We
+        don't need to do that anymore since we have the lambda-based m_graph.doToChildren(). This
+        allows us to get rid of a bunch of helper methods in DFG::FixupPhase.
+
+        I also took the opportunity to give the injectTypeConversionsInBlock() method a more
+        generic name, since after https://bugs.webkit.org/show_bug.cgi?id=145204 it will be used
+        for fix-up of checks more broadly.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::attemptToMakeGetTypedArrayByteOffset):
+        (JSC::DFG::FixupPhase::fixupChecksInBlock):
+        (JSC::DFG::FixupPhase::injectTypeConversionsInBlock): Deleted.
+        (JSC::DFG::FixupPhase::tryToRelaxRepresentation): Deleted.
+        (JSC::DFG::FixupPhase::fixEdgeRepresentation): Deleted.
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge): Deleted.
+
 2015-08-24  Geoffrey Garen  <ggaren@apple.com>
 
         Some renaming to clarify CodeBlock and UnlinkedCodeBlock
