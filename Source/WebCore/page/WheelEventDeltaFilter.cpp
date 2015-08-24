@@ -51,6 +51,16 @@ std::unique_ptr<WheelEventDeltaFilter> WheelEventDeltaFilter::create()
 #endif
 }
 
+bool WheelEventDeltaFilter::isFilteringDeltas() const
+{
+    return m_isFilteringDeltas;
+}
+
+FloatSize WheelEventDeltaFilter::filteredDelta() const
+{
+    return m_currentFilteredDelta;
+}
+
 BasicWheelEventDeltaFilter::BasicWheelEventDeltaFilter()
     : WheelEventDeltaFilter()
 {

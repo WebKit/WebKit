@@ -42,15 +42,8 @@ public:
     WEBCORE_EXPORT virtual void updateFromDelta(const FloatSize&) = 0;
     WEBCORE_EXPORT virtual void beginFilteringDeltas() = 0;
     WEBCORE_EXPORT virtual void endFilteringDeltas() = 0;
-    WEBCORE_EXPORT bool isFilteringDeltas() const
-    {
-        return m_isFilteringDeltas;
-    }
-    
-    WEBCORE_EXPORT FloatSize filteredDelta() const
-    {
-        return m_currentFilteredDelta;
-    }
+    WEBCORE_EXPORT bool isFilteringDeltas() const;
+    WEBCORE_EXPORT FloatSize filteredDelta() const;
 
 protected:
     FloatSize m_currentFilteredDelta;
