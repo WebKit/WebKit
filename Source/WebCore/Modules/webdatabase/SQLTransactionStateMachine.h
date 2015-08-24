@@ -91,7 +91,9 @@ void SQLTransactionStateMachine<T>::runStateMachine()
 {
     ASSERT(SQLTransactionState::End < SQLTransactionState::Idle);
 
-    ASSERT(m_nextState > SQLTransactionState::Idle);
+    if (m_nextState <= SQLTransactionState::Idle)
+        return;
+
     ASSERT(m_nextState < SQLTransactionState::NumberOfStates);
 
     StateFunction stateFunction = stateFunctionFor(m_nextState);
