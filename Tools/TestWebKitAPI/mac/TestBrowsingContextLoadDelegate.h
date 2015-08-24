@@ -25,7 +25,7 @@
 
 #import <WebKit/WebKit2.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 typedef void (^OnLoadBlock)(WKBrowsingContextController *);
 

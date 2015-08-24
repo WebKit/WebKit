@@ -28,7 +28,7 @@
 
 #import <WebKit/WKBrowsingContextGroup.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 TEST(WKBrowsingContextGroupTest, GetSetJavaScriptEnabled)
 {

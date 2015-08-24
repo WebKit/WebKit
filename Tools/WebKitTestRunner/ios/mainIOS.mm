@@ -26,7 +26,7 @@
 #import "config.h"
 
 #import "TestController.h"
-
+#import <UIKit/UIKit.h>
 
 static int _argc;
 static const char **_argv;
@@ -58,7 +58,6 @@ static const char **_argv;
     };
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
         NSTimeInterval timeRemaining;
         while (true) {
             timeRemaining = [application backgroundTimeRemaining];

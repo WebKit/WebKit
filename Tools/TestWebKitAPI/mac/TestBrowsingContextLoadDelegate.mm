@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TestBrowsingContextLoadDelegate.h"
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 @implementation TestBrowsingContextLoadDelegate
 

@@ -31,7 +31,6 @@
 #import <wtf/RetainPtr.h>
 
 @class WKContentView;
-@class WKView;
 @class WKWebView;
 
 namespace API {
@@ -65,7 +64,6 @@ class WebProcessPool;
 @property (nonatomic, readonly) BOOL isBackground;
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
-- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration wkView:(WKView *)webView;
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates

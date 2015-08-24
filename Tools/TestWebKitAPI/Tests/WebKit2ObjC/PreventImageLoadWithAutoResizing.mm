@@ -36,7 +36,7 @@
 #import <WebKit/WebKit2.h>
 #import <WebKit/WKViewPrivate.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 static bool testFinished = false;
 

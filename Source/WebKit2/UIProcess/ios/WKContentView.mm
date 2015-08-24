@@ -232,18 +232,6 @@ private:
     return [self _commonInitializationWithProcessPool:processPool configuration:WTF::move(configuration)];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration wkView:(WKView *)wkView
-{
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
-    InitializeWebKit2();
-
-    _pageClient = std::make_unique<PageClientImpl>(self, wkView);
-
-    return [self _commonInitializationWithProcessPool:processPool configuration:WTF::move(configuration)];
-}
-
 - (void)dealloc
 {
     [self cleanupInteraction];

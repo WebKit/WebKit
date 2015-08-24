@@ -1,3 +1,28 @@
+2015-08-24  Tim Horton  <timothy_horton@apple.com>
+
+        (Finally...) get rid of WKViewIOS
+        https://bugs.webkit.org/show_bug.cgi?id=148404
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsInvalidScheme.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKBrowsingContextGroupTest.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKBrowsingContextLoadDelegateTest.mm:
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.h:
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.mm:
+        Mark tests that use WKBrowsingContextController as Mac-only.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::AccessibilityController::addNotificationListener):
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp applicationDidEnterBackground:]):
+        Import UIKit instead of depending on WKView.h to do so.
+
 2015-08-24  Jason Marcell  <jmarcell@apple.com>
 
         Add support to dashboard for displaying Git SHA's as revisions.

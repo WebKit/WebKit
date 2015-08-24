@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PluginSandboxProfile.h"
 
+#include "WKFoundation.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
@@ -34,7 +35,12 @@ namespace WebKit {
 
 static NSString *pluginSandboxProfileDirectory()
 {
-    return [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"];
+#if WK_API_ENABLED
+    NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
+#else
+    NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+#endif
+    return [[bundle resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"];
 }
 
 static NSString *pluginSandboxProfileName(const String& bundleIdentifier)

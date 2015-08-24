@@ -1,3 +1,36 @@
+2015-08-24  Tim Horton  <timothy_horton@apple.com>
+
+        (Finally...) get rid of WKViewIOS
+        https://bugs.webkit.org/show_bug.cgi?id=148404
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKView.h:
+        * UIProcess/API/ios/WKViewIOS.mm: Removed.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::PageClientImpl): Deleted.
+        (WebKit::PageClientImpl::didRelaunchProcess): Deleted.
+        (WebKit::PageClientImpl::refView): Deleted.
+        (WebKit::PageClientImpl::derefView): Deleted.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:processPool:configuration:wkView:]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Get rid of WKViewIOS and references to it.
+
+        * DatabaseProcess/ios/DatabaseProcessIOS.mm:
+        (WebKit::DatabaseProcess::initializeSandbox):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::initializeSandbox):
+        * Shared/Plugins/mac/PluginSandboxProfile.mm:
+        (WebKit::pluginSandboxProfileDirectory):
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+        Look for WKWebView instead of WKView if we have it.
+
 2015-08-24  Anders Carlsson  <andersca@apple.com>
 
         Rename _WKVisitedLinkProvider to _WKVisitedLinkStore for consistency
