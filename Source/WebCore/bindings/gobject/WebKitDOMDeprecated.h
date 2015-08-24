@@ -81,6 +81,31 @@ webkit_dom_html_element_set_outer_html(WebKitDOMHTMLElement* self, const gchar* 
 WEBKIT_DEPRECATED_FOR(webkit_dom_element_get_children) WebKitDOMHTMLCollection*
 webkit_dom_html_element_get_children(WebKitDOMHTMLElement* self);
 
+/**
+ * webkit_dom_document_get_elements_by_tag_name:
+ * @self: A #WebKitDOMDocument
+ * @tag_name: a #gchar with the tag name
+ *
+ * Returns: (transfer full): a #WebKitDOMNodeList
+ *
+ * Deprecated: 2.12: Use webkit_dom_document_get_elements_by_tag_name_as_html_collection() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_document_get_elements_by_tag_name_as_html_collection) WebKitDOMNodeList*
+webkit_dom_document_get_elements_by_tag_name(WebKitDOMDocument* self, const gchar* tag_name);
+
+/**
+ * webkit_dom_document_get_elements_by_tag_name_ns:
+ * @self: A #WebKitDOMDocument
+ * @namespace_uri: a #gchar with the namespace URI
+ * @tag_name: a #gchar with the tag name
+ *
+ * Returns: (transfer full): a #WebKitDOMNodeList
+ *
+ * Deprecated: 2.12: Use webkit_dom_document_get_elements_by_tag_name_ns_as_html_collection() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_document_get_elements_by_tag_name_as_html_collection) WebKitDOMNodeList*
+webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocument* self, const gchar* namespace_uri, const gchar* tag_name);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */

@@ -19,7 +19,14 @@
 #include "config.h"
 #include "WebKitDOMDeprecated.h"
 
+#include "Document.h"
+#include "JSMainThreadExecState.h"
+#include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMHTMLElement.h"
+#include "WebKitDOMNodeListPrivate.h"
+#include <wtf/GetPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 gchar* webkit_dom_html_element_get_inner_html(WebKitDOMHTMLElement* self)
 {
@@ -49,4 +56,27 @@ WebKitDOMHTMLCollection* webkit_dom_html_element_get_children(WebKitDOMHTMLEleme
 {
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self), nullptr);
     return webkit_dom_element_get_children(WEBKIT_DOM_ELEMENT(self));
+}
+
+WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name(WebKitDOMDocument* self, const gchar* tagName)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), nullptr);
+    g_return_val_if_fail(tagName, nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::Document* document = WebKit::core(self);
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByTagNameForObjC(String::fromUTF8(tagName)));
+    return WebKit::kit(nodeList.get());
+}
+
+WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocument* self, const gchar* namespaceURI, const gchar* tagName)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), nullptr);
+    g_return_val_if_fail(namespaceURI, nullptr);
+    g_return_val_if_fail(tagName, nullptr);
+
+    WebCore::JSMainThreadNullState state;
+    WebCore::Document* document = WebKit::core(self);
+    RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(document->getElementsByTagNameNSForObjC(String::fromUTF8(namespaceURI), String::fromUTF8(tagName)));
+    return WebKit::kit(nodeList.get());
 }

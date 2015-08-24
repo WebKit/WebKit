@@ -993,6 +993,19 @@ sub GetTransferTypeForReturnType {
     return "none";
 }
 
+sub GetEffectiveFunctionName {
+    my $functionName = shift;
+
+    # Rename webkit_dom_document_get_elements_by_tag_name* functions since they were changed to return a
+    # WebKitDOMHTMLCollection instead of a WebKitDOMNodeList in r188809. The old methods are now manually
+    # added as deprecated.
+    if ($functionName eq "webkit_dom_document_get_elements_by_tag_name" || $functionName eq "webkit_dom_document_get_elements_by_tag_name_ns") {
+        return $functionName . "_as_html_collection";
+    }
+
+    return $functionName;
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -1004,7 +1017,7 @@ sub GenerateFunction {
 
     my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
     my $functionSigName = GetFunctionSignatureName($interfaceName, $function);
-    my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . $functionSigName;
+    my $functionName = GetEffectiveFunctionName("webkit_dom_" . $decamelize . "_" . $prefix . $functionSigName);
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
     my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
