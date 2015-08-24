@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "WheelEventDeltaFilterMac.h"
+#include "FloatPoint.h"
 
 #import "NSScrollingInputFilterSPI.h"
 #import <wtf/CurrentTime.h>
@@ -52,7 +53,7 @@ void WheelEventDeltaFilterMac::updateFromDelta(const FloatSize& delta)
 
     NSPoint filteredDeltaResult;
     NSPoint filteredVelocityResult;
-    [m_predominantAxisFilter filterInputDelta:CGPointMake(delta.width(), delta.height()) timestamp:monotonicallyIncreasingTime() - m_beginFilteringDeltasTime outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
+    [m_predominantAxisFilter filterInputDelta:NSPoint(FloatPoint(delta.width(), delta.height())) timestamp:monotonicallyIncreasingTime() - m_beginFilteringDeltasTime outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
     m_currentFilteredDelta = FloatSize(filteredDeltaResult.x, filteredDeltaResult.y);
 }
 
