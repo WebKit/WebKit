@@ -27,6 +27,7 @@
 #include "ModuleLoaderObject.h"
 
 #include "BuiltinNames.h"
+#include "CodeProfiling.h"
 #include "Error.h"
 #include "Exception.h"
 #include "JSCInlines.h"
@@ -75,6 +76,7 @@ const ClassInfo ModuleLoaderObject::s_info = { "ModuleLoader", &Base::s_info, &m
     requestInstantiate         moduleLoaderObjectRequestInstantiate         DontEnum|Function 1
     requestResolveDependencies moduleLoaderObjectRequestResolveDependencies DontEnum|Function 1
     requestInstantiateAll      moduleLoaderObjectRequestInstantiateAll      DontEnum|Function 1
+    loadModule                 moduleLoaderObjectLoadModule                 DontEnum|Function 2
     provide                    moduleLoaderObjectProvide                    DontEnum|Function 3
     parseModule                moduleLoaderObjectParseModule                DontEnum|Function 2
     requestedModules           moduleLoaderObjectRequestedModules           DontEnum|Function 1
@@ -135,7 +137,7 @@ JSValue ModuleLoaderObject::provide(ExecState* exec, JSValue key, Status status,
     return call(exec, function, callType, callData, this, arguments);
 }
 
-JSValue ModuleLoaderObject::requestInstantiateAll(ExecState* exec, JSValue key)
+JSInternalPromise* ModuleLoaderObject::requestInstantiateAll(ExecState* exec, JSValue key)
 {
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().requestInstantiateAllPublicName()));
     CallData callData;
@@ -145,10 +147,24 @@ JSValue ModuleLoaderObject::requestInstantiateAll(ExecState* exec, JSValue key)
     MarkedArgumentBuffer arguments;
     arguments.append(key);
 
-    return call(exec, function, callType, callData, this, arguments);
+    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
 }
 
-JSValue ModuleLoaderObject::resolve(ExecState* exec, JSValue name, JSValue referrer)
+JSInternalPromise* ModuleLoaderObject::loadModule(ExecState* exec, JSValue moduleName, JSValue referrer)
+{
+    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadModulePublicName()));
+    CallData callData;
+    CallType callType = JSC::getCallData(function, callData);
+    ASSERT(callType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(moduleName);
+    arguments.append(referrer);
+
+    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+}
+
+JSInternalPromise* ModuleLoaderObject::resolve(ExecState* exec, JSValue name, JSValue referrer)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [resolve] ", printableModuleKey(exec, name), "\n");
@@ -161,7 +177,7 @@ JSValue ModuleLoaderObject::resolve(ExecState* exec, JSValue name, JSValue refer
     return deferred->promise();
 }
 
-JSValue ModuleLoaderObject::fetch(ExecState* exec, JSValue key)
+JSInternalPromise* ModuleLoaderObject::fetch(ExecState* exec, JSValue key)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [fetch] ", printableModuleKey(exec, key), "\n");
@@ -181,7 +197,7 @@ JSValue ModuleLoaderObject::fetch(ExecState* exec, JSValue key)
     return deferred->promise();
 }
 
-JSValue ModuleLoaderObject::translate(ExecState* exec, JSValue key, JSValue payload)
+JSInternalPromise* ModuleLoaderObject::translate(ExecState* exec, JSValue key, JSValue payload)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [translate] ", printableModuleKey(exec, key), "\n");
@@ -194,7 +210,7 @@ JSValue ModuleLoaderObject::translate(ExecState* exec, JSValue key, JSValue payl
     return deferred->promise();
 }
 
-JSValue ModuleLoaderObject::instantiate(ExecState* exec, JSValue key, JSValue source)
+JSInternalPromise* ModuleLoaderObject::instantiate(ExecState* exec, JSValue key, JSValue source)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [instantiate] ", printableModuleKey(exec, key), "\n");
@@ -219,6 +235,8 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectParseModule(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     SourceCode sourceCode = makeSource(source, moduleKey.impl());
+
+    CodeProfiling profile(sourceCode);
 
     ParserError error;
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(

@@ -30,6 +30,8 @@
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
+#include "JSInternalPromise.h"
+#include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
 #include "JSModuleRecord.h"
 #include "ModuleAnalyzer.h"
@@ -111,13 +113,27 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, N
     return result;
 }
 
-void evaluateModule(ExecState* exec, const SourceCode& source, NakedPtr<Exception>& returnedException)
+static JSInternalPromise* evaluateModule(const JSLockHolder&, ExecState* exec, JSGlobalObject* globalObject, JSValue moduleName, JSValue referrer)
+{
+    return globalObject->moduleLoader()->loadModule(exec, moduleName, referrer);
+}
+
+static JSInternalPromise* evaluateModule(const JSLockHolder& lock, ExecState* exec, JSGlobalObject* globalObject, const Identifier& moduleName)
+{
+    JSValue moduleNameValue;
+    if (moduleName.isSymbol())
+        moduleNameValue = Symbol::create(exec->vm(), static_cast<SymbolImpl&>(*moduleName.impl()));
+    else
+        moduleNameValue = jsString(&exec->vm(), moduleName.impl());
+
+    return evaluateModule(lock, exec, globalObject, moduleNameValue, jsUndefined());
+}
+
+JSInternalPromise* evaluateModule(ExecState* exec, const SourceCode& source)
 {
     JSLockHolder lock(exec);
     RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusy());
-
-    CodeProfiling profile(source);
 
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
@@ -125,29 +141,35 @@ void evaluateModule(ExecState* exec, const SourceCode& source, NakedPtr<Exceptio
     PrivateName privateName(PrivateName::Description, "EntryPointModule");
     Symbol* key = Symbol::create(exec->vm(), *privateName.uid());
 
-    ModuleLoaderObject* moduleLoader = globalObject->moduleLoader();
-
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
-    moduleLoader->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.toString());
+    globalObject->moduleLoader()->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.toString());
     if (exec->hadException()) {
-        returnedException = exec->exception();
+        JSValue exception = exec->exception()->value();
         exec->clearException();
-        return;
+        JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+        deferred->reject(exec, exception);
+        return deferred->promise();
     }
 
-    // FIXME: Now, we don't implement the linking phase yet.
-    // So here, we just call requestInstantiateAll to only perform the module loading.
-    // At last, it should be replaced with requestReady.
-    // https://bugs.webkit.org/show_bug.cgi?id=148172
-    moduleLoader->requestInstantiateAll(exec, key);
+    return evaluateModule(lock, exec, globalObject, key, jsUndefined());
+}
 
-    // FIXME: We should also handle the asynchronous Syntax Errors that will be delivered by the rejected promise.
-    // https://bugs.webkit.org/show_bug.cgi?id=148173
-    if (exec->hadException()) {
-        returnedException = exec->exception();
-        exec->clearException();
-        return;
-    }
+JSInternalPromise* evaluateModule(ExecState* exec, const Identifier& moduleName)
+{
+    JSLockHolder lock(exec);
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
+    RELEASE_ASSERT(!exec->vm().isCollectorBusy());
+
+    return evaluateModule(lock, exec, exec->vmEntryGlobalObject(), moduleName);
+}
+
+JSInternalPromise* evaluateModule(ExecState* exec, const String& moduleName)
+{
+    JSLockHolder lock(exec);
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
+    RELEASE_ASSERT(!exec->vm().isCollectorBusy());
+
+    return evaluateModule(lock, exec, exec->vmEntryGlobalObject(), Identifier::fromString(exec, moduleName));
 }
 
 } // namespace JSC

@@ -396,6 +396,24 @@ function requestInstantiateAll(key)
     return this.requestResolveDependencies(key);
 }
 
+function loadModule(moduleName, referrer)
+{
+    "use strict";
+
+    var loader = this;
+    // Loader.resolve hook point.
+    // resolve: moduleName => Promise(moduleKey)
+    // Take the name and resolve it to the unique identifier for the resource location.
+    // For example, take the "jquery" and return the URL for the resource.
+    return this.resolve(moduleName, referrer).then(function (key) {
+        // FIXME: Now, we don't implement the linking phase yet.
+        // So here, we just call requestInstantiateAll to only perform the module loading.
+        // At last, it should be replaced with requestReady.
+        // https://bugs.webkit.org/show_bug.cgi?id=148172
+        return loader.requestInstantiateAll(key);
+    });
+}
+
 function provide(key, stage, value)
 {
     "use strict";

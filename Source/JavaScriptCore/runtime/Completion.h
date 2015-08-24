@@ -34,6 +34,7 @@ class JSScope;
 class ParserError;
 class SourceCode;
 class VM;
+class JSInternalPromise;
 
 JS_EXPORT_PRIVATE bool checkSyntax(VM&, const SourceCode&, ParserError&);
 JS_EXPORT_PRIVATE bool checkSyntax(ExecState*, const SourceCode&, JSValue* exception = 0);
@@ -44,7 +45,9 @@ inline JSValue evaluate(ExecState* exec, const SourceCode& sourceCode, JSValue t
     NakedPtr<Exception> unused;
     return evaluate(exec, sourceCode, thisValue, unused);
 }
-JS_EXPORT_PRIVATE void evaluateModule(ExecState*, const SourceCode&, NakedPtr<Exception>& returnedException);
+JS_EXPORT_PRIVATE JSInternalPromise* evaluateModule(ExecState*, const SourceCode&);
+JS_EXPORT_PRIVATE JSInternalPromise* evaluateModule(ExecState*, const Identifier& moduleName);
+JS_EXPORT_PRIVATE JSInternalPromise* evaluateModule(ExecState*, const String& moduleName);
 
 } // namespace JSC
 

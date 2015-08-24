@@ -1,3 +1,40 @@
+2015-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Return JSInternalPromise as result of evaluateModule
+        https://bugs.webkit.org/show_bug.cgi?id=148173
+
+        Reviewed by Saam Barati.
+
+        Now evaluateModule returns JSInternalPromise* as its result value.
+        When an error occurs while loading or executing the modules,
+        this promise is rejected by that error. By leveraging this, we implemented
+        asynchronous error reporting when executing the modules in JSC shell.
+
+        And this patch also changes the evaluateModule signature to accept the entry
+        point by the moduleName. By using it, JSC shell can start executing the modules
+        with the entry point module name.
+
+        * builtins/ModuleLoaderObject.js:
+        (loadModule):
+        * jsc.cpp:
+        (dumpException):
+        (runWithScripts):
+        * runtime/Completion.cpp:
+        (JSC::evaluateModule):
+        * runtime/Completion.h:
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+        * runtime/JSInternalPromise.h:
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::ModuleLoaderObject::requestInstantiateAll):
+        (JSC::ModuleLoaderObject::loadModule):
+        (JSC::ModuleLoaderObject::resolve):
+        (JSC::ModuleLoaderObject::fetch):
+        (JSC::ModuleLoaderObject::translate):
+        (JSC::ModuleLoaderObject::instantiate):
+        (JSC::moduleLoaderObjectParseModule):
+        * runtime/ModuleLoaderObject.h:
+
 2015-08-24  Basile Clement  <basile_clement@apple.com>
 
         REPTACH is not a word

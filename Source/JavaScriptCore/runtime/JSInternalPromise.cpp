@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSInternalPromise.h"
 
+#include "BuiltinNames.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "StructureInlines.h"
@@ -49,6 +50,20 @@ Structure* JSInternalPromise::createStructure(VM& vm, JSGlobalObject* globalObje
 JSInternalPromise::JSInternalPromise(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
+}
+
+JSInternalPromise* JSInternalPromise::then(ExecState* exec, JSFunction* onFulfilled, JSFunction* onRejected)
+{
+    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().thenPublicName()));
+    CallData callData;
+    CallType callType = JSC::getCallData(function, callData);
+    ASSERT(callType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(onFulfilled ? onFulfilled : jsUndefined());
+    arguments.append(onRejected ? onRejected : jsUndefined());
+
+    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
 }
 
 } // namespace JSC

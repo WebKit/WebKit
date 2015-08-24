@@ -30,6 +30,16 @@
 
 namespace JSC {
 
+class JSFunction;
+
+// JSInternalPromise is completely separated instance from the JSPromise.
+// Since its prototype and constructor are different from the exposed Promises' ones,
+// all the user modification onto the exposed Promise does not have effect on JSInternalPromise.
+//
+// e.g.
+//     Replacing Promise.prototype.then with the user-customized one does not effect on JSInternalPromise.
+//
+// CAUTION: Must not leak the JSInternalPromise to the user space to keep its integrity.
 class JSInternalPromise : public JSPromise {
 public:
     typedef JSPromise Base;
@@ -38,6 +48,8 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
+
+    JS_EXPORT_PRIVATE JSInternalPromise* then(ExecState*, JSFunction* = nullptr, JSFunction* = nullptr);
 
 private:
     JSInternalPromise(VM&, Structure*);

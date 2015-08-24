@@ -1336,15 +1336,19 @@ int main(int argc, char** argv)
     jscExit(res);
 }
 
+static void dumpException(GlobalObject* globalObject, JSValue exception)
+{
+    printf("Exception: %s\n", exception.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+    Identifier stackID = Identifier::fromString(globalObject->globalExec(), "stack");
+    JSValue stackValue = exception.get(globalObject->globalExec(), stackID);
+    if (!stackValue.isUndefinedOrNull())
+        printf("%s\n", stackValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+}
+
 static void dumpException(GlobalObject* globalObject, NakedPtr<Exception> evaluationException)
 {
-    if (evaluationException) {
-        printf("Exception: %s\n", evaluationException->value().toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
-        Identifier stackID = Identifier::fromString(globalObject->globalExec(), "stack");
-        JSValue stackValue = evaluationException->value().get(globalObject->globalExec(), stackID);
-        if (!stackValue.isUndefinedOrNull())
-            printf("%s\n", stackValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
-    }
+    if (evaluationException)
+        dumpException(globalObject, evaluationException->value());
 }
 
 static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scripts, bool dump, bool module)
@@ -1357,18 +1361,37 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         JSC::Options::dumpGeneratedBytecodes() = true;
 
     VM& vm = globalObject->vm();
+    bool success = true;
+
+#if ENABLE(ES6_MODULES)
+    JSFunction* errorHandler = JSFunction::create(vm, globalObject, 1, String(), [&](ExecState* exec) {
+        success = false;
+        dumpException(globalObject, exec->argument(0));
+        return JSValue::encode(jsUndefined());
+    });
+#endif
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::start();
 #endif
 
-    bool success = true;
     for (size_t i = 0; i < scripts.size(); i++) {
+#if ENABLE(ES6_MODULES)
+        JSInternalPromise* promise = nullptr;
+#endif
         if (scripts[i].isFile) {
             fileName = scripts[i].argument;
-            if (!fillBufferWithContentsOfFile(fileName, scriptBuffer))
-                return false; // fail early so we can catch missing files
-            script = scriptBuffer.data();
+            if (module) {
+#if ENABLE(ES6_MODULES)
+                promise = evaluateModule(globalObject->globalExec(), fileName);
+#else
+                RELEASE_ASSERT_NOT_REACHED();
+#endif
+            } else {
+                if (!fillBufferWithContentsOfFile(fileName, scriptBuffer))
+                    return false; // fail early so we can catch missing files
+                script = scriptBuffer.data();
+            }
         } else {
             script = scripts[i].argument;
             fileName = ASCIILiteral("[Command Line]");
@@ -1378,10 +1401,10 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
         if (module) {
 #if ENABLE(ES6_MODULES)
-            NakedPtr<Exception> evaluationException;
-            evaluateModule(globalObject->globalExec(), jscSource(script, fileName), evaluationException);
-            dumpException(globalObject, evaluationException);
+            if (!promise)
+                promise = evaluateModule(globalObject->globalExec(), jscSource(script, fileName));
             globalObject->globalExec()->clearException();
+            promise->then(globalObject->globalExec(), nullptr, errorHandler);
             globalObject->vm().drainMicrotasks();
 #else
             RELEASE_ASSERT_NOT_REACHED();

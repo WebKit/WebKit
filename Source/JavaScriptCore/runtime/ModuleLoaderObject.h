@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+class JSInternalPromise;
+
 class ModuleLoaderObject : public JSNonFinalObject {
 private:
     ModuleLoaderObject(VM&, Structure*);
@@ -62,13 +64,14 @@ public:
 
     // APIs to control the module loader.
     JSValue provide(ExecState*, JSValue key, Status, const String&);
-    JSValue requestInstantiateAll(ExecState*, JSValue key);
+    JSInternalPromise* requestInstantiateAll(ExecState*, JSValue key);
+    JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer);
 
     // Platform dependent hooked APIs.
-    JSValue resolve(ExecState*, JSValue name, JSValue referrer);
-    JSValue fetch(ExecState*, JSValue key);
-    JSValue translate(ExecState*, JSValue key, JSValue payload);
-    JSValue instantiate(ExecState*, JSValue key, JSValue source);
+    JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer);
+    JSInternalPromise* fetch(ExecState*, JSValue key);
+    JSInternalPromise* translate(ExecState*, JSValue key, JSValue payload);
+    JSInternalPromise* instantiate(ExecState*, JSValue key, JSValue source);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
