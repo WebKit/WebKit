@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,13 @@ namespace JSC {
 
 class CodeBlock;
 
-class BytecodeBasicBlock : public RefCounted<BytecodeBasicBlock> {
+class BytecodeBasicBlock {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum SpecialBlockType { EntryBlock, ExitBlock };
     BytecodeBasicBlock(unsigned start, unsigned length);
     BytecodeBasicBlock(SpecialBlockType);
+    void shrinkToFit();
 
     bool isEntryBlock() { return !m_leaderBytecodeOffset && !m_totalBytecodeLength; }
     bool isExitBlock() { return m_leaderBytecodeOffset == UINT_MAX && m_totalBytecodeLength == UINT_MAX; }
@@ -51,11 +53,8 @@ public:
     Vector<unsigned>& bytecodeOffsets() { return m_bytecodeOffsets; }
     void addBytecodeLength(unsigned);
 
-    void addPredecessor(BytecodeBasicBlock* block) { m_predecessors.append(block); }
-    void addSuccessor(BytecodeBasicBlock* block) { m_successors.append(block); }
-
-    Vector<BytecodeBasicBlock*>& predecessors() { return m_predecessors; }
     Vector<BytecodeBasicBlock*>& successors() { return m_successors; }
+    void addSuccessor(BytecodeBasicBlock* block) { m_successors.append(block); }
 
     FastBitVector& in() { return m_in; }
     FastBitVector& out() { return m_out; }
@@ -65,15 +64,13 @@ private:
     unsigned m_totalBytecodeLength;
 
     Vector<unsigned> m_bytecodeOffsets;
-
-    Vector<BytecodeBasicBlock*> m_predecessors;
     Vector<BytecodeBasicBlock*> m_successors;
 
     FastBitVector m_in;
     FastBitVector m_out;
 };
 
-void computeBytecodeBasicBlocks(CodeBlock*, Vector<RefPtr<BytecodeBasicBlock> >&);
+void computeBytecodeBasicBlocks(CodeBlock*, Vector<std::unique_ptr<BytecodeBasicBlock>>&);
 
 inline BytecodeBasicBlock::BytecodeBasicBlock(unsigned start, unsigned length)
     : m_leaderBytecodeOffset(start)

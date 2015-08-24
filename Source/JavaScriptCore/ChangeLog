@@ -1,3 +1,49 @@
+2015-08-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Reduce the memory usage of BytecodeLivenessAnalysis
+        https://bugs.webkit.org/show_bug.cgi?id=148353
+
+        Reviewed by Darin Adler.
+
+        BytecodeLivenessAnalysis easily takes kilobytes of memory for
+        non trivial blocks and that memory sticks around because
+        it stored on CodeBlock.
+
+        This patch reduces that memory use a bit.
+
+        Most of the memory is in the array of BytecodeBasicBlock.
+        BytecodeBasicBlock is shrunk by:
+        -Making it not ref-counted.
+        -Removing m_predecessors, it was only used for debugging and
+         is usually big.
+        -Added a shrinkToFit() phase to shrink the vectors once we are
+         done building the BytecodeBasicBlock.
+
+        There are more things we should do in the future:
+        -Store all the BytecodeBasicBlock direclty in the array.
+         We know the size ahead of time, this would be a pure win.
+         The only tricky part is changing m_successors to have the
+         index of the successor instead of a pointer.
+        -Stop putting duplicates in m_successors.
+
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::computeBytecodeBasicBlocks):
+        (JSC::BytecodeBasicBlock::shrinkToFit): Deleted.
+        (JSC::linkBlocks): Deleted.
+        * bytecode/BytecodeBasicBlock.h:
+        (JSC::BytecodeBasicBlock::addSuccessor):
+        (JSC::BytecodeBasicBlock::addPredecessor): Deleted.
+        (JSC::BytecodeBasicBlock::predecessors): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::getLeaderOffsetForBasicBlock):
+        (JSC::findBasicBlockWithLeaderOffset):
+        (JSC::findBasicBlockForBytecodeOffset):
+        (JSC::stepOverInstruction):
+        (JSC::computeLocalLivenessForBytecodeOffset):
+        (JSC::computeLocalLivenessForBlock):
+        (JSC::BytecodeLivenessAnalysis::dumpResults): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+
 2015-08-23  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling back in r188792.

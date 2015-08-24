@@ -51,14 +51,14 @@ static bool isValidRegisterForLiveness(CodeBlock* codeBlock, int operand)
     return virtualReg.isLocal();
 }
 
-static unsigned getLeaderOffsetForBasicBlock(RefPtr<BytecodeBasicBlock>* basicBlock)
+static unsigned getLeaderOffsetForBasicBlock(std::unique_ptr<BytecodeBasicBlock>* basicBlock)
 {
     return (*basicBlock)->leaderBytecodeOffset();
 }
 
-static BytecodeBasicBlock* findBasicBlockWithLeaderOffset(Vector<RefPtr<BytecodeBasicBlock> >& basicBlocks, unsigned leaderOffset)
+static BytecodeBasicBlock* findBasicBlockWithLeaderOffset(Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned leaderOffset)
 {
-    return (*tryBinarySearch<RefPtr<BytecodeBasicBlock>, unsigned>(basicBlocks, basicBlocks.size(), leaderOffset, getLeaderOffsetForBasicBlock)).get();
+    return (*tryBinarySearch<std::unique_ptr<BytecodeBasicBlock>, unsigned>(basicBlocks, basicBlocks.size(), leaderOffset, getLeaderOffsetForBasicBlock)).get();
 }
 
 static bool blockContainsBytecodeOffset(BytecodeBasicBlock* block, unsigned bytecodeOffset)
@@ -67,7 +67,7 @@ static bool blockContainsBytecodeOffset(BytecodeBasicBlock* block, unsigned byte
     return bytecodeOffset >= leaderOffset && bytecodeOffset < leaderOffset + block->totalBytecodeLength();
 }
 
-static BytecodeBasicBlock* findBasicBlockForBytecodeOffset(Vector<RefPtr<BytecodeBasicBlock> >& basicBlocks, unsigned bytecodeOffset)
+static BytecodeBasicBlock* findBasicBlockForBytecodeOffset(Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset)
 {
 /*
     for (unsigned i = 0; i < basicBlocks.size(); i++) {
@@ -76,7 +76,7 @@ static BytecodeBasicBlock* findBasicBlockForBytecodeOffset(Vector<RefPtr<Bytecod
     }
     return 0;
 */
-    RefPtr<BytecodeBasicBlock>* basicBlock = approximateBinarySearch<RefPtr<BytecodeBasicBlock>, unsigned>(
+    std::unique_ptr<BytecodeBasicBlock>* basicBlock = approximateBinarySearch<std::unique_ptr<BytecodeBasicBlock>, unsigned>(
         basicBlocks, basicBlocks.size(), bytecodeOffset, getLeaderOffsetForBasicBlock);
     // We found the block we were looking for.
     if (blockContainsBytecodeOffset((*basicBlock).get(), bytecodeOffset))
@@ -98,7 +98,7 @@ static BytecodeBasicBlock* findBasicBlockForBytecodeOffset(Vector<RefPtr<Bytecod
 // Simplified interface to bytecode use/def, which determines defs first and then uses, and includes
 // exception handlers in the uses.
 template<typename UseFunctor, typename DefFunctor>
-static void stepOverInstruction(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, const UseFunctor& use, const DefFunctor& def)
+static void stepOverInstruction(CodeBlock* codeBlock, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, const UseFunctor& use, const DefFunctor& def)
 {
     // This abstractly execute the instruction in reverse. Instructions logically first use operands and
     // then define operands. This logical ordering is necessary for operations that use and def the same
@@ -138,7 +138,7 @@ static void stepOverInstruction(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasi
     }
 }
 
-static void stepOverInstruction(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, FastBitVector& out)
+static void stepOverInstruction(CodeBlock* codeBlock, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, FastBitVector& out)
 {
     stepOverInstruction(
         codeBlock, basicBlocks, bytecodeOffset,
@@ -152,7 +152,7 @@ static void stepOverInstruction(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasi
         });
 }
 
-static void computeLocalLivenessForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* block, Vector<RefPtr<BytecodeBasicBlock> >& basicBlocks, unsigned targetOffset, FastBitVector& result)
+static void computeLocalLivenessForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* block, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned targetOffset, FastBitVector& result)
 {
     ASSERT(!block->isExitBlock());
     ASSERT(!block->isEntryBlock());
@@ -170,7 +170,7 @@ static void computeLocalLivenessForBytecodeOffset(CodeBlock* codeBlock, Bytecode
     result.set(out);
 }
 
-static void computeLocalLivenessForBlock(CodeBlock* codeBlock, BytecodeBasicBlock* block, Vector<RefPtr<BytecodeBasicBlock> >& basicBlocks)
+static void computeLocalLivenessForBlock(CodeBlock* codeBlock, BytecodeBasicBlock* block, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks)
 {
     if (block->isExitBlock() || block->isEntryBlock())
         return;
@@ -294,12 +294,6 @@ void BytecodeLivenessAnalysis::dumpResults()
     for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
         BytecodeBasicBlock* block = m_basicBlocks[i].get();
         dataLogF("\nBytecode basic block %u: %p (offset: %u, length: %u)\n", i, block, block->leaderBytecodeOffset(), block->totalBytecodeLength());
-        dataLogF("Predecessors: ");
-        for (unsigned j = 0; j < block->predecessors().size(); j++) {
-            BytecodeBasicBlock* predecessor = block->predecessors()[j];
-            dataLogF("%p ", predecessor);
-        }
-        dataLogF("\n");
         dataLogF("Successors: ");
         for (unsigned j = 0; j < block->successors().size(); j++) {
             BytecodeBasicBlock* successor = block->successors()[j];
