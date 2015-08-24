@@ -535,10 +535,9 @@ void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
     doCleanup();
 }
 
-SQLTransactionState SQLTransactionBackend::acquireLock()
+void SQLTransactionBackend::acquireLock()
 {
     m_database->transactionCoordinator()->acquireLock(this);
-    return SQLTransactionState::Idle;
 }
 
 void SQLTransactionBackend::lockAcquired()
@@ -550,7 +549,7 @@ void SQLTransactionBackend::lockAcquired()
     m_database->scheduleTransactionStep(this);
 }
 
-SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
+void SQLTransactionBackend::openTransactionAndPreflight()
 {
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
     ASSERT(m_lockAcquired);
@@ -562,7 +561,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
         m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to open a transaction, because the user deleted the database");
 
         handleTransactionError();
-        return SQLTransactionState::Idle;
+        return;
     }
 
     // Set the maximum usage for this transaction if this transactions is not read-only
@@ -587,7 +586,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
         m_sqliteTransaction = nullptr;
 
         handleTransactionError();
-        return SQLTransactionState::Idle;
+        return;
     }
 
     // Note: We intentionally retrieve the actual version even with an empty expected version.
@@ -602,7 +601,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
         m_database->enableAuthorizer();
 
         handleTransactionError();
-        return SQLTransactionState::Idle;
+        return;
     }
 
     m_hasVersionMismatch = !m_database->expectedVersion().isEmpty() && (m_database->expectedVersion() != actualVersion);
@@ -617,20 +616,20 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
             m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction preflight");
 
         handleTransactionError();
-        return SQLTransactionState::Idle;
+        return;
     }
 
     // Spec 4.3.2.4: Invoke the transaction callback with the new SQLTransaction object
     if (m_hasCallback) {
         m_frontend->requestTransitToState(SQLTransactionState::DeliverTransactionCallback);
-        return SQLTransactionState::Idle;
+        return;
     }
 
     // If we have no callback to make, skip pass to the state after:
-    return runStatements();
+    runStatements();
 }
 
-SQLTransactionState SQLTransactionBackend::runStatements()
+void SQLTransactionBackend::runStatements()
 {
     ASSERT(m_lockAcquired);
 
@@ -665,8 +664,6 @@ SQLTransactionState SQLTransactionBackend::runStatements()
     // the callback or performed any other additional work so we can return.
     if (!m_currentStatementBackend)
         postflightAndCommit();
-
-    return SQLTransactionState::Idle;
 }
 
 void SQLTransactionBackend::getNextStatement()
@@ -790,7 +787,7 @@ void SQLTransactionBackend::postflightAndCommit()
     m_frontend->requestTransitToState(SQLTransactionState::DeliverSuccessCallback);
 }
 
-SQLTransactionState SQLTransactionBackend::cleanupAndTerminate()
+void SQLTransactionBackend::cleanupAndTerminate()
 {
     ASSERT(m_lockAcquired);
 
@@ -801,10 +798,9 @@ SQLTransactionState SQLTransactionBackend::cleanupAndTerminate()
     // Phase 5 cleanup. See comment on the SQLTransaction life-cycle above.
     doCleanup();
     m_database->inProgressTransactionCompleted();
-    return SQLTransactionState::End;
 }
 
-SQLTransactionState SQLTransactionBackend::cleanupAfterTransactionErrorCallback()
+void SQLTransactionBackend::cleanupAfterTransactionErrorCallback()
 {
     ASSERT(m_lockAcquired);
 
@@ -823,7 +819,7 @@ SQLTransactionState SQLTransactionBackend::cleanupAfterTransactionErrorCallback(
 
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
 
-    return cleanupAndTerminate();
+    cleanupAndTerminate();
 }
 
 // requestTransitToState() can be called from the frontend. Hence, it should
@@ -840,10 +836,9 @@ void SQLTransactionBackend::requestTransitToState(SQLTransactionState nextState)
 // This state function is used as a stub function to plug unimplemented states
 // in the state dispatch table. They are unimplemented because they should
 // never be reached in the course of correct execution.
-SQLTransactionState SQLTransactionBackend::unreachableState()
+void SQLTransactionBackend::unreachableState()
 {
     ASSERT_NOT_REACHED();
-    return SQLTransactionState::End;
 }
 
 void SQLTransactionBackend::acquireOriginLock()

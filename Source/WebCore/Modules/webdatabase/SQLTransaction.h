@@ -76,13 +76,13 @@ private:
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
-    SQLTransactionState deliverTransactionCallback();
-    SQLTransactionState deliverTransactionErrorCallback();
-    SQLTransactionState deliverStatementCallback();
-    SQLTransactionState deliverQuotaIncreaseCallback();
-    SQLTransactionState deliverSuccessCallback();
+    void deliverTransactionCallback();
+    void deliverTransactionErrorCallback();
+    void deliverStatementCallback();
+    void deliverQuotaIncreaseCallback();
+    void deliverSuccessCallback();
 
-    SQLTransactionState unreachableState();
+    NO_RETURN_DUE_TO_ASSERT void unreachableState();
 
     Ref<Database> m_database;
     RefPtr<SQLTransactionBackend> m_backend;

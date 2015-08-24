@@ -88,13 +88,13 @@ private:
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
-    SQLTransactionState acquireLock();
-    SQLTransactionState openTransactionAndPreflight();
-    SQLTransactionState runStatements();
-    SQLTransactionState cleanupAndTerminate();
-    SQLTransactionState cleanupAfterTransactionErrorCallback();
+    void acquireLock();
+    void openTransactionAndPreflight();
+    void runStatements();
+    void cleanupAndTerminate();
+    void cleanupAfterTransactionErrorCallback();
 
-    SQLTransactionState unreachableState();
+    NO_RETURN_DUE_TO_ASSERT void unreachableState();
 
     void getNextStatement();
     bool runCurrentStatement();

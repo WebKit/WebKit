@@ -122,7 +122,7 @@ void SQLTransaction::requestTransitToState(SQLTransactionState nextState)
     m_database->scheduleTransactionCallback(this);
 }
 
-SQLTransactionState SQLTransaction::deliverTransactionCallback()
+void SQLTransaction::deliverTransactionCallback()
 {
     bool shouldDeliverErrorCallback = false;
 
@@ -141,10 +141,9 @@ SQLTransactionState SQLTransaction::deliverTransactionCallback()
     }
 
     m_backend->requestTransitToState(SQLTransactionState::RunStatements);
-    return SQLTransactionState::Idle;
 }
 
-SQLTransactionState SQLTransaction::deliverTransactionErrorCallback()
+void SQLTransaction::deliverTransactionErrorCallback()
 {
     // Spec 4.3.2.10: If exists, invoke error callback with the last
     // error to have occurred in this transaction.
@@ -167,10 +166,9 @@ SQLTransactionState SQLTransaction::deliverTransactionErrorCallback()
 
     // Spec 4.3.2.10: Rollback the transaction.
     m_backend->requestTransitToState(SQLTransactionState::CleanupAfterTransactionErrorCallback);
-    return SQLTransactionState::Idle;
 }
 
-SQLTransactionState SQLTransaction::deliverStatementCallback()
+void SQLTransaction::deliverStatementCallback()
 {
     // Spec 4.3.2.6.6 and 4.3.2.6.3: If the statement callback went wrong, jump to the transaction error callback
     // Otherwise, continue to loop through the statement queue
@@ -192,14 +190,13 @@ SQLTransactionState SQLTransaction::deliverStatementCallback()
         // No error callback, so fast-forward to:
         // Transaction Step 11 - Rollback the transaction.
         m_backend->requestTransitToState(SQLTransactionState::CleanupAfterTransactionErrorCallback);
-        return SQLTransactionState::Idle;
+        return;
     }
 
     m_backend->requestTransitToState(SQLTransactionState::RunStatements);
-    return SQLTransactionState::Idle;
 }
 
-SQLTransactionState SQLTransaction::deliverQuotaIncreaseCallback()
+void SQLTransaction::deliverQuotaIncreaseCallback()
 {
     ASSERT(m_backend->currentStatement());
 
@@ -207,10 +204,9 @@ SQLTransactionState SQLTransaction::deliverQuotaIncreaseCallback()
     m_backend->setShouldRetryCurrentStatement(shouldRetryCurrentStatement);
 
     m_backend->requestTransitToState(SQLTransactionState::RunStatements);
-    return SQLTransactionState::Idle;
 }
 
-SQLTransactionState SQLTransaction::deliverSuccessCallback()
+void SQLTransaction::deliverSuccessCallback()
 {
     // Spec 4.3.2.8: Deliver success callback.
     RefPtr<VoidCallback> successCallback = m_successCallbackWrapper.unwrap();
@@ -222,16 +218,14 @@ SQLTransactionState SQLTransaction::deliverSuccessCallback()
     // Schedule a "post-success callback" step to return control to the database thread in case there
     // are further transactions queued up for this Database
     m_backend->requestTransitToState(SQLTransactionState::CleanupAndTerminate);
-    return SQLTransactionState::Idle;
 }
 
 // This state function is used as a stub function to plug unimplemented states
 // in the state dispatch table. They are unimplemented because they should
 // never be reached in the course of correct execution.
-SQLTransactionState SQLTransaction::unreachableState()
+void SQLTransaction::unreachableState()
 {
     ASSERT_NOT_REACHED();
-    return SQLTransactionState::End;
 }
 
 void SQLTransaction::performPendingCallback()
