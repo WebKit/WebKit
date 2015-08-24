@@ -1,3 +1,34 @@
+2015-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::InsertionSet should be tolerant of occasional out-of-order insertions
+        https://bugs.webkit.org/show_bug.cgi?id=148367
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+
+        Since forever, the DFG::InsertionSet has been the way we insert nodes into DFG IR, and it
+        requires that you walk a block in order and perform insertions in order: you can't insert
+        something at index J, then at index I where I < J, except if you do a second pass.
+
+        This restriction makes sense, because it enables a very fast algorithm. And it's very
+        rare that a phase would need to insert things out of order.
+
+        But sometimes - rarely - we need to insert things slightly out-of-order. For example we
+        may want to insert a node at index J, but to insert a check associated with that node, we
+        may need to use index I where I < J. This will come up from the work on
+        https://bugs.webkit.org/show_bug.cgi?id=145204. And it has already come up in the past.
+        It seems like it would be best to just lift this restriction.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGInsertionSet.cpp: Added.
+        (JSC::DFG::InsertionSet::insertSlow):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::InsertionSet):
+        (JSC::DFG::InsertionSet::graph):
+        (JSC::DFG::InsertionSet::insert):
+        (JSC::DFG::InsertionSet::execute):
+
 2015-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Create ById IC for ByVal operation only when the specific Id comes more than once
