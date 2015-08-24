@@ -489,8 +489,8 @@ void VM::deleteAllCode()
 #if ENABLE(DFG_JIT)
         DFG::completeAllPlansForVM(*this);
 #endif
-        heap.deleteAllCompiledCode();
-        heap.deleteAllUnlinkedFunctionCode();
+        heap.deleteAllCodeBlocks();
+        heap.deleteAllUnlinkedCodeBlocks();
         heap.reportAbandonedObjectGraph();
     });
 }

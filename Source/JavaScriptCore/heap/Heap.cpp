@@ -902,7 +902,7 @@ std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
     return m_objectSpace.forEachLiveCell<RecordType>(iterationScope);
 }
 
-void Heap::deleteAllCompiledCode()
+void Heap::deleteAllCodeBlocks()
 {
     // If JavaScript is running, it's not safe to delete JavaScript code, since
     // we'll end up returning to deleted code.
@@ -925,7 +925,7 @@ void Heap::deleteAllCompiledCode()
     }
 #endif // ENABLE(DFG_JIT)
 
-    for (ExecutableBase* current : m_compiledCode) {
+    for (ExecutableBase* current : m_executables) {
         if (!current->isFunctionExecutable())
             continue;
         static_cast<FunctionExecutable*>(current)->clearCode();
@@ -936,28 +936,28 @@ void Heap::deleteAllCompiledCode()
     m_codeBlocks.deleteUnmarkedAndUnreferenced(FullCollection);
 }
 
-void Heap::deleteAllUnlinkedFunctionCode()
+void Heap::deleteAllUnlinkedCodeBlocks()
 {
-    for (ExecutableBase* current : m_compiledCode) {
+    for (ExecutableBase* current : m_executables) {
         if (!current->isFunctionExecutable())
             continue;
-        static_cast<FunctionExecutable*>(current)->clearUnlinkedCodeForRecompilation();
+        static_cast<FunctionExecutable*>(current)->unlinkedExecutable()->clearCode();
     }
 }
 
 void Heap::clearUnmarkedExecutables()
 {
     GCPHASE(ClearUnmarkedExecutables);
-    for (unsigned i = m_compiledCode.size(); i--;) {
-        ExecutableBase* current = m_compiledCode[i];
+    for (unsigned i = m_executables.size(); i--;) {
+        ExecutableBase* current = m_executables[i];
         if (isMarked(current))
             continue;
 
         // We do this because executable memory is limited on some platforms and because
         // CodeBlock requires eager finalization.
         ExecutableBase::clearCodeVirtual(current);
-        std::swap(m_compiledCode[i], m_compiledCode.last());
-        m_compiledCode.removeLast();
+        std::swap(m_executables[i], m_executables.last());
+        m_executables.removeLast();
     }
 }
 
@@ -1145,7 +1145,7 @@ void Heap::deleteOldCode(double gcStartTime)
     GCPHASE(DeleteOldCode);
     if (gcStartTime - m_lastCodeDiscardTime > minute) {
         m_vm->regExpCache()->deleteAllCode();
-        deleteAllCompiledCode();
+        deleteAllCodeBlocks();
         m_lastCodeDiscardTime = WTF::monotonicallyIncreasingTime();
     }
 }
@@ -1406,9 +1406,9 @@ void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
     WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
 }
 
-void Heap::addCompiledCode(ExecutableBase* executable)
+void Heap::addExecutable(ExecutableBase* executable)
 {
-    m_compiledCode.append(executable);
+    m_executables.append(executable);
 }
 
 void Heap::collectAllGarbageIfNotDoneRecently()

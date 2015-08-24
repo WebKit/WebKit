@@ -235,9 +235,14 @@ RefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     ParserError error;
     DebuggerMode debuggerMode = globalObject->hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
-    UnlinkedFunctionCodeBlock* unlinkedCodeBlock =
-    executable->m_unlinkedExecutable->codeBlockFor(*vm, executable->m_source, kind, debuggerMode, profilerMode, error, executable->isArrowFunction());
-    recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), firstLine(), lastLine(), startColumn(), endColumn()); 
+    UnlinkedFunctionCodeBlock* unlinkedCodeBlock = 
+        executable->m_unlinkedExecutable->unlinkedCodeBlockFor(
+            *vm, executable->m_source, kind, debuggerMode, profilerMode, error, 
+            executable->isArrowFunction());
+    recordParse(
+        executable->m_unlinkedExecutable->features(), 
+        executable->m_unlinkedExecutable->hasCapturedVariables(), firstLine(), 
+        lastLine(), startColumn(), endColumn()); 
     if (!unlinkedCodeBlock) {
         exception = vm->throwException(
             globalObject->globalExec(),
@@ -555,11 +560,6 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->m_codeBlockForConstruct->visitAggregate(visitor);
     visitor.append(&thisObject->m_unlinkedExecutable);
     visitor.append(&thisObject->m_singletonFunction);
-}
-
-void FunctionExecutable::clearUnlinkedCodeForRecompilation()
-{
-    m_unlinkedExecutable->clearCodeForRecompilation();
 }
 
 void FunctionExecutable::clearCode()

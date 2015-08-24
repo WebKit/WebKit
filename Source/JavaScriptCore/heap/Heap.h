@@ -149,7 +149,7 @@ public:
 
     typedef void (*Finalizer)(JSCell*);
     JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
-    void addCompiledCode(ExecutableBase*);
+    void addExecutable(ExecutableBase*);
 
     void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
     bool isSafeToCollect() const { return m_isSafeToCollect; }
@@ -208,8 +208,8 @@ public:
     size_t sizeBeforeLastFullCollection() const { return m_sizeBeforeLastFullCollect; }
     size_t sizeAfterLastFullCollection() const { return m_sizeAfterLastFullCollect; }
 
-    JS_EXPORT_PRIVATE void deleteAllCompiledCode();
-    void deleteAllUnlinkedFunctionCode();
+    JS_EXPORT_PRIVATE void deleteAllCodeBlocks();
+    void deleteAllUnlinkedCodeBlocks();
 
     void didAllocate(size_t);
     void didAbandon(size_t);
@@ -236,8 +236,6 @@ public:
     void unregisterWeakGCMap(void* weakGCMap);
 
     void addLogicallyEmptyWeakBlock(WeakBlock*);
-
-    Vector<ExecutableBase*>& compiledCode() { return m_compiledCode; }
 
 private:
     friend class CodeBlock;
@@ -392,7 +390,7 @@ private:
     double m_lastEdenGCLength;
     double m_lastCodeDiscardTime;
 
-    Vector<ExecutableBase*> m_compiledCode;
+    Vector<ExecutableBase*> m_executables;
 
     Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };

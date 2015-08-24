@@ -42,7 +42,7 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     if (!vm.entryScope) {
 #if ENABLE(ASSEMBLER)
         if (ExecutableAllocator::underMemoryPressure())
-            vm.heap.deleteAllCompiledCode();
+            vm.heap.deleteAllCodeBlocks();
 #endif
         vm.entryScope = this;
 

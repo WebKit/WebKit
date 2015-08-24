@@ -92,7 +92,7 @@ public:
     unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
 
-    UnlinkedFunctionCodeBlock* codeBlockFor(
+    UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(
         VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, 
         ParserError&, bool);
 
@@ -102,10 +102,10 @@ public:
 
     FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNumber = -1);
 
-    void clearCodeForRecompilation()
+    void clearCode()
     {
-        m_codeBlockForCall.clear();
-        m_codeBlockForConstruct.clear();
+        m_unlinkedCodeBlockForCall.clear();
+        m_unlinkedCodeBlockForConstruct.clear();
     }
 
     void recordParse(CodeFeatures features, bool hasCapturedVariables)
@@ -128,8 +128,8 @@ public:
 
 private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&);
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
+    WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
+    WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
 
     Identifier m_name;
     Identifier m_inferredName;

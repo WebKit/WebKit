@@ -47,7 +47,7 @@ static_assert(sizeof(UnlinkedFunctionExecutable) <= 256, "UnlinkedFunctionExecut
 
 const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutable", 0, 0, CREATE_METHOD_TABLE(UnlinkedFunctionExecutable) };
 
-static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(
+static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source,
     CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode,
     UnlinkedFunctionKind functionKind, ParserError& error, bool isArrowFunction)
@@ -110,8 +110,8 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     UnlinkedFunctionExecutable* thisObject = jsCast<UnlinkedFunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_codeBlockForCall);
-    visitor.append(&thisObject->m_codeBlockForConstruct);
+    visitor.append(&thisObject->m_unlinkedCodeBlockForCall);
+    visitor.append(&thisObject->m_unlinkedCodeBlockForConstruct);
     visitor.append(&thisObject->m_nameValue);
 }
 
@@ -178,22 +178,22 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     return executable;
 }
 
-UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(
+UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
     DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error, bool isArrowFunction)
 {
     switch (specializationKind) {
     case CodeForCall:
-        if (UnlinkedFunctionCodeBlock* codeBlock = m_codeBlockForCall.get())
+        if (UnlinkedFunctionCodeBlock* codeBlock = m_unlinkedCodeBlockForCall.get())
             return codeBlock;
         break;
     case CodeForConstruct:
-        if (UnlinkedFunctionCodeBlock* codeBlock = m_codeBlockForConstruct.get())
+        if (UnlinkedFunctionCodeBlock* codeBlock = m_unlinkedCodeBlockForConstruct.get())
             return codeBlock;
         break;
     }
 
-    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(
+    UnlinkedFunctionCodeBlock* result = generateUnlinkedFunctionCodeBlock(
         vm, this, source, specializationKind, debuggerMode, profilerMode, 
         isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, 
         error, isArrowFunction);
@@ -203,10 +203,10 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(
 
     switch (specializationKind) {
     case CodeForCall:
-        m_codeBlockForCall.set(vm, this, result);
+        m_unlinkedCodeBlockForCall.set(vm, this, result);
         break;
     case CodeForConstruct:
-        m_codeBlockForConstruct.set(vm, this, result);
+        m_unlinkedCodeBlockForConstruct.set(vm, this, result);
         break;
     }
     return result;

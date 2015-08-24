@@ -905,7 +905,7 @@ EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionDeleteAllCompiledCode(ExecState* exec)
 {
     JSLockHolder lock(exec);
-    exec->heap()->deleteAllCompiledCode();
+    exec->heap()->deleteAllCodeBlocks();
     return JSValue::encode(jsUndefined());
 }
 

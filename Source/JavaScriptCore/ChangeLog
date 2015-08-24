@@ -1,3 +1,67 @@
+2015-08-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Some renaming to clarify CodeBlock and UnlinkedCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=148391
+
+        Reviewed by Saam Barati.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        (JSC::generateFunctionCodeBlock): Deleted.
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.h: Call our CodeBlocks "unlinked"
+        in the name for clarity, since we are unlinked. 
+
+        * heap/Heap.cpp:
+        (JSC::Heap::objectTypeCounts):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::deleteAllUnlinkedCodeBlocks):
+        (JSC::Heap::clearUnmarkedExecutables):
+        (JSC::Heap::deleteOldCode):
+        (JSC::Heap::FinalizerOwner::finalize):
+        (JSC::Heap::addExecutable):
+        (JSC::Heap::collectAllGarbageIfNotDoneRecently):
+        (JSC::Heap::deleteAllCompiledCode): Deleted.
+        (JSC::Heap::deleteAllUnlinkedFunctionCode): Deleted.
+        (JSC::Heap::addCompiledCode): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::notifyIsSafeToCollect):
+        (JSC::Heap::isSafeToCollect):
+        (JSC::Heap::sizeBeforeLastFullCollection):
+        (JSC::Heap::sizeAfterLastFullCollection):
+        (JSC::Heap::compiledCode): Deleted.
+
+            deleteAllCompiledCode => deleteAllCodeBlocks because "compiled"
+            is a broad phrase these days.
+
+            m_compiledCode => m_executables for the same reason.
+
+            addCompiledCode => addExecutable for the same reason.
+
+            deleteAllUnlinkedFunctionCode => deleteAllUnlinkedCodeBlocks
+            for consistency.
+
+        * jsc.cpp:
+        (functionDeleteAllCompiledCode):
+
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor): codeBlockFor => unlinkedCodeBlockFor
+
+        (JSC::FunctionExecutable::clearUnlinkedCodeForRecompilation): Deleted.
+        It was strange to put this function on executable, since its name implied
+        that it only changed the executable, but it actually changed all cached
+        code. Now, a client that wants to change cached code must do so explicitly.
+
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::finishCreation):
+        * runtime/VM.cpp:
+        (JSC::VM::deleteAllCode):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope): Updated for renames above.
+
 2015-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::InsertionSet should be tolerant of occasional out-of-order insertions

@@ -421,7 +421,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        vm.heap.addCompiledCode(this); // Balanced by Heap::deleteUnmarkedCompiledCode().
+        vm.heap.addExecutable(this); // Balanced by Heap::deleteUnmarkedCompiledCode().
 
 #if ENABLE(CODEBLOCK_SAMPLING)
         if (SamplingTool* sampler = vm.interpreter->sampler())
@@ -640,7 +640,6 @@ public:
     JSString* nameValue() const { return m_unlinkedExecutable->nameValue(); }
     size_t parameterCount() const { return m_unlinkedExecutable->parameterCount(); } // Excluding 'this'!
 
-    void clearUnlinkedCodeForRecompilation();
     static void visitChildren(JSCell*, SlotVisitor&);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
