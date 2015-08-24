@@ -190,14 +190,14 @@ WebInspector.DashboardContainerView = class DashboardContainerView extends WebIn
             if (event.target !== dashboardView.element)
                 return;
 
-            dashboardView.element.removeEventListener("webkitAnimationEnd", animationEnded);
+            dashboardView.element.removeEventListener("animationEnd", animationEnded);
             dashboardView.element.classList.remove(animationClass);
             container._updateAdvanceArrowVisibility();
         }
 
         if (animationClass) {
             dashboardView.element.classList.add(animationClass);
-            dashboardView.element.addEventListener("webkitAnimationEnd", animationEnded);
+            dashboardView.element.addEventListener("animationEnd", animationEnded);
         }
 
         return dashboardView;
@@ -223,7 +223,7 @@ WebInspector.DashboardContainerView = class DashboardContainerView extends WebIn
             if (event.target !== dashboardView.element)
                 return;
 
-            dashboardView.element.removeEventListener("webkitAnimationEnd", animationEnded);
+            dashboardView.element.removeEventListener("animationEnd", animationEnded);
             dashboardView.element.classList.remove(animationClass);
             dashboardView.element.classList.remove(WebInspector.DashboardContainerView.VisibleDashboardStyleClassName);
             container._updateAdvanceArrowVisibility();
@@ -234,7 +234,7 @@ WebInspector.DashboardContainerView = class DashboardContainerView extends WebIn
 
         if (animationClass) {
             dashboardView.element.classList.add(animationClass);
-            dashboardView.element.addEventListener("webkitAnimationEnd", animationEnded);
+            dashboardView.element.addEventListener("animationEnd", animationEnded);
         } else
             dashboardView.element.classList.remove(WebInspector.DashboardContainerView.VisibleDashboardStyleClassName);
     }
