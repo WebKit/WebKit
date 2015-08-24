@@ -559,7 +559,11 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         // Apply the filters to the tree element and its descendants.
         var currentTreeElement = treeElement;
         while (currentTreeElement && !currentTreeElement.root) {
+            const currentTreeElementWasHidden = currentTreeElement.hidden;
             this.applyFiltersToTreeElement(currentTreeElement);
+            if (currentTreeElementWasHidden !== currentTreeElement.hidden)
+                this.representedObjectWasFiltered(currentTreeElement.representedObject, currentTreeElement.hidden);
+
             currentTreeElement = currentTreeElement.traverseNextTreeElement(false, treeElement, dontPopulate);
         }
 

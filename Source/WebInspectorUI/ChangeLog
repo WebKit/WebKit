@@ -1,3 +1,14 @@
+2015-08-23  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Filtered style not applied to graph elements during timeline recording
+        https://bugs.webkit.org/show_bug.cgi?id=148339
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        Check for hidden state change when applying filters to newly added tree elements.
+
 2015-08-23  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Drop webkit prefixes from animation, keyframes and transform
