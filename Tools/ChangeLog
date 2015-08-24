@@ -1,6 +1,6 @@
 2015-08-24  Andy Estes  <aestes@apple.com>
 
-        REGRESSION (r182356): WebKit2.BundleParameters fails on iOS
+        REGRESSION (r188851): WebKit2.BundleParameters fails on iOS
 
         * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Specify LD_RUNPATH_SEARCH_PATHS correctly for iOS.
 
