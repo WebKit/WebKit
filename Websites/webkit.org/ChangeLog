@@ -1,3 +1,11 @@
+2015-08-23  Saam barati  <sbarati@apple.com>
+
+        Change compiler-pipeline image for type profiler and code coverage profiler blog post.
+
+        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline-1x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline-2x.png: Added.
+        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline.png: Removed.
+
 2015-08-22  Saam barati  <sbarati@apple.com>
 
         Change image for type profiler and code coverage profiler blog post.
