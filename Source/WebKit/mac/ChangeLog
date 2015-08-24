@@ -1,3 +1,15 @@
+2015-08-23  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] REGRESSION (r182356): Provisional URL is incorrect in didReceiveServerRedirectForProvisionalLoadForFrame when Content Filtering is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=147872
+        rdar://problem/22044000
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad): Set provisionalURL using the URL argument.
+
 2015-08-23  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling back in r188803.

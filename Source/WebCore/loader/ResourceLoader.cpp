@@ -365,7 +365,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
     m_request = request;
 
     if (!redirectResponse.isNull() && !m_documentLoader->isCommitted())
-        frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
+        frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad(m_request.url());
 }
 
 void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback)

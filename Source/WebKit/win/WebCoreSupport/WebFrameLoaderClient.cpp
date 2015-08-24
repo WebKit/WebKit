@@ -330,7 +330,7 @@ void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
         frameLoadDelegatePriv->didHandleOnloadEventsForFrame(webView, m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
+void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad(const URL&)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;

@@ -96,7 +96,7 @@ private:
     virtual NSCachedURLResponse* willCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const override;
 
     virtual void dispatchDidHandleOnloadEvents() override;
-    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() override;
+    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad(const WebCore::URL&) override;
     virtual void dispatchDidCancelClientRedirect() override;
     virtual void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, double fireDate) override;
     virtual void dispatchDidChangeLocationWithinPage() override;

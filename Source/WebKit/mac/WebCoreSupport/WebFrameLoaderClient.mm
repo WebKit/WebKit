@@ -578,9 +578,9 @@ void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
         CallFrameLoadDelegate(implementations->didHandleOnloadEventsForFrameFunc, webView, @selector(webView:didHandleOnloadEventsForFrame:), m_webFrame.get());
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
+void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad(const URL& url)
 {
-    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader().provisionalDocumentLoader()->url().string();
+    m_webFrame->_private->provisionalURL = url.string();
 
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
