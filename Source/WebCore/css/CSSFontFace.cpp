@@ -98,9 +98,8 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
     }
 #endif
 
-    HashSet<CSSSegmentedFontFace*>::iterator end = m_segmentedFontFaces.end();
-    for (HashSet<CSSSegmentedFontFace*>::iterator it = m_segmentedFontFaces.begin(); it != end; ++it)
-        (*it)->fontLoaded(this);
+    for (auto* face : m_segmentedFontFaces)
+        face->fontLoaded(this);
 
 #if ENABLE(FONT_LOAD_EVENTS)
     if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled())

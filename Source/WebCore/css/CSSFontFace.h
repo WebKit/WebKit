@@ -44,7 +44,7 @@ class Font;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    static Ref<CSSFontFace> create(FontTraitsMask traitsMask, PassRefPtr<CSSFontFaceRule> rule, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(traitsMask, rule, isLocalFallback)); }
+    static Ref<CSSFontFace> create(FontTraitsMask traitsMask, RefPtr<CSSFontFaceRule>&& rule, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(traitsMask, WTF::move(rule), isLocalFallback)); }
 
     FontTraitsMask traitsMask() const { return m_traitsMask; }
 
@@ -92,7 +92,7 @@ public:
 #endif
 
 private:
-    CSSFontFace(FontTraitsMask traitsMask, PassRefPtr<CSSFontFaceRule> rule, bool isLocalFallback)
+    CSSFontFace(FontTraitsMask traitsMask, RefPtr<CSSFontFaceRule>&& rule, bool isLocalFallback)
         : m_traitsMask(traitsMask)
         , m_activeSource(0)
         , m_isLocalFallback(isLocalFallback)

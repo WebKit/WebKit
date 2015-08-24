@@ -237,7 +237,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description)
     return font.release();
 }
 
-void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
+Vector<FontTraitsMask> FontCache::getTraitsInFamily(const AtomicString& familyName)
 {
     RetainPtr<CFStringRef> familyNameStr = familyName.string().createCFString();
     CFStringRef familyNameStrPtr = familyNameStr.get();
@@ -245,12 +245,14 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     RetainPtr<CFArrayRef> matchedDescriptors = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptor.get(), nullptr));
     if (!matchedDescriptors)
-        return;
+        return { };
 
     CFIndex numMatches = CFArrayGetCount(matchedDescriptors.get());
     if (!numMatches)
-        return;
+        return { };
 
+    Vector<FontTraitsMask> traitsMasks;
+    traitsMasks.reserveInitialCapacity(numMatches);
     for (CFIndex i = 0; i < numMatches; ++i) {
         RetainPtr<CFDictionaryRef> traits = adoptCF((CFDictionaryRef)CTFontDescriptorCopyAttribute((CTFontDescriptorRef)CFArrayGetValueAtIndex(matchedDescriptors.get(), i), kCTFontTraitsAttribute));
         CFNumberRef resultRef = (CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait);
@@ -260,9 +262,10 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
             CFNumberGetValue(resultRef, kCFNumberIntType, &symbolicTraits);
             CGFloat weight = 0;
             CFNumberGetValue(weightRef, kCFNumberCGFloatType, &weight);
-            traitsMasks.append(toTraitsMask(symbolicTraits, weight));
+            traitsMasks.uncheckedAppend(toTraitsMask(symbolicTraits, weight));
         }
     }
+    return traitsMasks;
 }
 
 }

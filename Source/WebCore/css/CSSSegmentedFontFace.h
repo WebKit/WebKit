@@ -48,7 +48,7 @@ public:
 
     void fontLoaded(CSSFontFace*);
 
-    void appendFontFace(PassRefPtr<CSSFontFace>);
+    void appendFontFace(Ref<CSSFontFace>&&);
 
     FontRanges fontRanges(const FontDescription&);
 
@@ -75,7 +75,7 @@ private:
 
     CSSFontSelector* m_fontSelector;
     HashMap<FontDescriptionKey, FontRanges, FontDescriptionKeyHash, WTF::SimpleClassHashTraits<FontDescriptionKey>> m_descriptionToRangesMap;
-    Vector<RefPtr<CSSFontFace>, 1> m_fontFaces;
+    Vector<Ref<CSSFontFace>, 1> m_fontFaces;
 #if ENABLE(FONT_LOAD_EVENTS)
     Vector<RefPtr<LoadFontCallback>> m_callbacks;
 #endif

@@ -583,7 +583,7 @@ PassRefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID property
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
-        return 0;
+        return nullptr;
     return propertyAt(foundPropertyIndex).value();
 }
 
