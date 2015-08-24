@@ -204,8 +204,8 @@ struct BasicBlock : RefCounted<BasicBlock> {
     Vector<Node*> phis;
     PredecessorList predecessors;
     
-    Operands<Node*, NodePointerTraits> variablesAtHead;
-    Operands<Node*, NodePointerTraits> variablesAtTail;
+    Operands<Node*> variablesAtHead;
+    Operands<Node*> variablesAtTail;
     
     Operands<AbstractValue> valuesAtHead;
     Operands<AbstractValue> valuesAtTail;

@@ -40,11 +40,6 @@ struct Node;
 typedef uint32_t BlockIndex;
 static const BlockIndex NoBlock = UINT_MAX;
 
-struct NodePointerTraits {
-    static Node* defaultValue() { return 0; }
-    static bool isEmptyForDump(Node* value) { return !value; }
-};
-
 // Use RefChildren if the child ref counts haven't already been adjusted using
 // other means and either of the following is true:
 // - The node you're creating is MustGenerate.

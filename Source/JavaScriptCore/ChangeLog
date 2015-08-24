@@ -1,5 +1,19 @@
 2015-08-23  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Get rid of NodePointerTraits
+        https://bugs.webkit.org/show_bug.cgi?id=148340
+
+        Reviewed by Anders Carlsson.
+
+        NodePointerTraits does exactly the same thing has the default trait.
+
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGCommon.h:
+        (JSC::DFG::NodePointerTraits::defaultValue): Deleted.
+        (JSC::DFG::NodePointerTraits::isEmptyForDump): Deleted.
+
+2015-08-23  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Reduce the memory usage of BytecodeLivenessAnalysis
         https://bugs.webkit.org/show_bug.cgi?id=148353
 
