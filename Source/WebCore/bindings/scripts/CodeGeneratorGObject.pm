@@ -1036,7 +1036,7 @@ sub GenerateFunction {
 
     # If a method used to raise an exception, but was changed to not raise it anymore, the
     # API changes because we use a explicit GError parameter to handle the exceptions.
-    # In this case, it's better to keep the GError parameter even if it's unsused to keep
+    # In this case, it's better to keep the GError parameter even if it's unused to keep
     # the API compatibility.
     my $usedToRaiseException = FunctionUsedToRaiseException($functionName);
 
