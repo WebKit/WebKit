@@ -1,3 +1,17 @@
+2015-08-24  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add protocol test for existing error handling performed by the backend
+        https://bugs.webkit.org/show_bug.cgi?id=147097
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a bunch of test cases to cover existing error handling by the backend dispatcher.
+
+        * inspector/protocol/backend-dispatcher-argument-errors-expected.txt: Added.
+        * inspector/protocol/backend-dispatcher-argument-errors.html: Added.
+        * inspector/protocol/backend-dispatcher-malformed-message-errors-expected.txt: Added.
+        * inspector/protocol/backend-dispatcher-malformed-message-errors.html: Added.
+
 2015-08-24  Alexey Proskuryakov  <ap@apple.com>
 
         Mark flaky scrolling tests as such.

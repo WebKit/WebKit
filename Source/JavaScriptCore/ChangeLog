@@ -1,3 +1,16 @@
+2015-08-24  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add protocol test for existing error handling performed by the backend
+        https://bugs.webkit.org/show_bug.cgi?id=147097
+
+        Reviewed by Joseph Pecoraro.
+
+        A new test revealed that the protocol "method" parameter was being parsed in a naive way.
+        Rewrite it to use String::split and improve error checking to avoid failing later.
+
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::dispatch):
+
 2015-08-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Return JSInternalPromise as result of evaluateModule

@@ -26,6 +26,7 @@
 
 InspectorProtocol = {};
 InspectorProtocol._dispatchTable = [];
+InspectorProtocol._placeholderRequestIds = [];
 InspectorProtocol._requestId = -1;
 InspectorProtocol.eventHandler = {};
 
@@ -38,7 +39,7 @@ InspectorProtocol.sendCommand = function(methodOrObject, params, handler)
 
     this._dispatchTable[++this._requestId] = handler;
     let messageObject = {method, params, id: this._requestId};
-    this.sendMessage(messageObject);
+    this._sendMessage(messageObject);
 
     return this._requestId;
 }
@@ -46,10 +47,26 @@ InspectorProtocol.sendCommand = function(methodOrObject, params, handler)
 InspectorProtocol.awaitCommand = function(args)
 {
     let {method, params} = args;
+    let messageObject = {method, params, id: ++this._requestId};
+
+    return this.awaitMessage(messageObject);
+}
+
+InspectorProtocol.awaitMessage = function(messageObject)
+{
+    // Send a raw message to the backend. Mostly used to test the backend's error handling.
     return new Promise((resolve, reject) => {
-        this._dispatchTable[++this._requestId] = {resolve, reject};
-        let messageObject = {method, params, id: this._requestId};
-        this.sendMessage(messageObject);
+        let requestId = messageObject.id;
+
+        // If the caller did not provide an id, then make one up so that the response
+        // can be used to settle a promise.
+        if (typeof requestId !== "number") {
+            requestId = ++this._requestId;
+            this._placeholderRequestIds.push(requestId);
+        }
+
+        this._dispatchTable[requestId] = {resolve, reject};
+        this._sendMessage(messageObject);
     });
 }
 
@@ -65,6 +82,16 @@ InspectorProtocol.awaitEvent = function(args)
             resolve(message);
         }
     });
+}
+
+InspectorProtocol._sendMessage = function(messageObject)
+{
+    let messageString = typeof messageObject !== "string" ? JSON.stringify(messageObject) : messageObject;
+
+    if (ProtocolTest.dumpInspectorProtocolMessages)
+        console.log(`frontend: ${messageString}`);
+
+    InspectorFrontendHost.sendMessageToBackend(messageString);
 }
 
 InspectorProtocol.addEventListener = function(eventTypeOrObject, listener)
@@ -93,16 +120,6 @@ InspectorProtocol.addEventListener = function(eventTypeOrObject, listener)
     listeners.push(listener);
 }
 
-InspectorProtocol.sendMessage = function(messageObject)
-{
-    // This matches the debug dumping in InspectorBackend, which is bypassed
-    // by InspectorProtocol. Return messages should be dumped by InspectorBackend.
-    if (ProtocolTest.dumpInspectorProtocolMessages)
-        console.log("frontend: " + JSON.stringify(messageObject));
-
-    InspectorFrontendHost.sendMessageToBackend(JSON.stringify(messageObject));
-}
-
 InspectorProtocol.checkForError = function(responseObject)
 {
     if (responseObject.error) {
@@ -121,6 +138,12 @@ InspectorProtocol.dispatchMessageFromBackend = function(messageObject)
 
     // If the message has an id, then it is a reply to a command.
     let messageId = messageObject.id;
+
+    // If the id is 'null', then it may be an error response.
+    if (messageId === null)
+        messageId = InspectorProtocol._placeholderRequestIds.shift();
+
+    // If we could figure out a requestId, then dispatch the message.
     if (typeof messageId === "number") {
         let handler = InspectorProtocol._dispatchTable[messageId];
         if (!handler)
@@ -131,7 +154,7 @@ InspectorProtocol.dispatchMessageFromBackend = function(messageObject)
         else if (typeof handler === "object") {
             let {resolve, reject} = handler;
             if ("error" in messageObject)
-                reject(messageObject.error.message);
+                reject(messageObject.error);
             else
                 resolve(messageObject.result);
         }
@@ -149,7 +172,7 @@ InspectorProtocol.dispatchMessageFromBackend = function(messageObject)
         } else if (typeof handler === "object") {
             let {resolve, reject} = handler;
             if ("error" in messageObject)
-                reject(messageObject.error.message);
+                reject(messageObject.error);
             else
                 resolve(messageObject.result);
         }
