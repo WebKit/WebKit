@@ -111,7 +111,10 @@ if (window.testRunner && window.accessibilityController) {
    var fenceValues = new Array("{", "2", ",", "a", ",", "e", "}");
    for (var k = 0; k < fenceValues.length; k++) {
       var child = fenced.childAtIndex(k);
-      shouldBe("child.childAtIndex(0).stringValue", "'AXValue: " + fenceValues[k] + "'");
+      if (!child.childAtIndex(0))
+          shouldBe("child.stringValue", "'AXValue: " + fenceValues[k] + "'");
+      else
+          shouldBe("child.childAtIndex(0).stringValue", "'AXValue: " + fenceValues[k] + "'");
    }
 
    // Subscript

@@ -1,3 +1,16 @@
+2015-08-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Fix accessibility/mac/mathml-elements.html test
+        https://bugs.webkit.org/show_bug.cgi?id=148393
+
+        Reviewed by Chris Fleizach.
+
+        Updated the test to match the structure changes of mfenced/mo operators in bug 124838.
+
+        * accessibility/mac/mathml-elements-expected.txt:
+        * accessibility/mac/mathml-elements.html:
+        * platform/mac/TestExpectations:
+
 2015-08-24  Chris Dumez  <cdumez@apple.com>
 
         NodeList should not have a named getter
