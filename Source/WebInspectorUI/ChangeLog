@@ -1,3 +1,18 @@
+2015-08-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Rendering Frames filter checkboxes all become checked during recording
+        https://bugs.webkit.org/show_bug.cgi?id=148375
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegend):
+        Removed incorrect code that forced checked to true.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel._refreshFrameSelectionChart):
+        Persist legend item checkbox state when updating the chart.
+
 2015-08-23  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Filtered style not applied to graph elements during timeline recording

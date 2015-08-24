@@ -181,7 +181,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
                 keyElement = document.createElement("input");
                 keyElement.type = "checkbox";
                 keyElement.classList.add(className);
-                keyElement.checked = item.checked || true;
+                keyElement.checked = item.checked;
                 keyElement[WebInspector.ChartDetailsSectionRow.DataItemIdSymbol] = item.id;
 
                 keyElement.addEventListener("change", this._legendItemCheckboxValueChanged.bind(this));
