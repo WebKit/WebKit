@@ -190,9 +190,9 @@ void WebProcessProxy::shutDown()
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
 
-    for (VisitedLinkProvider* visitedLinkProvider : m_visitedLinkProviders)
-        visitedLinkProvider->removeProcess(*this);
-    m_visitedLinkProviders.clear();
+    for (VisitedLinkStore* visitedLinkStore : m_visitedLinkStores)
+        visitedLinkStore->removeProcess(*this);
+    m_visitedLinkStores.clear();
 
     for (WebUserContentControllerProxy* webUserContentControllerProxy : m_webUserContentControllerProxies)
         webUserContentControllerProxy->removeProcess(*this);
@@ -247,10 +247,10 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     shutDown();
 }
 
-void WebProcessProxy::addVisitedLinkProvider(VisitedLinkProvider& provider)
+void WebProcessProxy::addVisitedLinkStore(VisitedLinkStore& store)
 {
-    m_visitedLinkProviders.add(&provider);
-    provider.addProcess(*this);
+    m_visitedLinkStores.add(&store);
+    store.addProcess(*this);
 }
 
 void WebProcessProxy::addWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
@@ -259,10 +259,10 @@ void WebProcessProxy::addWebUserContentControllerProxy(WebUserContentControllerP
     proxy.addProcess(*this);
 }
 
-void WebProcessProxy::didDestroyVisitedLinkProvider(VisitedLinkProvider& provider)
+void WebProcessProxy::didDestroyVisitedLinkStore(VisitedLinkStore& store)
 {
-    ASSERT(m_visitedLinkProviders.contains(&provider));
-    m_visitedLinkProviders.remove(&provider);
+    ASSERT(m_visitedLinkStores.contains(&store));
+    m_visitedLinkStores.remove(&store);
 }
 
 void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)

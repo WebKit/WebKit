@@ -103,7 +103,7 @@ MESSAGE_RECEIVERS = \
     ViewGestureController \
     ViewGestureGeometryCollector \
     ViewUpdateDispatcher \
-    VisitedLinkProvider \
+    VisitedLinkStore \
     VisitedLinkTableController \
     WebConnection \
     WebCookieManager \

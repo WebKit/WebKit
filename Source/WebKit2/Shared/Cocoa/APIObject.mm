@@ -206,7 +206,7 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKUserScript alloc];
         break;
 
-    case Type::VisitedLinkProvider:
+    case Type::VisitedLinkStore:
         wrapper = [_WKVisitedLinkStore alloc];
         break;
 

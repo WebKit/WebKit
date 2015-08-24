@@ -146,7 +146,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
     , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
-    , m_visitedLinkProvider(VisitedLinkProvider::create())
+    , m_visitedLinkStore(VisitedLinkStore::create())
     , m_visitedLinksPopulated(false)
     , m_plugInAutoStartProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
@@ -841,8 +841,8 @@ PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, R
         pageConfiguration->setPageGroup(m_defaultPageGroup.ptr());
     if (!pageConfiguration->preferences())
         pageConfiguration->setPreferences(&pageConfiguration->pageGroup()->preferences());
-    if (!pageConfiguration->visitedLinkProvider())
-        pageConfiguration->setVisitedLinkProvider(m_visitedLinkProvider.ptr());
+    if (!pageConfiguration->visitedLinkStore())
+        pageConfiguration->setVisitedLinkStore(m_visitedLinkStore.ptr());
     if (!pageConfiguration->websiteDataStore()) {
         ASSERT(!pageConfiguration->sessionID().isValid());
         pageConfiguration->setWebsiteDataStore(m_websiteDataStore.get());

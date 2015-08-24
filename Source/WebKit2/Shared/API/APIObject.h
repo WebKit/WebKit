@@ -145,7 +145,7 @@ public:
         UserMediaPermissionRequest,
         Vibration,
         ViewportAttributes,
-        VisitedLinkProvider,
+        VisitedLinkStore,
         WebsiteDataRecord,
         WebsiteDataStore,
         WindowFeatures,

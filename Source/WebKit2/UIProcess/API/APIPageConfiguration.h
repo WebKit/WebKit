@@ -32,7 +32,7 @@
 #include <wtf/GetPtr.h>
 
 namespace WebKit {
-class VisitedLinkProvider;
+class VisitedLinkStore;
 class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
@@ -73,8 +73,8 @@ public:
     WebKit::WebPageProxy* relatedPage();
     void setRelatedPage(WebKit::WebPageProxy*);
 
-    WebKit::VisitedLinkProvider* visitedLinkProvider();
-    void setVisitedLinkProvider(WebKit::VisitedLinkProvider*);
+    WebKit::VisitedLinkStore* visitedLinkStore();
+    void setVisitedLinkStore(WebKit::VisitedLinkStore*);
 
     WebsiteDataStore* websiteDataStore();
     void setWebsiteDataStore(WebsiteDataStore*);
@@ -98,7 +98,7 @@ private:
     RefPtr<WebKit::WebPreferences> m_preferences;
     WebKit::WebPreferencesStore::ValueMap m_preferenceValues;
     RefPtr<WebKit::WebPageProxy> m_relatedPage;
-    RefPtr<WebKit::VisitedLinkProvider> m_visitedLinkProvider;
+    RefPtr<WebKit::VisitedLinkStore> m_visitedLinkStore;
 
     RefPtr<WebsiteDataStore> m_websiteDataStore;
     // FIXME: We currently have to pass the session ID separately here to support the legacy private browsing session.

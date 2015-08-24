@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VisitedLinkProvider_h
-#define VisitedLinkProvider_h
+#ifndef VisitedLinkStore_h
+#define VisitedLinkStore_h
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
@@ -41,12 +41,12 @@ namespace WebKit {
 class WebPageProxy;
 class WebProcessProxy;
     
-class VisitedLinkProvider final : public API::ObjectImpl<API::Object::Type::VisitedLinkProvider>, private IPC::MessageReceiver, public WebProcessLifetimeObserver {
+class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, private IPC::MessageReceiver, public WebProcessLifetimeObserver {
 public:
-    static Ref<VisitedLinkProvider> create();
+    static Ref<VisitedLinkStore> create();
 
-    explicit VisitedLinkProvider();
-    virtual ~VisitedLinkProvider();
+    explicit VisitedLinkStore();
+    virtual ~VisitedLinkStore();
 
     uint64_t identifier() const { return m_identifier; }
 
@@ -80,9 +80,9 @@ private:
     VisitedLinkTable m_table;
 
     HashSet<WebCore::LinkHash, WebCore::LinkHashHash> m_pendingVisitedLinks;
-    RunLoop::Timer<VisitedLinkProvider> m_pendingVisitedLinksTimer;
+    RunLoop::Timer<VisitedLinkStore> m_pendingVisitedLinksTimer;
 };
 
 } // namespace WebKit
 
-#endif // VisitedLinkProvider_h
+#endif // VisitedLinkStore_h

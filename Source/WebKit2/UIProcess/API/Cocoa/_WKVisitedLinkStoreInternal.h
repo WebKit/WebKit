@@ -27,22 +27,22 @@
 
 #if WK_API_ENABLED
 
-#import "VisitedLinkProvider.h"
+#import "VisitedLinkStore.h"
 #import "WKObject.h"
 
 namespace WebKit {
 
-inline _WKVisitedLinkStore *wrapper(VisitedLinkProvider& visitedLinkProvider)
+inline _WKVisitedLinkStore *wrapper(VisitedLinkStore& visitedLinkStore)
 {
-    ASSERT([visitedLinkProvider.wrapper() isKindOfClass:[_WKVisitedLinkStore class]]);
-    return (_WKVisitedLinkStore *)visitedLinkProvider.wrapper();
+    ASSERT([visitedLinkStore.wrapper() isKindOfClass:[_WKVisitedLinkStore class]]);
+    return (_WKVisitedLinkStore *)visitedLinkStore.wrapper();
 }
 
 }
 
 @interface _WKVisitedLinkStore () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::VisitedLinkProvider> _visitedLinkProvider;
+    API::ObjectStorage<WebKit::VisitedLinkStore> _visitedLinkStore;
 }
 
 @end

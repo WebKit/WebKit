@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "VisitedLinkProvider.h"
+#include "VisitedLinkStore.h"
 
 #include "SharedMemory.h"
-#include "VisitedLinkProviderMessages.h"
+#include "VisitedLinkStoreMessages.h"
 #include "VisitedLinkTable.h"
 #include "VisitedLinkTableControllerMessages.h"
 #include "WebProcessMessages.h"
@@ -47,35 +47,35 @@ static uint64_t generateIdentifier()
     return ++identifier;
 }
 
-Ref<VisitedLinkProvider> VisitedLinkProvider::create()
+Ref<VisitedLinkStore> VisitedLinkStore::create()
 {
-    return adoptRef(*new VisitedLinkProvider);
+    return adoptRef(*new VisitedLinkStore);
 }
 
-VisitedLinkProvider::~VisitedLinkProvider()
+VisitedLinkStore::~VisitedLinkStore()
 {
     for (WebProcessProxy* process : m_processes) {
-        process->removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
-        process->didDestroyVisitedLinkProvider(*this);
+        process->removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), m_identifier);
+        process->didDestroyVisitedLinkStore(*this);
     }
 }
 
-VisitedLinkProvider::VisitedLinkProvider()
+VisitedLinkStore::VisitedLinkStore()
     : m_identifier(generateIdentifier())
     , m_keyCount(0)
     , m_tableSize(0)
-    , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkProvider::pendingVisitedLinksTimerFired)
+    , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkStore::pendingVisitedLinksTimerFired)
 {
 }
 
-void VisitedLinkProvider::addProcess(WebProcessProxy& process)
+void VisitedLinkStore::addProcess(WebProcessProxy& process)
 {
     ASSERT(process.state() == WebProcessProxy::State::Running);
 
     if (!m_processes.add(&process).isNewEntry)
         return;
 
-    process.addMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier, *this);
+    process.addMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), m_identifier, *this);
 
     if (!m_keyCount)
         return;
@@ -85,15 +85,15 @@ void VisitedLinkProvider::addProcess(WebProcessProxy& process)
     sendTable(process);
 }
 
-void VisitedLinkProvider::removeProcess(WebProcessProxy& process)
+void VisitedLinkStore::removeProcess(WebProcessProxy& process)
 {
     ASSERT(m_processes.contains(&process));
 
     m_processes.remove(&process);
-    process.removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
+    process.removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), m_identifier);
 }
 
-void VisitedLinkProvider::addVisitedLinkHash(LinkHash linkHash)
+void VisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
 {
     m_pendingVisitedLinks.add(linkHash);
 
@@ -101,7 +101,7 @@ void VisitedLinkProvider::addVisitedLinkHash(LinkHash linkHash)
         m_pendingVisitedLinksTimer.startOneShot(0);
 }
 
-void VisitedLinkProvider::removeAll()
+void VisitedLinkStore::removeAll()
 {
     m_pendingVisitedLinksTimer.stop();
     m_pendingVisitedLinks.clear();
@@ -115,17 +115,17 @@ void VisitedLinkProvider::removeAll()
     }
 }
 
-void VisitedLinkProvider::webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&)
+void VisitedLinkStore::webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&)
 {
     // FIXME: Implement.
 }
 
-void VisitedLinkProvider::webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&)
+void VisitedLinkStore::webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&)
 {
     // FIXME: Implement.
 }
 
-void VisitedLinkProvider::addVisitedLinkHashFromPage(uint64_t pageID, LinkHash linkHash)
+void VisitedLinkStore::addVisitedLinkHashFromPage(uint64_t pageID, LinkHash linkHash)
 {
     if (WebPageProxy* webPageProxy = WebProcessProxy::webPage(pageID)) {
         if (!webPageProxy->addsVisitedLinks())
@@ -164,7 +164,7 @@ static unsigned tableSizeForKeyCount(unsigned keyCount)
     return tableSize;
 }
 
-void VisitedLinkProvider::pendingVisitedLinksTimerFired()
+void VisitedLinkStore::pendingVisitedLinksTimerFired()
 {
     unsigned currentTableSize = m_tableSize;
     unsigned newTableSize = tableSizeForKeyCount(m_keyCount + m_pendingVisitedLinks.size());
@@ -200,7 +200,7 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
     }
 }
 
-void VisitedLinkProvider::resizeTable(unsigned newTableSize)
+void VisitedLinkStore::resizeTable(unsigned newTableSize)
 {
     RefPtr<SharedMemory> newTableMemory = SharedMemory::allocate(newTableSize * sizeof(LinkHash));
 
@@ -245,7 +245,7 @@ void VisitedLinkProvider::resizeTable(unsigned newTableSize)
         sendTable(*process);
 }
 
-void VisitedLinkProvider::sendTable(WebProcessProxy& process)
+void VisitedLinkStore::sendTable(WebProcessProxy& process)
 {
     ASSERT(process.processPool().processes().contains(&process));
 

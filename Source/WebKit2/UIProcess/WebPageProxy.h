@@ -183,7 +183,7 @@ class RemoteScrollingCoordinatorProxy;
 class StringPairVector;
 class UserData;
 class ViewSnapshot;
-class VisitedLinkProvider;
+class VisitedLinkStore;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContextMenuProxy;
@@ -1501,7 +1501,7 @@ private:
     WebProcessLifetimeTracker m_webProcessLifetimeTracker { *this };
 
     const RefPtr<WebUserContentControllerProxy> m_userContentController;
-    Ref<VisitedLinkProvider> m_visitedLinkProvider;
+    Ref<VisitedLinkStore> m_visitedLinkStore;
     Ref<WebsiteDataStore> m_websiteDataStore;
 
     RefPtr<WebFrameProxy> m_mainFrame;

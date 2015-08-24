@@ -28,7 +28,7 @@
 
 #if WK_API_ENABLED
 
-#import "VisitedLinkProvider.h"
+#import "VisitedLinkStore.h"
 #import <WebCore/LinkHash.h>
 
 @implementation _WKVisitedLinkStore
@@ -38,14 +38,14 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::VisitedLinkProvider>(self);
+    API::Object::constructInWrapper<WebKit::VisitedLinkStore>(self);
 
     return self;
 }
 
 - (void)dealloc
 {
-    _visitedLinkProvider->~VisitedLinkProvider();
+    _visitedLinkStore->~VisitedLinkStore();
 
     [super dealloc];
 }
@@ -54,19 +54,19 @@
 {
     auto linkHash = WebCore::visitedLinkHash(URL.absoluteString);
 
-    _visitedLinkProvider->addVisitedLinkHash(linkHash);
+    _visitedLinkStore->addVisitedLinkHash(linkHash);
 }
 
 - (void)removeAll
 {
-    _visitedLinkProvider->removeAll();
+    _visitedLinkStore->removeAll();
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *_visitedLinkProvider;
+    return *_visitedLinkStore;
 }
 
 @end

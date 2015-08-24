@@ -1,3 +1,90 @@
+2015-08-24  Anders Carlsson  <andersca@apple.com>
+
+        Rename VisitedLinkProvider to VisitedLinkStore
+        https://bugs.webkit.org/show_bug.cgi?id=148406
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make:
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy):
+        (API::PageConfiguration::visitedLinkStore):
+        (API::PageConfiguration::setVisitedLinkStore):
+        (API::PageConfiguration::visitedLinkProvider): Deleted.
+        (API::PageConfiguration::setVisitedLinkProvider): Deleted.
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextAddVisitedLink):
+        (WKContextClearVisitedLinks):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.mm:
+        (-[_WKVisitedLinkStore init]):
+        (-[_WKVisitedLinkStore dealloc]):
+        (-[_WKVisitedLinkStore addVisitedLinkWithURL:]):
+        (-[_WKVisitedLinkStore removeAll]):
+        (-[_WKVisitedLinkStore _apiObject]):
+        * UIProcess/API/Cocoa/_WKVisitedLinkStoreInternal.h:
+        (WebKit::wrapper):
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::generateIdentifier): Deleted.
+        (WebKit::VisitedLinkProvider::create): Deleted.
+        (WebKit::VisitedLinkProvider::~VisitedLinkProvider): Deleted.
+        (WebKit::VisitedLinkProvider::VisitedLinkProvider): Deleted.
+        (WebKit::VisitedLinkProvider::addProcess): Deleted.
+        (WebKit::VisitedLinkProvider::removeProcess): Deleted.
+        (WebKit::VisitedLinkProvider::addVisitedLinkHash): Deleted.
+        (WebKit::VisitedLinkProvider::removeAll): Deleted.
+        (WebKit::VisitedLinkProvider::webProcessWillOpenConnection): Deleted.
+        (WebKit::VisitedLinkProvider::webProcessDidCloseConnection): Deleted.
+        (WebKit::VisitedLinkProvider::addVisitedLinkHashFromPage): Deleted.
+        (WebKit::nextPowerOf2): Deleted.
+        (WebKit::tableSizeForKeyCount): Deleted.
+        (WebKit::VisitedLinkProvider::pendingVisitedLinksTimerFired): Deleted.
+        (WebKit::VisitedLinkProvider::resizeTable): Deleted.
+        (WebKit::VisitedLinkProvider::sendTable): Deleted.
+        * UIProcess/VisitedLinkStore.cpp: Renamed from Source/WebKit2/UIProcess/VisitedLinkProvider.cpp.
+        (WebKit::generateIdentifier):
+        (WebKit::VisitedLinkStore::create):
+        (WebKit::VisitedLinkStore::~VisitedLinkStore):
+        (WebKit::VisitedLinkStore::VisitedLinkStore):
+        (WebKit::VisitedLinkStore::addProcess):
+        (WebKit::VisitedLinkStore::removeProcess):
+        (WebKit::VisitedLinkStore::addVisitedLinkHash):
+        (WebKit::VisitedLinkStore::removeAll):
+        (WebKit::VisitedLinkStore::webProcessWillOpenConnection):
+        (WebKit::VisitedLinkStore::webProcessDidCloseConnection):
+        (WebKit::VisitedLinkStore::addVisitedLinkHashFromPage):
+        (WebKit::nextPowerOf2):
+        (WebKit::tableSizeForKeyCount):
+        (WebKit::VisitedLinkStore::pendingVisitedLinksTimerFired):
+        (WebKit::VisitedLinkStore::resizeTable):
+        (WebKit::VisitedLinkStore::sendTable):
+        * UIProcess/VisitedLinkStore.h: Renamed from Source/WebKit2/UIProcess/VisitedLinkProvider.h.
+        * UIProcess/VisitedLinkStore.messages.in: Renamed from Source/WebKit2/UIProcess/VisitedLinkProvider.messages.in.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::processDidFinishLaunching):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::addVisitedLinkStore):
+        (WebKit::WebProcessProxy::didDestroyVisitedLinkStore):
+        (WebKit::WebProcessProxy::addVisitedLinkProvider): Deleted.
+        (WebKit::WebProcessProxy::didDestroyVisitedLinkProvider): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+
 2015-08-24  Tim Horton  <timothy_horton@apple.com>
 
         (Finally...) get rid of WKViewIOS

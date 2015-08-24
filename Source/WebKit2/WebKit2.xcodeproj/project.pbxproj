@@ -149,8 +149,8 @@
 		1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC90E124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp */; };
 		1A0F29CB120B37160053D1B9 /* VisitedLinkTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */; };
 		1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */; };
-		1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */; };
-		1A0F29E4120B44420053D1B9 /* VisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */; };
+		1A0F29E3120B44420053D1B9 /* VisitedLinkStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkStore.cpp */; };
+		1A0F29E4120B44420053D1B9 /* VisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29E2120B44420053D1B9 /* VisitedLinkStore.h */; };
 		1A158419189044F50017616C /* WKProcessPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A158417189044F50017616C /* WKProcessPool.mm */; };
 		1A15841A189044F50017616C /* WKProcessPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A158418189044F50017616C /* WKProcessPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */; };
@@ -272,8 +272,8 @@
 		1A5B1C5418987EDF004FCF9B /* WebDocumentLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */; };
 		1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */; };
 		1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */; };
-		1A60224C18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60224A18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp */; };
-		1A60224D18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60224B18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h */; };
+		1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60224A18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp */; };
+		1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60224B18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h */; };
 		1A6280C51919949F006AD9F9 /* WebKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6280C41919949F006AD9F9 /* WebKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6280C61919950C006AD9F9 /* WebKitPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A6280F019199800006AD9F9 /* WebKit2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6280EE19199800006AD9F9 /* WebKit2.m */; };
@@ -2234,8 +2234,8 @@
 		1A0EC90E124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnectionManager.cpp; sourceTree = "<group>"; };
 		1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkTable.cpp; sourceTree = "<group>"; };
 		1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTable.h; sourceTree = "<group>"; };
-		1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
-		1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProvider.h; sourceTree = "<group>"; };
+		1A0F29E1120B44420053D1B9 /* VisitedLinkStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkStore.cpp; sourceTree = "<group>"; };
+		1A0F29E2120B44420053D1B9 /* VisitedLinkStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkStore.h; sourceTree = "<group>"; };
 		1A158417189044F50017616C /* WKProcessPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessPool.mm; sourceTree = "<group>"; };
 		1A158418189044F50017616C /* WKProcessPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessPool.h; sourceTree = "<group>"; };
 		1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
@@ -2371,9 +2371,9 @@
 		1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDocumentLoader.cpp; sourceTree = "<group>"; };
 		1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentLoader.h; sourceTree = "<group>"; };
 		1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerState.h; sourceTree = "<group>"; };
-		1A60224918C16B0800C3E8C9 /* VisitedLinkProvider.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = VisitedLinkProvider.messages.in; sourceTree = "<group>"; };
-		1A60224A18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProviderMessageReceiver.cpp; sourceTree = "<group>"; };
-		1A60224B18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProviderMessages.h; sourceTree = "<group>"; };
+		1A60224918C16B0800C3E8C9 /* VisitedLinkStore.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = VisitedLinkStore.messages.in; sourceTree = "<group>"; };
+		1A60224A18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkStoreMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A60224B18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkStoreMessages.h; sourceTree = "<group>"; };
 		1A6280C41919949F006AD9F9 /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; };
 		1A6280C61919950C006AD9F9 /* WebKitPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPrivate.h; sourceTree = "<group>"; };
 		1A6280D0191997BD006AD9F9 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6114,9 +6114,9 @@
 				4A410F3B19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.cpp */,
 				4A410F3C19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.h */,
 				2DAF4FFA1B636181006013D6 /* ViewGestureController.cpp */,
-				1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */,
-				1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */,
-				1A60224918C16B0800C3E8C9 /* VisitedLinkProvider.messages.in */,
+				1A0F29E1120B44420053D1B9 /* VisitedLinkStore.cpp */,
+				1A0F29E2120B44420053D1B9 /* VisitedLinkStore.h */,
+				1A60224918C16B0800C3E8C9 /* VisitedLinkStore.messages.in */,
 				BC72BA1B11E64907001EB4EA /* WebBackForwardList.cpp */,
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,
 				F036978715F4BF0500C3A80E /* WebColorPicker.cpp */,
@@ -7217,8 +7217,8 @@
 				2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */,
 				2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */,
 				2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */,
-				1A60224A18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp */,
-				1A60224B18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h */,
+				1A60224A18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp */,
+				1A60224B18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h */,
 				1A8E7D3A18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp */,
 				1A8E7D3B18C15149005A702A /* VisitedLinkTableControllerMessages.h */,
 				1A1FEC1A1627B45600700F6D /* WebConnectionMessageReceiver.cpp */,
@@ -7890,8 +7890,8 @@
 				2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */,
 				2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */,
 				2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */,
-				1A0F29E4120B44420053D1B9 /* VisitedLinkProvider.h in Headers */,
-				1A60224D18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h in Headers */,
+				1A0F29E4120B44420053D1B9 /* VisitedLinkStore.h in Headers */,
+				1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */,
 				1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */,
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
@@ -9716,8 +9716,8 @@
 				2684054F18B86C8E0022C38B /* ViewUpdateDispatcher.cpp in Sources */,
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
 				2684054C18B86C350022C38B /* VisibleContentRectUpdateInfo.cpp in Sources */,
-				1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */,
-				1A60224C18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp in Sources */,
+				1A0F29E3120B44420053D1B9 /* VisitedLinkStore.cpp in Sources */,
+				1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */,
 				1A0F29CB120B37160053D1B9 /* VisitedLinkTable.cpp in Sources */,
 				1AF4CEEF18BC481800BC2D34 /* VisitedLinkTableController.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,

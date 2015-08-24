@@ -26,7 +26,7 @@
 #include "config.h"
 #include "VisitedLinkTableController.h"
 
-#include "VisitedLinkProviderMessages.h"
+#include "VisitedLinkStoreMessages.h"
 #include "VisitedLinkTableControllerMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -85,7 +85,7 @@ void VisitedLinkTableController::addVisitedLink(Page& page, LinkHash linkHash)
     if (!webPage)
         return;
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::VisitedLinkProvider::AddVisitedLinkHashFromPage(webPage->pageID(), linkHash), m_identifier);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::VisitedLinkStore::AddVisitedLinkHashFromPage(webPage->pageID(), linkHash), m_identifier);
 }
 
 void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle& handle)
