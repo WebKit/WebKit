@@ -35,4 +35,4 @@
 #import <WebKit/_WKFormInputSession.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKThumbnailView.h>
-#import <WebKit/_WKVisitedLinkProvider.h>
+#import <WebKit/_WKVisitedLinkStore.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKFoundation.h>
+#import <WebKit/_WKVisitedLinkStore.h>
 
 #if WK_API_ENABLED
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface _WKVisitedLinkProvider : NSObject
-
-- (void)addVisitedLinkWithURL:(NSURL *)URL;
-- (void)removeAll;
-
+WK_CLASS_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "Please use _WKVisitedLinkStore instead")
+@interface _WKVisitedLinkProvider : _WKVisitedLinkStore
 @end
 
 #endif

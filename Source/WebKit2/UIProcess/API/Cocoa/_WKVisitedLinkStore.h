@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "_WKVisitedLinkProvider.h"
+#import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@implementation _WKVisitedLinkProvider
+WK_CLASS_AVAILABLE(10_10, 8_0)
+@interface _WKVisitedLinkStore : NSObject
+
+- (void)addVisitedLinkWithURL:(NSURL *)URL;
+- (void)removeAll;
+
 @end
 
 #endif

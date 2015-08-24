@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "_WKVisitedLinkProvider.h"
+#import "config.h"
+#import "_WKVisitedLinkStoreInternal.h"
 
 #if WK_API_ENABLED
 
-@implementation _WKVisitedLinkProvider
+#import "VisitedLinkProvider.h"
+#import <WebCore/LinkHash.h>
+
+@implementation _WKVisitedLinkStore
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<WebKit::VisitedLinkProvider>(self);
+
+    return self;
+}
+
+- (void)dealloc
+{
+    _visitedLinkProvider->~VisitedLinkProvider();
+
+    [super dealloc];
+}
+
+- (void)addVisitedLinkWithURL:(NSURL *)URL
+{
+    auto linkHash = WebCore::visitedLinkHash(URL.absoluteString);
+
+    _visitedLinkProvider->addVisitedLinkHash(linkHash);
+}
+
+- (void)removeAll
+{
+    _visitedLinkProvider->removeAll();
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_visitedLinkProvider;
+}
+
 @end
 
 #endif

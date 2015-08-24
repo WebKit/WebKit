@@ -76,7 +76,7 @@
 #import "_WKFormDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
-#import "_WKVisitedLinkProviderInternal.h"
+#import "_WKVisitedLinkStoreInternal.h"
 #import <WebCore/IOSurface.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
@@ -310,7 +310,7 @@ static bool shouldAllowPictureInPictureMediaPlayback()
         pageConfiguration->setRelatedPage(relatedWebView->_page.get());
 
     pageConfiguration->setUserContentController([_configuration userContentController]->_userContentControllerProxy.get());
-    pageConfiguration->setVisitedLinkProvider([_configuration _visitedLinkProvider]->_visitedLinkProvider.get());
+    pageConfiguration->setVisitedLinkProvider([_configuration _visitedLinkStore]->_visitedLinkProvider.get());
     pageConfiguration->setWebsiteDataStore([_configuration websiteDataStore]->_websiteDataStore.get());
     pageConfiguration->setTreatsSHA1SignedCertificatesAsInsecure([_configuration _treatsSHA1SignedCertificatesAsInsecure]);
 

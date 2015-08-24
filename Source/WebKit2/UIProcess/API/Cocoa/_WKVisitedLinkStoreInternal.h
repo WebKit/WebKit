@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKVisitedLinkProvider.h"
+#import "_WKVisitedLinkStore.h"
 
 #if WK_API_ENABLED
 
@@ -32,15 +32,15 @@
 
 namespace WebKit {
 
-inline _WKVisitedLinkProvider *wrapper(VisitedLinkProvider& visitedLinkProvider)
+inline _WKVisitedLinkStore *wrapper(VisitedLinkProvider& visitedLinkProvider)
 {
-    ASSERT([visitedLinkProvider.wrapper() isKindOfClass:[_WKVisitedLinkProvider class]]);
-    return (_WKVisitedLinkProvider *)visitedLinkProvider.wrapper();
+    ASSERT([visitedLinkProvider.wrapper() isKindOfClass:[_WKVisitedLinkStore class]]);
+    return (_WKVisitedLinkStore *)visitedLinkProvider.wrapper();
 }
 
 }
 
-@interface _WKVisitedLinkProvider () <WKObject> {
+@interface _WKVisitedLinkStore () <WKObject> {
 @package
     API::ObjectStorage<WebKit::VisitedLinkProvider> _visitedLinkProvider;
 }

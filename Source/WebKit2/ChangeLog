@@ -1,3 +1,44 @@
+2015-08-24  Anders Carlsson  <andersca@apple.com>
+
+        Rename _WKVisitedLinkProvider to _WKVisitedLinkStore for consistency
+        https://bugs.webkit.org/show_bug.cgi?id=148398
+
+        Reviewed by Tim Horton.
+
+        We'd like to call the abstract classes providers and the concrete classes stores in WebKit. Begin by renaming
+        _WKVisitedLinkProvider to _WKVisitedLinkStore, but keep the former around as a deprecated class.
+
+        * Shared/API/Cocoa/WebKitPrivate.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _visitedLinkStore]):
+        (-[WKWebViewConfiguration _setVisitedLinkStore:]):
+        (-[WKWebViewConfiguration _visitedLinkProvider]):
+        (-[WKWebViewConfiguration _setVisitedLinkProvider:]):
+        (-[WKWebViewConfiguration _validate]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm:
+        (-[_WKVisitedLinkProvider init]): Deleted.
+        (-[_WKVisitedLinkProvider dealloc]): Deleted.
+        (-[_WKVisitedLinkProvider addVisitedLinkWithURL:]): Deleted.
+        (-[_WKVisitedLinkProvider removeAll]): Deleted.
+        (-[_WKVisitedLinkProvider _apiObject]): Deleted.
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKVisitedLinkProvider.h.
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm.
+        (-[_WKVisitedLinkStore init]):
+        (-[_WKVisitedLinkStore dealloc]):
+        (-[_WKVisitedLinkStore addVisitedLinkWithURL:]):
+        (-[_WKVisitedLinkStore removeAll]):
+        (-[_WKVisitedLinkStore _apiObject]):
+        * UIProcess/API/Cocoa/_WKVisitedLinkStoreInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/_WKVisitedLinkProviderInternal.h.
+        (WebKit::wrapper):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-08-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Use _NSScrollingPredominantAxisFilter for wheel event filtering on Mac
