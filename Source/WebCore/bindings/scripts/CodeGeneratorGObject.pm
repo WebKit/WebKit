@@ -1006,6 +1006,13 @@ sub GetEffectiveFunctionName {
     return $functionName;
 }
 
+sub FunctionUsedToRaiseException {
+    my $functionName = shift;
+
+    return $functionName eq "webkit_dom_document_create_node_iterator"
+        || $functionName eq "webkit_dom_document_create_tree_walker";
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -1021,6 +1028,12 @@ sub GenerateFunction {
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
     my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
+
+    # If a method used to raise an exception, but was changed to not raise it anymore, the
+    # API changes because we use a explicit GError parameter to handle the exceptions.
+    # In this case, it's better to keep the GError parameter even if it's unsused to keep
+    # the API compatibility.
+    my $usedToRaiseException = FunctionUsedToRaiseException($functionName);
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     my $parentConditionalString = $codeGenerator->GenerateConditionalString($parentNode);
@@ -1065,8 +1078,8 @@ sub GenerateFunction {
         $implIncludes{"WebKitDOM${functionSigType}Private.h"} = 1;
     }
 
-    $functionSig .= ", GError** error" if $raisesException;
-    $symbolSig .= ", GError**" if $raisesException;
+    $functionSig .= ", GError** error" if $raisesException || $usedToRaiseException;
+    $symbolSig .= ", GError**" if $raisesException || $usedToRaiseException;
 
     my $symbol = "$returnType $functionName($symbolSig)";
     my $isStableClass = scalar(@stableSymbols);
@@ -1097,7 +1110,7 @@ sub GenerateFunction {
         }
         push(@functionHeader, " * \@${paramName}:${paramAnnotations} A #${paramType}");
     }
-    push(@functionHeader, " * \@error: #GError") if $raisesException;
+    push(@functionHeader, " * \@error: #GError") if $raisesException || $usedToRaiseException;
     push(@functionHeader, " *");
     my $returnTypeName = $returnType;
     my $hasReturnTag = 0;
@@ -1154,6 +1167,8 @@ sub GenerateFunction {
     if ($raisesException) {
         $gReturnMacro = GetGReturnMacro("error", "GError", $returnType);
         push(@cBody, $gReturnMacro);
+    } elsif ($usedToRaiseException) {
+        push(@cBody, "    UNUSED_PARAM(error);\n");
     }
 
     # The WebKit::core implementations check for null already; no need to duplicate effort.
