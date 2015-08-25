@@ -1,3 +1,13 @@
+2015-08-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] r186800 broke the build on Ubuntu 14.04
+        https://bugs.webkit.org/show_bug.cgi?id=147559
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindGTK3.cmake: Always define GTK3_SUPPORTS_X11 and GTK3_SUPPORTS_WAYLAND.
+        * Source/cmake/OptionsGTK.cmake: Autodetect support for X11 and Wayland backends.
+
 2015-08-25  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Build does not generate debug info.
