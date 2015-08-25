@@ -1,3 +1,15 @@
+2015-08-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening
+        <rdar://problem/22420410>
+
+        Unreviewed.
+
+        Updating test expected results according to Kinsoku Shori.
+
+        * css3/line-break-language-sensitive/line-break-auto-hyphens-expected.html:
+        * css3/line-break-language-sensitive/line-break-auto-sound-marks-expected.html:
+
 2015-08-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix typo introduced in r188917
