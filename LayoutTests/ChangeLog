@@ -1,3 +1,9 @@
+2015-08-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix typo introduced in r188917
+
+        * TestExpectations:
+
 2015-08-24  Brent Fulgham  <bfulgham@apple.com>
 
         Wheel events stop propagating when target element is removed from DOM

@@ -127,7 +127,7 @@ webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
 webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
 webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 
-# These conformace tests are no longer in sync with the latest specification
+# These conformance tests are no longer in sync with the latest specification
 # and expect compareDocumentPosition() to return:
 # DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_DISCONNECTED
 # for disconnected nodes (missing PRECEDING / FOLLOWING information).
