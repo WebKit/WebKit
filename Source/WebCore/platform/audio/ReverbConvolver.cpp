@@ -34,6 +34,7 @@
 
 #include "VectorMath.h"
 #include "AudioBus.h"
+#include <mutex>
 
 namespace WebCore {
 
@@ -140,9 +141,9 @@ ReverbConvolver::~ReverbConvolver()
 
         // Wake up thread so it can return
         {
-            std::lock_guard<std::mutex> lock(m_backgroundThreadMutex);
+            std::lock_guard<Lock> lock(m_backgroundThreadMutex);
             m_moreInputBuffered = true;
-            m_backgroundThreadConditionVariable.notify_one();
+            m_backgroundThreadConditionVariable.notifyOne();
         }
 
         waitForThreadCompletion(m_backgroundThread);
@@ -155,7 +156,7 @@ void ReverbConvolver::backgroundThreadEntry()
         // Wait for realtime thread to give us more input
         m_moreInputBuffered = false;        
         {
-            std::unique_lock<std::mutex> lock(m_backgroundThreadMutex);
+            std::unique_lock<Lock> lock(m_backgroundThreadMutex);
 
             m_backgroundThreadConditionVariable.wait(lock, [this] { return m_moreInputBuffered || m_wantsToExit; });
         }
@@ -209,12 +210,12 @@ void ReverbConvolver::process(const AudioChannel* sourceChannel, AudioChannel* d
     // signal from time to time, since we'll get to it the next time we're called.  We're called repeatedly
     // and frequently (around every 3ms).  The background thread is processing well into the future and has a considerable amount of 
     // leeway here...
-    std::unique_lock<std::mutex> lock(m_backgroundThreadMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_backgroundThreadMutex, std::try_to_lock);
     if (!lock.owns_lock())
         return;
 
     m_moreInputBuffered = true;
-    m_backgroundThreadConditionVariable.notify_one();
+    m_backgroundThreadConditionVariable.notifyOne();
 }
 
 void ReverbConvolver::reset()

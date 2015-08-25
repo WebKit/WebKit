@@ -29,7 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithm.h"
-#include <mutex>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -41,17 +41,7 @@ CryptoAlgorithmRegistry& CryptoAlgorithmRegistry::singleton()
     return registry;
 }
 
-static std::mutex& registryMutex()
-{
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<std::mutex> mutex;
-
-    std::call_once(onceFlag, []{
-        mutex.construct();
-    });
-
-    return mutex;
-}
+static StaticLock registryMutex;
 
 CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
 {
@@ -63,7 +53,7 @@ bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlg
     if (name.isEmpty())
         return false;
 
-    std::lock_guard<std::mutex> lock(registryMutex());
+    std::lock_guard<StaticLock> lock(registryMutex);
 
     auto iter = m_nameToIdentifierMap.find(name.isolatedCopy());
     if (iter == m_nameToIdentifierMap.end())
@@ -75,14 +65,14 @@ bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlg
 
 String CryptoAlgorithmRegistry::nameForIdentifier(CryptoAlgorithmIdentifier identifier)
 {
-    std::lock_guard<std::mutex> lock(registryMutex());
+    std::lock_guard<StaticLock> lock(registryMutex);
 
     return m_identifierToNameMap.get(static_cast<unsigned>(identifier)).isolatedCopy();
 }
 
 std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
 {
-    std::lock_guard<std::mutex> lock(registryMutex());
+    std::lock_guard<StaticLock> lock(registryMutex);
 
     auto iter = m_identifierToConstructorMap.find(static_cast<unsigned>(identifier));
     if (iter == m_identifierToConstructorMap.end())
@@ -93,7 +83,7 @@ std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithm
 
 void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
 {
-    std::lock_guard<std::mutex> lock(registryMutex());
+    std::lock_guard<StaticLock> lock(registryMutex);
 
     bool added = m_nameToIdentifierMap.add(name, identifier).isNewEntry;
     ASSERT_UNUSED(added, added);

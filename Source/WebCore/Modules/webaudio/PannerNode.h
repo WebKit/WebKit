@@ -35,7 +35,7 @@
 #include "HRTFDatabaseLoader.h"
 #include "Panner.h"
 #include <memory>
-#include <mutex>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -161,7 +161,7 @@ private:
     unsigned m_connectionCount;
 
     // Synchronize process() and setPanningModel() which can change the panner.
-    mutable std::mutex m_pannerMutex;
+    mutable Lock m_pannerMutex;
 };
 
 } // namespace WebCore

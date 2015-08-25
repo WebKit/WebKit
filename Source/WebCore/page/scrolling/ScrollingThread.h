@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,10 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include <condition_variable>
 #include <functional>
+#include <wtf/Condition.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -74,10 +75,10 @@ private:
 
     ThreadIdentifier m_threadIdentifier;
 
-    std::condition_variable m_initializeRunLoopConditionVariable;
-    std::mutex m_initializeRunLoopMutex;
+    Condition m_initializeRunLoopConditionVariable;
+    Lock m_initializeRunLoopMutex;
 
-    std::mutex m_functionsMutex;
+    Lock m_functionsMutex;
     Vector<std::function<void ()>> m_functions;
 
 #if PLATFORM(COCOA)

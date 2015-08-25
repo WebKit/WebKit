@@ -29,9 +29,9 @@
 #ifndef WheelEventTestTrigger_h
 #define WheelEventTestTrigger_h
 
-#include <mutex>
 #include <set>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -60,7 +60,7 @@ public:
 private:
     std::function<void()> m_testNotificationCallback;
     RunLoop::Timer<WheelEventTestTrigger> m_testTriggerTimer;
-    mutable std::mutex m_testTriggerMutex;
+    mutable Lock m_testTriggerMutex;
     WTF::HashMap<ScrollableAreaIdentifier, std::set<DeferTestTriggerReason>> m_deferTestTriggerReasons;
 };
 

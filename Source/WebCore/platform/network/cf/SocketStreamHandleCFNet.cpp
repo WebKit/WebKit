@@ -39,8 +39,8 @@
 #include "ProtectionSpace.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
-#include <condition_variable>
-#include <mutex>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
@@ -136,20 +136,20 @@ static void callOnMainThreadAndWait(std::function<void ()> function)
         return;
     }
 
-    std::mutex mutex;
-    std::condition_variable conditionVariable;
+    Lock mutex;
+    Condition conditionVariable;
 
     bool isFinished = false;
 
     callOnMainThread([&] {
         function();
 
-        std::lock_guard<std::mutex> lock(mutex);
+        std::lock_guard<Lock> lock(mutex);
         isFinished = true;
-        conditionVariable.notify_one();
+        conditionVariable.notifyOne();
     });
 
-    std::unique_lock<std::mutex> lock(mutex);
+    std::unique_lock<Lock> lock(mutex);
     conditionVariable.wait(lock, [&] { return isFinished; });
 }
 

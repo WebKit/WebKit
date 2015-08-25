@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,9 @@
 
 #include "WebCoreThread.h"
 #include "WebCoreThreadInternal.h"
-#include <condition_variable>
+#include <mutex>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
 namespace {
@@ -44,23 +46,23 @@ public:
 
     void waitForCompletion()
     {
-        std::unique_lock<std::mutex> lock(m_stateMutex);
+        std::unique_lock<Lock> lock(m_stateMutex);
 
         m_completionConditionVariable.wait(lock, [this] { return m_completed; });
     }
 
     void setCompleted()
     {
-        std::lock_guard<std::mutex> lock(m_stateMutex);
+        std::lock_guard<Lock> lock(m_stateMutex);
 
         ASSERT(!m_completed);
         m_completed = true;
-        m_completionConditionVariable.notify_one();
+        m_completionConditionVariable.notifyOne();
     }
 
 private:
-    std::mutex m_stateMutex;
-    std::condition_variable m_completionConditionVariable;
+    Lock m_stateMutex;
+    Condition m_completionConditionVariable;
     bool m_completed;
 };
 
@@ -110,7 +112,7 @@ extern "C" {
 
 typedef WTF::Vector<WebThreadBlock> WebThreadRunQueue;
 
-static std::mutex* runQueueMutex;
+static StaticLock runQueueMutex;
 static CFRunLoopSourceRef runSource;
 static WebThreadRunQueue* runQueue;
 
@@ -118,13 +120,12 @@ static void HandleRunSource(void *info)
 {
     UNUSED_PARAM(info);
     ASSERT(WebThreadIsCurrent());
-    ASSERT(runQueueMutex);
     ASSERT(runSource);
     ASSERT(runQueue);
 
     WebThreadRunQueue queueCopy;
     {
-        std::lock_guard<std::mutex> lock(*runQueueMutex);
+        std::lock_guard<StaticLock> lock(runQueueMutex);
         queueCopy = *runQueue;
         runQueue->clear();
     }
@@ -140,7 +141,6 @@ static void _WebThreadRun(void (^task)(), bool synchronous)
         return;
     }
 
-    ASSERT(runQueueMutex);
     ASSERT(runSource);
     ASSERT(runQueue);
 
@@ -149,7 +149,7 @@ static void _WebThreadRun(void (^task)(), bool synchronous)
         state = new WebThreadBlockState;
 
     {
-        std::lock_guard<std::mutex> lock(*runQueueMutex);
+        std::lock_guard<StaticLock> lock(runQueueMutex);
         runQueue->append(WebThreadBlock(task, state));
     }
 
@@ -175,7 +175,6 @@ void WebThreadRunSync(void (^task)())
 void WebThreadInitRunQueue()
 {
     ASSERT(!runQueue);
-    ASSERT(!runQueueMutex);
     ASSERT(!runSource);
 
     static dispatch_once_t pred;
@@ -185,8 +184,6 @@ void WebThreadInitRunQueue()
         CFRunLoopSourceContext runSourceContext = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, HandleRunSource};
         runSource = CFRunLoopSourceCreate(NULL, -1, &runSourceContext);
         CFRunLoopAddSource(WebThreadRunLoop(), runSource, kCFRunLoopDefaultMode);
-
-        runQueueMutex = std::make_unique<std::mutex>().release();
     });
 }
 

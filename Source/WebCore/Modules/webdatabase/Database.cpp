@@ -157,17 +157,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 }
 
 // FIXME: move all guid-related functions to a DatabaseVersionTracker class.
-static std::mutex& guidMutex()
-{
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<std::mutex> mutex;
-
-    std::call_once(onceFlag, [] {
-        mutex.construct();
-    });
-
-    return mutex;
-}
+static StaticLock guidMutex;
 
 typedef HashMap<DatabaseGuid, String> GuidVersionMap;
 static GuidVersionMap& guidToVersionMap()
@@ -233,7 +223,7 @@ Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& na
         m_name = emptyString();
 
     {
-        std::lock_guard<std::mutex> locker(guidMutex());
+        std::lock_guard<StaticLock> locker(guidMutex);
 
         m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
         std::unique_ptr<HashSet<Database*>>& hashSet = guidToDatabaseMap().add(m_guid, nullptr).iterator->value;
@@ -370,7 +360,7 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
 
     String currentVersion;
     {
-        std::lock_guard<std::mutex> locker(guidMutex());
+        std::lock_guard<StaticLock> locker(guidMutex);
 
         auto entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
@@ -465,7 +455,7 @@ void Database::closeDatabase()
     // See comment at the top this file regarding calling removeOpenDatabase().
     DatabaseTracker::tracker().removeOpenDatabase(this);
     {
-        std::lock_guard<std::mutex> locker(guidMutex());
+        std::lock_guard<StaticLock> locker(guidMutex);
 
         auto it = guidToDatabaseMap().find(m_guid);
         ASSERT(it != guidToDatabaseMap().end());
@@ -524,7 +514,7 @@ void Database::setExpectedVersion(const String& version)
 
 String Database::getCachedVersion() const
 {
-    std::lock_guard<std::mutex> locker(guidMutex());
+    std::lock_guard<StaticLock> locker(guidMutex);
 
     return guidToVersionMap().get(m_guid).isolatedCopy();
 }
@@ -532,7 +522,7 @@ String Database::getCachedVersion() const
 void Database::setCachedVersion(const String& actualVersion)
 {
     // Update the in memory database version map.
-    std::lock_guard<std::mutex> locker(guidMutex());
+    std::lock_guard<StaticLock> locker(guidMutex);
 
     updateGuidVersionMap(m_guid, actualVersion);
 }

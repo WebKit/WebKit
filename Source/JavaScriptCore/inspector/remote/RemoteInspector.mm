@@ -131,7 +131,7 @@ unsigned RemoteInspector::nextAvailableIdentifier()
 
 void RemoteInspector::registerDebuggable(RemoteInspectorDebuggable* debuggable)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     unsigned identifier = nextAvailableIdentifier();
     debuggable->setIdentifier(identifier);
@@ -145,7 +145,7 @@ void RemoteInspector::registerDebuggable(RemoteInspectorDebuggable* debuggable)
 
 void RemoteInspector::unregisterDebuggable(RemoteInspectorDebuggable* debuggable)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     unsigned identifier = debuggable->identifier();
     if (!identifier)
@@ -163,7 +163,7 @@ void RemoteInspector::unregisterDebuggable(RemoteInspectorDebuggable* debuggable
 
 void RemoteInspector::updateDebuggable(RemoteInspectorDebuggable* debuggable)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     unsigned identifier = debuggable->identifier();
     if (!identifier)
@@ -178,7 +178,7 @@ void RemoteInspector::updateDebuggable(RemoteInspectorDebuggable* debuggable)
 void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorDebuggable* debuggable)
 {
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
 
         unsigned identifier = debuggable->identifier();
         if (!identifier)
@@ -213,7 +213,7 @@ void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorD
 
         // In case debuggers fail to respond, or we cannot connect to webinspectord, automatically continue after a short period of time.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.8 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::lock_guard<Lock> lock(m_mutex);
             if (m_automaticInspectionCandidateIdentifier == identifier) {
                 LOG_ERROR("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", m_automaticInspectionCandidateIdentifier);
                 m_automaticInspectionPaused = false;
@@ -224,7 +224,7 @@ void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorD
     debuggable->pauseWaitingForAutomaticInspection();
 
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
 
         ASSERT(m_automaticInspectionCandidateIdentifier);
         m_automaticInspectionCandidateIdentifier = 0;
@@ -245,7 +245,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 
 void RemoteInspector::sendMessageToRemoteFrontend(unsigned identifier, const String& message)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     if (!m_xpcConnection)
         return;
@@ -265,7 +265,7 @@ void RemoteInspector::sendMessageToRemoteFrontend(unsigned identifier, const Str
 
 void RemoteInspector::setupFailed(unsigned identifier)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     m_connectionMap.remove(identifier);
 
@@ -279,7 +279,7 @@ void RemoteInspector::setupFailed(unsigned identifier)
 
 void RemoteInspector::setupCompleted(unsigned identifier)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     if (identifier == m_automaticInspectionCandidateIdentifier)
         m_automaticInspectionPaused = false;
@@ -293,7 +293,7 @@ bool RemoteInspector::waitingForAutomaticInspection(unsigned)
 
 void RemoteInspector::start()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     if (m_enabled)
         return;
@@ -315,7 +315,7 @@ void RemoteInspector::start()
 
 void RemoteInspector::stop()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     stopInternal(StopSource::API);
 }
@@ -355,7 +355,7 @@ void RemoteInspector::stopInternal(StopSource source)
 
 void RemoteInspector::setupXPCConnectionIfNeeded()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     if (m_xpcConnection)
         return;
@@ -380,7 +380,7 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
 
 void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef> auditData)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     if (m_parentProcessIdentifier || m_parentProcessAuditData)
         return;
@@ -396,7 +396,7 @@ void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef
 
 void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     if ([messageName isEqualToString:WIRPermissionDenied]) {
         stopInternal(StopSource::XPCMessage);
@@ -427,7 +427,7 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
 
 void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* connection)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<Lock> lock(m_mutex);
 
     ASSERT(connection == m_xpcConnection);
     if (connection != m_xpcConnection)
@@ -522,7 +522,7 @@ void RemoteInspector::pushListingSoon()
 
     m_pushScheduled = true;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<Lock> lock(m_mutex);
         if (m_pushScheduled)
             pushListingNow();
     });
@@ -649,7 +649,7 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
     callOnWebThreadOrDispatchAsyncOnMainThread(^{
         RemoteInspectorDebuggable* debuggable = nullptr;
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::lock_guard<Lock> lock(m_mutex);
 
             auto it = m_debuggableMap.find(identifier);
             if (it == m_debuggableMap.end())
@@ -672,7 +672,7 @@ void RemoteInspector::receivedProxyApplicationSetupMessage(NSDictionary *)
         // Wait a bit for the information, but give up after a second.
         m_shouldSendParentProcessInformation = true;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::lock_guard<Lock> lock(m_mutex);
             if (m_shouldSendParentProcessInformation)
                 stopInternal(StopSource::XPCMessage);
         });

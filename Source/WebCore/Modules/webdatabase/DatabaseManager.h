@@ -29,10 +29,10 @@
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
 #include "DatabaseError.h"
-#include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -149,7 +149,7 @@ private:
     HashSet<ProposedDatabase*> m_proposedDatabases;
 
     // This mutex protects m_contextMap, and m_proposedDatabases.
-    std::mutex m_mutex;
+    Lock m_mutex;
 };
 
 } // namespace WebCore

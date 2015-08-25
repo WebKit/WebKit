@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +36,9 @@
 #include "ReverbAccumulationBuffer.h"
 #include "ReverbConvolverStage.h"
 #include "ReverbInputBuffer.h"
-#include <condition_variable>
 #include <memory>
-#include <mutex>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -88,8 +89,8 @@ private:
     ThreadIdentifier m_backgroundThread;
     bool m_wantsToExit;
     bool m_moreInputBuffered;
-    mutable std::mutex m_backgroundThreadMutex;
-    mutable std::condition_variable m_backgroundThreadConditionVariable;
+    mutable Lock m_backgroundThreadMutex;
+    mutable Condition m_backgroundThreadConditionVariable;
 };
 
 } // namespace WebCore

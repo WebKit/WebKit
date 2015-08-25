@@ -80,7 +80,7 @@ void AudioParamTimeline::insertEvent(const ParamEvent& event)
     if (!isValid)
         return;
         
-    std::lock_guard<std::mutex> lock(m_eventsMutex);
+    std::lock_guard<Lock> lock(m_eventsMutex);
     
     unsigned i = 0;
     float insertTime = event.time();
@@ -102,7 +102,7 @@ void AudioParamTimeline::insertEvent(const ParamEvent& event)
 
 void AudioParamTimeline::cancelScheduledValues(float startTime)
 {
-    std::lock_guard<std::mutex> lock(m_eventsMutex);
+    std::lock_guard<Lock> lock(m_eventsMutex);
 
     // Remove all events starting at startTime.
     for (unsigned i = 0; i < m_events.size(); ++i) {
@@ -118,7 +118,7 @@ float AudioParamTimeline::valueForContextTime(AudioContext* context, float defau
     ASSERT(context);
 
     {
-        std::unique_lock<std::mutex> lock(m_eventsMutex, std::try_to_lock);
+        std::unique_lock<Lock> lock(m_eventsMutex, std::try_to_lock);
         if (!lock.owns_lock() || !context || !m_events.size() || context->currentTime() < m_events[0].time()) {
             hasValue = false;
             return defaultValue;
@@ -140,7 +140,7 @@ float AudioParamTimeline::valueForContextTime(AudioContext* context, float defau
 float AudioParamTimeline::valuesForTimeRange(double startTime, double endTime, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate)
 {
     // We can't contend the lock in the realtime audio thread.
-    std::unique_lock<std::mutex> lock(m_eventsMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_eventsMutex, std::try_to_lock);
     if (!lock.owns_lock()) {
         if (values) {
             for (unsigned i = 0; i < numberOfValues; ++i)

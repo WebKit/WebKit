@@ -27,6 +27,7 @@
 #include "UTextProviderUTF16.h"
 #include <mutex>
 #include <wtf/Atomics.h>
+#include <wtf/Lock.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -765,8 +766,8 @@ static inline bool compareAndSwapNonSharedCharacterBreakIterator(TextBreakIterat
 #if ENABLE(COMPARE_AND_SWAP)
     return WTF::weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), expected, newValue);
 #else
-    DEPRECATED_DEFINE_STATIC_LOCAL(std::mutex, nonSharedCharacterBreakIteratorMutex, ());
-    std::lock_guard<std::mutex> locker(nonSharedCharacterBreakIteratorMutex);
+    static StaticLock nonSharedCharacterBreakIteratorMutex;
+    std::lock_guard<StaticLock> locker(nonSharedCharacterBreakIteratorMutex);
     if (nonSharedCharacterBreakIterator != expected)
         return false;
     nonSharedCharacterBreakIterator = newValue;

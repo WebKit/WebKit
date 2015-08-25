@@ -28,21 +28,26 @@
 
 #include <chrono>
 #include <functional>
-#include <mutex>
 #include <wtf/CurrentTime.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/ParkingLot.h>
 
 namespace WTF {
 
-class Condition {
-public:
+// This is a condition variable that is suitable for use with any lock-like object, including
+// our own WTF::Lock. It features standard wait()/notifyOne()/notifyAll() methods in addition to
+// a variety of wait-with-timeout methods. This includes methods that use WTF's own notion of
+// time, like wall-clock time (i.e. currentTime()) and monotonic time (i.e.
+// monotonicallyIncreasingTime()). This is a very efficient condition variable. It only requires
+// one byte of memory. notifyOne() and notifyAll() require just a load and branch for the fast
+// case where no thread is waiting. This condition variable, when used with WTF::Lock, can
+// outperform a system condition variable and lock by up to 58x.
+
+// This is a struct without a constructor or destructor so that it can be statically initialized.
+// Use Lock in instance variables.
+struct ConditionBase {
     typedef ParkingLot::Clock Clock;
     
-    Condition()
-    {
-        m_hasWaiters.store(false);
-    }
-
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
     // parking, and relock it upon wakeup. Returns true if we woke up due to some call to
     // notifyOne() or notifyAll(). Returns false if we woke up due to a timeout. Note that this form
@@ -172,7 +177,7 @@ public:
         ParkingLot::unparkAll(&m_hasWaiters);
     }
     
-private:
+protected:
     template<typename LockType>
     bool waitForSecondsImpl(LockType& lock, double relativeTimeoutSeconds)
     {
@@ -224,11 +229,23 @@ private:
     }
 
     Atomic<bool> m_hasWaiters;
+};    
+
+class Condition : public ConditionBase {
+    WTF_MAKE_NONCOPYABLE(Condition);
+public:
+    Condition()
+    {
+        m_hasWaiters.store(false);
+    }
 };
+
+typedef ConditionBase StaticCondition;
 
 } // namespace WTF
 
 using WTF::Condition;
+using WTF::StaticCondition;
 
 #endif // WTF_Condition_h
 

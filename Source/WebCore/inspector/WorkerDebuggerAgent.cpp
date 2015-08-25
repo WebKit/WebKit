@@ -36,7 +36,7 @@
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/ScriptDebugServer.h>
-#include <mutex>
+#include <wtf/Lock.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -46,17 +46,7 @@ namespace WebCore {
 
 namespace {
 
-std::mutex& workerDebuggerAgentsMutex()
-{
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<std::mutex> mutex;
-
-    std::call_once(onceFlag, []{
-        mutex.construct();
-    });
-
-    return mutex;
-}
+StaticLock workerDebuggerAgentsMutex;
 
 typedef HashMap<WorkerThread*, WorkerDebuggerAgent*> WorkerDebuggerAgents;
 
@@ -95,13 +85,13 @@ WorkerDebuggerAgent::WorkerDebuggerAgent(InjectedScriptManager* injectedScriptMa
     , m_scriptDebugServer(inspectedWorkerGlobalScope, WorkerDebuggerAgent::debuggerTaskMode)
     , m_inspectedWorkerGlobalScope(inspectedWorkerGlobalScope)
 {
-    std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
+    std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
     workerDebuggerAgents().set(&inspectedWorkerGlobalScope->thread(), this);
 }
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent()
 {
-    std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
+    std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
 
     ASSERT(workerDebuggerAgents().contains(&m_inspectedWorkerGlobalScope->thread()));
     workerDebuggerAgents().remove(&m_inspectedWorkerGlobalScope->thread());
@@ -109,7 +99,7 @@ WorkerDebuggerAgent::~WorkerDebuggerAgent()
 
 void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* thread)
 {
-    std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
+    std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
 
     if (WorkerDebuggerAgent* agent = workerDebuggerAgents().get(thread))
         agent->m_scriptDebugServer.interruptAndRunTask(std::make_unique<RunInspectorCommandsTask>(thread, agent->m_inspectedWorkerGlobalScope));

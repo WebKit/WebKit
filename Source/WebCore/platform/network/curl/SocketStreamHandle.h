@@ -40,9 +40,8 @@
 
 #include <curl/curl.h>
 
-#include <mutex>
-
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 
@@ -105,8 +104,8 @@ private:
 
     ThreadIdentifier m_workerThread { 0 };
     std::atomic<bool> m_stopThread { false };
-    std::mutex m_mutexSend;
-    std::mutex m_mutexReceive;
+    Lock m_mutexSend;
+    Lock m_mutexReceive;
     Deque<SocketData> m_sendData;
     Deque<SocketData> m_receiveData;
 };

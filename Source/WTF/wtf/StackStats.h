@@ -28,6 +28,7 @@
 
 #include "ExportMacros.h"
 #include <mutex>
+#include <wtf/Lock.h>
 
 
 // Define this flag to enable Stack stats collection. This feature is useful
@@ -67,7 +68,6 @@ public:
         LayoutCheckPoint() { }
     };
 
-    static void initialize() { }
     static void probe() { }
 };
 
@@ -109,9 +109,6 @@ public:
         int m_depth;
     };
 
-    // Initializes locks and the log file. Should only be called once.
-    static void initialize();
-
     // Used for probing the stack at places where we suspect to be high
     // points of stack usage but are NOT check points where stack recursion
     // is checked.
@@ -124,7 +121,7 @@ public:
 
 private:
     // CheckPoint management:
-    static std::mutex* s_sharedMutex;
+    static StaticLock s_sharedMutex;
     static CheckPoint* s_topCheckPoint;
     static LayoutCheckPoint* s_firstLayoutCheckPoint;
     static LayoutCheckPoint* s_topLayoutCheckPoint;

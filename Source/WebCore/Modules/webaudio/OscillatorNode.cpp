@@ -231,7 +231,7 @@ void OscillatorNode::process(size_t framesToProcess)
         return;
 
     // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<std::mutex> lock(m_processMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
     if (!lock.owns_lock()) {
         // Too bad - the try_lock() failed. We must be in the middle of changing wave-tables.
         outputBus->zero();
@@ -340,7 +340,7 @@ void OscillatorNode::setPeriodicWave(PeriodicWave* periodicWave)
     ASSERT(isMainThread());
 
     // This synchronizes with process().
-    std::lock_guard<std::mutex> lock(m_processMutex);
+    std::lock_guard<Lock> lock(m_processMutex);
     m_periodicWave = periodicWave;
     m_type = CUSTOM;
 }
