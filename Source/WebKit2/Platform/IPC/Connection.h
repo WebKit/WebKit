@@ -38,6 +38,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
@@ -298,7 +299,7 @@ private:
     class SyncMessageState;
     friend class SyncMessageState;
 
-    Mutex m_syncReplyStateMutex;
+    Lock m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 

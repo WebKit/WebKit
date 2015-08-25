@@ -35,6 +35,7 @@
 #include <WebCore/Timer.h>
 #include <functional>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
@@ -145,7 +146,7 @@ private:
 
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!
     Vector<std::function<void()>> m_renderQueue;
-    Mutex m_renderQueueMutex;
+    Lock m_renderQueueMutex;
 
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 

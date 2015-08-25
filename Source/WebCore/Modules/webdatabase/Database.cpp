@@ -294,7 +294,7 @@ void Database::close()
     ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
 
     {
-        MutexLocker locker(m_transactionInProgressMutex);
+        LockHolder locker(m_transactionInProgressMutex);
 
         // Clean up transactions that have not been scheduled yet:
         // Transaction phase 1 cleanup. See comment on "What happens if a
@@ -353,7 +353,7 @@ bool Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase, Database
 #if PLATFORM(IOS)
     {
         // Make sure we wait till the background removal of the empty database files finished before trying to open any database.
-        MutexLocker locker(DatabaseTracker::openDatabaseMutex());
+        LockHolder locker(DatabaseTracker::openDatabaseMutex());
     }
 #endif
 
@@ -565,7 +565,7 @@ void Database::scheduleTransaction()
 
 PassRefPtr<SQLTransactionBackend> Database::runTransaction(PassRefPtr<SQLTransaction> transaction, bool readOnly, const ChangeVersionData* data)
 {
-    MutexLocker locker(m_transactionInProgressMutex);
+    LockHolder locker(m_transactionInProgressMutex);
     if (!m_isTransactionQueueEnabled)
         return 0;
 
@@ -593,14 +593,14 @@ void Database::scheduleTransactionStep(SQLTransactionBackend* transaction)
 
 void Database::inProgressTransactionCompleted()
 {
-    MutexLocker locker(m_transactionInProgressMutex);
+    LockHolder locker(m_transactionInProgressMutex);
     m_transactionInProgress = false;
     scheduleTransaction();
 }
 
 bool Database::hasPendingTransaction()
 {
-    MutexLocker locker(m_transactionInProgressMutex);
+    LockHolder locker(m_transactionInProgressMutex);
     return m_transactionInProgress || !m_transactionQueue.isEmpty();
 }
 

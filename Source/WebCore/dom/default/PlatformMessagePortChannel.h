@@ -95,8 +95,8 @@ namespace WebCore {
         void setRemotePort(MessagePort*);
         void closeInternal();
 
-        // Mutex used to ensure exclusive access to the object internals.
-        Mutex m_mutex;
+        // Lock used to ensure exclusive access to the object internals.
+        Lock m_mutex;
 
         // Pointer to our entangled pair - cleared when close() is called.
         RefPtr<PlatformMessagePortChannel> m_entangledChannel;

@@ -38,6 +38,8 @@ class ParkingLot {
     ParkingLot(const ParkingLot&) = delete;
 
 public:
+    typedef std::chrono::steady_clock Clock;
+    
     // Parks the thread in a queue associated with the given address, which cannot be null. The
     // parking only succeeds if the validation function returns true while the queue lock is held.
     // If validation returns false, it will unlock the internal parking queue and then it will
@@ -53,7 +55,7 @@ public:
         const void* address,
         std::function<bool()> validation,
         std::function<void()> beforeSleep,
-        std::chrono::steady_clock::time_point timeout);
+        Clock::time_point timeout);
 
     // Simple version of parkConditionally() that covers the most common case: you want to park
     // indefinitely so long as the value at the given address hasn't changed.
@@ -67,7 +69,7 @@ public:
                 return value == expected;
             },
             [] () { },
-            std::chrono::steady_clock::time_point::max());
+            Clock::time_point::max());
     }
 
     // Unparks one thread from the queue associated with the given address, which cannot be null.
@@ -103,7 +105,7 @@ public:
     // A1,T1 A2,T3 A1,T2 A2,T4
     // A1,T1 A2,T3 A2,T4 A1,T2
     //
-    // As well as many other possible interleaves that all have T1 before T2 and T3 before T4 but are
+    // As well as many other possible interleavings that all have T1 before T2 and T3 before T4 but are
     // otherwise unconstrained. This method is useful primarily for debugging. It's also used by unit
     // tests.
     WTF_EXPORT_PRIVATE static void forEach(std::function<void(ThreadIdentifier, const void*)>);

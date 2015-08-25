@@ -32,6 +32,7 @@
 #include "HRTFDatabase.h"
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -76,7 +77,7 @@ private:
     std::unique_ptr<HRTFDatabase> m_hrtfDatabase;
 
     // Holding a m_threadLock is required when accessing m_databaseLoaderThread.
-    Mutex m_threadLock;
+    Lock m_threadLock;
     ThreadIdentifier m_databaseLoaderThread;
 
     float m_databaseSampleRate;

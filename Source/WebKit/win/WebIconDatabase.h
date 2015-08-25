@@ -31,8 +31,9 @@
 #include <WebCore/IconDatabaseClient.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IntSizeHash.h>
-#include <wtf/Vector.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
+#include <wtf/Vector.h>
 
 #include <windows.h>
 
@@ -116,7 +117,7 @@ protected:
     HashMap<IntSize, HBITMAP> m_defaultIconMap;
     HashMap<IntSize, HBITMAP> m_sharedIconMap;
 
-    Mutex m_notificationMutex;
+    Lock m_notificationMutex;
     Vector<String> m_notificationQueue;
     void scheduleNotificationDelivery();
     bool m_deliveryRequested;

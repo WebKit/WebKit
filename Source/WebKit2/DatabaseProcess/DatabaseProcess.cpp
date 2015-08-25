@@ -151,7 +151,7 @@ void DatabaseProcess::postDatabaseTask(std::unique_ptr<AsyncTask> task)
 {
     ASSERT(RunLoop::isMain());
 
-    MutexLocker locker(m_databaseTaskMutex);
+    LockHolder locker(m_databaseTaskMutex);
 
     m_databaseTasks.append(WTF::move(task));
 
@@ -166,7 +166,7 @@ void DatabaseProcess::performNextDatabaseTask()
 
     std::unique_ptr<AsyncTask> task;
     {
-        MutexLocker locker(m_databaseTaskMutex);
+        LockHolder locker(m_databaseTaskMutex);
         ASSERT(!m_databaseTasks.isEmpty());
         task = m_databaseTasks.takeFirst();
     }

@@ -133,10 +133,11 @@ static char* cookieJarPath()
 #endif
 }
 
-static Mutex* sharedResourceMutex(curl_lock_data data) {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, cookieMutex, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, dnsMutex, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, shareMutex, ());
+static Lock* sharedResourceMutex(curl_lock_data data)
+{
+    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, cookieMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, dnsMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, shareMutex, ());
 
     switch (data) {
         case CURL_LOCK_DATA_COOKIE:
@@ -190,13 +191,13 @@ static void calculateWebTimingInformations(ResourceHandleInternal* d)
 // cache.
 static void curl_lock_callback(CURL* /* handle */, curl_lock_data data, curl_lock_access /* access */, void* /* userPtr */)
 {
-    if (Mutex* mutex = sharedResourceMutex(data))
+    if (Lock* mutex = sharedResourceMutex(data))
         mutex->lock();
 }
 
 static void curl_unlock_callback(CURL* /* handle */, curl_lock_data data, void* /* userPtr */)
 {
-    if (Mutex* mutex = sharedResourceMutex(data))
+    if (Lock* mutex = sharedResourceMutex(data))
         mutex->unlock();
 }
 

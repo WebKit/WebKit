@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// On Mac, you can build this like so:
+// clang++ -o LockSpeedTest Source/WTF/benchmarks/LockSpeedTest.cpp -O3 -W -ISource/WTF -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++11
+
 #include "config.h"
 
 #include <unistd.h>

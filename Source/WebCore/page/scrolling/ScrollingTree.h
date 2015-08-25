@@ -33,6 +33,7 @@
 #include "ScrollingCoordinator.h"
 #include "WheelEventTestTrigger.h"
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 
@@ -160,11 +161,11 @@ private:
     typedef HashMap<ScrollingNodeID, ScrollingTreeNode*> ScrollingTreeNodeMap;
     ScrollingTreeNodeMap m_nodeMap;
 
-    Mutex m_mutex;
+    Lock m_mutex;
     Region m_nonFastScrollableRegion;
     FloatPoint m_mainFrameScrollPosition;
 
-    Mutex m_swipeStateMutex;
+    Lock m_swipeStateMutex;
     ScrollPinningBehavior m_scrollPinningBehavior { DoNotPin };
     ScrollingNodeID m_latchedNode { 0 };
 

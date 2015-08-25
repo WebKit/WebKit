@@ -27,8 +27,8 @@
 #define OriginLock_h
 
 #include "FileSystem.h"
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,7 +48,7 @@ private:
     static String lockFileNameForPath(String originPath);
 
     String m_lockFileName;
-    Mutex m_mutex;
+    Lock m_mutex;
 #if USE(FILE_LOCK)
     PlatformFileHandle m_lockHandle;
 #endif

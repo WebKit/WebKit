@@ -459,7 +459,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequest
 
     // Push the pending sync reply information on our stack.
     {
-        MutexLocker locker(m_syncReplyStateMutex);
+        LockHolder locker(m_syncReplyStateMutex);
         if (!m_shouldWaitForSyncReplies) {
             didFailToSendSyncMessage();
             return nullptr;
@@ -486,7 +486,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequest
 
     // Finally, pop the pending sync reply information.
     {
-        MutexLocker locker(m_syncReplyStateMutex);
+        LockHolder locker(m_syncReplyStateMutex);
         ASSERT(m_pendingSyncReplies.last().syncRequestID == syncRequestID);
         m_pendingSyncReplies.removeLast();
     }
@@ -508,7 +508,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
 
     // Push the pending sync reply information on our stack.
     {
-        MutexLocker locker(m_syncReplyStateMutex);
+        LockHolder locker(m_syncReplyStateMutex);
         if (!m_shouldWaitForSyncReplies)
             return nullptr;
 
@@ -526,7 +526,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
 
     // Finally, pop the pending sync reply information.
     {
-        MutexLocker locker(m_syncReplyStateMutex);
+        LockHolder locker(m_syncReplyStateMutex);
         ASSERT(m_secondaryThreadPendingSyncReplyMap.contains(syncRequestID));
         m_secondaryThreadPendingSyncReplyMap.remove(syncRequestID);
     }
@@ -546,7 +546,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
         SyncMessageState::singleton().dispatchMessages(nullptr);
         
         {
-            MutexLocker locker(m_syncReplyStateMutex);
+            LockHolder locker(m_syncReplyStateMutex);
 
             // Second, check if there is a sync reply at the top of the stack.
             ASSERT(!m_pendingSyncReplies.isEmpty());
@@ -592,7 +592,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
 
 void Connection::processIncomingSyncReply(std::unique_ptr<MessageDecoder> decoder)
 {
-    MutexLocker locker(m_syncReplyStateMutex);
+    LockHolder locker(m_syncReplyStateMutex);
 
     // Go through the stack of sync requests that have pending replies and see which one
     // this reply is for.
@@ -750,7 +750,7 @@ void Connection::connectionDidClose()
     platformInvalidate();
 
     {
-        MutexLocker locker(m_syncReplyStateMutex);
+        LockHolder locker(m_syncReplyStateMutex);
 
         ASSERT(m_shouldWaitForSyncReplies);
         m_shouldWaitForSyncReplies = false;

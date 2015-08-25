@@ -29,26 +29,46 @@
 #include <chrono>
 #include <functional>
 #include <mutex>
+#include <wtf/CurrentTime.h>
 #include <wtf/ParkingLot.h>
 
 namespace WTF {
 
 class Condition {
 public:
+    typedef ParkingLot::Clock Clock;
+    
     Condition() { }
 
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
     // parking, and relock it upon wakeup. Returns true if we woke up due to some call to
-    // notifyOne() or notifyAll(). Returns false if we woke up due to a timeout.
+    // notifyOne() or notifyAll(). Returns false if we woke up due to a timeout. Note that this form
+    // of waitUntil() has some quirks:
+    //
+    // No spurious wake-up: in order for this to return before the timeout, some notifyOne() or
+    // notifyAll() call must have happened. No scenario other than timeout or notify can lead to this
+    // method returning. This means, for example, that you can't use pthread cancelation or signals to
+    // cause early return.
+    //
+    // Past timeout: it's possible for waitUntil() to be called with a timeout in the past. In that
+    // case, waitUntil() will still release the lock and reacquire it. waitUntil() will always return
+    // false in that case. This is subtly different from some pthread_cond_timedwait() implementations,
+    // which may not release the lock for past timeout. But, this behavior is consistent with OpenGroup
+    // documentation for timedwait().
     template<typename LockType>
-    bool waitUntil(
-        LockType& lock, std::chrono::steady_clock::time_point timeout)
+    bool waitUntil(LockType& lock, Clock::time_point timeout)
     {
-        bool result = ParkingLot::parkConditionally(
-            &m_dummy,
-            [] () -> bool { return true; },
-            [&lock] () { lock.unlock(); },
-            timeout);
+        bool result;
+        if (timeout < Clock::now()) {
+            lock.unlock();
+            result = false;
+        } else {
+            result = ParkingLot::parkConditionally(
+                &m_dummy,
+                [] () -> bool { return true; },
+                [&lock] () { lock.unlock(); },
+                timeout);
+        }
         lock.lock();
         return result;
     }
@@ -56,8 +76,7 @@ public:
     // Wait until the given predicate is satisfied. Returns true if it is satisfied in the end.
     // May return early due to timeout.
     template<typename LockType, typename Functor>
-    bool waitUntil(
-        LockType& lock, std::chrono::steady_clock::time_point timeout, const Functor& predicate)
+    bool waitUntil(LockType& lock, Clock::time_point timeout, const Functor& predicate)
     {
         while (!predicate()) {
             if (!waitUntil(lock, timeout))
@@ -72,17 +91,13 @@ public:
     bool waitFor(
         LockType& lock, const DurationType& relativeTimeout, const Functor& predicate)
     {
-        std::chrono::steady_clock::time_point absoluteTimeout =
-            std::chrono::steady_clock::now() +
-            std::chrono::duration_cast<std::chrono::steady_clock::duration>(relativeTimeout);
-
-        return waitUntil(lock, absoluteTimeout, predicate);
+        return waitUntil(lock, absoluteFromRelative(relativeTimeout), predicate);
     }
 
     template<typename LockType>
     void wait(LockType& lock)
     {
-        waitUntil(lock, std::chrono::steady_clock::time_point::max());
+        waitUntil(lock, Clock::time_point::max());
     }
 
     template<typename LockType, typename Functor>
@@ -91,6 +106,32 @@ public:
         while (!predicate())
             wait(lock);
     }
+
+    template<typename LockType, typename TimeType>
+    bool waitUntil(LockType& lock, const TimeType& timeout)
+    {
+        if (timeout == TimeType::max()) {
+            wait(lock);
+            return true;
+        }
+        return waitForImpl(lock, timeout - TimeType::clock::now());
+    }
+
+    template<typename LockType>
+    bool waitUntilWallClockSeconds(LockType& lock, double absoluteTimeoutSeconds)
+    {
+        return waitForSecondsImpl(lock, absoluteTimeoutSeconds - currentTime());
+    }
+
+    template<typename LockType>
+    bool waitUntilMonotonicClockSeconds(LockType& lock, double absoluteTimeoutSeconds)
+    {
+        return waitForSecondsImpl(lock, absoluteTimeoutSeconds - monotonicallyIncreasingTime());
+    }
+
+    // FIXME: We could replace the dummy byte with a boolean to tell us if there is anyone waiting
+    // right now. This could be used to implement a fast path for notifyOne() and notifyAll().
+    // https://bugs.webkit.org/show_bug.cgi?id=148090
 
     void notifyOne()
     {
@@ -103,7 +144,56 @@ public:
     }
     
 private:
+    template<typename LockType>
+    bool waitForSecondsImpl(LockType& lock, double relativeTimeoutSeconds)
+    {
+        double relativeTimeoutNanoseconds = relativeTimeoutSeconds * (1000.0 * 1000.0 * 1000.0);
+        
+        if (!(relativeTimeoutNanoseconds > 0)) {
+            // This handles insta-timeouts as well as NaN.
+            lock.unlock();
+            lock.lock();
+            return false;
+        }
+
+        if (relativeTimeoutNanoseconds > static_cast<double>(std::numeric_limits<int64_t>::max())) {
+            // If the timeout in nanoseconds cannot be expressed using a 64-bit integer, then we
+            // might as well wait forever.
+            wait(lock);
+            return true;
+        }
+        
+        auto relativeTimeout =
+            std::chrono::nanoseconds(static_cast<int64_t>(relativeTimeoutNanoseconds));
+
+        return waitForImpl(lock, relativeTimeout);
+    }
     
+    template<typename LockType, typename DurationType>
+    bool waitForImpl(LockType& lock, const DurationType& relativeTimeout)
+    {
+        return waitUntil(lock, absoluteFromRelative(relativeTimeout));
+    }
+
+    template<typename DurationType>
+    Clock::time_point absoluteFromRelative(const DurationType& relativeTimeout)
+    {
+        if (relativeTimeout < DurationType::zero())
+            return Clock::time_point::min();
+
+        if (relativeTimeout > Clock::duration::max()) {
+            // This is highly unlikely. But if it happens, we want to not do anything dumb. Sleeping
+            // without a timeout seems sensible when the timeout duration is greater than what can be
+            // expressed using steady_clock.
+            return Clock::time_point::max();
+        }
+        
+        Clock::duration myRelativeTimeout =
+            std::chrono::duration_cast<Clock::duration>(relativeTimeout);
+
+        return Clock::now() + myRelativeTimeout;
+    }
+
     uint8_t m_dummy;
 };
 

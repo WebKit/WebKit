@@ -112,7 +112,7 @@ void runTest(
                                 return !shouldContinue || !queue.isEmpty();
                             },
                             timeout);
-                        if (!shouldContinue)
+                        if (!shouldContinue && queue.isEmpty())
                             return;
                         shouldNotify = queue.size() == maxQueueSize;
                         result = queue.takeFirst();
