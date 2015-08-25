@@ -1,3 +1,15 @@
+2015-08-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test gardening.
+
+        Fix another case where the logging string is constructed using the variable 'frame',
+        but the method argument is not given a name. This causes the global 'frame' value to
+        be used, producing incorrect output.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame): Use 'frame'
+        argument.
+
 2015-08-24  Tim Horton  <timothy_horton@apple.com>
 
         (Finally...) get rid of WKViewIOS

@@ -133,7 +133,7 @@ HRESULT FrameLoadDelegate::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _
     return S_OK; 
 }
 
-HRESULT FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*)
+HRESULT FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 { 
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didReceiveServerRedirectForProvisionalLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
