@@ -1,3 +1,25 @@
+2015-08-18  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF::Condition should have a fast path for notifyOne/notifyAll that avoids calling unparkOne/unparkAll
+        https://bugs.webkit.org/show_bug.cgi?id=148090
+
+        Reviewed by Geoffrey Garen.
+
+        This change makes notifyOne()/notifyAll() blazing fast when nobody is waiting, by using the
+        various hooks that ParkingLot gives us to maintain a m_hasWaiters variable. When it's false, it
+        means that any unpark operation would simply return immediately.
+
+        This is a 45% speed-up for the 1-producer/1-consumer scenario with a 100-element queue when you
+        use the notifyOne()-per-enqueue style. What's cool about this change is that you can now safely
+        call notifyOne() (or notifyAll()) out of paranoia, just in case someone might be waiting. It's
+        free to do so if nobody is waiting!
+
+        * wtf/Condition.h:
+        (WTF::Condition::Condition):
+        (WTF::Condition::waitUntil):
+        (WTF::Condition::notifyOne):
+        (WTF::Condition::notifyAll):
+
 2015-08-17  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all remaining uses of WTF::Mutex with WTF::Lock

@@ -38,7 +38,10 @@ class Condition {
 public:
     typedef ParkingLot::Clock Clock;
     
-    Condition() { }
+    Condition()
+    {
+        m_hasWaiters.store(false);
+    }
 
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
     // parking, and relock it upon wakeup. Returns true if we woke up due to some call to
@@ -64,8 +67,13 @@ public:
             result = false;
         } else {
             result = ParkingLot::parkConditionally(
-                &m_dummy,
-                [] () -> bool { return true; },
+                &m_hasWaiters,
+                [this] () -> bool {
+                    // Let everyone know that we will be waiting. Do this while we hold the queue lock,
+                    // to prevent races with notifyOne().
+                    m_hasWaiters.store(true);
+                    return true;
+                },
                 [&lock] () { lock.unlock(); },
                 timeout);
         }
@@ -129,18 +137,39 @@ public:
         return waitForSecondsImpl(lock, absoluteTimeoutSeconds - monotonicallyIncreasingTime());
     }
 
-    // FIXME: We could replace the dummy byte with a boolean to tell us if there is anyone waiting
-    // right now. This could be used to implement a fast path for notifyOne() and notifyAll().
-    // https://bugs.webkit.org/show_bug.cgi?id=148090
-
+    // Note that this method is extremely fast when nobody is waiting. It is not necessary to try to
+    // avoid calling this method.
     void notifyOne()
     {
-        ParkingLot::unparkOne(&m_dummy);
+        if (!m_hasWaiters.load()) {
+            // At this exact instant, there is nobody waiting on this condition. The way to visualize
+            // this is that if unparkOne() ran to completion without obstructions at this moment, it
+            // wouldn't wake anyone up. Hence, we have nothing to do!
+            return;
+        }
+        
+        ParkingLot::unparkOne(
+            &m_hasWaiters,
+            [this] (bool, bool mayHaveMoreThreads) {
+                if (!mayHaveMoreThreads)
+                    m_hasWaiters.store(false);
+            });
     }
     
     void notifyAll()
     {
-        ParkingLot::unparkAll(&m_dummy);
+        if (!m_hasWaiters.load()) {
+            // See above.
+            return;
+        }
+
+        // It's totally safe for us to set this to false without any locking, because this thread is
+        // guaranteed to then unparkAll() anyway. So, if there is a race with some thread calling
+        // wait() just before this store happens, that thread is guaranteed to be awoken by the call to
+        // unparkAll(), below.
+        m_hasWaiters.store(false);
+        
+        ParkingLot::unparkAll(&m_hasWaiters);
     }
     
 private:
@@ -194,7 +223,7 @@ private:
         return Clock::now() + myRelativeTimeout;
     }
 
-    uint8_t m_dummy;
+    Atomic<bool> m_hasWaiters;
 };
 
 } // namespace WTF
