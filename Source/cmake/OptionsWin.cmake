@@ -136,11 +136,6 @@ if (MSVC)
         /wd4291 /wd4305 /wd4309 /wd4344 /wd4355 /wd4389 /wd4396 /wd4481 /wd4503 /wd4505 /wd4510 /wd4512 /wd4530 /wd4610 /wd4702
         /wd4706 /wd4800 /wd4819 /wd4951 /wd4952 /wd4996 /wd6011 /wd6031 /wd6211 /wd6246 /wd6255 /wd6387 /wd4456 /wd4458
     )
-
-    # Create pdb files for debugging purposes, also for Release builds
-    add_definitions(/Zi)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG")
-
     if (NOT ${CMAKE_GENERATOR} MATCHES "Ninja")
         link_directories("${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}")
         add_definitions(/MP)

@@ -1,3 +1,16 @@
+2015-08-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r188919.
+        https://bugs.webkit.org/show_bug.cgi?id=148452
+
+        broke build (Requested by alexchristensen on #webkit).
+
+        Reverted changeset:
+
+        "[Win] Build does not generate debug info."
+        https://bugs.webkit.org/show_bug.cgi?id=148431
+        http://trac.webkit.org/changeset/188919
+
 2015-08-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] r186800 broke the build on Ubuntu 14.04
