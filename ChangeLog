@@ -1,3 +1,14 @@
+2015-08-25  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Build does not generate debug info.
+        https://bugs.webkit.org/show_bug.cgi?id=148431
+
+        Reviewed by Brent Fulgham.
+
+        Generate debug info for Windows builds.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2015-08-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Auto-detection of cairo-gl fails
