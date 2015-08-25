@@ -1,3 +1,35 @@
+2015-08-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Rendering Frames pie chart should use the needsLayout/updateLayout idiom
+        https://bugs.webkit.org/show_bug.cgi?id=148412
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        (WebInspector.ChartDetailsSectionRow):
+        (WebInspector.ChartDetailsSectionRow.prototype.set innerLabel):
+        (WebInspector.ChartDetailsSectionRow.prototype.set innerRadius):
+        Schedule a layout.
+        (WebInspector.ChartDetailsSectionRow.prototype.set data): Deleted.
+        Replaced by addItem, setItemValue, and clearItems.
+        (WebInspector.ChartDetailsSectionRow.prototype.addItem):
+        (WebInspector.ChartDetailsSectionRow.prototype.setItemValue):
+        (WebInspector.ChartDetailsSectionRow.prototype.clearItems):
+        Add/update data points and schedule a layout.
+        (WebInspector.ChartDetailsSectionRow.prototype._needsLayout):
+        (WebInspector.ChartDetailsSectionRow.prototype.updateLayout):
+        Update legend and draw pie chart.
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegend): Deleted.
+        Refactored as _updateLegend.
+        (WebInspector.ChartDetailsSectionRow.prototype._refresh): Deleted.
+        Refactored as updateLayout.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        Add chart data points once.
+        (WebInspector.TimelineSidebarPanel._refreshFrameSelectionChart):
+        Update chart values.
+
 2015-08-24  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add protocol test for existing error handling performed by the backend

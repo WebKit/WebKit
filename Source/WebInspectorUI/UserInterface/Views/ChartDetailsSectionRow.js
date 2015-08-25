@@ -48,7 +48,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         chartContentElement.appendChild(this._legendElement);
 
         this._delegate = delegate;
-        this._items = [];
+        this._items = new Map;
         this._title = "";
         this._innerLabel = "";
         this._innerRadius = 0;
@@ -83,7 +83,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
         this._innerLabel = label;
 
-        this._refresh();
+        this._needsLayout();
     }
 
     set innerRadius(radius)
@@ -93,7 +93,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
         this._innerRadius = radius;
 
-        this._refresh();
+        this._needsLayout();
     }
 
     get total()
@@ -101,23 +101,48 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         return this._total;
     }
 
-    set data(items)
+    addItem(id, label, value, color, checkbox, checked)
     {
-        if (!(items instanceof Array))
-            items = [items];
-
-        items = items.filter(function(item) { return item.value >= 0; });
-        if (!this._items.length && !items.length)
+        console.assert(!this._items.has(id), "Already added item with id: " + id);
+        if (this._items.has(id))
             return;
 
-        if (this._items.length === items.length && this._items.every(function(item, index) { return JSON.stringify(item) === JSON.stringify(items[index]); }))
+        console.assert(value >= 0, "Value cannot be negative.");
+        if (value < 0)
             return;
 
-        this._items = items;
-        this._total = this._items.reduce(function(previousValue, currentValue) { return previousValue + currentValue.value; }, 0);;
+        this._items.set(id, {label, value, color, checkbox, checked});
+        this._total += value;
 
-        this._createLegend();
-        this._refresh();
+        this._needsLayout();
+    }
+
+    setItemValue(id, value)
+    {
+        let item = this._items.get(id);
+        console.assert(item, "Cannot set value for invalid item id: " + id);
+        if (!item)
+            return;
+
+        console.assert(value >= 0, "Value cannot be negative.");
+        if (value < 0)
+            return;
+
+        if (item.value === value)
+            return;
+
+        this._total += value - item.value;
+        item.value = value;
+
+        this._needsLayout();
+    }
+
+    clearItems()
+    {
+        this._total = 0;
+        this._items.clear();
+
+        this._needsLayout();
     }
 
     // Private
@@ -165,15 +190,31 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         styleSheet.insertRule(".details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]." + id + " { filter: grayscale(1) url(#" + id + ") }", 0);
     }
 
-    _createLegend()
+    _updateLegend()
     {
-        this._legendElement.removeChildren();
+        if (!this._items.size) {
+            this._legendElement.removeChildren();
+            return;
+        }
 
-        for (let item of this._items) {
+        function formatItemValue(item)
+        {
+            if (this._delegate && typeof this._delegate.formatChartValue === "function")
+                return this._delegate.formatChartValue(item.value);
+            return item.value;
+        }
+
+        for (let [id, item] of this._items) {
+            if (item[WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol]) {
+                let valueElement = item[WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol];
+                valueElement.textContent = formatItemValue.call(this, item);
+                continue;
+            }
+
             let labelElement = document.createElement("label");
             let keyElement;
             if (item.checkbox) {
-                let className = item.id.toLowerCase();
+                let className = id.toLowerCase();
                 let rgb = item.color.substring(4, item.color.length - 1).replace(/ /g, "").split(",");
                 if (rgb[0] === rgb[1] && rgb[1] === rgb[2])
                     rgb[0] = rgb[1] = rgb[2] = Math.min(160, rgb[0]);
@@ -182,7 +223,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
                 keyElement.type = "checkbox";
                 keyElement.classList.add(className);
                 keyElement.checked = item.checked;
-                keyElement[WebInspector.ChartDetailsSectionRow.DataItemIdSymbol] = item.id;
+                keyElement[WebInspector.ChartDetailsSectionRow.DataItemIdSymbol] = id;
 
                 keyElement.addEventListener("change", this._legendItemCheckboxValueChanged.bind(this));
 
@@ -197,11 +238,9 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
             let valueElement = document.createElement("div");
             valueElement.classList.add("value");
+            valueElement.textContent = formatItemValue.call(this, item);
 
-            if (this._delegate && typeof this._delegate.formatChartValue === "function")
-                valueElement.textContent = this._delegate.formatChartValue(item.value);
-            else
-                valueElement.textContent = item.value;
+            item[WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol] = valueElement;
 
             let legendItemElement = document.createElement("div");
             legendItemElement.classList.add("legend-item");
@@ -218,8 +257,23 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         this.dispatchEventToListeners(WebInspector.ChartDetailsSectionRow.Event.LegendItemChecked, {id, checked: checkbox.checked});
     }
 
-    _refresh()
+    _needsLayout()
     {
+        if (this._scheduledLayoutUpdateIdentifier)
+            return;
+
+        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
+    }
+
+    updateLayout()
+    {
+        if (this._scheduledLayoutUpdateIdentifier) {
+            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
+            this._scheduledLayoutUpdateIdentifier = undefined;
+        }
+
+        this._updateLegend();
+
         var width = this._canvas.clientWidth * window.devicePixelRatio;
         var height = this._canvas.clientHeight * window.devicePixelRatio;
         this._canvas.width = width;
@@ -253,7 +307,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         drawSlice(x, y, 0, 2.0 * Math.PI, "rgb(242, 242, 242)");
         context.restore();
 
-        for (var item of this._items) {
+        for (let [id, item] of this._items) {
             if (item.value === 0)
                 continue;
             endAngle += (item.value / this._total) * 2.0 * Math.PI;
@@ -272,6 +326,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 };
 
 WebInspector.ChartDetailsSectionRow.DataItemIdSymbol = Symbol("chart-details-section-row-data-item-id");
+WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol = Symbol("chart-details-section-row-legend-item-value-element");
 
 WebInspector.ChartDetailsSectionRow.Event = {
     LegendItemChecked: "chart-details-section-row-legend-item-checked"

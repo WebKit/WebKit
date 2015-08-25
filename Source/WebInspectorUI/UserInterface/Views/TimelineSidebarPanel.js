@@ -97,6 +97,14 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._frameSelectionChartRow.innerRadius = 0.5;
             this._frameSelectionChartRow.addEventListener(WebInspector.ChartDetailsSectionRow.Event.LegendItemChecked, this._frameSelectionLegendItemChecked, this);
 
+            for (let key in WebInspector.RenderingFrameTimelineRecord.TaskType) {
+                let taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
+                let label = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(taskType);
+                let color = this._chartColors.get(taskType);
+                let checkbox = taskType !== WebInspector.RenderingFrameTimelineRecord.TaskType.Other;
+                this._frameSelectionChartRow.addItem(taskType, label, 0, color, checkbox, true);
+            }
+
             this._renderingFrameTaskFilter = new Set;
 
             var chartGroup = new WebInspector.DetailsSectionGroup([this._frameSelectionChartRow]);
@@ -893,19 +901,12 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             return selectedRecords;
         }
 
-        var chart = this._frameSelectionChartRow;
-        var records = getSelectedRecords.call(this);
-        var chartData = Object.keys(WebInspector.RenderingFrameTimelineRecord.TaskType).map(function(taskTypeKey) {
-            let taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[taskTypeKey];
-            let label = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(taskType);
+        let records = getSelectedRecords.call(this);
+        for (let key in WebInspector.RenderingFrameTimelineRecord.TaskType) {
+            let taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
             let value = records.reduce(function(previousValue, currentValue) { return previousValue + currentValue.durationForTask(taskType); }, 0);
-            let color = this._chartColors.get(taskType);
-            let checkbox = taskType !== WebInspector.RenderingFrameTimelineRecord.TaskType.Other;
-            let checked = checkbox && !this._renderingFrameTaskFilter.has(taskType);
-            return {id: taskType, label, value, color, checkbox, checked};
-        }, this);
-
-        this._frameSelectionChartRow.data = chartData;
+            this._frameSelectionChartRow.setItemValue(taskType, value);
+        }
 
         if (!records.length) {
             this._frameSelectionChartRow.title = WebInspector.UIString("Frames: None Selected");
