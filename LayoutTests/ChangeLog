@@ -1,3 +1,18 @@
+2015-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        Using the filter functional notation for background images results in wrong background-size rendering
+        https://bugs.webkit.org/show_bug.cgi?id=148221
+        rdar://problem/22379518
+
+        Reviewed by Daniel Bates.
+
+        Do not ignore the size argument, when the filter image is being drawn onto the context.
+        When the size is ignored, we end up painting the image with its native size while the filter
+        is applied on the size of the generated image.
+
+        * fast/filter-image/background-filter-image-expected.html: Added.
+        * fast/filter-image/background-filter-image.html: Added.
+
 2015-08-25  Nan Wang  <n_wang@apple.com>
 
         [Mac] accessibility/document-attributes.html fails
