@@ -345,7 +345,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
     [_longPressGestureRecognizer setDelay:tapAndHoldDelay];
     [_longPressGestureRecognizer setDelegate:self];
-#if __has_include(<WebKitAdditions/WKContentViewInteraction.mm>)
+#if __has_include(<WebKitAdditions/WKContentViewInteraction.mm>) && HAVE(LINK_PREVIEW)
     if ([_longPressGestureRecognizer respondsToSelector:@selector(_setAdjustsDelayBasedOnOtherRecognizers:)])
         [_longPressGestureRecognizer _setAdjustsDelayBasedOnOtherRecognizers:YES];
 #endif

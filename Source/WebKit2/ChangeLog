@@ -1,5 +1,12 @@
 2015-08-25  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build fix.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+
+2015-08-25  Beth Dakin  <bdakin@apple.com>
+
         Long press gesture recognizer should adjust delay based on other recognizers
         https://bugs.webkit.org/show_bug.cgi?id=148402
         -and corresponding-
