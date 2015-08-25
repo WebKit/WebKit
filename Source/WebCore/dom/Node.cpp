@@ -71,6 +71,7 @@
 #include "WheelEvent.h"
 #include "XMLNames.h"
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/SHA1.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -1460,6 +1461,31 @@ bool Node::offsetInCharacters() const
     return false;
 }
 
+static SHA1::Digest hashPointer(void* pointer)
+{
+    SHA1 sha1;
+    sha1.addBytes(reinterpret_cast<const uint8_t*>(&pointer), sizeof(pointer));
+    SHA1::Digest digest;
+    sha1.computeHash(digest);
+    return digest;
+}
+
+static inline unsigned short compareDetachedElementsPosition(Node* firstNode, Node* secondNode)
+{
+    // If the 2 nodes are not in the same tree, return the result of adding DOCUMENT_POSITION_DISCONNECTED,
+    // DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC, and either DOCUMENT_POSITION_PRECEDING or
+    // DOCUMENT_POSITION_FOLLOWING, with the constraint that this is to be consistent. Whether to return
+    // DOCUMENT_POSITION_PRECEDING or DOCUMENT_POSITION_FOLLOWING is implemented by comparing cryptographic
+    // hashes of Node pointers.
+    // See step 3 in https://dom.spec.whatwg.org/#dom-node-comparedocumentposition
+    SHA1::Digest firstHash = hashPointer(firstNode);
+    SHA1::Digest secondHash = hashPointer(secondNode);
+
+    unsigned short direction = memcmp(firstHash.data(), secondHash.data(), SHA1::hashSize) > 0 ? Node::DOCUMENT_POSITION_PRECEDING : Node::DOCUMENT_POSITION_FOLLOWING;
+
+    return Node::DOCUMENT_POSITION_DISCONNECTED | Node::DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | direction;
+}
+
 unsigned short Node::compareDocumentPosition(Node* otherNode)
 {
     // It is not clear what should be done if |otherNode| is nullptr.
@@ -1478,7 +1504,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     // If either of start1 or start2 is null, then we are disconnected, since one of the nodes is
     // an orphaned attribute node.
     if (!start1 || !start2)
-        return DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
+        return compareDetachedElementsPosition(this, otherNode);
 
     Vector<Node*, 16> chain1;
     Vector<Node*, 16> chain2;
@@ -1510,9 +1536,8 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     // If one node is in the document and the other is not, we must be disconnected.
     // If the nodes have different owning documents, they must be disconnected.  Note that we avoid
     // comparing Attr nodes here, since they return false from inDocument() all the time (which seems like a bug).
-    if (start1->inDocument() != start2->inDocument() ||
-        &start1->treeScope() != &start2->treeScope())
-        return DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
+    if (start1->inDocument() != start2->inDocument() || &start1->treeScope() != &start2->treeScope())
+        return compareDetachedElementsPosition(this, otherNode);
 
     // We need to find a common ancestor container, and then compare the indices of the two immediate children.
     Node* current;
@@ -1526,7 +1551,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
 
     // If the two elements don't have a common root, they're not in the same tree.
     if (chain1[index1 - 1] != chain2[index2 - 1])
-        return DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
+        return compareDetachedElementsPosition(this, otherNode);
 
     // Walk the two chains backwards and look for the first difference.
     for (unsigned i = std::min(index1, index2); i; --i) {

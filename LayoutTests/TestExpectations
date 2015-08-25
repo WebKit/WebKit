@@ -126,6 +126,21 @@ webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
 webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
 webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 
+# These conformace tests are no longer in sync with the latest specification
+# and expect compareDocumentPosition() to return:
+# DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_DISCONNECTED
+# for disconnected nodes (missing PRECEDING / FOLLOWING information).
+# We cannot check rebaseline them because their output is likely to change
+# between test runs as it decides PRECEDING / FOLLOWING using pointer
+# comparison.
+dom/xhtml/level3/core/nodecomparedocumentposition03.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition05.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition16.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition33.xhtml [ WontFix ]
+
+# Node::compareDocumentPosition() wrongly reports an attribute and its content as disconnected.
+webkit.org/b/119325 dom/xhtml/level3/core/nodecomparedocumentposition38.xhtml [ Failure ]
+
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 

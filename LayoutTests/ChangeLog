@@ -1,3 +1,26 @@
+2015-08-25  Chris Dumez  <cdumez@apple.com>
+
+        compareDocumentPosition() should report PRECEDING or FOLLOWING information even if nodes are disconnected
+        https://bugs.webkit.org/show_bug.cgi?id=119316
+
+        Reviewed by Darin Adler.
+
+        Update fast/dom/compare-document-position-disconnected-nodes.html to check that compareDocumentPosition()
+        now returns one of the following values for disconnected nodes:
+        - DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_PRECEDING
+        - DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING
+
+        * TestExpectations:
+        Several dom/xhtml/level3 are skipped and marked as WonfFix because they are outdated and no longer match
+        the latest DOM specification. They expect compareDocumentPosition() not to return PRECEDING / FOLLOWING
+        information for disconnected nodes.
+
+        * dom/xhtml/level3/core/nodecomparedocumentposition38-expected.txt:
+        * fast/dom/compare-document-position-disconnected-nodes-expected.txt:
+        * fast/dom/compare-document-position-disconnected-nodes.html:
+        * fast/dom/shadow/compare-document-position-expected.txt:
+        * fast/dom/shadow/compare-document-position.html:
+
 2015-08-24  Nan Wang  <n_wang@apple.com>
 
         AX: Fix accessibility/mac/search-with-frames.html test
