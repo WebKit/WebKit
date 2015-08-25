@@ -124,6 +124,20 @@ void MainFrame::popLatchingState()
 {
     m_latchingState.removeLast();
 }
+
+void MainFrame::removeLatchingStateForTarget(Element& targetNode)
+{
+    if (m_latchingState.isEmpty())
+        return;
+
+    m_latchingState.removeAllMatching([&targetNode] (ScrollLatchingState& state) {
+        auto* wheelElement = state.wheelEventElement();
+        if (!wheelElement)
+            return false;
+
+        return targetNode.isEqualNode(wheelElement);
+    });
+}
 #endif
 
 }

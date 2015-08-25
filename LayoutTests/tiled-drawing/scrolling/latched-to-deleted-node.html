@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+	#pane {
+      display:inline-block;
+	  width:200px;
+	  height:500px;
+	}
+	#boxup {
+	  position: absolute;
+	  top:0px;
+	  width:200px;
+	  height:230px;
+	  background-color: #000;
+	  opacity:.4;
+	}
+	#boxdown {
+	  position: absolute;
+	  top:270px;
+	  width:200px;
+	  height:230px;
+	  background-color: #000;
+	  opacity:.4;
+	}
+	#objectBack {
+	  position: absolute;
+	  top:200px;
+	  width:200px;
+	  height:100px;
+	  background-color: #6c6;
+	}
+	#targetElement {
+	  position: absolute;
+	  top:30px;
+	  width:200px;
+	  height:40px;
+	  background-color: #c66;
+	}
+	</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="setupTopLevel();">
+<script>
+window.jsTestIsAsync = true;
+
+var pageScrollPositionBeforeGesture;
+var divElement;
+var divScrollPositionBeforeGesture;
+
+var deleteThreshhold = 40;
+
+function locationInWindowCoordinates(element)
+{
+    var position = {};
+    position.x = element.offsetLeft;
+    position.y = element.offsetTop;
+
+    while (element.offsetParent) {
+        position.x = position.x + element.offsetParent.offsetLeft;
+        position.y = position.y + element.offsetParent.offsetTop;
+        if (element == document.getElementsByTagName("body")[0])
+            break;
+
+        element = element.offsetParent;
+    }
+
+    return position;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+	var objectBack = document.getElementById("objectBack");
+	var targetElement = document.getElementById("targetElement");
+	var inIFrame = window.parent !== window;
+	var pos = 0;
+	
+	
+	document.addEventListener("wheel", function(event) {
+		pos = pos - event.deltaY ;
+		move(objectBack, pos);
+		if (Math.abs(pos) > deleteThreshhold) {
+			// don't remove it twice
+			if (targetElement.parentNode) {
+				var parent = targetElement.parentNode;
+				parent.removeChild(targetElement);
+                testPassed("Removed the target element");
+			}
+		}
+		event.preventDefault();
+	});
+	
+	// Setup
+    targetElement.innerHTML = "Put cursor here. Scroll up/down";
+
+	function move(element, pos) {
+		element.style.transform = "translateY(" + pos + "px)";
+    }
+});	
+
+function checkForScroll()
+{
+    var pageScrollPositionAfterGesture = document.body.scrollTop;
+
+    // The page should not have scrolled
+    if (pageScrollPositionBeforeGesture != pageScrollPositionAfterGesture)
+        testFailed("Page received scroll events, when it should not have. Expected " + pageScrollPositionBeforeGesture + ", but got " + pageScrollPositionAfterGesture);
+    else
+        testPassed("Page did not scroll");
+
+    var divScrollPositionAfterGesture = divElement.getBoundingClientRect().top;
+
+    // The div should have continued moving after the element was deleted
+    if (divScrollPositionAfterGesture > (divScrollPositionBeforeGesture - deleteThreshhold - 10))
+        testFailed("div did not scroll to proper location. Expected " + divScrollPositionBeforeGesture + ", but got " + divScrollPositionAfterGesture);
+    else
+        testPassed("div continued scrolling after target element was deleted.");
+
+    finishJSTest();
+}
+
+function scrollTest()
+{
+    pageScrollPositionBeforeGesture = document.body.scrollTop;
+
+    divElement = document.getElementById('objectBack');
+
+    divScrollPositionBeforeGesture = divElement.getBoundingClientRect().top;
+
+    var windowPosition = locationInWindowCoordinates(divElement);
+
+    var startPosX = windowPosition.x + 0.5 * divElement.clientWidth;
+    var startPosY = windowPosition.y + 0.5 * divElement.clientHeight;
+    
+    eventSender.mouseMoveTo(startPosX, startPosY);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    eventSender.callAfterScrollingCompletes(checkForScroll);
+}
+
+function setupTopLevel()
+{
+    if (window.eventSender) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        eventSender.monitorWheelEvents();
+        setTimeout(scrollTest, 0);
+    } else {
+        var messageLocation = document.getElementById('parent');
+        var message = document.createElement('div');
+        message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
+            + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll the<br/>"
+            + "down past the iframe.<br/><br/>"
+            + "The iframe should not scroll.</p>";
+        messageLocation.appendChild(message);
+    }
+}
+</script>
+<div id="parent" style="height: 2000px;">
+    <div id="pane">
+    	<h3>Container</h3>
+    	<div id="objectBack"><div id="targetElement"></div></div>
+    	<div id="boxup"></div>
+    	<div id="boxdown"></div>
+    </div>
+    <p class="description">After moving 40px up or down we remove the initial target element of wheel event from<br/>
+        the dom. In safari this causes the wheel event to stop firing on the current frame, but it<br/>
+        then starts firing on the parent frame.</p>
+</div>
+<div id="console"></div>
+<script>
+description("Tests that iframe doesn't consume wheel events when scrolling a select in an iframe.");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

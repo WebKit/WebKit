@@ -1,3 +1,14 @@
+2015-08-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Wheel events stop propagating when target element is removed from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=148384
+        <rdar://problem/19732211>
+
+        Reviewed by David Hyatt.
+
+        * tiled-drawing/scrolling/latched-to-deleted-node-expected.txt: Added.
+        * tiled-drawing/scrolling/latched-to-deleted-node.html: Added.
+
 2015-08-25  Chris Dumez  <cdumez@apple.com>
 
         compareDocumentPosition() should report PRECEDING or FOLLOWING information even if nodes are disconnected

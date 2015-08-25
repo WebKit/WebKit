@@ -56,6 +56,7 @@
 #include "IdTargetObserverRegistry.h"
 #include "InsertionPoint.h"
 #include "KeyboardEvent.h"
+#include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "NodeRenderStyle.h"
@@ -71,6 +72,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
+#include "ScrollLatchingState.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "StyleProperties.h"
@@ -1591,6 +1593,12 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 
     if (hasPendingResources())
         document().accessSVGExtensions().removeElementFromPendingResources(this);
+
+
+#if PLATFORM(MAC)
+    if (Frame* frame = document().frame())
+        frame->mainFrame().removeLatchingStateForTarget(*this);
+#endif
 }
 
 void Element::unregisterNamedFlowContentElement()

@@ -59,6 +59,7 @@ public:
     void pushNewLatchingState();
     void popLatchingState();
     void resetLatchingState();
+    void removeLatchingStateForTarget(Element&);
 #endif // PLATFORM(MAC)
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
