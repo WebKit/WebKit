@@ -68,6 +68,16 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 }
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
+void clearSurface(cairo_surface_t* surface)
+{
+    if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS)
+        return;
+
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(surface));
+    cairo_set_operator(cr.get(), CAIRO_OPERATOR_CLEAR);
+    cairo_paint(cr.get());
+}
+
 PassRefPtr<cairo_surface_t> createCairoGLSurface(const FloatSize& size, uint32_t& texture)
 {
     GLContext::sharingContext()->makeContextCurrent();
@@ -91,7 +101,9 @@ PassRefPtr<cairo_surface_t> createCairoGLSurface(const FloatSize& size, uint32_t
     // Thread-awareness is a huge performance hit on non-Intel drivers.
     cairo_gl_device_set_thread_aware(device, FALSE);
 
-    return adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, texture, size.width(), size.height()));
+    auto surface = adoptRef(cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, texture, size.width(), size.height()));
+    clearSurface(surface.get());
+    return surface;
 }
 #endif
 
