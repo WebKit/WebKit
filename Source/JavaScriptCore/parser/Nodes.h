@@ -1808,7 +1808,7 @@ namespace JSC {
             ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
             unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
             int functionNameStart, int parametersStart, bool isInStrictContext, 
-            ConstructorKind, unsigned, SourceParseMode, bool isArrowFunction);
+            ConstructorKind, unsigned, SourceParseMode, bool isArrowFunction, bool isArrowFunctionBodyExpression);
 
         void finishParsing(const SourceCode&, const Identifier&, FunctionMode);
         
@@ -1835,6 +1835,7 @@ namespace JSC {
         bool isInStrictContext() const { return m_isInStrictContext; }
         ConstructorKind constructorKind() { return static_cast<ConstructorKind>(m_constructorKind); }
         bool isArrowFunction() const { return m_isArrowFunction; }
+        bool isArrowFunctionBodyExpression() const { return m_isArrowFunctionBodyExpression; }
 
         void setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)
         {
@@ -1861,6 +1862,7 @@ namespace JSC {
         unsigned m_isInStrictContext : 1;
         unsigned m_constructorKind : 2;
         unsigned m_isArrowFunction : 1;
+        unsigned m_isArrowFunctionBodyExpression : 1;
     };
 
     class FunctionNode final : public ScopeNode {

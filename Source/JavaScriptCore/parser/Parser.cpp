@@ -1547,11 +1547,12 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     ConstructorKind constructorKind, FunctionBodyType bodyType, unsigned parameterCount, SourceParseMode parseMode)
 {
     bool isArrowFunction = FunctionBodyType::StandardFunctionBodyBlock != bodyType;
-    if (bodyType == StandardFunctionBodyBlock || bodyType == ArrowFunctionBodyBlock) {
+    bool isArrowFunctionBodyExpression = bodyType == ArrowFunctionBodyExpression;
+    if (!isArrowFunctionBodyExpression) {
         next();
         if (match(CLOSEBRACE)) {
             unsigned endColumn = tokenColumn();
-            return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode, isArrowFunction);
+            return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode, isArrowFunction, isArrowFunctionBodyExpression);
         }
     }
 
@@ -1563,7 +1564,7 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     else
         failIfFalse(parseSourceElements(syntaxChecker, CheckForStrictMode), bodyType == StandardFunctionBodyBlock ? "Cannot parse body of this function" : "Cannot parse body of this arrow function");
     unsigned endColumn = tokenColumn();
-    return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode, isArrowFunction);
+    return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, parameterCount, parseMode, isArrowFunction, isArrowFunctionBodyExpression);
 }
 
 static const char* stringForFunctionMode(SourceParseMode mode)
@@ -1763,7 +1764,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         functionInfo.body = context.createFunctionMetadata(
             startLocation, endLocation, functionInfo.bodyStartColumn, bodyEndColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 
-            cachedInfo->strictMode, constructorKind, cachedInfo->parameterCount, mode, isArrowFunction);
+            cachedInfo->strictMode, constructorKind, cachedInfo->parameterCount, mode, isArrowFunction,  functionBodyType == ArrowFunctionBodyExpression);
         
         functionScope->restoreFromSourceProviderCache(cachedInfo);
         popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo);

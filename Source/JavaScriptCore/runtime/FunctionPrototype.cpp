@@ -88,10 +88,13 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
 
         FunctionExecutable* executable = function->jsExecutable();
+        
+        String functionHeader = executable->isArrowFunction() ? "" : "function ";
+        
         String source = executable->source().provider()->getRange(
             executable->parametersStartOffset(),
             executable->typeProfilingEndOffset() + 1); // Type profiling end offset is the character before the '}'.
-        return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), source));
+        return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(exec), source));
     }
 
     if (thisValue.inherits(InternalFunction::info())) {

@@ -361,18 +361,18 @@ public:
         const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, 
         unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
         int functionNameStart, int parametersStart, bool inStrictContext, 
-        ConstructorKind constructorKind, unsigned parameterCount, SourceParseMode mode, bool isArrowFunction)
+        ConstructorKind constructorKind, unsigned parameterCount, SourceParseMode mode, bool isArrowFunction, bool isArrowFunctionBodyExpression)
     {
         return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 
-            inStrictContext, constructorKind, parameterCount, mode, isArrowFunction);
+            inStrictContext, constructorKind, parameterCount, mode, isArrowFunction, isArrowFunctionBodyExpression);
     }
 
     ExpressionNode* createArrowFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
     {
         usesThis();
-        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
+        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.body->isArrowFunctionBodyExpression() ? functionInfo.endOffset - 1 : functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
         ArrowFuncExprNode* result = new (m_parserArena) ArrowFuncExprNode(location, *functionInfo.name, functionInfo.body, source);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         return result;
