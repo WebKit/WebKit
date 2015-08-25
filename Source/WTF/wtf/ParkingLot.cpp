@@ -535,15 +535,28 @@ bool ParkingLot::parkConditionally(
         return false;
 
     beforeSleep();
-
+    
     bool didGetDequeued;
     {
         std::unique_lock<std::mutex> locker(me->parkingLock);
-        while (me->address && std::chrono::steady_clock::now() < timeout)
-            me->parkingCondition.wait_until(locker, timeout);
+        while (me->address && std::chrono::steady_clock::now() < timeout) {
+            // This is pretty funny. On Linux, if you wait until the max time, it immediately reports that you timed
+            // out. What's particularly bad about this is that it never releases the lock in that case. So, you loop
+            // forever without yielding to the thread that would wake you up.
+            if (timeout == std::chrono::steady_clock::time_point::max())
+                me->parkingCondition.wait(locker);
+            else
+                me->parkingCondition.wait_until(locker, timeout);
+            
+            // Because of the above, we do this thing, which is hilariously awful, but ensures that the worst case is
+            // a CPU-eating spin but not a deadlock.
+            locker.unlock();
+            locker.lock();
+        }
         ASSERT(!me->address || me->address == address);
         didGetDequeued = !me->address;
     }
+    
     if (didGetDequeued) {
         // Great! We actually got dequeued rather than the timeout expiring.
         return true;

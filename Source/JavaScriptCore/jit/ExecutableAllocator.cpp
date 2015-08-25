@@ -31,10 +31,10 @@
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 #include "CodeProfiling.h"
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PageReservation.h>
-#include <wtf/ThreadingPrimitives.h>
 #include <wtf/VMTags.h>
 #endif
 
@@ -56,7 +56,7 @@ public:
     DemandExecutableAllocator()
         : MetaAllocator(jitAllocationGranule)
     {
-        std::lock_guard<std::mutex> lock(allocatorsMutex());
+        std::lock_guard<StaticLock> lock(allocatorsMutex());
         allocators().add(this);
         // Don't preallocate any memory here.
     }
@@ -64,7 +64,7 @@ public:
     virtual ~DemandExecutableAllocator()
     {
         {
-            std::lock_guard<std::mutex> lock(allocatorsMutex());
+            std::lock_guard<StaticLock> lock(allocatorsMutex());
             allocators().remove(this);
         }
         for (unsigned i = 0; i < reservations.size(); ++i)
@@ -74,7 +74,7 @@ public:
     static size_t bytesAllocatedByAllAllocators()
     {
         size_t total = 0;
-        std::lock_guard<std::mutex> lock(allocatorsMutex());
+        std::lock_guard<StaticLock> lock(allocatorsMutex());
         for (HashSet<DemandExecutableAllocator*>::const_iterator allocator = allocators().begin(); allocator != allocators().end(); ++allocator)
             total += (*allocator)->bytesAllocated();
         return total;
@@ -83,7 +83,7 @@ public:
     static size_t bytesCommittedByAllocactors()
     {
         size_t total = 0;
-        std::lock_guard<std::mutex> lock(allocatorsMutex());
+        std::lock_guard<StaticLock> lock(allocatorsMutex());
         for (HashSet<DemandExecutableAllocator*>::const_iterator allocator = allocators().begin(); allocator != allocators().end(); ++allocator)
             total += (*allocator)->bytesCommitted();
         return total;
@@ -92,7 +92,7 @@ public:
 #if ENABLE(META_ALLOCATOR_PROFILE)
     static void dumpProfileFromAllAllocators()
     {
-        std::lock_guard<std::mutex> lock(allocatorsMutex());
+        std::lock_guard<StaticLock> lock(allocatorsMutex());
         for (HashSet<DemandExecutableAllocator*>::const_iterator allocator = allocators().begin(); allocator != allocators().end(); ++allocator)
             (*allocator)->dumpProfile();
     }
@@ -138,9 +138,9 @@ private:
         return sAllocators;
     }
 
-    static std::mutex& allocatorsMutex()
+    static StaticLock& allocatorsMutex()
     {
-        static NeverDestroyed<std::mutex> mutex;
+        static StaticLock mutex;
 
         return mutex;
     }

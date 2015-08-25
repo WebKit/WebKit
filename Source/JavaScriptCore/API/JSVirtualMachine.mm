@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,17 +36,13 @@
 #import "JSWrapperMap.h"
 #import "SlotVisitorInlines.h"
 #import <mutex>
+#import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 static NSMapTable *globalWrapperCache = 0;
 
-static std::mutex& wrapperCacheMutex()
-{
-    static NeverDestroyed<std::mutex> mutex;
-
-    return mutex;
-}
+static StaticLock wrapperCacheMutex;
 
 static void initWrapperCache()
 {
@@ -72,13 +68,13 @@ static NSMapTable *wrapperCache()
 
 + (void)addWrapper:(JSVirtualMachine *)wrapper forJSContextGroupRef:(JSContextGroupRef)group
 {
-    std::lock_guard<std::mutex> lock(wrapperCacheMutex());
+    std::lock_guard<StaticLock> lock(wrapperCacheMutex);
     NSMapInsert(wrapperCache(), group, wrapper);
 }
 
 + (JSVirtualMachine *)wrapperForJSContextGroupRef:(JSContextGroupRef)group
 {
-    std::lock_guard<std::mutex> lock(wrapperCacheMutex());
+    std::lock_guard<StaticLock> lock(wrapperCacheMutex);
     return static_cast<JSVirtualMachine *>(NSMapGet(wrapperCache(), group));
 }
 

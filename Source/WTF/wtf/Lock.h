@@ -56,6 +56,23 @@ struct LockBase {
         lockSlow();
     }
 
+    bool tryLock()
+    {
+        for (;;) {
+            uint8_t currentByteValue = m_byte.load();
+            if (currentByteValue & isHeldBit)
+                return false;
+            if (m_byte.compareExchangeWeak(currentByteValue, currentByteValue | isHeldBit))
+                return true;
+        }
+    }
+
+    // Need this version for std::unique_lock.
+    bool try_lock()
+    {
+        return tryLock();
+    }
+
     void unlock()
     {
         if (LIKELY(m_byte.compareExchangeWeak(isHeldBit, 0, std::memory_order_release))) {
