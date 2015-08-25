@@ -81,7 +81,7 @@ void LockBase::unlockSlow()
     // be held and parked if someone attempts to lock just as we are unlocking.
     for (;;) {
         uint8_t oldByteValue = m_byte.load();
-        ASSERT(oldByteValue == isHeldBit || oldByteValue == (isHeldBit | hasParkedBit));
+        RELEASE_ASSERT(oldByteValue == isHeldBit || oldByteValue == (isHeldBit | hasParkedBit));
         
         if (oldByteValue == isHeldBit) {
             if (m_byte.compareExchangeWeak(isHeldBit, 0))

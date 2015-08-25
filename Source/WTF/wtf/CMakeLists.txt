@@ -10,6 +10,7 @@ set(WTF_HEADERS
     ByteOrder.h
     CompilationThread.h
     Compiler.h
+    Condition.h
     CryptographicUtilities.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
