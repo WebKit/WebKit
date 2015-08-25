@@ -38,8 +38,8 @@ struct LockInspector;
 namespace WTF {
 
 // A WordLock is a fully adaptive mutex that uses sizeof(void*) storage. It has a fast path that is
-// similar to SpinLock, and a slow path that is similar to Mutex. In most cases, you should use Lock
-// instead. WordLock sits lower in the stack and is used to implement Lock, so Lock is the main
+// similar to a spinlock, and a slow path that is similar to std::mutex. In most cases, you should use
+// Lock instead. WordLock sits lower in the stack and is used to implement Lock, so Lock is the main
 // client of WordLock.
 
 class WordLock {
