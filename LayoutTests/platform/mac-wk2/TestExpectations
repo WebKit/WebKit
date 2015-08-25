@@ -252,6 +252,12 @@ webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-ma
 webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html [ Pass Failure ]
 webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
 
+webkit.org/b/148408 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html [ Pass Failure ]
+webkit.org/b/148408 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html [ Pass Failure ]
+webkit.org/b/148408 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html [ Pass Failure ]
+webkit.org/b/148408 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html [ Pass Failure ]
+webkit.org/b/148408 tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html [ Pass Failure ]
+
 webkit.org/b/139820 fast/frames/lots-of-objects.html [ Timeout ]
 webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Timeout ]
 

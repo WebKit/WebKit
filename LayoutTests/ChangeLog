@@ -1,5 +1,11 @@
 2015-08-24  Alexey Proskuryakov  <ap@apple.com>
 
+        Marking more scroll-snap tests as flaky.
+
+        * platform/mac-wk2/TestExpectations:
+
+2015-08-24  Alexey Proskuryakov  <ap@apple.com>
+
         Roll out r188827, because it didn't help.
 
         * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html:
