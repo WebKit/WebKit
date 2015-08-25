@@ -47,14 +47,14 @@ void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeB
         node->transition()->next);
 }
 
-unsigned CommonData::addCodeOrigin(CodeOrigin codeOrigin)
+CallSiteIndex CommonData::addCodeOrigin(CodeOrigin codeOrigin)
 {
     if (codeOrigins.isEmpty()
         || codeOrigins.last() != codeOrigin)
         codeOrigins.append(codeOrigin);
     unsigned index = codeOrigins.size() - 1;
     ASSERT(codeOrigins[index] == codeOrigin);
-    return index;
+    return CallSiteIndex(index);
 }
 
 void CommonData::shrinkToFit()

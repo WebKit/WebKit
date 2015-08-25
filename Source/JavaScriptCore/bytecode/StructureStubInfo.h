@@ -96,6 +96,7 @@ struct StructureStubInfo {
         , seen(false)
         , resetByGC(false)
         , tookSlowPath(false)
+        , callSiteIndex(UINT_MAX)
     {
     }
 
@@ -189,6 +190,7 @@ struct StructureStubInfo {
     bool tookSlowPath : 1;
 
     CodeOrigin codeOrigin;
+    CallSiteIndex callSiteIndex;
 
     struct {
         unsigned spillMode : 8;

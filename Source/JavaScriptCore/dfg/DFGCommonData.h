@@ -79,7 +79,7 @@ public:
     { }
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
-    unsigned addCodeOrigin(CodeOrigin);
+    CallSiteIndex addCodeOrigin(CodeOrigin);
     
     void shrinkToFit();
     

@@ -1,3 +1,152 @@
+2015-08-25  Saam barati  <sbarati@apple.com>
+
+        Lets rename codeOriginIndex to callSiteIndex and get rid of CallFrame::Location.
+        https://bugs.webkit.org/show_bug.cgi?id=148213
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces a struct called CallSiteIndex which is
+        used as a wrapper for a 32-bit int to place things in the tag for ArgumentCount 
+        in the call frame. On 32-bit we place Instruction* into this slot for LLInt and Basline.
+        For 32-bit DFG we place a an index into the code origin table in this slot.
+        On 64-bit we place a bytecode offset into this slot for LLInt and Baseline.
+        On 64-bit we place the index into the code origin table in this slot in the
+        DFG/FTL.
+
+        This patch also gets rid of the encoding scheme that describes if something is a
+        bytecode index or a code origin table index. This information can always
+        be determined based on the CodeBlock's' JITType.
+
+        StructureStubInfo now also has a CallSiteIndex which it stores to
+        the call frame when making a call.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasCodeOrigins):
+        (JSC::CodeBlock::canGetCodeOrigin):
+        (JSC::CodeBlock::codeOrigin):
+        (JSC::CodeBlock::addFrequentExitSite):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::notifyCompilingStructureTransition):
+        (JSC::DFG::CommonData::addCodeOrigin):
+        (JSC::DFG::CommonData::shrinkToFit):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::setEndOfCode):
+        (JSC::DFG::JITCompiler::addCallSite):
+        (JSC::DFG::JITCompiler::emitStoreCodeOrigin):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::InlineCacheDescriptor::InlineCacheDescriptor):
+        (JSC::FTL::InlineCacheDescriptor::stackmapID):
+        (JSC::FTL::InlineCacheDescriptor::callSiteIndex):
+        (JSC::FTL::InlineCacheDescriptor::uid):
+        (JSC::FTL::GetByIdDescriptor::GetByIdDescriptor):
+        (JSC::FTL::PutByIdDescriptor::PutByIdDescriptor):
+        (JSC::FTL::CheckInDescriptor::CheckInDescriptor):
+        (JSC::FTL::InlineCacheDescriptor::codeOrigin): Deleted.
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIn):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callPreflight):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::storeCodeOrigin):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::currentVPC):
+        (JSC::CallFrame::setCurrentVPC):
+        (JSC::CallFrame::callSiteBitsAsBytecodeOffset):
+        (JSC::CallFrame::bytecodeOffset):
+        (JSC::CallFrame::codeOrigin):
+        (JSC::CallFrame::topOfFrameInternal):
+        (JSC::CallFrame::locationAsBytecodeOffset): Deleted.
+        (JSC::CallFrame::setLocationAsBytecodeOffset): Deleted.
+        (JSC::CallFrame::bytecodeOffsetFromCodeOriginIndex): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::CallSiteIndex::CallSiteIndex):
+        (JSC::CallSiteIndex::bits):
+        (JSC::ExecState::returnPCOffset):
+        (JSC::ExecState::abstractReturnPC):
+        (JSC::ExecState::topOfFrame):
+        (JSC::ExecState::setCallerFrame):
+        (JSC::ExecState::setScope):
+        (JSC::ExecState::currentVPC): Deleted.
+        (JSC::ExecState::setCurrentVPC): Deleted.
+        * interpreter/CallFrameInlines.h:
+        (JSC::CallFrame::callSiteBitsAreBytecodeOffset):
+        (JSC::CallFrame::callSiteBitsAreCodeOriginIndex):
+        (JSC::CallFrame::callSiteAsRawBits):
+        (JSC::CallFrame::callSiteIndex):
+        (JSC::CallFrame::hasActivation):
+        (JSC::CallFrame::Location::encode): Deleted.
+        (JSC::CallFrame::Location::decode): Deleted.
+        (JSC::CallFrame::Location::encodeAsBytecodeOffset): Deleted.
+        (JSC::CallFrame::Location::encodeAsBytecodeInstruction): Deleted.
+        (JSC::CallFrame::Location::encodeAsCodeOriginIndex): Deleted.
+        (JSC::CallFrame::Location::isBytecodeLocation): Deleted.
+        (JSC::CallFrame::Location::isCodeOriginIndex): Deleted.
+        (JSC::CallFrame::hasLocationAsBytecodeOffset): Deleted.
+        (JSC::CallFrame::hasLocationAsCodeOriginIndex): Deleted.
+        (JSC::CallFrame::locationAsRawBits): Deleted.
+        (JSC::CallFrame::setLocationAsRawBits): Deleted.
+        (JSC::CallFrame::locationAsBytecodeOffset): Deleted.
+        (JSC::CallFrame::setLocationAsBytecodeOffset): Deleted.
+        (JSC::CallFrame::locationAsCodeOriginIndex): Deleted.
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::Frame::print):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::garbageStubInfo):
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITByIdGenerator::generateFastPathChecks):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITGetByIdGenerator::generateFastPath):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITInlineCacheGenerator::stubInfo):
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlines.h:
+        (JSC::JIT::updateTopCallFrame):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        (JSC::tryGetByValOptimize):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+
 2015-08-25 Aleksandr Skachkov   <gskachkov@gmail.com>
 
         Function.prototype.toString is incorrect for ArrowFunction

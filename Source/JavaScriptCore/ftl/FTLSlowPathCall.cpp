@@ -166,8 +166,8 @@ void storeCodeOrigin(State& state, CCallHelpers& jit, CodeOrigin codeOrigin)
     if (!codeOrigin.isSet())
         return;
     
-    unsigned index = state.jitCode->common.addCodeOrigin(codeOrigin);
-    unsigned locationBits = CallFrame::Location::encodeAsCodeOriginIndex(index);
+    CallSiteIndex callSite = state.jitCode->common.addCodeOrigin(codeOrigin);
+    unsigned locationBits = callSite.bits();
     jit.store32(
         CCallHelpers::TrustedImm32(locationBits),
         CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));

@@ -168,7 +168,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     } // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
     
     uint32_t bytecodeOffset = instruction - m_codeBlock->instructions().begin();
-    uint32_t locationBits = CallFrame::Location::encodeAsBytecodeOffset(bytecodeOffset);
+    uint32_t locationBits = CallSiteIndex(bytecodeOffset).bits();
     store32(TrustedImm32(locationBits), Address(callFrameRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + TagOffset));
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
 

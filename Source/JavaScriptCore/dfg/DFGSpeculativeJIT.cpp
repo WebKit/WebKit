@@ -964,6 +964,7 @@ void SpeculativeJIT::compileIn(Node* node)
                 JSValueRegs::payloadOnly(resultGPR), stubInfo, baseGPR,
                 static_cast<const AtomicStringImpl*>(string->tryGetValueImpl()));
             
+            stubInfo->callSiteIndex = m_jit.addCallSite(node->origin.semantic);
             stubInfo->codeOrigin = node->origin.semantic;
             stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
             stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);

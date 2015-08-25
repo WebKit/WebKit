@@ -37,22 +37,24 @@ namespace JSC { namespace FTL {
 
 class InlineCacheDescriptor {
 public:
-    InlineCacheDescriptor() { }
+    InlineCacheDescriptor() 
+        : m_callSiteIndex(UINT_MAX) 
+    { }
     
-    InlineCacheDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+    InlineCacheDescriptor(unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid)
         : m_stackmapID(stackmapID)
-        , m_codeOrigin(codeOrigin)
+        , m_callSiteIndex(callSite)
         , m_uid(uid)
     {
     }
     
     unsigned stackmapID() const { return m_stackmapID; }
-    CodeOrigin codeOrigin() const { return m_codeOrigin; }
+    CallSiteIndex callSiteIndex() const { return m_callSiteIndex; }
     UniquedStringImpl* uid() const { return m_uid; }
     
 private:
     unsigned m_stackmapID;
-    CodeOrigin m_codeOrigin;
+    CallSiteIndex m_callSiteIndex;
     UniquedStringImpl* m_uid;
     
 public:
@@ -63,8 +65,8 @@ class GetByIdDescriptor : public InlineCacheDescriptor {
 public:
     GetByIdDescriptor() { }
     
-    GetByIdDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid)
-        : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
+    GetByIdDescriptor(unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid)
+        : InlineCacheDescriptor(stackmapID, callSite, uid)
     {
     }
     
@@ -76,9 +78,9 @@ public:
     PutByIdDescriptor() { }
     
     PutByIdDescriptor(
-        unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid,
+        unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid,
         ECMAMode ecmaMode, PutKind putKind)
-        : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
+        : InlineCacheDescriptor(stackmapID, callSite, uid)
         , m_ecmaMode(ecmaMode)
         , m_putKind(putKind)
     {
@@ -111,8 +113,8 @@ class CheckInDescriptor : public InlineCacheDescriptor {
 public:
     CheckInDescriptor() { }
     
-    CheckInDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const UniquedStringImpl* uid)
-        : InlineCacheDescriptor(stackmapID, codeOrigin, nullptr)
+    CheckInDescriptor(unsigned stackmapID, CallSiteIndex callSite, const UniquedStringImpl* uid)
+        : InlineCacheDescriptor(stackmapID, callSite, nullptr)
         , m_uid(uid)
     {
     }

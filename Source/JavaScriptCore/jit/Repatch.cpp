@@ -411,7 +411,7 @@ static bool generateByIdStub(
         // Need to make sure that whenever this call is made in the future, we remember the
         // place that we made it from. It just so happens to be the place that we are at
         // right now!
-        stubJit.store32(MacroAssembler::TrustedImm32(exec->locationAsRawBits()),
+        stubJit.store32(MacroAssembler::TrustedImm32(stubInfo.callSiteIndex.bits()),
             CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
 
         if (kind == CallGetter || kind == CallSetter) {

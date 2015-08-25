@@ -2220,7 +2220,7 @@ private:
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
         m_ftlState.putByIds.append(PutByIdDescriptor(
-            stackmapID, m_node->origin.semantic, uid,
+            stackmapID, m_ftlState.jitCode->common.addCodeOrigin(m_node->origin.semantic), uid,
             m_graph.executableFor(m_node->origin.semantic)->ecmaMode(),
             m_node->op() == PutByIdDirect ? Direct : NotDirect));
     }
@@ -4957,7 +4957,7 @@ private:
 
                 setInstructionCallingConvention(call, LLVMAnyRegCallConv);
 
-                m_ftlState.checkIns.append(CheckInDescriptor(stackmapID, m_node->origin.semantic, str));
+                m_ftlState.checkIns.append(CheckInDescriptor(stackmapID, m_ftlState.jitCode->common.addCodeOrigin(m_node->origin.semantic), str));
                 setJSValue(call);
                 return;
             }
@@ -5800,7 +5800,7 @@ private:
             constNull(m_out.ref8), m_out.constInt32(1), base);
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
-        m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->origin.semantic, uid));
+        m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_ftlState.jitCode->common.addCodeOrigin(m_node->origin.semantic), uid));
         
         return call;
     }
@@ -8056,8 +8056,7 @@ private:
     {
         m_out.store32(
             m_out.constInt32(
-                CallFrame::Location::encodeAsCodeOriginIndex(
-                    m_ftlState.jitCode->common.addCodeOrigin(codeOrigin))),
+                m_ftlState.jitCode->common.addCodeOrigin(codeOrigin).bits()),
             tagFor(JSStack::ArgumentCount));
     }
     void callPreflight()

@@ -153,7 +153,7 @@ void link(State& state)
         jit.emitFunctionPrologue();
         jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         jit.store32(
-            CCallHelpers::TrustedImm32(CallFrame::Location::encodeAsBytecodeOffset(0)),
+            CCallHelpers::TrustedImm32(CallSiteIndex(0).bits()),
             CCallHelpers::tagFor(JSStack::ArgumentCount));
         jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
         CCallHelpers::Call callArityCheck = jit.call();

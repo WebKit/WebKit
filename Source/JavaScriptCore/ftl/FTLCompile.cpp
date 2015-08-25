@@ -456,6 +456,7 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
+            CodeOrigin codeOrigin = state.jitCode->common.codeOrigins[getById.callSiteIndex().bits()];
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
             
@@ -465,13 +466,13 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg base = record.locations[1].directGPR();
                 
                 JITGetByIdGenerator gen(
-                    codeBlock, getById.codeOrigin(), usedRegisters, JSValueRegs(base),
+                    codeBlock, codeOrigin, getById.callSiteIndex(), usedRegisters, JSValueRegs(base),
                     JSValueRegs(result), NeedToSpill);
                 
                 MacroAssembler::Label begin = slowPathJIT.label();
 
                 MacroAssembler::Call call = callOperation(
-                    state, usedRegisters, slowPathJIT, getById.codeOrigin(), &exceptionTarget,
+                    state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
                     operationGetByIdOptimize, result, gen.stubInfo(), base, getById.uid());
 
                 gen.reportSlowPathCall(begin, call);
@@ -493,6 +494,7 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
+            CodeOrigin codeOrigin = state.jitCode->common.codeOrigins[putById.callSiteIndex().bits()];
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
                 
@@ -502,14 +504,14 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg value = record.locations[1].directGPR();
                 
                 JITPutByIdGenerator gen(
-                    codeBlock, putById.codeOrigin(), usedRegisters, JSValueRegs(base),
+                    codeBlock, codeOrigin, putById.callSiteIndex(), usedRegisters, JSValueRegs(base),
                     JSValueRegs(value), GPRInfo::patchpointScratchRegister, NeedToSpill,
                     putById.ecmaMode(), putById.putKind());
                 
                 MacroAssembler::Label begin = slowPathJIT.label();
                 
                 MacroAssembler::Call call = callOperation(
-                    state, usedRegisters, slowPathJIT, putById.codeOrigin(), &exceptionTarget,
+                    state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
                     gen.slowPathFunction(), gen.stubInfo(), value, base, putById.uid());
                 
                 gen.reportSlowPathCall(begin, call);
@@ -531,13 +533,15 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
+            CodeOrigin codeOrigin = state.jitCode->common.codeOrigins[checkIn.callSiteIndex().bits()];
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
                 RegisterSet usedRegisters = usedRegistersFor(record);
                 GPRReg result = record.locations[0].directGPR();
                 GPRReg obj = record.locations[1].directGPR();
                 StructureStubInfo* stubInfo = codeBlock->addStubInfo(); 
-                stubInfo->codeOrigin = checkIn.codeOrigin();
+                stubInfo->codeOrigin = codeOrigin;
+                stubInfo->callSiteIndex = checkIn.callSiteIndex();
                 stubInfo->patch.baseGPR = static_cast<int8_t>(obj);
                 stubInfo->patch.valueGPR = static_cast<int8_t>(result);
                 stubInfo->patch.usedRegisters = usedRegisters;
@@ -546,7 +550,7 @@ static void fixFunctionBasedOnStackMaps(
                 MacroAssembler::Label begin = slowPathJIT.label();
 
                 MacroAssembler::Call slowCall = callOperation(
-                    state, usedRegisters, slowPathJIT, checkIn.codeOrigin(), &exceptionTarget,
+                    state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
                     operationInOptimize, result, stubInfo, obj, checkIn.m_uid);
 
                 checkIn.m_slowPathDone.append(slowPathJIT.jump());

@@ -40,17 +40,18 @@ static StructureStubInfo* garbageStubInfo()
     return stubInfo;
 }
 
-JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin)
+JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite)
     : m_codeBlock(codeBlock)
 {
     m_stubInfo = m_codeBlock ? m_codeBlock->addStubInfo() : garbageStubInfo();
     m_stubInfo->codeOrigin = codeOrigin;
+    m_stubInfo->callSiteIndex = callSite;
 }
 
 JITByIdGenerator::JITByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
     JSValueRegs base, JSValueRegs value, SpillRegistersMode spillMode)
-    : JITInlineCacheGenerator(codeBlock, codeOrigin)
+    : JITInlineCacheGenerator(codeBlock, codeOrigin, callSite)
     , m_base(base)
     , m_value(value)
 {
@@ -111,9 +112,9 @@ void JITByIdGenerator::generateFastPathChecks(MacroAssembler& jit, GPRReg butter
 }
 
 JITGetByIdGenerator::JITGetByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
     JSValueRegs base, JSValueRegs value, SpillRegistersMode spillMode)
-    : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, spillMode)
+    : JITByIdGenerator(codeBlock, codeOrigin, callSite, usedRegisters, base, value, spillMode)
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
 }
@@ -136,10 +137,10 @@ void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 }
 
 JITPutByIdGenerator::JITPutByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
     JSValueRegs base, JSValueRegs value, GPRReg scratch, SpillRegistersMode spillMode,
     ECMAMode ecmaMode, PutKind putKind)
-    : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, spillMode)
+    : JITByIdGenerator(codeBlock, codeOrigin, callSite, usedRegisters, base, value, spillMode)
     , m_scratch(scratch)
     , m_ecmaMode(ecmaMode)
     , m_putKind(putKind)

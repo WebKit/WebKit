@@ -579,7 +579,7 @@ static OptimizationResult tryPutByValOptimize(ExecState* exec, JSValue baseValue
     if (baseValue.isObject() && subscript.isInt32()) {
         JSObject* object = asObject(baseValue);
 
-        ASSERT(exec->locationAsBytecodeOffset());
+        ASSERT(exec->bytecodeOffset());
         ASSERT(!byValInfo->stubRoutine);
 
         Structure* structure = object->structure(vm);
@@ -604,7 +604,7 @@ static OptimizationResult tryPutByValOptimize(ExecState* exec, JSValue baseValue
     if (baseValue.isObject() && isStringOrSymbol(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(exec);
         if (!subscript.isString() || !parseIndex(propertyName)) {
-            ASSERT(exec->locationAsBytecodeOffset());
+            ASSERT(exec->bytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
@@ -659,7 +659,7 @@ static OptimizationResult tryDirectPutByValOptimize(ExecState* exec, JSObject* o
     VM& vm = exec->vm();
 
     if (subscript.isInt32()) {
-        ASSERT(exec->locationAsBytecodeOffset());
+        ASSERT(exec->bytecodeOffset());
         ASSERT(!byValInfo->stubRoutine);
 
         Structure* structure = object->structure(vm);
@@ -684,7 +684,7 @@ static OptimizationResult tryDirectPutByValOptimize(ExecState* exec, JSObject* o
         Optional<uint32_t> index = parseIndex(propertyName);
 
         if (!subscript.isString() || !index) {
-            ASSERT(exec->locationAsBytecodeOffset());
+            ASSERT(exec->bytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
@@ -1548,7 +1548,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {
                 if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomicString.get())) {
-                    ASSERT(exec->locationAsBytecodeOffset());
+                    ASSERT(exec->bytecodeOffset());
                     if (byValInfo->stubInfo && byValInfo->cachedId.impl() != existingAtomicString)
                         byValInfo->tookSlowPath = true;
                     return result;
@@ -1558,7 +1558,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
     }
 
     if (subscript.isUInt32()) {
-        ASSERT(exec->locationAsBytecodeOffset());
+        ASSERT(exec->bytecodeOffset());
         byValInfo->tookSlowPath = true;
 
         uint32_t i = subscript.asUInt32();
@@ -1587,7 +1587,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
     if (exec->hadException())
         return jsUndefined();
 
-    ASSERT(exec->locationAsBytecodeOffset());
+    ASSERT(exec->bytecodeOffset());
     if (byValInfo->stubInfo && (!isStringOrSymbol(subscript) || byValInfo->cachedId != property))
         byValInfo->tookSlowPath = true;
 
@@ -1604,7 +1604,7 @@ static OptimizationResult tryGetByValOptimize(ExecState* exec, JSValue baseValue
     if (baseValue.isObject() && subscript.isInt32()) {
         JSObject* object = asObject(baseValue);
 
-        ASSERT(exec->locationAsBytecodeOffset());
+        ASSERT(exec->bytecodeOffset());
         ASSERT(!byValInfo->stubRoutine);
 
         if (hasOptimizableIndexing(object->structure(vm))) {
@@ -1631,7 +1631,7 @@ static OptimizationResult tryGetByValOptimize(ExecState* exec, JSValue baseValue
     if (baseValue.isObject() && isStringOrSymbol(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(exec);
         if (!subscript.isString() || !parseIndex(propertyName)) {
-            ASSERT(exec->locationAsBytecodeOffset());
+            ASSERT(exec->bytecodeOffset());
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
@@ -1706,7 +1706,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
     JSObject* object = asObject(baseValue);
     bool didOptimize = false;
 
-    ASSERT(exec->locationAsBytecodeOffset());
+    ASSERT(exec->bytecodeOffset());
     ASSERT(!byValInfo->stubRoutine);
     
     if (hasOptimizableIndexing(object->structure(vm))) {
@@ -1775,7 +1775,7 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
         else {
             result = baseValue.get(exec, i);
             if (!isJSString(baseValue)) {
-                ASSERT(exec->locationAsBytecodeOffset());
+                ASSERT(exec->bytecodeOffset());
                 ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(byValInfo->stubRoutine ? operationGetByValGeneric : operationGetByValOptimize));
             }
         }

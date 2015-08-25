@@ -41,7 +41,7 @@ class CodeBlock;
 class JITInlineCacheGenerator {
 protected:
     JITInlineCacheGenerator() { }
-    JITInlineCacheGenerator(CodeBlock*, CodeOrigin);
+    JITInlineCacheGenerator(CodeBlock*, CodeOrigin, CallSiteIndex);
     
 public:
     StructureStubInfo* stubInfo() const { return m_stubInfo; }
@@ -56,7 +56,7 @@ protected:
     JITByIdGenerator() { }
 
     JITByIdGenerator(
-        CodeBlock*, CodeOrigin, const RegisterSet&, JSValueRegs base, JSValueRegs value,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet&, JSValueRegs base, JSValueRegs value,
         SpillRegistersMode spillMode);
     
 public:
@@ -95,7 +95,7 @@ public:
     JITGetByIdGenerator() { }
 
     JITGetByIdGenerator(
-        CodeBlock*, CodeOrigin, const RegisterSet& usedRegisters, JSValueRegs base,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
         JSValueRegs value, SpillRegistersMode spillMode);
     
     void generateFastPath(MacroAssembler&);
@@ -106,7 +106,7 @@ public:
     JITPutByIdGenerator() { }
 
     JITPutByIdGenerator(
-        CodeBlock*, CodeOrigin, const RegisterSet& usedRegisters, JSValueRegs base,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
         JSValueRegs, GPRReg scratch, SpillRegistersMode spillMode, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);

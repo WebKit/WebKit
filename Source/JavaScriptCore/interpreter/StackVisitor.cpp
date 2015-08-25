@@ -95,7 +95,7 @@ void StackVisitor::readFrame(CallFrame* callFrame)
         return;
     }
 
-    unsigned index = callFrame->locationAsCodeOriginIndex();
+    CallSiteIndex index = callFrame->callSiteIndex();
     ASSERT(codeBlock->canGetCodeOrigin(index));
     if (!codeBlock->canGetCodeOrigin(index)) {
         // See assertion above. In release builds, we try to protect ourselves
@@ -125,7 +125,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     m_frame.m_codeBlock = callFrame->codeBlock();
     m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
         : codeOrigin ? codeOrigin->bytecodeIndex
-        : callFrame->locationAsBytecodeOffset();
+        : callFrame->bytecodeOffset();
 #if ENABLE(DFG_JIT)
     m_frame.m_inlineCallFrame = 0;
 #endif
@@ -376,7 +376,7 @@ void StackVisitor::Frame::print(int indent)
         logF(indent, "callee: %p\n", callee());
         logF(indent, "returnPC: %p\n", returnPC);
         logF(indent, "callerFrame: %p\n", callerFrame);
-        unsigned locationRawBits = callFrame->locationAsRawBits();
+        unsigned locationRawBits = callFrame->callSiteAsRawBits();
         logF(indent, "rawLocationBits: %u 0x%x\n", locationRawBits, locationRawBits);
         logF(indent, "codeBlock: %p ", codeBlock);
         if (codeBlock)
@@ -385,15 +385,15 @@ void StackVisitor::Frame::print(int indent)
         if (codeBlock && !isInlined) {
             indent++;
 
-            if (callFrame->hasLocationAsBytecodeOffset()) {
-                unsigned bytecodeOffset = callFrame->locationAsBytecodeOffset();
+            if (callFrame->callSiteBitsAreBytecodeOffset()) {
+                unsigned bytecodeOffset = callFrame->bytecodeOffset();
                 log(indent, "bytecodeOffset: ", bytecodeOffset, " of ", codeBlock->instructions().size(), "\n");
 #if ENABLE(DFG_JIT)
             } else {
                 log(indent, "hasCodeOrigins: ", codeBlock->hasCodeOrigins(), "\n");
                 if (codeBlock->hasCodeOrigins()) {
-                    unsigned codeOriginIndex = callFrame->locationAsCodeOriginIndex();
-                    log(indent, "codeOriginIndex: ", codeOriginIndex, " of ", codeBlock->codeOrigins().size(), "\n");
+                    CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
+                    log(indent, "callSiteIndex: ", callSiteIndex.bits(), " of ", codeBlock->codeOrigins().size(), "\n");
 
                     JITCode::JITType jitType = codeBlock->jitType();
                     if (jitType != JITCode::FTLJIT) {

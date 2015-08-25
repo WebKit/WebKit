@@ -150,11 +150,15 @@ public:
         m_disassembler->setEndOfCode(labelIgnoringWatchpoints());
     }
     
+    CallSiteIndex addCallSite(CodeOrigin codeOrigin)
+    {
+        return m_jitCode->common.addCodeOrigin(codeOrigin);
+    }
+
     void emitStoreCodeOrigin(CodeOrigin codeOrigin)
     {
-        unsigned index = m_jitCode->common.addCodeOrigin(codeOrigin);
-        unsigned locationBits = CallFrame::Location::encodeAsCodeOriginIndex(index);
-        store32(TrustedImm32(locationBits), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+        CallSiteIndex callSite = addCallSite(codeOrigin);
+        store32(TrustedImm32(callSite.bits()), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
     }
 
     // Add a call out from JIT code, without an exception check.
