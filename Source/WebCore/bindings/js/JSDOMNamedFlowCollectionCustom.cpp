@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSDOMNamedFlowCollection.h"
 
+#if ENABLE(CSS_REGIONS)
+
 #include "DOMNamedFlowCollection.h"
 #include "JSDOMBinding.h"
 #include "JSWebKitNamedFlow.h"
@@ -45,3 +47,5 @@ bool JSDOMNamedFlowCollection::nameGetter(ExecState* exec, PropertyName property
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(CSS_REGIONS)
