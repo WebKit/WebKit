@@ -455,11 +455,10 @@ public:
     virtual void playbackTargetPickerClientStateDidChange(uint64_t /*contextId*/, MediaProducer::MediaStateFlags) { }
 #endif
 
-#if ENABLE(VIDEO)
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
-#if USE(GSTREAMER)
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
     virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, MediaPlayerRequestInstallMissingPluginsCallback&) { };
-#endif
 #endif
 
 protected:
