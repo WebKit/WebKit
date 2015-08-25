@@ -1170,7 +1170,6 @@ set(WebCore_SOURCES
     bindings/js/JSReadableStreamControllerCustom.cpp
     bindings/js/JSReadableStreamCustom.cpp
     bindings/js/JSReadableStreamReaderCustom.cpp
-    bindings/js/JSRequestAnimationFrameCallbackCustom.cpp
     bindings/js/JSSQLResultSetRowListCustom.cpp
     bindings/js/JSSQLTransactionCustom.cpp
     bindings/js/JSSVGLengthCustom.cpp

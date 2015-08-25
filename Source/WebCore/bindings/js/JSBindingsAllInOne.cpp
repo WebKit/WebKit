@@ -127,7 +127,6 @@
 #include "JSReadableStreamReaderCustom.cpp"
 #include "ReadableJSStream.cpp"
 #endif
-#include "JSRequestAnimationFrameCallbackCustom.cpp"
 #include "JSSQLResultSetRowListCustom.cpp"
 #include "JSSQLTransactionCustom.cpp"
 #include "JSSVGLengthCustom.cpp"

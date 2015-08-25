@@ -1738,7 +1738,6 @@
 		4998AECE13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4998AECC13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h */; };
 		4998AED113FB224D0090B1AA /* ScriptedAnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4998AECF13FB224D0090B1AA /* ScriptedAnimationController.cpp */; };
 		4998AED213FB224D0090B1AA /* ScriptedAnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4998AED013FB224D0090B1AA /* ScriptedAnimationController.h */; };
-		4998AED413FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */; };
 		499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */; };
 		499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8994,7 +8993,6 @@
 		4998AECC13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRequestAnimationFrameCallback.h; sourceTree = "<group>"; };
 		4998AECF13FB224D0090B1AA /* ScriptedAnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptedAnimationController.cpp; sourceTree = "<group>"; };
 		4998AED013FB224D0090B1AA /* ScriptedAnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptedAnimationController.h; sourceTree = "<group>"; };
-		4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRequestAnimationFrameCallbackCustom.cpp; sourceTree = "<group>"; };
 		499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayer.h; sourceTree = "<group>"; };
 		499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerCA.cpp; sourceTree = "<group>"; };
 		499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCA.h; sourceTree = "<group>"; };
@@ -21579,7 +21577,6 @@
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				41A023F31A39DBCB00F722CF /* JSReadableStreamCustom.cpp */,
 				419FAFB01ABABD7B005B828B /* JSReadableStreamReaderCustom.cpp */,
-				4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */,
 				4AE0BF881836083100F3852D /* JSRTCIceCandidateCustom.cpp */,
 				07CA120D182D67D800D12197 /* JSRTCPeerConnectionCustom.cpp */,
 				07D07B131834158800ABDD3C /* JSRTCSessionDescriptionCustom.cpp */,
@@ -29290,7 +29287,6 @@
 				419FAFB11ABABDED005B828B /* JSReadableStreamReaderCustom.cpp in Sources */,
 				BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */,
 				4998AECD13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp in Sources */,
-				4998AED413FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp in Sources */,
 				BC74DA481013F468007987AD /* JSRGBColor.cpp in Sources */,
 				073794E519EE2FF200E5A045 /* JSRTCConfiguration.cpp in Sources */,
 				07969DAB17D14151007FF842 /* JSRTCDataChannel.cpp in Sources */,

@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007-2010, 2013-2105 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -3590,20 +3590,13 @@ sub GenerateCallbackImplementation
             push(@implContent, "    JSLockHolder lock(m_data->globalObject()->vm());\n\n");
             if (@params) {
                 push(@implContent, "    ExecState* exec = m_data->globalObject()->globalExec();\n");
+                push(@implContent, "    UNUSED_PARAM(exec);\n");
             }
             push(@implContent, "    MarkedArgumentBuffer args;\n");
 
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                if ($param->type eq "DOMString") {
-                    push(@implContent, "    args.append(jsStringWithCache(exec, ${paramName}));\n");
-                } elsif ($param->type eq "boolean") {
-                    push(@implContent, "    args.append(jsBoolean(${paramName}));\n");
-                } elsif ($param->type eq "SerializedScriptValue") {
-                    push(@implContent, "    args.append($paramName ? $paramName->deserialize(exec, m_data->globalObject(), 0) : jsNull());\n");
-                } else {
-                    push(@implContent, "    args.append(toJS(exec, m_data->globalObject(), ${paramName}));\n");
-                }
+                push(@implContent, "    args.append(" . NativeToJSValue($param, 1, $interfaceName, $paramName, "m_data") . ");\n");
             }
 
             push(@implContent, "\n    bool raisedException = false;\n");
