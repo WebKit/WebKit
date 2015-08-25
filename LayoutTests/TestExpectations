@@ -18,6 +18,7 @@ fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
+fast/forms/search/search-results-hidden-crash.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.

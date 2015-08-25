@@ -1,0 +1,32 @@
+<html>
+
+<head>
+    <script>
+    function hideSearchField() {
+        var search = document.getElementsByTagName("input")[0];
+        search.style.display = "none";
+    }
+
+    function setup() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            window.eventSender.mouseMoveTo(10, 10);
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+        }
+    }
+    </script>
+
+    <style>
+    body, input {
+        margin: 0;
+    }
+    </style>
+</head>
+
+<body onload="setup()">
+    <input onfocus="hideSearchField()" type="search" results="5"></input>
+    <p>We did not crash!</p>
+</body>
+
+</html>

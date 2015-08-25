@@ -11,6 +11,7 @@ editing/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
+fast/forms/search/search-results-hidden-crash.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
