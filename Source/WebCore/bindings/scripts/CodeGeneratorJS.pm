@@ -3570,7 +3570,8 @@ sub GenerateCallbackImplementation
             }
 
             AddIncludesForTypeInImpl($function->signature->type);
-            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::" . $function->signature->name . "(");
+            my $functionName = $function->signature->name;
+            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::${functionName}(");
 
             my @args = ();
             my @argsCheck = ();
@@ -3588,10 +3589,7 @@ sub GenerateCallbackImplementation
             push(@implContent, "        return true;\n\n");
             push(@implContent, "    Ref<$className> protect(*this);\n\n");
             push(@implContent, "    JSLockHolder lock(m_data->globalObject()->vm());\n\n");
-            if (@params) {
-                push(@implContent, "    ExecState* exec = m_data->globalObject()->globalExec();\n");
-                push(@implContent, "    UNUSED_PARAM(exec);\n");
-            }
+            push(@implContent, "    ExecState* exec = m_data->globalObject()->globalExec();\n");
             push(@implContent, "    MarkedArgumentBuffer args;\n");
 
             foreach my $param (@params) {
@@ -3600,7 +3598,7 @@ sub GenerateCallbackImplementation
             }
 
             push(@implContent, "\n    bool raisedException = false;\n");
-            push(@implContent, "    m_data->invokeCallback(args, &raisedException);\n");
+            push(@implContent, "    m_data->invokeCallback(args, Identifier::fromString(exec, \"${functionName}\"), &raisedException);\n");
             push(@implContent, "    return !raisedException;\n");
             push(@implContent, "}\n");
         }

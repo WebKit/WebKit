@@ -43,13 +43,13 @@ void JSCallbackData::deleteData(void* context)
     delete static_cast<JSCallbackData*>(context);
 }
 
-JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedException)
+JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, PropertyName functionName, bool* raisedException)
 {
     ASSERT(callback());
-    return invokeCallback(callback(), args, raisedException);
+    return invokeCallback(callback(), args, functionName, raisedException);
 }
 
-JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, bool* raisedException)
+JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, PropertyName functionName, bool* raisedException)
 {
     ASSERT(callback());
     ASSERT(globalObject());
@@ -60,7 +60,7 @@ JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& 
     CallData callData;
     CallType callType = callback()->methodTable()->getCallData(callback(), callData);
     if (callType == CallTypeNone) {
-        function = callback()->get(exec, Identifier::fromString(exec, "handleEvent"));
+        function = callback()->get(exec, functionName);
         callType = getCallData(function, callData);
         if (callType == CallTypeNone)
             return JSValue();
