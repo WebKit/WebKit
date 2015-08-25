@@ -232,9 +232,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     
     m_calleeRegister.setIndex(JSStack::Callee);
     
-    if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())
-        && functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode())) {
-        emitPushFunctionNameScope(functionNode->ident(), &m_calleeRegister);
+    if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())) {
+        bool isDynamicScope = functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode());
+        bool isFunctionNameCaptured = captures(functionNode->ident().impl());
+        bool markAsCaptured = isDynamicScope || isFunctionNameCaptured;
+        emitPushFunctionNameScope(functionNode->ident(), &m_calleeRegister, markAsCaptured);
     }
     
     if (shouldCaptureSomeOfTheThings) {
@@ -396,15 +398,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // - "arguments": unless it's used as a function or parameter, this should refer to the
     //   arguments object.
     //
-    // - callee: unless it's used as a var, function, or parameter, this should refer to the
-    //   callee (i.e. our function).
-    //
     // - functions: these always override everything else.
     //
     // The most logical way to do all of this is to initialize none of the variables until now,
     // and then initialize them in BytecodeGenerator::generate() in such an order that the rules
-    // for how these things override each other end up holding. We would initialize the callee
-    // first, then "arguments", then all arguments, then the functions.
+    // for how these things override each other end up holding. We would initialize "arguments" first, 
+    // then all arguments, then the functions.
     //
     // But some arguments are already initialized by default, since if they aren't captured and we
     // don't have "arguments" then we just point the symbol table at the stack slot of those
@@ -412,35 +411,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // binding (i.e. don't involve destructuring) above when figuring out how to lay them out,
     // because that's just the simplest thing. This means that when we initialize them, we have to
     // watch out for the things that override arguments (namely, functions).
-    //
-    // We also initialize callee here as well, just because it's so weird. We know whether we want
-    // to do this because we can just check if it's in the symbol table.
-    if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())
-        && !functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode())
-        && functionSymbolTable->get(functionNode->ident().impl()).isNull()) {
-        if (captures(functionNode->ident().impl())) {
-            ScopeOffset offset;
-            {
-                ConcurrentJITLocker locker(functionSymbolTable->m_lock);
-                offset = functionSymbolTable->takeNextScopeOffset(locker);
-                functionSymbolTable->add(
-                    locker, functionNode->ident().impl(),
-                    SymbolTableEntry(VarOffset(offset), ReadOnly));
-            }
-            
-            emitOpcode(op_put_to_scope);
-            instructions().append(m_lexicalEnvironmentRegister->index());
-            instructions().append(addConstant(functionNode->ident()));
-            instructions().append(m_calleeRegister.index());
-            instructions().append(ResolveModeAndType(ThrowIfNotFound, LocalClosureVar).operand());
-            instructions().append(symbolTableConstantIndex);
-            instructions().append(offset.offset());
-        } else {
-            functionSymbolTable->add(
-                functionNode->ident().impl(),
-                SymbolTableEntry(VarOffset(m_calleeRegister.virtualRegister()), ReadOnly));
-        }
-    }
     
     // This is our final act of weirdness. "arguments" is overridden by everything except the
     // callee. We add it to the symbol table if it's not already there and it's not an argument.
@@ -1441,8 +1411,12 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
                 hasCapturedVariables = true;
             } else {
                 ASSERT(varKind == VarKind::Stack);
-                RegisterID* local = newBlockScopeVariable();
-                local->ref();
+                RegisterID* local;
+                if (scopeRegisterType == ScopeRegisterType::Block) {
+                    local = newBlockScopeVariable();
+                    local->ref();
+                } else
+                    local = addVar();
                 varOffset = VarOffset(local->virtualRegister());
             }
 
@@ -1512,6 +1486,8 @@ void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
 
 void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment, TDZRequirement tdzRequirement)
 {
+    // NOTE: This function only makes sense for scopes that aren't ScopeRegisterType::Var (only function name scope right now is ScopeRegisterType::Var).
+    // This doesn't make sense for ScopeRegisterType::Var because we deref RegisterIDs here.
     if (!environment.size())
         return;
 
@@ -1654,12 +1630,20 @@ Variable BytecodeGenerator::variable(const Identifier& property)
         SymbolTableEntry symbolTableEntry = symbolTable->get(property.impl());
         if (symbolTableEntry.isNull())
             continue;
-        if (symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope && m_usesNonStrictEval) {
-            // We don't know if an eval has introduced a "var" named the same thing as the function name scope variable name.
-            // We resort to dynamic lookup to answer this question.
-            return Variable(property);
+        bool resultIsCallee = false;
+        if (symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
+            if (m_usesNonStrictEval) {
+                // We don't know if an eval has introduced a "var" named the same thing as the function name scope variable name.
+                // We resort to dynamic lookup to answer this question.
+                Variable result = Variable(property);
+                return result;
+            }
+            resultIsCallee = true;
         }
-        return variableForLocalEntry(property, symbolTableEntry, stackEntry.m_symbolTableConstantIndex, symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope);
+        Variable result = variableForLocalEntry(property, symbolTableEntry, stackEntry.m_symbolTableConstantIndex, symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope);
+        if (resultIsCallee)
+            result.setIsReadOnly();
+        return result;
     }
 
     return Variable(property);
@@ -1740,8 +1724,9 @@ ResolveType BytecodeGenerator::resolveType()
         if (m_symbolTableStack[i].m_isWithScope)
             return Dynamic;
         if (m_usesNonStrictEval && m_symbolTableStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
-            // What we really want here is something like LocalClosureVarWithVarInjectionsCheck but it's probably
-            // not worth inventing just for the function name scope.
+            // We never want to assign to a FunctionNameScope. Returning Dynamic here achieves this goal.
+            // If we aren't in non-strict eval mode, then NodesCodeGen needs to take care not to emit
+            // a put_to_scope with the destination being the function name scope variable.
             return Dynamic;
         }
     }
@@ -3101,7 +3086,7 @@ void BytecodeGenerator::emitThrowTypeError(const String& message)
     instructions().append(false);
 }
 
-void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, RegisterID* callee)
+void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, RegisterID* callee, bool isCaptured)
 {
     // There is some nuance here:
     // If we're in strict mode code, the function name scope variable acts exactly like a "const" variable.
@@ -3114,7 +3099,8 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     // to lexical environments.
     VariableEnvironment nameScopeEnvironment;
     auto addResult = nameScopeEnvironment.add(property);
-    addResult.iterator->value.setIsCaptured();
+    if (isCaptured)
+        addResult.iterator->value.setIsCaptured();
     addResult.iterator->value.setIsConst(); // The function name scope name acts like a const variable.
     unsigned numVars = m_codeBlock->m_numVars;
     pushLexicalScopeInternal(nameScopeEnvironment, true, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::FunctionNameScope, ScopeRegisterType::Var);
@@ -3287,6 +3273,8 @@ bool BytecodeGenerator::isArgumentNumber(const Identifier& ident, int argumentNu
 
 bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
 {
+    // If we're in strict mode, we always throw.
+    // If we're not in strict mode, we throw for "const" variables but not the function callee.
     if (isStrictMode() || variable.isConst()) {
         emitOpcode(op_throw_static_error);
         instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, StrictModeReadonlyPropertyWriteError)))->index());

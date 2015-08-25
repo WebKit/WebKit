@@ -234,6 +234,7 @@ namespace JSC {
         bool isReadOnly() const { return m_attributes & ReadOnly; }
         bool isSpecial() const { return m_kind != NormalVariable; }
         bool isConst() const { return isReadOnly() && m_isLexicallyScoped; }
+        void setIsReadOnly() { m_attributes |= ReadOnly; }
 
     private:
         Identifier m_ident;
@@ -589,7 +590,6 @@ namespace JSC {
         void emitThrowReferenceError(const String& message);
         void emitThrowTypeError(const String& message);
 
-        void emitPushFunctionNameScope(const Identifier& property, RegisterID* value);
         void emitPushCatchScope(const Identifier& property, RegisterID* exceptionValue, VariableEnvironment&);
         void emitPopCatchScope(VariableEnvironment&);
 
@@ -637,6 +637,8 @@ namespace JSC {
         void popLexicalScopeInternal(VariableEnvironment&, TDZRequirement);
         void emitPopScope(RegisterID* dst, RegisterID* scope);
         RegisterID* emitGetParentScope(RegisterID* dst, RegisterID* scope);
+        void emitPushFunctionNameScope(const Identifier& property, RegisterID* value, bool isCaptured);
+
     public:
         void pushLexicalScope(VariableEnvironmentNode*, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);

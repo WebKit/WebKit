@@ -1052,8 +1052,10 @@ RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* d
             return value.get();
     }
     RefPtr<RegisterID> oldValue = emitPostIncOrDec(generator, generator.finalDestination(dst), value.get(), m_operator);
-    generator.emitPutToScope(scope.get(), var, value.get(), ThrowIfNotFound);
-    generator.emitProfileType(value.get(), var, divotStart(), divotEnd());
+    if (!var.isReadOnly()) {
+        generator.emitPutToScope(scope.get(), var, value.get(), ThrowIfNotFound);
+        generator.emitProfileType(value.get(), var, divotStart(), divotEnd());
+    }
 
     return oldValue.get();
 }
@@ -1250,8 +1252,10 @@ RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* ds
     }
 
     emitIncOrDec(generator, value.get(), m_operator);
-    generator.emitPutToScope(scope.get(), var, value.get(), ThrowIfNotFound);
-    generator.emitProfileType(value.get(), var, divotStart(), divotEnd());
+    if (!var.isReadOnly()) {
+        generator.emitPutToScope(scope.get(), var, value.get(), ThrowIfNotFound);
+        generator.emitProfileType(value.get(), var, divotStart(), divotEnd());
+    }
     return generator.moveToDestinationIfNeeded(dst, value.get());
 }
 
@@ -1771,8 +1775,11 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
             return value.get();
     }
     RefPtr<RegisterID> result = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()), this);
-    RegisterID* returnResult = generator.emitPutToScope(scope.get(), var, result.get(), ThrowIfNotFound);
-    generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+    RegisterID* returnResult = result.get();
+    if (!var.isReadOnly()) {
+        returnResult = generator.emitPutToScope(scope.get(), var, result.get(), ThrowIfNotFound);
+        generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+    }
     return returnResult;
 }
 
@@ -1781,12 +1788,13 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
 RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     Variable var = generator.variable(m_ident);
+    bool isReadOnly = var.isReadOnly() && m_assignmentContext != AssignmentContext::ConstDeclarationStatement;
     if (RegisterID* local = var.local()) {
         RegisterID* result = nullptr;
         if (m_assignmentContext == AssignmentContext::AssignmentExpression)
             generator.emitTDZCheckIfNecessary(var, local, nullptr);
 
-        if (var.isReadOnly() && m_assignmentContext != AssignmentContext::ConstDeclarationStatement) {
+        if (isReadOnly) {
             result = generator.emitNode(dst, m_right); // Execute side effects first.
             generator.emitReadOnlyExceptionIfNeeded(var);
             generator.emitProfileType(result, var, divotStart(), divotEnd());
@@ -1817,15 +1825,18 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     if (dst == generator.ignoredResult())
         dst = 0;
     RefPtr<RegisterID> result = generator.emitNode(dst, m_right);
-    if (var.isReadOnly() && m_assignmentContext != AssignmentContext::ConstDeclarationStatement) {
+    if (isReadOnly) {
         RegisterID* result = generator.emitNode(dst, m_right); // Execute side effects first.
         bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
         if (threwException)
             return result;
     }
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    RegisterID* returnResult = generator.emitPutToScope(scope.get(), var, result.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
-    generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+    RegisterID* returnResult = result.get();
+    if (!isReadOnly) {
+        returnResult = generator.emitPutToScope(scope.get(), var, result.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
+        generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+    }
 
     if (m_assignmentContext == AssignmentContext::DeclarationStatement || m_assignmentContext == AssignmentContext::ConstDeclarationStatement)
         generator.liftTDZCheckIfPossible(var);
@@ -3282,13 +3293,13 @@ void ObjectPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers)
 void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) const
 {
     Variable var = generator.variable(m_boundProperty);
+    bool isReadOnly = var.isReadOnly() && m_bindingContext != AssignmentContext::ConstDeclarationStatement;
     if (RegisterID* local = var.local()) {
         if (m_bindingContext == AssignmentContext::AssignmentExpression)
             generator.emitTDZCheckIfNecessary(var, local, nullptr);
-        if (var.isReadOnly() && m_bindingContext != AssignmentContext::ConstDeclarationStatement) {
-            bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
-            if (threwException)
-                return;
+        if (isReadOnly) {
+            generator.emitReadOnlyExceptionIfNeeded(var);
+            return;
         }
         generator.emitMove(local, value);
         generator.emitProfileType(local, var, divotStart(), divotEnd());
@@ -3302,10 +3313,9 @@ void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) con
     generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
     if (m_bindingContext == AssignmentContext::AssignmentExpression)
         generator.emitTDZCheckIfNecessary(var, nullptr, scope);
-    if (var.isReadOnly() && m_bindingContext != AssignmentContext::ConstDeclarationStatement) {
-        bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
-        if (threwException)
-            return;
+    if (isReadOnly) {
+        generator.emitReadOnlyExceptionIfNeeded(var);
+        return;
     }
     generator.emitPutToScope(scope, var, value, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
     generator.emitProfileType(value, var, divotStart(), divotEnd());

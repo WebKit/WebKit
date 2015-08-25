@@ -1,3 +1,51 @@
+2015-08-25  Saam barati  <sbarati@apple.com>
+
+        Callee can be incorrectly overridden when it's captured
+        https://bugs.webkit.org/show_bug.cgi?id=148400
+
+        Reviewed by Filip Pizlo.
+
+        We now resort to always creating the function name scope
+        when the function name is in scope. Because the bytecode
+        generator now has a notion of local lexical scoping,
+        this incurs no runtime penalty for function expression names
+        that aren't heap allocated. If they are heap allocated,
+        this means we may now have one more scope on the runtime
+        scope stack than before. This modification simplifies the
+        callee initialization code and uses the lexical scoping constructs
+        to implement this. This implementation also ensures
+        that everything Just Works for function's with default
+        parameter values. Before this patch, IIFE functions
+        with default parameter values and a captured function
+        name would crash JSC.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::resolveType):
+        (JSC::BytecodeGenerator::emitThrowTypeError):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Variable::isReadOnly):
+        (JSC::Variable::isSpecial):
+        (JSC::Variable::isConst):
+        (JSC::Variable::setIsReadOnly):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+        * tests/stress/IIFE-es6-default-parameters.js: Added.
+        (assert):
+        (.):
+        * tests/stress/IIFE-function-name-captured.js: Added.
+        (assert):
+        (.):
+
 2015-08-24  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add protocol test for existing error handling performed by the backend
