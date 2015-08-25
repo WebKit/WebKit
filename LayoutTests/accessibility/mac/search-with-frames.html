@@ -25,30 +25,41 @@ var successfullyParsed = false;
 
 </script>
 <script>
+   var frame1aLoaded = false;
+   var frame2aLoaded = false;
+   var frame3aLoaded = false;
+   
    for (var k = 1; k <= 3; k++) {
 
       // This block adds sub frames to each of the frames, with some content in them. 
       // When the last frame loads, it runs the test.
 
       document.getElementById("frame" + k).onload = function(e) { 
-          var ifrm = document.createElement("iframe"); 
-          ifrm.setAttribute("name", e.target.id + "a");
+          var iframe = document.createElement("iframe"); 
+          iframe.setAttribute("name", e.target.id + "a");
+
+          iframe.onload = function() {
+              if (iframe.name == "frame1a")
+                  frame1aLoaded = true;
+              else if (iframe.name == "frame2a")
+                  frame2aLoaded = true;
+              else if (iframe.name == "frame3a")
+                  frame3aLoaded = true;
+              
+              // Call runTest() when all frames have been loaded.
+              if (frame1aLoaded && frame2aLoaded && frame3aLoaded)
+                  runTest();
+          };
 
           if (e.target.id == "frame2") {
-              ifrm.setAttribute("src", "data:text/html,<body><button id=button2>button2</button></body>"); 
+              iframe.setAttribute("src", "data:text/html,<body><button id=button2>button2</button></body>"); 
           } else {
-              ifrm.setAttribute("src", "data:text/html,<body>text</body>"); 
+              iframe.setAttribute("src", "data:text/html,<body>text</body>"); 
           }
 
-          ifrm.style.width = "200"; 
-          ifrm.style.height = "200"; 
-          this.contentDocument.childNodes[0].childNodes[1].appendChild(ifrm); 
-          if (e.target.id == "frame3") {
-             ifrm.onload = function() {
-                 // runTest() might run on the same call stack and the frame is not actually finished loading.
-                 setTimeout("runTest()", 0);
-             };
-          }
+          iframe.style.width = "200"; 
+          iframe.style.height = "200"; 
+          this.contentDocument.childNodes[0].childNodes[1].appendChild(iframe); 
        };
     }
 

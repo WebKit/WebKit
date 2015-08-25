@@ -1,3 +1,16 @@
+2015-08-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Fix accessibility/mac/search-with-frames.html test
+        https://bugs.webkit.org/show_bug.cgi?id=148313
+
+        Reviewed by Chris Fleizach.
+
+        Fixed the test by making sure that search is performed after all frames
+        have been loaded.
+
+        * accessibility/mac/search-with-frames.html:
+        * platform/mac/TestExpectations:
+
 2015-08-24  Alexey Proskuryakov  <ap@apple.com>
 
         Marking more scroll-snap tests as flaky.
