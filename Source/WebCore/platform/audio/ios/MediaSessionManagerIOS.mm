@@ -245,7 +245,10 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
 
 bool MediaSessionManageriOS::sessionCanLoadMedia(const PlatformMediaSession& session) const
 {
-    return session.state() == PlatformMediaSession::Playing || !session.isHidden() || session.displayType() == PlatformMediaSession::Optimized;
+    if (session.displayType() == PlatformMediaSession::Optimized)
+        return true;
+
+    return PlatformMediaSessionManager::sessionCanLoadMedia(session);
 }
 
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
