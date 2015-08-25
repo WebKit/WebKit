@@ -1407,11 +1407,23 @@ JSStringRef AccessibilityUIElement::accessibilityValue() const
 
 JSStringRef AccessibilityUIElement::documentEncoding()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:@"AXDocumentEncoding"];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
     return JSStringCreateWithCharacters(0, 0);
 }
 
 JSStringRef AccessibilityUIElement::documentURI()
 {
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:@"AXDocumentURI"];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
     return JSStringCreateWithCharacters(0, 0);
 }
 

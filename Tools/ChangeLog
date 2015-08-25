@@ -1,3 +1,19 @@
+2015-08-25  Nan Wang  <n_wang@apple.com>
+
+        [Mac] accessibility/document-attributes.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116636
+
+        Reviewed by Chris Fleizach.
+
+        Implemented documentURI() and documentEncoding().
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::documentEncoding):
+        (AccessibilityUIElement::documentURI):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+
 2015-08-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test gardening.

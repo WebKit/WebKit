@@ -233,6 +233,14 @@ using namespace HTMLNames;
 #define NSAccessibilityIsMultiSelectableAttribute @"AXIsMultiSelectable"
 #endif
 
+#ifndef NSAccessibilityDocumentURIAttribute
+#define NSAccessibilityDocumentURIAttribute @"AXDocumentURI"
+#endif
+
+#ifndef NSAccessibilityDocumentEncodingAttribute
+#define NSAccessibilityDocumentEncodingAttribute @"AXDocumentEncoding"
+#endif
+
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
@@ -3046,6 +3054,19 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // Multi-selectable
     if ([attributeName isEqualToString:NSAccessibilityIsMultiSelectableAttribute])
         return [NSNumber numberWithBool:m_object->isMultiSelectable()];
+    
+    // Document attributes
+    if ([attributeName isEqualToString:NSAccessibilityDocumentURIAttribute]) {
+        if (Document* document = m_object->document())
+            return document->documentURI();
+        return nil;
+    }
+    
+    if ([attributeName isEqualToString:NSAccessibilityDocumentEncodingAttribute]) {
+        if (Document* document = m_object->document())
+            return document->encoding();
+        return nil;
+    }
     
     return nil;
 }
