@@ -1,3 +1,16 @@
+2015-08-25  Beth Dakin  <bdakin@apple.com>
+
+        Long press gesture recognizer should adjust delay based on other recognizers
+        https://bugs.webkit.org/show_bug.cgi?id=148402
+        -and corresponding-
+        rdar://problem/22278723
+
+        Reviewed by Tim Horton.
+
+        Call _setAdjustsDelayBasedOnOtherRecognizers with a value of YES.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+
 2015-08-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed, EFL and GTK build fix since r188895.

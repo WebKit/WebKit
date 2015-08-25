@@ -70,6 +70,9 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
+#if __has_include(<WebKitAdditions/WKContentViewInteraction.mm>)
+#import <WebKitAdditions/WKContentViewInteraction.mm>
+#endif
 #import <WebKitSystemInterfaceIOS.h>
 #import <wtf/RetainPtr.h>
 
@@ -342,6 +345,10 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
     [_longPressGestureRecognizer setDelay:tapAndHoldDelay];
     [_longPressGestureRecognizer setDelegate:self];
+#if __has_include(<WebKitAdditions/WKContentViewInteraction.mm>)
+    if ([_longPressGestureRecognizer respondsToSelector:@selector(_setAdjustsDelayBasedOnOtherRecognizers:)])
+        [_longPressGestureRecognizer _setAdjustsDelayBasedOnOtherRecognizers:YES];
+#endif
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 
 #if HAVE(LINK_PREVIEW)
