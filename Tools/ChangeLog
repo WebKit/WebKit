@@ -1,3 +1,14 @@
+2015-08-25  Andy Estes  <aestes@apple.com>
+
+        [iOS] run-webkit-tests fails if watchOS SDK is installed
+        https://bugs.webkit.org/show_bug.cgi?id=148453
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Taught Simulator how to parse watchOS runtimes and devices.
+        * Scripts/webkitpy/xcode/simulator_unittest.py: Added tests.
+
 2015-08-25  Aakash Jain  <aakash_jain@apple.com>
 
         iOS Simulator layout-tests fail to start while cleaning a directory structure if simulator is already running
