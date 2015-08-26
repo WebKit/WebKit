@@ -10,7 +10,7 @@ if (window.testRunner)
 <body>
 
 <div contenteditable=true id="content" role="textbox">
-wrods is misspelled aa lotsi nowadays. euep.
+wrods is misspelled aab lotsi nowadays. euep.
 </div>
 
 
@@ -46,21 +46,21 @@ wrods is misspelled aa lotsi nowadays. euep.
         shouldBe("text.stringForRange(9, 10)", "'misspelled'");
         shouldBeFalse("text.attributedStringRangeIsMisspelled(9, 10)");
 
-        // aa
-        shouldBe("text.stringForRange(20, 2)", "'aa'");
-        shouldBeTrue("text.attributedStringRangeIsMisspelled(20, 2)");
+        // aab
+        shouldBe("text.stringForRange(20, 3)", "'aab'");
+        shouldBeTrue("text.attributedStringRangeIsMisspelled(20, 3)");
    
         // lotsi
-        shouldBe("text.stringForRange(23, 5)", "'lotsi'");
-        shouldBeTrue("text.attributedStringRangeIsMisspelled(23, 5)");
+        shouldBe("text.stringForRange(24, 5)", "'lotsi'");
+        shouldBeTrue("text.attributedStringRangeIsMisspelled(24, 5)");
 
         // nowadays
-        shouldBe("text.stringForRange(29, 8)", "'nowadays'");
-        shouldBeFalse("text.attributedStringRangeIsMisspelled(29, 8)");
+        shouldBe("text.stringForRange(30, 8)", "'nowadays'");
+        shouldBeFalse("text.attributedStringRangeIsMisspelled(30, 8)");
 
         // eue9
-        shouldBe("text.stringForRange(39, 5)", "'euep.'");
-        shouldBeTrue("text.attributedStringRangeIsMisspelled(39, 5)");
+        shouldBe("text.stringForRange(40, 5)", "'euep.'");
+        shouldBeTrue("text.attributedStringRangeIsMisspelled(40, 5)");
     }
 
 </script>

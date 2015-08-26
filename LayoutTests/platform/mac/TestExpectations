@@ -1066,9 +1066,6 @@ webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 
 webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass Timeout ]
 
-# FIXME: Needs bugzilla (<rdar://problem/15971968>)
-[ Yosemite+ ] accessibility/mac/misspelled-attributed-string.html [ Pass Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16040720>)
 [ Yosemite+ ] canvas/philip/tests/2d.drawImage.animated.poster.html [ Pass Failure ]
 [ Yosemite+ ] fast/canvas/canvas-scale-strokePath-shadow.html [ Pass Failure ]

@@ -1,3 +1,17 @@
+2015-08-25  Nan Wang  <n_wang@apple.com>
+
+        AX: accessibility/mac/misspelled-attributed-string.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=148455
+
+        Reviewed by Chris Fleizach.
+
+        Updated the test case to be more stable since the client's text checker
+        might change over time.
+
+        * accessibility/mac/misspelled-attributed-string-expected.txt:
+        * accessibility/mac/misspelled-attributed-string.html:
+        * platform/mac/TestExpectations:
+
 2015-08-25  Zalan Bujtas  <zalan@apple.com>
 
         Using the filter functional notation for background images results in wrong background-size rendering
