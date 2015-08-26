@@ -1,3 +1,15 @@
+2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Refresh button to Cookie Content View
+        https://bugs.webkit.org/show_bug.cgi?id=148468
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView):
+        (WebInspector.CookieStorageContentView.prototype.get navigationItems):
+        (WebInspector.CookieStorageContentView.prototype._refreshButtonClicked):
+
 2015-08-25  Brian Burg  <bburg@apple.com>
 
         Web Inspector: message dispatch metrics should use high-resolution timing data
