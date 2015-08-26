@@ -30,8 +30,7 @@ namespace WebCore {
 
 static inline bool isEmojiGroupCandidate(UChar32 character)
 {
-    return (character >= 0x1F466 && character <= 0x1F469) || character == 0x2764 || character == 0x1F48B
-        || character == 0x1F441 || character == 0x1F5E8;
+    return (character >= 0x1F466 && character <= 0x1F469) || character == 0x2764 || character == 0x1F48B;
 }
 
 static inline bool isEmojiModifier(UChar32 character)
