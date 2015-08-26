@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,12 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeOrigin.h"
+#include "DFGClobbersExitState.h"
 
 namespace JSC { namespace DFG {
+
+class Graph;
+struct Node;
 
 struct NodeOrigin {
     NodeOrigin() { }
@@ -48,7 +52,7 @@ struct NodeOrigin {
         return semantic.isSet();
     }
     
-    NodeOrigin withSemantic(CodeOrigin semantic)
+    NodeOrigin withSemantic(CodeOrigin semantic) const
     {
         if (!isSet())
             return NodeOrigin();
@@ -58,7 +62,46 @@ struct NodeOrigin {
             result.semantic = semantic;
         return result;
     }
+
+    NodeOrigin withExitOK(bool value) const
+    {
+        NodeOrigin result = *this;
+        result.exitOK = value;
+        return result;
+    }
+
+    NodeOrigin withInvalidExit() const
+    {
+        return withExitOK(false);
+    }
+
+    NodeOrigin takeValidExit(bool& canExit) const
+    {
+        return withExitOK(exitOK & std::exchange(canExit, false));
+    }
     
+    NodeOrigin forInsertingAfter(Graph& graph, Node* node) const
+    {
+        NodeOrigin result = *this;
+        if (exitOK && clobbersExitState(graph, node))
+            result.exitOK = false;
+        return result;
+    }
+
+    bool operator==(const NodeOrigin& other) const
+    {
+        return semantic == other.semantic
+            && forExit == other.forExit
+            && exitOK == other.exitOK;
+    }
+
+    bool operator!=(const NodeOrigin& other) const
+    {
+        return !(*this == other);
+    }
+
+    void dump(PrintStream&) const;
+
     // Used for determining what bytecode this came from. This is important for
     // debugging, exceptions, and even basic execution semantics.
     CodeOrigin semantic;

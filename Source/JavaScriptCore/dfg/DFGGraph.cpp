@@ -34,7 +34,9 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGBlockWorklist.h"
 #include "DFGClobberSet.h"
+#include "DFGClobbersExitState.h"
 #include "DFGJITCode.h"
+#include "DFGMayExit.h"
 #include "DFGVariableAccessDataDump.h"
 #include "FullBytecodeLiveness.h"
 #include "FunctionExecutableDump.h"
@@ -101,8 +103,14 @@ static void printWhiteSpace(PrintStream& out, unsigned amount)
         out.print(" ");
 }
 
-bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node* previousNode, Node* currentNode, DumpContext* context)
+bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node*& previousNodeRef, Node* currentNode, DumpContext* context)
 {
+    if (!currentNode->origin.semantic)
+        return false;
+    
+    Node* previousNode = previousNodeRef;
+    previousNodeRef = currentNode;
+
     if (!previousNode)
         return false;
     
@@ -345,12 +353,18 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "R:", sortedListDump(reads.direct(), ","));
     if (!writes.isEmpty())
         out.print(comma, "W:", sortedListDump(writes.direct(), ","));
+    ExitMode exitMode = mayExit(*this, node);
+    if (exitMode != DoesNotExit)
+        out.print(comma, exitMode);
+    if (clobbersExitState(*this, node))
+        out.print(comma, "ClobbersExit");
     if (node->origin.isSet()) {
         out.print(comma, "bc#", node->origin.semantic.bytecodeIndex);
-        if (node->origin.semantic != node->origin.forExit)
+        if (node->origin.semantic != node->origin.forExit && node->origin.forExit.isSet())
             out.print(comma, "exit: ", node->origin.forExit);
     }
-    
+    if (!node->origin.exitOK)
+        out.print(comma, "ExitInvalid");
     out.print(")");
 
     if (node->hasVariableAccessData(*this) && node->tryGetVariableAccessData())
@@ -455,7 +469,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         out.print("  Arguments: ", listDump(m_arguments), "\n");
     out.print("\n");
     
-    Node* lastNode = 0;
+    Node* lastNode = nullptr;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
         if (!block)
@@ -496,7 +510,6 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         for (size_t i = 0; i < block->size(); ++i) {
             dumpCodeOrigin(out, "", lastNode, block->at(i), context);
             dump(out, "", block->at(i), context);
-            lastNode = block->at(i);
         }
         out.print("  States: ", block->cfaBranchDirection, ", ", block->cfaStructureClobberStateAtTail);
         if (!block->cfaDidFinish)

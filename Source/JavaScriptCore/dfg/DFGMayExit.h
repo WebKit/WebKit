@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,47 @@ struct Node;
 // A *very* conservative approximation of whether or not a node could possibly exit. Usually
 // returns true except in cases where we obviously don't expect an exit.
 
-bool mayExit(Graph&, Node*);
+enum ExitMode {
+    // The node does not exit at all. This means that it's legal to eliminate the first store in a
+    // program like:
+    //
+    // global = 1 // first store
+    // DoesNotExit(); // let's assume that this also doesn't read "global"
+    // global = 2 // second store
+    //
+    // It's legal to eliminate the first one since nobody will see it; the second store is always
+    // executed right after.
+    DoesNotExit,
+
+    // The node will exit, but only by properly throwing exceptions. A proper exception throw will
+    // divert execution to the matching op_catch and will not reexecute the exit origin. This means
+    // that the store elimination optimization above would be illegal, but the following would be OK:
+    //
+    // SideEffect(..., exit: bc#42)
+    // ExitsForExceptions(..., exit: #bc42, ExitInvalid)
+    //
+    // In particular, it's OK for a node that reports ExitsForExceptions to be executed in a context
+    // where !Node::origin.exitOK. That's because this node will not exit in a manner that could lead
+    // to the reexecution of SideEffect().
+    ExitsForExceptions,
+
+    // The node will exit to the exit origin. This means that we cannot do store elimination like for
+    // DoesNotExit and also we cannot place this node in an ExitInvalid context, since this will exit
+    // in a manner that will cause the reexecution of all previous operations within this exit origin.
+    Exits
+};
+
+ExitMode mayExit(Graph&, Node*);
 
 } } // namespace JSC::DFG
+
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::DFG::ExitMode);
+
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

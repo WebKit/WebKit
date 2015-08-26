@@ -667,6 +667,7 @@ private:
         
         addBaseCheck(indexInBlock, node, baseValue, variant.oldStructure());
 
+        node->child1().setUseKind(KnownCellUse);
         childEdge.setUseKind(KnownCellUse);
 
         Transition* transition = 0;
@@ -676,6 +677,9 @@ private:
         }
 
         Edge propertyStorage;
+
+        DFG_ASSERT(m_graph, node, origin.exitOK);
+        bool canExit = true;
 
         if (isInlineOffset(variant.offset()))
             propertyStorage = childEdge;
@@ -687,7 +691,7 @@ private:
             ASSERT(!isInlineOffset(variant.offset()));
             Node* allocatePropertyStorage = m_insertionSet.insertNode(
                 indexInBlock, SpecNone, AllocatePropertyStorage,
-                origin, OpInfo(transition), childEdge);
+                origin.takeValidExit(canExit), OpInfo(transition), childEdge);
             propertyStorage = Edge(allocatePropertyStorage);
         } else {
             ASSERT(variant.oldStructureForTransition()->outOfLineCapacity());
@@ -695,7 +699,7 @@ private:
             ASSERT(!isInlineOffset(variant.offset()));
 
             Node* reallocatePropertyStorage = m_insertionSet.insertNode(
-                indexInBlock, SpecNone, ReallocatePropertyStorage, origin,
+                indexInBlock, SpecNone, ReallocatePropertyStorage, origin.takeValidExit(canExit),
                 OpInfo(transition), childEdge,
                 Edge(m_insertionSet.insertNode(
                     indexInBlock, SpecNone, GetButterfly, origin, childEdge)));
@@ -707,13 +711,15 @@ private:
         data.identifierNumber = identifierNumber;
         
         node->convertToPutByOffset(data, propertyStorage);
+        node->origin.exitOK = canExit;
 
         if (variant.kind() == PutByIdVariant::Transition) {
             // FIXME: PutStructure goes last until we fix either
             // https://bugs.webkit.org/show_bug.cgi?id=142921 or
             // https://bugs.webkit.org/show_bug.cgi?id=142924.
             m_insertionSet.insertNode(
-                indexInBlock + 1, SpecNone, PutStructure, origin, OpInfo(transition), childEdge);
+                indexInBlock + 1, SpecNone, PutStructure, origin.withInvalidExit(), OpInfo(transition),
+                childEdge);
         }
     }
     

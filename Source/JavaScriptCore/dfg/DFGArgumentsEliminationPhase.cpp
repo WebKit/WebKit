@@ -484,16 +484,21 @@ private:
                     if (inlineCallFrame
                         && !inlineCallFrame->isVarargs()
                         && inlineCallFrame->arguments.size() - varargsData->offset <= varargsData->limit) {
+                        
+                        // LoadVarargs can exit, so it better be exitOK.
+                        DFG_ASSERT(m_graph, node, node->origin.exitOK);
+                        bool canExit = true;
+                        
                         Node* argumentCount = insertionSet.insertConstant(
-                            nodeIndex, node->origin,
+                            nodeIndex, node->origin.withExitOK(canExit),
                             jsNumber(inlineCallFrame->arguments.size() - varargsData->offset));
                         insertionSet.insertNode(
-                            nodeIndex, SpecNone, MovHint, node->origin,
+                            nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
                             OpInfo(varargsData->count.offset()), Edge(argumentCount));
                         insertionSet.insertNode(
-                            nodeIndex, SpecNone, PutStack, node->origin,
+                            nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
                             OpInfo(m_graph.m_stackAccessData.add(varargsData->count, FlushedInt32)),
-                            Edge(argumentCount, Int32Use));
+                            Edge(argumentCount, KnownInt32Use));
                         
                         DFG_ASSERT(m_graph, node, varargsData->limit - 1 >= varargsData->mandatoryMinimum);
                         // Define our limit to not include "this", since that's a bit easier to reason about.
@@ -514,7 +519,8 @@ private:
                                     reg, FlushedJSValue);
                                 
                                 value = insertionSet.insertNode(
-                                    nodeIndex, SpecNone, GetStack, node->origin, OpInfo(data));
+                                    nodeIndex, SpecNone, GetStack, node->origin.withExitOK(canExit),
+                                    OpInfo(data));
                             } else {
                                 // FIXME: We shouldn't have to store anything if
                                 // storeIndex >= varargsData->mandatoryMinimum, but we will still
@@ -525,7 +531,7 @@ private:
                                 
                                 if (!undefined) {
                                     undefined = insertionSet.insertConstant(
-                                        nodeIndex, node->origin, jsUndefined());
+                                        nodeIndex, node->origin.withExitOK(canExit), jsUndefined());
                                 }
                                 value = undefined;
                             }
@@ -537,14 +543,15 @@ private:
                                 m_graph.m_stackAccessData.add(reg, FlushedJSValue);
                             
                             insertionSet.insertNode(
-                                nodeIndex, SpecNone, MovHint, node->origin, OpInfo(reg.offset()),
-                                Edge(value));
+                                nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
+                                OpInfo(reg.offset()), Edge(value));
                             insertionSet.insertNode(
-                                nodeIndex, SpecNone, PutStack, node->origin, OpInfo(data),
-                                Edge(value));
+                                nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
+                                OpInfo(data), Edge(value));
                         }
                         
                         node->remove();
+                        node->origin.exitOK = canExit;
                         break;
                     }
                     

@@ -36,14 +36,14 @@
 namespace JSC { namespace DFG {
 
 OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
-    : OSRExitBase(kind, jit->m_codeOriginForExitTarget, jit->m_codeOriginForExitProfile)
+    : OSRExitBase(kind, jit->m_origin.forExit, jit->m_origin.semantic)
     , m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
     , m_patchableCodeOffset(0)
     , m_recoveryIndex(recoveryIndex)
     , m_streamIndex(streamIndex)
 {
-    ASSERT(m_codeOrigin.isSet());
+    DFG_ASSERT(jit->m_jit.graph(), jit->m_currentNode, jit->m_origin.exitOK);
 }
 
 void OSRExit::setPatchableCodeOffset(MacroAssembler::PatchableJump check)

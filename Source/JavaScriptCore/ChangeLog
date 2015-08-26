@@ -1,3 +1,214 @@
+2015-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Node::origin should be able to tell you if it's OK to exit
+        https://bugs.webkit.org/show_bug.cgi?id=145204
+
+        Reviewed by Geoffrey Garen.
+
+        This is a major change to DFG IR, that makes it easier to reason about where nodes with
+        speculations can be soundly hoisted.
+
+        A program in DFG IR is a sequence of operations that compute the values of SSA variables,
+        perform effects on the heap or stack, and perform updates to the OSR exit state. Because
+        effects and OSR exit updates are interleaved, there are points in execution where exiting
+        simply won't work. For example, we may have some bytecode operation:
+
+            [  24] op_foo loc42 // does something, and puts a value in loc42.
+
+        that gets compiled down to a sequence of DFG IR nodes like:
+
+            a: Foo(W:Heap, R:World, bc#24) // writes heap, reads world - i.e. an observable effect.
+            b: MovHint(@a, loc42, bc#24)
+            c: SetLocal(Check:Int32:@a, loc42, bc#24, exit: bc#26)
+
+        Note that we can OSR exit at @a because we haven't yet performed any effects for bc#24 yet and
+        we have performed all effects for prior bytecode operations. That's what the origin.forExit
+        being set to "bc#24" guarantees. So, an OSR exit at @a would transfer execution to bc#24 and
+        this would not be observable. But at @b, if we try to exit to bc#24 as indicated by forExit, we
+        would end up causing the side effect of bc#24 to execute a second time. This would be
+        observable, so we cannot do it. And we cannot exit to the next instruction - bc#26 - either,
+        because @b is responsible for updating the OSR state to indicate that the result of @a should
+        be put into loc42. It's not until we get to @c that we can exit again.
+
+        This is a confusing, but useful, property of DFG IR. It's useful because it allows us to use IR
+        to spell out how we would have affected the bytecode state, and we use this to implement hard
+        things like object allocation elimination, where we use IR instructions to indicate what object
+        allocation and mutation operations we would have performed, and which bytecode variables would
+        have pointed to those objects. So long as IR allows us to describe how OSR exit state is
+        updated, there will be points in execution where that state is invalid - especially if the IR
+        to update exit state is separate from the IR to perform actual effects.
+
+        But this property is super confusing! It's difficult to explain that somehow magically, @b is a
+        bad place to put OSR exits, and that magically we will only have OSR exits at @a. Of course, it
+        all kind of makes sense - we insert OSR exit checks in phases that *know* where it's safe to
+        exit - but it's just too opaque. This also gets in the way of more sophisticated
+        transformations. For example, LICM barely works - it magically knows that loop pre-headers are
+        good places to exit from, but it has no way of determining if that is actually true. It would
+        be odd to introduce a restriction that anytime some block qualifies as a pre-header according
+        to our loop calculator, it must end with a terminal at which it is OK to exit. So, our choices
+        are to either leave LICM in a magical state and exercise extreme caution when introducing new
+        optimizations that hoist checks, or to do something to make the "can I exit here" property more
+        explicit in IR.
+
+        We have already, in a separate change, added a NodeOrigin::exitOK property, though it didn't do
+        anything yet. This change puts exitOK to work, and makes it an integral part of IR. The key
+        intuition behind this change is that if we know which nodes clobber exit state - i.e. after the
+        node, it's no longer possible to OSR exit until the exit state is fixed up - then we can figure
+        out where it's fine to exit. This change mostly adopts the already implicit rule that it's
+        always safe to exit right at the boundary of exit origins (in between two nodes where
+        origin.forExit differs), and adds a new node, called ExitOK, which is a kind of declaration
+        that exit state is good again. When making this change, I struggled with the question of
+        whether to make origin.exitOK be explicit, or something that we can compute with an analysis.
+        Of course if we are armed with a clobbersExitState(Node*) function, we can find the places
+        where it's fine to exit. But this kind of computation could get quite sophisticated if the
+        nodes belonging to an exit origin are lowered to a control-flow construct. It would also be
+        harder to see what the original intent was, if we found an error: is the bug that we shouldn't
+        be clobbering exit state, or that we shouldn't be exiting? This change opts to make exitOK be
+        an explicit property of IR, so that DFG IR validation will reject any program where exitOK is
+        true after a node that clobbersExitState(), or if exitOK is true after a node has exitOK set to
+        false - unless the latter node has a different exit origin or is an ExitOK node. It will also
+        reject any program where a node mayExit() with !exitOK.
+
+        It turns out that this revealed a lot of sloppiness and what almost looked like an outright
+        bug: the callee property of an inline closure call frame was being set up "as if" by the
+        callee's op_enter. If we did hoist a check per the old rule - to the boundary of exit origins -
+        then we would crash because the callee is unknown. It also revealed that LICM could *almost*
+        get hosed by having a pre-header where there are effects before the jump. I wasn't able to
+        construct a test case that would crash trunk, but I also couldn't quite prove why such a
+        program couldn't be constructed. I did fix the issue in loop pre-header creation, and the
+        validater does catch the issue because of its exitOK assertions.
+
+        This doesn't yet add any other safeguards to LICM - that phase still expects that pre-headers
+        are in place and that they were created in such a way that their terminal origins have exitOK.
+        It also still keeps the old way of saying "not OK to exit" - having a clear NodeOrigin. In a
+        later patch I'll remove that and use !exitOK everywhere. Note that I did consider using clear
+        NodeOrigins to signify that it's not OK to exit, but that would make DFGForAllKills a lot more
+        expensive - it would have to sometimes search to find nearby forExit origins if the current
+        node doesn't have it set - and that's a critical phase for DFG compilation performance.
+        Requiring that forExit is usually set to *something* and that properly shadows the original
+        bytecode is cheap and easy, so it seemed like a good trade-off.
+
+        This change has no performance effect. Its only effect is that it makes the compiler easier to
+        understand by turning a previously magical concept into an explicit one.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setDirect):
+        (JSC::DFG::ByteCodeParser::currentNodeOrigin):
+        (JSC::DFG::ByteCodeParser::branchData):
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp: Added.
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGClobbersExitState.h: Added.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertStringAddUse):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        (JSC::DFG::FixupPhase::fixupGetAndSetLocalsInBlock):
+        (JSC::DFG::FixupPhase::fixupChecksInBlock):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::useKindFor):
+        (JSC::DFG::uncheckedUseKindFor):
+        (JSC::DFG::typeFilterFor):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::printWhiteSpace):
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addSpeculationMode):
+        * dfg/DFGInsertionSet.cpp:
+        (JSC::DFG::InsertionSet::insertSlow):
+        (JSC::DFG::InsertionSet::execute):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::LoopPreHeaderCreationPhase::run):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        (WTF::printInternal):
+        * dfg/DFGMayExit.h:
+        * dfg/DFGMovHintRemovalPhase.cpp:
+        * dfg/DFGNodeOrigin.cpp: Added.
+        (JSC::DFG::NodeOrigin::dump):
+        * dfg/DFGNodeOrigin.h:
+        (JSC::DFG::NodeOrigin::NodeOrigin):
+        (JSC::DFG::NodeOrigin::isSet):
+        (JSC::DFG::NodeOrigin::withSemantic):
+        (JSC::DFG::NodeOrigin::withExitOK):
+        (JSC::DFG::NodeOrigin::withInvalidExit):
+        (JSC::DFG::NodeOrigin::takeValidExit):
+        (JSC::DFG::NodeOrigin::forInsertingAfter):
+        (JSC::DFG::NodeOrigin::operator==):
+        (JSC::DFG::NodeOrigin::operator!=):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::OSRExit::setPatchableCodeOffset):
+        * dfg/DFGOSRExitBase.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPhantomInsertionPhase.cpp:
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::validate):
+        (JSC::DFG::Phase::beginPhase):
+        (JSC::DFG::Phase::endPhase):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::Phase::vm):
+        (JSC::DFG::Phase::codeBlock):
+        (JSC::DFG::Phase::profiledBlock):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileUpsilon):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+
 2015-08-26  Andreas Kling  <akling@apple.com>
 
         [JSC] StructureTransitionTable should eagerly deallocate single-transition WeakImpls.

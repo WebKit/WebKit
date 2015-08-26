@@ -668,6 +668,7 @@ private:
         case ConstantStoragePointer:
         case MovHint:
         case ZombieHint:
+        case ExitOK:
         case LoadVarargs:
             break;
             

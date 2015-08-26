@@ -461,7 +461,7 @@ public:
                         insertionSet.insertNode(
                             nodeIndex, SpecNone, PutStack, node->origin,
                             OpInfo(m_graph.m_stackAccessData.add(operand, format)),
-                            Edge(incoming, useKindFor(format)));
+                            Edge(incoming, uncheckedUseKindFor(format)));
                     
                         deferred.operand(operand) = DeadFlush;
                     };

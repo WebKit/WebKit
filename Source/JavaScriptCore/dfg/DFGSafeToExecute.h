@@ -138,6 +138,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetStack:
     case MovHint:
     case ZombieHint:
+    case ExitOK:
     case Phantom:
     case Upsilon:
     case Phi:

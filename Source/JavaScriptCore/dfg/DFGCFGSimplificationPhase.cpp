@@ -241,7 +241,7 @@ public:
             }
             
             if (Options::validateGraphAtEachPhase())
-                validate(m_graph);
+                validate();
         } while (innerChanged);
         
         return outerChanged;

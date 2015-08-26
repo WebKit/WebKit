@@ -1971,6 +1971,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case ExitOK: {
+        noResult(node);
+        break;
+    }
+        
     case SetLocal: {
         switch (node->variableAccessData()->flushFormat()) {
         case FlushedDouble: {

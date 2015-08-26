@@ -2458,7 +2458,6 @@ public:
     BasicBlock* m_block;
     Node* m_currentNode;
     NodeType m_lastGeneratedNode;
-    bool m_canExit;
     unsigned m_indexInBlock;
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;
@@ -2479,16 +2478,13 @@ public:
     };
     Vector<BranchRecord, 8> m_branches;
 
-    CodeOrigin m_codeOriginForExitTarget;
-    CodeOrigin m_codeOriginForExitProfile;
+    NodeOrigin m_origin;
     
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;
     
     VariableEventStream* m_stream;
     MinifiedGraph* m_minifiedGraph;
-    
-    bool m_isCheckingArgumentTypes;
     
     Vector<std::unique_ptr<SlowPathGenerator>, 8> m_slowPathGenerators;
     Vector<SilentRegisterSavePlan> m_plans;

@@ -271,6 +271,7 @@ public:
                     m_insertionSet.insertNode(
                         nodeIndex, SpecNone, KillStack, node->origin,
                         OpInfo(node->unlinkedLocal().offset()));
+                    node->origin.exitOK = false; // KillStack clobbers exit.
                     break;
                 }
                     
@@ -346,7 +347,11 @@ public:
                     SSACalculator::Variable* ssaVariable = phiDef->variable();
                     VariableAccessData* variable = m_variableForSSAIndex[ssaVariable->index()];
                     FlushFormat format = variable->flushFormat();
-                    UseKind useKind = useKindFor(format);
+
+                    // We can use an unchecked use kind because the SetLocal was turned into a Check.
+                    // We have to use an unchecked use because at least sometimes, the end of the block
+                    // is not exitOK.
+                    UseKind useKind = uncheckedUseKindFor(format);
                     
                     m_insertionSet.insertNode(
                         upsilonInsertionPoint, SpecNone, Upsilon, upsilonOrigin,

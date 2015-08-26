@@ -71,6 +71,7 @@ namespace JSC { namespace DFG {
     \
     macro(MovHint, NodeMustGenerate) \
     macro(ZombieHint, NodeMustGenerate) \
+    macro(ExitOK, NodeMustGenerate) /* Indicates that exit state is intact. */ \
     macro(Phantom, NodeMustGenerate) \
     macro(Check, NodeMustGenerate) /* Used if we want just a type check but not liveness. Non-checking uses will be removed. */\
     macro(Upsilon, 0) \

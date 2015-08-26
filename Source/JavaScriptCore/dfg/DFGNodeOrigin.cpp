@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitBase_h
-#define DFGOSRExitBase_h
+#include "config.h"
+#include "DFGNodeOrigin.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeOrigin.h"
-#include "DFGExitProfile.h"
-
 namespace JSC { namespace DFG {
 
-struct BasicBlock;
-struct Node;
-
-// Provides for the OSR exit profiling functionality that is common between the DFG
-// and the FTL.
-
-struct OSRExitBase {
-    OSRExitBase(ExitKind kind, CodeOrigin origin, CodeOrigin originForProfile)
-        : m_kind(kind)
-        , m_count(0)
-        , m_codeOrigin(origin)
-        , m_codeOriginForExitProfile(originForProfile)
-    {
-        ASSERT(m_codeOrigin.isSet());
-        ASSERT(m_codeOriginForExitProfile.isSet());
-    }
-    
-    ExitKind m_kind;
-    uint32_t m_count;
-    
-    CodeOrigin m_codeOrigin;
-    CodeOrigin m_codeOriginForExitProfile;
-
-protected:
-    void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
-    {
-        if (m_count)
-            considerAddingAsFrequentExitSiteSlow(profiledCodeBlock, jitType);
-    }
-
-private:
-    void considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType);
-};
+void NodeOrigin::dump(PrintStream& out) const
+{
+    out.print("{semantic: ", semantic, ", forExit: ", forExit, ", exitOK: ", exitOK, "}");
+}
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGOSRExitBase_h
 

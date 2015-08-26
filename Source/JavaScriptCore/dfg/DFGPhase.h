@@ -60,6 +60,9 @@ protected:
     VM& vm() { return m_graph.m_vm; }
     CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
     CodeBlock* profiledBlock() { return m_graph.m_profiledBlock; }
+
+    // This runs validation, and uses the graph dump before the phase if possible.
+    void validate();
     
     const char* m_name;
     

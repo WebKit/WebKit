@@ -157,6 +157,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGCleanUpPhase.cpp
     dfg/DFGClobberSet.cpp
     dfg/DFGClobberize.cpp
+    dfg/DFGClobbersExitState.cpp
     dfg/DFGCombinedLiveness.cpp
     dfg/DFGCommon.cpp
     dfg/DFGCommonData.cpp
@@ -210,6 +211,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGNaturalLoops.cpp
     dfg/DFGNode.cpp
     dfg/DFGNodeFlags.cpp
+    dfg/DFGNodeOrigin.cpp
     dfg/DFGOSRAvailabilityAnalysisPhase.cpp
     dfg/DFGOSREntry.cpp
     dfg/DFGOSREntrypointCreationPhase.cpp

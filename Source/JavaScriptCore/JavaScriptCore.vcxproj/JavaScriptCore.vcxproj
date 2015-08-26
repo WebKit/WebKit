@@ -391,6 +391,7 @@
     <ClCompile Include="..\dfg\DFGCleanUpPhase.cpp" />
     <ClCompile Include="..\dfg\DFGClobberize.cpp" />
     <ClCompile Include="..\dfg\DFGClobberSet.cpp" />
+    <ClCompile Include="..\dfg\DFGClobbersExitState.cpp" />
     <ClCompile Include="..\dfg\DFGCombinedLiveness.cpp" />
     <ClCompile Include="..\dfg\DFGCommon.cpp" />
     <ClCompile Include="..\dfg\DFGCommonData.cpp" />
@@ -446,6 +447,7 @@
     <ClCompile Include="..\dfg\DFGNaturalLoops.cpp" />
     <ClCompile Include="..\dfg\DFGNode.cpp" />
     <ClCompile Include="..\dfg\DFGNodeFlags.cpp" />
+    <ClCompile Include="..\dfg\DFGNodeOrigin.cpp" />
     <ClCompile Include="..\dfg\DFGOperations.cpp" />
     <ClCompile Include="..\dfg\DFGOSRAvailabilityAnalysisPhase.cpp" />
     <ClCompile Include="..\dfg\DFGOSREntry.cpp" />
@@ -1108,6 +1110,7 @@
     <ClInclude Include="..\dfg\DFGCleanUpPhase.h" />
     <ClInclude Include="..\dfg\DFGClobberize.h" />
     <ClInclude Include="..\dfg\DFGClobberSet.h" />
+    <ClInclude Include="..\dfg\DFGClobbersExitState.h" />
     <ClInclude Include="..\dfg\DFGCombinedLiveness.h" />
     <ClInclude Include="..\dfg\DFGCommon.h" />
     <ClInclude Include="..\dfg\DFGCommonData.h" />

@@ -1362,6 +1362,7 @@ private:
         case LoopHint:
         case MovHint:
         case ZombieHint:
+        case ExitOK:
         case BottomValue:
         case TypeOf:
             break;
@@ -1408,9 +1409,6 @@ private:
     void convertStringAddUse(Node* node, Edge& edge)
     {
         if (useKind == StringUse) {
-            // This preserves the binaryUseKind() invariant ot ValueAdd: ValueAdd's
-            // two edges will always have identical use kinds, which makes the
-            // decision process much easier.
             observeUseKindOnNode<StringUse>(edge.node());
             m_insertionSet.insertNode(
                 m_indexInBlock, SpecNone, Check, node->origin,
@@ -1512,6 +1510,14 @@ private:
 
     bool attemptToMakeFastStringAdd(Node* node)
     {
+        if (!node->origin.exitOK) {
+            // If this code cannot exit, then we should not convert it to a MakeRope, since MakeRope
+            // can exit. This arises because we think that StrCat clobbers exit state, even though it
+            // doesn't really do that.
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=148443
+            return false;
+        }
+        
         bool goodToGo = true;
         m_graph.doToChildren(
             node,
@@ -1637,6 +1643,9 @@ private:
                 break;
                 
             case SetLocal:
+                // NOTE: Any type checks we put here may get hoisted by fixupChecksInBlock(). So, if we
+                // add new type checking use kind for SetLocals, we need to modify that code as well.
+                
                 switch (variable->flushFormat()) {
                 case FlushedJSValue:
                     break;
@@ -2110,8 +2119,19 @@ private:
             return;
         ASSERT(block->isReachable);
         m_block = block;
-        for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
-            Node* node = block->at(m_indexInBlock);
+        unsigned indexForChecks = UINT_MAX;
+        NodeOrigin originForChecks;
+        for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
+            Node* node = block->at(indexInBlock);
+
+            // If this is a node at which we could exit, then save its index. If nodes after this one
+            // cannot exit, then we will hoist checks to here.
+            if (node->origin.exitOK) {
+                indexForChecks = indexInBlock;
+                originForChecks = node->origin;
+            }
+
+            originForChecks = originForChecks.withSemantic(node->origin.semantic);
 
             // First, try to relax the representational demands of each node, in order to have
             // fewer conversions.
@@ -2175,21 +2195,21 @@ private:
                 node,
                 [&] (Edge& edge) {
                     Node* result = nullptr;
-        
+
                     switch (edge.useKind()) {
                     case DoubleRepUse:
                     case DoubleRepRealUse:
                     case DoubleRepMachineIntUse: {
                         if (edge->hasDoubleResult())
-                            return;
+                            break;
             
                         if (edge->isNumberConstant()) {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecBytecodeDouble, DoubleConstant, node->origin,
+                                indexForChecks, SpecBytecodeDouble, DoubleConstant, originForChecks,
                                 OpInfo(m_graph.freeze(jsDoubleNumber(edge->asNumber()))));
                         } else if (edge->hasInt52Result()) {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
+                                indexForChecks, SpecInt52AsDouble, DoubleRep, originForChecks,
                                 Edge(edge.node(), Int52RepUse));
                         } else {
                             UseKind useKind;
@@ -2201,53 +2221,90 @@ private:
                                 useKind = NotCellUse;
 
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecBytecodeDouble, DoubleRep, node->origin,
+                                indexForChecks, SpecBytecodeDouble, DoubleRep, originForChecks,
                                 Edge(edge.node(), useKind));
                         }
+
+                        edge.setNode(result);
                         break;
                     }
             
                     case Int52RepUse: {
                         if (edge->hasInt52Result())
-                            return;
+                            break;
             
                         if (edge->isMachineIntConstant()) {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecMachineInt, Int52Constant, node->origin,
+                                indexForChecks, SpecMachineInt, Int52Constant, originForChecks,
                                 OpInfo(edge->constant()));
                         } else if (edge->hasDoubleResult()) {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
+                                indexForChecks, SpecMachineInt, Int52Rep, originForChecks,
                                 Edge(edge.node(), DoubleRepMachineIntUse));
                         } else if (edge->shouldSpeculateInt32ForArithmetic()) {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecInt32, Int52Rep, node->origin,
+                                indexForChecks, SpecInt32, Int52Rep, originForChecks,
                                 Edge(edge.node(), Int32Use));
                         } else {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,
+                                indexForChecks, SpecMachineInt, Int52Rep, originForChecks,
                                 Edge(edge.node(), MachineIntUse));
                         }
+
+                        edge.setNode(result);
                         break;
                     }
-            
+
                     default: {
                         if (!edge->hasDoubleResult() && !edge->hasInt52Result())
-                            return;
+                            break;
             
                         if (edge->hasDoubleResult()) {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecBytecodeDouble, ValueRep, node->origin,
+                                indexForChecks, SpecBytecodeDouble, ValueRep, originForChecks,
                                 Edge(edge.node(), DoubleRepUse));
                         } else {
                             result = m_insertionSet.insertNode(
-                                m_indexInBlock, SpecInt32 | SpecInt52AsDouble, ValueRep,
-                                node->origin, Edge(edge.node(), Int52RepUse));
+                                indexForChecks, SpecInt32 | SpecInt52AsDouble, ValueRep,
+                                originForChecks, Edge(edge.node(), Int52RepUse));
                         }
+
+                        edge.setNode(result);
                         break;
                     } }
-                    
-                    edge.setNode(result);
+
+                    // It's remotely possible that this node cannot do type checks, but we now have a
+                    // type check on this node. We don't have to handle the general form of this
+                    // problem. It only arises when ByteCodeParser emits an immediate SetLocal, rather
+                    // than a delayed one. So, we only worry about those checks that we may have put on
+                    // a SetLocal. Note that "indexForChecks != indexInBlock" is just another way of
+                    // saying "!node->origin.exitOK".
+                    if (indexForChecks != indexInBlock && mayHaveTypeCheck(edge.useKind())) {
+                        UseKind knownUseKind;
+                        
+                        switch (edge.useKind()) {
+                        case Int32Use:
+                            knownUseKind = KnownInt32Use;
+                            break;
+                        case CellUse:
+                            knownUseKind = KnownCellUse;
+                            break;
+                        case BooleanUse:
+                            knownUseKind = KnownBooleanUse;
+                            break;
+                        default:
+                            // This can only arise if we have a Check node, and in that case, we can
+                            // just remove the original check.
+                            DFG_ASSERT(m_graph, node, node->op() == Check);
+                            knownUseKind = UntypedUse;
+                            break;
+                        }
+
+                        m_insertionSet.insertNode(
+                            indexForChecks, SpecNone, Check, originForChecks, edge);
+
+                        edge.setUseKind(knownUseKind);
+                    }
                 });
         }
         

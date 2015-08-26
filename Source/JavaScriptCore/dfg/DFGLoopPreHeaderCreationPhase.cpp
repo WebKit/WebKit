@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,6 +104,13 @@ public:
             // because that is the DFG SSA convention. Therefore, each predecessor of the loop
             // header must have only one successor.
             DFG_ASSERT(m_graph, nullptr, existingPreHeader->terminal()->op() == Jump);
+
+            // A pre-header is most useful if it's possible to exit from its terminal. Hence
+            // if the terminal of the existing pre-header doesn't allow for exit, but the first
+            // origin of the loop header does, then we should create a new pre-header.
+            if (!needsNewPreHeader && loop.header()->firstOrigin().exitOK
+                && !existingPreHeader->terminal()->origin.exitOK)
+                needsNewPreHeader = true;
             
             if (!needsNewPreHeader)
                 continue;

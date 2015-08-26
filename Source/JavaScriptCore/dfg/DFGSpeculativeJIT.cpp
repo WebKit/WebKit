@@ -61,7 +61,6 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_interpreter(m_jit.graph(), m_state)
     , m_stream(&jit.jitCode()->variableEventStream)
     , m_minifiedGraph(&jit.jitCode()->minifiedDFG)
-    , m_isCheckingArgumentTypes(false)
 {
 }
 
@@ -196,7 +195,6 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
 {
     if (!m_compileOkay)
         return;
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     JITCompiler::Jump fuzzJump = emitOSRExitFuzzCheck();
     if (fuzzJump.isSet()) {
         JITCompiler::JumpList jumpsToFail;
@@ -212,7 +210,6 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
 {
     if (!m_compileOkay)
         return;
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     JITCompiler::Jump fuzzJump = emitOSRExitFuzzCheck();
     if (fuzzJump.isSet()) {
         JITCompiler::JumpList myJumpsToFail;
@@ -228,7 +225,6 @@ OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSo
 {
     if (!m_compileOkay)
         return OSRExitJumpPlaceholder();
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     unsigned index = m_jit.jitCode()->osrExit.size();
     m_jit.appendExitInfo();
     m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
@@ -237,19 +233,16 @@ OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSo
 
 OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse)
 {
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     return speculationCheck(kind, jsValueSource, nodeUse.node());
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail)
 {
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     speculationCheck(kind, jsValueSource, nodeUse.node(), jumpToFail);
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, const MacroAssembler::JumpList& jumpsToFail)
 {
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     speculationCheck(kind, jsValueSource, nodeUse.node(), jumpsToFail);
 }
 
@@ -257,7 +250,6 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
 {
     if (!m_compileOkay)
         return;
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     unsigned recoveryIndex = m_jit.jitCode()->appendSpeculationRecovery(recovery);
     m_jit.appendExitInfo(jumpToFail);
     m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size(), recoveryIndex));
@@ -265,7 +257,6 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
 {
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     speculationCheck(kind, jsValueSource, nodeUse.node(), jumpToFail, recovery);
 }
 
@@ -273,7 +264,6 @@ void SpeculativeJIT::emitInvalidationPoint(Node* node)
 {
     if (!m_compileOkay)
         return;
-    ASSERT(m_canExit);
     OSRExitCompilationInfo& info = m_jit.appendExitInfo(JITCompiler::JumpList());
     m_jit.jitCode()->appendOSRExit(OSRExit(
         UncountableInvalidation, JSValueSource(),
@@ -286,7 +276,6 @@ void SpeculativeJIT::emitInvalidationPoint(Node* node)
 
 void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Node* node)
 {
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     if (!m_compileOkay)
         return;
     speculationCheck(kind, jsValueRegs, node, m_jit.jump());
@@ -297,7 +286,6 @@ void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs js
 
 void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Edge nodeUse)
 {
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
     terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.node());
 }
 
@@ -1468,9 +1456,8 @@ void SpeculativeJIT::compileCurrentBlock()
                 variable->machineLocal(),
                 format));
     }
-    
-    m_codeOriginForExitTarget = CodeOrigin();
-    m_codeOriginForExitProfile = CodeOrigin();
+
+    m_origin = NodeOrigin();
     
     for (m_indexInBlock = 0; m_indexInBlock < m_block->size(); ++m_indexInBlock) {
         m_currentNode = m_block->at(m_indexInBlock);
@@ -1482,15 +1469,11 @@ void SpeculativeJIT::compileCurrentBlock()
             return;
         }
 
-        if (ASSERT_DISABLED)
-            m_canExit = true; // Essentially disable the assertions.
-        else
-            m_canExit = mayExit(m_jit.graph(), m_currentNode);
-        
         m_interpreter.startExecuting();
         m_jit.setForNode(m_currentNode);
-        m_codeOriginForExitTarget = m_currentNode->origin.forExit;
-        m_codeOriginForExitProfile = m_currentNode->origin.semantic;
+        m_origin = m_currentNode->origin;
+        if (validationEnabled())
+            m_origin.exitOK &= mayExit(m_jit.graph(), m_currentNode) == Exits;
         m_lastGeneratedNode = m_currentNode->op();
         
         ASSERT(m_currentNode->shouldGenerate());
@@ -1537,9 +1520,7 @@ void SpeculativeJIT::compileCurrentBlock()
 void SpeculativeJIT::checkArgumentTypes()
 {
     ASSERT(!m_currentNode);
-    m_isCheckingArgumentTypes = true;
-    m_codeOriginForExitTarget = CodeOrigin(0);
-    m_codeOriginForExitProfile = CodeOrigin(0);
+    m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
 
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
         Node* node = m_jit.graph().m_arguments[i];
@@ -1602,7 +1583,8 @@ void SpeculativeJIT::checkArgumentTypes()
         }
 #endif
     }
-    m_isCheckingArgumentTypes = false;
+
+    m_origin = NodeOrigin();
 }
 
 bool SpeculativeJIT::compile()

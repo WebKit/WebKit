@@ -42,7 +42,7 @@ void InsertionSet::insertSlow(const Insertion& insertion)
         }
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
+    m_insertions.insert(0, insertion);
 }
 
 void InsertionSet::execute(BasicBlock* block)
