@@ -1,3 +1,18 @@
+2015-08-25  Nan Wang  <n_wang@apple.com>
+
+        AX: Enable accessibility/aria-controls.html test for mac
+        https://bugs.webkit.org/show_bug.cgi?id=148458
+
+        Reviewed by Chris Fleizach.
+
+        Implemented ariaControlsElementAtIndex(unsigned index).
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::ariaControlsElementAtIndex):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex):
+
 2015-08-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove python tests for PassRefPtr 

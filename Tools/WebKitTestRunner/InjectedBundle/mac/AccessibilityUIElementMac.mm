@@ -458,7 +458,11 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIn
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
-    // FIXME: implement
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* ariaControls = [m_element accessibilityAttributeValue:@"AXARIAControls"];
+    if (index < [ariaControls count])
+        return AccessibilityUIElement::create([ariaControls objectAtIndex:index]);
+    END_AX_OBJC_EXCEPTIONS
     return nullptr;
 }
 

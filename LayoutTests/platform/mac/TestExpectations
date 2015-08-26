@@ -47,9 +47,6 @@ accessibility/multiselect-list-reports-active-option.html
 # Missing implementation of some functions in mac.
 webkit.org/b/129039 accessibility/select-element-at-index.html [ Skip ]
 
-# ariaControlsElementAtIndex is not implemented in mac
-webkit.org/b/127908 accessibility/aria-controls.html [ Skip ]
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 

@@ -241,6 +241,10 @@ using namespace HTMLNames;
 #define NSAccessibilityDocumentEncodingAttribute @"AXDocumentEncoding"
 #endif
 
+#ifndef NSAccessibilityAriaControlsAttribute
+#define NSAccessibilityAriaControlsAttribute @"AXARIAControls"
+#endif
+
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
@@ -3066,6 +3070,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (Document* document = m_object->document())
             return document->encoding();
         return nil;
+    }
+    
+    // Aria controls element
+    if ([attributeName isEqualToString:NSAccessibilityAriaControlsAttribute]) {
+        AccessibilityObject::AccessibilityChildrenVector ariaControls;
+        m_object->ariaControlsElements(ariaControls);
+        return convertToNSArray(ariaControls);
     }
     
     return nil;

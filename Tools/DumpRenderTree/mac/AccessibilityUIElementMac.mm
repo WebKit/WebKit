@@ -395,8 +395,13 @@ AccessibilityUIElement AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned
 
 AccessibilityUIElement AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
-    // FIXME: implement
-    return 0;
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* ariaControls = [m_element accessibilityAttributeValue:@"AXARIAControls"];
+    if (index < [ariaControls count])
+        return [ariaControls objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)

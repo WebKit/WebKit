@@ -22,8 +22,13 @@
         var tablist = accessibilityController.accessibleElementById("tablist");
         var tab1 = tablist.childAtIndex(0);
 
-        shouldBe("tab1.ariaControlsElementAtIndex(0).stringValue", "'AXValue: Panel 1'");
-        shouldBe("tab1.ariaControlsElementAtIndex(1).stringValue", "'AXValue: Panel 2'");
+        if (accessibilityController.platformName == "mac") {
+            shouldBe("tab1.ariaControlsElementAtIndex(0).childAtIndex(0).stringValue", "'AXValue: Panel 1'");
+            shouldBe("tab1.ariaControlsElementAtIndex(1).childAtIndex(0).stringValue", "'AXValue: Panel 2'");
+        } else {
+            shouldBe("tab1.ariaControlsElementAtIndex(0).stringValue", "'AXValue: Panel 1'");
+            shouldBe("tab1.ariaControlsElementAtIndex(1).stringValue", "'AXValue: Panel 2'");
+        }
     }
 
 </script>
