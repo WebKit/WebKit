@@ -1,3 +1,9 @@
+2015-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Update Windows tool install instructions.
+
+        * building/tools.html:
+
 2015-08-24  Saam barati  <sbarati@apple.com>
 
         Add mp4 version of types-changing video.

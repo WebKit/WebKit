@@ -17,7 +17,7 @@ include("../header.inc");
 <div class="windows-instructions">
 <h4>Windows</h4>
 <ol>
-<li><p>You can build with either Visual Studio 2013 or Visual Studio 2013 express. (Newer versions currently unsupported)</p>
+<li><p>You can build with either Visual Studio 2015 or Visual Studio 2015 Community Edition.</p>
 <p>Use the default options for the installation.</p>
 
 <li><p>Install Cygwin</p>
@@ -59,10 +59,12 @@ Those lines would prevent picking up the Windows TMP and TEMP environment variab
 <p>If you are behind a proxy you need to do the following to allow cygwin svn to get through the proxy (similar steps are available for your Windows svn):
 <ul><li>In bash (Cygwin) run: <code>svn help</code>. This will create in your cygwin home directory the file .subversion/servers.</li>
 <li>Edit the file mentioned above and follow the instructions in the file to set up your proxy settings.</li></ul></p>
-<li><p>Install DirectX SDK</p>
-<p>Download the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=6812">June 2010 DirectX SDK</a>  This is needed for accelerated compositing.</p></li>
+<li><p>Install Perl</p>
+<p>Download Perl 5.18 (or newer) from <a href="http://www.activestate.com/activeperl/downloads">www.activestate.com</a> and install it.</p></li>
 <li><p>Install Python</p>
-<p>Download Python 2.7.8 from <a href="http://www.python.org">www.python.org</a>. When done installing, remember to add the folder of the python executable to your PATH environment variable.</p></li>
+<p>Download Python 2.7.8 from <a href="http://www.activestate.com/activepython/downloads">www.activestate.com</a> and install it.</p></li>
+<li><p>Install Ruby</p>
+<p>Download Ruby 2.0.0 from <a href="http://rubyinstaller.org">rubyinstaller.org</a> and install it.</p></li>
 <li><p>Install php, we use the following steps (you need this to run http layout tests):</p>
 <ol>
 <li>cd /usr/local/bin</li>
@@ -71,9 +73,7 @@ Those lines would prevent picking up the Windows TMP and TEMP environment variab
 <li>Change line 341 of the apt-cyg script to "wget -nc $mirror/../$install"</li>
 <li>apt-cyg -m ftp://sourceware.org/pub/cygwinports/x86 install php</li>
 </ol>
-<li><p>Optional: Install the 32-bit version of Debugging Tools for Windows</p>
-<p>Debugging Tools for Windows includes many useful debugging tools such as WinDbg and NTSD. Some of WebKit&rsquo;s tests and scripts use these tools. Follow the <a target="installtools" href="http://www.microsoft.com/whdc/devtools/debugging/installx86.mspx#b">instructions for installing the 32-bit version of Debugging Tools for Windows</a>.</p>
-<li><p>Optional: Hotfix for 64-bit Windows to disable the user-mode callback filter for exceptions</p>
+<li><p>Optional: Hotfix for 64-bit Windows (Windows 7 or earlier) to disable the user-mode callback filter for exceptions</p>
 <p>Without the <a href="http://support.microsoft.com/kb/976038">976038 hotfix</a>, exceptions may be thrown in callback routines that do not cause a crash but leave the application in an inconsistent state that might cause a crash later. You will need to click on "View and request hotfix downloads" and fill out the form. A link to download the hotfix and a password will be emailed to you.</p>
 </ol>
 </div>
