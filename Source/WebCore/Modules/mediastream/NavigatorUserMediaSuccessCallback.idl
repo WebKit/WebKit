@@ -24,6 +24,7 @@
 
 [
     Conditional=MEDIA_STREAM,
+    Callback=FunctionOnly,
 ] callback interface NavigatorUserMediaSuccessCallback {
     boolean handleEvent(MediaStream stream);
 };

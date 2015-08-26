@@ -1379,7 +1379,11 @@ sub GenerateParametersCheckExpression
             }
         } elsif ($codeGenerator->IsCallbackInterface($parameter->type)) {
             # For Callbacks only checks if the value is null or object.
-            push(@andExpression, "(${value}.isNull() || ${value}.isFunction())");
+            if ($codeGenerator->IsFunctionOnlyCallbackInterface($parameter->type)) {
+                push(@andExpression, "(${value}.isNull() || ${value}.isFunction())");
+            } else {
+                push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
+            }
             $usedArguments{$parameterIndex} = 1;
         } elsif (!IsNativeType($type)) {
             my $condition = "";
@@ -3271,7 +3275,11 @@ sub GenerateParametersCheck
             if ($optional) {
                 push(@$outputArray, "    RefPtr<$argType> $name;\n");
                 push(@$outputArray, "    if (!exec->argument($argsIndex).isUndefinedOrNull()) {\n");
-                push(@$outputArray, "        if (!exec->uncheckedArgument($argsIndex).isFunction())\n");
+                if ($codeGenerator->IsFunctionOnlyCallbackInterface($parameter->type)) {
+                    push(@$outputArray, "        if (!exec->uncheckedArgument($argsIndex).isFunction())\n");
+                } else {
+                    push(@$outputArray, "        if (!exec->uncheckedArgument($argsIndex).isObject())\n");
+                }
                 push(@$outputArray, "            return throwArgumentMustBeFunctionError(*exec, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName);\n");
                 if ($function->isStatic) {
                     AddToImplIncludes("CallbackFunction.h");
@@ -3281,7 +3289,11 @@ sub GenerateParametersCheck
                 }
                 push(@$outputArray, "    }\n");
             } else {
-                push(@$outputArray, "    if (!exec->argument($argsIndex).isFunction())\n");
+                if ($codeGenerator->IsFunctionOnlyCallbackInterface($parameter->type)) {
+                    push(@$outputArray, "    if (!exec->argument($argsIndex).isFunction())\n");
+                } else {
+                    push(@$outputArray, "    if (!exec->argument($argsIndex).isObject())\n");
+                }
                 push(@$outputArray, "        return throwArgumentMustBeFunctionError(*exec, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName);\n");
                 if ($function->isStatic) {
                     AddToImplIncludes("CallbackFunction.h");
@@ -3598,7 +3610,22 @@ sub GenerateCallbackImplementation
             }
 
             push(@implContent, "\n    bool raisedException = false;\n");
-            push(@implContent, "    m_data->invokeCallback(args, Identifier::fromString(exec, \"${functionName}\"), &raisedException);\n");
+
+            my $propertyToLookup = "Identifier::fromString(exec, \"${functionName}\")";
+            my $invokeMethod = "JSCallbackData::CallbackType::FunctionOrObject";
+            if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{"Callback"}, "FunctionOnly")) {
+                # For callback functions, do not look up callable property on the user object.
+                # https://heycam.github.io/webidl/#es-callback-function
+                $invokeMethod = "JSCallbackData::CallbackType::Function";
+                $propertyToLookup = "Identifier()";
+                push(@implContent, "    UNUSED_PARAM(exec);\n");    
+            } elsif ($numFunctions > 1) {
+                # The callback interface has more than one operation so we should not call the user object as a function.
+                # instead, we should look for a property with the same name as the operation on the user object.
+                # https://heycam.github.io/webidl/#es-user-objects
+                $invokeMethod = "JSCallbackData::CallbackType::Object";
+            }
+            push(@implContent, "    m_data->invokeCallback(args, $invokeMethod, $propertyToLookup, &raisedException);\n");
             push(@implContent, "    return !raisedException;\n");
             push(@implContent, "}\n");
         }

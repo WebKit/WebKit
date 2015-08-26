@@ -54,7 +54,7 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
     args.append(toJS(exec, m_data->globalObject(), error));
 
     bool raisedException = false;
-    JSValue result = m_data->invokeCallback(args, Identifier::fromString(exec, "handleEvent"), &raisedException);
+    JSValue result = m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), &raisedException);
     if (raisedException) {
         // The spec says:
         // "If the error callback returns false, then move on to the next statement..."

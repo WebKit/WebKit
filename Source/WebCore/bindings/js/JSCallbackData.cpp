@@ -43,28 +43,39 @@ void JSCallbackData::deleteData(void* context)
     delete static_cast<JSCallbackData*>(context);
 }
 
-JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, PropertyName functionName, bool* raisedException)
+JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, bool* raisedException)
 {
     ASSERT(callback());
-    return invokeCallback(callback(), args, functionName, raisedException);
+    return invokeCallback(callback(), args, method, functionName, raisedException);
 }
 
-JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, PropertyName functionName, bool* raisedException)
+JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, bool* raisedException)
 {
     ASSERT(callback());
     ASSERT(globalObject());
 
     ExecState* exec = globalObject()->globalExec();
-    JSValue function = callback();
-
+    JSValue function;
     CallData callData;
-    CallType callType = callback()->methodTable()->getCallData(callback(), callData);
+    CallType callType = CallTypeNone;
+
+    if (method != CallbackType::Object) {
+        function = callback();
+        callType = callback()->methodTable()->getCallData(callback(), callData);
+    }
     if (callType == CallTypeNone) {
+        if (method == CallbackType::Function)
+            return JSValue();
+
+        ASSERT(!functionName.isNull());
         function = callback()->get(exec, functionName);
         callType = getCallData(function, callData);
         if (callType == CallTypeNone)
             return JSValue();
     }
+
+    ASSERT(!function.isEmpty());
+    ASSERT(callType != CallTypeNone);
 
     ScriptExecutionContext* context = globalObject()->scriptExecutionContext();
     // We will fail to get the context if the frame has been detached.

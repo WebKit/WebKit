@@ -496,6 +496,13 @@ sub WK_lcfirst
     return $ret;
 }
 
+sub trim
+{
+    my $string = shift;
+    $string =~ s/^\s+|\s+$//g;
+    return $string;
+}
+
 # Return the C++ namespace that a given attribute name string is defined in.
 sub NamespaceForAttributeName
 {
@@ -651,6 +658,40 @@ sub IsCallbackInterface
 
   my $fileContents = join('', @lines);
   return ($fileContents =~ /callback\s+interface\s+(\w+)/gs);
+}
+
+# Callback interface with [Callback=FunctionOnly].
+# FIXME: This should be a callback function:
+# https://heycam.github.io/webidl/#idl-callback-functions
+sub IsFunctionOnlyCallbackInterface
+{
+  my $object = shift;
+  my $type = shift;
+
+  return 0 unless $object->IsCallbackInterface($type);
+
+  my $idlFile = $object->IDLFileForInterface($type)
+      or die("Could NOT find IDL file for interface \"$type\"!\n");
+
+  open FILE, "<", $idlFile;
+  my @lines = <FILE>;
+  close FILE;
+
+  my $fileContents = join('', @lines);
+  if ($fileContents =~ /\[(.*)\]\s+callback\s+interface\s+(\w+)/gs) {
+      my @parts = split(',', $1);
+      foreach my $part (@parts) {
+          my @keyValue = split('=', $part);
+          my $key = trim($keyValue[0]);
+          next unless length($key);
+          my $value = "VALUE_IS_MISSING";
+          $value = trim($keyValue[1]) if @keyValue > 1;
+
+          return 1 if ($key eq "Callback" && $value eq "FunctionOnly");
+      }
+  }
+
+  return 0;
 }
 
 sub GenerateConditionalString

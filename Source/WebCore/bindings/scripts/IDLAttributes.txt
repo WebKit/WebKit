@@ -23,6 +23,7 @@ AtomicString
 CPPPureInterface
 CachedAttribute
 CallbackNeedsOperatorEqual
+Callback=FunctionOnly
 CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack
 CheckSecurity
 CheckSecurityForNode

@@ -38,6 +38,7 @@
 #include "JSSVGPoint.h"
 #include "JSScriptProfile.h"
 #include "JSTestCallback.h"
+#include "JSTestCallbackFunction.h"
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestSubObj.h"
@@ -116,6 +117,9 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSt
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackArg(JSC::ExecState*);
 #if ENABLE(Condition1)
@@ -451,12 +455,15 @@ COMPILE_ASSERT(0 == TestObj::readonly, TestObjEnumreadonlyIsWrongUseDoNotCheckCo
 EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
 {
     auto* castedThis = jsCast<JSTestObjConstructor*>(exec->callee());
-    if (UNLIKELY(exec->argumentCount() < 1))
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (!exec->argument(0).isFunction())
+    if (!exec->argument(0).isObject())
         return throwArgumentMustBeFunctionError(*exec, 0, "testCallback", "TestObj", nullptr);
     RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
-    RefPtr<TestObj> object = TestObj::create(testCallback);
+    if (!exec->argument(1).isFunction())
+        return throwArgumentMustBeFunctionError(*exec, 1, "testCallbackFunction", "TestObj", nullptr);
+    RefPtr<TestCallbackFunction> testCallbackFunction = JSTestCallbackFunction::create(asObject(exec->uncheckedArgument(1)), castedThis->globalObject());
+    RefPtr<TestObj> object = TestObj::create(testCallback, testCallbackFunction);
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
@@ -473,7 +480,7 @@ void JSTestObjConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObjec
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestObj::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestObject"))), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontEnum);
     reifyStaticProperties(vm, JSTestObjConstructorTableValues, *this);
 }
 
@@ -618,6 +625,9 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithCallbackArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackArg), (intptr_t) (1) },
     { "methodWithNonCallbackArgAndCallbackArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg), (intptr_t) (2) },
     { "methodWithCallbackAndOptionalArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg), (intptr_t) (0) },
+    { "methodWithCallbackFunctionArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg), (intptr_t) (1) },
+    { "methodWithNonCallbackArgAndCallbackFunctionArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg), (intptr_t) (2) },
+    { "methodWithCallbackFunctionAndOptionalArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg), (intptr_t) (0) },
 #if ENABLE(Condition1)
     { "conditionalMethod1", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod1), (intptr_t) (0) },
 #else
@@ -3599,7 +3609,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
     auto& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (!exec->argument(0).isFunction())
+    if (!exec->argument(0).isObject())
         return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "methodWithCallbackArg");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     impl.methodWithCallbackArg(callback);
@@ -3619,7 +3629,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     int nonCallback = toInt32(exec, exec->argument(0), NormalConversion);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!exec->argument(1).isFunction())
+    if (!exec->argument(1).isObject())
         return throwArgumentMustBeFunctionError(*exec, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackArg");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(1)), castedThis->globalObject());
     impl.methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
@@ -3636,7 +3646,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
     auto& impl = castedThis->impl();
     RefPtr<TestCallback> callback;
     if (!exec->argument(0).isUndefinedOrNull()) {
-        if (!exec->uncheckedArgument(0).isFunction())
+        if (!exec->uncheckedArgument(0).isObject())
             return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "methodWithCallbackAndOptionalArg");
         callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     }
@@ -3644,11 +3654,66 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "methodWithCallbackFunctionArg");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+    if (UNLIKELY(exec->argumentCount() < 1))
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    if (!exec->argument(0).isFunction())
+        return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "methodWithCallbackFunctionArg");
+    RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
+    impl.methodWithCallbackFunctionArg(callback);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "methodWithNonCallbackArgAndCallbackFunctionArg");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+    if (UNLIKELY(exec->argumentCount() < 2))
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    int nonCallback = toInt32(exec, exec->argument(0), NormalConversion);
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    if (!exec->argument(1).isFunction())
+        return throwArgumentMustBeFunctionError(*exec, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackFunctionArg");
+    RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(exec->uncheckedArgument(1)), castedThis->globalObject());
+    impl.methodWithNonCallbackArgAndCallbackFunctionArg(nonCallback, callback);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "methodWithCallbackFunctionAndOptionalArg");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+    RefPtr<TestCallbackFunction> callback;
+    if (!exec->argument(0).isUndefinedOrNull()) {
+        if (!exec->uncheckedArgument(0).isFunction())
+            return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "methodWithCallbackFunctionAndOptionalArg");
+        callback = JSTestCallbackFunction::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
+    }
+    impl.methodWithCallbackFunctionAndOptionalArg(callback);
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArg(ExecState* exec)
 {
     RefPtr<TestCallback> callback;
     if (!exec->argument(0).isUndefinedOrNull()) {
-        if (!exec->uncheckedArgument(0).isFunction())
+        if (!exec->uncheckedArgument(0).isObject())
             return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "staticMethodWithCallbackAndOptionalArg");
         callback = createFunctionOnlyCallback<JSTestCallback>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     }
@@ -3660,7 +3725,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
 {
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (!exec->argument(0).isFunction())
+    if (!exec->argument(0).isObject())
         return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "staticMethodWithCallbackArg");
     RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     TestObj::staticMethodWithCallbackArg(callback);
@@ -3803,7 +3868,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
     auto& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (!exec->argument(0).isFunction())
+    if (!exec->argument(0).isObject())
         return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "overloadedMethod");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     impl.overloadedMethod(callback);
@@ -3943,7 +4008,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         return jsTestObjPrototypeFunctionOverloadedMethod3(exec);
     if (argsCount == 1)
         return jsTestObjPrototypeFunctionOverloadedMethod4(exec);
-    if ((argsCount == 1 && (arg0.isNull() || arg0.isFunction())))
+    if ((argsCount == 1 && (arg0.isNull() || arg0.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod5(exec);
     if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSDOMStringList::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethod6(exec);

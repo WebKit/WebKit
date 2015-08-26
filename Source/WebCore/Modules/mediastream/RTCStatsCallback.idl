@@ -24,6 +24,7 @@
 
 [
     Conditional=MEDIA_STREAM,
+    Callback=FunctionOnly,
 ] callback interface RTCStatsCallback {
     boolean handleEvent(RTCStatsResponse response);
 };

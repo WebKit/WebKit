@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback interface SQLTransactionErrorCallback {
+[
+    Callback=FunctionOnly,
+] callback interface SQLTransactionErrorCallback {
     boolean handleEvent(SQLError error);
 };

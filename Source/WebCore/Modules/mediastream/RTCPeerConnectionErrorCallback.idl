@@ -25,6 +25,7 @@
 
 [
     Conditional=MEDIA_STREAM,
+    Callback=FunctionOnly,
 ] callback interface RTCPeerConnectionErrorCallback {
     boolean handleEvent(DOMError error);
 };

@@ -25,7 +25,7 @@
 
 [
     Conditional=MEDIA_STREAM,
-    NoInterfaceObject,
+    Callback=FunctionOnly,
 ] callback interface MediaStreamTrackSourcesCallback {
     boolean handleEvent(sequence<SourceInfo> sources);
 };
