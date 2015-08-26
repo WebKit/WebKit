@@ -376,7 +376,7 @@ static const LocaleScript localeScriptList[] = {
     { "yap", USCRIPT_LATIN },
     { "yo", USCRIPT_LATIN },
     { "za", USCRIPT_LATIN },
-    { "zh", USCRIPT_SIMPLIFIED_HAN },
+    { "zh", USCRIPT_SIMPLIFIED_HAN }, // FIXME: This mapping in incorrect. Instead, we should consult with an external source (such as the user's language preferences).
     { "zh_hk", USCRIPT_TRADITIONAL_HAN },
     { "zh_tw", USCRIPT_TRADITIONAL_HAN },
     { "zu", USCRIPT_LATIN }
