@@ -210,19 +210,20 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$RI      = [\\U0001F1E6-\\U0001F1FF];" // Emoji regional indicators
         "$ZWJ     = \\u200D;"               // Zero width joiner
         "$EmojiVar = [\\uFE0F];"            // Emoji-style variation selector
-        "$EmojiForSeqs = [\\u2764 \\U0001F466-\\U0001F469 \\U0001F48B];" // Emoji that participate in ZWJ sequences
-        "$EmojiForMods = [\\u261D \\u270A-\\u270C \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F466-\\U0001F469 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F596 \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6A3 \\U0001F6B4-\\U0001F6B6 \\U0001F6C0] ;" // Emoji that take Fitzpatrick modifiers
+        "$EmojiForSeqs = [\\u2764 \\U0001F441 \\U0001F466-\\U0001F469 \\U0001F48B \\U0001F5E8];" // Emoji that participate in ZWJ sequences
+        "$EmojiForMods = [\\u261D \\u26F9 \\u270A-\\u270D \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F3CB \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F466-\\U0001F469 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F590 \\U0001F595 \\U0001F596 \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6A3 \\U0001F6B4-\\U0001F6B6 \\U0001F6C0 \\U0001F918] ;" // Emoji that take Fitzpatrick modifiers
         "$EmojiMods = [\\U0001F3FB-\\U0001F3FF];" // Fitzpatrick modifiers
         "!!chain;"
+        "!!RINoChain;"
         "!!forward;"
         "$CR $LF;"
         "$L ($L | $V | $LV | $LVT);"
         "($LV | $V) ($V | $T);"
         "($LVT | $T) $T;"
+        "$RI $RI $Extend* / $RI;"
+        "$RI $RI $Extend*;"
         "[^$Control $CR $LF] $Extend;"
         "[^$Control $CR $LF] $SpacingMark;"
-        "$RI $RI / $RI;"
-        "$RI $RI;"
         "$Hin0 $HinV $Hin1;"               // Devanagari Virama (forward)
         "$Ben0 $BenV $Ben1;"               // Bengali Virama (forward)
         "$Pan0 $PanV $Pan1;"               // Gurmukhi Virama (forward)
@@ -238,10 +239,10 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "($L | $V | $LV | $LVT) $L;"
         "($V | $T) ($LV | $V);"
         "$T ($LVT | $T);"
+        "$Extend* $RI $RI / $Extend* $RI $RI;"
+        "$Extend* $RI $RI;"
         "$Extend      [^$Control $CR $LF];"
         "$SpacingMark [^$Control $CR $LF];"
-        "$RI $RI / $RI $RI;"
-        "$RI $RI;"
         "$Hin1 $HinV $Hin0;"               // Devanagari Virama (backward)
         "$Ben1 $BenV $Ben0;"               // Bengali Virama (backward)
         "$Pan1 $PanV $Pan0;"               // Gurmukhi Virama (backward)
@@ -252,10 +253,12 @@ TextBreakIterator* cursorMovementIterator(StringView string)
         "$Mal1 $MalV $Mal0;"               // Malayalam Virama (backward)
         "$EmojiForSeqs $ZWJ;"              // Don't break in emoji ZWJ sequences
         "$EmojiMods $EmojiVar? $EmojiForMods;" // Don't break between relevant emoji (possibly with variation selector) and Fitzpatrick modifier
-        "[$EmojiVar $EmojiMods]+ $EmojiForMods;"
-        "$EmojiForMods [$EmojiVar $EmojiMods]+;"
         "!!safe_reverse;"
-        "!!safe_forward;";
+        "$RI $RI+;"
+        "[$EmojiVar $EmojiMods]+ $EmojiForMods;"
+        "!!safe_forward;"
+        "$RI $RI+;"
+        "$EmojiForMods [$EmojiVar $EmojiMods]+;";
     static TextBreakIterator* staticCursorMovementIterator = initializeIteratorWithRules(kRules);
 #else // PLATFORM(IOS)
     // Use the special Thai character break iterator for all locales
@@ -402,6 +405,7 @@ static const char* uax14AssignmentsAfter =
     "$PO = [[:LineBreak = Postfix_Numeric:] - $PO_SUB];"
     "$PR = [[:LineBreak = Prefix_Numeric:] - $PR_SUB];"
     "$QU = [:LineBreak = Quotation:];"
+    "$RI = [\\U0001F1E6-\\U0001F1FF];"
     "$SA = [:LineBreak = Complex_Context:];"
     "$SG = [:LineBreak = Surrogate:];"
     "$SP = [:LineBreak = Space:];"
@@ -411,8 +415,8 @@ static const char* uax14AssignmentsAfter =
     "$ZW = [:LineBreak = ZWSpace:];"
     "$ZWJ = \\u200D;"
     "$EmojiVar = \\uFE0F;"
-    "$EmojiForSeqs = [\\u2764 \\U0001F466-\\U0001F469 \\U0001F48B];"
-    "$EmojiForMods = [\\u261D \\u270A-\\u270C \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F466-\\U0001F469 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F596 \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6A3 \\U0001F6B4-\\U0001F6B6 \\U0001F6C0] ;" // Emoji that take Fitzpatrick modifiers
+    "$EmojiForSeqs = [\\u2764 \\U0001F441 \\U0001F466-\\U0001F469 \\U0001F48B \\U0001F5E8];"
+    "$EmojiForMods = [\\u261D \\u26F9 \\u270A-\\u270D \\U0001F385 \\U0001F3C3-\\U0001F3C4 \\U0001F3C7 \\U0001F3CA \\U0001F3CB \\U0001F442-\\U0001F443 \\U0001F446-\\U0001F450 \\U0001F466-\\U0001F469 \\U0001F46E-\\U0001F478 \\U0001F47C \\U0001F481-\\U0001F483 \\U0001F485-\\U0001F487 \\U0001F4AA \\U0001F590 \\U0001F595 \\U0001F596 \\U0001F645-\\U0001F647 \\U0001F64B-\\U0001F64F \\U0001F6A3 \\U0001F6B4-\\U0001F6B6 \\U0001F6C0 \\U0001F918] ;" // Emoji that take Fitzpatrick modifiers
     "$EmojiMods = [\\U0001F3FB-\\U0001F3FF];"
     "$dictionary = [:LineBreak = Complex_Context:];"
     "$ALPlus = [$AL $AI $SA $SG $XX];"
@@ -440,6 +444,7 @@ static const char* uax14AssignmentsAfter =
     "$POcm = $PO $CM*;"
     "$PRcm = $PR $CM*;"
     "$QUcm = $QU $CM*;"
+    "$RIcm = $QU $CM*;"
     "$SYcm = $SY $CM*;"
     "$WJcm = $WJ $CM*;";
 
@@ -558,6 +563,7 @@ static const char* uax14Forward =
     "($ALcm | $HLcm | $NUcm) $OPcm;"
     "$CM+ $OPcm;"
     "$CPcm ($ALcm | $HLcm | $NUcm);"
+    "$RIcm $RIcm;"
     "$EmojiForMods $EmojiVar? $EmojiMods;";
 
 static const char* uax14Reverse =
@@ -586,6 +592,7 @@ static const char* uax14Reverse =
     "$CM+ $PO;"
     "$CM+ $PR;"
     "$CM+ $QU;"
+    "$CM+ $RI;"
     "$CM+ $SY;"
     "$CM+ $WJ;"
     "$CM+;"
@@ -654,6 +661,7 @@ static const char* uax14Reverse =
     "$CM* ($ALPlus | $HL) $CM* $IS;"
     "$CM* $OP $CM* ($ALPlus | $HL | $NU);"
     "$CM* ($ALPlus | $HL | $NU) $CM* $CP;"
+    "$CM* $RI $CM* $RI;"
     "$EmojiMods $EmojiVar? $EmojiForMods;";
 
 static const char* uax14SafeForward =
