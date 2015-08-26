@@ -1,3 +1,18 @@
+2015-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix crash due to animationDidEnd called on deallocated RemoteLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=148442
+        <rdar://problem/21609257>
+
+        Reviewed by Tim Horton.
+
+        A PlatformCAAnimationRemote's backpointer to a deallocated RemoteLayerTreeHost is not
+        invalidated when its host removes its reference to it.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::layerWillBeRemoved): Invalidate a backpointer from the
+            PlatformCAAnimationRemotes to the RemoteLayerTreeHost.
+
 2015-08-26  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Safari navigates after a cancelled force click
