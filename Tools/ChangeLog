@@ -1,3 +1,22 @@
+2015-08-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL][GTK] REGRESSION(r188828): All performance tests and almost all layout tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=148377
+
+        Reviewed by Carlos Garcia Campos.
+
+        EFL and GTK don't support TestController::platformPreferences() yet which was introduced by r188828.
+        It caused all crashes of layout test and performance test on EFL and GTK. So this patch implements
+        TestController::platformPreferences() using WKPageGroupGetPreferences() which was previous thing for
+        EFL and GTK at the moment.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::platformWillRunTest):
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformPreferences):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformPreferences):
+
 2015-08-25  Nan Wang  <n_wang@apple.com>
 
         AX: Enable accessibility/aria-controls.html test for mac

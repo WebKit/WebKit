@@ -1600,15 +1600,17 @@ void TestController::didUpdateHistoryTitle(WKStringRef title, WKURLRef URL, WKFr
     m_currentInvocation->outputText(String::format("WebView updated the title for history URL \"%s\" to \"%s\".\n", toSTD(urlStringWK).c_str(), toSTD(title).c_str()));
 }
 
-#if !PLATFORM(COCOA)
-void TestController::platformWillRunTest(const TestInvocation&)
-{
-}
-
+#if !PLATFORM(EFL) && !PLATFORM(GTK) && !PLATFORM(COCOA)
 WKPreferencesRef TestController::platformPreferences()
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageCopyPageConfiguration(m_mainWebView->page())); 
     return WKPageConfigurationGetPreferences(configuration.get());
+}
+#endif
+
+#if !PLATFORM(COCOA)
+void TestController::platformWillRunTest(const TestInvocation&)
+{
 }
 
 void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
