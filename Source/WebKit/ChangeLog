@@ -1,3 +1,9 @@
+2015-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct build after r188982.
+
+        * WebKit.vcxproj/WebKit.sln:
+
 2015-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CMake build after r188673

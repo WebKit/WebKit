@@ -84,14 +84,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitGUID", "WebKitGUID\We
 		{1659B1B6-F2A3-46B3-AE02-FE65B4A607EB} = {1659B1B6-F2A3-46B3-AE02-FE65B4A607EB}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinLauncher Projects", "WinLauncher Projects", "{20A8616C-E56B-4649-A910-8E97751DE145}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MiniBrowser Projects", "MiniBrowser Projects", "{20A8616C-E56B-4649-A910-8E97751DE145}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncherLib", "..\..\..\Tools\WinLauncher\WinLauncher.vcxproj\WinLauncherLib.vcxproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniBrowserLib", "..\..\..\Tools\MiniBrowser\MiniBrowser.vcxproj\MiniBrowserLib.vcxproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0473724F-0AB3-4F12-892E-9FAB0186C804} = {0473724F-0AB3-4F12-892E-9FAB0186C804}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\Tools\WinLauncher\WinLauncher.vcxproj\WinLauncher.vcxproj", "{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniBrowser", "..\..\..\Tools\MiniBrowser\MiniBrowser.vcxproj\MiniBrowser.vcxproj", "{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{114FCA11-216B-4C8C-957E-30A75AE80443} = {114FCA11-216B-4C8C-957E-30A75AE80443}
 	EndProjectSection
