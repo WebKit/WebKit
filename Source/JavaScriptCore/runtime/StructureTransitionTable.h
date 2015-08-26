@@ -134,6 +134,8 @@ public:
     Structure* get(UniquedStringImpl*, unsigned attributes) const;
 
 private:
+    friend class SingleSlotTransitionWeakOwner;
+
     bool isUsingSingleSlot() const
     {
         return m_data & UsingSingleSlotFlag;
@@ -164,24 +166,8 @@ private:
         ASSERT(!isUsingSingleSlot());
     }
 
-    Structure* singleTransition() const
-    {
-        ASSERT(isUsingSingleSlot());
-        if (WeakImpl* impl = this->weakImpl()) {
-            if (impl->state() == WeakImpl::Live)
-                return reinterpret_cast<Structure*>(impl->jsValue().asCell());
-        }
-        return 0;
-    }
-    
-    void setSingleTransition(VM&, Structure* structure)
-    {
-        ASSERT(isUsingSingleSlot());
-        if (WeakImpl* impl = this->weakImpl())
-            WeakSet::deallocate(impl);
-        WeakImpl* impl = WeakSet::allocate(reinterpret_cast<JSCell*>(structure));
-        m_data = reinterpret_cast<intptr_t>(impl) | UsingSingleSlotFlag;
-    }
+    Structure* singleTransition() const;
+    void setSingleTransition(Structure*);
 
     intptr_t m_data;
 };

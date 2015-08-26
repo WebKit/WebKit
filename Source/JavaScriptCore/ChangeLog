@@ -1,3 +1,26 @@
+2015-08-26  Andreas Kling  <akling@apple.com>
+
+        [JSC] StructureTransitionTable should eagerly deallocate single-transition WeakImpls.
+        <https://webkit.org/b/148478>
+
+        Reviewed by Geoffrey Garen.
+
+        Use a WeakHandleOwner to eagerly deallocate StructureTransitionTable's Weak pointers
+        when it's using the single-transition optimization and the Structure it transitioned
+        to has been GC'd.
+
+        This prevents Structures from keeping WeakBlocks alive longer than necessary when
+        they've been transitioned away from but are still in use themselves.
+
+        * runtime/Structure.cpp:
+        (JSC::singleSlotTransitionWeakOwner):
+        (JSC::StructureTransitionTable::singleTransition):
+        (JSC::StructureTransitionTable::setSingleTransition):
+        (JSC::StructureTransitionTable::add):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::singleTransition): Deleted.
+        (JSC::StructureTransitionTable::setSingleTransition): Deleted.
+
 2015-08-26  Brian Burg  <bburg@apple.com>
 
         Web Inspector: REGRESSION(r188965): BackendDispatcher loses request ids when called re-entrantly

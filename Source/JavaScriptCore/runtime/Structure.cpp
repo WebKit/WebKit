@@ -38,6 +38,7 @@
 #include "StructureRareDataInlines.h"
 #include "WeakGCMapInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
@@ -59,6 +60,41 @@ namespace JSC {
 #if DUMP_STRUCTURE_ID_STATISTICS
 static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
+
+class SingleSlotTransitionWeakOwner final : public WeakHandleOwner {
+    void finalize(Handle<Unknown>, void* context) override
+    {
+        StructureTransitionTable* table = reinterpret_cast<StructureTransitionTable*>(context);
+        ASSERT(table->isUsingSingleSlot());
+        WeakSet::deallocate(table->weakImpl());
+        table->m_data = StructureTransitionTable::UsingSingleSlotFlag;
+    }
+};
+
+static SingleSlotTransitionWeakOwner& singleSlotTransitionWeakOwner()
+{
+    static NeverDestroyed<SingleSlotTransitionWeakOwner> owner;
+    return owner;
+}
+
+inline Structure* StructureTransitionTable::singleTransition() const
+{
+    ASSERT(isUsingSingleSlot());
+    if (WeakImpl* impl = this->weakImpl()) {
+        if (impl->state() == WeakImpl::Live)
+            return jsCast<Structure*>(impl->jsValue().asCell());
+    }
+    return nullptr;
+}
+
+inline void StructureTransitionTable::setSingleTransition(Structure* structure)
+{
+    ASSERT(isUsingSingleSlot());
+    if (WeakImpl* impl = this->weakImpl())
+        WeakSet::deallocate(impl);
+    WeakImpl* impl = WeakSet::allocate(structure, &singleSlotTransitionWeakOwner(), this);
+    m_data = reinterpret_cast<intptr_t>(impl) | UsingSingleSlotFlag;
+}
 
 bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attributes) const
 {
@@ -85,7 +121,7 @@ void StructureTransitionTable::add(VM& vm, Structure* structure)
 
         // This handles the first transition being added.
         if (!existingTransition) {
-            setSingleTransition(vm, structure);
+            setSingleTransition(structure);
             return;
         }
 
