@@ -1208,7 +1208,11 @@ void WebPage::immediateActionDidUpdate()
 
 void WebPage::immediateActionDidCancel()
 {
-    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelled);
+    ImmediateActionStage lastStage = m_page->mainFrame().eventHandler().immediateActionStage();
+    if (lastStage == ImmediateActionStage::ActionUpdated)
+        m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
+    else
+        m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledWithoutUpdate);
 }
 
 void WebPage::immediateActionDidComplete()

@@ -1,3 +1,16 @@
+2015-08-26  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: Safari navigates after a cancelled force click
+        https://bugs.webkit.org/show_bug.cgi?id=148491
+        -and corresponding-
+        rdar://problem/22394323
+
+        Reviewed by Tim Horton.
+
+        Use the current stage to determine which type of cancel this is.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::immediateActionDidCancel):
+
 2015-08-26  Eric Carlson  <eric.carlson@apple.com>
 
         Media Session: make MediaSessionMetadata a class
