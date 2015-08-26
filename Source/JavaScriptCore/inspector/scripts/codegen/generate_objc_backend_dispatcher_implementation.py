@@ -82,7 +82,7 @@ class ObjCConfigurationImplementationGenerator(Generator):
 
     def _generate_handler_implementation_for_command(self, domain, command):
         lines = []
-        parameters = ['long callId']
+        parameters = ['long requestId']
         for parameter in command.call_parameters:
             parameters.append('%s in_%s' % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(parameter), parameter.parameter_name))
 
@@ -139,9 +139,9 @@ class ObjCConfigurationImplementationGenerator(Generator):
                 else:
                     lines.append('        if (%s)' % var_name)
                     lines.append('            resultObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-            lines.append('        backendDispatcher()->sendResponse(callId, WTF::move(resultObject), String());')
+            lines.append('        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));')
         else:
-            lines.append('        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());')
+            lines.append('        backendDispatcher()->sendResponse(requestId, InspectorObject::create());')
 
         lines.append('    };')
         return '\n'.join(lines)

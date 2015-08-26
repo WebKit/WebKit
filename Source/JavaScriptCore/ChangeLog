@@ -1,3 +1,95 @@
+2015-08-25  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: no need to allocate protocolErrors array for every dispatched backend command
+        https://bugs.webkit.org/show_bug.cgi?id=146466
+
+        Reviewed by Joseph Pecoraro.
+
+        Clean up some of the backend dispatcher code, with a focus on eliminating useless allocations
+        of objects in the common case when no protocol errors happen. This is done by saving the
+        current id of each request as it is being processed by the backend dispatcher, and tagging any
+        subsequent errors with that id. This also means we don't have to thread the requestId except
+        in the async command code path.
+
+        This patch also lifts some common code shared between all generated backend command
+        implementatations into the per-domain dispatch method instead. This reduces generated code size.
+
+        To be consistent, this patch standardizes on calling the id of a backend message its 'requestId'.
+        Requests can be handled synchronously or asynchronously (triggered via the 'async' property).
+
+        No new tests, covered by existing protocol tests.
+
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::CallbackBase::CallbackBase): Split the two code paths for reporting
+        success and failure.
+
+        (Inspector::BackendDispatcher::CallbackBase::sendFailure):
+        (Inspector::BackendDispatcher::CallbackBase::sendSuccess): Renamed from sendIfActive.
+        (Inspector::BackendDispatcher::dispatch): Reset counters and current requestId before dispatching.
+        No need to manually thread the requestId to all reportProtocolError calls.
+
+        (Inspector::BackendDispatcher::hasProtocolErrors): Added.
+        (Inspector::BackendDispatcher::sendResponse):
+        (Inspector::BackendDispatcher::sendPendingErrors): Send any saved protocol errors to the frontend.
+        Always send a 'data' member with all of the errors, even if there's just one. We might want to add
+        more information about errors later.
+
+        (Inspector::BackendDispatcher::reportProtocolError): Enqueue a protocol error to be sent later.
+        (Inspector::BackendDispatcher::getPropertyValue): Remove useless type parameters and nuke most of
+        the type conversion methods. Use std::function types instead of function pointer types.
+
+        (Inspector::castToInteger): Added.
+        (Inspector::castToNumber): Added.
+        (Inspector::BackendDispatcher::getInteger):
+        (Inspector::BackendDispatcher::getDouble):
+        (Inspector::BackendDispatcher::getString):
+        (Inspector::BackendDispatcher::getBoolean):
+        (Inspector::BackendDispatcher::getObject):
+        (Inspector::BackendDispatcher::getArray):
+        (Inspector::BackendDispatcher::getValue):
+        (Inspector::getPropertyValue): Deleted.
+        (Inspector::AsMethodBridges::asInteger): Deleted.
+        (Inspector::AsMethodBridges::asDouble): Deleted.
+        (Inspector::AsMethodBridges::asString): Deleted.
+        (Inspector::AsMethodBridges::asBoolean): Deleted.
+        (Inspector::AsMethodBridges::asObject): Deleted.
+        (Inspector::AsMethodBridges::asArray): Deleted.
+        (Inspector::AsMethodBridges::asValue): Deleted.
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/scripts/codegen/cpp_generator_templates.py: Extract 'params' object in domain dispatch method.
+        Omit requestIds where possible. Convert dispatch tables to use NeverDestroyed. Check the protocol error count
+        to decide whether to abort the dispatch or not, rather than allocating our own errors array.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        (void):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py: Revert to passing RefPtr<InspectorObject>
+        since parameters are now being passed rather than the message object. Some commands do not require parameters.
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.generate_output):
+        (CppBackendDispatcherImplementationGenerator._generate_small_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_handler_declaration_for_command):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCConfigurationImplementationGenerator._generate_handler_implementation_for_command):
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command):
+        * inspector/scripts/codegen/objc_generator_templates.py:
+
+        Rebaseline some protocol generator tests.
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2015-08-25  Saam barati  <sbarati@apple.com>
 
         Lets rename codeOriginIndex to callSiteIndex and get rid of CallFrame::Location.

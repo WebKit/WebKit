@@ -1,3 +1,14 @@
+2015-08-25  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: no need to allocate protocolErrors array for every dispatched backend command
+        https://bugs.webkit.org/show_bug.cgi?id=146466
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/backend-dispatcher-argument-errors-expected.txt:
+        * inspector/protocol/backend-dispatcher-argument-errors.html:
+        Stringify the 'data' member before dumping, since it now contains JSON. Rebaseline it.
+
 2015-08-26  Enrica Casucci  <enrica@apple.com>
 
         Add some new emoji with modifiers and new sequence.

@@ -188,9 +188,9 @@ protected:
 class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network1BackendDispatcher> create(BackendDispatcher*, Network1BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
+    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void loadResource1(long callId, const InspectorObject& message);
+    void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
 private:
     Network1BackendDispatcher(BackendDispatcher&, Network1BackendDispatcherHandler*);
     Network1BackendDispatcherHandler* m_agent;
@@ -205,15 +205,15 @@ private:
 class Network3BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network3BackendDispatcher> create(BackendDispatcher*, Network3BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
+    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void loadResource1(long callId, const InspectorObject& message);
-    void loadResource2(long callId, const InspectorObject& message);
-    void loadResource3(long callId, const InspectorObject& message);
-    void loadResource4(long callId, const InspectorObject& message);
-    void loadResource5(long callId, const InspectorObject& message);
-    void loadResource6(long callId, const InspectorObject& message);
-    void loadResource7(long callId, const InspectorObject& message);
+    void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource2(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource3(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource4(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource5(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource6(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource7(long requestId, RefPtr<InspectorObject>&& parameters);
 private:
     Network3BackendDispatcher(BackendDispatcher&, Network3BackendDispatcherHandler*);
     Network3BackendDispatcherHandler* m_agent;
@@ -266,6 +266,7 @@ private:
 
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -292,21 +293,24 @@ Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendD
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
 }
 
-void Network1BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void Network1BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<Network1BackendDispatcher> protect(*this);
 
+    RefPtr<InspectorObject> parameters;
+    message->getObject(ASCIILiteral("params"), parameters);
+
     if (method == "loadResource1")
-        loadResource1(callId, message);
+        loadResource1(requestId, WTF::move(parameters));
     else
-        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
 
-void Network1BackendDispatcher::loadResource1(long callId, const InspectorObject&)
+void Network1BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource1(callId);
+        m_alternateDispatcher->loadResource1(requestId);
         return;
     }
 #endif
@@ -315,7 +319,10 @@ void Network1BackendDispatcher::loadResource1(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource1(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
 Ref<Network3BackendDispatcher> Network3BackendDispatcher::create(BackendDispatcher* backendDispatcher, Network3BackendDispatcherHandler* agent)
@@ -333,14 +340,17 @@ Network3BackendDispatcher::Network3BackendDispatcher(BackendDispatcher& backendD
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network3"), this);
 }
 
-void Network3BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void Network3BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<Network3BackendDispatcher> protect(*this);
 
-    typedef void (Network3BackendDispatcher::*CallHandler)(long callId, const InspectorObject& message);
+    RefPtr<InspectorObject> parameters;
+    message->getObject(ASCIILiteral("params"), parameters);
+
+    typedef void (Network3BackendDispatcher::*CallHandler)(long requestId, RefPtr<InspectorObject>&& message);
     typedef HashMap<String, CallHandler> DispatchMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, ());
-    if (dispatchMap.isEmpty()) {
+    static NeverDestroyed<DispatchMap> dispatchMap;
+    if (dispatchMap.get().isEmpty()) {
         static const struct MethodTable {
             const char* name;
             CallHandler handler;
@@ -355,23 +365,23 @@ void Network3BackendDispatcher::dispatch(long callId, const String& method, Ref<
         };
         size_t length = WTF_ARRAY_LENGTH(commands);
         for (size_t i = 0; i < length; ++i)
-            dispatchMap.add(commands[i].name, commands[i].handler);
+            dispatchMap.get().add(commands[i].name, commands[i].handler);
     }
 
-    HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
-    if (it == dispatchMap.end()) {
-        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "Network3", '.', method, "' was not found"));
+    auto findResult = dispatchMap.get().find(method);
+    if (findResult == dispatchMap.get().end()) {
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network3", '.', method, "' was not found"));
         return;
     }
 
-    ((*this).*it->value)(callId, message.get());
+    ((*this).*findResult->value)(requestId, WTF::move(parameters));
 }
 
-void Network3BackendDispatcher::loadResource1(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource1(callId);
+        m_alternateDispatcher->loadResource1(requestId);
         return;
     }
 #endif
@@ -380,14 +390,17 @@ void Network3BackendDispatcher::loadResource1(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource1(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
-void Network3BackendDispatcher::loadResource2(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource2(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource2(callId);
+        m_alternateDispatcher->loadResource2(requestId);
         return;
     }
 #endif
@@ -396,14 +409,17 @@ void Network3BackendDispatcher::loadResource2(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource2(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
-void Network3BackendDispatcher::loadResource3(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource3(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource3(callId);
+        m_alternateDispatcher->loadResource3(requestId);
         return;
     }
 #endif
@@ -412,14 +428,17 @@ void Network3BackendDispatcher::loadResource3(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource3(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
-void Network3BackendDispatcher::loadResource4(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource4(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource4(callId);
+        m_alternateDispatcher->loadResource4(requestId);
         return;
     }
 #endif
@@ -428,14 +447,17 @@ void Network3BackendDispatcher::loadResource4(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource4(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
-void Network3BackendDispatcher::loadResource5(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource5(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource5(callId);
+        m_alternateDispatcher->loadResource5(requestId);
         return;
     }
 #endif
@@ -444,14 +466,17 @@ void Network3BackendDispatcher::loadResource5(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource5(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
-void Network3BackendDispatcher::loadResource6(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource6(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource6(callId);
+        m_alternateDispatcher->loadResource6(requestId);
         return;
     }
 #endif
@@ -460,14 +485,17 @@ void Network3BackendDispatcher::loadResource6(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource6(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
-void Network3BackendDispatcher::loadResource7(long callId, const InspectorObject&)
+void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource7(callId);
+        m_alternateDispatcher->loadResource7(requestId);
         return;
     }
 #endif
@@ -476,7 +504,10 @@ void Network3BackendDispatcher::loadResource7(long callId, const InspectorObject
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource7(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
 } // namespace Inspector
@@ -739,7 +770,7 @@ namespace Inspector {
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<RWIProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
-    virtual void loadResource1(long callId) override;
+    virtual void loadResource1(long requestId) override;
 private:
     RetainPtr<id<RWIProtocolNetwork1DomainHandler>> m_delegate;
 };
@@ -749,13 +780,13 @@ private:
 class ObjCInspectorNetwork3BackendDispatcher final : public AlternateNetwork3BackendDispatcher {
 public:
     ObjCInspectorNetwork3BackendDispatcher(id<RWIProtocolNetwork3DomainHandler> handler) { m_delegate = handler; }
-    virtual void loadResource1(long callId) override;
-    virtual void loadResource2(long callId) override;
-    virtual void loadResource3(long callId) override;
-    virtual void loadResource4(long callId) override;
-    virtual void loadResource5(long callId) override;
-    virtual void loadResource6(long callId) override;
-    virtual void loadResource7(long callId) override;
+    virtual void loadResource1(long requestId) override;
+    virtual void loadResource2(long requestId) override;
+    virtual void loadResource3(long requestId) override;
+    virtual void loadResource4(long requestId) override;
+    virtual void loadResource5(long requestId) override;
+    virtual void loadResource6(long requestId) override;
+    virtual void loadResource7(long requestId) override;
 private:
     RetainPtr<id<RWIProtocolNetwork3DomainHandler>> m_delegate;
 };
@@ -955,14 +986,15 @@ __attribute__((visibility ("default")))
 
 namespace Inspector {
 
-void ObjCInspectorNetwork1BackendDispatcher::loadResource1(long callId)
+void ObjCInspectorNetwork1BackendDispatcher::loadResource1(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource1WithErrorCallback:errorCallback successCallback:successCallback];
@@ -971,92 +1003,99 @@ void ObjCInspectorNetwork1BackendDispatcher::loadResource1(long callId)
 
 
 
-void ObjCInspectorNetwork3BackendDispatcher::loadResource1(long callId)
+void ObjCInspectorNetwork3BackendDispatcher::loadResource1(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource1WithErrorCallback:errorCallback successCallback:successCallback];
 }
 
-void ObjCInspectorNetwork3BackendDispatcher::loadResource2(long callId)
+void ObjCInspectorNetwork3BackendDispatcher::loadResource2(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource2WithErrorCallback:errorCallback successCallback:successCallback];
 }
 
-void ObjCInspectorNetwork3BackendDispatcher::loadResource3(long callId)
+void ObjCInspectorNetwork3BackendDispatcher::loadResource3(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource3WithErrorCallback:errorCallback successCallback:successCallback];
 }
 
-void ObjCInspectorNetwork3BackendDispatcher::loadResource4(long callId)
+void ObjCInspectorNetwork3BackendDispatcher::loadResource4(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource4WithErrorCallback:errorCallback successCallback:successCallback];
 }
 
-void ObjCInspectorNetwork3BackendDispatcher::loadResource5(long callId)
+void ObjCInspectorNetwork3BackendDispatcher::loadResource5(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource5WithErrorCallback:errorCallback successCallback:successCallback];
 }
 
-void ObjCInspectorNetwork3BackendDispatcher::loadResource6(long callId)
+void ObjCInspectorNetwork3BackendDispatcher::loadResource6(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource6WithErrorCallback:errorCallback successCallback:successCallback];
 }
 
-void ObjCInspectorNetwork3BackendDispatcher::loadResource7(long callId)
+void ObjCInspectorNetwork3BackendDispatcher::loadResource7(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResource7WithErrorCallback:errorCallback successCallback:successCallback];

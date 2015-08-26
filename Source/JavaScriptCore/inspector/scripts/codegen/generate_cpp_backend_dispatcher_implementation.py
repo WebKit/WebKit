@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         secondary_headers = [
             '<inspector/InspectorFrontendChannel.h>',
             '<inspector/InspectorValues.h>',
+            '<wtf/NeverDestroyed.h>',
             '<wtf/text/CString.h>']
 
         secondary_includes = ['#include %s' % header for header in secondary_headers]
@@ -104,10 +105,10 @@ class CppBackendDispatcherImplementationGenerator(Generator):
     def _generate_small_dispatcher_switch_implementation_for_domain(self, domain):
         cases = []
         cases.append('    if (method == "%s")' % domain.commands[0].command_name)
-        cases.append('        %s(callId, message);' % domain.commands[0].command_name)
+        cases.append('        %s(requestId, WTF::move(parameters));' % domain.commands[0].command_name)
         for command in domain.commands[1:]:
             cases.append('    else if (method == "%s")' % command.command_name)
-            cases.append('        %s(callId, message);' % command.command_name)
+            cases.append('        %s(requestId, WTF::move(parameters));' % command.command_name)
 
         switch_args = {
             'domainName': domain.domain_name,
@@ -170,7 +171,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         in_parameter_declarations = []
         out_parameter_declarations = []
         out_parameter_assignments = []
-        alternate_dispatcher_method_parameters = ['callId']
+        alternate_dispatcher_method_parameters = ['requestId']
         method_parameters = ['error']
 
         for parameter in command.call_parameters:
@@ -207,7 +208,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
                 'successOutParam': out_success_argument
             }
 
-            in_parameter_declarations.append('    %(parameterType)s %(parameterName)s = BackendDispatcher::%(keyedGetMethod)s(paramsContainer.get(), ASCIILiteral("%(parameterKey)s"), %(successOutParam)s, protocolErrors.get());' % param_args)
+            in_parameter_declarations.append('    %(parameterType)s %(parameterName)s = m_backendDispatcher->%(keyedGetMethod)s(parameters.get(), ASCIILiteral("%(parameterKey)s"), %(successOutParam)s);' % param_args)
 
             if parameter.is_optional:
                 optional_in_parameter_string = '%(parameterName)s_valueFound ? %(parameterExpression)s : nullptr' % param_args
@@ -224,7 +225,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
             }
 
             out_parameter_assignments.append('        callback->disable();')
-            out_parameter_assignments.append('        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::ServerError, error);')
+            out_parameter_assignments.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, error);')
             out_parameter_assignments.append('        return;')
             method_parameters.append('callback.copyRef()')
 
@@ -267,9 +268,9 @@ class CppBackendDispatcherImplementationGenerator(Generator):
 
         lines = []
         if len(command.call_parameters) == 0:
-            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long callId, const InspectorObject&)' % command_args)
+            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long requestId, RefPtr<InspectorObject>&&)' % command_args)
         else:
-            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long callId, const InspectorObject& message)' % command_args)
+            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long requestId, RefPtr<InspectorObject>&& parameters)' % command_args)
         lines.append('{')
 
         if len(command.call_parameters) > 0:
@@ -286,7 +287,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         lines.append('    ErrorString error;')
         lines.append('    Ref<InspectorObject> result = InspectorObject::create();')
         if command.is_async:
-            lines.append('    Ref<%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(*new %(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher.copyRef(), callId));' % command_args)
+            lines.append('    Ref<%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(*new %(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher.copyRef(), requestId));' % command_args)
         if len(command.return_parameters) > 0:
             lines.extend(out_parameter_declarations)
         lines.append('    m_agent->%(commandName)s(%(invocationParameters)s);' % command_args)
@@ -305,6 +306,9 @@ class CppBackendDispatcherImplementationGenerator(Generator):
             lines.append('')
 
         if not command.is_async:
-            lines.append('    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);')
+            lines.append('    if (!error.length())')
+            lines.append('        m_backendDispatcher->sendResponse(requestId, WTF::move(result));')
+            lines.append('    else')
+            lines.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));')
         lines.append('}')
         return "\n".join(lines)

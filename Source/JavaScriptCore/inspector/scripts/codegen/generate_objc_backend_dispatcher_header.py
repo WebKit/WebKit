@@ -94,7 +94,7 @@ class ObjCBackendDispatcherHeaderGenerator(Generator):
 
     def _generate_objc_handler_declaration_for_command(self, command):
         lines = []
-        parameters = ['long callId']
+        parameters = ['long requestId']
         for _parameter in command.call_parameters:
             parameters.append('%s in_%s' % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
 

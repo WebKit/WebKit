@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,7 @@ protected:
     """${classAndExportMacro} ${domainName}BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<${domainName}BackendDispatcher> create(BackendDispatcher*, ${domainName}BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
+    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 ${commandDeclarations}
 private:
     ${domainName}BackendDispatcher(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
@@ -123,24 +123,30 @@ private:
     virtual void ${commandName}(${inParameters}) = 0;""")
 
     BackendDispatcherImplementationSmallSwitch = (
-    """void ${domainName}BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+    """void ${domainName}BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<${domainName}BackendDispatcher> protect(*this);
+
+    RefPtr<InspectorObject> parameters;
+    message->getObject(ASCIILiteral("params"), parameters);
 
 ${dispatchCases}
     else
-        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\\'', "${domainName}", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\\'', "${domainName}", '.', method, "' was not found"));
 }""")
 
     BackendDispatcherImplementationLargeSwitch = (
-"""void ${domainName}BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+"""void ${domainName}BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<${domainName}BackendDispatcher> protect(*this);
 
-    typedef void (${domainName}BackendDispatcher::*CallHandler)(long callId, const InspectorObject& message);
+    RefPtr<InspectorObject> parameters;
+    message->getObject(ASCIILiteral("params"), parameters);
+
+    typedef void (${domainName}BackendDispatcher::*CallHandler)(long requestId, RefPtr<InspectorObject>&& message);
     typedef HashMap<String, CallHandler> DispatchMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, ());
-    if (dispatchMap.isEmpty()) {
+    static NeverDestroyed<DispatchMap> dispatchMap;
+    if (dispatchMap.get().isEmpty()) {
         static const struct MethodTable {
             const char* name;
             CallHandler handler;
@@ -149,16 +155,16 @@ ${dispatchCases}
         };
         size_t length = WTF_ARRAY_LENGTH(commands);
         for (size_t i = 0; i < length; ++i)
-            dispatchMap.add(commands[i].name, commands[i].handler);
+            dispatchMap.get().add(commands[i].name, commands[i].handler);
     }
 
-    HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
-    if (it == dispatchMap.end()) {
-        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\\'', "${domainName}", '.', method, "' was not found"));
+    auto findResult = dispatchMap.get().find(method);
+    if (findResult == dispatchMap.get().end()) {
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\\'', "${domainName}", '.', method, "' was not found"));
         return;
     }
 
-    ((*this).*it->value)(callId, message.get());
+    ((*this).*findResult->value)(requestId, WTF::move(parameters));
 }""")
 
     BackendDispatcherImplementationDomainConstructor = (
@@ -178,13 +184,9 @@ ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher
 }""")
 
     BackendDispatcherImplementationPrepareCommandArguments = (
-"""    auto protocolErrors = Inspector::Protocol::Array<String>::create();
-    RefPtr<InspectorObject> paramsContainer;
-    message.getObject(ASCIILiteral("params"), paramsContainer);
-${inParameterDeclarations}
-    if (protocolErrors->length()) {
-        String errorMessage = String::format("Some arguments of method \'%s\' can't be processed", "${domainName}.${commandName}");
-        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::InvalidParams, errorMessage, WTF::move(protocolErrors));
+"""${inParameterDeclarations}
+    if (m_backendDispatcher->hasProtocolErrors()) {
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, String::format("Some arguments of method \'%s\' can't be processed", "${domainName}.${commandName}"));
         return;
     }
 """)
@@ -196,7 +198,7 @@ void ${domainName}BackendDispatcherHandler::${callbackName}::sendSuccess(${forma
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
 ${outParameterAssignments}
-    sendIfActive(WTF::move(jsonMessage), ErrorString());
+    CallbackBase::sendSuccess(WTF::move(jsonMessage));
 }""")
 
     FrontendDispatcherDomainDispatcherDeclaration = (
