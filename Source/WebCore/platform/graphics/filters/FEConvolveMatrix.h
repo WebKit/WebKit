@@ -103,20 +103,6 @@ private:
     // Parallelization parts
     static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs
 
-    template<typename Type>
-    friend class ParallelJobs;
-
-    struct InteriorPixelParameters {
-        FEConvolveMatrix* filter;
-        PaintingData* paintingData;
-        int clipBottom;
-        int clipRight;
-        int yStart;
-        int yEnd;
-    };
-
-    static void setInteriorPixelsWorker(InteriorPixelParameters*);
-
     IntSize m_kernelSize;
     float m_divisor;
     float m_bias;
