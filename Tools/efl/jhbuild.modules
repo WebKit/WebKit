@@ -65,10 +65,10 @@
       <dep package="fontconfig"/>
       <dep package="pixman"/>
     </dependencies>
-    <branch module="releases/cairo-1.12.4.tar.xz" version="1.12.4"
+    <branch module="releases/cairo-1.14.2.tar.xz" version="1.14.2"
             repo="cairographics.org"
-            hash="sha256:a467b2e1f04bfd3f848370ce5e82cfe0a7f712bac05a04d133bc34c94f677a28"
-            md5sum="a64bb8774a1e476e5cdd69e635794dfb">
+            hash="sha256:c919d999ddb1bbbecd4bbe65299ca2abd2079c7e13d224577895afa7005ecceb"
+            md5sum="e1cdfaf1c6c995c4d4c54e07215b0118">
     </branch>
   </autotools>
 

@@ -1,3 +1,12 @@
+2015-08-26  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Bump cairo version to 1.14.2
+        https://bugs.webkit.org/show_bug.cgi?id=148474
+
+        Reviewed by Csaba Osztrogonác.
+
+        * efl/jhbuild.modules:
+
 2015-08-26  Andy Estes  <aestes@apple.com>
 
         Crash when following a Google search link to Twitter with Limit Adult Content enabled
