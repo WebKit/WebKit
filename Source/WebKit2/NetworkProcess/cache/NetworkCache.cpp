@@ -407,8 +407,11 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
         LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", storeDecision);
         auto key = makeCacheKey(originalRequest);
 
-        // Make sure we don't keep a stale entry in the cache.
-        remove(key);
+        auto isSuccessfulRevalidation = response.httpStatusCode() == 304;
+        if (!isSuccessfulRevalidation) {
+            // Make sure we don't keep a stale entry in the cache.
+            remove(key);
+        }
 
         if (m_statistics)
             m_statistics->recordNotCachingResponse(key, storeDecision);
