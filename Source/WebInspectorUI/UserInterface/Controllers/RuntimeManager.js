@@ -30,8 +30,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         super();
 
         // Enable the RuntimeAgent to receive notification of execution contexts.
-        if (RuntimeAgent.enable)
-            RuntimeAgent.enable();
+        RuntimeAgent.enable();
     }
 
     // Public
@@ -62,24 +61,21 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         }
 
         if (WebInspector.debuggerManager.activeCallFrame) {
-            // COMPATIBILITY (iOS 6): "generatePreview" did not exist.
             // COMPATIBILITY (iOS 8): "saveResult" did not exist.
             DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
             return;
         }
 
-        // COMPATIBILITY (iOS 6): Execution context identifiers (contextId) did not exist
-        // in iOS 6. Fallback to including the frame identifier (frameId).
-        // COMPATIBILITY (iOS 6): "generatePreview" did not exist.
         // COMPATIBILITY (iOS 8): "saveResult" did not exist.
         var contextId = WebInspector.quickConsole.executionContextIdentifier;
-        RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId, frameId: contextId, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
+        RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId, returnByValue, generatePreview, saveResult}, evalCallback.bind(this));
     }
 
     saveResult(remoteObject, callback)
     {
         console.assert(remoteObject instanceof WebInspector.RemoteObject);
 
+        // COMPATIBILITY (iOS 8): Runtime.saveResult did not exist.
         if (!RuntimeAgent.saveResult) {
             callback(undefined);
             return;

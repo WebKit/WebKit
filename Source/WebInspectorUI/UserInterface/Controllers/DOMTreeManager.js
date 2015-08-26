@@ -403,7 +403,8 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
 
     highlightSelector(selectorText, frameId, mode)
     {
-        if (!DOMAgent.highlightSelector || typeof DOMAgent.highlightSelector !== "function")
+        // COMPATIBILITY (iOS 8): DOM.highlightSelector did not exist.
+        if (!DOMAgent.highlightSelector)
             return;
 
         DOMAgent.highlightSelector(this._buildHighlightConfig(mode), selectorText, frameId);
@@ -513,7 +514,7 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
             this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowListWasUpdated, {documentNodeIdentifier, flows: contentFlows});
         }
 
-        if (window.CSSAgent && CSSAgent.getNamedFlowCollection)
+        if (window.CSSAgent)
             CSSAgent.getNamedFlowCollection(documentNodeIdentifier, onNamedFlowCollectionAvailable.bind(this));
     }
 

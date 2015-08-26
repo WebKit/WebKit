@@ -123,6 +123,7 @@ WebInspector.loaded = function()
 
     // Tell the backend we are initialized after all our initialization messages have been sent.
     setTimeout(function() {
+        // COMPATIBILITY (iOS 8): Inspector.initialized did not exist yet.
         if (window.InspectorAgent && InspectorAgent.initialized)
             InspectorAgent.initialized();
     }, 0);
@@ -152,10 +153,12 @@ WebInspector.loaded = function()
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
     this.showReplayInterfaceSetting = new WebInspector.Setting("show-web-replay", false);
 
+    // COMPATIBILITY (iOS 8): Page.enableTypeProfiler did not exist.
     this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
     if (this.showJavaScriptTypeInformationSetting.value && window.RuntimeAgent && RuntimeAgent.enableTypeProfiler)
         RuntimeAgent.enableTypeProfiler();
 
+    // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
     this.showPaintRectsSetting = new WebInspector.Setting("show-paint-rects", false);
     if (this.showPaintRectsSetting.value && window.PageAgent && PageAgent.setShowPaintRects)
         PageAgent.setShowPaintRects(true);
@@ -1592,7 +1595,7 @@ WebInspector._reloadPageIgnoringCache = function(event)
 
 WebInspector._updateReloadToolbarButton = function()
 {
-    if (!window.PageAgent || !PageAgent.reload) {
+    if (!window.PageAgent) {
         this._reloadToolbarButton.hidden = true;
         return;
     }
@@ -1602,6 +1605,7 @@ WebInspector._updateReloadToolbarButton = function()
 
 WebInspector._updateDownloadToolbarButton = function()
 {
+    // COMPATIBILITY (iOS 7): Page.archive did not exist yet.
     if (!window.PageAgent || !PageAgent.archive || this.debuggableType !== WebInspector.DebuggableType.Web) {
         this._downloadToolbarButton.hidden = true;
         return;
@@ -2081,6 +2085,7 @@ WebInspector.archiveMainFrame = function()
 
 WebInspector.canArchiveMainFrame = function()
 {
+    // COMPATIBILITY (iOS 7): Page.archive did not exist yet.
     if (!PageAgent.archive || this.debuggableType !== WebInspector.DebuggableType.Web)
         return false;
 

@@ -29,10 +29,6 @@ WebInspector.ConsoleObserver = class ConsoleObserver
 
     messageAdded(message)
     {
-        // COMPATIBILITY (iOS 6): Treat Tips like Logs.
-        if (message.type === "tip")
-            message.type = "log";
-
         if (message.type === "assert" && !message.text)
             message.text = WebInspector.UIString("Assertion");
 

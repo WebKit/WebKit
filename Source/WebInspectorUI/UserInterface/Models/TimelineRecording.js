@@ -197,7 +197,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         if (!timestamp || isNaN(timestamp))
             return NaN;
 
-        // COMPATIBILITY (iOS8): old backends send timestamps (seconds or milliseconds since the epoch),
+        // COMPATIBILITY (iOS 8): old backends send timestamps (seconds or milliseconds since the epoch),
         // rather than seconds elapsed since timeline capturing started. We approximate the latter by
         // subtracting the start timestamp, as old versions did not use monotonic times.
         if (WebInspector.TimelineRecording.isLegacy === undefined)

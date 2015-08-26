@@ -18,14 +18,14 @@
     <Filter Include="UserInterface\Legacy">
       <UniqueIdentifier>{78dfa843-ec32-47d5-9365-6336032fd35b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UserInterface\Legacy\6.0">
-      <UniqueIdentifier>{f3a0840d-35a0-41f6-8642-5f87f6f19b07}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UserInterface\Legacy\7.0">
       <UniqueIdentifier>{f3a0840d-35a0-41f6-8642-162354612341}</UniqueIdentifier>
     </Filter>
     <Filter Include="UserInterface\Legacy\8.0">
       <UniqueIdentifier>{f3a0840d-35a0-41f6-8642-928734972394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface\Legacy\9.0">
+      <UniqueIdentifier>{f3a0840d-35a0-41f6-8642-5f87f6f19b07}</UniqueIdentifier>
     </Filter>
     <Filter Include="Images">
       <UniqueIdentifier>{af041f00-ecbb-405c-a2e0-02bbd07bfc7c}</UniqueIdentifier>
@@ -1128,14 +1128,14 @@
     <None Include="..\UserInterface\External\CodeMirror\xml.js">
       <Filter>UserInterface\External\CodeMirror</Filter>
     </None>
-    <None Include="..\UserInterface\Legacy\6.0\InspectorBackendCommands.js">
-      <Filter>UserInterface\Legacy\6.0</Filter>
-    </None>
     <None Include="..\UserInterface\Legacy\7.0\InspectorBackendCommands.js">
       <Filter>UserInterface\Legacy\7.0</Filter>
     </None>
     <None Include="..\UserInterface\Legacy\8.0\InspectorBackendCommands.js">
       <Filter>UserInterface\Legacy\8.0</Filter>
+    </None>
+    <None Include="..\UserInterface\Legacy\9.0\InspectorBackendCommands.js">
+      <Filter>UserInterface\Legacy\9.0</Filter>
     </None>
     <None Include="..\UserInterface\Images\Weight.svg">
       <Filter>Images</Filter>

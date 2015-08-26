@@ -691,9 +691,9 @@
     <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\LayoutTimelineDataGridNode.js" />
     <None Include="..\UserInterface\LayoutTimelineRecord.js" />
-    <None Include="..\UserInterface\Legacy\6.0\InspectorBackendCommands.js" />
     <None Include="..\UserInterface\Legacy\7.0\InspectorBackendCommands.js" />
     <None Include="..\UserInterface\Legacy\8.0\InspectorBackendCommands.js" />
+    <None Include="..\UserInterface\Legacy\9.0\InspectorBackendCommands.js" />
     <None Include="..\UserInterface\LinearTimelineOverview.js" />
     <None Include="..\UserInterface\LoadInspectorBackendCommands.js" />
     <None Include="..\UserInterface\LoadLocalizedStrings.js" />

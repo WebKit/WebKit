@@ -1,3 +1,130 @@
+2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Drop iOS 6 Legacy Remote Inspector Support
+        https://bugs.webkit.org/show_bug.cgi?id=148456
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector._updateReloadToolbarButton):
+        (WebInspector._updateDownloadToolbarButton):
+        (WebInspector.canArchiveMainFrame):
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager.prototype._frameURLMapKey):
+        (WebInspector.CSSStyleManager.prototype._lookupStyleSheet.styleSheetsFetched):
+        (WebInspector.CSSStyleManager._updateResourceContent.fetchedStyleSheetContent):
+        (WebInspector.CSSStyleManager.prototype._clearStyleSheetsForResource): Deleted.
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.highlightSelector):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager):
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        * UserInterface/Controllers/SourceMapManager.js:
+        (WebInspector.SourceMapManager.prototype._loadAndParseSourceMap):
+        * UserInterface/Controllers/StorageManager.js:
+        (WebInspector.StorageManager):
+        (WebInspector.StorageManager.prototype._addDOMStorageIfNeeded):
+        (WebInspector.StorageManager.prototype.domStorageWasUpdated): Deleted.
+        (WebInspector.StorageManager.prototype._domStorageForIdentifier): Deleted.
+        (WebInspector.StorageManager.prototype._extraDomainsActivated): Deleted.
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._processRecord):
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype._editBreakpointPopoverContentElement):
+        * UserInterface/Models/CSSCompletions.js:
+        (WebInspector.CSSCompletions):
+        (WebInspector.CSSCompletions.requestCSSCompletions):
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.addCustomCompletions): Deleted.
+        * UserInterface/Models/CSSProperty.js:
+        (WebInspector.CSSProperty):
+        (WebInspector.CSSProperty.prototype.update):
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.get matchedSelectors): Deleted.
+        (WebInspector.CSSRule.prototype.get matchedSelectorText): Deleted.
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.parseRuleMatchArrayPayload):
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedMatchedStyles):
+        (WebInspector.DOMNodeStyles.prototype.changeRule.changeText):
+        (WebInspector.DOMNodeStyles.prototype.changeStyleText):
+        (WebInspector.DOMNodeStyles.prototype._parseStylePropertyPayload):
+        (WebInspector.DOMNodeStyles.prototype._parseRulePayload):
+        (WebInspector.DOMNodeStyles.prototype.changeStyleText.attributeChanged): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.changeStyleText.fetchedStyleSheetContent.contentDidChange): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.changeStyleText.fetchedStyleSheetContent): Deleted.
+        (WebInspector.DOMNodeStyles.prototype._parseSourceRangePayload): Deleted.
+        (WebInspector.DOMNodeStyles.prototype._parseSelectorListPayload): Deleted.
+        * UserInterface/Models/DOMStorageObject.js:
+        * UserInterface/Models/DOMTree.js:
+        (WebInspector.DOMTree.prototype.requestRootDOMNode):
+        (WebInspector.DOMTree.prototype._requestRootDOMNode):
+        * UserInterface/Models/DatabaseObject.js:
+        (WebInspector.DatabaseObject.prototype.executeSQL.queryCallback):
+        (WebInspector.DatabaseObject.prototype.executeSQL):
+        (WebInspector.DatabaseObject):
+        (WebInspector.DatabaseObject.prototype.executeSQL.callback): Deleted.
+        * UserInterface/Models/ExecutionContext.js:
+        (WebInspector.ExecutionContext.supported): Deleted.
+        * UserInterface/Models/IssueMessage.js:
+        (WebInspector.IssueMessage): Deleted.
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        (WebInspector.LayoutTimelineRecord):
+        (WebInspector.LayoutTimelineRecord.prototype.get width):
+        (WebInspector.LayoutTimelineRecord.prototype.get height):
+        (WebInspector.LayoutTimelineRecord.prototype.get area):
+        (WebInspector.LayoutTimelineRecord.prototype.get x): Deleted.
+        (WebInspector.LayoutTimelineRecord.prototype.get y): Deleted.
+        (WebInspector.LayoutTimelineRecord.prototype.get rect): Deleted.
+        * UserInterface/Models/ProfileNode.js:
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.associateWithScript):
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeFromPayload):
+        * UserInterface/Models/SourceMapResource.js:
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend):
+        * UserInterface/Models/TextRange.js:
+        (WebInspector.TextRange.prototype.resolveLinesAndColumns.countNewLineCharacters): Deleted.
+        (WebInspector.TextRange.prototype.resolveLinesAndColumns): Deleted.
+        * UserInterface/Models/TimelineRecording.js:
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded): Deleted.
+        * UserInterface/Protocol/DOMStorageObserver.js:
+        (WebInspector.DOMStorageObserver.prototype.addDOMStorage): Deleted.
+        (WebInspector.DOMStorageObserver.prototype.updateDOMStorage): Deleted.
+        * UserInterface/Protocol/DatabaseObserver.js:
+        (WebInspector.DatabaseObserver.prototype.sqlTransactionSucceeded): Deleted.
+        (WebInspector.DatabaseObserver.prototype.sqlTransactionFailed): Deleted.
+        (WebInspector.DatabaseObserver): Deleted.
+        * UserInterface/Protocol/Legacy/6.0/InspectorBackendCommands.js: Removed.
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._deleteCallback):
+        (WebInspector.CookieStorageContentView):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype._updateCompositingBordersButtonToMatchPageSettings): Deleted.
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WebInspector.EventListenerSectionGroup.prototype._functionTextOrLink):
+        (WebInspector.EventListenerSectionGroup):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype._showHighlightForRecord):
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole):
+        (WebInspector.QuickConsole.prototype._createExecutionContextPathComponentFromFrame):
+        (WebInspector.QuickConsole.prototype._frameAdded): Deleted.
+        (WebInspector.QuickConsole.prototype._frameRemoved): Deleted.
+        (WebInspector.QuickConsole.prototype._frameMainResourceChanged): Deleted.
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get data):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._makeBasicBlockAnnotator):
+        * Versions/Inspector-iOS-6.0.json: Removed.
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2015-08-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Command-Enter should evaluate selected JS in Debugger/Sources

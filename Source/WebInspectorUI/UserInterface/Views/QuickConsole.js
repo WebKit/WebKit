@@ -66,15 +66,8 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
 
         this._rebuildExecutionContextPathComponents();
 
-        // COMPATIBILITY (iOS 6): Execution contexts did not exist, evaluation worked with frame ids.
-        if (WebInspector.ExecutionContext.supported()) {
-            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextsChanged, this);
-            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
-        } else {
-            WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameAdded, this);
-            WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasRemoved, this._frameRemoved, this);
-            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._frameMainResourceChanged, this);
-        }
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextsChanged, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
 
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
     }
@@ -171,24 +164,6 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
         this._removeExecutionContextPathComponentForFrame(frame);
     }
 
-    _frameAdded(event)
-    {
-        var frame = event.data.frame;
-        this._insertExecutionContextPathComponentForFrame(frame);
-    }
-
-    _frameRemoved(event)
-    {
-        var frame = event.data.frame;
-        this._removeExecutionContextPathComponentForFrame(frame);
-    }
-
-    _frameMainResourceChanged(event)
-    {
-        var frame = event.target;
-        this._updateExecutionContextPathComponentForFrame(frame);
-    }
-
     _createExecutionContextPathComponent(name, identifier)
     {
         var pathComponent = new WebInspector.HierarchicalPathComponent(name, "execution-context", identifier, true, true);
@@ -202,9 +177,8 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
     _createExecutionContextPathComponentFromFrame(frame)
     {
         var name = frame.name ? frame.name + " \u2014 " + frame.mainResource.displayName : frame.mainResource.displayName;
-        var identifier = WebInspector.ExecutionContext.supported() ? frame.pageExecutionContext.id : frame.id;
 
-        var pathComponent = this._createExecutionContextPathComponent(name, identifier);
+        var pathComponent = this._createExecutionContextPathComponent(name, frame.pageExecutionContext.id);
         pathComponent._frame = frame;
 
         return pathComponent;

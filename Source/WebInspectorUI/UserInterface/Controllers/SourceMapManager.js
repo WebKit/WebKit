@@ -115,8 +115,13 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
         if (!frameIdentifier)
             frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
 
-        if (NetworkAgent.loadResource)
-            NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
+        // COMPATIBILITY (iOS 7): Network.loadResource did not exist.
+        if (!NetworkAgent.loadResource) {
+            this._loadAndParseFailed(sourceMapURL);
+            return;
+        }
+
+        NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
     }
 
     _loadAndParseFailed(sourceMapURL)

@@ -170,7 +170,7 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
             };
         }
 
-        // COMPATIBILITY (iOS8): Profiles included per-call information and can be finely partitioned.
+        // COMPATIBILITY (iOS 8): Profiles included per-call information and can be finely partitioned.
         // Compute that below by iterating over all the calls / children for the time range.
 
         var recordCallCount = true;

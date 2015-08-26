@@ -107,7 +107,7 @@ WebInspector.DOMTree = class DOMTree extends WebInspector.Object
             return;
         }
 
-        if (!this._frame.isMainFrame() && WebInspector.ExecutionContext.supported() && !this._frame.pageExecutionContext) {
+        if (!this._frame.isMainFrame() && !this._frame.pageExecutionContext) {
             this._rootDOMNodeRequestWaitingForExecutionContext = true;
             if (!this._pendingRootDOMNodeRequests)
                 this._pendingRootDOMNodeRequests = [];
@@ -136,7 +136,7 @@ WebInspector.DOMTree = class DOMTree extends WebInspector.Object
 
     _requestRootDOMNode()
     {
-        console.assert(this._frame.isMainFrame() || !WebInspector.ExecutionContext.supported() || this._frame.pageExecutionContext);
+        console.assert(this._frame.isMainFrame() || this._frame.pageExecutionContext);
         console.assert(this._pendingRootDOMNodeRequests.length);
 
         // Bump the request identifier. This prevents pending callbacks for previous requests from completing.
@@ -213,10 +213,8 @@ WebInspector.DOMTree = class DOMTree extends WebInspector.Object
         if (this._frame.isMainFrame())
             WebInspector.domTreeManager.requestDocument(mainDocumentAvailable.bind(this));
         else {
-            // COMPATIBILITY (iOS 6): Execution context identifiers (contextId) did not exist
-            // in iOS 6. Fallback to including the frame identifier (frameId).
-            var contextId = this._frame.pageExecutionContext ? this._frame.pageExecutionContext.id : undefined;
-            RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, frameId: this._frame.id, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
+            var contextId = this._frame.pageExecutionContext.id;
+            RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
         }
     }
 

@@ -38,16 +38,6 @@ WebInspector.ExecutionContext = class ExecutionContext extends WebInspector.Obje
         this._frame = frame || null;
     }
 
-    // Static
-
-    static supported()
-    {
-        // Execution contexts were added to the Inspector protocol alongside RuntimeAgent.enable and
-        // disable methods, which turn on and off sending Runtime agent execution context created events.
-        // So we can feature detect support for execution contexts with these RuntimeAgent functions.
-        return typeof RuntimeAgent.enable === "function";
-    }
-
     // Public
 
     get id()

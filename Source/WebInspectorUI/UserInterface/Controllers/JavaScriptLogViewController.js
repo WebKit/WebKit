@@ -205,12 +205,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             return;
         }
 
-        // COMPATIBILITY (iOS 6): RuntimeAgent.parse did not exist in iOS 6. Always commit.
-        if (!RuntimeAgent.parse) {
-            handler(true);
-            return;
-        }
-
         function parseFinished(error, result, message, range)
         {
             handler(result !== RuntimeAgent.SyntaxErrorType.Recoverable);

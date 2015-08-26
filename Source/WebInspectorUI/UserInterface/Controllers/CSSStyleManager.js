@@ -221,14 +221,12 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     {
         // Clear known stylesheets for this URL and frame. This will cause the stylesheets to
         // be updated next time _fetchInfoForAllStyleSheets is called.
-        // COMPATIBILITY (iOS 6): The frame's id was not available for the key, so delete just the url too.
         this._styleSheetIdentifierMap.delete(this._frameURLMapKey(resource.parentFrame, resource.url));
-        this._styleSheetIdentifierMap.delete(resource.url);
     }
 
     _frameURLMapKey(frame, url)
     {
-        return (frame ? frame.id + ":" : "") + url;
+        return frame.id + ":" + url;
     }
 
     _lookupStyleSheetForResource(resource, callback)
@@ -244,11 +242,10 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         function styleSheetsFetched()
         {
-            callback(this._styleSheetFrameURLMap.get(key) || this._styleSheetFrameURLMap.get(url) || null);
+            callback(this._styleSheetFrameURLMap.get(key) || null);
         }
 
-        // COMPATIBILITY (iOS 6): The frame's id was not available for the key, so check for just the url too.
-        let styleSheet = this._styleSheetFrameURLMap.get(key) || this._styleSheetFrameURLMap.get(url) || null;
+        let styleSheet = this._styleSheetFrameURLMap.get(key) || null;
         if (styleSheet)
             callback(styleSheet);
         else
@@ -269,8 +266,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             }
 
             for (let styleSheetInfo of styleSheets) {
-                // COMPATIBILITY (iOS 6): The info did not have 'frameId', so make parentFrame null in that case.
-                let parentFrame = "frameId" in styleSheetInfo ? WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId) : null;
+                let parentFrame = WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
 
                 // COMPATIBILITY (iOS 9): The info did not have 'isInline', 'startLine', and 'startColumn', so make false and 0 in these cases.
                 let isInline = styleSheetInfo.isInline || false;
@@ -340,15 +336,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             if (!styleSheet.url)
                 return;
 
-            var resource = null;
-
-            // COMPATIBILITY (iOS 6): The stylesheet did not always have a frame, so fallback to looking
-            // for the resource in all frames.
-            if (styleSheet.parentFrame)
-                resource = styleSheet.parentFrame.resourceForURL(styleSheet.url);
-            else
-                resource = WebInspector.frameResourceManager.resourceForURL(styleSheet.url);
-
+            var resource = styleSheet.parentFrame.resourceForURL(styleSheet.url);;
             if (!resource)
                 return;
 

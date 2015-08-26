@@ -25,14 +25,14 @@
 
 WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
 {
-    constructor(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange)
+    constructor(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange)
     {
         super();
 
         this._ownerStyle = null;
         this._index = index;
 
-        this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange, true);
+        this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, true);
     }
 
     // Public
@@ -57,7 +57,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this._index = index;
     }
 
-    update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange, dontFireEvents)
+    update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, dontFireEvents)
     {
         text = text || "";
         name = name || "";
@@ -94,14 +94,11 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this._valid = valid;
         this._styleSheetTextRange = styleSheetTextRange || null;
 
-        if (styleDeclarationTextRange)
-            this._styleDeclarationTextRange = styleDeclarationTextRange;
-        else
-            delete this._styleDeclarationTextRange;
-
         this._relatedShorthandProperty = null;
         this._relatedLonghandProperties = [];
 
+        // Clear computed properties.
+        delete this._styleDeclarationTextRange;
         delete this._canonicalName;
         delete this._hasOtherVendorNameOrKeyword;
 

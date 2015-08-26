@@ -42,7 +42,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         this._attributesStyle = null;
         this._computedStyle = null;
         this._orderedStyles = [];
-        this._stylesNeedingTextCommited = [];
 
         this._propertyNameToEffectivePropertyMap = {};
 
@@ -80,14 +79,10 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         {
             var result = [];
 
-            var ruleOccurrences = {};
-
             // Iterate in reverse order to match the cascade order.
+            var ruleOccurrences = {};
             for (var i = matchArray.length - 1; i >= 0; --i) {
-                // COMPATIBILITY (iOS 6): This was just an array of rules, now it is an array of matches that have
-                // a 'rule' property. Support both here. And 'matchingSelectors' does not exist on iOS 6.
-                var matchedSelectorIndices = matchArray[i].matchingSelectors || [];
-                var rule = this._parseRulePayload(matchArray[i].rule || matchArray[i], matchedSelectorIndices, node, inherited, ruleOccurrences);
+                var rule = this._parseRulePayload(matchArray[i].rule, matchArray[i].matchingSelectors, node, inherited, ruleOccurrences);
                 if (!rule)
                     continue;
                 result.push(rule);
@@ -113,11 +108,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             this._matchedRules = parseRuleMatchArrayPayload.call(this, matchedRulesPayload, this._node);
 
             this._pseudoElements = {};
-            for (var i = 0; i < pseudoElementRulesPayload.length; ++i) {
-                var pseudoElementRulePayload = pseudoElementRulesPayload[i];
-
-                // COMPATIBILITY (iOS 6): The entry payload had a 'rules' property, now it has a 'matches' property. Support both here.
-                var pseudoElementRules = parseRuleMatchArrayPayload.call(this, pseudoElementRulePayload.matches || pseudoElementRulePayload.rules, this._node);
+            for (var pseudoElementRulePayload of pseudoElementRulesPayload) {
+                var pseudoElementRules = parseRuleMatchArrayPayload.call(this, pseudoElementRulePayload.matches, this._node);
                 this._pseudoElements[pseudoElementRulePayload.pseudoId] = {matchedRules: pseudoElementRules};
             }
 
@@ -216,18 +208,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             // Delete the previous maps now that any reused rules and style have been moved over.
             delete this._previousRulesMap;
             delete this._previousStyleDeclarationsMap;
-
-            var styleToCommit = this._stylesNeedingTextCommited.shift();
-            if (styleToCommit) {
-                // Remember the significant change flag so we can pass it along when the pending style
-                // changes trigger a refresh. If we wait to scan later we might not find a significant change
-                // and fail to tell listeners about it.
-                this._previousSignificantChange = significantChange;
-
-                this.changeStyleText(styleToCommit, styleToCommit.__pendingText);
-
-                return;
-            }
 
             // Delete the previous saved significant change flag so we rescan for a significant change next time.
             delete this._previousSignificantChange;
@@ -334,12 +314,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
     attributeDidChange(node, attributeName)
     {
-        // Ignore the attribute we know we just changed and handled above.
-        if (this._ignoreNextStyleAttributeDidChangeEvent && node === this._node && attributeName === "style") {
-            delete this._ignoreNextStyleAttributeDidChangeEvent;
-            return;
-        }
-
         this._markAsNeedsRefresh();
     }
 
@@ -366,8 +340,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         function changeText(styleId)
         {
-            // COMPATIBILITY (iOS 6): CSSAgent.setStyleText was not available in iOS 6.
-            if (!text || !text.length || !CSSAgent.setStyleText) {
+            if (!text || !text.length) {
                 changeCompleted.call(this);
                 return;
             }
@@ -431,92 +404,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             this.refresh();
         }
 
-        if (CSSAgent.setStyleText) {
-            CSSAgent.setStyleText(style.id, text, styleChanged.bind(this));
-            return;
-        }
-
-        // COMPATIBILITY (iOS 6): CSSAgent.setStyleText was not available in iOS 6.
-
-        function attributeChanged(error)
-        {
-            if (error)
-                return;
-            this.refresh();
-        }
-
-        // Setting the text on CSSStyleSheet for inline styles causes a crash. https://webkit.org/b/110359
-        // So we just set the style attribute to get the same affect. This also avoids SourceCodeRevisions.
-        if (style.type === WebInspector.CSSStyleDeclaration.Type.Inline) {
-            text = text.trim();
-
-            this._ignoreNextStyleAttributeDidChangeEvent = true;
-
-            if (text)
-                style.node.setAttributeValue("style", text, attributeChanged.bind(this));
-            else
-                style.node.removeAttribute("style", attributeChanged.bind(this));
-
-            return;
-        }
-
-        if (this._needsRefresh || this._refreshPending) {
-            // If we need refreshed then it is not safe to use the styleSheetTextRange since the range likely has
-            // changed and we need updated ranges. Store the text and remember the style so we can commit it after
-            // the next refresh.
-
-            style.__pendingText = text;
-
-            if (!this._stylesNeedingTextCommited.includes(style))
-                this._stylesNeedingTextCommited.push(style);
-
-            return;
-        }
-
-        function fetchedStyleSheetContent(parameters)
-        {
-            var content = parameters.content;
-
-            console.assert(style.styleSheetTextRange);
-            if (!style.styleSheetTextRange)
-                return;
-
-            var startOffset = style.styleSheetTextRange.startOffset;
-            var endOffset = style.styleSheetTextRange.endOffset;
-
-            if (isNaN(startOffset) || isNaN(endOffset)) {
-                style.styleSheetTextRange.resolveOffsets(content);
-
-                startOffset = style.styleSheetTextRange.startOffset;
-                endOffset = style.styleSheetTextRange.endOffset;
-            }
-
-            console.assert(!isNaN(startOffset));
-            console.assert(!isNaN(endOffset));
-            if (isNaN(startOffset) || isNaN(endOffset))
-                return;
-
-            function contentDidChange()
-            {
-                style.ownerStyleSheet.removeEventListener(WebInspector.CSSStyleSheet.Event.ContentDidChange, contentDidChange, this);
-
-                this.refresh();
-            }
-
-            style.ownerStyleSheet.addEventListener(WebInspector.CSSStyleSheet.Event.ContentDidChange, contentDidChange, this);
-
-            var newContent = content.substring(0, startOffset) + text + content.substring(endOffset);
-
-            WebInspector.branchManager.currentBranch.revisionForRepresentedObject(style.ownerStyleSheet).content = newContent;
-        }
-
-        this._stylesNeedingTextCommited.remove(style);
-        delete style.__pendingText;
-
-        this._needsRefresh = true;
-        this._ignoreNextContentDidChangeForStyleSheet = style.ownerStyleSheet;
-
-        style.ownerStyleSheet.requestContent().then(fetchedStyleSheetContent.bind(this));
+        CSSAgent.setStyleText(style.id, text, styleChanged.bind(this));
     }
 
     // Private
@@ -547,19 +435,10 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         return sourceCode.createSourceCodeLocation(sourceLine || 0, sourceColumn || 0);
     }
 
-    _parseSourceRangePayload(payload, text)
+    _parseSourceRangePayload(payload)
     {
         if (!payload)
             return null;
-
-        // COMPATIBILITY (iOS 6): The range use to only contain start and end offsets. Now it
-        // has line and column for the start and end position. Support both here.
-        if ("start" in payload && "end" in payload) {
-            var textRange = new WebInspector.TextRange(payload.start, payload.end);
-            if (typeof text === "string")
-                textRange.resolveLinesAndColumns(text);
-            return textRange;
-        }
 
         return new WebInspector.TextRange(payload.startLine, payload.startColumn, payload.endLine, payload.endColumn);
     }
@@ -594,15 +473,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             break;
         }
 
-        var styleSheetTextRange = null;
-        var styleDeclarationTextRange = null;
-
-        // COMPATIBILITY (iOS 6): The range is in the style text, not the whole stylesheet.
-        // Later the range was changed to be in the whole stylesheet.
-        if (payload.range && "start" in payload.range && "end" in payload.range)
-            styleDeclarationTextRange = this._parseSourceRangePayload(payload.range, styleText);
-        else
-            styleSheetTextRange = this._parseSourceRangePayload(payload.range);
+        var styleSheetTextRange = this._parseSourceRangePayload(payload.range);
 
         if (styleDeclaration) {
             // Use propertyForName when the index is NaN since propertyForName is fast in that case.
@@ -614,7 +485,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             // FIXME: This could be smarter by ignoring index and just go by name. However, that gets
             // tricky for rules that have more than one property with the same name.
             if (property && property.name === name && (property.index === index || (isNaN(property.index) && isNaN(index)))) {
-                property.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange);
+                property.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
                 return property;
             }
 
@@ -625,13 +496,13 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 var pendingProperty = pendingProperties[i];
                 if (pendingProperty.name === name && isNaN(pendingProperty.index)) {
                     pendingProperty.index = index;
-                    pendingProperty.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange);
+                    pendingProperty.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
                     return pendingProperty;
                 }
             }
         }
 
-        return new WebInspector.CSSProperty(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, styleDeclarationTextRange);
+        return new WebInspector.CSSProperty(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
     }
 
     _parseStyleDeclarationPayload(payload, node, inherited, type, rule, updateAllStyles)
@@ -749,10 +620,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
     _parseSelectorListPayload(selectorList)
     {
-        // COMPATIBILITY (iOS 6): The payload did not have 'selectorList'.
-        if (!selectorList)
-            return [];
-
         var selectors = selectorList.selectors;
         if (!selectors.length)
             return [];
@@ -815,18 +682,18 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         var styleSheet = id ? WebInspector.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
 
-        // COMPATIBILITY (iOS 6): The payload had 'selectorText' as a property,
-        // now it has 'selectorList' with a 'text' property. Support both here.
-        var selectorText = payload.selectorList ? payload.selectorList.text : payload.selectorText;
+        var selectorText = payload.selectorList.text;
         var selectors = this._parseSelectorListPayload(payload.selectorList);
 
-        // COMPATIBILITY (iOS 6): The payload did not have 'selectorList'.
-        // Fallback to using 'sourceLine' without column information.
-        if (payload.selectorList && payload.selectorList.range) {
-            var sourceRange = payload.selectorList.range;
-            var sourceCodeLocation = this._createSourceCodeLocation(payload.sourceURL, sourceRange.startLine, sourceRange.startColumn);
-        } else
-            var sourceCodeLocation = this._createSourceCodeLocation(payload.sourceURL, payload.sourceLine);
+        var sourceCodeLocation = null;
+        var sourceRange = payload.selectorList.range;
+        if (sourceRange)
+            sourceCodeLocation = this._createSourceCodeLocation(payload.sourceURL, sourceRange.startLine, sourceRange.startColumn);
+        else {
+            // FIXME: Is it possible for a CSSRule to have a sourceLine without its selectorList having a sourceRange? Fall back just in case.
+            sourceCodeLocation = this._createSourceCodeLocation(payload.sourceURL, payload.sourceLine);
+        }
+
         if (styleSheet)
             sourceCodeLocation = styleSheet.offsetSourceCodeLocation(sourceCodeLocation);
 

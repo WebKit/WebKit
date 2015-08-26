@@ -414,6 +414,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         conditionLabel.setAttribute("for", conditionInput.id);
         conditionLabel.textContent = WebInspector.UIString("Condition");
 
+        // COMPATIBILITY (iOS 7): Debugger.setBreakpoint did not support options.
         if (DebuggerAgent.setBreakpoint.supports("options")) {
             var actionRow = table.appendChild(document.createElement("tr"));
             var actionHeader = actionRow.appendChild(document.createElement("th"));
