@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="$(WebKit_Libraries)\tools\vsprops\production.props" />
-    <Import Project="WinLauncherCommon.props" />
+    <Import Project="MiniBrowserCommon.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />

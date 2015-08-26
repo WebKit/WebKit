@@ -1,5 +1,156 @@
 2015-08-26  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Rename 'WinLauncher' to 'MiniBrowser'
+        https://bugs.webkit.org/show_bug.cgi?id=148485
+
+        Reviewed by Alex Christensen
+
+        Move the WinLauncher project and source files to a subdirectory
+        of MiniBrowser. Globally change WinLauncher -> MiniBrowser in the
+        source code and project files.
+        
+        * MiniBrowser/MiniBrowser.vcxproj: Copied from WinLauncher/WinLauncher.vcxproj.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.ico: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncher.ico.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.rc: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncher.rc.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.vcxproj: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowser.vcxproj.filters: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj.filters.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserCF.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherCF.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserCFLite.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherCFLite.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserCommon.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherCommon.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserDebug.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherDebug.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.rc: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLib.rc.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.vcxproj: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.vcxproj.filters: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibCommon.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibDebug.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLibDebug.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibPostBuild.cmd: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLibPostBuild.cmd.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibPreBuild.cmd: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLibPreBuild.cmd.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibProduction.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLibProduction.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibRelease.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLibRelease.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibResource.h: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherLibResource.h.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserPostBuild.cmd: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherPostBuild.cmd.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserPreBuild.cmd: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherPreBuild.cmd.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserProduction.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherProduction.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserRelease.props: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherRelease.props.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserResource.h: Copied from WinLauncher/WinLauncher.vcxproj/WinLauncherResource.h.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncher.ico: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncher.rc: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncher.vcxproj: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncher.vcxproj.filters: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherCF.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherCFLite.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherCommon.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherDebug.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLib.rc: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLib.vcxproj: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLib.vcxproj.filters: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLibCommon.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLibDebug.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLibPostBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLibPreBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLibProduction.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLibRelease.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherLibResource.h: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherPostBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherPreBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherProduction.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherRelease.props: Removed.
+        * MiniBrowser/MiniBrowser.vcxproj/WinLauncherResource.h: Removed.
+        * MiniBrowser/win: Copied from WinLauncher.
+        * MiniBrowser/win/Common.cpp:
+        * MiniBrowser/win/MiniBrowser.cpp: Copied from WinLauncher/WinLauncher.cpp.
+        * MiniBrowser/win/MiniBrowser.h: Copied from WinLauncher/WinLauncher.h.
+        * MiniBrowser/win/MiniBrowserReplace.h: Copied from WinLauncher/WinLauncherReplace.h.
+        * MiniBrowser/win/MiniBrowserWebHost.cpp: Copied from WinLauncher/WinLauncherWebHost.cpp.
+        * MiniBrowser/win/MiniBrowserWebHost.h: Copied from WinLauncher/WinLauncherWebHost.h.
+        * MiniBrowser/win/PageLoadTestClient.cpp:
+        * MiniBrowser/win/PageLoadTestClient.h:
+        * MiniBrowser/win/ResourceLoadDelegate.cpp:
+        * MiniBrowser/win/ResourceLoadDelegate.h:
+        * MiniBrowser/win/WinLauncher.cpp: Removed.
+        * MiniBrowser/win/WinLauncher.h: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncher.ico: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncher.rc: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncher.vcxproj: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncher.vcxproj.filters: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherCF.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherCFLite.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherCommon.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherDebug.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLib.rc: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLib.vcxproj: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLibCommon.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLibDebug.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLibPostBuild.cmd: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLibPreBuild.cmd: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLibProduction.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLibRelease.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherLibResource.h: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherPostBuild.cmd: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherPreBuild.cmd: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherProduction.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherRelease.props: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/WinLauncherResource.h: Removed.
+        * MiniBrowser/win/WinLauncher.vcxproj/small.ico: Removed.
+        * MiniBrowser/win/WinLauncherReplace.h: Removed.
+        * MiniBrowser/win/WinLauncherWebHost.cpp: Removed.
+        * MiniBrowser/win/WinLauncherWebHost.h: Removed.
+        * MiniBrowser/win/WinMain.cpp:
+        * WinLauncher: Removed.
+        * WinLauncher/AccessibilityDelegate.cpp: Removed.
+        * WinLauncher/AccessibilityDelegate.h: Removed.
+        * WinLauncher/CMakeLists.txt: Removed.
+        * WinLauncher/Common.cpp: Removed.
+        * WinLauncher/DOMDefaultImpl.cpp: Removed.
+        * WinLauncher/DOMDefaultImpl.h: Removed.
+        * WinLauncher/PageLoadTestClient.cpp: Removed.
+        * WinLauncher/PageLoadTestClient.h: Removed.
+        * WinLauncher/PrintWebUIDelegate.cpp: Removed.
+        * WinLauncher/PrintWebUIDelegate.h: Removed.
+        * WinLauncher/ResourceLoadDelegate.cpp: Removed.
+        * WinLauncher/ResourceLoadDelegate.h: Removed.
+        * WinLauncher/WebDownloadDelegate.cpp: Removed.
+        * WinLauncher/WebDownloadDelegate.h: Removed.
+        * WinLauncher/WinLauncher.cpp: Removed.
+        * WinLauncher/WinLauncher.h: Removed.
+        * WinLauncher/WinLauncher.vcxproj: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.ico: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.rc: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj.filters: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherCF.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherCFLite.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherCommon.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherDebug.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.rc: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibDebug.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibPostBuild.cmd: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibPreBuild.cmd: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibProduction.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibRelease.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibResource.h: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherPostBuild.cmd: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherPreBuild.cmd: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherProduction.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherRelease.props: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherResource.h: Removed.
+        * WinLauncher/WinLauncher.vcxproj/small.ico: Removed.
+        * WinLauncher/WinLauncherReplace.h: Removed.
+        * WinLauncher/WinLauncherWebHost.cpp: Removed.
+        * WinLauncher/WinLauncherWebHost.h: Removed.
+        * WinLauncher/WinMain.cpp: Removed.
+        * WinLauncher/resource.h: Removed.
+        * WinLauncher/stdafx.cpp: Removed.
+        * WinLauncher/stdafx.h: Removed.
+        * win/AssembleBuildLogs/AssembleLogs.cmd:
+
+2015-08-26  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Simplify menu handling code in WinLauncher
         https://bugs.webkit.org/show_bug.cgi?id=148461
 

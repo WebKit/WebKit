@@ -1,5 +1,5 @@
-set(WinLauncher_INCLUDE_DIRECTORIES
-    WinLauncher.vcxproj
+set(MiniBrowser_INCLUDE_DIRECTORIES
+    MiniBrowser.vcxproj
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit"
     "${DERIVED_SOURCES_DIR}"
@@ -9,22 +9,22 @@ set(WinLauncher_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
 )
 
-set(WinLauncher_SOURCES
+set(MiniBrowser_SOURCES
     AccessibilityDelegate.cpp
     DOMDefaultImpl.cpp
     PageLoadTestClient.cpp
     PrintWebUIDelegate.cpp
     ResourceLoadDelegate.cpp
     WebDownloadDelegate.cpp
-    WinLauncher.cpp
-    WinLauncherWebHost.cpp
+    MiniBrowser.cpp
+    MiniBrowserWebHost.cpp
     WinMain.cpp
     stdafx.cpp
 
-    WinLauncher.vcxproj/WinLauncherLib.rc
+    MiniBrowser.vcxproj/MiniBrowserLib.rc
 )
 
-set(WinLauncher_LIBRARIES
+set(MiniBrowser_LIBRARIES
     DbgHelp
     WTF
     WebKit
@@ -36,11 +36,11 @@ set(WinLauncher_LIBRARIES
 )
 
 if (WTF_PLATFORM_WIN_CAIRO)
-    list(APPEND WinLauncher_LIBRARIES
+    list(APPEND MiniBrowser_LIBRARIES
         CFLite
     )
 else ()
-    list(APPEND WinLauncher_LIBRARIES
+    list(APPEND MiniBrowser_LIBRARIES
         CoreFoundation
     )
 endif ()
@@ -52,13 +52,13 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DWIN_CAIRO)
 endif ()
 add_definitions(-D_UNICODE)
-include_directories(${WinLauncher_INCLUDE_DIRECTORIES})
-add_library(WinLauncherLib SHARED ${WinLauncher_SOURCES})
-target_link_libraries(WinLauncherLib ${WinLauncher_LIBRARIES})
-set_target_properties(WinLauncherLib PROPERTIES FOLDER "Tools")
-set_target_properties(WinLauncherLib PROPERTIES OUTPUT_NAME "WinLauncher")
+include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
+add_library(MiniBrowserLib SHARED ${MiniBrowser_SOURCES})
+target_link_libraries(MiniBrowserLib ${MiniBrowser_LIBRARIES})
+set_target_properties(MiniBrowserLib PROPERTIES FOLDER "Tools")
+set_target_properties(MiniBrowserLib PROPERTIES OUTPUT_NAME "MiniBrowser")
 
-add_executable(WinLauncher WIN32 ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp WinLauncher.vcxproj/WinLauncher.rc)
-target_link_libraries(WinLauncher shlwapi)
-set_target_properties(WinLauncher PROPERTIES FOLDER "Tools")
-set_target_properties(WinLauncher PROPERTIES OUTPUT_NAME "WinLauncher")
+add_executable(MiniBrowser WIN32 ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp MiniBrowser.vcxproj/MiniBrowser.rc)
+target_link_libraries(MiniBrowser shlwapi)
+set_target_properties(MiniBrowser PROPERTIES FOLDER "Tools")
+set_target_properties(MiniBrowser PROPERTIES OUTPUT_NAME "MiniBrowser")

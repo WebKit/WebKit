@@ -27,8 +27,8 @@
  */
 
 #include "stdafx.h"
-#include "WinLauncherLibResource.h"
-#include "WinLauncherWebHost.h"
+#include "MiniBrowserLibResource.h"
+#include "MiniBrowserWebHost.h"
 #include "Common.cpp"
 
 namespace WebCore {
@@ -60,7 +60,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     // Initialize global strings
     LoadString(hInst, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadString(hInst, IDC_WINLAUNCHER, szWindowClass, MAX_LOADSTRING);
+    LoadString(hInst, IDC_MINIBROWSER, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInst);
 
     if (useFullDesktop)
@@ -105,59 +105,59 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (usesLayeredWebView)
         clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
 
-    WinLauncherWebHost* webHost = nullptr;
+    MiniBrowserWebHost* webHost = nullptr;
 
     IWebDownloadDelegatePtr downloadDelegate;
     downloadDelegate.Attach(new WebDownloadDelegate());
 
-    gWinLauncher = new WinLauncher(hMainWnd, hURLBarWnd, usesLayeredWebView, pageLoadTesting);
-    if (!gWinLauncher)
+    gMiniBrowser = new MiniBrowser(hMainWnd, hURLBarWnd, usesLayeredWebView, pageLoadTesting);
+    if (!gMiniBrowser)
         goto exit;
 
-    if (!gWinLauncher->seedInitialDefaultPreferences())
+    if (!gMiniBrowser->seedInitialDefaultPreferences())
         goto exit;
 
-    if (!gWinLauncher->setToDefaultPreferences())
+    if (!gMiniBrowser->setToDefaultPreferences())
         goto exit;
 
-    HRESULT hr = gWinLauncher->init();
+    HRESULT hr = gMiniBrowser->init();
     if (FAILED(hr))
         goto exit;
 
     if (!setCacheFolder())
         goto exit;
 
-    webHost = new WinLauncherWebHost(gWinLauncher, hURLBarWnd);
+    webHost = new MiniBrowserWebHost(gMiniBrowser, hURLBarWnd);
 
-    hr = gWinLauncher->setFrameLoadDelegate(webHost);
+    hr = gMiniBrowser->setFrameLoadDelegate(webHost);
     if (FAILED(hr))
         goto exit;
 
-    hr = gWinLauncher->setFrameLoadDelegatePrivate(webHost);
+    hr = gMiniBrowser->setFrameLoadDelegatePrivate(webHost);
     if (FAILED(hr))
         goto exit;
 
-    hr = gWinLauncher->setUIDelegate(new PrintWebUIDelegate());
+    hr = gMiniBrowser->setUIDelegate(new PrintWebUIDelegate());
     if (FAILED (hr))
         goto exit;
 
-    hr = gWinLauncher->setAccessibilityDelegate(new AccessibilityDelegate());
+    hr = gMiniBrowser->setAccessibilityDelegate(new AccessibilityDelegate());
     if (FAILED (hr))
         goto exit;
 
-    hr = gWinLauncher->setResourceLoadDelegate(new ResourceLoadDelegate(gWinLauncher));
+    hr = gMiniBrowser->setResourceLoadDelegate(new ResourceLoadDelegate(gMiniBrowser));
     if (FAILED(hr))
         goto exit;
 
-    hr = gWinLauncher->setDownloadDelegate(downloadDelegate);
+    hr = gMiniBrowser->setDownloadDelegate(downloadDelegate);
     if (FAILED(hr))
         goto exit;
 
-    hr = gWinLauncher->prepareViews(hMainWnd, clientRect, requestedURL.GetBSTR(), gViewWindow);
+    hr = gMiniBrowser->prepareViews(hMainWnd, clientRect, requestedURL.GetBSTR(), gViewWindow);
     if (FAILED(hr) || !gViewWindow)
         goto exit;
 
-    if (gWinLauncher->usesLayeredWebView())
+    if (gMiniBrowser->usesLayeredWebView())
         subclassForLayeredWindow();
 
     resizeSubViews();
@@ -165,7 +165,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     ShowWindow(gViewWindow, nCmdShow);
     UpdateWindow(gViewWindow);
 
-    hAccelTable = LoadAccelerators(hInst, MAKEINTRESOURCE(IDC_WINLAUNCHER));
+    hAccelTable = LoadAccelerators(hInst, MAKEINTRESOURCE(IDC_MINIBROWSER));
 
     if (requestedURL.length())
         loadURL(requestedURL.GetBSTR());
@@ -193,7 +193,7 @@ exit:
     // Shut down COM.
     OleUninitialize();
 
-    delete gWinLauncher;
+    delete gMiniBrowser;
     
     return static_cast<int>(msg.wParam);
 }
@@ -209,10 +209,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINLAUNCHER));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MINIBROWSER));
     wcex.hCursor        = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground  = 0;
-    wcex.lpszMenuName   = MAKEINTRESOURCE(IDC_WINLAUNCHER);
+    wcex.lpszMenuName   = MAKEINTRESOURCE(IDC_MINIBROWSER);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 

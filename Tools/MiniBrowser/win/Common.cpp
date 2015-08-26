@@ -31,8 +31,8 @@
 #include "PrintWebUIDelegate.h"
 #include "ResourceLoadDelegate.h"
 #include "WebDownloadDelegate.h"
-#include "WinLauncher.h"
-#include "WinLauncherReplace.h"
+#include "MiniBrowser.h"
+#include "MiniBrowserReplace.h"
 #include <WebKit/WebKitCOMAPI.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
@@ -84,7 +84,7 @@ WNDPROC DefEditProc = nullptr;
 WNDPROC DefButtonProc = nullptr;
 WNDPROC DefWebKitProc = nullptr;
 HWND gViewWindow = 0;
-WinLauncher* gWinLauncher = nullptr;
+MiniBrowser* gMiniBrowser = nullptr;
 TCHAR szTitle[MAX_LOADSTRING]; // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING]; // the main window class name
 
@@ -112,7 +112,7 @@ float deviceScaleFactorForWindow(HWND);
 
 static void resizeSubViews()
 {
-    if (gWinLauncher->usesLayeredWebView() || !gViewWindow)
+    if (gMiniBrowser->usesLayeredWebView() || !gViewWindow)
         return;
 
     float scaleFactor = WebCore::deviceScaleFactorForWindow(gViewWindow);
@@ -128,7 +128,7 @@ static void resizeSubViews()
     MoveWindow(hURLBarWnd, width * 2, 0, rcClient.right, height, TRUE);
     MoveWindow(gViewWindow, 0, height, rcClient.right, rcClient.bottom - height, TRUE);
 
-    ::SendMessage(hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(gWinLauncher->urlBarFont()), TRUE);
+    ::SendMessage(hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(gMiniBrowser->urlBarFont()), TRUE);
 }
 
 static void subclassForLayeredWindow()
@@ -193,7 +193,7 @@ static bool getAppDataFolder(_bstr_t& directory)
 
 static bool setCacheFolder()
 {
-    IWebCachePtr webCache = gWinLauncher->webCache();
+    IWebCachePtr webCache = gMiniBrowser->webCache();
     if (!webCache)
         return false;
 
@@ -286,7 +286,7 @@ void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         return;
     }
 
-    IWebFramePtr frame = gWinLauncher->mainFrame();
+    IWebFramePtr frame = gMiniBrowser->mainFrame();
     if (!frame)
         return;
 
@@ -361,7 +361,7 @@ static void turnOffOtherUserAgents(HMENU menu)
 
 static bool ToggleMenuItem(HWND hWnd, UINT menuID)
 {
-    if (!gWinLauncher)
+    if (!gMiniBrowser)
         return false;
 
     HMENU menu = ::GetMenu(hWnd);
@@ -376,38 +376,38 @@ static bool ToggleMenuItem(HWND hWnd, UINT menuID)
 
     BOOL newState = !menuItemIsChecked(info);
 
-    if (!gWinLauncher->standardPreferences() || !gWinLauncher->privatePreferences())
+    if (!gMiniBrowser->standardPreferences() || !gMiniBrowser->privatePreferences())
         return false;
 
     switch (menuID) {
     case IDM_AVFOUNDATION:
-        gWinLauncher->standardPreferences()->setAVFoundationEnabled(newState);
+        gMiniBrowser->standardPreferences()->setAVFoundationEnabled(newState);
         break;
     case IDM_ACC_COMPOSITING:
-        gWinLauncher->privatePreferences()->setAcceleratedCompositingEnabled(newState);
+        gMiniBrowser->privatePreferences()->setAcceleratedCompositingEnabled(newState);
         break;
     case IDM_WK_FULLSCREEN:
-        gWinLauncher->privatePreferences()->setFullScreenEnabled(newState);
+        gMiniBrowser->privatePreferences()->setFullScreenEnabled(newState);
         break;
     case IDM_COMPOSITING_BORDERS:
-        gWinLauncher->privatePreferences()->setShowDebugBorders(newState);
-        gWinLauncher->privatePreferences()->setShowRepaintCounter(newState);
+        gMiniBrowser->privatePreferences()->setShowDebugBorders(newState);
+        gMiniBrowser->privatePreferences()->setShowRepaintCounter(newState);
         break;
     case IDM_INVERT_COLORS:
-        gWinLauncher->privatePreferences()->setShouldInvertColors(newState);
+        gMiniBrowser->privatePreferences()->setShouldInvertColors(newState);
         break;
     case IDM_DISABLE_IMAGES:
-        gWinLauncher->standardPreferences()->setLoadsImagesAutomatically(!newState);
+        gMiniBrowser->standardPreferences()->setLoadsImagesAutomatically(!newState);
         break;
     case IDM_DISABLE_STYLES:
-        gWinLauncher->privatePreferences()->setAuthorAndUserStylesEnabled(!newState);
+        gMiniBrowser->privatePreferences()->setAuthorAndUserStylesEnabled(!newState);
         break;
     case IDM_DISABLE_JAVASCRIPT:
-        gWinLauncher->standardPreferences()->setJavaScriptEnabled(!newState);
+        gMiniBrowser->standardPreferences()->setJavaScriptEnabled(!newState);
         break;
     case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
-        gWinLauncher->privatePreferences()->setAllowUniversalAccessFromFileURLs(newState);
-        gWinLauncher->privatePreferences()->setAllowFileAccessFromFileURLs(newState);
+        gMiniBrowser->privatePreferences()->setAllowUniversalAccessFromFileURLs(newState);
+        gMiniBrowser->privatePreferences()->setAllowFileAccessFromFileURLs(newState);
         break;
     case IDM_UA_DEFAULT:
     case IDM_UA_SAFARI_8_0:
@@ -418,7 +418,7 @@ static bool ToggleMenuItem(HWND hWnd, UINT menuID)
     case IDM_UA_CHROME_WIN:
     case IDM_UA_FIREFOX_MAC:
     case IDM_UA_FIREFOX_WIN:
-        gWinLauncher->setUserAgent(menuID);
+        gMiniBrowser->setUserAgent(menuID);
         turnOffOtherUserAgents(menu);
         break;
     case IDM_UA_OTHER:
@@ -440,11 +440,11 @@ static const int dragBarHeight = 30;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    WNDPROC parentProc = (gWinLauncher) ? (gWinLauncher->usesLayeredWebView() ? DefWebKitProc : DefWindowProc) : DefWindowProc;
+    WNDPROC parentProc = (gMiniBrowser) ? (gMiniBrowser->usesLayeredWebView() ? DefWebKitProc : DefWindowProc) : DefWindowProc;
 
     switch (message) {
     case WM_NCHITTEST:
-        if (gWinLauncher && gWinLauncher->usesLayeredWebView()) {
+        if (gMiniBrowser && gMiniBrowser->usesLayeredWebView()) {
             RECT window;
             ::GetWindowRect(hWnd, &window);
             // For testing our transparent window, we need a region to use as a handle for
@@ -455,7 +455,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // When we are within this bad, return HT_CAPTION to tell Windows we want to
             // treat this region as if it were the title bar on a normal window.
             int y = HIWORD(lParam);
-            float scaledDragBarHeightFactor = dragBarHeight * gWinLauncher->deviceScaleFactor();
+            float scaledDragBarHeightFactor = dragBarHeight * gMiniBrowser->deviceScaleFactor();
             if ((y > window.top) && (y < window.top + scaledDragBarHeightFactor))
                 return HTCAPTION;
         }
@@ -464,8 +464,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         int wmId = LOWORD(wParam);
         int wmEvent = HIWORD(wParam);
         if (wmId >= IDM_HISTORY_LINK0 && wmId <= IDM_HISTORY_LINK9) {
-            if (gWinLauncher)
-                gWinLauncher->navigateToHistory(hWnd, wmId);
+            if (gMiniBrowser)
+                gMiniBrowser->navigateToHistory(hWnd, wmId);
             break;
         }
         // Parse the menu selections:
@@ -480,8 +480,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PrintView(hWnd, message, wParam, lParam);
             break;
         case IDM_WEB_INSPECTOR:
-            if (gWinLauncher)
-                gWinLauncher->launchInspector();
+            if (gMiniBrowser)
+                gMiniBrowser->launchInspector();
             break;
         case IDM_CACHES:
             if (!::IsWindow(hCacheWnd)) {
@@ -491,8 +491,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case IDM_HISTORY_BACKWARD:
         case IDM_HISTORY_FORWARD:
-            if (gWinLauncher)
-                gWinLauncher->navigateForwardOrBackward(hWnd, wmId);
+            if (gMiniBrowser)
+                gMiniBrowser->navigateForwardOrBackward(hWnd, wmId);
             break;
         case IDM_UA_OTHER:
             if (wmEvent)
@@ -501,16 +501,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_USER_AGENT), hWnd, CustomUserAgent);
             break;
         case IDM_ACTUAL_SIZE:
-            if (gWinLauncher)
-                gWinLauncher->resetZoom();
+            if (gMiniBrowser)
+                gMiniBrowser->resetZoom();
             break;
         case IDM_ZOOM_IN:
-            if (gWinLauncher)
-                gWinLauncher->zoomIn();
+            if (gMiniBrowser)
+                gMiniBrowser->zoomIn();
             break;
         case IDM_ZOOM_OUT:
-            if (gWinLauncher)
-                gWinLauncher->zoomOut();
+            if (gMiniBrowser)
+                gMiniBrowser->zoomOut();
             break;
         default:
             if (!ToggleMenuItem(hWnd, wmId))
@@ -525,14 +525,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
     case WM_SIZE:
-        if (!gWinLauncher || !gWinLauncher->hasWebView() || gWinLauncher->usesLayeredWebView())
+        if (!gMiniBrowser || !gMiniBrowser->hasWebView() || gMiniBrowser->usesLayeredWebView())
             return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
 
         resizeSubViews();
         break;
     case WM_DPICHANGED:
-        if (gWinLauncher)
-            gWinLauncher->updateDeviceScaleFactor();
+        if (gMiniBrowser)
+            gMiniBrowser->updateDeviceScaleFactor();
         return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
     default:
         return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
@@ -565,7 +565,7 @@ LRESULT CALLBACK BackButtonProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 {
     switch (message) {
     case WM_LBUTTONUP:
-        gWinLauncher->goBack();
+        gMiniBrowser->goBack();
     default:
         return CallWindowProc(DefButtonProc, hDlg, message, wParam, lParam);
     }
@@ -575,7 +575,7 @@ LRESULT CALLBACK ForwardButtonProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
 {
     switch (message) {
     case WM_LBUTTONUP:
-        gWinLauncher->goForward();
+        gMiniBrowser->goForward();
     default:
         return CallWindowProc(DefButtonProc, hDlg, message, wParam, lParam);
     }
@@ -635,8 +635,8 @@ INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
     case WM_INITDIALOG: {
         HWND edit = ::GetDlgItem(hDlg, IDC_USER_AGENT_INPUT);
         _bstr_t userAgent;
-        if (gWinLauncher)
-            userAgent = gWinLauncher->userAgent();
+        if (gMiniBrowser)
+            userAgent = gMiniBrowser->userAgent();
 
         ::SetWindowText(edit, static_cast<LPCTSTR>(userAgent));
         return (INT_PTR)TRUE;
@@ -652,7 +652,7 @@ INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
             _bstr_t bstr(buffer);
             if (bstr.length()) {
-                gWinLauncher->setUserAgent(bstr);
+                gMiniBrowser->setUserAgent(bstr);
                 ::PostMessage(hMainWnd, static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_UA_OTHER, 1), 0);
             }
         }
@@ -668,7 +668,7 @@ INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
 static void loadURL(BSTR passedURL)
 {
-    if (FAILED(gWinLauncher->loadURL(passedURL)))
+    if (FAILED(gMiniBrowser->loadURL(passedURL)))
         return;
 
     SetFocus(gViewWindow);
@@ -716,10 +716,10 @@ static void setWindowText(HWND dialog, UINT field, CFDictionaryRef dictionary, C
 
 static void updateStatistics(HWND dialog)
 {
-    if (!gWinLauncher)
+    if (!gMiniBrowser)
         return;
 
-    IWebCoreStatisticsPtr webCoreStatistics = gWinLauncher->statistics();
+    IWebCoreStatisticsPtr webCoreStatistics = gMiniBrowser->statistics();
     if (!webCoreStatistics)
         return;
 
@@ -735,7 +735,7 @@ static void updateStatistics(HWND dialog)
 
     // WebCore Cache.
 #if USE(CF)
-    IWebCachePtr webCache = gWinLauncher->webCache();
+    IWebCachePtr webCache = gMiniBrowser->webCache();
 
     int dictCount = 6;
     IPropertyBag* cacheDict[6] = { 0 };

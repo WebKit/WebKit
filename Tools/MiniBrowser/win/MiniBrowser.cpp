@@ -27,11 +27,11 @@
  */
 
 #include "stdafx.h"
-#include "WinLauncher.h"
+#include "MiniBrowser.h"
 
 #include "DOMDefaultImpl.h"
-#include "WinLauncherLibResource.h"
-#include "WinLauncherReplace.h"
+#include "MiniBrowserLibResource.h"
+#include "MiniBrowserReplace.h"
 #include <WebKit/WebKitCOMAPI.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
@@ -55,7 +55,7 @@ static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
-WinLauncher::WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
+MiniBrowser::MiniBrowser(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, bool pageLoadTesting)
     : m_hMainWnd(mainWnd)
     , m_hURLBarWnd(urlBarWnd)
     , m_useLayeredWebView(useLayeredWebView)
@@ -63,7 +63,7 @@ WinLauncher::WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, b
 {
 }
 
-HRESULT WinLauncher::init()
+HRESULT MiniBrowser::init()
 {
     updateDeviceScaleFactor();
 
@@ -88,7 +88,7 @@ HRESULT WinLauncher::init()
     return hr;
 }
 
-HRESULT WinLauncher::prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL, HWND& viewHwnd)
+HRESULT MiniBrowser::prepareViews(HWND mainWnd, const RECT& clientRect, const BSTR& requestedURL, HWND& viewHwnd)
 {
     if (!m_webView)
         return E_FAIL;
@@ -123,49 +123,49 @@ HRESULT WinLauncher::prepareViews(HWND mainWnd, const RECT& clientRect, const BS
     return hr;
 }
 
-HRESULT WinLauncher::setFrameLoadDelegate(IWebFrameLoadDelegate* frameLoadDelegate)
+HRESULT MiniBrowser::setFrameLoadDelegate(IWebFrameLoadDelegate* frameLoadDelegate)
 {
     m_frameLoadDelegate = frameLoadDelegate;
     return m_webView->setFrameLoadDelegate(frameLoadDelegate);
 }
 
-HRESULT WinLauncher::setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate* frameLoadDelegatePrivate)
+HRESULT MiniBrowser::setFrameLoadDelegatePrivate(IWebFrameLoadDelegatePrivate* frameLoadDelegatePrivate)
 {
     return m_webViewPrivate->setFrameLoadDelegatePrivate(frameLoadDelegatePrivate);
 }
 
-HRESULT WinLauncher::setUIDelegate(IWebUIDelegate* uiDelegate)
+HRESULT MiniBrowser::setUIDelegate(IWebUIDelegate* uiDelegate)
 {
     m_uiDelegate = uiDelegate;
     return m_webView->setUIDelegate(uiDelegate);
 }
 
-HRESULT WinLauncher::setAccessibilityDelegate(IAccessibilityDelegate* accessibilityDelegate)
+HRESULT MiniBrowser::setAccessibilityDelegate(IAccessibilityDelegate* accessibilityDelegate)
 {
     m_accessibilityDelegate = accessibilityDelegate;
     return m_webView->setAccessibilityDelegate(accessibilityDelegate);
 }
 
-HRESULT WinLauncher::setResourceLoadDelegate(IWebResourceLoadDelegate* resourceLoadDelegate)
+HRESULT MiniBrowser::setResourceLoadDelegate(IWebResourceLoadDelegate* resourceLoadDelegate)
 {
     m_resourceLoadDelegate = resourceLoadDelegate;
     return m_webView->setResourceLoadDelegate(resourceLoadDelegate);
 }
 
-HRESULT WinLauncher::setDownloadDelegate(IWebDownloadDelegatePtr downloadDelegate)
+HRESULT MiniBrowser::setDownloadDelegate(IWebDownloadDelegatePtr downloadDelegate)
 {
     m_downloadDelegate = downloadDelegate;
     return m_webView->setDownloadDelegate(downloadDelegate);
 }
 
-IWebFramePtr WinLauncher::mainFrame()
+IWebFramePtr MiniBrowser::mainFrame()
 {
     IWebFramePtr framePtr;
     m_webView->mainFrame(&framePtr.GetInterfacePtr());
     return framePtr;
 }
 
-bool WinLauncher::seedInitialDefaultPreferences()
+bool MiniBrowser::seedInitialDefaultPreferences()
 {
     IWebPreferencesPtr tmpPreferences;
     if (FAILED(WebKitCreateInstance(CLSID_WebPreferences, 0, IID_IWebPreferences, reinterpret_cast<void**>(&tmpPreferences.GetInterfacePtr()))))
@@ -177,7 +177,7 @@ bool WinLauncher::seedInitialDefaultPreferences()
     return true;
 }
 
-bool WinLauncher::setToDefaultPreferences()
+bool MiniBrowser::setToDefaultPreferences()
 {
     HRESULT hr = m_standardPreferences->QueryInterface(IID_IWebPreferencesPrivate, reinterpret_cast<void**>(&m_prefsPrivate.GetInterfacePtr()));
     if (!SUCCEEDED(hr))
@@ -221,7 +221,7 @@ static void updateMenuItemForHistoryItem(HMENU menu, IWebHistoryItem& historyIte
     ::EnableMenuItem(menu, menuID, MF_BYCOMMAND | MF_ENABLED);
 }
 
-void WinLauncher::showLastVisitedSites(IWebView& webView)
+void MiniBrowser::showLastVisitedSites(IWebView& webView)
 {
     HMENU menu = ::GetMenu(m_hMainWnd);
 
@@ -298,7 +298,7 @@ void WinLauncher::showLastVisitedSites(IWebView& webView)
         ::EnableMenuItem(menu, IDM_HISTORY_LINK0 + i, MF_BYCOMMAND | MF_DISABLED);
 }
 
-void WinLauncher::launchInspector()
+void MiniBrowser::launchInspector()
 {
     if (!m_webViewPrivate)
         return;
@@ -309,7 +309,7 @@ void WinLauncher::launchInspector()
     m_inspector->show();
 }
 
-void WinLauncher::navigateForwardOrBackward(HWND hWnd, UINT menuID)
+void MiniBrowser::navigateForwardOrBackward(HWND hWnd, UINT menuID)
 {
     if (!m_webView)
         return;
@@ -321,7 +321,7 @@ void WinLauncher::navigateForwardOrBackward(HWND hWnd, UINT menuID)
         m_webView->goBack(&wentBackOrForward);
 }
 
-void WinLauncher::navigateToHistory(HWND hWnd, UINT menuID)
+void MiniBrowser::navigateToHistory(HWND hWnd, UINT menuID)
 {
     if (!m_webView)
         return;
@@ -343,21 +343,21 @@ void WinLauncher::navigateToHistory(HWND hWnd, UINT menuID)
     ::SendMessage(m_hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)frameURL.GetBSTR());
 }
 
-bool WinLauncher::goBack()
+bool MiniBrowser::goBack()
 {
     BOOL wentBack = FALSE;
     m_webView->goBack(&wentBack);
     return wentBack;
 }
 
-bool WinLauncher::goForward()
+bool MiniBrowser::goForward()
 {
     BOOL wentForward = FALSE;
     m_webView->goForward(&wentForward);
     return wentForward;
 }
 
-HRESULT WinLauncher::loadURL(const BSTR& passedURL)
+HRESULT MiniBrowser::loadURL(const BSTR& passedURL)
 {
     _bstr_t urlBStr(passedURL);
     if (!!urlBStr && (::PathFileExists(urlBStr) || ::PathIsUNC(urlBStr))) {
@@ -395,12 +395,12 @@ HRESULT WinLauncher::loadURL(const BSTR& passedURL)
     return hr;
 }
 
-void WinLauncher::exitProgram()
+void MiniBrowser::exitProgram()
 {
     ::PostMessage(m_hMainWnd, static_cast<UINT>(WM_COMMAND), MAKELPARAM(IDM_EXIT, 0), 0);
 }
 
-void WinLauncher::setUserAgent(UINT menuID)
+void MiniBrowser::setUserAgent(UINT menuID)
 {
     if (!webView())
         return;
@@ -443,12 +443,12 @@ void WinLauncher::setUserAgent(UINT menuID)
     setUserAgent(customUserAgent);
 }
 
-void WinLauncher::setUserAgent(_bstr_t& customUserAgent)
+void MiniBrowser::setUserAgent(_bstr_t& customUserAgent)
 {
     webView()->setCustomUserAgent(customUserAgent.GetBSTR());
 }
 
-_bstr_t WinLauncher::userAgent()
+_bstr_t MiniBrowser::userAgent()
 {
     _bstr_t userAgent;
     if (FAILED(webView()->customUserAgent(&userAgent.GetBSTR())))
@@ -459,7 +459,7 @@ _bstr_t WinLauncher::userAgent()
 
 typedef _com_ptr_t<_com_IIID<IWebIBActions, &__uuidof(IWebIBActions)>> IWebIBActionsPtr;
 
-void WinLauncher::resetZoom()
+void MiniBrowser::resetZoom()
 {
     IWebIBActionsPtr webActions;
     if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
@@ -468,7 +468,7 @@ void WinLauncher::resetZoom()
     webActions->resetPageZoom(nullptr);
 }
 
-void WinLauncher::zoomIn()
+void MiniBrowser::zoomIn()
 {
     IWebIBActionsPtr webActions;
     if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
@@ -477,7 +477,7 @@ void WinLauncher::zoomIn()
     webActions->zoomPageIn(nullptr);
 }
 
-void WinLauncher::zoomOut()
+void MiniBrowser::zoomOut()
 {
     IWebIBActionsPtr webActions;
     if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
@@ -486,7 +486,7 @@ void WinLauncher::zoomOut()
     webActions->zoomPageOut(nullptr);
 }
 
-void WinLauncher::generateFontForScaleFactor(float scaleFactor)
+void MiniBrowser::generateFontForScaleFactor(float scaleFactor)
 {
     if (m_hURLBarFont)
         ::DeleteObject(m_hURLBarFont);
@@ -496,7 +496,7 @@ void WinLauncher::generateFontForScaleFactor(float scaleFactor)
 }
 
 
-void WinLauncher::updateDeviceScaleFactor()
+void MiniBrowser::updateDeviceScaleFactor()
 {
     m_deviceScaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
     generateFontForScaleFactor(m_deviceScaleFactor);

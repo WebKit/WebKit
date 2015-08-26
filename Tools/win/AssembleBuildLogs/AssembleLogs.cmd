@@ -156,14 +156,14 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebInspectorUI\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo COMPILING WinLauncherLib...                               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING MiniBrowserLib...                               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WinLauncherLib\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\MiniBrowserLib\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo COMPILING WinLauncher...                                  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING MiniBrowser...                                  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WinLauncher\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\MiniBrowser\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING TestNetscapePlugin...                           >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"

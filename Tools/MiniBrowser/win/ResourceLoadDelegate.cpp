@@ -26,7 +26,7 @@
 #include "ResourceLoadDelegate.h"
 
 #include "PageLoadTestClient.h"
-#include "WinLauncher.h"
+#include "MiniBrowser.h"
 #include <WebKit/WebKitCOMAPI.h>
 #include <comip.h>
 #include <commctrl.h>

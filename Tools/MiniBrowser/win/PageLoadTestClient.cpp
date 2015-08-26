@@ -26,7 +26,7 @@
 #include "stdafx.h"
 #include "PageLoadTestClient.h"
 
-#include "WinLauncher.h"
+#include "MiniBrowser.h"
 #include <WebCore/PlatformExportMacros.h>
 #include <wtf/Assertions.h>
 #include <wtf/FilePrintStream.h>
@@ -34,7 +34,7 @@
 
 static const CFTimeInterval waitForNewResourceLoadDuration = 0.1;
 
-PageLoadTestClient::PageLoadTestClient(WinLauncher* host, bool pageLoadTesting)
+PageLoadTestClient::PageLoadTestClient(MiniBrowser* host, bool pageLoadTesting)
     : m_host(host)
     , m_repetitions(pageLoadTesting ? 20 : 1)
     , m_waitForLoadToReallyEnd(this, &PageLoadTestClient::endPageLoad)

@@ -3,6 +3,6 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
-    <Import Project="WinLauncherCommon.props" />
+    <Import Project="MiniBrowserLibCommon.props" />
   </ImportGroup>
 </Project>

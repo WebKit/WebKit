@@ -28,11 +28,11 @@
 #include "resource.h"
 #include <WebKit/WebKit.h>
 
-class WinLauncher;
+class MiniBrowser;
 
-class WinLauncherWebHost : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate {
+class MiniBrowserWebHost : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate {
 public:
-    WinLauncherWebHost(WinLauncher* client, HWND urlBar)
+    MiniBrowserWebHost(MiniBrowser* client, HWND urlBar)
         : m_client(client), m_hURLBarWnd(urlBar) { }
 
     // IUnknown
@@ -80,5 +80,5 @@ private:
     HGDIOBJ m_URLBarFont { 0 };
     HGDIOBJ m_oldFont { 0 };
     ULONG m_refCount { 1 };
-    WinLauncher* m_client { nullptr };
+    MiniBrowser* m_client { nullptr };
 };

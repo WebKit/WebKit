@@ -22,10 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WinLauncherReplace_h
-#define WinLauncherReplace_h
+#ifndef MiniBrowserReplace_h
+#define MiniBrowserReplace_h
 
-// This file is to make it easier for users to manage changes to the internals of WinLauncher
+// This file is to make it easier for users to manage changes to the internals of MiniBrowser
 
 static const wchar_t* defaultHTML = L"<p style=\"background-color: #00FF00\">Testing</p><img id=\"webkit logo\" src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue; background: white;\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>";
 

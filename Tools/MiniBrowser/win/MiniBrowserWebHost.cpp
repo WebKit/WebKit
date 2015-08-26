@@ -27,11 +27,11 @@
  */
 
 #include "stdafx.h"
-#include "WinLauncherWebHost.h"
+#include "MiniBrowserWebHost.h"
 
 #include "DOMDefaultImpl.h"
 #include "PageLoadTestClient.h"
-#include "WinLauncher.h"
+#include "MiniBrowser.h"
 #include <WebKit/WebKit.h>
 
 class SimpleEventListener : public DOMEventListener {
@@ -59,7 +59,7 @@ typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebDataSource, &__uuidof(IWebDataSource)>> IWebDataSourcePtr;
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
-HRESULT WinLauncherWebHost::updateAddressBar(IWebView& webView)
+HRESULT MiniBrowserWebHost::updateAddressBar(IWebView& webView)
 {
     IWebFramePtr mainFrame;
     HRESULT hr = webView.mainFrame(&mainFrame.GetInterfacePtr());
@@ -93,12 +93,12 @@ HRESULT WinLauncherWebHost::updateAddressBar(IWebView& webView)
     return S_OK;
 }
 
-void WinLauncherWebHost::loadURL(_bstr_t& url)
+void MiniBrowserWebHost::loadURL(_bstr_t& url)
 {
     ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETTEXT), 0, reinterpret_cast<LPARAM>(url.GetBSTR()));
 }
 
-HRESULT WinLauncherWebHost::didFailProvisionalLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError *error, _In_opt_ IWebFrame*)
+HRESULT MiniBrowserWebHost::didFailProvisionalLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError *error, _In_opt_ IWebFrame*)
 {
     _bstr_t errorDescription;
     HRESULT hr = E_POINTER;
@@ -113,7 +113,7 @@ HRESULT WinLauncherWebHost::didFailProvisionalLoadWithError(_In_opt_ IWebView*, 
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
+HRESULT MiniBrowserWebHost::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
     if (!ppvObject)
         return E_POINTER;
@@ -129,12 +129,12 @@ HRESULT WinLauncherWebHost::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void**
     return S_OK;
 }
 
-ULONG WinLauncherWebHost::AddRef()
+ULONG MiniBrowserWebHost::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG WinLauncherWebHost::Release()
+ULONG MiniBrowserWebHost::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -148,7 +148,7 @@ typedef _com_ptr_t<_com_IIID<IDOMElement, &__uuidof(IDOMElement)>> IDOMElementPt
 typedef _com_ptr_t<_com_IIID<IDOMEventTarget, &__uuidof(IDOMEventTarget)>> IDOMEventTargetPtr;
 typedef _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> IWebFrame2Ptr;
 
-HRESULT WinLauncherWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
+HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _In_opt_ IWebFrame* frame)
 {
     if (!frame || !webView)
         return E_POINTER;
@@ -187,7 +187,7 @@ HRESULT WinLauncherWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _I
     return hr;
 }
 
-HRESULT WinLauncherWebHost::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
+HRESULT MiniBrowserWebHost::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!frame)
         return E_FAIL;
@@ -196,13 +196,13 @@ HRESULT WinLauncherWebHost::didStartProvisionalLoadForFrame(_In_opt_ IWebView*, 
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*)
+HRESULT MiniBrowserWebHost::didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*)
 {
     m_client->pageLoadTestClient().didFailLoad();
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::didHandleOnloadEventsForFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame* frame)
+HRESULT MiniBrowserWebHost::didHandleOnloadEventsForFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame* frame)
 {
     IWebDataSourcePtr dataSource;
     HRESULT hr = frame->dataSource(&dataSource.GetInterfacePtr());
@@ -227,7 +227,7 @@ HRESULT WinLauncherWebHost::didHandleOnloadEventsForFrame(_In_opt_ IWebView* sen
     return S_OK;
 }
 
-HRESULT WinLauncherWebHost::didFirstLayoutInFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
+HRESULT MiniBrowserWebHost::didFirstLayoutInFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
     if (!frame)
         return E_POINTER;

@@ -101,12 +101,12 @@ private:
     RetainPtr<CFRunLoopTimerRef> m_timer;
 };
 
-class WinLauncher;
+class MiniBrowser;
 
 class PageLoadTestClient {
     WTF_MAKE_NONCOPYABLE(PageLoadTestClient);
 public:
-    PageLoadTestClient(WinLauncher* host, bool pageLoadTesting = false);
+    PageLoadTestClient(MiniBrowser* host, bool pageLoadTesting = false);
 
 #if OS(WINDOWS)
     void setPageURL(const _bstr_t&);
@@ -131,7 +131,7 @@ private:
     virtual void pageLoadEndedAtTime(CFAbsoluteTime);
     void dumpRunStatistics();
 
-    WinLauncher* m_host;
+    MiniBrowser* m_host;
     CFAbsoluteTime m_pageLoadEndTime { 0 };
     CFTimeInterval m_totalTime { 0 };
     CFTimeInterval m_totalSquareRootsOfTime { 0 };

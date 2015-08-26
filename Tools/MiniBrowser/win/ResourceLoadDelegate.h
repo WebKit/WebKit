@@ -28,11 +28,11 @@
 
 #include <WebKit/WebKit.h>
 
-class WinLauncher;
+class MiniBrowser;
 
 class ResourceLoadDelegate : public IWebResourceLoadDelegate {
 public:
-    ResourceLoadDelegate(WinLauncher* client)
+    ResourceLoadDelegate(MiniBrowser* client)
         : m_client(client) { }
 
     // IUnknown
@@ -52,7 +52,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE plugInFailedWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebDataSource*);
 
 private:
-    WinLauncher* m_client;
+    MiniBrowser* m_client;
     int m_refCount { 1 };
 };
 

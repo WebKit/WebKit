@@ -3,7 +3,7 @@
   <ItemDefinitionGroup>
     <Link>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)WinLauncher$(DebugSuffix).exe</OutputFile>
+      <OutputFile>$(OutDir)MiniBrowser$(DebugSuffix).exe</OutputFile>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <ClCompile />

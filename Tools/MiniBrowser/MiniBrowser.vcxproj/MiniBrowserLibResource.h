@@ -1,17 +1,17 @@
 // {{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by WinLauncherLib.rc
+// Used by MiniBrowserLib.rc
 //
 #define IDC_MYICON                      2
-#define IDD_WINLAUNCHER_DIALOG          102
+#define IDD_MINIBROWSER_DIALOG          102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
 #define IDM_PRINT                       106
-#define IDI_WINLAUNCHER                 107
+#define IDI_MINIBROWSER                 107
 #define IDI_SMALL                       108
-#define IDC_WINLAUNCHER                 109
+#define IDC_MINIBROWSER                 109
 #define IDM_AVFOUNDATION                110
 #define IDM_ACC_COMPOSITING             111
 #define IDM_WK_FULLSCREEN               112

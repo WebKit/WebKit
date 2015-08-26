@@ -11,7 +11,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WinLauncherResource.h" />
+    <ClInclude Include="MiniBrowserResource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\win\DLLLauncher\DLLLauncherMain.cpp">
@@ -19,15 +19,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="WinLauncher.rc">
+    <ResourceCompile Include="MiniBrowser.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="WinLauncher.ico">
+    <None Include="MiniBrowser.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="WinLauncherPostBuild.cmd" />
-    <None Include="WinLauncherPreBuild.cmd" />
+    <None Include="MiniBrowserPostBuild.cmd" />
+    <None Include="MiniBrowserPreBuild.cmd" />
   </ItemGroup>
 </Project>

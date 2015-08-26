@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "WinLauncherResource.h"
+#include "MiniBrowserResource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_WINLAUNCHER         ICON                    "WinLauncher.ico"
+IDI_MINIBROWSER         ICON                    "MiniBrowser.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ IDI_WINLAUNCHER         ICON                    "WinLauncher.ico"
 
 1 TEXTINCLUDE 
 BEGIN
-    "WinLauncherResource.\0"
+    "MiniBrowserResource.\0"
 END
 
 2 TEXTINCLUDE 
