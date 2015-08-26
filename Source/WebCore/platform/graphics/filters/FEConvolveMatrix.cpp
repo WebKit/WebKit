@@ -448,6 +448,11 @@ void FEConvolveMatrix::platformApplySoftware()
     }
 
     int iterations = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
+    if (!iterations) {
+        setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
+        return;
+    }
+
     int stride = clipBottom / iterations;
     int chunkCount = (clipBottom + stride - 1) / stride;
 
