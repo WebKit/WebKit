@@ -359,8 +359,11 @@ static void turnOffOtherUserAgents(HMENU menu)
     }
 }
 
-static void ToggleMenuItem(HWND hWnd, UINT menuID)
+static bool ToggleMenuItem(HWND hWnd, UINT menuID)
 {
+    if (!gWinLauncher)
+        return false;
+
     HMENU menu = ::GetMenu(hWnd);
 
     MENUITEMINFO info;
@@ -369,12 +372,12 @@ static void ToggleMenuItem(HWND hWnd, UINT menuID)
     info.fMask = MIIM_STATE;
 
     if (!::GetMenuItemInfo(menu, menuID, FALSE, &info))
-        return;
+        return false;
 
     BOOL newState = !menuItemIsChecked(info);
 
     if (!gWinLauncher->standardPreferences() || !gWinLauncher->privatePreferences())
-        return;
+        return false;
 
     switch (menuID) {
     case IDM_AVFOUNDATION:
@@ -422,11 +425,15 @@ static void ToggleMenuItem(HWND hWnd, UINT menuID)
         // The actual user agent string will be set by the custom user agent dialog
         turnOffOtherUserAgents(menu);
         break;
+    default:
+        return false;
     }
 
     info.fState = (newState) ? MFS_CHECKED : MFS_UNCHECKED;
 
     ::SetMenuItemInfo(menu, menuID, FALSE, &info);
+
+    return true;
 }
 
 static const int dragBarHeight = 30;
@@ -487,26 +494,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (gWinLauncher)
                 gWinLauncher->navigateForwardOrBackward(hWnd, wmId);
             break;
-        case IDM_AVFOUNDATION:
-        case IDM_ACC_COMPOSITING:
-        case IDM_WK_FULLSCREEN:
-        case IDM_COMPOSITING_BORDERS:
-        case IDM_INVERT_COLORS:
-        case IDM_DISABLE_IMAGES:
-        case IDM_DISABLE_STYLES:
-        case IDM_DISABLE_JAVASCRIPT:
-        case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
-        case IDM_UA_DEFAULT:
-        case IDM_UA_SAFARI_8_0:
-        case IDM_UA_SAFARI_IOS_8_IPHONE:
-        case IDM_UA_SAFARI_IOS_8_IPAD:
-        case IDM_UA_IE_11:
-        case IDM_UA_CHROME_MAC:
-        case IDM_UA_CHROME_WIN:
-        case IDM_UA_FIREFOX_MAC:
-        case IDM_UA_FIREFOX_WIN:
-            ToggleMenuItem(hWnd, wmId);
-            break;
         case IDM_UA_OTHER:
             if (wmEvent)
                 ToggleMenuItem(hWnd, wmId);
@@ -526,7 +513,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 gWinLauncher->zoomOut();
             break;
         default:
-            return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
+            if (!ToggleMenuItem(hWnd, wmId))
+                return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
         }
         }
         break;

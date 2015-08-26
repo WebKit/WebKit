@@ -1,3 +1,20 @@
+2015-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Simplify menu handling code in WinLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=148461
+
+        Reviewed by Zalan Bujtas.
+
+        Revise 'ToggleMenuItem' to return a boolean value indicating if
+        it handled the message. Revise WndProc to use this to decide if it
+        should pass the message on to the default handler, rather than
+        duplicating the logic in both places.
+        
+        * WinLauncher/Common.cpp:
+        (ToggleMenuItem): Return true if the menu item message was handled.
+        (WndProc): If 'ToggleMenuItem' did not handle the message, pass
+        the message tothe default handler.
+
 2015-08-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove unused code after r188948
