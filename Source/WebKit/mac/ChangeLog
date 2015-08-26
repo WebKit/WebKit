@@ -1,3 +1,18 @@
+2015-08-26  Tim Horton  <timothy_horton@apple.com>
+
+        Layout Test platform/mac/fast/events/content-inset-hit-testing-in-frame.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=148409
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView setContentInsets:]):
+        Explicitly force our NSScrollView to lay out after updating
+        content insets. We depend on this happening synchronously (specifically,
+        we need our frame/bounds change callbacks to fire), because the layout
+        which will happen subsequently needs up-to-date information in order to
+        correctly a) enable scrollbars and then b) update the scroll position.
+
 2015-08-23  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] REGRESSION (r182356): Provisional URL is incorrect in didReceiveServerRedirectForProvisionalLoadForFrame when Content Filtering is enabled
