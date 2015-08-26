@@ -27,13 +27,13 @@
 #include "WorkQueue.h"
 
 #include <mutex>
-#include <wtf/BinarySemaphore.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Ref.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 

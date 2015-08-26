@@ -1,5 +1,11 @@
 2015-08-26  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * wtf/WorkQueue.cpp:
+
+2015-08-26  Anders Carlsson  <andersca@apple.com>
+
         Add and implement WorkQueue::concurrentApply
         https://bugs.webkit.org/show_bug.cgi?id=148488
 
