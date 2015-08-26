@@ -1,3 +1,13 @@
+2015-08-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
+        Fix the crashes in GTK+'s WebKitTestRunner by setting the process pool
+        on the API::PageConfiguration object in webkitWebViewBaseCreate().
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate):
+
 2015-08-25  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.

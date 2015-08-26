@@ -1048,6 +1048,7 @@ WebKitWebViewBase* webkitWebViewBaseCreate(WebProcessPool* context, WebPreferenc
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, nullptr));
 
     auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setProcessPool(context);
     pageConfiguration->setPreferences(preferences);
     pageConfiguration->setPageGroup(pageGroup);
     pageConfiguration->setRelatedPage(relatedPage);
