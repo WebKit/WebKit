@@ -1642,24 +1642,6 @@ def _check_parameter_name_against_text(parameter, text, error):
         return False
     return True
 
-
-def check_function_definition_and_pass_ptr(type_text, row, error):
-    """Check that function definitions for use Pass*Ptr instead of *Ptr.
-
-    Args:
-       type_text: A string containing the type.
-       row: The row number of the type.
-       error: The function to call with any errors found.
-    """
-    match_ref_ptr = '(?=\W|^)RefPtr(?=\W)'
-    bad_type_usage = search(match_ref_ptr, type_text)
-    if not bad_type_usage or type_text.endswith('&') or type_text.endswith('*'):
-        return
-    type_name = bad_type_usage.group(0)
-    error(row, 'readability/pass_ptr', 5,
-          'The parameter type should use Pass%s instead of %s.' % (type_name, type_name))
-
-
 def check_function_definition(filename, file_extension, clean_lines, line_number, function_state, error):
     """Check that function definitions for style issues.
 
@@ -1678,8 +1660,6 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
 
     parameter_list = function_state.parameter_list()
     for parameter in parameter_list:
-        check_function_definition_and_pass_ptr(parameter.type, parameter.row, error)
-
         # Do checks specific to function declarations and parameter names.
         if not function_state.is_declaration or not parameter.name:
             continue
@@ -1693,32 +1673,6 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
         # Check the parameter name against the type.
         if not _check_parameter_name_against_text(parameter, parameter.type, error):
             continue  # Since an error was noted for this name, move to the next parameter.
-
-
-def check_pass_ptr_usage(clean_lines, line_number, function_state, error):
-    """Check for proper usage of Pass*Ptr.
-
-    Currently this is limited to detecting declarations of Pass*Ptr
-    variables inside of functions.
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      function_state: Current function name and lines in body so far.
-      error: The function to call with any errors found.
-    """
-    if not function_state.in_a_function:
-        return
-
-    lines = clean_lines.lines
-    line = lines[line_number]
-    if line_number > function_state.body_start_position.row:
-        matched_pass_ptr = match(r'^\s*Pass([A-Z][A-Za-z]*)Ptr<', line)
-        if matched_pass_ptr:
-            type_name = 'Pass%sPtr' % matched_pass_ptr.group(1)
-            error(line_number, 'readability/pass_ptr', 5,
-                  'Local variables should never be %s (see '
-                  'http://webkit.org/coding/RefPtr.html).' % type_name)
 
 
 def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
@@ -3752,7 +3706,6 @@ def process_line(filename, file_extension,
     if asm_state.is_in_asm():  # Ignore further checks because asm blocks formatted differently.
         return
     check_function_definition(filename, file_extension, clean_lines, line, function_state, error)
-    check_pass_ptr_usage(clean_lines, line, function_state, error)
     check_for_leaky_patterns(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, enum_state, error)
@@ -3864,7 +3817,6 @@ class CppChecker(object):
         'readability/naming',
         'readability/naming/underscores',
         'readability/null',
-        'readability/pass_ptr',
         'readability/streams',
         'readability/todo',
         'readability/utf8',

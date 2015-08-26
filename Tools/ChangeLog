@@ -1,3 +1,20 @@
+2015-08-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove PassRefPtr style check rule
+        https://bugs.webkit.org/show_bug.cgi?id=148432
+
+        Reviewed by Andreas Kling.
+
+        PassRefPtr is being removed. Thus style rule needs to be removed as well.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_check_parameter_name_against_text): Deleted.
+        (check_function_definition_and_pass_ptr): Deleted.
+        (check_function_definition): Deleted.
+        (check_pass_ptr_usage): Deleted.
+        (process_line): Deleted.
+        (CppChecker): Deleted.
+
 2015-08-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Expose "Inverted Colors" option in WinLauncher
