@@ -1,4 +1,14 @@
 =================
+WebKitGTK+ 2.9.91
+=================
+
+What's new in WebKitGTK+ 2.9.91?
+
+  - Fix performance regression introduced in previous release when scaling images.
+  - Fix runtime critical warning when there are missing media plugins.
+  - Fix the build on systems with GTK+ compiled with an old version of wayland.
+
+=================
 WebKitGTK+ 2.9.90
 =================
 
