@@ -238,10 +238,10 @@ void FEMorphology::platformApplySoftware()
     PaintingData paintingData;
     paintingData.srcPixelArray = srcPixelArray.get();
     paintingData.dstPixelArray = dstPixelArray;
-    paintingData.width = effectDrawingRect.width();
-    paintingData.height = effectDrawingRect.height();
-    paintingData.radiusX = radiusX;
-    paintingData.radiusY = radiusY;
+    paintingData.width = ceilf(effectDrawingRect.width() * filter.filterScale());
+    paintingData.height = ceilf(effectDrawingRect.height() * filter.filterScale());
+    paintingData.radiusX = ceilf(radiusX * filter.filterScale());
+    paintingData.radiusY = ceilf(radiusY * filter.filterScale());
 
     platformApply(&paintingData);
 }
