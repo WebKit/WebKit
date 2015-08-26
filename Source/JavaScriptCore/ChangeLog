@@ -1,3 +1,33 @@
+2015-08-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r188311.
+
+    2015-08-11  Alexey Proskuryakov  <ap@apple.com>
+
+            Make ASan build not depend on asan.xcconfig
+            https://bugs.webkit.org/show_bug.cgi?id=147840
+            rdar://problem/21093702
+
+            Reviewed by Daniel Bates.
+
+            * dfg/DFGOSREntry.cpp:
+            (JSC::DFG::OSREntryData::dump):
+            (JSC::DFG::prepareOSREntry):
+            * ftl/FTLOSREntry.cpp:
+            (JSC::FTL::prepareOSREntry):
+            * heap/ConservativeRoots.cpp:
+            (JSC::ConservativeRoots::genericAddPointer):
+            (JSC::ConservativeRoots::genericAddSpan):
+            * heap/MachineStackMarker.cpp:
+            (JSC::MachineThreads::removeThreadIfFound):
+            (JSC::MachineThreads::gatherFromCurrentThread):
+            (JSC::MachineThreads::Thread::captureStack):
+            (JSC::copyMemory):
+            * interpreter/Register.h:
+            (JSC::Register::operator=):
+            (JSC::Register::asanUnsafeJSValue):
+            (JSC::Register::jsValue):
+
 2015-08-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r188067.

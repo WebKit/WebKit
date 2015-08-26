@@ -92,6 +92,7 @@ inline void ConservativeRoots::genericAddPointer(void* p, TinyBloomFilter filter
 }
 
 template<typename MarkHook>
+SUPPRESS_ASAN
 void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHook)
 {
     if (begin > end) {
