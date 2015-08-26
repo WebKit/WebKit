@@ -61,8 +61,8 @@ private:
 
     CURLM* getMultiHandle() const { return m_curlMultiHandle; }
 
-    bool runThread() const { return m_runThread; }
-    void setRunThread(bool runThread) { m_runThread = runThread; }
+    bool runThread() const { LockHolder locker(m_mutex); return m_runThread; }
+    void setRunThread(bool runThread) { LockHolder locker(m_mutex); m_runThread = runThread; }
 
     bool addToCurl(CURL* curlHandle);
     bool removeFromCurl(CURL* curlHandle);

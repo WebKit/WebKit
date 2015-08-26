@@ -60,9 +60,11 @@ CurlDownloadManager::~CurlDownloadManager()
 
 bool CurlDownloadManager::add(CURL* curlHandle)
 {
-    LockHolder locker(m_mutex);
+    {
+        LockHolder locker(m_mutex);
+        m_pendingHandleList.append(curlHandle);
+    }
 
-    m_pendingHandleList.append(curlHandle);
     startThreadIfNeeded();
 
     return true;
@@ -91,17 +93,17 @@ int CurlDownloadManager::getPendingDownloadCount() const
 
 void CurlDownloadManager::startThreadIfNeeded()
 {
-    if (!m_runThread) {
+    if (!runThread()) {
         if (m_threadId)
             waitForThreadCompletion(m_threadId);
-        m_runThread = true;
+        setRunThread(true);
         m_threadId = createThread(downloadThread, this, "downloadThread");
     }
 }
 
 void CurlDownloadManager::stopThread()
 {
-    m_runThread = false;
+    setRunThread(false);
 
     if (m_threadId) {
         waitForThreadCompletion(m_threadId);
@@ -111,8 +113,6 @@ void CurlDownloadManager::stopThread()
 
 void CurlDownloadManager::stopThreadIfIdle()
 {
-    LockHolder locker(m_mutex);
-
     if (!getActiveDownloadCount() && !getPendingDownloadCount())
         setRunThread(false);
 }
@@ -245,13 +245,15 @@ CurlDownload::CurlDownload()
 
 CurlDownload::~CurlDownload()
 {
-    LockHolder locker(m_mutex);
+    {
+        LockHolder locker(m_mutex);
 
-    if (m_url)
-        fastFree(m_url);
+        if (m_url)
+            fastFree(m_url);
 
-    if (m_customHeaders)
-        curl_slist_free_all(m_customHeaders);
+        if (m_customHeaders)
+            curl_slist_free_all(m_customHeaders);
+    }
 
     closeFile();
     moveFileToDestination();
@@ -345,6 +347,8 @@ void CurlDownload::closeFile()
 
 void CurlDownload::moveFileToDestination()
 {
+    LockHolder locker(m_mutex);
+
     if (m_destination.isEmpty())
         return;
 
@@ -464,9 +468,9 @@ void CurlDownload::didFinish()
 
 void CurlDownload::didFail()
 {
-    LockHolder locker(m_mutex);
-
     closeFile();
+
+    LockHolder locker(m_mutex);
 
     if (m_deletesFileUponFailure)
         deleteFile(m_tempPath);
