@@ -21,7 +21,7 @@ set(MiniBrowser_SOURCES
     WinMain.cpp
     stdafx.cpp
 
-    MiniBrowser.vcxproj/MiniBrowserLib.rc
+    ../MiniBrowser.vcxproj/MiniBrowserLib.rc
 )
 
 set(MiniBrowser_LIBRARIES
@@ -58,7 +58,7 @@ target_link_libraries(MiniBrowserLib ${MiniBrowser_LIBRARIES})
 set_target_properties(MiniBrowserLib PROPERTIES FOLDER "Tools")
 set_target_properties(MiniBrowserLib PROPERTIES OUTPUT_NAME "MiniBrowser")
 
-add_executable(MiniBrowser WIN32 ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp MiniBrowser.vcxproj/MiniBrowser.rc)
+add_executable(MiniBrowser WIN32 ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp ../MiniBrowser.vcxproj/MiniBrowser.rc)
 target_link_libraries(MiniBrowser shlwapi)
 set_target_properties(MiniBrowser PROPERTIES FOLDER "Tools")
 set_target_properties(MiniBrowser PROPERTIES OUTPUT_NAME "MiniBrowser")

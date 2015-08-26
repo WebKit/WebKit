@@ -1,3 +1,10 @@
+2015-08-26  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r188982
+
+        * MiniBrowser/win/CMakeLists.txt:
+        Find .rc files in correct directory.
+
 2015-08-26  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Bump cairo version to 1.14.2
