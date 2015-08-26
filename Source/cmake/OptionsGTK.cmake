@@ -112,27 +112,7 @@ else ()
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEMORY_SAMPLER PUBLIC OFF)
 endif ()
 
-if (OPENGL_FOUND)
-    if (GLX_FOUND)
-        list(APPEND CAIROGL_COMPONENTS cairo-glx)
-    endif ()
-    if (EGL_FOUND)
-        list(APPEND CAIROGL_COMPONENTS cairo-egl)
-    endif ()
-endif ()
-find_package(CairoGL 1.10.2 COMPONENTS ${CAIROGL_COMPONENTS})
-
-# Normally we do not set the value of options automatically. However, CairoGL is special. Currently
-# most major distros compile Cario with --enable-gl, but Debian and derivitives are a major
-# exception. You very probably want accelerated 2D canvas if Cario has been compiled with CarioGL,
-# and very probably do not want to recompile Cario otherwise. So we expect some major distros will
-# enable this feature, and others will not, and that is just fine for the time being. Once Debian
-# enables CairoGL, then it will be time to force this ON by default. Note that if GLX is installed,
-# EGL is not, and ENABLE_X11_TARGET is OFF, this guess is wrong and the user must override it. We
-# can't check ENABLE_X11_TARGET at this point because we don't know whether it's enabled until
-# WEBKIT_OPTION_END has been called, and at that point it's too late to change default values.
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC CAIROGL_FOUND)
-
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CREDENTIAL_STORAGE PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DRAG_SUPPORT PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GEOLOCATION PUBLIC ON)
@@ -240,6 +220,20 @@ if (ENABLE_GAMEPAD_DEPRECATED OR ENABLE_GEOLOCATION)
     list(APPEND glib_components gio-unix)
 endif ()
 find_package(GLIB 2.36 REQUIRED COMPONENTS ${glib_components})
+
+if (ENABLE_ACCELERATED_2D_CANVAS)
+    if (GLX_FOUND)
+        list(APPEND CAIROGL_COMPONENTS cairo-glx)
+    endif ()
+    if (EGL_FOUND)
+        list(APPEND CAIROGL_COMPONENTS cairo-egl)
+    endif ()
+
+    find_package(CairoGL 1.10.2 COMPONENTS ${CAIROGL_COMPONENTS})
+    if (NOT CAIROGL_FOUND)
+        message(FATAL_ERROR "CairoGL is needed for ENABLE_ACCELERATED_2D_CANVAS")
+    endif ()
+endif ()
 
 if (ENABLE_CREDENTIAL_STORAGE)
     find_package(Libsecret)

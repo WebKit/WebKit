@@ -1,3 +1,22 @@
+2015-08-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Disable ACCELERATED_2D_CANVAS by default
+        https://bugs.webkit.org/show_bug.cgi?id=148473
+
+        Reviewed by Martin Robinson.
+
+        Currently ACCELERATED_2D_CANVAS is enabled by default on most systems (which have CairoGL)
+        but not on Debian (which does not). We've known this was problematic for a while, since it
+        means we have two different sets of distro-dependent bugs, but never decided whether that
+        outweighed the benefits of CarioGL or not. I'm making the call now: it's more important to
+        have the same bugs everywhere. We can turn this on again for other distros when we're ready
+        to turn it on for Debian.
+
+        Also, properly fail the build if ENABLE_ACCELERATED_2D_CANVAS is enabled but CairoGL is not
+        available.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-08-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r188919.
