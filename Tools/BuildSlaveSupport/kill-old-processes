@@ -85,6 +85,7 @@ def main():
         "WebKitTestRunner",
         "WebProcess",
         "xcodebuild",
+        "Simulator"  # FIXME: Consider moving iOS-specific tasks to their own list.
     ]
 
     taskToKillUnix = [

@@ -1,3 +1,19 @@
+2015-08-25  Aakash Jain  <aakash_jain@apple.com>
+
+        iOS Simulator layout-tests fail to start while cleaning a directory structure if simulator is already running
+        https://bugs.webkit.org/show_bug.cgi?id=148197
+        rdar://problem/22334382
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/kill-old-processes: Add Simulator to the list of processes to kill (for iOS builders).
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort): Converted bundle id com.apple.iphonesimulator to a variable SIMULATOR_BUNDLE_ID.
+        (IOSSimulatorPort._quitIOSSimulator): Common function to quit iOS Simulator.
+        (IOSSimulatorPort.clean_up_test_run): Quit the simulator during the cleanup.
+        (IOSSimulatorPort.check_sys_deps): No need to quit the simulator here as its now being quit in reset_preferences().
+        (IOSSimulatorPort.reset_preferences): Quit the simulator before trying to delete associated data directory.
+
 2015-08-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove PassRefPtr style check rule
