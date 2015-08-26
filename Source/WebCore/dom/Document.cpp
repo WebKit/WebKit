@@ -2251,6 +2251,8 @@ void Document::prepareForDestruction()
         page()->pointerLockController().documentDetached(this);
 #endif
 
+    InspectorInstrumentation::documentDetached(*this);
+
     stopActiveDOMObjects();
     m_eventQueue.close();
 #if ENABLE(FULLSCREEN_API)

@@ -43,10 +43,33 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         this._colorFormatSetting = new WebInspector.Setting("default-color-format", WebInspector.Color.Format.Original);
 
-        this._fetchedInitialStyleSheets = false;
         this._styleSheetIdentifierMap = new Map;
         this._styleSheetFrameURLMap = new Map;
         this._nodeStylesMap = {};
+
+        // COMPATIBILITY (iOS 9): Legacy backends did not send stylesheet
+        // added/removed events and must be fetched manually.
+        this._fetchedInitialStyleSheets = window.CSSAgent && window.CSSAgent.hasEvent("styleSheetAdded");
+    }
+
+    // Static
+
+    static protocolStyleSheetOriginToEnum(origin)
+    {
+        // FIXME: Switch from CSSRule.Type to CSSStyleSheet.Type everywhere.
+        switch (origin) {
+        case CSSAgent.StyleSheetOrigin.Regular:
+            return WebInspector.CSSStyleSheet.Type.Author;
+        case CSSAgent.StyleSheetOrigin.User:
+            return WebInspector.CSSStyleSheet.Type.User;
+        case CSSAgent.StyleSheetOrigin.UserAgent:
+            return WebInspector.CSSStyleSheet.Type.UserAgent;
+        case CSSAgent.StyleSheetOrigin.Inspector:
+            return WebInspector.CSSStyleSheet.Type.Inspector;
+        default:
+            console.assert(false, "Unknown StyleSheetOrigin", origin);
+            return CSSAgent.StyleSheetOrigin.Regular;
+        }
     }
 
     // Public
@@ -152,6 +175,29 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         this._updateResourceContent(styleSheet);
     }
 
+    styleSheetAdded(styleSheetInfo)
+    {
+        console.assert(!this._styleSheetIdentifierMap.has(styleSheetInfo.styleSheetId), "Attempted to add a CSSStyleSheet but identifier was already in use");
+        let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
+        let parentFrame = WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
+        let origin = WebInspector.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
+        styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
+
+        this.dispatchEventToListeners(WebInspector.CSSStyleManager.Event.StyleSheetAdded, {styleSheet});
+    }
+
+    styleSheetRemoved(styleSheetIdentifier)
+    {
+        let styleSheet = this._styleSheetIdentifierMap.get(styleSheetIdentifier);
+        console.assert(styleSheet, "Attempted to remove a CSSStyleSheet that was not tracked");
+        if (!styleSheet)
+            return;
+
+        this._styleSheetIdentifierMap.delete(styleSheetIdentifier);
+
+        this.dispatchEventToListeners(WebInspector.CSSStyleManager.Event.StyleSheetRemoved, {styleSheet});
+    }
+
     // Private
 
     _nodePseudoClassesDidChange(event)
@@ -187,7 +233,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         // Clear our maps when the main frame navigates.
 
-        this._fetchedInitialStyleSheets = false;
+        this._fetchedInitialStyleSheets = window.CSSAgent && window.CSSAgent.hasEvent("styleSheetAdded");
         this._styleSheetIdentifierMap.clear();
         this._styleSheetFrameURLMap.clear();
         this._nodeStylesMap = {};
@@ -267,6 +313,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
             for (let styleSheetInfo of styleSheets) {
                 let parentFrame = WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
+                let origin = WebInspector.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
                 // COMPATIBILITY (iOS 9): The info did not have 'isInline', 'startLine', and 'startColumn', so make false and 0 in these cases.
                 let isInline = styleSheetInfo.isInline || false;
@@ -274,7 +321,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 let startColumn = styleSheetInfo.startColumn || 0;
 
                 let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, isInline, startLine, startColumn);
+                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, isInline, startLine, startColumn);
 
                 let key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
                 this._styleSheetFrameURLMap.set(key, styleSheet);
@@ -372,6 +419,11 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             clearTimeout(styleSheet.__pendingChangeTimeout);
         styleSheet.__pendingChangeTimeout = setTimeout(applyStyleSheetChanges.bind(this), 500);
     }
+};
+
+WebInspector.CSSStyleManager.Event = {
+    StyleSheetAdded: "css-style-manager-style-sheet-added",
+    StyleSheetRemoved: "css-style-manager-style-sheet-removed",
 };
 
 WebInspector.CSSStyleManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];

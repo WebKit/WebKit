@@ -1,3 +1,13 @@
+2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement tracking of active stylesheets in the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=105828
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/CSS.json:
+        Add new events for when a StyleSheet is added or removed.
+
 2015-08-26  Chris Dumez  <cdumez@apple.com>
 
         Distinguish Web IDL callback interfaces from Web IDL callback functions

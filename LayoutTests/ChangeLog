@@ -1,3 +1,23 @@
+2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Implement tracking of active stylesheets in the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=105828
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/css/resources/import-level-1.css: Added.
+        * inspector/css/resources/import-level-2.css: Added.
+        * inspector/css/resources/stylesheet-events-subframe.html: Added.
+        * inspector/css/stylesheet-events-basic-expected.txt: Added.
+        * inspector/css/stylesheet-events-basic.html: Added.
+        * inspector/css/stylesheet-events-imports-expected.txt: Added.
+        * inspector/css/stylesheet-events-imports.html: Added.
+        * inspector/css/stylesheet-events-inspector-stylesheet-expected.txt: Added.
+        * inspector/css/stylesheet-events-inspector-stylesheet.html: Added.
+        * inspector/css/stylesheet-events-multiple-documents-expected.txt: Added.
+        * inspector/css/stylesheet-events-multiple-documents.html: Added.
+        Tests for different ways that StyleSheets can be added / removed.
+
 2015-08-26  Andy Estes  <aestes@apple.com>
 
         Crash when following a Google search link to Twitter with Limit Adult Content enabled

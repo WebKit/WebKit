@@ -1,5 +1,40 @@
 2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Implement tracking of active stylesheets in the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=105828
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WebInspector.CSSStyleSheet):
+        (WebInspector.CSSStyleSheet.prototype.get origin):
+        (WebInspector.CSSStyleSheet.prototype.updateInfo):
+        Add a new origin attribute that has been sent from the backend for a while.
+
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager.prototype.styleSheetAdded):
+        (WebInspector.CSSStyleManager.prototype.styleSheetRemoved):
+        Handle the new events by managing the new CSSStyleSheets.
+        
+        (WebInspector.CSSStyleManager):
+        (WebInspector.CSSStyleManager.prototype._mainResourceDidChange):
+        Reset the legacy fetching flag. Fetching is only needed for legacy backends.
+
+        (WebInspector.CSSStyleManager.prototype._fetchInfoForAllStyleSheets):
+        Include the new origin property in the legacy updateInfo path.
+
+        * UserInterface/Protocol/CSSObserver.js:
+        (WebInspector.CSSObserver.prototype.styleSheetAdded):
+        (WebInspector.CSSObserver.prototype.styleSheetRemoved):
+        Forward to the manager.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        Refresh the sidebar when stylesheets are added / removed, as that
+        may affect the style of the select element.
+
+2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Drop iOS 6 Legacy Remote Inspector Support
         https://bugs.webkit.org/show_bug.cgi?id=148456
 

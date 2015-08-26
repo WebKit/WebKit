@@ -184,6 +184,12 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents& i
         domDebuggerAgent->didInvalidateStyleAttr(node);
 }
 
+void InspectorInstrumentation::documentDetachedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
+{
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
+        cssAgent->documentDetached(document);
+}
+
 void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& instrumentingAgents, DOMWindow* window)
 {
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -194,6 +200,12 @@ void InspectorInstrumentation::mediaQueryResultChangedImpl(InstrumentingAgents& 
 {
     if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
         cssAgent->mediaQueryResultChanged();
+}
+
+void InspectorInstrumentation::activeStyleSheetsUpdatedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
+{
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
+        cssAgent->activeStyleSheetsUpdated(document);
 }
 
 void InspectorInstrumentation::didPushShadowRootImpl(InstrumentingAgents& instrumentingAgents, Element& host, ShadowRoot& root)
