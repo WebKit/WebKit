@@ -1,3 +1,43 @@
+2015-08-19  Chris Dumez  <cdumez@apple.com>
+
+        WebKit may keep outdated entry in the disk cache after a reload
+        https://bugs.webkit.org/show_bug.cgi?id=148137
+        <rdar://problem/22299547>
+
+        Reviewed by Antti Koivisto.
+
+        WebKit would keep outdated entry in the disk cache after a reload
+        in the following scenario:
+        1. We have an entry in the cache
+        2. The user reloads
+        3. We get a fresh resource from the network but this one is not cacheable
+
+        In this case, we now remove the stale entry from the cache to make sure
+        it is not served to following requests (e.g. history navigations).
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        Remove the entry from the cache if its redirection is no longer
+        cacheable.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        If we make the decision not to store the response, then remove the
+        entry in the cache for this resource if it exists.
+
+        (WebKit::NetworkCache::Cache::remove):
+        * NetworkProcess/cache/NetworkCache.h:
+        Add new remove() overload taking a ResourceRequest argument so the
+        call site does not have the compute the key.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::removeFromPendingWriteOperations):
+        (WebKit::NetworkCache::Storage::remove):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        When we're asked to remove an entry with a given key, also remove
+        it from the pending write operations. This pre-existing bug would
+        prevent the new layout test from passing.
+
 2015-08-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] GMainLoopSource should receive the std::function<> objects through rvalue references
