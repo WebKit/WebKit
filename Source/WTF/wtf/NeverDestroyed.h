@@ -94,6 +94,8 @@ public:
     operator T&() { return *asPtr(); }
     T& get() { return *asPtr(); }
 
+    T* operator->() { return asPtr(); }
+
 private:
     typedef typename std::remove_const<T>::type* PointerType;
 
