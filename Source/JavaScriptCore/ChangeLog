@@ -1,3 +1,23 @@
+2015-08-26  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Remove the unused *Executable::unlinkCalls() and CodeBlock::unlinkCalls()
+        https://bugs.webkit.org/show_bug.cgi?id=148469
+
+        Reviewed by Geoffrey Garen.
+
+        We use CodeBlock::unlinkIncomingCalls() to unlink calls.
+        (...)Executable::unlinkCalls() and CodeBlock::unlinkCalls() are no longer used.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::unlinkCalls): Deleted.
+        * bytecode/CodeBlock.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::unlinkCalls): Deleted.
+        (JSC::ProgramExecutable::unlinkCalls): Deleted.
+        (JSC::FunctionExecutable::unlinkCalls): Deleted.
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::unlinkCalls): Deleted.
+
 2015-08-25  Brian Burg  <bburg@apple.com>
 
         Web Inspector: no need to allocate protocolErrors array for every dispatched backend command

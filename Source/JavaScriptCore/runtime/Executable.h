@@ -381,8 +381,6 @@ public:
     
     bool* addressOfDidTryToEnterInLoop() { return &m_didTryToEnterInLoop; }
 
-    void unlinkCalls();
-        
     CodeFeatures features() const { return m_features; }
         
     DECLARE_INFO;
@@ -470,8 +468,6 @@ public:
         
     DECLARE_INFO;
 
-    void unlinkCalls();
-
     void clearCode();
 
     ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, false); }
@@ -525,8 +521,6 @@ public:
     }
         
     DECLARE_INFO;
-        
-    void unlinkCalls();
 
     void clearCode();
 
@@ -656,8 +650,6 @@ public:
     }
 
     DECLARE_INFO;
-        
-    void unlinkCalls();
 
     void clearCode();
     
@@ -691,20 +683,6 @@ inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
         return jsCast<FunctionExecutable*>(executable)->clearCode();
     default:
         return jsCast<NativeExecutable*>(executable)->clearCode();
-    }
-}
-
-inline void ScriptExecutable::unlinkCalls()
-{
-    switch (type()) {
-    case EvalExecutableType:
-        return jsCast<EvalExecutable*>(this)->unlinkCalls();
-    case ProgramExecutableType:
-        return jsCast<ProgramExecutable*>(this)->unlinkCalls();
-    case FunctionExecutableType:
-        return jsCast<FunctionExecutable*>(this)->unlinkCalls();
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

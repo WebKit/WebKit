@@ -230,8 +230,6 @@ public:
     void unlinkIncomingCalls();
 
 #if ENABLE(JIT)
-    void unlinkCalls();
-        
     void linkIncomingCall(ExecState* callerFrame, CallLinkInfo*);
     void linkIncomingPolymorphicCall(ExecState* callerFrame, PolymorphicCallNode*);
 #endif // ENABLE(JIT)

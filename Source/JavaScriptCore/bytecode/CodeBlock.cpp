@@ -2973,27 +2973,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 }
 
 #if ENABLE(JIT)
-void CodeBlock::unlinkCalls()
-{
-    if (!!m_alternative)
-        m_alternative->unlinkCalls();
-    for (size_t i = 0; i < m_llintCallLinkInfos.size(); ++i) {
-        if (m_llintCallLinkInfos[i].isLinked())
-            m_llintCallLinkInfos[i].unlink();
-    }
-    if (m_callLinkInfos.isEmpty())
-        return;
-    if (!m_vm->canUseJIT())
-        return;
-    RepatchBuffer repatchBuffer(this);
-    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter) {
-        CallLinkInfo& info = **iter;
-        if (!info.isLinked())
-            continue;
-        info.unlink(repatchBuffer);
-    }
-}
-
 void CodeBlock::linkIncomingCall(ExecState* callerFrame, CallLinkInfo* incoming)
 {
     noticeIncomingCall(callerFrame);

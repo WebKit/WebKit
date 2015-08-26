@@ -442,16 +442,6 @@ void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_unlinkedEvalCodeBlock);
 }
 
-void EvalExecutable::unlinkCalls()
-{
-#if ENABLE(JIT)
-    if (!m_jitCodeForCall)
-        return;
-    RELEASE_ASSERT(m_evalCodeBlock);
-    m_evalCodeBlock->unlinkCalls();
-#endif
-}
-
 void EvalExecutable::clearCode()
 {
     m_evalCodeBlock = nullptr;
@@ -471,16 +461,6 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
         return 0;
     ASSERT(error.isValid());
     return error.toErrorObject(lexicalGlobalObject, m_source);
-}
-
-void ProgramExecutable::unlinkCalls()
-{
-#if ENABLE(JIT)
-    if (!m_jitCodeForCall)
-        return;
-    RELEASE_ASSERT(m_programCodeBlock);
-    m_programCodeBlock->unlinkCalls();
-#endif
 }
 
 JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callFrame, JSScope* scope)
@@ -567,20 +547,6 @@ void FunctionExecutable::clearCode()
     m_codeBlockForCall = nullptr;
     m_codeBlockForConstruct = nullptr;
     Base::clearCode();
-}
-
-void FunctionExecutable::unlinkCalls()
-{
-#if ENABLE(JIT)
-    if (!!m_jitCodeForCall) {
-        RELEASE_ASSERT(m_codeBlockForCall);
-        m_codeBlockForCall->unlinkCalls();
-    }
-    if (!!m_jitCodeForConstruct) {
-        RELEASE_ASSERT(m_codeBlockForConstruct);
-        m_codeBlockForConstruct->unlinkCalls();
-    }
-#endif
 }
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
