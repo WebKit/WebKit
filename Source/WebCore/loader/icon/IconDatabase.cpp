@@ -1367,8 +1367,10 @@ void IconDatabase::syncThreadMainLoop()
         }
         
         // Then, if the thread should be quitting, quit now!
-        if (m_threadTerminationRequested)
-            break;
+        if (m_threadTerminationRequested) {
+            cleanupSyncThread();
+            return;
+        }
 
         {
             LockHolder locker(m_urlAndIconLock);
