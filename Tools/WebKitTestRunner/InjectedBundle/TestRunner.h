@@ -283,6 +283,9 @@ public:
     JSValueRef numberOfDFGCompiles(JSValueRef theFunction);
     JSValueRef neverInlineFunction(JSValueRef theFunction);
 
+    bool shouldDecideNavigationPolicyAfterDelay() const { return m_shouldDecideNavigationPolicyAfterDelay; }
+    void setShouldDecideNavigationPolicyAfterDelay(bool);
+
 private:
     TestRunner();
 
@@ -332,6 +335,8 @@ private:
 
     double m_databaseDefaultQuota;
     double m_databaseMaxQuota;
+
+    bool m_shouldDecideNavigationPolicyAfterDelay { false };
 
     bool m_userStyleSheetEnabled;
     WKRetainPtr<WKStringRef> m_userStyleSheetLocation;

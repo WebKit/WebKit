@@ -852,4 +852,12 @@ JSValueRef TestRunner::neverInlineFunction(JSValueRef theFunction)
     return JSC::setNeverInline(context, theFunction);
 }
 
+void TestRunner::setShouldDecideNavigationPolicyAfterDelay(bool value)
+{
+    m_shouldDecideNavigationPolicyAfterDelay = value;
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetShouldDecideNavigationPolicyAfterDelay"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
 } // namespace WTR

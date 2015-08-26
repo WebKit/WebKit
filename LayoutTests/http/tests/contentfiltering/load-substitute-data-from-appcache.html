@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script>
+if (window.internals) {
+    var settings = window.internals.mockContentFilterSettings;
+    settings.enabled = true;
+    settings.decisionPoint = settings.DECISION_POINT_AFTER_ADD_DATA;
+    settings.decision = settings.DECISION_ALLOW;
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
+
+window.addEventListener("message", function() {
+    frames[0].location = "/resources/redirect.php?url=/contentfiltering/resources/appcache.html";
+});
+</script>
+<body>
+<p>This is a regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=147651">webkit.org/b/147651</a>. The test passes if it does not crash.</p>
+<iframe src="/contentfiltering/resources/appcache.html"></iframe>
+</body>
+</html>

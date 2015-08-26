@@ -141,3 +141,6 @@ loader/navigation-policy [ Skip ]
 
 ### END OF (2) Failures without bug reports
 ########################################
+
+# This test is WebKit2-only
+http/tests/contentfiltering/load-substitute-data-from-appcache.html

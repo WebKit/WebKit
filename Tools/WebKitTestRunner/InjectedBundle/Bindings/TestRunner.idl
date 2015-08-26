@@ -75,6 +75,7 @@ interface TestRunner {
     void setCacheModel(int model);
     void setAsynchronousSpellCheckingEnabled(boolean value);
     void setPrinting();
+    void setShouldDecideNavigationPolicyAfterDelay(boolean value);
 
     // Special DOM functions.
     void clearBackForwardList();

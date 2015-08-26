@@ -628,6 +628,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldDecideNavigationPolicyAfterDelay")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setShouldDecideNavigationPolicyAfterDelay(WKBooleanGetValue(value));
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
