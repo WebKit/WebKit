@@ -1,3 +1,19 @@
+2015-08-26  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: REGRESSION(r188965): BackendDispatcher loses request ids when called re-entrantly
+        https://bugs.webkit.org/show_bug.cgi?id=148480
+
+        Reviewed by Joseph Pecoraro.
+
+        I added an assertion that m_currentRequestId is Nullopt when dispatch() is called, but this should
+        not hold if dispatching a backend command while debugger is paused. I will remove the assertion
+        and add proper scoping for all dispatch() branches.
+
+        No new tests, this wrong assert caused inspector/dom-debugger/node-removed.html to crash reliably.
+
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::dispatch): Cover each exit with an appropriate TemporaryChange scope.
+
 2015-08-26  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Remove the unused *Executable::unlinkCalls() and CodeBlock::unlinkCalls()

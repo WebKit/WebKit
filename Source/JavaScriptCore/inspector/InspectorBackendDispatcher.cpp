@@ -86,72 +86,81 @@ void BackendDispatcher::dispatch(const String& message)
 
     ASSERT(!m_protocolErrors.size());
 
-    RefPtr<InspectorValue> parsedMessage;
-    if (!InspectorValue::parseJSON(message, parsedMessage)) {
-        reportProtocolError(ParseError, ASCIILiteral("Message must be in JSON format"));
-        sendPendingErrors();
-        return;
-    }
-
-    RefPtr<InspectorObject> messageObject;
-    if (!parsedMessage->asObject(messageObject)) {
-        reportProtocolError(InvalidRequest, ASCIILiteral("Message must be a JSONified object"));
-        sendPendingErrors();
-        return;
-    }
-
-    RefPtr<InspectorValue> requestIdValue;
-    if (!messageObject->getValue(ASCIILiteral("id"), requestIdValue)) {
-        reportProtocolError(InvalidRequest, ASCIILiteral("'id' property was not found"));
-        sendPendingErrors();
-        return;
-    }
-
     long requestId = 0;
-    if (!requestIdValue->asInteger(requestId)) {
-        reportProtocolError(InvalidRequest, ASCIILiteral("The type of 'id' property must be integer"));
-        sendPendingErrors();
-        return;
+    RefPtr<InspectorObject> messageObject;
+
+    {
+        // In case this is a re-entrant call from a nested run loop, we don't want to lose
+        // the outer request's id just because the inner request is bogus.
+        TemporaryChange<Optional<long>> scopedRequestId(m_currentRequestId, Nullopt);
+
+        RefPtr<InspectorValue> parsedMessage;
+        if (!InspectorValue::parseJSON(message, parsedMessage)) {
+            reportProtocolError(ParseError, ASCIILiteral("Message must be in JSON format"));
+            sendPendingErrors();
+            return;
+        }
+
+        if (!parsedMessage->asObject(messageObject)) {
+            reportProtocolError(InvalidRequest, ASCIILiteral("Message must be a JSONified object"));
+            sendPendingErrors();
+            return;
+        }
+
+        RefPtr<InspectorValue> requestIdValue;
+        if (!messageObject->getValue(ASCIILiteral("id"), requestIdValue)) {
+            reportProtocolError(InvalidRequest, ASCIILiteral("'id' property was not found"));
+            sendPendingErrors();
+            return;
+        }
+
+        if (!requestIdValue->asInteger(requestId)) {
+            reportProtocolError(InvalidRequest, ASCIILiteral("The type of 'id' property must be integer"));
+            sendPendingErrors();
+            return;
+        }
     }
 
-    ASSERT(!m_currentRequestId);
-    TemporaryChange<Optional<long>> scopedRequestId(m_currentRequestId, requestId);
+    {
+        // We could be called re-entrantly from a nested run loop, so restore the previous id.
+        TemporaryChange<Optional<long>> scopedRequestId(m_currentRequestId, requestId);
 
-    RefPtr<InspectorValue> methodValue;
-    if (!messageObject->getValue(ASCIILiteral("method"), methodValue)) {
-        reportProtocolError(InvalidRequest, ASCIILiteral("'method' property wasn't found"));
-        sendPendingErrors();
-        return;
+        RefPtr<InspectorValue> methodValue;
+        if (!messageObject->getValue(ASCIILiteral("method"), methodValue)) {
+            reportProtocolError(InvalidRequest, ASCIILiteral("'method' property wasn't found"));
+            sendPendingErrors();
+            return;
+        }
+
+        String methodString;
+        if (!methodValue->asString(methodString)) {
+            reportProtocolError(InvalidRequest, ASCIILiteral("The type of 'method' property must be string"));
+            sendPendingErrors();
+            return;
+        }
+
+        Vector<String> domainAndMethod;
+        methodString.split('.', true, domainAndMethod);
+        if (domainAndMethod.size() != 2 || !domainAndMethod[0].length() || !domainAndMethod[1].length()) {
+            reportProtocolError(InvalidRequest, ASCIILiteral("The 'method' property was formatted incorrectly. It should be 'Domain.method'"));
+            sendPendingErrors();
+            return;
+        }
+
+        String domain = domainAndMethod[0];
+        SupplementalBackendDispatcher* domainDispatcher = m_dispatchers.get(domain);
+        if (!domainDispatcher) {
+            reportProtocolError(MethodNotFound, "'" + domain + "' domain was not found");
+            sendPendingErrors();
+            return;
+        }
+
+        String method = domainAndMethod[1];
+        domainDispatcher->dispatch(requestId, method, messageObject.releaseNonNull());
+
+        if (m_protocolErrors.size())
+            sendPendingErrors();
     }
-
-    String methodString;
-    if (!methodValue->asString(methodString)) {
-        reportProtocolError(InvalidRequest, ASCIILiteral("The type of 'method' property must be string"));
-        sendPendingErrors();
-        return;
-    }
-
-    Vector<String> domainAndMethod;
-    methodString.split('.', true, domainAndMethod);
-    if (domainAndMethod.size() != 2 || !domainAndMethod[0].length() || !domainAndMethod[1].length()) {
-        reportProtocolError(InvalidRequest, ASCIILiteral("The 'method' property was formatted incorrectly. It should be 'Domain.method'"));
-        sendPendingErrors();
-        return;
-    }
-
-    String domain = domainAndMethod[0];
-    SupplementalBackendDispatcher* domainDispatcher = m_dispatchers.get(domain);
-    if (!domainDispatcher) {
-        reportProtocolError(MethodNotFound, "'" + domain + "' domain was not found");
-        sendPendingErrors();
-        return;
-    }
-
-    String method = domainAndMethod[1];
-    domainDispatcher->dispatch(requestId, method, messageObject.releaseNonNull());
-
-    if (m_protocolErrors.size())
-        sendPendingErrors();
 }
 
 void BackendDispatcher::sendResponse(long requestId, RefPtr<InspectorObject>&& result)
