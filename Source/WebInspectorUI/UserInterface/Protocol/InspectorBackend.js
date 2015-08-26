@@ -135,9 +135,8 @@ InspectorBackendClass = class InspectorBackendClass
 
         let responseData = {command, callback};
 
-        // FIXME: <https://webkit.org/b/135467> use performance.now() where available.
         if (this.dumpInspectorTimeStats)
-            responseData.sendRequestTime = Date.now();
+            responseData.sendRequestTimestamp = timestamp();
 
         this._pendingResponses.set(sequenceId, responseData);
         this._sendMessageToBackend(messageObject);
@@ -157,9 +156,8 @@ InspectorBackendClass = class InspectorBackendClass
 
         let responseData = {command};
 
-        // FIXME: <https://webkit.org/b/135467> use performance.now() where available.
         if (this.dumpInspectorTimeStats)
-            responseData.sendRequestTime = Date.now();
+            responseData.sendRequestTimestamp = timestamp();
 
         let responsePromise = new Promise(function(resolve, reject) {
             responseData.promise = {resolve, reject};
@@ -195,9 +193,9 @@ InspectorBackendClass = class InspectorBackendClass
         let responseData = this._pendingResponses.take(sequenceId);
         let {command, callback, promise} = responseData;
 
-        var processingStartTime;
+        var processingStartTimestamp;
         if (this.dumpInspectorTimeStats)
-            processingStartTime = Date.now();
+            processingStartTimestamp = timestamp();
 
         if (typeof callback === "function")
             this._dispatchResponseToCallback(command, messageObject, callback);
@@ -206,12 +204,14 @@ InspectorBackendClass = class InspectorBackendClass
         else
             console.error("Received a command response without a corresponding callback or promise.", messageObject, command);
 
-        var processingDuration = Date.now() - processingStartTime;
+        let processingDuration = (timestamp() - processingStartTimestamp).toFixed(3);
         if (this.warnForLongMessageHandling && processingDuration > this.longMessageHandlingThreshold)
-            console.warn("InspectorBackend: took " + processingDuration + "ms to handle response for command: " + command.qualifiedName);
+            console.warn(`InspectorBackend: took ${processingDuration}ms to handle response for command: ${command.qualifiedName}`);
 
-        if (this.dumpInspectorTimeStats)
-            console.log("time-stats: Handling: " + processingDuration + "ms; RTT: " + (processingStartTime - responseData.sendRequestTime) + "ms; (command " + command.qualifiedName + ")");
+        if (this.dumpInspectorTimeStats) {
+            let roundTripDuration = (processingStartTimestamp - responseData.sendRequestTimestamp).toFixed(3);
+            console.log(`time-stats: Handling: ${processingDuration}ms; RTT: ${roundTripDuration}ms; (command ${command.qualifiedName})`);
+        }
 
         if (this._deferredScripts.length && !this._pendingResponses.size)
             this._flushPendingScripts();
@@ -271,9 +271,9 @@ InspectorBackendClass = class InspectorBackendClass
                 eventArguments.push(messageObject["params"][parameterNames[i]]);
         }
 
-        var processingStartTime;
+        var processingStartTimestamp;
         if (this.dumpInspectorTimeStats)
-            processingStartTime = Date.now();
+            processingStartTimestamp = timestamp();
 
         try {
             agent.dispatchEvent(eventName, eventArguments);
@@ -281,12 +281,12 @@ InspectorBackendClass = class InspectorBackendClass
             console.error("Uncaught exception in inspector page while handling event " + qualifiedName + ": ", e, e.stack);
         }
 
-        var processingDuration = Date.now() - processingStartTime;
+        let processingDuration = (timestamp() - processingStartTimestamp).toFixed(3);
         if (this.warnForLongMessageHandling && processingDuration > this.longMessageHandlingThreshold)
-            console.warn("InspectorBackend: took " + processingDuration + "ms to handle event: " + messageObject["method"]);
+            console.warn(`InspectorBackend: took ${processingDuration}ms to handle event: ${messageObject.method}`);
 
         if (this.dumpInspectorTimeStats)
-            console.log("time-stats: Handling: " + processingDuration + "ms (event " + messageObject["method"] + ")");
+            console.log(`time-stats: Handling: ${processingDuration}ms (event ${messageObject.method})`);
     }
 
     _reportProtocolError(messageObject)

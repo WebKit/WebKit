@@ -1,3 +1,23 @@
+2015-08-25  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: message dispatch metrics should use high-resolution timing data
+        https://bugs.webkit.org/show_bug.cgi?id=135467
+
+        Reviewed by Timothy Hatcher.
+
+        Use performance.now if it's available, otherwise fallback to Date.now().
+        Format timestamps with fixed decimal point, and sprinkle some ES6.
+
+        * UserInterface/Base/Utilities.js:
+        (timestamp): Added.
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackendClass.prototype._dispatchEvent):
+        * UserInterface/Protocol/MessageDispatcher.js:
+        (WebInspector.dispatchNextQueuedMessageFromBackend):
+        (WebInspector.dispatchMessageFromBackend): Be consistent about using `this`.
+
 2015-08-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Rendering Frames pie chart should use the needsLayout/updateLayout idiom
