@@ -1,3 +1,14 @@
+2015-08-26  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Build does not generate debug info.
+        https://bugs.webkit.org/show_bug.cgi?id=148431
+
+        Reviewed by Alex Christensen.
+
+        Generate debug info for Windows builds.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2015-08-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Disable ACCELERATED_2D_CANVAS by default
