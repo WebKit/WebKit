@@ -1,3 +1,14 @@
+2015-08-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        More test gardening of css3/line-break-language-sensitive.
+
+        Unreviewed.
+
+        * css3/line-break-language-sensitive/line-break-auto-hyphens-expected.html:
+        * css3/line-break-language-sensitive/line-break-auto-hyphens.html:
+        * css3/line-break-language-sensitive/line-break-auto-sound-marks-expected.html:
+        * css3/line-break-language-sensitive/line-break-auto-sound-marks.html:
+
 2015-08-25  Nan Wang  <n_wang@apple.com>
 
         AX: accessibility/mac/misspelled-attributed-string.html is flaky
