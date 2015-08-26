@@ -22,6 +22,7 @@
 #define IDM_DISABLE_STYLES              122
 #define IDM_DISABLE_JAVASCRIPT          123
 #define IDM_DISABLE_LOCAL_FILE_RESTRICTIONS 124
+#define IDM_INVERT_COLORS               125
 #define IDR_MAINFRAME                   128
 #define IDD_CACHES                      129
 #define IDM_HISTORY_BACKWARD            130

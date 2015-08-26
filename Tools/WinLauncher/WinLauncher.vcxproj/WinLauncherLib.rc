@@ -48,6 +48,7 @@ BEGIN
         MENUITEM "Actual Size",                 IDM_ACTUAL_SIZE
         MENUITEM "Zoom In\tCtrl++",             IDM_ZOOM_IN
         MENUITEM "Zoom Out\tCtrl+-",            IDM_ZOOM_OUT
+        MENUITEM "Invert Colors",               IDM_INVERT_COLORS
     END
     POPUP "&History"
     BEGIN

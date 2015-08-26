@@ -191,6 +191,7 @@ bool WinLauncher::setToDefaultPreferences()
     m_prefsPrivate->setFullScreenEnabled(TRUE);
     m_prefsPrivate->setShowDebugBorders(FALSE);
     m_prefsPrivate->setShowRepaintCounter(FALSE);
+    m_prefsPrivate->setShouldInvertColors(FALSE);
 
     m_standardPreferences->setLoadsImagesAutomatically(TRUE);
     m_prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);

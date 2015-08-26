@@ -1,3 +1,24 @@
+2015-08-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Expose "Inverted Colors" option in WinLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=148451
+
+        Reviewed by Tim Horton.
+
+        Add the ability to toggle the "Inverted Colors" preference
+        in WinLauncher.
+        
+        * WinLauncher/Common.cpp:
+        (ToggleMenuItem): Toggle the feature when the menu item
+        is selected.
+        (WndProc): Recognize the new menu option.
+        * WinLauncher/WinLauncher.cpp:
+        (WinLauncher::setToDefaultPreferences): Launch with "Invert
+        Colors" turned off.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.rc: Add menu
+        entry for "Invert Colors".
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibResource.h:
+
 2015-08-25  Nan Wang  <n_wang@apple.com>
 
         [Mac] accessibility/document-attributes.html fails

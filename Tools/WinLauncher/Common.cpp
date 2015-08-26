@@ -390,6 +390,9 @@ static void ToggleMenuItem(HWND hWnd, UINT menuID)
         gWinLauncher->privatePreferences()->setShowDebugBorders(newState);
         gWinLauncher->privatePreferences()->setShowRepaintCounter(newState);
         break;
+    case IDM_INVERT_COLORS:
+        gWinLauncher->privatePreferences()->setShouldInvertColors(newState);
+        break;
     case IDM_DISABLE_IMAGES:
         gWinLauncher->standardPreferences()->setLoadsImagesAutomatically(!newState);
         break;
@@ -488,6 +491,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDM_ACC_COMPOSITING:
         case IDM_WK_FULLSCREEN:
         case IDM_COMPOSITING_BORDERS:
+        case IDM_INVERT_COLORS:
         case IDM_DISABLE_IMAGES:
         case IDM_DISABLE_STYLES:
         case IDM_DISABLE_JAVASCRIPT:
