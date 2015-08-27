@@ -102,6 +102,20 @@
         "category": "html"
     },
     {
+        "name": "IndexedDB",
+        "status": {
+            "status": "Partial Support"
+        },
+        "url": "http://www.w3.org/TR/IndexedDB/",
+        "keywords": ["indexeddb", "index db"],
+        "description": "A standard interface to a browser database of records for simple values and objects.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "Service Workers",
         "status": {
             "status": "No active development"
