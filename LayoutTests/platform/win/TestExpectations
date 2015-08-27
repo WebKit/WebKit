@@ -1898,6 +1898,13 @@ webkit.org/b/140770 svg/custom/scrolling-embedded-svg-file-image-repaint-problem
 svg/animations/animate-text-nested-transforms.html [ Failure ]
 svg/repaint/text-mask-update.svg [ ImageOnlyFailure ]
 svg/text/lengthAdjust-text-metrics.html [ Failure ]
+
+# Weird black images
+imported/mozilla/svg/svg-effects-area-unzoomed.xhtml
+imported/mozilla/svg/svg-effects-area-zoomed-in.xhtml
+imported/mozilla/svg/svg-effects-area-zoomed-out.xhtml
+svg/filters/feImage-self-and-other-referencing.html
+
 ################################################################################
 ###################          End SVG Issues              #######################
 ################################################################################
@@ -2708,7 +2715,9 @@ fast/events/attribute-listener-cloned-from-frameless-doc-context.html [ Pass Fai
 fast/events/shadow-event-path.html [ Failure ]
 fast/events/pageshow-pagehide-on-back-uncached.html [ Skip ]
 
+# Weird black images
 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
+fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 
 fast/flexbox/001.html [ Pass Failure ]
 

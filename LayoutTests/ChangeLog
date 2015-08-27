@@ -1,5 +1,12 @@
 2015-08-27  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Mark some test failures.
+
+        * platform/win/TestExpectations: Mark some test failures. Images are black instead
+        of showing the correct output.
+
+2015-08-27  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Test gardening.
 
         Remove failure case for recent progression.
