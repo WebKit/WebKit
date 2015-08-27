@@ -411,7 +411,6 @@ sub GetGlibTypeName {
 
     my %types = ("DOMString", "gchar*",
                  "DOMTimeStamp", "guint32",
-                 "CompareHow", "gushort",
                  "SerializedScriptValue", "gchar*",
                  "float", "gfloat",
                  "unrestricted float", "gfloat",
@@ -1066,7 +1065,7 @@ sub GenerateFunction {
                 $implIncludes{"WebKitDOM${paramIDLType}Private.h"} = 1;
             }
         }
-        if ($paramIsGDOMType || ($paramIDLType eq "DOMString") || ($paramIDLType eq "CompareHow")) {
+        if ($paramIsGDOMType || ($paramIDLType eq "DOMString")) {
             $paramName = "converted" . $codeGenerator->WK_ucfirst($paramName);
         }
         if ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
@@ -1188,8 +1187,6 @@ sub GenerateFunction {
         $convertedParamName = "converted" . $codeGenerator->WK_ucfirst($paramName);
         if ($paramIDLType eq "DOMString") {
             push(@cBody, "    WTF::String ${convertedParamName} = WTF::String::fromUTF8($paramName);\n");
-        } elsif ($paramIDLType eq "CompareHow") {
-            push(@cBody, "    WebCore::Range::CompareHow ${convertedParamName} = static_cast<WebCore::Range::CompareHow>($paramName);\n");
         } elsif ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
             push(@cBody, "    RefPtr<WebCore::$paramIDLType> ${convertedParamName} = WebKit::core($paramName);\n");
         } elsif ($paramIsGDOMType) {

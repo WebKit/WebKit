@@ -1,3 +1,16 @@
+2015-08-27  Chris Dumez  <cdumez@apple.com>
+
+        Range.compareBoundaryPoints() should throw a NotSupportedError for invalid compareHow values
+        https://bugs.webkit.org/show_bug.cgi?id=148483
+
+        Reviewed by Geoffrey Garen.
+
+        Add new layout test to confirm that Range.compareBoundaryPoints() throws
+        when passed in invalid compareHow values.
+
+        * fast/dom/Range/compareBoundaryPoints-compareHow-exception-expected.txt: Added.
+        * fast/dom/Range/compareBoundaryPoints-compareHow-exception.html: Added.
+
 2015-08-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Page does not update when <link> media attribute changes to no longer apply to page

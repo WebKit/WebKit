@@ -50,7 +50,7 @@
     const unsigned short END_TO_END     = 2;
     const unsigned short END_TO_START   = 3;
 
-    [ObjCLegacyUnnamedParameters, RaisesException] short compareBoundaryPoints([Default=Undefined] optional CompareHow how,
+    [ObjCLegacyUnnamedParameters, RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints([Default=Undefined] optional unsigned short how,
                                                [Default=Undefined] optional Range sourceRange);
 
     [RaisesException] void deleteContents();

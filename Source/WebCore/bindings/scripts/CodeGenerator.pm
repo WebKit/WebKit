@@ -57,14 +57,13 @@ my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 # WebCore types used directly in IDL files.
 my %webCoreTypeHash = (
-    "CompareHow" => 1,
     "SerializedScriptValue" => 1,
     "Dictionary" => 1
 );
 
 my %enumTypeHash = ();
 
-my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1);
+my %nonPointerTypeHash = ("DOMTimeStamp" => 1);
 
 my %svgAttributesInHTMLHash = ("class" => 1, "id" => 1, "onabort" => 1, "onclick" => 1,
                                "onerror" => 1, "onload" => 1, "onmousedown" => 1,

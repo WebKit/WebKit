@@ -3740,7 +3740,6 @@ sub GetNativeTypeFromSignature
 }
 
 my %nativeType = (
-    "CompareHow" => "Range::CompareHow",
     "DOMString" => "String",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
@@ -3880,7 +3879,6 @@ sub JSValueToNative
     return "toUInt64(exec, $value, $intConversion)" if $type eq "unsigned long long";
 
     return "valueToDate(exec, $value)" if $type eq "Date";
-    return "static_cast<Range::CompareHow>($value.toInt32(exec))" if $type eq "CompareHow";
 
     if ($type eq "DOMString") {
         # FIXME: This implements [TreatNullAs=NullString] and [TreatUndefinedAs=NullString],

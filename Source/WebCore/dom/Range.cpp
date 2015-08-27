@@ -462,6 +462,15 @@ short Range::compareBoundaryPoints(CompareHow how, const Range* sourceRange, Exc
     return 0;
 }
 
+short Range::compareBoundaryPointsForBindings(unsigned short compareHow, const Range* sourceRange, ExceptionCode& ec) const
+{
+    if (compareHow > END_TO_START) {
+        ec = NOT_SUPPORTED_ERR;
+        return 0;
+    }
+    return compareBoundaryPoints(static_cast<CompareHow>(compareHow), sourceRange, ec);
+}
+
 short Range::compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB, ExceptionCode& ec)
 {
     ASSERT(containerA);
