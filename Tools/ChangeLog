@@ -1,3 +1,11 @@
+2015-08-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, install-dependencies should install geoclue2 on Fedora
+
+        geoclue-devel is for obsolete geoclue. Install geoclue2-devel instead.
+
+        * gtk/install-dependencies:
+
 2015-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Mark WTF_WordLock.ContendedShortSection as slow too.

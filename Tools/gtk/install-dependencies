@@ -309,7 +309,7 @@ function installFedoraDependencies {
         fontconfig-devel \
         freetype-devel \
         gcc-c++ \
-        geoclue-devel \
+        geoclue2-devel \
         gettext-devel \
         gobject-introspection-devel \
         gperf \
