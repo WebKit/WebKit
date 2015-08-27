@@ -45,6 +45,8 @@ public:
     
     void operator()(Node*, Edge edge)
     {
+        // FIXME: Maybe this should call mayHaveTypeCheck(edge.useKind()) instead.
+        // https://bugs.webkit.org/show_bug.cgi?id=148545
         if (edge.willHaveCheck()) {
             m_result = true;
             return;

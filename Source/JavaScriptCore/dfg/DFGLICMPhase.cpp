@@ -130,11 +130,12 @@ public:
             
             DFG_ASSERT(m_graph, preHeader->terminal(), preHeader->terminal()->op() == Jump);
             
-            // We should validate the pre-header. If we placed forExit origins on nodes only if
-            // at the top of that node it is legal to exit, then we would simply check if Jump
-            // had a forExit. We should disable hoisting to pre-headers that don't validate.
-            // Or, we could only allow hoisting of things that definitely don't exit.
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=145204
+            // We should validate the pre-header. This currently assumes that it's valid to OSR exit at
+            // the Jump of the pre-header. That may not always be the case, like if we lowered a Node
+            // that was ExitInvalid to a loop. This phase should somehow defend against this - at the
+            // very least with assertions, if not with something better (like only hoisting things that
+            // cannot exit).
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=148259
             
             data.preHeader = preHeader;
         }
@@ -283,16 +284,18 @@ private:
                 "    Hoisting ", node, " from ", *fromBlock, " to ", *data.preHeader,
                 "\n");
         }
-        
+
+        // FIXME: We should adjust the Check: flags on the edges of node. There are phases that assume
+        // that those flags are correct even if AI is stale.
+        // https://bugs.webkit.org/show_bug.cgi?id=148544
         data.preHeader->insertBeforeTerminal(node);
         node->owner = data.preHeader;
         NodeOrigin originalOrigin = node->origin;
         node->origin = data.preHeader->terminal()->origin.withSemantic(node->origin.semantic);
         
         // Modify the states at the end of the preHeader of the loop we hoisted to,
-        // and all pre-headers inside the loop.
-        // FIXME: This could become a scalability bottleneck. Fortunately, most loops
-        // are small and anyway we rapidly skip over basic blocks here.
+        // and all pre-headers inside the loop. This isn't a stability bottleneck right now
+        // because most loops are small and most blocks belong to few loops.
         for (unsigned bodyIndex = loop->size(); bodyIndex--;) {
             BasicBlock* subBlock = loop->at(bodyIndex);
             const NaturalLoop* subLoop = m_graph.m_naturalLoops.headerOf(subBlock);

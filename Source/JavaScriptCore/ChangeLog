@@ -1,3 +1,14 @@
+2015-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix some FIXMEs and add some new ones, based on things we've learned from some
+        recent OSR exit work.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGMayExit.h:
+
 2015-08-27  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add TypedArray.prototype functionality.

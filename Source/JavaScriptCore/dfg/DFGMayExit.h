@@ -66,6 +66,12 @@ enum ExitMode {
     Exits
 };
 
+// FIXME: This currently consumes the Check: flag produced by AI, and will claim that something doesn't
+// exit if the Check: flag was cleared. This makes it hard to use mayExit() for things like hoisting
+// (for example in LICM), since that wants to know if the node would exit if it was moved somewhere
+// else.
+// https://bugs.webkit.org/show_bug.cgi?id=148545
+
 ExitMode mayExit(Graph&, Node*);
 
 } } // namespace JSC::DFG
