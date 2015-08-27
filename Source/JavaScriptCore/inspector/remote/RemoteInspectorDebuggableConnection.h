@@ -92,6 +92,8 @@ public:
     void sendMessageToBackend(NSString *);
     virtual bool sendMessageToFrontend(const String&) override;
 
+    virtual ConnectionType connectionType() const override { return ConnectionType::Remote; }
+
     Lock& queueMutex() { return m_queueMutex; }
     RemoteInspectorQueue queue() const { return m_queue; }
     void clearQueue() { m_queue.clear(); }

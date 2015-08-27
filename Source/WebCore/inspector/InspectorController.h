@@ -94,17 +94,12 @@ public:
 
     WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
 
-    bool hasFrontend() const { return !!m_frontendChannel; }
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel*, bool isAutomaticInspection);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::DisconnectReason);
     void setProcessId(long);
-
-#if ENABLE(REMOTE_INSPECTOR)
-    void setHasRemoteFrontend(bool hasRemote) { m_hasRemoteFrontend = hasRemote; }
-#endif
 
     void inspect(Node*);
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
@@ -155,21 +150,17 @@ private:
     InspectorTimelineAgent* m_timelineAgent;
 
     RefPtr<Inspector::BackendDispatcher> m_backendDispatcher;
-    Inspector::FrontendChannel* m_frontendChannel;
+    Inspector::FrontendChannel* m_frontendChannel { nullptr };
     Ref<WTF::Stopwatch> m_executionStopwatch;
     Page& m_page;
     InspectorClient* m_inspectorClient;
-    InspectorFrontendClient* m_inspectorFrontendClient;
+    InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
     Inspector::AgentRegistry m_agents;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
-    bool m_isUnderTest;
-    bool m_isAutomaticInspection;
-
-#if ENABLE(REMOTE_INSPECTOR)
-    bool m_hasRemoteFrontend;
-#endif
+    bool m_isUnderTest { false };
+    bool m_isAutomaticInspection { false };
 };
 
-}
+} // namespace WebCore
 
 #endif // !defined(InspectorController_h)

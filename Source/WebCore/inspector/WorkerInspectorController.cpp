@@ -62,6 +62,8 @@ public:
     explicit PageInspectorProxy(WorkerGlobalScope& workerGlobalScope)
         : m_workerGlobalScope(workerGlobalScope) { }
     virtual ~PageInspectorProxy() { }
+
+    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
 private:
     virtual bool sendMessageToFrontend(const String& message) override
     {

@@ -85,6 +85,7 @@ public:
     virtual void didSetSearchingForNode(bool) override;
 
     virtual bool sendMessageToFrontend(const String&) override;
+    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);

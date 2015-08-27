@@ -1,3 +1,13 @@
+2015-08-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: FrontendChannel should know its own connection type
+        https://bugs.webkit.org/show_bug.cgi?id=148482
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorFrontendChannel.h: Add connectionType().
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+
 2015-08-26  Filip Pizlo  <fpizlo@apple.com>
 
         Node::origin should always be set, and the dead zone due to SSA Phis can just use exitOK=false

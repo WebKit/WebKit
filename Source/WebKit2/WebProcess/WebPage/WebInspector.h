@@ -46,6 +46,7 @@ public:
     void updateDockingAvailability();
 
     virtual bool sendMessageToFrontend(const String& message) override;
+    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     // Implemented in generated WebInspectorMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;

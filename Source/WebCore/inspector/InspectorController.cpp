@@ -86,16 +86,9 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_overlay(std::make_unique<InspectorOverlay>(page, inspectorClient))
-    , m_frontendChannel(nullptr)
     , m_executionStopwatch(Stopwatch::create())
     , m_page(page)
     , m_inspectorClient(inspectorClient)
-    , m_inspectorFrontendClient(nullptr)
-    , m_isUnderTest(false)
-    , m_isAutomaticInspection(false)
-#if ENABLE(REMOTE_INSPECTOR)
-    , m_hasRemoteFrontend(false)
-#endif
 {
     ASSERT_ARG(inspectorClient, inspectorClient);
 
@@ -197,20 +190,12 @@ void InspectorController::setInspectorFrontendClient(InspectorFrontendClient* in
 
 bool InspectorController::hasLocalFrontend() const
 {
-#if ENABLE(REMOTE_INSPECTOR)
-    return hasFrontend() && !m_hasRemoteFrontend;
-#else
-    return hasFrontend();
-#endif
+    return m_frontendChannel && m_frontendChannel->connectionType() == FrontendChannel::ConnectionType::Local;
 }
 
 bool InspectorController::hasRemoteFrontend() const
 {
-#if ENABLE(REMOTE_INSPECTOR)
-    return m_hasRemoteFrontend;
-#else
-    return false;
-#endif
+    return m_frontendChannel && m_frontendChannel->connectionType() == FrontendChannel::ConnectionType::Remote;
 }
 
 bool InspectorController::hasInspectorFrontendClient() const
@@ -250,7 +235,7 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
     InspectorInstrumentation::frontendCreated();
 
 #if ENABLE(REMOTE_INSPECTOR)
-    if (!m_hasRemoteFrontend)
+    if (!hasRemoteFrontend())
         m_page.remoteInspectorInformationDidChange();
 #endif
 }
@@ -259,6 +244,11 @@ void InspectorController::disconnectFrontend(DisconnectReason reason)
 {
     if (!m_frontendChannel)
         return;
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!hasRemoteFrontend())
+        m_page.remoteInspectorInformationDidChange();
+#endif
 
     m_agents.willDestroyFrontendAndBackend(reason);
 
@@ -272,11 +262,6 @@ void InspectorController::disconnectFrontend(DisconnectReason reason)
     m_overlay->freePage();
     InspectorInstrumentation::frontendDeleted();
     InspectorInstrumentation::unregisterInstrumentingAgents(*m_instrumentingAgents);
-
-#if ENABLE(REMOTE_INSPECTOR)
-    if (!m_hasRemoteFrontend)
-        m_page.remoteInspectorInformationDidChange();
-#endif
 }
 
 void InspectorController::show()

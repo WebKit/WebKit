@@ -64,7 +64,8 @@ public:
     virtual void highlight();
     virtual void hideHighlight();
 
-    virtual bool sendMessageToFrontend(const WTF::String&);
+    virtual bool sendMessageToFrontend(const WTF::String&) override;
+    virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);

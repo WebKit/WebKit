@@ -1,3 +1,12 @@
+2015-08-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: FrontendChannel should know its own connection type
+        https://bugs.webkit.org/show_bug.cgi?id=148482
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/WebPage/WebInspector.h: add connectionType().
+
 2015-08-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] REGRESSION: 50+ layout tests crash

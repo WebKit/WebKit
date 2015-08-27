@@ -77,15 +77,13 @@ void PageDebuggable::connect(Inspector::FrontendChannel* channel, bool isAutomat
         m_forcedDeveloperExtrasEnabled = false;
 
     InspectorController& inspectorController = m_page.inspectorController();
-    inspectorController.setHasRemoteFrontend(true);
-    inspectorController.connectFrontend(reinterpret_cast<Inspector::FrontendChannel*>(channel), isAutomaticInspection);
+    inspectorController.connectFrontend(channel, isAutomaticInspection);
 }
 
 void PageDebuggable::disconnect()
 {
     InspectorController& inspectorController = m_page.inspectorController();
     inspectorController.disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
-    inspectorController.setHasRemoteFrontend(false);
 
     if (m_forcedDeveloperExtrasEnabled) {
         m_forcedDeveloperExtrasEnabled = false;
