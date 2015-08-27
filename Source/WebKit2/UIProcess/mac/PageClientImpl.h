@@ -145,7 +145,7 @@ private:
 
     virtual void makeFirstResponder() override;
     
-    virtual void didPerformDictionaryLookup(const DictionaryPopupInfo&) override;
+    virtual void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
     virtual void dismissContentRelativeChildWindows(bool withAnimation = true) override;
 
     virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;

@@ -83,6 +83,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DataDetectorsSPI.h>
+#import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
 #import <WebCore/FloatRect.h>
@@ -4083,9 +4084,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 + (void)hideWordDefinitionWindow
 {
-    if (!getLULookupDefinitionModuleClass())
-        return;
-    [getLULookupDefinitionModuleClass() hideDefinition];
+    DictionaryLookup::hidePopup();
 }
 
 - (NSSize)minimumSizeForAutoLayout
@@ -4676,8 +4675,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         || [_data->_immediateActionController hasActiveImmediateAction]
 #endif
         ) {
-        if (Class lookupDefinitionModuleClass = getLULookupDefinitionModuleClass())
-            [lookupDefinitionModuleClass hideDefinition];
+        DictionaryLookup::hidePopup();
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];

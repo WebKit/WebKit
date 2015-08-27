@@ -35,6 +35,7 @@
 #import "HTMLConverter.h"
 #import "HitTestResult.h"
 #import "LookupSPI.h"
+#import "NSImmediateActionGestureRecognizerSPI.h"
 #import "Page.h"
 #import "Range.h"
 #import "RenderObject.h"
@@ -46,6 +47,8 @@
 #import "htmlediting.h"
 #import <PDFKit/PDFKit.h>
 #import <wtf/RefPtr.h>
+
+SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
 
 namespace WebCore {
 
@@ -61,7 +64,7 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
     return selectedRange->contains(position);
 }
 
-PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection& selection, NSDictionary **options)
+PassRefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& selection, NSDictionary **options)
 {
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
@@ -87,7 +90,7 @@ PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection& s
     return selectedRange.release();
 }
 
-PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& hitTestResult, NSDictionary **options)
+PassRefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult, NSDictionary **options)
 {
     Node* node = hitTestResult.innerNonSharedNode();
     if (!node)
@@ -113,7 +116,7 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
     // If we hit the selection, use that instead of letting Lookup decide the range.
     VisibleSelection selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
     if (selectionContainsPosition(position, selection))
-        return rangeForDictionaryLookupForSelection(selection, options);
+        return DictionaryLookup::rangeForSelection(selection, options);
 
     VisibleSelection selectionAccountingForLineRules = VisibleSelection(position);
     selectionAccountingForLineRules.expandUsingGranularity(WordGranularity);
@@ -150,7 +153,7 @@ static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numbe
     charactersAddedAfterEnd = selection.string.length - originalLength - charactersAddedBeforeStart;
 }
 
-NSString *dictionaryLookupForPDFSelection(PDFSelection *selection, NSDictionary **options)
+NSString *DictionaryLookup::stringForPDFSelection(PDFSelection *selection, NSDictionary **options)
 {
     // Don't do anything if there is no character at the point.
     if (!selection || !selection.string.length)
@@ -183,6 +186,69 @@ NSString *dictionaryLookupForPDFSelection(PDFSelection *selection, NSDictionary 
     
     ASSERT([selection.string isEqualToString:[fullPlainTextString substringWithRange:extractedRange]]);
     return selection.string;
+}
+
+static PlatformAnimationController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, std::function<void(TextIndicator&)> textIndicatorInstallationCallback)
+{
+    if (!getLULookupDefinitionModuleClass())
+        return nil;
+
+    RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
+
+    auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
+
+    if (canLoadLUTermOptionDisableSearchTermIndicator() && textIndicator.get().contentImage()) {
+        textIndicatorInstallationCallback(textIndicator.get());
+        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+
+        if ([getLULookupDefinitionModuleClass() respondsToSelector:@selector(showDefinitionForTerm:relativeToRect:ofView:options:)]) {
+            FloatRect firstTextRectInViewCoordinates = textIndicator.get().textRectsInBoundingRectCoordinates()[0];
+            firstTextRectInViewCoordinates.moveBy(textIndicator.get().textBoundingRectInRootViewCoordinates().location());
+            if (createAnimationController) {
+#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+                return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+#else
+                return nil;
+#endif
+            }
+            [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+            return nil;
+        }
+    }
+
+    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
+
+    // Convert to screen coordinates.
+    textBaselineOrigin = [view convertPoint:textBaselineOrigin toView:nil];
+    textBaselineOrigin = [view.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
+
+    if (createAnimationController) {
+#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+#else
+        return nil;
+#endif
+    }
+
+    [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+    return nil;
+}
+
+void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, std::function<void(TextIndicator&)> textIndicatorInstallationCallback)
+{
+    showPopupOrCreateAnimationController(false, dictionaryPopupInfo, view, textIndicatorInstallationCallback);
+}
+
+void DictionaryLookup::hidePopup()
+{
+    if (!getLULookupDefinitionModuleClass())
+        return;
+    [getLULookupDefinitionModuleClass() hideDefinition];
+}
+
+PlatformAnimationController DictionaryLookup::animationControllerForPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, std::function<void(TextIndicator&)> textIndicatorInstallationCallback)
+{
+    return showPopupOrCreateAnimationController(true, dictionaryPopupInfo, view, textIndicatorInstallationCallback);
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(MAC)
+#ifndef DictionaryPopupInfo_h
+#define DictionaryPopupInfo_h
 
-#import <WebCore/FloatPoint.h>
-#import <wtf/RetainPtr.h>
+#include "FloatPoint.h"
+#include "TextIndicator.h"
+#include <wtf/RetainPtr.h>
 
-@class NSAttributedString;
-@class NSDictionary;
+OBJC_CLASS NSAttributedString;
+OBJC_CLASS NSDictionary;
 
 namespace WebCore {
-class TextIndicator;
-};
 
 struct DictionaryPopupInfo {
-    NSPoint origin;
+    FloatPoint origin;
+    TextIndicatorData textIndicator;
+#if PLATFORM(COCOA)
     RetainPtr<NSDictionary> options;
     RetainPtr<NSAttributedString> attributedString;
-    RefPtr<WebCore::TextIndicator> textIndicator;
+#endif
 };
 
-#endif // PLATFORM(MAC)
+} // namespace WebCore
+
+#endif // DictionaryPopupInfo_h

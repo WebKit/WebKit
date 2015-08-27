@@ -21,8 +21,8 @@
 #define WebHitTestResult_h
 
 #include "APIObject.h"
-#include "DictionaryPopupInfo.h"
 #include "SharedMemory.h"
+#include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
@@ -75,7 +75,7 @@ public:
         RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
         WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
 
-        DictionaryPopupInfo dictionaryPopupInfo;
+        WebCore::DictionaryPopupInfo dictionaryPopupInfo;
 
         RefPtr<WebCore::TextIndicator> linkTextIndicator;
 

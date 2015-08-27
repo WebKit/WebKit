@@ -28,6 +28,16 @@
 
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS NSArray;
+OBJC_CLASS NSAttributedString;
+OBJC_CLASS NSColor;
+OBJC_CLASS NSData;
+OBJC_CLASS NSDate;
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSFont;
+OBJC_CLASS NSNumber;
+OBJC_CLASS NSString;
+
 namespace IPC {
 
 class ArgumentEncoder;

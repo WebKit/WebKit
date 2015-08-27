@@ -29,9 +29,7 @@
 #if ENABLE(PDFKIT_PLUGIN)
 
 #import "ArgumentCoders.h"
-#import "AttributedString.h"
 #import "DataReference.h"
-#import "DictionaryPopupInfo.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFKitImports.h"
 #import "PDFLayerControllerDetails.h"
@@ -1720,7 +1718,7 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
 {
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.origin = convertFromPDFViewToRootView(IntPoint(point));
-    dictionaryPopupInfo.attributedString.string = string;
+    dictionaryPopupInfo.attributedString = string;
 
     webFrame()->page()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
 }
@@ -1937,7 +1935,7 @@ String PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInView
         return selection.string;
     }
     
-    NSString *lookupText = dictionaryLookupForPDFSelection(selection, options);
+    NSString *lookupText = DictionaryLookup::stringForPDFSelection(selection, options);
     if (!lookupText || !lookupText.length)
         return @"";
 

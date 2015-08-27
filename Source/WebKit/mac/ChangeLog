@@ -1,3 +1,30 @@
+2015-08-27  Timothy Horton  <timothy_horton@apple.com>
+
+        Factor out Lookup invocation
+        https://bugs.webkit.org/show_bug.cgi?id=148509
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/DictionaryPopupInfo.h: Removed.
+        Move to WebCore.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        DictionaryPopupInfo keeps a TextIndicatorData, not a TextIndicator.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        (dictionaryPopupInfoForRange):
+        (-[WebImmediateActionController _animationControllerForText]):
+        * WebView/WebView.mm:
+        (-[WebView _prepareForDictionaryLookup]):
+        (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+        (-[WebView _setTextIndicator:withLifetime:]):
+        (-[WebView _showDictionaryLookupPopup:]):
+        * WebView/WebViewInternal.h:
+        Move a bunch of code to WebCore.
+        Factor some that has to stay out into _prepareForDictionaryLookup.
+
 2015-08-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: FrontendChannel should know its own connection type

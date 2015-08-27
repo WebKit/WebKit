@@ -28,10 +28,10 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#import "DictionaryPopupInfo.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import <WebCore/DictionaryLookup.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>

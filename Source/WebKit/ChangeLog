@@ -1,3 +1,12 @@
+2015-08-27  Timothy Horton  <timothy_horton@apple.com>
+
+        Factor out Lookup invocation
+        https://bugs.webkit.org/show_bug.cgi?id=148509
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2015-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         Correct build after r188982.

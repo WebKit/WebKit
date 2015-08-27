@@ -30,7 +30,6 @@
 
 #import "AttributedString.h"
 #import "DataReference.h"
-#import "DictionaryPopupInfo.h"
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "InjectedBundleHitTestResult.h"
@@ -518,7 +517,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
     Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
     NSDictionary *options = nil;
-    RefPtr<Range> range = rangeForDictionaryLookupAtHitTestResult(result, &options);
+    RefPtr<Range> range = DictionaryLookup::rangeAtHitTestResult(result, &options);
     if (!range)
         return;
 
@@ -528,7 +527,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
     NSDictionary *options = nil;
-    RefPtr<Range> selectedRange = rangeForDictionaryLookupForSelection(selection, &options);
+    RefPtr<Range> selectedRange = DictionaryLookup::rangeForSelection(selection, &options);
     if (selectedRange)
         performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
 }
@@ -556,7 +555,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& ra
     IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().ascent() * pageScaleFactor()));
-    dictionaryPopupInfo.options = (CFDictionaryRef)*options;
+    dictionaryPopupInfo.options = *options;
 
     NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
 
@@ -585,7 +584,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& ra
         return dictionaryPopupInfo;
 
     dictionaryPopupInfo.textIndicator = textIndicator->data();
-    dictionaryPopupInfo.attributedString.string = scaledNSAttributedString;
+    dictionaryPopupInfo.attributedString = scaledNSAttributedString;
 
     return dictionaryPopupInfo;
 }
@@ -638,9 +637,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
     dataForSelection.presentationTransition = presentationTransition;
     
     dictionaryPopupInfo.origin = rangeRect.origin;
-    dictionaryPopupInfo.options = (CFDictionaryRef)*options;
+    dictionaryPopupInfo.options = *options;
     dictionaryPopupInfo.textIndicator = dataForSelection;
-    dictionaryPopupInfo.attributedString.string = scaledNSAttributedString;
+    dictionaryPopupInfo.attributedString = scaledNSAttributedString;
     
     return dictionaryPopupInfo;
 }
@@ -1198,7 +1197,7 @@ RefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCo
 
     IntPoint point = roundedIntPoint(locationInViewCoordinates);
     HitTestResult result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
-    return rangeForDictionaryLookupAtHitTestResult(result, options);
+    return DictionaryLookup::rangeAtHitTestResult(result, options);
 }
 
 void WebPage::immediateActionDidUpdate()

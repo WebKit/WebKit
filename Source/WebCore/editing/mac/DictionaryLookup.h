@@ -28,10 +28,21 @@
 
 #if PLATFORM(MAC)
 
+#include "DictionaryPopupInfo.h"
+#include <functional>
 #include <wtf/PassRefPtr.h>
 
-OBJC_CLASS NSDictionary;
+OBJC_CLASS NSString;
+OBJC_CLASS NSView;
 OBJC_CLASS PDFSelection;
+
+// This file is included in Internals.cpp, so we can't use ObjC outright.
+#if defined(__OBJC__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#include "NSImmediateActionGestureRecognizerSPI.h"
+#define PlatformAnimationController id<NSImmediateActionAnimationController>
+#else
+#define PlatformAnimationController void*
+#endif
 
 namespace WebCore {
 
@@ -39,9 +50,19 @@ class HitTestResult;
 class Range;
 class VisibleSelection;
 
-WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, NSDictionary **options);
-WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);
-WEBCORE_EXPORT NSString *dictionaryLookupForPDFSelection(PDFSelection *, NSDictionary **options);
+class DictionaryLookup {
+public:
+    WEBCORE_EXPORT static PassRefPtr<Range> rangeForSelection(const VisibleSelection&, NSDictionary **options);
+    WEBCORE_EXPORT static PassRefPtr<Range> rangeAtHitTestResult(const HitTestResult&, NSDictionary **options);
+    WEBCORE_EXPORT static NSString *stringForPDFSelection(PDFSelection *, NSDictionary **options);
+
+    // FIXME: Should move/unify dictionaryPopupInfoForRange here too.
+
+    WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, NSView *, std::function<void(TextIndicator&)> textIndicatorInstallationCallback);
+    WEBCORE_EXPORT static void hidePopup();
+
+    WEBCORE_EXPORT static PlatformAnimationController animationControllerForPopup(const DictionaryPopupInfo&, NSView *, std::function<void(TextIndicator&)> textIndicatorInstallationCallback);
+};
 
 } // namespace WebCore
 

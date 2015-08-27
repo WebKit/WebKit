@@ -71,6 +71,7 @@ class URL;
 struct CompositionUnderline;
 struct Cookie;
 struct DictationAlternative;
+struct DictionaryPopupInfo;
 struct FileChooserSettings;
 struct IDBDatabaseMetadata;
 struct IDBGetResult;
@@ -471,6 +472,11 @@ template<> struct ArgumentCoder<WebCore::MediaSessionMetadata> {
 template<> struct ArgumentCoder<WebCore::TextIndicatorData> {
     static void encode(ArgumentEncoder&, const WebCore::TextIndicatorData&);
     static bool decode(ArgumentDecoder&, WebCore::TextIndicatorData&);
+};
+
+template<> struct ArgumentCoder<WebCore::DictionaryPopupInfo> {
+    static void encode(ArgumentEncoder&, const WebCore::DictionaryPopupInfo&);
+    static bool decode(ArgumentDecoder&, WebCore::DictionaryPopupInfo&);
 };
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

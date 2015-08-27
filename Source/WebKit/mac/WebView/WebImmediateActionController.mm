@@ -30,7 +30,6 @@
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
-#import "DictionaryPopupInfo.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
@@ -454,6 +453,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!linkRange)
         return nullptr;
     RefPtr<TextIndicator> indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::FadeIn);
+    indicator->data().textBoundingRectInRootViewCoordinates = [_webView _convertRectFromRootView:indicator->textBoundingRectInRootViewCoordinates()];
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
@@ -510,7 +510,9 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
     }];
 
     popupInfo.attributedString = scaledNSAttributedString.get();
-    popupInfo.textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionDefault, presentationTransition);
+
+    if (auto textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionDefault, presentationTransition))
+        popupInfo.textIndicator = textIndicator->data();
     return popupInfo;
 }
 
@@ -528,7 +530,7 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
         return nil;
 
     NSDictionary *options = nil;
-    RefPtr<Range> dictionaryRange = rangeForDictionaryLookupAtHitTestResult(_hitTestResult, &options);
+    RefPtr<Range> dictionaryRange = DictionaryLookup::rangeAtHitTestResult(_hitTestResult, &options);
     if (!dictionaryRange)
         return nil;
 

@@ -36,6 +36,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DictationAlternative.h>
+#include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
@@ -73,6 +74,7 @@
 
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
+#include "ArgumentCodersMac.h"
 #endif
 
 #if PLATFORM(IOS)
@@ -2202,5 +2204,53 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(ArgumentDecoder& decoder,
     return decodePlatformData(decoder, target);
 }
 #endif
+
+void ArgumentCoder<DictionaryPopupInfo>::encode(IPC::ArgumentEncoder& encoder, const DictionaryPopupInfo& info)
+{
+    encoder << info.origin;
+    encoder << info.textIndicator;
+
+#if PLATFORM(COCOA)
+    bool hadOptions = info.options;
+    encoder << hadOptions;
+    if (hadOptions)
+        IPC::encode(encoder, info.options.get());
+
+    bool hadAttributedString = info.attributedString;
+    encoder << hadAttributedString;
+    if (hadAttributedString)
+        IPC::encode(encoder, info.attributedString.get());
+#endif
+}
+
+bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::ArgumentDecoder& decoder, DictionaryPopupInfo& result)
+{
+    if (!decoder.decode(result.origin))
+        return false;
+
+    if (!decoder.decode(result.textIndicator))
+        return false;
+
+#if PLATFORM(COCOA)
+    bool hadOptions;
+    if (!decoder.decode(hadOptions))
+        return false;
+    if (hadOptions) {
+        if (!IPC::decode(decoder, result.options))
+            return false;
+    } else
+        result.options = nullptr;
+
+    bool hadAttributedString;
+    if (!decoder.decode(hadAttributedString))
+        return false;
+    if (hadAttributedString) {
+        if (!IPC::decode(decoder, result.attributedString))
+            return false;
+    } else
+        result.attributedString = nullptr;
+#endif
+    return true;
+}
 
 } // namespace IPC

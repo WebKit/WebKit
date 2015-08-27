@@ -308,7 +308,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(COCOA)
     # Dictionary support.
-    DidPerformDictionaryLookup(struct WebKit::DictionaryPopupInfo dictionaryPopupInfo)
+    DidPerformDictionaryLookup(struct WebCore::DictionaryPopupInfo dictionaryPopupInfo)
 
     # Keyboard input support messages
     ExecuteSavedCommandBySelector(String selector) -> (bool handled)

@@ -1,3 +1,48 @@
+2015-08-27  Timothy Horton  <timothy_horton@apple.com>
+
+        Factor out Lookup invocation
+        https://bugs.webkit.org/show_bug.cgi?id=148509
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/DictionaryPopupInfo.cpp: Removed.
+        * Shared/DictionaryPopupInfo.h: Removed.
+        Moved to WebCore.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DictionaryPopupInfo>::encode):
+        (IPC::ArgumentCoder<DictionaryPopupInfo>::decode):
+        Add encode/decoders for DictionaryPopupInfo now that it's in WebCore.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebHitTestResult.h:
+        * Shared/mac/ArgumentCodersMac.h:
+        * UIProcess/API/mac/WKView.mm:
+        (+[WKView hideWordDefinitionWindow]):
+        (-[WKView _dismissContentRelativeChildWindows]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _animationControllerForText]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showDefinitionForAttributedString):
+        (WebKit::PDFPlugin::lookupTextAtLocation):
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::performDictionaryLookupForSelection):
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+        (WebKit::WebPage::dictionaryPopupInfoForSelectionInPDFPlugin):
+        (WebKit::WebPage::lookupTextAtLocation):
+        Adjust to new names and move stuff to WebCore.
+
 2015-08-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: FrontendChannel should know its own connection type
