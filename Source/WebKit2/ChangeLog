@@ -1,3 +1,20 @@
+2015-08-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix WKMutableArray creations in WKUserMediaPermissionRequest
+        https://bugs.webkit.org/show_bug.cgi?id=148489
+
+        Reviewed by Carlos Garcia Campos.
+
+        Call WKMutableArrayCreate() to create the WKMutableArray objects.
+        WKMutableArrayRef type is a pointer, so calling 'WKMutableArrayRef()' 
+        just sets a null value to the variable that is then returned and
+        queried for size in WebKitTestRunner's TestController, resulting
+        in a crash.
+
+        * UIProcess/API/C/WKUserMediaPermissionRequest.cpp:
+        (WKUserMediaPermissionRequestDeviceNamesVideo):
+        (WKUserMediaPermissionRequestDeviceNamesAudio):
+
 2015-08-26  Emanuele Aina  <emanuele.aina@collabora.com>
 
         [ThreadedCompositor] Use WTF::Condition together with WTF::Lock

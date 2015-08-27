@@ -52,7 +52,7 @@ void WKUserMediaPermissionRequestDeny(WKUserMediaPermissionRequestRef userMediaP
 
 WKArrayRef WKUserMediaPermissionRequestDeviceNamesVideo(WKUserMediaPermissionRequestRef userMediaPermissionRef)
 {
-    WKMutableArrayRef array = WKMutableArrayRef();
+    WKMutableArrayRef array = WKMutableArrayCreate();
 #if ENABLE(MEDIA_STREAM)
     for (auto& name : toImpl(userMediaPermissionRef)->videoDeviceUIDs()) {
         String deviceName = toImpl(userMediaPermissionRef)->getDeviceNameForUID(name, WebCore::RealtimeMediaSource::Type::Video);
@@ -64,7 +64,7 @@ WKArrayRef WKUserMediaPermissionRequestDeviceNamesVideo(WKUserMediaPermissionReq
 
 WKArrayRef WKUserMediaPermissionRequestDeviceNamesAudio(WKUserMediaPermissionRequestRef userMediaPermissionRef)
 {
-    WKMutableArrayRef array = WKMutableArrayRef();
+    WKMutableArrayRef array = WKMutableArrayCreate();
 #if ENABLE(MEDIA_STREAM)
     for (auto& name : toImpl(userMediaPermissionRef)->audioDeviceUIDs()) {
         String deviceName = toImpl(userMediaPermissionRef)->getDeviceNameForUID(name, WebCore::RealtimeMediaSource::Type::Audio);
