@@ -1,3 +1,17 @@
+2015-08-27  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel positioned iframe's repaint area calculation problem.
+        https://bugs.webkit.org/show_bug.cgi?id=148422
+
+        When the repaint rect position is floored for iframes, we need
+        to expand the size so that it still covers the content.
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/content-inside-subpixel-positioned-iframe-expected.txt: Added.
+        * fast/repaint/content-inside-subpixel-positioned-iframe.html: Copied from LayoutTests/fast/repaint/hidpi-content-inside-iframe-leaves-trails.html.
+        * fast/repaint/hidpi-content-inside-iframe-leaves-trails.html:
+
 2015-08-27  Enrica Casucci  <enrica@apple.com>
 
         Add some new emoji with modifiers and new sequence.
