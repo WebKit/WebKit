@@ -1,3 +1,9 @@
+2015-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Add an expectation for another momentum scrolling test that became flaky.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-08-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel positioned iframe's repaint area calculation problem.
