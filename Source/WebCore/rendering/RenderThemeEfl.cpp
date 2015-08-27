@@ -79,10 +79,22 @@ static const int sliderThumbWidth = 29;
 static const int sliderThumbHeight = 11;
 
 #define _ASSERT_ON_RELEASE_RETURN(o, fmt, ...) \
-    do { if (!o) { EINA_LOG_CRIT(fmt, ## __VA_ARGS__); ASSERT(o); return; } } while (0)
-#define _ASSERT_ON_RELEASE_RETURN_VAL(o, val, fmt, ...) \
-    do { if (!o) { EINA_LOG_CRIT(fmt, ## __VA_ARGS__); ASSERT(o); return val; } } while (0)
+    do { \
+        if (!o) { \
+            EINA_LOG_CRIT(fmt, ## __VA_ARGS__); \
+            ASSERT(o); \
+            return; \
+        } \
+    } while (0)
 
+#define _ASSERT_ON_RELEASE_RETURN_VAL(o, val, fmt, ...) \
+    do { \
+        if (!o) { \
+            EINA_LOG_CRIT(fmt, ## __VA_ARGS__); \
+            ASSERT(o); \
+            return val; \
+        } \
+    } while (0)
 
 static const char* toEdjeGroup(FormType type)
 {
@@ -275,7 +287,7 @@ void RenderThemeEfl::clearThemePartCache()
 
 void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, const ControlStates* states, bool haveBackground)
 {
-    const char *signals[] = { // keep in sync with WebCore/platform/ThemeTypes.h
+    const char* signals[] = { // keep in sync with WebCore/platform/ThemeTypes.h
         "hovered",
         "pressed",
         "focused",
@@ -494,7 +506,7 @@ bool RenderThemeEfl::loadTheme()
     if (!canvas()) {
         m_canvas = EflUniquePtr<Ecore_Evas>(ecore_evas_buffer_new(1, 1));
         _ASSERT_ON_RELEASE_RETURN_VAL(canvas(), false,
-                "Could not create canvas required by theme, things will not work properly.");
+        "Could not create canvas required by theme, things will not work properly.");
     }
 
     EflUniquePtr<Evas_Object> o = EflUniquePtr<Evas_Object>(edje_object_add(ecore_evas_get(canvas())));
@@ -560,7 +572,7 @@ void RenderThemeEfl::applyPartDescription(Evas_Object* object, ThemePartDesc* de
     else {
         Evas_Coord px, py, pw, ph;
         Evas_Coord ox = 0, oy = 0, ow = 0, oh = 0;
-        int t, r, b, l;
+        int top, right, bottom, left;
 
         if (minw > 0)
             ow = minw;
@@ -581,13 +593,13 @@ void RenderThemeEfl::applyPartDescription(Evas_Object* object, ThemePartDesc* de
         edje_object_message_signal_process(object);
         edje_object_part_geometry_get(object, "text_confinement", &px, &py, &pw, &ph);
 
-        t = py - oy;
-        b = (oh + oy) - (ph + py);
+        top = py - oy;
+        bottom = (oh + oy) - (ph + py);
 
-        l = px - ox;
-        r = (ow + ox) - (pw + px);
+        left = px - ox;
+        right = (ow + ox) - (pw + px);
 
-        desc->padding = LengthBox(t, r, b, l);
+        desc->padding = LengthBox(top, right, bottom, left);
     }
 }
 

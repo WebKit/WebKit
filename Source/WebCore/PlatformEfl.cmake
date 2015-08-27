@@ -119,7 +119,6 @@ list(APPEND WebCore_SOURCES
     platform/efl/PlatformMouseEventEfl.cpp
     platform/efl/PlatformScreenEfl.cpp
     platform/efl/PlatformWheelEventEfl.cpp
-    platform/efl/RenderThemeEfl.cpp
     platform/efl/ScrollbarThemeEfl.cpp
     platform/efl/SharedTimerEfl.cpp
     platform/efl/SoundEfl.cpp
@@ -284,6 +283,8 @@ list(APPEND WebCore_SOURCES
     platform/text/enchant/TextCheckerEnchant.cpp
 
     platform/text/hyphen/HyphenationLibHyphen.cpp
+
+    rendering/RenderThemeEfl.cpp
 )
 
 if (USE_GEOCLUE2)
