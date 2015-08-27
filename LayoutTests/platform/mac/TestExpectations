@@ -56,8 +56,6 @@ fast/events/touch [ Skip ]
 # No button tracked
 fast/events/mouseover-button.html
 
-webkit.org/b/33923 accessibility/mac/change-notification-on-scroll.html [ Skip ] # times out
-
 # eventSender needs to propagate the event to the calling window, not the main frame always.
 http/tests/plugins/plugin-document-has-focus.html
 

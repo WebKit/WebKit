@@ -1,5 +1,19 @@
 2015-08-27  Nan Wang  <n_wang@apple.com>
 
+        AX: Remove accessibility/mac/change-notification-on-scroll.html test
+        https://bugs.webkit.org/show_bug.cgi?id=148534
+
+        Reviewed by Chris Fleizach.
+
+        Removed the test since AXValueChange notifications are not being sent
+        when scrollable regions inside the WebView are scrolled.
+
+        * accessibility/mac/change-notification-on-scroll-expected.txt: Removed.
+        * accessibility/mac/change-notification-on-scroll.html: Removed.
+        * platform/mac/TestExpectations:
+
+2015-08-27  Nan Wang  <n_wang@apple.com>
+
         AX: Fix accessibility/select-element-at-index.html test
         https://bugs.webkit.org/show_bug.cgi?id=148516
 
