@@ -1,3 +1,9 @@
+2015-08-26  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        Unreviewed build fix attempt on EFL
+
+        * WebKitTestRunner/PlatformEfl.cmake:
+
 2015-08-26  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r188982
