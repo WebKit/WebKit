@@ -1,3 +1,17 @@
+2015-08-27  Chris Dumez  <cdumez@apple.com>
+
+        Document window.NodeFilter properties
+        https://bugs.webkit.org/show_bug.cgi?id=148531
+
+        Reviewed by Geoffrey Garen.
+
+        Document window.NodeFilter properties to detect changes to them. This
+        is in preparation of Bug 148415 as this will help detect unwanted
+        changes to the interface when making NodeFilter a callback interface.
+
+        * fast/dom/node-filter-interface-expected.txt: Added.
+        * fast/dom/node-filter-interface.html: Added.
+
 2015-08-27  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Text jumps sometimes on naughty strings page
