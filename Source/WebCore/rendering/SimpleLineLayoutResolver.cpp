@@ -33,19 +33,14 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
-static float baselinePosition(float lineHeight, float baseline, int lineIndex)
+static FloatPoint linePosition(float logicalLeft, float logicalTop)
 {
-    return lineHeight * lineIndex + baseline;
+    return FloatPoint(logicalLeft, roundf(logicalTop));
 }
 
-static LayoutPoint linePosition(float logicalLeft, float logicalTop)
+static FloatSize lineSize(float logicalLeft, float logicalRight, float height)
 {
-    return LayoutPoint(LayoutUnit::fromFloatFloor(logicalLeft), roundToInt(logicalTop));
-}
-
-static LayoutSize lineSize(float logicalLeft, float logicalRight, float height)
-{
-    return LayoutSize(LayoutUnit::fromFloatCeil(logicalRight) - LayoutUnit::fromFloatFloor(logicalLeft), height);
+    return FloatSize(logicalRight - logicalLeft, height);
 }
 
 RunResolver::Run::Run(const Iterator& iterator)
@@ -53,13 +48,13 @@ RunResolver::Run::Run(const Iterator& iterator)
 {
 }
 
-LayoutRect RunResolver::Run::rect() const
+FloatRect RunResolver::Run::rect() const
 {
     auto& run = m_iterator.simpleRun();
     auto& resolver = m_iterator.resolver();
-    float baseline = baselinePosition(resolver.m_lineHeight, resolver.m_baseline, m_iterator.lineIndex());
-    LayoutPoint position = linePosition(run.logicalLeft, baseline - resolver.m_ascent + resolver.m_borderAndPaddingBefore);
-    LayoutSize size = lineSize(run.logicalLeft, run.logicalRight, resolver.m_ascent + resolver.m_descent);
+    float baseline = computeBaselinePosition();
+    FloatPoint position = linePosition(run.logicalLeft, baseline - resolver.m_ascent);
+    FloatSize size = lineSize(run.logicalLeft, run.logicalRight, resolver.m_ascent + resolver.m_descent);
     bool moveLineBreakToBaseline = false;
     if (run.start == run.end && m_iterator != resolver.begin() && m_iterator.inQuirksMode()) {
         auto previousRun = m_iterator;
@@ -67,17 +62,8 @@ LayoutRect RunResolver::Run::rect() const
         moveLineBreakToBaseline = !previousRun.simpleRun().isEndOfLine;
     }
     if (moveLineBreakToBaseline)
-        return LayoutRect(LayoutPoint(position.x(), baseline + resolver.m_borderAndPaddingBefore), LayoutSize(size.width(), std::max<float>(0, resolver.m_ascent - resolver.m_baseline.toFloat())));
-    return LayoutRect(position, size);
-}
-
-FloatPoint RunResolver::Run::baseline() const
-{
-    auto& resolver = m_iterator.resolver();
-    auto& run = m_iterator.simpleRun();
-
-    float baseline = baselinePosition(resolver.m_lineHeight, resolver.m_baseline, m_iterator.lineIndex());
-    return FloatPoint(run.logicalLeft, roundToInt(baseline + resolver.m_borderAndPaddingBefore));
+        return FloatRect(FloatPoint(position.x(), baseline), FloatSize(size.width(), std::max<float>(0, resolver.m_ascent - resolver.m_baseline.toFloat())));
+    return FloatRect(position, size);
 }
 
 StringView RunResolver::Run::text() const
@@ -204,14 +190,13 @@ LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)
 {
 }
 
-const LayoutRect LineResolver::Iterator::operator*() const
+const FloatRect LineResolver::Iterator::operator*() const
 {
     unsigned currentLine = m_runIterator.lineIndex();
     auto it = m_runIterator;
-    LayoutRect rect = (*it).rect();
+    FloatRect rect = (*it).rect();
     while (it.advance().lineIndex() == currentLine)
         rect.unite((*it).rect());
-
     return rect;
 }
 
