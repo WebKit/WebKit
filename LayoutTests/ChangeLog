@@ -1,3 +1,10 @@
+2015-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r188820): fast/dom/HTMLObjectElement/object-as-frame.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=148533
+
+        * TestExpectations: Marking is as such.
+
 2015-08-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Mark some test failures.

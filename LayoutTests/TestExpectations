@@ -575,3 +575,5 @@ webkit.org/b/148026 [ Debug ] animations/restart-after-scroll.html [ Skip ]
 
 # REGRESSION (r188987): imported/mozilla/svg/filters/feConvolveMatrix-1.svg fails
 webkit.org/b/148497 imported/mozilla/svg/filters/feConvolveMatrix-1.svg [ ImageOnlyFailure ]
+
+webkit.org/b/148533 fast/dom/HTMLObjectElement/object-as-frame.html [ Pass Failure ]
