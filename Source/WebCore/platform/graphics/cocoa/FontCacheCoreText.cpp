@@ -462,6 +462,17 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
     // Only attempt to auto-activate fonts once for performance reasons.
     return knownFamilies.get().add(family).isNewEntry;
 }
+
+static void autoActivateFont(const String& name, CGFloat size)
+{
+    auto fontName = name.createCFString();
+    CFTypeRef keys[] = { kCTFontNameAttribute };
+    CFTypeRef values[] = { fontName.get() };
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
+    if (auto newFont = CTFontCreateWithFontDescriptor(descriptor.get(), size, nullptr))
+        CFRelease(newFont);
+}
 #endif
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
@@ -478,7 +489,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
         // Auto activate the font before looking for it a second time.
         // Ignore the result because we want to use our own algorithm to actually find the font.
-        CFRelease(CTFontCreateWithName(family.string().createCFString().get(), size, nullptr));
+        autoActivateFont(family.string(), size);
 
         font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
     }
