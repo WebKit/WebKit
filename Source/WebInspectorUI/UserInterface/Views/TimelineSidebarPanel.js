@@ -93,8 +93,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._chartColors.set(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint, "rgb(152, 188, 77)");
             this._chartColors.set(WebInspector.RenderingFrameTimelineRecord.TaskType.Other, "rgb(221, 221, 221)");
 
-            this._frameSelectionChartRow = new WebInspector.ChartDetailsSectionRow(this);
-            this._frameSelectionChartRow.innerRadius = 0.5;
+            this._frameSelectionChartRow = new WebInspector.ChartDetailsSectionRow(this, 74, 0.5);
             this._frameSelectionChartRow.addEventListener(WebInspector.ChartDetailsSectionRow.Event.LegendItemChecked, this._frameSelectionLegendItemChecked, this);
 
             for (let key in WebInspector.RenderingFrameTimelineRecord.TaskType) {

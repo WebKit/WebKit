@@ -42,6 +42,20 @@
     padding: 8px 5px 0px 12px;
 }
 
+.details-section > .content > .group > .row.chart > .chart-content > svg > path.hidden {
+    display: none;
+}
+.details-section > .content > .group > .row.chart > .chart-content > svg > path.chart-segment {
+    stroke-width: 1;
+    stroke: rgba(255, 255, 255, 0.7);
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > svg > path.empty-chart {
+    fill: rgba(0, 0, 0, 0.02);
+    stroke-width: 1;
+    stroke: rgba(0, 0, 0, 0.1);
+}
+
 .details-section > .content > .group > .row.chart > .chart-content > .legend {
     display: table;
     margin-left: 12px;

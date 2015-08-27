@@ -25,9 +25,13 @@
 
 WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebInspector.DetailsSectionRow
 {
-    constructor(delegate)
+    constructor(delegate, chartSize, innerRadiusRatio)
     {
         super(WebInspector.UIString("No Chart Available"));
+
+        innerRadiusRatio = innerRadiusRatio || 0;
+        console.assert(chartSize > 0, chartSize);
+        console.assert(innerRadiusRatio >= 0 && innerRadiusRatio < 1, innerRadiusRatio);
 
         this.element.classList.add("chart");
 
@@ -35,13 +39,12 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         this._titleElement.className = "title";
         this.element.appendChild(this._titleElement);
 
-        var chartContentElement = document.createElement("div");
+        let chartContentElement = document.createElement("div");
         chartContentElement.className = "chart-content";
         this.element.appendChild(chartContentElement);
 
-        this._canvas = document.createElement("canvas");
-        this._canvas.className = "chart";
-        chartContentElement.appendChild(this._canvas);
+        this._chartElement = createSVGElement("svg");
+        chartContentElement.appendChild(this._chartElement);
 
         this._legendElement = document.createElement("div");
         this._legendElement.className = "legend";
@@ -50,10 +53,9 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         this._delegate = delegate;
         this._items = new Map;
         this._title = "";
-        this._innerLabel = "";
-        this._innerRadius = 0;
-        this._innerLabelFontSize = 11;
-        this._shadowColor = "rgba(0, 0, 0, 0.6)";
+        this._chartSize = chartSize;
+        this._radius = (this._chartSize / 2) - 1;   // Subtract one to accomodate chart stroke width.
+        this._innerRadius = innerRadiusRatio ? Math.floor(this._radius * innerRadiusRatio) : 0;
         this._total = 0;
 
         this._svgFiltersElement = document.createElement("svg");
@@ -63,9 +65,41 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         this._checkboxStyleElement = document.createElement("style");
         this._checkboxStyleElement.id = "checkbox-styles";
         document.getElementsByTagName("head")[0].append(this._checkboxStyleElement);
+
+        function createEmptyChartPathData(c, r1, r2)
+        {
+            const a1 = 0;
+            const a2 = Math.PI * 1.9999;
+            let x1 = c + Math.cos(a1) * r1,
+                y1 = c + Math.sin(a1) * r1,
+                x2 = c + Math.cos(a2) * r1,
+                y2 = c + Math.sin(a2) * r1,
+                x3 = c + Math.cos(a2) * r2,
+                y3 = c + Math.sin(a2) * r2,
+                x4 = c + Math.cos(a1) * r2,
+                y4 = c + Math.sin(a1) * r2;
+            return [
+                "M", x1, y1,                    // Starting position.
+                "A", r1, r1, 0, 1, 1, x2, y2,   // Draw outer arc.
+                "Z",                            // Close path.
+                "M", x3, y3,                    // Starting position.
+                "A", r2, r2, 0, 1, 0, x4, y4,   // Draw inner arc.
+                "Z"                             // Close path.
+            ].join(" ");
+        }
+
+        this._emptyChartPath = createSVGElement("path");
+        this._emptyChartPath.setAttribute("d", createEmptyChartPathData(this._chartSize / 2, this._radius, this._innerRadius));
+        this._emptyChartPath.classList.add("empty-chart");
+        this._chartElement.appendChild(this._emptyChartPath);
     }
 
     // Public
+
+    get chartSize()
+    {
+        return this._chartSize;
+    }
 
     set title(title)
     {
@@ -74,26 +108,6 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
         this._title = title;
         this._titleElement.textContent = title;
-    }
-
-    set innerLabel(label)
-    {
-        if (this._innerLabel === label)
-            return;
-
-        this._innerLabel = label;
-
-        this._needsLayout();
-    }
-
-    set innerRadius(radius)
-    {
-        if (this._innerRadius === radius)
-            return;
-
-        this._innerRadius = radius;
-
-        this._needsLayout();
     }
 
     get total()
@@ -139,6 +153,12 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
     clearItems()
     {
+        for (let item of this._items.values()) {
+            let path = item[WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol];
+            if (path)
+                path.remove();
+        }
+
         this._total = 0;
         this._items.clear();
 
@@ -262,10 +282,10 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         if (this._scheduledLayoutUpdateIdentifier)
             return;
 
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
+        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this._updateLayout.bind(this));
     }
 
-    updateLayout()
+    _updateLayout()
     {
         if (this._scheduledLayoutUpdateIdentifier) {
             cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
@@ -274,58 +294,62 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
         this._updateLegend();
 
-        var width = this._canvas.clientWidth * window.devicePixelRatio;
-        var height = this._canvas.clientHeight * window.devicePixelRatio;
-        this._canvas.width = width;
-        this._canvas.height = height;
+        this._chartElement.setAttribute("width", this._chartSize);
+        this._chartElement.setAttribute("height", this._chartSize);
+        this._chartElement.setAttribute("viewbox", "0 0 " + this._chartSize + " " + this._chartSize);
 
-        var context = this._canvas.getContext("2d");
-        context.clearRect(0, 0, width, height);
-
-        var x = Math.floor(width / 2);
-        var y = Math.floor(height / 2);
-        var radius = Math.floor(Math.min(x, y) * 0.96);   // Add a small margin to prevent clipping of the chart shadow.
-        var innerRadius = Math.floor(radius * this._innerRadius);
-        var startAngle = 1.5 * Math.PI;
-        var endAngle = startAngle;
-
-        function drawSlice(x, y, startAngle, endAngle, color)
+        function createSegmentPathData(c, a1, a2, r1, r2)
         {
-            context.beginPath();
-            context.moveTo(x, y);
-            context.arc(x, y, radius, startAngle, endAngle, false);
-            if (innerRadius > 0)
-                context.arc(x, y, innerRadius, endAngle, startAngle, true);
-            context.fillStyle = color;
-            context.fill();
+            const largeArcFlag = ((a2 - a1) % (Math.PI * 2)) > Math.PI ? 1 : 0;
+            let x1 = c + Math.cos(a1) * r1,
+                y1 = c + Math.sin(a1) * r1,
+                x2 = c + Math.cos(a2) * r1,
+                y2 = c + Math.sin(a2) * r1,
+                x3 = c + Math.cos(a2) * r2,
+                y3 = c + Math.sin(a2) * r2,
+                x4 = c + Math.cos(a1) * r2,
+                y4 = c + Math.sin(a1) * r2;
+            return [
+                "M", x1, y1,                                // Starting position.
+                "A", r1, r1, 0, largeArcFlag, 1, x2, y2,    // Draw outer arc.
+                "L", x3, y3,                                // Connect outer and innner arcs.
+                "A", r2, r2, 0, largeArcFlag, 0, x4, y4,    // Draw inner arc.
+                "Z"                                         // Close path.
+            ].join(" ");
         }
 
-        context.save();
-        context.shadowBlur = 2 * window.devicePixelRatio;
-        context.shadowOffsetY = window.devicePixelRatio;
-        context.shadowColor = this._shadowColor;
-        drawSlice(x, y, 0, 2.0 * Math.PI, "rgb(242, 242, 242)");
-        context.restore();
-
+        const center = this._chartSize / 2;
+        let startAngle = -Math.PI / 2;
+        let endAngle = 0;
         for (let [id, item] of this._items) {
-            if (item.value === 0)
-                continue;
-            endAngle += (item.value / this._total) * 2.0 * Math.PI;
-            drawSlice(x, y, startAngle, endAngle, item.color);
-            startAngle = endAngle;
-        }
+            let path = item[WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol];
+            if (!path) {
+                path = createSVGElement("path");
+                path.classList.add("chart-segment");
+                path.setAttribute("fill", item.color);
+                this._chartElement.appendChild(path);
 
-        if (this._innerLabel) {
-            context.font = (this._innerLabelFontSize * window.devicePixelRatio) + "px sans-serif";
-            var metrics = context.measureText(this._innerLabel);
-            var offsetX = centerX - metrics.width / 2;
-            context.fillStyle = "rgb(68, 68, 68)";
-            context.fillText(this._innerLabel, offsetX, centerY);
+                item[WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol] = path;
+            }
+
+            if (!item.value) {
+                path.classList.add("hidden");
+                continue;
+            }
+
+            const angle = (item.value / this._total) * Math.PI * 2;
+            endAngle = startAngle + angle;
+
+            path.setAttribute("d", createSegmentPathData(center, startAngle, endAngle, this._radius, this._innerRadius));
+            path.classList.remove("hidden");
+
+            startAngle = endAngle;
         }
     }
 };
 
 WebInspector.ChartDetailsSectionRow.DataItemIdSymbol = Symbol("chart-details-section-row-data-item-id");
+WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol = Symbol("chart-details-section-row-chart-segment-path");
 WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol = Symbol("chart-details-section-row-legend-item-value-element");
 
 WebInspector.ChartDetailsSectionRow.Event = {
