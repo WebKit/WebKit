@@ -1,5 +1,5 @@
 set(MiniBrowser_INCLUDE_DIRECTORIES
-    MiniBrowser.vcxproj
+    ../MiniBrowser.vcxproj
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit"
     "${DERIVED_SOURCES_DIR}"

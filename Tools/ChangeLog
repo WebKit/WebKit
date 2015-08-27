@@ -1,3 +1,10 @@
+2015-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r188982
+
+        * MiniBrowser/win/CMakeLists.txt:
+        The directory structure changed in the move.
+
 2015-08-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, install-dependencies should install geoclue2 on Fedora
