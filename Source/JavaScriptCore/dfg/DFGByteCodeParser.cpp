@@ -4107,7 +4107,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             addToGraph(LoopHint);
             
-            if (m_vm->watchdog && m_vm->watchdog->hasTimeLimit())
+            if (m_vm->watchdog)
                 addToGraph(CheckWatchdogTimer);
             
             NEXT_OPCODE(op_loop_hint);

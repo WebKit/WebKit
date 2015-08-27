@@ -3267,6 +3267,9 @@
     <ClInclude Include="..\runtime\VM.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\VMInlines.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\VMEntryScope.h">
       <Filter>runtime</Filter>
     </ClInclude>

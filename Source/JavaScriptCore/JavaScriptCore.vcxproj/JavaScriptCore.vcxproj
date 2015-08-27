@@ -1770,6 +1770,7 @@
     <ClInclude Include="..\runtime\Uint32Array.h" />
     <ClInclude Include="..\runtime\Uint8Array.h" />
     <ClInclude Include="..\runtime\VM.h" />
+    <ClInclude Include="..\runtime\VMInlines.h" />
     <ClInclude Include="..\runtime\VMEntryScope.h" />
     <ClInclude Include="..\runtime\VarOffset.h" />
     <ClInclude Include="..\runtime\Watchdog.h" />

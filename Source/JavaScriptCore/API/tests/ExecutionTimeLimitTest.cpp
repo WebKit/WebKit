@@ -83,6 +83,22 @@ struct TierOptions {
     const char* optionsStr;
 };
 
+static void testResetAfterTimeout(bool& failed)
+{
+    JSValueRef v = nullptr;
+    JSValueRef exception = nullptr;
+    const char* reentryScript = "100";
+    JSStringRef script = JSStringCreateWithUTF8CString(reentryScript);
+    v = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+    if (exception) {
+        printf("FAIL: Watchdog timeout was not reset.\n");
+        failed = true;
+    } else if (!JSValueIsNumber(context, v) || JSValueToNumber(context, v, nullptr) != 100) {
+        printf("FAIL: Script result is not as expected.\n");
+        failed = true;
+    }
+}
+
 int testExecutionTimeLimit()
 {
     static const TierOptions tierOptionsList[] = {
@@ -152,6 +168,8 @@ int testExecutionTimeLimit()
                 printf("FAIL: %s TerminatedExecutionException was not thrown.\n", tierOptions.tier);
                 failed = true;
             }
+
+            testResetAfterTimeout(failed);
         }
 
         /* Test the script timeout's TerminatedExecutionException should NOT be catchable: */
@@ -187,6 +205,8 @@ int testExecutionTimeLimit()
                 printf("FAIL: %s TerminatedExecutionException was caught.\n", tierOptions.tier);
                 failed = true;
             }
+
+            testResetAfterTimeout(failed);
         }
         
         /* Test script timeout with no callback: */
@@ -222,6 +242,8 @@ int testExecutionTimeLimit()
                 printf("FAIL: %s TerminatedExecutionException was not thrown.\n", tierOptions.tier);
                 failed = true;
             }
+
+            testResetAfterTimeout(failed);
         }
         
         /* Test script timeout cancellation: */

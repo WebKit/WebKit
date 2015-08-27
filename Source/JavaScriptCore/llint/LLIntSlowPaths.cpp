@@ -54,7 +54,7 @@
 #include "ObjectConstructor.h"
 #include "ProtoCallFrame.h"
 #include "StructureRareDataInlines.h"
-#include "Watchdog.h"
+#include "VMInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace LLInt {
@@ -1303,7 +1303,7 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_watchdog_timer)
 {
     LLINT_BEGIN_NO_SET_PC();
     ASSERT(vm.watchdog);
-    if (UNLIKELY(vm.watchdog->didFire(exec)))
+    if (UNLIKELY(vm.shouldTriggerTermination(exec)))
         LLINT_THROW(createTerminatedExecutionException(&vm));
     LLINT_RETURN_TWO(0, exec);
 }

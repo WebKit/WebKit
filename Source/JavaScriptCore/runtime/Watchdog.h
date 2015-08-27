@@ -26,7 +26,7 @@
 #ifndef Watchdog_h
 #define Watchdog_h
 
-#include <mutex>
+#include <wtf/Lock.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
@@ -44,14 +44,11 @@ public:
     Watchdog();
 
     typedef bool (*ShouldTerminateCallback)(ExecState*, void* data1, void* data2);
-    void setTimeLimit(VM&, std::chrono::microseconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
+    void setTimeLimit(std::chrono::microseconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
+    JS_EXPORT_PRIVATE void terminateSoon();
 
-    // This version of didFire() will check the elapsed CPU time and call the
-    // callback (if needed) to determine if the watchdog should fire.
     bool didFire(ExecState* exec)
     {
-        if (m_didFire)
-            return true;
         if (!m_timerDidFire)
             return false;
         return didFireSlow(exec);
@@ -61,21 +58,13 @@ public:
     void enteredVM();
     void exitedVM();
 
-    // This version of didFire() is a more efficient version for when we want
-    // to know if the watchdog has fired in the past, and not whether it should
-    // fire right now.
-    bool didFire() { return m_didFire; }
-    JS_EXPORT_PRIVATE void fire();
-
     void* timerDidFireAddress() { return &m_timerDidFire; }
 
     static const std::chrono::microseconds noTimeLimit;
 
 private:
-    void startTimer(std::chrono::microseconds timeLimit);
-    void stopTimer();
-
-    inline bool hasStartedTimer();
+    void startTimer(LockHolder&, std::chrono::microseconds timeLimit);
+    void stopTimer(LockHolder&);
 
     bool didFireSlow(ExecState*);
 
@@ -85,12 +74,15 @@ private:
     // NOTE: m_timerDidFire is only set by the platform specific timer
     // (probably from another thread) but is only cleared in the script thread.
     bool m_timerDidFire;
-    bool m_didFire;
 
     std::chrono::microseconds m_timeLimit;
 
     std::chrono::microseconds m_cpuDeadline;
     std::chrono::microseconds m_wallClockDeadline;
+
+    // Writes to m_timerDidFire and m_timeLimit, and Reads+Writes to m_cpuDeadline and m_wallClockDeadline
+    // must be guarded by this lock.
+    Lock m_lock;
 
     bool m_hasEnteredVM { false };
 

@@ -236,7 +236,7 @@ public:
     static Ref<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 
-    Watchdog& ensureWatchdog();
+    JS_EXPORT_PRIVATE Watchdog& ensureWatchdog();
 
 private:
     RefPtr<JSLock> m_apiLock;
@@ -564,6 +564,8 @@ public:
 
     JS_EXPORT_PRIVATE void queueMicrotask(JSGlobalObject*, PassRefPtr<Microtask>);
     JS_EXPORT_PRIVATE void drainMicrotasks();
+
+    inline bool shouldTriggerTermination(ExecState*);
 
 private:
     friend class LLIntOffsetsExtractor;

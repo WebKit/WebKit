@@ -292,7 +292,7 @@ VM::VM(VMType vmType, HeapType heapType)
     if (Options::watchdog()) {
         std::chrono::milliseconds timeoutMillis(Options::watchdog());
         Watchdog& watchdog = ensureWatchdog();
-        watchdog.setTimeLimit(*this, timeoutMillis);
+        watchdog.setTimeLimit(timeoutMillis);
     }
 }
 
@@ -388,6 +388,11 @@ Watchdog& VM::ensureWatchdog()
         // the LLINT assumes that the internal shape of a std::unique_ptr is the
         // same as a plain C++ pointer, and loads the address of Watchdog from it.
         RELEASE_ASSERT(*reinterpret_cast<Watchdog**>(&watchdog) == watchdog.get());
+
+        // And if we've previously compiled any functions, we need to revert
+        // them because they don't have the needed polling checks for the watchdog
+        // yet.
+        deleteAllCode();
     }
     return *watchdog;
 }

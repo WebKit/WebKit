@@ -1,3 +1,90 @@
+2015-08-26  Mark Lam  <mark.lam@apple.com>
+
+        watchdog m_didFire state erroneously retained.
+        https://bugs.webkit.org/show_bug.cgi?id=131082
+
+        Reviewed by Geoffrey Garen.
+
+        The watchdog can fire for 2 reasons:
+        1. an external controlling entity (i.e. another thread) has scheduled termination
+           of the script thread via watchdog::terminateSoon().
+        2. the allowed CPU time has expired.
+
+        For case 1, we're doing away with the m_didFire flag.  Watchdog::terminateSoon() 
+        will set the timer deadlines and m_timeLimit to 0, and m_timerDidFire to true.
+        This will get the script thread to check Watchdog::didFire() and terminate
+        execution.
+
+        Note: the watchdog only guarantees that script execution will terminate as soon
+        as possible due to a time limit of 0.  Once we've exited the VM, the client of the
+        VM is responsible from keeping a flag to prevent new script execution.
+
+        In a race condition, if terminateSoon() is called just after execution has gotten
+        past the client's reentry check and the client is in the process of re-entering,
+        the worst that can happen is that we will schedule the watchdog timer to fire
+        after a period of 0.  This will terminate script execution quickly, and thereafter
+        the client's check should be able to prevent further entry into the VM.
+
+        The correctness (i.e. has no race condition) of this type of termination relies
+        on the termination state being sticky.  Once the script thread is terminated this
+        way, the VM will continue to terminate scripts quickly until the client sets the
+        time limit to a non-zero value (or clears it which sets the time limit to
+        noTimeLimit).
+
+        For case 2, the watchdog does not alter m_timeLimit.  If the CPU deadline has
+        been reached, the script thread will terminate execution and exit the VM.
+
+        If the client of the VM starts new script execution, the watchdog will allow
+        execution for the specified m_timeLimit.  In this case, since m_timeLimit is not
+        0, the script gets a fresh allowance of CPU time to execute.  Hence, terminations
+        due to watchdog time outs are no longer sticky.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupSetExecutionTimeLimit):
+        (JSContextGroupClearExecutionTimeLimit):
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        - Add test scenarios to verify that the watchdog is automatically reset by the VM
+          upon throwing the TerminatedExecutionException.
+
+        (testResetAfterTimeout):
+        (testExecutionTimeLimit):
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::ensureWatchdog):
+        * runtime/VM.h:
+        * runtime/VMInlines.h: Added.
+        (JSC::VM::shouldTriggerTermination):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::Watchdog):
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::terminateSoon):
+        (JSC::Watchdog::didFireSlow):
+        (JSC::Watchdog::hasTimeLimit):
+        (JSC::Watchdog::enteredVM):
+        (JSC::Watchdog::exitedVM):
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::stopTimer):
+        (JSC::Watchdog::hasStartedTimer): Deleted.
+        (JSC::Watchdog::fire): Deleted.
+        * runtime/Watchdog.h:
+        (JSC::Watchdog::didFire):
+        (JSC::Watchdog::timerDidFireAddress):
+
 2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Implement tracking of active stylesheets in the frontend
