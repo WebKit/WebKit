@@ -76,6 +76,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
 - (void)_accessibilitySetTestValue:(id)value forAttribute:(NSString*)attributeName;
+- (void)_accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName;
 @end
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
@@ -1402,6 +1403,33 @@ void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) c
     NSArray* array = [NSArray arrayWithObject:element->platformUIElement()];
     [m_element accessibilitySetValue:array forAttribute:NSAccessibilitySelectedChildrenAttribute];
     END_AX_OBJC_EXCEPTIONS    
+}
+
+void AccessibilityUIElement::setSelectedChildAtIndex(unsigned index) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    AccessibilityUIElement element = const_cast<AccessibilityUIElement*>(this)->getChildAtIndex(index);
+    if (!element.platformUIElement())
+        return;
+    NSArray *selectedChildren = [m_element accessibilityAttributeValue:NSAccessibilitySelectedChildrenAttribute];
+    NSArray *array = [NSArray arrayWithObject:element.platformUIElement()];
+    if (selectedChildren)
+        array = [selectedChildren arrayByAddingObjectsFromArray:array];
+    [m_element _accessibilitySetValue:array forAttribute:NSAccessibilitySelectedChildrenAttribute];
+    END_AX_OBJC_EXCEPTIONS
+}
+
+void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    AccessibilityUIElement element = const_cast<AccessibilityUIElement*>(this)->getChildAtIndex(index);
+    NSArray *selectedChildren = [m_element accessibilityAttributeValue:NSAccessibilitySelectedChildrenAttribute];
+    if (!element.platformUIElement() || !selectedChildren)
+        return;
+    NSMutableArray *array = [NSMutableArray arrayWithArray:selectedChildren];
+    [array removeObject:element.platformUIElement()];
+    [m_element _accessibilitySetValue:array forAttribute:NSAccessibilitySelectedChildrenAttribute];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const

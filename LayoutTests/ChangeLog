@@ -1,3 +1,14 @@
+2015-08-27  Nan Wang  <n_wang@apple.com>
+
+        AX: Fix accessibility/select-element-at-index.html test
+        https://bugs.webkit.org/show_bug.cgi?id=148516
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/select-element-at-index.html:
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/select-element-at-index-expected.txt: Added.
+
 2015-08-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip new High DPI test (Windows doesn't quite support this)

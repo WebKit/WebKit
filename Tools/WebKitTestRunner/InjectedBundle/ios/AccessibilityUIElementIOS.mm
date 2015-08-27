@@ -737,6 +737,14 @@ void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) c
 {
 }
 
+void AccessibilityUIElement::setSelectedChildAtIndex(unsigned index) const
+{
+}
+
+void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
+{
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 {
     // FIXME: implement

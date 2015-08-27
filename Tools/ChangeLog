@@ -1,3 +1,43 @@
+2015-08-27  Nan Wang  <n_wang@apple.com>
+
+        AX: Fix accessibility/select-element-at-index.html test
+        https://bugs.webkit.org/show_bug.cgi?id=148516
+
+        Reviewed by Chris Fleizach.
+
+        Implemented setSelectedChildAtIndex and removeSelectionAtIndex for mac.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (setSelectedChildCallback):
+        (setSelectedChildAtIndexCallback):
+        (removeSelectionAtIndexCallback):
+        (elementAtPointCallback):
+        (sentenceAtOffsetCallback):
+        (stringForSelectionCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::setSelectedChild):
+        (AccessibilityUIElement::setSelectedChildAtIndex):
+        (AccessibilityUIElement::removeSelectionAtIndex):
+        (AccessibilityUIElement::accessibilityValue):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::wordAtOffset):
+        (WTR::AccessibilityUIElement::lineAtOffset):
+        (WTR::AccessibilityUIElement::sentenceAtOffset):
+        (WTR::AccessibilityUIElement::isSelectable):
+        (WTR::AccessibilityUIElement::isMultiSelectable):
+        (WTR::AccessibilityUIElement::setSelectedChild):
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex):
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex):
+        (WTR::AccessibilityUIElement::selectedChildrenCount):
+        (WTR::AccessibilityUIElement::selectedChildAtIndex):
+        (WTR::AccessibilityUIElement::isExpanded):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::setSelectedChild):
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex):
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex):
+        (WTR::AccessibilityUIElement::accessibilityValue):
+
 2015-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r188982

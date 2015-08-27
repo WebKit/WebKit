@@ -45,7 +45,14 @@
         selectElement.setSelectedChildAtIndex(3);
         shouldBe("selectElement.selectedChildrenCount", "3");
         shouldBeTrue("option4.isSelected");
-        shouldBeTrue("selectElement.selectedChildAtIndex(3).isEqual(option4)");
+        
+        // On mac, selectedChildAtIndex is using the index to retrieve the element
+        // from the selected children array. Here, the selected children array has
+        // size 3, so the index should be 2.
+        if (accessibilityController.platformName == "mac") 
+            shouldBeTrue("selectElement.selectedChildAtIndex(2).isEqual(option4)");
+        else
+            shouldBeTrue("selectElement.selectedChildAtIndex(3).isEqual(option4)");
 
         selectElement.removeSelectionAtIndex(3);
         shouldBeFalse("option4.isSelected");
