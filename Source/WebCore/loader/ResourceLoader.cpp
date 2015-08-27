@@ -81,6 +81,17 @@ ResourceLoader::~ResourceLoader()
     ASSERT(m_reachedTerminalState);
 }
 
+void ResourceLoader::finishNetworkLoad()
+{
+    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->remove(this);
+
+    if (m_handle) {
+        ASSERT(m_handle->client() == this);
+        m_handle->clearClient();
+        m_handle = nullptr;
+    }
+}
+
 void ResourceLoader::releaseResources()
 {
     ASSERT(!m_reachedTerminalState);
@@ -98,16 +109,9 @@ void ResourceLoader::releaseResources()
     // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
     m_reachedTerminalState = true;
 
-    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->remove(this);
-    m_identifier = 0;
+    finishNetworkLoad();
 
-    if (m_handle) {
-        // Clear out the ResourceHandle's client so that it doesn't try to call
-        // us back after we release it, unless it has been replaced by someone else.
-        if (m_handle->client() == this)
-            m_handle->clearClient();
-        m_handle = nullptr;
-    }
+    m_identifier = 0;
 
     m_resourceData = nullptr;
     m_deferredRequest = ResourceRequest();
@@ -359,13 +363,23 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
     else
         InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse);
 
-    if (!redirectResponse.isNull())
+    bool isRedirect = !redirectResponse.isNull();
+    if (isRedirect)
         platformStrategies()->loaderStrategy()->resourceLoadScheduler()->crossOriginRedirectReceived(this, request.url());
 
     m_request = request;
 
-    if (!redirectResponse.isNull() && !m_documentLoader->isCommitted())
-        frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad(m_request.url());
+    if (isRedirect) {
+        auto& redirectURL = request.url();
+        if (!m_documentLoader->isCommitted())
+            frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad(redirectURL);
+
+        if (redirectURL.protocolIsData()) {
+            // Handle data URL decoding locally.
+            finishNetworkLoad();
+            loadDataURL();
+        }
+    }
 }
 
 void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback)

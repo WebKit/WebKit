@@ -177,6 +177,7 @@ private:
 
     void addDataOrBuffer(const char*, unsigned, SharedBuffer*, DataPayloadType);
     void loadDataURL();
+    void finishNetworkLoad();
 
     // ResourceHandleClient
     virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse) override;
