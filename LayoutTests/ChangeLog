@@ -1,3 +1,12 @@
+2015-08-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Test gardening.
+
+        Remove failure case for recent progression.
+
+        * platform/win/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent: Removed.
+        * platform/win/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T6-expected.txt: Removed.
+
 2015-08-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Generic font families do not consult with the user's preferred language
