@@ -36,6 +36,8 @@
                     { "name": "bot192", "platform": "mac-yosemite" },
                     { "name": "bot193", "platform": "mac-yosemite" },
                     { "name": "bot194", "platform": "mac-yosemite" },
+                    { "name": "bot400", "platform": "mac-yosemite" },
+                    { "name": "bot401", "platform": "mac-yosemite" },
 
                     { "name": "bot516", "platform": "win" },
                     { "name": "bot514", "platform": "win" },
@@ -144,7 +146,7 @@
                     { "name": "Apple Yosemite Release (Build)", "type": "Build", "builddir": "yosemite-release",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["yosemite-release-tests-jsc", "yosemite-release-tests-wk1", "yosemite-release-tests-wk2", "yosemite-release-perf"],
-                      "slavenames": ["bot188", "bot189"]
+                      "slavenames": ["bot188", "bot189", "bot400", "bot401"]
                     },
                     { "name": "Apple Yosemite Release JSC (Tests)", "type": "TestJSC", "builddir": "yosemite-release-tests-jsc",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
