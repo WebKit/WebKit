@@ -191,6 +191,8 @@ inline bool isDouble(UseKind kind)
     }
 }
 
+// Returns true if the use kind only admits cells, and is therefore appropriate for
+// SpeculateCellOperand in the DFG or lowCell() in the FTL.
 inline bool isCell(UseKind kind)
 {
     switch (kind) {

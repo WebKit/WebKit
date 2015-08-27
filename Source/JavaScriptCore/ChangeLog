@@ -1,3 +1,10 @@
+2015-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add a comment to describe something I learned about a confusingly-named function.
+
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::isCell):
+
 2015-08-27  Basile Clement  <basile_clement@apple.com>
 
         REGRESSION(r184779): Possible read-after-free in JavaScriptCore/dfg/DFGClobberize.h
