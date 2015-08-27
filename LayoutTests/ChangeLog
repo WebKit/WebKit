@@ -1,3 +1,14 @@
+2015-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Page does not update when <link> media attribute changes to no longer apply to page
+        https://bugs.webkit.org/show_bug.cgi?id=148392
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/link-media-attr-expected.txt: Added.
+        * fast/css/link-media-attr.html: Added.
+        Add a test to verify that styles change after a link's media attribute changes.
+
 2015-08-27  Chris Dumez  <cdumez@apple.com>
 
         Document window.NodeFilter properties
