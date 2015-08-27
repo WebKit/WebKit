@@ -447,21 +447,18 @@ void FEConvolveMatrix::platformApplySoftware()
         return;
     }
 
-    int iterations = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
-    if (!iterations) {
+    if (int iterations = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension) {
+        int stride = clipBottom / iterations;
+        int chunkCount = (clipBottom + stride - 1) / stride;
+
+        WorkQueue::concurrentApply(chunkCount, [&](size_t index) {
+            int yStart = (stride * index);
+            int yEnd = std::min<int>(stride * (index + 1), clipBottom);
+
+            setInteriorPixels(paintingData, clipRight, clipBottom, yStart, yEnd);
+        });
+    } else
         setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
-        return;
-    }
-
-    int stride = clipBottom / iterations;
-    int chunkCount = (clipBottom + stride - 1) / stride;
-
-    WorkQueue::concurrentApply(chunkCount, [&](size_t index) {
-        int yStart = (stride * index);
-        int yEnd = std::min<int>(stride * (index + 1), clipBottom);
-
-        setInteriorPixels(paintingData, clipRight, clipBottom, yStart, yEnd);
-    });
 
     clipRight += m_targetOffset.x() + 1;
     clipBottom += m_targetOffset.y() + 1;

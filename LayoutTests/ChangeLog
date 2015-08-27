@@ -1,3 +1,13 @@
+2015-08-27  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r188987): imported/mozilla/svg/filters/feConvolveMatrix-1.svg fails
+        https://bugs.webkit.org/show_bug.cgi?id=148497
+        <rdar://problem/22459541>
+
+        Reviewed by Andy Estes.
+
+        * TestExpectations:
+
 2015-08-27  Basile Clement  <basile_clement@apple.com>
 
         REGRESSION(r184779): Possible read-after-free in JavaScriptCore/dfg/DFGClobberize.h
