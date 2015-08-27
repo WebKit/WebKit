@@ -6542,36 +6542,32 @@ double HTMLMediaElement::playerVolume() const
 MediaSession* HTMLMediaElement::session() const
 {
     MediaSession* session = m_session.get();
-    if (session && session->kindEnum() == MediaSession::Kind::Default)
+    if (session && session == &document().defaultMediaSession())
         return nullptr;
+
     return session;
 }
 
 void HTMLMediaElement::setSession(MediaSession* session)
 {
-    // 6.1
+    // 6.1. Extensions to the HTMLMediaElement interface
     // 1. Let m be the media element in question.
-    // 2. Let old media session be m's current media session, if it has one, and null otherwise.
-    // 3. Let new media session be null.
-    // 4. Set m's current media session to null, if it currently has one.
-    // 5. Let m's current media session be the new value or the top-level browsing context's media session if the new
-    //    value is null.
-    // 6. If the new value is null, then set the m's kind IDL attribute to the empty string. Otherwise, set m's kind IDL
-    //    attribute to the value of current media session's kind attribute.
-    // 7. Let new media session be m's current media session.
-    // 8. Update media sessions: If old media session and new media session are the same (whether both null or both the
-    //    same media session), then terminate these steps.
-    // 9. If m is an active audio-producing participant of old media session, then pause m and remove m from old media
-    //    session's active audio-producing participants.
-    // 10. If old media session is not null and no longer has one or more active audio-producing participants, then run
-    //     the media session release algorithm for old media session.
+    // 2. Let old media session be m’s current media session, if it has one, and null otherwise.
+    // 3. Let m’s current media session be the new value or the top-level browsing context’s media session if the new value is null.
+    // 4. Let new media session be m’s current media session.
+
+    // 5. Update media sessions: If old media session and new media session are the same (whether both null or both the same media session), then terminate these steps.
+    if (m_session.get() == session)
+        return;
 
     if (m_session) {
+        // 6. If m is an audio-producing participant of old media session, then pause m and remove m from old media session’s list of audio-producing participants.
         if (m_session->isMediaElementActive(*this))
             pause();
 
         m_session->removeMediaElement(*this);
 
+        // 7. If old media session is not null and no longer has one or more audio-producing participants, then run the media session deactivation algorithm for old media session.
         if (!m_session->hasActiveMediaElements())
             m_session->releaseSession();
     }

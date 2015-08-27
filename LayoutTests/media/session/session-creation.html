@@ -9,20 +9,27 @@
             testSessionKind("transient");
             testSessionKind("transient-solo");
             testSessionKind("ambient");
+            testSessionKind();
 
+            consoleWrite("");
             endTest();
         }
 
         function testSessionKind(sessionKind)
         {
-            consoleWrite("---");
-            consoleWrite("Testing '" + sessionKind + "' session");
-            consoleWrite("---");
+            consoleWrite("<br>---");
 
-            session = new MediaSession(sessionKind);
+            if (sessionKind != undefined) {
+                consoleWrite("Testing \"new MediaSession('" + sessionKind + "')\"");
+                session = new MediaSession(sessionKind);
+            } else {
+                consoleWrite("Testing \"new MediaSession()\"");
+                session = new MediaSession();
+            }
 
             if (window.internals)
                 testExpected('internals.mediaSessionCurrentState(session)', "idle");
+            consoleWrite("---");
         }
     </script>
 </head>

@@ -8,27 +8,25 @@
     
         function runTest() 
         {
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
-
-            window.jsTestIsAsync = true;
-
+            findMediaElement();
             session = new MediaSession("content");
 
             consoleWrite("Waiting for Content media to begin playing.")
-            var video = document.getElementById("video");
             video.src = findMediaFile("video", "../content/counting");
             video.session = session;
             video.onplaying = beganPlaying;
+            video.oncanplaythrough = canplaythrough;
+        }
+
+        function canplaythrough() 
+        {
             video.play();
         }
 
         function beganPlaying(event)
         {
             consoleWrite("Media began playing.");
-            document.getElementById("video").onpause = paused;
+            video.onpause = paused;
 
             if (window.internals) {
                 testExpected('internals.mediaSessionCurrentState(session)', "active");
@@ -51,6 +49,6 @@
 </head>
 <body onload="runTest()">
     <p>'Content' start of interruption events should indefinitely pause 'Content' media sessions.</p>
-    <video id="video" />
+    <video id="video" controls> </video>
 </body>
 </html>

@@ -1,3 +1,14 @@
+2015-08-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Media Session: MediaSession constructor 'kind' argument optional
+        https://bugs.webkit.org/show_bug.cgi?id=148527
+
+        Reviewed by Jer Noble.
+
+        * media/session/content-interruptions.html: Restructure to make less timing dependent. Minor cleanup.
+        * media/session/session-creation-expected.txt:
+        * media/session/session-creation.html: Test default MediaSession constructor argument.
+
 2015-08-27  Alexey Proskuryakov  <ap@apple.com>
 
         Add an expectation for another momentum scrolling test that became flaky.

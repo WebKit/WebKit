@@ -46,21 +46,19 @@ static const char* contentKind = "content";
 MediaSession::Kind MediaSession::parseKind(const String& kind)
 {
     // 4. Media Session
-    // 2. If no corresponding media session type can be found for the provided media session category or media session
-    //    category is empty, then set media session's current media session type to "content".
+    // 2. Set media session's current media session type to the corresponding media session type of media session category.
+
+    if (kind.isNull() || kind == contentKind)
+        return MediaSession::Kind::Content;
     if (kind == ambientKind)
         return MediaSession::Kind::Ambient;
     if (kind == transientKind)
         return MediaSession::Kind::Transient;
     if (kind == transientSoloKind)
         return MediaSession::Kind::TransientSolo;
-    return MediaSession::Kind::Content;
-}
 
-MediaSession::MediaSession(Document& document)
-    : m_document(document)
-{
-    MediaSessionManager::singleton().addMediaSession(*this);
+    ASSERT_NOT_REACHED();
+    return MediaSession::Kind::Content;
 }
 
 MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)

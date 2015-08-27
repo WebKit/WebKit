@@ -25,7 +25,7 @@
 
 [
     Conditional=MEDIA_SESSION,
-    Constructor(MediaSessionKind kind),
+    CustomConstructor(optional MediaSessionKind kind),
     ConstructorCallWith=ScriptExecutionContext,
     ImplementationLacksVTable,
 ] interface MediaSession {

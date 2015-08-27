@@ -53,13 +53,11 @@ public:
         Ambient
     };
 
-    static Ref<MediaSession> create(ScriptExecutionContext& context, const String& kind)
+    static Ref<MediaSession> create(ScriptExecutionContext& context, const String& kind = String())
     {
         return adoptRef(*new MediaSession(context, kind));
     }
 
-    explicit MediaSession(Document&);
-    MediaSession(ScriptExecutionContext&, const String&);
     ~MediaSession();
 
     String kind() const;
@@ -90,6 +88,8 @@ public:
 
 private:
     friend class HTMLMediaElement;
+
+    MediaSession(ScriptExecutionContext&, const String&);
 
     static Kind parseKind(const String&);
 
