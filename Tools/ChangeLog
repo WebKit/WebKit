@@ -1,3 +1,16 @@
+2015-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, further shorten a test that times out because it's very long
+        running.
+
+        I've locally run these tests on repeat for 24 hours and found no genuine
+        failures, like deadlocks. So, the timeouts are probably because the test
+        machine is slow and debug is slow. We should just run this test for fewer
+        iterations.
+
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-08-26  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         Unreviewed build fix attempt on EFL
