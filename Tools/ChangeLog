@@ -1,5 +1,12 @@
 2015-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Mark WTF_WordLock.ContendedShortSection as slow too.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
+2015-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Fix GTK+ WTR crashes in initializeMainRunLoop()
 
         Rubber-stamped by Žan Doberšek.
