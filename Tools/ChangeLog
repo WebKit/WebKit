@@ -1,3 +1,14 @@
+2015-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        [Win CMake] Fix incremental build after r188673
+        https://bugs.webkit.org/show_bug.cgi?id=148539
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        Copy forwarding headers from WebCore before building in case that was not yet done.
+        It used to be done when running CMake, but now it's a build step.
+
 2015-08-27  Nan Wang  <n_wang@apple.com>
 
         AX: Fix accessibility/select-element-at-index.html test

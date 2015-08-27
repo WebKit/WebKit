@@ -2,6 +2,11 @@ set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}")
 add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 
+add_custom_target(forwarding-headersWinForTestWebKitAPI
+    COMMAND ${CMAKE_BINARY_DIR}/DerivedSources/WebCore/preBuild.cmd VERBATIM
+)
+set(ForwardingHeadersForTestWebKitAPI_NAME forwarding-headersWinForTestWebKitAPI)
+
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DWIN_CAIRO)
 endif ()
