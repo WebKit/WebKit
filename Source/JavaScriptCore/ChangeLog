@@ -1,3 +1,10 @@
+2015-08-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r189064.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2015-08-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add module loader "resolve" hook for local file system to test the loader in JSC shell

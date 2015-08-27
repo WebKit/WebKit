@@ -1038,6 +1038,9 @@
     <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSTypedArrayViewPrototypes.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSTypedArrays.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -1863,6 +1866,10 @@
     <ClCompile Include="..\dfg\DFGAdaptiveInferredPropertyValueWatchpoint.cpp" />
     <ClCompile Include="..\dfg\DFGAdaptiveStructureWatchpoint.cpp" />
     <ClCompile Include="..\dfg\DFGMultiGetByOffsetData.cpp" />
+    <ClCompile Include="..\dfg\DFGClobbersExitState.cpp" />
+    <ClCompile Include="..\dfg\DFGInsertionSet.cpp" />
+    <ClCompile Include="..\dfg\DFGNodeOrigin.cpp" />
+    <ClCompile Include="..\runtime\JSArrowFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -3393,6 +3400,9 @@
     <ClInclude Include="..\runtime\JSTypedArrayPrototypes.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\JSTypedArrayViewPrototypes.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\JSTypedArrays.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -4453,6 +4463,7 @@
     <ClInclude Include="..\dfg\DFGAdaptiveInferredPropertyValueWatchpoint.h" />
     <ClInclude Include="..\dfg\DFGAdaptiveStructureWatchpoint.h" />
     <ClInclude Include="..\dfg\DFGMultiGetByOffsetData.h" />
+    <ClInclude Include="..\dfg\DFGClobbersExitState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />

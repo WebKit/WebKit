@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -807,6 +807,7 @@
     <ClCompile Include="..\runtime\JSTemplateRegistryKey.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayConstructors.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp" />
+    <ClCompile Include="..\runtime\JSTypedArrayViewPrototypes.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrays.cpp" />
     <ClCompile Include="..\runtime\JSEnvironmentRecord.cpp" />
     <ClCompile Include="..\runtime\JSWeakMap.cpp" />
@@ -1662,6 +1663,7 @@
     <ClInclude Include="..\runtime\JSTypeInfo.h" />
     <ClInclude Include="..\runtime\JSTypedArrayConstructors.h" />
     <ClInclude Include="..\runtime\JSTypedArrayPrototypes.h" />
+    <ClInclude Include="..\runtime\JSTypedArrayViewPrototypes.h" />
     <ClInclude Include="..\runtime\JSTypedArrays.h" />
     <ClInclude Include="..\runtime\JSUint16Array.h" />
     <ClInclude Include="..\runtime\JSUint32Array.h" />
