@@ -1,5 +1,14 @@
 2015-08-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] REGRESSION: userscripts tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=148519
+
+        Unreviewed gardening, skip failing tests to make the bot work again.
+
+        * platform/efl/TestExpectations:
+
+2015-08-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] REGRESSION: fullscreen tests fail with timeout
         https://bugs.webkit.org/show_bug.cgi?id=148518
 

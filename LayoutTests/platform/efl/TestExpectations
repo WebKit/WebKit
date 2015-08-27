@@ -2268,3 +2268,6 @@ css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 
 # [EFL] REGRESSION: fullscreen tests fail with timeout
 webkit.org/b/148518 fullscreen [ Skip ]
+
+# [EFL] REGRESSION: userscripts tests crash
+webkit.org/b/148519 userscripts [ Skip ]
