@@ -78,6 +78,20 @@
         "description": "The new class syntax of ES6 provides a new syntax to define and extend JavaScript objects. The class syntax is a new notation, objects still use prototypal inheritance."
     },
     {
+        "name": "Generators (ES6)",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-generator-objects",
+        "specification": "ES6",
+        "description": "An iterative function object that is interruptable and resumable.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "Map data structure",
         "status": {
             "status": "Done",
@@ -123,6 +137,20 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120260",
         "specification": "ES6"
+    },
+    {
+        "name": "Proxy Objects (ES6)",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-objects",
+        "specification": "ES6",
+        "description": "An intermediary object that defines custom basic behaviors of another object such as property lookup, assignment, enumeration.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
     },
     {
         "name": "Set data structure",
