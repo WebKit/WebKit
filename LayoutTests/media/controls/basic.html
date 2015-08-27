@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+        <script>
+            var video;
+            var currentStatus;
+
+            function init()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "../content/test");
+
+                waitForEvent("canplaythrough", canplaythrough);
+                waitForEventAndFail("error");
+            }
+
+            function canplaythrough()
+            {
+                if (!window.testRunner)
+                    return;
+
+                currentStatus = JSON.parse(internals.getCurrentMediaControlsStatusForElement(video));
+                test("currentStatus != null");
+                if (currentStatus)
+                    testExpected("currentStatus.status", "ok");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <p>This is a basic test of the internal controls status API.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

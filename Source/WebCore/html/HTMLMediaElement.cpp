@@ -6280,6 +6280,39 @@ void HTMLMediaElement::pageScaleFactorChanged()
 
     setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
 }
+
+String HTMLMediaElement::getCurrentMediaControlsStatus()
+{
+    DOMWrapperWorld& world = ensureIsolatedWorld();
+    ScriptController& scriptController = document().frame()->script();
+    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSLockHolder lock(exec);
+
+    JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
+    JSC::JSObject* controllerObject = controllerValue.toObject(exec);
+
+    if (exec->hadException())
+        return "";
+
+    JSC::JSValue functionValue = controllerObject->get(exec, JSC::Identifier::fromString(exec, "getCurrentControlsStatus"));
+    if (exec->hadException() || functionValue.isUndefinedOrNull())
+        return "";
+
+    JSC::JSObject* function = functionValue.toObject(exec);
+    JSC::CallData callData;
+    JSC::CallType callType = function->methodTable()->getCallData(function, callData);
+    JSC::MarkedArgumentBuffer argList;
+    if (callType == JSC::CallTypeNone)
+        return "";
+
+    JSC::JSValue outputValue = JSC::call(exec, function, callType, callData, controllerObject, argList);
+
+    if (exec->hadException())
+        return "";
+
+    return outputValue.getString(exec);
+}
 #endif // ENABLE(MEDIA_CONTROLS_SCRIPT)
 
 unsigned long long HTMLMediaElement::fileSize() const

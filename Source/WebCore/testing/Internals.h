@@ -431,6 +431,8 @@ public:
 
     String pathStringWithShrinkWrappedRects(Vector<double> rectComponents, double radius, ExceptionCode&);
 
+    String getCurrentMediaControlsStatusForElement(HTMLMediaElement*);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

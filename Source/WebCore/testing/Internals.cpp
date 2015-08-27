@@ -3052,4 +3052,18 @@ String Internals::pathStringWithShrinkWrappedRects(Vector<double> rectComponents
     return pathString;
 }
 
+
+String Internals::getCurrentMediaControlsStatusForElement(HTMLMediaElement* mediaElement)
+{
+#if !ENABLE(MEDIA_CONTROLS_SCRIPT)
+    UNUSED_PARAM(mediaElement);
+    return String();
+#else
+    if (!mediaElement)
+        return String();
+
+    return mediaElement->getCurrentMediaControlsStatus();
+#endif
+}
+
 }

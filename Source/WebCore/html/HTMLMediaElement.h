@@ -434,6 +434,7 @@ public:
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     void pageScaleFactorChanged();
+    WEBCORE_EXPORT String getCurrentMediaControlsStatus();
 #endif
 
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }

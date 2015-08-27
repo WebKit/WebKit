@@ -1,0 +1,10 @@
+This is a basic test of the internal controls status API.
+
+This test only runs in DRT!
+
+
+EVENT(canplaythrough)
+TEST(currentStatus != null) OK
+EXPECTED (currentStatus.status == 'ok') OK
+END OF TEST
+

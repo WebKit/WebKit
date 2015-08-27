@@ -1,3 +1,17 @@
+2015-08-27  Dean Jackson  <dino@apple.com>
+
+        Initial infrastructure of media controls testing
+        https://bugs.webkit.org/show_bug.cgi?id=148426
+        <rdar://problem/22417286>
+
+        Reviewed by Eric Carlson.
+
+        Very simple test that calls into the status object
+        of the media controls instance.
+
+        * media/controls/basic-expected.txt: Added.
+        * media/controls/basic.html: Added.
+
 2015-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a Layout test for r188991

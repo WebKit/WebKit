@@ -2087,6 +2087,13 @@ Controller.prototype = {
         this.setNeedsTimelineMetricsUpdate();
         this.updateTimelineMetricsIfNeeded();
         this.drawTimelineBackground();
+    },
+
+    getCurrentControlsStatus: function ()
+    {
+        return JSON.stringify({
+            status: "ok"
+        });
     }
 
 };
