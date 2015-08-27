@@ -30,6 +30,7 @@
 #include "PlatformWebView.h"
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GMainLoopSource.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
@@ -40,8 +41,8 @@ static GMainLoopSource timeoutSource;
 
 void TestController::notifyDone()
 {
-    gtk_main_quit();
     timeoutSource.cancel();
+    RunLoop::main().stop();
 }
 
 void TestController::platformInitialize()
@@ -62,11 +63,11 @@ void TestController::platformRunUntil(bool&, double timeout)
     if (timeout > 0) {
         timeoutSource.scheduleAfterDelay("[WTR] Test timeout source", [] {
             fprintf(stderr, "FAIL: TestControllerRunLoop timed out.\n");
-            gtk_main_quit();
+            RunLoop::main().stop();
         }, std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(timeout)));
     } else
         timeoutSource.cancel();
-    gtk_main();
+    RunLoop::main().run();
 }
 
 static char* getEnvironmentVariableAsUTF8String(const char* variableName)

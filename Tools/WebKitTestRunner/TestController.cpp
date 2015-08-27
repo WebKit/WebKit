@@ -54,8 +54,10 @@
 #include <algorithm>
 #include <cstdio>
 #include <ctype.h>
+#include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <string>
+#include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 
@@ -313,6 +315,8 @@ const char* TestController::libraryPathForTesting()
 
 void TestController::initialize(int argc, const char* argv[])
 {
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
     platformInitialize();

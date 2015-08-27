@@ -1,3 +1,21 @@
+2015-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Fix GTK+ WTR crashes in initializeMainRunLoop()
+
+        Rubber-stamped by Žan Doberšek.
+
+        Initialize threading and main thread before
+        RunLoop::initializeMainRunLoop(), since the GLib implementation of
+        the RunLoop uses isMainThread() to decide whether to create a new
+        GMainContext or use the default one. Also use RunLoop::run() and
+        ::stop() instead of gtk_main/quit.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::notifyDone):
+        (WTR::TestController::platformRunUntil):
+
 2015-08-27  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, further shorten a test that times out because it's very long
