@@ -1,3 +1,38 @@
+2015-08-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add module loader "resolve" hook for local file system to test the loader in JSC shell
+        https://bugs.webkit.org/show_bug.cgi?id=148543
+
+        Reviewed by Filip Pizlo.
+
+        Add the module loader "resolve" hook to the JSC shell.
+        It takes the module name and the referrer module key and resolves the name to the unique module key.
+
+        resolve(ModuleName moduleName, ModuleKey referrer) -> Promise<ModuleKey>
+
+        In the JSC shell, since we load the module from the local file system, we treat an absolute file path
+        as a module key. So, in this patch, we implement the "resolve" hook that resolves the module name to
+        the absolute file path.
+
+        This local file system "resolve" functionality makes JSC shell easy to test the module loader.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (GlobalObject::moduleLoaderFetch):
+        (pathSeparator):
+        (extractDirectoryName):
+        (currentWorkingDirectory):
+        (resolvePath):
+        (GlobalObject::moduleLoaderResolve):
+        (functionDrainMicrotasks):
+        * runtime/JSInternalPromiseDeferred.cpp:
+        (JSC::JSInternalPromiseDeferred::resolve):
+        (JSC::JSInternalPromiseDeferred::reject):
+        * runtime/JSInternalPromiseDeferred.h:
+        * tests/stress/pathname-resolve.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2015-08-27  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix some FIXMEs and add some new ones, based on things we've learned from some

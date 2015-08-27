@@ -47,6 +47,8 @@ public:
     DECLARE_EXPORT_INFO;
 
     JS_EXPORT_PRIVATE JSInternalPromise* promise() const;
+    JS_EXPORT_PRIVATE JSInternalPromise* resolve(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE JSInternalPromise* reject(ExecState*, JSValue);
 
 private:
     JSInternalPromiseDeferred(VM&);

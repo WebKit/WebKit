@@ -66,4 +66,16 @@ JSInternalPromise* JSInternalPromiseDeferred::promise() const
     return jsCast<JSInternalPromise*>(Base::promise());
 }
 
+JSInternalPromise* JSInternalPromiseDeferred::resolve(ExecState* exec, JSValue value)
+{
+    Base::resolve(exec, value);
+    return promise();
+}
+
+JSInternalPromise* JSInternalPromiseDeferred::reject(ExecState* exec, JSValue reason)
+{
+    Base::reject(exec, reason);
+    return promise();
+}
+
 } // namespace JSC
