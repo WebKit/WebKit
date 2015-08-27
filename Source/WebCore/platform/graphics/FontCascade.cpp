@@ -775,7 +775,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
             if (supplementaryCharacter <= 0x1F1FF)
                 return Complex;
 
-            if (supplementaryCharacter >= 0x1F466 && supplementaryCharacter <= 0x1F469) {
+            if (supplementaryCharacter == 0x1F441 || supplementaryCharacter == 0x1F5E8 || (supplementaryCharacter >= 0x1F466 && supplementaryCharacter <= 0x1F469)) {
                 previousCharacterIsEmojiGroupCandidate = true;
                 continue;
             }
