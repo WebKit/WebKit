@@ -149,7 +149,7 @@ public:
                     return nullptr;
                 
                 Node* phiNode = m_graph.addNode(
-                    variable->prediction(), Phi, NodeOrigin());
+                    variable->prediction(), Phi, block->at(0)->origin.withInvalidExit());
                 FlushFormat format = variable->flushFormat();
                 NodeFlags result = resultFor(format);
                 phiNode->mergeFlags(result);
@@ -252,9 +252,12 @@ public:
                 valueForOperand.operand(variable->local()) = phiDef->value();
                 
                 m_insertionSet.insertNode(
-                    phiInsertionPoint, SpecNone, MovHint, NodeOrigin(),
+                    phiInsertionPoint, SpecNone, MovHint, block->at(0)->origin.withInvalidExit(),
                     OpInfo(variable->local().offset()), phiDef->value()->defaultEdge());
             }
+
+            if (block->at(0)->origin.exitOK)
+                m_insertionSet.insertNode(phiInsertionPoint, SpecNone, ExitOK, block->at(0)->origin);
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);

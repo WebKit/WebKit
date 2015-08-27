@@ -91,7 +91,7 @@ public:
                     BasicBlock* successor = block->successor(successorIndex);
                     successor->ssa->availabilityAtHead.merge(calculator.m_availability);
                     successor->ssa->availabilityAtHead.pruneByLiveness(
-                        m_graph, successor->firstOrigin().forExit);
+                        m_graph, successor->at(0)->origin.forExit);
                 }
             }
         } while (changed);

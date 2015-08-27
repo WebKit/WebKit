@@ -358,7 +358,7 @@ public:
                 if (verbose)
                     dataLog("Adding Phi for ", operand, " at ", pointerDump(block), "\n");
                 
-                Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, NodeOrigin());
+                Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
                 phiNode->mergeFlags(resultFor(format));
                 return phiNode;
             });

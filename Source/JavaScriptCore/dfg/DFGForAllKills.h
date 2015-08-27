@@ -55,32 +55,17 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
     CodeOrigin after = nodeAfter->origin.forExit;
     
     VirtualRegister alreadyNoted;
-    if (!!after) {
-        // If we MovHint something that is live at the time, then we kill the old value.
-        if (nodeAfter->containsMovHint()) {
-            VirtualRegister reg = nodeAfter->unlinkedLocal();
-            if (graph.isLiveInBytecode(reg, after)) {
-                functor(reg);
-                alreadyNoted = reg;
-            }
+    // If we MovHint something that is live at the time, then we kill the old value.
+    if (nodeAfter->containsMovHint()) {
+        VirtualRegister reg = nodeAfter->unlinkedLocal();
+        if (graph.isLiveInBytecode(reg, after)) {
+            functor(reg);
+            alreadyNoted = reg;
         }
-    }
-    
-    if (!before) {
-        if (!after)
-            return;
-        // The true before-origin is the origin at predecessors that jump to us. But there can be
-        // many such predecessors and they will likely all have a different origin. So, it's better
-        // to do the conservative thing.
-        graph.forAllLocalsLiveInBytecode(after, functor);
-        return;
     }
     
     if (before == after)
         return;
-    
-    // before could be unset even if after is, but the opposite cannot happen.
-    ASSERT(!!after);
     
     // It's easier to do this if the inline call frames are the same. This is way faster than the
     // other loop, below.

@@ -187,6 +187,7 @@ public:
             for (size_t i = 0; i < block->size(); ++i) {
                 Node* node = block->at(i);
 
+                VALIDATE((node), node->origin.isSet());
                 VALIDATE((node), node->origin.semantic.isSet() == node->origin.forExit.isSet());
                 VALIDATE((node), !(!node->origin.forExit.isSet() && node->origin.exitOK));
                 VALIDATE((node), !(mayExit(m_graph, node) == Exits && !node->origin.exitOK));
@@ -526,20 +527,21 @@ private:
                 continue;
             
             VALIDATE((block), block->phis.isEmpty());
-            
-            unsigned nodeIndex = 0;
-            for (; nodeIndex < block->size() && !block->at(nodeIndex)->origin.forExit.isSet(); nodeIndex++) { }
-            
-            VALIDATE((block), nodeIndex < block->size());
-            
-            for (; nodeIndex < block->size(); nodeIndex++)
-                VALIDATE((block->at(nodeIndex)), block->at(nodeIndex)->origin.forExit.isSet());
+
+            bool didSeeExitOK = false;
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
+                didSeeExitOK |= node->origin.exitOK;
                 switch (node->op()) {
                 case Phi:
-                    VALIDATE((node), !node->origin.forExit.isSet());
+                    // Phi cannot exit, and it would be wrong to hoist anything to the Phi that could
+                    // exit.
+                    VALIDATE((node), !node->origin.exitOK);
+
+                    // It never makes sense to have exitOK anywhere in the block before a Phi. It's only
+                    // OK to exit after all Phis are done.
+                    VALIDATE((node), !didSeeExitOK);
                     break;
                     
                 case GetLocal:

@@ -43,7 +43,7 @@ HashSet<Node*> liveNodesAtHead(Graph& graph, BasicBlock* block)
     
     AvailabilityMap& availabilityMap = block->ssa->availabilityAtHead;
     graph.forAllLocalsLiveInBytecode(
-        block->firstOrigin().forExit,
+        block->at(0)->origin.forExit,
         [&] (VirtualRegister reg) {
             availabilityMap.closeStartingWithLocal(
                 reg,

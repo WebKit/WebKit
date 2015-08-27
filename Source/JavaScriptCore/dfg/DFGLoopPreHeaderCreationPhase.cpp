@@ -42,7 +42,7 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
     // Don't bother to preserve execution frequencies for now.
     BasicBlock* preHeader = insertionSet.insertBefore(block, PNaN);
     preHeader->appendNode(
-        graph, SpecNone, Jump, block->firstOrigin(), OpInfo(block));
+        graph, SpecNone, Jump, block->at(0)->origin, OpInfo(block));
     
     for (unsigned predecessorIndex = 0; predecessorIndex < block->predecessors.size(); predecessorIndex++) {
         BasicBlock* predecessor = block->predecessors[predecessorIndex];
@@ -108,7 +108,7 @@ public:
             // A pre-header is most useful if it's possible to exit from its terminal. Hence
             // if the terminal of the existing pre-header doesn't allow for exit, but the first
             // origin of the loop header does, then we should create a new pre-header.
-            if (!needsNewPreHeader && loop.header()->firstOrigin().exitOK
+            if (!needsNewPreHeader && loop.header()->at(0)->origin.exitOK
                 && !existingPreHeader->terminal()->origin.exitOK)
                 needsNewPreHeader = true;
             

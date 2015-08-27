@@ -999,7 +999,7 @@ public:
             }
         }
         if (!m_zero) {
-            m_zero = m_insertionSet.insertConstant(0, NodeOrigin(), jsNumber(0));
+            m_zero = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(0));
             m_insertionSet.execute(m_graph.block(0));
         }
         

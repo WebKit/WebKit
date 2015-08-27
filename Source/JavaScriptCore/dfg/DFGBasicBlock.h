@@ -141,10 +141,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     BlockNodeList::iterator begin() { return m_nodes.begin(); }
     BlockNodeList::iterator end() { return m_nodes.end(); }
-    
-    Node* firstOriginNode();
-    NodeOrigin firstOrigin();
-    
+
     unsigned numSuccessors() { return terminal()->numSuccessors(); }
     
     BasicBlock*& successor(unsigned index)

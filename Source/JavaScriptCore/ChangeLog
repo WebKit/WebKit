@@ -1,3 +1,56 @@
+2015-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Node::origin should always be set, and the dead zone due to SSA Phis can just use exitOK=false
+        https://bugs.webkit.org/show_bug.cgi?id=148462
+
+        Reviewed by Saam Barati.
+
+        The need to label nodes that absolutely cannot exit was first observed when we introduced SSA form.
+        We indicated this by not setting the CodeOrigin.
+
+        But just recently (http://trac.webkit.org/changeset/188979), we added a more comprehensive "exitOK"
+        bit in NodeOrigin. After that change, there were two ways of indicating that you cannot exit:
+        !exitOK and an unset NodeOrigin. An unset NodeOrigin implied !exitOK.
+
+        Now, this change is about removing the old way so that we only use !exitOK. From now on, all nodes
+        must have their NodeOrigin set, and the IR validation will check this. This means that I could
+        remove various pieces of cruft for dealing with unset NodeOrigins, but I did have to add some new
+        cruft to ensure that all nodes we create have a NodeOrigin.
+
+        This change simplifies our IR by having a simpler rule about when NodeOrigin is set: it's always
+        set.
+
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::isInBlock):
+        (JSC::DFG::BasicBlock::removePredecessor):
+        (JSC::DFG::BasicBlock::firstOriginNode): Deleted.
+        (JSC::DFG::BasicBlock::firstOrigin): Deleted.
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::begin):
+        (JSC::DFG::BasicBlock::end):
+        (JSC::DFG::BasicBlock::numSuccessors):
+        (JSC::DFG::BasicBlock::successor):
+        * dfg/DFGCombinedLiveness.cpp:
+        (JSC::DFG::liveNodesAtHead):
+        * dfg/DFGConstantHoistingPhase.cpp:
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        (JSC::DFG::LoopPreHeaderCreationPhase::run):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::validateSSA):
+
 2015-08-26  Saam barati  <sbarati@apple.com>
 
         MarkedBlock::allocateBlock will have the wrong allocation size when (sizeof(MarkedBlock) + bytes) is divisible by WTF::pageSize()

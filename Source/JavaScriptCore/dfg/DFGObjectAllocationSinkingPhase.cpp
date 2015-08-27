@@ -1548,7 +1548,7 @@ private:
         // with useless constants everywhere
         HashMap<FrozenValue*, Node*> lazyMapping;
         if (!m_bottom)
-            m_bottom = m_insertionSet.insertConstant(0, NodeOrigin(), jsNumber(1927));
+            m_bottom = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(1927));
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             m_heap = m_heapAtHead[block];
 
@@ -1621,7 +1621,7 @@ private:
                 if (m_heapAtHead[block].follow(location))
                     return nullptr;
 
-                Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, NodeOrigin());
+                Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
                 phiNode->mergeFlags(NodeResultJS);
                 return phiNode;
             });
@@ -1638,7 +1638,7 @@ private:
                 if (!m_heapAtHead[block].getAllocation(identifier).isEscapedAllocation())
                     return nullptr;
 
-                Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, NodeOrigin());
+                Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
                 phiNode->mergeFlags(NodeResultJS);
                 return phiNode;
             });
@@ -1669,7 +1669,9 @@ private:
 
                 if (m_sinkCandidates.contains(location.base())) {
                     m_insertionSet.insert(
-                        0, location.createHint(m_graph, NodeOrigin(), phiDef->value()));
+                        0,
+                        location.createHint(
+                            m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
                 }
             }
 
@@ -1680,7 +1682,9 @@ private:
                 Node* identifier = indexToNode[variable->index()];
                 m_escapeeToMaterialization.add(identifier, phiDef->value());
                 bool canExit = false;
-                insertOSRHintsForUpdate(0, NodeOrigin(), canExit, availabilityCalculator.m_availability, identifier, phiDef->value());
+                insertOSRHintsForUpdate(
+                    0, block->at(0)->origin, canExit,
+                    availabilityCalculator.m_availability, identifier, phiDef->value());
             }
 
             if (verbose) {
