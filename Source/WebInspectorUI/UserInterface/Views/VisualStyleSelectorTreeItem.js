@@ -34,13 +34,13 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
             if (style.inherited)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.Author)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Author)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.User)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.User)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.UserAgent)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.Inspector)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName;
             break;
 

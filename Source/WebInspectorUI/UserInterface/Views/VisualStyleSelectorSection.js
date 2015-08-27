@@ -101,7 +101,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             selector.addEventListener(WebInspector.VisualStyleSelectorTreeItem.Event.CheckboxChanged, this._treeElementCheckboxToggled, this);
             this._selectors.appendChild(selector);
 
-            if (this._focusNextNewInspectorRule && style.ownerRule && style.ownerRule.type === WebInspector.CSSRule.Type.Inspector) {
+            if (this._focusNextNewInspectorRule && style.ownerRule && style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector) {
                 selector.select(true);
                 selector.element.scrollIntoView();
                 this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = style;
@@ -166,7 +166,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
 
         // Matched Rules
         for (let rule of uniqueOrderedRules(this._nodeStyles.matchedRules)) {
-            if (rule.type === WebInspector.CSSRule.Type.UserAgent) {
+            if (rule.type === WebInspector.CSSStyleSheet.Type.UserAgent) {
                 insertAllMatchingPseudoRules.call(this, true);
                 continue;
             }
@@ -190,7 +190,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             this._selectors.appendChild(divider);
 
             for (let rule of uniqueOrderedRules(inherited.matchedRules)) {
-                if (rule.type === WebInspector.CSSRule.Type.UserAgent)
+                if (rule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
                     continue;
 
                 createSelectorItem.call(this, rule.style, rule.selectorText, rule.mediaText);

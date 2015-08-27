@@ -170,7 +170,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                     if (!this._includeUserAgentRulesOnNextRefresh) {
                         // We can assume all the styles with the same key are from the same stylesheet and rule, so we only check the first.
                         var firstStyle = this._styleDeclarationsMap[key][0];
-                        if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSRule.Type.UserAgent) {
+                        if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent) {
                             // User Agent styles get different identifiers after some edits. This would cause us to fire a significant refreshed
                             // event more than it is helpful. And since the user agent stylesheet is static it shouldn't match differently
                             // between refreshes for the same node. This issue is tracked by: https://webkit.org/b/110055
@@ -193,7 +193,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                     if (!this._includeUserAgentRulesOnNextRefresh) {
                         // See above for why we skip user agent style rules.
                         var firstStyle = this._previousStyleDeclarationsMap[key][0];
-                        if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSRule.Type.UserAgent)
+                        if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
                             continue;
                     }
 
@@ -684,6 +684,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         var selectorText = payload.selectorList.text;
         var selectors = this._parseSelectorListPayload(payload.selectorList);
+        var type = WebInspector.CSSStyleManager.protocolStyleSheetOriginToEnum(payload.origin);
 
         var sourceCodeLocation = null;
         var sourceRange = payload.selectorList.range;
@@ -697,42 +698,10 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         if (styleSheet)
             sourceCodeLocation = styleSheet.offsetSourceCodeLocation(sourceCodeLocation);
 
-        var type;
-        switch (payload.origin) {
-        case "regular":
-            type = WebInspector.CSSRule.Type.Author;
-            break;
-        case "user":
-            type = WebInspector.CSSRule.Type.User;
-            break;
-        case "user-agent":
-            type = WebInspector.CSSRule.Type.UserAgent;
-            break;
-        case "inspector":
-            type = WebInspector.CSSRule.Type.Inspector;
-            break;
-        }
-
         var mediaList = [];
         for (var i = 0; payload.media && i < payload.media.length; ++i) {
             var mediaItem = payload.media[i];
-
-            var mediaType;
-            switch (mediaItem.source) {
-            case "mediaRule":
-                mediaType = WebInspector.CSSMedia.Type.MediaRule;
-                break;
-            case "importRule":
-                mediaType = WebInspector.CSSMedia.Type.ImportRule;
-                break;
-            case "linkedSheet":
-                mediaType = WebInspector.CSSMedia.Type.LinkedStyleSheet;
-                break;
-            case "inlineSheet":
-                mediaType = WebInspector.CSSMedia.Type.InlineStyleSheet;
-                break;
-            }
-
+            var mediaType = WebInspector.CSSStyleManager.protocolMediaSourceToEnum(mediaItem.source);
             var mediaText = mediaItem.text;
             var mediaSourceCodeLocation = this._createSourceCodeLocation(mediaItem.sourceURL, mediaItem.sourceLine);
             if (styleSheet)
@@ -820,13 +789,13 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             // Only append to the result array here for author and inspector rules since attribute
             // styles come between author rules and user/user agent rules.
             switch (rule.type) {
-            case WebInspector.CSSRule.Type.Inspector:
-            case WebInspector.CSSRule.Type.Author:
+            case WebInspector.CSSStyleSheet.Type.Inspector:
+            case WebInspector.CSSStyleSheet.Type.Author:
                 result.push(rule.style);
                 break;
 
-            case WebInspector.CSSRule.Type.User:
-            case WebInspector.CSSRule.Type.UserAgent:
+            case WebInspector.CSSStyleSheet.Type.User:
+            case WebInspector.CSSStyleSheet.Type.UserAgent:
                 userAndUserAgentStyles.push(rule.style);
                 break;
             }

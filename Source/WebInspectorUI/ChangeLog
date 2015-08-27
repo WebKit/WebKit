@@ -1,3 +1,39 @@
+2015-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Standardize on CSSStyleSheet.Type enum and move more protocol enum conversion to the manager
+        https://bugs.webkit.org/show_bug.cgi?id=148515
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager.protocolStyleSheetOriginToEnum):
+        (WebInspector.CSSStyleManager.protocolMediaSourceToEnum):
+        Protocol enum to frontend enum conversion.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        (WebInspector.DOMNodeStyles.prototype.refresh):
+        (WebInspector.DOMNodeStyles.prototype._parseRulePayload):
+        (WebInspector.DOMNodeStyles.prototype._collectStylesInCascadeOrder):
+        Use the manager to convert from a protocol payload enum to frontend num for css types.
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.get editable):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.appendStyleSection):
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh):
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection.prototype.update.createSelectorItem):
+        (WebInspector.VisualStyleSelectorSection.prototype.update.uniqueOrderedRules.set return):
+        (WebInspector.VisualStyleSelectorSection.prototype.update.uniqueOrderedRules):
+        (WebInspector.VisualStyleSelectorSection.prototype.update):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem):
+        Update enum use.
+
 2015-08-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [Regression] [Mavericks]: Undocked Web Inspector toolbar is two different colors and has extra space

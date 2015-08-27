@@ -164,7 +164,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             } else
                 section.refresh();
 
-            if (this._focusNextNewInspectorRule && style.ownerRule && style.ownerRule.type === WebInspector.CSSRule.Type.Inspector) {
+            if (this._focusNextNewInspectorRule && style.ownerRule && style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector) {
                 this._previousFocusedSection = section;
                 delete this._focusNextNewInspectorRule;
             }
@@ -282,7 +282,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         this._ruleMediaAndInherticanceList = [];
         var orderedStyles = uniqueOrderedStyles(this.nodeStyles.orderedStyles);
         for (var style of orderedStyles) {
-            var isUserAgentStyle = style.ownerRule && style.ownerRule.type === WebInspector.CSSRule.Type.UserAgent;
+            var isUserAgentStyle = style.ownerRule && style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent;
             insertAllMatchingPseudoStyles.call(this, isUserAgentStyle || style.inerhited);
 
             insertMediaOrInheritanceLabel.call(this, style);

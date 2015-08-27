@@ -1,3 +1,16 @@
+2015-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Standardize on CSSStyleSheet.Type enum and move more protocol enum conversion to the manager
+        https://bugs.webkit.org/show_bug.cgi?id=148515
+
+        Reviewed by Brian Burg.
+
+        * inspector/css/matched-style-properties.html:
+        * inspector/css/pseudo-element-matches.html:
+        * inspector/css/selector-dynamic-specificity.html:
+        * inspector/css/selector-specificity.html:
+        * inspector/css/stylesheet-with-mutations.html:
+
 2015-08-27  Eric Carlson  <eric.carlson@apple.com>
 
         Media Session: MediaSession constructor 'kind' argument optional
