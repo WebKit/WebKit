@@ -21,6 +21,11 @@
       .group > *:nth-child(6) { object-fit: inherit; }
       .group > *:nth-child(7) { }
     </style>
+    <script>
+    // Disable plugins, because otherwise the "Test WebKit PlugIn" steals <embed>s referencing PNGs.
+    if (window.testRunner)
+      testRunner.setPluginsEnabled(false);
+    </script>
   </head>
   <body>
 

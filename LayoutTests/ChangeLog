@@ -1,3 +1,21 @@
+2015-08-27  Tim Horton  <timothy_horton@apple.com>
+
+        fast/css/object-fit/object-fit-embed.html isn't testing anything
+        https://bugs.webkit.org/show_bug.cgi?id=148512
+
+        Reviewed by Andy Estes.
+
+        * fast/css/object-fit/object-fit-embed-expected.html:
+        * fast/css/object-fit/object-fit-embed.html:
+        * fast/replaced/border-radius-clip-content-edge.html:
+        * fast/replaced/outline-replaced-elements.html:
+        These tests load PNGs inside <embeds>. r82001 made it so that
+        the test plugin handles PNGs, and also so that <embed> prefers
+        plugins even for types that we know how to handle natively.
+
+        Since these tests actually want to load PNGs natively, disable
+        plugins so we don't get that behavior.
+
 2015-08-27  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add TypedArray.prototype functionality.

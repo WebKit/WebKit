@@ -19,6 +19,9 @@
 if (window.testRunner) {
     var dumpPixelResults = true;
     testRunner.dumpAsText(dumpPixelResults);
+    
+    // Disable plugins, because otherwise the "Test WebKit PlugIn" steals <embed>s referencing PNGs.
+    testRunner.setPluginsEnabled(false);
 }
 </script>
 

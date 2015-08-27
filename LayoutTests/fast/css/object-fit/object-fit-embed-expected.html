@@ -23,6 +23,11 @@
       .group > *:nth-child(6) * { width:100%; margin-top:25%; }
       .group > *:nth-child(7) * { width:100%; height:100%; }
     </style>
+    <script>
+    // Disable plugins, because otherwise the "Test WebKit PlugIn" steals <embed>s referencing PNGs.
+    if (window.testRunner)
+      testRunner.setPluginsEnabled(false);
+    </script>
   </head>
   <body>
 
