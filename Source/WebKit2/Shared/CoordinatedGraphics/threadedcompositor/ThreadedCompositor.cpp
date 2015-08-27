@@ -312,7 +312,7 @@ void ThreadedCompositor::runCompositingThread()
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
         m_viewportController = std::make_unique<SimpleViewportController>(this);
 
-        m_initializeRunLoopCondition.signal();
+        m_initializeRunLoopCondition.notifyOne();
     }
 
     m_compositingRunLoop->runLoop().run();
@@ -324,7 +324,7 @@ void ThreadedCompositor::runCompositingThread()
         LockHolder locker(m_terminateRunLoopConditionMutex);
         m_compositingRunLoop = nullptr;
         m_context = nullptr;
-        m_terminateRunLoopCondition.signal();
+        m_terminateRunLoopCondition.notifyOne();
     }
 
     detachThread(m_threadIdentifier);

@@ -1,3 +1,15 @@
+2015-08-26  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        [ThreadedCompositor] Use WTF::Condition together with WTF::Lock
+        https://bugs.webkit.org/show_bug.cgi?id=148493
+
+        Reviewed by Gyuyoung Kim.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        Replace ThreadCondition::signal() calls with Condition::notifyOne().
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        Replace ThreadCondition usage with Condition.
+
 2015-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix crash due to animationDidEnd called on deallocated RemoteLayerTreeHost
