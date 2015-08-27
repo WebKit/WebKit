@@ -1,0 +1,36 @@
+This test checks the behavior of the TypedArray.prototype.map function
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Int32Array.prototype.map.length is 1
+PASS Int32Array.prototype.map.name is 'map'
+PASS isSameFunctionForEachTypedArrayPrototype('map') is true
+PASS testPrototypeReceivesArray('map', [undefined, this, { }, [ ], true, '']) is true
+
+testPrototypeFunction has the following arg list (name, args, init, result [ , expectedArray ])
+
+1.0 Single Argument Testing
+PASS testPrototypeFunction('map', '(even)', [12, 5, 8, 13, 44], [1, 0, 1, 0, 1], [12, 5, 8, 13, 44]) is true
+PASS testPrototypeFunction('map', '(even)', [11, 54, 18, 13, 1], [0, 1, 1, 0, 0]) is true
+
+2.0 Two Argument Testing
+PASS testPrototypeFunction('map', '(even, thisValue)', [12, 23, 11, 1, 45], [1, 1, 0, 1, 0]) is true
+
+3.0 Array Element Changing
+PASS testPrototypeFunction('map', '(evenAndChange)', [12, 15, 2, 13, 44], [1, 0, 1, 0, 0], [5, 5, 5, 5, 5]) is true
+
+4.0 Exception Test
+PASS testPrototypeFunction('map', '(isBigEnoughAndException)', [12, 15, 10, 13, 44], false) threw exception exception from function.
+
+5.0 Wrong Type for Callback Test
+PASS testPrototypeFunction('map', '(8)', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.map callback must be a function.
+PASS testPrototypeFunction('map', '("wrong")', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.map callback must be a function.
+PASS testPrototypeFunction('map', '(new Object())', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.map callback must be a function.
+PASS testPrototypeFunction('map', '(null)', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.map callback must be a function.
+PASS testPrototypeFunction('map', '()', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.map callback must be a function.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

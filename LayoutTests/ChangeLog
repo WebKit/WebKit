@@ -1,3 +1,106 @@
+2015-08-27  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add TypedArray.prototype functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=148035
+
+        Reviewed by Geoffrey Garen.
+
+        Added tests for the TypedArray.prototype functions.
+        All the tests use the typedarray-test-helper-function.js
+        to run the test on each TypedArray.
+
+        * fast/canvas/webgl/type-conversion-test-expected.txt:
+        * js/script-tests/typedarray-copyWithin.js: Added.
+        * js/script-tests/typedarray-every.js: Added.
+        (isBigEnough):
+        (isBigEnoughAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-fill.js: Added.
+        * js/script-tests/typedarray-filter.js: Added.
+        (keepEven):
+        (keepEvenAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-find.js: Added.
+        (keepEven):
+        (keepEvenAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-findIndex.js: Added.
+        (keepEven):
+        (keepEvenAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-forEach.js: Added.
+        (.checkCorrect.let.list):
+        (.checkCorrect):
+        (createChecker):
+        (foo):
+        (changeArray):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-indexOf.js: Added.
+        (keepEven):
+        * js/script-tests/typedarray-lastIndexOf.js: Added.
+        * js/script-tests/typedarray-map.js: Added.
+        (even):
+        (evenAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-reduce.js: Added.
+        (createArray):
+        (sum):
+        (createArrayAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-reduceRight.js: Added.
+        (createArray):
+        (sum):
+        (createArrayAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-slice.js: Added.
+        * js/script-tests/typedarray-some.js: Added.
+        (isBigEnough):
+        (isBigEnoughAndChange):
+        (isBigEnoughAndException):
+        * js/script-tests/typedarray-sort.js: Added.
+        (sortBackwards):
+        (compareException):
+        * js/script-tests/typedarray-test-helper-functions.js: Added.
+        (forEachTypedArray):
+        (isSameFunctionForEachTypedArrayPrototype.eq):
+        (isSameFunctionForEachTypedArrayPrototype):
+        (hasSameValues):
+        (.foo):
+        (testPrototypeFunctionHelper):
+        (testPrototypeFunctionOnSigned):
+        (testPrototypeFunctionOnFloat):
+        (testPrototypeFunction):
+        * js/typedarray-copyWithin-expected.txt: Added.
+        * js/typedarray-copyWithin.html: Added.
+        * js/typedarray-every-expected.txt: Added.
+        * js/typedarray-every.html: Added.
+        * js/typedarray-fill-expected.txt: Added.
+        * js/typedarray-fill.html: Added.
+        * js/typedarray-filter-expected.txt: Added.
+        * js/typedarray-filter.html: Added.
+        * js/typedarray-find-expected.txt: Added.
+        * js/typedarray-find.html: Added.
+        * js/typedarray-findIndex-expected.txt: Added.
+        * js/typedarray-findIndex.html: Added.
+        * js/typedarray-forEach-expected.txt: Added.
+        * js/typedarray-forEach.html: Added.
+        * js/typedarray-indexOf-expected.txt: Added.
+        * js/typedarray-indexOf.html: Added.
+        * js/typedarray-lastIndexOf-expected.txt: Added.
+        * js/typedarray-lastIndexOf.html: Added.
+        * js/typedarray-map-expected.txt: Added.
+        * js/typedarray-map.html: Added.
+        * js/typedarray-reduce-expected.txt: Added.
+        * js/typedarray-reduce.html: Added.
+        * js/typedarray-reduceRight-expected.txt: Added.
+        * js/typedarray-reduceRight.html: Added.
+        * js/typedarray-slice-expected.txt: Added.
+        * js/typedarray-slice.html: Added.
+        * js/typedarray-some-expected.txt: Added.
+        * js/typedarray-some.html: Added.
+        * js/typedarray-sort-expected.txt: Added.
+        * js/typedarray-sort.html: Added.
+
 2015-08-27  Chris Dumez  <cdumez@apple.com>
 
         Range.compareBoundaryPoints() should throw a NotSupportedError for invalid compareHow values

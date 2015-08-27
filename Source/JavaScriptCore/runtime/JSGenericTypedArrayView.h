@@ -83,10 +83,59 @@ JS_EXPORT_PRIVATE const ClassInfo* getFloat64ArrayClassInfo();
 //     template<T> static T::Type convertTo(uint8_t);
 // };
 
+// The ECMA 6 spec states that floating point Typed Arrays should have the following ordering:
+//
+// -Inifinity < negative finite numbers < -0.0 < 0.0 < positive finite numbers < Infinity < NaN
+// Note: regardless of the sign or exact representation of a NaN it is greater than all other values.
+//
+// An interesting fact about IEEE 754 floating point numbers is that have an adjacent representation
+// i.e. for any finite floating point x there does not exist a finite floating point y such that
+// ((float) ((int) x + 1)) > y > x. Thus if we have an array of floating points if we view it as an
+// array of signed bit integers it will sort in the format we desire.
+//
+// All the processors we support, however, use twos complement. Fortunately, if you compare a signed
+// bit number as if it were twos complement the result will be correct assuming both numbers are not
+// negative. e.g.
+//
+//    - <=> - = reversed (-30 > -20 = true)
+//    + <=> + = ordered (30 > 20 = true)
+//    - <=> + = ordered (-30 > 20 = false)
+//    + <=> - = ordered (30 > -20 = true)
+//
+// For NaN, we normalize the NaN to a peticular representation; the sign bit is 0, all exponential bits
+// are 1 and only the MSB of the mantissa is 1. So, NaN is recognized as the largest integral numbers.
+
+template<typename FloatType, typename IntegralType>
+void sortFloat(FloatType* floatArray, unsigned length)
+{
+    static_assert(sizeof(IntegralType) == sizeof(FloatType), "floating point type and integral type must be the same size");
+
+    // We need this union because of the strict aliasing rule in C/C++.
+    union TypeConverter {
+        FloatType floatType;
+        IntegralType intType;
+    };
+
+    // Since there might be another view that sets the bits of
+    // our floats to NaNs with negative sign bits we need to
+    // purify the array.
+    TypeConverter* unionArray = reinterpret_cast<TypeConverter*>(floatArray);
+    for (unsigned i = 0; i < length; ++i)
+        unionArray[i].floatType = purifyNaN(unionArray[i].floatType);
+
+    std::sort(unionArray, unionArray + length, [](TypeConverter a, TypeConverter b) {
+        if (a.intType >= 0 || b.intType >= 0)
+            return a.intType < b.intType;
+        return a.intType > b.intType;
+    });
+}
+
 template<typename Adaptor>
 class JSGenericTypedArrayView : public JSArrayBufferView {
 public:
     typedef JSArrayBufferView Base;
+    typedef typename Adaptor::Type ElementType;
+
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     static const unsigned elementSize = sizeof(typename Adaptor::Type);
@@ -168,7 +217,47 @@ public:
         setIndexQuicklyToNativeValue(i, value);
         return true;
     }
-    
+
+    static Optional<typename Adaptor::Type> toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue)
+    {
+        typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
+        if (exec->hadException())
+            return Nullopt;
+        return value;
+    }
+
+    bool setRangeToValue(ExecState* exec, unsigned start, unsigned end, JSValue jsValue)
+    {
+        ASSERT(0 <= start && start <= end && end <= m_length);
+
+        typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
+        if (exec->hadException())
+            return false;
+
+        // We might want to do something faster here (e.g. SIMD) if this is too slow.
+        typename Adaptor::Type* array = typedVector();
+        for (unsigned i = start; i < end; ++i)
+            array[i] = value;
+
+        return true;
+    }
+
+    void sort()
+    {
+        typename Adaptor::Type* array = typedVector();
+        switch (Adaptor::typeValue) {
+        case TypeFloat32:
+            sortFloat<float, int32_t>(reinterpret_cast<float*>(array), m_length);
+            break;
+        case TypeFloat64:
+            sortFloat<double, int64_t>(reinterpret_cast<double*>(array), m_length);
+            break;
+        default:
+            std::sort(array, array + m_length);
+            break;
+        }
+    }
+
     bool canAccessRangeQuickly(unsigned offset, unsigned length)
     {
         return offset <= m_length

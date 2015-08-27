@@ -1,0 +1,38 @@
+This test checks the behavior of the TypedArray.prototype.every function
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Int32Array.prototype.every.length is 1
+PASS Int32Array.prototype.every.name is 'every'
+PASS isSameFunctionForEachTypedArrayPrototype('every') is true
+PASS testPrototypeReceivesArray('every', [undefined, this, { }, [ ], true, '']) is true
+
+testPrototypeFunction has the following arg list (name, args, init, result [ , expectedArray ])
+
+1.0 Single Argument Testing
+PASS testPrototypeFunction('every', '(isBigEnough)', [12, 5, 8, 13, 44], false) is true
+PASS testPrototypeFunction('every', '(isBigEnough)', [12, 54, 18, 13, 44], true) is true
+
+2.0 Two Argument Testing
+PASS testPrototypeFunction('every', '(isBigEnough, thisValue)', [12, 15, 10, 13, 44], false) is true
+PASS testPrototypeFunction('every', '(isBigEnough, thisValue)', [12, 54, 82, 13, 44], true) is true
+
+3.0 Array Element Changing
+PASS testPrototypeFunction('every', '(isBigEnoughAndChange)', [12, 15, 1, 13, 44], false, [12, 15, 5, 5, 5]) is true
+PASS testPrototypeFunction('every', '(isBigEnoughAndChange)', [12, 15, 10, 13, 44], false, [12, 5, 5, 5, 5]) is true
+
+4.0 Exception Test
+PASS testPrototypeFunction('every', '(isBigEnoughAndException)', [12, 15, 10, 13, 44], false) threw exception exception from function.
+
+5.0 Wrong Type for Callback Test
+PASS testPrototypeFunction('every', '(8)', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.every callback must be a function.
+PASS testPrototypeFunction('every', '("wrong")', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.every callback must be a function.
+PASS testPrototypeFunction('every', '(new Object())', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.every callback must be a function.
+PASS testPrototypeFunction('every', '(null)', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.every callback must be a function.
+PASS testPrototypeFunction('every', '()', [12, 15, 10, 13, 44], false) threw exception TypeError: TypedArray.prototype.every callback must be a function.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

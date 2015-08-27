@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,28 +20,36 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSTypedArrayPrototypes_h
-#define JSTypedArrayPrototypes_h
+#ifndef JSTypedArrayViewPrototype_h
+#define JSTypedArrayViewPrototype_h
 
-#include "JSGenericTypedArrayViewPrototype.h"
-#include "JSTypedArrayViewPrototype.h"
-#include "JSTypedArrays.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-typedef JSGenericTypedArrayViewPrototype<JSInt8Array> JSInt8ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSInt16Array> JSInt16ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSInt32Array> JSInt32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint8Array> JSUint8ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint8ClampedArray> JSUint8ClampedArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint16Array> JSUint16ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSUint32Array> JSUint32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSFloat32Array> JSFloat32ArrayPrototype;
-typedef JSGenericTypedArrayViewPrototype<JSFloat64Array> JSFloat64ArrayPrototype;
+class JSTypedArrayViewPrototype : public JSNonFinalObject {
+public:
+    typedef JSNonFinalObject Base;
 
+protected:
+    JSTypedArrayViewPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
+
+public:
+    static JSTypedArrayViewPrototype* create(VM&, JSGlobalObject*, Structure*);
+
+    DECLARE_INFO;
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+};
+
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState*);
+
+    
 } // namespace JSC
 
-#endif // JSTypedArrayPrototypes_h
+#endif /* JSTypedArrayViewPrototype_h */
