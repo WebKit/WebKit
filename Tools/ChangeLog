@@ -1,5 +1,13 @@
 2015-08-27  Lucas Forschler  <lforschler@apple.com>
 
+        Remove Mac slaves 188/189 after being replaced with 400/401.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2015-08-27  Lucas Forschler  <lforschler@apple.com>
+
         Add two bots to the Mac Yosemite queue.
         This is to eventually replace bots188/189, which will be removed after 400/401 are vetted.
         
