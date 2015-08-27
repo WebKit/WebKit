@@ -33,6 +33,11 @@
 @class DOMTestNode;
 @class NSString;
 
+enum {
+    DOM_CONSTANT1 = 1,
+    DOM_CONSTANT2 = 2
+} WEBKIT_ENUM_AVAILABLE_MAC(9876_5);
+
 WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
 WEBCORE_EXPORT @interface DOMTestCallback : DOMObject
 - (BOOL)callbackWithNoParam;

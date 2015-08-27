@@ -40,6 +40,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     virtual ~JSTestCallback();
+    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
 
     // Functions
     virtual bool callbackWithNoParam();

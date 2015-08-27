@@ -95,10 +95,15 @@ foreach my $idlFile (sort keys %idlFileHash) {
             $supplementalDependencies{$implementedIdlFile} = [$interfaceName];
         }
     }
-    # Handle [NoInterfaceObject].
-    unless (isCallbackInterfaceFromIDL($idlFileContents)) {
-        my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
-        unless ($extendedAttributes->{"NoInterfaceObject"}) {
+
+    # For every interface that is exposed in a given ECMAScript global environment and:
+    # - is a callback interface that has constants declared on it, or
+    # - is a non-callback interface that is not declared with the [NoInterfaceObject] extended attribute, a corresponding
+    #   property must exist on the ECMAScript environment's global object.
+    # See https://heycam.github.io/webidl/#es-interfaces
+    my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
+    unless ($extendedAttributes->{"NoInterfaceObject"}) {
+        if (!isCallbackInterfaceFromIDL($idlFileContents) || interfaceHasConstantAttribute($idlFileContents)) {
             my @globalContexts = split("&", $extendedAttributes->{"GlobalContext"} || "DOMWindow");
             my $attributeCode = GenerateConstructorAttribute($interfaceName, $extendedAttributes);
             $windowConstructorsCode .= $attributeCode if grep(/^DOMWindow$/, @globalContexts);
@@ -277,7 +282,7 @@ sub getInterfaceExtendedAttributesFromIDL
 
     my $extendedAttributes = {};
 
-    if ($fileContents =~ /\[(.*)\]\s+(interface|exception)\s+(\w+)/gs) {
+    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|exception)\s+(\w+)/gs) {
         my @parts = split(',', $1);
         foreach my $part (@parts) {
             my @keyValue = split('=', $part);
@@ -290,4 +295,11 @@ sub getInterfaceExtendedAttributesFromIDL
     }
 
     return $extendedAttributes;
+}
+
+sub interfaceHasConstantAttribute
+{
+    my $fileContents = shift;
+
+    return $fileContents =~ /\s+const[\s\w]+=\s+[\w]+;/gs;
 }

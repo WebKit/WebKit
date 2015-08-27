@@ -3475,6 +3475,11 @@ sub GenerateCallbackHeader
     # Destructor
     push(@headerContent, "    virtual ~$className();\n");
 
+    # Constructor object getter.
+    if (@{$interface->constants}) {
+        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);\n");
+    }
+
     if ($interface->extendedAttributes->{"CallbackNeedsOperatorEqual"}) {
         push(@headerContent, "    virtual bool operator==(const $interfaceName&) const;\n\n")
     }
@@ -3522,6 +3527,7 @@ sub GenerateCallbackImplementation
     my ($object, $interface) = @_;
 
     my $interfaceName = $interface->name;
+    my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
     my $className = "JS$interfaceName";
 
     # - Add default header template
@@ -3570,7 +3576,54 @@ sub GenerateCallbackImplementation
         push(@implContent, "    return static_cast<const ${className}*>(&other)->m_data->callback() == m_data->callback();\n");
         push(@implContent, "}\n\n");
     }
-    # Functions
+
+    # Constants.
+    my $numConstants = @{$interface->constants};
+    if ($numConstants > 0) {
+        GenerateConstructorDeclaration(\@implContent, $className, $interface, $interfaceName);
+
+        my $hashSize = 0;
+        my $hashName = $className . "ConstructorTable";
+
+        my @hashKeys = ();
+        my @hashValue1 = ();
+        my @hashValue2 = ();
+        my @hashSpecials = ();
+        my %conditionals = ();
+
+        foreach my $constant (@{$interface->constants}) {
+            my $name = $constant->name;
+            push(@hashKeys, $name);
+            push(@hashValue1, $constant->value);
+            push(@hashValue2, "0");
+            push(@hashSpecials, "DontDelete | ReadOnly | ConstantInteger");
+
+            my $implementedBy = $constant->extendedAttributes->{"ImplementedBy"};
+            if ($implementedBy) {
+                $implIncludes{"${implementedBy}.h"} = 1;
+            }
+            my $conditional = $constant->extendedAttributes->{"Conditional"};
+            if ($conditional) {
+                $conditionals{$name} = $conditional;
+            }
+
+            $hashSize++;
+        }
+        $object->GenerateHashTable($hashName, $hashSize,
+                                   \@hashKeys, \@hashSpecials,
+                                   \@hashValue1, \@hashValue2,
+                                   \%conditionals, 1) if $hashSize > 0;
+
+       push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
+
+       GenerateConstructorDefinitions(\@implContent, $className, "", $interfaceName, $visibleInterfaceName, $interface);
+
+       push(@implContent, "JSValue ${className}::getConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
+       push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));\n");
+       push(@implContent, "}\n\n");
+    }
+
+    # Functions.
     my $numFunctions = @{$interface->functions};
     if ($numFunctions > 0) {
         push(@implContent, "\n// Functions\n");
@@ -4779,18 +4832,23 @@ sub GenerateConstructorHelperMethods
 
     push(@$outputArray, "void ${constructorClassName}::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "{\n");
-    if (IsDOMGlobalObject($interface)) {
-        push(@$outputArray, "    Base::finishCreation(vm);\n");
-        push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject->prototype(), DontDelete | ReadOnly | DontEnum);\n");
-    } elsif ($generatingNamedConstructor) {
+
+    if ($generatingNamedConstructor) {
         push(@$outputArray, "    Base::finishCreation(globalObject);\n");
-        push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);\n");
     } else {
         push(@$outputArray, "    Base::finishCreation(vm);\n");
-        push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);\n");
+    }
+    push(@$outputArray, "    ASSERT(inherits(info()));\n");
+
+    # There must exist an interface prototype object for every non-callback interface defined, regardless
+    # of whether the interface was declared with the [NoInterfaceObject] extended attribute.
+    # https://heycam.github.io/webidl/#interface-prototype-object
+    if (IsDOMGlobalObject($interface)) {
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject->prototype(), DontDelete | ReadOnly | DontEnum);\n");
+    } elsif ($interface->isCallback) {
+        push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
+    } else {
+       push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);\n");
     }
 
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral(\"$visibleInterfaceName\"))), ReadOnly | DontEnum);\n");

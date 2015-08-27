@@ -31,6 +31,11 @@
 [
     Conditional=SPEECH_SYNTHESIS,
 ] callback interface TestCallback {
+  // Constants
+  const unsigned short CONSTANT1 = 1;
+  const unsigned short CONSTANT2 = 2;
+
+  // Operations.
   boolean callbackWithNoParam();
   boolean callbackWithArrayParam(Float32Array arrayParam);
   boolean callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strArg);
