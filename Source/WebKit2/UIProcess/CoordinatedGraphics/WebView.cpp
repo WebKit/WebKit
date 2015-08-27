@@ -54,6 +54,7 @@ WebView::WebView(WebProcessPool* context, WebPageGroup* pageGroup)
     , m_opacity(1.0)
 {
     auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setProcessPool(context);
     pageConfiguration->setPageGroup(pageGroup);
 
     // Need to call createWebPage after other data members, specifically m_visible, are initialized.
