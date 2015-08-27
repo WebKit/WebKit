@@ -499,6 +499,7 @@ webkit.org/b/87919 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.
 webkit.org/b/87919 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/87919 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ ImageOnlyFailure ]
 webkit.org/b/87919 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
+webkit.org/b/87919 fast/repaint/hidpi-content-inside-iframe-leaves-trails.html [ Failure ]
 webkit.org/b/87919 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
 webkit.org/b/87919 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
 webkit.org/b/87919 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
@@ -576,6 +577,7 @@ compositing/overflow/updating-scrolling-content.html [ Skip ]
 # TODO Enable when support drag-and-drop autoscrolling
 webkit.org/b/140518 [ Debug ] fast/events/drag-and-drop-autoscroll.html [ Skip ]  # Crashing
 webkit.org/b/140518 [ Release ] fast/events/drag-and-drop-autoscroll.html [ Failure ]
+fast/events/clear-drag-state.html [ Failure ]
 
 # Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
 fast/dom/custom/ [ Skip ]
