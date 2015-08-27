@@ -1,3 +1,25 @@
+2015-08-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [Regression] [Mavericks]: Undocked Web Inspector toolbar is two different colors and has extra space
+        https://bugs.webkit.org/show_bug.cgi?id=148510
+
+        Make body element transparent and remove extra padding above the toolbar only for OS X Mavericks.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        * UserInterface/Views/Main.css:
+        (body:not(.mavericks)):
+        (body): Deleted.
+        * UserInterface/Views/Toolbar.css:
+        (body:not(.mavericks) .toolbar):
+        (body.window-inactive:not(.mavericks) .toolbar):
+        (body.mac-platform:not(.docked, .mavericks) .toolbar):
+        (.toolbar): Deleted.
+        (body.window-inactive .toolbar): Deleted.
+        (body.mac-platform:not(.docked) .toolbar): Deleted.
+
 2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught exception in CSS Completion - TypeError: undefined is not an object (evaluating 'this._values[middleIndex].startsWith')

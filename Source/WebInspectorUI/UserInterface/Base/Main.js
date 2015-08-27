@@ -195,6 +195,8 @@ WebInspector.contentLoaded = function()
         document.body.classList.add("nightly-build");
 
     if (WebInspector.Platform.name === "mac") {
+        document.body.classList.add(WebInspector.Platform.version.name);
+
         if (WebInspector.Platform.version.release >= 11)
             document.body.classList.add("latest-mac");
         else

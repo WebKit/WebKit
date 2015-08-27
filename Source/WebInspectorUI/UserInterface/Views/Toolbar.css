@@ -29,9 +29,6 @@
     white-space: nowrap;
     overflow: hidden;
 
-    background-image: linear-gradient(to bottom, hsl(0, 0%, 92%), hsl(0, 0%, 87%));
-    box-shadow: inset hsla(0, 0%, 100%, 0.5) 0 1px 1px;
-
     outline: none;
 
     padding-top: 3px;
@@ -39,12 +36,17 @@
     height: 36px;
 }
 
-body.window-inactive .toolbar {
+body:not(.mavericks) .toolbar {
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 92%), hsl(0, 0%, 87%));
+    box-shadow: inset hsla(0, 0%, 100%, 0.5) 0 1px 1px;
+}
+
+body.window-inactive:not(.mavericks) .toolbar {
     background-image: none;
     background-color: hsl(0, 0%, 96%);
 }
 
-body.mac-platform:not(.docked) .toolbar {
+body.mac-platform:not(.docked, .mavericks) .toolbar {
     padding-top: 21px;
     height: 54px;
 }
