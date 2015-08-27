@@ -1,3 +1,12 @@
+2015-08-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] REGRESSION(r188793): It made 200 layout tests and Bindings/event-target-wrapper.html performance test fail
+        https://bugs.webkit.org/show_bug.cgi?id=148470
+
+        Unreviewed gardening, skip the hanging test to make the performance bot work.
+
+        * Skipped:
+
 2015-08-17  Chris Dumez  <cdumez@apple.com>
 
         Add performance tests for traversal of collections returned by getElementsByClassName() / getElementsByTagName()
