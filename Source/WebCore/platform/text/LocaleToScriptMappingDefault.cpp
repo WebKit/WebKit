@@ -164,14 +164,14 @@ typedef HashMap<String, UScriptCode, DefaultHash<String>::Hash, ScriptNameCodeMa
 
 UScriptCode scriptNameToCode(const String& scriptName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ScriptNameCodeMap, scriptNameCodeMap, ());
-    if (scriptNameCodeMap.isEmpty()) {
+    static NeverDestroyed<ScriptNameCodeMap> scriptNameCodeMap;
+    if (scriptNameCodeMap.get().isEmpty()) {
         for (size_t i = 0; i < sizeof(scriptNameCodeList) / sizeof(ScriptNameCode); ++i)
-            scriptNameCodeMap.set(ASCIILiteral(scriptNameCodeList[i].name), scriptNameCodeList[i].code);
+            scriptNameCodeMap.get().set(ASCIILiteral(scriptNameCodeList[i].name), scriptNameCodeList[i].code);
     }
 
-    ScriptNameCodeMap::iterator it = scriptNameCodeMap.find(scriptName.lower());
-    if (it != scriptNameCodeMap.end())
+    ScriptNameCodeMap::iterator it = scriptNameCodeMap.get().find(scriptName.lower());
+    if (it != scriptNameCodeMap.get().end())
         return it->value;
     return USCRIPT_INVALID_CODE;
 }
@@ -376,7 +376,7 @@ static const LocaleScript localeScriptList[] = {
     { "yap", USCRIPT_LATIN },
     { "yo", USCRIPT_LATIN },
     { "za", USCRIPT_LATIN },
-    { "zh", USCRIPT_SIMPLIFIED_HAN }, // FIXME: This mapping in incorrect. Instead, we should consult with an external source (such as the user's language preferences).
+    { "zh", USCRIPT_HAN },
     { "zh_hk", USCRIPT_TRADITIONAL_HAN },
     { "zh_tw", USCRIPT_TRADITIONAL_HAN },
     { "zu", USCRIPT_LATIN }
