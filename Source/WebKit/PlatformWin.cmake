@@ -46,7 +46,18 @@ else ()
     )
 endif ()
 
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitVersion.h
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/scripts/generate-webkitversion.pl
+    DEPENDS ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/scripts/generate-webkitversion.pl --config ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig --outputDir ${DERIVED_SOURCES_WEBKIT_DIR}
+    VERBATIM)
+list(APPEND WebKit_SOURCES ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitVersion.h)
+
 list(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}/../include/private"
+    "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
+    "${CMAKE_BINARY_DIR}/../include/private/WebCore"
     Storage
     win
     win/plugins
@@ -61,6 +72,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/egl"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/khr"
+    "${DERIVED_SOURCES_DIR}/WebKit"
 )
 
 list(APPEND WebKit_INCLUDES
@@ -384,7 +396,7 @@ set(WEBKIT_IDL_DEPENDENCIES
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/autoversion.h
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/WebKitLibraries/win/tools/scripts/auto-version.pl ${DERIVED_SOURCES_WEBKIT_DIR}
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${DERIVED_SOURCES_WEBKIT_DIR}
     VERBATIM)
 
 GENERATE_INTERFACE(win/Interfaces/WebKit.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
@@ -441,6 +453,8 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         libGLESv2${DEBUG_SUFFIX}
     )
 endif ()
+
+set(WebKit_LIBRARY_TYPE SHARED)
 
 # We need the webkit libraries to come before the system default libraries to prevent symbol conflicts with uuid.lib.
 # To do this we add system default libs as webkit libs and zero out system default libs.

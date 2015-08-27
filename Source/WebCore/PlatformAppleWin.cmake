@@ -2,6 +2,8 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBKIT_LIBRARIES_DIR}/include"
     "${WEBKIT_LIBRARIES_DIR}/include/zlib"
     "${WEBCORE_DIR}/loader/archive/cf"
+    "${WEBCORE_DIR}/platform/graphics/avfoundation"
+    "${WEBCORE_DIR}/platform/graphics/avfoundation/cf"
     "${WEBCORE_DIR}/platform/graphics/ca"
     "${WEBCORE_DIR}/platform/graphics/ca/win"
     "${WEBCORE_DIR}/platform/graphics/cg"
@@ -19,6 +21,18 @@ list(APPEND WebCore_SOURCES
 
     platform/cf/CFURLExtras.cpp
     platform/cf/URLCF.cpp
+
+    platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
+    platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
+    platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
+    platform/graphics/avfoundation/MediaTimeAVFoundation.cpp
+    platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
+
+    platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp
+    platform/graphics/avfoundation/cf/ImbandTextTrackPrivateLegacyAVCF.cpp
+    platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp
+    platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp
+    platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp
 
     platform/graphics/ca/GraphicsLayerCA.cpp
     platform/graphics/ca/LayerFlushScheduler.cpp

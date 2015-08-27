@@ -1,5 +1,18 @@
 2015-08-27  Alex Christensen  <achristensen@webkit.org>
 
+        Isolate Source directories in CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=148389
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformWin.cmake:
+        Include ../include/private to find WTF headers in internal build.
+        Don't use a script to generate forwarding headers.
+        * shell/PlatformWin.cmake:
+        Copy inspector scripts to the forwarding headers directory to be used by WebCore.
+
+2015-08-27  Alex Christensen  <achristensen@webkit.org>
+
         [Win CMake] Fix incremental build after r188673
         https://bugs.webkit.org/show_bug.cgi?id=148539
 

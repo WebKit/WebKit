@@ -1,6 +1,8 @@
 add_definitions(/bigobj)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}/../include/private"
+    "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/KHR"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
