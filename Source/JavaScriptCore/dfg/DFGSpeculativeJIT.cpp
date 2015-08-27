@@ -5881,6 +5881,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case KnownStringUse:
         ASSERT(!needsTypeCheck(edge, SpecString));
         break;
+    case KnownPrimitiveUse:
+        ASSERT(!needsTypeCheck(edge, SpecHeapTop & ~SpecObject));
+        break;
     case Int32Use:
         speculateInt32(edge);
         break;

@@ -160,7 +160,18 @@ private:
         }
 
         case StrCat: {
-            attemptToMakeFastStringAdd(node);
+            if (attemptToMakeFastStringAdd(node))
+                break;
+
+            // FIXME: Remove empty string arguments and possibly turn this into a ToString operation. That
+            // would require a form of ToString that takes a KnownPrimitiveUse. This is necessary because
+            // the implementation of StrCat doesn't dynamically optimize for empty strings.
+            // https://bugs.webkit.org/show_bug.cgi?id=148540
+            m_graph.doToChildren(
+                node,
+                [&] (Edge& edge) {
+                    fixEdge<KnownPrimitiveUse>(edge);
+                });
             break;
         }
             
@@ -1510,14 +1521,6 @@ private:
 
     bool attemptToMakeFastStringAdd(Node* node)
     {
-        if (!node->origin.exitOK) {
-            // If this code cannot exit, then we should not convert it to a MakeRope, since MakeRope
-            // can exit. This arises because we think that StrCat clobbers exit state, even though it
-            // doesn't really do that.
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=148443
-            return false;
-        }
-        
         bool goodToGo = true;
         m_graph.doToChildren(
             node,

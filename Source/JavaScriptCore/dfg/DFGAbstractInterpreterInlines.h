@@ -420,7 +420,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case StrCat: {
-        clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(m_graph, SpecString);
         break;
     }
@@ -1575,7 +1574,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         clobberWorld(node->origin.semantic, clobberLimit);
         
-        forNode(node).setType(m_graph, (SpecHeapTop & ~SpecCell) | SpecString | SpecSymbol);
+        forNode(node).setType(m_graph, SpecHeapTop & ~SpecObject);
         break;
     }
         

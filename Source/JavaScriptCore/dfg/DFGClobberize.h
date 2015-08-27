@@ -157,6 +157,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case BooleanToNumber:
     case FiatInt52:
     case MakeRope:
+    case StrCat:
     case ValueToInt32:
     case GetExecutable:
     case BottomValue:
@@ -393,15 +394,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(Heap);
         return;
         
-    case StrCat:
-        // This is pretty weird. In fact, StrCat has very limited effectfulness because we only
-        // pass it primitive values. But, right now, the compiler isn't smart enough to know this
-        // and that's probably OK.
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=148443
-        read(World);
-        write(Heap);
-        return;
-
     case GetGetter:
         read(GetterSetter_getter);
         def(HeapLocation(GetterLoc, GetterSetter_getter, node->child1()), LazyNode(node));

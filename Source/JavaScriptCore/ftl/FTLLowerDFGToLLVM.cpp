@@ -1326,12 +1326,14 @@ private:
         if (m_node->child3()) {
             result = vmCall(
                 m_out.operation(operationStrCat3), m_callFrame,
-                lowJSValue(m_node->child1()), lowJSValue(m_node->child2()),
-                lowJSValue(m_node->child3()));
+                lowJSValue(m_node->child1(), ManualOperandSpeculation),
+                lowJSValue(m_node->child2(), ManualOperandSpeculation),
+                lowJSValue(m_node->child3(), ManualOperandSpeculation));
         } else {
             result = vmCall(
                 m_out.operation(operationStrCat2), m_callFrame,
-                lowJSValue(m_node->child1()), lowJSValue(m_node->child2()));
+                lowJSValue(m_node->child1(), ManualOperandSpeculation),
+                lowJSValue(m_node->child2(), ManualOperandSpeculation));
         }
         setJSValue(result);
     }
@@ -7495,6 +7497,7 @@ private:
             break;
         case KnownInt32Use:
         case KnownStringUse:
+        case KnownPrimitiveUse:
         case DoubleRepUse:
         case Int52RepUse:
             ASSERT(!m_interpreter.needsTypeCheck(edge));

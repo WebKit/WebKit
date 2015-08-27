@@ -1,3 +1,49 @@
+2015-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::StrCat isn't really effectful
+        https://bugs.webkit.org/show_bug.cgi?id=148443
+
+        Reviewed by Geoffrey Garen.
+
+        I previously made the DFG StrCat node effectful because it is implemented by calling a
+        DFGOperations function that could cause arbitrary effects. But, the node is only generated from the
+        op_strcat bytecode operation, and that operation is only used when we first ensure that its
+        operands are primitives. Primitive operands to StrCat cannot cause arbitrary side-effects. The
+        reason why I didn't immediately mark StrCat as pure was because there was nothing in DFG IR that
+        guaranteed that StrCat's children were primitives.
+
+        This change adds a KnownPrimitiveUse use kind, and applies it to StrCat. This allows us to mark
+        StrCat as being pure. This should be a speed-up because we can CSE StrCat and because it means that
+        we can OSR exit after a StrCat (a pure node doesn't clobber exit state), so we can convert more
+        of a large string concatenation into MakeRope's.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::shouldNotHaveTypeCheck):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStrCat):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculate):
+
 2015-08-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r189064.

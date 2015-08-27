@@ -2195,9 +2195,9 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case StrCat: {
-        JSValueOperand op1(this, node->child1());
-        JSValueOperand op2(this, node->child2());
-        JSValueOperand op3(this, node->child3());
+        JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);
+        JSValueOperand op2(this, node->child2(), ManualOperandSpeculation);
+        JSValueOperand op3(this, node->child3(), ManualOperandSpeculation);
         
         GPRReg op1GPR = op1.gpr();
         GPRReg op2GPR = op2.gpr();

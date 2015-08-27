@@ -100,6 +100,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case KnownStringUse:
         out.print("KnownString");
         return;
+    case KnownPrimitiveUse:
+        out.print("KnownPrimitive");
+        return;
     case SymbolUse:
         out.print("Symbol");
         return;

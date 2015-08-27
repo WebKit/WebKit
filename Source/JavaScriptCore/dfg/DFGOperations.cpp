@@ -1114,11 +1114,9 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
-    if (exec->hadException())
-        return nullptr;
+    ASSERT(!exec->hadException()); // Impossible, since we must have been given primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
-    if (exec->hadException())
-        return nullptr;
+    ASSERT(!exec->hadException());
 
     if (sumOverflows<int32_t>(str1->length(), str2->length())) {
         throwOutOfMemoryError(exec);
@@ -1134,14 +1132,11 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
-    if (exec->hadException())
-        return nullptr;
+    ASSERT(!exec->hadException()); // Impossible, since we must have been given primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
-    if (exec->hadException())
-        return nullptr;
+    ASSERT(!exec->hadException());
     JSString* str3 = JSValue::decode(c).toString(exec);
-    if (exec->hadException())
-        return nullptr;
+    ASSERT(!exec->hadException());
 
     if (sumOverflows<int32_t>(str1->length(), str2->length(), str3->length())) {
         throwOutOfMemoryError(exec);
