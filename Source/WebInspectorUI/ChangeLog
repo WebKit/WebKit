@@ -1,3 +1,16 @@
+2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception in CSS Completion - TypeError: undefined is not an object (evaluating 'this._values[middleIndex].startsWith')
+        https://bugs.webkit.org/show_bug.cgi?id=148508
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WebInspector.CSSCompletions):
+        Add a comment explaining that the constructor may be called with
+        a list of strings or a list of objects from the protocol. Add
+        a fast path for when this is constructed with a list of strings.
+
 2015-08-26  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Rendering Frames timeline pie chart should use SVG instead of 2D canvas
