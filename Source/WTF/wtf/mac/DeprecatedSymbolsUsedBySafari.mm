@@ -62,7 +62,7 @@ void unlockAtomicallyInitializedStaticMutex()
     atomicallyInitializedStaticMutex.unlock();
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101100
+#if !((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 90000))
 WTF_EXPORT_PRIVATE void callOnMainThread(void (*function)(void*), void* context);
 WTF_EXPORT_PRIVATE void cancelCallOnMainThread(void (*function)(void*), void* context);
 
