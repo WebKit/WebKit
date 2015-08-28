@@ -1,5 +1,19 @@
 2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve ScriptSyntaxTree a bit
+        https://bugs.webkit.org/show_bug.cgi?id=148563
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        Share and fix ClassDeclaration and ClassExpression recursion to visit
+        the identifier (node.id). Include the kind with a VariableDeclaration
+        ("var", "let", "const").
+
+2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Separate creating a style sheet from adding a new rule in the protocol
         https://bugs.webkit.org/show_bug.cgi?id=148502
 
