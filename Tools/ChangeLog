@@ -1,3 +1,9 @@
+2015-08-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Remove an old temporary script that has served its purpose
+
+        * Scripts/convert-test-expectations: Removed.
+
 2015-08-28  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Add WebKit/WebKit2 settings to control automatic data loading
