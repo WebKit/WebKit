@@ -1,13 +1,13 @@
 include_directories(./ ${JavaScriptCore_INCLUDE_DIRECTORIES})
-add_library(jscdll SHARED ${JSC_SOURCES})
+add_library(jscLib SHARED ${JSC_SOURCES})
 
 list(APPEND JSC_LIBRARIES
     Winmm
 )
 
-target_link_libraries(jscdll ${JSC_LIBRARIES})
-set_target_properties(jscdll PROPERTIES FOLDER "JavaScriptCore")
-set_target_properties(jscdll PROPERTIES OUTPUT_NAME "jsc${DEBUG_SUFFIX}")
+target_link_libraries(jscLib ${JSC_LIBRARIES})
+set_target_properties(jscLib PROPERTIES FOLDER "JavaScriptCore")
+set_target_properties(jscLib PROPERTIES OUTPUT_NAME "jsc${DEBUG_SUFFIX}")
 
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DWIN_CAIRO)

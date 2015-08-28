@@ -138,4 +138,6 @@ set_target_properties(ImageDiffLib PROPERTIES FOLDER "Tools")
 set_target_properties(ImageDiffLib PROPERTIES OUTPUT_NAME "ImageDiff")
 target_link_libraries(ImageDiffLib ${ImageDiff_LIBRARIES})
 
+add_dependencies(ImageDiff ImageDiffLib)
+
 add_definitions(-D_UNICODE)

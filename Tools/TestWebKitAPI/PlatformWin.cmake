@@ -133,3 +133,6 @@ set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
 set(test_main_SOURCES
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
+
+add_dependencies(TestWebCore TestWebCoreLib)
+add_dependencies(TestWebKit TestWebKitLib)

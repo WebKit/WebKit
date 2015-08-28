@@ -31,3 +31,7 @@ endif ()
 if (SHOULD_INSTALL_JS_SHELL)
     install(TARGETS jsc DESTINATION "${EXEC_INSTALL_DIR}")
 endif ()
+
+if (WIN32)
+    add_dependencies(jsc jscLib)
+endif ()

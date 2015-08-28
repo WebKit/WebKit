@@ -168,6 +168,10 @@ add_executable(TestWTF
     ${TestWTF_SOURCES}
 )
 
+if (WIN32)
+    add_dependencies(TestWTF TestWTFLib)
+endif ()
+
 target_link_libraries(TestWTF ${test_wtf_LIBRARIES})
 add_dependencies(TestWTF WTF ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 add_test(TestWTF ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF}/TestWTF)

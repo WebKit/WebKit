@@ -1,3 +1,13 @@
+2015-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Make DLLLauncherMain executables dependent on dll
+        https://bugs.webkit.org/show_bug.cgi?id=148548
+
+        Reviewed by Brent Fulgham.
+
+        * shell/CMakeLists.txt:
+        * shell/PlatformWin.cmake:
+
 2015-08-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::StrCat isn't really effectful
