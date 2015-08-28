@@ -596,8 +596,7 @@ bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder& decoder, PluginInfo& plu
         return false;
     if (!decoder.decode(pluginInfo.isApplicationPlugin))
         return false;
-    PluginLoadClientPolicy clientLoadPolicy;
-    if (!decoder.decodeEnum(clientLoadPolicy))
+    if (!decoder.decodeEnum(pluginInfo.clientLoadPolicy))
         return false;
 #if PLATFORM(MAC)
     if (!decoder.decode(pluginInfo.bundleIdentifier))
