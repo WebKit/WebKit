@@ -31,12 +31,10 @@
 #include "DFGDriver.h"
 #include "JIT.h"
 #include "JSCInlines.h"
-#include "JSWASMModule.h"
 #include "LLIntEntrypoint.h"
 #include "Parser.h"
 #include "ProfilerDatabase.h"
 #include "TypeProfiler.h"
-#include "WASMFunctionParser.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
@@ -563,62 +561,6 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(
 
     return unlinkedExecutable->link(exec.vm(), source, overrideLineNumber);
 }
-
-#if ENABLE(WEBASSEMBLY)
-const ClassInfo WebAssemblyExecutable::s_info = { "WebAssemblyExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(WebAssemblyExecutable) };
-
-WebAssemblyExecutable::WebAssemblyExecutable(VM& vm, const SourceCode& source, JSWASMModule* module, unsigned functionIndex)
-    : ExecutableBase(vm, vm.webAssemblyExecutableStructure.get(), NUM_PARAMETERS_NOT_COMPILED)
-    , m_source(source)
-    , m_module(vm, this, module)
-    , m_functionIndex(functionIndex)
-{
-}
-
-void WebAssemblyExecutable::destroy(JSCell* cell)
-{
-    static_cast<WebAssemblyExecutable*>(cell)->WebAssemblyExecutable::~WebAssemblyExecutable();
-}
-
-void WebAssemblyExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    WebAssemblyExecutable* thisObject = jsCast<WebAssemblyExecutable*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    ExecutableBase::visitChildren(thisObject, visitor);
-    if (thisObject->m_codeBlockForCall)
-        thisObject->m_codeBlockForCall->visitAggregate(visitor);
-    visitor.append(&thisObject->m_module);
-}
-
-void WebAssemblyExecutable::clearCode()
-{
-    m_codeBlockForCall = nullptr;
-    Base::clearCode();
-}
-
-void WebAssemblyExecutable::prepareForExecution(ExecState* exec)
-{
-    if (hasJITCodeForCall())
-        return;
-
-    VM& vm = exec->vm();
-    DeferGC deferGC(vm.heap);
-
-    RefPtr<WebAssemblyCodeBlock> codeBlock = adoptRef(new WebAssemblyCodeBlock(
-        this, vm, exec->lexicalGlobalObject()));
-
-    WASMFunctionParser::compile(vm, codeBlock.get(), m_module.get(), m_source, m_functionIndex);
-
-    m_jitCodeForCall = codeBlock->jitCode();
-    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
-    m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
-    m_numParametersForCall = codeBlock->numParameters();
-
-    m_codeBlockForCall = codeBlock;
-
-    Heap::heap(this)->writeBarrier(this);
-}
-#endif
 
 void ExecutableBase::dump(PrintStream& out) const
 {

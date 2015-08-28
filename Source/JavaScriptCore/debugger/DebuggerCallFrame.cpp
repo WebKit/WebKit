@@ -242,7 +242,7 @@ SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
         return noSourceID;
-    return codeBlock->ownerScriptExecutable()->sourceID();
+    return codeBlock->ownerExecutable()->sourceID();
 }
 
 JSValue DebuggerCallFrame::thisValueForCallFrame(CallFrame* callFrame)

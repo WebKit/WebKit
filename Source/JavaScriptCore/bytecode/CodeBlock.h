@@ -96,9 +96,6 @@ protected:
     CodeBlock(CopyParsedBlockTag, CodeBlock& other);
         
     CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset);
-#if ENABLE(WEBASSEMBLY)
-    CodeBlock(WebAssemblyExecutable* ownerExecutable, VM&, JSGlobalObject*);
-#endif
 
     WriteBarrier<JSGlobalObject> m_globalObject;
     Heap* m_heap;
@@ -306,8 +303,7 @@ public:
 
     void jettison(Profiler::JettisonReason, ReoptimizationMode = DontCountReoptimization, const FireDetail* = nullptr);
     
-    ExecutableBase* ownerExecutable() const { return m_ownerExecutable.get(); }
-    ScriptExecutable* ownerScriptExecutable() const { return jsCast<ScriptExecutable*>(m_ownerExecutable.get()); }
+    ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
 
     void setVM(VM* vm) { m_vm = vm; }
     VM* vm() { return m_vm; }
@@ -350,15 +346,7 @@ public:
         return m_needsActivation;
     }
     
-    CodeType codeType() const
-    {
-#if ENABLE(WEBASSEMBLY)
-        if (m_ownerExecutable->isWebAssemblyExecutable())
-            return FunctionCode;
-#endif
-        return m_unlinkedCode->codeType();
-    }
-
+    CodeType codeType() const { return m_unlinkedCode->codeType(); }
     PutPropertySlot::Context putByIdContext() const
     {
         if (codeType() == EvalCode)
@@ -995,7 +983,7 @@ private:
             unsigned m_numBreakpoints : 30;
         };
     };
-    WriteBarrier<ExecutableBase> m_ownerExecutable;
+    WriteBarrier<ScriptExecutable> m_ownerExecutable;
     VM* m_vm;
 
     RefCountedArray<Instruction> m_instructions;
@@ -1145,27 +1133,6 @@ protected:
     virtual DFG::CapabilityLevel capabilityLevelInternal() override;
 #endif
 };
-
-#if ENABLE(WEBASSEMBLY)
-class WebAssemblyCodeBlock : public CodeBlock {
-public:
-    WebAssemblyCodeBlock(CopyParsedBlockTag, WebAssemblyCodeBlock& other)
-        : CodeBlock(CopyParsedBlock, other)
-    {
-    }
-
-    WebAssemblyCodeBlock(WebAssemblyExecutable* ownerExecutable, VM& vm, JSGlobalObject* globalObject)
-        : CodeBlock(ownerExecutable, vm, globalObject)
-    {
-    }
-
-#if ENABLE(JIT)
-protected:
-    virtual CodeBlock* replacement() override;
-    virtual DFG::CapabilityLevel capabilityLevelInternal() override;
-#endif
-};
-#endif
 
 inline Register& ExecState::r(int index)
 {

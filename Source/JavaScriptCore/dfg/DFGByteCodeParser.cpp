@@ -939,7 +939,7 @@ private:
         CodeBlock* m_profiledBlock;
         InlineCallFrame* m_inlineCallFrame;
         
-        ScriptExecutable* executable() { return m_codeBlock->ownerScriptExecutable(); }
+        ScriptExecutable* executable() { return m_codeBlock->ownerExecutable(); }
         
         QueryableExitProfile m_exitProfile;
         
@@ -1252,8 +1252,8 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         dataLog("    Might inline function: ", mightInlineFunctionFor(codeBlock, kind), "\n");
         dataLog("    Might compile function: ", mightCompileFunctionFor(codeBlock, kind), "\n");
         dataLog("    Is supported for inlining: ", isSupportedForInlining(codeBlock), "\n");
-        dataLog("    Needs activation: ", codeBlock->ownerScriptExecutable()->needsActivation(), "\n");
-        dataLog("    Is inlining candidate: ", codeBlock->ownerScriptExecutable()->isInliningCandidate(), "\n");
+        dataLog("    Needs activation: ", codeBlock->ownerExecutable()->needsActivation(), "\n");
+        dataLog("    Is inlining candidate: ", codeBlock->ownerExecutable()->isInliningCandidate(), "\n");
     }
     if (!canInline(capabilityLevel)) {
         if (verbose)
@@ -4436,7 +4436,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         byteCodeParser->m_graph.freeze(codeBlock->ownerExecutable());
         // The owner is the machine code block, and we already have a barrier on that when the
         // plan finishes.
-        m_inlineCallFrame->executable.setWithoutWriteBarrier(codeBlock->ownerScriptExecutable());
+        m_inlineCallFrame->executable.setWithoutWriteBarrier(codeBlock->ownerExecutable());
         m_inlineCallFrame->setStackOffset(inlineCallFrameStart.offset() - JSStack::CallFrameHeaderSize);
         if (callee) {
             m_inlineCallFrame->calleeRecovery = ValueRecovery::constant(callee);
@@ -4529,7 +4529,7 @@ void ByteCodeParser::parseCodeBlock()
         }
         dataLog(
             ": needsActivation = ", codeBlock->needsActivation(),
-            ", isStrictMode = ", codeBlock->ownerScriptExecutable()->isStrictMode(), "\n");
+            ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
         codeBlock->baselineVersion()->dumpBytecode();
     }
     

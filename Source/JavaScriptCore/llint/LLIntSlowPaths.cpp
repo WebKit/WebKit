@@ -1116,14 +1116,9 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
-    bool isWebAssemblyExecutable = false;
-#if ENABLE(WEBASSEMBLY)
-    isWebAssemblyExecutable = executable->isWebAssemblyExecutable();
-#endif
-
-    if (executable->isHostFunction()) {
+    if (executable->isHostFunction())
         codePtr = executable->entrypointFor(vm, kind, MustCheckArity, RegisterPreservationNotRequired);
-    } else if (!isWebAssemblyExecutable) {
+    else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
@@ -1140,19 +1135,6 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         else
             arity = ArityCheckNotRequired;
         codePtr = functionExecutable->entrypointFor(vm, kind, arity, RegisterPreservationNotRequired);
-    } else {
-#if ENABLE(WEBASSEMBLY)
-        WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-        webAssemblyExecutable->prepareForExecution(execCallee);
-        codeBlock = webAssemblyExecutable->codeBlockForCall();
-        ASSERT(codeBlock);
-        ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            arity = MustCheckArity;
-        else
-            arity = ArityCheckNotRequired;
-        codePtr = webAssemblyExecutable->entrypointFor(vm, kind, arity, RegisterPreservationNotRequired);
-#endif
     }
     
     ASSERT(!!codePtr);

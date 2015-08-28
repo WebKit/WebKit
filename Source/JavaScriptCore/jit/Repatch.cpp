@@ -1742,13 +1742,8 @@ void linkPolymorphicCall(
         if (variant.executable()->isHostFunction())
             codeBlock = nullptr;
         else {
-            ExecutableBase* executable = variant.executable();
-#if ENABLE(WEBASSEMBLY)
-            if (executable->isWebAssemblyExecutable())
-                codeBlock = jsCast<WebAssemblyExecutable*>(executable)->codeBlockForCall();
-            else
-#endif
-                codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
+            codeBlock = jsCast<FunctionExecutable*>(variant.executable())->codeBlockForCall();
+            
             // If we cannot handle a callee, assume that it's better for this whole thing to be a
             // virtual call.
             if (exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType() == CallLinkInfo::CallVarargs || callLinkInfo.callType() == CallLinkInfo::ConstructVarargs) {

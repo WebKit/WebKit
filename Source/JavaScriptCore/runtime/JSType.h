@@ -42,7 +42,6 @@ enum JSType : uint8_t {
     EvalExecutableType,
     ProgramExecutableType,
     FunctionExecutableType,
-    WebAssemblyExecutableType,
 
     UnlinkedFunctionExecutableType,
     UnlinkedProgramCodeBlockType,

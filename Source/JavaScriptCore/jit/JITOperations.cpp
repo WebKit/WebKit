@@ -848,22 +848,9 @@ char* JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLinkInfo* callL
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
-    if (executable->isHostFunction()) {
+    if (executable->isHostFunction())
         codePtr = executable->entrypointFor(*vm, kind, MustCheckArity, callLinkInfo->registerPreservationMode());
-#if ENABLE(WEBASSEMBLY)
-    } else if (executable->isWebAssemblyExecutable()) {
-        WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-        webAssemblyExecutable->prepareForExecution(execCallee);
-        codeBlock = webAssemblyExecutable->codeBlockForCall();
-        ASSERT(codeBlock);
-        ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            arity = MustCheckArity;
-        else
-            arity = ArityCheckNotRequired;
-        codePtr = webAssemblyExecutable->entrypointFor(*vm, kind, arity, callLinkInfo->registerPreservationMode());
-#endif
-    } else {
+    else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
@@ -909,33 +896,17 @@ inline char* virtualForWithFunction(
     JSScope* scope = function->scopeUnchecked();
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
-        bool isWebAssemblyExecutable = false;
-#if ENABLE(WEBASSEMBLY)
-        isWebAssemblyExecutable = executable->isWebAssemblyExecutable();
-#endif
-        if (!isWebAssemblyExecutable) {
-            FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
-            if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
-                exec->vm().throwException(exec, createNotAConstructorError(exec, function));
-                return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
-            }
+        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
+            exec->vm().throwException(exec, createNotAConstructorError(exec, function));
+            return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
+        }
 
-            JSObject* error = functionExecutable->prepareForExecution(execCallee, function, scope, kind);
-            if (error) {
-                exec->vm().throwException(exec, error);
-                return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
-            }
-        } else {
-#if ENABLE(WEBASSEMBLY)
-            if (!isCall(kind)) {
-                exec->vm().throwException(exec, createNotAConstructorError(exec, function));
-                return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
-            }
-
-            WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-            webAssemblyExecutable->prepareForExecution(execCallee);
-#endif
+        JSObject* error = functionExecutable->prepareForExecution(execCallee, function, scope, kind);
+        if (error) {
+            exec->vm().throwException(exec, error);
+            return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
         }
     }
     return reinterpret_cast<char*>(executable->entrypointFor(

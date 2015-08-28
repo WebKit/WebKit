@@ -42,8 +42,8 @@ class VM;
 
 class WASMModuleParser {
 public:
-    WASMModuleParser(VM&, JSGlobalObject*, const SourceCode&);
-    JSWASMModule* parse(String& errorMessage);
+    WASMModuleParser(const SourceCode&);
+    JSWASMModule* parse(VM&, JSGlobalObject*, String& errorMessage);
 
 private:
     void parseModule();
@@ -57,8 +57,6 @@ private:
     void parseFunctionDefinition(size_t functionIndex);
     void parseExportSection();
 
-    VM& m_vm;
-    Strong<JSGlobalObject> m_globalObject;
     const SourceCode& m_source;
     WASMReader m_reader;
     Strong<JSWASMModule> m_module;

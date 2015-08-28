@@ -279,9 +279,6 @@ public:
     Strong<Structure> evalExecutableStructure;
     Strong<Structure> programExecutableStructure;
     Strong<Structure> functionExecutableStructure;
-#if ENABLE(WEBASSEMBLY)
-    Strong<Structure> webAssemblyExecutableStructure;
-#endif
     Strong<Structure> regExpStructure;
     Strong<Structure> symbolStructure;
     Strong<Structure> symbolTableStructure;

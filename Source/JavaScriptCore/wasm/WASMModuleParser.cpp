@@ -49,17 +49,15 @@
 
 namespace JSC {
 
-WASMModuleParser::WASMModuleParser(VM& vm, JSGlobalObject* globalObject, const SourceCode& source)
-    : m_vm(vm)
-    , m_globalObject(vm, globalObject)
-    , m_source(source)
+WASMModuleParser::WASMModuleParser(const SourceCode& source)
+    : m_source(source)
     , m_reader(static_cast<WebAssemblySourceProvider*>(source.provider())->data())
 {
 }
 
-JSWASMModule* WASMModuleParser::parse(String& errorMessage)
+JSWASMModule* WASMModuleParser::parse(VM& vm, JSGlobalObject* globalObject, String& errorMessage)
 {
-    m_module.set(m_vm, JSWASMModule::create(m_vm, m_globalObject->wasmModuleStructure()));
+    m_module.set(vm, JSWASMModule::create(vm, globalObject->wasmModuleStructure()));
     parseModule();
     if (!m_errorMessage.isNull()) {
         errorMessage = m_errorMessage;
@@ -219,7 +217,6 @@ void WASMModuleParser::parseFunctionDeclarationSection()
     uint32_t numberOfFunctionDeclarations;
     READ_COMPACT_UINT32_OR_FAIL(numberOfFunctionDeclarations, "Cannot read the number of function declarations.");
     m_module->functionDeclarations().reserveInitialCapacity(numberOfFunctionDeclarations);
-    m_module->functions().reserveInitialCapacity(numberOfFunctionDeclarations);
     for (uint32_t i = 0; i < numberOfFunctionDeclarations; ++i) {
         WASMFunctionDeclaration functionDeclaration;
         READ_COMPACT_UINT32_OR_FAIL(functionDeclaration.signatureIndex, "Cannot read the signature index.");
@@ -268,10 +265,6 @@ void WASMModuleParser::parseFunctionDefinition(size_t functionIndex)
         return;
     }
     m_reader.setOffset(endOffsetInSource);
-
-    WebAssemblyExecutable* webAssemblyExecutable = WebAssemblyExecutable::create(m_vm, m_source, m_module.get(), functionIndex);
-    JSFunction* function = JSFunction::create(m_vm, webAssemblyExecutable, m_globalObject.get());
-    m_module->functions().uncheckedAppend(WriteBarrier<JSFunction>(m_vm, m_module.get(), function));
 }
 
 void WASMModuleParser::parseExportSection()
@@ -292,11 +285,11 @@ void WASMModuleParser::parseExportSection()
         for (uint32_t exportIndex = 0; exportIndex < numberOfExports; ++exportIndex) {
             String exportName;
             READ_STRING_OR_FAIL(exportName, "Cannot read the function export name.");
+            // FIXME: Check that exportName is legal.
             uint32_t functionIndex;
             READ_COMPACT_UINT32_OR_FAIL(functionIndex, "Cannot read the function index.");
             FAIL_IF_FALSE(functionIndex < m_module->functionDeclarations().size(), "The function index is incorrect.");
-            Identifier identifier = Identifier::fromString(&m_vm, exportName);
-            m_module->putDirect(m_vm, identifier, m_module->functions()[functionIndex].get());
+            // FIXME: Export the function.
         }
         break;
     }
@@ -307,8 +300,8 @@ void WASMModuleParser::parseExportSection()
 
 JSWASMModule* parseWebAssembly(ExecState* exec, const SourceCode& source, String& errorMessage)
 {
-    WASMModuleParser moduleParser(exec->vm(), exec->lexicalGlobalObject(), source);
-    return moduleParser.parse(errorMessage);
+    WASMModuleParser WASMModuleParser(source);
+    return WASMModuleParser.parse(exec->vm(), exec->lexicalGlobalObject(), errorMessage);
 }
 
 } // namespace JSC

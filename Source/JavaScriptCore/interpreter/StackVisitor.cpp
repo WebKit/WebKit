@@ -221,7 +221,7 @@ String StackVisitor::Frame::sourceURL()
     case CodeType::Eval:
     case CodeType::Function:
     case CodeType::Global: {
-        String sourceURL = codeBlock()->ownerScriptExecutable()->sourceURL();
+        String sourceURL = codeBlock()->ownerExecutable()->sourceURL();
         if (!sourceURL.isEmpty())
             traceLine = sourceURL.impl();
         break;
@@ -292,11 +292,11 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
     unsigned divotColumn = 0;
     retrieveExpressionInfo(divot, unusedStartOffset, unusedEndOffset, divotLine, divotColumn);
 
-    line = divotLine + codeBlock->ownerScriptExecutable()->firstLine();
+    line = divotLine + codeBlock->ownerExecutable()->firstLine();
     column = divotColumn + (divotLine ? 1 : codeBlock->firstLineColumnOffset());
 
-    if (codeBlock->ownerScriptExecutable()->hasOverrideLineNumber())
-        line = codeBlock->ownerScriptExecutable()->overrideLineNumber();
+    if (codeBlock->ownerExecutable()->hasOverrideLineNumber())
+        line = codeBlock->ownerExecutable()->overrideLineNumber();
 }
 
 void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
