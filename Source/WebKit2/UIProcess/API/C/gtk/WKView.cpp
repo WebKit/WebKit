@@ -31,15 +31,12 @@
 #include "WKAPICast.h"
 #include "WKViewPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
-#include "WebPageGroup.h"
-#include "WebProcessPool.h"
 
 using namespace WebKit;
-using namespace WebCore;
 
-WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKPageRef relatedPage)
+WKViewRef WKViewCreate(WKPageConfigurationRef configuration)
 {
-    return toAPI(webkitWebViewBaseCreate(toImpl(contextRef), nullptr, toImpl(pageGroupRef), nullptr, toImpl(relatedPage)));
+    return toAPI(webkitWebViewBaseCreate(*toImpl(configuration)));
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)

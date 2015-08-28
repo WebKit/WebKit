@@ -1318,12 +1318,13 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
 
     auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setProcessPool(context->priv->context.get());
     pageConfiguration->setPreferences(webkitSettingsGetPreferences(webkit_web_view_get_settings(webView)));
     pageConfiguration->setRelatedPage(relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr);
     pageConfiguration->setUserContentController(userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr);
     pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()));
     pageConfiguration->setSessionID(pageConfiguration->websiteDataStore()->websiteDataStore().sessionID());
-    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), WTF::move(pageConfiguration));
+    webkitWebViewBaseCreateWebPage(webViewBase, WTF::move(pageConfiguration));
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     context->priv->webViews.set(page->pageID(), webView);

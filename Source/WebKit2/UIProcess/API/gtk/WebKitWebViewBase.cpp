@@ -1043,17 +1043,10 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     containerClass->forall = webkitWebViewBaseContainerForall;
 }
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebProcessPool* context, WebPreferences* preferences, WebPageGroup* pageGroup, WebUserContentControllerProxy* userContentController, WebPageProxy* relatedPage)
+WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration& configuration)
 {
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, nullptr));
-
-    auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(context);
-    pageConfiguration->setPreferences(preferences);
-    pageConfiguration->setPageGroup(pageGroup);
-    pageConfiguration->setRelatedPage(relatedPage);
-    pageConfiguration->setUserContentController(userContentController);
-    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, WTF::move(pageConfiguration));
+    webkitWebViewBaseCreateWebPage(webkitWebViewBase, configuration.copy());
     return webkitWebViewBase;
 }
 
@@ -1074,9 +1067,10 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 }
 #endif // HAVE(GTK_SCALE_FACTOR)
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebProcessPool* context, Ref<API::PageConfiguration>&& configuration)
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<API::PageConfiguration>&& configuration)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    WebProcessPool* context = configuration->processPool();
     priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(configuration));
     priv->pageProxy->initializeWebPage();
 

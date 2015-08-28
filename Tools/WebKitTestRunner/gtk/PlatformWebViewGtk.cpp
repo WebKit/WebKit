@@ -37,7 +37,7 @@
 namespace WTR {
 
 PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
-    : m_view(WKViewCreate(WKPageConfigurationGetContext(configuration), WKPageConfigurationGetPageGroup(configuration), WKPageConfigurationGetRelatedPage(configuration)))
+    : m_view(WKViewCreate(configuration))
     , m_window(gtk_window_new(GTK_WINDOW_POPUP))
     , m_windowIsKey(true)
     , m_options(options)

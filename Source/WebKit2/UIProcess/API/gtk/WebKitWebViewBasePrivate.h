@@ -28,6 +28,7 @@
 #ifndef WebKitWebViewBasePrivate_h
 #define WebKitWebViewBasePrivate_h
 
+#include "APIPageConfiguration.h"
 #include "DragAndDropHandler.h"
 #include "GestureController.h"
 #include "WebContextMenuProxyGtk.h"
@@ -36,10 +37,10 @@
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebKit::WebProcessPool*, WebKit::WebPreferences*, WebKit::WebPageGroup*, WebKit::WebUserContentControllerProxy*, WebKit::WebPageProxy*);
+WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration&);
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WebKit::WebProcessPool*, Ref<API::PageConfiguration>&&);
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, Ref<API::PageConfiguration>&&);
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);

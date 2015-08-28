@@ -1,3 +1,20 @@
+2015-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify the internal API to create a WebView
+        https://bugs.webkit.org/show_bug.cgi?id=148570
+
+        Reviewed by Žan Doberšek.
+
+        * TestWebKitAPI/PlatformWebView.h: Add initialize method for GTK+ too.
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView): Implement all
+        PlatformWebView constructors that end up calling initialize with a PageConfiguration.
+        (TestWebKitAPI::PlatformWebView::initialize): Create the WebView
+        passing the received PageConfiguration.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView): Create the WebView
+        passing the received PageConfiguration.
+
 2015-08-27  Aakash Jain  <aakash_jain@apple.com>
 
         iOS Simulator API tests fails as Simulator is not running

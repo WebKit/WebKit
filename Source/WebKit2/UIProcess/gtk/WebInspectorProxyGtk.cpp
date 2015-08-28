@@ -77,7 +77,12 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     preferences->setJavaScriptRuntimeFlags({
     });
     RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifier(), false, false);
-    m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&inspectorProcessPool(), preferences.get(), pageGroup.get(), nullptr, nullptr));
+
+    auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setProcessPool(&inspectorProcessPool());
+    pageConfiguration->setPreferences(preferences.get());
+    pageConfiguration->setPageGroup(pageGroup.get());
+    m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(*pageConfiguration.ptr()));
     g_object_add_weak_pointer(G_OBJECT(m_inspectorView), reinterpret_cast<void**>(&m_inspectorView));
 
     WKPageUIClientV2 uiClient = {
