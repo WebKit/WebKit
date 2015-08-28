@@ -87,7 +87,8 @@ BuildbotCombinedQueueView.prototype = {
             this._appendPendingRevisionCount(slowestQueue);
 
             var message = this.revisionContentForIteration(slowestQueue.mostRecentSuccessfulIteration);
-            var status = new StatusLineView(message, StatusLineView.Status.Good, "all tests passed", null, null);
+            var statusMessagePassed = "all " + (queue.builder ? "builds succeeded" : "tests passed");
+            var status = new StatusLineView(message, StatusLineView.Status.Good, statusMessagePassed, null, null);
             new PopoverTracker(status.statusBubbleElement, this._presentPopoverForCombinedGreenBubble.bind(this));
             this.element.appendChild(status.element);
         } else {

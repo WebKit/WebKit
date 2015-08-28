@@ -1,3 +1,15 @@
+2015-08-28  Jason Marcell  <jmarcell@apple.com>
+
+        The status message for combined builder queues should say "all builds succeeded" if everything
+        built correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=148535
+
+        Reviewed by David Kilzer and Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView.prototype.update): Make status message for combined builder queues
+        say "all builds succeeded" if everything built correctly.
+
 2015-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Simplify the internal API to create a WebView
