@@ -1,3 +1,11 @@
+2015-08-27  Mark Lam  <mark.lam@apple.com>
+
+        Unbreak JSC tests (broken since r189064).
+
+        Not reviewed.
+
+        * js/script-tests/typedarray-test-helper-functions.js:
+
 2015-08-27  Tim Horton  <timothy_horton@apple.com>
 
         fast/css/object-fit/object-fit-embed.html isn't testing anything
