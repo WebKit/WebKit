@@ -1,3 +1,16 @@
+2015-08-28  Tim Horton  <timothy_horton@apple.com>
+
+        Add navigation gesture callbacks to WKPageNavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=148568
+        <rdar://problem/22371346>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        Add some zeroes.
+
 2015-08-28  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] kill-old-processes should kill more processes

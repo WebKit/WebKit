@@ -2102,6 +2102,27 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
                 return nullptr;
             return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo)));
         }
+
+        virtual void didBeginNavigationGesture(WebPageProxy& page) override
+        {
+            if (!m_client.didBeginNavigationGesture)
+                return;
+            m_client.didBeginNavigationGesture(toAPI(&page), m_client.base.clientInfo);
+        }
+
+        virtual void didEndNavigationGesture(WebPageProxy& page, bool willNavigate, WebKit::WebBackForwardListItem& item) override
+        {
+            if (!m_client.didEndNavigationGesture)
+                return;
+            m_client.didEndNavigationGesture(toAPI(&page), willNavigate ? toAPI(&item) : nullptr, m_client.base.clientInfo);
+        }
+
+        virtual void willEndNavigationGesture(WebPageProxy& page, bool willNavigate, WebKit::WebBackForwardListItem& item) override
+        {
+            if (!m_client.willEndNavigationGesture)
+                return;
+            m_client.willEndNavigationGesture(toAPI(&page), willNavigate ? toAPI(&item) : nullptr, m_client.base.clientInfo);
+        }
         
 #if ENABLE(NETSCAPE_PLUGIN_API)
         virtual PluginModuleLoadPolicy decidePolicyForPluginLoad(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary* pluginInformation, String& unavailabilityDescription) override

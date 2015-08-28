@@ -291,6 +291,9 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKPageConfiguration
         didReceiveAuthenticationChallenge,
         processDidCrash,
         copyWebCryptoMasterKey,
+        0, // didBeginNavigationGesture
+        0, // willEndNavigationGesture
+        0, // didEndNavigationGesture
     };
     WKPageSetPageNavigationClient(newPage, &pageNavigationClient.base);
 
@@ -532,6 +535,9 @@ void TestController::createWebViewWithOptions(const ViewOptions& options)
         didReceiveAuthenticationChallenge,
         processDidCrash,
         copyWebCryptoMasterKey,
+        0, // didBeginNavigationGesture
+        0, // willEndNavigationGesture
+        0, // didEndNavigationGesture
     };
     WKPageSetPageNavigationClient(m_mainWebView->page(), &pageNavigationClient.base);
 

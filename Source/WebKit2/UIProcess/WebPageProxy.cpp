@@ -5873,7 +5873,11 @@ void WebPageProxy::navigationGestureDidBegin()
 
     m_isShowingNavigationGestureSnapshot = true;
     m_pageClient.navigationGestureDidBegin();
-    m_loaderClient->navigationGestureDidBegin(*this);
+
+    if (m_navigationClient)
+        m_navigationClient->didBeginNavigationGesture(*this);
+    else
+        m_loaderClient->navigationGestureDidBegin(*this);
 }
 
 void WebPageProxy::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
@@ -5881,7 +5885,11 @@ void WebPageProxy::navigationGestureWillEnd(bool willNavigate, WebBackForwardLis
     PageClientProtector protector(m_pageClient);
 
     m_pageClient.navigationGestureWillEnd(willNavigate, item);
-    m_loaderClient->navigationGestureWillEnd(*this, willNavigate, item);
+
+    if (m_navigationClient)
+        m_navigationClient->willEndNavigationGesture(*this, willNavigate, item);
+    else
+        m_loaderClient->navigationGestureWillEnd(*this, willNavigate, item);
 }
 
 void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
@@ -5889,7 +5897,10 @@ void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardList
     PageClientProtector protector(m_pageClient);
 
     m_pageClient.navigationGestureDidEnd(willNavigate, item);
-    m_loaderClient->navigationGestureDidEnd(*this, willNavigate, item);
+    if (m_navigationClient)
+        m_navigationClient->didEndNavigationGesture(*this, willNavigate, item);
+    else
+        m_loaderClient->navigationGestureDidEnd(*this, willNavigate, item);
 }
 
 void WebPageProxy::navigationGestureDidEnd()
