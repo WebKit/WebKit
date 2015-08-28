@@ -77,7 +77,7 @@ JSFunction* JSFunction::create(VM& vm, WebAssemblyExecutable* executable, JSScop
 }
 #endif
 
-static inline NativeExecutable* getNativeExecutable(VM& vm, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
+NativeExecutable* JSFunction::lookUpOrCreateNativeExecutable(VM& vm, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
 #if !ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
@@ -92,33 +92,8 @@ static inline NativeExecutable* getNativeExecutable(VM& vm, NativeFunction nativ
 
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
-    NativeExecutable* executable = getNativeExecutable(vm, nativeFunction, intrinsic, nativeConstructor);
+    NativeExecutable* executable = lookUpOrCreateNativeExecutable(vm, nativeFunction, intrinsic, nativeConstructor);
     JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, globalObject->functionStructure());
-    // Can't do this during initialization because getHostFunction might do a GC allocation.
-    function->finishCreation(vm, executable, length, name);
-    return function;
-}
-
-class JSStdFunction : public JSFunction {
-public:
-    JSStdFunction(VM& vm, JSGlobalObject* object, Structure* structure, NativeStdFunction&& function)
-        : JSFunction(vm, object, structure)
-        , stdFunction(WTF::move(function)) { }
-
-    NativeStdFunction stdFunction;
-};
-
-static EncodedJSValue JSC_HOST_CALL runStdFunction(ExecState* state)
-{
-    JSStdFunction* jsFunction = jsCast<JSStdFunction*>(state->callee());
-    ASSERT(jsFunction);
-    return jsFunction->stdFunction(state);
-}
-
-JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
-{
-    NativeExecutable* executable = getNativeExecutable(vm, runStdFunction, intrinsic, nativeConstructor);
-    JSStdFunction* function = new (NotNull, allocateCell<JSStdFunction>(vm.heap)) JSStdFunction(vm, globalObject, globalObject->functionStructure(), WTF::move(nativeStdFunction));
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, length, name);
     return function;

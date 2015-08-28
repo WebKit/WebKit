@@ -726,6 +726,9 @@
     <ClCompile Include="..\runtime\JSModuleRecord.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSNativeStdFunction.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSNotAnObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -808,6 +811,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\NativeErrorPrototype.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\NativeStdFunctionCell.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\NullGetterFunction.cpp">
@@ -2934,6 +2940,9 @@
     <ClInclude Include="..\runtime\NativeErrorPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\NativeStdFunctionCell.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\NullGetterFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -3491,6 +3500,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSModuleRecord.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSNativeStdFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSSet.h">

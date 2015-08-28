@@ -70,6 +70,7 @@
 #include "Lexer.h"
 #include "Lookup.h"
 #include "MapData.h"
+#include "NativeStdFunctionCell.h"
 #include "Nodes.h"
 #include "Parser.h"
 #include "ProfilerDatabase.h"
@@ -243,6 +244,7 @@ VM::VM(VMType vmType, HeapType heapType)
     promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
     internalPromiseDeferredStructure.set(*this, JSInternalPromiseDeferred::createStructure(*this, 0, jsNull()));
     iterationTerminator.set(*this, JSFinalObject::create(*this, JSFinalObject::createStructure(*this, 0, jsNull(), 1)));
+    nativeStdFunctionCellStructure.set(*this, NativeStdFunctionCell::createStructure(*this, 0, jsNull()));
     smallStrings.initializeCommonStrings(*this);
 
     wtfThreadData().setCurrentAtomicStringTable(existingEntryAtomicStringTable);

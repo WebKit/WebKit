@@ -1703,6 +1703,10 @@
 		E33637A51B63220200EE0840 /* ReflectObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33637A31B63220200EE0840 /* ReflectObject.cpp */; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
+		E33E8D1C1B9013C300346B52 /* JSNativeStdFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */; };
+		E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E33E8D201B9013DE00346B52 /* NativeStdFunctionCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E8D1E1B9013DE00346B52 /* NativeStdFunctionCell.cpp */; };
+		E33E8D211B9013DE00346B52 /* NativeStdFunctionCell.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1F1B9013DE00346B52 /* NativeStdFunctionCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33F50741B8421C000413856 /* JSInternalPromisePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33F50721B8421C000413856 /* JSInternalPromisePrototype.cpp */; };
 		E33F50751B8421C000413856 /* JSInternalPromisePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F50731B8421C000413856 /* JSInternalPromisePrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33F50781B84225700413856 /* JSInternalPromiseConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33F50761B84225700413856 /* JSInternalPromiseConstructor.cpp */; };
@@ -3556,6 +3560,10 @@
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
 		E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.lut.h; sourceTree = "<group>"; };
+		E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNativeStdFunction.cpp; sourceTree = "<group>"; };
+		E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNativeStdFunction.h; sourceTree = "<group>"; };
+		E33E8D1E1B9013DE00346B52 /* NativeStdFunctionCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeStdFunctionCell.cpp; sourceTree = "<group>"; };
+		E33E8D1F1B9013DE00346B52 /* NativeStdFunctionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeStdFunctionCell.h; sourceTree = "<group>"; };
 		E33F50721B8421C000413856 /* JSInternalPromisePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternalPromisePrototype.cpp; sourceTree = "<group>"; };
 		E33F50731B8421C000413856 /* JSInternalPromisePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalPromisePrototype.h; sourceTree = "<group>"; };
 		E33F50761B84225700413856 /* JSInternalPromiseConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternalPromiseConstructor.cpp; sourceTree = "<group>"; };
@@ -4767,6 +4775,8 @@
 				A74DEF90182D991400522C22 /* JSMapIterator.h */,
 				E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */,
 				E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */,
+				E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */,
+				E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */,
 				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
 				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
@@ -4852,6 +4862,8 @@
 				BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */,
 				BC02E90A0E1839DB000F9297 /* NativeErrorPrototype.cpp */,
 				BC02E90B0E1839DB000F9297 /* NativeErrorPrototype.h */,
+				E33E8D1E1B9013DE00346B52 /* NativeStdFunctionCell.cpp */,
+				E33E8D1F1B9013DE00346B52 /* NativeStdFunctionCell.h */,
 				6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */,
 				6546F5201A32A59C006F07D5 /* NullGetterFunction.h */,
 				65525FC31A6DD3B3007B5495 /* NullSetterFunction.cpp */,
@@ -6369,6 +6381,7 @@
 				A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */,
 				A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */,
 				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
+				E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
 				A5EA70E919F5B1010098F5EC /* AlternateDispatchableAgent.h in Headers */,
@@ -6729,6 +6742,7 @@
 				A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */,
 				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
 				0FF8BDEB1AD4CF7100DFE884 /* InferredValue.h in Headers */,
+				E33E8D211B9013DE00346B52 /* NativeStdFunctionCell.h in Headers */,
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
 				0FB17661196B8F9E0091052A /* DFGHeapLocation.h in Headers */,
@@ -7675,6 +7689,7 @@
 				0FC712E217CD8791008CC93C /* JITToDFGDeferredCompilationCallback.cpp in Sources */,
 				140B7D1D0DC69AF7009C42B8 /* JSLexicalEnvironment.cpp in Sources */,
 				140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */,
+				E33E8D201B9013DE00346B52 /* NativeStdFunctionCell.cpp in Sources */,
 				C2CF39C116E15A8100DD69BE /* JSAPIWrapperObject.mm in Sources */,
 				147F39D0107EC37600427A48 /* JSArray.cpp in Sources */,
 				0F2B66E217B6B5AB00A7AE3F /* JSArrayBuffer.cpp in Sources */,
@@ -7901,6 +7916,7 @@
 				E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */,
 				0F8F2B9E17306C8D007DBDA5 /* SourceCode.cpp in Sources */,
 				0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */,
+				E33E8D1C1B9013C300346B52 /* JSNativeStdFunction.cpp in Sources */,
 				E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */,
 				0F0CD4C415F6B6BB0032F1C0 /* SparseArrayValueMap.cpp in Sources */,
 				0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */,

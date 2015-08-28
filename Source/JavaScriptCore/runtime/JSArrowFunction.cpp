@@ -40,11 +40,6 @@ namespace JSC {
 
 const ClassInfo JSArrowFunction::s_info = { "ArrowFunction", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrowFunction) };
 
-void JSArrowFunction::destroy(JSCell* cell)
-{
-    static_cast<JSArrowFunction*>(cell)->JSArrowFunction::~JSArrowFunction();
-}
-
 JSArrowFunction* JSArrowFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, JSValue boundThis)
 {
     JSArrowFunction* result = createImpl(vm, executable, scope, boundThis);

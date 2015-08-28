@@ -786,6 +786,7 @@
     <ClCompile Include="..\runtime\JSMap.cpp" />
     <ClCompile Include="..\runtime\JSMapIterator.cpp" />
     <ClCompile Include="..\runtime\JSModuleRecord.cpp" />
+    <ClCompile Include="..\runtime\JSNativeStdFunction.cpp" />
     <ClCompile Include="..\runtime\JSNotAnObject.cpp" />
     <ClCompile Include="..\runtime\JSONObject.cpp" />
     <ClCompile Include="..\runtime\JSObject.cpp" />
@@ -824,6 +825,7 @@
     <ClCompile Include="..\runtime\ModuleLoaderObject.cpp" />
     <ClCompile Include="..\runtime\NativeErrorConstructor.cpp" />
     <ClCompile Include="..\runtime\NativeErrorPrototype.cpp" />
+    <ClCompile Include="..\runtime\NativeStdFunctionCell.cpp" />
     <ClCompile Include="..\runtime\NullGetterFunction.cpp" />
     <ClCompile Include="..\runtime\NullSetterFunction.cpp" />
     <ClCompile Include="..\runtime\NumberConstructor.cpp" />
@@ -1638,6 +1640,7 @@
     <ClInclude Include="..\runtime\JSMap.h" />
     <ClInclude Include="..\runtime\JSMapIterator.h" />
     <ClInclude Include="..\runtime\JSModuleRecord.h" />
+    <ClInclude Include="..\runtime\JSNativeStdFunction.h" />
     <ClInclude Include="..\runtime\JSNotAnObject.h" />
     <ClInclude Include="..\runtime\JSONObject.h" />
     <ClInclude Include="..\runtime\JSObject.h" />
@@ -1687,6 +1690,7 @@
     <ClInclude Include="..\runtime\Microtask.h" />
     <ClInclude Include="..\runtime\NativeErrorConstructor.h" />
     <ClInclude Include="..\runtime\NativeErrorPrototype.h" />
+    <ClInclude Include="..\runtime\NativeStdFunctionCell.h" />
     <ClInclude Include="..\runtime\NullGetterFunction.h" />
     <ClInclude Include="..\runtime\NullSetterFunction.h" />
     <ClInclude Include="..\runtime\NumberConstructor.h" />

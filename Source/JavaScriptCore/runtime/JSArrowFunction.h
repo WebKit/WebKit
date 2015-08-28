@@ -48,8 +48,6 @@ public:
     static JSArrowFunction* create(VM&, FunctionExecutable*, JSScope*, JSValue);
     static JSArrowFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*, JSValue);
 
-    static void destroy(JSCell*);
-    
     static size_t allocationSize(size_t inlineCapacity)
     {
         ASSERT_UNUSED(inlineCapacity, !inlineCapacity);

@@ -43,6 +43,7 @@
 #include <runtime/Error.h>
 #include <runtime/Exception.h>
 #include <runtime/JSCJSValueInlines.h>
+#include <runtime/JSNativeStdFunction.h>
 #include <runtime/JSPromise.h>
 #include <runtime/JSString.h>
 #include <runtime/StructureInlines.h>
@@ -100,7 +101,7 @@ JSDOMGlobalObject* ReadableJSStream::globalObject()
 static inline JSFunction* createStartResultFulfilledFunction(ExecState& state, ReadableStream& readableStream)
 {
     RefPtr<ReadableStream> stream = &readableStream;
-    return JSFunction::create(state.vm(), state.callee()->globalObject(), 1, String(), [stream](ExecState*) {
+    return JSNativeStdFunction::create(state.vm(), state.callee()->globalObject(), 1, String(), [stream](ExecState*) {
         stream->start();
         return JSValue::encode(jsUndefined());
     });
@@ -147,7 +148,7 @@ void ReadableJSStream::doStart(ExecState& exec)
 static inline JSFunction* createPullResultFulfilledFunction(ExecState& exec, ReadableStream& stream)
 {
     RefPtr<ReadableStream> protectedStream = &stream;
-    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 0, String(), [protectedStream](ExecState*) {
+    return JSNativeStdFunction::create(exec.vm(), exec.callee()->globalObject(), 0, String(), [protectedStream](ExecState*) {
         protectedStream->finishPulling();
         return JSValue::encode(jsUndefined());
     });
@@ -175,7 +176,7 @@ bool ReadableJSStream::doPull()
 static JSFunction* createCancelResultFulfilledFunction(ExecState& exec, ReadableStream& stream)
 {
     RefPtr<ReadableStream> protectedStream = &stream;
-    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 1, String(), [protectedStream](ExecState*) {
+    return JSNativeStdFunction::create(exec.vm(), exec.callee()->globalObject(), 1, String(), [protectedStream](ExecState*) {
         protectedStream->notifyCancelSucceeded();
         return JSValue::encode(jsUndefined());
     });
@@ -184,7 +185,7 @@ static JSFunction* createCancelResultFulfilledFunction(ExecState& exec, Readable
 static JSFunction* createCancelResultRejectedFunction(ExecState& exec, ReadableJSStream& stream)
 {
     RefPtr<ReadableJSStream> protectedStream = &stream;
-    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 1, String(), [protectedStream](ExecState* exec) {
+    return JSNativeStdFunction::create(exec.vm(), exec.callee()->globalObject(), 1, String(), [protectedStream](ExecState* exec) {
         protectedStream->storeError(*exec, exec->argument(0));
         protectedStream->notifyCancelFailed();
         return JSValue::encode(jsUndefined());
@@ -260,7 +261,7 @@ ReadableJSStream::ReadableJSStream(ExecState& state, JSObject* source, double hi
     m_source.set(state.vm(), source);
     // We do not take a Ref to the stream as this would cause a Ref cycle.
     // The resolution callback used jointly with m_errorFunction as promise callbacks should protect the stream instead.
-    m_errorFunction.set(state.vm(), JSFunction::create(state.vm(), state.callee()->globalObject(), 1, String(), [this](ExecState* state) {
+    m_errorFunction.set(state.vm(), JSNativeStdFunction::create(state.vm(), state.callee()->globalObject(), 1, String(), [this](ExecState* state) {
         storeError(*state, state->argument(0));
         return JSValue::encode(jsUndefined());
     }));

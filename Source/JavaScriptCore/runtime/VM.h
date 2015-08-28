@@ -300,6 +300,7 @@ public:
     Strong<Structure> exceptionStructure;
     Strong<Structure> promiseDeferredStructure;
     Strong<Structure> internalPromiseDeferredStructure;
+    Strong<Structure> nativeStdFunctionCellStructure;
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;
 

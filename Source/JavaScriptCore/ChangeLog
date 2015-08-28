@@ -1,3 +1,79 @@
+2015-08-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Move std::function from JSFunction into NativeStdFunctionCell to correctly destroy the heap allocated std::function
+        https://bugs.webkit.org/show_bug.cgi?id=148262
+
+        Reviewed by Filip Pizlo.
+
+        std::function is heap allocated value. So if this is held in the JSCell, the cell should be destructible.
+        Before this patch, it is held in the JSStdFunction. JSStdFunction is the derived class from the JSFunction,
+        and they are not destructible. So it leaked the memory.
+
+        This patch extracts std::function field from the JSStdFunction to the NativeStdFunctionCell. NativeStdFunctionCell
+        is responsible for destructing the held std::function.
+        Instead of moving std::function to the ExecutableBase, we move it to the newly created NativeStdFunctionCell cell.
+        The reason is the following.
+
+        - Each NativeExecutable (in 64_32 JIT environment) has the trampolines to call given host functions.
+          And the address of the host function is directly embedded on the JIT-compiled trampoline code.
+        - To suppress the overuse of the executable memory (which is used to generate the trampoline), NativeExecutable
+          is cached. The host function address is used as the key to look up the cached executable from the table.
+        - In all the JSStdFunction, we use the same host function that immediately calls the each std::function.
+        - As a result, without any change, all the JSStdFunction hit the same cached NativeExecutable even if the held
+          std::function is different.
+        - To solve it, if we put the std::function in the NativeExecutable, we need to add this std::function
+          identity (like address) to the cache key, because the address of the stub host function (that calls the
+          std::function) is the same in the all JSStdFunction.
+        - But since the std::function will be allocated in the heap, this address is always different. So caching has
+          no effect.
+        - If we do not cache the NativeExecutable that holds the std::function, each time when creating the JSStdFunction,
+          we need to regenerate the completely same trampolines (since it just calls the same host function stub that
+          calls the std::function).
+
+        And this patch drops JSArrowFunction::destroy because (1) JSArrowFunction is not destructible and (2) it no longer
+        holds any fields that require destructions.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (runWithScripts):
+        * runtime/JSArrowFunction.cpp:
+        (JSC::JSArrowFunction::destroy): Deleted.
+        * runtime/JSArrowFunction.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::lookUpOrCreateNativeExecutable):
+        (JSC::JSFunction::create):
+        (JSC::getNativeExecutable): Deleted.
+        (JSC::JSStdFunction::JSStdFunction): Deleted.
+        (JSC::runStdFunction): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::nativeStdFunctionStructure):
+        * runtime/JSNativeStdFunction.cpp: Added.
+        (JSC::JSNativeStdFunction::JSNativeStdFunction):
+        (JSC::JSNativeStdFunction::visitChildren):
+        (JSC::JSNativeStdFunction::finishCreation):
+        (JSC::runStdFunction):
+        (JSC::JSNativeStdFunction::create):
+        * runtime/JSNativeStdFunction.h: Copied from Source/JavaScriptCore/runtime/JSArrowFunction.h.
+        (JSC::JSNativeStdFunction::createStructure):
+        (JSC::JSNativeStdFunction::nativeStdFunctionCell):
+        * runtime/NativeStdFunctionCell.cpp: Added.
+        (JSC::NativeStdFunctionCell::create):
+        (JSC::NativeStdFunctionCell::NativeStdFunctionCell):
+        (JSC::NativeStdFunctionCell::destroy):
+        * runtime/NativeStdFunctionCell.h: Added.
+        (JSC::NativeStdFunctionCell::createStructure):
+        (JSC::NativeStdFunctionCell::function):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2015-08-28  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Create WebAssembly functions

@@ -46,8 +46,6 @@ class SpeculativeJIT;
 class JITCompiler;
 }
 
-typedef std::function<EncodedJSValue (ExecState*)> NativeStdFunction;
-
 JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
 JS_EXPORT_PRIVATE String getCalculatedDisplayName(CallFrame*, JSObject*);
@@ -71,7 +69,6 @@ public:
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
     
     static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
-    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeStdFunction&&, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
     static JSFunction* create(VM&, FunctionExecutable*, JSScope*);
 #if ENABLE(WEBASSEMBLY)
@@ -166,6 +163,9 @@ protected:
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
     static void visitChildren(JSCell*, SlotVisitor&);
+
+
+    static NativeExecutable* lookUpOrCreateNativeExecutable(VM&, NativeFunction, Intrinsic, NativeFunction nativeConstructor);
 
 private:
     static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope)

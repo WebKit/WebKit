@@ -42,6 +42,7 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
+#include "JSNativeStdFunction.h"
 #include "JSONObject.h"
 #include "JSProxy.h"
 #include "JSString.h"
@@ -1504,7 +1505,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
     bool success = true;
 
 #if ENABLE(ES6_MODULES)
-    JSFunction* errorHandler = JSFunction::create(vm, globalObject, 1, String(), [&](ExecState* exec) {
+    JSFunction* errorHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&](ExecState* exec) {
         success = false;
         dumpException(globalObject, exec->argument(0));
         return JSValue::encode(jsUndefined());
