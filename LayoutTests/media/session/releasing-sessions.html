@@ -33,7 +33,7 @@
             if (window.internals)
                 testExpected('internals.mediaSessionCurrentState(session)', "active");
 
-            run('session.releaseSession()');
+            run('session.deactivate()');
 
             testExpected('video.paused', true);
 

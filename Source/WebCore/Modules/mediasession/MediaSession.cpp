@@ -185,18 +185,20 @@ void MediaSession::setMetadata(const Dictionary& metadata)
         page->chrome().client().mediaSessionMetadataDidChange(m_metadata);
 }
 
-void MediaSession::releaseSession()
+void MediaSession::deactivate()
 {
-    // 5.1.3
+    // 5.1.2. Object members
+    // When the deactivate() method is invoked, the user agent must run the following steps:
     // 1. Let media session be the current media session.
-    // 2. Indefinitely pause all of media session's active participating media elements.
-    // 3. Reset media session's active participating media elements to an empty list.
+    // 2. Indefinitely pause all of media session’s audio-producing participants.
+    // 3. Set media session's resume list to an empty list.
+    // 4. Set media session's audio-producing participants to an empty list.
     changeActiveMediaElements([&]() {
         while (!m_activeParticipatingElements.isEmpty())
             m_activeParticipatingElements.takeAny()->pause();
     });
 
-    // 4. Run the media session release algorithm for media session.
+    // 5. Run the media session deactivation algorithm for media session.
     releaseInternal();
 }
 

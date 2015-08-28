@@ -34,7 +34,7 @@
 
     void setMetadata(Dictionary metadata);
 
-    void releaseSession();
+    void deactivate();
 };
 
 enum MediaSessionKind {

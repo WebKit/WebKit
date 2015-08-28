@@ -8,7 +8,7 @@ EVENT(playing)
 Media began playing.
 EXPECTED (video.paused == 'false') OK
 EXPECTED (internals.mediaSessionCurrentState(session) == 'active') OK
-RUN(session.releaseSession())
+RUN(session.deactivate())
 EXPECTED (video.paused == 'true') OK
 EXPECTED (internals.mediaSessionCurrentState(session) == 'idle') OK
 END OF TEST

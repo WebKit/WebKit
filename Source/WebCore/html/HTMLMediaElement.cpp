@@ -6569,7 +6569,7 @@ void HTMLMediaElement::setSession(MediaSession* session)
 
         // 7. If old media session is not null and no longer has one or more audio-producing participants, then run the media session deactivation algorithm for old media session.
         if (!m_session->hasActiveMediaElements())
-            m_session->releaseSession();
+            m_session->deactivate();
     }
 
     if (session)

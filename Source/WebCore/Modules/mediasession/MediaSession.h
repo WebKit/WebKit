@@ -69,7 +69,7 @@ public:
 
     void setMetadata(const Dictionary&);
 
-    void releaseSession();
+    void deactivate();
 
     // Runs the media session invocation algorithm and returns true on success.
     bool invoke();
