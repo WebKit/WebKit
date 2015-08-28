@@ -168,7 +168,7 @@ JSValue eval(CallFrame* callFrame)
         ASSERT(!callFrame->vm().exception());
 
         ThisTDZMode thisTDZMode = callerCodeBlock->unlinkedCodeBlock()->constructorKind() == ConstructorKind::Derived ? ThisTDZMode::AlwaysCheck : ThisTDZMode::CheckIfNeeded;
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->ownerExecutable(), callerCodeBlock->isStrictMode(), thisTDZMode, programSource, callerScopeChain);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->ownerScriptExecutable(), callerCodeBlock->isStrictMode(), thisTDZMode, programSource, callerScopeChain);
         if (!eval)
             return jsUndefined();
     }
@@ -515,6 +515,16 @@ String StackFrame::toString(CallFrame* callFrame)
     return traceBuild.toString().impl();
 }
 
+static inline bool isWebAssemblyExecutable(ExecutableBase* executable)
+{
+#if !ENABLE(WEBASSEMBLY)
+    UNUSED_PARAM(executable);
+    return false;
+#else
+    return executable->isWebAssemblyExecutable();
+#endif
+}
+
 class GetStackTraceFunctor {
 public:
     GetStackTraceFunctor(VM& vm, Vector<StackFrame>& results, size_t remainingCapacity)
@@ -528,15 +538,17 @@ public:
     {
         VM& vm = m_vm;
         if (m_remainingCapacityForFrameCapture) {
-            if (visitor->isJSFrame() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
+            if (visitor->isJSFrame()
+                && !isWebAssemblyExecutable(visitor->codeBlock()->ownerExecutable())
+                && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 CodeBlock* codeBlock = visitor->codeBlock();
                 StackFrame s = {
                     Strong<JSObject>(vm, visitor->callee()),
                     getStackFrameCodeType(visitor),
-                    Strong<ScriptExecutable>(vm, codeBlock->ownerExecutable()),
+                    Strong<ScriptExecutable>(vm, codeBlock->ownerScriptExecutable()),
                     Strong<UnlinkedCodeBlock>(vm, codeBlock->unlinkedCodeBlock()),
                     codeBlock->source(),
-                    codeBlock->ownerExecutable()->firstLine(),
+                    codeBlock->ownerScriptExecutable()->firstLine(),
                     codeBlock->firstLineColumnOffset(),
                     codeBlock->sourceOffset(),
                     visitor->bytecodeOffset(),
@@ -629,7 +641,7 @@ public:
         m_codeBlock = visitor->codeBlock();
         unsigned bytecodeOffset = visitor->bytecodeOffset();
 
-        if (m_isTermination || !(m_handler = m_codeBlock ? m_codeBlock->handlerForBytecodeOffset(bytecodeOffset) : nullptr)) {
+        if (m_isTermination || !(m_handler = (m_codeBlock && !isWebAssemblyExecutable(m_codeBlock->ownerExecutable())) ? m_codeBlock->handlerForBytecodeOffset(bytecodeOffset) : nullptr)) {
             if (!unwindCallFrame(visitor)) {
                 if (LegacyProfiler* profiler = vm.enabledProfiler())
                     profiler->exceptionUnwind(m_callFrame);

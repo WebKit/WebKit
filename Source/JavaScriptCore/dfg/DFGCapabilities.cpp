@@ -44,32 +44,36 @@ bool isSupported()
 
 bool isSupportedForInlining(CodeBlock* codeBlock)
 {
-    return codeBlock->ownerExecutable()->isInliningCandidate();
+#if ENABLE(WEBASSEMBLY)
+    if (codeBlock->ownerExecutable()->isWebAssemblyExecutable())
+        return false;
+#endif
+    return codeBlock->ownerScriptExecutable()->isInliningCandidate();
 }
 
 bool mightCompileEval(CodeBlock* codeBlock)
 {
     return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
-        && codeBlock->ownerExecutable()->isOkToOptimize();
+        && codeBlock->ownerScriptExecutable()->isOkToOptimize();
 }
 bool mightCompileProgram(CodeBlock* codeBlock)
 {
     return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
-        && codeBlock->ownerExecutable()->isOkToOptimize();
+        && codeBlock->ownerScriptExecutable()->isOkToOptimize();
 }
 bool mightCompileFunctionForCall(CodeBlock* codeBlock)
 {
     return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
-        && codeBlock->ownerExecutable()->isOkToOptimize();
+        && codeBlock->ownerScriptExecutable()->isOkToOptimize();
 }
 bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 {
     return isSupported()
         && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
-        && codeBlock->ownerExecutable()->isOkToOptimize();
+        && codeBlock->ownerScriptExecutable()->isOkToOptimize();
 }
 
 bool mightInlineFunctionForCall(CodeBlock* codeBlock)

@@ -64,6 +64,8 @@ public:
     Vector<WASMFunctionDeclaration>& functionDeclarations() { return m_functionDeclarations; }
     Vector<WASMFunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
 
+    Vector<WriteBarrier<JSFunction>>& functions() { return m_functions; }
+
 private:
     JSWASMModule(VM& vm, Structure* structure)
         : Base(vm, structure)

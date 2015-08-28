@@ -36,11 +36,14 @@
 
 namespace JSC {
 
+class CodeBlock;
 class JSWASMModule;
+class VM;
 
 class WASMFunctionParser {
 public:
     static bool checkSyntax(JSWASMModule*, const SourceCode&, size_t functionIndex, unsigned startOffsetInSource, unsigned& endOffsetInSource, String& errorMessage);
+    static void compile(VM&, CodeBlock*, JSWASMModule*, const SourceCode&, size_t functionIndex);
 
 private:
     WASMFunctionParser(JSWASMModule* module, const SourceCode& source, size_t functionIndex)

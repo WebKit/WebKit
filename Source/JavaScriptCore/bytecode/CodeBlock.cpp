@@ -107,7 +107,7 @@ CodeBlockHash CodeBlock::hash() const
 {
     if (!m_hash) {
         RELEASE_ASSERT(isSafeToComputeHash());
-        m_hash = CodeBlockHash(ownerExecutable()->source(), specializationKind());
+        m_hash = CodeBlockHash(ownerScriptExecutable()->source(), specializationKind());
     }
     return m_hash;
 }
@@ -115,7 +115,7 @@ CodeBlockHash CodeBlock::hash() const
 CString CodeBlock::sourceCodeForTools() const
 {
     if (codeType() != FunctionCode)
-        return ownerExecutable()->source().toUTF8();
+        return ownerScriptExecutable()->source().toUTF8();
     
     SourceProvider* provider = source();
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(ownerExecutable());
@@ -155,13 +155,13 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
     out.print(", ", instructionCount());
     if (this->jitType() == JITCode::BaselineJIT && m_shouldAlwaysBeInlined)
         out.print(" (ShouldAlwaysBeInlined)");
-    if (ownerExecutable()->neverInline())
+    if (ownerScriptExecutable()->neverInline())
         out.print(" (NeverInline)");
-    if (ownerExecutable()->neverOptimize())
+    if (ownerScriptExecutable()->neverOptimize())
         out.print(" (NeverOptimize)");
-    if (ownerExecutable()->didTryToEnterInLoop())
+    if (ownerScriptExecutable()->didTryToEnterInLoop())
         out.print(" (DidTryToEnterInLoop)");
-    if (ownerExecutable()->isStrictMode())
+    if (ownerScriptExecutable()->isStrictMode())
         out.print(" (StrictMode)");
     if (this->jitType() == JITCode::BaselineJIT && m_didFailFTLCompilation)
         out.print(" (FTLFail)");
@@ -554,7 +554,7 @@ void CodeBlock::dumpSource()
 
 void CodeBlock::dumpSource(PrintStream& out)
 {
-    ScriptExecutable* executable = ownerExecutable();
+    ScriptExecutable* executable = ownerScriptExecutable();
     if (executable->isFunctionExecutable()) {
         FunctionExecutable* functionExecutable = reinterpret_cast<FunctionExecutable*>(executable);
         String source = functionExecutable->source().provider()->getRange(
@@ -1753,7 +1753,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     setNumParameters(unlinkedCodeBlock->numParameters());
 
     if (vm()->typeProfiler() || vm()->controlFlowProfiler())
-        vm()->functionHasExecutedCache()->removeUnexecutedRange(m_ownerExecutable->sourceID(), m_ownerExecutable->typeProfilingStartOffset(), m_ownerExecutable->typeProfilingEndOffset());
+        vm()->functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(), ownerExecutable->typeProfilingEndOffset());
 
     setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
     if (unlinkedCodeBlock->usesGlobalObject())
@@ -1787,7 +1787,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         if (vm()->typeProfiler() || vm()->controlFlowProfiler())
-            vm()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
+            vm()->functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
         m_functionDecls[i].set(*m_vm, ownerExecutable, unlinkedExecutable->link(*m_vm, ownerExecutable->source()));
     }
 
@@ -1795,7 +1795,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     for (size_t count = unlinkedCodeBlock->numberOfFunctionExprs(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         if (vm()->typeProfiler() || vm()->controlFlowProfiler())
-            vm()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
+            vm()->functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
         m_functionExprs[i].set(*m_vm, ownerExecutable, unlinkedExecutable->link(*m_vm, ownerExecutable->source()));
     }
 
@@ -1927,7 +1927,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
             instructions[i + opLength - 1] = objectAllocationProfile;
             objectAllocationProfile->initialize(*vm(),
-                m_ownerExecutable.get(), m_globalObject->objectPrototype(), inferredInlineCapacity);
+                ownerExecutable, m_globalObject->objectPrototype(), inferredInlineCapacity);
             break;
         }
 
@@ -2108,7 +2108,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                     // the user's program, give the type profiler some range to identify these return statements.
                     // Currently, the text offset that is used as identification is "f" in the function keyword
                     // and is stored on TypeLocation's m_divotForFunctionOffsetIfReturnStatement member variable.
-                    divotStart = divotEnd = m_ownerExecutable->typeProfilingStartOffset();
+                    divotStart = divotEnd = ownerExecutable->typeProfilingStartOffset();
                     shouldAnalyze = true;
                 }
                 break;
@@ -2116,12 +2116,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             }
 
             std::pair<TypeLocation*, bool> locationPair = vm()->typeProfiler()->typeLocationCache()->getTypeLocation(globalVariableID,
-                m_ownerExecutable->sourceID(), divotStart, divotEnd, globalTypeSet, vm());
+                ownerExecutable->sourceID(), divotStart, divotEnd, globalTypeSet, vm());
             TypeLocation* location = locationPair.first;
             bool isNewLocation = locationPair.second;
 
             if (flag == ProfileTypeBytecodeFunctionReturnStatement)
-                location->m_divotForFunctionOffsetIfReturnStatement = m_ownerExecutable->typeProfilingStartOffset();
+                location->m_divotForFunctionOffsetIfReturnStatement = ownerExecutable->typeProfilingStartOffset();
 
             if (shouldAnalyze && isNewLocation)
                 vm()->typeProfiler()->insertNewLocation(location);
@@ -2164,6 +2164,39 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     m_heap->m_codeBlocks.add(this);
     m_heap->reportExtraMemoryAllocated(sizeof(CodeBlock) + m_instructions.size() * sizeof(Instruction));
 }
+
+#if ENABLE(WEBASSEMBLY)
+CodeBlock::CodeBlock(WebAssemblyExecutable* ownerExecutable, VM& vm, JSGlobalObject* globalObject)
+    : m_globalObject(globalObject->vm(), ownerExecutable, globalObject)
+    , m_heap(&m_globalObject->vm().heap)
+    , m_numCalleeRegisters(0)
+    , m_numVars(0)
+    , m_isConstructor(false)
+    , m_shouldAlwaysBeInlined(false)
+    , m_didFailFTLCompilation(false)
+    , m_hasBeenCompiledWithFTL(false)
+    , m_hasDebuggerStatement(false)
+    , m_steppingMode(SteppingModeDisabled)
+    , m_numBreakpoints(0)
+    , m_ownerExecutable(m_globalObject->vm(), ownerExecutable, ownerExecutable)
+    , m_vm(&vm)
+    , m_isStrictMode(false)
+    , m_needsActivation(false)
+    , m_mayBeExecuting(false)
+    , m_codeType(FunctionCode)
+    , m_osrExitCounter(0)
+    , m_optimizationDelayCounter(0)
+    , m_reoptimizationRetryCounter(0)
+#if ENABLE(JIT)
+    , m_capabilityLevelState(DFG::CannotCompile)
+#endif
+{
+    ASSERT(m_heap->isDeferred());
+
+    m_heap->m_codeBlocks.add(this);
+    m_heap->reportExtraMemoryAllocated(sizeof(CodeBlock));
+}
+#endif
 
 CodeBlock::~CodeBlock()
 {
@@ -2510,7 +2543,11 @@ void CodeBlock::visitWeakReferences(SlotVisitor& visitor)
 void CodeBlock::finalizeUnconditionally()
 {
     Interpreter* interpreter = m_vm->interpreter;
-    if (JITCode::couldBeInterpreted(jitType())) {
+    bool ownedByWebAssemblyExecutable = false;
+#if ENABLE(WEBASSEMBLY)
+    ownedByWebAssemblyExecutable = m_ownerExecutable->isWebAssemblyExecutable();
+#endif
+    if (JITCode::couldBeInterpreted(jitType()) && !ownedByWebAssemblyExecutable) {
         const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
         for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
             Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
@@ -2915,7 +2952,7 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset, Requir
 unsigned CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     RELEASE_ASSERT(bytecodeOffset < instructions().size());
-    return m_ownerExecutable->firstLine() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
+    return ownerScriptExecutable()->firstLine() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
 unsigned CodeBlock::columnNumberForBytecodeOffset(unsigned bytecodeOffset)
@@ -2934,7 +2971,7 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     m_unlinkedCode->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
     divot += m_sourceOffset;
     column += line ? 1 : firstLineColumnOffset();
-    line += m_ownerExecutable->firstLine();
+    line += ownerScriptExecutable()->firstLine();
 }
 
 bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
@@ -3011,12 +3048,12 @@ void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* inco
 
 void CodeBlock::install()
 {
-    ownerExecutable()->installCode(this);
+    ownerScriptExecutable()->installCode(this);
 }
 
 PassRefPtr<CodeBlock> CodeBlock::newReplacement()
 {
-    return ownerExecutable()->newReplacementCodeBlockFor(specializationKind());
+    return ownerScriptExecutable()->newReplacementCodeBlockFor(specializationKind());
 }
 
 #if ENABLE(JIT)
@@ -3051,6 +3088,18 @@ DFG::CapabilityLevel FunctionCodeBlock::capabilityLevelInternal()
         return DFG::functionForConstructCapabilityLevel(this);
     return DFG::functionForCallCapabilityLevel(this);
 }
+
+#if ENABLE(WEBASSEMBLY)
+CodeBlock* WebAssemblyCodeBlock::replacement()
+{
+    return nullptr;
+}
+
+DFG::CapabilityLevel WebAssemblyCodeBlock::capabilityLevelInternal()
+{
+    return DFG::CannotCompile;
+}
+#endif
 #endif
 
 void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mode, const FireDetail* detail)
@@ -3603,6 +3652,10 @@ void CodeBlock::updateAllArrayPredictions()
 
 void CodeBlock::updateAllPredictions()
 {
+#if ENABLE(WEBASSEMBLY)
+    if (m_ownerExecutable->isWebAssemblyExecutable())
+        return;
+#endif
     updateAllValueProfilePredictions();
     updateAllArrayPredictions();
 }
@@ -3920,7 +3973,7 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruct
             RELEASE_ASSERT(vm()->interpreter->getOpcodeID(instructions[endIdx].u.opcode) == op_profile_control_flow);
             basicBlockEndOffset = instructions[endIdx + 1].u.operand - 1;
         } else {
-            basicBlockEndOffset = m_sourceOffset + m_ownerExecutable->source().length() - 1; // Offset before the closing brace.
+            basicBlockEndOffset = m_sourceOffset + ownerScriptExecutable()->source().length() - 1; // Offset before the closing brace.
             basicBlockStartOffset = std::min(basicBlockStartOffset, basicBlockEndOffset); // Some start offsets may be at the closing brace, ensure it is the offset before.
         }
 
@@ -3948,7 +4001,7 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruct
             continue;
         }
 
-        BasicBlockLocation* basicBlockLocation = vm()->controlFlowProfiler()->getBasicBlockLocation(m_ownerExecutable->sourceID(), basicBlockStartOffset, basicBlockEndOffset);
+        BasicBlockLocation* basicBlockLocation = vm()->controlFlowProfiler()->getBasicBlockLocation(ownerScriptExecutable()->sourceID(), basicBlockStartOffset, basicBlockEndOffset);
 
         // Find all functions that are enclosed within the range: [basicBlockStartOffset, basicBlockEndOffset]
         // and insert these functions' start/end offsets as gaps in the current BasicBlockLocation.

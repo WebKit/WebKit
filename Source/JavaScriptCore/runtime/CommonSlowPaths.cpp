@@ -525,7 +525,7 @@ SLOW_PATH_DECL(slow_path_to_primitive)
 SLOW_PATH_DECL(slow_path_enter)
 {
     BEGIN();
-    ScriptExecutable* ownerExecutable = exec->codeBlock()->ownerExecutable();
+    ExecutableBase* ownerExecutable = exec->codeBlock()->ownerExecutable();
     Heap::heap(ownerExecutable)->writeBarrier(ownerExecutable);
     END();
 }

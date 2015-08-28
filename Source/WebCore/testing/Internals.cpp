@@ -1463,7 +1463,7 @@ String Internals::parserMetaData(Deprecated::ScriptValue value)
         GetCallerCodeBlockFunctor iter;
         exec->iterate(iter);
         CodeBlock* codeBlock = iter.codeBlock();
-        executable = codeBlock->ownerExecutable(); 
+        executable = codeBlock->ownerScriptExecutable();
     } else if (code.isFunction()) {
         JSFunction* funcObj = JSC::jsCast<JSFunction*>(code.toObject(exec));
         executable = funcObj->jsExecutable();
@@ -1485,10 +1485,14 @@ String Internals::parserMetaData(Deprecated::ScriptValue value)
         result.append('"');
     } else if (executable->isEvalExecutable())
         result.appendLiteral("eval");
-    else {
-        ASSERT(executable->isProgramExecutable());
+    else if (executable->isProgramExecutable())
         result.appendLiteral("program");
-    }
+#if ENABLE(WEBASSEMBLY)
+    else if (executable->isWebAssemblyExecutable())
+        result.appendLiteral("WebAssembly");
+#endif
+    else
+        ASSERT_NOT_REACHED();
 
     result.appendLiteral(" { ");
     result.appendNumber(startLine);
