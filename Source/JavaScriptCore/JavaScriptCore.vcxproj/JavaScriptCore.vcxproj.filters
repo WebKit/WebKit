@@ -1038,7 +1038,7 @@
     <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSTypedArrayViewPrototypes.cpp">
+    <ClCompile Include="..\runtime\JSTypedArrayViewPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSTypedArrays.cpp">
@@ -3400,7 +3400,7 @@
     <ClInclude Include="..\runtime\JSTypedArrayPrototypes.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSTypedArrayViewPrototypes.h">
+    <ClInclude Include="..\runtime\JSTypedArrayViewPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSTypedArrays.h">
