@@ -1,5 +1,11 @@
 2015-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Skip inspector tests timing out after r188639.
+
+        * platform/gtk/TestExpectations:
+
+2015-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Skip some MediaStream tests that are timing out.
 
         * platform/gtk/TestExpectations:
