@@ -1,3 +1,9 @@
+2015-08-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed EWS correction.
+
+        * EWSTools/start-queue-win.sh: Update settings to point to VS2015.
+
 2015-08-28  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Make the AllowsInlineMediaPlayback preference work in WebKit / WebKit2.
