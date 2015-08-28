@@ -1270,3 +1270,6 @@ webkit.org/b/148119 [ Mavericks Yosemite ] fast/text/trak-optimizeLegibility.htm
 
 # These operating systems do not have language-sensitive font fallback.
 [ Mavericks Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
+
+# http/tests/media/video-play-stall.html is flakey
+webkit.org/b/148597 http/tests/media/video-play-stall.html [ Pass Failure ]

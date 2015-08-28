@@ -1,3 +1,10 @@
+2015-08-28  Andy Estes  <aestes@apple.com>
+
+        http/tests/media/video-play-stall.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=148597
+
+        * platform/mac/TestExpectations: Marked as flakey.
+
 2015-08-28  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Add WebKit/WebKit2 settings to control automatic data loading
