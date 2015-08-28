@@ -1,3 +1,12 @@
+2015-08-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] kill-old-processes should kill more processes
+        https://bugs.webkit.org/show_bug.cgi?id=148577
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/kill-old-processes:
+
 2015-08-28  Jason Marcell  <jmarcell@apple.com>
 
         The status message for combined builder queues should say "all builds succeeded" if everything
