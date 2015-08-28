@@ -99,6 +99,8 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         bool m_allowsAirPlayForMediaPlayback;
 #endif
+        bool m_allowsInlineMediaPlayback;
+        bool m_inlineMediaPlaybackRequiresPlaysInlineAttribute;
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)
@@ -144,6 +146,8 @@ public:
     void setBackgroundShouldExtendBeyondPage(bool, ExceptionCode&);
     void setShouldConvertPositionStyleOnCopy(bool, ExceptionCode&);
     void setScrollingTreeIncludesFrames(bool, ExceptionCode&);
+    void setAllowsInlineMediaPlayback(bool, ExceptionCode&);
+    void setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool, ExceptionCode&);
 
 private:
     explicit InternalSettings(Page*);

@@ -395,6 +395,9 @@ public:
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
+#else
+    bool allowsInlineMediaPlayback = WKGetDeviceClass() == WKDeviceClassiPad;
+    bool requiresPlaysInlineAttribute = !allowsInlineMediaPlayback;
 #endif
     InitWebCoreSystemInterface();
 
@@ -519,6 +522,7 @@ public:
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowsInlineMediaPlaybackPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
         [NSNumber numberWithBool:YES],  WebKitMediaControlsScaleWithPageZoomPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
@@ -529,7 +533,8 @@ public:
         [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
 #else
         [NSNumber numberWithBool:YES],  WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackPreferenceKey,
+        [NSNumber numberWithBool:allowsInlineMediaPlayback],   WebKitAllowsInlineMediaPlaybackPreferenceKey,
+        [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
         [NSNumber numberWithBool:NO],   WebKitMediaControlsScaleWithPageZoomPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
 #if HAVE(AVKIT)
@@ -2196,6 +2201,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAllowsInlineMediaPlaybackPreferenceKey];
+}
+
+- (BOOL)inlineMediaPlaybackRequiresPlaysInlineAttribute
+{
+    return [self _boolValueForKey:WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey];
+}
+
+- (void)setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey];
 }
 
 - (BOOL)mediaControlsScaleWithPageZoom

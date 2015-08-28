@@ -57,6 +57,7 @@
 #define DEFAULT_MINIMUM_FONT_ZOOM_SIZE WKGetMinimumZoomFontSize()
 #define DEFAULT_PASSWORD_ECHO_ENABLED true
 #define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK false
+#define DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE true
 #define DEFAULT_REQUIRES_USER_GESTURE_FOR_MEDIA_PLAYBACK true
 #define DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM false
 #define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED false
@@ -69,6 +70,7 @@
 #define DEFAULT_MINIMUM_FONT_ZOOM_SIZE 0
 #define DEFAULT_PASSWORD_ECHO_ENABLED false
 #define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK true
+#define DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE false
 #define DEFAULT_REQUIRES_USER_GESTURE_FOR_MEDIA_PLAYBACK false
 #define DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM true
 #define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED true
@@ -132,6 +134,7 @@
     macro(AVFoundationEnabled, isAVFoundationEnabled, Bool, bool, true) \
     macro(RequiresUserGestureForMediaPlayback, requiresUserGestureForMediaPlayback, Bool, bool, DEFAULT_REQUIRES_USER_GESTURE_FOR_MEDIA_PLAYBACK) \
     macro(AllowsInlineMediaPlayback, allowsInlineMediaPlayback, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK) \
+    macro(InlineMediaPlaybackRequiresPlaysInlineAttribute, inlineMediaPlaybackRequiresPlaysInlineAttribute, Bool, bool, DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE) \
     macro(AllowsPictureInPictureMediaPlayback, allowsPictureInPictureMediaPlayback, Bool, bool, true) \
     macro(AllowsAirPlayForMediaPlayback, allowsAirPlayForMediaPlayback, Bool, bool, true) \
     macro(MediaControlsScaleWithPageZoom, mediaControlsScaleWithPageZoom, Bool, bool, DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM) \

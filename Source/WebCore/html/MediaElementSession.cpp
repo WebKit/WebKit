@@ -360,22 +360,11 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
         return false;
 
-    if (!PlatformMediaSessionManager::sharedManager().sessionRestrictsInlineVideoPlayback(*this))
-        return false;
-
     Settings* settings = element.document().settings();
     if (!settings || !settings->allowsInlineMediaPlayback())
         return true;
 
-    if (element.fastHasAttribute(HTMLNames::webkit_playsinlineAttr))
-        return false;
-
-#if PLATFORM(IOS)
-    if (applicationIsDumpRenderTree())
-        return false;
-#endif
-
-    return true;
+    return settings->inlineMediaPlaybackRequiresPlaysInlineAttribute() && !element.fastHasAttribute(HTMLNames::webkit_playsinlineAttr);
 }
 
 bool MediaElementSession::allowsAutomaticMediaDataLoading(const HTMLMediaElement& element) const

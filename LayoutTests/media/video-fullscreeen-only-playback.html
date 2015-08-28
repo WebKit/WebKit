@@ -64,7 +64,7 @@
 
                 video.src = findMediaFile("video", "content/test");
 
-                run("internals.setMediaSessionRestrictions('video', 'InlineVideoPlaybackRestricted')");
+                run("internals.settings.setAllowsInlineMediaPlayback(false)");
                 consoleWrite("");
             }
         </script>

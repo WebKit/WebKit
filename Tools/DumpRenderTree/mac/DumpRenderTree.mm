@@ -1005,6 +1005,8 @@ static void setDefaultsToConsistentValuesForTesting()
         @"AppleLanguages": @[ @"en" ],
         WebKitEnableFullDocumentTeardownPreferenceKey: @YES,
         WebKitFullScreenEnabledPreferenceKey: @YES,
+        WebKitAllowsInlineMediaPlaybackPreferenceKey: @YES,
+        WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey: @NO,
         @"UseWebKitWebInspector": @YES,
 #if !PLATFORM(IOS)
         @"NSPreferredSpellServerLanguage": @"en_US",

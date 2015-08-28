@@ -1,3 +1,15 @@
+2015-08-28  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Make the AllowsInlineMediaPlayback preference work in WebKit / WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=147512
+
+        Reviewed by Anders Carlsson.
+
+        * media/video-fullscreeen-only-controls.html:
+        * media/video-fullscreeen-only-controls-expected.txt:
+        * media/video-fullscreeen-only-playback.html:
+        * media/video-fullscreeen-only-playback-expected.txt:
+
 2015-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         Media Session: MediaSession.releaseSession() renamed to deactivate()

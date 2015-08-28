@@ -267,15 +267,6 @@ PlatformMediaSession* PlatformMediaSessionManager::currentSession()
     return m_sessions[0];
 }
     
-bool PlatformMediaSessionManager::sessionRestrictsInlineVideoPlayback(const PlatformMediaSession& session) const
-{
-    PlatformMediaSession::MediaType sessionType = session.presentationType();
-    if (sessionType != PlatformMediaSession::Video)
-        return false;
-
-    return m_restrictions[sessionType] & InlineVideoPlaybackRestricted;
-}
-
 bool PlatformMediaSessionManager::sessionCanLoadMedia(const PlatformMediaSession& session) const
 {
     return session.state() == PlatformMediaSession::Playing || !session.isHidden() || session.isPlayingToWirelessPlaybackTarget();

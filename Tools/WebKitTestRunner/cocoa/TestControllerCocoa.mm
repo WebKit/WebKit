@@ -55,6 +55,11 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 
     globalWebViewConfiguration.processPool = [[WKProcessPool alloc] _initWithConfiguration:(_WKProcessPoolConfiguration *)contextConfiguration];
     globalWebViewConfiguration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
+
+#if TARGET_OS_IPHONE
+    globalWebViewConfiguration.allowsInlineMediaPlayback = YES;
+    globalWebViewConfiguration._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
+#endif
 #endif
 }
 

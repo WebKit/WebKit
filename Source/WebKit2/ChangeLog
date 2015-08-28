@@ -1,3 +1,32 @@
+2015-08-28  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Make the AllowsInlineMediaPlayback preference work in WebKit / WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=147512
+
+        Reviewed by Anders Carlsson.
+
+        Default the value of allowsInlineMediaPlayback to YES on iPad and NO on iPhone and iPod.
+        Add a new configuration property, _inlineMediaPlaybackRequiresPlaysInlineAttribute, which
+        defaults to NO on iPad and YES on iPhone and iPad.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute):
+        (WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _inlineMediaPlaybackRequiresPlaysInlineAttribute]):
+        (-[WKWebViewConfiguration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2015-08-28  Timothy Horton  <timothy_horton@apple.com>
 
         Add navigation gesture callbacks to WKPageNavigationClient

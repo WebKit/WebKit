@@ -9,7 +9,7 @@
     var shadowRoot;
     var panel;
 
-    run("internals.setMediaSessionRestrictions('video', 'InlineVideoPlaybackRestricted')");
+    run("internals.settings.setAllowsInlineMediaPlayback(false)");
 
     var video = document.getElementById('video');
     video.src = findMediaFile("video", "content/test");

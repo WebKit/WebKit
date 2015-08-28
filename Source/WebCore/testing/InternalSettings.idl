@@ -74,5 +74,7 @@
     [RaisesException] void setScrollingTreeIncludesFrames(boolean enabled);
 
     [RaisesException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
+    [RaisesException] void setAllowsInlineMediaPlayback(boolean allows);
+    [RaisesException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
 };
 

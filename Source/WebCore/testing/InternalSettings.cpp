@@ -101,6 +101,8 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_allowsAirPlayForMediaPlayback(settings.allowsAirPlayForMediaPlayback())
 #endif
+    , m_allowsInlineMediaPlayback(settings.allowsInlineMediaPlayback())
+    , m_inlineMediaPlaybackRequiresPlaysInlineAttribute(settings.inlineMediaPlaybackRequiresPlaysInlineAttribute())
 {
 }
 
@@ -165,6 +167,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(TOUCH_EVENTS)
     settings.setTouchEventEmulationEnabled(m_touchEventEmulationEnabled);
 #endif
+    settings.setAllowsInlineMediaPlayback(m_allowsInlineMediaPlayback);
+    settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackRequiresPlaysInlineAttribute);
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
 }
 
@@ -522,6 +526,18 @@ void InternalSettings::setScrollingTreeIncludesFrames(bool enabled, ExceptionCod
 {
     InternalSettingsGuardForSettings();
     settings()->setScrollingTreeIncludesFrames(enabled);
+}
+
+void InternalSettings::setAllowsInlineMediaPlayback(bool allows, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setAllowsInlineMediaPlayback(allows);
+}
+
+void InternalSettings::setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool requires, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setInlineMediaPlaybackRequiresPlaysInlineAttribute(requires);
 }
 
 // If you add to this list, make sure that you update the Backup class for test reproducability!

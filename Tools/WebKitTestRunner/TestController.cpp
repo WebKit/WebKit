@@ -638,6 +638,9 @@ void TestController::resetPreferencesToConsistentValues()
     // FIXME: We should be testing the default.
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
 
+    WKPreferencesSetMediaPlaybackAllowsInline(preferences, true);
+    WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(preferences, false);
+
     WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
 
     platformResetPreferencesToConsistentValues();

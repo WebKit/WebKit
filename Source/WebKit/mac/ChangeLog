@@ -1,3 +1,23 @@
+2015-08-28  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Make the AllowsInlineMediaPlayback preference work in WebKit / WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=147512
+
+        Reviewed by Anders Carlsson.
+
+        Add a new preference, inlineMediaPlaybackRequiresPlaysInlineAttribute, which defaults to
+        NO on iPad and YES on iPhone and iPod.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Default the value of WebKitAllowsInlineMediaPlaybackPreferenceKey to
+        YES on iPad and NO on iPhone and iPod.
+        (-[WebPreferences inlineMediaPlaybackRequiresPlaysInlineAttribute]):
+        (-[WebPreferences setInlineMediaPlaybackRequiresPlaysInlineAttribute:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2015-08-28  Timothy Horton  <timothy_horton@apple.com>
 
         [Mac] Right-clicking on GIFs spins the UI process for a while

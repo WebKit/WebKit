@@ -81,9 +81,6 @@ public:
 
     virtual bool sessionWillBeginPlayback(PlatformMediaSession&);
     virtual void sessionWillEndPlayback(PlatformMediaSession&);
-
-    bool sessionRestrictsInlineVideoPlayback(const PlatformMediaSession&) const;
-
     virtual bool sessionCanLoadMedia(const PlatformMediaSession&) const;
 
 #if PLATFORM(IOS)

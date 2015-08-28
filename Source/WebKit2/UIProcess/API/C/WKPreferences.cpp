@@ -748,6 +748,16 @@ bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->allowsInlineMediaPlayback();
 }
 
+void WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setInlineMediaPlaybackRequiresPlaysInlineAttribute(flag);
+}
+
+bool WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->inlineMediaPlaybackRequiresPlaysInlineAttribute();
+}
+
 void WKPreferencesSetMediaControlsScaleWithPageZoom(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setMediaControlsScaleWithPageZoom(flag);

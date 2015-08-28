@@ -1,7 +1,7 @@
 This tests that when inline-playback is restricted, the video element's "controls" are always shown while inline.
 
 
-RUN(internals.setMediaSessionRestrictions('video', 'InlineVideoPlaybackRestricted'))
+RUN(internals.settings.setAllowsInlineMediaPlayback(false))
 EXPECTED (video.hasAttribute('controls') == 'false') OK
 EXPECTED (video.controls == 'false') OK
 EXPECTED (shadowRoot = internals.shadowRoot(video) != 'null') OK

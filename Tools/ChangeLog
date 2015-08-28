@@ -1,3 +1,18 @@
+2015-08-28  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Make the AllowsInlineMediaPlayback preference work in WebKit / WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=147512
+
+        Reviewed by Anders Carlsson.
+
+        Set the value of WebKitAllowsInlineMediaPlayback / WKPreferencesSetMediaPlaybackAllowsInline()
+        to a consistent (true) value.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2015-08-28  Tim Horton  <timothy_horton@apple.com>
 
         Add navigation gesture callbacks to WKPageNavigationClient
