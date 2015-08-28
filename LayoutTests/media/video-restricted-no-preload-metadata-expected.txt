@@ -3,7 +3,7 @@ Test that "no preloading restriction" disables preloading in spite of preload='a
 
 ** setting video.src
 EXPECTED (video.preload == 'auto') OK
-RUN(internals.setMediaSessionRestrictions('video', 'MetadataPreloadingNotPermitted'))
+RUN(internals.setMediaElementRestrictions(video, 'MetadataPreloadingNotPermitted'))
 ** Pausing...
 
 ** 250ms timer fired

@@ -1,5 +1,19 @@
 2015-08-28  Jer Noble  <jer.noble@apple.com>
 
+        [iOS] Add WebKit/WebKit2 settings to control automatic data loading
+        https://bugs.webkit.org/show_bug.cgi?id=148579
+
+        Reviewed by Anders Carlsson.
+
+        Restriction setting moved from a global to a specific session.
+
+        * media/video-restricted-no-preload-auto-expected.txt:
+        * media/video-restricted-no-preload-auto.html:
+        * media/video-restricted-no-preload-metadata-expected.txt:
+        * media/video-restricted-no-preload-metadata.html:
+
+2015-08-28  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed gardening; fix (rebaseline) expected results for media/video-fullscreeen-only-playback.html after r189112.
 
         * media/video-fullscreeen-only-playback-expected.txt:

@@ -37,7 +37,7 @@
 
                 testExpected("video.preload", "auto");
                 waitForEvent('loadedmetadata', loadedmetadata);
-                run("internals.setMediaSessionRestrictions('video', 'MetadataPreloadingNotPermitted')");
+                run("internals.setMediaElementRestrictions(video, 'MetadataPreloadingNotPermitted')");
 
                 // Wait 250ms before load()ing to make sure setting src did not kick off the load.
                 consoleWrite("** Pausing...<br>");

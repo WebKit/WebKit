@@ -453,6 +453,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)httpEquivEnabled;
 
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
+@property (nonatomic) BOOL mediaDataLoadsAutomatically;
 
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
 - (void)_setAllowCompositingLayerVisualDegradation:(BOOL)flag;

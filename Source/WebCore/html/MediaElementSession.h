@@ -89,6 +89,8 @@ public:
         WirelessVideoPlaybackDisabled =  1 << 7,
         RequireUserGestureToAutoplayToExternalDevice = 1 << 8,
 #endif
+        MetadataPreloadingNotPermitted = 1 << 9,
+        AutoPreloadingNotPermitted = 1 << 10,
     };
     typedef unsigned BehaviorRestrictions;
 

@@ -1,3 +1,21 @@
+2015-08-28  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Add WebKit/WebKit2 settings to control automatic data loading
+        https://bugs.webkit.org/show_bug.cgi?id=148579
+
+        Reviewed by Anders Carlsson.
+
+        In DumpRenderTree, set the new mediaDataLoadsAutomatically preference to YES.
+
+        In WebKitTestRunner, do the same for the new _mediaDataLoadsAutomatically configuration property,
+        and also set the existing requiresUserActionForMediaPlayback configuration property to NO.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        (resetWebViewToConsistentStateBeforeTesting): 
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2015-08-28  Alexey Proskuryakov  <ap@apple.com>
 
         Fix run-webkit-tests --additional-env-var="DYLD_INSERT_LIBRARIES=..."

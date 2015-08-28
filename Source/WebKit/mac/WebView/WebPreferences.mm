@@ -531,12 +531,14 @@ public:
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayTextDescriptionsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitNotificationsEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
+        [NSNumber numberWithBool:YES],  WebKitMediaDataLoadsAutomaticallyPreferenceKey,
 #else
         [NSNumber numberWithBool:YES],  WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:allowsInlineMediaPlayback],   WebKitAllowsInlineMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
         [NSNumber numberWithBool:NO],   WebKitMediaControlsScaleWithPageZoomPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
+        [NSNumber numberWithBool:NO],   WebKitMediaDataLoadsAutomaticallyPreferenceKey,
 #if HAVE(AVKIT)
         [NSNumber numberWithBool:YES],  WebKitAVKitEnabled,
 #endif
@@ -2580,6 +2582,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setJavaScriptMarkupEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitJavaScriptMarkupEnabledPreferenceKey];
+}
+
+- (BOOL)mediaDataLoadsAutomatically
+{
+    return [self _boolValueForKey:WebKitMediaDataLoadsAutomaticallyPreferenceKey];
+}
+
+- (void)setMediaDataLoadsAutomatically:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaDataLoadsAutomaticallyPreferenceKey];
 }
 
 @end

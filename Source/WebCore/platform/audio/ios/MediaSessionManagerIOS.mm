@@ -160,12 +160,6 @@ void MediaSessionManageriOS::resetRestrictions()
 
     removeRestriction(PlatformMediaSession::WebAudio, ConcurrentPlaybackNotPermitted);
     removeRestriction(PlatformMediaSession::WebAudio, BackgroundProcessPlaybackRestricted);
-
-    removeRestriction(PlatformMediaSession::Audio, MetadataPreloadingNotPermitted);
-    removeRestriction(PlatformMediaSession::Video, MetadataPreloadingNotPermitted);
-
-    addRestriction(PlatformMediaSession::Audio, AutoPreloadingNotPermitted);
-    addRestriction(PlatformMediaSession::Video, AutoPreloadingNotPermitted);
 }
 
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()

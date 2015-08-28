@@ -936,6 +936,7 @@ static void resetWebPreferencesToConsistentValues()
 #if PLATFORM(IOS)
     [preferences setMediaPlaybackAllowsInline:YES];
     [preferences setMediaPlaybackRequiresUserGesture:NO];
+    [preferences setMediaDataLoadsAutomatically:YES];
 
     // Enable the tracker before creating the first WebView will
     // cause initialization to use the correct database paths.
@@ -1801,7 +1802,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
 #if PLATFORM(IOS)
     adjustWebDocumentForStandardViewport(gWebBrowserView, gWebScrollView);
     [webView _setAllowsMessaging:YES];
-    [mainFrame setMediaDataLoadsAutomatically:YES];
 #endif
     [webView setEditable:NO];
     [(EditingDelegate *)[webView editingDelegate] setAcceptsEditing:YES];

@@ -1,5 +1,27 @@
 2015-08-28  Jer Noble  <jer.noble@apple.com>
 
+        [iOS] Add WebKit/WebKit2 settings to control automatic data loading
+        https://bugs.webkit.org/show_bug.cgi?id=148579
+
+        Reviewed by Anders Carlsson.
+
+        Add a property to WKWebViewConfiguration to control whether clients are allowed
+        to load media data automatically.  Pass this configuration on through to WebCore.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _mediaDataLoadsAutomatically]):
+        (-[WKWebViewConfiguration _setMediaDataLoadsAutomatically:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2015-08-28  Jer Noble  <jer.noble@apple.com>
+
         [iOS] Make the AllowsInlineMediaPlayback preference work in WebKit / WebKit2.
         https://bugs.webkit.org/show_bug.cgi?id=147512
 

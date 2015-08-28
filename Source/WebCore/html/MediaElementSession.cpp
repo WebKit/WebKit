@@ -338,16 +338,15 @@ void MediaElementSession::mediaStateDidChange(const HTMLMediaElement& element, M
 
 MediaPlayer::Preload MediaElementSession::effectivePreloadForElement(const HTMLMediaElement& element) const
 {
-    PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType());
     MediaPlayer::Preload preload = element.preloadValue();
 
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
         return preload;
 
-    if ((restrictions & PlatformMediaSessionManager::MetadataPreloadingNotPermitted) == PlatformMediaSessionManager::MetadataPreloadingNotPermitted)
+    if (m_restrictions & MetadataPreloadingNotPermitted)
         return MediaPlayer::None;
 
-    if ((restrictions & PlatformMediaSessionManager::AutoPreloadingNotPermitted) == PlatformMediaSessionManager::AutoPreloadingNotPermitted) {
+    if (m_restrictions & AutoPreloadingNotPermitted) {
         if (preload > MediaPlayer::MetaData)
             return MediaPlayer::MetaData;
     }

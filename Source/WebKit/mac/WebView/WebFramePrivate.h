@@ -149,8 +149,6 @@ typedef enum {
 - (int)layoutCount;
 - (BOOL)isTelephoneNumberParsingAllowed;
 - (BOOL)isTelephoneNumberParsingEnabled;
-- (BOOL)mediaDataLoadsAutomatically;
-- (void)setMediaDataLoadsAutomatically:(BOOL)flag;
 
 - (DOMRange *)selectedDOMRange;
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)affinity closeTyping:(BOOL)closeTyping;

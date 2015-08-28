@@ -214,7 +214,7 @@ shouldConvertPositionStyleOnCopy initial=false
 maxParseDuration type=double, initial=-1
 standalone initial=false
 telephoneNumberParsingEnabled initial=false
-mediaDataLoadsAutomatically initial=false
+mediaDataLoadsAutomatically initial=defaultMediaDataLoadsAutomatically
 shouldTransformsAffectOverflow initial=true
 shouldDispatchJavaScriptWindowOnErrorEvents initial=false
 alwaysUseAcceleratedOverflowScroll initial=false

@@ -49,7 +49,7 @@
                 waitForEvent('loadedmetadata', loadedmetadata);
                 waitForEvent('canplaythrough', canplaythrough);
                 failTestIn(2000);
-                run("internals.setMediaSessionRestrictions('video', 'AutoPreloadingNotPermitted')");
+                run("internals.setMediaElementRestrictions(video, 'AutoPreloadingNotPermitted')");
                 consoleWrite("");
             }
         </script>

@@ -1439,22 +1439,6 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     return document->isTelephoneNumberParsingEnabled();
 }
 
-- (BOOL)mediaDataLoadsAutomatically
-{
-    WebCore::Frame *frame = core(self);
-    if (WebCore::Page* page = frame->page())
-        return page->settings().mediaDataLoadsAutomatically();
-
-    return NO;
-}
-
-- (void)setMediaDataLoadsAutomatically:(BOOL)flag
-{
-    WebCore::Frame *frame = core(self);
-    if (WebCore::Page* page = frame->page())
-        page->settings().setMediaDataLoadsAutomatically(flag);
-}
-
 - (DOMRange *)selectedDOMRange
 {
     WebCore::Frame *frame = core(self);

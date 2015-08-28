@@ -2462,6 +2462,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     settings.setMediaKeysStorageDirectory([preferences mediaKeysStorageDirectory]);
 #endif
+
+    settings.setMediaDataLoadsAutomatically([preferences mediaDataLoadsAutomatically]);
 }
 
 static inline IMP getMethod(id o, SEL s)
