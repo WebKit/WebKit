@@ -1902,7 +1902,7 @@ static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
-            if (!compositedWithOwnBackingStore(curLayer)
+            if (!compositedWithOwnBackingStore(*curLayer)
                 && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                 return true;
         }
@@ -1917,7 +1917,7 @@ static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
-                if (!compositedWithOwnBackingStore(curLayer)
+                if (!compositedWithOwnBackingStore(*curLayer)
                     && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
@@ -1927,7 +1927,7 @@ static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
-                if (!compositedWithOwnBackingStore(curLayer)
+                if (!compositedWithOwnBackingStore(*curLayer)
                     && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
