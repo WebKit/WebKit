@@ -322,13 +322,10 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     bool useLetterpressEffect = shouldUseLetterpressEffect(*context);
     FloatPoint point = anchorPoint;
 
-#if PLATFORM(IOS)
-    float fontSize = platformData.size();
-    CGAffineTransform matrix = useLetterpressEffect || platformData.isColorBitmapFont() ? CGAffineTransformIdentity : CGAffineTransformMakeScale(fontSize, fontSize);
-#else
     CGAffineTransform matrix = CGAffineTransformIdentity;
+#if !PLATFORM(IOS)
     if (drawFont && !platformData.isColorBitmapFont())
-        memcpy(&matrix, [drawFont matrix], sizeof(matrix));
+        matrix = CTFontGetMatrix(reinterpret_cast<CTFontRef>(drawFont));
 #endif
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
@@ -342,15 +339,11 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     CGContextSetTextMatrix(cgContext, matrix);
 
 #if PLATFORM(IOS)
-    CGContextSetFontSize(cgContext, 1);
     CGContextSetShouldSubpixelQuantizeFonts(cgContext, context->shouldSubpixelQuantizeFonts());
 #else
     setCGFontRenderingMode(cgContext, [drawFont renderingMode], context->shouldSubpixelQuantizeFonts());
-    if (drawFont)
-        CGContextSetFontSize(cgContext, 1);
-    else
-        CGContextSetFontSize(cgContext, platformData.m_size);
 #endif
+    CGContextSetFontSize(cgContext, platformData.size());
 
 
     FloatSize shadowOffset;
