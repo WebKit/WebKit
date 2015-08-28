@@ -1,3 +1,16 @@
+2015-08-28  Mark Lam  <mark.lam@apple.com>
+
+        [Follow up] ScratchRegisterAllocator::preserveReusedRegistersByPushing() should allow room for C helper calls and keep sp properly aligned.
+        https://bugs.webkit.org/show_bug.cgi?id=148564
+
+        Not reviewed.
+
+        Updated the test to run with //@ runNoCJITNoAccessInlining instead of specifying
+        the JSC option directly via //@ run().  This is the right thing to do in order
+        to guarantee that the test will be compiled by the DFG.
+
+        * tests/stress/regress-148564.js:
+
 2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Separate creating a style sheet from adding a new rule in the protocol

@@ -1,4 +1,4 @@
-//@ run("regress", "--enableAccessInlining=false")
+//@ runNoCJITNoAccessInlining
 
 // Regression test for https://bugs.webkit.org/show_bug.cgi?id=148542
 //
