@@ -46,7 +46,7 @@ namespace {
 
 struct LoopData {
     LoopData()
-        : preHeader(0)
+        : preHeader(nullptr)
     {
     }
     
@@ -112,6 +112,7 @@ public:
         for (unsigned loopIndex = m_graph.m_naturalLoops.numLoops(); loopIndex--;) {
             const NaturalLoop& loop = m_graph.m_naturalLoops.loop(loopIndex);
             LoopData& data = m_data[loop.index()];
+            
             for (
                 const NaturalLoop* outerLoop = m_graph.m_naturalLoops.innerMostOuterLoop(loop);
                 outerLoop;
@@ -119,23 +120,45 @@ public:
                 m_data[outerLoop->index()].writes.addAll(data.writes);
             
             BasicBlock* header = loop.header();
-            BasicBlock* preHeader = 0;
+            BasicBlock* preHeader = nullptr;
+            unsigned numberOfPreHeaders = 0; // We're cool if this is 1.
+
+            // This is guaranteed because we expect the CFG not to have unreachable code. Therefore, a
+            // loop header must have a predecessor. (Also, we don't allow the root block to be a loop,
+            // which cuts out the one other way of having a loop header with only one predecessor.)
+            DFG_ASSERT(m_graph, header->at(0), header->predecessors.size() > 1);
+            
             for (unsigned i = header->predecessors.size(); i--;) {
                 BasicBlock* predecessor = header->predecessors[i];
                 if (m_graph.m_dominators.dominates(header, predecessor))
                     continue;
-                DFG_ASSERT(m_graph, nullptr, !preHeader || preHeader == predecessor);
+
                 preHeader = predecessor;
+                ++numberOfPreHeaders;
             }
-            
+
+            // We need to validate the pre-header. There are a bunch of things that could be wrong
+            // about it:
+            //
+            // - There might be more than one. This means that pre-header creation either did not run,
+            //   or some CFG transformation destroyed the pre-headers.
+            //
+            // - It may not be legal to exit at the pre-header. That would be a real bummer. Currently,
+            //   LICM assumes that it can always hoist checks. See
+            //   https://bugs.webkit.org/show_bug.cgi?id=148545. Though even with that fixed, we anyway
+            //   would need to check if it's OK to exit at the pre-header since if we can't then we
+            //   would have to restrict hoisting to non-exiting nodes.
+
+            if (numberOfPreHeaders != 1)
+                continue;
+
+            // This is guaranteed because the header has multiple predecessors and critical edges are
+            // broken. Therefore the predecessors must all have one successor, which implies that they
+            // must end in a Jump.
             DFG_ASSERT(m_graph, preHeader->terminal(), preHeader->terminal()->op() == Jump);
-            
-            // We should validate the pre-header. This currently assumes that it's valid to OSR exit at
-            // the Jump of the pre-header. That may not always be the case, like if we lowered a Node
-            // that was ExitInvalid to a loop. This phase should somehow defend against this - at the
-            // very least with assertions, if not with something better (like only hoisting things that
-            // cannot exit).
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=148259
+
+            if (!preHeader->terminal()->origin.exitOK)
+                continue;
             
             data.preHeader = preHeader;
         }
@@ -146,6 +169,7 @@ public:
         // We try to hoist to the outer-most loop that permits it. Hoisting is valid if:
         // - The node doesn't write anything.
         // - The node doesn't read anything that the loop writes.
+        // - The preHeader is valid (i.e. it passed the validation above).
         // - The preHeader's state at tail makes the node safe to execute.
         // - The loop's children all belong to nodes that strictly dominate the loop header.
         // - The preHeader's state at tail is still valid. This is mostly to save compile
@@ -205,6 +229,12 @@ private:
     {
         Node* node = nodeRef;
         LoopData& data = m_data[loop->index()];
+
+        if (!data.preHeader) {
+            if (verbose)
+                dataLog("    Not hoisting ", node, " because the pre-header is invalid.\n");
+            return false;
+        }
         
         if (!data.preHeader->cfaDidFinish) {
             if (verbose)

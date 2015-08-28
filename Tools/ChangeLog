@@ -1,3 +1,14 @@
+2015-08-28  Filip Pizlo  <fpizlo@apple.com>
+
+        LICM should be sound even if the CFG has changed
+        https://bugs.webkit.org/show_bug.cgi?id=148259
+
+        Reviewed by Benjamin Poulain.
+
+        Add a utility for creating tests that set some uncommon option.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-08-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed EWS correction.

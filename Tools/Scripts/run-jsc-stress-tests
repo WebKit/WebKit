@@ -762,6 +762,14 @@ def runFTLNoCJITSmallPool
     run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
+def runMiscNoCJITTest(*options)
+    run("misc-no-cjit", *(NO_CJIT_OPTIONS + options))
+end
+
+def runMiscFTLNoCJITTest(*options)
+    run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + options))
+end
+
 def defaultRun
     runDefault
     runAlwaysTriggerCopyPhase

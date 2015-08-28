@@ -374,7 +374,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         performCleanUp(dfg); // Reduce the graph size a bit.
         performCriticalEdgeBreaking(dfg);
-        performLoopPreHeaderCreation(dfg);
+        if (Options::createPreHeaders())
+            performLoopPreHeaderCreation(dfg);
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
         performSSALowering(dfg);

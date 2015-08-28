@@ -39,8 +39,56 @@ namespace JSC { namespace DFG {
 
 BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, BasicBlock* block)
 {
+    // FIXME: If we run this utility on SSA IR, then we may end up with a bizarre arrangement of
+    // Upsilons and Phis, like:
+    //
+    // BB#1:
+    //     Upsilon(@a, ^p)
+    //     Jump(#3)
+    //
+    // BB#2:
+    //     Upsilon(@b, ^p)
+    //     Jump(#3)
+    //
+    // BB#3:
+    //     Jump(#4)
+    //
+    // BB#4:
+    //     p: Phi()
+    //
+    // Notice how the Upsilons are not in the predecessor of the Phi anymore. It's not clear if this
+    // would be bad. Probably not, but it's weird anyway. We should add a validation rule, and we
+    // should implement a Upsilon/Phi canonicalization that handles this by calling into the
+    // SSACalculator and treating the Upsilons as Defs and rebuilding the Phis from scratch.
+    //
+    // https://bugs.webkit.org/show_bug.cgi?id=148587
+    
     // Don't bother to preserve execution frequencies for now.
     BasicBlock* preHeader = insertionSet.insertBefore(block, PNaN);
+
+    // FIXME: It would be great if we put some effort into enabling exitOK at this origin, if it
+    // happens to be unset. It might not be set because the loop header (i.e. "block") has Phis in it.
+    // Phis have to have exitOK=false. There are a few ways to try to set exitOK:
+    //
+    // - Regenerate an exit origin by proving that we are at an exit origin boundary. If all of the
+    //   predecessors' terminals have different exit origins than the exit origin of head of block,
+    //   then we can leverage the assumption that exit origin boundaries can always exit. We could
+    //   extend this further, and say that we will set exitOK even if a predecessor's terminal has the
+    //   same exit origin, but so long it hadn't done anything that clobbers exit since the start of
+    //   the origin.
+    //
+    // - Analyze the Phi's and MovHint's at the head of block. If prior to the ExitOK there are only
+    //   Phi's and MovHint's, we could "roll them back" by proving that for each of the MovHints, the
+    //   referenced Phi has a child that dominates the pre-header, and that child is the node that is
+    //   OSR-available at the local being MovHinted.
+    //
+    // Note that there are some obviously wrong ways to try to set exitOK. For example, we cannot
+    // simply use the origin of our predecessors, since in bytecode that could be *any* kind of
+    // instruction. It may not even be a control flow construct, if we had lowered some non-control
+    // bytecode operation into DFG IR that has control flow. Hence, we really do need to try to use the
+    // origin of the head of the loop header.
+    //
+    // https://bugs.webkit.org/show_bug.cgi?id=148586
     preHeader->appendNode(
         graph, SpecNone, Jump, block->at(0)->origin, OpInfo(block));
     

@@ -1,3 +1,55 @@
+2015-08-28  Filip Pizlo  <fpizlo@apple.com>
+
+        LICM should be sound even if the CFG has changed
+        https://bugs.webkit.org/show_bug.cgi?id=148259
+
+        Reviewed by Benjamin Poulain.
+
+        Prior to this change, LICM expected a certain CFG shape around a loop: broken critical edges,
+        a pre-header, and the pre-header's terminal has exitOK. LICM would either crash on an
+        assertion, or generate code that fails validation, if these conditions weren't met.
+
+        The broken critical edge assumption is fine; so far we are assuming that SSA means broken
+        critical edges. We may revisit this, but we don't have to right now.
+
+        The other assumptions are not fine, because it's hard to guarantee that every phase will
+        preserve the presence of pre-headers. Even if we required that pre-headers are regenerated
+        before LICM, that regeneration wouldn't be guaranteed to create pre-headers that have exitOK at
+        the terminal. That's because once in SSA, the loop header probably has exitOK=false at the
+        head because of Phi's. Pre-header creation has no choice but to use the Node::origin from the
+        loop header, which means creating a pre-header that has exitOK=false. Regardless of whether
+        that's a fixable problem, it seems that our best short-term approach is just to be defensive
+        and turn undesirable pathologies into performance bugs and not crashes.
+
+        For the foreseeable future, once pre-headers are created they will probably not be removed. Our
+        current CFG simplification phase doesn't have a rule for removing pre-headers (since it doesn't
+        have any jump threading). So, it wouldn't be profitable to put effort towards reneration of
+        pre-headers for LICM's benefit.
+
+        Also, we cannot guarantee that some sequence of CFG transformations will not create a loop that
+        doesn't have a pre-header. This would be super rare. But you could imagine that some program
+        has control flow encoded using relooping (like
+        https://github.com/kripken/Relooper/blob/master/paper.pdf). If that happens, our compiler will
+        probably incrementally discover the "original" CFG. That may happen only after SSA conversion,
+        and so after pre-header generation. This is super unlikely for a bunch of reasons, but it
+        *could* happen.
+
+        So, this patch just makes sure that if pre-headers are missing or cannot be exited from, LICM
+        will simply avoid hoisting out of that block. At some point later, we can worry about a more
+        comprehensive solution to the pre-header problem. That's covered by this bug:
+        https://bugs.webkit.org/show_bug.cgi?id=148586
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * runtime/Options.h:
+        * tests/stress/licm-no-pre-header.js: Added.
+        (foo):
+        * tests/stress/licm-pre-header-cannot-exit.js: Added.
+        (foo):
+
 2015-08-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Move std::function from JSFunction into NativeStdFunctionCell to correctly destroy the heap allocated std::function

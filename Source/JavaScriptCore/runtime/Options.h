@@ -195,6 +195,7 @@ typedef const char* optionString;
     v(unsigned, maxPolymorphicCallVariantsForInlining, 5, nullptr) \
     v(unsigned, frequentCallThreshold, 2, nullptr) \
     v(double, minimumCallToKnownRate, 0.51, nullptr) \
+    v(bool, createPreHeaders, true, nullptr) \
     v(bool, enableMovHintRemoval, true, nullptr) \
     v(bool, enableObjectAllocationSinking, true, nullptr) \
     \
