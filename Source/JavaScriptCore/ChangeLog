@@ -1,3 +1,13 @@
+2015-08-28  Khem Raj  <raj.khem@gmail.com>
+
+        JavaScriptCore fails to build using GCC 5
+        https://bugs.webkit.org/show_bug.cgi?id=147815
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSObject.cpp: Explicitly instantiate all variants of
+        putByIndexBeyondVectorLengthWithAttributes used by JSArray.cpp.
+
 2015-08-28  Mark Lam  <mark.lam@apple.com>
 
         Refactor the JIT printer out of the AbstractMacroAssembler into MacroAssemblerPrinter.
