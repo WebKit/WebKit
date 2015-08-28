@@ -78,7 +78,7 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
         return false;
 
     PrivateName privateName(PrivateName::Description, "EntryPointModule");
-    ModuleAnalyzer moduleAnalyzer(exec, Identifier::fromUid(privateName), moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
+    ModuleAnalyzer moduleAnalyzer(exec, Identifier::fromUid(privateName), source, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
     moduleAnalyzer.analyze(*moduleProgramNode);
     return true;
 }

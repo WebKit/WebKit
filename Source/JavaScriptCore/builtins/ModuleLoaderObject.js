@@ -192,7 +192,7 @@ function commitInstantiated(entry, optionalInstance, source)
     // https://github.com/whatwg/loader/pull/67
 
     var dependencies = [];
-    var dependenciesMap = new @Map();
+    var dependenciesMap = moduleRecord.dependenciesMap;
     moduleRecord.registryEntry = entry;
     var requestedModules = this.requestedModules(moduleRecord);
     for (var i = 0, length = requestedModules.length; i < length; ++i) {
@@ -349,7 +349,7 @@ function requestResolveDependencies(key)
     var resolveDependenciesPromise = this.requestInstantiate(key).then(function (entry) {
         var depLoads = [];
         for (var i = 0, length = entry.dependencies.length; i < length; ++i) {
-            var pair = entry.dependencies[i];
+            let pair = entry.dependencies[i];
 
             // Hook point.
             // 1. Loader.resolve.
@@ -361,15 +361,21 @@ function requestResolveDependencies(key)
 
                 // Recursive resolving. The dependencies of this entry is being resolved or already resolved.
                 // Stop tracing the circular dependencies.
+                // But to retrieve the instantiated module record correctly,
+                // we need to wait for the instantiation for the dependent module.
+                // For example, reaching here, the module is starting resolving the dependencies.
+                // But the module may or may not reach the instantiation phase in the loader's pipeline.
+                // If we wait for the ResolveDependencies for this module, it construct the circular promise chain and
+                // rejected by the Promises runtime. Since only we need is the instantiated module, instead of waiting
+                // the ResolveDependencies for this module, we just wait Instantiate for this.
                 if (depEntry.resolveDependencies) {
-                    pair.value = depEntry.module;
-                    return depEntry;
+                    return depEntry.instantiate.then(function (entry) {
+                        pair.value = entry.module;
+                        return entry;
+                    });
                 }
 
                 return loader.requestResolveDependencies(depKey).then(function (entry) {
-                    // FIXME: The result promise of the requestInstantiateAll should be fulfilled with
-                    // the registry entry.
-                    // https://github.com/whatwg/loader/pull/66
                     pair.value = entry.module;
                     return entry;
                 });
@@ -396,6 +402,90 @@ function requestInstantiateAll(key)
     return this.requestResolveDependencies(key);
 }
 
+function requestLink(key)
+{
+    // https://whatwg.github.io/loader/#request-link
+
+    "use strict";
+
+    var entry = this.ensureRegistered(key);
+    if (entry.state > this.Link) {
+        var deferred = @newPromiseCapability(@InternalPromise);
+        deferred.@resolve.@call(undefined, entry.module);
+        return deferred.@promise;
+    }
+
+    var loader = this;
+    return this.requestInstantiateAll(key).then(function (entry) {
+        loader.link(entry);
+        return entry;
+    });
+}
+
+function requestReady(key)
+{
+    // https://whatwg.github.io/loader/#request-ready
+
+    "use strict";
+
+    var loader = this;
+    return this.requestLink(key).then(function (entry) {
+        loader.moduleEvaluation(entry.module);
+    });
+}
+
+// Linking semantics.
+
+function link(entry)
+{
+    // https://whatwg.github.io/loader/#link
+
+    "use strict";
+
+    // FIXME: Current implementation does not support optionalInstance.
+    // So Link's step 3 is skipped.
+    // https://bugs.webkit.org/show_bug.cgi?id=148171
+
+    if (entry.state === this.Ready)
+        return;
+    this.setStateToMax(entry, this.Ready);
+
+    // Since we already have the "dependencies" field,
+    // we can call moduleDeclarationInstantiation with the correct order
+    // without constructing the dependency graph by calling dependencyGraph.
+    var dependencies = entry.dependencies;
+    for (var i = 0, length = dependencies.length; i < length; ++i) {
+        var pair = dependencies[i];
+        this.link(pair.value.registryEntry);
+    }
+
+    this.moduleDeclarationInstantiation(entry.module);
+}
+
+// Module semantics.
+
+function moduleEvaluation(moduleRecord)
+{
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
+
+    "use strict";
+
+    if (moduleRecord.evaluated)
+        return;
+    moduleRecord.evaluated = true;
+
+    var entry = moduleRecord.registryEntry;
+
+    // The contents of the [[RequestedModules]] is cloned into entry.dependencies.
+    var dependencies = entry.dependencies;
+    for (var i = 0, length = dependencies.length; i < length; ++i) {
+        var pair = dependencies[i];
+        var requiredModuleRecord = pair.value;
+        this.moduleEvaluation(requiredModuleRecord);
+    }
+    this.evaluate(moduleRecord);
+}
+
 function loadModule(moduleName, referrer)
 {
     "use strict";
@@ -406,11 +496,7 @@ function loadModule(moduleName, referrer)
     // Take the name and resolve it to the unique identifier for the resource location.
     // For example, take the "jquery" and return the URL for the resource.
     return this.resolve(moduleName, referrer).then(function (key) {
-        // FIXME: Now, we don't implement the linking phase yet.
-        // So here, we just call requestInstantiateAll to only perform the module loading.
-        // At last, it should be replaced with requestReady.
-        // https://bugs.webkit.org/show_bug.cgi?id=148172
-        return loader.requestInstantiateAll(key);
+        return loader.requestReady(key);
     });
 }
 

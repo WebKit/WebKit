@@ -45,6 +45,8 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL moduleLoaderObjectParseModule(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderObjectRequestedModules(ExecState*);
+static EncodedJSValue JSC_HOST_CALL moduleLoaderObjectEvaluate(ExecState*);
+static EncodedJSValue JSC_HOST_CALL moduleLoaderObjectModuleDeclarationInstantiation(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderObjectResolve(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderObjectFetch(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderObjectTranslate(ExecState*);
@@ -62,28 +64,34 @@ const ClassInfo ModuleLoaderObject::s_info = { "ModuleLoader", &Base::s_info, &m
 
 /* Source for ModuleLoaderObject.lut.h
 @begin moduleLoaderObjectTable
-    setStateToMax              moduleLoaderObjectSetStateToMax              DontEnum|Function 2
-    newRegistryEntry           moduleLoaderObjectNewRegistryEntry           DontEnum|Function 1
-    ensureRegistered           moduleLoaderObjectEnsureRegistered           DontEnum|Function 1
-    forceFulfillPromise        moduleLoaderObjectForceFulfillPromise        DontEnum|Function 2
-    fulfillFetch               moduleLoaderObjectFulfillFetch               DontEnum|Function 2
-    fulfillTranslate           moduleLoaderObjectFulfillTranslate           DontEnum|Function 2
-    fulfillInstantiate         moduleLoaderObjectFulfillInstantiate         DontEnum|Function 2
-    commitInstantiated         moduleLoaderObjectCommitInstantiated         DontEnum|Function 3
-    instantiation              moduleLoaderObjectInstantiation              DontEnum|Function 3
-    requestFetch               moduleLoaderObjectRequestFetch               DontEnum|Function 1
-    requestTranslate           moduleLoaderObjectRequestTranslate           DontEnum|Function 1
-    requestInstantiate         moduleLoaderObjectRequestInstantiate         DontEnum|Function 1
-    requestResolveDependencies moduleLoaderObjectRequestResolveDependencies DontEnum|Function 1
-    requestInstantiateAll      moduleLoaderObjectRequestInstantiateAll      DontEnum|Function 1
-    loadModule                 moduleLoaderObjectLoadModule                 DontEnum|Function 2
-    provide                    moduleLoaderObjectProvide                    DontEnum|Function 3
-    parseModule                moduleLoaderObjectParseModule                DontEnum|Function 2
-    requestedModules           moduleLoaderObjectRequestedModules           DontEnum|Function 1
-    resolve                    moduleLoaderObjectResolve                    DontEnum|Function 1
-    fetch                      moduleLoaderObjectFetch                      DontEnum|Function 1
-    translate                  moduleLoaderObjectTranslate                  DontEnum|Function 2
-    instantiate                moduleLoaderObjectInstantiate                DontEnum|Function 2
+    setStateToMax                  moduleLoaderObjectSetStateToMax                  DontEnum|Function 2
+    newRegistryEntry               moduleLoaderObjectNewRegistryEntry               DontEnum|Function 1
+    ensureRegistered               moduleLoaderObjectEnsureRegistered               DontEnum|Function 1
+    forceFulfillPromise            moduleLoaderObjectForceFulfillPromise            DontEnum|Function 2
+    fulfillFetch                   moduleLoaderObjectFulfillFetch                   DontEnum|Function 2
+    fulfillTranslate               moduleLoaderObjectFulfillTranslate               DontEnum|Function 2
+    fulfillInstantiate             moduleLoaderObjectFulfillInstantiate             DontEnum|Function 2
+    commitInstantiated             moduleLoaderObjectCommitInstantiated             DontEnum|Function 3
+    instantiation                  moduleLoaderObjectInstantiation                  DontEnum|Function 3
+    requestFetch                   moduleLoaderObjectRequestFetch                   DontEnum|Function 1
+    requestTranslate               moduleLoaderObjectRequestTranslate               DontEnum|Function 1
+    requestInstantiate             moduleLoaderObjectRequestInstantiate             DontEnum|Function 1
+    requestResolveDependencies     moduleLoaderObjectRequestResolveDependencies     DontEnum|Function 1
+    requestInstantiateAll          moduleLoaderObjectRequestInstantiateAll          DontEnum|Function 1
+    requestLink                    moduleLoaderObjectRequestLink                    DontEnum|Function 1
+    requestReady                   moduleLoaderObjectRequestReady                   DontEnum|Function 1
+    link                           moduleLoaderObjectLink                           DontEnum|Function 1
+    moduleDeclarationInstantiation moduleLoaderObjectModuleDeclarationInstantiation DontEnum|Function 2
+    moduleEvaluation               moduleLoaderObjectModuleEvaluation               DontEnum|Function 2
+    evaluate                       moduleLoaderObjectEvaluate                       DontEnum|Function 2
+    loadModule                     moduleLoaderObjectLoadModule                     DontEnum|Function 2
+    provide                        moduleLoaderObjectProvide                        DontEnum|Function 3
+    parseModule                    moduleLoaderObjectParseModule                    DontEnum|Function 2
+    requestedModules               moduleLoaderObjectRequestedModules               DontEnum|Function 1
+    resolve                        moduleLoaderObjectResolve                        DontEnum|Function 1
+    fetch                          moduleLoaderObjectFetch                          DontEnum|Function 1
+    translate                      moduleLoaderObjectTranslate                      DontEnum|Function 2
+    instantiate                    moduleLoaderObjectInstantiate                    DontEnum|Function 2
 @end
 */
 
@@ -135,19 +143,6 @@ JSValue ModuleLoaderObject::provide(ExecState* exec, JSValue key, Status status,
     arguments.append(jsString(exec, source));
 
     return call(exec, function, callType, callData, this, arguments);
-}
-
-JSInternalPromise* ModuleLoaderObject::requestInstantiateAll(ExecState* exec, JSValue key)
-{
-    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().requestInstantiateAllPublicName()));
-    CallData callData;
-    CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(key);
-
-    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
 }
 
 JSInternalPromise* ModuleLoaderObject::loadModule(ExecState* exec, JSValue moduleName, JSValue referrer)
@@ -249,14 +244,15 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectParseModule(ExecState* exec)
     }
     ASSERT(moduleProgramNode);
 
-    ModuleAnalyzer moduleAnalyzer(exec, moduleKey, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
+    ModuleAnalyzer moduleAnalyzer(exec, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
     JSModuleRecord* moduleRecord = moduleAnalyzer.analyze(*moduleProgramNode);
+
     return JSValue::encode(moduleRecord);
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderObjectRequestedModules(ExecState* exec)
 {
-    JSModuleRecord* moduleRecord = jsCast<JSModuleRecord*>(exec->argument(0));
+    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
     if (!moduleRecord)
         return JSValue::encode(constructEmptyArray(exec, nullptr));
 
@@ -266,6 +262,31 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectRequestedModules(ExecState* exec)
         result->putDirectIndex(exec, i++, jsString(exec, key.get()));
 
     return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL moduleLoaderObjectModuleDeclarationInstantiation(ExecState* exec)
+{
+    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
+    if (!moduleRecord)
+        return JSValue::encode(jsUndefined());
+
+    if (Options::dumpModuleLoadingState())
+        dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
+
+    moduleRecord->link(exec);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL moduleLoaderObjectEvaluate(ExecState* exec)
+{
+    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
+    if (!moduleRecord)
+        return JSValue::encode(jsUndefined());
+
+    if (Options::dumpModuleLoadingState())
+        dataLog("Loader [evaluate] ", moduleRecord->moduleKey(), "\n");
+
+    return JSValue::encode(moduleRecord->execute(exec));
 }
 
 // ------------------------------ Hook Functions ---------------------------

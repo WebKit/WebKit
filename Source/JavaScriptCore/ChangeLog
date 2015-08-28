@@ -1,3 +1,60 @@
+2015-08-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Module execution and Loader's ready / link phase
+        https://bugs.webkit.org/show_bug.cgi?id=148172
+
+        Reviewed by Saam Barati.
+
+        This patch adds the link / ready phases to the existing module loader.
+        They are just the stubs and the actual implementations will be
+        forthcoming in the subsequnt patch.
+
+        And this patch paves the way to instantiate the module environment and
+        compile the executable code in the link phase. Move declaredVariables /
+        lexicalVariables from ModuleAnalyzer to JSModuleRecord to use them when
+        instantiating the module environment. Hold the source code in
+        JSModuleRecord to construct the executable in the link phase. And to
+        use HostResolveImportedModule operation from the C++ side, we expose
+        the JSMap from C++ to JS and use it in the builtin JS module loader
+        code.
+
+        * builtins/ModuleLoaderObject.js:
+        (requestResolveDependencies.resolveDependenciesPromise.this.requestInstantiate.then.):
+        (requestLink):
+        (requestReady):
+        (link):
+        (moduleEvaluation):
+        (loadModule):
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::ModuleAnalyzer):
+        (JSC::ModuleAnalyzer::analyze):
+        * parser/ModuleAnalyzer.h:
+        * runtime/Completion.cpp:
+        (JSC::checkModuleSyntax):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::finishCreation):
+        (JSC::JSModuleRecord::visitChildren):
+        (JSC::identifierToJSValue):
+        (JSC::JSModuleRecord::hostResolveImportedModule):
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::execute):
+        * runtime/JSModuleRecord.h:
+        (JSC::JSModuleRecord::create):
+        (JSC::JSModuleRecord::sourceCode):
+        (JSC::JSModuleRecord::moduleKey):
+        (JSC::JSModuleRecord::exportEntries):
+        (JSC::JSModuleRecord::importEntries):
+        (JSC::JSModuleRecord::declaredVariables):
+        (JSC::JSModuleRecord::lexicalVariables):
+        (JSC::JSModuleRecord::JSModuleRecord):
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::moduleLoaderObjectParseModule):
+        (JSC::moduleLoaderObjectRequestedModules):
+        (JSC::moduleLoaderObjectModuleDeclarationInstantiation):
+        (JSC::moduleLoaderObjectEvaluate):
+        (JSC::ModuleLoaderObject::requestInstantiateAll): Deleted.
+        * runtime/ModuleLoaderObject.h:
+
 2015-08-27  Mark Lam  <mark.lam@apple.com>
 
         Add noDFG() to jsc to prevent DFG compilation of a specified function.

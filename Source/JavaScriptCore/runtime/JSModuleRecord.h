@@ -28,15 +28,22 @@
 
 #include "Identifier.h"
 #include "JSDestructibleObject.h"
+#include "SourceCode.h"
 #include "VariableEnvironment.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 
 namespace JSC {
 
+class JSModuleNamespaceObject;
+class JSModuleEnvironment;
+class JSMap;
+class ModuleProgramExecutable;
+
 // Based on the Source Text Module Record
 // http://www.ecma-international.org/ecma-262/6.0/#sec-source-text-module-records
 class JSModuleRecord : public JSDestructibleObject {
+    friend class LLIntOffsetsExtractor;
 public:
     typedef JSDestructibleObject Base;
 
@@ -81,16 +88,11 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSModuleRecord* create(VM& vm, Structure* structure, const Identifier& moduleKey)
+    static JSModuleRecord* create(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
     {
-        JSModuleRecord* instance = new (NotNull, allocateCell<JSModuleRecord>(vm.heap)) JSModuleRecord(vm, structure, moduleKey);
+        JSModuleRecord* instance = new (NotNull, allocateCell<JSModuleRecord>(vm.heap)) JSModuleRecord(vm, structure, moduleKey, sourceCode, declaredVariables, lexicalVariables);
         instance->finishCreation(vm);
         return instance;
-    }
-
-    static JSModuleRecord* create(ExecState* exec, Structure* structure, const Identifier& moduleKey)
-    {
-        return create(exec->vm(), structure, moduleKey);
     }
 
     void appendRequestedModule(const Identifier&);
@@ -100,23 +102,45 @@ public:
 
     const ImportEntry& lookUpImportEntry(const RefPtr<UniquedStringImpl>& localName);
 
+    const SourceCode& sourceCode() const { return m_sourceCode; }
+    const Identifier& moduleKey() const { return m_moduleKey; }
     const OrderedIdentifierSet& requestedModules() const { return m_requestedModules; }
+    const ExportMap& exportEntries() const { return m_exportEntries; }
+    const ImportMap& importEntries() const { return m_importEntries; }
+
+    const VariableEnvironment& declaredVariables() const { return m_declaredVariables; }
+    const VariableEnvironment& lexicalVariables() const { return m_lexicalVariables; }
 
     void dump();
 
+
+    void link(ExecState*);
+    JSValue execute(ExecState*);
+
 private:
-    JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey)
+    JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
         : Base(vm, structure)
         , m_moduleKey(moduleKey)
+        , m_sourceCode(sourceCode)
+        , m_declaredVariables(declaredVariables)
+        , m_lexicalVariables(lexicalVariables)
     {
     }
 
     void finishCreation(VM&);
 
+    static void visitChildren(JSCell*, SlotVisitor&);
     static void destroy(JSCell*);
+
+    JSModuleRecord* hostResolveImportedModule(ExecState*, const Identifier& moduleName);
 
     // The loader resolves the given module name to the module key. The module key is the unique value to represent this module.
     Identifier m_moduleKey;
+
+    SourceCode m_sourceCode;
+
+    VariableEnvironment m_declaredVariables;
+    VariableEnvironment m_lexicalVariables;
 
     // Map localName -> ImportEntry.
     ImportMap m_importEntries;
@@ -129,6 +153,8 @@ private:
     // Save the occurrence order since the module loader loads and runs the modules in this order.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
     OrderedIdentifierSet m_requestedModules;
+
+    WriteBarrier<JSMap> m_dependenciesMap;
 };
 
 inline void JSModuleRecord::appendRequestedModule(const Identifier& moduleName)

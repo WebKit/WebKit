@@ -64,7 +64,6 @@ public:
 
     // APIs to control the module loader.
     JSValue provide(ExecState*, JSValue key, Status, const String&);
-    JSInternalPromise* requestInstantiateAll(ExecState*, JSValue key);
     JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer);
 
     // Platform dependent hooked APIs.

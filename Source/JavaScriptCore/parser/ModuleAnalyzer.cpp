@@ -36,11 +36,9 @@
 namespace JSC {
 
 
-ModuleAnalyzer::ModuleAnalyzer(ExecState* exec, const Identifier& moduleKey, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
+ModuleAnalyzer::ModuleAnalyzer(ExecState* exec, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
     : m_vm(&exec->vm())
-    , m_moduleRecord(exec->vm(), JSModuleRecord::create(exec->vm(), exec->lexicalGlobalObject()->moduleRecordStructure(), moduleKey))
-    , m_declaredVariables(declaredVariables)
-    , m_lexicalVariables(lexicalVariables)
+    , m_moduleRecord(exec->vm(), JSModuleRecord::create(exec->vm(), exec->lexicalGlobalObject()->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables))
 {
 }
 
@@ -144,10 +142,10 @@ JSModuleRecord* ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
     //     This exports all the names from the specified external module as the current module's name.
     //
     //     export * from "mod"
-    for (const auto& pair : m_declaredVariables)
+    for (const auto& pair : m_moduleRecord->declaredVariables())
         exportVariable(pair.key, pair.value);
 
-    for (const auto& pair : m_lexicalVariables)
+    for (const auto& pair : m_moduleRecord->lexicalVariables())
         exportVariable(pair.key, pair.value);
 
     if (Options::dumpModuleRecord())

@@ -31,11 +31,12 @@
 namespace JSC {
 
 class JSModuleRecord;
+class SourceCode;
 
 class ModuleAnalyzer {
     WTF_MAKE_NONCOPYABLE(ModuleAnalyzer);
 public:
-    ModuleAnalyzer(ExecState*, const Identifier& moduleKey, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables);
+    ModuleAnalyzer(ExecState*, const Identifier& moduleKey, const SourceCode&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables);
 
     JSModuleRecord* analyze(ModuleProgramNode&);
 
@@ -54,8 +55,6 @@ private:
 
     VM* m_vm;
     Strong<JSModuleRecord> m_moduleRecord;
-    VariableEnvironment m_declaredVariables;
-    VariableEnvironment m_lexicalVariables;
     IdentifierAliasMap m_aliasMap;
 };
 
