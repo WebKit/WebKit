@@ -1,71 +1,19 @@
-2015-08-26  Brent Fulgham  <bfulgham@apple.com>
+2015-08-28  Jonathan Davis  <jond@apple.com>
 
-        Update Windows tool install instructions.
+        Add assets for Styles Sidebar Refinements in Web Inspector blog post.
 
-        * building/tools.html:
-
-2015-08-24  Saam barati  <sbarati@apple.com>
-
-        Add mp4 version of types-changing video.
-
-        * blog-files/type-profiler-and-code-coverage-profiler/types-changing.mp4: Added.
-
-2015-08-23  Saam barati  <sbarati@apple.com>
-
-        Change compiler-pipeline image for type profiler and code coverage profiler blog post.
-
-        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline-1x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline-2x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline.png: Removed.
-
-2015-08-22  Saam barati  <sbarati@apple.com>
-
-        Change image for type profiler and code coverage profiler blog post.
-
-        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-1x.png:
-        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-2x.png:
-
-2015-08-22  Saam barati  <sbarati@apple.com>
-
-        Change video for type profiler and code coverage profiler blog post.
-
-        * blog-files/type-profiler-and-code-coverage-profiler/types-changing.mov:
-
-2015-08-22  Saam barati  <sbarati@apple.com>
-
-        Add 1x/2x resources for type profiler and code coverage profiler blog post.
-
-        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-1x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-2x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage.png: Removed.
-        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug-1x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug-2x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug.png: Removed.
-        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view-1x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view-2x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view.png: Removed.
-        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere-1x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere-2x.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere.png: Removed.
-
-2015-08-21  Saam barati  <sbarati@apple.com>
-
-        Edit a resource for type profiler and code coverage profiler blog post.
-
-        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere.png:
-
-2015-08-21  Saam barati  <sbarati@apple.com>
-
-        Add resources for type profiler and code coverage profiler blog post.
-
-        * blog-files/type-profiler-and-code-coverage-profiler: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage-video.mp4: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/code-coverage.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/compiler-pipeline.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/subtle-bug.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/type-profiler-api-view.png: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/types-changing.mov: Added.
-        * blog-files/type-profiler-and-code-coverage-profiler/types-everywhere.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/ComputedToRules-1x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/ComputedToRules-2x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/Filter-1x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/Filter-2x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/FilterSelector-1x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/FilterSelector-2x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/SelectorHovering-1x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/SelectorHovering-2x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/Tabbing.mp4: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/WarningIcon-1x.png: Added.
+        * blog-files/styles-sidebar-refinements-in-web-inspector/WarningIcon-2x.png: Added.
 
 2015-08-06  Brent Fulgham  <bfulgham@apple.com>
 
