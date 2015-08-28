@@ -1,7 +1,7 @@
 
 Test play() when <video> playback requires fullscreen.
 
-internals.settings.setAllowsInlineMediaPlayback(false)
+RUN(internals.settings.setAllowsInlineMediaPlayback(false))
 
 EVENT(canplaythrough)
 EXPECTED (video.webkitSupportsFullscreen == 'true') OK
