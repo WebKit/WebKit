@@ -1,3 +1,20 @@
+2015-08-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix run-webkit-tests --additional-env-var="DYLD_INSERT_LIBRARIES=..."
+        https://bugs.webkit.org/show_bug.cgi?id=148592
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.setup_environ_for_server):
+        (Port.to):
+        (Port.to._append_value_colon_separated):
+        (Port.to.show_results_html_file):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.setup_environ_for_server):
+
 2015-08-28  Filip Pizlo  <fpizlo@apple.com>
 
         LICM should be sound even if the CFG has changed

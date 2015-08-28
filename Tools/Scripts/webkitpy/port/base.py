@@ -853,6 +853,14 @@ class Port(object):
 
         return clean_env
 
+    @staticmethod
+    def _append_value_colon_separated(env, name, value):
+        assert ":" not in value
+        if name in env and env[name]:
+            env[name] = env[name] + ":" + value
+        else:
+            env[name] = value
+
     def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by
         results_filename in a users' browser."""
