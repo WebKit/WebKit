@@ -1,3 +1,18 @@
+2015-08-27  Aakash Jain  <aakash_jain@apple.com>
+
+        iOS Simulator API tests fails as Simulator is not running
+        https://bugs.webkit.org/show_bug.cgi?id=148501
+        rdar://problem/22447525
+
+        Reviewed by Daniel Bates.
+
+        This change is a workaround for <rdar://problem/22388812>.
+
+         * Scripts/run-api-tests: Launch the iOS Simulator before starting the API Tests
+         and quit it on program termination when running tests on the iOS port.
+         * Scripts/webkitdirs.pm: Store string "For WebKit Development" in constant
+         SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT to make it consistently reusable.
+
 2015-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Make DLLLauncherMain executables dependent on dll

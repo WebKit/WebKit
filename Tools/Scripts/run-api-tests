@@ -103,6 +103,9 @@ setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 
 buildTestTool() if $build && !defined($root);
 setPathForRunningWebKitApp(\%ENV);
+
+# FIXME: We launch (and quit) iOS Simulator as a workaround for <rdar://problem/22388812>.
+relaunchIOSSimulator(findOrCreateSimulatorForIOSDevice(SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT)) if willUseIOSSimulatorSDKWhenBuilding();
 my @testsToRun = listAllTests();
 
 @testsToRun = grep { my $test = $_; grep { $test =~ m/^\Q$_\E/ } @ARGV; } @testsToRun if @ARGV;
@@ -111,6 +114,9 @@ if ($dumpTests) {
     dumpTestsBySuite(@testsToRun);
     exit 0;
 }
+
+# FIXME: We launch (and quit) iOS Simulator as a workaround for <rdar://problem/22388812>.
+END { quitIOSSimulator() if willUseIOSSimulatorSDKWhenBuilding(); }
 
 exit runTestsBySuite(@testsToRun);
 

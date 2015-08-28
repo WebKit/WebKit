@@ -80,6 +80,7 @@ BEGIN {
        &setupMacWebKitEnvironment
        &sharedCommandLineOptions
        &sharedCommandLineOptionsUsage
+       SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT
        USE_OPEN_COMMAND
    );
    %EXPORT_TAGS = ( );
@@ -90,6 +91,7 @@ use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
 use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
 use constant SIMULATOR_DEVICE_STATE_SHUTDOWN => "1";
 use constant SIMULATOR_DEVICE_STATE_BOOTED => "3";
+use constant SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT  => "For WebKit Development";
 
 our @EXPORT_OK;
 
@@ -2237,7 +2239,7 @@ sub runIOSWebKitAppInSimulator($;$)
     my $productDir = productDir();
     my $appDisplayName = appDisplayNameFromBundle($appBundle);
     my $appIdentifier = appIdentifierFromBundle($appBundle);
-    my $simulatedDevice = findOrCreateSimulatorForIOSDevice("For WebKit Development");
+    my $simulatedDevice = findOrCreateSimulatorForIOSDevice(SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT);
     my $simulatedDeviceUDID = $simulatedDevice->{UDID};
 
     my $willUseSystemInstalledApp = isIOSSimulatorSystemInstalledApp($appBundle);
