@@ -28,7 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "CCallHelpers.h"
 #include "JSWASMModule.h"
+#include "LinkBuffer.h"
 #include "WASMFunctionSyntaxChecker.h"
 
 #define PROPAGATE_ERROR() do { if (!m_errorMessage.isNull()) return 0; } while (0)
@@ -57,6 +59,27 @@ bool WASMFunctionParser::checkSyntax(JSWASMModule* module, const SourceCode& sou
     }
     endOffsetInSource = parser.m_reader.offset();
     return true;
+}
+
+void WASMFunctionParser::compile(VM& vm, CodeBlock* codeBlock, JSWASMModule* module, const SourceCode&, size_t functionIndex)
+{
+    // FIXME: Actually compile the code.
+    CCallHelpers jit(&vm, codeBlock);
+    MacroAssembler::Label beginLabel = jit.label();
+    jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(0))), GPRInfo::returnValueGPR);
+    jit.ret();
+    MacroAssembler::Label arityCheck = jit.label();
+    jit.jump(beginLabel);
+
+    LinkBuffer patchBuffer(vm, jit, codeBlock, JITCompilationMustSucceed);
+    MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(arityCheck);
+    MacroAssembler::CodeRef result = FINALIZE_CODE(patchBuffer, ("Baseline JIT code for WebAssembly"));
+    codeBlock->setJITCode(adoptRef(new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
+    codeBlock->capabilityLevel();
+
+    uint32_t signatureIndex = module->functionDeclarations()[functionIndex].signatureIndex;
+    const WASMSignature& signature = module->signatures()[signatureIndex];
+    codeBlock->setNumParameters(1 + signature.arguments.size());
 }
 
 template <class Context>

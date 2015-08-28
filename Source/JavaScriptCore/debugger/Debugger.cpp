@@ -227,7 +227,7 @@ void Debugger::registerCodeBlock(CodeBlock* codeBlock)
 
 void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, BreakpointState enabledOrNot)
 {
-    ScriptExecutable* executable = codeBlock->ownerExecutable();
+    ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
 
     SourceID sourceID = static_cast<SourceID>(executable->sourceID());
     if (breakpoint.sourceID != sourceID)

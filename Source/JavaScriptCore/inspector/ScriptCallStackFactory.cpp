@@ -66,6 +66,10 @@ public:
         }
 
         if (m_remainingCapacityForFrameCapture) {
+#if ENABLE(WEBASSEMBLY)
+            if (visitor->codeBlock()->ownerExecutable()->isWebAssemblyExecutable())
+                return StackVisitor::Continue;
+#endif
             unsigned line;
             unsigned column;
             visitor->computeLineAndColumn(line, column);

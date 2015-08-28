@@ -67,6 +67,16 @@ JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* 
     return result;
 }
 
+#if ENABLE(WEBASSEMBLY)
+JSFunction* JSFunction::create(VM& vm, WebAssemblyExecutable* executable, JSScope* scope)
+{
+    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
+    ASSERT(function->structure()->globalObject());
+    function->finishCreation(vm);
+    return function;
+}
+#endif
+
 static inline NativeExecutable* getNativeExecutable(VM& vm, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
 #if !ENABLE(JIT)

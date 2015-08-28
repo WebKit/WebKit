@@ -52,6 +52,15 @@ inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* s
 {
 }
 
+#if ENABLE(WEBASSEMBLY)
+inline JSFunction::JSFunction(VM& vm, WebAssemblyExecutable* executable, JSScope* scope)
+    : Base(vm, scope, scope->globalObject()->functionStructure())
+    , m_executable(vm, this, executable)
+    , m_rareData()
+{
+}
+#endif
+
 inline FunctionExecutable* JSFunction::jsExecutable() const
 {
     ASSERT(!isHostFunctionNonInline());
@@ -66,6 +75,10 @@ inline bool JSFunction::isHostFunction() const
 
 inline bool JSFunction::isBuiltinFunction() const
 {
+#if ENABLE(WEBASSEMBLY)
+    if (m_executable->isWebAssemblyExecutable())
+        return false;
+#endif
     return !isHostFunction() && jsExecutable()->isBuiltinFunction();
 }
 

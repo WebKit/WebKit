@@ -40,6 +40,7 @@ class JSGlobalObject;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
 class SourceCode;
+class WebAssemblyExecutable;
 namespace DFG {
 class SpeculativeJIT;
 class JITCompiler;
@@ -73,6 +74,9 @@ public:
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeStdFunction&&, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
     static JSFunction* create(VM&, FunctionExecutable*, JSScope*);
+#if ENABLE(WEBASSEMBLY)
+    static JSFunction* create(VM&, WebAssemblyExecutable*, JSScope*);
+#endif
 
     static JSFunction* createBuiltinFunction(VM&, FunctionExecutable*, JSGlobalObject*);
     static JSFunction* createBuiltinFunction(VM&, FunctionExecutable*, JSGlobalObject*, const String& name);
@@ -142,6 +146,10 @@ protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
     JSFunction(VM&, FunctionExecutable*, JSScope*);
     JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
+
+#if ENABLE(WEBASSEMBLY)
+    JSFunction(VM&, WebAssemblyExecutable*, JSScope*);
+#endif
 
     void finishCreation(VM&, NativeExecutable*, int length, const String& name);
     using Base::finishCreation;

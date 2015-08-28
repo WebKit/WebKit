@@ -345,7 +345,7 @@ public:
     ScriptExecutable* executableFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
-            return m_codeBlock->ownerExecutable();
+            return m_codeBlock->ownerScriptExecutable();
         
         return inlineCallFrame->executable.get();
     }

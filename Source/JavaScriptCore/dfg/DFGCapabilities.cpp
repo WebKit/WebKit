@@ -44,7 +44,11 @@ bool isSupported()
 
 bool isSupportedForInlining(CodeBlock* codeBlock)
 {
-    return codeBlock->ownerExecutable()->isInliningCandidate();
+#if ENABLE(WEBASSEMBLY)
+    if (codeBlock->ownerExecutable()->isWebAssemblyExecutable())
+        return false;
+#endif
+    return codeBlock->ownerScriptExecutable()->isInliningCandidate();
 }
 
 bool mightCompileEval(CodeBlock* codeBlock)
