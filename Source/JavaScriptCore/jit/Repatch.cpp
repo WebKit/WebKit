@@ -916,7 +916,7 @@ static bool emitPutReplaceStub(
 
     CCallHelpers stubJit(vm, exec->codeBlock());
 
-    allocator.preserveReusedRegistersByPushing(stubJit);
+    size_t numberOfPaddingBytes = allocator.preserveReusedRegistersByPushing(stubJit);
 
     MacroAssembler::Jump badStructure = branchStructure(stubJit,
         MacroAssembler::NotEqual,
@@ -945,11 +945,11 @@ static bool emitPutReplaceStub(
     MacroAssembler::Jump failure;
     
     if (allocator.didReuseRegisters()) {
-        allocator.restoreReusedRegistersByPopping(stubJit);
+        allocator.restoreReusedRegistersByPopping(stubJit, numberOfPaddingBytes);
         success = stubJit.jump();
         
         badStructure.link(&stubJit);
-        allocator.restoreReusedRegistersByPopping(stubJit);
+        allocator.restoreReusedRegistersByPopping(stubJit, numberOfPaddingBytes);
         failure = stubJit.jump();
     } else {
         success = stubJit.jump();
@@ -1053,7 +1053,7 @@ static bool emitPutTransitionStub(
     } else
         scratchGPR3 = InvalidGPRReg;
     
-    allocator.preserveReusedRegistersByPushing(stubJit);
+    size_t numberOfPaddingBytes = allocator.preserveReusedRegistersByPushing(stubJit);
 
     MacroAssembler::JumpList failureCases;
             
@@ -1169,11 +1169,11 @@ static bool emitPutTransitionStub(
     MacroAssembler::Jump failure;
             
     if (allocator.didReuseRegisters()) {
-        allocator.restoreReusedRegistersByPopping(stubJit);
+        allocator.restoreReusedRegistersByPopping(stubJit, numberOfPaddingBytes);
         success = stubJit.jump();
 
         failureCases.link(&stubJit);
-        allocator.restoreReusedRegistersByPopping(stubJit);
+        allocator.restoreReusedRegistersByPopping(stubJit, numberOfPaddingBytes);
         failure = stubJit.jump();
     } else
         success = stubJit.jump();
@@ -1184,7 +1184,7 @@ static bool emitPutTransitionStub(
     if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()) {
         slowPath.link(&stubJit);
         
-        allocator.restoreReusedRegistersByPopping(stubJit);
+        allocator.restoreReusedRegistersByPopping(stubJit, numberOfPaddingBytes);
         if (!scratchBuffer)
             scratchBuffer = vm->scratchBufferForSize(allocator.desiredScratchBufferSizeForCall());
         allocator.preserveUsedRegistersToScratchBufferForCall(stubJit, scratchBuffer, scratchGPR1);

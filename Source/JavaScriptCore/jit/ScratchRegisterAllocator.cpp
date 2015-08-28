@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "JSCInlines.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "VM.h"
 
 namespace JSC {
@@ -91,28 +92,44 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
 GPRReg ScratchRegisterAllocator::allocateScratchGPR() { return allocateScratch<GPRInfo>(); }
 FPRReg ScratchRegisterAllocator::allocateScratchFPR() { return allocateScratch<FPRInfo>(); }
 
-void ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit)
+size_t ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit)
 {
     if (!didReuseRegisters())
-        return;
-        
+        return 0;
+
+    size_t numberOfBytesPushed = 0;
+
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg reg = FPRInfo::toRegister(i);
-        if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.get(reg))
+        if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.get(reg)) {
             jit.pushToSave(reg);
+            numberOfBytesPushed += sizeof(double);
+        }
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg))
+        if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg)) {
             jit.pushToSave(reg);
+            numberOfBytesPushed += sizeof(uintptr_t);
+        }
     }
+
+    size_t totalStackAdjustmentBytes = numberOfBytesPushed + maxFrameExtentForSlowPathCall;
+    totalStackAdjustmentBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalStackAdjustmentBytes);
+
+    size_t numberOfPaddingBytes = totalStackAdjustmentBytes - numberOfBytesPushed;
+    jit.subPtr(MacroAssembler::TrustedImm32(numberOfPaddingBytes), MacroAssembler::stackPointerRegister);
+
+    return numberOfPaddingBytes;
 }
 
-void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit)
+void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, size_t numberOfPaddingBytes)
 {
     if (!didReuseRegisters())
         return;
-        
+
+    jit.addPtr(MacroAssembler::TrustedImm32(numberOfPaddingBytes), MacroAssembler::stackPointerRegister);
+
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
         if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg))

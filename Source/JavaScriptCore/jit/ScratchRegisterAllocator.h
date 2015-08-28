@@ -62,8 +62,12 @@ public:
         return m_numberOfReusedRegisters;
     }
     
-    void preserveReusedRegistersByPushing(MacroAssembler& jit);
-    void restoreReusedRegistersByPopping(MacroAssembler& jit);
+    // preserveReusedRegistersByPushing() returns the number of padding bytes used to keep the stack
+    // pointer properly aligned and to reserve room for calling a C helper. This number of padding
+    // bytes must be provided to restoreReusedRegistersByPopping() in order to reverse the work done
+    // by preserveReusedRegistersByPushing().
+    size_t preserveReusedRegistersByPushing(MacroAssembler& jit);
+    void restoreReusedRegistersByPopping(MacroAssembler& jit, size_t numberOfPaddingBytes);
     
     RegisterSet usedRegistersForCall() const;
     

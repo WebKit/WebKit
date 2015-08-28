@@ -1,3 +1,48 @@
+2015-08-28  Mark Lam  <mark.lam@apple.com>
+
+        ScratchRegisterAllocator::preserveReusedRegistersByPushing() should allow room for C helper calls and keep sp properly aligned.
+        https://bugs.webkit.org/show_bug.cgi?id=148564
+
+        Reviewed by Saam Barati.
+
+        ScratchRegisterAllocator::preserveReusedRegistersByPushing() pushes registers on
+        the stack in order to preserve them.  But emitPutTransitionStub() (which uses
+        preserveReusedRegistersByPushing()) may also emit a call to a C helper function
+        to flush the heap write barrier buffer.  The code for emitting a C helper call
+        expects the stack pointer (sp) to already be pointing to a location on the stack
+        where there's adequate space reserved for storing the arguments to the C helper,
+        and that space is expected to be at the top of the stack.  Hence, there is a
+        conflict of expectations.  As a result, the arguments for the C helper will
+        overwrite and corrupt the values that are pushed on the stack by
+        preserveReusedRegistersByPushing().
+
+        In addition, JIT compiled functions always position the sp such that it will be
+        aligned (according to platform ABI dictates) after a C call is made (i.e. after
+        the frame pointer and return address is pushed on to the stack).
+        preserveReusedRegistersByPushing()'s arbitrary pushing of a number of saved
+        register values may mess up this alignment.
+
+        The fix is to have preserveReusedRegistersByPushing(), after it has pushed the
+        saved register values, adjust the sp to reserve an additional amount of stack
+        space needed for C call helpers plus any padding needed to restore proper sp
+        alignment.  The stack's ReservedZone will ensure that we have enough stack space
+        for this.  ScratchRegisterAllocator::restoreReusedRegistersByPopping() also
+        needs to be updated to perform the complement of this behavior.
+
+        * jit/Repatch.cpp:
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        * jit/ScratchRegisterAllocator.h:
+        (JSC::ScratchRegisterAllocator::numberOfReusedRegisters):
+        * tests/stress/regress-148564.js: Added.
+        (test):
+        (runTest):
+
 2015-08-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed Windows buildfix.
