@@ -1,3 +1,9 @@
+2015-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Skip some MediaStream tests that are timing out.
+
+        * platform/gtk/TestExpectations:
+
 2015-08-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189064 and r189084.

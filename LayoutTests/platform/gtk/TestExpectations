@@ -1391,6 +1391,21 @@ webkit.org/b/146731 fast/events/touch/tap-highlight-color.html [ Timeout ]
 webkit.org/b/146731 fast/events/touch/touch-scaled-scrolled.html [ Timeout ]
 webkit.org/b/146731 fast/events/touch/touch-stale-node-crash.html [ Timeout ]
 
+webkit.org/b/148567 fast/mediastream/MediaDevices-getUserMedia.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStream-add-remove-tracks.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStream-add-tracks-to-inactive-stream.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStream-clone.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStream-getTracks.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStreamConstructor.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStreamTrack-clone.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStreamTrack-kind.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/MediaStreamTrack-stop.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/delayed-permission-allowed.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/getusermedia.html [ Timeout ]
+webkit.org/b/148567 fast/mediastream/success.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
