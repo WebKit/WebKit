@@ -268,12 +268,13 @@ test6.step(function() {
 
     startPromise.then(test6.step_func(function() {
         assert_equals(pullCount, 1, 'pull should be called once start finishes');
+
+        setTimeout(test6.step_func(function() {
+            assert_equals(pullCount, 1, 'pull should be called exactly once');
+            test6.done();
+        }), 1000);
     }));
 
-    setTimeout(test6.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called exactly once');
-        test6.done();
-    }), 1000);
 });
 
 var test7 = async_test('ReadableStream: should call pull when trying to read from a started, empty stream');
@@ -327,14 +328,14 @@ test8.step(function() {
     rs.getReader().read().then(test8.step_func(function(r) {
         assert_object_equals(r, { value: 'a', done: false }, 'first read() should return first chunk');
         assert_equals(pullCount, 1, 'pull should not have been called again');
+
+        setTimeout(test8.step_func(function() {
+            assert_equals(pullCount, 1, 'pull should be called exactly once');
+            test8.done();
+        }), 1000);
     }));
 
     assert_equals(pullCount, 0, 'calling read() should not cause pull to be called yet');
-
-    setTimeout(test8.step_func(function() {
-        assert_equals(pullCount, 1, 'pull should be called exactly once');
-        test8.done();
-    }), 1000);
 });
 
 var test9 = async_test('ReadableStream: should only call pull once on a non-empty stream read from after start fulfills');
@@ -529,6 +530,18 @@ test14.step(function() {
         },
         pull: function(c) {
             c.enqueue(++timesCalled);
+
+            if (timesCalled == 4) {
+                setTimeout(test14.step_func(function() {
+                    // after start: size = 0, pull()
+                    // after enqueue(1): size = 1, pull()
+                    // after enqueue(2): size = 2, pull()
+                    // after enqueue(3): size = 3, pull()
+                    // after enqueue(4): size = 4, do not pull
+                    assert_equals(timesCalled, 4, 'pull() should have been called four times');
+                    test14.done();
+                }), 1000);
+            }
         }
     },
     {
@@ -537,16 +550,6 @@ test14.step(function() {
         },
         highWaterMark: 4
     });
-
-    setTimeout(test14.step_func(function() {
-        // after start: size = 0, pull()
-        // after enqueue(1): size = 1, pull()
-        // after enqueue(2): size = 2, pull()
-        // after enqueue(3): size = 3, pull()
-        // after enqueue(4): size = 4, do not pull
-        assert_equals(timesCalled, 4, 'pull() should have been called four times');
-        test14.done();
-    }), 1000);
 });
 
 var test15 = async_test('ReadableStream pull should be able to close a stream.');

@@ -1,3 +1,13 @@
+2015-08-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Layout Test streams/reference-implementation/readable-stream.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=148320
+
+        Reviewed by Alexey Proskuryakov.
+
+        * streams/reference-implementation/readable-stream.html: Set the timeouts at the last moment so that it is less
+        likely to hit them earlier that we should.
+
 2015-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Skip inspector tests timing out after r188639.
