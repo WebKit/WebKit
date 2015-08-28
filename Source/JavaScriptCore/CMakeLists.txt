@@ -63,6 +63,7 @@ set(JavaScriptCore_SOURCES
     assembler/MacroAssembler.cpp
     assembler/MacroAssemblerARM.cpp
     assembler/MacroAssemblerARMv7.cpp
+    assembler/MacroAssemblerPrinter.cpp
     assembler/MacroAssemblerX86Common.cpp
 
     bindings/ScriptFunctionCall.cpp

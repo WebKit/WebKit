@@ -1583,6 +1583,13 @@ public:
     {
         urshift32(src, trustedImm32ForShift(amount), dest);
     }
+
+#if ENABLE(MASM_PROBE)
+    // Let's you print from your JIT generated code.
+    // See comments in MacroAssemblerPrinter.h for examples of how to use this.
+    template<typename... Arguments>
+    void print(Arguments... args);
+#endif
 };
 
 } // namespace JSC

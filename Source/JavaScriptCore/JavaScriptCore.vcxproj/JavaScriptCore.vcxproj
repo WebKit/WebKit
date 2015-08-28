@@ -305,6 +305,7 @@
     <ClCompile Include="..\API\OpaqueJSString.cpp" />
     <ClCompile Include="..\assembler\LinkBuffer.cpp" />
     <ClCompile Include="..\assembler\MacroAssembler.cpp" />
+    <ClCompile Include="..\assembler\MacroAssemblerPrinter.cpp" />
     <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp" />
     <ClCompile Include="..\bindings\ScriptFunctionCall.cpp" />
     <ClCompile Include="..\bindings\ScriptObject.cpp" />
@@ -986,6 +987,7 @@
     <ClInclude Include="..\assembler\CodeLocation.h" />
     <ClInclude Include="..\assembler\LinkBuffer.h" />
     <ClInclude Include="..\assembler\MacroAssembler.h" />
+    <ClInclude Include="..\assembler\MacroAssemblerPrinter.h" />
     <ClInclude Include="..\assembler\MacroAssemblerX86.h" />
     <ClInclude Include="..\assembler\MacroAssemblerX86Common.h" />
     <ClInclude Include="..\assembler\MacroAssemblerX86_64.h" />

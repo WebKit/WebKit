@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2014 Apple Inc.
+ * Copyright (C) 2008, 2013-2015 Apple Inc.
  * Copyright (C) 2009, 2010 University of Szeged
  * All rights reserved.
  *
@@ -1433,11 +1433,6 @@ public:
     }
 
 #if ENABLE(MASM_PROBE)
-    // Methods required by the MASM_PROBE mechanism as defined in
-    // AbstractMacroAssembler.h. 
-    static void printCPURegisters(CPUState&, int indentation = 0);
-    static void printRegister(CPUState&, RegisterID);
-    static void printRegister(CPUState&, FPRegisterID);
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
 #endif // ENABLE(MASM_PROBE)
 

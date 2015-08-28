@@ -1751,6 +1751,8 @@
 		FE5068671AE25E280009DAB7 /* DeferredSourceDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */; };
 		FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */; };
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE68C6381B90DE0B0042BCB3 /* MacroAssemblerPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */; };
 		FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */; };
 		FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3643,6 +3645,8 @@
 		FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredSourceDump.cpp; sourceTree = "<group>"; };
 		FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMEntryScope.cpp; sourceTree = "<group>"; };
 		FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEntryScope.h; sourceTree = "<group>"; };
+		FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerPrinter.cpp; sourceTree = "<group>"; };
+		FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerPrinter.h; sourceTree = "<group>"; };
 		FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapVerifier.cpp; sourceTree = "<group>"; };
 		FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
 		FE90BB3A1B7CF64E006B3F03 /* VMInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInlines.h; sourceTree = "<group>"; };
@@ -5469,6 +5473,8 @@
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
 				86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */,
+				FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */,
+				FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */,
 				86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
@@ -6139,6 +6145,7 @@
 				0F2B9CED19D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.h in Headers */,
 				A704D90717A0BAA8006BA554 /* DFGMergeMode.h in Headers */,
 				0FB17663196B8F9E0091052A /* DFGPureValue.h in Headers */,
+				FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */,
 				0F2BDC451522801B00CD8910 /* DFGMinifiedGraph.h in Headers */,
 				0F2E892D16D02BAF009E4FD2 /* DFGMinifiedID.h in Headers */,
 				0F2BDC461522802000CD8910 /* DFGMinifiedNode.h in Headers */,
@@ -7967,6 +7974,7 @@
 				E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */,
 				FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */,
 				FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */,
+				FE68C6381B90DE0B0042BCB3 /* MacroAssemblerPrinter.cpp in Sources */,
 				7B98D1361B60CD5F0023B1A4 /* JSWASMModule.cpp in Sources */,
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,
 				1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */,

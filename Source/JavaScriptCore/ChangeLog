@@ -1,3 +1,66 @@
+2015-08-28  Mark Lam  <mark.lam@apple.com>
+
+        Refactor the JIT printer out of the AbstractMacroAssembler into MacroAssemblerPrinter.
+        https://bugs.webkit.org/show_bug.cgi?id=148595
+
+        Reviewed by Geoffrey Garen.
+
+        Why do this?
+        1. MacroAssembler::print() code (except for the prototype) need no longer be parsed
+           when compiling C++ files that don't need it.
+        2. Adding support for more printable types to MacroAssemblerPrinter::PrintArg
+           triggers recompilation of less files.
+        3. The printing code is for most the part common between all target platforms and
+           was previously duplicated by cut-and-paste to all the varieties of MacroAssemblers
+           that support the MASM_PROBE mechanism.  Now, there is only one copy in
+           MacroAssemblerPrinter.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ProbeContext::print): Deleted.
+        - Removed this function because it is no longer useful since we have this more
+          flexible print() functionality.
+
+        (JSC::AbstractMacroAssembler::printIndent): Deleted.
+        (JSC::AbstractMacroAssembler::printCPU): Deleted.
+        (JSC::AbstractMacroAssembler::print): Deleted.
+        (JSC::AbstractMacroAssembler::PrintArg::PrintArg): Deleted.
+        (JSC::AbstractMacroAssembler::appendPrintArg): Deleted.
+        (JSC::AbstractMacroAssembler::printInternal): Deleted.
+        (JSC::AbstractMacroAssembler::printCallback): Deleted.
+        - These got moved into MacroAssemblerPrinter.cpp.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::printCPURegisters): Deleted.
+        (JSC::MacroAssemblerARM::printRegister): Deleted.
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssemblerARMv7::printCPURegisters): Deleted.
+        (JSC::MacroAssemblerARMv7::printRegister): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::printCPURegisters): Deleted.
+        (JSC::MacroAssemblerX86Common::printRegister): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        - Deleted a whole bunch of mostly duplicated code.
+
+        * assembler/MacroAssemblerPrinter.cpp: Added.
+        (JSC::printIndent):
+        (JSC::printCPU):
+        (JSC::printCPURegisters):
+        (JSC::printRegister):
+        (JSC::MacroAssemblerPrinter::printCallback):
+        * assembler/MacroAssemblerPrinter.h: Added.
+        (JSC::MacroAssemblerPrinter::print):
+        (JSC::MacroAssemblerPrinter::PrintArg::PrintArg):
+        (JSC::MacroAssemblerPrinter::appendPrintArg):
+        (JSC::MacroAssembler::print):
+
 2015-08-28  Filip Pizlo  <fpizlo@apple.com>
 
         LICM should be sound even if the CFG has changed

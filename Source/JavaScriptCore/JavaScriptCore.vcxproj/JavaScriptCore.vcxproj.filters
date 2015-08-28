@@ -132,6 +132,9 @@
     <ClCompile Include="..\assembler\MacroAssembler.cpp">
       <Filter>assembler</Filter>
     </ClCompile>
+    <ClCompile Include="..\assembler\MacroAssemblerPrinter.cpp">
+      <Filter>assembler</Filter>
+    </ClCompile>
     <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp">
       <Filter>assembler</Filter>
     </ClCompile>
@@ -1978,6 +1981,9 @@
       <Filter>assembler</Filter>
     </ClInclude>
     <ClInclude Include="..\assembler\MacroAssembler.h">
+      <Filter>assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\assembler\MacroAssemblerPrinter.h">
       <Filter>assembler</Filter>
     </ClInclude>
     <ClInclude Include="..\assembler\MacroAssemblerX86.h">
