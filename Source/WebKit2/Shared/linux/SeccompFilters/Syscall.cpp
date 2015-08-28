@@ -62,11 +62,13 @@ static void writeUnsignedInt(char* buf, unsigned val)
         buf[--width] = '0' + (tens % 10);
 }
 
-static void reportUnexpectedSyscall(int syscall)
+static void reportUnexpectedSyscall(unsigned syscall)
 {
     char buf[128];
 #if defined(__has_builtin) && __has_builtin(__builtin_strlen)
-    static_assert(__builtin_strlen(message) + std::numeric_limits<int>::digits10 + 1 < sizeof(buf), "Buffer too small");
+    // Buffer must be big enough for the literal, plus the number of digits in the largest possible
+    // unsigned int, plus one for the newline, plus one more for the trailing null.
+    static_assert(__builtin_strlen(message) + std::numeric_limits<unsigned>::digits10 + 2 < sizeof(buf), "Buffer too small");
 #endif
     strcpy(buf, message);
     writeUnsignedInt(buf + strlen(buf), syscall);

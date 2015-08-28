@@ -1,3 +1,21 @@
+2015-08-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Minor fixes in reportUnexpectedSyscall
+        https://bugs.webkit.org/show_bug.cgi?id=148551
+
+        Reviewed by Žan Doberšek.
+
+        There is an off-by-one in the static assert.
+
+        Also, an unsigned long long is passed in, but the parameter is an int. Then it's passed to
+        writeUnsignedInt, which takes an unsigned int. Let's use unsigned int instead. (The value
+        is a syscall number, so it's safe to truncate regardless -- it never be anywhere near as
+        large as an int, unless the input is malicious, in which case truncating it is the right
+        thing to do anyway -- so this is just a matter of style.)
+
+        * Shared/linux/SeccompFilters/Syscall.cpp:
+        (WebKit::reportUnexpectedSyscall):
+
 2015-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Simplify the internal API to create a WebView
