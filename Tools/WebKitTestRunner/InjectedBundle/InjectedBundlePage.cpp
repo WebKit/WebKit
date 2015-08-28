@@ -1286,6 +1286,9 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
         injectedBundle.outputText(stringBuilder.toString());
     }
 
+    if (injectedBundle.testRunner()->shouldDecideNavigationPolicyAfterDelay())
+        return WKBundlePagePolicyActionPassThrough;
+
     if (!injectedBundle.testRunner()->isPolicyDelegateEnabled())
         return WKBundlePagePolicyActionUse;
 
