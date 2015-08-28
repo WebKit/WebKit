@@ -726,7 +726,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
 
     styleSheetText.append(selector);
     styleSheetText.appendLiteral(" {}");
-    // Using setText() as this operation changes the style sheet rule set.
+    // Using setText() as this operation changes the stylesheet rule set.
     setText(styleSheetText.toString(), ASSERT_NO_EXCEPTION);
 
     fireStyleSheetChanged();
@@ -1295,7 +1295,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
     ASSERT_UNUSED(style, style == inlineStyle());
 
     {
-        InspectorCSSAgent::InlineStyleOverrideScope overrideScope(&m_element->document());
+        InspectorCSSAgent::InlineStyleOverrideScope overrideScope(m_element->document());
         m_element->setAttribute("style", text, ec);
     }
 

@@ -333,15 +333,25 @@
             "description": "Modifies the rule selector."
         },
         {
+            "name": "createStyleSheet",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame where the new \"inspector\" stylesheet should be created." }
+            ],
+            "returns": [
+                { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Identifier of the created \"inspector\" stylesheet." }
+            ],
+            "description": "Creates a new special \"inspector\" stylesheet in the frame with given <code>frameId</code>."
+        },
+        {
             "name": "addRule",
             "parameters": [
-                { "name": "contextNodeId", "$ref": "DOM.NodeId" },
+                { "name": "styleSheetId", "$ref": "StyleSheetId" },
                 { "name": "selector", "type": "string" }
             ],
             "returns": [
                 { "name": "rule", "$ref": "CSSRule", "description": "The newly created rule." }
             ],
-            "description": "Creates a new empty rule with the given <code>selector</code> in a special \"inspector\" stylesheet in the owner document of the context node."
+            "description": "Creates a new empty rule with the given <code>selector</code> in a stylesheet with given <code>styleSheetId</code>."
         },
         {
             "name": "getSupportedCSSProperties",

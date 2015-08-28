@@ -112,6 +112,11 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
         return this._hasInfo;
     }
 
+    isInspectorStyleSheet()
+    {
+        return this._origin === WebInspector.CSSStyleSheet.Type.Inspector;
+    }
+
     isInlineStyleTag()
     {
         return this._inlineStyleTag;

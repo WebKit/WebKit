@@ -63,6 +63,7 @@ WebInspector.Object = class Object
         }.bind(this);
 
         this.addEventListener(eventType, wrappedCallback, null);
+        return wrappedCallback;
     }
 
     static removeEventListener(eventType, listener, thisObject)

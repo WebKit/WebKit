@@ -1,3 +1,17 @@
+2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Separate creating a style sheet from adding a new rule in the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=148502
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/css/createStyleSheet-expected.txt: Added.
+        * inspector/css/createStyleSheet.html: Added.
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame-expected.txt: Added.
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame.html: Added.
+        * inspector/css/stylesheet-events-inspector-stylesheet-expected.txt:
+        * inspector/css/stylesheet-events-inspector-stylesheet.html:
+
 2015-08-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Layout Test streams/reference-implementation/readable-stream.html is flaky

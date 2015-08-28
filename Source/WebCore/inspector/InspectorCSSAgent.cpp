@@ -41,6 +41,7 @@
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
+#include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "NamedFlowCollection.h"
 #include "Node.h"
@@ -747,13 +748,78 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const Inspecto
     errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
-void InspectorCSSAgent::addRule(ErrorString& errorString, const int contextNodeId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result)
+void InspectorCSSAgent::createStyleSheet(ErrorString& errorString, const String& frameId, String* styleSheetId)
 {
-    Node* node = m_domAgent->assertNode(errorString, contextNodeId);
-    if (!node)
+    Frame* frame = m_domAgent->pageAgent()->frameForId(frameId);
+    if (!frame) {
+        errorString = ASCIILiteral("No frame for given id found");
         return;
+    }
 
-    InspectorStyleSheet* inspectorStyleSheet = viaInspectorStyleSheet(&node->document(), true);
+    Document* document = frame->document();
+    if (!document) {
+        errorString = ASCIILiteral("No document for frame");
+        return;
+    }
+
+    InspectorStyleSheet* inspectorStyleSheet = createInspectorStyleSheetForDocument(*document);
+    if (!inspectorStyleSheet) {
+        errorString = ASCIILiteral("Could not create stylesheet for the frame.");
+        return;
+    }
+
+    *styleSheetId = inspectorStyleSheet->id();
+}
+
+InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Document& document)
+{
+    if (!document.isHTMLDocument() && !document.isSVGDocument())
+        return nullptr;
+
+    ExceptionCode ec = 0;
+    RefPtr<Element> styleElement = document.createElement("style", ec);
+    if (ec)
+        return nullptr;
+
+    styleElement->setAttribute("type", "text/css", ec);
+    if (ec)
+        return nullptr;
+
+    ContainerNode* targetNode;
+    // HEAD is absent in ImageDocuments, for example.
+    if (auto* head = document.head())
+        targetNode = head;
+    else if (auto* body = document.bodyOrFrameset())
+        targetNode = body;
+    else
+        return nullptr;
+
+    // Inserting this <style> into the document will trigger activeStyleSheetsUpdated
+    // and we will create an InspectorStyleSheet for this <style>'s CSSStyleSheet.
+    // Set this flag, so when we create it, we put it into the via inspector map.
+    m_creatingViaInspectorStyleSheet = true;
+    InlineStyleOverrideScope overrideScope(document);
+    targetNode->appendChild(styleElement, ec);
+    m_creatingViaInspectorStyleSheet = false;
+    if (ec)
+        return nullptr;
+
+    auto iterator = m_documentToInspectorStyleSheet.find(&document);
+    ASSERT(iterator != m_documentToInspectorStyleSheet.end());
+    if (iterator == m_documentToInspectorStyleSheet.end())
+        return nullptr;
+
+    auto& inspectorStyleSheetsForDocument = iterator->value;
+    ASSERT(!inspectorStyleSheetsForDocument.isEmpty());
+    if (inspectorStyleSheetsForDocument.isEmpty())
+        return nullptr;
+
+    return inspectorStyleSheetsForDocument.last().get();
+}
+
+void InspectorCSSAgent::addRule(ErrorString& errorString, const String& styleSheetId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result)
+{
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet) {
         errorString = ASCIILiteral("No target stylesheet found");
         return;
@@ -905,59 +971,19 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
         inspectorStyleSheet = InspectorStyleSheet::create(m_domAgent->pageAgent(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
         m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
         m_cssStyleSheetToInspectorStyleSheet.set(styleSheet, inspectorStyleSheet);
-        if (m_creatingViaInspectorStyleSheet)
-            m_documentToInspectorStyleSheet.add(document, inspectorStyleSheet);
+        if (m_creatingViaInspectorStyleSheet) {
+            auto& inspectorStyleSheetsForDocument = m_documentToInspectorStyleSheet.add(document, Vector<RefPtr<InspectorStyleSheet>>()).iterator->value;
+            inspectorStyleSheetsForDocument.append(inspectorStyleSheet);
+        }
     }
     return inspectorStyleSheet.get();
-}
-
-InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* document, bool createIfAbsent)
-{
-    if (!document) {
-        ASSERT(!createIfAbsent);
-        return nullptr;
-    }
-
-    if (!document->isHTMLDocument() && !document->isSVGDocument())
-        return nullptr;
-
-    RefPtr<InspectorStyleSheet> inspectorStyleSheet = m_documentToInspectorStyleSheet.get(document);
-    if (inspectorStyleSheet || !createIfAbsent)
-        return inspectorStyleSheet.get();
-
-    ExceptionCode ec = 0;
-    RefPtr<Element> styleElement = document->createElement("style", ec);
-    if (!ec)
-        styleElement->setAttribute("type", "text/css", ec);
-    if (!ec) {
-        ContainerNode* targetNode;
-        // HEAD is absent in ImageDocuments, for example.
-        if (auto* head = document->head())
-            targetNode = head;
-        else if (auto* body = document->bodyOrFrameset())
-            targetNode = body;
-        else
-            return nullptr;
-
-        // Inserting this <style> into the document will trigger activeStyleSheetsUpdated
-        // and we will create an InspectorStyleSheet for this <style>'s CSSStyleSheet.
-        // Set this flag, so when we create it, we put it into the via inspector hash map.
-        m_creatingViaInspectorStyleSheet = true;
-        InlineStyleOverrideScope overrideScope(document);
-        targetNode->appendChild(styleElement, ec);
-        m_creatingViaInspectorStyleSheet = false;
-    }
-    if (ec)
-        return nullptr;
-
-    return m_documentToInspectorStyleSheet.get(document);
 }
 
 InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(ErrorString& errorString, const String& styleSheetId)
 {
     IdToInspectorStyleSheet::iterator it = m_idToInspectorStyleSheet.find(styleSheetId);
     if (it == m_idToInspectorStyleSheet.end()) {
-        errorString = ASCIILiteral("No style sheet with given id found");
+        errorString = ASCIILiteral("No stylesheet with given id found");
         return nullptr;
     }
     return it->value.get();
@@ -970,13 +996,17 @@ Inspector::Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSSt
 
     if (pageStyleSheet && !pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
         return Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent;
-    
+
     if (pageStyleSheet && pageStyleSheet->ownerNode() && pageStyleSheet->ownerNode()->nodeName() == "#document")
         return Inspector::Protocol::CSS::StyleSheetOrigin::User;
 
-    InspectorStyleSheet* viaInspectorStyleSheetForOwner = viaInspectorStyleSheet(ownerDocument, false);
-    if (viaInspectorStyleSheetForOwner && pageStyleSheet == viaInspectorStyleSheetForOwner->pageStyleSheet())
-        return Inspector::Protocol::CSS::StyleSheetOrigin::Inspector;
+    auto iterator = m_documentToInspectorStyleSheet.find(ownerDocument);
+    if (iterator != m_documentToInspectorStyleSheet.end()) {
+        for (auto& inspectorStyleSheet : iterator->value) {
+            if (pageStyleSheet == inspectorStyleSheet->pageStyleSheet())
+                return Inspector::Protocol::CSS::StyleSheetOrigin::Inspector;
+        }
+    }
 
     return Inspector::Protocol::CSS::StyleSheetOrigin::Regular;
 }

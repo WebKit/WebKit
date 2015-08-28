@@ -7,5 +7,5 @@ PASS: Should be no stylesheets.
 
 -- Running test case: CreateInspectorStyleSheet
 PASS: Should be one stylesheet.
-PASS: StyleSheet origin is inspector.
+PASS: StyleSheet origin should be 'inspector'.
 

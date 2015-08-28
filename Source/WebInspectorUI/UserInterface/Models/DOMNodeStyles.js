@@ -235,9 +235,20 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             this.refresh();
         }
 
-        var selector = this._node.appropriateSelectorFor(true);
+        let selector = this._node.appropriateSelectorFor(true);
 
-        CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
+        // COMPATIBILITY (iOS 9): Before CSS.createStyleSheet, CSS.addRule could be called with a contextNode.
+        if (!CSSAgent.createStyleSheet) {
+            CSSAgent.addRule.invoke({contextNodeId: this._node.id , selector}, addedRule.bind(this));
+            return;
+        }
+
+        function inspectorStyleSheetAvailable(styleSheet)
+        {
+            CSSAgent.addRule(styleSheet.id, selector, addedRule.bind(this));
+        }
+
+        WebInspector.cssStyleManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
     }
 
     addRuleWithSelector(selector)

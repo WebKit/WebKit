@@ -1,3 +1,13 @@
+2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Separate creating a style sheet from adding a new rule in the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=148502
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/CSS.json:
+        Add CSS.createStyleSheet. Modify CSS.addRule.
+
 2015-08-28  Mark Lam  <mark.lam@apple.com>
 
         ScratchRegisterAllocator::preserveReusedRegistersByPushing() should allow room for C helper calls and keep sp properly aligned.
