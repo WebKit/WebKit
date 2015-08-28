@@ -708,11 +708,13 @@ void PageClientImpl::exitFullScreen()
 void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     [m_wkView._fullScreenWindowController beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    [m_wkView _updateSupportsArbitraryLayoutModes];
 }
 
 void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     [m_wkView._fullScreenWindowController beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    [m_wkView _updateSupportsArbitraryLayoutModes];
 }
 
 #endif // ENABLE(FULLSCREEN_API)

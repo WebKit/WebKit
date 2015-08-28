@@ -3901,6 +3901,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (BOOL)_supportsArbitraryLayoutModes
 {
+    if ([_data->_fullScreenWindowController isFullScreen])
+        return NO;
+
     WebPageProxy* page = _data->_page.get();
     if (!page)
         return YES;
@@ -3916,7 +3919,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return YES;
 }
 
-- (void)_didCommitLoadForMainFrame
+- (void)_updateSupportsArbitraryLayoutModes
 {
     if (![self _supportsArbitraryLayoutModes]) {
         WKLayoutMode oldRequestedLayoutMode = _data->_lastRequestedLayoutMode;
@@ -3932,6 +3935,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [self _setViewScale:_data->_lastRequestedViewScale];
         [self _setLayoutMode:_data->_lastRequestedLayoutMode];
     }
+}
+
+- (void)_didCommitLoadForMainFrame
+{
+    [self _updateSupportsArbitraryLayoutModes];
 }
 
 - (void)_didFinishLoadForMainFrame

@@ -1,3 +1,30 @@
+2015-08-27  Timothy Horton  <timothy_horton@apple.com>
+
+        Video full-screen shouldn't use the DynamicSizeWithMinimumViewSize layout mode
+        https://bugs.webkit.org/show_bug.cgi?id=148553
+
+        Reviewed by Zalan Bujtas.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _supportsArbitraryLayoutModes]):
+        (-[WKView _updateSupportsArbitraryLayoutModes]):
+        (-[WKView _didCommitLoadForMainFrame]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Deleted.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Deleted.
+        It's not OK to just randomly change the layout mode, because the client
+        can change it or its properties out from under us, and also because we
+        weren't resetting it to whatever the client had specified.
+
+        I recently implemented a better way to override layout modes, for PDF,
+        so use that here. Also, we shouldn't use DynamicSizeWithMinimumViewSize,
+        we should just use the "normal" mode (ViewSize), since we've already ensured
+        a minimum size by setting contentMinSize.
+
 2015-08-27  Alexey Proskuryakov  <ap@apple.com>
 
         pluginInfo.clientLoadPolicy is used uninitialized in WebContent process

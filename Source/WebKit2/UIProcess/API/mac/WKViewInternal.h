@@ -161,4 +161,6 @@ struct EditorState;
 - (void)_updateViewExposedRect;
 - (CALayer *)_rootLayer;
 
+- (void)_updateSupportsArbitraryLayoutModes;
+
 @end
