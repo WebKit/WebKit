@@ -196,7 +196,7 @@ bool ContextMenuItem::checked() const
     return [m_platformDescription.get() state] == NSOnState;
 }
 
-ContextMenuItem ContextMenuItem::shareMenuItem(const URL& absoluteLinkURL, const URL& downloadableMediaURL, Image* image, const String& selectedText)
+ContextMenuItem ContextMenuItem::shareMenuItem(const URL& absoluteLinkURL, const URL& downloadableMediaURL, NSImage *image, const String& selectedText)
 {
     if (![[NSMenuItem class] respondsToSelector:@selector(standardShareMenuItemWithItems:)])
         return ContextMenuItem();
@@ -209,11 +209,8 @@ ContextMenuItem ContextMenuItem::shareMenuItem(const URL& absoluteLinkURL, const
     if (!downloadableMediaURL.isEmpty())
         [items addObject:(NSURL *)downloadableMediaURL];
 
-    if (image) {
-        NSImage *nsImage = image->getNSImage();
-        if (nsImage)
-            [items addObject:nsImage];
-    }
+    if (image)
+        [items addObject:image];
 
     if (!selectedText.isEmpty())
         [items addObject:(NSString *)selectedText];

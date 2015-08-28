@@ -748,9 +748,25 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 #endif
 }
 
-void WebPageProxy::platformInitializeShareMenuItem(ContextMenuItem& item)
-{
 #if ENABLE(SERVICE_CONTROLS)
+ContextMenuItem WebPageProxy::platformInitializeShareMenuItem(const ContextMenuContextData& contextMenuContextData)
+{
+    const WebHitTestResult::Data& hitTestData = contextMenuContextData.webHitTestResultData();
+
+    URL absoluteLinkURL;
+    if (!hitTestData.absoluteLinkURL.isEmpty())
+        absoluteLinkURL = URL(ParsedURLString, hitTestData.absoluteLinkURL);
+
+    URL downloadableMediaURL;
+    if (!hitTestData.absoluteMediaURL.isEmpty() && hitTestData.isDownloadableMedia)
+        downloadableMediaURL = URL(ParsedURLString, hitTestData.absoluteMediaURL);
+
+    RetainPtr<NSImage> image;
+    if (hitTestData.imageSharedMemory && hitTestData.imageSize)
+        image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSize]]);
+
+    ContextMenuItem item = ContextMenuItem::shareMenuItem(absoluteLinkURL, downloadableMediaURL, image.get(), contextMenuContextData.selectedText());
+
     NSMenuItem *nsItem = item.platformDescription();
 
     NSSharingServicePicker *sharingServicePicker = [nsItem representedObject];
@@ -762,9 +778,11 @@ void WebPageProxy::platformInitializeShareMenuItem(ContextMenuItem& item)
 
     // Setting the picker lets the delegate retain it to keep it alive, but this picker is kept alive by the menu item.
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nil];
-#endif
+
+    return item;
 }
-    
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

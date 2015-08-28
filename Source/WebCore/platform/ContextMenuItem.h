@@ -34,6 +34,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
+OBJC_CLASS NSImage;
 OBJC_CLASS NSMenuItem;
 #elif PLATFORM(GTK)
 typedef struct _GtkMenuItem GtkMenuItem;
@@ -207,7 +208,9 @@ namespace WebCore {
 
         void setSubMenu(ContextMenu*);
 
-        WEBCORE_EXPORT static ContextMenuItem shareMenuItem(const URL& absoluteLinkURL, const URL& downloadableMediaURL, Image*, const String& selectedText);
+#if PLATFORM(MAC)
+        WEBCORE_EXPORT static ContextMenuItem shareMenuItem(const URL& absoluteLinkURL, const URL& downloadableMediaURL, NSImage *, const String& selectedText);
+#endif
 
 #if PLATFORM(GTK)
         GtkAction* gtkAction() const;

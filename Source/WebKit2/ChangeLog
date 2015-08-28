@@ -1,3 +1,20 @@
+2015-08-28  Timothy Horton  <timothy_horton@apple.com>
+
+        [Mac] Right-clicking on GIFs spins the UI process for a while
+        https://bugs.webkit.org/show_bug.cgi?id=148566
+        <rdar://problem/22460854>
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        (WebKit::WebPageProxy::platformInitializeShareMenuItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformInitializeShareMenuItem):
+        Move all of the code to make a Share menuitem into platformInitializeShareMenuItem.
+        Make an NSImage directly from the image data if possible.
+
 2015-08-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] LIBSECCOMP_INCLUDE_DIRS should be added to WebKit2_SYSTEM_INCLUDE_DIRECTORIES

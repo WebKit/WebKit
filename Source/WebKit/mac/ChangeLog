@@ -1,3 +1,15 @@
+2015-08-28  Timothy Horton  <timothy_horton@apple.com>
+
+        [Mac] Right-clicking on GIFs spins the UI process for a while
+        https://bugs.webkit.org/show_bug.cgi?id=148566
+        <rdar://problem/22460854>
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::shareMenuItem):
+        Make an NSImage directly from the hit image if possible.
+
 2015-08-27  Timothy Horton  <timothy_horton@apple.com>
 
         Factor out Lookup invocation
