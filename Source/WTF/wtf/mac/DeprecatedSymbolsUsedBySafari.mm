@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC)
-
 #include "Functional.h"
 #include "HashMap.h"
 #include "HashSet.h"
@@ -41,6 +39,7 @@
 
 namespace WTF {
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1090
 WTF_EXPORT_PRIVATE void callOnMainThread(const Function<void ()>&);
 WTF_EXPORT_PRIVATE void lockAtomicallyInitializedStaticMutex();
 WTF_EXPORT_PRIVATE void unlockAtomicallyInitializedStaticMutex();
@@ -61,8 +60,9 @@ void unlockAtomicallyInitializedStaticMutex()
 {
     atomicallyInitializedStaticMutex.unlock();
 }
+#endif
 
-#if !((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 90000))
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000)
 WTF_EXPORT_PRIVATE void callOnMainThread(void (*function)(void*), void* context);
 WTF_EXPORT_PRIVATE void cancelCallOnMainThread(void (*function)(void*), void* context);
 
@@ -154,5 +154,3 @@ void cancelCallOnMainThread(void (*function)(void*), void* context)
 #endif
 
 } // namespace WTF
-
-#endif

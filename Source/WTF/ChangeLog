@@ -1,3 +1,11 @@
+2015-08-28  Anders Carlsson  <andersca@apple.com>
+
+        Remove the #if PLATFORM(MAC) in DeprecatedSymbolsUsedBySafari.mm so we'll actually build it on iOS.
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+
 2015-08-27  Anders Carlsson  <andersca@apple.com>
 
         Define legacy main thread calling functions for iOS as well
