@@ -1,3 +1,16 @@
+2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Type Profiler does not understand Functions inside Template Strings (ScriptSyntaxTree warnings)
+        https://bugs.webkit.org/show_bug.cgi?id=148556
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+        Add support for abstracting and recursing through the Esprima template nodes.
+
 2015-08-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Standardize on CSSStyleSheet.Type enum and move more protocol enum conversion to the manager
