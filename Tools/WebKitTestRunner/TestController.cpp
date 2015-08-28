@@ -55,7 +55,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string>
-#include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
@@ -312,8 +311,6 @@ const char* TestController::libraryPathForTesting()
 
 void TestController::initialize(int argc, const char* argv[])
 {
-    RunLoop::initializeMainRunLoop();
-
     platformInitialize();
 
     Options options;
@@ -719,8 +716,6 @@ bool TestController::resetStateToConsistentValues()
 
     // Reset main page back to about:blank
     m_doneResetting = false;
-
-    m_shouldDecideNavigationPolicyAfterDelay = false;
 
     WKPageLoadURL(m_mainWebView->page(), blankURL());
     runUntil(m_doneResetting, shortTimeout);
@@ -1553,19 +1548,12 @@ void TestController::decidePolicyForNavigationAction(WKPageRef, WKNavigationActi
 
 void TestController::decidePolicyForNavigationAction(WKFramePolicyListenerRef listener)
 {
-    WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
-    const bool shouldIgnore { m_policyDelegateEnabled && !m_policyDelegatePermissive };
-    std::function<void()> decisionFunction = [shouldIgnore, retainedListener]() {
-        if (shouldIgnore)
-            WKFramePolicyListenerIgnore(retainedListener.get());
-        else
-            WKFramePolicyListenerUse(retainedListener.get());
-    };
+    if (m_policyDelegateEnabled && !m_policyDelegatePermissive) {
+        WKFramePolicyListenerIgnore(listener);
+        return;
+    }
 
-    if (m_shouldDecideNavigationPolicyAfterDelay)
-        RunLoop::main().dispatch(decisionFunction);
-    else
-        decisionFunction();
+    WKFramePolicyListenerUse(listener);
 }
 
 void TestController::decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef navigationResponse, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
