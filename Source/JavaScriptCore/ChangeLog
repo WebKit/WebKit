@@ -2,6 +2,15 @@
 
         Unreviewed Windows buildfix.
 
+        Revert part of r189072 since the original change was rolled out by r189085.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
+2015-08-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Windows buildfix.
+
         Revert r189077 since the original change was rolled out by r189085.
 
         * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
