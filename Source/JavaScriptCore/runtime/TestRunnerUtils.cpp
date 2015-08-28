@@ -83,6 +83,14 @@ JSValue setNeverInline(JSValue theFunctionValue)
     return jsUndefined();
 }
 
+JSValue setNeverOptimize(JSValue theFunctionValue)
+{
+    if (FunctionExecutable* executable = getExecutableForFunction(theFunctionValue))
+        executable->setNeverOptimize(true);
+    
+    return jsUndefined();
+}
+
 JSValue optimizeNextInvocation(JSValue theFunctionValue)
 {
 #if ENABLE(JIT)
@@ -107,6 +115,13 @@ JSValue setNeverInline(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
     return setNeverInline(exec->uncheckedArgument(0));
+}
+
+JSValue setNeverOptimize(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+    return setNeverOptimize(exec->uncheckedArgument(0));
 }
 
 JSValue optimizeNextInvocation(ExecState* exec)

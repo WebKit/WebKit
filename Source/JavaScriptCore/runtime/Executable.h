@@ -374,10 +374,13 @@ public:
     ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
         
     void setNeverInline(bool value) { m_neverInline = value; }
+    void setNeverOptimize(bool value) { m_neverOptimize = value; }
     void setDidTryToEnterInLoop(bool value) { m_didTryToEnterInLoop = value; }
     bool neverInline() const { return m_neverInline; }
+    bool neverOptimize() const { return m_neverOptimize; }
     bool didTryToEnterInLoop() const { return m_didTryToEnterInLoop; }
     bool isInliningCandidate() const { return !neverInline(); }
+    bool isOkToOptimize() const { return !neverOptimize(); }
     
     bool* addressOfDidTryToEnterInLoop() { return &m_didTryToEnterInLoop; }
 
@@ -431,6 +434,7 @@ protected:
     CodeFeatures m_features;
     bool m_hasCapturedVariables;
     bool m_neverInline;
+    bool m_neverOptimize { false };
     bool m_didTryToEnterInLoop;
     int m_overrideLineNumber;
     int m_firstLine;

@@ -46,5 +46,12 @@ JSValueRef setNeverInline(JSContextRef context, JSValueRef theFunctionValueRef)
     return toRef(exec, setNeverInline(toJS(exec, theFunctionValueRef)));
 }
 
+JSValueRef setNeverOptimize(JSContextRef context, JSValueRef theFunctionValueRef)
+{
+    ExecState* exec= toJS(context);
+    JSLockHolder holder(exec);
+    return toRef(exec, setNeverOptimize(toJS(exec, theFunctionValueRef)));
+}
+
 } // namespace JSC
 

@@ -473,6 +473,7 @@ static EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionNoDFG(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionOptimizeNextInvocation(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*);
@@ -631,6 +632,7 @@ protected:
         addFunction(vm, "preciseTime", functionPreciseTime, 0);
         addFunction(vm, "neverInlineFunction", functionNeverInlineFunction, 1);
         addFunction(vm, "noInline", functionNeverInlineFunction, 1);
+        addFunction(vm, "noDFG", functionNoDFG, 1);
         addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
         addFunction(vm, "optimizeNextInvocation", functionOptimizeNextInvocation, 1);
         addFunction(vm, "reoptimizationRetryCount", functionReoptimizationRetryCount, 1);
@@ -1177,6 +1179,11 @@ EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState* exec)
 {
     return JSValue::encode(setNeverInline(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL functionNoDFG(ExecState* exec)
+{
+    return JSValue::encode(setNeverOptimize(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL functionOptimizeNextInvocation(ExecState* exec)

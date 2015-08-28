@@ -157,6 +157,8 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
         out.print(" (ShouldAlwaysBeInlined)");
     if (ownerExecutable()->neverInline())
         out.print(" (NeverInline)");
+    if (ownerExecutable()->neverOptimize())
+        out.print(" (NeverOptimize)");
     if (ownerExecutable()->didTryToEnterInLoop())
         out.print(" (DidTryToEnterInLoop)");
     if (ownerExecutable()->isStrictMode())

@@ -50,22 +50,26 @@ bool isSupportedForInlining(CodeBlock* codeBlock)
 bool mightCompileEval(CodeBlock* codeBlock)
 {
     return isSupported()
-        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
+        && codeBlock->ownerExecutable()->isOkToOptimize();
 }
 bool mightCompileProgram(CodeBlock* codeBlock)
 {
     return isSupported()
-        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
+        && codeBlock->ownerExecutable()->isOkToOptimize();
 }
 bool mightCompileFunctionForCall(CodeBlock* codeBlock)
 {
     return isSupported()
-        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
+        && codeBlock->ownerExecutable()->isOkToOptimize();
 }
 bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 {
     return isSupported()
-        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+        && codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount()
+        && codeBlock->ownerExecutable()->isOkToOptimize();
 }
 
 bool mightInlineFunctionForCall(CodeBlock* codeBlock)
