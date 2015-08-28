@@ -30,7 +30,6 @@
 #include "DeferGC.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "JSArrayBuffer.h"
 #include "JSGenericTypedArrayView.h"
 #include "Reject.h"
 #include "TypedArrays.h"

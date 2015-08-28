@@ -46,6 +46,7 @@
 
 namespace JSC {
 
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState*);
