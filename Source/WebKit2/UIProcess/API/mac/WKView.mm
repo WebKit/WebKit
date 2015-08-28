@@ -267,7 +267,6 @@ struct WKViewInterpretKeyEventsParameters {
     RetainPtr<WKViewLayoutStrategy> _layoutStrategy;
     WKLayoutMode _lastRequestedLayoutMode;
     float _lastRequestedViewScale;
-    CGSize _minimumViewSize;
 
     RetainPtr<CALayer> _rootLayer;
 
@@ -4388,17 +4387,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     _data->_page->scaleView(viewScale);
     [_data->_layoutStrategy didChangeViewScale];
-}
-
-- (void)_setMinimumViewSize:(CGSize)minimumViewSize
-{
-    _data->_minimumViewSize = minimumViewSize;
-    [_data->_layoutStrategy didChangeMinimumViewSize];
-}
-
-- (CGSize)_minimumViewSize
-{
-    return _data->_minimumViewSize;
 }
 
 - (void)_dispatchSetTopContentInset

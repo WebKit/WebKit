@@ -2275,22 +2275,6 @@ void WebPageProxy::scaleView(double scale)
     m_process->send(Messages::WebPage::ScaleView(scale), m_pageID);
 }
 
-#if PLATFORM(COCOA)
-void WebPageProxy::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, std::function<void (const MachSendRight&, CallbackBase::Error)> callback)
-{
-    if (!isValid()) {
-        callback(MachSendRight(), CallbackBase::Error::OwnerWasInvalidated);
-        return;
-    }
-
-    m_viewScaleFactor = scale;
-    if (m_drawingArea)
-        m_drawingArea->willSendUpdateGeometry();
-    uint64_t callbackID = m_callbacks.put(WTF::move(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::ScaleViewAndUpdateGeometryFenced(scale, viewSize, callbackID), m_pageID);
-}
-#endif
-
 void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 {
     if (m_intrinsicDeviceScaleFactor == scaleFactor)

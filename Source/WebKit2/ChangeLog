@@ -1,5 +1,47 @@
 2015-08-28  Timothy Horton  <timothy_horton@apple.com>
 
+        Get rid of the DynamicSizeWithMinimumViewSize layout mode
+        https://bugs.webkit.org/show_bug.cgi?id=148554
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKLayoutMode.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _layoutMode]):
+        (-[WKWebView _setLayoutMode:]):
+        (-[WKWebView _setMinimumViewSize:]): Deleted.
+        (-[WKWebView _minimumViewSize]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKLayoutMode.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setMinimumViewSize:]): Deleted.
+        (-[WKView _minimumViewSize]): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scaleViewAndUpdateGeometryFenced): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:mode:]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy initWithPage:view:mode:]): Deleted.
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy _updateTransientScale:]): Deleted.
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy updateLayout]): Deleted.
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy didChangeMinimumViewSize]): Deleted.
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy willStartLiveResize]): Deleted.
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy didEndLiveResize]): Deleted.
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy didChangeFrameSize]): Deleted.
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy willChangeLayoutStrategy]): Deleted.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::replyWithFenceAfterNextFlush): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaleViewAndUpdateGeometryFenced): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::replyWithFenceAfterNextFlush): Deleted.
+
+2015-08-28  Timothy Horton  <timothy_horton@apple.com>
+
         [Mac] Right-clicking on GIFs spins the UI process for a while
         https://bugs.webkit.org/show_bug.cgi?id=148566
         <rdar://problem/22460854>

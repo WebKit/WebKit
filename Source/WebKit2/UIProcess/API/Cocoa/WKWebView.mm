@@ -2506,8 +2506,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return _WKLayoutModeFixedSize;
     case kWKLayoutModeDynamicSizeComputedFromViewScale:
         return _WKLayoutModeDynamicSizeComputedFromViewScale;
-    case kWKLayoutModeDynamicSizeWithMinimumViewSize:
-        return _WKLayoutModeDynamicSizeWithMinimumViewSize;
     case kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize:
         return _WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize;
     case kWKLayoutModeViewSize:
@@ -2529,9 +2527,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         break;
     case _WKLayoutModeDynamicSizeComputedFromViewScale:
         wkViewLayoutMode = kWKLayoutModeDynamicSizeComputedFromViewScale;
-        break;
-    case _WKLayoutModeDynamicSizeWithMinimumViewSize:
-        wkViewLayoutMode = kWKLayoutModeDynamicSizeWithMinimumViewSize;
         break;
     case _WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize:
         wkViewLayoutMode = kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize;
@@ -2571,22 +2566,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
 
     _page->scaleView(viewScale);
-#endif
-}
-
-- (void)_setMinimumViewSize:(CGSize)minimumViewSize
-{
-#if PLATFORM(MAC)
-    [_wkView _setMinimumViewSize:minimumViewSize];
-#endif
-}
-
-- (CGSize)_minimumViewSize
-{
-#if PLATFORM(MAC)
-    return [_wkView _minimumViewSize];
-#else
-    return CGSizeZero;
 #endif
 }
 

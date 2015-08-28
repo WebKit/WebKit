@@ -99,8 +99,6 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 @property (nonatomic, setter=_setLayoutMode:) _WKLayoutMode _layoutMode;
 // For use with _layoutMode = _WKLayoutModeFixedSize:
 @property (nonatomic, setter=_setFixedLayoutSize:) CGSize _fixedLayoutSize;
-// For use with _layoutMode = _WKLayoutModeDynamicSizeWithMinimumViewSize:
-@property (nonatomic, setter=_setMinimumViewSize:) CGSize _minimumViewSize;
 
 @property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
 

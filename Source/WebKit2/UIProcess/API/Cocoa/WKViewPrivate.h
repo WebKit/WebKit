@@ -95,8 +95,6 @@
 @property (nonatomic, setter=_setLayoutMode:) WKLayoutMode _layoutMode;
 // For use with _layoutMode = kWKLayoutModeFixedSize:
 @property (nonatomic, setter=_setFixedLayoutSize:) CGSize _fixedLayoutSize;
-// For use with _layoutMode = kWKLayoutModeDynamicSizeWithMinimumViewSize:
-@property (nonatomic, setter=_setMinimumViewSize:) CGSize _minimumViewSize;
 
 @property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
 

@@ -370,9 +370,6 @@ public:
     double totalScaleFactor() const;
     double viewScaleFactor() const;
     void scaleView(double scale);
-#if PLATFORM(COCOA)
-    void scaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, uint64_t callbackID);
-#endif
 
     void setUseFixedLayout(bool);
     bool useFixedLayout() const { return m_useFixedLayout; }

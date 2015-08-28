@@ -1492,15 +1492,6 @@ void WebPage::scaleView(double scale)
     scalePage(pageScale, scrollPositionAtNewScale);
 }
 
-#if PLATFORM(COCOA)
-void WebPage::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, uint64_t callbackID)
-{
-    scaleView(scale);
-    m_drawingArea->updateGeometry(viewSize, IntSize(), false, MachSendRight());
-    m_drawingArea->replyWithFenceAfterNextFlush(callbackID);
-}
-#endif
-
 void WebPage::setDeviceScaleFactor(float scaleFactor)
 {
     if (scaleFactor == m_page->deviceScaleFactor())
