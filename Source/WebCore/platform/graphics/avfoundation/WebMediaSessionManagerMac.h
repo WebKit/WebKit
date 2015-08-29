@@ -35,7 +35,6 @@ namespace WebCore {
 class WebMediaSessionManagerMac : public WebMediaSessionManager {
     friend class NeverDestroyed<WebMediaSessionManagerMac>;
 public:
-    WEBCORE_EXPORT static WebMediaSessionManager& singleton();
 
 private:
     WebMediaSessionManagerMac();

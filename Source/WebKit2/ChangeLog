@@ -1,3 +1,14 @@
+2015-08-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Restructure WebMediaSessionManager for testing
+        https://bugs.webkit.org/show_bug.cgi?id=148593
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::mediaSessionManager): Call WebMediaSessionManager::singleton, not
+          WebMediaSessionManagerMac::singleton.
+
 2015-08-28  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Add WebKit/WebKit2 settings to control automatic data loading
