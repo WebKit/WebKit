@@ -42,8 +42,8 @@ private:
     virtual void updateShapeFromElement() override;
     virtual bool isEmpty() const override { return m_usePathFallback ? RenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }
     virtual bool isRenderingDisabled() const override;
-    virtual void fillShape(GraphicsContext*) const override;
-    virtual void strokeShape(GraphicsContext*) const override;
+    virtual void fillShape(GraphicsContext&) const override;
+    virtual void strokeShape(GraphicsContext&) const override;
     virtual bool shapeDependentStrokeContains(const FloatPoint&) override;
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const override;
     void calculateRadiiAndCenter();

@@ -200,7 +200,7 @@ void PluginProxy::destroy()
     m_connection->removePluginProxy(this);
 }
 
-void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
+void PluginProxy::paint(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
     if (!needsBackingStore() || !m_backingStore)
         return;
@@ -218,7 +218,7 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
         m_pluginBackingStoreContainsValidData = true;
     }
 
-    m_backingStore->paint(*graphicsContext, contentsScaleFactor(), dirtyRect.location(), dirtyRect);
+    m_backingStore->paint(graphicsContext, contentsScaleFactor(), dirtyRect.location(), dirtyRect);
 
     if (m_waitingForPaintInResponseToUpdate) {
         m_waitingForPaintInResponseToUpdate = false;

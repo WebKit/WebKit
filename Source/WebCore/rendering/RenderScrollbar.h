@@ -47,7 +47,7 @@ public:
 
     RenderBox* owningRenderer() const;
 
-    void paintPart(GraphicsContext*, ScrollbarPart, const IntRect&);
+    void paintPart(GraphicsContext&, ScrollbarPart, const IntRect&);
 
     IntRect buttonRect(ScrollbarPart);
     IntRect trackRect(int startLength, int endLength);
@@ -67,7 +67,7 @@ private:
     virtual void setParent(ScrollView*) override;
     virtual void setEnabled(bool) override;
 
-    virtual void paint(GraphicsContext*, const IntRect& damageRect) override;
+    virtual void paint(GraphicsContext&, const IntRect& damageRect) override;
 
     virtual void setHoveredPart(ScrollbarPart) override;
     virtual void setPressedPart(ScrollbarPart) override;

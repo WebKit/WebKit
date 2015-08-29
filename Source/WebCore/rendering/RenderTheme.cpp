@@ -267,12 +267,12 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
     // for that control.
-    if (paintInfo.context->updatingControlTints()) {
+    if (paintInfo.context().updatingControlTints()) {
         if (controlSupportsTints(box))
             box.repaint();
         return false;
     }
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return false;
 
     ControlPart part = box.style().appearance();
@@ -292,7 +292,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case ButtonPart:
     case InnerSpinButtonPart:
         updateControlStatesForRenderer(box, controlStates);
-        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor);
+        m_theme->paint(part, controlStates, paintInfo.context(), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor);
         return false;
     default:
         break;
@@ -411,7 +411,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 
 bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return false;
 
 #if PLATFORM(IOS)
@@ -465,7 +465,7 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
 
 bool RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return false;
 
     IntRect integralSnappedRect = snappedIntRect(rect);
@@ -1053,8 +1053,8 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
         tickRegionWidth = trackBounds.height() - thumbSize.width();
     }
     Ref<HTMLCollection> options = dataList->options();
-    GraphicsContextStateSaver stateSaver(*paintInfo.context);
-    paintInfo.context->setFillColor(o.style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    GraphicsContextStateSaver stateSaver(paintInfo.context());
+    paintInfo.context().setFillColor(o.style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
         ASSERT(is<HTMLOptionElement>(*node));
         HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);
@@ -1069,7 +1069,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
             tickRect.setX(tickPosition);
         else
             tickRect.setY(tickPosition);
-        paintInfo.context->fillRect(tickRect);
+        paintInfo.context().fillRect(tickRect);
     }
 }
 #endif

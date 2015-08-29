@@ -605,13 +605,13 @@ void BitmapImage::resetAnimation()
     destroyDecodedDataIfNecessary(true);
 }
 
-void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& transform,
+void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& transform,
     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     if (tileRect.isEmpty())
         return;
 
-    if (!ctxt->drawLuminanceMask()) {
+    if (!ctxt.drawLuminanceMask()) {
         Image::drawPattern(ctxt, tileRect, transform, phase, styleColorSpace, op, destRect, blendMode);
         return;
     }
@@ -638,7 +638,7 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
         m_cachedImage->setSpaceSize(spaceSize());
     }
 
-    ctxt->setDrawLuminanceMask(false);
+    ctxt.setDrawLuminanceMask(false);
     m_cachedImage->drawPattern(ctxt, tileRect, transform, phase, styleColorSpace, op, destRect, blendMode);
 }
 

@@ -234,7 +234,7 @@ void HTMLVideoElement::updateDisplayState()
         setDisplayMode(Poster);
 }
 
-void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext* context, const FloatRect& destRect)
+void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)
 {
     MediaPlayer* player = HTMLMediaElement::player();
     if (!player)

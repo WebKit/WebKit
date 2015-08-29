@@ -77,10 +77,10 @@ private:
     bool prepareGraphicsContextForTextPainting(GraphicsContext*&, float scalingFactor, TextRun&, RenderStyle*);
     void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);
 
-    void paintDecoration(GraphicsContext*, TextDecoration, const SVGTextFragment&);
-    void paintDecorationWithStyle(GraphicsContext*, TextDecoration, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
-    void paintTextWithShadows(GraphicsContext*, RenderStyle*, TextRun&, const SVGTextFragment&, int startPosition, int endPosition);
-    void paintText(GraphicsContext*, RenderStyle*, RenderStyle* selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
+    void paintDecoration(GraphicsContext&, TextDecoration, const SVGTextFragment&);
+    void paintDecorationWithStyle(GraphicsContext&, TextDecoration, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
+    void paintTextWithShadows(GraphicsContext&, RenderStyle*, TextRun&, const SVGTextFragment&, int startPosition, int endPosition);
+    void paintText(GraphicsContext&, RenderStyle*, RenderStyle* selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 

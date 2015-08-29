@@ -1334,7 +1334,7 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     GraphicsContextStateSaver stateSaver(graphicsContext);
     graphicsContext.clip(rect);
 
-    m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
+    m_mainFrame->coreFrame()->view()->paint(graphicsContext, rect);
 }
 
 double WebPage::textZoomFactor() const
@@ -1763,7 +1763,7 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
     if (options & SnapshotOptionsInViewCoordinates)
         coordinateSpace = FrameView::ViewCoordinates;
 
-    frameView->paintContentsForSnapshot(graphicsContext.get(), snapshotRect, shouldPaintSelection, coordinateSpace);
+    frameView->paintContentsForSnapshot(*graphicsContext, snapshotRect, shouldPaintSelection, coordinateSpace);
 
     if (options & SnapshotOptionsPaintSelectionRectangle) {
         FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection().selectionBounds();
@@ -1819,7 +1819,7 @@ PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions 
     frameView->setBaseBackgroundColor(Color::transparent);
     frameView->setNodeToDraw(&node);
 
-    frameView->paintContentsForSnapshot(graphicsContext.get(), snapshotRect, FrameView::ExcludeSelection, FrameView::DocumentCoordinates);
+    frameView->paintContentsForSnapshot(*graphicsContext, snapshotRect, FrameView::ExcludeSelection, FrameView::DocumentCoordinates);
 
     frameView->setBaseBackgroundColor(savedBackgroundColor);
     frameView->setNodeToDraw(nullptr);

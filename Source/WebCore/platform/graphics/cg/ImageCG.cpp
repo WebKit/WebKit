@@ -86,7 +86,7 @@ static void patternReleaseCallback(void* info)
     });
 }
 
-void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     if (!nativeImageForCurrentFrame())
@@ -95,10 +95,10 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (!patternTransform.isInvertible())
         return;
 
-    CGContextRef context = ctxt->platformContext();
-    GraphicsContextStateSaver stateSaver(*ctxt);
+    CGContextRef context = ctxt.platformContext();
+    GraphicsContextStateSaver stateSaver(ctxt);
     CGContextClipToRect(context, destRect);
-    ctxt->setCompositeOperation(op, blendMode);
+    ctxt.setCompositeOperation(op, blendMode);
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);
     

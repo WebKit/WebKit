@@ -480,7 +480,7 @@ void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) cons
 
 void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return;
 
     if (paintInfo.phase != PaintPhaseForeground
@@ -488,7 +488,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
          return;
 
     PaintInfo blockInfo(paintInfo);
-    GraphicsContextStateSaver stateSaver(*blockInfo.context);
+    GraphicsContextStateSaver stateSaver(blockInfo.context());
     blockInfo.applyTransform(localToParentTransform());
     RenderBlock::paint(blockInfo, LayoutPoint());
 

@@ -47,7 +47,7 @@ public:
     // clipPath can be clipped too, but don't have a boundingBox or repaintRect. So we can't call
     // applyResource directly and use the rects from the object, since they are empty for RenderSVGResources
     // FIXME: We made applyClippingToContext public because we cannot call applyResource on HTML elements (it asserts on RenderObject::objectBoundingBox)
-    bool applyClippingToContext(RenderElement&, const FloatRect&, const FloatRect&, GraphicsContext*);
+    bool applyClippingToContext(RenderElement&, const FloatRect&, const FloatRect&, GraphicsContext&);
     virtual FloatRect resourceBoundingBox(const RenderObject&) override;
 
     virtual RenderSVGResourceType resourceType() const override { return ClipperResourceType; }
@@ -64,7 +64,7 @@ private:
 
     virtual const char* renderName() const override { return "RenderSVGResourceClipper"; }
 
-    bool pathOnlyClipping(GraphicsContext*, const AffineTransform&, const FloatRect&);
+    bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&);
     bool drawContentIntoMaskImage(const ClipperMaskImage&, const FloatRect& objectBoundingBox);
     void calculateClipContentRepaintRect();
     ClipperMaskImage& addRendererToClipper(const RenderObject&);

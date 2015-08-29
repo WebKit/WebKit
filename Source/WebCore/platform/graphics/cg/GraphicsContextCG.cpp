@@ -712,7 +712,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawRectShadow(this, FloatRoundedRect(rect));
+        contextShadow.drawRectShadow(*this, FloatRoundedRect(rect));
     }
 
     CGContextFillRect(context, rect);
@@ -740,7 +740,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawRectShadow(this, FloatRoundedRect(rect));
+        contextShadow.drawRectShadow(*this, FloatRoundedRect(rect));
     }
 
     CGContextFillRect(context, rect);
@@ -771,7 +771,7 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, cons
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawRectShadow(this, rect);
+        contextShadow.drawRectShadow(*this, rect);
     }
 
     const FloatRect& r = rect.rect();
@@ -824,7 +824,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(m_state);
-        contextShadow.drawInsetShadow(this, rect, roundedHoleRect);
+        contextShadow.drawInsetShadow(*this, rect, roundedHoleRect);
     }
 
     fillPath(path);

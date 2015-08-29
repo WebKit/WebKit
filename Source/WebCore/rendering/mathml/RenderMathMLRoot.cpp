@@ -319,7 +319,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
     
-    if (isEmpty() || info.context->paintingDisabled() || style().visibility() != VISIBLE)
+    if (isEmpty() || info.context().paintingDisabled() || style().visibility() != VISIBLE)
         return;
 
     auto base = baseWrapper();
@@ -328,16 +328,16 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
         return;
 
     // We draw the radical line.
-    GraphicsContextStateSaver stateSaver(*info.context);
+    GraphicsContextStateSaver stateSaver(info.context());
 
-    info.context->setStrokeThickness(m_ruleThickness);
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    info.context().setStrokeThickness(m_ruleThickness);
+    info.context().setStrokeStyle(SolidStroke);
+    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
 
     // The preferred width of the radical is sometimes incorrect, so we draw a slightly longer line to ensure it touches the radical symbol (https://bugs.webkit.org/show_bug.cgi?id=130326).
     LayoutUnit sizeError = radical->trailingSpaceError();
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + base->location() + LayoutPoint(-sizeError, -(m_verticalGap + m_ruleThickness / 2)));
-    info.context->drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + base->offsetWidth() + sizeError, adjustedPaintOffset.y())));
+    info.context().drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + base->offsetWidth() + sizeError, adjustedPaintOffset.y())));
 }
 
 RenderPtr<RenderMathMLRootWrapper> RenderMathMLRootWrapper::createAnonymousWrapper(RenderMathMLRoot* renderObject)

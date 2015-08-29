@@ -117,7 +117,7 @@ void FEImage::platformApplySoftware()
 
     if (renderer) {
         const AffineTransform& absoluteTransform = filter().absoluteTransform();
-        resultImage->context()->concatCTM(absoluteTransform);
+        resultImage->context().concatCTM(absoluteTransform);
 
         SVGElement* contextNode = downcast<SVGElement>(renderer->element());
         if (contextNode->hasRelativeLengths()) {
@@ -127,7 +127,7 @@ void FEImage::platformApplySoftware()
             // If we're referencing an element with percentage units, eg. <rect with="30%"> those values were resolved against the viewport.
             // Build up a transformation that maps from the viewport space to the filter primitive subregion.
             if (lengthContext.determineViewport(viewportSize))
-                resultImage->context()->concatCTM(makeMapBetweenRects(FloatRect(FloatPoint(), viewportSize), destRect));
+                resultImage->context().concatCTM(makeMapBetweenRects(FloatRect(FloatPoint(), viewportSize), destRect));
         }
 
         AffineTransform contentTransformation;
@@ -135,7 +135,7 @@ void FEImage::platformApplySoftware()
         return;
     }
 
-    resultImage->context()->drawImage(m_image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
+    resultImage->context().drawImage(m_image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
 }
 
 void FEImage::dump()

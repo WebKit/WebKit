@@ -503,14 +503,14 @@ static void releaseImageData(void*, const void* data, size_t)
     fastFree(const_cast<void*>(data));
 }
 
-void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, GraphicsContext* context)
+void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, GraphicsContext& context)
 {
-    if (!imagePixels || imageWidth <= 0 || imageHeight <= 0 || canvasWidth <= 0 || canvasHeight <= 0 || !context)
+    if (!imagePixels || imageWidth <= 0 || imageHeight <= 0 || canvasWidth <= 0 || canvasHeight <= 0)
         return;
     int rowBytes = imageWidth * 4;
     RetainPtr<CGDataProviderRef> dataProvider;
 
-    if (context->isAcceleratedContext()) {
+    if (context.isAcceleratedContext()) {
         unsigned char* copiedPixels;
 
         if (!tryFastCalloc(imageHeight, rowBytes).getValue(copiedPixels))
@@ -532,11 +532,11 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
     // We want to completely overwrite the previous frame's
     // rendering results.
 
-    GraphicsContextStateSaver stateSaver(*context);
-    context->scale(FloatSize(1, -1));
-    context->translate(0, -imageHeight);
-    context->setImageInterpolationQuality(InterpolationNone);
-    context->drawNativeImage(cgImage.get(), imageSize, ColorSpaceDeviceRGB, canvasRect, FloatRect(FloatPoint(), imageSize), CompositeCopy);
+    GraphicsContextStateSaver stateSaver(context);
+    context.scale(FloatSize(1, -1));
+    context.translate(0, -imageHeight);
+    context.setImageInterpolationQuality(InterpolationNone);
+    context.drawNativeImage(cgImage.get(), imageSize, ColorSpaceDeviceRGB, canvasRect, FloatRect(FloatPoint(), imageSize), CompositeCopy);
 }
 
 } // namespace WebCore

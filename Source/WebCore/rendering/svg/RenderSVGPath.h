@@ -42,7 +42,7 @@ private:
     virtual void updateShapeFromElement() override;
     FloatRect calculateUpdatedStrokeBoundingBox() const;
 
-    virtual void strokeShape(GraphicsContext*) const override;
+    virtual void strokeShape(GraphicsContext&) const override;
     virtual bool shapeDependentStrokeContains(const FloatPoint&) override;
 
     bool shouldStrokeZeroLengthSubpath() const;

@@ -80,7 +80,7 @@ FilterEffectRenderer::~FilterEffectRenderer()
 
 GraphicsContext* FilterEffectRenderer::inputContext()
 {
-    return sourceImage() ? sourceImage()->context() : 0;
+    return sourceImage() ? &sourceImage()->context() : nullptr;
 }
 
 PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
@@ -417,7 +417,7 @@ bool FilterEffectRendererHelper::beginFilterEffect()
     return true;
 }
 
-void FilterEffectRendererHelper::applyFilterEffect(GraphicsContext* destinationContext)
+void FilterEffectRendererHelper::applyFilterEffect(GraphicsContext& destinationContext)
 {
     ASSERT(m_haveFilterEffect && m_renderLayer->filterRenderer());
     FilterEffectRenderer* filter = m_renderLayer->filterRenderer();
@@ -429,7 +429,7 @@ void FilterEffectRendererHelper::applyFilterEffect(GraphicsContext* destinationC
     LayoutRect destRect = filter->outputRect();
     destRect.move(m_paintOffset.x(), m_paintOffset.y());
 
-    destinationContext->drawImageBuffer(filter->output(), m_renderLayer->renderer().style().colorSpace(),
+    destinationContext.drawImageBuffer(filter->output(), m_renderLayer->renderer().style().colorSpace(),
         snapRectToDevicePixels(destRect, m_renderLayer->renderer().document().deviceScaleFactor()));
 
     filter->clearIntermediateResults();

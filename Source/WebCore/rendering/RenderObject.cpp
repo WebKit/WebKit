@@ -721,7 +721,7 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
     const AtomicString& href = downcast<Element>(*node).getAttribute(hrefAttr);
     if (href.isNull())
         return;
-    paintInfo.context->setURLForRect(node->document().completeURL(href), snappedIntRect(urlRect));
+    paintInfo.context().setURLForRect(node->document().completeURL(href), snappedIntRect(urlRect));
 }
 
 #if PLATFORM(IOS)

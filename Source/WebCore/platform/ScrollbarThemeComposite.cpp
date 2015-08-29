@@ -260,9 +260,9 @@ int ScrollbarThemeComposite::trackLength(Scrollbar& scrollbar)
     return (scrollbar.orientation() == HorizontalScrollbar) ? constrainedTrackRect.width() : constrainedTrackRect.height();
 }
 
-void ScrollbarThemeComposite::paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect)
+void ScrollbarThemeComposite::paintScrollCorner(ScrollView*, GraphicsContext& context, const IntRect& cornerRect)
 {
-    context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
+    context.fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
 }
 
 IntRect ScrollbarThemeComposite::thumbRect(Scrollbar& scrollbar)
@@ -279,15 +279,15 @@ IntRect ScrollbarThemeComposite::thumbRect(Scrollbar& scrollbar)
     return thumbRect;
 }
 
-void ScrollbarThemeComposite::paintOverhangAreas(ScrollView*, GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
+void ScrollbarThemeComposite::paintOverhangAreas(ScrollView&, GraphicsContext& context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
 {    
-    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
+    context.setFillColor(Color::white, ColorSpaceDeviceRGB);
     if (!horizontalOverhangRect.isEmpty())
-        context->fillRect(intersection(horizontalOverhangRect, dirtyRect));
+        context.fillRect(intersection(horizontalOverhangRect, dirtyRect));
 
-    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
+    context.setFillColor(Color::white, ColorSpaceDeviceRGB);
     if (!verticalOverhangRect.isEmpty())
-        context->fillRect(intersection(verticalOverhangRect, dirtyRect));
+        context.fillRect(intersection(verticalOverhangRect, dirtyRect));
 }
 
 }

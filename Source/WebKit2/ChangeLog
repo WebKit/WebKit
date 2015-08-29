@@ -1,3 +1,50 @@
+2015-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate GraphicsContexts from pointers to references
+        https://bugs.webkit.org/show_bug.cgi?id=148561
+
+        Reviewed by Tim Horton.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::paint):
+        (WebKit::NetscapePlugin::snapshot):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginNone.cpp:
+        (WebKit::NetscapePlugin::platformPaint):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPaint):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformPaint):
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::updateControlTints):
+        (WebKit::PDFPlugin::paintControlForLayerInContext):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::updateControlTints):
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect):
+        (WebKit::WebPage::snapshotAtSize):
+        (WebKit::WebPage::snapshotNode):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindIndicatorOverlayClientIOS::drawRect):
+
 2015-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Restructure WebMediaSessionManager for testing

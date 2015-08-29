@@ -204,7 +204,7 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
     if (!cWidth || !cHeight)
         return;
 
-    GraphicsContext* context = paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
     LayoutSize contentSize(cWidth, cHeight);
     LayoutPoint contentLocation = location() + paintOffset;
     contentLocation.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
@@ -219,7 +219,7 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-    context->drawImage(image, style().colorSpace(), alignedRect, ImagePaintingOptions(orientationDescription, useLowQualityScaling));
+    context.drawImage(image, style().colorSpace(), alignedRect, ImagePaintingOptions(orientationDescription, useLowQualityScaling));
 }
 
 void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -262,9 +262,9 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintO
     RenderWidget::paint(paintInfo, paintOffset);
 }
 
-static void drawReplacementArrow(GraphicsContext* context, const FloatRect& insideRect)
+static void drawReplacementArrow(GraphicsContext& context, const FloatRect& insideRect)
 {
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
 
     FloatRect rect(insideRect);
     rect.inflate(-replacementArrowPadding);
@@ -272,9 +272,9 @@ static void drawReplacementArrow(GraphicsContext* context, const FloatRect& insi
     FloatPoint center(rect.center());
     FloatPoint arrowTip(rect.maxX(), center.y());
 
-    context->setStrokeThickness(2);
-    context->setLineCap(RoundCap);
-    context->setLineJoin(RoundJoin);
+    context.setStrokeThickness(2);
+    context.setLineCap(RoundCap);
+    context.setLineJoin(RoundJoin);
 
     Path path;
     path.moveTo(FloatPoint(rect.x(), center.y()));
@@ -282,7 +282,7 @@ static void drawReplacementArrow(GraphicsContext* context, const FloatRect& insi
     path.addLineTo(FloatPoint(center.x(), rect.y()));
     path.moveTo(arrowTip);
     path.addLineTo(FloatPoint(center.x(), rect.maxY()));
-    context->strokePath(path);
+    context.strokePath(path);
 }
 
 void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -293,8 +293,8 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     if (paintInfo.phase == PaintPhaseSelection)
         return;
 
-    GraphicsContext* context = paintInfo.context;
-    if (context->paintingDisabled())
+    GraphicsContext& context = paintInfo.context();
+    if (context.paintingDisabled())
         return;
 
     FloatRect contentRect;
@@ -310,36 +310,36 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     Path background;
     background.addRoundedRect(indicatorRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
 
-    GraphicsContextStateSaver stateSaver(*context);
-    context->clip(contentRect);
-    context->setFillColor(m_unavailablePluginIndicatorIsPressed ? replacementTextRoundedRectPressedColor() : replacementTextRoundedRectColor(), style().colorSpace());
-    context->fillPath(background);
+    GraphicsContextStateSaver stateSaver(context);
+    context.clip(contentRect);
+    context.setFillColor(m_unavailablePluginIndicatorIsPressed ? replacementTextRoundedRectPressedColor() : replacementTextRoundedRectColor(), style().colorSpace());
+    context.fillPath(background);
 
     Path strokePath;
     FloatRect strokeRect(indicatorRect);
     strokeRect.inflate(1);
     strokePath.addRoundedRect(strokeRect, FloatSize(replacementTextRoundedRectRadius + 1, replacementTextRoundedRectRadius + 1));
 
-    context->setStrokeColor(unavailablePluginBorderColor(), style().colorSpace());
-    context->setStrokeThickness(2);
-    context->strokePath(strokePath);
+    context.setStrokeColor(unavailablePluginBorderColor(), style().colorSpace());
+    context.setStrokeThickness(2);
+    context.strokePath(strokePath);
 
     const FontMetrics& fontMetrics = font.fontMetrics();
     float labelX = roundf(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
     float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent() + replacementTextRoundedRectTopTextMargin);
-    context->setFillColor(replacementTextColor(), style().colorSpace());
-    context->drawBidiText(font, run, FloatPoint(labelX, labelY));
+    context.setFillColor(replacementTextColor(), style().colorSpace());
+    context.drawBidiText(font, run, FloatPoint(labelX, labelY));
 
     if (shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason)) {
         arrowRect.inflate(-replacementArrowCirclePadding);
 
-        context->beginTransparencyLayer(1.0);
-        context->setFillColor(replacementTextColor(), style().colorSpace());
-        context->fillEllipse(arrowRect);
+        context.beginTransparencyLayer(1.0);
+        context.setFillColor(replacementTextColor(), style().colorSpace());
+        context.fillEllipse(arrowRect);
 
-        context->setCompositeOperation(CompositeClear);
+        context.setCompositeOperation(CompositeClear);
         drawReplacementArrow(context, arrowRect);
-        context->endTransparencyLayer();
+        context.endTransparencyLayer();
     }
 }
 

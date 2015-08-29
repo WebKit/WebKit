@@ -185,8 +185,8 @@ protected:
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
-    virtual void paint(GraphicsContext*, const FloatRect&) override = 0;
-    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&) override = 0;
+    virtual void paint(GraphicsContext&, const FloatRect&) override = 0;
+    virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override = 0;
     virtual void setPreload(MediaPlayer::Preload) override;
     virtual PlatformLayer* platformLayer() const override { return 0; }
     virtual bool supportsAcceleratedRendering() const override = 0;

@@ -151,17 +151,17 @@ void Scrollbar::updateThumbProportion()
     updateThumb();
 }
 
-void Scrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
+void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect)
 {
-    if (context->updatingControlTints() && theme()->supportsControlTints()) {
+    if (context.updatingControlTints() && theme()->supportsControlTints()) {
         invalidate();
         return;
     }
 
-    if (context->paintingDisabled() || !frameRect().intersects(damageRect))
+    if (context.paintingDisabled() || !frameRect().intersects(damageRect))
         return;
 
-    if (!theme()->paint(*this, *context, damageRect))
+    if (!theme()->paint(*this, context, damageRect))
         Widget::paint(context, damageRect);
 }
 

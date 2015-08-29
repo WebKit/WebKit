@@ -141,14 +141,14 @@ NSView* Widget::getOuterView() const
     return view;
 }
 
-void Widget::paint(GraphicsContext* p, const IntRect& r)
+void Widget::paint(GraphicsContext& p, const IntRect& r)
 {
-    if (p->paintingDisabled())
+    if (p.paintingDisabled())
         return;
     
     NSView *view = getOuterView();
 
-    CGContextRef cgContext = p->platformContext();
+    CGContextRef cgContext = p.platformContext();
     CGContextSaveGState(cgContext);
 
     NSRect viewFrame = [view frame];

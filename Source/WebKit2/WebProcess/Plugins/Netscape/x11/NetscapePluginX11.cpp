@@ -279,7 +279,7 @@ void NetscapePlugin::platformVisibilityDidChange()
     controller()->windowedPluginGeometryDidChange(m_frameRectInWindowCoordinates, m_clipRect, windowID);
 }
 
-void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool /*isSnapshot*/)
+void NetscapePlugin::platformPaint(GraphicsContext& context, const IntRect& dirtyRect, bool /*isSnapshot*/)
 {
     if (m_isWindowed)
         return;
@@ -289,7 +289,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
         return;
     }
 
-    if (context->paintingDisabled() || !m_drawable)
+    if (context.paintingDisabled() || !m_drawable)
         return;
 
     XEvent xevent;
@@ -316,7 +316,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 #if PLATFORM(GTK) || (PLATFORM(EFL) && USE(CAIRO))
     RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(m_pluginDisplay, m_drawable.get(),
         static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->visual, m_pluginSize.width(), m_pluginSize.height()));
-    cairo_t* cr = context->platformContext()->cr();
+    cairo_t* cr = context.platformContext()->cr();
     cairo_save(cr);
 
     cairo_set_source_surface(cr, drawableSurface.get(), 0, 0);

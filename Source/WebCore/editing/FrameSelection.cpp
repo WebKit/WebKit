@@ -1542,7 +1542,7 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
     }
 }
 
-void FrameSelection::paintCaret(GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
+void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
 {
     if (m_selection.isCaret() && m_caretPaint)
         CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
@@ -1555,7 +1555,7 @@ static inline bool disappearsIntoBackground(Color foreground, Color background)
 }
 #endif
 
-void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void CaretBase::paintCaret(Node* node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_caretVisibility == Hidden)
@@ -1593,7 +1593,7 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
         }
     }
 
-    context->fillRect(caret, caretColor, colorSpace);
+    context.fillRect(caret, caretColor, colorSpace);
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
@@ -2031,7 +2031,7 @@ void FrameSelection::setFocusedElementIfNeeded()
         m_frame->page()->focusController().setFocusedElement(0, m_frame);
 }
 
-void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)

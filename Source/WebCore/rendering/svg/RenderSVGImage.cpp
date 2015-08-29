@@ -131,7 +131,7 @@ void RenderSVGImage::layout()
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled() || paintInfo.phase != PaintPhaseForeground
+    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhaseForeground
         || style().visibility() == HIDDEN || !imageResource().hasImage())
         return;
 
@@ -140,14 +140,14 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         return;
 
     PaintInfo childPaintInfo(paintInfo);
-    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
+    GraphicsContextStateSaver stateSaver(childPaintInfo.context());
     childPaintInfo.applyTransform(m_localTransform);
 
     if (childPaintInfo.phase == PaintPhaseForeground) {
         SVGRenderingContext renderingContext(*this, childPaintInfo);
 
         if (renderingContext.isRenderingPrepared()) {
-            if (style().svgStyle().bufferedRendering() == BR_STATIC  && renderingContext.bufferForeground(m_bufferedForeground))
+            if (style().svgStyle().bufferedRendering() == BR_STATIC && renderingContext.bufferForeground(m_bufferedForeground))
                 return;
 
             paintForeground(childPaintInfo);
@@ -166,7 +166,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo)
 
     imageElement().preserveAspectRatio().transformRect(destRect, srcRect);
 
-    paintInfo.context->drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
+    paintInfo.context().drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
 }
 
 void RenderSVGImage::invalidateBufferedForeground()

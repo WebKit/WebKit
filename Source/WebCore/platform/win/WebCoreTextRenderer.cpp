@@ -51,7 +51,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
 
     context.setFillColor(color, ColorSpaceDeviceRGB);
     if (isOneLeftToRightRun(run))
-        font.drawText(&context, run, point);
+        font.drawText(context, run, point);
     else
         context.drawBidiText(font, run, point);
 

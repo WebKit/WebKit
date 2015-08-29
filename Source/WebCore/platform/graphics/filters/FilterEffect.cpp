@@ -466,7 +466,6 @@ ImageBuffer* FilterEffect::createImageBufferResult()
     if (!m_imageBufferResult)
         return nullptr;
 
-    ASSERT(m_imageBufferResult->context());
     return m_imageBufferResult.get();
 }
 

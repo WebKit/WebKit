@@ -91,9 +91,9 @@ private:
     virtual bool currentFrameKnownToBeOpaque() override { return false; }
 
     SVGImage(ImageObserver&, const URL&);
-    virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
-    void drawForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);
-    void drawPatternForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace,
+    virtual void draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    void drawForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);
+    void drawPatternForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace,
         CompositeOperator, const FloatRect&, BlendMode);
 
     SVGSVGElement* rootElement() const;

@@ -1147,14 +1147,14 @@ void ScrollView::updateScrollCorner()
 {
 }
 
-void ScrollView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)
+void ScrollView::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
 {
     ScrollbarTheme::theme()->paintScrollCorner(this, context, cornerRect);
 }
 
-void ScrollView::paintScrollbar(GraphicsContext* context, Scrollbar* bar, const IntRect& rect)
+void ScrollView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, const IntRect& rect)
 {
-    bar->paint(context, rect);
+    bar.paint(context, rect);
 }
 
 void ScrollView::invalidateScrollCornerRect(const IntRect& rect)
@@ -1162,12 +1162,12 @@ void ScrollView::invalidateScrollCornerRect(const IntRect& rect)
     invalidateRect(rect);
 }
 
-void ScrollView::paintScrollbars(GraphicsContext* context, const IntRect& rect)
+void ScrollView::paintScrollbars(GraphicsContext& context, const IntRect& rect)
 {
     if (m_horizontalScrollbar && !layerForHorizontalScrollbar())
-        paintScrollbar(context, m_horizontalScrollbar.get(), rect);
+        paintScrollbar(context, *m_horizontalScrollbar.get(), rect);
     if (m_verticalScrollbar && !layerForVerticalScrollbar())
-        paintScrollbar(context, m_verticalScrollbar.get(), rect);
+        paintScrollbar(context, *m_verticalScrollbar.get(), rect);
 
     if (layerForScrollCorner())
         return;
@@ -1175,23 +1175,23 @@ void ScrollView::paintScrollbars(GraphicsContext* context, const IntRect& rect)
     paintScrollCorner(context, scrollCornerRect());
 }
 
-void ScrollView::paintPanScrollIcon(GraphicsContext* context)
+void ScrollView::paintPanScrollIcon(GraphicsContext& context)
 {
     static Image* panScrollIcon = Image::loadPlatformResource("panIcon").leakRef();
     IntPoint iconGCPoint = m_panScrollIconPoint;
     if (parent())
         iconGCPoint = parent()->windowToContents(iconGCPoint);
-    context->drawImage(panScrollIcon, ColorSpaceDeviceRGB, iconGCPoint);
+    context.drawImage(panScrollIcon, ColorSpaceDeviceRGB, iconGCPoint);
 }
 
-void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
+void ScrollView::paint(GraphicsContext& context, const IntRect& rect)
 {
     if (platformWidget()) {
         Widget::paint(context, rect);
         return;
     }
 
-    if (context->paintingDisabled() && !context->updatingControlTints())
+    if (context.paintingDisabled() && !context.updatingControlTints())
         return;
 
     notifyPageThatContentAreaWillPaint();
@@ -1203,16 +1203,16 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     }
 
     if (!documentDirtyRect.isEmpty()) {
-        GraphicsContextStateSaver stateSaver(*context);
+        GraphicsContextStateSaver stateSaver(context);
 
-        context->translate(x(), y());
+        context.translate(x(), y());
         documentDirtyRect.moveBy(-location());
 
         if (!paintsEntireContents()) {
-            context->translate(-scrollX(), -scrollY());
+            context.translate(-scrollX(), -scrollY());
             documentDirtyRect.moveBy(scrollPosition());
 
-            context->clip(visibleContentRect(LegacyIOSDocumentVisibleRect));
+            context.clip(visibleContentRect(LegacyIOSDocumentVisibleRect));
         }
 
         paintContents(context, documentDirtyRect);
@@ -1227,13 +1227,13 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     // Now paint the scrollbars.
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
-        GraphicsContextStateSaver stateSaver(*context);
+        GraphicsContextStateSaver stateSaver(context);
         IntRect scrollViewDirtyRect = rect;
         IntRect visibleAreaWithScrollbars(location(), unobscuredContentRectIncludingScrollbars().size());
         scrollViewDirtyRect.intersect(visibleAreaWithScrollbars);
-        context->translate(x(), y());
+        context.translate(x(), y());
         scrollViewDirtyRect.moveBy(-location());
-        context->clip(IntRect(IntPoint(), visibleAreaWithScrollbars.size()));
+        context.clip(IntRect(IntPoint(), visibleAreaWithScrollbars.size()));
 
         paintScrollbars(context, scrollViewDirtyRect);
     }
@@ -1299,12 +1299,12 @@ void ScrollView::updateOverhangAreas()
         window->invalidateContentsAndRootView(verticalOverhangRect);
 }
 
-void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
+void ScrollView::paintOverhangAreas(GraphicsContext& context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
 {
-    ScrollbarTheme::theme()->paintOverhangAreas(this, context, horizontalOverhangRect, verticalOverhangRect, dirtyRect);
+    ScrollbarTheme::theme()->paintOverhangAreas(*this, context, horizontalOverhangRect, verticalOverhangRect, dirtyRect);
 }
 
-void ScrollView::calculateAndPaintOverhangAreas(GraphicsContext* context, const IntRect& dirtyRect)
+void ScrollView::calculateAndPaintOverhangAreas(GraphicsContext& context, const IntRect& dirtyRect)
 {
     IntRect horizontalOverhangRect;
     IntRect verticalOverhangRect;

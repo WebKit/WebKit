@@ -53,18 +53,18 @@ SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
 
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return;
 
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
         return;
 
     PaintInfo childPaintInfo(paintInfo);
-    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
+    GraphicsContextStateSaver stateSaver(childPaintInfo.context());
     childPaintInfo.applyTransform(localTransform());
 
     if (SVGRenderSupport::isOverflowHidden(*this))
-        childPaintInfo.context->clip(m_viewport);
+        childPaintInfo.context().clip(m_viewport);
 
     SVGRenderingContext renderingContext;
     if (paintInfo.phase == PaintPhaseForeground) {

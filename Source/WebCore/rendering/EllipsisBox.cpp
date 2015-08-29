@@ -42,14 +42,14 @@ EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomicString& ellipsis
 
 void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    GraphicsContext* context = paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
     const RenderStyle& lineStyle = this->lineStyle();
     Color textColor = lineStyle.visitedDependentColor(CSSPropertyWebkitTextFillColor);
-    if (textColor != context->fillColor())
-        context->setFillColor(textColor, lineStyle.colorSpace());
+    if (textColor != context.fillColor())
+        context.setFillColor(textColor, lineStyle.colorSpace());
     bool setShadow = false;
     if (lineStyle.textShadow()) {
-        context->setShadow(LayoutSize(lineStyle.textShadow()->x(), lineStyle.textShadow()->y()),
+        context.setShadow(LayoutSize(lineStyle.textShadow()->x(), lineStyle.textShadow()->y()),
             lineStyle.textShadow()->radius(), lineStyle.textShadow()->color(), lineStyle.colorSpace());
         setShadow = true;
     }
@@ -61,18 +61,18 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
         // Select the correct color for painting the text.
         Color foreground = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : blockFlow().selectionForegroundColor();
         if (foreground.isValid() && foreground != textColor)
-            context->setFillColor(foreground, lineStyle.colorSpace());
+            context.setFillColor(foreground, lineStyle.colorSpace());
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(font, RenderBlock::constructTextRun(&blockFlow(), font, m_str, lineStyle, AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.fontMetrics().ascent()));
+    context.drawText(font, RenderBlock::constructTextRun(&blockFlow(), font, m_str, lineStyle, AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.fontMetrics().ascent()));
 
     // Restore the regular fill color.
-    if (textColor != context->fillColor())
-        context->setFillColor(textColor, lineStyle.colorSpace());
+    if (textColor != context.fillColor())
+        context.setFillColor(textColor, lineStyle.colorSpace());
 
     if (setShadow)
-        context->clearShadow();
+        context.clearShadow();
 
     paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle);
 }
@@ -119,7 +119,7 @@ IntRect EllipsisBox::selectionRect()
     return enclosingIntRect(selectionRect);
 }
 
-void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, const RenderStyle& style, const FontCascade& font)
+void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& paintOffset, const RenderStyle& style, const FontCascade& font)
 {
     Color textColor = style.visitedDependentColor(CSSPropertyColor);
     Color c = blockFlow().selectionBackgroundColor();
@@ -132,12 +132,12 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
     const RootInlineBox& rootBox = root();
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     LayoutRect selectionRect = LayoutRect(x() + paintOffset.x(), y() + paintOffset.y() + rootBox.selectionTop(), 0, rootBox.selectionHeight());
     TextRun run = RenderBlock::constructTextRun(&blockFlow(), font, m_str, style, AllowTrailingExpansion);
     font.adjustSelectionRectForText(run, selectionRect, 0, -1);
-    context->fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c, style.colorSpace());
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c, style.colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)

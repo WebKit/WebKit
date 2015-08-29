@@ -644,9 +644,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     }
     
     if (contentsOnly)
-        view->paintContents(&context, enclosingIntRect(rect));
+        view->paintContents(context, enclosingIntRect(rect));
     else
-        view->paint(&context, enclosingIntRect(rect));
+        view->paint(context, enclosingIntRect(rect));
 
     if (shouldFlatten)
         view->setPaintBehavior(oldBehavior);

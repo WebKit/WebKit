@@ -147,8 +147,8 @@ private:
 
     virtual void setSize(const IntSize&) override;
 
-    virtual void paint(GraphicsContext*, const FloatRect&) override;
-    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&) override;
+    virtual void paint(GraphicsContext&, const FloatRect&) override;
+    virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
 
     virtual bool hasAvailableVideoFrame() const override;
 

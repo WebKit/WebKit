@@ -418,8 +418,8 @@ public:
     bool autoplay() const;
     void setAutoplay(bool);
 
-    void paint(GraphicsContext*, const FloatRect&);
-    void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
+    void paint(GraphicsContext&, const FloatRect&);
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
     // copyVideoTextureToPlatformTexture() is used to do the GPU-GPU textures copy without a readback to system memory.
     // The first five parameters denote the corresponding GraphicsContext, destination texture, requested level, requested type and the required internalFormat for destination texture.

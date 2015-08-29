@@ -125,35 +125,35 @@ void RenderScrollbarTheme::didPaintScrollbar(GraphicsContext& context, Scrollbar
     }
 }
 
-void RenderScrollbarTheme::paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect)
+void RenderScrollbarTheme::paintScrollCorner(ScrollView*, GraphicsContext& context, const IntRect& cornerRect)
 {
     // FIXME: Implement.
-    context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
+    context.fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
 }
 
 void RenderScrollbarTheme::paintScrollbarBackground(GraphicsContext& context, Scrollbar& scrollbar)
 {
-    downcast<RenderScrollbar>(scrollbar).paintPart(&context, ScrollbarBGPart, scrollbar.frameRect());
+    downcast<RenderScrollbar>(scrollbar).paintPart(context, ScrollbarBGPart, scrollbar.frameRect());
 }
 
 void RenderScrollbarTheme::paintTrackBackground(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect)
 {
-    downcast<RenderScrollbar>(scrollbar).paintPart(&context, TrackBGPart, rect);
+    downcast<RenderScrollbar>(scrollbar).paintPart(context, TrackBGPart, rect);
 }
 
 void RenderScrollbarTheme::paintTrackPiece(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    downcast<RenderScrollbar>(scrollbar).paintPart(&context, part, rect);
+    downcast<RenderScrollbar>(scrollbar).paintPart(context, part, rect);
 }
 
 void RenderScrollbarTheme::paintButton(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    downcast<RenderScrollbar>(scrollbar).paintPart(&context, part, rect);
+    downcast<RenderScrollbar>(scrollbar).paintPart(context, part, rect);
 }
 
 void RenderScrollbarTheme::paintThumb(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect)
 {
-    downcast<RenderScrollbar>(scrollbar).paintPart(&context, ThumbPart, rect);
+    downcast<RenderScrollbar>(scrollbar).paintPart(context, ThumbPart, rect);
 }
 
 void RenderScrollbarTheme::paintTickmarks(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect)

@@ -34,7 +34,7 @@ namespace WebCore {
 void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
 {
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
-    ASSERT(!paintInfo.context->paintingDisabled());
+    ASSERT(!paintInfo.context().paintingDisabled());
 
     PaintInfo childPaintInfo(paintInfo);
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -48,7 +48,7 @@ void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
 void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
 {
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
-    ASSERT(!paintInfo.context->paintingDisabled());
+    ASSERT(!paintInfo.context().paintingDisabled());
 
     SVGRenderingContext renderingContext(renderer(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {

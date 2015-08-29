@@ -63,7 +63,7 @@ void RenderSVGResourceMarker::removeClientFromCache(RenderElement& client, bool 
 void RenderSVGResourceMarker::applyViewportClip(PaintInfo& paintInfo)
 {
     if (SVGRenderSupport::isOverflowHidden(*this))
-        paintInfo.context->clip(m_viewport);
+        paintInfo.context().clip(m_viewport);
 }
 
 FloatRect RenderSVGResourceMarker::markerBoundaries(const AffineTransform& markerTransformation) const
@@ -118,7 +118,7 @@ void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& 
         return;
 
     PaintInfo info(paintInfo);
-    GraphicsContextStateSaver stateSaver(*info.context);
+    GraphicsContextStateSaver stateSaver(info.context());
     info.applyTransform(transform);
     RenderSVGContainer::paint(info, IntPoint());
 }

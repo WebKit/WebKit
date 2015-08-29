@@ -3248,7 +3248,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
 
                 PaintBehavior oldBehavior = m_frame.view()->paintBehavior();
                 m_frame.view()->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-                m_frame.view()->paintContents(&context, enclosingIntRect(visibleRect));
+                m_frame.view()->paintContents(context, enclosingIntRect(visibleRect));
                 m_frame.view()->setPaintBehavior(oldBehavior);
             }
         }

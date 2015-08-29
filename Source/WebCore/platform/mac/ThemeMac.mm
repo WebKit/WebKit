@@ -376,7 +376,7 @@ static bool drawCellFocusRing(NSCell *cell, NSRect cellFrame, NSView *controlVie
     return false;
 }
 
-static void paintToggleButton(ControlPart buttonType, ControlStates& controlStates, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
+static void paintToggleButton(ControlPart buttonType, ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -400,7 +400,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
     }
     controlStates.setDirty(false);
 
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
 
     NSControlSize controlSize = [toggleButtonCell controlSize];
     IntSize zoomedSize = buttonType == CheckboxPart ? checkboxSizes()[controlSize] : radioSizes()[controlSize];
@@ -412,9 +412,9 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
     if (zoomFactor != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
         inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
-        context->translate(inflatedRect.x(), inflatedRect.y());
-        context->scale(FloatSize(zoomFactor, zoomFactor));
-        context->translate(-inflatedRect.x(), -inflatedRect.y());
+        context.translate(inflatedRect.x(), inflatedRect.y());
+        context.scale(FloatSize(zoomFactor, zoomFactor));
+        context.translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
     LocalCurrentGraphicsContext localContext(context);
@@ -431,11 +431,11 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([toggleButtonCell _stateAnimationRunning]) {
-        context->translate(inflatedRect.x(), inflatedRect.y());
-        context->scale(FloatSize(1, -1));
-        context->translate(0, -inflatedRect.height());
+        context.translate(inflatedRect.x(), inflatedRect.y());
+        context.scale(FloatSize(1, -1));
+        context.translate(0, -inflatedRect.height());
 
-        [toggleButtonCell _renderCurrentAnimationFrameInContext:context->platformContext() atLocation:NSMakePoint(0, 0)];
+        [toggleButtonCell _renderCurrentAnimationFrameInContext:context.platformContext() atLocation:NSMakePoint(0, 0)];
         if (![toggleButtonCell _stateAnimationRunning] && isCellFocused)
             needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, false, true, useImageBuffer, deviceScaleFactor);
     } else
@@ -520,14 +520,14 @@ static NSButtonCell *button(ControlPart part, const ControlStates& controlStates
     return cell;
 }
     
-static void paintButton(ControlPart part, ControlStates& controlStates, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
+static void paintButton(ControlPart part, ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     // Determine the width and height needed for the control and prepare the cell for painting.
     ControlStates::States states = controlStates.states();
     NSButtonCell *buttonCell = button(part, controlStates, IntSize(zoomedRect.size()), zoomFactor);
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
 
     NSControlSize controlSize = [buttonCell controlSize];
     IntSize zoomedSize = buttonSizes()[controlSize];
@@ -547,9 +547,9 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
         if (zoomFactor != 1.0f) {
             inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
             inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
-            context->translate(inflatedRect.x(), inflatedRect.y());
-            context->scale(FloatSize(zoomFactor, zoomFactor));
-            context->translate(-inflatedRect.x(), -inflatedRect.y());
+            context.translate(inflatedRect.x(), inflatedRect.y());
+            context.scale(FloatSize(zoomFactor, zoomFactor));
+            context.translate(-inflatedRect.x(), -inflatedRect.y());
         }
     }
     
@@ -599,7 +599,7 @@ static NSControlSize stepperControlSizeForFont(const FontCascade& font)
     return NSMiniControlSize;
 }
 
-static void paintStepper(ControlStates& states, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*)
+static void paintStepper(ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*)
 {
     // We don't use NSStepperCell because there are no ways to draw an
     // NSStepperCell with the up button highlighted.
@@ -617,13 +617,13 @@ static void paintStepper(ControlStates& states, GraphicsContext* context, const 
         drawInfo.kind = kThemeIncDecButton;
 
     IntRect rect(zoomedRect);
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
     if (zoomFactor != 1.0f) {
         rect.setWidth(rect.width() / zoomFactor);
         rect.setHeight(rect.height() / zoomFactor);
-        context->translate(rect.x(), rect.y());
-        context->scale(FloatSize(zoomFactor, zoomFactor));
-        context->translate(-rect.x(), -rect.y());
+        context.translate(rect.x(), rect.y());
+        context.scale(FloatSize(zoomFactor, zoomFactor));
+        context.translate(-rect.x(), -rect.y());
     }
     CGRect bounds(rect);
     CGRect backgroundBounds;
@@ -664,7 +664,7 @@ void ThemeMac::setFocusRingClipRect(const FloatRect& rect)
 
 const float buttonFocusRectOutlineWidth = 3.0f;
 
-bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell* cell, GraphicsContext* context, const FloatRect& inflatedRect, NSView* view, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor)
+bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell* cell, GraphicsContext& context, const FloatRect& inflatedRect, NSView* view, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor)
 {
     ASSERT(drawButtonCell || drawFocusRing);
     bool needsRepaint = false;
@@ -679,7 +679,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell* cell, GraphicsCont
             if (drawFocusRing)
                 needsRepaint = drawCellFocusRing(cell, imageBufferDrawRect, view);
         }
-        context->drawImageBuffer(imageBuffer.get(), ColorSpaceSRGB, inflatedRect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
+        context.drawImageBuffer(imageBuffer.get(), ColorSpaceSRGB, inflatedRect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
         return needsRepaint;
     }
     if (drawButtonCell)
@@ -840,7 +840,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates& st
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
+void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
 {
     switch (part) {
         case CheckboxPart:

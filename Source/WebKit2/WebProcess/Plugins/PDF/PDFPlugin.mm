@@ -1111,9 +1111,9 @@ void PDFPlugin::destroy()
     [m_contentLayer removeFromSuperlayer];
 }
 
-void PDFPlugin::updateControlTints(GraphicsContext* graphicsContext)
+void PDFPlugin::updateControlTints(GraphicsContext& graphicsContext)
 {
-    ASSERT(graphicsContext->updatingControlTints());
+    ASSERT(graphicsContext.updatingControlTints());
 
     if (m_horizontalScrollbar)
         m_horizontalScrollbar->invalidate();
@@ -1132,7 +1132,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     if (layer == m_scrollCornerLayer) {
         IntRect scrollCornerRect = this->scrollCornerRect();
         graphicsContext.translate(-scrollCornerRect.x(), -scrollCornerRect.y());
-        ScrollbarTheme::theme()->paintScrollCorner(0, &graphicsContext, scrollCornerRect);
+        ScrollbarTheme::theme()->paintScrollCorner(nullptr, graphicsContext, scrollCornerRect);
         return;
     }
     
@@ -1147,7 +1147,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
         return;
     
     graphicsContext.translate(-scrollbar->x(), -scrollbar->y());
-    scrollbar->paint(&graphicsContext, scrollbar->frameRect());
+    scrollbar->paint(graphicsContext, scrollbar->frameRect());
 }
 
 RefPtr<ShareableBitmap> PDFPlugin::snapshot()

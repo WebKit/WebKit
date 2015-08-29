@@ -457,7 +457,7 @@ namespace WebCore {
         AffineTransform& affineTransform();
         void resetAffineTransform();
         void fillRect(const FloatRect&, const Gradient*);
-        void drawText(const Font*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
+        void drawText(const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
         void drawFrameControl(const IntRect& rect, unsigned type, unsigned state);
         void drawFocusRect(const IntRect& rect);
         void paintTextField(const IntRect& rect, unsigned state);

@@ -51,7 +51,7 @@ void RenderSVGViewportContainer::determineIfLayoutSizeChanged()
 void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 {
     if (SVGRenderSupport::isOverflowHidden(*this))
-        paintInfo.context->clip(m_viewport);
+        paintInfo.context().clip(m_viewport);
 }
 
 void RenderSVGViewportContainer::calcViewport()

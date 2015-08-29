@@ -77,7 +77,7 @@ private:
     bool initializeSynchronously();
 
     virtual void destroy() override;
-    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) override;
+    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     virtual bool supportsSnapshotting() const override;
     virtual RefPtr<ShareableBitmap> snapshot() override;
 #if PLATFORM(COCOA)

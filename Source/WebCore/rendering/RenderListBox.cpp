@@ -345,7 +345,7 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& pain
             m_vBar->width(),
             height() - (borderTop() + borderBottom()));
         m_vBar->setFrameRect(scrollRect);
-        m_vBar->paint(paintInfo.context, snappedIntRect(paintInfo.rect));
+        m_vBar->paint(paintInfo.context(), snappedIntRect(paintInfo.rect));
     }
 }
 
@@ -397,7 +397,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     }
 
     ColorSpace colorSpace = itemStyle.colorSpace();
-    paintInfo.context->setFillColor(textColor, colorSpace);
+    paintInfo.context().setFillColor(textColor, colorSpace);
 
     TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle.direction(), isOverride(itemStyle.unicodeBidi()), true, TextRun::NoRounding);
     FontCascade itemFont = style().fontCascade();
@@ -412,7 +412,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     }
 
     // Draw the item text
-    paintInfo.context->drawBidiText(itemFont, textRun, roundedIntPoint(r.location()));
+    paintInfo.context().drawBidiText(itemFont, textRun, roundedIntPoint(r.location()));
 }
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
@@ -435,7 +435,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         ColorSpace colorSpace = itemStyle.colorSpace();
         LayoutRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
         itemRect.intersect(controlClipRect(paintOffset));
-        paintInfo.context->fillRect(snappedIntRect(itemRect), backColor, colorSpace);
+        paintInfo.context().fillRect(snappedIntRect(itemRect), backColor, colorSpace);
     }
 }
 

@@ -43,19 +43,19 @@ GradientImage::~GradientImage()
 {
 }
 
-void GradientImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
+void GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
 {
-    GraphicsContextStateSaver stateSaver(*destContext);
-    destContext->setCompositeOperation(compositeOp, blendMode);
-    destContext->clip(destRect);
-    destContext->translate(destRect.x(), destRect.y());
+    GraphicsContextStateSaver stateSaver(destContext);
+    destContext.setCompositeOperation(compositeOp, blendMode);
+    destContext.clip(destRect);
+    destContext.translate(destRect.x(), destRect.y());
     if (destRect.size() != srcRect.size())
-        destContext->scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
-    destContext->translate(-srcRect.x(), -srcRect.y());
-    destContext->fillRect(FloatRect(FloatPoint(), size()), *m_gradient.get());
+        destContext.scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
+    destContext.translate(-srcRect.x(), -srcRect.y());
+    destContext.fillRect(FloatRect(FloatPoint(), size()), *m_gradient.get());
 }
 
-void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
+void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect, BlendMode blendMode)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
@@ -64,7 +64,7 @@ void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& s
     m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
 
     // Factor in the destination context's scale to generate at the best resolution
-    AffineTransform destContextCTM = destContext->getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    AffineTransform destContextCTM = destContext.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     double xScale = fabs(destContextCTM.xScale());
     double yScale = fabs(destContextCTM.yScale());
     AffineTransform adjustedPatternCTM = patternTransform;
@@ -73,23 +73,23 @@ void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& s
 
     unsigned generatorHash = m_gradient->hash();
 
-    if (!m_cachedImageBuffer || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != adjustedSize || !destContext->isCompatibleWithBuffer(m_cachedImageBuffer.get())) {
-        m_cachedImageBuffer = destContext->createCompatibleBuffer(adjustedSize, m_gradient->hasAlpha());
+    if (!m_cachedImageBuffer || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != adjustedSize || !destContext.isCompatibleWithBuffer(m_cachedImageBuffer.get())) {
+        m_cachedImageBuffer = destContext.createCompatibleBuffer(adjustedSize, m_gradient->hasAlpha());
         if (!m_cachedImageBuffer)
             return;
 
         // Fill with the generated image.
-        m_cachedImageBuffer->context()->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_gradient);
+        m_cachedImageBuffer->context().fillRect(FloatRect(FloatPoint(), adjustedSize), *m_gradient);
 
         m_cachedGeneratorHash = generatorHash;
         m_cachedAdjustedSize = adjustedSize;
 
-        if (destContext->drawLuminanceMask())
+        if (destContext.drawLuminanceMask())
             m_cachedImageBuffer->convertToLuminanceMask();
     }
 
     m_cachedImageBuffer->setSpaceSize(spaceSize());
-    destContext->setDrawLuminanceMask(false);
+    destContext.setDrawLuminanceMask(false);
 
     // Tile the image buffer into the context.
     m_cachedImageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect, blendMode);

@@ -1120,7 +1120,7 @@ void RenderTableSection::paintRowGroupBorder(const PaintInfo& paintInfo, bool an
     rect.intersect(paintInfo.rect);
     if (rect.isEmpty())
         return;
-    drawLineForBoxSide(*paintInfo.context, rect, side, style().visitedDependentColor(borderColor), borderStyle, 0, 0, antialias);
+    drawLineForBoxSide(paintInfo.context(), rect, side, style().visitedDependentColor(borderColor), borderStyle, 0, 0, antialias);
 }
 
 int RenderTableSection::offsetLeftForRowGroupBorder(RenderTableCell* cell, const LayoutRect& rowGroupRect, unsigned row)
@@ -1169,11 +1169,11 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
 {
     if (table()->currentBorderValue()->precedence() > BROWGROUP)
         return;
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return;
 
     const RenderStyle& style = this->style();
-    bool antialias = shouldAntialiasLines(paintInfo.context);
+    bool antialias = shouldAntialiasLines(paintInfo.context());
     LayoutRect rowGroupRect = LayoutRect(paintOffset, size());
     rowGroupRect.moveBy(-LayoutPoint(outerBorderLeft(&style), (borderSide == BSRight) ? 0 : outerBorderTop(&style)));
 

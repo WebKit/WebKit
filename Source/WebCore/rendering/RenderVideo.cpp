@@ -180,11 +180,11 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     LayoutRect contentRect = contentBoxRect();
     contentRect.moveBy(paintOffset);
-    GraphicsContext* context = paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
     bool clip = !contentRect.contains(rect);
-    GraphicsContextStateSaver stateSaver(*context, clip);
+    GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)
-        context->clip(contentRect);
+        context.clip(contentRect);
 
     if (displayingPoster)
         paintIntoRect(context, rect);

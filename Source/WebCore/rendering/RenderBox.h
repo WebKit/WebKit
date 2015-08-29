@@ -640,7 +640,7 @@ protected:
 
     void paintMaskImages(const PaintInfo&, const LayoutRect&);
 
-    BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext*) const;
+    BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext&) const;
     bool backgroundHasOpaqueTopLayer() const;
 
     void computePositionedLogicalWidth(LogicalExtentComputedValues&, RenderRegion* = nullptr) const;

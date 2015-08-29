@@ -45,7 +45,7 @@ public:
 
     virtual void layout() override;
     
-    void paintIntoRect(GraphicsContext*, const LayoutPoint&, const LayoutRect&);
+    void paintIntoRect(GraphicsContext&, const LayoutPoint&, const LayoutRect&);
 
     // Scrollbar parts needs to be rendered at device pixel boundaries.
     virtual LayoutUnit marginTop() const override { ASSERT(isIntegerValue(m_marginBox.top())); return m_marginBox.top(); }

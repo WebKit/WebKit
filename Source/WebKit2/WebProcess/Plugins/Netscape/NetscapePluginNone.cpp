@@ -59,7 +59,7 @@ void NetscapePlugin::platformVisibilityDidChange()
 {
 }
 
-void NetscapePlugin::platformPaint(GraphicsContext*, const IntRect&, bool)
+void NetscapePlugin::platformPaint(GraphicsContext&, const IntRect&, bool)
 {
 }
 

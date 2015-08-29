@@ -169,8 +169,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
     paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
                   imageBuffer->internalSize().width(), imageBuffer->internalSize().height(), imageBuffer->context());
 #else
-    paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
-                  imageBuffer->internalSize().width(), imageBuffer->internalSize().height(), imageBuffer->context()->platformContext());
+    paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight, imageBuffer->internalSize().width(), imageBuffer->internalSize().height(), imageBuffer->context().platformContext());
 #endif
 
 #if PLATFORM(IOS)

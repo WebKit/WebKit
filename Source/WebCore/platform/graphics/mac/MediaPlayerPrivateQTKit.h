@@ -127,8 +127,8 @@ private:
     
     virtual bool hasAvailableVideoFrame() const override;
 
-    void paint(GraphicsContext*, const FloatRect&) override;
-    void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&) override;
+    void paint(GraphicsContext&, const FloatRect&) override;
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     virtual void prepareForRendering() override;
 
     bool supportsAcceleratedRendering() const override;

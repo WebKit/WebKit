@@ -187,7 +187,7 @@ private:
     static void setTextInputBorders(RenderStyle&);
 
 #if ENABLE(VIDEO)
-    bool paintMediaButton(const RenderObject&, GraphicsContext*, const IntRect&, const char* symbolicIconName, const char* fallbackStockIconName);
+    bool paintMediaButton(const RenderObject&, GraphicsContext&, const IntRect&, const char* symbolicIconName, const char* fallbackStockIconName);
 #endif
 
     static IntRect calculateProgressRect(const RenderObject&, const IntRect&);

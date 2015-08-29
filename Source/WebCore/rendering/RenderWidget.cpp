@@ -228,14 +228,14 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
     // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
     if (!widgetPaintOffset.isZero()) {
-        paintInfo.context->translate(widgetPaintOffset);
+        paintInfo.context().translate(widgetPaintOffset);
         paintRect.move(-widgetPaintOffset);
     }
     // FIXME: Remove repaintrect encolsing/integral snapping when RenderWidget becomes device pixel snapped.
-    m_widget->paint(paintInfo.context, snappedIntRect(paintRect));
+    m_widget->paint(paintInfo.context(), snappedIntRect(paintRect));
 
     if (!widgetPaintOffset.isZero())
-        paintInfo.context->translate(-widgetPaintOffset);
+        paintInfo.context().translate(-widgetPaintOffset);
 
     if (is<FrameView>(*m_widget)) {
         FrameView& frameView = downcast<FrameView>(*m_widget);
@@ -275,26 +275,26 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             return;
 
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
-        paintInfo.context->save();
+        paintInfo.context().save();
         FloatRoundedRect roundedInnerRect = FloatRoundedRect(style().getRoundedInnerBorderFor(borderRect,
             paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true));
-        clipRoundedInnerRect(paintInfo.context, borderRect, roundedInnerRect);
+        clipRoundedInnerRect(paintInfo.context(), borderRect, roundedInnerRect);
     }
 
     if (m_widget)
         paintContents(paintInfo, paintOffset);
 
     if (style().hasBorderRadius())
-        paintInfo.context->restore();
+        paintInfo.context().restore();
 
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document().printing()) {
         // FIXME: selectionRect() is in absolute, not painting coordinates.
-        paintInfo.context->fillRect(snappedIntRect(selectionRect()), selectionBackgroundColor(), style().colorSpace());
+        paintInfo.context().fillRect(snappedIntRect(selectionRect()), selectionBackgroundColor(), style().colorSpace());
     }
 
     if (hasLayer() && layer()->canResize())
-        layer()->paintResizer(paintInfo.context, roundedIntPoint(adjustedPaintOffset), paintInfo.rect);
+        layer()->paintResizer(paintInfo.context(), roundedIntPoint(adjustedPaintOffset), paintInfo.rect);
 }
 
 void RenderWidget::setOverlapTestResult(bool isOverlapped)

@@ -832,10 +832,10 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationCF::as
     return MediaPlayerAVAssetStatusLoaded;
 }
 
-void MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext(GraphicsContext* context, const FloatRect& rect)
+void MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
     ASSERT(isMainThread());
-    if (!metaDataAvailable() || context->paintingDisabled())
+    if (!metaDataAvailable() || context.paintingDisabled())
         return;
 
     if (currentRenderingMode() == MediaRenderingToLayer && !imageGenerator(m_avfWrapper)) {
@@ -847,10 +847,10 @@ void MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext(GraphicsContex
     paint(context, rect);
 }
 
-void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext* context, const FloatRect& rect)
+void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext& context, const FloatRect& rect)
 {
     ASSERT(isMainThread());
-    if (!metaDataAvailable() || context->paintingDisabled() || !imageGenerator(m_avfWrapper))
+    if (!metaDataAvailable() || context.paintingDisabled() || !imageGenerator(m_avfWrapper))
         return;
 
     LOG(Media, "MediaPlayerPrivateAVFoundationCF::paint(%p)", this);
@@ -858,13 +858,13 @@ void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext* context, const Flo
     setDelayCallbacks(true);
     RetainPtr<CGImageRef> image = m_avfWrapper->createImageForTimeInRect(currentMediaTime(), rect);
     if (image) {
-        context->save();
-        context->translate(rect.x(), rect.y() + rect.height());
-        context->scale(FloatSize(1.0f, -1.0f));
-        context->setImageInterpolationQuality(InterpolationLow);
+        context.save();
+        context.translate(rect.x(), rect.y() + rect.height());
+        context.scale(FloatSize(1.0f, -1.0f));
+        context.setImageInterpolationQuality(InterpolationLow);
         FloatRect paintRect(FloatPoint(), rect.size());
-        CGContextDrawImage(context->platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
-        context->restore();
+        CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
+        context.restore();
         image = 0;
     }
     setDelayCallbacks(false);

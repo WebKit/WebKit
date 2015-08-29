@@ -180,7 +180,7 @@ void MockMediaPlayerMediaSource::setSize(const IntSize&)
 {
 }
 
-void MockMediaPlayerMediaSource::paint(GraphicsContext*, const FloatRect&)
+void MockMediaPlayerMediaSource::paint(GraphicsContext&, const FloatRect&)
 {
 }
 

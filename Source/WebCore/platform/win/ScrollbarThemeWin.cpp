@@ -247,7 +247,7 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext& context, Scrollbar& scr
     if (scrollbarTheme)
         alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, part, state);
 
-    LocalWindowsContext windowsContext(&context, rect, alphaBlend);
+    LocalWindowsContext windowsContext(context, rect, alphaBlend);
     RECT themeRect(rect);
 
     if (scrollbarTheme)
@@ -316,7 +316,7 @@ void ScrollbarThemeWin::paintButton(GraphicsContext& context, Scrollbar& scrollb
     if (scrollbarTheme)
         alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, SP_BUTTON, xpState);
 
-    LocalWindowsContext windowsContext(&context, rect, alphaBlend);
+    LocalWindowsContext windowsContext(context, rect, alphaBlend);
     RECT themeRect(rect);
     if (scrollbarTheme)
         DrawThemeBackground(scrollbarTheme, windowsContext.hdc(), SP_BUTTON, xpState, &themeRect, 0);
@@ -372,7 +372,7 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext& context, Scrollbar& scrollba
     bool alphaBlend = false;
     if (scrollbarTheme)
         alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, scrollbar.orientation() == HorizontalScrollbar ? SP_THUMBHOR : SP_THUMBVERT, state);
-    LocalWindowsContext windowsContext(&context, rect, alphaBlend);
+    LocalWindowsContext windowsContext(context, rect, alphaBlend);
     RECT themeRect(rect);
     if (scrollbarTheme) {
         DrawThemeBackground(scrollbarTheme, windowsContext.hdc(), scrollbar.orientation() == HorizontalScrollbar ? SP_THUMBHOR : SP_THUMBVERT, state, &themeRect, 0);

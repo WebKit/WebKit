@@ -208,7 +208,7 @@ Vector<FloatSize> NinePieceImage::computeNonIntrinsicTileScales()
     return Vector<FloatSize>(MaxPiece, FloatSize(1, 1));
 }
 
-void NinePieceImage::paint(GraphicsContext* graphicsContext, RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source,  bool intrinsicSource, float deviceScaleFactor, CompositeOperator op) const
+void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source,  bool intrinsicSource, float deviceScaleFactor, CompositeOperator op) const
 {
     StyleImage* styleImage = image();
     ASSERT(styleImage && styleImage->isLoaded());
@@ -238,13 +238,13 @@ void NinePieceImage::paint(GraphicsContext* graphicsContext, RenderElement* rend
             continue;
 
         if (isCornerPiece(piece)) {
-            graphicsContext->drawImage(image.get(), colorSpace, destinationRects[piece], sourceRects[piece], op);
+            graphicsContext.drawImage(image.get(), colorSpace, destinationRects[piece], sourceRects[piece], op);
             continue;
         }
 
         Image::TileRule hRule = isHorizontalPiece(piece) ? static_cast<Image::TileRule>(horizontalRule()) : Image::StretchTile;
         Image::TileRule vRule = isVerticalPiece(piece) ? static_cast<Image::TileRule>(verticalRule()) : Image::StretchTile;
-        graphicsContext->drawTiledImage(image.get(), colorSpace, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, op);
+        graphicsContext.drawTiledImage(image.get(), colorSpace, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, op);
     }
 }
 

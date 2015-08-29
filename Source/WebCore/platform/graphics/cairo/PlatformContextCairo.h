@@ -58,7 +58,7 @@ public:
     float globalAlpha() const;
 
     void pushImageMask(cairo_surface_t*, const FloatRect&);
-    void drawSurfaceToContext(cairo_surface_t*, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext*);
+    void drawSurfaceToContext(cairo_surface_t*, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext&);
 
     void setImageInterpolationQuality(InterpolationQuality);
     InterpolationQuality imageInterpolationQuality() const;

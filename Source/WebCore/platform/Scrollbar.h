@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT void setProportion(int visibleSize, int totalSize);
     void setPressedPos(int p) { m_pressedPos = p; }
 
-    virtual void paint(GraphicsContext*, const IntRect& damageRect) override;
+    virtual void paint(GraphicsContext&, const IntRect& damageRect) override;
 
     bool enabled() const { return m_enabled; }
     virtual void setEnabled(bool);

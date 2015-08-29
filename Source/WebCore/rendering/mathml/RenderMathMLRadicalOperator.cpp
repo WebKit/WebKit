@@ -108,7 +108,7 @@ void RenderMathMLRadicalOperator::computeLogicalHeight(LayoutUnit logicalHeight,
 
 void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
         return;
 
     if (style().fontCascade().primaryFont().mathData()) {
@@ -129,13 +129,13 @@ void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& pain
     FloatPoint dipLeftPoint(startX - gRadicalDipLeftPointXFront * frontWidth, adjustedPaintOffset.y() + radicalDipLeftPointYPos);
     FloatPoint leftEnd(startX - frontWidth, dipLeftPoint.y() + gRadicalLeftEndYShiftEms * style().fontSize());
 
-    GraphicsContextStateSaver stateSaver(*info.context);
+    GraphicsContextStateSaver stateSaver(info.context());
 
-    info.context->setStrokeThickness(gRadicalLineThicknessEms * style().fontSize());
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
-    info.context->setLineJoin(MiterJoin);
-    info.context->setMiterLimit(style().fontSize());
+    info.context().setStrokeThickness(gRadicalLineThicknessEms * style().fontSize());
+    info.context().setStrokeStyle(SolidStroke);
+    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    info.context().setLineJoin(MiterJoin);
+    info.context().setMiterLimit(style().fontSize());
 
     Path root;
 
@@ -147,9 +147,9 @@ void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& pain
     // draw to end
     root.addLineTo(leftEnd);
 
-    info.context->strokePath(root);
+    info.context().strokePath(root);
 
-    GraphicsContextStateSaver maskStateSaver(*info.context);
+    GraphicsContextStateSaver maskStateSaver(info.context());
 
     // Build a mask to draw the thick part of the root.
     Path mask;
@@ -159,17 +159,17 @@ void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& pain
     mask.addLineTo(dipLeftPoint);
     mask.addLineTo(FloatPoint(2 * dipLeftPoint.x() - leftEnd.x(), 2 * dipLeftPoint.y() - leftEnd.y()));
 
-    info.context->clip(mask);
+    info.context().clip(mask);
 
     // Draw the thick part of the root.
-    info.context->setStrokeThickness(gRadicalThickLineThicknessEms * style().fontSize());
-    info.context->setLineCap(SquareCap);
+    info.context().setStrokeThickness(gRadicalThickLineThicknessEms * style().fontSize());
+    info.context().setLineCap(SquareCap);
 
     Path line;
     line.moveTo(bottomPoint);
     line.addLineTo(dipLeftPoint);
 
-    info.context->strokePath(line);
+    info.context().strokePath(line);
 }
 
 }

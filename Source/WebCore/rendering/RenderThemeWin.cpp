@@ -622,7 +622,7 @@ ThemeData RenderThemeWin::getThemeData(const RenderObject& o, ControlSubPart sub
     return result;
 }
 
-static void drawControl(GraphicsContext* context, const RenderObject& o, HANDLE theme, const ThemeData& themeData, const IntRect& r)
+static void drawControl(GraphicsContext& context, const RenderObject& o, HANDLE theme, const ThemeData& themeData, const IntRect& r)
 {
     bool alphaBlend = false;
     if (theme)
@@ -677,13 +677,13 @@ static void drawControl(GraphicsContext* context, const RenderObject& o, HANDLE 
         }
     }
 
-    if (!alphaBlend && !context->isInTransparencyLayer())
+    if (!alphaBlend && !context.isInTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), r, 255);
 }
 
 bool RenderThemeWin::paintButton(const RenderObject& o, const PaintInfo& i, const IntRect& r)
 {  
-    drawControl(i.context,  o, buttonTheme(), getThemeData(o), r);
+    drawControl(i.context(),  o, buttonTheme(), getThemeData(o), r);
     return false;
 }
 
@@ -707,8 +707,8 @@ bool RenderThemeWin::paintInnerSpinButton(const RenderObject& o, const PaintInfo
     IntRect downRect(r);
     downRect.setY(upRect.maxY());
     downRect.setHeight(r.height() - upRect.height());
-    drawControl(i.context, o, spinButtonTheme(), getThemeData(o, SpinButtonUp), upRect);
-    drawControl(i.context, o, spinButtonTheme(), getThemeData(o, SpinButtonDown), downRect);
+    drawControl(i.context(), o, spinButtonTheme(), getThemeData(o, SpinButtonUp), upRect);
+    drawControl(i.context(), o, spinButtonTheme(), getThemeData(o, SpinButtonDown), downRect);
     return false;
 }
 
@@ -730,7 +730,7 @@ void RenderThemeWin::setCheckboxSize(RenderStyle& style) const
 
 bool RenderThemeWin::paintTextField(const RenderObject& o, const PaintInfo& i, const FloatRect& r)
 {
-    drawControl(i.context,  o, textFieldTheme(), getThemeData(o), IntRect(r));
+    drawControl(i.context(),  o, textFieldTheme(), getThemeData(o), IntRect(r));
     return false;
 }
 
@@ -746,7 +746,7 @@ bool RenderThemeWin::paintMenuList(const RenderObject& renderer, const PaintInfo
         part = TFP_TEXTFIELD;
     }
 
-    drawControl(paintInfo.context, renderer, theme, ThemeData(part, determineState(renderer)), IntRect(rect));
+    drawControl(paintInfo.context(), renderer, theme, ThemeData(part, determineState(renderer)), IntRect(rect));
     
     return paintMenuListButtonDecorations(downcast<RenderBox>(renderer), paintInfo, FloatRect(rect));
 }
@@ -808,7 +808,7 @@ bool RenderThemeWin::paintMenuListButtonDecorations(const RenderBox& renderer, c
         buttonRect.setWidth(buttonRect.width() + vistaMenuListButtonOutset);
     }
 
-    drawControl(paintInfo.context, renderer, menuListTheme(), getThemeData(renderer), buttonRect);
+    drawControl(paintInfo.context(), renderer, menuListTheme(), getThemeData(renderer), buttonRect);
 
     return false;
 }
@@ -827,13 +827,13 @@ bool RenderThemeWin::paintSliderTrack(const RenderObject& o, const PaintInfo& i,
         bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
     }
     
-    drawControl(i.context,  o, sliderTheme(), getThemeData(o), bounds);
+    drawControl(i.context(),  o, sliderTheme(), getThemeData(o), bounds);
     return false;
 }
 
 bool RenderThemeWin::paintSliderThumb(const RenderObject& o, const PaintInfo& i, const IntRect& r)
 {   
-    drawControl(i.context,  o, sliderTheme(), getThemeData(o), r);
+    drawControl(i.context(),  o, sliderTheme(), getThemeData(o), r);
     return false;
 }
 
@@ -892,7 +892,7 @@ bool RenderThemeWin::paintSearchFieldCancelButton(const RenderObject& o, const P
 
     static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
     static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
-    paintInfo.context->drawImage(isPressed(o) ? cancelPressedImage : cancelImage, o.style().colorSpace(), bounds);
+    paintInfo.context().drawImage(isPressed(o) ? cancelPressedImage : cancelImage, o.style().colorSpace(), bounds);
     return false;
 }
 
@@ -940,7 +940,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderObject& o
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
     
     static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").leakRef();
-    paintInfo.context->drawImage(magnifierImage, o.style().colorSpace(), bounds);
+    paintInfo.context().drawImage(magnifierImage, o.style().colorSpace(), bounds);
     return false;
 }
 
@@ -975,7 +975,7 @@ bool RenderThemeWin::paintSearchFieldResultsButton(const RenderObject& o, const 
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
 
     static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").leakRef();
-    paintInfo.context->drawImage(magnifierImage, o.style().colorSpace(), bounds);
+    paintInfo.context().drawImage(magnifierImage, o.style().colorSpace(), bounds);
     return false;
 }
 
@@ -1139,14 +1139,14 @@ bool RenderThemeWin::paintMeter(const RenderObject& renderObject, const PaintInf
     int remaining = static_cast<int>((1.0 - element->valueRatio()) * static_cast<double>(rect.size().width()));
 
     // Draw the background
-    drawControl(paintInfo.context, renderObject, progressBarTheme(), theme, rect);
+    drawControl(paintInfo.context(), renderObject, progressBarTheme(), theme, rect);
 
     // Draw the progress portion
     IntRect completedRect(rect);
     completedRect.contract(remaining, 0);
 
     theme.m_part = PP_FILL;
-    drawControl(paintInfo.context, renderObject, progressBarTheme(), theme, completedRect);
+    drawControl(paintInfo.context(), renderObject, progressBarTheme(), theme, completedRect);
 
     return true;
 }

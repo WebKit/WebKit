@@ -100,7 +100,7 @@ public:
     virtual bool controlRequiresPreWhiteSpace(ControlPart) const { return false; }
 
     // Method for painting a control. The rect is in zoomed coordinates.
-    virtual void paint(ControlPart, ControlStates&, GraphicsContext*, const FloatRect& /*zoomedRect*/, float /*zoomFactor*/, ScrollView*, float /*deviceScaleFactor*/, float /*pageScaleFactor*/) { }
+    virtual void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect& /*zoomedRect*/, float /*zoomFactor*/, ScrollView*, float /*deviceScaleFactor*/, float /*pageScaleFactor*/) { }
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
@@ -108,7 +108,7 @@ public:
     // amount is also scaled by the zoomFactor.
     virtual void inflateControlPaintRect(ControlPart, const ControlStates&, FloatRect& /*zoomedRect*/, float /*zoomFactor*/) const { }
 
-    virtual void drawNamedImage(const String&, GraphicsContext*, const FloatRect&) const;
+    virtual void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const;
 
     // This method is called once, from RenderTheme::adjustDefaultStyleSheet(), to let each platform adjust
     // the default CSS rules in html.css.

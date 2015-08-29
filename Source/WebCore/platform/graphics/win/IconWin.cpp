@@ -78,7 +78,7 @@ void Icon::paint(GraphicsContext& context, const FloatRect& r)
     if (context.paintingDisabled())
         return;
 
-    LocalWindowsContext windowContext(&context, enclosingIntRect(r));
+    LocalWindowsContext windowContext(context, enclosingIntRect(r));
     DrawIconEx(windowContext.hdc(), r.x(), r.y(), m_hIcon, r.width(), r.height(), 0, 0, DI_NORMAL);
 }
 

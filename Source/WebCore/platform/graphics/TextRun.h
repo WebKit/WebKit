@@ -135,7 +135,7 @@ public:
 
 #if ENABLE(SVG_FONTS)
         virtual GlyphData glyphDataForCharacter(const FontCascade&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) = 0;
-        virtual void drawSVGGlyphs(GraphicsContext*, const Font*, const GlyphBuffer&, int from, int to, const FloatPoint&) const = 0;
+        virtual void drawSVGGlyphs(GraphicsContext&, const Font&, const GlyphBuffer&, int from, int to, const FloatPoint&) const = 0;
         virtual float floatWidthUsingSVGFont(const FontCascade&, const TextRun&, int& charsConsumed, String& glyphName) const = 0;
         virtual bool applySVGKerning(const Font*, WidthIterator&, GlyphBuffer*, int from) const = 0;
         virtual std::unique_ptr<GlyphToPathTranslator> createGlyphToPathTranslator(const Font&, const TextRun*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const = 0;

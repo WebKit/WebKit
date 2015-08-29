@@ -141,7 +141,7 @@ void RenderMathMLFraction::layout()
 void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
-    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
         return;
     
     RenderBox* denominatorWrapper = lastChildBox();
@@ -150,12 +150,12 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
 
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + denominatorWrapper->location() + LayoutPoint(0, m_lineThickness / 2));
     
-    GraphicsContextStateSaver stateSaver(*info.context);
+    GraphicsContextStateSaver stateSaver(info.context());
     
-    info.context->setStrokeThickness(m_lineThickness);
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
-    info.context->drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + denominatorWrapper->offsetWidth(), adjustedPaintOffset.y())));
+    info.context().setStrokeThickness(m_lineThickness);
+    info.context().setStrokeStyle(SolidStroke);
+    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
+    info.context().drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + denominatorWrapper->offsetWidth(), adjustedPaintOffset.y())));
 }
 
 Optional<int> RenderMathMLFraction::firstLineBaseline() const

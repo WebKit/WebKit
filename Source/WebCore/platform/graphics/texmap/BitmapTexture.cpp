@@ -40,14 +40,14 @@ void BitmapTexture::updateContents(TextureMapper* textureMapper, GraphicsLayer* 
     if (!imageBuffer)
         return;
 
-    GraphicsContext* context = imageBuffer->context();
-    context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
-    context->setTextDrawingMode(textureMapper->textDrawingMode());
+    GraphicsContext& context = imageBuffer->context();
+    context.setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
+    context.setTextDrawingMode(textureMapper->textDrawingMode());
 
     IntRect sourceRect(targetRect);
     sourceRect.setLocation(offset);
-    context->translate(-offset.x(), -offset.y());
-    sourceLayer->paintGraphicsLayerContents(*context, sourceRect);
+    context.translate(-offset.x(), -offset.y());
+    sourceLayer->paintGraphicsLayerContents(context, sourceRect);
 
     RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
     if (!image)

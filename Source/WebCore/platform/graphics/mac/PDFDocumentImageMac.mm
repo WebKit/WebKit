@@ -69,19 +69,19 @@ unsigned PDFDocumentImage::pageCount() const
     return [m_document pageCount];
 }
 
-void PDFDocumentImage::drawPDFPage(GraphicsContext* context)
+void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
 {
     LocalCurrentGraphicsContext localCurrentContext(context);
 
     // These states can be mutated by PDFKit but are not saved
     // on the context's state stack. (<rdar://problem/14951759>)
-    bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context->platformContext());
-    bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context->platformContext());
+    bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context.platformContext());
+    bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context.platformContext());
 
     [[m_document pageAtIndex:0] drawWithBox:kPDFDisplayBoxCropBox];
 
-    CGContextSetAllowsFontSmoothing(context->platformContext(), allowsSmoothing);
-    CGContextSetAllowsFontSubpixelQuantization(context->platformContext(), allowsSubpixelQuantization);
+    CGContextSetAllowsFontSmoothing(context.platformContext(), allowsSmoothing);
+    CGContextSetAllowsFontSubpixelQuantization(context.platformContext(), allowsSubpixelQuantization);
 }
 
 }

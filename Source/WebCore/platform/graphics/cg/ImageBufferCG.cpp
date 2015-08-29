@@ -143,9 +143,9 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         m_data.context = std::make_unique<GraphicsContext>(cgContext.get());
     }
 
-    context()->scale(FloatSize(1, -1));
-    context()->translate(0, -m_data.backingStoreSize.height());
-    context()->applyDeviceScaleFactor(m_resolutionScale);
+    context().scale(FloatSize(1, -1));
+    context().translate(0, -m_data.backingStoreSize.height());
+    context().applyDeviceScaleFactor(m_resolutionScale);
 
     success = true;
 }
@@ -154,18 +154,18 @@ ImageBuffer::~ImageBuffer()
 {
 }
 
-GraphicsContext* ImageBuffer::context() const
+GraphicsContext& ImageBuffer::context() const
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (m_data.surface)
-        return &m_data.surface->ensureGraphicsContext();
+        return m_data.surface->ensureGraphicsContext();
 #endif
-    return m_data.context.get();
+    return *m_data.context;
 }
 
 void ImageBuffer::flushContext() const
 {
-    CGContextFlush(context()->platformContext());
+    CGContextFlush(context().platformContext());
 }
 
 static RetainPtr<CGImageRef> createCroppedImageIfNecessary(CGImageRef image, const IntSize& bounds)
@@ -210,13 +210,13 @@ BackingStoreCopy ImageBuffer::fastCopyImageMode()
 RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
     RetainPtr<CGImageRef> image;
-    if (!context()->isAcceleratedContext()) {
+    if (!context().isAcceleratedContext()) {
         switch (copyBehavior) {
         case DontCopyBackingStore:
             image = adoptCF(CGImageCreate(m_data.backingStoreSize.width(), m_data.backingStoreSize.height(), 8, 32, m_data.bytesPerRow.unsafeGet(), m_data.colorSpace, m_data.bitmapInfo, m_data.dataProvider.get(), 0, true, kCGRenderingIntentDefault));
             break;
         case CopyBackingStore:
-            image = adoptCF(CGBitmapContextCreateImage(context()->platformContext()));
+            image = adoptCF(CGBitmapContextCreateImage(context().platformContext()));
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -231,29 +231,29 @@ RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior
     return image;
 }
 
-void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
+void ImageBuffer::draw(GraphicsContext& destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     UNUSED_PARAM(useLowQualityScale);
-    ColorSpace colorSpace = (destContext == context()) ? ColorSpaceDeviceRGB : styleColorSpace;
+    ColorSpace colorSpace = (&destContext == &context()) ? ColorSpaceDeviceRGB : styleColorSpace;
 
     RetainPtr<CGImageRef> image;
-    if (destContext == context() || destContext->isAcceleratedContext())
+    if (&destContext == &context() || destContext.isAcceleratedContext())
         image = copyNativeImage(CopyBackingStore); // Drawing into our own buffer, need to deep copy.
     else
         image = copyNativeImage(DontCopyBackingStore);
 
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
-    destContext->drawNativeImage(image.get(), m_data.backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
+    destContext.drawNativeImage(image.get(), m_data.backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
 }
 
-void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
 
-    if (!context()->isAcceleratedContext()) {
-        if (destContext == context() || destContext->isAcceleratedContext()) {
+    if (!context().isAcceleratedContext()) {
+        if (&destContext == &context() || destContext.isAcceleratedContext()) {
             if (RefPtr<Image> copy = copyImage(CopyBackingStore)) // Drawing into our own buffer, need to deep copy.
                 copy->drawPattern(destContext, adjustedSrcRect, patternTransform, phase, styleColorSpace, op, destRect, blendMode);
         } else {
@@ -266,11 +266,11 @@ void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& src
     }
 }
 
-void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) const
+void ImageBuffer::clip(GraphicsContext& contextToClip, const FloatRect& rect) const
 {
     FloatSize backingStoreSizeInUserSpace = scaleSizeToUserSpace(rect.size(), m_data.backingStoreSize, internalSize());
 
-    CGContextRef platformContextToClip = contextToClip->platformContext();
+    CGContextRef platformContextToClip = contextToClip.platformContext();
     // FIXME: This image needs to be grayscale to be used as an alpha mask here.
     RetainPtr<CGImageRef> image = copyNativeImage(DontCopyBackingStore);
     CGContextTranslateCTM(platformContextToClip, rect.x(), rect.y() + backingStoreSizeInUserSpace.height());
@@ -283,31 +283,31 @@ void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) co
 
 PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
-    if (context()->isAcceleratedContext())
+    if (context().isAcceleratedContext())
         flushContext();
 
     IntRect srcRect = rect;
     if (coordinateSystem == LogicalCoordinateSystem)
         srcRect.scale(m_resolutionScale);
 
-    return m_data.getData(srcRect, internalSize(), context()->isAcceleratedContext(), true, 1);
+    return m_data.getData(srcRect, internalSize(), context().isAcceleratedContext(), true, 1);
 }
 
 PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
-    if (context()->isAcceleratedContext())
+    if (context().isAcceleratedContext())
         flushContext();
 
     IntRect srcRect = rect;
     if (coordinateSystem == LogicalCoordinateSystem)
         srcRect.scale(m_resolutionScale);
 
-    return m_data.getData(srcRect, internalSize(), context()->isAcceleratedContext(), false, 1);
+    return m_data.getData(srcRect, internalSize(), context().isAcceleratedContext(), false, 1);
 }
 
 void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
 {
-    if (!context()->isAcceleratedContext()) {
+    if (!context().isAcceleratedContext()) {
         IntRect scaledSourceRect = sourceRect;
         IntSize scaledSourceSize = sourceSize;
         if (coordinateSystem == LogicalCoordinateSystem) {
@@ -326,10 +326,10 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     if (!sourceCopy)
         return;
 
-    sourceCopy->m_data.putData(source, sourceSize, sourceRect, IntPoint(-sourceRect.x(), -sourceRect.y()), sourceCopy->internalSize(), sourceCopy->context()->isAcceleratedContext(), multiplied == Unmultiplied, 1);
+    sourceCopy->m_data.putData(source, sourceSize, sourceRect, IntPoint(-sourceRect.x(), -sourceRect.y()), sourceCopy->internalSize(), sourceCopy->context().isAcceleratedContext(), multiplied == Unmultiplied, 1);
 
     // Set up context for using drawImage as a direct bit copy
-    CGContextRef destContext = context()->platformContext();
+    CGContextRef destContext = context().platformContext();
     CGContextSaveGState(destContext);
     if (coordinateSystem == LogicalCoordinateSystem)
         CGContextConcatCTM(destContext, AffineTransform(wkGetUserToBaseCTM(destContext)).inverse());
@@ -430,7 +430,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    if (context()->isAcceleratedContext())
+    if (context().isAcceleratedContext())
         flushContext();
 
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);

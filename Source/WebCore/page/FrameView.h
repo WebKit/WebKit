@@ -323,7 +323,7 @@ public:
     void addEmbeddedObjectToUpdate(RenderEmbeddedObject&);
     void removeEmbeddedObjectToUpdate(RenderEmbeddedObject&);
 
-    WEBCORE_EXPORT virtual void paintContents(GraphicsContext*, const IntRect& dirtyRect) override;
+    WEBCORE_EXPORT virtual void paintContents(GraphicsContext&, const IntRect& dirtyRect) override;
 
     struct PaintingState {
         PaintBehavior paintBehavior;
@@ -337,8 +337,8 @@ public:
         }
     };
 
-    void willPaintContents(GraphicsContext*, const IntRect& dirtyRect, PaintingState&);
-    void didPaintContents(GraphicsContext*, const IntRect& dirtyRect, PaintingState&);
+    void willPaintContents(GraphicsContext&, const IntRect& dirtyRect, PaintingState&);
+    void didPaintContents(GraphicsContext&, const IntRect& dirtyRect, PaintingState&);
 
 #if PLATFORM(IOS)
     WEBCORE_EXPORT void didReplaceMultipartContent();
@@ -353,11 +353,11 @@ public:
 
     enum SelectionInSnapshot { IncludeSelection, ExcludeSelection };
     enum CoordinateSpaceForSnapshot { DocumentCoordinates, ViewCoordinates };
-    WEBCORE_EXPORT void paintContentsForSnapshot(GraphicsContext*, const IntRect& imageRect, SelectionInSnapshot shouldPaintSelection, CoordinateSpaceForSnapshot);
+    WEBCORE_EXPORT void paintContentsForSnapshot(GraphicsContext&, const IntRect& imageRect, SelectionInSnapshot shouldPaintSelection, CoordinateSpaceForSnapshot);
 
-    virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) override;
-    virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect) override;
-    virtual void paintScrollbar(GraphicsContext*, Scrollbar*, const IntRect&) override;
+    virtual void paintOverhangAreas(GraphicsContext&, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) override;
+    virtual void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect) override;
+    virtual void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&) override;
 
     WEBCORE_EXPORT Color documentBackgroundColor() const;
 

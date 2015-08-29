@@ -69,7 +69,7 @@ public:
 
     bool prepareFilterEffect(RenderLayer*, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
     bool beginFilterEffect();
-    void applyFilterEffect(GraphicsContext* destinationContext);
+    void applyFilterEffect(GraphicsContext& destinationContext);
     
     GraphicsContext* filterContext() const;
 

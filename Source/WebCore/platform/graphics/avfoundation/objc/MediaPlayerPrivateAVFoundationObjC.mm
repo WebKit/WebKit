@@ -1494,9 +1494,9 @@ long MediaPlayerPrivateAVFoundationObjC::assetErrorCode() const
     return [error code];
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsContext* context, const FloatRect& rect)
+void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
-    if (!metaDataAvailable() || context->paintingDisabled())
+    if (!metaDataAvailable() || context.paintingDisabled())
         return;
 
     setDelayCallbacks(true);
@@ -1515,9 +1515,9 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     m_videoFrameHasDrawn = true;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const FloatRect& rect)
+void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext& context, const FloatRect& rect)
 {
-    if (!metaDataAvailable() || context->paintingDisabled())
+    if (!metaDataAvailable() || context.paintingDisabled())
         return;
 
     // We can ignore the request if we are already rendering to a layer.
@@ -1531,18 +1531,18 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const F
     paintCurrentFrameInContext(context, rect);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext* context, const FloatRect& rect)
+void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext& context, const FloatRect& rect)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(%p)", this);
 
     RetainPtr<CGImageRef> image = createImageForTimeInRect(currentTime(), rect);
     if (image) {
-        GraphicsContextStateSaver stateSaver(*context);
-        context->translate(rect.x(), rect.y() + rect.height());
-        context->scale(FloatSize(1.0f, -1.0f));
-        context->setImageInterpolationQuality(InterpolationLow);
+        GraphicsContextStateSaver stateSaver(context);
+        context.translate(rect.x(), rect.y() + rect.height());
+        context.scale(FloatSize(1.0f, -1.0f));
+        context.setImageInterpolationQuality(InterpolationLow);
         IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-        CGContextDrawImage(context->platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
+        CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
         image = 0;
     }
 }
@@ -2323,7 +2323,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
         m_lastImage = createImageFromPixelBuffer(pixelBuffer.get());
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const FloatRect& outputRect)
+void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
 {
 #if (!defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
     if (m_videoOutput && !m_lastImage && !videoOutputHasAvailableFrame())
@@ -2341,13 +2341,13 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(%p)", this);
 
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
     FloatRect imageRect(0, 0, CGImageGetWidth(m_lastImage.get()), CGImageGetHeight(m_lastImage.get()));
     AffineTransform videoTransform = [firstEnabledVideoTrack preferredTransform];
     FloatRect transformedOutputRect = videoTransform.inverse().mapRect(outputRect);
 
-    context->concatCTM(videoTransform);
-    context->drawNativeImage(m_lastImage.get(), imageRect.size(), ColorSpaceDeviceRGB, transformedOutputRect, imageRect);
+    context.concatCTM(videoTransform);
+    context.drawNativeImage(m_lastImage.get(), imageRect.size(), ColorSpaceDeviceRGB, transformedOutputRect, imageRect);
 
     // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
     // video frame, destroy it now that it is no longer needed.

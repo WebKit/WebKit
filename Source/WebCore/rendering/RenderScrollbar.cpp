@@ -102,9 +102,9 @@ void RenderScrollbar::styleChanged()
     updateScrollbarParts();
 }
 
-void RenderScrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
+void RenderScrollbar::paint(GraphicsContext& context, const IntRect& damageRect)
 {
-    if (context->updatingControlTints()) {
+    if (context.updatingControlTints()) {
         updateScrollbarParts();
         return;
     }
@@ -252,7 +252,7 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
     }
 }
 
-void RenderScrollbar::paintPart(GraphicsContext* graphicsContext, ScrollbarPart partType, const IntRect& rect)
+void RenderScrollbar::paintPart(GraphicsContext& graphicsContext, ScrollbarPart partType, const IntRect& rect)
 {
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer)

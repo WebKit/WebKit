@@ -99,11 +99,11 @@ void ImageQualityController::restartTimer()
     m_timer.startOneShot(cLowQualityTimeThreshold);
 }
 
-bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, RenderBoxModelObject* object, Image* image, const void *layer, const LayoutSize& size)
+bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, RenderBoxModelObject* object, Image* image, const void *layer, const LayoutSize& size)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high
     // quality.
-    if (!image || !(image->isBitmapImage() || image->isPDFDocumentImage()) || context->paintingDisabled())
+    if (!image || !(image->isBitmapImage() || image->isPDFDocumentImage()) || context.paintingDisabled())
         return false;
 
     switch (object->style().imageRendering()) {
@@ -146,7 +146,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
             return false;
     }
 
-    const AffineTransform& currentTransform = context->getCTM();
+    const AffineTransform& currentTransform = context.getCTM();
     bool contextIsScaled = !currentTransform.isIdentityOrTranslationOrFlipped();
     if (!contextIsScaled && size == imageSize) {
         // There is no scale in effect. If we had a scale in effect before, we can just remove this object from the list.

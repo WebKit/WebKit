@@ -672,7 +672,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
     }
 
     if (m_scrollbar)
-        m_scrollbar->paint(&context, damageRect);
+        m_scrollbar->paint(context, damageRect);
 
     HWndDC hWndDC;
     HDC localDC = hdc ? hdc : hWndDC.setHWnd(m_popup);

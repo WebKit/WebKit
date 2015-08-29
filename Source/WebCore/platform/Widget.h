@@ -117,7 +117,7 @@ public:
     void move(int x, int y) { setFrameRect(IntRect(x, y, width(), height())); }
     void move(const IntPoint& p) { setFrameRect(IntRect(p, size())); }
 
-    WEBCORE_EXPORT virtual void paint(GraphicsContext*, const IntRect&);
+    WEBCORE_EXPORT virtual void paint(GraphicsContext&, const IntRect&);
     void invalidate() { invalidateRect(boundsRect()); }
     virtual void invalidateRect(const IntRect&) = 0;
 

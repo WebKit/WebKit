@@ -39,16 +39,16 @@ NamedImageGeneratedImage::NamedImageGeneratedImage(String name, const FloatSize&
     setContainerSize(size);
 }
 
-void NamedImageGeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
+void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
 {
 #if USE(NEW_THEME)
-    GraphicsContextStateSaver stateSaver(*context);
-    context->setCompositeOperation(compositeOp, blendMode);
-    context->clip(dstRect);
-    context->translate(dstRect.x(), dstRect.y());
+    GraphicsContextStateSaver stateSaver(context);
+    context.setCompositeOperation(compositeOp, blendMode);
+    context.clip(dstRect);
+    context.translate(dstRect.x(), dstRect.y());
     if (dstRect.size() != srcRect.size())
-        context->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
-    context->translate(-srcRect.x(), -srcRect.y());
+        context.scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
+    context.translate(-srcRect.x(), -srcRect.y());
 
     platformTheme()->drawNamedImage(m_name, context, dstRect);
 #else
@@ -60,15 +60,15 @@ void NamedImageGeneratedImage::draw(GraphicsContext* context, const FloatRect& d
 #endif
 }
 
-void NamedImageGeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
 #if USE(NEW_THEME)
 //    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(size(), 1, ColorSpaceDeviceRGB, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
-    std::unique_ptr<ImageBuffer> imageBuffer = context->createCompatibleBuffer(size(), true);
+    std::unique_ptr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(size(), true);
     if (!imageBuffer)
         return;
 
-    GraphicsContext* graphicsContext = imageBuffer->context();
+    GraphicsContext& graphicsContext = imageBuffer->context();
     platformTheme()->drawNamedImage(m_name, graphicsContext, FloatRect(0, 0, size().width(), size().height()));
 
     // Tile the image buffer into the context.

@@ -124,7 +124,7 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSiz
     if (!texture)
         return Image::nullImage();
     FloatRect imageRect = FloatRect(FloatPoint(), size);
-    texture->context()->drawImage(image, ColorSpaceDeviceRGB, imageRect);
+    texture->context().drawImage(image, ColorSpaceDeviceRGB, imageRect);
 
     RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
     filterRenderer->setSourceImage(WTF::move(texture));

@@ -39,13 +39,13 @@
 
 namespace WebCore {
 
-static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext* gc)
+static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext& gc)
 {
     IntSize offset = view->scrollOffset();
     rect.move(-offset.width(), -offset.height());
     rect = view->convertToContainingWindow(rect);
 
-    gc->concatCTM(AffineTransform().translate(-rect.x(), -rect.y()));
+    gc.concatCTM(AffineTransform().translate(-rect.x(), -rect.y()));
 
     view->paint(gc, rect);
 }
@@ -72,7 +72,7 @@ GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
 
     GraphicsContext gc(context);
 
-    drawRectIntoContext(ir, frame->view(), &gc);
+    drawRectIntoContext(ir, frame->view(), gc);
 
     CGContextRelease(context);
     SelectObject(hdc.get(), hbmpOld);

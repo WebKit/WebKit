@@ -1797,12 +1797,12 @@ LayoutRect RenderMathMLOperator::paintGlyph(PaintInfo& info, const GlyphData& da
     }
 
     // Clipping the enclosing IntRect avoids any potential issues at joined edges.
-    GraphicsContextStateSaver stateSaver(*info.context);
-    info.context->clip(clipBounds);
+    GraphicsContextStateSaver stateSaver(info.context());
+    info.context().clip(clipBounds);
 
     GlyphBuffer buffer;
     buffer.add(data.glyph, data.font, advanceForGlyph(data));
-    info.context->drawGlyphs(style().fontCascade(), *data.font, buffer, 0, 1, origin);
+    info.context().drawGlyphs(style().fontCascade(), *data.font, buffer, 0, 1, origin);
 
     return glyphPaintRect;
 }
@@ -1818,7 +1818,7 @@ void RenderMathMLOperator::fillWithVerticalExtensionGlyph(PaintInfo& info, const
     if (from.y() == to.y())
         return;
 
-    GraphicsContextStateSaver stateSaver(*info.context);
+    GraphicsContextStateSaver stateSaver(info.context());
 
     FloatRect glyphBounds = boundsForGlyph(m_stretchyData.extension());
 
@@ -1827,7 +1827,7 @@ void RenderMathMLOperator::fillWithVerticalExtensionGlyph(PaintInfo& info, const
     LayoutRect clipBounds = info.rect;
     clipBounds.shiftYEdgeTo(from.y());
     clipBounds.shiftMaxYEdgeTo(to.y());
-    info.context->clip(clipBounds);
+    info.context().clip(clipBounds);
 
     // Trimming may remove up to two pixels from the top of the extender glyph, so we move it up by two pixels.
     float offsetToGlyphTop = glyphBounds.y() + 2;
@@ -1856,14 +1856,14 @@ void RenderMathMLOperator::fillWithHorizontalExtensionGlyph(PaintInfo& info, con
     if (from.x() == to.x())
         return;
 
-    GraphicsContextStateSaver stateSaver(*info.context);
+    GraphicsContextStateSaver stateSaver(info.context());
 
     // Clipping the extender region here allows us to draw the bottom extender glyph into the
     // regions of the bottom glyph without worrying about overdraw (hairy pixels) and simplifies later clipping.
     LayoutRect clipBounds = info.rect;
     clipBounds.shiftXEdgeTo(from.x());
     clipBounds.shiftMaxXEdgeTo(to.x());
-    info.context->clip(clipBounds);
+    info.context().clip(clipBounds);
 
     // Trimming may remove up to two pixels from the left of the extender glyph, so we move it left by two pixels.
     float offsetToGlyphLeft = -2;
@@ -1885,11 +1885,11 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
 {
     RenderMathMLToken::paint(info, paintOffset);
 
-    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || m_stretchyData.mode() == DrawNormal)
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || m_stretchyData.mode() == DrawNormal)
         return;
 
-    GraphicsContextStateSaver stateSaver(*info.context);
-    info.context->setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
+    GraphicsContextStateSaver stateSaver(info.context());
+    info.context().setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
 
     if (m_stretchyData.mode() == DrawSizeVariant) {
         ASSERT(m_stretchyData.variant().glyph);
@@ -1898,7 +1898,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
         LayoutPoint operatorTopLeft = ceiledIntPoint(paintOffset + location());
         FloatRect glyphBounds = boundsForGlyph(m_stretchyData.variant());
         LayoutPoint operatorOrigin(operatorTopLeft.x(), operatorTopLeft.y() - glyphBounds.y());
-        info.context->drawGlyphs(style().fontCascade(), *m_stretchyData.variant().font, buffer, 0, 1, operatorOrigin);
+        info.context().drawGlyphs(style().fontCascade(), *m_stretchyData.variant().font, buffer, 0, 1, operatorOrigin);
         return;
     }
 

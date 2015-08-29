@@ -1194,14 +1194,14 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     FloatRect marker = getRelativeMarkerRect();
     marker.moveBy(boxOrigin);
 
-    GraphicsContext* context = paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
 
     if (isImage()) {
-        context->drawImage(m_image->image(this, marker.size()).get(), style().colorSpace(), marker);
+        context.drawImage(m_image->image(this, marker.size()).get(), style().colorSpace(), marker);
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
-            context->fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor(), style().colorSpace());
+            context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor(), style().colorSpace());
         }
         return;
     }
@@ -1209,26 +1209,26 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (selectionState() != SelectionNone) {
         LayoutRect selRect = localSelectionRect();
         selRect.moveBy(boxOrigin);
-        context->fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor(), style().colorSpace());
+        context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor(), style().colorSpace());
     }
 
     const Color color(style().visitedDependentColor(CSSPropertyColor));
-    context->setStrokeColor(color, style().colorSpace());
-    context->setStrokeStyle(SolidStroke);
-    context->setStrokeThickness(1.0f);
-    context->setFillColor(color, style().colorSpace());
+    context.setStrokeColor(color, style().colorSpace());
+    context.setStrokeStyle(SolidStroke);
+    context.setStrokeThickness(1.0f);
+    context.setFillColor(color, style().colorSpace());
 
     EListStyleType type = style().listStyleType();
     switch (type) {
         case Disc:
-            context->drawEllipse(marker);
+            context.drawEllipse(marker);
             return;
         case Circle:
-            context->setFillColor(Color::transparent, ColorSpaceDeviceRGB);
-            context->drawEllipse(marker);
+            context.setFillColor(Color::transparent, ColorSpaceDeviceRGB);
+            context.drawEllipse(marker);
             return;
         case Square:
-            context->drawRect(marker);
+            context.drawRect(marker);
             return;
         case NoneListStyle:
             return;
@@ -1317,22 +1317,22 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     const FontCascade& font = style().fontCascade();
     TextRun textRun = RenderBlock::constructTextRun(this, font, m_text, style());
 
-    GraphicsContextStateSaver stateSaver(*context, false);
+    GraphicsContextStateSaver stateSaver(context, false);
     if (!style().isHorizontalWritingMode()) {
         marker.moveBy(-boxOrigin);
         marker = marker.transposedRect();
         marker.moveBy(FloatPoint(box.x(), box.y() - logicalHeight()));
         stateSaver.save();
-        context->translate(marker.x(), marker.maxY());
-        context->rotate(static_cast<float>(deg2rad(90.)));
-        context->translate(-marker.x(), -marker.maxY());
+        context.translate(marker.x(), marker.maxY());
+        context.rotate(static_cast<float>(deg2rad(90.)));
+        context.translate(-marker.x(), -marker.maxY());
     }
 
     FloatPoint textOrigin = FloatPoint(marker.x(), marker.y() + style().fontMetrics().ascent());
     textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), style().isLeftToRightDirection());
 
     if (type == Asterisks || type == Footnotes)
-        context->drawText(font, textRun, textOrigin);
+        context.drawText(font, textRun, textOrigin);
     else {
         const UChar suffix = listMarkerSuffix(type, m_listItem.value());
 
@@ -1363,7 +1363,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         }
         textRun.setText(StringView(toDraw));
 
-        context->drawText(font, textRun, textOrigin);
+        context.drawText(font, textRun, textOrigin);
     }
 }
 

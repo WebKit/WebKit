@@ -475,7 +475,7 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoi
                 LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                 if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
                     if (paintInfo && box->parent()->renderer().style().visibility() == VISIBLE)
-                        paintInfo->context->fillRect(gapRect, box->parent()->renderer().selectionBackgroundColor(), box->parent()->renderer().style().colorSpace());
+                        paintInfo->context().fillRect(gapRect, box->parent()->renderer().selectionBackgroundColor(), box->parent()->renderer().style().colorSpace());
                     // VisibleSelection may be non-contiguous, see comment above.
                     result.uniteCenter(gapRect);
                 }

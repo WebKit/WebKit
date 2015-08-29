@@ -75,7 +75,7 @@ public:
     static std::unique_ptr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, ColorSpace, RenderingMode);
 
     static void renderSubtreeToImageBuffer(ImageBuffer*, RenderElement&, const AffineTransform&);
-    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& targetRect, std::unique_ptr<ImageBuffer>&, bool safeToClear);
+    static void clipToImageBuffer(GraphicsContext&, const AffineTransform& absoluteTransform, const FloatRect& targetRect, std::unique_ptr<ImageBuffer>&, bool safeToClear);
 
     static float calculateScreenFontSizeScalingFactor(const RenderObject&);
     static AffineTransform calculateTransformationToOutermostCoordinateSystem(const RenderObject&);

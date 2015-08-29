@@ -1242,9 +1242,9 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
     paintFillLayers(paintInfo, bgColor, bgLayer, view().backgroundRect(), BackgroundBleedNone, CompositeSourceOver, &rootBackgroundRenderer);
 }
 
-BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext* context) const
+BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext& context) const
 {
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return BackgroundBleedNone;
 
     const RenderStyle& style = this->style();
@@ -1252,7 +1252,7 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     if (!style.hasBackground() || !style.hasBorder() || !style.hasBorderRadius() || borderImageIsLoadedAndCanBeRendered())
         return BackgroundBleedNone;
 
-    AffineTransform ctm = context->getCTM();
+    AffineTransform ctm = context.getCTM();
     FloatSize contextScaling(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
 
     // Because RoundedRect uses IntRect internally the inset applied by the 
@@ -1293,21 +1293,21 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         paintRect = IntRect(paintRect.x(), paintRect.y() + (this->height() - height) / 2, width, height); // Vertically center the checkbox, like on desktop
     }
 #endif
-    BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
+    BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context());
 
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
     if (!boxShadowShouldBeAppliedToBackground(paintRect.location(), bleedAvoidance))
         paintBoxShadow(paintInfo, paintRect, style(), Normal);
 
-    GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
         // To avoid the background color bleeding out behind the border, we'll render background and border
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
         stateSaver.save();
-        paintInfo.context->clipRoundedRect(style().getRoundedBorderFor(paintRect).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor()));
-        paintInfo.context->beginTransparencyLayer(1);
+        paintInfo.context().clipRoundedRect(style().getRoundedBorderFor(paintRect).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor()));
+        paintInfo.context().beginTransparencyLayer(1);
     }
 
     // If we have a native theme appearance, paint that before painting our background.
@@ -1342,7 +1342,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
-        paintInfo.context->endTransparencyLayer();
+        paintInfo.context().endTransparencyLayer();
 }
 
 void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance)
@@ -1519,7 +1519,7 @@ bool RenderBox::backgroundHasOpaqueTopLayer() const
 
 void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context->paintingDisabled())
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context().paintingDisabled())
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
@@ -1528,11 +1528,11 @@ void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBox::paintClippingMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseClippingMask || paintInfo.context->paintingDisabled())
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != VISIBLE || paintInfo.phase != PaintPhaseClippingMask || paintInfo.context().paintingDisabled())
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
-    paintInfo.context->fillRect(snappedIntRect(paintRect), Color::black, style().colorSpace());
+    paintInfo.context().fillRect(snappedIntRect(paintRect), Color::black, style().colorSpace());
 }
 
 void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& paintRect)
@@ -1557,18 +1557,18 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
         if (maskLayers)
             allMaskImagesLoaded &= maskLayers->imagesAreLoaded();
 
-        paintInfo.context->setCompositeOperation(CompositeDestinationIn);
-        paintInfo.context->beginTransparencyLayer(1);
+        paintInfo.context().setCompositeOperation(CompositeDestinationIn);
+        paintInfo.context().beginTransparencyLayer(1);
         compositeOp = CompositeSourceOver;
     }
 
     if (allMaskImagesLoaded) {
         paintFillLayers(paintInfo, Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
-        paintNinePieceImage(paintInfo.context, paintRect, style(), style().maskBoxImage(), compositeOp);
+        paintNinePieceImage(paintInfo.context(), paintRect, style(), style().maskBoxImage(), compositeOp);
     }
     
     if (pushTransparencyLayer)
-        paintInfo.context->endTransparencyLayer();
+        paintInfo.context().endTransparencyLayer();
 }
 
 LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
@@ -1619,16 +1619,13 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, cons
         curLayer = curLayer->next();
     }
 
-    GraphicsContext* context = paintInfo.context;
-    if (!context)
-        shouldDrawBackgroundInSeparateBuffer = false;
-
+    GraphicsContext& context = paintInfo.context();
     BaseBackgroundColorUsage baseBgColorUsage = BaseBackgroundColorUse;
 
     if (shouldDrawBackgroundInSeparateBuffer) {
         paintFillLayer(paintInfo, c, *layers.rbegin(), rect, bleedAvoidance, op, backgroundObject, BaseBackgroundColorOnly);
         baseBgColorUsage = BaseBackgroundColorSkip;
-        context->beginTransparencyLayer(1);
+        context.beginTransparencyLayer(1);
     }
 
     Vector<const FillLayer*>::const_reverse_iterator topLayer = layers.rend();
@@ -1636,7 +1633,7 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, cons
         paintFillLayer(paintInfo, c, *it, rect, bleedAvoidance, op, backgroundObject, baseBgColorUsage);
 
     if (shouldDrawBackgroundInSeparateBuffer)
-        context->endTransparencyLayer();
+        context.endTransparencyLayer();
 }
 
 void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect,
@@ -1768,10 +1765,10 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     }
     float deviceScaleFactor = document().deviceScaleFactor();
     FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, currentRenderNamedFlowFragment(), IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
-    paintInfo.context->save();
+    paintInfo.context().save();
     if (style().hasBorderRadius())
-        paintInfo.context->clipRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
-    paintInfo.context->clip(clipRect);
+        paintInfo.context().clipRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+    paintInfo.context().clip(clipRect);
     return true;
 }
 
@@ -1779,7 +1776,7 @@ void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, 
 {
     ASSERT(hasControlClip() || (hasOverflowClip() && !layer()->isSelfPaintingLayer()));
 
-    paintInfo.context->restore();
+    paintInfo.context().restore();
     if (originalPhase == PaintPhaseOutline) {
         paintInfo.phase = PaintPhaseSelfOutline;
         paintObject(paintInfo, accumulatedOffset);

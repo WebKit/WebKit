@@ -115,7 +115,7 @@ private:
     virtual ~RenderThemeIOS() { }
 
     const Color& shadowColor() const;
-    FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext*, const IntRect&);
+    FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
     virtual Color systemColor(CSSValueID) const override;
 

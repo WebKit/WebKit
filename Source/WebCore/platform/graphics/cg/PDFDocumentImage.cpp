@@ -98,7 +98,7 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
     return m_document; // Return true if size is available.
 }
 
-bool PDFDocumentImage::cacheParametersMatch(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect) const
+bool PDFDocumentImage::cacheParametersMatch(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect) const
 {
     if (dstRect.size() != m_cachedDestinationSize)
         return false;
@@ -107,7 +107,7 @@ bool PDFDocumentImage::cacheParametersMatch(GraphicsContext* context, const Floa
         return false;
 
     AffineTransform::DecomposedType decomposedTransform;
-    context->getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).decompose(decomposedTransform);
+    context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).decompose(decomposedTransform);
 
     AffineTransform::DecomposedType cachedDecomposedTransform;
     m_cachedTransform.decompose(cachedDecomposedTransform);
@@ -117,7 +117,7 @@ bool PDFDocumentImage::cacheParametersMatch(GraphicsContext* context, const Floa
     return true;
 }
 
-static void transformContextForPainting(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect)
+static void transformContextForPainting(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect)
 {
     float hScale = dstRect.width() / srcRect.width();
     float vScale = dstRect.height() / srcRect.height();
@@ -135,12 +135,12 @@ static void transformContextForPainting(GraphicsContext* context, const FloatRec
         }
     }
 
-    context->translate(srcRect.x() * hScale, srcRect.y() * vScale);
-    context->scale(FloatSize(hScale, -vScale));
-    context->translate(0, -srcRect.height());
+    context.translate(srcRect.x() * hScale, srcRect.y() * vScale);
+    context.scale(FloatSize(hScale, -vScale));
+    context.translate(0, -srcRect.height());
 }
 
-void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect)
+void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect)
 {
 #if PLATFORM(IOS)
     // On iOS, some clients use low-quality image interpolation always, which throws off this optimization,
@@ -152,24 +152,20 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext* context, const
 #else
     // If we have an existing image, reuse it if we're doing a low-quality paint, even if cache parameters don't match;
     // we'll rerender when we do the subsequent high-quality paint.
-    InterpolationQuality interpolationQuality = context->imageInterpolationQuality();
+    InterpolationQuality interpolationQuality = context.imageInterpolationQuality();
     bool repaintIfNecessary = interpolationQuality != InterpolationNone && interpolationQuality != InterpolationLow;
 #endif
 
     if (!m_cachedImageBuffer || (!cacheParametersMatch(context, dstRect, srcRect) && repaintIfNecessary)) {
-        m_cachedImageBuffer = context->createCompatibleBuffer(FloatRect(enclosingIntRect(dstRect)).size());
+        m_cachedImageBuffer = context.createCompatibleBuffer(FloatRect(enclosingIntRect(dstRect)).size());
         if (!m_cachedImageBuffer)
             return;
-        GraphicsContext* bufferContext = m_cachedImageBuffer->context();
-        if (!bufferContext) {
-            m_cachedImageBuffer = nullptr;
-            return;
-        }
+        GraphicsContext& bufferContext = m_cachedImageBuffer->context();
 
         transformContextForPainting(bufferContext, dstRect, srcRect);
         drawPDFPage(bufferContext);
 
-        m_cachedTransform = context->getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+        m_cachedTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
         m_cachedDestinationSize = dstRect.size();
         m_cachedSourceRect = srcRect;
 
@@ -182,7 +178,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext* context, const
     }
 }
 
-void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode, ImageOrientationDescription)
+void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode, ImageOrientationDescription)
 {
     if (!m_document || !m_hasPage)
         return;
@@ -190,11 +186,11 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, 
     updateCachedImageIfNeeded(context, dstRect, srcRect);
 
     {
-        GraphicsContextStateSaver stateSaver(*context);
-        context->setCompositeOperation(op);
+        GraphicsContextStateSaver stateSaver(context);
+        context.setCompositeOperation(op);
 
         if (m_cachedImageBuffer)
-            context->drawImageBuffer(m_cachedImageBuffer.get(), ColorSpaceDeviceRGB, dstRect);
+            context.drawImageBuffer(m_cachedImageBuffer.get(), ColorSpaceDeviceRGB, dstRect);
         else {
             transformContextForPainting(context, dstRect, srcRect);
             drawPDFPage(context);
@@ -244,26 +240,26 @@ unsigned PDFDocumentImage::pageCount() const
     return CGPDFDocumentGetNumberOfPages(m_document.get());
 }
 
-static void applyRotationForPainting(GraphicsContext* context, FloatSize size, int rotationDegrees)
+static void applyRotationForPainting(GraphicsContext& context, FloatSize size, int rotationDegrees)
 {
     if (rotationDegrees == 90)
-        context->translate(0, size.height());
+        context.translate(0, size.height());
     else if (rotationDegrees == 180)
-        context->translate(size.width(), size.height());
+        context.translate(size.width(), size.height());
     else if (rotationDegrees == 270)
-        context->translate(size.width(), 0);
+        context.translate(size.width(), 0);
 
-    context->rotate(-deg2rad(static_cast<float>(rotationDegrees)));
+    context.rotate(-deg2rad(static_cast<float>(rotationDegrees)));
 }
 
-void PDFDocumentImage::drawPDFPage(GraphicsContext* context)
+void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
 {
     applyRotationForPainting(context, size(), m_rotationDegrees);
 
-    context->translate(-m_cropBox.x(), -m_cropBox.y());
+    context.translate(-m_cropBox.x(), -m_cropBox.y());
 
     // CGPDF pages are indexed from 1.
-    CGContextDrawPDFPage(context->platformContext(), CGPDFDocumentGetPage(m_document.get(), 1));
+    CGContextDrawPDFPage(context.platformContext(), CGPDFDocumentGetPage(m_document.get(), 1));
 }
 
 #endif // !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)

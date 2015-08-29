@@ -1220,8 +1220,8 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         renderer().paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     else if (renderer().style().boxDecorationBreak() == DCLONE) {
-        GraphicsContextStateSaver stateSaver(*paintInfo.context);
-        paintInfo.context->clip(LayoutRect(rect.x(), rect.y(), width(), height()));
+        GraphicsContextStateSaver stateSaver(paintInfo.context());
+        paintInfo.context().clip(LayoutRect(rect.x(), rect.y(), width(), height()));
         renderer().paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
     }
 #endif
@@ -1252,8 +1252,8 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : LayoutUnit(width());
         LayoutUnit stripHeight = isHorizontal() ? LayoutUnit(height()) : totalLogicalWidth;
 
-        GraphicsContextStateSaver stateSaver(*paintInfo.context);
-        paintInfo.context->clip(LayoutRect(rect.x(), rect.y(), width(), height()));
+        GraphicsContextStateSaver stateSaver(paintInfo.context());
+        paintInfo.context().clip(LayoutRect(rect.x(), rect.y(), width(), height()));
         renderer().paintFillLayerExtended(paintInfo, c, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
     }
 }
@@ -1337,7 +1337,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     LayoutPoint adjustedPaintoffset = paintOffset + localRect.location();
-    GraphicsContext* context = paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
     // Shadow comes first and is behind the background and border.
     if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, this))
@@ -1382,8 +1382,8 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
         LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
         LayoutRect clipRect = clipRectForNinePieceImageStrip(this, borderImage, paintRect);
-        GraphicsContextStateSaver stateSaver(*context);
-        context->clip(clipRect);
+        GraphicsContextStateSaver stateSaver(context);
+        context.clip(clipRect);
         renderer().paintBorder(paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), lineStyle);
     }
 }
@@ -1415,8 +1415,8 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         
         compositeOp = CompositeDestinationIn;
         if (pushTransparencyLayer) {
-            paintInfo.context->setCompositeOperation(CompositeDestinationIn);
-            paintInfo.context->beginTransparencyLayer(1.0f);
+            paintInfo.context().setCompositeOperation(CompositeDestinationIn);
+            paintInfo.context().beginTransparencyLayer(1.0f);
             compositeOp = CompositeSourceOver;
         }
     }
@@ -1427,14 +1427,14 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(&renderer(), renderer().style().effectiveZoom());
     if (!hasBoxImage || !maskBoxImage->isLoaded()) {
         if (pushTransparencyLayer)
-            paintInfo.context->endTransparencyLayer();
+            paintInfo.context().endTransparencyLayer();
         return; // Don't paint anything while we wait for the image to load.
     }
 
     // The simple case is where we are the only box for this object.  In those
     // cases only a single call to draw is required.
     if (!prevLineBox() && !nextLineBox()) {
-        renderer().paintNinePieceImage(paintInfo.context, LayoutRect(adjustedPaintOffset, frameRect.size()), renderer().style(), maskNinePieceImage, compositeOp);
+        renderer().paintNinePieceImage(paintInfo.context(), LayoutRect(adjustedPaintOffset, frameRect.size()), renderer().style(), maskNinePieceImage, compositeOp);
     } else {
         // We have a mask image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -1450,13 +1450,13 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
         LayoutRect clipRect = clipRectForNinePieceImageStrip(this, maskNinePieceImage, paintRect);
-        GraphicsContextStateSaver stateSaver(*paintInfo.context);
-        paintInfo.context->clip(clipRect);
-        renderer().paintNinePieceImage(paintInfo.context, LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer().style(), maskNinePieceImage, compositeOp);
+        GraphicsContextStateSaver stateSaver(paintInfo.context());
+        paintInfo.context().clip(clipRect);
+        renderer().paintNinePieceImage(paintInfo.context(), LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer().style(), maskNinePieceImage, compositeOp);
     }
     
     if (pushTransparencyLayer)
-        paintInfo.context->endTransparencyLayer();
+        paintInfo.context().endTransparencyLayer();
 }
 
 InlineBox* InlineFlowBox::firstLeafChild() const

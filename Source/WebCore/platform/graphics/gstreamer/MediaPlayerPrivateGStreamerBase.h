@@ -82,7 +82,7 @@ public:
     void sizeChanged();
 
     void triggerRepaint(GstSample*);
-    void paint(GraphicsContext*, const FloatRect&);
+    void paint(GraphicsContext&, const FloatRect&);
 
     virtual bool hasSingleSecurityOrigin() const { return true; }
     virtual float maxTimeLoaded() const { return 0.0; }

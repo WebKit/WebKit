@@ -81,7 +81,7 @@ protected:
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
-    void paintIntoRect(GraphicsContext*, const FloatRect&);
+    void paintIntoRect(GraphicsContext&, const FloatRect&);
     virtual void paint(PaintInfo&, const LayoutPoint&) override final;
     virtual void layout() override;
 

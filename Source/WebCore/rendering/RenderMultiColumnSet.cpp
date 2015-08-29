@@ -570,7 +570,7 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
 
 void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return;
 
     RenderMultiColumnFlowThread* flowThread = multiColumnFlowThread();
@@ -588,7 +588,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     if (colCount <= 1)
         return;
 
-    bool antialias = shouldAntialiasLines(paintInfo.context);
+    bool antialias = shouldAntialiasLines(paintInfo.context());
 
     if (flowThread->progressionIsInline()) {
         bool leftToRight = style().isLeftToRightDirection() ^ flowThread->progressionIsReversed();
@@ -617,7 +617,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
                 LayoutUnit ruleTop = isHorizontalWritingMode() ? paintOffset.y() + borderTop() + paddingTop() : paintOffset.y() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd;
                 LayoutUnit ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleThickness;
                 IntRect pixelSnappedRuleRect = snappedIntRect(ruleLeft, ruleTop, ruleRight - ruleLeft, ruleBottom - ruleTop);
-                drawLineForBoxSide(*paintInfo.context, pixelSnappedRuleRect, boxSide, ruleColor, ruleStyle, 0, 0, antialias);
+                drawLineForBoxSide(paintInfo.context(), pixelSnappedRuleRect, boxSide, ruleColor, ruleStyle, 0, 0, antialias);
             }
             
             ruleLogicalLeft = currLogicalLeftOffset;
@@ -648,7 +648,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
         for (unsigned i = 1; i < colCount; i++) {
             ruleRect.move(step);
             IntRect pixelSnappedRuleRect = snappedIntRect(ruleRect);
-            drawLineForBoxSide(*paintInfo.context, pixelSnappedRuleRect, boxSide, ruleColor, ruleStyle, 0, 0, antialias);
+            drawLineForBoxSide(paintInfo.context(), pixelSnappedRuleRect, boxSide, ruleColor, ruleStyle, 0, 0, antialias);
         }
     }
 }

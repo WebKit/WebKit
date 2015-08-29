@@ -78,23 +78,23 @@ bool Image::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     return dataChanged(allDataReceived);
 }
 
-void Image::fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, const Color& color, ColorSpace styleColorSpace, CompositeOperator op)
+void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, const Color& color, ColorSpace styleColorSpace, CompositeOperator op)
 {
     if (!color.alpha())
         return;
     
-    CompositeOperator previousOperator = ctxt->compositeOperation();
-    ctxt->setCompositeOperation(!color.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
-    ctxt->fillRect(dstRect, color, styleColorSpace);
-    ctxt->setCompositeOperation(previousOperator);
+    CompositeOperator previousOperator = ctxt.compositeOperation();
+    ctxt.setCompositeOperation(!color.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
+    ctxt.fillRect(dstRect, color, styleColorSpace);
+    ctxt.setCompositeOperation(previousOperator);
 }
 
-void Image::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode, ImageOrientationDescription description)
+void Image::draw(GraphicsContext& ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode, ImageOrientationDescription description)
 {
     draw(ctx, dstRect, srcRect, styleColorSpace, op, blendMode, description);
 }
 
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
+void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
 {    
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, destRect, solidColor(), styleColorSpace, op);
@@ -123,7 +123,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     oneTileRect.setSize(scaledTileSize);
     
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
-    if (oneTileRect.contains(destRect) && !ctxt->drawLuminanceMask()) {
+    if (oneTileRect.contains(destRect) && !ctxt.drawLuminanceMask()) {
         FloatRect visibleSrcRect;
         visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
@@ -135,7 +135,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 
 #if PLATFORM(IOS)
     // When using accelerated drawing on iOS, it's faster to stretch an image than to tile it.
-    if (ctxt->isAcceleratedContext()) {
+    if (ctxt.isAcceleratedContext()) {
         if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
             FloatRect visibleSrcRect;
             visibleSrcRect.setX(0);
@@ -166,12 +166,12 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 #else
     const float maxPatternTilePixels = 2048 * 2048;
 #endif
-    FloatRect transformedTileSize = ctxt->getCTM().mapRect(FloatRect(FloatPoint(), scaledTileSize));
+    FloatRect transformedTileSize = ctxt.getCTM().mapRect(FloatRect(FloatPoint(), scaledTileSize));
     float transformedTileSizePixels = transformedTileSize.width() * transformedTileSize.height();
     FloatRect currentTileRect = oneTileRect;
     if (transformedTileSizePixels > maxPatternTilePixels) {
-        GraphicsContextStateSaver stateSaver(*ctxt);
-        ctxt->clip(destRect);
+        GraphicsContextStateSaver stateSaver(ctxt);
+        ctxt.clip(destRect);
 
         currentTileRect.shiftYEdgeTo(destRect.y());
         float toY = currentTileRect.y();
@@ -205,7 +205,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect,
+void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const FloatRect& srcRect,
     const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ColorSpace styleColorSpace, CompositeOperator op)
 {    
     if (mayFillWithSolidColor()) {

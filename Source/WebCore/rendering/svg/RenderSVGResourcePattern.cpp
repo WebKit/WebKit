@@ -189,13 +189,13 @@ void RenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsContext
         if (path)
             context->fillPath(*path);
         else if (shape)
-            shape->fillShape(context);
+            shape->fillShape(*context);
     }
     if (resourceMode & ApplyToStrokeMode) {
         if (path)
             context->strokePath(*path);
         else if (shape)
-            shape->strokeShape(context);
+            shape->strokeShape(*context);
     }
 
     context->restore();
@@ -237,16 +237,15 @@ std::unique_ptr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const Pat
     if (!tileImage)
         return nullptr;
 
-    GraphicsContext* tileImageContext = tileImage->context();
-    ASSERT(tileImageContext);
+    GraphicsContext& tileImageContext = tileImage->context();
 
     // The image buffer represents the final rendered size, so the content has to be scaled (to avoid pixelation).
-    tileImageContext->scale(FloatSize(clampedAbsoluteTileBoundaries.width() / tileBoundaries.width(),
+    tileImageContext.scale(FloatSize(clampedAbsoluteTileBoundaries.width() / tileBoundaries.width(),
                                       clampedAbsoluteTileBoundaries.height() / tileBoundaries.height()));
 
     // Apply tile image transformations.
     if (!tileImageTransform.isIdentity())
-        tileImageContext->concatCTM(tileImageTransform);
+        tileImageContext.concatCTM(tileImageTransform);
 
     AffineTransform contentTransformation;
     if (attributes.patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)

@@ -143,7 +143,7 @@ PassRefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions op
     frameView->setPaintBehavior(paintBehavior);
     ownerDocument.updateLayout();
 
-    frameView->paint(graphicsContext.get(), paintRect);
+    frameView->paint(*graphicsContext, paintRect);
     frameView->setPaintBehavior(oldPaintBehavior);
 
     frame->selection().setSelection(oldSelection);

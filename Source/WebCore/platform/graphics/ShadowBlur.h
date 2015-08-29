@@ -60,11 +60,11 @@ public:
     void setShadowsIgnoreTransforms(bool ignoreTransforms) { m_shadowsIgnoreTransforms = ignoreTransforms; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
 
-    GraphicsContext* beginShadowLayer(GraphicsContext*, const FloatRect& layerArea);
-    void endShadowLayer(GraphicsContext*);
+    GraphicsContext* beginShadowLayer(GraphicsContext&, const FloatRect& layerArea);
+    void endShadowLayer(GraphicsContext&);
 
-    void drawRectShadow(GraphicsContext*, const FloatRoundedRect&);
-    void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRoundedRect& holeRect);
+    void drawRectShadow(GraphicsContext&, const FloatRoundedRect&);
+    void drawInsetShadow(GraphicsContext&, const FloatRect&, const FloatRoundedRect& holeRect);
 
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
 
@@ -75,25 +75,25 @@ public:
 private:
     void updateShadowBlurValues();
 
-    void drawShadowBuffer(GraphicsContext*);
+    void drawShadowBuffer(GraphicsContext&);
 
-    void adjustBlurRadius(GraphicsContext*);
+    void adjustBlurRadius(GraphicsContext&);
     
     enum ShadowDirection {
         OuterShadow,
         InnerShadow
     };
     
-    IntRect calculateLayerBoundingRect(GraphicsContext*, const FloatRect& layerArea, const IntRect& clipRect);
+    IntRect calculateLayerBoundingRect(GraphicsContext&, const FloatRect& layerArea, const IntRect& clipRect);
     IntSize templateSize(const IntSize& blurredEdgeSize, const FloatRoundedRect::Radii&) const;
 
-    void drawRectShadowWithoutTiling(GraphicsContext*, const FloatRoundedRect&, const IntRect& layerRect);
-    void drawRectShadowWithTiling(GraphicsContext*, const FloatRoundedRect&, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
+    void drawRectShadowWithoutTiling(GraphicsContext&, const FloatRoundedRect&, const IntRect& layerRect);
+    void drawRectShadowWithTiling(GraphicsContext&, const FloatRoundedRect&, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
 
-    void drawInsetShadowWithoutTiling(GraphicsContext*, const FloatRect&, const FloatRoundedRect& holeRect, const IntRect& layerRect);
-    void drawInsetShadowWithTiling(GraphicsContext*, const FloatRect&, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
+    void drawInsetShadowWithoutTiling(GraphicsContext&, const FloatRect&, const FloatRoundedRect& holeRect, const IntRect& layerRect);
+    void drawInsetShadowWithTiling(GraphicsContext&, const FloatRect&, const FloatRoundedRect& holeRect, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
     
-    void drawLayerPieces(GraphicsContext*, const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, ShadowDirection);
+    void drawLayerPieces(GraphicsContext&, const FloatRect& shadowBounds, const FloatRoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, ShadowDirection);
     
     void blurShadowBuffer(const IntSize& templateSize);
     void blurAndColorShadowBuffer(const IntSize& templateSize);

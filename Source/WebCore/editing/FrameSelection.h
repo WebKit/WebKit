@@ -71,7 +71,7 @@ protected:
     void clearCaretRect();
     bool updateCaretRect(Document*, const VisiblePosition& caretPosition);
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-    void paintCaret(Node*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
+    void paintCaret(Node*, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     const LayoutRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
 
@@ -95,7 +95,7 @@ public:
     DragCaretController();
 
     RenderBlock* caretRenderer() const;
-    void paintDragCaret(Frame*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
+    void paintDragCaret(Frame*, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     bool isContentEditable() const { return m_position.rootEditableElement(); }
     bool isContentRichlyEditable() const;
@@ -193,7 +193,7 @@ public:
     void textWasReplaced(CharacterData*, unsigned offset, unsigned oldLength, unsigned newLength);
 
     void setCaretVisible(bool caretIsVisible) { setCaretVisibility(caretIsVisible ? Visible : Hidden); }
-    void paintCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect);
+    void paintCaret(GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect);
 
     // Used to suspend caret blinking while the mouse is down.
     void setCaretBlinkingSuspended(bool suspended) { m_isCaretBlinkingSuspended = suspended; }

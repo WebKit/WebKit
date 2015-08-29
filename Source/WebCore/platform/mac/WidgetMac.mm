@@ -185,9 +185,9 @@ NSView *Widget::getOuterView() const
     return view;
 }
 
-void Widget::paint(GraphicsContext* p, const IntRect& r)
+void Widget::paint(GraphicsContext& p, const IntRect& r)
 {
-    if (p->paintingDisabled())
+    if (p.paintingDisabled())
         return;
     NSView *view = getOuterView();
 
@@ -229,7 +229,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
             scrollView = 0;
     }
 
-    CGContextRef cgContext = p->platformContext();
+    CGContextRef cgContext = p.platformContext();
     ASSERT(cgContext == [currentContext graphicsPort]);
     CGContextSaveGState(cgContext);
 

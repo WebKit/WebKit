@@ -64,7 +64,7 @@ BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver*
     checkForSolidColor();
 }
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op,
+void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op,
     BlendMode blendMode, ImageOrientationDescription description)
 {
     if (!dst.width() || !dst.height() || !src.width() || !src.height())
@@ -81,13 +81,13 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         return;
     }
 
-    context->save();
+    context.save();
 
     // Set the compositing operation.
     if (op == CompositeSourceOver && blendMode == BlendModeNormal && !frameHasAlphaAtIndex(m_currentFrame))
-        context->setCompositeOperation(CompositeCopy);
+        context.setCompositeOperation(CompositeCopy);
     else
-        context->setCompositeOperation(op, blendMode);
+        context.setCompositeOperation(op, blendMode);
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     IntSize scaledSize = cairoSurfaceSize(surface.get());
@@ -104,9 +104,9 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
 
     if (frameOrientation != DefaultImageOrientation) {
         // ImageOrientation expects the origin to be at (0, 0).
-        context->translate(dstRect.x(), dstRect.y());
+        context.translate(dstRect.x(), dstRect.y());
         dstRect.setLocation(FloatPoint());
-        context->concatCTM(frameOrientation.transformFromDefault(dstRect.size()));
+        context.concatCTM(frameOrientation.transformFromDefault(dstRect.size()));
         if (frameOrientation.usesWidthAsHeight()) {
             // The destination rectangle will have it's width and height already reversed for the orientation of
             // the image, as it was needed for page layout, so we need to reverse it back here.
@@ -114,9 +114,9 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         }
     }
 
-    context->platformContext()->drawSurfaceToContext(surface.get(), dstRect, adjustedSrcRect, context);
+    context.platformContext()->drawSurfaceToContext(surface.get(), dstRect, adjustedSrcRect, context);
 
-    context->restore();
+    context.restore();
 
     if (imageObserver())
         imageObserver()->didDraw(this);

@@ -444,9 +444,9 @@ static EventModifiers modifiersForEvent(const WebEvent& event)
 
 #endif
 
-void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool isSnapshot)
+void NetscapePlugin::platformPaint(GraphicsContext& context, const IntRect& dirtyRect, bool isSnapshot)
 {
-    CGContextRef platformContext = context->platformContext();
+    CGContextRef platformContext = context.platformContext();
 
     switch (m_eventModel) {
         case NPEventModelCocoa: {

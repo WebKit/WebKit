@@ -69,7 +69,7 @@ private:
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
     virtual FloatSize size() const override;
 
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    virtual void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() override { return false; }
@@ -77,10 +77,10 @@ private:
     void createPDFDocument();
     void computeBoundsForCurrentPage();
     unsigned pageCount() const;
-    void drawPDFPage(GraphicsContext*);
+    void drawPDFPage(GraphicsContext&);
 
-    void updateCachedImageIfNeeded(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect);
-    bool cacheParametersMatch(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect) const;
+    void updateCachedImageIfNeeded(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect);
+    bool cacheParametersMatch(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect) const;
 
 #if USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
     RetainPtr<PDFDocument> m_document;

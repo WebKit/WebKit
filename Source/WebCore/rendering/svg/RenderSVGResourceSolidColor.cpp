@@ -81,13 +81,13 @@ void RenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsCont
         if (path)
             context->fillPath(*path);
         else if (shape)
-            shape->fillShape(context);
+            shape->fillShape(*context);
     }
     if (resourceMode & ApplyToStrokeMode) {
         if (path)
             context->strokePath(*path);
         else if (shape)
-            shape->strokeShape(context);
+            shape->strokeShape(*context);
     }
 }
 

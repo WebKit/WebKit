@@ -77,7 +77,7 @@ void Icon::paint(GraphicsContext& context, const FloatRect& rect)
     if (context.paintingDisabled())
         return;
 
-    LocalCurrentGraphicsContext localCurrentGC(&context);
+    LocalCurrentGraphicsContext localCurrentGC(context);
 
     [m_nsImage drawInRect:rect fromRect:NSMakeRect(0, 0, [m_nsImage size].width, [m_nsImage size].height) operation:NSCompositeSourceOver fraction:1.0f];
 }

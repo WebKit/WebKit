@@ -178,10 +178,10 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             completelyClippedOut = true;
         else {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
-            paintInfo.context->save();
+            paintInfo.context().save();
             FloatRoundedRect roundedInnerRect = FloatRoundedRect(style().getRoundedInnerBorderFor(paintRect,
                 paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true));
-            clipRoundedInnerRect(paintInfo.context, paintRect, roundedInnerRect);
+            clipRoundedInnerRect(paintInfo.context(), paintRect, roundedInnerRect);
         }
     }
 
@@ -189,7 +189,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintReplaced(paintInfo, adjustedPaintOffset);
 
         if (style().hasBorderRadius())
-            paintInfo.context->restore();
+            paintInfo.context().restore();
     }
         
     // The selection tint never gets clipped by border-radius rounding, since we want it to run right up to the edges of
@@ -197,7 +197,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (drawSelectionTint) {
         LayoutRect selectionPaintingRect = localSelectionRect();
         selectionPaintingRect.moveBy(adjustedPaintOffset);
-        paintInfo.context->fillRect(snappedIntRect(selectionPaintingRect), selectionBackgroundColor(), style().colorSpace());
+        paintInfo.context().fillRect(snappedIntRect(selectionPaintingRect), selectionBackgroundColor(), style().colorSpace());
     }
 }
 

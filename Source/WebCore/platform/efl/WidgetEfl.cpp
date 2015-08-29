@@ -95,7 +95,7 @@ void Widget::hide()
     notImplemented();
 }
 
-void Widget::paint(GraphicsContext*, const IntRect&)
+void Widget::paint(GraphicsContext&, const IntRect&)
 {
     notImplemented();
 }

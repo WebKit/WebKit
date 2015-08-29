@@ -744,7 +744,7 @@ void NetscapePlugin::destroy()
     m_timers.clear();
 }
     
-void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
+void NetscapePlugin::paint(GraphicsContext& context, const IntRect& dirtyRect)
 {
     ASSERT(m_isStarted);
     
@@ -768,7 +768,7 @@ RefPtr<ShareableBitmap> NetscapePlugin::snapshot()
     // which we currently don't have initiated in the plug-in process.
     context->scale(FloatSize(contentsScaleFactor(), contentsScaleFactor()));
 
-    platformPaint(context.get(), IntRect(IntPoint(), m_pluginSize), true);
+    platformPaint(*context, IntRect(IntPoint(), m_pluginSize), true);
 
     return bitmap;
 }

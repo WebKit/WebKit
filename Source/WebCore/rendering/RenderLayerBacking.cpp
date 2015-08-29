@@ -2258,7 +2258,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
     }
 }
 
-void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext* context,
+void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext& context,
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
     PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
 {
@@ -2341,7 +2341,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
-        paintIntoLayer(graphicsLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase);
+        paintIntoLayer(graphicsLayer, context, dirtyRect, PaintBehaviorNormal, paintingPhase);
 
         InspectorInstrumentation::didPaint(&renderer(), dirtyRect);
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
@@ -2354,8 +2354,8 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         context.translate(-scrollCornerAndResizer.x(), -scrollCornerAndResizer.y());
         LayoutRect transformedClip = LayoutRect(clip);
         transformedClip.moveBy(scrollCornerAndResizer.location());
-        m_owningLayer.paintScrollCorner(&context, IntPoint(), snappedIntRect(transformedClip));
-        m_owningLayer.paintResizer(&context, IntPoint(), transformedClip);
+        m_owningLayer.paintScrollCorner(context, IntPoint(), snappedIntRect(transformedClip));
+        m_owningLayer.paintResizer(context, IntPoint(), transformedClip);
         context.restore();
     }
 #ifndef NDEBUG

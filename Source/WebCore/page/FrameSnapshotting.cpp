@@ -102,7 +102,7 @@ std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imag
     std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(imageRect.size(), scaleFactor, ColorSpaceDeviceRGB);
     if (!buffer)
         return nullptr;
-    buffer->context()->translate(-imageRect.x(), -imageRect.y());
+    buffer->context().translate(-imageRect.x(), -imageRect.y());
 
     frame.view()->paintContentsForSnapshot(buffer->context(), imageRect, shouldIncludeSelection, coordinateSpace);
     return buffer;

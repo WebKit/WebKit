@@ -526,16 +526,16 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, const Ren
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
     if (widgetType == GTK_TYPE_CHECK_BUTTON)
-        gtk_render_check(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+        gtk_render_check(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
     else
-        gtk_render_option(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+        gtk_render_option(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
     if (theme->isFocused(renderObject)) {
         IntRect indicatorRect(rect);
         gint indicatorSpacing;
         gtk_style_context_get_style(context, "indicator-spacing", &indicatorSpacing, nullptr);
         indicatorRect.inflate(indicatorSpacing);
-        gtk_render_focus(context, paintInfo.context->platformContext()->cr(), indicatorRect.x(), indicatorRect.y(),
+        gtk_render_focus(context, paintInfo.context().platformContext()->cr(), indicatorRect.x(), indicatorRect.y(),
             indicatorRect.width(), indicatorRect.height());
     }
 
@@ -594,8 +594,8 @@ static void renderButton(RenderTheme* theme, GtkStyleContext* context, const Ren
         gtk_style_context_add_class(context, GTK_STYLE_CLASS_DEFAULT);
     }
 
-    gtk_render_background(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_background(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_frame(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
 
     if (theme->isFocused(renderObject)) {
         gint focusWidth, focusPad;
@@ -627,7 +627,7 @@ static void renderButton(RenderTheme* theme, GtkStyleContext* context, const Ren
             buttonRect.move(childDisplacementX, childDisplacementY);
         }
 
-        gtk_render_focus(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+        gtk_render_focus(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
     }
 }
 bool RenderThemeGtk::paintButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -744,7 +744,7 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const Paint
     // FIXME: adopt subpixel themes.
     IntRect rect = IntRect(r);
 
-    cairo_t* cairoContext = paintInfo.context->platformContext()->cr();
+    cairo_t* cairoContext = paintInfo.context().platformContext()->cr();
     GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject.style().direction()));
 
     // Paint the button.
@@ -880,8 +880,8 @@ bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const Pain
         flags |= GTK_STATE_FLAG_FOCUSED;
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
-    gtk_render_background(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_background(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
     if (isFocused(renderObject) && isEnabled(renderObject)) {
         gboolean interiorFocus;
@@ -890,7 +890,7 @@ bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const Pain
         if (!interiorFocus) {
             IntRect focusRect(rect);
             focusRect.inflate(focusWidth + focusPad);
-            gtk_render_focus(context, paintInfo.context->platformContext()->cr(), focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
+            gtk_render_focus(context, paintInfo.context().platformContext()->cr(), focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
         }
     }
 
@@ -904,7 +904,7 @@ bool RenderThemeGtk::paintTextArea(const RenderObject& o, const PaintInfo& i, co
     return paintTextField(o, i, r);
 }
 
-static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, const IntRect& iconRect)
+static void paintGdkPixbuf(GraphicsContext& context, const GdkPixbuf* icon, const IntRect& iconRect)
 {
     IntSize iconSize(gdk_pixbuf_get_width(icon), gdk_pixbuf_get_height(icon));
     GRefPtr<GdkPixbuf> scaledIcon;
@@ -914,7 +914,7 @@ static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, cons
         icon = scaledIcon.get();
     }
 
-    cairo_t* cr = context->platformContext()->cr();
+    cairo_t* cr = context.platformContext()->cr();
     cairo_save(cr);
     gdk_cairo_set_source_pixbuf(cr, icon, iconRect.x(), iconRect.y());
     cairo_paint(cr);
@@ -1008,7 +1008,7 @@ bool RenderThemeGtk::paintSearchFieldResultsDecorationPart(const RenderObject& r
         gtkTextDirection(renderObject.style().direction()),
         gtkIconState(this, renderObject),
         getIconSizeForPixelSize(rect.height()));
-    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    paintGdkPixbuf(paintInfo.context(), icon.get(), iconRect);
     return false;
 }
 
@@ -1027,7 +1027,7 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderObject& renderObje
         gtkTextDirection(renderObject.style().direction()),
         gtkIconState(this, renderObject),
         getIconSizeForPixelSize(rect.height()));
-    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    paintGdkPixbuf(paintInfo.context(), icon.get(), iconRect);
     return false;
 }
 
@@ -1047,7 +1047,7 @@ bool RenderThemeGtk::paintCapsLockIndicator(const RenderObject& renderObject, co
 {
     // The other paint methods don't need to check whether painting is disabled because RenderTheme already checks it
     // before calling them, but paintCapsLockIndicator() is called by RenderTextControlSingleLine which doesn't check it.
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return true;
 
     int iconSize = std::min(rect.width(), rect.height());
@@ -1063,7 +1063,7 @@ bool RenderThemeGtk::paintCapsLockIndicator(const RenderObject& renderObject, co
         rect.x() + rect.width() - iconSize,
         rect.y() + (rect.height() - iconSize) / 2,
         iconSize, iconSize);
-    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    paintGdkPixbuf(paintInfo.context(), icon.get(), iconRect);
     return true;
 }
 
@@ -1102,15 +1102,15 @@ bool RenderThemeGtk::paintSliderTrack(const RenderObject& renderObject, const Pa
     if (!isEnabled(renderObject))
         gtk_style_context_set_state(context, GTK_STATE_FLAG_INSENSITIVE);
 
-    gtk_render_background(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_background(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
     if (isFocused(renderObject)) {
         gint focusWidth, focusPad;
         gtk_style_context_get_style(context, "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
         IntRect focusRect(rect);
         focusRect.inflate(focusWidth + focusPad);
-        gtk_render_focus(context, paintInfo.context->platformContext()->cr(), focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
+        gtk_render_focus(context, paintInfo.context().platformContext()->cr(), focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
     }
 
     gtk_style_context_restore(context);
@@ -1138,7 +1138,7 @@ bool RenderThemeGtk::paintSliderThumb(const RenderObject& renderObject, const Pa
         flags |= GTK_STATE_FLAG_ACTIVE;
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
-    gtk_render_slider(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height(),
+    gtk_render_slider(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height(),
         part == SliderThumbHorizontalPart ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL);
 
     gtk_style_context_restore(context);
@@ -1174,8 +1174,8 @@ bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const Pa
 
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
 
-    gtk_render_background(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_background(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
     gtk_style_context_restore(context);
 
@@ -1193,7 +1193,7 @@ bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const Pa
     progressRect = RenderThemeGtk::calculateProgressRect(renderObject, progressRect);
 
     if (!progressRect.isEmpty())
-        gtk_render_activity(context, paintInfo.context->platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
+        gtk_render_activity(context, paintInfo.context().platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
 
     gtk_style_context_restore(context);
     return false;
@@ -1256,8 +1256,8 @@ static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, c
     buttonRect.setHeight(rect.height() / 2);
     gtk_style_context_set_junction_sides(context, static_cast<GtkJunctionSides>(junction));
 
-    gtk_render_background(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_background(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_frame(context, paintInfo.context().platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
 
     // Paint arrow centered inside button.
     // This code is based on gtkspinbutton.c code.
@@ -1283,7 +1283,7 @@ static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, c
     gint height = (width + 1) / 2;
 
     arrowRect.move((arrowRect.width() - width) / 2, (arrowRect.height() - height) / 2);
-    gtk_render_arrow(context, paintInfo.context->platformContext()->cr(), angle, arrowRect.x(), arrowRect.y(), width);
+    gtk_render_arrow(context, paintInfo.context().platformContext()->cr(), angle, arrowRect.x(), arrowRect.y(), width);
 
     gtk_style_context_restore(context);
 }
@@ -1417,7 +1417,7 @@ String RenderThemeGtk::extraFullScreenStyleSheet()
 }
 #endif
 
-bool RenderThemeGtk::paintMediaButton(const RenderObject& renderObject, GraphicsContext* context, const IntRect& rect, const char* symbolicIconName, const char* fallbackStockIconName)
+bool RenderThemeGtk::paintMediaButton(const RenderObject& renderObject, GraphicsContext& context, const IntRect& rect, const char* symbolicIconName, const char* fallbackStockIconName)
 {
     IntRect iconRect(
         rect.x() + (rect.width() - m_mediaIconSize) / 2,
@@ -1436,7 +1436,7 @@ bool RenderThemeGtk::hasOwnDisabledStateHandlingFor(ControlPart part) const
 
 bool RenderThemeGtk::paintMediaFullscreenButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintMediaButton(renderObject, paintInfo.context, rect, "view-fullscreen-symbolic", GTK_STOCK_FULLSCREEN);
+    return paintMediaButton(renderObject, paintInfo.context(), rect, "view-fullscreen-symbolic", GTK_STOCK_FULLSCREEN);
 }
 
 bool RenderThemeGtk::paintMediaMuteButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -1446,7 +1446,7 @@ bool RenderThemeGtk::paintMediaMuteButton(const RenderObject& renderObject, cons
         return false;
 
     bool muted = mediaElement->muted();
-    return paintMediaButton(renderObject, paintInfo.context, rect,
+    return paintMediaButton(renderObject, paintInfo.context(), rect,
         muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic",
         muted ? "audio-volume-muted" : "audio-volume-high");
 }
@@ -1461,19 +1461,19 @@ bool RenderThemeGtk::paintMediaPlayButton(const RenderObject& renderObject, cons
         return false;
     bool showPlayButton = nodeHasClass(node, "paused");
 
-    return paintMediaButton(renderObject, paintInfo.context, rect,
+    return paintMediaButton(renderObject, paintInfo.context(), rect,
         showPlayButton ? "media-playback-start-symbolic" : "media-playback-pause-symbolic",
         showPlayButton ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 }
 
 bool RenderThemeGtk::paintMediaSeekBackButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintMediaButton(renderObject, paintInfo.context, rect, "media-seek-backward-symbolic", GTK_STOCK_MEDIA_REWIND);
+    return paintMediaButton(renderObject, paintInfo.context(), rect, "media-seek-backward-symbolic", GTK_STOCK_MEDIA_REWIND);
 }
 
 bool RenderThemeGtk::paintMediaSeekForwardButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintMediaButton(renderObject, paintInfo.context, rect, "media-seek-forward-symbolic", GTK_STOCK_MEDIA_FORWARD);
+    return paintMediaButton(renderObject, paintInfo.context(), rect, "media-seek-forward-symbolic", GTK_STOCK_MEDIA_FORWARD);
 }
 
 #if ENABLE(VIDEO_TRACK)
@@ -1487,7 +1487,7 @@ bool RenderThemeGtk::paintMediaToggleClosedCaptionsButton(const RenderObject& re
         icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, "user-invisible-symbolic", GTK_STOCK_JUSTIFY_FILL,
             gtkTextDirection(renderObject.style().direction()), gtkIconState(this, renderObject), iconRect.width());
     }
-    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    paintGdkPixbuf(paintInfo.context(), icon.get(), iconRect);
     return true;
 }
 #endif
@@ -1507,9 +1507,9 @@ bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInf
     if (!mediaElement)
         return false;
 
-    GraphicsContext* context = paintInfo.context;
-    context->save();
-    context->setStrokeStyle(NoStroke);
+    GraphicsContext& context = paintInfo.context();
+    context.save();
+    context.setStrokeStyle(NoStroke);
 
     float mediaDuration = mediaElement->duration();
     float totalTrackWidth = r.width();
@@ -1527,17 +1527,17 @@ bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInf
         rangeRect.setWidth(lengthRatio * totalTrackWidth);
         if (index)
             rangeRect.move(startRatio * totalTrackWidth, 0);
-        context->fillRoundedRect(FloatRoundedRect(rangeRect, borderRadiiFromStyle(style)), style.visitedDependentColor(CSSPropertyColor), style.colorSpace());
+        context.fillRoundedRect(FloatRoundedRect(rangeRect, borderRadiiFromStyle(style)), style.visitedDependentColor(CSSPropertyColor), style.colorSpace());
     }
 
-    context->restore();
+    context.restore();
     return false;
 }
 
 bool RenderThemeGtk::paintMediaSliderThumb(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
     RenderStyle& style = o.style();
-    paintInfo.context->fillRoundedRect(FloatRoundedRect(r, borderRadiiFromStyle(style)), style.visitedDependentColor(CSSPropertyColor), style.colorSpace());
+    paintInfo.context().fillRoundedRect(FloatRoundedRect(r, borderRadiiFromStyle(style)), style.visitedDependentColor(CSSPropertyColor), style.colorSpace());
     return false;
 }
 
@@ -1556,9 +1556,9 @@ bool RenderThemeGtk::paintMediaVolumeSliderTrack(const RenderObject& renderObjec
     if (!volume)
         return true;
 
-    GraphicsContext* context = paintInfo.context;
-    context->save();
-    context->setStrokeStyle(NoStroke);
+    GraphicsContext& context = paintInfo.context();
+    context.save();
+    context.setStrokeStyle(NoStroke);
 
     int rectHeight = rect.height();
     float trackHeight = rectHeight * volume;
@@ -1567,9 +1567,9 @@ bool RenderThemeGtk::paintMediaVolumeSliderTrack(const RenderObject& renderObjec
     volumeRect.move(0, rectHeight - trackHeight);
     volumeRect.setHeight(ceil(trackHeight));
 
-    context->fillRoundedRect(FloatRoundedRect(volumeRect, borderRadiiFromStyle(style)),
+    context.fillRoundedRect(FloatRoundedRect(volumeRect, borderRadiiFromStyle(style)),
         style.visitedDependentColor(CSSPropertyColor), style.colorSpace());
-    context->restore();
+    context.restore();
 
     return false;
 }

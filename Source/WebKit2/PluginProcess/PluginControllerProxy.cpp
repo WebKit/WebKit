@@ -194,7 +194,7 @@ void PluginControllerProxy::paint()
     if (m_plugin->isTransparent())
         graphicsContext->clearRect(dirtyRect);
 
-    m_plugin->paint(graphicsContext.get(), dirtyRect);
+    m_plugin->paint(*graphicsContext, dirtyRect);
 
     m_connection->connection()->send(Messages::PluginProxy::Update(dirtyRect), m_pluginInstanceID);
 }

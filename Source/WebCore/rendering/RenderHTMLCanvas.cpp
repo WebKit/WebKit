@@ -66,7 +66,7 @@ bool RenderHTMLCanvas::requiresLayer() const
 
 void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    GraphicsContext* context = paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
 
     LayoutRect contentBoxRect = this->contentBoxRect();
     contentBoxRect.moveBy(paintOffset);
@@ -75,9 +75,9 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
 
     // Not allowed to overflow the content box.
     bool clip = !contentBoxRect.contains(replacedContentRect);
-    GraphicsContextStateSaver stateSaver(*paintInfo.context, clip);
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), clip);
     if (clip)
-        paintInfo.context->clip(snappedIntRect(contentBoxRect));
+        paintInfo.context().clip(snappedIntRect(contentBoxRect));
 
     if (Page* page = frame().page()) {
         if (paintInfo.phase == PaintPhaseForeground)

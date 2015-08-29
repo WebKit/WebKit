@@ -513,7 +513,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
         GraphicsContextStateSaver stateSaver(context);
         context.clip(damageRect);
         context.translate(scrollbar.frameRect().x(), scrollbar.frameRect().y());
-        LocalCurrentGraphicsContext localContext(&context);
+        LocalCurrentGraphicsContext localContext(context);
         scrollbarPainterPaint(scrollbarMap()->get(&scrollbar).get(), scrollbar.enabled());
     }
 

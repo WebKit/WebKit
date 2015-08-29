@@ -44,7 +44,7 @@ public:
 
     virtual bool supportsControlTints() const override { return true; }
 
-    virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect) override;
+    virtual void paintScrollCorner(ScrollView*, GraphicsContext&, const IntRect& cornerRect) override;
 
     virtual bool shouldCenterOnThumb(Scrollbar& scrollbar, const PlatformMouseEvent& event) override { return ScrollbarTheme::theme()->shouldCenterOnThumb(scrollbar, event); }
     

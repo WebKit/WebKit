@@ -376,7 +376,7 @@ bool RenderThemeEfl::paintThemePart(const RenderObject& object, FormType type, c
     edje_object_message_signal_process(entry->edje());
     evas_render(ecore_evas_get(entry->canvas()));
 
-    cairo_t* cairo = info.context->platformContext()->cr();
+    cairo_t* cairo = info.context().platformContext()->cr();
     ASSERT(cairo);
 
     cairo_save(cairo);

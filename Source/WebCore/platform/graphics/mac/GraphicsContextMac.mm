@@ -256,7 +256,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 
     // Draw underline.
 #if !PLATFORM(IOS)
-    LocalCurrentGraphicsContext localContext(this);
+    LocalCurrentGraphicsContext localContext(*this);
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     CGContextRef context = (CGContextRef)[currentContext graphicsPort];
 #else

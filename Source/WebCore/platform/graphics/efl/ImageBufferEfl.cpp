@@ -56,7 +56,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    cairo_surface_t* image = cairo_get_target(context()->platformContext()->cr());
+    cairo_surface_t* image = cairo_get_target(context().platformContext()->cr());
 
     Vector<char> encodedImage;
 

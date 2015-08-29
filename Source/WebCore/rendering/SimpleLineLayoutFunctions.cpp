@@ -69,7 +69,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
 
     bool debugBordersEnabled = flow.frame().settings().simpleLineLayoutDebugBordersEnabled();
 
-    GraphicsContext& context = *paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
     const FontCascade& font = style.fontCascade();
     TextPaintStyle textPaintStyle = computeTextPaintStyle(flow.frame(), style, paintInfo);
     GraphicsContextStateSaver stateSaver(context, textPaintStyle.strokeWidth > 0);

@@ -315,7 +315,7 @@ float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, con
     if (paintingDisabled())
         return 0;
 
-    return font.drawText(this, run, point, from, to);
+    return font.drawText(*this, run, point, from, to);
 }
 
 void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& font, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
@@ -323,7 +323,7 @@ void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& fon
     if (paintingDisabled())
         return;
 
-    fontCascade.drawGlyphs(this, &font, buffer, from, numGlyphs, point);
+    fontCascade.drawGlyphs(*this, font, buffer, from, numGlyphs, point);
 }
 
 void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)
@@ -331,7 +331,7 @@ void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& 
     if (paintingDisabled())
         return;
 
-    font.drawEmphasisMarks(this, run, mark, point, from, to);
+    font.drawEmphasisMarks(*this, run, mark, point, from, to);
 }
 
 void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
@@ -359,7 +359,7 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
         subrun.setDirection(isRTL ? RTL : LTR);
         subrun.setDirectionalOverride(bidiRun->dirOverride(false));
 
-        float width = font.drawText(this, subrun, currPoint, 0, -1, customFontNotReadyAction);
+        float width = font.drawText(*this, subrun, currPoint, 0, -1, customFontNotReadyAction);
         currPoint.move(width, 0);
 
         bidiRun = bidiRun->next();
@@ -396,7 +396,7 @@ void GraphicsContext::drawImage(Image* image, ColorSpace colorSpace, const Float
 
     // FIXME (49002): Should be InterpolationLow
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
-    image->draw(this, destination, source, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_orientationDescription);
+    image->draw(*this, destination, source, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_orientationDescription);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize,
@@ -406,7 +406,7 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const 
         return;
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-    image->drawTiled(this, destination, source, tileSize, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
+    image->drawTiled(*this, destination, source, tileSize, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
@@ -422,7 +422,7 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const 
     }
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-    image->drawTiled(this, destination, source, tileScaleFactor, hRule, vRule, colorSpace, imagePaintingOptions.m_compositeOperator);
+    image->drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, colorSpace, imagePaintingOptions.m_compositeOperator);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
@@ -446,7 +446,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace,
 
     // FIXME (49002): Should be InterpolationLow
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
-    image->draw(this, colorSpace, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
+    image->draw(*this, colorSpace, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
 }
 
 void GraphicsContext::clip(const IntRect& rect)
@@ -483,7 +483,7 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& re
 {
     if (paintingDisabled())
         return;
-    buffer->clip(this, rect);
+    buffer->clip(*this, rect);
 }
 
 #if !USE(CG) && !USE(CAIRO)
@@ -640,20 +640,20 @@ std::unique_ptr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const Float
     AffineTransform transform = getCTM(DefinitelyIncludeDeviceScale);
     FloatSize scaledSize(static_cast<int>(ceil(size.width() * transform.xScale())), static_cast<int>(ceil(size.height() * transform.yScale())));
 
-    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceDeviceRGB, this, hasAlpha);
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceDeviceRGB, *this, hasAlpha);
     if (!buffer)
         return nullptr;
 
-    buffer->context()->scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
+    buffer->context().scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
 
     return buffer;
 }
 
 bool GraphicsContext::isCompatibleWithBuffer(ImageBuffer* buffer) const
 {
-    GraphicsContext* bufferContext = buffer->context();
+    GraphicsContext& bufferContext = buffer->context();
 
-    return scalesMatch(getCTM(), bufferContext->getCTM()) && isAcceleratedContext() == bufferContext->isAcceleratedContext();
+    return scalesMatch(getCTM(), bufferContext.getCTM()) && isAcceleratedContext() == bufferContext.isAcceleratedContext();
 }
 
 #if !USE(CG)

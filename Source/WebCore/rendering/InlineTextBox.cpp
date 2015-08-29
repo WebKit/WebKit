@@ -505,7 +505,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         }
     }
 
-    GraphicsContext& context = *paintInfo.context;
+    GraphicsContext& context = paintInfo.context();
 
     const RenderStyle& lineStyle = this->lineStyle();
     

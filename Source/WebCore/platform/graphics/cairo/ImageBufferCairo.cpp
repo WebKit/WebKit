@@ -141,9 +141,9 @@ ImageBuffer::~ImageBuffer()
 {
 }
 
-GraphicsContext* ImageBuffer::context() const
+GraphicsContext& ImageBuffer::context() const
 {
-    return m_data.m_context.get();
+    return *m_data.m_context;
 }
 
 RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior) const
@@ -160,20 +160,20 @@ BackingStoreCopy ImageBuffer::fastCopyImageMode()
     return DontCopyBackingStore;
 }
 
-void ImageBuffer::clip(GraphicsContext* context, const FloatRect& maskRect) const
+void ImageBuffer::clip(GraphicsContext& context, const FloatRect& maskRect) const
 {
-    context->platformContext()->pushImageMask(m_data.m_surface.get(), maskRect);
+    context.platformContext()->pushImageMask(m_data.m_surface.get(), maskRect);
 }
 
-void ImageBuffer::draw(GraphicsContext* destinationContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
+void ImageBuffer::draw(GraphicsContext& destinationContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
     CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
-    BackingStoreCopy copyMode = destinationContext == context() ? CopyBackingStore : DontCopyBackingStore;
+    BackingStoreCopy copyMode = &destinationContext == &context() ? CopyBackingStore : DontCopyBackingStore;
     RefPtr<Image> image = copyImage(copyMode);
-    destinationContext->drawImage(image.get(), styleColorSpace, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription(), useLowQualityScale));
+    destinationContext.drawImage(image.get(), styleColorSpace, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription(), useLowQualityScale));
 }
 
-void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
+void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
 {
     if (RefPtr<Image> image = copyImage(DontCopyBackingStore))
@@ -395,7 +395,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateS
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    cairo_surface_t* image = cairo_get_target(context()->platformContext()->cr());
+    cairo_surface_t* image = cairo_get_target(context().platformContext()->cr());
 
     Vector<char> encodedImage;
     if (!image || !encodeImage(image, mimeType, &encodedImage))

@@ -115,8 +115,8 @@ private:
     // Plugin functions.
     virtual bool initialize(const Parameters&) override;
     virtual void destroy() override;
-    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRectInWindowCoordinates) override { }
-    virtual void updateControlTints(WebCore::GraphicsContext*) override;
+    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRectInWindowCoordinates) override { }
+    virtual void updateControlTints(WebCore::GraphicsContext&) override;
     virtual bool supportsSnapshotting() const override { return true; }
     virtual RefPtr<ShareableBitmap> snapshot() override;
     virtual PlatformLayer* pluginLayer() override;

@@ -92,12 +92,12 @@ bool RenderSVGShape::isEmpty() const
     return path().isEmpty();
 }
 
-void RenderSVGShape::fillShape(GraphicsContext* context) const
+void RenderSVGShape::fillShape(GraphicsContext& context) const
 {
-    context->fillPath(path());
+    context.fillPath(path());
 }
 
-void RenderSVGShape::strokeShape(GraphicsContext* context) const
+void RenderSVGShape::strokeShape(GraphicsContext& context) const
 {
     ASSERT(m_path);
     Path* usePath = m_path.get();
@@ -105,7 +105,7 @@ void RenderSVGShape::strokeShape(GraphicsContext* context) const
     if (hasNonScalingStroke())
         usePath = nonScalingStrokePath(usePath, nonScalingStrokeTransform());
 
-    context->strokePath(*usePath);
+    context.strokePath(*usePath);
 }
 
 bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point)
@@ -225,8 +225,9 @@ bool RenderSVGShape::shouldGenerateMarkerPositions() const
     return resources->markerStart() || resources->markerMid() || resources->markerEnd();
 }
 
-void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext* context)
+void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
 {
+    GraphicsContext* context = &originalContext;
     Color fallbackColor;
     if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(*this, style, fallbackColor)) {
         if (fillPaintingResource->applyResource(*this, style, context, ApplyToFillMode))
@@ -240,8 +241,9 @@ void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext* contex
     }
 }
 
-void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext* context)
+void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& originalContext)
 {
+    GraphicsContext* context = &originalContext;
     Color fallbackColor;
     if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(*this, style, fallbackColor)) {
         if (strokePaintingResource->applyResource(*this, style, context, ApplyToStrokeMode))
@@ -255,12 +257,12 @@ void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext* cont
     }
 }
 
-void RenderSVGShape::strokeShape(GraphicsContext* context)
+void RenderSVGShape::strokeShape(GraphicsContext& context)
 {
     if (!style().svgStyle().hasVisibleStroke())
         return;
 
-    GraphicsContextStateSaver stateSaver(*context, false);
+    GraphicsContextStateSaver stateSaver(context, false);
     if (hasNonScalingStroke()) {
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
         if (!setupNonScalingStrokeContext(nonScalingTransform, stateSaver))
@@ -275,10 +277,10 @@ void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
     for (unsigned i = 0; i < paintOrder.size(); ++i) {
         switch (paintOrder.at(i)) {
         case PaintTypeFill:
-            fillShape(style(), childPaintInfo.context);
+            fillShape(style(), childPaintInfo.context());
             break;
         case PaintTypeStroke:
-            strokeShape(childPaintInfo.context);
+            strokeShape(childPaintInfo.context());
             break;
         case PaintTypeMarkers:
             if (!m_markerPositions.isEmpty())
@@ -290,7 +292,7 @@ void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 
 void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled() || paintInfo.phase != PaintPhaseForeground
+    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhaseForeground
         || style().visibility() == HIDDEN || isEmpty())
         return;
     FloatRect boundingBox = repaintRectInLocalCoordinates();
@@ -298,7 +300,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         return;
 
     PaintInfo childPaintInfo(paintInfo);
-    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
+    GraphicsContextStateSaver stateSaver(childPaintInfo.context());
     childPaintInfo.applyTransform(m_localTransform);
 
     if (childPaintInfo.phase == PaintPhaseForeground) {
@@ -307,7 +309,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         if (renderingContext.isRenderingPrepared()) {
             const SVGRenderStyle& svgStyle = style().svgStyle();
             if (svgStyle.shapeRendering() == SR_CRISPEDGES)
-                childPaintInfo.context->setShouldAntialias(false);
+                childPaintInfo.context().setShouldAntialias(false);
 
             fillStrokeMarkers(childPaintInfo);
         }

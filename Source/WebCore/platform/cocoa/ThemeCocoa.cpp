@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static void fitContextToBox(GraphicsContext* context, const FloatSize& srcImageSize, const FloatSize& dstSize)
+static void fitContextToBox(GraphicsContext& context, const FloatSize& srcImageSize, const FloatSize& dstSize)
 {
     float srcRatio = srcImageSize.aspectRatio();
     float dstRatio = dstSize.aspectRatio();
@@ -45,11 +45,11 @@ static void fitContextToBox(GraphicsContext* context, const FloatSize& srcImageS
         scale = dstSize.height() / srcImageSize.height();
         translationX = (dstSize.width() - scale * srcImageSize.width()) / 2;
     }
-    context->translate(translationX, translationY);
-    context->scale(FloatSize(scale, scale));
+    context.translate(translationX, translationY);
+    context.scale(FloatSize(scale, scale));
 }
 
-void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext* context, const FloatRect& rect) const
+void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatRect& rect) const
 {
     // We only handle one icon at the moment.
     if (name != "wireless-playback") {
@@ -57,8 +57,8 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext* context, co
         return;
     }
 
-    GraphicsContextStateSaver stateSaver(*context);
-    context->setFillColor(Color::black, ColorSpaceDeviceRGB);
+    GraphicsContextStateSaver stateSaver(context);
+    context.setFillColor(Color::black, ColorSpaceDeviceRGB);
 
     FloatSize wirelessPlaybackSrcSize(32, 24.016);
     fitContextToBox(context, wirelessPlaybackSrcSize, rect.size());
@@ -84,7 +84,7 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext* context, co
     outline.addLineTo(FloatPoint(26.917, 24.016));
     outline.closeSubpath();
     
-    context->fillPath(outline);
+    context.fillPath(outline);
 }
 
 }

@@ -57,19 +57,19 @@ LengthBox Theme::controlPadding(ControlPart part, const FontCascade&, const Leng
     }
 }
 
-void Theme::drawNamedImage(const String& name, GraphicsContext* context, const FloatRect& rect) const
+void Theme::drawNamedImage(const String& name, GraphicsContext& context, const FloatRect& rect) const
 {
     // We only handle one icon at the moment.
     if (name != "wireless-playback")
         return;
 
-    GraphicsContextStateSaver stateSaver(*context);
-    context->setFillColor(Color::black, ColorSpaceDeviceRGB);
+    GraphicsContextStateSaver stateSaver(context);
+    context.setFillColor(Color::black, ColorSpaceDeviceRGB);
 
     // Draw a generic Wireless Playback icon.
 
-    context->scale(FloatSize(rect.size().width() / 100, rect.size().height() / 100));
-    context->translate(8, 1);
+    context.scale(FloatSize(rect.size().width() / 100, rect.size().height() / 100));
+    context.translate(8, 1);
 
     Path outline;
     outline.moveTo(FloatPoint(59, 58.7));
@@ -110,7 +110,7 @@ void Theme::drawNamedImage(const String& name, GraphicsContext* context, const F
     outline.addLineTo(FloatPoint(83.6, 41.6));
     outline.closeSubpath();
 
-    context->fillPath(outline);
+    context.fillPath(outline);
 }
 
 }

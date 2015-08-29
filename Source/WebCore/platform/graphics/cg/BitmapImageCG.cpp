@@ -203,7 +203,7 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
     return adoptCF(array);
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
+void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
 #if PLATFORM(IOS)
     startAnimation(DoNotCatchUp);
@@ -213,10 +213,10 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
 
     RetainPtr<CGImageRef> image;
     // Never use subsampled images for drawing into PDF contexts.
-    if (wkCGContextIsPDFContext(ctxt->platformContext()))
+    if (wkCGContextIsPDFContext(ctxt.platformContext()))
         image = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
     else {
-        CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt->platformContext()));
+        CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt.platformContext()));
         float subsamplingScale = std::min<float>(1, std::max(transformedDestinationRect.size.width / srcRect.width(), transformedDestinationRect.size.height / srcRect.height()));
 
         image = frameAtIndex(m_currentFrame, subsamplingScale);
@@ -245,7 +245,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
-    ctxt->drawNativeImage(image.get(), imageSize, styleColorSpace, destRect, scaledSrcRect, compositeOp, blendMode, orientation);
+    ctxt.drawNativeImage(image.get(), imageSize, styleColorSpace, destRect, scaledSrcRect, compositeOp, blendMode, orientation);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

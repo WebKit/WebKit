@@ -67,9 +67,9 @@ void FETile::platformApplySoftware()
     if (!tileImage)
         return;
 
-    GraphicsContext* tileImageContext = tileImage->context();
-    tileImageContext->translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
-    tileImageContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, in->absolutePaintRect().location());
+    GraphicsContext& tileImageContext = tileImage->context();
+    tileImageContext.translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
+    tileImageContext.drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, in->absolutePaintRect().location());
 
     auto tileImageCopy = tileImage->copyImage(CopyBackingStore);
     if (!tileImageCopy)
@@ -80,9 +80,9 @@ void FETile::platformApplySoftware()
     AffineTransform patternTransform;
     patternTransform.translate(inMaxEffectLocation.x() - maxEffectLocation.x(), inMaxEffectLocation.y() - maxEffectLocation.y());
     pattern.get().setPatternSpaceTransform(patternTransform);
-    GraphicsContext* filterContext = resultImage->context();
-    filterContext->setFillPattern(WTF::move(pattern));
-    filterContext->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
+    GraphicsContext& filterContext = resultImage->context();
+    filterContext.setFillPattern(WTF::move(pattern));
+    filterContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
 }
 
 void FETile::dump()

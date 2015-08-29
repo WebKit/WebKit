@@ -177,7 +177,7 @@ private:
     bool platformInvalidate(const WebCore::IntRect&);
     void platformGeometryDidChange();
     void platformVisibilityDidChange();
-    void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect, bool isSnapshot = false);
+    void platformPaint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect, bool isSnapshot = false);
 
     bool platformHandleMouseEvent(const WebMouseEvent&);
     bool platformHandleWheelEvent(const WebWheelEvent&);
@@ -191,7 +191,7 @@ private:
     // Plugin
     virtual bool initialize(const Parameters&) override;
     virtual void destroy() override;
-    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) override;
+    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     virtual RefPtr<ShareableBitmap> snapshot() override;
 #if PLATFORM(COCOA)
     virtual PlatformLayer* pluginLayer() override;

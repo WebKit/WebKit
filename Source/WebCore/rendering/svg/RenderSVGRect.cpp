@@ -97,7 +97,7 @@ void RenderSVGRect::updateShapeFromElement()
 #endif
 }
 
-void RenderSVGRect::fillShape(GraphicsContext* context) const
+void RenderSVGRect::fillShape(GraphicsContext& context) const
 {
     if (m_usePathFallback) {
         RenderSVGShape::fillShape(context);
@@ -109,18 +109,18 @@ void RenderSVGRect::fillShape(GraphicsContext* context) const
     // shadow drawing method, which draws an extra shadow.
     // This is a workaround for switching off the extra shadow.
     // https://bugs.webkit.org/show_bug.cgi?id=68899
-    if (context->hasShadow()) {
-        GraphicsContextStateSaver stateSaver(*context);
-        context->clearShadow();
-        context->fillRect(m_fillBoundingBox);
+    if (context.hasShadow()) {
+        GraphicsContextStateSaver stateSaver(context);
+        context.clearShadow();
+        context.fillRect(m_fillBoundingBox);
         return;
     }
 #endif
 
-    context->fillRect(m_fillBoundingBox);
+    context.fillRect(m_fillBoundingBox);
 }
 
-void RenderSVGRect::strokeShape(GraphicsContext* context) const
+void RenderSVGRect::strokeShape(GraphicsContext& context) const
 {
     if (!style().svgStyle().hasVisibleStroke())
         return;
@@ -130,7 +130,7 @@ void RenderSVGRect::strokeShape(GraphicsContext* context) const
         return;
     }
 
-    context->strokeRect(m_fillBoundingBox, strokeWidth());
+    context.strokeRect(m_fillBoundingBox, strokeWidth());
 }
 
 bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point)

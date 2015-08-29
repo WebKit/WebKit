@@ -362,12 +362,12 @@ RetainPtr<CGImageRef> MediaPlayerPrivateMediaStreamAVFObjC::createImageFromSampl
     return quartzImage;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext* context, const FloatRect& rect)
+void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext& context, const FloatRect& rect)
 {
     paintCurrentFrameInContext(context, rect);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext*, const FloatRect&)
+void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext&, const FloatRect&)
 {
     // FIXME(125157): Implement painting.
 }

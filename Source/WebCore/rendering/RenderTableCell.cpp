@@ -1201,8 +1201,8 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     if (paintRect.maxY() + table()->outerBorderBottom() <= localRepaintRect.y())
         return;
 
-    GraphicsContext* graphicsContext = paintInfo.context;
-    if (!table()->currentBorderValue() || graphicsContext->paintingDisabled())
+    GraphicsContext& graphicsContext = paintInfo.context();
+    if (!table()->currentBorderValue() || graphicsContext.paintingDisabled())
         return;
 
     const RenderStyle& styleForCellFlow = this->styleForCellFlow();
@@ -1244,7 +1244,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     
     for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
         if (border->borderValue.isSameIgnoringColor(*table()->currentBorderValue()))
-            drawLineForBoxSide(*graphicsContext, FloatRect(FloatPoint(border->x1, border->y1), FloatPoint(border->x2, border->y2)), border->side,
+            drawLineForBoxSide(graphicsContext, FloatRect(FloatPoint(border->x1, border->y1), FloatPoint(border->x2, border->y2)), border->side,
                 border->borderValue.color(), border->style, 0, 0, antialias);
     }
 }
@@ -1275,11 +1275,11 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Lay
         // We have to clip here because the background would paint
         // on top of the borders otherwise.  This only matters for cells and rows.
         bool shouldClip = backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders();
-        GraphicsContextStateSaver stateSaver(*paintInfo.context, shouldClip);
+        GraphicsContextStateSaver stateSaver(paintInfo.context(), shouldClip);
         if (shouldClip) {
             LayoutRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
                 width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
-            paintInfo.context->clip(clipRect);
+            paintInfo.context().clip(clipRect);
         }
         paintFillLayers(paintInfo, c, bgLayer, LayoutRect(adjustedPaintOffset, snappedIntRect(frameRect()).size()), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
     }

@@ -221,7 +221,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     GraphicsContextStateSaver stateSaver(context);
     FrameView* view = overlayPage()->mainFrame().view();
     view->updateLayoutAndStyleIfNeededRecursive();
-    view->paint(&context, IntRect(0, 0, view->width(), view->height()));
+    view->paint(context, IntRect(0, 0, view->width(), view->height()));
 }
 
 void InspectorOverlay::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const

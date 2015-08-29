@@ -54,8 +54,8 @@ public:
     virtual void setNeedsBoundariesUpdate() override final { m_needsBoundariesUpdate = true; }
     virtual bool needsBoundariesUpdate() override final { return m_needsBoundariesUpdate; }
     virtual void setNeedsTransformUpdate() override final { m_needsTransformUpdate = true; }
-    virtual void fillShape(GraphicsContext*) const;
-    virtual void strokeShape(GraphicsContext*) const;
+    virtual void fillShape(GraphicsContext&) const;
+    virtual void strokeShape(GraphicsContext&) const;
     virtual bool isRenderingDisabled() const = 0;
 
     bool hasPath() const { return m_path.get(); }
@@ -114,9 +114,9 @@ private:
     FloatRect markerRect(float strokeWidth) const;
     void processMarkerPositions();
 
-    void fillShape(const RenderStyle&, GraphicsContext*);
-    void strokeShape(const RenderStyle&, GraphicsContext*);
-    void strokeShape(GraphicsContext*);
+    void fillShape(const RenderStyle&, GraphicsContext&);
+    void strokeShape(const RenderStyle&, GraphicsContext&);
+    void strokeShape(GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
     void drawMarkers(PaintInfo&);
 

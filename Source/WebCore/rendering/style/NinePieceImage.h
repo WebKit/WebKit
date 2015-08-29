@@ -206,7 +206,7 @@ public:
     static Vector<FloatSize> computeIntrinsicTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
     static Vector<FloatSize> computeNonIntrinsicTileScales();
 
-    void paint(GraphicsContext*, RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, bool intrinsicSource, float deviceScaleFactor, CompositeOperator) const;
+    void paint(GraphicsContext&, RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, bool intrinsicSource, float deviceScaleFactor, CompositeOperator) const;
 
 private:
     DataRef<NinePieceImageData> m_data;

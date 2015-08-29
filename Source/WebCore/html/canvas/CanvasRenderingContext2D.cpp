@@ -1554,7 +1554,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     c->translate(dstRect.x(), dstRect.y());
     c->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
     c->translate(-srcRect.x(), -srcRect.y());
-    video->paintCurrentFrameInContext(c, FloatRect(FloatPoint(), size(video)));
+    video->paintCurrentFrameInContext(*c, FloatRect(FloatPoint(), size(video)));
     stateSaver.restore();
     didDraw(dstRect);
 }
@@ -1658,14 +1658,14 @@ void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRec
     c->restore();
 }
 
-static void drawImageToContext(Image* image, GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(Image* image, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
-    context->drawImage(image, styleColorSpace, dest, src, op);
+    context.drawImage(image, styleColorSpace, dest, src, op);
 }
 
-static void drawImageToContext(ImageBuffer* imageBuffer, GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(ImageBuffer* imageBuffer, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
-    context->drawImageBuffer(imageBuffer, styleColorSpace, dest, src, op);
+    context.drawImageBuffer(imageBuffer, styleColorSpace, dest, src, op);
 }
 
 template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(T* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
@@ -1691,9 +1691,9 @@ template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(
     adjustedDest.setLocation(FloatPoint(0, 0));
     AffineTransform effectiveTransform = c->getCTM();
     IntRect transformedAdjustedRect = enclosingIntRect(effectiveTransform.mapRect(adjustedDest));
-    buffer->context()->translate(-transformedAdjustedRect.location().x(), -transformedAdjustedRect.location().y());
-    buffer->context()->translate(croppedOffset.width(), croppedOffset.height());
-    buffer->context()->concatCTM(effectiveTransform);
+    buffer->context().translate(-transformedAdjustedRect.location().x(), -transformedAdjustedRect.location().y());
+    buffer->context().translate(croppedOffset.width(), croppedOffset.height());
+    buffer->context().concatCTM(effectiveTransform);
     drawImageToContext(image, buffer->context(), styleColorSpace, adjustedDest, src, CompositeSourceOver);
 
     compositeBuffer(buffer.get(), bufferRect, op);
@@ -2393,25 +2393,25 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
         std::unique_ptr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
 
-        GraphicsContext* maskImageContext = maskImage->context();
+        GraphicsContext& maskImageContext = maskImage->context();
 
         if (fill)
-            maskImageContext->setFillColor(Color::black, ColorSpaceDeviceRGB);
+            maskImageContext.setFillColor(Color::black, ColorSpaceDeviceRGB);
         else {
-            maskImageContext->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
-            maskImageContext->setStrokeThickness(c->strokeThickness());
+            maskImageContext.setStrokeColor(Color::black, ColorSpaceDeviceRGB);
+            maskImageContext.setStrokeThickness(c->strokeThickness());
         }
 
-        maskImageContext->setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
+        maskImageContext.setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
 
         if (useMaxWidth) {
-            maskImageContext->translate(location.x() - maskRect.x(), location.y() - maskRect.y());
+            maskImageContext.translate(location.x() - maskRect.x(), location.y() - maskRect.y());
             // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
-            maskImageContext->scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
-            maskImageContext->drawBidiText(font, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
+            maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
+            maskImageContext.drawBidiText(font, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
         } else {
-            maskImageContext->translate(-maskRect.x(), -maskRect.y());
-            maskImageContext->drawBidiText(font, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+            maskImageContext.translate(-maskRect.x(), -maskRect.y());
+            maskImageContext.drawBidiText(font, textRun, location, FontCascade::UseFallbackIfFontNotReady);
         }
 
         GraphicsContextStateSaver stateSaver(*c);

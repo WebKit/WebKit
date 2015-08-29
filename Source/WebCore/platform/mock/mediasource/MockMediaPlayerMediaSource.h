@@ -77,7 +77,7 @@ private:
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
-    virtual void paint(GraphicsContext*, const FloatRect&) override;
+    virtual void paint(GraphicsContext&, const FloatRect&) override;
     virtual MediaTime currentMediaTime() const override;
     virtual MediaTime durationMediaTime() const override;
     virtual void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;

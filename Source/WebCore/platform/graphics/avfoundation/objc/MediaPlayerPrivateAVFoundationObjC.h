@@ -152,8 +152,8 @@ private:
     virtual MediaTime currentMediaTime() const override;
     virtual void setVolume(float) override;
     virtual void setClosedCaptionsVisible(bool) override;
-    virtual void paint(GraphicsContext*, const FloatRect&) override;
-    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&) override;
+    virtual void paint(GraphicsContext&, const FloatRect&) override;
+    virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     virtual PlatformLayer* platformLayer() const override;
 #if PLATFORM(IOS)
     virtual void setVideoFullscreenLayer(PlatformLayer*) override;
@@ -224,7 +224,7 @@ private:
     void createImageGenerator();
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const FloatRect&);
-    void paintWithImageGenerator(GraphicsContext*, const FloatRect&);
+    void paintWithImageGenerator(GraphicsContext&, const FloatRect&);
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void createVideoOutput();
@@ -232,7 +232,7 @@ private:
     RetainPtr<CVPixelBufferRef> createPixelBuffer();
     void updateLastImage();
     bool videoOutputHasAvailableFrame();
-    void paintWithVideoOutput(GraphicsContext*, const FloatRect&);
+    void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     virtual PassNativeImagePtr nativeImageForCurrentTime() override;
     void waitForVideoOutputMediaDataWillChange();
 #endif

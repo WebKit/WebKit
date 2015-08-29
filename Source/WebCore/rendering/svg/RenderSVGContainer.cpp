@@ -108,7 +108,7 @@ bool RenderSVGContainer::selfWillPaint()
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context().paintingDisabled())
         return;
 
     // Spec: groups w/o children still may render filter content.
@@ -121,7 +121,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 
     PaintInfo childPaintInfo(paintInfo);
     {
-        GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
+        GraphicsContextStateSaver stateSaver(childPaintInfo.context());
 
         // Let the RenderSVGViewportContainer subclass clip if necessary
         applyViewportClip(childPaintInfo);

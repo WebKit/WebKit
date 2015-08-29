@@ -3717,16 +3717,16 @@ void FrameView::updateScrollCorner()
     ScrollView::updateScrollCorner();
 }
 
-void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)
+void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
 {
-    if (context->updatingControlTints()) {
+    if (context.updatingControlTints()) {
         updateScrollCorner();
         return;
     }
 
     if (m_scrollCorner) {
         if (frame().isMainFrame())
-            context->fillRect(cornerRect, baseBackgroundColor(), ColorSpaceDeviceRGB);
+            context.fillRect(cornerRect, baseBackgroundColor(), ColorSpaceDeviceRGB);
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
     }
@@ -3734,12 +3734,12 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
     ScrollView::paintScrollCorner(context, cornerRect);
 }
 
-void FrameView::paintScrollbar(GraphicsContext* context, Scrollbar* bar, const IntRect& rect)
+void FrameView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, const IntRect& rect)
 {
-    if (bar->isCustomScrollbar() && frame().isMainFrame()) {
-        IntRect toFill = bar->frameRect();
+    if (bar.isCustomScrollbar() && frame().isMainFrame()) {
+        IntRect toFill = bar.frameRect();
         toFill.intersect(rect);
-        context->fillRect(toFill, baseBackgroundColor(), ColorSpaceDeviceRGB);
+        context.fillRect(toFill, baseBackgroundColor(), ColorSpaceDeviceRGB);
     }
 
     ScrollView::paintScrollbar(context, bar, rect);
@@ -3897,9 +3897,9 @@ void FrameView::paintControlTints()
     context.setUpdatingControlTints(true);
     if (platformWidget()) {
         // FIXME: consult paintsEntireContents().
-        paintContents(&context, visibleContentRect(LegacyIOSDocumentVisibleRect));
+        paintContents(context, visibleContentRect(LegacyIOSDocumentVisibleRect));
     } else
-        paint(&context, frameRect());
+        paint(context, frameRect());
 }
 
 bool FrameView::wasScrolledByUser() const
@@ -3920,11 +3920,11 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     adjustTiledBackingCoverage();
 }
 
-void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirtyRect, PaintingState& paintingState)
+void FrameView::willPaintContents(GraphicsContext& context, const IntRect& dirtyRect, PaintingState& paintingState)
 {
     Document* document = frame().document();
 
-    if (!context->paintingDisabled())
+    if (!context.paintingDisabled())
         InspectorInstrumentation::willPaint(renderView());
 
     paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
@@ -3961,7 +3961,7 @@ void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirty
     m_isPainting = true;
 }
 
-void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyRect, PaintingState& paintingState)
+void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyRect, PaintingState& paintingState)
 {
     m_isPainting = false;
 
@@ -3985,14 +3985,14 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
     if (paintingState.isTopLevelPainter)
         sCurrentPaintTimeStamp = 0;
 
-    if (!context->paintingDisabled()) {
+    if (!context.paintingDisabled()) {
         InspectorInstrumentation::didPaint(renderView(), dirtyRect);
         // FIXME: should probably not fire milestones for snapshot painting. https://bugs.webkit.org/show_bug.cgi?id=117623
         firePaintRelatedMilestonesIfNeeded();
     }
 }
 
-void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect)
+void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect)
 {
 #ifndef NDEBUG
     bool fillWithRed;
@@ -4010,7 +4010,7 @@ void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect
         fillWithRed = true;
     
     if (fillWithRed)
-        context->fillRect(dirtyRect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
+        context.fillRect(dirtyRect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
 #endif
 
     if (m_layoutPhase == InViewSizeAdjust)
@@ -4072,7 +4072,7 @@ void FrameView::setNodeToDraw(Node* node)
     m_nodeToDraw = node;
 }
 
-void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect& imageRect, SelectionInSnapshot shouldPaintSelection, CoordinateSpaceForSnapshot coordinateSpace)
+void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect& imageRect, SelectionInSnapshot shouldPaintSelection, CoordinateSpaceForSnapshot coordinateSpace)
 {
     updateLayoutAndStyleIfNeededRecursive();
 
@@ -4108,9 +4108,9 @@ void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect
     setPaintBehavior(oldBehavior);
 }
 
-void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
+void FrameView::paintOverhangAreas(GraphicsContext& context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
 {
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
     if (frame().document()->printing())
@@ -4301,7 +4301,7 @@ void FrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float
     renderView->setTruncatedAt(static_cast<int>(floorf(oldBottom)));
     IntRect dirtyRect(0, static_cast<int>(floorf(oldTop)), renderView->layoutOverflowRect().maxX(), static_cast<int>(ceilf(oldBottom - oldTop)));
     renderView->setPrintRect(dirtyRect);
-    renderView->layer()->paint(&context, dirtyRect);
+    renderView->layer()->paint(context, dirtyRect);
     *newBottom = renderView->bestTruncatedAt();
     if (!*newBottom)
         *newBottom = oldBottom;

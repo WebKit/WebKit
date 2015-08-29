@@ -2144,7 +2144,7 @@ void RenderBlockFlow::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& 
 {
     RenderBlock::paintColumnRules(paintInfo, point);
     
-    if (!multiColumnFlowThread() || paintInfo.context->paintingDisabled())
+    if (!multiColumnFlowThread() || paintInfo.context().paintingDisabled())
         return;
 
     // Iterate over our children and paint the column rules as needed.
@@ -2196,7 +2196,7 @@ void RenderBlockFlow::clipOutFloatingObjects(RenderBlock& rootBlock, const Paint
                 floatingObject->renderer().width(), floatingObject->renderer().height());
             rootBlock.flipForWritingMode(floatBox);
             floatBox.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
-            paintInfo->context->clipOut(snappedIntRect(floatBox));
+            paintInfo->context().clipOut(snappedIntRect(floatBox));
         }
     }
 }

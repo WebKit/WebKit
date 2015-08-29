@@ -126,10 +126,10 @@ public:
 
     // Tells the plug-in to paint itself into the given graphics context. The passed-in context and
     // dirty rect are in window coordinates. The context is saved/restored by the caller.
-    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) = 0;
+    virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
 
     // Invalidate native tintable controls. The passed-in context is in window coordinates.
-    virtual void updateControlTints(WebCore::GraphicsContext*);
+    virtual void updateControlTints(WebCore::GraphicsContext&);
 
     // Returns whether the plug-in supports snapshotting or not.
     virtual bool supportsSnapshotting() const = 0;

@@ -198,13 +198,12 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // Set the rendering mode from the page's settings.
     filterData->filter->setRenderingMode(renderingMode);
 
-    GraphicsContext* sourceGraphicContext = sourceGraphic->context();
-    ASSERT(sourceGraphicContext);
+    GraphicsContext& sourceGraphicContext = sourceGraphic->context();
   
     filterData->sourceGraphicBuffer = WTF::move(sourceGraphic);
     filterData->savedContext = context;
 
-    context = sourceGraphicContext;
+    context = &sourceGraphicContext;
 
     ASSERT(!m_filter.contains(&renderer));
     m_filter.set(&renderer, WTF::move(filterData));

@@ -72,7 +72,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
         GraphicsContextStateSaver stateSaver(context);
         context.translate(-overlayFrame.x(), -overlayFrame.y());
         m_frame.view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
-        m_frame.view()->paintContents(&context, overlayFrame);
+        m_frame.view()->paintContents(context, overlayFrame);
         m_frame.view()->setPaintBehavior(PaintBehaviorNormal);
     }
 }

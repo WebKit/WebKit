@@ -482,7 +482,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     PaintBehavior oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(PaintBehaviorSelectionOnly);
 
-    buffer->context()->translate(-toFloatSize(rect.location()));
+    buffer->context().translate(-toFloatSize(rect.location()));
     frameView->paintContents(buffer->context(), roundedIntRect(rect));
 
     frameView->frame().selection().setSelection(oldSelection);

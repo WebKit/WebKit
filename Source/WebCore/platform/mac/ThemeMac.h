@@ -52,13 +52,13 @@ public:
 
     virtual bool controlRequiresPreWhiteSpace(ControlPart part) const override { return part == PushButtonPart; }
 
-    virtual void paint(ControlPart, ControlStates&, GraphicsContext*, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor) override;
+    virtual void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor) override;
     virtual void inflateControlPaintRect(ControlPart, const ControlStates&, FloatRect&, float zoomFactor) const override;
 
     // FIXME: Once RenderThemeMac is converted over to use Theme then this can be internal to ThemeMac.
     static NSView* ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
     static void setFocusRingClipRect(const FloatRect&);
-    static bool drawCellOrFocusRingWithViewIntoContext(NSCell*, GraphicsContext*, const FloatRect&, NSView*, bool /* drawButtonCell */, bool /* drawFocusRing */, bool /* useImageBuffer */, float /* deviceScaleFactor */);
+    static bool drawCellOrFocusRingWithViewIntoContext(NSCell*, GraphicsContext&, const FloatRect&, NSView*, bool /* drawButtonCell */, bool /* drawFocusRing */, bool /* useImageBuffer */, float /* deviceScaleFactor */);
 };
 
 } // namespace WebCore

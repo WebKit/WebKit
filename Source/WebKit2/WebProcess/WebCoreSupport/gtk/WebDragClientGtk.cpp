@@ -52,7 +52,7 @@ static PassRefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_su
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
     auto graphicsContext = bitmap->createGraphicsContext();
 
-    graphicsContext->platformContext()->drawSurfaceToContext(surface, IntRect(IntPoint(), imageSize), IntRect(IntPoint(), imageSize), graphicsContext.get());
+    graphicsContext->platformContext()->drawSurfaceToContext(surface, IntRect(IntPoint(), imageSize), IntRect(IntPoint(), imageSize), *graphicsContext);
     return bitmap.release();
 }
 

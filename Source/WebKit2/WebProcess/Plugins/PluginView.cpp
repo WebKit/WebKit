@@ -792,13 +792,13 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
     viewGeometryDidChange();
 }
 
-void PluginView::paint(GraphicsContext* context, const IntRect& /*dirtyRect*/)
+void PluginView::paint(GraphicsContext& context, const IntRect& /*dirtyRect*/)
 {
     if (!m_plugin || !m_isInitialized || m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
         return;
 
-    if (context->paintingDisabled()) {
-        if (context->updatingControlTints())
+    if (context.paintingDisabled()) {
+        if (context.updatingControlTints())
             m_plugin->updateControlTints(context);
         return;
     }
@@ -810,14 +810,14 @@ void PluginView::paint(GraphicsContext* context, const IntRect& /*dirtyRect*/)
         return;
 
     if (m_transientPaintingSnapshot) {
-        m_transientPaintingSnapshot->paint(*context, contentsScaleFactor(), frameRect().location(), m_transientPaintingSnapshot->bounds());
+        m_transientPaintingSnapshot->paint(context, contentsScaleFactor(), frameRect().location(), m_transientPaintingSnapshot->bounds());
         return;
     }
     
-    GraphicsContextStateSaver stateSaver(*context);
+    GraphicsContextStateSaver stateSaver(context);
 
     // Translate the coordinate system so that the origin is in the top-left corner of the plug-in.
-    context->translate(frameRect().location().x(), frameRect().location().y());
+    context.translate(frameRect().location().x(), frameRect().location().y());
 
     m_plugin->paint(context, paintRect);
 }
