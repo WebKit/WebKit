@@ -52,9 +52,6 @@ public:
     virtual String cssText() const = 0;
     virtual bool equals(const CSSBasicShape&) const = 0;
 
-    CSSPrimitiveValue* referenceBox() const { return m_referenceBox.get(); }
-    void setReferenceBox(PassRefPtr<CSSPrimitiveValue> referenceBox) { m_referenceBox = referenceBox; }
-
 public:
     virtual ~CSSBasicShape() { }
 
