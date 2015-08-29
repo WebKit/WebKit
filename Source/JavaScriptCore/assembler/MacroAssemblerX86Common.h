@@ -1124,10 +1124,28 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
+        if (!right.m_value && (cond == Equal || cond == NotEqual || cond == LessThan || cond == GreaterThanOrEqual)) {
+            ResultCondition resultCondition;
+            switch (cond) {
+            case Equal:
+                resultCondition = Zero;
+                break;
+            case NotEqual:
+                resultCondition = NonZero;
+                break;
+            case LessThan:
+                resultCondition = Signed;
+                break;
+            case GreaterThanOrEqual:
+                resultCondition = PositiveOrZero;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
             m_assembler.testl_rr(left, left);
-        else
-            m_assembler.cmpl_ir(right.m_value, left);
+            return Jump(m_assembler.jCC(x86Condition(resultCondition)));
+        }
+        m_assembler.cmpl_ir(right.m_value, left);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
@@ -1437,10 +1455,29 @@ public:
 
     void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
+        if (!right.m_value && (cond == Equal || cond == NotEqual || cond == LessThan || cond == GreaterThanOrEqual)) {
+            ResultCondition resultCondition;
+            switch (cond) {
+            case Equal:
+                resultCondition = Zero;
+                break;
+            case NotEqual:
+                resultCondition = NonZero;
+                break;
+            case LessThan:
+                resultCondition = Signed;
+                break;
+            case GreaterThanOrEqual:
+                resultCondition = PositiveOrZero;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
             m_assembler.testl_rr(left, left);
-        else
-            m_assembler.cmpl_ir(right.m_value, left);
+            set32(x86Condition(resultCondition), dest);
+            return;
+        }
+        m_assembler.cmpl_ir(right.m_value, left);
         set32(x86Condition(cond), dest);
     }
 

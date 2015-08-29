@@ -1,3 +1,32 @@
+2015-08-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC][x86] Improve the compare functions when comparing with zero
+        https://bugs.webkit.org/show_bug.cgi?id=148536
+
+        Reviewed by Geoffrey Garen.
+
+        This patch has two parts:
+        1) The macro assembler gets an additional cmp->test optimization
+           for LessThan and GreaterThanOrEqual.
+           Instead of comparing the value with an immediate, test the value
+           with itself and use the flag.
+        2) Extend the DFG JIT optimization of compare.
+           In particular, use the same optimization in compileInt32Compare()
+           as we have in compilePeepHoleBooleanBranch().
+           The generator compileInt32Compare() is unfortunately very
+           common due to MoveHints placed between the Compare node and the Branch
+           node.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::compare32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::compare32):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBooleanBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare):
+
 2015-08-28  Mark Lam  <mark.lam@apple.com>
 
         Add MacroAssemblerPrinter support for printing memory.
