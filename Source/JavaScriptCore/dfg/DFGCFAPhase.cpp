@@ -173,7 +173,7 @@ private:
             m_interpreter.dump(WTF::dataFile());
             dataLogF("\n");
         }
-        m_changed |= m_state.endBasicBlock(MergeToSuccessors);
+        m_changed |= m_state.endBasicBlock();
         
         if (m_verbose) {
             dataLog("      tail vars: ", block->valuesAtTail, "\n");

@@ -1377,7 +1377,6 @@
 		A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A704D8FF17A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A704D90517A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A704D90017A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp */; };
 		A704D90617A0BAA8006BA554 /* DFGInPlaceAbstractState.h in Headers */ = {isa = PBXBuildFile; fileRef = A704D90117A0BAA8006BA554 /* DFGInPlaceAbstractState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A704D90717A0BAA8006BA554 /* DFGMergeMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A704D90217A0BAA8006BA554 /* DFGMergeMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A709F2EF17A0AC0400512E98 /* SlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A709F2F217A0AC2A00512E98 /* CommonSlowPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A709F2F117A0AC2A00512E98 /* CommonSlowPaths.cpp */; };
 		A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */; };
@@ -3233,7 +3232,6 @@
 		A704D8FF17A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractInterpreterInlines.h; path = dfg/DFGAbstractInterpreterInlines.h; sourceTree = "<group>"; };
 		A704D90017A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGInPlaceAbstractState.cpp; path = dfg/DFGInPlaceAbstractState.cpp; sourceTree = "<group>"; };
 		A704D90117A0BAA8006BA554 /* DFGInPlaceAbstractState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGInPlaceAbstractState.h; path = dfg/DFGInPlaceAbstractState.h; sourceTree = "<group>"; };
-		A704D90217A0BAA8006BA554 /* DFGMergeMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGMergeMode.h; path = dfg/DFGMergeMode.h; sourceTree = "<group>"; };
 		A709F2EF17A0AC0400512E98 /* SlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowPathCall.h; sourceTree = "<group>"; };
 		A709F2F117A0AC2A00512E98 /* CommonSlowPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonSlowPaths.cpp; sourceTree = "<group>"; };
 		A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOpcodes32_64.cpp; sourceTree = "<group>"; };
@@ -5247,7 +5245,6 @@
 				A767B5B417A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h */,
 				0F5874EB194FEB1200AAB2C1 /* DFGMayExit.cpp */,
 				0F5874EC194FEB1200AAB2C1 /* DFGMayExit.h */,
-				A704D90217A0BAA8006BA554 /* DFGMergeMode.h */,
 				0F1725FE1B48719A00AC3A55 /* DFGMinifiedGraph.cpp */,
 				0F2BDC3D1522801700CD8910 /* DFGMinifiedGraph.h */,
 				0FB4B51016B3A964003F696B /* DFGMinifiedID.h */,
@@ -6143,7 +6140,6 @@
 				709FB8681AE335C60039D069 /* JSWeakSet.h in Headers */,
 				A767B5B617A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h in Headers */,
 				0F2B9CED19D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.h in Headers */,
-				A704D90717A0BAA8006BA554 /* DFGMergeMode.h in Headers */,
 				0FB17663196B8F9E0091052A /* DFGPureValue.h in Headers */,
 				FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */,
 				0F2BDC451522801B00CD8910 /* DFGMinifiedGraph.h in Headers */,

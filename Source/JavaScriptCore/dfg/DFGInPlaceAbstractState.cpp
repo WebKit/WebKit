@@ -162,7 +162,7 @@ void InPlaceAbstractState::initialize()
     }
 }
 
-bool InPlaceAbstractState::endBasicBlock(MergeMode mergeMode)
+bool InPlaceAbstractState::endBasicBlock()
 {
     ASSERT(m_block);
     
@@ -177,49 +177,40 @@ bool InPlaceAbstractState::endBasicBlock(MergeMode mergeMode)
         return false;
     }
     
-    bool changed = false;
+    bool changed = checkAndSet(block->cfaStructureClobberStateAtTail, m_structureClobberState);
     
-    if ((mergeMode != DontMerge) || !ASSERT_DISABLED) {
-        changed |= checkAndSet(block->cfaStructureClobberStateAtTail, m_structureClobberState);
-    
-        switch (m_graph.m_form) {
-        case ThreadedCPS: {
-            for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
-                AbstractValue& destination = block->valuesAtTail.argument(argument);
-                changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
-            }
-            
-            for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
-                AbstractValue& destination = block->valuesAtTail.local(local);
-                changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
-            }
-            break;
+    switch (m_graph.m_form) {
+    case ThreadedCPS: {
+        for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
+            AbstractValue& destination = block->valuesAtTail.argument(argument);
+            changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
         }
-            
-        case SSA: {
-            for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
-                changed |= block->valuesAtTail[i].merge(m_variables[i]);
-            
-            HashSet<Node*>::iterator iter = block->ssa->liveAtTail.begin();
-            HashSet<Node*>::iterator end = block->ssa->liveAtTail.end();
-            for (; iter != end; ++iter) {
-                Node* node = *iter;
-                changed |= block->ssa->valuesAtTail.find(node)->value.merge(forNode(node));
-            }
-            break;
+
+        for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
+            AbstractValue& destination = block->valuesAtTail.local(local);
+            changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
         }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        break;
     }
-    
-    ASSERT(mergeMode != DontMerge || !changed);
-    
+
+    case SSA: {
+        for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
+            changed |= block->valuesAtTail[i].merge(m_variables[i]);
+
+        HashSet<Node*>::iterator iter = block->ssa->liveAtTail.begin();
+        HashSet<Node*>::iterator end = block->ssa->liveAtTail.end();
+        for (; iter != end; ++iter) {
+            Node* node = *iter;
+            changed |= block->ssa->valuesAtTail.find(node)->value.merge(forNode(node));
+        }
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     reset();
-    
-    if (mergeMode != MergeToSuccessors)
-        return changed;
     
     return mergeToSuccessors(block);
 }

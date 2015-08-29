@@ -3736,9 +3736,6 @@
     <ClInclude Include="..\dfg\DFGLoopPreHeaderCreationPhase.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGMergeMode.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGMinifiedGraph.h">
       <Filter>dfg</Filter>
     </ClInclude>

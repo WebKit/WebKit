@@ -31,7 +31,6 @@
 #include "DFGAbstractValue.h"
 #include "DFGBranchDirection.h"
 #include "DFGGraph.h"
-#include "DFGMergeMode.h"
 #include "DFGNode.h"
 
 namespace JSC { namespace DFG {
@@ -76,26 +75,14 @@ public:
     // Finish abstractly executing a basic block. If MergeToTail or
     // MergeToSuccessors is passed, then this merges everything we have
     // learned about how the state changes during this block's execution into
-    // the block's data structures. There are three return modes, depending
-    // on the value of mergeMode:
+    // the block's data structures.
     //
-    // DontMerge:
-    //    Always returns false.
-    //
-    // MergeToTail:
-    //    Returns true if the state of the block at the tail was changed.
-    //    This means that you must call mergeToSuccessors(), and if that
-    //    returns true, then you must revisit (at least) the successor
-    //    blocks. False will always be returned if the block is terminal
-    //    (i.e. ends in Throw or Return, or has a ForceOSRExit inside it).
-    //
-    // MergeToSuccessors:
-    //    Returns true if the state of the block at the tail was changed,
-    //    and, if the state at the heads of successors was changed.
-    //    A true return means that you must revisit (at least) the successor
-    //    blocks. This also sets cfaShouldRevisit to true for basic blocks
-    //    that must be visited next.
-    bool endBasicBlock(MergeMode);
+    // Returns true if the state of the block at the tail was changed,
+    // and, if the state at the heads of successors was changed.
+    // A true return means that you must revisit (at least) the successor
+    // blocks. This also sets cfaShouldRevisit to true for basic blocks
+    // that must be visited next.
+    bool endBasicBlock();
     
     // Reset the AbstractState. This throws away any results, and at this point
     // you can safely call beginBasicBlock() on any basic block.
