@@ -1,5 +1,17 @@
 2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Resource.prototype.associateWithScript assertions firing
+        https://bugs.webkit.org/show_bug.cgi?id=148601
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.associateWithScript):
+        Restore the code that was here before it was converted to asserts.
+        It looked as if it was iOS 6 only but it was not.
+
+2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve ScriptSyntaxTree a bit
         https://bugs.webkit.org/show_bug.cgi?id=148563
 
