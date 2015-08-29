@@ -341,8 +341,6 @@ webkit.org/b/139828 svg/animations/animateMotion-additive-2b.svg [ Pass ImageOnl
 # This test crashes every time in WebKit2 on Yosemite
 webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
 
-webkit.org/b/144155 [ Yosemite ] fast/frames/flattening/iframe-flattening-resize-event-count.html [ Pass Failure ]
-
 [ Debug ] editing/undo/remove-css-property-and-remove-style.html [ Pass Failure ]
 
 ### END OF (3) Unclassified failures

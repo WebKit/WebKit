@@ -1,3 +1,10 @@
+2015-08-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac TestExpectations gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2015-08-28  Andy Estes  <aestes@apple.com>
 
         http/tests/media/video-play-stall.html is flakey

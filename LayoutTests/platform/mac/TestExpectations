@@ -373,7 +373,6 @@ fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
 fast/repaint/repaint-across-writing-mode-boundary.html [ Failure ]
 fast/ruby/base-shorter-than-text.html [ Failure ]
 fast/text/emphasis-vertical.html [ Failure ]
-fast/text/international/text-spliced-font.html [ Failure ]
 fast/writing-mode/border-vertical-lr.html [ Failure ]
 fast/writing-mode/fallback-orientation.html [ Failure ]
 fast/writing-mode/japanese-lr-selection.html [ Failure ]
@@ -1238,8 +1237,8 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 [ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
 [ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
 
-# <rdar://problem/20622665> WebKit media doesn't get a canplay event when load stalls
-[ ElCapitan+ ] http/tests/media/video-play-stall.html [ Pass Failure ]
+# See also: <rdar://problem/20622665>
+webkit.org/b/148597 http/tests/media/video-play-stall.html [ Pass Failure ]
 
 # <rdar://problem/21263363>
 http/tests/media/remove-while-loading.html [ Skip ]
@@ -1270,6 +1269,3 @@ webkit.org/b/148119 [ Mavericks Yosemite ] fast/text/trak-optimizeLegibility.htm
 
 # These operating systems do not have language-sensitive font fallback.
 [ Mavericks Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
-
-# http/tests/media/video-play-stall.html is flakey
-webkit.org/b/148597 http/tests/media/video-play-stall.html [ Pass Failure ]
