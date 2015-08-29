@@ -1,5 +1,13 @@
 2015-08-28  Timothy Horton  <timothy_horton@apple.com>
 
+        Add a mysteriously nonproblematic missing comma.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._collect_matching_tests):
+        (TestExpectationParser):
+
+2015-08-28  Timothy Horton  <timothy_horton@apple.com>
+
         Remove an old temporary script that has served its purpose
 
         * Scripts/convert-test-expectations: Removed.
