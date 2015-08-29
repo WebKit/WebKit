@@ -46,6 +46,7 @@ void printCPURegisters(CPUState&, int indentation = 0);
 // print stream. Hence, no indentation will be applied.
 void printRegister(CPUState&, RegisterID);
 void printRegister(CPUState&, FPRegisterID);
+void printMemory(CPUState&, const Memory&);
     
 static void printIndent(int indentation)
 {
@@ -110,6 +111,62 @@ void printRegister(CPUState& cpu, FPRegisterID regID)
     dataLogF("%s:<0x%016llx %.13g>", name, u.uint64Value, u.doubleValue);
 }
 
+void printMemory(CPUState& cpu, const Memory& memory)
+{
+    uint8_t* ptr = nullptr;
+    switch (memory.addressType) {
+    case Memory::AddressType::Address: {
+        ptr = reinterpret_cast<uint8_t*>(cpu.registerValue(memory.u.address.base));
+        ptr += memory.u.address.offset;
+        break;
+    }
+    case Memory::AddressType::AbsoluteAddress: {
+        ptr = reinterpret_cast<uint8_t*>(const_cast<void*>(memory.u.absoluteAddress.m_ptr));
+        break;
+    }
+    }
+
+    if (memory.dumpStyle == Memory::SingleWordDump) {
+        if (memory.numBytes == sizeof(int8_t)) {
+            auto p = reinterpret_cast<int8_t*>(ptr);
+            dataLogF("%p:<0x%02x %d>", p, *p, *p);
+            return;
+        }
+        if (memory.numBytes == sizeof(int16_t)) {
+            auto p = reinterpret_cast<int16_t*>(ptr);
+            dataLogF("%p:<0x%04x %d>", p, *p, *p);
+            return;
+        }
+        if (memory.numBytes == sizeof(int32_t)) {
+            auto p = reinterpret_cast<int32_t*>(ptr);
+            dataLogF("%p:<0x%08x %d>", p, *p, *p);
+            return;
+        }
+        if (memory.numBytes == sizeof(int64_t)) {
+            auto p = reinterpret_cast<int64_t*>(ptr);
+            dataLogF("%p:<0x%016llx %lld>", p, *p, *p);
+            return;
+        }
+        // Else, unknown word size. Fall thru and dump in the generic way.
+    }
+
+    // Generic dump: dump rows of 16 bytes in 4 byte groupings.
+    size_t numBytes = memory.numBytes;
+    for (size_t i = 0; i < numBytes; i++) {
+        if (!(i % 16))
+            dataLogF("%p: ", &ptr[i]);
+        else if (!(i % 4))
+            dataLog(" ");
+
+        dataLogF("%02x", ptr[i]);
+
+        if (i % 16 == 15)
+            dataLog("\n");
+    }
+    if (numBytes % 16 < 15)
+        dataLog("\n");
+}
+
 void MacroAssemblerPrinter::printCallback(ProbeContext* context)
 {
     typedef PrintArg Arg;
@@ -126,6 +183,9 @@ void MacroAssemblerPrinter::printCallback(ProbeContext* context)
             break;
         case Arg::Type::FPRegisterID:
             printRegister(context->cpu, arg.u.fpRegisterID);
+            break;
+        case Arg::Type::Memory:
+            printMemory(context->cpu, arg.u.memory);
             break;
         case Arg::Type::ConstCharPtr:
             dataLog(arg.u.constCharPtr);

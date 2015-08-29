@@ -67,6 +67,15 @@ namespace JSC {
 //      //      }
 //      jit.print(AllRegisters());
 //
+//      jit.print(MemWord<uint8_t>(regID), "\n");   // Emits code to print a byte pointed to by the register.
+//      jit.print(MemWord<uint32_t>(regID), "\n");  // Emits code to print a 32-bit word pointed to by the register.
+//
+//      jit.print(MemWord<uint8_t>(Address(regID, 23), "\n");     // Emits code to print a byte at the address.
+//      jit.print(MemWord<intptr_t>(AbsoluteAddress(&cb), "\n");  // Emits code to print an intptr_t sized word at the address.
+//
+//      jit.print(Memory(reg, 100), "\n");              // Emits code to print a 100 bytes at the address pointed by the register.
+//      jit.print(Memory(Address(reg, 4), 100), "\n");  // Emits code to print a 100 bytes at the address.
+//
 //      // Print multiple things at once. This incurs the probe overhead only once
 //      // to print all the items.
 //      jit.print("cb:", cb, " regID:", regID, " cpu:\n", AllRegisters());
@@ -80,6 +89,72 @@ namespace JSC {
 // This is a marker type only used with MacroAssemblerPrinter::print().
 // See MacroAssemblerPrinter::print() below for details.
 struct AllRegisters { };
+
+struct Memory {
+    using Address = MacroAssembler::Address;
+    using AbsoluteAddress = MacroAssembler::AbsoluteAddress;
+    using RegisterID = MacroAssembler::RegisterID;
+
+    enum class AddressType {
+        Address,
+        AbsoluteAddress,
+    };
+
+    enum DumpStyle {
+        SingleWordDump,
+        GenericDump,
+    };
+
+    Memory(RegisterID& reg, size_t bytes, DumpStyle style = GenericDump)
+        : addressType(AddressType::Address)
+        , dumpStyle(style)
+        , numBytes(bytes)
+    {
+        u.address = Address(reg, 0);
+    }
+
+    Memory(const Address& address, size_t bytes, DumpStyle style = GenericDump)
+        : addressType(AddressType::Address)
+        , dumpStyle(style)
+        , numBytes(bytes)
+    {
+        u.address = address;
+    }
+
+    Memory(const AbsoluteAddress& address, size_t bytes, DumpStyle style = GenericDump)
+        : addressType(AddressType::AbsoluteAddress)
+        , dumpStyle(style)
+        , numBytes(bytes)
+    {
+        u.absoluteAddress = address;
+    }
+
+    AddressType addressType;
+    DumpStyle dumpStyle;
+    size_t numBytes;
+    union UnionedAddress {
+        UnionedAddress() { }
+
+        Address address;
+        AbsoluteAddress absoluteAddress;
+    } u;
+};
+
+template <typename IntType>
+struct MemWord : public Memory {
+    MemWord(RegisterID& reg)
+        : Memory(reg, sizeof(IntType), Memory::SingleWordDump)
+    { }
+
+    MemWord(const Address& address)
+        : Memory(address, sizeof(IntType), Memory::SingleWordDump)
+    { }
+
+    MemWord(const AbsoluteAddress& address)
+        : Memory(address, sizeof(IntType), Memory::SingleWordDump)
+    { }
+};
+
 
 class MacroAssemblerPrinter {
     using CPUState = MacroAssembler::CPUState;
@@ -103,6 +178,7 @@ private:
             AllRegisters,
             RegisterID,
             FPRegisterID,
+            Memory,
             ConstCharPtr,
             ConstVoidPtr,
             IntptrValue,
@@ -125,7 +201,13 @@ private:
         {
             u.fpRegisterID = regID;
         }
-        
+
+        PrintArg(const Memory& memory)
+            : type(Type::Memory)
+        {
+            u.memory = memory;
+        }
+
         PrintArg(const char* ptr)
             : type(Type::ConstCharPtr)
         {
@@ -163,9 +245,12 @@ private:
         }
         
         Type type;
-        union {
+        union Value {
+            Value() { }
+
             RegisterID gpRegisterID;
             FPRegisterID fpRegisterID;
+            Memory memory;
             const char* constCharPtr;
             const void* constVoidPtr;
             intptr_t intptrValue;

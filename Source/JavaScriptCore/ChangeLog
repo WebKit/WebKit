@@ -1,3 +1,21 @@
+2015-08-28  Mark Lam  <mark.lam@apple.com>
+
+        Add MacroAssemblerPrinter support for printing memory.
+        https://bugs.webkit.org/show_bug.cgi?id=148600
+
+        Reviewed by Saam Barati.
+
+        Previously, we can dump registers at runtime.  Now we can dump memory too.
+        See comment in MacroAssemblerPrinter.h for examples of how to do this.
+
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::printMemory):
+        (JSC::MacroAssemblerPrinter::printCallback):
+        * assembler/MacroAssemblerPrinter.h:
+        (JSC::Memory::Memory):
+        (JSC::MemWord::MemWord):
+        (JSC::MacroAssemblerPrinter::PrintArg::PrintArg):
+
 2015-08-28  Khem Raj  <raj.khem@gmail.com>
 
         JavaScriptCore fails to build using GCC 5
