@@ -225,6 +225,8 @@ public:
     PassRefPtr<AccessibilityUIElement> verticalScrollbar() const;
 
     void scrollToMakeVisible();
+    void scrollToGlobalPoint(int x, int y);
+    void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);
     
     // Text markers.
     PassRefPtr<AccessibilityTextMarkerRange> lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);

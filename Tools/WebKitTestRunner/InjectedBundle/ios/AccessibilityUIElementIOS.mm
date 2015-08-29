@@ -699,6 +699,14 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() c
 void AccessibilityUIElement::scrollToMakeVisible()
 {
 }
+    
+void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
+{
+}
+    
+void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)
+{
+}
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
 {

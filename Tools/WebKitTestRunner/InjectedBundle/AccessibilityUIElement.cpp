@@ -224,6 +224,8 @@ int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*) { retur
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*) { return false; }
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int) { return 0; }
 void AccessibilityUIElement::scrollToMakeVisible() { }
+void AccessibilityUIElement::scrollToGlobalPoint(int, int) { }
+void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int, int, int, int) { }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPostscriptsDescription() const { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPrescriptsDescription() const { return 0; }

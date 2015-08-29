@@ -76,6 +76,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
 - (void)_accessibilitySetTestValue:(id)value forAttribute:(NSString*)attributeName;
+- (void)_accessibilityScrollToMakeVisibleWithSubFocus:(NSRect)rect;
+- (void)_accessibilityScrollToGlobalPoint:(NSPoint)point;
 - (void)_accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName;
 @end
 
@@ -1881,7 +1883,6 @@ JSStringRef AccessibilityUIElement::mathPrescriptsDescription() const
     return nullptr;
 }
 
-
 void AccessibilityUIElement::scrollToMakeVisible()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -1891,10 +1892,14 @@ void AccessibilityUIElement::scrollToMakeVisible()
 
 void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)
 {
-    // FIXME: implement
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element _accessibilityScrollToMakeVisibleWithSubFocus:NSMakeRect(x, y, width, height)];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
 {
-    // FIXME: implement
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element _accessibilityScrollToGlobalPoint:NSMakePoint(x, y)];
+    END_AX_OBJC_EXCEPTIONS
 }

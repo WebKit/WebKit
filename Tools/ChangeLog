@@ -1,3 +1,51 @@
+2015-08-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: When navigating the elements of a scrollable element with VoiceOver, the scrollTop() position of the element does not permanently change
+        https://bugs.webkit.org/show_bug.cgi?id=125720
+
+        Reviewed by Daniel Bates.
+
+        Add support for scrollToMakeVisibleWithSubFocus and scrollToGlobalPoint.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (pressCallback):
+        (scrollToMakeVisibleWithSubFocusCallback):
+        (scrollToGlobalPointCallback):
+        (scrollToMakeVisibleCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::scrollToMakeVisible):
+        (AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (AccessibilityUIElement::scrollToGlobalPoint):
+        (AccessibilityUIElement::selectedTextRange):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::mathPrescriptsDescription):
+        (AccessibilityUIElement::scrollToMakeVisible):
+        (AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (AccessibilityUIElement::scrollToGlobalPoint):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::isTextMarkerValid):
+        (WTR::AccessibilityUIElement::textMarkerForIndex):
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        (WTR::AccessibilityUIElement::scrollToGlobalPoint):
+        (WTR::AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (WTR::AccessibilityUIElement::supportedActions):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        (WTR::AccessibilityUIElement::scrollToGlobalPoint):
+        (WTR::AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        (WTR::AccessibilityUIElement::scrollToGlobalPoint):
+        (WTR::AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+
 2015-08-28  Timothy Horton  <timothy_horton@apple.com>
 
         Add a mysteriously nonproblematic missing comma.

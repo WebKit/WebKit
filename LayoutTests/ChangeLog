@@ -1,3 +1,29 @@
+2015-08-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: When navigating the elements of a scrollable element with VoiceOver, the scrollTop() position of the element does not permanently change
+        https://bugs.webkit.org/show_bug.cgi?id=125720
+
+        Reviewed by Daniel Bates.
+
+        * accessibility/scroll-to-global-point-iframe-expected.txt: Added.
+        * accessibility/scroll-to-global-point-iframe-nested-expected.txt: Added.
+        * accessibility/scroll-to-global-point-iframe-nested.html: Added.
+        * accessibility/scroll-to-global-point-iframe.html: Added.
+        * accessibility/scroll-to-global-point-main-window-expected.txt: Added.
+        * accessibility/scroll-to-global-point-main-window.html: Added.
+        * accessibility/scroll-to-global-point-nested-expected.txt: Added.
+        * accessibility/scroll-to-global-point-nested.html: Added.
+        * accessibility/scroll-to-make-visible-div-overflow-expected.txt: Added.
+        * accessibility/scroll-to-make-visible-div-overflow.html: Added.
+        * accessibility/scroll-to-make-visible-iframe-expected.txt: Added.
+        * accessibility/scroll-to-make-visible-iframe.html: Added.
+        * accessibility/scroll-to-make-visible-nested-2-expected.txt: Added.
+        * accessibility/scroll-to-make-visible-nested-2.html: Added.
+        * accessibility/scroll-to-make-visible-nested-expected.txt: Added.
+        * accessibility/scroll-to-make-visible-nested.html: Added.
+        * accessibility/scroll-to-make-visible-with-subfocus-expected.txt: Added.
+        * accessibility/scroll-to-make-visible-with-subfocus.html: Added.
+
 2015-08-28  Alexey Proskuryakov  <ap@apple.com>
 
         Mac TestExpectations gardening.

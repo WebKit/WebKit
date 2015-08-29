@@ -680,6 +680,16 @@ void AccessibilityUIElement::scrollToMakeVisible()
     // FIXME: implement
 }
 
+void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
+{
+    // FIXME: implement
+}
+
 JSStringRef AccessibilityUIElement::selectedTextRange()
 {
     return JSStringCreateWithCharacters(0, 0);

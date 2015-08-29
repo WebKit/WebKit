@@ -1935,6 +1935,16 @@ void AccessibilityUIElement::scrollToMakeVisible()
 {
     // FIXME: implement
 }
+    
+void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
+{
+    // FIXME: implement
+}
+    
+void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)
+{
+    // FIXME: implement
+}
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
 {

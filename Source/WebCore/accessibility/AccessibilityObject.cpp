@@ -2331,22 +2331,46 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 // logic is the same. The goal is to compute the best scroll offset
 // in order to make an object visible within a viewport.
 //
+// If the object is already fully visible, returns the same scroll
+// offset.
+//
 // In case the whole object cannot fit, you can specify a
 // subfocus - a smaller region within the object that should
 // be prioritized. If the whole object can fit, the subfocus is
 // ignored.
 //
-// Example: the viewport is scrolled to the right just enough
-// that the object is in view.
+// If possible, the object and subfocus are centered within the
+// viewport.
+//
+// Example 1: the object is already visible, so nothing happens.
+//   +----------Viewport---------+
+//                 +---Object---+
+//                 +--SubFocus--+
+//
+// Example 2: the object is not fully visible, so it's centered
+// within the viewport.
 //   Before:
 //   +----------Viewport---------+
 //                         +---Object---+
 //                         +--SubFocus--+
 //
 //   After:
-//          +----------Viewport---------+
+//                 +----------Viewport---------+
 //                         +---Object---+
 //                         +--SubFocus--+
+//
+// Example 3: the object is larger than the viewport, so the
+// viewport moves to show as much of the object as possible,
+// while also trying to center the subfocus.
+//   Before:
+//   +----------Viewport---------+
+//     +---------------Object--------------+
+//                         +-SubFocus-+
+//
+//   After:
+//             +----------Viewport---------+
+//     +---------------Object--------------+
+//                         +-SubFocus-+
 //
 // When constraints cannot be fully satisfied, the min
 // (left/top) position takes precedence over the max (right/bottom).
@@ -2354,42 +2378,42 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 // Note that the return value represents the ideal new scroll offset.
 // This may be out of range - the calling function should clip this
 // to the available range.
-static int computeBestScrollOffset(int currentScrollOffset, int subfocusMin, int objectMin, int objectMax, int viewportMin, int viewportMax)
+static int computeBestScrollOffset(int currentScrollOffset, int subfocusMin, int subfocusMax, int objectMin, int objectMax, int viewportMin, int viewportMax)
 {
     int viewportSize = viewportMax - viewportMin;
-
-    // If the focus size is larger than the viewport size, shrink it in the
-    // direction of subfocus.
+    
+    // If the object size is larger than the viewport size, consider
+    // only a portion that's as large as the viewport, centering on
+    // the subfocus as much as possible.
     if (objectMax - objectMin > viewportSize) {
-        // Subfocus must be within focus:
+        // Since it's impossible to fit the whole object in the
+        // viewport, exit now if the subfocus is already within the viewport.
+        if (subfocusMin - currentScrollOffset >= viewportMin && subfocusMax - currentScrollOffset <= viewportMax)
+            return currentScrollOffset;
+        
+        // Subfocus must be within focus.
         subfocusMin = std::max(subfocusMin, objectMin);
-
+        subfocusMax = std::min(subfocusMax, objectMax);
+        
         // Subfocus must be no larger than the viewport size; favor top/left.
-        if (subfocusMin + viewportSize > objectMax)
-            objectMin = objectMax - viewportSize;
-        else {
-            objectMin = subfocusMin;
-            objectMax = subfocusMin + viewportSize;
-        }
+        if (subfocusMax - subfocusMin > viewportSize)
+            subfocusMax = subfocusMin + viewportSize;
+        
+        // Compute the size of an object centered on the subfocus, the size of the viewport.
+        int centeredObjectMin = (subfocusMin + subfocusMax - viewportSize) / 2;
+        int centeredObjectMax = centeredObjectMin + viewportSize;
+
+        objectMin = std::max(objectMin, centeredObjectMin);
+        objectMax = std::min(objectMax, centeredObjectMax);
     }
 
     // Exit now if the focus is already within the viewport.
     if (objectMin - currentScrollOffset >= viewportMin
         && objectMax - currentScrollOffset <= viewportMax)
         return currentScrollOffset;
-
-    // Scroll left if we're too far to the right.
-    if (objectMax - currentScrollOffset > viewportMax)
-        return objectMax - viewportMax;
-
-    // Scroll right if we're too far to the left.
-    if (objectMin - currentScrollOffset < viewportMin)
-        return objectMin - viewportMin;
-
-    ASSERT_NOT_REACHED();
-
-    // This shouldn't happen.
-    return currentScrollOffset;
+    
+    // Center the object in the viewport.
+    return (objectMin + objectMax - viewportMin - viewportMax) / 2;
 }
 
 bool AccessibilityObject::isOnscreen() const
@@ -2449,22 +2473,34 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocu
     // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
     IntRect scrollVisibleRect = scrollableArea->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 
+    if (!scrollParent->isScrollView()) {
+        objectRect.moveBy(scrollPosition);
+        objectRect.moveBy(-snappedIntRect(scrollParent->elementRect()).location());
+    }
+    
     int desiredX = computeBestScrollOffset(
         scrollPosition.x(),
-        objectRect.x() + subfocus.x(),
+        objectRect.x() + subfocus.x(), objectRect.x() + subfocus.maxX(),
         objectRect.x(), objectRect.maxX(),
         0, scrollVisibleRect.width());
     int desiredY = computeBestScrollOffset(
         scrollPosition.y(),
-        objectRect.y() + subfocus.y(),
+        objectRect.y() + subfocus.y(), objectRect.y() + subfocus.maxY(),
         objectRect.y(), objectRect.maxY(),
         0, scrollVisibleRect.height());
 
     scrollParent->scrollTo(IntPoint(desiredX, desiredY));
 
+    // Convert the subfocus into the coordinates of the scroll parent.
+    IntRect newSubfocus = subfocus;
+    IntRect newElementRect = snappedIntRect(elementRect());
+    IntRect scrollParentRect = snappedIntRect(scrollParent->elementRect());
+    newSubfocus.move(newElementRect.x(), newElementRect.y());
+    newSubfocus.move(-scrollParentRect.x(), -scrollParentRect.y());
+    
     // Recursively make sure the scroll parent itself is visible.
     if (scrollParent->parentObject())
-        scrollParent->scrollToMakeVisible();
+        scrollParent->scrollToMakeVisibleWithSubFocus(newSubfocus);
 }
 
 void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
@@ -2503,12 +2539,12 @@ void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
 
         int desiredX = computeBestScrollOffset(
             0,
-            objectRect.x(),
+            objectRect.x(), objectRect.maxX(),
             objectRect.x(), objectRect.maxX(),
             point.x(), point.x());
         int desiredY = computeBestScrollOffset(
             0,
-            objectRect.y(),
+            objectRect.y(), objectRect.maxY(),
             objectRect.y(), objectRect.maxY(),
             point.y(), point.y());
         outer->scrollTo(IntPoint(desiredX, desiredY));

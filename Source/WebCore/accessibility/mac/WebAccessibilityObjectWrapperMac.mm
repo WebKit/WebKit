@@ -3361,6 +3361,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     m_object->scrollToMakeVisible();
 }
 
+- (void)_accessibilityScrollToMakeVisibleWithSubFocus:(NSRect)rect
+{
+    m_object->scrollToMakeVisibleWithSubFocus(IntRect(rect));
+}
+
+- (void)_accessibilityScrollToGlobalPoint:(NSPoint)point
+{
+    m_object->scrollToGlobalPoint(IntPoint(point));
+}
+
 - (void)accessibilityPerformAction:(NSString*)action
 {
     if (![self updateObjectBackingStore])
