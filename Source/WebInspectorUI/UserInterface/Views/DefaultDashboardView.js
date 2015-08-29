@@ -164,7 +164,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         {
             if (event.target === container) {
                 container.classList.remove("pulsing");
-                container.removeEventListener("animationEnd", animationEnded);
+                container.removeEventListener("animationend", animationEnded);
             }
         }
 
@@ -174,7 +174,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
             container.classList.remove("pulsing");
             container.recalculateStyles();
         } else
-            container.addEventListener("animationEnd", animationEnded);
+            container.addEventListener("animationend", animationEnded);
 
         container.classList.add("pulsing");
     }

@@ -1,5 +1,25 @@
 2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: "animationEnd" event names should be "animationend" (broken dashboard animation after pause)
+        https://bugs.webkit.org/show_bug.cgi?id=148604
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.emphasizeSearchHighlight):
+        * UserInterface/Views/DashboardContainerView.js:
+        (WebInspector.DashboardContainerView.prototype._showDashboardView.animationEnded):
+        (WebInspector.DashboardContainerView.prototype._showDashboardView):
+        (WebInspector.DashboardContainerView.prototype._hideDashboardView.animationEnded):
+        (WebInspector.DashboardContainerView.prototype._hideDashboardView):
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView.prototype._setConsoleItemValue.animationEnded):
+        (WebInspector.DefaultDashboardView.prototype._setConsoleItemValue):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype._revealSearchResult):
+
+2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Resource.prototype.associateWithScript assertions firing
         https://bugs.webkit.org/show_bug.cgi?id=148601
 
