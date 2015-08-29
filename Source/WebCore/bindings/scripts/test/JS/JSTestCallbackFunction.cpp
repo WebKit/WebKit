@@ -74,10 +74,12 @@ bool JSTestCallbackFunction::callbackWithNoParam()
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
 
-    bool raisedException = false;
+    NakedPtr<Exception> returnedException;
     UNUSED_PARAM(exec);
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), &raisedException);
-    return !raisedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallbackFunction::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
@@ -93,10 +95,12 @@ bool JSTestCallbackFunction::callbackWithArrayParam(RefPtr<Float32Array> arrayPa
     MarkedArgumentBuffer args;
     args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(arrayParam)));
 
-    bool raisedException = false;
+    NakedPtr<Exception> returnedException;
     UNUSED_PARAM(exec);
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), &raisedException);
-    return !raisedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallbackFunction::callbackWithSerializedScriptValueParam(PassRefPtr<SerializedScriptValue> srzParam, const String& strArg)
@@ -113,10 +117,12 @@ bool JSTestCallbackFunction::callbackWithSerializedScriptValueParam(PassRefPtr<S
     args.append(srzParam ? srzParam->deserialize(exec, castedThis->globalObject(), 0) : jsNull());
     args.append(jsStringWithCache(exec, strArg));
 
-    bool raisedException = false;
+    NakedPtr<Exception> returnedException;
     UNUSED_PARAM(exec);
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), &raisedException);
-    return !raisedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallbackFunction::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
@@ -132,10 +138,12 @@ bool JSTestCallbackFunction::callbackWithStringList(PassRefPtr<DOMStringList> li
     MarkedArgumentBuffer args;
     args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(listParam)));
 
-    bool raisedException = false;
+    NakedPtr<Exception> returnedException;
     UNUSED_PARAM(exec);
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), &raisedException);
-    return !raisedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallbackFunction::callbackWithBoolean(bool boolParam)
@@ -151,10 +159,12 @@ bool JSTestCallbackFunction::callbackWithBoolean(bool boolParam)
     MarkedArgumentBuffer args;
     args.append(jsBoolean(boolParam));
 
-    bool raisedException = false;
+    NakedPtr<Exception> returnedException;
     UNUSED_PARAM(exec);
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), &raisedException);
-    return !raisedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallbackFunction::callbackRequiresThisToPass(int longParam, TestNode* testNodeParam)
@@ -171,10 +181,12 @@ bool JSTestCallbackFunction::callbackRequiresThisToPass(int longParam, TestNode*
     args.append(jsNumber(longParam));
     args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(testNodeParam)));
 
-    bool raisedException = false;
+    NakedPtr<Exception> returnedException;
     UNUSED_PARAM(exec);
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), &raisedException);
-    return !raisedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 }

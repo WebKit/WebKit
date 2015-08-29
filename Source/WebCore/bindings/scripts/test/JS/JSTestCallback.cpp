@@ -129,9 +129,11 @@ bool JSTestCallback::callbackWithNoParam()
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
 
-    bool raisedException = false;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithNoParam"), &raisedException);
-    return !raisedException;
+    NakedPtr<Exception> returnedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithNoParam"), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
@@ -147,9 +149,11 @@ bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
     MarkedArgumentBuffer args;
     args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(arrayParam)));
 
-    bool raisedException = false;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithArrayParam"), &raisedException);
-    return !raisedException;
+    NakedPtr<Exception> returnedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithArrayParam"), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallback::callbackWithSerializedScriptValueParam(PassRefPtr<SerializedScriptValue> srzParam, const String& strArg)
@@ -166,9 +170,11 @@ bool JSTestCallback::callbackWithSerializedScriptValueParam(PassRefPtr<Serialize
     args.append(srzParam ? srzParam->deserialize(exec, castedThis->globalObject(), 0) : jsNull());
     args.append(jsStringWithCache(exec, strArg));
 
-    bool raisedException = false;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithSerializedScriptValueParam"), &raisedException);
-    return !raisedException;
+    NakedPtr<Exception> returnedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithSerializedScriptValueParam"), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
@@ -184,9 +190,11 @@ bool JSTestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
     MarkedArgumentBuffer args;
     args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(listParam)));
 
-    bool raisedException = false;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithStringList"), &raisedException);
-    return !raisedException;
+    NakedPtr<Exception> returnedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithStringList"), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallback::callbackWithBoolean(bool boolParam)
@@ -202,9 +210,11 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
     MarkedArgumentBuffer args;
     args.append(jsBoolean(boolParam));
 
-    bool raisedException = false;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithBoolean"), &raisedException);
-    return !raisedException;
+    NakedPtr<Exception> returnedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithBoolean"), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 bool JSTestCallback::callbackRequiresThisToPass(int longParam, TestNode* testNodeParam)
@@ -221,9 +231,11 @@ bool JSTestCallback::callbackRequiresThisToPass(int longParam, TestNode* testNod
     args.append(jsNumber(longParam));
     args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(testNodeParam)));
 
-    bool raisedException = false;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackRequiresThisToPass"), &raisedException);
-    return !raisedException;
+    NakedPtr<Exception> returnedException;
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackRequiresThisToPass"), returnedException);
+    if (returnedException)
+        reportException(exec, returnedException);
+    return !returnedException;
 }
 
 }
