@@ -1102,7 +1102,7 @@ void PluginView::invalidateWindowlessPluginRect(const IntRect& rect)
     renderer.repaintRectangle(dirtyRect);
 }
 
-void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect& rect)
+void PluginView::paintMissingPluginIcon(GraphicsContext& context, const IntRect& rect)
 {
     static RefPtr<Image> nullPluginImage;
     if (!nullPluginImage)
@@ -1118,10 +1118,10 @@ void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect&
     if (!rect.intersects(imageRect))
         return;
 
-    context->save();
-    context->clip(windowClipRect());
-    context->drawImage(nullPluginImage.get(), ColorSpaceDeviceRGB, imageRect.location());
-    context->restore();
+    context.save();
+    context.clip(windowClipRect());
+    context.drawImage(nullPluginImage.get(), ColorSpaceDeviceRGB, imageRect.location());
+    context.restore();
 }
 
 static const char* MozillaUserAgent = "Mozilla/5.0 ("

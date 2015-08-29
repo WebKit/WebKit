@@ -500,11 +500,11 @@ void PluginView::paintIntoTransformedContext(HDC hdc)
     dispatchNPEvent(npEvent);
 }
 
-void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const IntRect& rect)
+void PluginView::paintWindowedPluginIntoContext(GraphicsContext& context, const IntRect& rect)
 {
 #if !USE(WINGDI)
     ASSERT(m_isWindowed);
-    ASSERT(context->shouldIncludeChildWindows());
+    ASSERT(context.shouldIncludeChildWindows());
 
     IntPoint locationInWindow = downcast<FrameView>(*parent()).convertToContainingWindow(frameRect().location());
 
@@ -514,7 +514,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
     // Must flush drawings up to this point to the backing metafile, otherwise the
     // plugin region will be overwritten with any clear regions specified in the
     // cairo-controlled portions of the rendering.
-    cairo_show_page(context->platformContext()->cr());
+    cairo_show_page(context.platformContext()->cr());
 #endif
 
     HDC hdc = windowsContext.hdc();
@@ -523,7 +523,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
 
     // The plugin expects the DC to be in client coordinates, so we translate
     // the DC to make that so.
-    AffineTransform ctm = context->getCTM();
+    AffineTransform ctm = context.getCTM();
     ctm.translate(locationInWindow.x(), locationInWindow.y());
     XFORM transform = static_cast<XFORM>(ctm.toTransformationMatrix());
 
@@ -535,7 +535,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
 #endif
 }
 
-void PluginView::paint(GraphicsContext* context, const IntRect& rect)
+void PluginView::paint(GraphicsContext& context, const IntRect& rect)
 {
     if (!m_isStarted) {
         // Draw the "missing plugin" image
@@ -543,7 +543,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
     // Ensure that we have called SetWindow before we try to paint.
@@ -552,7 +552,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     if (m_isWindowed) {
 #if !USE(WINGDI)
-        if (context->shouldIncludeChildWindows())
+        if (context.shouldIncludeChildWindows())
             paintWindowedPluginIntoContext(context, rect);
 #endif
         return;
@@ -563,7 +563,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
     // of the window and the plugin expects that the passed in DC has window coordinates.
-    if (!context->isInTransparencyLayer()) {
+    if (!context.isInTransparencyLayer()) {
         XFORM transform;
         GetWorldTransform(windowsContext.hdc(), &transform);
         transform.eDx = 0;

@@ -179,7 +179,7 @@ namespace WebCore {
         virtual void setFocus(bool);
         virtual void show();
         virtual void hide();
-        virtual void paint(GraphicsContext*, const IntRect&);
+        virtual void paint(GraphicsContext&, const IntRect&);
         virtual void clipRectChanged() override;
 
         // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
@@ -250,7 +250,7 @@ namespace WebCore {
         virtual void mediaCanStart();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        void paintWindowedPluginIntoContext(GraphicsContext*, const IntRect&);
+        void paintWindowedPluginIntoContext(GraphicsContext&, const IntRect&);
         static HDC WINAPI hookedBeginPaint(HWND, PAINTSTRUCT*);
         static BOOL WINAPI hookedEndPaint(HWND, const PAINTSTRUCT*);
 #endif
@@ -286,7 +286,7 @@ namespace WebCore {
 #endif
 
         void updatePluginWidget();
-        void paintMissingPluginIcon(GraphicsContext*, const IntRect&);
+        void paintMissingPluginIcon(GraphicsContext&, const IntRect&);
 
         void handleKeyboardEvent(KeyboardEvent*);
         void handleMouseEvent(MouseEvent*);

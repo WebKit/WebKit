@@ -1,3 +1,17 @@
+2015-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the Windows build after r189144
+        https://bugs.webkit.org/show_bug.cgi?id=148561
+
+        Unreviewed.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::paintMissingPluginIcon):
+        * Plugins/PluginView.h:
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        (WebCore::PluginView::paint):
+
 2015-08-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: FrontendChannel should know its own connection type
