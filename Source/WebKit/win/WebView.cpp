@@ -1254,7 +1254,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
         gc.save();
         gc.scale(FloatSize(scaleFactor, scaleFactor));
         gc.clip(logicalDirtyRect);
-        frameView->paint(&gc, logicalDirtyRect);
+        frameView->paint(gc, logicalDirtyRect);
         gc.restore();
         if (m_shouldInvertColors)
             gc.fillRect(logicalDirtyRect, Color::white, ColorSpaceDeviceRGB, CompositeDifference);
@@ -6989,7 +6989,7 @@ void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, Grap
     context.save();
     context.scale(FloatSize(scaleFactor, scaleFactor));
     context.clip(logicalClip);
-    frame->view()->paint(&context, enclosingIntRect(logicalClip));
+    frame->view()->paint(context, enclosingIntRect(logicalClip));
     context.restore();
 }
 

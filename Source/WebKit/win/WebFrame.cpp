@@ -335,7 +335,7 @@ HRESULT WebFrame::paintDocumentRectToContext(RECT rect, _In_ HDC deviceContext)
     gc.translate(-rect.left, -rect.top);
     float scaleFactor = webView()->deviceScaleFactor();
     gc.scale(WebCore::FloatSize(scaleFactor, scaleFactor));
-    view->paintContents(&gc, rect);
+    view->paintContents(gc, rect);
     gc.restore();
 
     return S_OK;
@@ -361,7 +361,7 @@ HRESULT WebFrame::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, _In_ 
     dirtyRect.move(-pt.x, -pt.y);
     float scaleFactor = webView()->deviceScaleFactor();
     gc.scale(WebCore::FloatSize(scaleFactor, scaleFactor));
-    view->paint(&gc, dirtyRect);
+    view->paint(gc, dirtyRect);
     gc.restore();
 
     return S_OK;
@@ -1579,7 +1579,7 @@ void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, con
     ui->drawFooterInRect(d->webView, &footerRect, reinterpret_cast<ULONG_PTR>(pctx), page + 1, pageCount);
 }
 
-void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate* ui, float headerHeight, float footerHeight, UINT page, UINT pageCount)
+void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext& spoolCtx, HDC printDC, IWebUIDelegate* ui, float headerHeight, float footerHeight, UINT page, UINT pageCount)
 {
     Frame* coreFrame = core(this);
 
@@ -1676,7 +1676,7 @@ static XFORM buildXFORMFromCairo(HDC targetDC, cairo_t* previewContext)
     return scaled;
 }
 
-void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate* ui, float headerHeight, float footerHeight, UINT page, UINT pageCount)
+void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext& spoolCtx, HDC printDC, IWebUIDelegate* ui, float headerHeight, float footerHeight, UINT page, UINT pageCount)
 {
     Frame* coreFrame = core(this);
 
@@ -1686,7 +1686,7 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
     // In preview, the printDC is a placeholder, so just always use the HDC backing the graphics context.
     HDC hdc = hdcFromContext(pctx);
 
-    spoolCtx->save();
+    spoolCtx.save();
     
     XFORM original, scaled;
     GetWorldTransform(hdc, &original);
@@ -1737,7 +1737,7 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
 
     cairo_show_page(cr);
     ASSERT(!cairo_status(cr));
-    spoolCtx->restore();
+    spoolCtx.restore();
 }
 
 static void setCairoTransformToPreviewHDC(cairo_t* previewCtx, HDC previewDC)
@@ -1842,7 +1842,7 @@ HRESULT WebFrame::spoolPages(HDC printDC, UINT startPage, UINT endPage, void* ct
     spoolCtx.setShouldIncludeChildWindows(true);
 
     for (UINT ii = startPage; ii < endPage; ii++)
-        spoolPage(pctx, &spoolCtx, printDC, ui.get(), headerHeight, footerHeight, ii, pageCount);
+        spoolPage(pctx, spoolCtx, printDC, ui.get(), headerHeight, footerHeight, ii, pageCount);
 
 #if USE(CAIRO)
     cairo_surface_finish(printSurface);
