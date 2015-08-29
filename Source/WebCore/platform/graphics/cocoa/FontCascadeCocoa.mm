@@ -308,7 +308,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         resetAntialiasingStyle = true;
         oldAntialiasingStyle = CGContextGetFontAntialiasingStyle(cgContext);
         CGContextSetFontAntialiasingStyle(cgContext, kCGFontAntialiasingStyleUnfilteredCustomDilation);
-        CGContextSetFontDilation(cgContext, dilationSizeForTextColor(context->fillColor()));
+        CGContextSetFontDilation(cgContext, dilationSizeForTextColor(context.fillColor()));
     }
 #endif
 #endif
