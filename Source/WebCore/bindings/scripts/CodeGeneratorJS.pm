@@ -3662,7 +3662,7 @@ sub GenerateCallbackImplementation
                 push(@implContent, "    args.append(" . NativeToJSValue($param, 1, $interfaceName, $paramName, "m_data") . ");\n");
             }
 
-            push(@implContent, "\n    bool raisedException = false;\n");
+            push(@implContent, "\n    NakedPtr<Exception> returnedException;\n");
 
             my $propertyToLookup = "Identifier::fromString(exec, \"${functionName}\")";
             my $invokeMethod = "JSCallbackData::CallbackType::FunctionOrObject";
@@ -3678,8 +3678,13 @@ sub GenerateCallbackImplementation
                 # https://heycam.github.io/webidl/#es-user-objects
                 $invokeMethod = "JSCallbackData::CallbackType::Object";
             }
-            push(@implContent, "    m_data->invokeCallback(args, $invokeMethod, $propertyToLookup, &raisedException);\n");
-            push(@implContent, "    return !raisedException;\n");
+            push(@implContent, "    m_data->invokeCallback(args, $invokeMethod, $propertyToLookup, returnedException);\n");
+
+            # FIXME: We currently just report the exception. We should probably add an extended attribute to indicate when
+            # we want the exception to be rethrown instead.
+            push(@implContent, "    if (returnedException)\n");
+            push(@implContent, "        reportException(exec, returnedException);\n");
+            push(@implContent, "    return !returnedException;\n");
             push(@implContent, "}\n");
         }
     }

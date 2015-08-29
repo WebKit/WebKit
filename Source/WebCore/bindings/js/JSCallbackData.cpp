@@ -43,13 +43,13 @@ void JSCallbackData::deleteData(void* context)
     delete static_cast<JSCallbackData*>(context);
 }
 
-JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, bool* raisedException)
+JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<Exception>& returnedException)
 {
     ASSERT(callback());
-    return invokeCallback(callback(), args, method, functionName, raisedException);
+    return invokeCallback(callback(), args, method, functionName, returnedException);
 }
 
-JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, bool* raisedException)
+JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<Exception>& returnedException)
 {
     ASSERT(callback());
     ASSERT(globalObject());
@@ -84,19 +84,12 @@ JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& 
 
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
-    NakedPtr<Exception> exception;
+    returnedException = nullptr;
     JSValue result = context->isDocument()
-        ? JSMainThreadExecState::call(exec, function, callType, callData, thisValue, args, exception)
-        : JSC::call(exec, function, callType, callData, thisValue, args, exception);
+        ? JSMainThreadExecState::call(exec, function, callType, callData, thisValue, args, returnedException)
+        : JSC::call(exec, function, callType, callData, thisValue, args, returnedException);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
-
-    if (exception) {
-        reportException(exec, exception);
-        if (raisedException)
-            *raisedException = true;
-        return result;
-    }
 
     return result;
 }

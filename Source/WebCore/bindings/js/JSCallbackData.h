@@ -67,8 +67,8 @@ public:
     JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
     
     enum class CallbackType { Function, Object, FunctionOrObject };
-    JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, bool* raisedException = nullptr);
-    JSC::JSValue invokeCallback(JSC::JSValue thisValue, JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, bool* raisedException = nullptr);
+    JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException);
+    JSC::JSValue invokeCallback(JSC::JSValue thisValue, JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException);
 
 private:
     JSC::Strong<JSC::JSObject> m_callback;
