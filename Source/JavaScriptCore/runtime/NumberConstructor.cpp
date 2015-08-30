@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000,2003 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008, 2011, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -68,12 +68,12 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "POSITIVE_INFINITY"), jsDoubleNumber(std::numeric_limits<double>::infinity()), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "NaN"), jsNaN(), DontDelete | DontEnum | ReadOnly);
 
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isFinite"), 1, numberConstructorFuncIsFinite, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isInteger"), 1, numberConstructorFuncIsInteger, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isNaN"), 1, numberConstructorFuncIsNaN, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isSafeInteger"), 1, numberConstructorFuncIsSafeInteger, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "parseFloat"), 1, globalFuncParseFloat, NoIntrinsic, DontEnum | Function);
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "parseInt"), numberPrototype->globalObject()->parseIntFunction(), DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isFinite"), 1, numberConstructorFuncIsFinite, NoIntrinsic, DontEnum);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isInteger"), 1, numberConstructorFuncIsInteger, NoIntrinsic, DontEnum);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isNaN"), 1, numberConstructorFuncIsNaN, NoIntrinsic, DontEnum);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "isSafeInteger"), 1, numberConstructorFuncIsSafeInteger, NoIntrinsic, DontEnum);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier::fromString(&vm, "parseFloat"), 1, globalFuncParseFloat, NoIntrinsic, DontEnum);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "parseInt"), numberPrototype->globalObject()->parseIntFunction(), DontEnum);
 }
 
 // ECMA 15.7.1

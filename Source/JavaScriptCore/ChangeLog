@@ -1,3 +1,56 @@
+2015-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC property attributes should fit in a byte
+        https://bugs.webkit.org/show_bug.cgi?id=148611
+
+        Reviewed by Sam Weinig.
+
+        I want to make room in PropertyMapEntry for more things to support property type inference (see
+        https://bugs.webkit.org/show_bug.cgi?id=148610). The most obvious candidate for a size reduction is
+        attributes, since we only have a small number of attribute bits. Even without complex changes, it
+        would have been possible to reduce the attribute field from 32 bits to 16 bits. Specifically, prior
+        to this change, the attributes field needed 9 bits. This made it very tempting to trim it so that
+        it could fit in a byte.
+
+        Luckily, many of the attributes bits are for the static lookup hashtables that we use for lazily
+        building objects in the standard library. Those bits don't need to stay around after the property
+        has been created, since they are just for telling the code in Lookup how to create the property.
+        So, this change separates the attributes bits into those that are interesting for Structure and
+        those that aren't. The ones used by Structure sit in the low 8 bits, allowing for the attributes
+        field in PropertyMapEntry to be a uint8_t. The attributes bits used only by Lookup use the higher
+        bits. In production, the conversion from the Lookup attributes to the Structure attributes is just
+        a cast to uint8_t. In debug, we assert that those bits are not dropped by accident. Code that
+        intentionally drops those bits calls attributesForStructure().
+
+        It turned out that there was a lot of code that was using the Function bit even in code that didn't
+        involve Lookup. This change removes those uses of Function. Structure does not need to know if we
+        think that a property points to a function.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSObject.h:
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticValueSlot):
+        (JSC::reifyStaticProperties):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/PropertySlot.h:
+        (JSC::attributesForStructure):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+        * runtime/Structure.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+
 2015-08-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix PropertyName::isNull() that was introduced in r188994.

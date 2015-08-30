@@ -80,7 +80,7 @@ static const unsigned outOfLineGrowthFactor = 2;
 struct PropertyMapEntry {
     UniquedStringImpl* key;
     PropertyOffset offset;
-    unsigned attributes;
+    uint8_t attributes;
 
     PropertyMapEntry()
         : key(nullptr)
@@ -94,6 +94,7 @@ struct PropertyMapEntry {
         , offset(offset)
         , attributes(attributes)
     {
+        ASSERT(this->attributes == attributes);
     }
 };
 

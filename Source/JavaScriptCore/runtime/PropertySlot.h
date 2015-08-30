@@ -40,15 +40,23 @@ enum Attribute {
     ReadOnly          = 1 << 1,  // property can be only read, not written
     DontEnum          = 1 << 2,  // property doesn't appear in (for .. in ..)
     DontDelete        = 1 << 3,  // property can't be deleted
-    Function          = 1 << 4,  // property is a function - only used by static hashtables
-    Accessor          = 1 << 5,  // property is a getter/setter
-    CustomAccessor    = 1 << 6,
-    Builtin           = 1 << 7, // property is a builtin function - only used by static hashtables
-    ConstantInteger   = 1 << 8, // property is a constant integer - only used by static hashtables
+    Accessor          = 1 << 4,  // property is a getter/setter
+    CustomAccessor    = 1 << 5,
+
+    // Things that are used by static hashtables are not in the attributes byte in PropertyMapEntry.
+    Function          = 1 << 8,  // property is a function - only used by static hashtables
+    Builtin           = 1 << 9,  // property is a builtin function - only used by static hashtables
+    ConstantInteger   = 1 << 10, // property is a constant integer - only used by static hashtables
     BuiltinOrFunction = Builtin | Function, // helper only used by static hashtables
     BuiltinOrFunctionOrAccessor = Builtin | Function | Accessor, // helper only used by static hashtables
     BuiltinOrFunctionOrAccessorOrConstant = Builtin | Function | Accessor | ConstantInteger, // helper only used by static hashtables
 };
+
+inline unsigned attributesForStructure(unsigned attributes)
+{
+    // The attributes that are used just for the static hashtable are at bit 8 and higher.
+    return static_cast<uint8_t>(attributes);
+}
 
 class PropertySlot {
     enum PropertyType {
@@ -125,6 +133,8 @@ public:
 
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value)
     {
+        ASSERT(attributes == attributesForStructure(attributes));
+        
         m_data.value = JSValue::encode(value);
         m_attributes = attributes;
 
@@ -136,6 +146,8 @@ public:
     
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value, PropertyOffset offset)
     {
+        ASSERT(attributes == attributesForStructure(attributes));
+        
         ASSERT(value);
         m_data.value = JSValue::encode(value);
         m_attributes = attributes;
@@ -148,6 +160,8 @@ public:
 
     void setValue(JSString*, unsigned attributes, JSValue value)
     {
+        ASSERT(attributes == attributesForStructure(attributes));
+        
         ASSERT(value);
         m_data.value = JSValue::encode(value);
         m_attributes = attributes;
@@ -159,6 +173,8 @@ public:
 
     void setCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue)
     {
+        ASSERT(attributes == attributesForStructure(attributes));
+        
         ASSERT(getValue);
         m_data.custom.getValue = getValue;
         m_attributes = attributes;
@@ -171,6 +187,8 @@ public:
     
     void setCacheableCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue)
     {
+        ASSERT(attributes == attributesForStructure(attributes));
+        
         ASSERT(getValue);
         m_data.custom.getValue = getValue;
         m_attributes = attributes;
@@ -183,6 +201,8 @@ public:
 
     void setGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter)
     {
+        ASSERT(attributes == attributesForStructure(attributes));
+        
         ASSERT(getterSetter);
         m_data.getter.getterSetter = getterSetter;
         m_attributes = attributes;
@@ -195,6 +215,8 @@ public:
 
     void setCacheableGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter, PropertyOffset offset)
     {
+        ASSERT(attributes == attributesForStructure(attributes));
+        
         ASSERT(getterSetter);
         m_data.getter.getterSetter = getterSetter;
         m_attributes = attributes;

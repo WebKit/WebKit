@@ -188,11 +188,11 @@ inline bool getStaticPropertySlot(ExecState* exec, const HashTable& table, ThisI
         return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
 
     if (entry->attributes() & ConstantInteger) {
-        slot.setValue(thisObj, entry->attributes(), jsNumber(entry->constantInteger()));
+        slot.setValue(thisObj, attributesForStructure(entry->attributes()), jsNumber(entry->constantInteger()));
         return true;
     }
 
-    slot.setCacheableCustom(thisObj, entry->attributes(), entry->propertyGetter());
+    slot.setCacheableCustom(thisObj, attributesForStructure(entry->attributes()), entry->propertyGetter());
     return true;
 }
 
@@ -229,11 +229,11 @@ inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp*
     ASSERT(!(entry->attributes() & BuiltinOrFunctionOrAccessor));
 
     if (entry->attributes() & ConstantInteger) {
-        slot.setValue(thisObj, entry->attributes(), jsNumber(entry->constantInteger()));
+        slot.setValue(thisObj, attributesForStructure(entry->attributes()), jsNumber(entry->constantInteger()));
         return true;
     }
 
-    slot.setCacheableCustom(thisObj, entry->attributes(), entry->propertyGetter());
+    slot.setCacheableCustom(thisObj, attributesForStructure(entry->attributes()), entry->propertyGetter());
     return true;
 }
 
@@ -279,18 +279,19 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
 
         Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
         if (value.attributes() & Builtin) {
-            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), value.attributes());
+            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
             continue;
         }
 
         if (value.attributes() & Function) {
-            thisObj.putDirectNativeFunction(vm, thisObj.globalObject(), propertyName, value.functionLength(),
-                value.function(), value.intrinsic(), value.attributes());
+            thisObj.putDirectNativeFunction(
+                vm, thisObj.globalObject(), propertyName, value.functionLength(),
+                value.function(), value.intrinsic(), attributesForStructure(value.attributes()));
             continue;
         }
 
         if (value.attributes() & ConstantInteger) {
-            thisObj.putDirect(vm, propertyName, jsNumber(value.constantInteger()), value.attributes());
+            thisObj.putDirect(vm, propertyName, jsNumber(value.constantInteger()), attributesForStructure(value.attributes()));
             continue;
         }
 
@@ -300,7 +301,7 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
         }
 
         CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, value.propertyGetter(), value.propertyPutter());
-        thisObj.putDirectCustomAccessor(vm, propertyName, customGetterSetter, value.attributes());
+        thisObj.putDirectCustomAccessor(vm, propertyName, customGetterSetter, attributesForStructure(value.attributes()));
     }
 }
 
