@@ -432,8 +432,6 @@ webkit.org/b/95622 css3/filters/composited-during-animation-layertree.html [ Pas
 platform/mac/fast/text/combining-character-sequence-fallback.html [ Pass Failure ]
 
 # --- Editing ---
-# Pasting replaces the three periods with an ellipsis on Lion and Mountain Lion
-editing/pasteboard/5478250.html
 
 # Mac does not have global selections.
 editing/pasteboard/paste-global-selection.html
@@ -445,9 +443,6 @@ webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Tim
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
 webkit.org/b/124935 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
-webkit.org/b/124935 [ Yosemite ] webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
-
-[ Yosemite ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
 
 # Skip 1.0.3 tests for now, to be unskipped when we get closer to conformance
 webgl/1.0.3/conformance/attribs [ Skip ]
@@ -520,9 +515,6 @@ webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html [ Skip ]
 # MHTML is not yet enabled
 mhtml [ Skip ]
 
-# Our slow tests, in alphabetical order.
-webkit.org/b/57672 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure Pass ]
-
 # Flaky tests that appear to be fail depending on which earlier tests
 # run in the same process
 webkit.org/b/57688 fast/text/international/bidi-AN-after-empty-run.html [ Failure Pass ]
@@ -531,10 +523,6 @@ webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass 
 
 webkit.org/b/112646 plugins/private-browsing-mode.html [ Failure Pass ]
 webkit.org/b/112616 plugins/plugin-clip-subframe.html [ Failure Pass ]
-
-# Occasional assertion in JSNPObject::invalidate()
-webkit.org/b/112518 [ Debug ] plugins/object-onfocus-mutation-crash.html [ Crash Pass ]
-webkit.org/b/112518 [ Debug ] plugins/npruntime/evaluate.html [ Crash Pass ]
 
 # Flakey plugin tests
 webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
@@ -654,12 +642,6 @@ webkit.org/b/105777 editing/mac/spelling/autocorrection-in-textarea.html [ Failu
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout ] 
-webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ] 
-webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
-
-webkit.org/b/119374 fast/workers/termination-early.html [ Pass Crash ]
-
 webkit.org/b/110186 inspector/page/javascriptDialogEvents.html [ Skip ]
 
 # Need support for ResourceHandle::didChangePriority and DRT support
@@ -703,8 +685,8 @@ webkit.org/b/121331 http/tests/misc/submit-post-keygen.html [ Pass Failure Timeo
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
-# New test failing, needs investigation.
-webkit.org/b/103857 fast/events/mouse-cursor-change.html
+# WebKit1-only
+webkit.org/b/103857 fast/events/mouse-cursor-change.html [ Failure ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
 
@@ -714,7 +696,7 @@ webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 webkit.org/b/131244 svg/as-image/svg-as-image-canvas.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass Failure Crash Timeout ]
+webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass ImageOnlyFailure ]
 
 # Resizing windows appears broken in both DRT and WTR, making the test fail or time out flakily.
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure Timeout ]
@@ -733,15 +715,15 @@ webkit.org/b/138179 compositing/regions/propagate-region-box-shadow-border-paddi
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
-webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 
 # webkit.org/b/100846, webkit.org/b/136715
 inspector/debugger
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 
-webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Failure ]
+webkit.org/b/124321 animations/resume-after-page-cache.html [ Pass Failure ]
 
 webkit.org/b/147254 media/restore-from-page-cache.html [ Pass Failure ]
 

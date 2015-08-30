@@ -1,3 +1,16 @@
+2015-08-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac test result gardening.
+        
+        Unmarked tests that no longer flake, updated a a few results.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.txt:
+        * platform/mac/editing/pasteboard/5478250-expected.png:
+        * platform/mac/editing/pasteboard/5478250-expected.txt:
+        * platform/mac/fast/loader/javascript-url-in-embed-expected.txt:
+
 2015-08-29  Chris Dumez  <cdumez@apple.com>
 
         Import W3C DOM test suite from github.com/w3c/web-platform-tests
