@@ -1,3 +1,9 @@
+2015-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline http/tests/w3c/dom/nodes/Element-matches.html
+
+        * http/tests/w3c/dom/nodes/Element-matches-expected.txt:
+
 2015-08-29  Alexey Proskuryakov  <ap@apple.com>
 
         Mac test result gardening.
