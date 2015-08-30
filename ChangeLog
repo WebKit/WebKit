@@ -1,3 +1,10 @@
+2015-08-29  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed build fix after r179923.
+
+        * Source/CMakeLists.txt:
+        bmalloc isn't ported to Windows yet.
+
 2015-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Isolate Source directories in CMake build
