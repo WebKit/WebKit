@@ -54,14 +54,14 @@ void TiledBackingStore::setTrajectoryVector(const FloatPoint& trajectoryVector)
     m_pendingTrajectoryVector.normalize();
 }
 
-void TiledBackingStore::coverWithTilesIfNeeded()
+void TiledBackingStore::createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& contentsRect)
 {
-    IntRect visibleRect = this->visibleRect();
-    IntRect rect = mapFromContents(m_client->tiledBackingStoreContentsRect());
+    IntRect scaledContentsRect = mapFromContents(contentsRect);
+    IntRect visibleRect = mapFromContents(unscaledVisibleRect);
 
-    bool didChange = m_trajectoryVector != m_pendingTrajectoryVector || m_visibleRect != visibleRect || m_rect != rect;
+    bool didChange = m_trajectoryVector != m_pendingTrajectoryVector || m_visibleRect != visibleRect || m_rect != scaledContentsRect;
     if (didChange || m_pendingTileCreation)
-        createTiles();
+        createTiles(visibleRect, scaledContentsRect);
 }
 
 void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
@@ -104,11 +104,6 @@ void TiledBackingStore::updateTileBuffers()
         m_client->didUpdateTileBuffers();
 }
 
-IntRect TiledBackingStore::visibleRect() const
-{
-    return mapFromContents(m_client->tiledBackingStoreVisibleRect());
-}
-
 double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coordinate& tileCoordinate) const
 {
     if (viewport.intersects(tileRectForCoordinate(tileCoordinate)))
@@ -120,10 +115,9 @@ double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coor
     return std::max(abs(centerCoordinate.y() - tileCoordinate.y()), abs(centerCoordinate.x() - tileCoordinate.x()));
 }
 
-// Returns a ratio between 0.0f and 1.0f of the surface of contentsRect covered by rendered tiles.
-float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect) const
+// Returns a ratio between 0.0f and 1.0f of the surface covered by rendered tiles.
+float TiledBackingStore::coverageRatio(const WebCore::IntRect& dirtyRect) const
 {
-    IntRect dirtyRect = mapFromContents(contentsRect);
     float rectArea = dirtyRect.width() * dirtyRect.height();
     float coverArea = 0.0f;
 
@@ -145,17 +139,16 @@ float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect) con
 
 bool TiledBackingStore::visibleAreaIsCovered() const
 {
-    IntRect boundedVisibleContentsRect = intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect());
-    return coverageRatio(boundedVisibleContentsRect) == 1.0f;
+    return coverageRatio(intersection(m_visibleRect, m_rect)) == 1.0f;
 }
 
-void TiledBackingStore::createTiles()
+void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect)
 {
     // Update our backing store geometry.
     const IntRect previousRect = m_rect;
-    m_rect = mapFromContents(m_client->tiledBackingStoreContentsRect());
+    m_rect = scaledContentsRect;
     m_trajectoryVector = m_pendingTrajectoryVector;
-    m_visibleRect = visibleRect();
+    m_visibleRect = visibleRect;
 
     if (m_rect.isEmpty()) {
         setCoverRect(IntRect());
@@ -373,9 +366,9 @@ void TiledBackingStore::setKeepRect(const IntRect& keepRect)
     m_keepRect = keepRect;
 }
 
-void TiledBackingStore::removeAllNonVisibleTiles()
+void TiledBackingStore::removeAllNonVisibleTiles(const IntRect& unscaledVisibleRect, const IntRect& contentsRect)
 {
-    IntRect boundedVisibleRect = mapFromContents(intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect()));
+    IntRect boundedVisibleRect = mapFromContents(intersection(unscaledVisibleRect, contentsRect));
     setKeepRect(boundedVisibleRect);
 }
 

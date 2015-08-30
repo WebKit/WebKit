@@ -26,7 +26,6 @@ namespace WebCore {
 
 #if USE(COORDINATED_GRAPHICS)
 
-class Color;
 class GraphicsContext;
 class SurfaceUpdateInfo;
 
@@ -35,9 +34,7 @@ public:
     virtual ~TiledBackingStoreClient() { }
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) = 0;
     virtual void didUpdateTileBuffers() = 0;
-    virtual void tiledBackingStoreHasPendingTileCreation() { }
-    virtual IntRect tiledBackingStoreContentsRect() = 0;
-    virtual IntRect tiledBackingStoreVisibleRect() = 0;
+    virtual void tiledBackingStoreHasPendingTileCreation() = 0;
 
     virtual void createTile(uint32_t tileID, float) = 0;
     virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
