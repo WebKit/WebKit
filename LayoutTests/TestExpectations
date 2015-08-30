@@ -222,6 +222,9 @@ webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-isPointInRange.htm
 webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-mutations.html [ Skip ]
 webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-set.html [ Skip ]
 
+# Newly imported W3C DOM test that is flaky.
+webkit.org/b/148615 http/tests/w3c/dom/nodes/Element-matches.html [ Failure Pass ]
+
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
 webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]
