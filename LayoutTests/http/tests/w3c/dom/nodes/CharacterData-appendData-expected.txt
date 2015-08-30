@@ -1,0 +1,16 @@
+
+PASS Text.appendData('bar') 
+PASS Text.appendData('') 
+PASS Text.appendData(non-ASCII) 
+PASS Text.appendData(null) 
+PASS Text.appendData(undefined) 
+PASS Text.appendData('', 'bar') 
+FAIL Text.appendData() assert_throws: function "function () { node.appendData() }" did not throw
+PASS Comment.appendData('bar') 
+PASS Comment.appendData('') 
+PASS Comment.appendData(non-ASCII) 
+PASS Comment.appendData(null) 
+PASS Comment.appendData(undefined) 
+PASS Comment.appendData('', 'bar') 
+FAIL Comment.appendData() assert_throws: function "function () { node.appendData() }" did not throw
+

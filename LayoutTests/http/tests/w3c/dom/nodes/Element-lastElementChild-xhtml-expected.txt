@@ -1,0 +1,7 @@
+Test of firstElementChild
+
+The result of this test is logged above.
+
+
+PASS firstElementChild 
+

@@ -1,0 +1,7 @@
+Test of previousElementSibling
+
+The result of this test is unknown.
+
+
+PASS previousElementSibling 
+

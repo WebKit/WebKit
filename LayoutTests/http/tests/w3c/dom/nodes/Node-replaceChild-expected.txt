@@ -1,0 +1,36 @@
+
+FAIL Passing null to replaceChild should throw a TypeError. assert_throws: function "function () {
+    a.replaceChild(null, null);
+  }" did not throw
+FAIL If child's parent is not the context node, a NotFoundError exception should be thrown assert_throws: function "function () {
+    a.replaceChild(a, c);
+  }" threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException NotFoundError: property "code" is equal to 3, expected 8
+PASS If the context node is not a node that can contain children, a NotFoundError exception should be thrown 
+PASS If node is an inclusive ancestor of the context node, a HierarchyRequestError should be thrown. 
+PASS If the context node is a document, inserting a document or text node should throw a HierarchyRequestError. 
+PASS If the context node is a document, inserting a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. 
+PASS If the context node is a document (without element children), inserting a DocumentFragment that contains multiple elements should throw a HierarchyRequestError. 
+PASS If the context node is a document, inserting a DocumentFragment with an element if there already is an element child should throw a HierarchyRequestError. 
+FAIL If the context node is a document, inserting a DocumentFragment with an element before the doctype should throw a HierarchyRequestError. assert_throws: function "function () {
+    doc.replaceChild(df, comment);
+  }" did not throw
+PASS If the context node is a document, inserting an element if there already is an element child should throw a HierarchyRequestError. 
+FAIL If the context node is a document, inserting an element before the doctype should throw a HierarchyRequestError. assert_throws: function "function () {
+    doc.replaceChild(a, comment);
+  }" did not throw
+PASS If the context node is a document, inserting a doctype if there already is a doctype child should throw a HierarchyRequestError. 
+FAIL If the context node is a document, inserting a doctype after the document element should throw a HierarchyRequestError. assert_throws: function "function () {
+    doc.replaceChild(doctype, comment);
+  }" did not throw
+PASS If the context node is a DocumentFragment, inserting a document or a doctype should throw a HierarchyRequestError. 
+PASS If the context node is an element, inserting a document or a doctype should throw a HierarchyRequestError. 
+PASS Replacing a node with its next sibling should work (2 children) 
+PASS Replacing a node with its next sibling should work (4 children) 
+PASS Replacing a node with itself should not move the node 
+PASS If the context node is a document, inserting a new doctype should work. 
+PASS Replacing the document element with a DocumentFragment containing a single element should work. 
+PASS Replacing the document element with a DocumentFragment containing a single element and comments should work. 
+PASS Replacing the document element with a single element should work. 
+PASS replaceChild should work in the presence of mutation events. 
+PASS Replacing an element with a DocumentFragment should allow a child of the DocumentFragment to be found by Id. 
+

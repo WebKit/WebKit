@@ -213,7 +213,14 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFa
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
 
 # Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit. 
-webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ] 
+webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
+
+# Skip W3C tests that are too slow in debug builds.
+webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-compareBoundaryPoints.html [ Skip ]
+webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-comparePoint.html [ Skip ]
+webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-isPointInRange.html [ Skip ]
+webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-mutations.html [ Skip ]
+webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-set.html [ Skip ]
 
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]

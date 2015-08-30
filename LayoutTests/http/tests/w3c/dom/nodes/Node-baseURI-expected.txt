@@ -1,0 +1,6 @@
+
+PASS For elements belonging to document, baseURI should be document url 
+FAIL For elements unassigned to document, baseURI should be document url assert_equals: expected (string) "http://127.0.0.1:8000/w3c/dom/nodes/Node-baseURI.html" but got (object) null
+FAIL For elements belonging to document fragments, baseURI should be document url assert_equals: expected (string) "http://127.0.0.1:8000/w3c/dom/nodes/Node-baseURI.html" but got (object) null
+PASS After inserting fragment into document, element baseURI should be document url 
+

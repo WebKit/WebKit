@@ -1,0 +1,65 @@
+LookupNamespaceURI and IsDefaultNamespace
+
+
+PASS DocumentFragment should have null namespace 
+PASS DocumentFragment should have null namespace 
+PASS DocumentFragment should have null namespace 
+PASS DocumentFragment should have null namespace 
+FAIL DocumentFragment is in default namespace assert_equals: expected true but got false
+FAIL DocumentFragment is in default namespace assert_equals: expected true but got false
+PASS DocumentFragment is in default namespace 
+PASS DocumentFragment is in default namespace 
+PASS Element should have null namespace 
+PASS Element should have null namespace 
+PASS Element should not have namespace matching prefix with namespaceURI value 
+PASS Element should not have XMLNS namespace 
+PASS Element has namespace URI matching prefix 
+FAIL Empty namespace is not default assert_equals: expected true but got false
+FAIL Empty namespace is not default assert_equals: expected true but got false
+PASS fooNamespace is not default 
+PASS xmlns namespace is not default 
+PASS Element should have baz namespace 
+FAIL Element should have baz namespace assert_equals: expected (string) "bazURI" but got (object) null
+PASS Element has namespace URI matching prefix 
+PASS Element does not has namespace with xlmns prefix 
+PASS Element has bar namespace 
+PASS Empty namespace is not default 
+PASS Empty namespace is not default 
+PASS fooNamespace is not default 
+PASS xmlns namespace is not default 
+PASS bar namespace is not default 
+PASS baz namespace is default 
+PASS Comment should inherit baz namespace 
+FAIL Comment should inherit  baz namespace assert_equals: expected (string) "bazURI" but got (object) null
+PASS Comment should inherit namespace URI matching prefix 
+PASS Comment should inherit bar namespace 
+PASS For comment, empty namespace is not default 
+PASS For comment, empty namespace is not default 
+PASS For comment, fooNamespace is not default 
+PASS For comment, xmlns namespace is not default 
+PASS For comment, inherited bar namespace is not default 
+PASS For comment, inherited baz namespace is default 
+PASS Child element should inherit baz namespace 
+FAIL Child element should have null namespace assert_equals: expected (string) "childNamespace" but got (object) null
+PASS Child element should not have XMLNS namespace 
+PASS Child element has namespace URI matching prefix 
+PASS Empty namespace is not default for child 
+PASS Empty namespace is not default for child 
+PASS fooNamespace is not default for child 
+PASS xmlns namespace is not default for child 
+PASS bar namespace is not default for child 
+PASS baz namespace is default for child 
+PASS childNamespace is default for child 
+PASS Document should have xhtml namespace 
+FAIL Document should have xhtml namespace assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+PASS Document has no namespace URI matching prefix 
+PASS Document has bar namespace 
+PASS For document, Empty namespace is not default 
+PASS For document, Empty namespace is not default 
+PASS For document, fooNamespace is not default 
+PASS For document, xmlns namespace is not default 
+PASS For document, bar namespace is not default 
+PASS For document, baz namespace is not default 
+PASS For document, xhtml namespace is default 
+PASS Comment does not have bar namespace 
+

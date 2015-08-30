@@ -1,0 +1,3 @@
+
+FAIL Calling intersectsNode without an argument or with an invalid argument should throw a TypeError. assert_throws: function "function () { r.intersectsNode(); }" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+

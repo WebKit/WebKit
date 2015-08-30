@@ -1,0 +1,8 @@
+MutationObservers: document mutations
+
+
+PASS setup test 
+PASS parser insertion mutations 
+PASS parser script insertion mutation 
+PASS removal of parent during parsing 
+

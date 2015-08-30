@@ -1,3 +1,15 @@
+2015-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Import W3C DOM test suite from github.com/w3c/web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=148546
+
+        Reviewed by Alexey Proskuryakov.
+
+        Import W3C DOM test suite from github.com/w3c/web-platform-tests
+        to improve coverage and track progress.
+
+        * http/tests/w3c/dom/*: Added.
+
 2015-08-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: When navigating the elements of a scrollable element with VoiceOver, the scrollTop() position of the element does not permanently change

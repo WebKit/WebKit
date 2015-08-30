@@ -1,0 +1,7 @@
+
+PASS Required arguments to createTreeWalker should be required. 
+PASS Optional arguments to createTreeWalker should be optional (1 passed). 
+PASS Optional arguments to createTreeWalker should be optional (2 passed). 
+PASS Optional arguments to createTreeWalker should be optional (3 passed, null). 
+FAIL Optional arguments to createTreeWalker should be optional (3 passed, function). assert_equals: expected (function) function "function () {}" but got (object) object "[object NodeFilter]"
+

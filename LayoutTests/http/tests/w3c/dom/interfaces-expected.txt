@@ -1,0 +1,1957 @@
+CONSOLE MESSAGE: line 198: callback not yet supported
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'type' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'target' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'currentTarget' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'eventPhase' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'bubbles' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'cancelable' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'defaultPrevented' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'timeStamp' on a non-Event object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'type' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'target' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'addedNodes' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'removedNodes' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousSibling' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextSibling' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'attributeName' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'attributeNamespace' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'oldValue' on a non-MutationRecord object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeType' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeName' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'baseURI' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'ownerDocument' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'parentNode' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'parentElement' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childNodes' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstChild' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastChild' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousSibling' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextSibling' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeValue' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'textContent' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'implementation' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'URL' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'documentURI' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'origin' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'compatMode' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'characterSet' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'inputEncoding' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'contentType' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'doctype' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'documentElement' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-Document object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childElementCount' on a non-Document object.
+CONSOLE MESSAGE: line 793: Deprecated attempt to access property 'nodeType' on a non-Node object.
+CONSOLE MESSAGE: line 2475: Deprecated attempt to access property 'nodeType' on a non-Node object.
+CONSOLE MESSAGE: line 793: Deprecated attempt to access property 'nodeType' on a non-Node object.
+CONSOLE MESSAGE: line 2475: Deprecated attempt to access property 'nodeType' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on a non-DocumentFragment object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-DocumentFragment object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-DocumentFragment object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childElementCount' on a non-DocumentFragment object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'name' on a non-DocumentType object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'publicId' on a non-DocumentType object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'systemId' on a non-DocumentType object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'namespaceURI' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'prefix' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'localName' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'tagName' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'id' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'className' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'classList' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'attributes' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childElementCount' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousElementSibling' on a non-Element object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextElementSibling' on a non-Element object.
+CONSOLE MESSAGE: line 793: Deprecated attempt to access property 'nodeType' on a non-Node object.
+CONSOLE MESSAGE: line 2475: Deprecated attempt to access property 'nodeType' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'namespaceURI' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'prefix' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'localName' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'name' on a non-Attr object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'value' on a non-Attr object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeValue' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'textContent' on a non-Node object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'ownerElement' on a non-Attr object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'specified' on a non-Attr object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'data' on a non-CharacterData object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'length' on a non-CharacterData object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousElementSibling' on a non-CharacterData object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextElementSibling' on a non-CharacterData object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'wholeText' on a non-Text object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'target' on a non-ProcessingInstruction object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'startContainer' on a non-Range object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'startOffset' on a non-Range object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'endContainer' on a non-Range object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'endOffset' on a non-Range object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'collapsed' on a non-Range object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'commonAncestorContainer' on a non-Range object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'root' on a non-NodeIterator object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'referenceNode' on a non-NodeIterator object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'pointerBeforeReferenceNode' on a non-NodeIterator object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'whatToShow' on a non-NodeIterator object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'filter' on a non-NodeIterator object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'root' on a non-TreeWalker object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'whatToShow' on a non-TreeWalker object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'filter' on a non-TreeWalker object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'currentNode' on a non-TreeWalker object.
+DOM IDL tests
+
+
+FAIL Event interface: existence and properties of interface object assert_equals: class string of Event expected "[object Function]" but got "[object EventConstructor]"
+PASS Event interface object length 
+PASS Event interface: existence and properties of interface prototype object 
+FAIL Event interface: existence and properties of interface prototype object's "constructor" property assert_true: Event.prototype.constructor is not writable expected true got false
+FAIL Event interface: attribute type assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Event interface: attribute target assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Event interface: attribute currentTarget assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Event interface: constant NONE on interface object 
+PASS Event interface: constant NONE on interface prototype object 
+PASS Event interface: constant CAPTURING_PHASE on interface object 
+PASS Event interface: constant CAPTURING_PHASE on interface prototype object 
+PASS Event interface: constant AT_TARGET on interface object 
+PASS Event interface: constant AT_TARGET on interface prototype object 
+PASS Event interface: constant BUBBLING_PHASE on interface object 
+PASS Event interface: constant BUBBLING_PHASE on interface prototype object 
+FAIL Event interface: attribute eventPhase assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Event interface: operation stopPropagation() 
+PASS Event interface: operation stopImmediatePropagation() 
+FAIL Event interface: attribute bubbles assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Event interface: attribute cancelable assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Event interface: operation preventDefault() 
+FAIL Event interface: attribute defaultPrevented assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Event interface: attribute timeStamp assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Event interface: operation initEvent(DOMString,boolean,boolean) assert_equals: property has wrong .length expected 3 but got 0
+PASS Event must be primary interface of document.createEvent("Event") 
+PASS Stringification of document.createEvent("Event") 
+PASS Event interface: document.createEvent("Event") must inherit property "type" with the proper type (0) 
+PASS Event interface: document.createEvent("Event") must inherit property "target" with the proper type (1) 
+PASS Event interface: document.createEvent("Event") must inherit property "currentTarget" with the proper type (2) 
+PASS Event interface: document.createEvent("Event") must inherit property "NONE" with the proper type (3) 
+PASS Event interface: document.createEvent("Event") must inherit property "CAPTURING_PHASE" with the proper type (4) 
+PASS Event interface: document.createEvent("Event") must inherit property "AT_TARGET" with the proper type (5) 
+PASS Event interface: document.createEvent("Event") must inherit property "BUBBLING_PHASE" with the proper type (6) 
+PASS Event interface: document.createEvent("Event") must inherit property "eventPhase" with the proper type (7) 
+PASS Event interface: document.createEvent("Event") must inherit property "stopPropagation" with the proper type (8) 
+PASS Event interface: document.createEvent("Event") must inherit property "stopImmediatePropagation" with the proper type (9) 
+PASS Event interface: document.createEvent("Event") must inherit property "bubbles" with the proper type (10) 
+PASS Event interface: document.createEvent("Event") must inherit property "cancelable" with the proper type (11) 
+PASS Event interface: document.createEvent("Event") must inherit property "preventDefault" with the proper type (12) 
+PASS Event interface: document.createEvent("Event") must inherit property "defaultPrevented" with the proper type (13) 
+FAIL Event interface: document.createEvent("Event") must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: document.createEvent("Event") must inherit property "timeStamp" with the proper type (15) 
+PASS Event interface: document.createEvent("Event") must inherit property "initEvent" with the proper type (16) 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on document.createEvent("Event") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Event must be primary interface of new Event("foo") 
+PASS Stringification of new Event("foo") 
+PASS Event interface: new Event("foo") must inherit property "type" with the proper type (0) 
+PASS Event interface: new Event("foo") must inherit property "target" with the proper type (1) 
+PASS Event interface: new Event("foo") must inherit property "currentTarget" with the proper type (2) 
+PASS Event interface: new Event("foo") must inherit property "NONE" with the proper type (3) 
+PASS Event interface: new Event("foo") must inherit property "CAPTURING_PHASE" with the proper type (4) 
+PASS Event interface: new Event("foo") must inherit property "AT_TARGET" with the proper type (5) 
+PASS Event interface: new Event("foo") must inherit property "BUBBLING_PHASE" with the proper type (6) 
+PASS Event interface: new Event("foo") must inherit property "eventPhase" with the proper type (7) 
+PASS Event interface: new Event("foo") must inherit property "stopPropagation" with the proper type (8) 
+PASS Event interface: new Event("foo") must inherit property "stopImmediatePropagation" with the proper type (9) 
+PASS Event interface: new Event("foo") must inherit property "bubbles" with the proper type (10) 
+PASS Event interface: new Event("foo") must inherit property "cancelable" with the proper type (11) 
+PASS Event interface: new Event("foo") must inherit property "preventDefault" with the proper type (12) 
+PASS Event interface: new Event("foo") must inherit property "defaultPrevented" with the proper type (13) 
+FAIL Event interface: new Event("foo") must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: new Event("foo") must inherit property "timeStamp" with the proper type (15) 
+PASS Event interface: new Event("foo") must inherit property "initEvent" with the proper type (16) 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new Event("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+FAIL CustomEvent interface: existence and properties of interface object assert_equals: class string of CustomEvent expected "[object Function]" but got "[object CustomEventConstructor]"
+PASS CustomEvent interface object length 
+PASS CustomEvent interface: existence and properties of interface prototype object 
+FAIL CustomEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: CustomEvent.prototype.constructor is not writable expected true got false
+FAIL CustomEvent interface: attribute detail assert_true: The prototype object must have a property "detail" expected true got false
+FAIL CustomEvent interface: operation initCustomEvent(DOMString,boolean,boolean,any) assert_equals: property has wrong .length expected 4 but got 0
+PASS CustomEvent must be primary interface of new CustomEvent("foo") 
+PASS Stringification of new CustomEvent("foo") 
+FAIL CustomEvent interface: new CustomEvent("foo") must inherit property "detail" with the proper type (0) assert_inherits: property "detail" found on object expected in prototype chain
+PASS CustomEvent interface: new CustomEvent("foo") must inherit property "initCustomEvent" with the proper type (1) 
+FAIL CustomEvent interface: calling initCustomEvent(DOMString,boolean,boolean,any) on new CustomEvent("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Event interface: new CustomEvent("foo") must inherit property "type" with the proper type (0) 
+PASS Event interface: new CustomEvent("foo") must inherit property "target" with the proper type (1) 
+PASS Event interface: new CustomEvent("foo") must inherit property "currentTarget" with the proper type (2) 
+PASS Event interface: new CustomEvent("foo") must inherit property "NONE" with the proper type (3) 
+PASS Event interface: new CustomEvent("foo") must inherit property "CAPTURING_PHASE" with the proper type (4) 
+PASS Event interface: new CustomEvent("foo") must inherit property "AT_TARGET" with the proper type (5) 
+PASS Event interface: new CustomEvent("foo") must inherit property "BUBBLING_PHASE" with the proper type (6) 
+PASS Event interface: new CustomEvent("foo") must inherit property "eventPhase" with the proper type (7) 
+PASS Event interface: new CustomEvent("foo") must inherit property "stopPropagation" with the proper type (8) 
+PASS Event interface: new CustomEvent("foo") must inherit property "stopImmediatePropagation" with the proper type (9) 
+PASS Event interface: new CustomEvent("foo") must inherit property "bubbles" with the proper type (10) 
+PASS Event interface: new CustomEvent("foo") must inherit property "cancelable" with the proper type (11) 
+PASS Event interface: new CustomEvent("foo") must inherit property "preventDefault" with the proper type (12) 
+PASS Event interface: new CustomEvent("foo") must inherit property "defaultPrevented" with the proper type (13) 
+FAIL Event interface: new CustomEvent("foo") must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: new CustomEvent("foo") must inherit property "timeStamp" with the proper type (15) 
+PASS Event interface: new CustomEvent("foo") must inherit property "initEvent" with the proper type (16) 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new CustomEvent("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+FAIL EventTarget interface: existence and properties of interface object assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+FAIL EventTarget interface object length assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+FAIL EventTarget interface: existence and properties of interface prototype object assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+FAIL EventTarget interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+FAIL EventTarget interface: operation addEventListener(DOMString,EventListener,boolean) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+FAIL EventTarget interface: operation removeEventListener(DOMString,EventListener,boolean) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+FAIL EventTarget interface: operation dispatchEvent(Event) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+PASS EventListener interface: existence and properties of interface object 
+PASS EventListener interface: existence and properties of interface prototype object 
+PASS EventListener interface: existence and properties of interface prototype object's "constructor" property 
+PASS EventListener interface: operation handleEvent(Event) 
+FAIL NodeList interface: existence and properties of interface object assert_equals: class string of NodeList expected "[object Function]" but got "[object NodeListConstructor]"
+PASS NodeList interface object length 
+PASS NodeList interface: existence and properties of interface prototype object 
+FAIL NodeList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: NodeList.prototype does not have own property "constructor" expected property "constructor" missing
+PASS NodeList interface: operation item(unsigned long) 
+FAIL NodeList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS NodeList must be primary interface of document.querySelectorAll("script") 
+PASS Stringification of document.querySelectorAll("script") 
+PASS NodeList interface: document.querySelectorAll("script") must inherit property "item" with the proper type (0) 
+PASS NodeList interface: calling item(unsigned long) on document.querySelectorAll("script") with too few arguments must throw TypeError 
+FAIL NodeList interface: document.querySelectorAll("script") must inherit property "length" with the proper type (1) assert_inherits: property "length" found on object expected in prototype chain
+FAIL HTMLCollection interface: existence and properties of interface object assert_equals: class string of HTMLCollection expected "[object Function]" but got "[object HTMLCollectionConstructor]"
+PASS HTMLCollection interface object length 
+PASS HTMLCollection interface: existence and properties of interface prototype object 
+FAIL HTMLCollection interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLCollection.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+FAIL HTMLCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
+FAIL HTMLCollection interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS HTMLCollection must be primary interface of document.body.children 
+PASS Stringification of document.body.children 
+FAIL HTMLCollection interface: document.body.children must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS HTMLCollection interface: document.body.children must inherit property "item" with the proper type (1) 
+FAIL HTMLCollection interface: calling item(unsigned long) on document.body.children with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS HTMLCollection interface: document.body.children must inherit property "namedItem" with the proper type (2) 
+FAIL HTMLCollection interface: calling namedItem(DOMString) on document.body.children with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+FAIL MutationObserver interface: existence and properties of interface object assert_equals: class string of MutationObserver expected "[object Function]" but got "[object MutationObserverConstructor]"
+PASS MutationObserver interface object length 
+PASS MutationObserver interface: existence and properties of interface prototype object 
+FAIL MutationObserver interface: existence and properties of interface prototype object's "constructor" property assert_true: MutationObserver.prototype.constructor is not writable expected true got false
+PASS MutationObserver interface: operation observe(Node,MutationObserverInit) 
+PASS MutationObserver interface: operation disconnect() 
+PASS MutationObserver interface: operation takeRecords() 
+FAIL MutationRecord interface: existence and properties of interface object assert_equals: class string of MutationRecord expected "[object Function]" but got "[object MutationRecordConstructor]"
+PASS MutationRecord interface object length 
+PASS MutationRecord interface: existence and properties of interface prototype object 
+FAIL MutationRecord interface: existence and properties of interface prototype object's "constructor" property assert_true: MutationRecord.prototype.constructor is not writable expected true got false
+FAIL MutationRecord interface: attribute type assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute target assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute addedNodes assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute removedNodes assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute previousSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute nextSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute attributeName assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute attributeNamespace assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL MutationRecord interface: attribute oldValue assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: existence and properties of interface object assert_equals: class string of Node expected "[object Function]" but got "[object NodeConstructor]"
+PASS Node interface object length 
+FAIL Node interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL Node interface: existence and properties of interface prototype object's "constructor" property assert_true: Node.prototype.constructor is not writable expected true got false
+PASS Node interface: constant ELEMENT_NODE on interface object 
+PASS Node interface: constant ELEMENT_NODE on interface prototype object 
+PASS Node interface: constant ATTRIBUTE_NODE on interface object 
+PASS Node interface: constant ATTRIBUTE_NODE on interface prototype object 
+PASS Node interface: constant TEXT_NODE on interface object 
+PASS Node interface: constant TEXT_NODE on interface prototype object 
+PASS Node interface: constant CDATA_SECTION_NODE on interface object 
+PASS Node interface: constant CDATA_SECTION_NODE on interface prototype object 
+PASS Node interface: constant ENTITY_REFERENCE_NODE on interface object 
+PASS Node interface: constant ENTITY_REFERENCE_NODE on interface prototype object 
+PASS Node interface: constant ENTITY_NODE on interface object 
+PASS Node interface: constant ENTITY_NODE on interface prototype object 
+PASS Node interface: constant PROCESSING_INSTRUCTION_NODE on interface object 
+PASS Node interface: constant PROCESSING_INSTRUCTION_NODE on interface prototype object 
+PASS Node interface: constant COMMENT_NODE on interface object 
+PASS Node interface: constant COMMENT_NODE on interface prototype object 
+PASS Node interface: constant DOCUMENT_NODE on interface object 
+PASS Node interface: constant DOCUMENT_NODE on interface prototype object 
+PASS Node interface: constant DOCUMENT_TYPE_NODE on interface object 
+PASS Node interface: constant DOCUMENT_TYPE_NODE on interface prototype object 
+PASS Node interface: constant DOCUMENT_FRAGMENT_NODE on interface object 
+PASS Node interface: constant DOCUMENT_FRAGMENT_NODE on interface prototype object 
+PASS Node interface: constant NOTATION_NODE on interface object 
+PASS Node interface: constant NOTATION_NODE on interface prototype object 
+FAIL Node interface: attribute nodeType assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute nodeName assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute baseURI assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute ownerDocument assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute parentNode assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute parentElement assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: operation hasChildNodes() 
+FAIL Node interface: attribute childNodes assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute firstChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute lastChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute previousSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute nextSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute nodeValue assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Node interface: attribute textContent assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: operation normalize() 
+PASS Node interface: operation cloneNode(boolean) 
+FAIL Node interface: operation isEqualNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Node interface: constant DOCUMENT_POSITION_DISCONNECTED on interface object 
+PASS Node interface: constant DOCUMENT_POSITION_DISCONNECTED on interface prototype object 
+PASS Node interface: constant DOCUMENT_POSITION_PRECEDING on interface object 
+PASS Node interface: constant DOCUMENT_POSITION_PRECEDING on interface prototype object 
+PASS Node interface: constant DOCUMENT_POSITION_FOLLOWING on interface object 
+PASS Node interface: constant DOCUMENT_POSITION_FOLLOWING on interface prototype object 
+PASS Node interface: constant DOCUMENT_POSITION_CONTAINS on interface object 
+PASS Node interface: constant DOCUMENT_POSITION_CONTAINS on interface prototype object 
+PASS Node interface: constant DOCUMENT_POSITION_CONTAINED_BY on interface object 
+PASS Node interface: constant DOCUMENT_POSITION_CONTAINED_BY on interface prototype object 
+PASS Node interface: constant DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC on interface object 
+PASS Node interface: constant DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC on interface prototype object 
+FAIL Node interface: operation compareDocumentPosition(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Node interface: operation contains(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Node interface: operation lookupPrefix(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Node interface: operation lookupNamespaceURI(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Node interface: operation isDefaultNamespace(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Node interface: operation insertBefore(Node,Node) 
+PASS Node interface: operation appendChild(Node) 
+PASS Node interface: operation replaceChild(Node,Node) 
+PASS Node interface: operation removeChild(Node) 
+FAIL Document interface: existence and properties of interface object assert_equals: class string of Document expected "[object Function]" but got "[object DocumentConstructor]"
+PASS Document interface object length 
+PASS Document interface: existence and properties of interface prototype object 
+FAIL Document interface: existence and properties of interface prototype object's "constructor" property assert_true: Document.prototype.constructor is not writable expected true got false
+FAIL Document interface: attribute implementation assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute URL assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute documentURI assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute origin assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute compatMode assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute characterSet assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute inputEncoding assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute contentType assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute doctype assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute documentElement assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: operation getElementsByTagName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Document interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation createElement(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation createElementNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+PASS Document interface: operation createDocumentFragment() 
+FAIL Document interface: operation createTextNode(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation createComment(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation createProcessingInstruction(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Document interface: operation importNode(Node,boolean) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation adoptNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation createAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation createAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Document interface: operation createEvent(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation createRange() 
+PASS Document interface: operation createNodeIterator(Node,unsigned long,NodeFilter) 
+PASS Document interface: operation createTreeWalker(Node,unsigned long,NodeFilter) 
+FAIL Document interface: operation getElementById(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: attribute children assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute firstElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute lastElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Document interface: operation prepend([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL Document interface: operation append([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL Document interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
+FAIL Document interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
+PASS Document interface: operation querySelector(DOMString) 
+PASS Document interface: operation querySelectorAll(DOMString) 
+FAIL XMLDocument interface: existence and properties of interface object assert_equals: class string of XMLDocument expected "[object Function]" but got "[object DocumentConstructor]"
+PASS XMLDocument interface object length 
+FAIL XMLDocument interface: existence and properties of interface prototype object assert_equals: prototype of XMLDocument.prototype is not Document.prototype expected Node object of unknown type but got Node object of unknown type
+FAIL XMLDocument interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLDocument.prototype.constructor is not writable expected true got false
+PASS XMLDocument must be primary interface of xmlDoc 
+FAIL Stringification of xmlDoc assert_equals: class string of xmlDoc expected "[object XMLDocument]" but got "[object Document]"
+PASS Document interface: xmlDoc must inherit property "implementation" with the proper type (0) 
+PASS Document interface: xmlDoc must inherit property "URL" with the proper type (1) 
+FAIL Document interface: xmlDoc must inherit property "documentURI" with the proper type (2) assert_equals: expected "string" but got "object"
+PASS Document interface: xmlDoc must inherit property "origin" with the proper type (3) 
+PASS Document interface: xmlDoc must inherit property "compatMode" with the proper type (4) 
+FAIL Document interface: xmlDoc must inherit property "characterSet" with the proper type (5) assert_equals: expected "string" but got "object"
+FAIL Document interface: xmlDoc must inherit property "inputEncoding" with the proper type (6) assert_equals: expected "string" but got "object"
+PASS Document interface: xmlDoc must inherit property "contentType" with the proper type (7) 
+PASS Document interface: xmlDoc must inherit property "doctype" with the proper type (8) 
+PASS Document interface: xmlDoc must inherit property "documentElement" with the proper type (9) 
+PASS Document interface: xmlDoc must inherit property "getElementsByTagName" with the proper type (10) 
+FAIL Document interface: calling getElementsByTagName(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "getElementsByTagNameNS" with the proper type (11) 
+FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "getElementsByClassName" with the proper type (12) 
+FAIL Document interface: calling getElementsByClassName(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "createElement" with the proper type (13) 
+FAIL Document interface: calling createElement(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "createElementNS" with the proper type (14) 
+FAIL Document interface: calling createElementNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "createDocumentFragment" with the proper type (15) 
+PASS Document interface: xmlDoc must inherit property "createTextNode" with the proper type (16) 
+FAIL Document interface: calling createTextNode(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "createComment" with the proper type (17) 
+FAIL Document interface: calling createComment(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "createProcessingInstruction" with the proper type (18) 
+FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "importNode" with the proper type (19) 
+FAIL Document interface: calling importNode(Node,boolean) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: xmlDoc must inherit property "adoptNode" with the proper type (20) 
+FAIL Document interface: calling adoptNode(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: xmlDoc must inherit property "createAttribute" with the proper type (21) 
+FAIL Document interface: calling createAttribute(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "createAttributeNS" with the proper type (22) 
+FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (23) 
+FAIL Document interface: calling createEvent(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: xmlDoc must inherit property "createRange" with the proper type (24) 
+PASS Document interface: xmlDoc must inherit property "createNodeIterator" with the proper type (25) 
+PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
+PASS Document interface: xmlDoc must inherit property "createTreeWalker" with the proper type (26) 
+PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
+PASS Document interface: xmlDoc must inherit property "getElementById" with the proper type (27) 
+FAIL Document interface: calling getElementById(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Document interface: xmlDoc must inherit property "children" with the proper type (28) 
+PASS Document interface: xmlDoc must inherit property "firstElementChild" with the proper type (29) 
+PASS Document interface: xmlDoc must inherit property "lastElementChild" with the proper type (30) 
+PASS Document interface: xmlDoc must inherit property "childElementCount" with the proper type (31) 
+PASS Document interface: xmlDoc must inherit property "prepend" with the proper type (32) 
+PASS Document interface: calling prepend([object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
+PASS Document interface: xmlDoc must inherit property "append" with the proper type (33) 
+PASS Document interface: calling append([object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
+FAIL Document interface: xmlDoc must inherit property "query" with the proper type (34) assert_inherits: property "query" not found in prototype chain
+FAIL Document interface: calling query(DOMString) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
+FAIL Document interface: xmlDoc must inherit property "queryAll" with the proper type (35) assert_inherits: property "queryAll" not found in prototype chain
+FAIL Document interface: calling queryAll(DOMString) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
+PASS Document interface: xmlDoc must inherit property "querySelector" with the proper type (36) 
+PASS Document interface: calling querySelector(DOMString) on xmlDoc with too few arguments must throw TypeError 
+PASS Document interface: xmlDoc must inherit property "querySelectorAll" with the proper type (37) 
+PASS Document interface: calling querySelectorAll(DOMString) on xmlDoc with too few arguments must throw TypeError 
+PASS Node interface: xmlDoc must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: xmlDoc must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: xmlDoc must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: xmlDoc must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: xmlDoc must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: xmlDoc must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: xmlDoc must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: xmlDoc must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: xmlDoc must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: xmlDoc must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: xmlDoc must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: xmlDoc must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: xmlDoc must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: xmlDoc must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: xmlDoc must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: xmlDoc must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: xmlDoc must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: xmlDoc must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: xmlDoc must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: xmlDoc must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: xmlDoc must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: xmlDoc must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: xmlDoc must inherit property "textContent" with the proper type (25) 
+PASS Node interface: xmlDoc must inherit property "normalize" with the proper type (26) 
+PASS Node interface: xmlDoc must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on xmlDoc with too few arguments must throw TypeError 
+PASS Node interface: xmlDoc must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: xmlDoc must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: xmlDoc must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: xmlDoc must inherit property "appendChild" with the proper type (41) 
+FAIL Node interface: calling appendChild(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: xmlDoc must inherit property "replaceChild" with the proper type (42) 
+FAIL Node interface: calling replaceChild(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc must inherit property "removeChild" with the proper type (43) 
+FAIL Node interface: calling removeChild(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS EventTarget interface: xmlDoc must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: xmlDoc must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: xmlDoc must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on xmlDoc with too few arguments must throw TypeError 
+FAIL DOMImplementation interface: existence and properties of interface object assert_equals: class string of DOMImplementation expected "[object Function]" but got "[object DOMImplementationConstructor]"
+PASS DOMImplementation interface object length 
+PASS DOMImplementation interface: existence and properties of interface prototype object 
+FAIL DOMImplementation interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMImplementation.prototype.constructor is not writable expected true got false
+FAIL DOMImplementation interface: operation createDocumentType(DOMString,DOMString,DOMString) assert_equals: property has wrong .length expected 3 but got 0
+FAIL DOMImplementation interface: operation createDocument(DOMString,DOMString,DocumentType) assert_equals: property has wrong .length expected 2 but got 0
+PASS DOMImplementation interface: operation createHTMLDocument(DOMString) 
+PASS DOMImplementation interface: operation hasFeature() 
+PASS DOMImplementation must be primary interface of document.implementation 
+PASS Stringification of document.implementation 
+PASS DOMImplementation interface: document.implementation must inherit property "createDocumentType" with the proper type (0) 
+FAIL DOMImplementation interface: calling createDocumentType(DOMString,DOMString,DOMString) on document.implementation with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidCharacterError: DOM Exception 5" ("InvalidCharacterError") expected object "TypeError" ("TypeError")
+PASS DOMImplementation interface: document.implementation must inherit property "createDocument" with the proper type (1) 
+FAIL DOMImplementation interface: calling createDocument(DOMString,DOMString,DocumentType) on document.implementation with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS DOMImplementation interface: document.implementation must inherit property "createHTMLDocument" with the proper type (2) 
+PASS DOMImplementation interface: calling createHTMLDocument(DOMString) on document.implementation with too few arguments must throw TypeError 
+PASS DOMImplementation interface: document.implementation must inherit property "hasFeature" with the proper type (3) 
+FAIL DocumentFragment interface: existence and properties of interface object assert_equals: class string of DocumentFragment expected "[object Function]" but got "[object DocumentFragmentConstructor]"
+PASS DocumentFragment interface object length 
+PASS DocumentFragment interface: existence and properties of interface prototype object 
+FAIL DocumentFragment interface: existence and properties of interface prototype object's "constructor" property assert_true: DocumentFragment.prototype.constructor is not writable expected true got false
+FAIL DocumentFragment interface: operation getElementById(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL DocumentFragment interface: attribute children assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL DocumentFragment interface: attribute firstElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL DocumentFragment interface: attribute lastElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL DocumentFragment interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL DocumentFragment interface: operation prepend([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL DocumentFragment interface: operation append([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL DocumentFragment interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
+FAIL DocumentFragment interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
+PASS DocumentFragment interface: operation querySelector(DOMString) 
+PASS DocumentFragment interface: operation querySelectorAll(DOMString) 
+PASS DocumentFragment must be primary interface of document.createDocumentFragment() 
+PASS Stringification of document.createDocumentFragment() 
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "getElementById" with the proper type (0) 
+FAIL DocumentFragment interface: calling getElementById(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "children" with the proper type (1) 
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "firstElementChild" with the proper type (2) 
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "lastElementChild" with the proper type (3) 
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "childElementCount" with the proper type (4) 
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "prepend" with the proper type (5) 
+PASS DocumentFragment interface: calling prepend([object Object],[object Object]) on document.createDocumentFragment() with too few arguments must throw TypeError 
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "append" with the proper type (6) 
+PASS DocumentFragment interface: calling append([object Object],[object Object]) on document.createDocumentFragment() with too few arguments must throw TypeError 
+FAIL DocumentFragment interface: document.createDocumentFragment() must inherit property "query" with the proper type (7) assert_inherits: property "query" not found in prototype chain
+FAIL DocumentFragment interface: calling query(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
+FAIL DocumentFragment interface: document.createDocumentFragment() must inherit property "queryAll" with the proper type (8) assert_inherits: property "queryAll" not found in prototype chain
+FAIL DocumentFragment interface: calling queryAll(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "querySelector" with the proper type (9) 
+PASS DocumentFragment interface: calling querySelector(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
+PASS DocumentFragment interface: document.createDocumentFragment() must inherit property "querySelectorAll" with the proper type (10) 
+PASS DocumentFragment interface: calling querySelectorAll(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError 
+PASS Node interface: document.createDocumentFragment() must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: document.createDocumentFragment() must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: document.createDocumentFragment() must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: document.createDocumentFragment() must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: document.createDocumentFragment() must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: document.createDocumentFragment() must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: document.createDocumentFragment() must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: document.createDocumentFragment() must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: document.createDocumentFragment() must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: document.createDocumentFragment() must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: document.createDocumentFragment() must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: document.createDocumentFragment() must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: document.createDocumentFragment() must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: document.createDocumentFragment() must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: document.createDocumentFragment() must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: document.createDocumentFragment() must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: document.createDocumentFragment() must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: document.createDocumentFragment() must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: document.createDocumentFragment() must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: document.createDocumentFragment() must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: document.createDocumentFragment() must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: document.createDocumentFragment() must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: document.createDocumentFragment() must inherit property "textContent" with the proper type (25) 
+PASS Node interface: document.createDocumentFragment() must inherit property "normalize" with the proper type (26) 
+PASS Node interface: document.createDocumentFragment() must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on document.createDocumentFragment() with too few arguments must throw TypeError 
+PASS Node interface: document.createDocumentFragment() must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: document.createDocumentFragment() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: document.createDocumentFragment() must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createDocumentFragment() must inherit property "appendChild" with the proper type (41) 
+FAIL Node interface: calling appendChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createDocumentFragment() must inherit property "replaceChild" with the proper type (42) 
+FAIL Node interface: calling replaceChild(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "removeChild" with the proper type (43) 
+FAIL Node interface: calling removeChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS EventTarget interface: document.createDocumentFragment() must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.createDocumentFragment() must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.createDocumentFragment() must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on document.createDocumentFragment() with too few arguments must throw TypeError 
+FAIL DocumentType interface: existence and properties of interface object assert_equals: class string of DocumentType expected "[object Function]" but got "[object DocumentTypeConstructor]"
+PASS DocumentType interface object length 
+PASS DocumentType interface: existence and properties of interface prototype object 
+FAIL DocumentType interface: existence and properties of interface prototype object's "constructor" property assert_true: DocumentType.prototype.constructor is not writable expected true got false
+FAIL DocumentType interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL DocumentType interface: attribute publicId assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL DocumentType interface: attribute systemId assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL DocumentType interface: operation before([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL DocumentType interface: operation after([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL DocumentType interface: operation replaceWith([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+PASS DocumentType interface: operation remove() 
+PASS DocumentType must be primary interface of document.doctype 
+PASS Stringification of document.doctype 
+PASS DocumentType interface: document.doctype must inherit property "name" with the proper type (0) 
+FAIL DocumentType interface: document.doctype must inherit property "publicId" with the proper type (1) assert_equals: expected "string" but got "object"
+FAIL DocumentType interface: document.doctype must inherit property "systemId" with the proper type (2) assert_equals: expected "string" but got "object"
+PASS DocumentType interface: document.doctype must inherit property "before" with the proper type (3) 
+PASS DocumentType interface: calling before([object Object],[object Object]) on document.doctype with too few arguments must throw TypeError 
+PASS DocumentType interface: document.doctype must inherit property "after" with the proper type (4) 
+PASS DocumentType interface: calling after([object Object],[object Object]) on document.doctype with too few arguments must throw TypeError 
+PASS DocumentType interface: document.doctype must inherit property "replaceWith" with the proper type (5) 
+PASS DocumentType interface: calling replaceWith([object Object],[object Object]) on document.doctype with too few arguments must throw TypeError 
+PASS DocumentType interface: document.doctype must inherit property "remove" with the proper type (6) 
+PASS Node interface: document.doctype must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: document.doctype must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: document.doctype must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: document.doctype must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: document.doctype must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: document.doctype must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: document.doctype must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: document.doctype must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: document.doctype must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: document.doctype must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: document.doctype must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: document.doctype must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: document.doctype must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: document.doctype must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: document.doctype must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: document.doctype must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: document.doctype must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: document.doctype must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: document.doctype must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: document.doctype must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: document.doctype must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: document.doctype must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: document.doctype must inherit property "textContent" with the proper type (25) 
+PASS Node interface: document.doctype must inherit property "normalize" with the proper type (26) 
+PASS Node interface: document.doctype must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on document.doctype with too few arguments must throw TypeError 
+PASS Node interface: document.doctype must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: document.doctype must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: document.doctype must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.doctype must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.doctype must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.doctype must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.doctype must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.doctype must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.doctype must inherit property "appendChild" with the proper type (41) 
+FAIL Node interface: calling appendChild(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.doctype must inherit property "replaceChild" with the proper type (42) 
+FAIL Node interface: calling replaceChild(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.doctype must inherit property "removeChild" with the proper type (43) 
+FAIL Node interface: calling removeChild(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS EventTarget interface: document.doctype must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.doctype must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.doctype must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on document.doctype with too few arguments must throw TypeError 
+FAIL Element interface: existence and properties of interface object assert_equals: class string of Element expected "[object Function]" but got "[object ElementConstructor]"
+PASS Element interface object length 
+PASS Element interface: existence and properties of interface prototype object 
+FAIL Element interface: existence and properties of interface prototype object's "constructor" property assert_true: Element.prototype.constructor is not writable expected true got false
+FAIL Element interface: attribute namespaceURI assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute prefix assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute localName assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute tagName assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute id assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute className assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute classList assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: operation hasAttributes() 
+FAIL Element interface: attribute attributes assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: operation getAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation getAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Element interface: operation setAttribute(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Element interface: operation setAttributeNS(DOMString,DOMString,DOMString) assert_equals: property has wrong .length expected 3 but got 0
+FAIL Element interface: operation removeAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Element interface: operation removeAttributeNS(DOMString,DOMString) 
+PASS Element interface: operation hasAttribute(DOMString) 
+FAIL Element interface: operation hasAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Element interface: operation getAttributeNode(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation getAttributeNodeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Element interface: operation setAttributeNode(Attr) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation setAttributeNodeNS(Attr) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation removeAttributeNode(Attr) assert_equals: property has wrong .length expected 1 but got 0
+PASS Element interface: operation closest(DOMString) 
+PASS Element interface: operation matches(DOMString) 
+FAIL Element interface: operation getElementsByTagName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Element interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: attribute children assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute firstElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute lastElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: operation prepend([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL Element interface: operation append([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL Element interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
+FAIL Element interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
+PASS Element interface: operation querySelector(DOMString) 
+PASS Element interface: operation querySelectorAll(DOMString) 
+FAIL Element interface: attribute previousElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: attribute nextElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Element interface: operation before([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL Element interface: operation after([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL Element interface: operation replaceWith([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+PASS Element interface: operation remove() 
+PASS Element must be primary interface of element 
+PASS Stringification of element 
+PASS Element interface: element must inherit property "namespaceURI" with the proper type (0) 
+PASS Element interface: element must inherit property "prefix" with the proper type (1) 
+PASS Element interface: element must inherit property "localName" with the proper type (2) 
+PASS Element interface: element must inherit property "tagName" with the proper type (3) 
+PASS Element interface: element must inherit property "id" with the proper type (4) 
+PASS Element interface: element must inherit property "className" with the proper type (5) 
+PASS Element interface: element must inherit property "classList" with the proper type (6) 
+PASS Element interface: element must inherit property "hasAttributes" with the proper type (7) 
+PASS Element interface: element must inherit property "attributes" with the proper type (8) 
+PASS Element interface: element must inherit property "getAttribute" with the proper type (9) 
+FAIL Element interface: calling getAttribute(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "getAttributeNS" with the proper type (10) 
+FAIL Element interface: calling getAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "setAttribute" with the proper type (11) 
+FAIL Element interface: calling setAttribute(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "setAttributeNS" with the proper type (12) 
+FAIL Element interface: calling setAttributeNS(DOMString,DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "removeAttribute" with the proper type (13) 
+FAIL Element interface: calling removeAttribute(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "removeAttributeNS" with the proper type (14) 
+PASS Element interface: calling removeAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "hasAttribute" with the proper type (15) 
+PASS Element interface: calling hasAttribute(DOMString) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "hasAttributeNS" with the proper type (16) 
+FAIL Element interface: calling hasAttributeNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "getAttributeNode" with the proper type (17) 
+FAIL Element interface: calling getAttributeNode(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "getAttributeNodeNS" with the proper type (18) 
+FAIL Element interface: calling getAttributeNodeNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "setAttributeNode" with the proper type (19) 
+FAIL Element interface: calling setAttributeNode(Attr) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: TypeMismatchError: DOM Exception 17" ("TypeMismatchError") expected object "TypeError" ("TypeError")
+PASS Element interface: element must inherit property "setAttributeNodeNS" with the proper type (20) 
+FAIL Element interface: calling setAttributeNodeNS(Attr) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: TypeMismatchError: DOM Exception 17" ("TypeMismatchError") expected object "TypeError" ("TypeError")
+PASS Element interface: element must inherit property "removeAttributeNode" with the proper type (21) 
+FAIL Element interface: calling removeAttributeNode(Attr) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: TypeMismatchError: DOM Exception 17" ("TypeMismatchError") expected object "TypeError" ("TypeError")
+PASS Element interface: element must inherit property "closest" with the proper type (22) 
+PASS Element interface: calling closest(DOMString) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "matches" with the proper type (23) 
+PASS Element interface: calling matches(DOMString) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "getElementsByTagName" with the proper type (24) 
+FAIL Element interface: calling getElementsByTagName(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "getElementsByTagNameNS" with the proper type (25) 
+FAIL Element interface: calling getElementsByTagNameNS(DOMString,DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "getElementsByClassName" with the proper type (26) 
+FAIL Element interface: calling getElementsByClassName(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Element interface: element must inherit property "children" with the proper type (27) 
+PASS Element interface: element must inherit property "firstElementChild" with the proper type (28) 
+PASS Element interface: element must inherit property "lastElementChild" with the proper type (29) 
+PASS Element interface: element must inherit property "childElementCount" with the proper type (30) 
+PASS Element interface: element must inherit property "prepend" with the proper type (31) 
+PASS Element interface: calling prepend([object Object],[object Object]) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "append" with the proper type (32) 
+PASS Element interface: calling append([object Object],[object Object]) on element with too few arguments must throw TypeError 
+FAIL Element interface: element must inherit property "query" with the proper type (33) assert_inherits: property "query" not found in prototype chain
+FAIL Element interface: calling query(DOMString) on element with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
+FAIL Element interface: element must inherit property "queryAll" with the proper type (34) assert_inherits: property "queryAll" not found in prototype chain
+FAIL Element interface: calling queryAll(DOMString) on element with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
+PASS Element interface: element must inherit property "querySelector" with the proper type (35) 
+PASS Element interface: calling querySelector(DOMString) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "querySelectorAll" with the proper type (36) 
+PASS Element interface: calling querySelectorAll(DOMString) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "previousElementSibling" with the proper type (37) 
+PASS Element interface: element must inherit property "nextElementSibling" with the proper type (38) 
+PASS Element interface: element must inherit property "before" with the proper type (39) 
+PASS Element interface: calling before([object Object],[object Object]) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "after" with the proper type (40) 
+PASS Element interface: calling after([object Object],[object Object]) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "replaceWith" with the proper type (41) 
+PASS Element interface: calling replaceWith([object Object],[object Object]) on element with too few arguments must throw TypeError 
+PASS Element interface: element must inherit property "remove" with the proper type (42) 
+PASS Node interface: element must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: element must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: element must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: element must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: element must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: element must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: element must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: element must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: element must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: element must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: element must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: element must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: element must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: element must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: element must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: element must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: element must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: element must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: element must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: element must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: element must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: element must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: element must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: element must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: element must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: element must inherit property "textContent" with the proper type (25) 
+PASS Node interface: element must inherit property "normalize" with the proper type (26) 
+PASS Node interface: element must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on element with too few arguments must throw TypeError 
+PASS Node interface: element must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: element must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: element must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: element must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: element must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: element must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: element must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: element must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: element must inherit property "appendChild" with the proper type (41) 
+FAIL Node interface: calling appendChild(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: element must inherit property "replaceChild" with the proper type (42) 
+FAIL Node interface: calling replaceChild(Node,Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: element must inherit property "removeChild" with the proper type (43) 
+FAIL Node interface: calling removeChild(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS EventTarget interface: element must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: element must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: element must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on element with too few arguments must throw TypeError 
+FAIL NamedNodeMap interface: existence and properties of interface object assert_equals: class string of NamedNodeMap expected "[object Function]" but got "[object NamedNodeMapConstructor]"
+PASS NamedNodeMap interface object length 
+PASS NamedNodeMap interface: existence and properties of interface prototype object 
+FAIL NamedNodeMap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: NamedNodeMap.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL NamedNodeMap interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+FAIL NamedNodeMap interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
+FAIL NamedNodeMap interface: operation getNamedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL NamedNodeMap interface: operation getNamedItemNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL NamedNodeMap interface: operation setNamedItem(Attr) assert_equals: property has wrong .length expected 1 but got 0
+FAIL NamedNodeMap interface: operation setNamedItemNS(Attr) assert_equals: property has wrong .length expected 1 but got 0
+FAIL NamedNodeMap interface: operation removeNamedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL NamedNodeMap interface: operation removeNamedItemNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Attr interface: existence and properties of interface object assert_equals: class string of Attr expected "[object Function]" but got "[object AttrConstructor]"
+PASS Attr interface object length 
+FAIL Attr interface: existence and properties of interface prototype object assert_equals: prototype of Attr.prototype is not Object.prototype expected object "[object Object]" but got Node object of unknown type
+FAIL Attr interface: existence and properties of interface prototype object's "constructor" property assert_true: Attr.prototype.constructor is not writable expected true got false
+FAIL Attr interface: attribute namespaceURI assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute prefix assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute localName assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute value assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute nodeValue assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute textContent assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute ownerElement assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Attr interface: attribute specified assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Attr must be primary interface of document.querySelector("[id]").attributes[0] 
+PASS Stringification of document.querySelector("[id]").attributes[0] 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "namespaceURI" with the proper type (0) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "prefix" with the proper type (1) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "localName" with the proper type (2) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "name" with the proper type (3) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "value" with the proper type (4) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "nodeValue" with the proper type (5) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "textContent" with the proper type (6) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "ownerElement" with the proper type (7) 
+PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "specified" with the proper type (8) 
+FAIL CharacterData interface: existence and properties of interface object assert_equals: class string of CharacterData expected "[object Function]" but got "[object CharacterDataConstructor]"
+PASS CharacterData interface object length 
+PASS CharacterData interface: existence and properties of interface prototype object 
+FAIL CharacterData interface: existence and properties of interface prototype object's "constructor" property assert_true: CharacterData.prototype.constructor is not writable expected true got false
+FAIL CharacterData interface: attribute data assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL CharacterData interface: attribute length assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL CharacterData interface: operation substringData(unsigned long,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
+FAIL CharacterData interface: operation appendData(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL CharacterData interface: operation insertData(unsigned long,DOMString) assert_equals: property has wrong .length expected 2 but got 0
+FAIL CharacterData interface: operation deleteData(unsigned long,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
+FAIL CharacterData interface: operation replaceData(unsigned long,unsigned long,DOMString) assert_equals: property has wrong .length expected 3 but got 0
+FAIL CharacterData interface: attribute previousElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL CharacterData interface: attribute nextElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL CharacterData interface: operation before([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL CharacterData interface: operation after([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+FAIL CharacterData interface: operation replaceWith([object Object],[object Object]) assert_equals: property has wrong .length expected 0 but got 1
+PASS CharacterData interface: operation remove() 
+FAIL Text interface: existence and properties of interface object assert_equals: class string of Text expected "[object Function]" but got "[object TextConstructor]"
+PASS Text interface object length 
+PASS Text interface: existence and properties of interface prototype object 
+FAIL Text interface: existence and properties of interface prototype object's "constructor" property assert_true: Text.prototype.constructor is not writable expected true got false
+PASS Text interface: operation splitText(unsigned long) 
+FAIL Text interface: attribute wholeText assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS Text must be primary interface of document.createTextNode("abc") 
+PASS Stringification of document.createTextNode("abc") 
+PASS Text interface: document.createTextNode("abc") must inherit property "splitText" with the proper type (0) 
+PASS Text interface: calling splitText(unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError 
+PASS Text interface: document.createTextNode("abc") must inherit property "wholeText" with the proper type (1) 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "data" with the proper type (0) 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "length" with the proper type (1) 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "substringData" with the proper type (2) 
+FAIL CharacterData interface: calling substringData(unsigned long,unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "appendData" with the proper type (3) 
+FAIL CharacterData interface: calling appendData(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "insertData" with the proper type (4) 
+FAIL CharacterData interface: calling insertData(unsigned long,DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "deleteData" with the proper type (5) 
+FAIL CharacterData interface: calling deleteData(unsigned long,unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "replaceData" with the proper type (6) 
+FAIL CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "previousElementSibling" with the proper type (7) 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "nextElementSibling" with the proper type (8) 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "before" with the proper type (9) 
+PASS CharacterData interface: calling before([object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "after" with the proper type (10) 
+PASS CharacterData interface: calling after([object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "replaceWith" with the proper type (11) 
+PASS CharacterData interface: calling replaceWith([object Object],[object Object]) on document.createTextNode("abc") with too few arguments must throw TypeError 
+PASS CharacterData interface: document.createTextNode("abc") must inherit property "remove" with the proper type (12) 
+PASS Node interface: document.createTextNode("abc") must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: document.createTextNode("abc") must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: document.createTextNode("abc") must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: document.createTextNode("abc") must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: document.createTextNode("abc") must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: document.createTextNode("abc") must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: document.createTextNode("abc") must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: document.createTextNode("abc") must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: document.createTextNode("abc") must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: document.createTextNode("abc") must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: document.createTextNode("abc") must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: document.createTextNode("abc") must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: document.createTextNode("abc") must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: document.createTextNode("abc") must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: document.createTextNode("abc") must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: document.createTextNode("abc") must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: document.createTextNode("abc") must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: document.createTextNode("abc") must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: document.createTextNode("abc") must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: document.createTextNode("abc") must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: document.createTextNode("abc") must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: document.createTextNode("abc") must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: document.createTextNode("abc") must inherit property "textContent" with the proper type (25) 
+PASS Node interface: document.createTextNode("abc") must inherit property "normalize" with the proper type (26) 
+PASS Node interface: document.createTextNode("abc") must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on document.createTextNode("abc") with too few arguments must throw TypeError 
+PASS Node interface: document.createTextNode("abc") must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: document.createTextNode("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: document.createTextNode("abc") must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createTextNode("abc") must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createTextNode("abc") must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createTextNode("abc") must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createTextNode("abc") must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createTextNode("abc") must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createTextNode("abc") must inherit property "appendChild" with the proper type (41) 
+FAIL Node interface: calling appendChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createTextNode("abc") must inherit property "replaceChild" with the proper type (42) 
+FAIL Node interface: calling replaceChild(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createTextNode("abc") must inherit property "removeChild" with the proper type (43) 
+FAIL Node interface: calling removeChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS EventTarget interface: document.createTextNode("abc") must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.createTextNode("abc") must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.createTextNode("abc") must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on document.createTextNode("abc") with too few arguments must throw TypeError 
+FAIL ProcessingInstruction interface: existence and properties of interface object assert_equals: class string of ProcessingInstruction expected "[object Function]" but got "[object ProcessingInstructionConstructor]"
+PASS ProcessingInstruction interface object length 
+PASS ProcessingInstruction interface: existence and properties of interface prototype object 
+FAIL ProcessingInstruction interface: existence and properties of interface prototype object's "constructor" property assert_true: ProcessingInstruction.prototype.constructor is not writable expected true got false
+FAIL ProcessingInstruction interface: attribute target assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS ProcessingInstruction must be primary interface of xmlDoc.createProcessingInstruction("abc", "def") 
+PASS Stringification of xmlDoc.createProcessingInstruction("abc", "def") 
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "target" with the proper type (0) 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "data" with the proper type (0) 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "length" with the proper type (1) 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "substringData" with the proper type (2) 
+FAIL CharacterData interface: calling substringData(unsigned long,unsigned long) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendData" with the proper type (3) 
+FAIL CharacterData interface: calling appendData(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertData" with the proper type (4) 
+FAIL CharacterData interface: calling insertData(unsigned long,DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "deleteData" with the proper type (5) 
+FAIL CharacterData interface: calling deleteData(unsigned long,unsigned long) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceData" with the proper type (6) 
+FAIL CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "previousElementSibling" with the proper type (7) 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nextElementSibling" with the proper type (8) 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "before" with the proper type (9) 
+PASS CharacterData interface: calling before([object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "after" with the proper type (10) 
+PASS CharacterData interface: calling after([object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceWith" with the proper type (11) 
+PASS CharacterData interface: calling replaceWith([object Object],[object Object]) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
+PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "remove" with the proper type (12) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "textContent" with the proper type (25) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "normalize" with the proper type (26) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendChild" with the proper type (41) 
+FAIL Node interface: calling appendChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceChild" with the proper type (42) 
+FAIL Node interface: calling replaceChild(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeChild" with the proper type (43) 
+FAIL Node interface: calling removeChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
+FAIL Comment interface: existence and properties of interface object assert_equals: class string of Comment expected "[object Function]" but got "[object CommentConstructor]"
+PASS Comment interface object length 
+PASS Comment interface: existence and properties of interface prototype object 
+FAIL Comment interface: existence and properties of interface prototype object's "constructor" property assert_true: Comment.prototype.constructor is not writable expected true got false
+PASS Comment must be primary interface of document.createComment("abc") 
+PASS Stringification of document.createComment("abc") 
+PASS CharacterData interface: document.createComment("abc") must inherit property "data" with the proper type (0) 
+PASS CharacterData interface: document.createComment("abc") must inherit property "length" with the proper type (1) 
+PASS CharacterData interface: document.createComment("abc") must inherit property "substringData" with the proper type (2) 
+FAIL CharacterData interface: calling substringData(unsigned long,unsigned long) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createComment("abc") must inherit property "appendData" with the proper type (3) 
+FAIL CharacterData interface: calling appendData(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createComment("abc") must inherit property "insertData" with the proper type (4) 
+FAIL CharacterData interface: calling insertData(unsigned long,DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createComment("abc") must inherit property "deleteData" with the proper type (5) 
+FAIL CharacterData interface: calling deleteData(unsigned long,unsigned long) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createComment("abc") must inherit property "replaceData" with the proper type (6) 
+FAIL CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS CharacterData interface: document.createComment("abc") must inherit property "previousElementSibling" with the proper type (7) 
+PASS CharacterData interface: document.createComment("abc") must inherit property "nextElementSibling" with the proper type (8) 
+PASS CharacterData interface: document.createComment("abc") must inherit property "before" with the proper type (9) 
+PASS CharacterData interface: calling before([object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError 
+PASS CharacterData interface: document.createComment("abc") must inherit property "after" with the proper type (10) 
+PASS CharacterData interface: calling after([object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError 
+PASS CharacterData interface: document.createComment("abc") must inherit property "replaceWith" with the proper type (11) 
+PASS CharacterData interface: calling replaceWith([object Object],[object Object]) on document.createComment("abc") with too few arguments must throw TypeError 
+PASS CharacterData interface: document.createComment("abc") must inherit property "remove" with the proper type (12) 
+PASS Node interface: document.createComment("abc") must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: document.createComment("abc") must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: document.createComment("abc") must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: document.createComment("abc") must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: document.createComment("abc") must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: document.createComment("abc") must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: document.createComment("abc") must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: document.createComment("abc") must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: document.createComment("abc") must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: document.createComment("abc") must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: document.createComment("abc") must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: document.createComment("abc") must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: document.createComment("abc") must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: document.createComment("abc") must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: document.createComment("abc") must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: document.createComment("abc") must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: document.createComment("abc") must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: document.createComment("abc") must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: document.createComment("abc") must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: document.createComment("abc") must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: document.createComment("abc") must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: document.createComment("abc") must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: document.createComment("abc") must inherit property "textContent" with the proper type (25) 
+PASS Node interface: document.createComment("abc") must inherit property "normalize" with the proper type (26) 
+PASS Node interface: document.createComment("abc") must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on document.createComment("abc") with too few arguments must throw TypeError 
+PASS Node interface: document.createComment("abc") must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: document.createComment("abc") must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: document.createComment("abc") must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createComment("abc") must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createComment("abc") must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createComment("abc") must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createComment("abc") must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS Node interface: document.createComment("abc") must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createComment("abc") must inherit property "appendChild" with the proper type (41) 
+FAIL Node interface: calling appendChild(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createComment("abc") must inherit property "replaceChild" with the proper type (42) 
+FAIL Node interface: calling replaceChild(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: document.createComment("abc") must inherit property "removeChild" with the proper type (43) 
+FAIL Node interface: calling removeChild(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS EventTarget interface: document.createComment("abc") must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.createComment("abc") must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: document.createComment("abc") must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on document.createComment("abc") with too few arguments must throw TypeError 
+FAIL Range interface: existence and properties of interface object assert_equals: class string of Range expected "[object Function]" but got "[object RangeConstructor]"
+PASS Range interface object length 
+PASS Range interface: existence and properties of interface prototype object 
+FAIL Range interface: existence and properties of interface prototype object's "constructor" property assert_true: Range.prototype.constructor is not writable expected true got false
+FAIL Range interface: attribute startContainer assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Range interface: attribute startOffset assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Range interface: attribute endContainer assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Range interface: attribute endOffset assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Range interface: attribute collapsed assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Range interface: attribute commonAncestorContainer assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL Range interface: operation setStart(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Range interface: operation setEnd(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Range interface: operation setStartBefore(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Range interface: operation setStartAfter(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Range interface: operation setEndBefore(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Range interface: operation setEndAfter(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Range interface: operation collapse(boolean) 
+FAIL Range interface: operation selectNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Range interface: operation selectNodeContents(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Range interface: constant START_TO_START on interface object 
+PASS Range interface: constant START_TO_START on interface prototype object 
+PASS Range interface: constant START_TO_END on interface object 
+PASS Range interface: constant START_TO_END on interface prototype object 
+PASS Range interface: constant END_TO_END on interface object 
+PASS Range interface: constant END_TO_END on interface prototype object 
+PASS Range interface: constant END_TO_START on interface object 
+PASS Range interface: constant END_TO_START on interface prototype object 
+FAIL Range interface: operation compareBoundaryPoints(unsigned short,Range) assert_equals: property has wrong .length expected 2 but got 0
+PASS Range interface: operation deleteContents() 
+PASS Range interface: operation extractContents() 
+PASS Range interface: operation cloneContents() 
+FAIL Range interface: operation insertNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Range interface: operation surroundContents(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Range interface: operation cloneRange() 
+PASS Range interface: operation detach() 
+FAIL Range interface: operation isPointInRange(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Range interface: operation comparePoint(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
+FAIL Range interface: operation intersectsNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Range interface: stringifier 
+PASS Range must be primary interface of document.createRange() 
+PASS Stringification of document.createRange() 
+PASS Range interface: document.createRange() must inherit property "startContainer" with the proper type (0) 
+PASS Range interface: document.createRange() must inherit property "startOffset" with the proper type (1) 
+PASS Range interface: document.createRange() must inherit property "endContainer" with the proper type (2) 
+PASS Range interface: document.createRange() must inherit property "endOffset" with the proper type (3) 
+PASS Range interface: document.createRange() must inherit property "collapsed" with the proper type (4) 
+PASS Range interface: document.createRange() must inherit property "commonAncestorContainer" with the proper type (5) 
+PASS Range interface: document.createRange() must inherit property "setStart" with the proper type (6) 
+FAIL Range interface: calling setStart(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "setEnd" with the proper type (7) 
+FAIL Range interface: calling setEnd(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "setStartBefore" with the proper type (8) 
+FAIL Range interface: calling setStartBefore(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "setStartAfter" with the proper type (9) 
+FAIL Range interface: calling setStartAfter(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "setEndBefore" with the proper type (10) 
+FAIL Range interface: calling setEndBefore(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "setEndAfter" with the proper type (11) 
+FAIL Range interface: calling setEndAfter(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "collapse" with the proper type (12) 
+PASS Range interface: calling collapse(boolean) on document.createRange() with too few arguments must throw TypeError 
+PASS Range interface: document.createRange() must inherit property "selectNode" with the proper type (13) 
+FAIL Range interface: calling selectNode(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "selectNodeContents" with the proper type (14) 
+FAIL Range interface: calling selectNodeContents(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "START_TO_START" with the proper type (15) 
+PASS Range interface: document.createRange() must inherit property "START_TO_END" with the proper type (16) 
+PASS Range interface: document.createRange() must inherit property "END_TO_END" with the proper type (17) 
+PASS Range interface: document.createRange() must inherit property "END_TO_START" with the proper type (18) 
+PASS Range interface: document.createRange() must inherit property "compareBoundaryPoints" with the proper type (19) 
+FAIL Range interface: calling compareBoundaryPoints(unsigned short,Range) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "deleteContents" with the proper type (20) 
+PASS Range interface: document.createRange() must inherit property "extractContents" with the proper type (21) 
+PASS Range interface: document.createRange() must inherit property "cloneContents" with the proper type (22) 
+PASS Range interface: document.createRange() must inherit property "insertNode" with the proper type (23) 
+FAIL Range interface: calling insertNode(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "surroundContents" with the proper type (24) 
+FAIL Range interface: calling surroundContents(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "cloneRange" with the proper type (25) 
+PASS Range interface: document.createRange() must inherit property "detach" with the proper type (26) 
+PASS Range interface: document.createRange() must inherit property "isPointInRange" with the proper type (27) 
+FAIL Range interface: calling isPointInRange(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "comparePoint" with the proper type (28) 
+FAIL Range interface: calling comparePoint(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Range interface: document.createRange() must inherit property "intersectsNode" with the proper type (29) 
+FAIL Range interface: calling intersectsNode(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range must be primary interface of detachedRange 
+PASS Stringification of detachedRange 
+PASS Range interface: detachedRange must inherit property "startContainer" with the proper type (0) 
+PASS Range interface: detachedRange must inherit property "startOffset" with the proper type (1) 
+PASS Range interface: detachedRange must inherit property "endContainer" with the proper type (2) 
+PASS Range interface: detachedRange must inherit property "endOffset" with the proper type (3) 
+PASS Range interface: detachedRange must inherit property "collapsed" with the proper type (4) 
+PASS Range interface: detachedRange must inherit property "commonAncestorContainer" with the proper type (5) 
+PASS Range interface: detachedRange must inherit property "setStart" with the proper type (6) 
+FAIL Range interface: calling setStart(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "setEnd" with the proper type (7) 
+FAIL Range interface: calling setEnd(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "setStartBefore" with the proper type (8) 
+FAIL Range interface: calling setStartBefore(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "setStartAfter" with the proper type (9) 
+FAIL Range interface: calling setStartAfter(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "setEndBefore" with the proper type (10) 
+FAIL Range interface: calling setEndBefore(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "setEndAfter" with the proper type (11) 
+FAIL Range interface: calling setEndAfter(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "collapse" with the proper type (12) 
+PASS Range interface: calling collapse(boolean) on detachedRange with too few arguments must throw TypeError 
+PASS Range interface: detachedRange must inherit property "selectNode" with the proper type (13) 
+FAIL Range interface: calling selectNode(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "selectNodeContents" with the proper type (14) 
+FAIL Range interface: calling selectNodeContents(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "START_TO_START" with the proper type (15) 
+PASS Range interface: detachedRange must inherit property "START_TO_END" with the proper type (16) 
+PASS Range interface: detachedRange must inherit property "END_TO_END" with the proper type (17) 
+PASS Range interface: detachedRange must inherit property "END_TO_START" with the proper type (18) 
+PASS Range interface: detachedRange must inherit property "compareBoundaryPoints" with the proper type (19) 
+FAIL Range interface: calling compareBoundaryPoints(unsigned short,Range) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "deleteContents" with the proper type (20) 
+PASS Range interface: detachedRange must inherit property "extractContents" with the proper type (21) 
+PASS Range interface: detachedRange must inherit property "cloneContents" with the proper type (22) 
+PASS Range interface: detachedRange must inherit property "insertNode" with the proper type (23) 
+FAIL Range interface: calling insertNode(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "surroundContents" with the proper type (24) 
+FAIL Range interface: calling surroundContents(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "cloneRange" with the proper type (25) 
+PASS Range interface: detachedRange must inherit property "detach" with the proper type (26) 
+PASS Range interface: detachedRange must inherit property "isPointInRange" with the proper type (27) 
+FAIL Range interface: calling isPointInRange(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "comparePoint" with the proper type (28) 
+FAIL Range interface: calling comparePoint(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+PASS Range interface: detachedRange must inherit property "intersectsNode" with the proper type (29) 
+FAIL Range interface: calling intersectsNode(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" threw object "Error: InvalidStateError: DOM Exception 11" ("InvalidStateError") expected object "TypeError" ("TypeError")
+FAIL NodeIterator interface: existence and properties of interface object assert_equals: class string of NodeIterator expected "[object Function]" but got "[object NodeIteratorConstructor]"
+PASS NodeIterator interface object length 
+PASS NodeIterator interface: existence and properties of interface prototype object 
+FAIL NodeIterator interface: existence and properties of interface prototype object's "constructor" property assert_true: NodeIterator.prototype.constructor is not writable expected true got false
+FAIL NodeIterator interface: attribute root assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL NodeIterator interface: attribute referenceNode assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL NodeIterator interface: attribute pointerBeforeReferenceNode assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL NodeIterator interface: attribute whatToShow assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL NodeIterator interface: attribute filter assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS NodeIterator interface: operation nextNode() 
+PASS NodeIterator interface: operation previousNode() 
+PASS NodeIterator interface: operation detach() 
+PASS NodeIterator must be primary interface of document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) 
+PASS Stringification of document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "root" with the proper type (0) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "referenceNode" with the proper type (1) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "pointerBeforeReferenceNode" with the proper type (2) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "whatToShow" with the proper type (3) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "filter" with the proper type (4) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "nextNode" with the proper type (5) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "previousNode" with the proper type (6) 
+PASS NodeIterator interface: document.createNodeIterator(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "detach" with the proper type (7) 
+FAIL TreeWalker interface: existence and properties of interface object assert_equals: class string of TreeWalker expected "[object Function]" but got "[object TreeWalkerConstructor]"
+PASS TreeWalker interface object length 
+PASS TreeWalker interface: existence and properties of interface prototype object 
+FAIL TreeWalker interface: existence and properties of interface prototype object's "constructor" property assert_true: TreeWalker.prototype.constructor is not writable expected true got false
+FAIL TreeWalker interface: attribute root assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL TreeWalker interface: attribute whatToShow assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL TreeWalker interface: attribute filter assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL TreeWalker interface: attribute currentNode assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS TreeWalker interface: operation parentNode() 
+PASS TreeWalker interface: operation firstChild() 
+PASS TreeWalker interface: operation lastChild() 
+PASS TreeWalker interface: operation previousSibling() 
+PASS TreeWalker interface: operation nextSibling() 
+PASS TreeWalker interface: operation previousNode() 
+PASS TreeWalker interface: operation nextNode() 
+PASS TreeWalker must be primary interface of document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) 
+PASS Stringification of document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "root" with the proper type (0) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "whatToShow" with the proper type (1) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "filter" with the proper type (2) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "currentNode" with the proper type (3) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "parentNode" with the proper type (4) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "firstChild" with the proper type (5) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "lastChild" with the proper type (6) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "previousSibling" with the proper type (7) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "nextSibling" with the proper type (8) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "previousNode" with the proper type (9) 
+PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "nextNode" with the proper type (10) 
+PASS NodeFilter interface: existence and properties of interface object 
+FAIL NodeFilter interface: existence and properties of interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+FAIL NodeFilter interface: existence and properties of interface prototype object's "constructor" property assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant FILTER_ACCEPT on interface object 
+FAIL NodeFilter interface: constant FILTER_ACCEPT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant FILTER_REJECT on interface object 
+FAIL NodeFilter interface: constant FILTER_REJECT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant FILTER_SKIP on interface object 
+FAIL NodeFilter interface: constant FILTER_SKIP on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ALL on interface object 
+FAIL NodeFilter interface: constant SHOW_ALL on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ELEMENT on interface object 
+FAIL NodeFilter interface: constant SHOW_ELEMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ATTRIBUTE on interface object 
+FAIL NodeFilter interface: constant SHOW_ATTRIBUTE on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_TEXT on interface object 
+FAIL NodeFilter interface: constant SHOW_TEXT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_CDATA_SECTION on interface object 
+FAIL NodeFilter interface: constant SHOW_CDATA_SECTION on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ENTITY_REFERENCE on interface object 
+FAIL NodeFilter interface: constant SHOW_ENTITY_REFERENCE on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ENTITY on interface object 
+FAIL NodeFilter interface: constant SHOW_ENTITY on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_PROCESSING_INSTRUCTION on interface object 
+FAIL NodeFilter interface: constant SHOW_PROCESSING_INSTRUCTION on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_COMMENT on interface object 
+FAIL NodeFilter interface: constant SHOW_COMMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_DOCUMENT on interface object 
+FAIL NodeFilter interface: constant SHOW_DOCUMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_DOCUMENT_TYPE on interface object 
+FAIL NodeFilter interface: constant SHOW_DOCUMENT_TYPE on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_DOCUMENT_FRAGMENT on interface object 
+FAIL NodeFilter interface: constant SHOW_DOCUMENT_FRAGMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_NOTATION on interface object 
+FAIL NodeFilter interface: constant SHOW_NOTATION on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+FAIL NodeFilter interface: operation acceptNode(Node) assert_false: NodeFilter should not have a "prototype" property expected false got true
+FAIL DOMTokenList interface: existence and properties of interface object assert_equals: class string of DOMTokenList expected "[object Function]" but got "[object DOMTokenListConstructor]"
+PASS DOMTokenList interface object length 
+PASS DOMTokenList interface: existence and properties of interface prototype object 
+FAIL DOMTokenList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: DOMTokenList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL DOMTokenList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS DOMTokenList interface: operation item(unsigned long) 
+PASS DOMTokenList interface: operation contains(DOMString) 
+FAIL DOMTokenList interface: operation add(DOMString) assert_equals: property has wrong .length expected 0 but got 1
+FAIL DOMTokenList interface: operation remove(DOMString) assert_equals: property has wrong .length expected 0 but got 1
+PASS DOMTokenList interface: operation toggle(DOMString,boolean) 
+FAIL DOMTokenList interface: stringifier assert_true: property is not enumerable expected true got false
+PASS DOMTokenList must be primary interface of document.body.classList 
+PASS Stringification of document.body.classList 
+FAIL DOMTokenList interface: document.body.classList must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS DOMTokenList interface: document.body.classList must inherit property "item" with the proper type (1) 
+PASS DOMTokenList interface: calling item(unsigned long) on document.body.classList with too few arguments must throw TypeError 
+PASS DOMTokenList interface: document.body.classList must inherit property "contains" with the proper type (2) 
+PASS DOMTokenList interface: calling contains(DOMString) on document.body.classList with too few arguments must throw TypeError 
+PASS DOMTokenList interface: document.body.classList must inherit property "add" with the proper type (3) 
+PASS DOMTokenList interface: calling add(DOMString) on document.body.classList with too few arguments must throw TypeError 
+PASS DOMTokenList interface: document.body.classList must inherit property "remove" with the proper type (4) 
+PASS DOMTokenList interface: calling remove(DOMString) on document.body.classList with too few arguments must throw TypeError 
+PASS DOMTokenList interface: document.body.classList must inherit property "toggle" with the proper type (5) 
+PASS DOMTokenList interface: calling toggle(DOMString,boolean) on document.body.classList with too few arguments must throw TypeError 
+FAIL DOMSettableTokenList interface: existence and properties of interface object assert_equals: class string of DOMSettableTokenList expected "[object Function]" but got "[object DOMSettableTokenListConstructor]"
+PASS DOMSettableTokenList interface object length 
+PASS DOMSettableTokenList interface: existence and properties of interface prototype object 
+FAIL DOMSettableTokenList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: DOMSettableTokenList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL DOMSettableTokenList interface: attribute value assert_true: The prototype object must have a property "value" expected true got false
+

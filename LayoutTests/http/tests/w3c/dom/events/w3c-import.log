@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/http/tests/w3c/dom/events/Event-constants.html
+/LayoutTests/http/tests/w3c/dom/events/Event-constructors.html
+/LayoutTests/http/tests/w3c/dom/events/Event-defaultPrevented.html
+/LayoutTests/http/tests/w3c/dom/events/Event-dispatch-bubbles-false.html
+/LayoutTests/http/tests/w3c/dom/events/Event-dispatch-handlers-changed.html
+/LayoutTests/http/tests/w3c/dom/events/Event-dispatch-omitted-capture.html
+/LayoutTests/http/tests/w3c/dom/events/Event-dispatch-redispatch.html
+/LayoutTests/http/tests/w3c/dom/events/Event-dispatch-reenter.html
+/LayoutTests/http/tests/w3c/dom/events/Event-dispatch-target-moved.html
+/LayoutTests/http/tests/w3c/dom/events/Event-dispatch-target-removed.html
+/LayoutTests/http/tests/w3c/dom/events/Event-initEvent.html
+/LayoutTests/http/tests/w3c/dom/events/Event-propagation.html
+/LayoutTests/http/tests/w3c/dom/events/Event-type-empty.html
+/LayoutTests/http/tests/w3c/dom/events/Event-type.html
+/LayoutTests/http/tests/w3c/dom/events/EventTarget-addEventListener.html
+/LayoutTests/http/tests/w3c/dom/events/EventTarget-dispatchEvent-returnvalue.html
+/LayoutTests/http/tests/w3c/dom/events/EventTarget-dispatchEvent.html
+/LayoutTests/http/tests/w3c/dom/events/EventTarget-removeEventListener.html
+/LayoutTests/http/tests/w3c/dom/events/ProgressEvent.html

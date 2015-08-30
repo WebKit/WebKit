@@ -1,0 +1,3 @@
+
+PASS element.getElementsByClassName(): adding an element 
+

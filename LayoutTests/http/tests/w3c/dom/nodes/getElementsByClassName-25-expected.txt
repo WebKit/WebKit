@@ -1,0 +1,11 @@
+test link #foo
+text caption
+TEXT head
+td text1text
+td text
+td te xt
+TEXT foot
+xt te
+
+PASS verify spacing is handled correctly 
+

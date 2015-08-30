@@ -1,0 +1,4 @@
+
+PASS getElementsByClassName should work on disconnected subtrees. 
+PASS Interface should be correct. 
+

@@ -1,0 +1,38 @@
+
+PASS Document.createElement 
+PASS createElement(undefined) 
+FAIL createElement(null) InvalidCharacterError: DOM Exception 5
+PASS createElement("foo") 
+PASS createElement("f1oo") 
+PASS createElement("foo1") 
+PASS createElement("f̀oo") 
+PASS createElement("foò") 
+PASS createElement(":foo") 
+PASS createElement("f:oo") 
+PASS createElement("foo:") 
+PASS createElement("xml") 
+PASS createElement("xmlns") 
+PASS createElement("xmlfoo") 
+PASS createElement("xml:foo") 
+PASS createElement("xmlns:foo") 
+PASS createElement("xmlfoo:bar") 
+PASS createElement("svg") 
+PASS createElement("math") 
+PASS createElement("FOO") 
+FAIL createElement("marK") assert_equals: expected "marK" but got "mark"
+FAIL createElement("İnput") assert_equals: expected "İnput" but got "i̇nput"
+FAIL createElement("ınput") assert_equals: expected "ıNPUT" but got "INPUT"
+PASS createElement("") 
+PASS createElement("1foo") 
+PASS createElement("̀foo") 
+PASS createElement("}foo") 
+PASS createElement("f}oo") 
+PASS createElement("foo}") 
+PASS createElement("￿foo") 
+PASS createElement("f￿oo") 
+PASS createElement("foo￿") 
+PASS createElement("<foo") 
+PASS createElement("foo>") 
+PASS createElement("<foo>") 
+PASS createElement("f<oo") 
+

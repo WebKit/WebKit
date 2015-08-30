@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 60: Error
+
+FAIL Calling dispatchEvent(null). assert_throws: function "function () { document.dispatchEvent(null) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" ("UNSPECIFIED_EVENT_TYPE_ERR") expected object "TypeError" ("TypeError")
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (CustomEvent). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (Event). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (Events). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (HTMLEvents). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (KeyboardEvent). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (KeyEvents). NotSupportedError: DOM Exception 9
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (MessageEvent). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (MouseEvent). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (MouseEvents). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TouchEvent). NotSupportedError: DOM Exception 9
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (UIEvent). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (UIEvents). assert_throws: function "function () { document.dispatchEvent(e) }" threw object "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0" that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+FAIL If the event's dispatch flag is set, an InvalidStateError must be thrown. assert_throws: function "function () {
+      target.dispatchEvent(e)
+    }" threw object "Error: DISPATCH_REQUEST_ERR: DOM Events Exception 1" that is not a DOMException InvalidStateError: property "code" is equal to 1, expected 11
+PASS Exceptions from event listeners must not be propagated. 
+FAIL Event listeners added during dispatch should be called assert_array_equals: lengths differ, expected 2 got 0
+PASS Event listeners should be called in order of addition 
+

@@ -1,0 +1,13 @@
+
+PASS createAttribute("") 
+PASS createAttribute("invalid^Name") 
+PASS createAttribute("\\") 
+PASS createAttribute("'") 
+PASS createAttribute("\"") 
+PASS createAttribute("0") 
+PASS createAttribute("0:a") 
+PASS createAttribute("title") 
+PASS createAttribute("TITLE") 
+PASS createAttribute(null) 
+PASS createAttribute(undefined) 
+

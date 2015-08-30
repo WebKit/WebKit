@@ -1,0 +1,5 @@
+
+PASS Node.normalize() 
+PASS Empty text nodes separated by a non-empty text node 
+PASS Empty text nodes 
+

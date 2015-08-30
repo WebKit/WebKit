@@ -1,0 +1,75 @@
+
+PASS CustomEvent should be an alias for CustomEvent. 
+FAIL createEvent('CustomEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL customevent should be an alias for CustomEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('customevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL CUSTOMEVENT should be an alias for CustomEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('CUSTOMEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS Event should be an alias for Event. 
+FAIL createEvent('Event') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL event should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL createEvent('event') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL EVENT should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL createEvent('EVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS Events should be an alias for Event. 
+FAIL createEvent('Events') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL events should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL createEvent('events') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL EVENTS should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL createEvent('EVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS HTMLEvents should be an alias for Event. 
+FAIL createEvent('HTMLEvents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL htmlevents should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL createEvent('htmlevents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL HTMLEVENTS should be an alias for Event. NotSupportedError: DOM Exception 9
+FAIL createEvent('HTMLEVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS KeyboardEvent should be an alias for KeyboardEvent. 
+FAIL createEvent('KeyboardEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL keyboardevent should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('keyboardevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL KEYBOARDEVENT should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('KEYBOARDEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL KeyEvents should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('KeyEvents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL keyevents should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('keyevents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL KEYEVENTS should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('KEYEVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS MessageEvent should be an alias for MessageEvent. 
+FAIL createEvent('MessageEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL messageevent should be an alias for MessageEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('messageevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL MESSAGEEVENT should be an alias for MessageEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('MESSAGEEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS MouseEvent should be an alias for MouseEvent. 
+FAIL createEvent('MouseEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL mouseevent should be an alias for MouseEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('mouseevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL MOUSEEVENT should be an alias for MouseEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('MOUSEEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS MouseEvents should be an alias for MouseEvent. 
+FAIL createEvent('MouseEvents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL mouseevents should be an alias for MouseEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('mouseevents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL MOUSEEVENTS should be an alias for MouseEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('MOUSEEVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL TouchEvent should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('TouchEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL touchevent should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('touchevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL TOUCHEVENT should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('TOUCHEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS UIEvent should be an alias for UIEvent. 
+FAIL createEvent('UIEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL uievent should be an alias for UIEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('uievent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL UIEVENT should be an alias for UIEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('UIEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS UIEvents should be an alias for UIEvent. 
+FAIL createEvent('UIEvents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+FAIL uievents should be an alias for UIEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('uievents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+FAIL UIEVENTS should be an alias for UIEvent. NotSupportedError: DOM Exception 9
+FAIL createEvent('UIEVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS Should throw NOT_SUPPORTED_ERR for unrecognized arguments 
+

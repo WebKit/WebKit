@@ -1,0 +1,60 @@
+
+FAIL Historical DOM features must be removed: CDATASection assert_equals: expected (undefined) undefined but got (object) object "[object CDATASectionConstructor]"
+PASS Historical DOM features must be removed: DOMConfiguration 
+PASS Historical DOM features must be removed: DOMError 
+PASS Historical DOM features must be removed: DOMErrorHandler 
+PASS Historical DOM features must be removed: DOMImplementationList 
+PASS Historical DOM features must be removed: DOMImplementationSource 
+PASS Historical DOM features must be removed: DOMLocator 
+PASS Historical DOM features must be removed: DOMObject 
+PASS Historical DOM features must be removed: DOMUserData 
+FAIL Historical DOM features must be removed: Entity assert_equals: expected (undefined) undefined but got (object) object "[object EntityConstructor]"
+FAIL Historical DOM features must be removed: EntityReference assert_equals: expected (undefined) undefined but got (object) object "[object EntityReferenceConstructor]"
+FAIL Historical DOM features must be removed: EventException assert_equals: expected (undefined) undefined but got (object) object "[object EventExceptionConstructor]"
+PASS Historical DOM features must be removed: NameList 
+PASS Historical DOM features must be removed: Notation 
+PASS Historical DOM features must be removed: TypeInfo 
+PASS Historical DOM features must be removed: UserDataHandler 
+FAIL Historical DOM features must be removed: RangeException assert_equals: expected (undefined) undefined but got (object) object "[object RangeExceptionConstructor]"
+FAIL Historical DOM features must be removed: createCDATASection assert_equals: expected (undefined) undefined but got (function) function "function createCDATASection() {
+    [native code]
+}"
+FAIL Historical DOM features must be removed: createEntityReference assert_equals: expected (undefined) undefined but got (function) function "function createEntityReference() {
+    [native code]
+}"
+FAIL Historical DOM features must be removed: xmlEncoding assert_equals: expected (undefined) undefined but got (object) null
+FAIL Historical DOM features must be removed: xmlStandalone assert_equals: expected (undefined) undefined but got (boolean) false
+FAIL Historical DOM features must be removed: xmlVersion assert_equals: expected (undefined) undefined but got (object) null
+PASS Historical DOM features must be removed: strictErrorChecking 
+PASS Historical DOM features must be removed: domConfig 
+PASS Historical DOM features must be removed: normalizeDocument 
+PASS Historical DOM features must be removed: renameNode 
+FAIL Historical DOM features must be removed: charset assert_equals: expected (undefined) undefined but got (string) "ISO-8859-1"
+FAIL Historical DOM features must be removed: defaultCharset assert_equals: expected (undefined) undefined but got (string) "ISO-8859-1"
+FAIL Historical DOM features must be removed: height assert_equals: expected (undefined) undefined but got (number) 600
+FAIL Historical DOM features must be removed: width assert_equals: expected (undefined) undefined but got (number) 800
+PASS DOMImplementation.getFeature() must be nuked. 
+PASS Historical DOM features must be removed: schemaTypeInfo 
+PASS Historical DOM features must be removed: setIdAttribute 
+PASS Historical DOM features must be removed: setIdAttributeNS 
+PASS Historical DOM features must be removed: setIdAttributeNode 
+FAIL DocumentType member must be nuked: entities assert_equals: expected (undefined) undefined but got (object) null
+FAIL DocumentType member must be nuked: notations assert_equals: expected (undefined) undefined but got (object) null
+FAIL DocumentType member must be nuked: internalSubset assert_equals: expected (undefined) undefined but got (object) null
+PASS Text member must be nuked: isElementContentWhitespace 
+FAIL Text member must be nuked: replaceWholeText assert_equals: expected (undefined) undefined but got (function) function "function replaceWholeText() {
+    [native code]
+}"
+PASS Node member must be nuked: hasAttributes 
+PASS Node member must be nuked: attributes 
+FAIL Node member must be nuked: namespaceURI assert_equals: expected (undefined) undefined but got (object) null
+FAIL Node member must be nuked: prefix assert_equals: expected (undefined) undefined but got (object) null
+FAIL Node member must be nuked: localName assert_equals: expected (undefined) undefined but got (object) null
+FAIL Node member must be nuked: isSupported assert_equals: expected (undefined) undefined but got (function) function "function isSupported() {
+    [native code]
+}"
+PASS Node member must be nuked: getFeature 
+PASS Node member must be nuked: getUserData 
+PASS Node member must be nuked: setUserData 
+PASS Window member must be nuked: attachEvent 
+

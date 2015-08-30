@@ -1,0 +1,12 @@
+test link #foo
+text
+text caption
+TEXT head
+td text1
+td text
+td te xt
+TEXT foot
+xt te
+
+PASS get elements in document 
+

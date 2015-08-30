@@ -1,0 +1,66 @@
+
+PASS Element.classList must exist as an object 
+PASS Element.classList must exist as an object even if the element has no class attribute 
+PASS DOMTokenList should be exposed for prototyping 
+PASS prototyping DOMTokenList should work 
+PASS Element.classList must implement DOMTokenList 
+PASS CSS .foo selectors must not match elements without any class 
+FAIL classList must be correct for an element that has classes assert_equals: duplicates in initial string should be removed per https://dom.spec.whatwg.org/#concept-class expected 1 but got 2
+PASS classList.length must be 0 for an element that has no classes 
+PASS classList must not contain an undefined class 
+PASS classList.item() must return null for out-of-range index 
+PASS classList.item() must return null for negative index 
+PASS classList[index] must be undefined for out-of-range index 
+PASS classList[index] must be undefined for negative index 
+PASS className should contain initial markup whitespace 
+FAIL empty classList should return the empty string since the ordered set parser skip the whitespaces assert_equals: implicit expected "" but got " "
+PASS .contains(empty_string) must throw a SYNTAX_ERR 
+PASS .add(empty_string) must throw a SYNTAX_ERR 
+PASS .remove(empty_string) must throw a SYNTAX_ERR 
+PASS .toggle(empty_string) must throw a SYNTAX_ERR 
+PASS .contains(string_with_spaces) must throw an INVALID_CHARACTER_ERR 
+PASS .add(string_with_spaces) must throw an INVALID_CHARACTER_ERR 
+PASS .remove(string_with_spaces) must throw an INVALID_CHARACTER_ERR 
+PASS .toggle(string_with_spaces) must throw an INVALID_CHARACTER_ERR 
+PASS computed style must update when setting .className 
+PASS classList.contains must update when .className is changed 
+PASS classList.contains must be case sensitive 
+PASS classList.contains must not match when punctuation characters are added 
+PASS classList.add must not cause the CSS selector to stop matching 
+PASS classList.add must not remove existing classes 
+PASS classList.contains case sensitivity must match a case-specific string 
+PASS classList.length must correctly reflect the number of tokens 
+PASS classList.item(0) must return the first token 
+PASS classList.item must return case-sensitive strings and preserve token order 
+PASS classList[0] must return the first token 
+PASS classList[index] must return case-sensitive strings and preserve token order 
+PASS classList[index] must still be undefined for out-of-range index when earlier indexes exist 
+PASS className must update correctly when items have been added through classList 
+PASS classList must stringify correctly when items have been added 
+PASS classList.add should not add a token if it already exists 
+PASS classList.remove removes arguments passed, if they are present. 
+PASS classList.remove must remove existing tokens 
+PASS classList.remove must not break case-sensitive CSS selector matching 
+PASS classList.remove must remove duplicated tokens 
+PASS classList.remove must collapse whitespace around removed tokens 
+FAIL classList.remove must collapse whitespaces around each token assert_equals: implicit expected "token1" but got " token1"
+FAIL classList.remove must collapse whitespaces around each token and remove duplicates assert_equals: implicit expected "token1" but got "  token1 token1  "
+PASS classList.remove must collapse whitespace when removing duplicate tokens 
+FAIL classList.add must collapse whitespaces and remove duplicates when adding a token that already exists assert_equals: implicit expected "token1" but got "  token1  token1  "
+PASS classList.toggle must toggle tokens case-sensitively when adding 
+PASS classList.toggle must not break case-sensitive CSS selector matching 
+PASS classList.toggle must be able to remove tokens 
+PASS classList.toggle must be case-sensitive when removing tokens 
+PASS CSS class selectors must stop matching when all classes have been removed 
+PASS className must be empty when all classes have been removed 
+PASS classList must stringify to an empty string when all classes have been removed 
+PASS classList.item(0) must return null when all classes have been removed 
+PASS classList[0] must be undefined when all classes have been removed 
+PASS classList.add should treat " " as a space 
+FAIL classList.add should treat \t as a space assert_equals: expected "a b" but got "a\tb"
+FAIL classList.add should treat \r as a space assert_equals: expected "a b" but got "a\rb"
+FAIL classList.add should treat \n as a space assert_equals: expected "a b" but got "a\nb"
+FAIL classList.add should treat \f as a space assert_equals: expected "a b" but got "a\fb"
+PASS classList.length must be read-only 
+PASS classList must be read-only 
+

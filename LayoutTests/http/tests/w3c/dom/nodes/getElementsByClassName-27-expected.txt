@@ -1,0 +1,7 @@
+te xt
+te; xt test link #foo dummy tag
+text
+xt te
+
+PASS generic element listed 
+

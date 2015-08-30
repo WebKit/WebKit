@@ -1,0 +1,9 @@
+
+PASS Text.nodeValue 
+PASS Comment.nodeValue 
+FAIL ProcessingInstruction.nodeValue NotSupportedError: DOM Exception 9
+PASS Element.nodeValue 
+PASS Document.nodeValue 
+PASS DocumentFragment.nodeValue 
+PASS DocumentType.nodeValue 
+
