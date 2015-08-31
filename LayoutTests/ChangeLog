@@ -1,3 +1,12 @@
+2015-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Add test expectations for:
+        
+        Many Web Inspector tests are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=148636
+
+        * platform/mac/TestExpectations:
+
 2015-08-31  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] auto-margins alignment does not work for heights
