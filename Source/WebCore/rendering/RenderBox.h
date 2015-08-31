@@ -664,7 +664,6 @@ private:
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    void updateGridAlignmentAfterStyleChange(const RenderStyle*);
     bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
 #endif
 

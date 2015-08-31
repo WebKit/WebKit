@@ -15,15 +15,9 @@ body {
     margin-bottom: 20px;
 }
 
-.cell {
+.item {
     width: 20px;
     height: 40px;
-}
-
-.item {
-    width: 8px;
-    height: 16px;
-    background: black;
 }
 
 .autoMarginTop { margin-top: auto; }
@@ -42,48 +36,88 @@ body {
 
 <p>This test checks that aling-self and justify-self properties are not applied when there is auto-margin in the correponding axis. Instead, auto-margin alignment should be applied.</p>
 
-<p>Direction: LTR | Self Aligmment: center | 1 auto-margin</p>
+<p>Direction: LTR | Self Aligmment: center | fixed size items | 1 auto-margin</p>
 <div style="position: relative">
     <div class="grid verticalRL itemsCenter" data-expected-width="400" data-expected-height="200">
-        <div class="cell autoMarginTop firstRowFirstColumn" data-offset-x="290" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMarginRight firstRowSecondColumn" data-offset-x="200" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMarginBottom secondRowSecondColumn" data-offset-x="90" data-offset-y="100" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginTop firstRowFirstColumn" data-offset-x="290" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginRight firstRowSecondColumn" data-offset-x="200" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginBottom secondRowSecondColumn" data-offset-x="90" data-offset-y="100" data-expected-width="20" data-expected-height="40"></div>
     </div>
 </div>
 
-<p>Direction: LTR | Self Aligmment: start | 4 auto-margin</p>
+<p>Direction: LTR | Self Aligmment: start | fixed size items | 4 auto-margin</p>
 <div style="position: relative">
     <div class="grid verticalRL" data-expected-width="400" data-expected-height="200">
-        <div class="cell autoMargin firstRowFirstColumn" data-offset-x="290" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMargin firstRowSecondColumn" data-offset-x="290" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMargin secondRowFirstColumn" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMargin secondRowSecondColumn" data-offset-x="90" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin firstRowFirstColumn" data-offset-x="290" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin firstRowSecondColumn" data-offset-x="290" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin secondRowFirstColumn" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin secondRowSecondColumn" data-offset-x="90" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+    </div>
+</div>
+
+<p>Direction: LTR | Self Aligmment: center | auto size items | 1 auto-margin</p>
+<div style="position: relative">
+    <div class="grid verticalRL itemsCenter" data-expected-width="400" data-expected-height="200">
+        <div class="item autoMarginTop firstRowFirstColumn" data-offset-x="290" data-offset-y="60" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMarginRight firstRowSecondColumn" data-offset-x="200" data-offset-y="130" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="30" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMarginBottom secondRowSecondColumn" data-offset-x="90" data-offset-y="100" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+    </div>
+</div>
+
+<p>Direction: LTR | Self Aligmment: start | auto size items | 4 auto-margin</p>
+<div style="position: relative">
+    <div class="grid verticalRL" data-expected-width="400" data-expected-height="200">
+        <div class="item autoMargin firstRowFirstColumn" data-offset-x="290" data-offset-y="30" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMargin firstRowSecondColumn" data-offset-x="290" data-offset-y="130" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMargin secondRowFirstColumn" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMargin secondRowSecondColumn" data-offset-x="90" data-offset-y="130" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
     </div>
 </div>
 
 <!-- direction RTL -->
-<p>Direction: RTL | Self Aligmment: center | 1 auto-margin</p>
+<p>Direction: RTL | Self Aligmment: center | fixed size items | 1 auto-margin</p>
 <div style="position: relative">
     <div class="grid verticalRL itemsCenter directionRTL" data-expected-width="400" data-expected-height="200">
-        <div class="cell autoMarginTop firstRowFirstColumn" data-offset-x="290" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMarginRight firstRowSecondColumn" data-offset-x="200" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMarginBottom secondRowSecondColumn" data-offset-x="90" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginTop firstRowFirstColumn" data-offset-x="290" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginRight firstRowSecondColumn" data-offset-x="200" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMarginBottom secondRowSecondColumn" data-offset-x="90" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
     </div>
 </div>
 
 
-<p>Direction: RTL | Self Aligmment: start | 4 auto-margin</p>
+<p>Direction: RTL | Self Aligmment: start | fixed size items | 4 auto-margin</p>
 <div style="position: relative">
     <div class="grid verticalRL directionRTL" data-expected-width="400" data-expected-height="200">
-        <div class="cell autoMargin firstRowFirstColumn" data-offset-x="290" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMargin firstRowSecondColumn" data-offset-x="290" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMargin secondRowFirstColumn" data-offset-x="90" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="cell autoMargin secondRowSecondColumn" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin firstRowFirstColumn" data-offset-x="290" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin firstRowSecondColumn" data-offset-x="290" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin secondRowFirstColumn" data-offset-x="90" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+        <div class="item autoMargin secondRowSecondColumn" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
     </div>
 </div>
 
+<p>Direction: RTL | Self Aligmment: center | auto size items | 1 auto-margin</p>
+<div style="position: relative">
+    <div class="grid verticalRL itemsCenter directionRTL" data-expected-width="400" data-expected-height="200">
+        <div class="item autoMarginTop firstRowFirstColumn" data-offset-x="290" data-offset-y="160" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMarginRight firstRowSecondColumn" data-offset-x="200" data-offset-y="30" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="130" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMarginBottom secondRowSecondColumn" data-offset-x="90" data-offset-y="0" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+    </div>
+</div>
+
+
+<p>Direction: RTL | Self Aligmment: start | auto size items | 4 auto-margin</p>
+<div style="position: relative">
+    <div class="grid verticalRL directionRTL" data-expected-width="400" data-expected-height="200">
+        <div class="item autoMargin firstRowFirstColumn" data-offset-x="290" data-offset-y="130" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMargin firstRowSecondColumn" data-offset-x="290" data-offset-y="30" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMargin secondRowFirstColumn" data-offset-x="90" data-offset-y="130" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+        <div class="item autoMargin secondRowSecondColumn" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
+    </div>
+</div>
 
 </body>
 </html>

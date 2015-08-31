@@ -1166,6 +1166,8 @@ void RenderGrid::layoutGridItems()
             || ((!oldOverrideContainingBlockContentLogicalHeight || oldOverrideContainingBlockContentLogicalHeight.value() != overrideContainingBlockContentLogicalHeight)
                 && child->hasRelativeLogicalHeight()))
             child->setNeedsLayout(MarkOnlyThis);
+        else
+            resetAutoMarginsAndLogicalTopInColumnAxis(*child);
 
         child->setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
         child->setOverrideContainingBlockContentLogicalHeight(overrideContainingBlockContentLogicalHeight);
@@ -1180,7 +1182,8 @@ void RenderGrid::layoutGridItems()
         child->layoutIfNeeded();
 
         // We need pending layouts to be done in order to compute auto-margins properly.
-        updateAutoMarginsInColumnAxisIfNeeded(*child, overrideContainingBlockContentLogicalHeight);
+        updateAutoMarginsInColumnAxisIfNeeded(*child);
+        updateAutoMarginsInRowAxisIfNeeded(*child);
 
         child->setLogicalLocation(findChildLogicalPosition(*child));
 
@@ -1340,11 +1343,67 @@ bool RenderGrid::hasAutoMarginsInRowAxis(const RenderBox& child) const
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
-void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child, LayoutUnit gridAreaBreadthForChild)
+void RenderGrid::resetAutoMarginsAndLogicalTopInColumnAxis(RenderBox& child)
+{
+    if (hasAutoMarginsInColumnAxis(child) || child.needsLayout()) {
+        child.clearOverrideLogicalContentHeight();
+        child.updateLogicalHeight();
+        if (isHorizontalWritingMode()) {
+            if (child.style().marginTop().isAuto())
+                child.setMarginTop(0);
+            if (child.style().marginBottom().isAuto())
+                child.setMarginBottom(0);
+        } else {
+            if (child.style().marginLeft().isAuto())
+                child.setMarginLeft(0);
+            if (child.style().marginRight().isAuto())
+                child.setMarginRight(0);
+        }
+
+    }
+}
+
+// FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
+void RenderGrid::updateAutoMarginsInRowAxisIfNeeded(RenderBox& child)
 {
     ASSERT(!child.isOutOfFlowPositioned());
+    ASSERT(child.overrideContainingBlockContentLogicalWidth());
 
-    LayoutUnit availableAlignmentSpace = gridAreaBreadthForChild - child.logicalHeight();
+    LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalWidth().value() - child.logicalWidth();
+    if (availableAlignmentSpace <= 0)
+        return;
+
+    bool isHorizontal = isHorizontalWritingMode();
+    Length topOrLeft = isHorizontal ? child.style().marginLeft() : child.style().marginTop();
+    Length bottomOrRight = isHorizontal ? child.style().marginRight() : child.style().marginBottom();
+    if (topOrLeft.isAuto() && bottomOrRight.isAuto()) {
+        if (isHorizontal) {
+            child.setMarginLeft(availableAlignmentSpace / 2);
+            child.setMarginRight(availableAlignmentSpace / 2);
+        } else {
+            child.setMarginTop(availableAlignmentSpace / 2);
+            child.setMarginBottom(availableAlignmentSpace / 2);
+        }
+    } else if (topOrLeft.isAuto()) {
+        if (isHorizontal)
+            child.setMarginLeft(availableAlignmentSpace);
+        else
+            child.setMarginTop(availableAlignmentSpace);
+    } else if (bottomOrRight.isAuto()) {
+        if (isHorizontal)
+            child.setMarginRight(availableAlignmentSpace);
+        else
+            child.setMarginBottom(availableAlignmentSpace);
+    }
+}
+
+// FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
+void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
+{
+    ASSERT(!child.isOutOfFlowPositioned());
+    ASSERT(child.overrideContainingBlockContentLogicalHeight());
+
+    LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalHeight().value() - child.logicalHeight();
     if (availableAlignmentSpace <= 0)
         return;
 
