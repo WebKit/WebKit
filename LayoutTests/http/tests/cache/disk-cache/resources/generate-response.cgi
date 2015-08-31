@@ -5,8 +5,13 @@ use HTTP::Date;
 
 my $query = new CGI;
 @names = $query->param;
-my $includeBody = $query->param('include-body') || 0;
 my $expiresInFutureIn304 = $query->param('expires-in-future-in-304') || 0;
+my $delay = $query->param('delay') || 0;
+my $body = $query->param('body') || 0;
+
+if ($body eq "unique") {
+    $body = sprintf "%08X\n", rand(0xffffffff)
+}
 
 my $hasStatusCode = 0;
 my $hasExpiresHeader = 0;
@@ -32,10 +37,18 @@ if ($query->http && $query->param("Range") =~ /bytes=(\d+)-(\d+)/) {
 
 foreach (@names) {
     next if ($_ eq "uniqueId");
-    next if ($_ eq "include-body");
+    next if ($_ eq "delay");
+    next if ($_ eq "body");
     next if ($_ eq "Status" and $hasStatusCode);
     next if ($_ eq "Expires" and $hasExpiresHeader);
     print $_ . ": " . $query->param($_) . "\n";
 }
 print "\n";
-print "test" if $includeBody;
+if ($delay) {
+    # Include some padding so headers and full body are sent separately.
+    for (my $i=0; $i < 1024; $i++) {
+        print "                                                                                ";
+    }
+    sleep $delay;
+}
+print $body if $body;

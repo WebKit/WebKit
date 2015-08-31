@@ -5,8 +5,8 @@
 
 var tests =
 [
- { responseHeaders: {'Status': '302', 'Location': '/', 'Cache-control': 'max-age=0' }, includeBody: false },
- { responseHeaders: {'Status': '302', 'Location': '/', 'Cache-control': 'max-age=100' }, includeBody: false },
+ { responseHeaders: {'Status': '302', 'Location': '/', 'Cache-control': 'max-age=0' }, body: "" },
+ { responseHeaders: {'Status': '302', 'Location': '/', 'Cache-control': 'max-age=100' }, body: "" },
 ];
 
 description("Test that responses with HTTP status code 302 are not cached");

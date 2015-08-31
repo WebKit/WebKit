@@ -1,3 +1,23 @@
+2015-08-31  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Stale content after back navigation
+        https://bugs.webkit.org/show_bug.cgi?id=148634
+
+        Reviewed by Chris Dumez.
+
+        It is possible to get an older version of the previous page when navigating back. This can happen
+        if the main resource load has not completed before navigating away from the page.
+
+        Network cache entry is normally updated when the load completes. In case of cancellation we would leave
+        any existing entry as-is. However we render incrementally and user might have seen some content from
+        the partial load already. Navigating back to the cached page could show older version of the content.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::abort):
+
+            If a network load is canceled by the client after receiving response but before the load has completed
+            remove any existing cache entry for it.
+
 2015-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate GraphicsContexts from pointers to references

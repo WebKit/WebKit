@@ -1,3 +1,25 @@
+2015-08-31  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Stale content after back navigation
+        https://bugs.webkit.org/show_bug.cgi?id=148634
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/cache/disk-cache/disk-cache-302-status-code.html:
+        * http/tests/cache/disk-cache/disk-cache-cancel-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-cancel.html: Added.
+        * http/tests/cache/disk-cache/resources/cache-test.js:
+
+            Support delayed responses so we can test canceling the load.
+            Some minor improvements.
+
+        (makeHeaderValue):
+        (generateTestURL):
+        (loadResource):
+        (loadResourcesWithOptions):
+        (generateTests):
+        * http/tests/cache/disk-cache/resources/generate-response.cgi:
+
 2015-08-31  Zalan Bujtas  <zalan@apple.com>
 
         Repaint cleanup: 4776765.html. Use repaint rect tracking.
