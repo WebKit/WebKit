@@ -582,5 +582,3 @@ media/session [ Skip ]
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
 
 webkit.org/b/148026 [ Debug ] animations/restart-after-scroll.html [ Skip ]
-
-webkit.org/b/148533 fast/dom/HTMLObjectElement/object-as-frame.html [ Pass Failure ]
