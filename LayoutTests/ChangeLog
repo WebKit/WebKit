@@ -1,3 +1,17 @@
+2015-08-31  Enrica Casucci  <enrica@apple.com>
+
+        Incorrect cursor movement for U+26F9, U+1F3CB with variations.
+        https://bugs.webkit.org/show_bug.cgi?id=148629
+        rdar://problem/22492366
+
+        Reviewed by Ryosuke Niwa.
+
+        The test has been updated to test these two emoji and to
+        cover the cursor movement as well.
+
+        * editing/deleting/delete-emoji-expected.txt:
+        * editing/deleting/delete-emoji.html:
+
 2015-07-31  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Grid containers reporting wrong preferred widths
