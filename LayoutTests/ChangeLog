@@ -1,3 +1,21 @@
+2015-08-31  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+        absolute-position-change-containing-block.html -> repaint rect tracking.
+        absolute-position-changed.html -> reftest.
+
+        Unreviewed.
+
+        * fast/repaint/absolute-position-change-containing-block-expected.png: Removed.
+        * fast/repaint/absolute-position-change-containing-block-expected.txt:
+        * fast/repaint/absolute-position-change-containing-block.html:
+        * fast/repaint/absolute-position-changed-expected.html: Added.
+        * fast/repaint/absolute-position-changed-expected.png: Removed.
+        * fast/repaint/absolute-position-changed-expected.txt: Removed.
+        * fast/repaint/absolute-position-changed.html:
+        * platform/gtk/fast/repaint/absolute-position-change-containing-block-expected.png: Removed.
+        * platform/mac/fast/repaint/absolute-position-changed-expected.png: Removed.
+
 2015-08-31  Chris Dumez  <cdumez@apple.com>
 
         NodeFilter.SHOW_ALL has wrong value on 32-bit
