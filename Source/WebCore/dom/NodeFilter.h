@@ -49,7 +49,7 @@ namespace WebCore {
          * their values are derived by using a bit position corresponding
          * to the value of NodeType for the equivalent node type.
          */
-        enum {
+        enum : unsigned long {
             SHOW_ALL                       = 0xFFFFFFFF,
             SHOW_ELEMENT                   = 0x00000001,
             SHOW_ATTRIBUTE                 = 0x00000002,
