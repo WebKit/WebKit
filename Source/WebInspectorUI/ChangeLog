@@ -1,5 +1,77 @@
 2015-08-31  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Move the Popover code out of the Breakpoint model object
+        https://bugs.webkit.org/show_bug.cgi?id=127328
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js: Added.
+        (WebInspector.BreakpointPopoverController):
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.editBreakpoint):
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.removeBreakpoint):
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.toggleBreakpoint):
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.toggleAutoContinue):
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.revealOriginalSourceCodeLocation):
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems):
+        (WebInspector.BreakpointPopoverController.prototype.showEditBreakpointPopover):
+        (WebInspector.BreakpointPopoverController.prototype._createPopoverContent):
+        (WebInspector.BreakpointPopoverController.prototype._popoverToggleEnabledCheckboxChanged):
+        (WebInspector.BreakpointPopoverController.prototype._popoverConditionInputChanged):
+        (WebInspector.BreakpointPopoverController.prototype._popoverToggleAutoContinueCheckboxChanged):
+        (WebInspector.BreakpointPopoverController.prototype._popoverConditionInputKeyDown):
+        (WebInspector.BreakpointPopoverController.prototype._popoverActionsCreateAddActionButton):
+        (WebInspector.BreakpointPopoverController.prototype._popoverActionsAddActionButtonClicked):
+        (WebInspector.BreakpointPopoverController.prototype._popoverActionsInsertBreakpointActionView):
+        (WebInspector.BreakpointPopoverController.prototype.breakpointActionViewAppendActionView):
+        (WebInspector.BreakpointPopoverController.prototype.breakpointActionViewRemoveActionView):
+        (WebInspector.BreakpointPopoverController.prototype.breakpointActionViewResized):
+        (WebInspector.BreakpointPopoverController.prototype.willDismissPopover):
+        (WebInspector.BreakpointPopoverController.prototype.didDismissPopover):
+        Added controller class to encapsulate view logic previously located in WebInspector.Breakpoint.
+
+        * UserInterface/Main.html:
+        Added and updated file paths.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.appendContextMenuItems.editBreakpoint): Deleted.
+        (WebInspector.Breakpoint.prototype.appendContextMenuItems.removeBreakpoint): Deleted.
+        (WebInspector.Breakpoint.prototype.appendContextMenuItems.toggleBreakpoint): Deleted.
+        (WebInspector.Breakpoint.prototype.appendContextMenuItems.toggleAutoContinue): Deleted.
+        (WebInspector.Breakpoint.prototype.appendContextMenuItems.revealOriginalSourceCodeLocation): Deleted.
+        (WebInspector.Breakpoint.prototype.appendContextMenuItems): Deleted.
+        (WebInspector.Breakpoint.prototype._popoverToggleEnabledCheckboxChanged): Deleted.
+        (WebInspector.Breakpoint.prototype._popoverConditionInputChanged): Deleted.
+        (WebInspector.Breakpoint.prototype._popoverToggleAutoContinueCheckboxChanged): Deleted.
+        (WebInspector.Breakpoint.prototype._popoverConditionInputKeyDown): Deleted.
+        (WebInspector.Breakpoint.prototype._editBreakpointPopoverContentElement): Deleted.
+        (WebInspector.Breakpoint.prototype._popoverActionsCreateAddActionButton): Deleted.
+        (WebInspector.Breakpoint.prototype._popoverActionsAddActionButtonClicked): Deleted.
+        (WebInspector.Breakpoint.prototype._popoverActionsInsertBreakpointActionView): Deleted.
+        (WebInspector.Breakpoint.prototype.breakpointActionViewAppendActionView): Deleted.
+        (WebInspector.Breakpoint.prototype.breakpointActionViewRemoveActionView): Deleted.
+        (WebInspector.Breakpoint.prototype.breakpointActionViewResized): Deleted.
+        (WebInspector.Breakpoint.prototype.willDismissPopover): Deleted.
+        (WebInspector.Breakpoint.prototype.didDismissPopover): Deleted.
+        (WebInspector.Breakpoint.prototype._showEditBreakpointPopover): Deleted.
+        Removed view logic.
+
+        * UserInterface/Views/BreakpointPopoverController.css: Renamed from Source/WebInspectorUI/UserInterface/Views/Breakpoint.css.
+        (.popover .edit-breakpoint-popover-content):
+        (.popover .edit-breakpoint-popover-content.wide):
+        (.popover .edit-breakpoint-popover-content > label.toggle):
+        (.popover .edit-breakpoint-popover-content > table):
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        (.popover .edit-breakpoint-popover-content > table > tr > td):
+        (#edit-breakpoint-popover-condition):
+        (#edit-breakpoint-popoover-auto-continue):
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        Creates a BreakpointPopoverController instance. The lifetime of the 'Edit Breakpoint' view is internal to the
+        controller, and can't be initiated outside of a context menu item click.
+
+2015-08-31  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Rendering Frame tasks making up < 1% of the selection don't appear in the pie chart
         https://bugs.webkit.org/show_bug.cgi?id=148549
 
