@@ -113,19 +113,14 @@ function test()
         document.getElementById("test13").innerHTML = "test 13 passed: start at range start, end after range";
 
     // test 14 - detached range, attached node
-    // firefox throws an exception and does not return a value
+    // detach() should be a noop.
+    expectedResult = 1;
     var detachedRange = document.createRange();
     detachedRange.detach();
-    try {
-        result = detachedRange.compareNode(document.getElementById("a1"));
-    } catch (e) {
-        if(e.code == DOMException.INVALID_STATE_ERR) {
-            document.getElementById("test14").innerHTML = "test 14 passed: detached range, attached node"; 
-        } else {
-            document.getElementById("test14").innerHTML = "<span style=\"color: red;\">test 14 failed error: " + e.message + "</span>";
-        }
-    }
-        
+    result = detachedRange.compareNode(document.getElementById("a1"));
+    if (result == expectedResult)
+        document.getElementById("test14").innerHTML = "test 14 passed: detach is a noop";
+
     // test 15 - attached range, detached node
     // firefox does not throw an exception and returns 0 for this test
     expectedResult = 0;

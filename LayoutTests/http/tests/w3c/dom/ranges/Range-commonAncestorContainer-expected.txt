@@ -1,5 +1,5 @@
 
-FAIL 0: range [detached] InvalidStateError: DOM Exception 11
+PASS 0: range [detached] 
 PASS 1: range [paras[0].firstChild, 0, paras[0].firstChild, 0] 
 PASS 2: range [paras[0].firstChild, 0, paras[0].firstChild, 1] 
 PASS 3: range [paras[0].firstChild, 2, paras[0].firstChild, 8] 

@@ -1799,15 +1799,15 @@ void FrameSelection::selectAll()
 
 bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
 {
-    if (!range || !range->startContainer() || !range->endContainer())
+    if (!range)
         return false;
-    ASSERT(&range->startContainer()->document() == &range->endContainer()->document());
+    ASSERT(&range->startContainer().document() == &range->endContainer().document());
 
     VisibleSelection newSelection(*range, affinity);
 
 #if PLATFORM(IOS)
     // FIXME: Why do we need this check only in iOS?
-    if (range->startContainer() && range->endContainer() && newSelection.isNone())
+    if (newSelection.isNone())
         return false;
 #endif
 
@@ -2384,9 +2384,7 @@ int FrameSelection::wordOffsetInRange(const Range *range) const
     // FIXME: This will only work in cases where the selection remains in
     // the same node after it is expanded. Improve to handle more complicated
     // cases.
-    ExceptionCode ec = 0;
-    int result = selection.start().deprecatedEditingOffset() - range->startOffset(ec);
-    ASSERT(!ec);
+    int result = selection.start().deprecatedEditingOffset() - range->startOffset();
     if (result < 0)
         result = 0;
     return result;
@@ -2396,12 +2394,9 @@ bool FrameSelection::spaceFollowsWordInRange(const Range *range) const
 {
     if (!range)
         return false;
-    ExceptionCode ec = 0;
-    Node* node = range->endContainer(ec);
-    ASSERT(!ec);
-    int endOffset = range->endOffset(ec);
-    ASSERT(!ec);
-    VisiblePosition pos(createLegacyEditingPosition(node, endOffset), VP_DEFAULT_AFFINITY);
+    Node& node = range->endContainer();
+    int endOffset = range->endOffset();
+    VisiblePosition pos(createLegacyEditingPosition(&node, endOffset), VP_DEFAULT_AFFINITY);
     return isSpaceOrNewline(pos.characterAfter());
 }
 

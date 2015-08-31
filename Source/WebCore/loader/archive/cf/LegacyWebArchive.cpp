@@ -476,12 +476,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
 {
     if (!range)
         return nullptr;
-    
-    Node* startContainer = range->startContainer();
-    if (!startContainer)
-        return nullptr;
         
-    Document& document = startContainer->document();
+    Document& document = range->startContainer().document();
 
     Frame* frame = document.frame();
     if (!frame)

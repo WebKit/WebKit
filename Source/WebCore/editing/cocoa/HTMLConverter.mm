@@ -2229,12 +2229,12 @@ void HTMLConverter::_processText(CharacterData& characterData)
     String originalString = characterData.data();
     unsigned startOffset = 0;
     unsigned endOffset = originalString.length();
-    if (&characterData == m_range->startContainer()) {
+    if (&characterData == &m_range->startContainer()) {
         startOffset = m_range->startOffset();
         _domRangeStartIndex = [_attrStr length];
         _flags.reachedStart = YES;
     }
-    if (&characterData == m_range->endContainer()) {
+    if (&characterData == &m_range->endContainer()) {
         endOffset = m_range->endOffset();
         _flags.reachedEnd = YES;
     }
@@ -2305,12 +2305,12 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
     unsigned endOffset = UINT_MAX;
     bool isStart = false;
     bool isEnd = false;
-    if (&node == m_range->startContainer()) {
+    if (&node == &m_range->startContainer()) {
         startOffset = m_range->startOffset();
         isStart = true;
         _flags.reachedStart = YES;
     }
-    if (&node == m_range->endContainer()) {
+    if (&node == &m_range->endContainer()) {
         endOffset = m_range->endOffset();
         isEnd = true;
     }
@@ -2366,12 +2366,12 @@ void HTMLConverter::_traverseFooterNode(Element& element, unsigned depth)
     unsigned endOffset = UINT_MAX;
     bool isStart = false;
     bool isEnd = false;
-    if (&element == m_range->startContainer()) {
+    if (&element == &m_range->startContainer()) {
         startOffset = m_range->startOffset();
         isStart = true;
         _flags.reachedStart = YES;
     }
-    if (&element == m_range->endContainer()) {
+    if (&element == &m_range->endContainer()) {
         endOffset = m_range->endOffset();
         isEnd = true;
     }
@@ -2409,8 +2409,8 @@ void HTMLConverter::_adjustTrailingNewline()
 
 Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Range& range)
 {
-    Node* commonAncestor = range.commonAncestorContainer(ASSERT_NO_EXCEPTION);
-    Node* ancestor = range.startContainer();
+    Node* commonAncestor = range.commonAncestorContainer();
+    Node* ancestor = &range.startContainer();
 
     while (ancestor) {
         m_ancestorsUnderCommonAncestor.add(ancestor);
@@ -2497,14 +2497,14 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
 
     for (TextIterator it(&range); !it.atEnd(); it.advance()) {
         RefPtr<Range> currentTextRange = it.range();
-        Node* startContainer = currentTextRange->startContainer();
-        Node* endContainer = currentTextRange->endContainer();
+        Node& startContainer = currentTextRange->startContainer();
+        Node& endContainer = currentTextRange->endContainer();
         int startOffset = currentTextRange->startOffset();
         int endOffset = currentTextRange->endOffset();
 
         if (includeOrSkipImages == IncludeImagesInAttributedString::Yes) {
-            if (startContainer == endContainer && (startOffset == endOffset - 1)) {
-                Node* node = startContainer->traverseToChildAt(startOffset);
+            if (&startContainer == &endContainer && (startOffset == endOffset - 1)) {
+                Node* node = startContainer.traverseToChildAt(startOffset);
                 if (is<HTMLImageElement>(node)) {
                     NSFileWrapper* fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(node));
                     NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
@@ -2518,7 +2518,7 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
         if (!currentTextLength)
             continue;
 
-        RenderObject* renderer = startContainer->renderer();
+        RenderObject* renderer = startContainer.renderer();
         ASSERT(renderer);
         if (!renderer)
             continue;

@@ -730,7 +730,7 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     
     RefPtr<Range> selectedStringRange = selectionRange();
     // When starting our search again, make this a zero length range so that search forwards will find this selected range if its appropriate.
-    selectedStringRange->setEnd(selectedStringRange->startContainer(), selectedStringRange->startOffset());
+    selectedStringRange->setEnd(&selectedStringRange->startContainer(), selectedStringRange->startOffset());
     
     RefPtr<Range> closestAfterStringRange = nullptr;
     RefPtr<Range> closestBeforeStringRange = nullptr;
@@ -745,7 +745,7 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     if (RefPtr<Range> closestStringRange = rangeClosestToRange(selectedStringRange.get(), closestAfterStringRange, closestBeforeStringRange)) {
         // If the search started within a text control, ensure that the result is inside that element.
         if (element() && element()->isTextFormControl()) {
-            if (!closestStringRange->startContainer()->isDescendantOrShadowDescendantOf(element()) || !closestStringRange->endContainer()->isDescendantOrShadowDescendantOf(element()))
+            if (!closestStringRange->startContainer().isDescendantOrShadowDescendantOf(element()) || !closestStringRange->endContainer().isDescendantOrShadowDescendantOf(element()))
                 return String();
         }
         
@@ -1258,10 +1258,10 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range
-            Node* node = it.range()->startContainer();
-            ASSERT(node == it.range()->endContainer());
+            Node& node = it.range()->startContainer();
+            ASSERT(&node == &it.range()->endContainer());
             int offset = it.range()->startOffset();
-            if (replacedNodeNeedsCharacter(node->traverseToChildAt(offset)))
+            if (replacedNodeNeedsCharacter(node.traverseToChildAt(offset)))
                 builder.append(objectReplacementCharacter);
         }
     }
@@ -1283,13 +1283,12 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
             length += it.text().length();
         else {
             // locate the node and starting offset for this replaced range
-            int exception = 0;
-            Node* node = it.range()->startContainer(exception);
-            ASSERT(node == it.range()->endContainer(exception));
-            int offset = it.range()->startOffset(exception);
+            Node& node = it.range()->startContainer();
+            ASSERT(&node == &it.range()->endContainer());
+            int offset = it.range()->startOffset();
 
-            if (replacedNodeNeedsCharacter(node->traverseToChildAt(offset)))
-                length++;
+            if (replacedNodeNeedsCharacter(node.traverseToChildAt(offset)))
+                ++length;
         }
     }
     

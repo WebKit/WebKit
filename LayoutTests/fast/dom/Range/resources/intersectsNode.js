@@ -94,8 +94,8 @@ debug("");
 
 debug("2.1 Detached Range, attached node");
 var detachedRange = document.createRange();
-detachedRange.detach();
-shouldThrow("detachedRange.intersectsNode(document.getElementById('a1'))", '"Error: InvalidStateError: DOM Exception 11"');
+detachedRange.detach(); // no-op.
+shouldBeFalse("detachedRange.intersectsNode(document.getElementById('a1'))");
 debug("");
 
 debug("2.2 attached range, detached node");

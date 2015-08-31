@@ -1,3 +1,38 @@
+2015-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Range.detach() / NodeIterator.detach() should be no-ops as per the latest DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=148454
+
+        Reviewed by Ryosuke Niwa.
+
+        Update Range API call sites to reflect changes.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange collapse:]):
+        (-[WKDOMRange startContainer]):
+        (-[WKDOMRange startOffset]):
+        (-[WKDOMRange endContainer]):
+        (-[WKDOMRange endOffset]):
+        (-[WKDOMRange isCollapsed]):
+        (-[WKDOMRange text]): Deleted.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::getImageForFindMatch):
+        (WebKit::FindController::selectFindMatch):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::targetFrameForEditing):
+        (WebKit::WebPage::firstRectForCharacterRangeAsync): Deleted.
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::targetFrameForEditing):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::rangeForBlockAtPoint):
+        (WebKit::containsRange):
+        (WebKit::unionDOMRanges):
+        (WebKit::WebPage::contractedRangeFromHandle):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+        (WebKit::WebPage::firstRectForCharacterRange): Deleted.
+
 2015-08-31  Tim Horton  <timothy_horton@apple.com>
 
         iOS WebKit2 find-in-page doesn't support multi-line results, is often blank

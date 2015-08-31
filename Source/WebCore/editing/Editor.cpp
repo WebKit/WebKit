@@ -299,19 +299,17 @@ bool Editor::canDelete() const
 
 bool Editor::canDeleteRange(Range* range) const
 {
-    Node* startContainer = range->startContainer();
-    Node* endContainer = range->endContainer();
-    if (!startContainer || !endContainer)
-        return false;
+    Node& startContainer = range->startContainer();
+    Node& endContainer = range->endContainer();
     
-    if (!startContainer->hasEditableStyle() || !endContainer->hasEditableStyle())
+    if (!startContainer.hasEditableStyle() || !endContainer.hasEditableStyle())
         return false;
 
-    if (range->collapsed(IGNORE_EXCEPTION)) {
+    if (range->collapsed()) {
         VisiblePosition start(range->startPosition(), DOWNSTREAM);
         VisiblePosition previous = start.previous();
         // FIXME: We sometimes allow deletions at the start of editable roots, like when the caret is in an empty list item.
-        if (previous.isNull() || previous.deepEquivalent().deprecatedNode()->rootEditableElement() != startContainer->rootEditableElement())
+        if (previous.isNull() || previous.deepEquivalent().deprecatedNode()->rootEditableElement() != startContainer.rootEditableElement())
             return false;
     }
     return true;
@@ -647,7 +645,7 @@ void Editor::setTextAsChildOfElement(const String& text, Element* elem)
 
 bool Editor::shouldDeleteRange(Range* range) const
 {
-    if (!range || range->collapsed(IGNORE_EXCEPTION))
+    if (!range || range->collapsed())
         return false;
     
     if (!canDeleteRange(range))
@@ -1928,7 +1926,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         // else we were already at the start of the editable node
     }
 
-    if (spellingSearchRange->collapsed(IGNORE_EXCEPTION))
+    if (spellingSearchRange->collapsed())
         return; // nothing to search in
     
     // Get the spell checker if it is available
@@ -1938,7 +1936,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     // We go to the end of our first range instead of the start of it, just to be sure
     // we don't get foiled by any word boundary problems at the start.  It means we might
     // do a tiny bit more searching.
-    Node* searchEndNodeAfterWrap = spellingSearchRange->endContainer();
+    Node& searchEndNodeAfterWrap = spellingSearchRange->endContainer();
     int searchEndOffsetAfterWrap = spellingSearchRange->endOffset();
     
     int misspellingOffset = 0;
@@ -1953,7 +1951,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     String foundItem;
     RefPtr<Range> firstMisspellingRange;
     if (unifiedTextCheckerEnabled()) {
-        grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
+        grammarSearchRange = spellingSearchRange->cloneRange();
         foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
         if (isSpelling) {
             misspelledWord = foundItem;
@@ -1966,12 +1964,12 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
 #if USE(GRAMMAR_CHECKING)
-        grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
+        grammarSearchRange = spellingSearchRange->cloneRange();
         if (!misspelledWord.isEmpty()) {
             // Stop looking at start of next misspelled word
             CharacterIterator chars(*grammarSearchRange);
             chars.advance(misspellingOffset);
-            grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
+            grammarSearchRange->setEnd(&chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
         }
     
         if (isGrammarCheckingEnabled())
@@ -1984,10 +1982,10 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     if (startedWithSelection && !misspelledWord && !badGrammarPhrase) {
         spellingSearchRange->setStart(topNode, 0, IGNORE_EXCEPTION);
         // going until the end of the very first chunk we tested is far enough
-        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, IGNORE_EXCEPTION);
+        spellingSearchRange->setEnd(&searchEndNodeAfterWrap, searchEndOffsetAfterWrap, IGNORE_EXCEPTION);
         
         if (unifiedTextCheckerEnabled()) {
-            grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
+            grammarSearchRange = spellingSearchRange->cloneRange();
             foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
             if (isSpelling) {
                 misspelledWord = foundItem;
@@ -2000,12 +1998,12 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
 #if USE(GRAMMAR_CHECKING)
-            grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
+            grammarSearchRange = spellingSearchRange->cloneRange();
             if (!misspelledWord.isEmpty()) {
                 // Stop looking at start of next misspelled word
                 CharacterIterator chars(*grammarSearchRange);
                 chars.advance(misspellingOffset);
-                grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
+                grammarSearchRange->setEnd(&chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
             }
 
             if (isGrammarCheckingEnabled())
@@ -2297,11 +2295,11 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
         return;
     
     // If we're not in an editable node, bail.
-    Node* editableNode = searchRange->startContainer();
-    if (!editableNode || !editableNode->hasEditableStyle())
+    Node& editableNode = searchRange->startContainer();
+    if (!editableNode.hasEditableStyle())
         return;
 
-    if (!isSpellCheckingEnabledFor(editableNode))
+    if (!isSpellCheckingEnabledFor(&editableNode))
         return;
 
     // Get the spell checker if it is available
@@ -2371,11 +2369,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
         return;
 
     // If we're not in an editable node, bail.
-    Node* editableNode = spellingRange->startContainer();
-    if (!editableNode || !editableNode->hasEditableStyle())
+    Node& editableNode = spellingRange->startContainer();
+    if (!editableNode.hasEditableStyle())
         return;
 
-    if (!isSpellCheckingEnabledFor(editableNode))
+    if (!isSpellCheckingEnabledFor(&editableNode))
         return;
 
     Range* rangeToCheck = shouldMarkGrammar ? grammarRange : spellingRange;
@@ -2420,7 +2418,7 @@ static bool isAutomaticTextReplacementType(TextCheckingType type)
 
 static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingParagraph& paragraph, PassRefPtr<Range> rangeToReplace, const String& replacement, int resultLocation, int resultLength)
 {
-    ContainerNode* scope = downcast<ContainerNode>(highestAncestor(paragraph.paragraphRange()->startContainer()));
+    ContainerNode* scope = downcast<ContainerNode>(highestAncestor(&paragraph.paragraphRange()->startContainer()));
 
     size_t paragraphLocation;
     size_t paragraphLength;
@@ -2495,7 +2493,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
             RefPtr<Range> misspellingRange = paragraph.subrange(resultLocation, resultLength);
             if (!m_alternativeTextController->isSpellingMarkerAllowed(misspellingRange))
                 continue;
-            misspellingRange->startContainer()->document().markers().addMarker(misspellingRange.get(), DocumentMarker::Spelling, replacement);
+            misspellingRange->startContainer().document().markers().addMarker(misspellingRange.get(), DocumentMarker::Spelling, replacement);
         } else if (shouldMarkGrammar && resultType == TextCheckingTypeGrammar && paragraph.checkingRangeCovers(resultLocation, resultLength)) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
             const Vector<GrammarDetail>& details = results[i].details;
@@ -2504,7 +2502,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
                 ASSERT(detail.length > 0 && detail.location >= 0);
                 if (paragraph.checkingRangeCovers(resultLocation + detail.location, detail.length)) {
                     RefPtr<Range> badGrammarRange = paragraph.subrange(resultLocation + detail.location, detail.length);
-                    badGrammarRange->startContainer()->document().markers().addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail.userDescription);
+                    badGrammarRange->startContainer().document().markers().addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail.userDescription);
                 }
             }
         } else if (resultEndLocation <= spellingRangeEndOffset && resultEndLocation >= paragraph.checkingStart()
@@ -2614,7 +2612,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
     TextCheckingParagraph paragraph(selection);
     replaceSelectionWithText(replacedString, false, false, EditActionInsert);
     RefPtr<Range> changedRange = paragraph.subrange(paragraph.checkingStart(), replacedString.length());
-    changedRange->startContainer()->document().markers().addMarker(changedRange.get(), DocumentMarker::Replacement, String());
+    changedRange->startContainer().document().markers().addMarker(changedRange.get(), DocumentMarker::Replacement, String());
     m_alternativeTextController->markReversed(changedRange.get());
 #else
     ASSERT_NOT_REACHED();
@@ -2937,12 +2935,9 @@ static inline void collapseCaretWidth(IntRect& rect)
 
 IntRect Editor::firstRectForRange(Range* range) const
 {
-    ASSERT(range->startContainer());
-    ASSERT(range->endContainer());
-
     VisiblePosition startVisiblePosition(range->startPosition(), DOWNSTREAM);
 
-    if (range->collapsed(ASSERT_NO_EXCEPTION)) {
+    if (range->collapsed()) {
         // FIXME: Getting caret rect and removing caret width is a very roundabout way to get collapsed range location.
         // In particular, width adjustment doesn't work for rotated text.
         IntRect startCaretRect = RenderedPosition(startVisiblePosition).absoluteRect();
@@ -3118,7 +3113,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
             searchRange->setEnd(startInReferenceRange ? referenceRange->endPosition() : referenceRange->startPosition());
     }
 
-    RefPtr<Node> shadowTreeRoot = referenceRange && referenceRange->startContainer() ? referenceRange->startContainer()->nonBoundaryShadowTreeRootNode() : 0;
+    RefPtr<Node> shadowTreeRoot = referenceRange ? referenceRange->startContainer().nonBoundaryShadowTreeRootNode() : nullptr;
     if (shadowTreeRoot) {
         if (forward)
             searchRange->setEnd(shadowTreeRoot.get(), shadowTreeRoot->countChildNodes());
@@ -3148,7 +3143,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
     }
 
     // If nothing was found in the shadow tree, search in main content following the shadow tree.
-    if (resultRange->collapsed(ASSERT_NO_EXCEPTION) && shadowTreeRoot) {
+    if (resultRange->collapsed() && shadowTreeRoot) {
         searchRange = rangeOfContents(document());
         if (forward)
             searchRange->setStartAfter(shadowTreeRoot->shadowHost());
@@ -3160,7 +3155,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
 
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
-    if (resultRange->collapsed(ASSERT_NO_EXCEPTION) && options & WrapAround) {
+    if (resultRange->collapsed() && options & WrapAround) {
         searchRange = rangeOfContents(document());
         resultRange = findPlainText(*searchRange, target, options);
         // We used to return false here if we ended up with the same range that we started with
@@ -3168,7 +3163,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
         // this should be a success case instead, so we'll just fall through in that case.
     }
 
-    return resultRange->collapsed(ASSERT_NO_EXCEPTION) ? 0 : resultRange.release();
+    return resultRange->collapsed() ? nullptr : resultRange.release();
 }
 
 static bool isFrameInRange(Frame* frame, Range* range)
@@ -3198,18 +3193,18 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
     if (!searchRange)
         searchRange = rangeOfContents(document());
 
-    Node* originalEndContainer = searchRange->endContainer();
+    Node& originalEndContainer = searchRange->endContainer();
     int originalEndOffset = searchRange->endOffset();
 
     unsigned matchCount = 0;
     do {
         RefPtr<Range> resultRange(findPlainText(*searchRange, target, options & ~Backwards));
-        if (resultRange->collapsed(IGNORE_EXCEPTION)) {
-            if (!resultRange->startContainer()->isInShadowTree())
+        if (resultRange->collapsed()) {
+            if (!resultRange->startContainer().isInShadowTree())
                 break;
 
-            searchRange->setStartAfter(resultRange->startContainer()->shadowHost(), IGNORE_EXCEPTION);
-            searchRange->setEnd(originalEndContainer, originalEndOffset, IGNORE_EXCEPTION);
+            searchRange->setStartAfter(resultRange->startContainer().shadowHost(), IGNORE_EXCEPTION);
+            searchRange->setEnd(&originalEndContainer, originalEndOffset, IGNORE_EXCEPTION);
             continue;
         }
 
@@ -3228,10 +3223,10 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         // result range. There is no need to use a VisiblePosition here,
         // since findPlainText will use a TextIterator to go over the visible
         // text nodes. 
-        searchRange->setStart(resultRange->endContainer(IGNORE_EXCEPTION), resultRange->endOffset(IGNORE_EXCEPTION), IGNORE_EXCEPTION);
+        searchRange->setStart(&resultRange->endContainer(), resultRange->endOffset(), IGNORE_EXCEPTION);
 
         Node* shadowTreeRoot = searchRange->shadowRoot();
-        if (searchRange->collapsed(IGNORE_EXCEPTION) && shadowTreeRoot)
+        if (searchRange->collapsed() && shadowTreeRoot)
             searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->countChildNodes(), IGNORE_EXCEPTION);
     } while (true);
 
@@ -3353,9 +3348,8 @@ void Editor::scanSelectionForTelephoneNumbers()
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)
 {
     // Don't scan for phone numbers inside editable regions.
-    Node* startNode = range.startContainer();
-    ASSERT(startNode);
-    if (startNode->hasEditableStyle())
+    Node& startNode = range.startContainer();
+    if (startNode.hasEditableStyle())
         return;
 
     // relativeStartPosition and relativeEndPosition are the endpoints of the phone number range,

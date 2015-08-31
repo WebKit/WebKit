@@ -342,17 +342,14 @@ TextIterator::TextIterator(const Range* range, TextIteratorBehavior behavior)
 
     range->ownerDocument().updateLayoutIgnorePendingStylesheets();
 
-    m_startContainer = range->startContainer();
-    if (!m_startContainer)
-        return;
-    ASSERT(range->endContainer());
+    m_startContainer = &range->startContainer();
 
     // Callers should be handing us well-formed ranges. If we discover that this isn't
     // the case, we could consider changing this assertion to an early return.
     ASSERT(range->boundaryPointsValid());
 
     m_startOffset = range->startOffset();
-    m_endContainer = range->endContainer();
+    m_endContainer = &range->endContainer();
     m_endOffset = range->endOffset();
 
     // Set up the current node for processing.
@@ -1178,11 +1175,11 @@ Node* TextIterator::node() const
 {
     Ref<Range> textRange = range();
 
-    Node* node = textRange->startContainer();
-    if (node->offsetInCharacters())
-        return node;
+    Node& node = textRange->startContainer();
+    if (node.offsetInCharacters())
+        return &node;
     
-    return node->traverseToChildAt(textRange->startOffset());
+    return node.traverseToChildAt(textRange->startOffset());
 }
 
 // --------
@@ -1209,10 +1206,8 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& ra
 
     range.ownerDocument().updateLayoutIgnorePendingStylesheets();
 
-    Node* startNode = range.startContainer();
-    if (!startNode)
-        return;
-    Node* endNode = range.endContainer();
+    Node* startNode = &range.startContainer();
+    Node* endNode = &range.endContainer();
     int startOffset = range.startOffset();
     int endOffset = range.endOffset();
 
@@ -1476,11 +1471,11 @@ Ref<Range> CharacterIterator::range() const
         if (m_underlyingIterator.text().length() <= 1) {
             ASSERT(m_runOffset == 0);
         } else {
-            Node* n = range->startContainer();
-            ASSERT(n == range->endContainer());
+            Node& node = range->startContainer();
+            ASSERT(&node == &range->endContainer());
             int offset = range->startOffset() + m_runOffset;
-            range->setStart(n, offset);
-            range->setEnd(n, offset + 1);
+            range->setStart(&node, offset);
+            range->setEnd(&node, offset + 1);
         }
     }
     return range;
@@ -1546,9 +1541,7 @@ static Ref<Range> characterSubrange(Document& document, CharacterIterator& it, i
 
     Ref<Range> end = it.range();
 
-    return Range::create(document,
-        start->startContainer(), start->startOffset(), 
-        end->endContainer(), end->endOffset());
+    return Range::create(document, &start->startContainer(), start->startOffset(), &end->endContainer(), end->endOffset());
 }
 
 BackwardsCharacterIterator::BackwardsCharacterIterator(const Range& range)
@@ -1568,11 +1561,11 @@ Ref<Range> BackwardsCharacterIterator::range() const
         if (m_underlyingIterator.text().length() <= 1)
             ASSERT(m_runOffset == 0);
         else {
-            Node* n = r->startContainer();
-            ASSERT(n == r->endContainer());
+            Node& node = r->startContainer();
+            ASSERT(&node == &r->endContainer());
             int offset = r->endOffset() - m_runOffset;
-            r->setStart(n, offset - 1);
-            r->setEnd(n, offset);
+            r->setStart(&node, offset - 1);
+            r->setEnd(&node, offset);
         }
     }
     return r;
@@ -2481,8 +2474,8 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
     
     // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugs.webkit.org/show_bug.cgi?id=6289>.
     if (!rangeLocation && !rangeLength && it.atEnd()) {
-        resultRange->setStart(textRunRange->startContainer(), 0);
-        resultRange->setEnd(textRunRange->startContainer(), 0);
+        resultRange->setStart(&textRunRange->startContainer(), 0);
+        resultRange->setEnd(&textRunRange->startContainer(), 0);
         return WTF::move(resultRange);
     }
 
@@ -2500,7 +2493,7 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
                 it.advance();
                 if (!it.atEnd()) {
                     Ref<Range> range = it.range();
-                    textRunRange->setEnd(range->startContainer(), range->startOffset());
+                    textRunRange->setEnd(&range->startContainer(), range->startOffset());
                 } else {
                     Position runStart = textRunRange->startPosition();
                     Position runEnd = VisiblePosition(runStart).next().deepEquivalent();
@@ -2512,26 +2505,26 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
 
         if (foundStart) {
             startRangeFound = true;
-            if (textRunRange->startContainer()->isTextNode()) {
+            if (textRunRange->startContainer().isTextNode()) {
                 int offset = rangeLocation - docTextPosition;
-                resultRange->setStart(textRunRange->startContainer(), offset + textRunRange->startOffset());
+                resultRange->setStart(&textRunRange->startContainer(), offset + textRunRange->startOffset());
             } else {
                 if (rangeLocation == docTextPosition)
-                    resultRange->setStart(textRunRange->startContainer(), textRunRange->startOffset());
+                    resultRange->setStart(&textRunRange->startContainer(), textRunRange->startOffset());
                 else
-                    resultRange->setStart(textRunRange->endContainer(), textRunRange->endOffset());
+                    resultRange->setStart(&textRunRange->endContainer(), textRunRange->endOffset());
             }
         }
 
         if (foundEnd) {
-            if (textRunRange->startContainer()->isTextNode()) {
+            if (textRunRange->startContainer().isTextNode()) {
                 int offset = rangeEnd - docTextPosition;
-                resultRange->setEnd(textRunRange->startContainer(), offset + textRunRange->startOffset());
+                resultRange->setEnd(&textRunRange->startContainer(), offset + textRunRange->startOffset());
             } else {
                 if (rangeEnd == docTextPosition)
-                    resultRange->setEnd(textRunRange->startContainer(), textRunRange->startOffset());
+                    resultRange->setEnd(&textRunRange->startContainer(), textRunRange->startOffset());
                 else
-                    resultRange->setEnd(textRunRange->endContainer(), textRunRange->endOffset());
+                    resultRange->setEnd(&textRunRange->endContainer(), textRunRange->endOffset());
             }
             docTextPosition += length;
             break;
@@ -2544,7 +2537,7 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
         return nullptr;
     
     if (rangeLength && rangeEnd > docTextPosition) // rangeEnd is out of bounds
-        resultRange->setEnd(textRunRange->endContainer(), textRunRange->endOffset());
+        resultRange->setEnd(&textRunRange->endContainer(), textRunRange->endOffset());
     
     return WTF::move(resultRange);
 }
@@ -2554,25 +2547,22 @@ bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range
     location = notFound;
     length = 0;
 
-    if (!range->startContainer())
-        return false;
-
     // The critical assumption is that this only gets called with ranges that
     // concentrate on a given area containing the selection root. This is done
     // because of text fields and textareas. The DOM for those is not
     // directly in the document DOM, so ensure that the range does not cross a
     // boundary of one of those.
-    if (range->startContainer() != scope && !range->startContainer()->isDescendantOf(scope))
+    if (&range->startContainer() != scope && !range->startContainer().isDescendantOf(scope))
         return false;
-    if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
+    if (&range->endContainer() != scope && !range->endContainer().isDescendantOf(scope))
         return false;
 
-    Ref<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
-    ASSERT(testRange->startContainer() == scope);
+    Ref<Range> testRange = Range::create(scope->document(), scope, 0, &range->startContainer(), range->startOffset());
+    ASSERT(&testRange->startContainer() == scope);
     location = TextIterator::rangeLength(testRange.ptr());
 
-    testRange->setEnd(range->endContainer(), range->endOffset(), IGNORE_EXCEPTION);
-    ASSERT(testRange->startContainer() == scope);
+    testRange->setEnd(&range->endContainer(), range->endOffset(), IGNORE_EXCEPTION);
+    ASSERT(&testRange->startContainer() == scope);
     length = TextIterator::rangeLength(testRange.ptr()) - location;
     return true;
 }
@@ -2614,8 +2604,8 @@ String plainTextReplacingNoBreakSpace(const Range* range, TextIteratorBehavior d
 
 static Ref<Range> collapsedToBoundary(const Range& range, bool forward)
 {
-    Ref<Range> result = range.cloneRange(ASSERT_NO_EXCEPTION).releaseNonNull();
-    result->collapse(!forward, ASSERT_NO_EXCEPTION);
+    Ref<Range> result = range.cloneRange();
+    result->collapse(!forward);
     return result;
 }
 
@@ -2628,7 +2618,7 @@ static size_t findPlainText(const Range& range, const String& target, FindOption
 
     if (buffer.needsMoreContext()) {
         Ref<Range> beforeStartRange = range.ownerDocument().createRange();
-        beforeStartRange->setEnd(range.startContainer(), range.startOffset());
+        beforeStartRange->setEnd(&range.startContainer(), range.startOffset());
         for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
             buffer.prependContext(backwardsIterator.text());
             if (!buffer.needsMoreContext())

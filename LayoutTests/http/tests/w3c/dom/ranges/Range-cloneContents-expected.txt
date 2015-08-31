@@ -1,7 +1,7 @@
 To debug test failures, add a query parameter "subtest" with the test id (like "?subtest=5"). Only that test will be run. Then you can look at the resulting iframe in the DOM.
 
 
-FAIL Range.detach() InvalidStateError: DOM Exception 11
+PASS Range.detach() 
 PASS Resulting DOM for range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
 PASS Resulting cursor position for range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
 PASS Returned fragment for range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 

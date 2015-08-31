@@ -11,7 +11,7 @@ test 10 passed: start after range, end after range
 test 11 passed: start before range, end after range
 test 12 passed: start before range, end at range end
 test 13 passed: start at range start, end after range
-test 14 passed: detached range, attached node
+test 14 passed: detach is a noop
 test 15 passed: attached range, detached node
 test 16 passed: the node has no parent
 test 17 passed: the range has no parent

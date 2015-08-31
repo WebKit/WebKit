@@ -62,7 +62,7 @@ void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerTyp
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description));
+        addMarker(&textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description));
     }
 }
 
@@ -71,7 +71,7 @@ void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerTyp
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset()));
+        addMarker(&textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset()));
     }
 
 }
@@ -94,14 +94,13 @@ void DocumentMarkerController::addTextMatchMarker(const Range* range, bool activ
         RefPtr<Range> textPiece = markedText.range();
         unsigned startOffset = textPiece->startOffset();
         unsigned endOffset = textPiece->endOffset();
-        addMarker(textPiece->startContainer(), DocumentMarker(startOffset, endOffset, activeMatch));
+        addMarker(&textPiece->startContainer(), DocumentMarker(startOffset, endOffset, activeMatch));
         if (endOffset > startOffset) {
             // Rendered rects for markers in WebKit are not populated until each time
             // the markers are painted. However, we need it to happen sooner, because
             // the whole purpose of tickmarks on the scrollbar is to show where
             // matches off-screen are (that haven't been painted yet).
-            Node* node = textPiece->startContainer();
-            Vector<RenderedDocumentMarker*> markers = markersFor(node);
+            Vector<RenderedDocumentMarker*> markers = markersFor(&textPiece->startContainer());
             markers[markers.size() - 1]->addRenderedRect(range->absoluteBoundingBox());
         }
     }
@@ -113,7 +112,7 @@ void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerTyp
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description, interpretations, metadata));
+        addMarker(&textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description, interpretations, metadata));
     }
 }
 
@@ -130,7 +129,7 @@ void DocumentMarkerController::addDictationPhraseWithAlternativesMarker(Range* r
         DocumentMarker marker(DocumentMarker::DictationPhraseWithAlternatives, textPiece->startOffset(), textPiece->endOffset(), "", Vector<String>(numberOfAlternatives), RetainPtr<id>());
         for (size_t i = 0; i < numberOfAlternatives; ++i)
             marker.setAlternative(interpretations[i + 1], i);
-        addMarker(textPiece->startContainer(), marker);
+        addMarker(&textPiece->startContainer(), marker);
     }
 }
 
@@ -139,7 +138,7 @@ void DocumentMarkerController::addDictationResultMarker(Range* range, const Reta
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        addMarker(textPiece->startContainer(), DocumentMarker(DocumentMarker::DictationResult, textPiece->startOffset(), textPiece->endOffset(), String(), Vector<String>(), metadata));
+        addMarker(&textPiece->startContainer(), DocumentMarker(DocumentMarker::DictationResult, textPiece->startOffset(), textPiece->endOffset(), String(), Vector<String>(), metadata));
     }
 }
 #endif
@@ -154,7 +153,7 @@ void DocumentMarkerController::removeMarkers(Range* range, DocumentMarker::Marke
         RefPtr<Range> textPiece = markedText.range();
         int startOffset = textPiece->startOffset();
         int endOffset = textPiece->endOffset();
-        removeMarkers(textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, shouldRemovePartiallyOverlappingMarker);
+        removeMarkers(&textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, shouldRemovePartiallyOverlappingMarker);
     }
 }
 
@@ -398,19 +397,17 @@ Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(Range* 
 
     Vector<RenderedDocumentMarker*> foundMarkers;
 
-    Node* startContainer = range->startContainer();
-    ASSERT(startContainer);
-    Node* endContainer = range->endContainer();
-    ASSERT(endContainer);
+    Node& startContainer = range->startContainer();
+    Node& endContainer = range->endContainer();
 
     Node* pastLastNode = range->pastLastNode();
     for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         for (auto* marker : markersFor(node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
-            if (node == startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
+            if (node == &startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
                 continue;
-            if (node == endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
+            if (node == &endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
                 continue;
             foundMarkers.append(marker);
         }
@@ -621,14 +618,14 @@ void DocumentMarkerController::setMarkersActive(Range* range, bool active)
         return;
     ASSERT(!m_markers.isEmpty());
 
-    Node* startContainer = range->startContainer();
-    Node* endContainer = range->endContainer();
+    Node& startContainer = range->startContainer();
+    Node& endContainer = range->endContainer();
 
     Node* pastLastNode = range->pastLastNode();
 
     for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
-        int startOffset = node == startContainer ? range->startOffset() : 0;
-        int endOffset = node == endContainer ? range->endOffset() : INT_MAX;
+        int startOffset = node == &startContainer ? range->startOffset() : 0;
+        int endOffset = node == &endContainer ? range->endOffset() : INT_MAX;
         setMarkersActive(node, startOffset, endOffset, active);
     }
 }
@@ -666,19 +663,17 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
         return false;
     ASSERT(!m_markers.isEmpty());
 
-    Node* startContainer = range->startContainer();
-    ASSERT(startContainer);
-    Node* endContainer = range->endContainer();
-    ASSERT(endContainer);
+    Node& startContainer = range->startContainer();
+    Node& endContainer = range->endContainer();
 
     Node* pastLastNode = range->pastLastNode();
     for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         for (auto* marker : markersFor(node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
-            if (node == startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
+            if (node == &startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
                 continue;
-            if (node == endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
+            if (node == &endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
                 continue;
             return true;
         }
@@ -692,13 +687,13 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
         return;
     ASSERT(!m_markers.isEmpty());
 
-    Node* startContainer = range->startContainer();
-    Node* endContainer = range->endContainer();
+    Node& startContainer = range->startContainer();
+    Node& endContainer = range->endContainer();
 
     Node* pastLastNode = range->pastLastNode();
     for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
-        unsigned startOffset = node == startContainer ? range->startOffset() : 0;
-        unsigned endOffset = node == endContainer ? static_cast<unsigned>(range->endOffset()) : std::numeric_limits<unsigned>::max();
+        unsigned startOffset = node == &startContainer ? range->startOffset() : 0;
+        unsigned endOffset = node == &endContainer ? static_cast<unsigned>(range->endOffset()) : std::numeric_limits<unsigned>::max();
         MarkerList* list = m_markers.get(node);
         if (!list)
             continue;

@@ -123,8 +123,7 @@ int Frame::indexCountOfWordPrecedingSelection(NSString *word) const
 
     setEnd(searchRange.get(), oneBeforeStart.isNotNull() ? oneBeforeStart : start);
 
-    int exception = 0;
-    if (searchRange->collapsed(exception))
+    if (searchRange->collapsed())
         return result;
 
     WordAwareIterator it(*searchRange);
@@ -176,8 +175,7 @@ NSArray *Frame::wordsInCurrentParagraph() const
     setStart(searchRange.get(), start);
     setEnd(searchRange.get(), end);
 
-    int exception = 0;
-    if (searchRange->collapsed(exception))
+    if (searchRange->collapsed())
         return nil;
 
     NSMutableArray *words = [NSMutableArray array];

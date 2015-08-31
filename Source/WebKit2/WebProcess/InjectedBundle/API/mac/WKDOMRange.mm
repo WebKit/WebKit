@@ -79,9 +79,7 @@
 
 - (void)collapse:(BOOL)toStart
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec = 0;
-    _impl->collapse(toStart, ec);
+    _impl->collapse(toStart);
 }
 
 - (void)selectNode:(WKDOMNode *)node
@@ -100,30 +98,22 @@
 
 - (WKDOMNode *)startContainer
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec = 0;
-    return WebKit::toWKDOMNode(_impl->startContainer(ec));
+    return WebKit::toWKDOMNode(&_impl->startContainer());
 }
 
 - (NSInteger)startOffset
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec = 0;
-    return _impl->startOffset(ec);
+    return _impl->startOffset();
 }
 
 - (WKDOMNode *)endContainer
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec = 0;
-    return WebKit::toWKDOMNode(_impl->endContainer(ec));
+    return WebKit::toWKDOMNode(&_impl->endContainer());
 }
 
 - (NSInteger)endOffset
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec = 0;
-    return _impl->endOffset(ec);
+    return _impl->endOffset();
 }
 
 - (NSString *)text
@@ -133,9 +123,7 @@
 
 - (BOOL)isCollapsed
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec = 0;
-    return _impl->collapsed(ec);
+    return _impl->collapsed();
 }
 
 - (NSArray *)textRects

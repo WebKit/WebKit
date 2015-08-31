@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 12: InvalidStateError: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
 Detaching a Range while deleteContents() is running should not cause a crash.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

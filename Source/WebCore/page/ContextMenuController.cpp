@@ -423,7 +423,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
     case ContextMenuItemTagStartSpeaking: {
         RefPtr<Range> selectedRange = frame->selection().toNormalizedRange();
-        if (!selectedRange || selectedRange->collapsed(IGNORE_EXCEPTION)) {
+        if (!selectedRange || selectedRange->collapsed()) {
             Document& document = m_context.hitTestResult().innerNonSharedNode()->document();
             selectedRange = document.createRange();
             selectedRange->selectNode(document.documentElement(), IGNORE_EXCEPTION);

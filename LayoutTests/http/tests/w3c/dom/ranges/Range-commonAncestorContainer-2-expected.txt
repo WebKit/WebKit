@@ -1,5 +1,5 @@
 
-FAIL Detached Range InvalidStateError: DOM Exception 11
+PASS Detached Range 
 PASS Normal Ranges 
 PASS Range.commonAncestorContainer 
 PASS Range.commonAncestorContainer 1 

@@ -272,9 +272,9 @@ String StyledMarkupAccumulator::renderedText(const Node& node, const Range* rang
     unsigned endOffset = textNode.length();
 
     TextIteratorBehavior behavior = TextIteratorDefaultBehavior;
-    if (range && &node == range->startContainer())
+    if (range && &node == &range->startContainer())
         startOffset = range->startOffset();
-    if (range && &node == range->endContainer())
+    if (range && &node == &range->endContainer())
         endOffset = range->endOffset();
     else if (range)
         behavior = TextIteratorBehavesAsIfNodesFollowing;
@@ -290,9 +290,9 @@ String StyledMarkupAccumulator::stringValueForRange(const Node& node, const Rang
         return node.nodeValue();
 
     String nodeValue = node.nodeValue();
-    if (&node == range->endContainer())
+    if (&node == &range->endContainer())
         nodeValue.truncate(range->endOffset());
-    if (&node == range->startContainer())
+    if (&node == &range->startContainer())
         nodeValue.remove(0, range->startOffset());
     return nodeValue;
 }
@@ -530,9 +530,9 @@ static bool isElementPresentational(const Node* node)
 
 static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterchange shouldAnnotate)
 {
-    Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
+    Node* commonAncestor = range->commonAncestorContainer();
     ASSERT(commonAncestor);
-    Node* specialCommonAncestor = 0;
+    Node* specialCommonAncestor = nullptr;
     if (shouldAnnotate == AnnotateForInterchange) {
         // Include ancestors that aren't completely inside the range but are required to retain 
         // the structure and appearance of the copied markup.
@@ -580,10 +580,10 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, (ASCIILiteral("<br class=\"" AppleInterchangeNewline "\">")));
 
-    bool collapsed = range.collapsed(ASSERT_NO_EXCEPTION);
+    bool collapsed = range.collapsed();
     if (collapsed)
         return emptyString();
-    Node* commonAncestor = range.commonAncestorContainer(ASSERT_NO_EXCEPTION);
+    Node* commonAncestor = range.commonAncestorContainer();
     if (!commonAncestor)
         return emptyString();
 
@@ -864,12 +864,8 @@ String createFullMarkup(const Node& node)
 
 String createFullMarkup(const Range& range)
 {
-    Node* node = range.startContainer();
-    if (!node)
-        return String();
-
     // FIXME: This is always "for interchange". Is that right?
-    return documentTypeString(node->document()) + createMarkup(range, 0, AnnotateForInterchange);
+    return documentTypeString(range.startContainer().document()) + createMarkup(range, 0, AnnotateForInterchange);
 }
 
 String urlToMarkup(const URL& url, const String& title)

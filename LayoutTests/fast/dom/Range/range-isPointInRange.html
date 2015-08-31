@@ -60,15 +60,14 @@ function test()
         document.getElementById("test8").innerHTML = "test 8 passed"; 
         
     // test 9 - detached range, attached node
-    // firefox throws an exception and does not return a value
+    // detach() is a no-op.
+    expectedResult = false;
     var detachedRange = document.createRange();
     detachedRange.detach();
-    try {
-        result = detachedRange.isPointInRange(document.getElementById("a1"), 0);
-    } catch (e) {
+    result = detachedRange.isPointInRange(document.getElementById("a1"), 0);
+    if (result == expectedResult)
         document.getElementById("test9").innerHTML = "test 9 passed"; 
-    }
-        
+
     // test 10 - attached range, detached node
     // firefox does not throw an exception and returns false for this test
     range.selectNode(document.getElementById("a1"));

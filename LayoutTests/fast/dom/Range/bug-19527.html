@@ -46,15 +46,6 @@ shouldBe("ra.isPointInRange(document.documentElement, 0)", false);
 shouldBe("ra.isPointInRange(document.body, 0)", false);
 shouldThrow("ra.isPointInRange(null, 0)", "HIERARCHY_REQUEST_ERR");
 
-ra.detach();
-
-shouldThrow("ra.comparePoint(document.createElement('b'), 0)", "INVALID_STATE_ERR");
-shouldThrow("ra.comparePoint(document.body, 0)", "INVALID_STATE_ERR");
-shouldThrow("ra.comparePoint(null, 0)", "INVALID_STATE_ERR");
-shouldThrow("ra.isPointInRange(document.createElement('b'), 0)", "INVALID_STATE_ERR");
-shouldThrow("ra.isPointInRange(document.body, 0)", "INVALID_STATE_ERR");
-shouldThrow("ra.isPointInRange(null, 0)", "INVALID_STATE_ERR");
-
 if (!hadError)
     document.getElementById("log").innerHTML = "PASS";
 

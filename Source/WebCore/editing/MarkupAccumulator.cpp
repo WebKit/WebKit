@@ -343,9 +343,9 @@ void MarkupAccumulator::appendText(StringBuilder& result, const Text& text)
     unsigned length = textData.length();
 
     if (m_range) {
-        if (&text == m_range->endContainer())
+        if (&text == &m_range->endContainer())
             length = m_range->endOffset();
-        if (&text == m_range->startContainer()) {
+        if (&text == &m_range->startContainer()) {
             start = m_range->startOffset();
             length -= start;
         }

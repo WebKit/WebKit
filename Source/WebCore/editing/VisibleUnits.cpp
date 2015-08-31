@@ -536,10 +536,11 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     if (!next)
         return VisiblePosition(it.atEnd() ? searchRange->startPosition() : pos, DOWNSTREAM);
 
-    Node* node = it.atEnd() ? searchRange->startContainer() : it.range()->startContainer();
-    if ((node->isTextNode() && static_cast<int>(next) <= node->maxCharacterOffset()) || (node->renderer() && node->renderer()->isBR() && !next))
+    Node& node = it.atEnd() ? searchRange->startContainer() : it.range()->startContainer();
+    if ((node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node
-        return VisiblePosition(createLegacyEditingPosition(node, next), DOWNSTREAM);
+        return VisiblePosition(createLegacyEditingPosition(&node, next), DOWNSTREAM);
+    }
 
     // Use the character iterator to translate the next value into a DOM position.
     BackwardsCharacterIterator charIt(*searchRange);

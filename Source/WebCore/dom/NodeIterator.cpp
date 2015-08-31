@@ -79,7 +79,6 @@ bool NodeIterator::NodePointer::moveToPrevious(Node* root)
 NodeIterator::NodeIterator(PassRefPtr<Node> rootNode, unsigned long whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
     : NodeIteratorBase(rootNode, whatToShow, filter, expandEntityReferences)
     , m_referenceNode(root(), true)
-    , m_detached(false)
 {
     root()->document().attachNodeIterator(this);
 }
@@ -89,13 +88,8 @@ NodeIterator::~NodeIterator()
     root()->document().detachNodeIterator(this);
 }
 
-PassRefPtr<Node> NodeIterator::nextNode(JSC::ExecState* state, ExceptionCode& ec)
+RefPtr<Node> NodeIterator::nextNode(JSC::ExecState* state)
 {
-    if (m_detached) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
     RefPtr<Node> result;
 
     m_candidateNode = m_referenceNode;
@@ -115,16 +109,11 @@ PassRefPtr<Node> NodeIterator::nextNode(JSC::ExecState* state, ExceptionCode& ec
     }
 
     m_candidateNode.clear();
-    return result.release();
+    return result;
 }
 
-PassRefPtr<Node> NodeIterator::previousNode(JSC::ExecState* state, ExceptionCode& ec)
+RefPtr<Node> NodeIterator::previousNode(JSC::ExecState* state)
 {
-    if (m_detached) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
     RefPtr<Node> result;
 
     m_candidateNode = m_referenceNode;
@@ -144,14 +133,12 @@ PassRefPtr<Node> NodeIterator::previousNode(JSC::ExecState* state, ExceptionCode
     }
 
     m_candidateNode.clear();
-    return result.release();
+    return result;
 }
 
 void NodeIterator::detach()
 {
-    root()->document().detachNodeIterator(this);
-    m_detached = true;
-    m_referenceNode.node = nullptr;
+    // This is now a no-op as per the DOM specification.
 }
 
 void NodeIterator::nodeWillBeRemoved(Node& removedNode)
@@ -162,7 +149,6 @@ void NodeIterator::nodeWillBeRemoved(Node& removedNode)
 
 void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenceNode) const
 {
-    ASSERT(!m_detached);
     ASSERT(&root()->document() == &removedNode.document());
 
     // Iterator is not affected if the removed node is the reference node and is the root.

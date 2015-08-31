@@ -414,9 +414,6 @@ void WebPage::firstRectForCharacterRange(const EditingRange& editingRange, WebCo
     RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
     if (!range)
         return;
-    
-    ASSERT(range->startContainer());
-    ASSERT(range->endContainer());
      
     IntRect rect = frame.editor().firstRectForRange(range.get());
     resultRect = frame.view()->contentsToWindow(rect);
@@ -544,7 +541,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& ra
     if (range.text().stripWhiteSpace().isEmpty())
         return dictionaryPopupInfo;
     
-    RenderObject* renderer = range.startContainer()->renderer();
+    RenderObject* renderer = range.startContainer().renderer();
     const RenderStyle& style = renderer->style();
 
     Vector<FloatQuad> quads;

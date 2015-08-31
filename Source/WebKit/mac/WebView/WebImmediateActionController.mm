@@ -489,7 +489,7 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
     if (range.text().stripWhiteSpace().isEmpty())
         return popupInfo;
     
-    RenderObject* renderer = range.startContainer()->renderer();
+    RenderObject* renderer = range.startContainer().renderer();
     const RenderStyle& style = renderer->style();
 
     Vector<FloatQuad> quads;

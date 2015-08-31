@@ -804,7 +804,7 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 
 FloatRect RenderObject::absoluteBoundingBoxRectForRange(const Range* range)
 {
-    if (!range || !range->startContainer())
+    if (!range)
         return FloatRect();
 
     range->ownerDocument().updateLayout();

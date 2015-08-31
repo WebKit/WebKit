@@ -1014,7 +1014,9 @@ sub FunctionUsedToRaiseException {
     my $functionName = shift;
 
     return $functionName eq "webkit_dom_document_create_node_iterator"
-        || $functionName eq "webkit_dom_document_create_tree_walker";
+        || $functionName eq "webkit_dom_document_create_tree_walker"
+        || $functionName eq "webkit_dom_node_iterator_next_node"
+        || $functionName eq "webkit_dom_node_iterator_previous_node";
 }
 
 sub GenerateFunction {

@@ -1,3 +1,15 @@
+2015-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Range.detach() / NodeIterator.detach() should be no-ops as per the latest DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=148454
+
+        Reviewed by Ryosuke Niwa.
+
+        Update Range API call sites to reflect changes.
+
+        * WebView/WebImmediateActionController.mm:
+        (dictionaryPopupInfoForRange):
+
 2015-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate GraphicsContexts from pointers to references

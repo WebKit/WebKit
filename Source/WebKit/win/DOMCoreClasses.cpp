@@ -1606,7 +1606,7 @@ HRESULT DOMRange::startContainer(_COM_Outptr_opt_ IDOMNode** node)
     if (!m_range)
         return E_UNEXPECTED;
 
-    *node = DOMNode::createInstance(m_range->startContainer());
+    *node = DOMNode::createInstance(&m_range->startContainer());
 
     return S_OK;
 }
@@ -1632,7 +1632,7 @@ HRESULT DOMRange::endContainer(_COM_Outptr_opt_ IDOMNode** node)
     if (!m_range)
         return E_UNEXPECTED;
 
-    *node = DOMNode::createInstance(m_range->endContainer());
+    *node = DOMNode::createInstance(&m_range->endContainer());
 
     return S_OK;
 }
@@ -1658,8 +1658,7 @@ HRESULT DOMRange::collapsed(_Out_ BOOL* result)
     if (!m_range)
         return E_UNEXPECTED;
 
-    WebCore::ExceptionCode ec = 0;
-    *result = m_range->collapsed(ec);
+    *result = m_range->collapsed();
 
     return S_OK;
 }
@@ -1786,8 +1785,7 @@ HRESULT DOMRange::toString(__deref_opt_out BSTR* str)
     if (!m_range)
         return E_UNEXPECTED;
 
-    WebCore::ExceptionCode ec = 0;
-    *str = BString(m_range->toString(ec)).release();
+    *str = BString(m_range->toString()).release();
 
     return S_OK;
 }

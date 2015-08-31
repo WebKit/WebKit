@@ -25,12 +25,12 @@
     ImplementationLacksVTable
 ] interface Range {
 
-    [GetterRaisesException] readonly attribute Node startContainer;
-    [GetterRaisesException] readonly attribute long startOffset;
-    [GetterRaisesException] readonly attribute Node endContainer;
-    [GetterRaisesException] readonly attribute long endOffset;
-    [GetterRaisesException] readonly attribute boolean collapsed;
-    [GetterRaisesException] readonly attribute Node commonAncestorContainer;
+    readonly attribute Node startContainer;
+    readonly attribute long startOffset;
+    readonly attribute Node endContainer;
+    readonly attribute long endOffset;
+    readonly attribute boolean collapsed;
+    readonly attribute Node commonAncestorContainer;
 
     [ObjCLegacyUnnamedParameters, RaisesException] void setStart([Default=Undefined] optional Node refNode, 
                                  [Default=Undefined] optional long offset);
@@ -40,7 +40,7 @@
     [RaisesException] void setStartAfter([Default=Undefined] optional Node refNode);
     [RaisesException] void setEndBefore([Default=Undefined] optional Node refNode);
     [RaisesException] void setEndAfter([Default=Undefined] optional Node refNode);
-    [RaisesException] void collapse([Default=Undefined] optional boolean toStart);
+    void collapse([Default=Undefined] optional boolean toStart);
     [RaisesException] void selectNode([Default=Undefined] optional Node refNode);
     [RaisesException] void selectNodeContents([Default=Undefined] optional Node refNode);
 
@@ -58,10 +58,10 @@
     [RaisesException] DocumentFragment cloneContents();
     [RaisesException] void insertNode([Default=Undefined] optional Node newNode);
     [RaisesException] void surroundContents([Default=Undefined] optional Node newParent);
-    [RaisesException] Range cloneRange();
-    [RaisesException] DOMString toString();
+    Range cloneRange();
+    DOMString toString();
 
-    [RaisesException] void detach();
+    void detach();
 
 #if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
     // CSSOM View Module API extensions

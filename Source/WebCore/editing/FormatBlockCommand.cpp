@@ -102,14 +102,14 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
     if (!range)
         return nullptr;
 
-    Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
+    Node* commonAncestor = range->commonAncestorContainer();
     while (commonAncestor && !isElementForFormatBlock(commonAncestor))
         commonAncestor = commonAncestor->parentNode();
 
     if (!commonAncestor)
         return nullptr;
 
-    Element* rootEditableElement = range->startContainer()->rootEditableElement();
+    Element* rootEditableElement = range->startContainer().rootEditableElement();
     if (!rootEditableElement || commonAncestor->contains(rootEditableElement))
         return nullptr;
 
