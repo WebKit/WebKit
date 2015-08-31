@@ -64,6 +64,7 @@ use List::Util qw/max/;
 use POSIX qw(strftime);
 use VCSUtils;
 
+sub attributeCommand($$);
 sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($$);
 sub changeLogNameFromArgs($$);
@@ -81,7 +82,7 @@ sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$);
 sub generateFunctionLists($$$$$);
 sub generateFunctionListsByRanges($$$$);
-sub generateNewChangeLogs($$$$$$$$$$$$);
+sub generateNewChangeLogs($$$$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_cpp($$);
@@ -116,6 +117,8 @@ use constant ChangeLogTimeZone => "PST8PDT";
 use constant SVN => "svn";
 use constant GIT => "git";
 use constant SupportedTestExtensions => {map { $_ => 1 } qw(html shtml svg xml xhtml pl php)};
+
+my %attributeCache;
 
 exit(main());
 
@@ -184,7 +187,7 @@ sub main()
     my %paths = processPaths(@ARGV);
 
     # Find the list of modified files
-    my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests) = generateFileList(%paths, $gitCommit, $gitIndex, $mergeBase);
+    my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests, $requiresTests) = generateFileList(%paths, $gitCommit, $gitIndex, $mergeBase);
 
     if (!@$changedFiles && !@$conflictFiles && !keys %$functionLists) {
         print STDERR "  No changes found.\n";
@@ -226,7 +229,7 @@ sub main()
         resolveConflictedChangeLogs($changeLogs);
     }
 
-    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters);
+    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters);
 
     if ($writeChangeLogs) {
         print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -527,9 +530,9 @@ sub resolveConflictedChangeLogs($)
     close RESOLVE;
 }
 
-sub generateNewChangeLogs($$$$$$$$$$$$)
+sub generateNewChangeLogs($$$$$$$$$$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters) = @_;
 
     # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
     foreach my $prefix (@$prefixes) {
@@ -570,7 +573,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$)
 
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
 
-        if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
+        if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/ || @$requiresTests) {
             if (@$addedRegressionTests) {
                 print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @$addedRegressionTests), $endl);
             } else {
@@ -1801,6 +1804,46 @@ sub statusCommand($$$$)
     return "$command 2>&1";
 }
 
+sub attributeCommand($$)
+{
+    my ($file, $attr) = @_;
+
+    my $result;
+    if (isSVN()) {
+        my $foundAttribute = 0;
+        my $subPath = ".";
+        my (@directoryParts) = File::Spec->splitdir($file);
+        foreach my $part (@directoryParts) {
+            if ($part eq ".") {
+                next;
+            }
+            $subPath = File::Spec->join($subPath, $part);
+            $subPath =~ s/^\.\///;
+            if ($foundAttribute || exists $attributeCache{$attr}{$subPath} && $attributeCache{$attr}{$subPath} eq "1") {
+                $attributeCache{$attr}{$subPath} = "1";
+                $foundAttribute = 1;
+                next;
+            }
+            my $command = SVN . " propget $attr $subPath";
+            my $attrib = $attributeCache{$attr}{$subPath} || `$command`;
+            chomp $attrib;
+            if ($attrib eq "1") {
+                $foundAttribute = 1;
+            }
+            $attributeCache{$attr}{$subPath} = $attrib || "0";
+        }
+        $result = $attributeCache{$attr}{$file};
+    } elsif (isGit()) {
+        my $command = GIT . " check-attr $attr -- $file";
+        $result = `$command`;
+        chomp $result;
+        $result =~ s/.*\W(\w)/$1/;
+    }
+
+    $result =~ s/\D//g;
+    return int($result || 0);
+}
+
 sub createPatchCommand($$$$)
 {
     my ($changedFilesString, $gitCommit, $gitIndex, $mergeBase) = @_;
@@ -1925,6 +1968,7 @@ sub generateFileList(\%$$$)
     my @conflictFiles;
     my %functionLists;
     my @addedRegressionTests;
+    my @requiresTests;
     print STDERR "  Running status to find changed, added, or removed files.\n";
     open STAT, "-|", statusCommand($paths, $gitCommit, $gitIndex, $mergeBase) or die "The status failed: $!.\n";
     while (<STAT>) {
@@ -1984,6 +2028,10 @@ sub generateFileList(\%$$$)
                        && $file !~ /-expected(-mismatch)?\.html$/
                        && !scalar(grep(/^resources$/i, @components))
                        && !scalar(grep(/^script-tests$/i, @components));
+            } elsif (attributeCommand($file, "test")) {
+                push @addedRegressionTests, $file;
+            } elsif (attributeCommand($file, "requiresTests")) {
+                push @requiresTests, $file
             }
             push @changedFiles, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status, $gitCommit, $gitIndex) || isConflictStatus($propertyStatus, $gitCommit, $gitIndex)) {
@@ -1995,7 +2043,7 @@ sub generateFileList(\%$$$)
         }
     }
     close STAT;
-    return (\@changedFiles, \@conflictFiles, \%functionLists, \@addedRegressionTests);
+    return (\@changedFiles, \@conflictFiles, \%functionLists, \@addedRegressionTests, \@requiresTests);
 }
 
 sub isUnmodifiedStatus($)

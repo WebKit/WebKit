@@ -1,3 +1,23 @@
+2015-08-31  Jason Marcell  <jmarcell@apple.com>
+
+        Modify prepare-Changelog to be aware of files that are marked as tests as well as files
+        that are marked as requiring corresponding tests.
+        https://bugs.webkit.org/show_bug.cgi?id=148498
+        <rdar://problem/21555314>
+
+        Reviewed by Dan Bernstein and David Kilzer.
+
+        * Scripts/prepare-ChangeLog: Added "attributeCache" to cache Subversion properties in order to
+        simulate Git's attribute behevaior.
+        (main): Added "requiresTests" array to contain files that require tests.
+        (generateNewChangeLogs): Checks "requiresTests" array to determine whether to inject "tests"
+        section in ChangeLog.
+        (attributeCommand): Queries a given file for a given Git attribute value. If using Subversion,
+        however, we check if the file or any containing folder has the given property set to "1" and
+        return 1 if so; return 0 otherwise.
+        (generateFileList): Adds files to "requiresTests" array if Git attribute is set to "1". Also
+        adds files to "addedRegressionTests" array if "test" attribute is set to "1".
+
 2015-08-26  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Determine navigation and content policy before continuing to filter a load
