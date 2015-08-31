@@ -1,3 +1,19 @@
+2015-08-31  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup: 4776765.html. Use repaint rect tracking.
+
+        Unreviewed.
+
+        * fast/repaint/4776765-expected.txt: Added.
+        * fast/repaint/4776765.html:
+        * platform/efl/fast/repaint/4776765-expected.png: Removed.
+        * platform/efl/fast/repaint/4776765-expected.txt: Removed.
+        * platform/gtk/fast/repaint/4776765-expected.png: Removed.
+        * platform/gtk/fast/repaint/4776765-expected.txt: Removed.
+        * platform/mac/fast/repaint/4776765-expected.png: Removed.
+        * platform/mac/fast/repaint/4776765-expected.txt: Removed.
+        * platform/win/fast/repaint/4776765-expected.txt: Removed.
+
 2015-08-31  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark a few tests as failing on Windows.
