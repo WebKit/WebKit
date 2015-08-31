@@ -300,22 +300,10 @@ public:
     {
         return m_technique == InPair;
     }
-
-    JSValueRegs jsValueRegs() const
-    {
-        ASSERT(isInJSValueRegs());
-        return JSValueRegs(tagGPR(), payloadGPR());
-    }
 #else
     bool isInJSValueRegs() const
     {
         return isInGPR();
-    }
-
-    JSValueRegs jsValueRegs() const
-    {
-        ASSERT(isInGPR());
-        return JSValueRegs(gpr());
     }
 #endif
     

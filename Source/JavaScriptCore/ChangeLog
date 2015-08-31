@@ -1,3 +1,10 @@
+2015-08-31  Basile Clement  <basile_clement@apple.com>
+
+        Unreviewed, build fix after r189292
+
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::jsValueRegs): Deleted.
+
 2015-08-24  Basile Clement  <basile_clement@apple.com>
 
         ValueRecovery should distinguish between doubles in an FPR and JSValues in an FPR
