@@ -1,3 +1,21 @@
+2015-08-31  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+        add-table-overpaint.html -> repaint rect tracking + [ Pass Failure] for now.
+        absolute-position-moved.html -> reftest.
+
+        Unreviewed.
+
+        * TestExpectations:
+        * fast/repaint/absolute-position-moved-expected.html: Added.
+        * fast/repaint/absolute-position-moved-expected.png: Removed.
+        * fast/repaint/absolute-position-moved-expected.txt: Removed.
+        * fast/repaint/absolute-position-moved.html:
+        * fast/repaint/add-table-overpaint-expected.png: Removed.
+        * fast/repaint/add-table-overpaint-expected.txt:
+        * fast/repaint/add-table-overpaint.html:
+        * platform/gtk/fast/repaint/add-table-overpaint-expected.png: Removed.
+
 2015-08-31  Aleksandr Skachkov  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Add missed tests for invoking the arrow function that created by 'eval' statement.
