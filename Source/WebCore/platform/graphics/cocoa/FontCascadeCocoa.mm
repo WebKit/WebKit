@@ -206,25 +206,19 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
     }
 }
 
-#if PLATFORM(MAC)
-static void setCGFontRenderingMode(CGContextRef cgContext, NSFontRenderingMode renderingMode, BOOL shouldSubpixelQuantize)
+static void setCGFontRenderingMode(GraphicsContext& context)
 {
-    if (renderingMode == NSFontIntegerAdvancementsRenderingMode) {
-        CGContextSetShouldAntialiasFonts(cgContext, false);
-        return;
-    }
-
+    CGContextRef cgContext = context.platformContext();
     CGContextSetShouldAntialiasFonts(cgContext, true);
 
     CGAffineTransform contextTransform = CGContextGetCTM(cgContext);
-    BOOL isTranslationOrIntegralScale = WTF::isIntegral(contextTransform.a) && WTF::isIntegral(contextTransform.d) && contextTransform.b == 0.f && contextTransform.c == 0.f;
-    BOOL isRotated = ((contextTransform.b || contextTransform.c) && (contextTransform.a || contextTransform.d));
-    BOOL doSubpixelQuantization = isTranslationOrIntegralScale || (!isRotated && shouldSubpixelQuantize);
+    bool isTranslationOrIntegralScale = WTF::isIntegral(contextTransform.a) && WTF::isIntegral(contextTransform.d) && contextTransform.b == 0.f && contextTransform.c == 0.f;
+    bool isRotated = ((contextTransform.b || contextTransform.c) && (contextTransform.a || contextTransform.d));
+    bool doSubpixelQuantization = isTranslationOrIntegralScale || (!isRotated && context.shouldSubpixelQuantizeFonts());
 
-    CGContextSetShouldSubpixelPositionFonts(cgContext, renderingMode != NSFontAntialiasedIntegerAdvancementsRenderingMode || !isTranslationOrIntegralScale);
+    CGContextSetShouldSubpixelPositionFonts(cgContext, true);
     CGContextSetShouldSubpixelQuantizeFonts(cgContext, doSubpixelQuantization);
 }
-#endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 static CGSize dilationSizeForTextColor(const Color& color)
@@ -313,20 +307,14 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 #endif
 #endif
 
-#if !PLATFORM(IOS)
-    NSFont* drawFont = [platformData.nsFont() printerFont];
-#endif
-    
     CGContextSetFont(cgContext, platformData.cgFont());
 
     bool useLetterpressEffect = shouldUseLetterpressEffect(context);
     FloatPoint point = anchorPoint;
 
     CGAffineTransform matrix = CGAffineTransformIdentity;
-#if !PLATFORM(IOS)
-    if (drawFont && !platformData.isColorBitmapFont())
-        matrix = CTFontGetMatrix(reinterpret_cast<CTFontRef>(drawFont));
-#endif
+    if (!platformData.isColorBitmapFont())
+        matrix = CTFontGetMatrix(platformData.font());
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
     if (platformData.m_syntheticOblique) {
@@ -338,11 +326,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     }
     CGContextSetTextMatrix(cgContext, matrix);
 
-#if PLATFORM(IOS)
-    CGContextSetShouldSubpixelQuantizeFonts(cgContext, context.shouldSubpixelQuantizeFonts());
-#else
-    setCGFontRenderingMode(cgContext, [drawFont renderingMode], context.shouldSubpixelQuantizeFonts());
-#endif
+    setCGFontRenderingMode(context);
     CGContextSetFontSize(cgContext, platformData.size());
 
 
