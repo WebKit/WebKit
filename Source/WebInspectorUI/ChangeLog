@@ -1,3 +1,22 @@
+2015-08-31  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Rendering Frame tasks making up < 1% of the selection don't appear in the pie chart
+        https://bugs.webkit.org/show_bug.cgi?id=148549
+
+        Reviewed by Timothy Hatcher.
+
+        Small data points can be invisible or difficult to see in the pie chart. This patch introduces
+        a minimum slice size of 1.5% (determined by visual inspection) for chart items.
+
+        Legend items continue to show the original data point values, not the adjusted values used to
+        draw the chart slices.
+
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        (WebInspector.ChartDetailsSectionRow):
+        (WebInspector.ChartDetailsSectionRow.prototype._updateLayout):
+        Adjust display values up or down as needed, so no data point is less than the
+        minimum and all chart slices still total 100%.
+
 2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "animationEnd" event names should be "animationend" (broken dashboard animation after pause)
