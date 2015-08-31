@@ -132,9 +132,8 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
     for (size_t i = 0; i < redirectCount; i++) {
         RedirectPair redirect = m_redirectChain[i];
         ResourceRequest request(redirect.m_request);
-        bool shouldContinue = true;
-        client->syntheticRedirectReceived(this, request, redirect.m_redirectResponse, shouldContinue);
-        if (!hasClient(c) || !shouldContinue)
+        client->redirectReceived(this, request, redirect.m_redirectResponse);
+        if (!hasClient(c))
             return;
     }
     ASSERT(redirectCount == m_redirectChain.size());

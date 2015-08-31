@@ -1,3 +1,18 @@
+2015-08-26  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Determine navigation and content policy before continuing to filter a load
+        https://bugs.webkit.org/show_bug.cgi?id=148506
+
+        Reviewed by Brady Eidson.
+
+        Added tests for what happens if the content filter does not make a decision when the load finishes.
+
+        * contentfiltering/allow-never-expected.html: Added.
+        * contentfiltering/allow-never.html: Added.
+        * contentfiltering/block-never-expected.html: Added.
+        * contentfiltering/block-never.html: Added.
+        * contentfiltering/resources/contentfiltering.js:
+
 2015-08-31  Zalan Bujtas  <zalan@apple.com>
 
         Repaint cleanup:

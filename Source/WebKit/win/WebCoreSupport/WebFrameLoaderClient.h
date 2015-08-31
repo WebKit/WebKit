@@ -77,7 +77,7 @@ public:
     virtual bool shouldCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&, const unsigned char* data, unsigned long long length);
 
     virtual void dispatchDidHandleOnloadEvents() override;
-    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad(const WebCore::URL&) override;
+    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() override;
     virtual void dispatchDidCancelClientRedirect() override;
     virtual void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, double fireDate) override;
     virtual void dispatchDidChangeLocationWithinPage() override;

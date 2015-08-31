@@ -372,7 +372,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
     if (isRedirect) {
         auto& redirectURL = request.url();
         if (!m_documentLoader->isCommitted())
-            frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad(redirectURL);
+            frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
 
         if (redirectURL.protocolIsData()) {
             // Handle data URL decoding locally.

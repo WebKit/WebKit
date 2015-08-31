@@ -64,7 +64,7 @@ static NSString * const testParameter = @"TestParameter";
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     JSContext *jsContext = [[_browserContextController mainFrame] jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
-    [jsContext setObject:[object valueForKey:keyPath] forKeyedSubscript:keyPath];
+    [jsContext setObject:[object valueForKeyPath:keyPath] forKeyedSubscript:keyPath];
 }
 
 @end

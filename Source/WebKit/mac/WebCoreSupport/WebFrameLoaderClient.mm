@@ -288,7 +288,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
     WebView *webView = getWebView(m_webFrame.get());
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
-    if (!mainResourceLoader || !mainResourceLoader->callingDidReceiveResponse()) {
+    if (!mainResourceLoader) {
         // The resource has already been cached, or the conversion is being attmpted when not calling SubresourceLoader::didReceiveResponse().
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -578,9 +578,9 @@ void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
         CallFrameLoadDelegate(implementations->didHandleOnloadEventsForFrameFunc, webView, @selector(webView:didHandleOnloadEventsForFrame:), m_webFrame.get());
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad(const URL& url)
+void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
-    m_webFrame->_private->provisionalURL = url.string();
+    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader().provisionalDocumentLoader()->url().string();
 
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);

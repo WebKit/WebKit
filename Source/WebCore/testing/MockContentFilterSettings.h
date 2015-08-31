@@ -40,7 +40,8 @@ public:
         AfterRedirect,
         AfterResponse,
         AfterAddData,
-        AfterFinishedAddingData
+        AfterFinishedAddingData,
+        Never
     };
 
     enum class Decision {

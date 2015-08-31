@@ -272,7 +272,7 @@ public:
     virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) override { return false; }
 
     virtual void dispatchDidHandleOnloadEvents() override { }
-    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad(const URL&) override { }
+    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() override { }
     virtual void dispatchDidCancelClientRedirect() override { }
     virtual void dispatchWillPerformClientRedirect(const URL&, double, double) override { }
     virtual void dispatchDidChangeLocationWithinPage() override { }

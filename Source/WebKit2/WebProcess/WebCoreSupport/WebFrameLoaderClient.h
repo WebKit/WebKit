@@ -79,7 +79,7 @@ private:
     virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) override;
     
     virtual void dispatchDidHandleOnloadEvents() override;
-    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad(const WebCore::URL&) override;
+    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() override;
     virtual void dispatchDidChangeProvisionalURL() override;
     virtual void dispatchDidCancelClientRedirect() override;
     virtual void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, double fireDate) override;

@@ -278,20 +278,21 @@ void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
     webPage->injectedBundleLoaderClient().didHandleOnloadEventsForFrame(webPage, m_frame);
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad(const URL& url)
+void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
     WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().provisionalDocumentLoader());
+    const String& url = documentLoader.url().string();
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didReceiveServerRedirectForProvisionalLoadForFrame(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), url.string(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), url, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebFrameLoaderClient::dispatchDidChangeProvisionalURL()

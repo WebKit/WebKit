@@ -307,7 +307,6 @@ namespace WebCore {
         void finishedLoading(double finishTime);
         void mainReceivedError(const ResourceError&);
         WEBCORE_EXPORT virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
-        WEBCORE_EXPORT virtual void syntheticRedirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&, bool& /* shouldContinue */) override;
         WEBCORE_EXPORT virtual void responseReceived(CachedResource*, const ResourceResponse&) override;
         WEBCORE_EXPORT virtual void dataReceived(CachedResource*, const char* data, int length) override;
         WEBCORE_EXPORT virtual void notifyFinished(CachedResource*) override;
@@ -339,9 +338,10 @@ namespace WebCore {
         void clearMainResource();
 
         void cancelPolicyCheckIfNeeded();
+        void becomeMainResourceClient();
 
 #if ENABLE(CONTENT_FILTERING)
-        void becomeMainResourceClientIfFilterAllows();
+        friend class ContentFilter;
         void installContentFilterUnblockHandler(ContentFilter&);
         void contentFilterDidDecide();
 #endif

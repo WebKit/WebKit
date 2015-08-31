@@ -142,7 +142,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_subresourceLoadersArePageCacheAcceptable(false)
     , m_applicationCacheHost(std::make_unique<ApplicationCacheHost>(*this))
 #if ENABLE(CONTENT_FILTERING)
-    , m_contentFilter(!substituteData.isValid() ? ContentFilter::createIfNeeded(std::bind(&DocumentLoader::contentFilterDidDecide, this)) : nullptr)
+    , m_contentFilter(!substituteData.isValid() ? ContentFilter::createIfEnabled(*this) : nullptr)
 #endif
 {
 }
@@ -489,14 +489,6 @@ void DocumentLoader::redirectReceived(CachedResource* resource, ResourceRequest&
     willSendRequest(request, redirectResponse);
 }
 
-void DocumentLoader::syntheticRedirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse, bool& shouldContinue)
-{
-    redirectReceived(resource, request, redirectResponse);
-
-    // If we will soon remove our reference to the CachedRawResource in favor of a SubstituteData load, we don't want to continue receiving synthetic CachedRawResource callbacks.
-    shouldContinue = !m_substituteData.isValid();
-}
-
 void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
@@ -544,8 +536,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     }
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter) {
-        ASSERT(redirectResponse.isNull());
+    if (m_contentFilter && redirectResponse.isNull()) {
         m_contentFilter->willSendRequest(newRequest, redirectResponse);
         if (newRequest.isNull())
             return;
@@ -1462,11 +1453,7 @@ void DocumentLoader::startLoadingMainResource()
         frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
     }
 
-#if ENABLE(CONTENT_FILTERING)
-    becomeMainResourceClientIfFilterAllows();
-#else
-    m_mainResource->addClient(this);
-#endif
+    becomeMainResourceClient();
 
     // A bunch of headers are set when the underlying ResourceLoader is created, and m_request needs to include those.
     if (mainResourceLoader())
@@ -1604,6 +1591,18 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
     return m_shouldOpenExternalURLsPolicy;
 }
 
+void DocumentLoader::becomeMainResourceClient()
+{
+#if ENABLE(CONTENT_FILTERING)
+    if (m_contentFilter && m_contentFilter->state() == ContentFilter::State::Initialized) {
+        // ContentFilter will synthesize CachedRawResourceClient callbacks.
+        m_contentFilter->startFilteringMainResource(*m_mainResource);
+        return;
+    }
+#endif
+    m_mainResource->addClient(this);
+}
+
 #if ENABLE(CONTENT_EXTENSIONS)
 void DocumentLoader::addPendingContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
 {
@@ -1620,16 +1619,6 @@ void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String&
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-void DocumentLoader::becomeMainResourceClientIfFilterAllows()
-{
-    ASSERT(m_mainResource);
-    if (m_contentFilter) {
-        ASSERT(m_contentFilter->state() == ContentFilter::State::Initialized);
-        m_contentFilter->startFilteringMainResource(*m_mainResource);
-    } else
-        m_mainResource->addClient(this);
-}
-
 void DocumentLoader::installContentFilterUnblockHandler(ContentFilter& contentFilter)
 {
     ContentFilterUnblockHandler unblockHandler { contentFilter.unblockHandler() };
@@ -1652,21 +1641,17 @@ void DocumentLoader::contentFilterDidDecide()
     using State = ContentFilter::State;
     ASSERT(m_contentFilter);
     ASSERT(m_contentFilter->state() == State::Blocked || m_contentFilter->state() == State::Allowed);
-    std::unique_ptr<ContentFilter> contentFilter;
-    std::swap(contentFilter, m_contentFilter);
-    if (contentFilter->state() == State::Allowed) {
-        if (m_mainResource)
-            m_mainResource->addClient(this);
+    if (m_contentFilter->state() == State::Allowed)
         return;
-    }
 
-    installContentFilterUnblockHandler(*contentFilter);
+    installContentFilterUnblockHandler(*m_contentFilter);
 
     URL blockedURL;
     blockedURL.setProtocol(ContentFilter::urlScheme());
     blockedURL.setHost(ASCIILiteral("blocked-page"));
-    ResourceResponse response(URL(), ASCIILiteral("text/html"), contentFilter->replacementData()->size(), ASCIILiteral("UTF-8"));
-    SubstituteData substituteData { contentFilter->replacementData(), documentURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
+    auto replacementData = m_contentFilter->replacementData();
+    ResourceResponse response(URL(), ASCIILiteral("text/html"), replacementData->size(), ASCIILiteral("UTF-8"));
+    SubstituteData substituteData { adoptRef(&replacementData.leakRef()), documentURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
     frame()->navigationScheduler().scheduleSubstituteDataLoad(blockedURL, substituteData);
 }
 #endif

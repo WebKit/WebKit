@@ -1,3 +1,49 @@
+2015-08-26  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Determine navigation and content policy before continuing to filter a load
+        https://bugs.webkit.org/show_bug.cgi?id=148506
+
+        Reviewed by Brady Eidson.
+
+        Added download API tests covering every decision and decision point.
+        Removed _WKDownload.AsynchronousDownloadPolicy in favor of these new tests.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig: Added $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport to the header search path.
+        * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Removed it from here.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleParametersPlugIn.mm:
+        (-[BundleParametersPlugIn observeValueForKeyPath:ofObject:change:context:]): Called -valueForKeyPath:, which
+        returns an id, instead of -valueForKey:, which always returns an NSString even if the object is of another type.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm: Added a class that can send a MockContentFilter
+        decision and decision point as a bundle parameter.
+        (+[MockContentFilterEnabler supportsSecureCoding]):
+        (-[MockContentFilterEnabler copyWithZone:]):
+        (-[MockContentFilterEnabler initWithCoder:]):
+        (-[MockContentFilterEnabler initWithDecision:decisionPoint:]):
+        (-[MockContentFilterEnabler encodeWithCoder:]):
+        (configurationWithContentFilterSettings): Added a helper function to create a WKWebViewConfiguration with MockConentFilter settings.
+        (TEST): Renamed ContentFiltering.ServerRedirect to ContentFiltering.URLAfterServerRedirect.
+        (-[BecomeDownloadDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]): Decided _WKNavigationResponsePolicyBecomeDownload.
+        (-[BecomeDownloadDelegate webView:didFailProvisionalNavigation:withError:]): Set isDone to true.
+        (-[BecomeDownloadDelegate webView:didFinishNavigation:]): Ditto.
+        (-[ContentFilteringDownloadDelegate _downloadDidStart:]): Set downloadDidStart to true.
+        (downloadTest): Added a helper function to test downloads with a given decision and decision point.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFilteringPlugIn.mm: Added a corresponding bundle class that decodes
+        the MockContentFilter decision and decision point, and sets these values in the MockContentFilterSettings
+        singleton. This class is duplicated in the bundle to prevent TestWebKitAPI from having to link to WebCoreTestSupport.
+        (+[MockContentFilterEnabler supportsSecureCoding]):
+        (-[MockContentFilterEnabler copyWithZone:]):
+        (-[MockContentFilterEnabler initWithCoder:]):
+        (-[MockContentFilterEnabler dealloc]):
+        (-[MockContentFilterEnabler encodeWithCoder:]):
+        (-[ContentFilteringPlugIn webProcessPlugIn:initializeWithObject:]): Start observing changes to the MockContentFilterEnabler key path.
+        (-[ContentFilteringPlugIn dealloc]): Stop observing.
+        (-[ContentFilteringPlugIn observeValueForKeyPath:ofObject:change:context:]): Store a MockContentFilterEnabler in _contentFilterEnabler.
+        (+[ServerRedirectPlugIn initialize]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[AsynchronousDownloadNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]): Deleted.
+        (-[AsynchronousDownloadDelegate _downloadDidStart:]): Deleted.
+        (TEST): Deleted.
+
 2015-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Skip slow lock tests on Windows/debug

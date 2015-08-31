@@ -1,3 +1,16 @@
+2015-08-27  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Determine navigation and content policy before continuing to filter a load
+        https://bugs.webkit.org/show_bug.cgi?id=148506
+
+        Reviewed by Brady Eidson.
+
+        Deleted part of r188851.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2015-08-31  Chris Dumez  <cdumez@apple.com>
 
         Range.detach() / NodeIterator.detach() should be no-ops as per the latest DOM specification
