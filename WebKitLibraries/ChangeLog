@@ -1,3 +1,10 @@
+2015-08-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * win/lib32/WebKitSystemInterface.lib: Update with VS2015 build of this
+        library to avoid linker errors on build bots.
+
 2015-08-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
