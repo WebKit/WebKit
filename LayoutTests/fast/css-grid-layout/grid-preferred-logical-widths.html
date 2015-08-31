@@ -4,22 +4,24 @@
 <link href="resources/grid.css" rel=stylesheet>
 <link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel=stylesheet>
 <style>
+
+.grid {
+    font: 10px/1 Ahem;
+}
+
 .gridMinContentFixed {
     -webkit-grid-template-columns: minmax(-webkit-min-content, 40px) minmax(-webkit-min-content, 40px);
     -webkit-grid-template-rows: 10px;
-    font: 10px/1 Ahem;
 }
 
 .gridFixedMinContent {
     -webkit-grid-template-columns: minmax(30px, -webkit-min-content) minmax(30px, -webkit-min-content);
     -webkit-grid-template-rows: 10px;
-    font: 10px/1 Ahem;
 }
 
 .gridFixedMaxContent {
     -webkit-grid-template-columns: minmax(40px, -webkit-max-content) minmax(40px, -webkit-max-content);
     -webkit-grid-template-rows: 10px;
-    font: 10px/1 Ahem;
 }
 
 .gridFixedFixed {
@@ -30,7 +32,6 @@
 .gridAutoContent {
     -webkit-grid-template-columns: auto auto;
     -webkit-grid-template-rows: 10px;
-    font: 10px/1 Ahem;
 }
 
 .gridFixedFraction {
@@ -41,95 +42,243 @@
 .margins {
     margin: 10px 20px 30px 40px;
 }
+
+.dummyContainer { }
+
+.minWidth70 {
+    min-width: 70px;
+}
+
+.maxWidth20 {
+    max-width: 20px;
+}
+
 </style>
 </head>
 <script src="../../resources/check-layout.js"></script>
-<body onload="checkLayout('.grid')">
+<body onload="checkLayout('.dummyContainer')">
 <body>
 <p>This test checks that the grid element's preferred logical widths are properly computed with different combinations of minmax().</p>
-<div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="40">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
-</div>
-<div class="grid gridMinContentFixed max-content" data-expected-height="10" data-expected-width="80">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
-</div>
-<div class="grid gridFixedMinContent min-content" data-expected-height="10" data-expected-width="60">
-    <div class="firstRowFirstColumn">XXXXX XXXXX</div>
-    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
-</div>
-<div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="100">
-    <div class="firstRowFirstColumn">XXXXX XXXXX</div>
-    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
-</div>
-<div class="grid gridFixedMaxContent min-content" data-expected-height="10" data-expected-width="80">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
-</div>
-<div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="160">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
-</div>
-<div class="grid gridFixedFixed min-content" data-expected-height="10" data-expected-width="60"></div>
-<div class="grid gridFixedFixed max-content" data-expected-height="10" data-expected-width="80"></div>
-<div class="grid gridAutoContent min-content" data-expected-height="10" data-expected-width="40">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
-</div>
-<div class="grid gridAutoContent max-content" data-expected-height="10" data-expected-width="160">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
+<div class="dummyContainer">
+    <div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="40">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
 </div>
 
-<div class="grid gridFixedFraction min-content" data-expected-height="10" data-expected-width="10"></div>
-<div class="grid gridFixedFraction max-content" data-expected-height="10" data-expected-width="30"></div>
+<div class="dummyContainer">
+    <div class="grid gridMinContentFixed max-content" data-expected-height="10" data-expected-width="80">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
 
+<div class="dummyContainer">
+    <div class="grid gridFixedMinContent min-content" data-expected-height="10" data-expected-width="60">
+        <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+        <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="100">
+        <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+        <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMaxContent min-content" data-expected-height="10" data-expected-width="80">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="160">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedFixed min-content" data-expected-height="10" data-expected-width="60"></div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedFixed max-content" data-expected-height="10" data-expected-width="80"></div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridAutoContent min-content" data-expected-height="10" data-expected-width="40">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridAutoContent max-content" data-expected-height="10" data-expected-width="160">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedFraction min-content" data-expected-height="10" data-expected-width="10"></div>
+</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedFraction max-content" data-expected-height="10" data-expected-width="30"></div>
+</div>
 <!-- Now with margin on one of the grid items. -->
-<div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="100">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn margins">XX XX XX</div>
+<div class="dummyContainer">
+    <div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="100">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn margins">XX XX XX</div>
+    </div>
 </div>
-<div class="grid gridMinContentFixed max-content" data-expected-height="10" data-expected-width="120">
-    <div class="firstRowFirstColumn margins">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridMinContentFixed max-content" data-expected-height="10" data-expected-width="120">
+        <div class="firstRowFirstColumn margins">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
 </div>
-<div class="grid gridFixedMinContent min-content" data-expected-height="10" data-expected-width="60">
-    <div class="firstRowFirstColumn">XXXXX XXXXX</div>
-    <div class="firstRowSecondColumn margins">XXXXX XXXXX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMinContent min-content" data-expected-height="10" data-expected-width="60">
+        <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+        <div class="firstRowSecondColumn margins">XXXXX XXXXX</div>
+    </div>
 </div>
-<div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="160">
-    <div class="firstRowFirstColumn margins">XXXXX XXXXX</div>
-    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="160">
+        <div class="firstRowFirstColumn margins">XXXXX XXXXX</div>
+        <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+    </div>
 </div>
-<div class="grid gridFixedMaxContent min-content" data-expected-height="10" data-expected-width="80">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn margins">XX XX XX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMaxContent min-content" data-expected-height="10" data-expected-width="80">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn margins">XX XX XX</div>
+    </div>
 </div>
-<div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="220">
-    <div class="firstRowFirstColumn margins">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="220">
+        <div class="firstRowFirstColumn margins">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
 </div>
 
 <!-- Spanning cells -->
-<div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="20">
-    <div class="firstRowBothColumn">XX XX XX</div>
+<div class="dummyContainer">
+    <div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="20">
+        <div class="firstRowBothColumn">XX XX XX</div>
+    </div>
 </div>
-<div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="80">
-    <div class="firstRowBothColumn">XXXXX XXXXX</div>
-    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="80">
+        <div class="firstRowBothColumn">XXXXX XXXXX</div>
+        <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+    </div>
 </div>
-<div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="80">
-    <div class="firstRowBothColumn">XX XX XX</div>
-    <div class="firstRowBothColumn">XX XX XX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="80">
+        <div class="firstRowBothColumn">XX XX XX</div>
+        <div class="firstRowBothColumn">XX XX XX</div>
+    </div>
 </div>
-<div class="grid gridAutoContent min-content" data-expected-height="10" data-expected-width="20">
-    <div class="firstRowFirstColumn">XX XX XX</div>
-    <div class="firstRowBothColumn">XX XX XX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridAutoContent min-content" data-expected-height="10" data-expected-width="20">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowBothColumn">XX XX XX</div>
+    </div>
 </div>
-<div class="grid gridAutoContent max-content" data-expected-height="10" data-expected-width="80">
-    <div class="firstRowBothColumn">XX XX XX</div>
-    <div class="firstRowSecondColumn">XX XX XX</div>
+
+<div class="dummyContainer">
+    <div class="grid gridAutoContent max-content" data-expected-height="10" data-expected-width="80">
+        <div class="firstRowBothColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<!-- Grids under min-width / max-width constraints -->
+<div class="dummyContainer min-content" data-expected-height="10" data-expected-width="70">
+    <div class="grid gridMinContentFixed minWidth70" data-expected-height="10" data-expected-width="70">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer max-content" data-expected-height="10" data-expected-width="20">
+    <div class="grid gridMinContentFixed maxWidth20" data-expected-height="10" data-expected-width="20">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer min-content" data-expected-height="10" data-expected-width="70">
+    <div class="grid gridFixedMinContent minWidth70" data-expected-height="10" data-expected-width="70">
+        <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+        <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="dummyContainer max-content" data-expected-height="10" data-expected-width="20">
+    <div class="grid gridFixedMinContent maxWidth20" data-expected-height="10" data-expected-width="20">
+        <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+        <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="dummyContainer min-content" data-expected-height="10" data-expected-width="80">
+    <div class="grid gridFixedMaxContent minWidth70" data-expected-height="10" data-expected-width="80">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer max-content" data-expected-height="10" data-expected-width="20">
+    <div class="grid gridFixedMaxContent maxWidth20" data-expected-height="10" data-expected-width="20">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer min-content" data-expected-height="10" data-expected-width="70">
+    <div class="grid gridFixedFixed minWidth70" data-expected-height="10" data-expected-width="70"></div>
+</div>
+
+<div class="dummyContainer max-content" data-expected-height="10" data-expected-width="20">
+    <div class="grid gridFixedFixed maxWidth20" data-expected-height="10" data-expected-width="20"></div>
+</div>
+
+<div class="dummyContainer min-content" data-expected-height="10" data-expected-width="70">
+    <div class="grid gridAutoContent minWidth70" data-expected-height="10" data-expected-width="70">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer max-content" data-expected-height="10" data-expected-width="20">
+    <div class="grid gridAutoContent maxWidth20" data-expected-height="10" data-expected-width="20">
+        <div class="firstRowFirstColumn">XX XX XX</div>
+        <div class="firstRowSecondColumn">XX XX XX</div>
+    </div>
+</div>
+
+<div class="dummyContainer min-content" data-expected-height="10" data-expected-width="70">
+    <div class="grid gridFixedFraction minWidth70" data-expected-height="10" data-expected-width="70"></div>
+</div>
+
+<div class="dummyContainer max-content" data-expected-height="10" data-expected-width="20">
+    <div class="grid gridFixedFraction maxWidth20" data-expected-height="10" data-expected-width="20"></div>
 </div>
 
 </body>

@@ -311,25 +311,6 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         const_cast<RenderGrid*>(this)->clearGrid();
 }
 
-void RenderGrid::computePreferredLogicalWidths()
-{
-    ASSERT(preferredLogicalWidthsDirty());
-
-    m_minPreferredLogicalWidth = 0;
-    m_maxPreferredLogicalWidth = 0;
-
-    // FIXME: We don't take our own logical width into account. Once we do, we need to make sure
-    // we apply (and test the interaction with) min-width / max-width.
-
-    computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-
-    LayoutUnit borderAndPaddingInInlineDirection = borderAndPaddingLogicalWidth();
-    m_minPreferredLogicalWidth += borderAndPaddingInInlineDirection;
-    m_maxPreferredLogicalWidth += borderAndPaddingInInlineDirection;
-
-    setPreferredLogicalWidthsDirty(false);
-}
-
 void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection direction, GridSizingData& sizingData)
 {
     LayoutUnit availableLogicalSpace = (direction == ForColumns) ? availableLogicalWidth() : availableLogicalHeight(IncludeMarginBorderPadding);

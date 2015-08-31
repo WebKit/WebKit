@@ -1,3 +1,17 @@
+2015-07-31  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Grid containers reporting wrong preferred widths
+        https://bugs.webkit.org/show_bug.cgi?id=147486
+
+        Reviewed by Darin Adler.
+
+        Added new test cases to check the preferred widths reported by
+        grid containers when they are sized under min/max-width
+        constraints.
+
+        * fast/css-grid-layout/grid-preferred-logical-widths-expected.txt:
+        * fast/css-grid-layout/grid-preferred-logical-widths.html:
+
 2015-08-31  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r188820): fast/dom/HTMLObjectElement/object-as-frame.html is flaky

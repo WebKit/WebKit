@@ -61,7 +61,6 @@ private:
     virtual const char* renderName() const override;
     virtual bool isRenderGrid() const override { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    virtual void computePreferredLogicalWidths() override;
 
     class GridIterator;
     class GridSizingData;
