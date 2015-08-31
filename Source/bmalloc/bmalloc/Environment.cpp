@@ -29,6 +29,8 @@
 #include <cstring>
 #if BOS(DARWIN)
 #include <mach-o/dyld.h>
+#elif BOS(UNIX)
+#include <dlfcn.h>
 #endif
 
 namespace bmalloc {
@@ -85,6 +87,13 @@ static bool isASanEnabled()
             return true;
     }
     return false;
+#elif BOS(UNIX)
+    void* handle = dlopen(nullptr, RTLD_NOW);
+    if (!handle)
+        return false;
+    bool result = !!dlsym(handle, "__asan_poison_memory_region");
+    dlclose(handle);
+    return result;
 #else
     return false;
 #endif
