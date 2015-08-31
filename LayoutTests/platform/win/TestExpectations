@@ -952,6 +952,11 @@ webkit.org/b/122166 media/media-controls-invalid-url.html [ Skip ] # Crashing
 webkit.org/b/122166 media/media-volume-slider-rendered-normal.html [ Skip ] # Crashing
 webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Skip ] # Crashing
 
+# 32-bit bug in the bindings.
+webkit.org/b/148602 fast/dom/node-filter-interface.html [ Failure ]
+webkit.org/b/148602 http/tests/w3c/dom/interfaces.html [ Failure ]
+webkit.org/b/148602 http/tests/w3c/dom/traversal/NodeFilter-constants.html [ Failure ]
+
 # Test introduced in r157133 fails. State of colorspace management on Windows is unclear.
 media/video-canvas-drawing-output.html [ Skip ] #  [ Timeout ]
 # Mock media source does not work on Windows
