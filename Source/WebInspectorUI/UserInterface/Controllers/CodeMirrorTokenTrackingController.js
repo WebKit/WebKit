@@ -452,10 +452,26 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
         if (!isProperty && !isKeyword && type.indexOf("variable") === -1 && type.indexOf("def") === -1)
             return null;
 
-        // Not object literal properties.
-        var state = this._hoveredTokenInfo.innerMode.state;
-        if (isProperty && state.lexical && state.lexical.type === "}")
-            return null;
+        // Not object literal property names, but yes if an object literal shorthand property, which is a variable.
+        let state = this._hoveredTokenInfo.innerMode.state;
+        if (isProperty && state.lexical && state.lexical.type === "}") {
+            // Peek ahead to see if the next token is "}" or ",". If it is, we are a shorthand and therefore a variable.
+            let shorthand = false;
+            let mode = this._hoveredTokenInfo.innerMode.mode;
+            let position =  {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.end};
+            WebInspector.walkTokens(this._codeMirror, mode, position, function(tokenType, string) {
+                if (tokenType)
+                    return false;
+                if (string === "," || string === "}") {
+                    shorthand = true;
+                    return false;
+                }
+                return true;
+            });
+
+            if (!shorthand)
+                return null;
+        }
 
         // Only the "this" keyword.
         if (isKeyword && this._hoveredTokenInfo.token.string !== "this")
@@ -465,7 +481,7 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
         var expression = this._hoveredTokenInfo.token.string;
         var expressionStartPosition = {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.start};
         while (true) {
-            var token = this._codeMirror.getTokenAt(expressionStartPosition);            
+            var token = this._codeMirror.getTokenAt(expressionStartPosition);
             if (!token)
                 break;
 

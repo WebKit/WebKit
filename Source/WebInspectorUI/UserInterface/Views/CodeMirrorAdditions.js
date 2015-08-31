@@ -552,3 +552,30 @@ WebInspector.compareCodeMirrorPositions = function(a, b)
     var bColumn = "ch" in b ? b.ch : Number.MAX_VALUE;
     return aColumn - bColumn;
 };
+
+WebInspector.walkTokens = function(cm, mode, initialPosition, callback)
+{
+    let state = CodeMirror.copyState(mode, cm.getTokenAt(initialPosition).state);
+    let lineCount = cm.lineCount();
+
+    let abort = false;
+    for (lineNumber = initialPosition.line; !abort && lineNumber < lineCount; ++lineNumber) {
+        let line = cm.getLine(lineNumber);
+        let stream = new CodeMirror.StringStream(line);
+        if (lineNumber === initialPosition.line)
+            stream.start = stream.pos = initialPosition.ch;
+
+        while (!stream.eol()) {
+            let innerMode = CodeMirror.innerMode(mode, state);
+            let tokenType = mode.token(stream, state);
+            if (!callback(tokenType, stream.current())) {
+                abort = true;
+                break;
+            }
+            stream.start = stream.pos;
+        }
+    }
+
+    if (!abort)
+        callback(null);
+}
