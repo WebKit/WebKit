@@ -1,14 +1,29 @@
 // This tests JSON correctly behaves with Symbol.
 
-if (JSON.stringify(Symbol('Cocoa')) !== undefined)
-    throw "Error: bad value " + JSON.stringify(Symbol('Cocoa'));
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error('bad value: ' + actual);
+}
+
+shouldBe(JSON.stringify(Symbol('Cocoa')), undefined);
 
 var object = {};
 var symbol = Symbol("Cocoa");
 object[symbol] = 42;
 object['Cappuccino'] = 42;
-if (JSON.stringify(object) !== '{"Cappuccino":42}')
-    throw "Error: bad value " + JSON.stringify(object);
+shouldBe(JSON.stringify(object), '{"Cappuccino":42}');
 
-if (JSON.stringify(object, [ Symbol('Cocoa') ]) !== "{}")
-    throw "Error: bad value " + JSON.stringify(object, [ Symbol('Cocoa') ]);
+shouldBe(JSON.stringify(object, [ Symbol('Cocoa') ]), "{}");
+
+// The property that value is Symbol will be ignored.
+shouldBe(JSON.stringify({ cocoa: Symbol('Cocoa'), cappuccino: Symbol('Cappuccino') }), '{}');
+shouldBe(JSON.stringify({ cocoa: Symbol('Cocoa'), cappuccino: 'cappuccino', [Symbol('Matcha')]: 'matcha' }), '{"cappuccino":"cappuccino"}');
+var object = {foo: Symbol()};
+object[Symbol()] = 1;
+shouldBe(JSON.stringify(object), '{}');
+
+// The symbol value included in Array will be converted to null
+shouldBe(JSON.stringify([ Symbol('Cocoa') ]), '[null]');
+shouldBe(JSON.stringify([ "hello", Symbol('Cocoa'), 'world' ]), '["hello",null,"world"]');
+var array = [Symbol()];
+shouldBe(JSON.stringify(array), '[null]');
