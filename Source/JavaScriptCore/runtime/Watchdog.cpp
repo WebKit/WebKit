@@ -51,8 +51,10 @@ Watchdog::Watchdog()
     , m_timerQueue(WorkQueue::create("jsc.watchdog.queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
 {
     m_timerHandler = [this] {
-        LockHolder locker(m_lock);
-        this->m_timerDidFire = true;
+        {
+            LockHolder locker(m_lock);
+            this->m_timerDidFire = true;
+        }
         this->deref();
     };
 }

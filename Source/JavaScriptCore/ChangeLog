@@ -1,3 +1,16 @@
+2015-08-31  Mark Lam  <mark.lam@apple.com>
+
+        Watchdog timer callback should release the lock before deref'ing the watchdog.
+        https://bugs.webkit.org/show_bug.cgi?id=148635
+
+        Reviewed by Filip Pizlo.
+
+        The deref'ing of the watchdog may free it.  The lock may not be available to be unlocked
+        after the deref.
+
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::Watchdog):
+
 2015-08-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] JSON.stringify should ignore object properties that have symbol values and convert the symbol values in array to null
