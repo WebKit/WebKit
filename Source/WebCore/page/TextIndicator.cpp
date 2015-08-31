@@ -189,19 +189,27 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
 
     if ((data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges) && hasNonInlineOrReplacedElements(range))
         data.options |= TextIndicatorOptionPaintAllContent;
-    else
-        frame.selection().getClippedVisibleTextRectangles(textRects, textRectHeight);
+    else {
+        if (data.options & TextIndicatorOptionDoNotClipToVisibleRect)
+            frame.selection().getTextRectangles(textRects, textRectHeight);
+        else
+            frame.selection().getClippedVisibleTextRectangles(textRects, textRectHeight);
+    }
 
     if (textRects.isEmpty()) {
         RenderView* renderView = frame.contentRenderer();
         if (!renderView)
             return false;
-        // Clip to the visible rect, just like getClippedVisibleTextRectangles does.
-        // FIXME: We really want to clip to the unobscured rect in both cases, I think.
-        // (this seems to work on Mac, but maybe not iOS?)
-        FloatRect visibleContentRect = frame.view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
         FloatRect boundingRect = range.absoluteBoundingRect();
-        textRects.append(intersection(visibleContentRect, boundingRect));
+        if (data.options & TextIndicatorOptionDoNotClipToVisibleRect)
+            textRects.append(boundingRect);
+        else {
+            // Clip to the visible rect, just like getClippedVisibleTextRectangles does.
+            // FIXME: We really want to clip to the unobscured rect in both cases, I think.
+            // (this seems to work on Mac, but maybe not iOS?)
+            FloatRect visibleContentRect = frame.view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+            textRects.append(intersection(visibleContentRect, boundingRect));
+        }
     }
 
     FloatRect textBoundingRectInRootViewCoordinates;

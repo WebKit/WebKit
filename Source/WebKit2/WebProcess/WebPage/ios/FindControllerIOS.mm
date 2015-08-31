@@ -33,17 +33,23 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
+#import <WebCore/PathUtilities.h>
+#import <WebCore/Settings.h>
+#import <WebCore/TextIndicator.h>
 
 using namespace WebCore;
 
 const int cornerRadius = 3;
 const int totalHorizontalMargin = 2;
 const int totalVerticalMargin = 1;
+
+const TextIndicatorOptions findTextIndicatorOptions = TextIndicatorOptionTightlyFitContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionDoNotClipToVisibleRect;
 
 static Color highlightColor()
 {
@@ -54,44 +60,46 @@ namespace WebKit {
 
 void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {
-    // FIXME: Support multiple text rects.
+    float scaleFactor = m_frame.page()->deviceScaleFactor();
 
-    IntRect overlayFrame = overlay.frame();
-    IntRect overlayBounds = overlay.bounds();
+    if (m_frame.settings().delegatesPageScaling())
+        scaleFactor *= m_frame.page()->pageScaleFactor();
 
-    {
-        GraphicsContextStateSaver stateSaver(context);
-        Path clipPath;
-        clipPath.addRoundedRect(overlayBounds, FloatSize(cornerRadius, cornerRadius));
-        context.clip(clipPath);
-        context.setFillColor(highlightColor(), ColorSpaceDeviceRGB);
-        context.fillRect(overlayBounds);
-    }
+    // If the page scale changed, we need to paint a new TextIndicator.
+    if (m_textIndicator->contentImageScaleFactor() != scaleFactor)
+        m_textIndicator = TextIndicator::createWithSelectionInFrame(m_frame, findTextIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
 
-    {
-        GraphicsContextStateSaver stateSaver(context);
-        context.translate(-overlayFrame.x(), -overlayFrame.y());
-        m_frame.view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
-        m_frame.view()->paintContents(context, overlayFrame);
-        m_frame.view()->setPaintBehavior(PaintBehaviorNormal);
-    }
+    if (!m_textIndicator)
+        return;
+
+    Image* indicatorImage = m_textIndicator->contentImage();
+    if (!indicatorImage)
+        return;
+
+    Vector<FloatRect> textRectsInBoundingRectCoordinates = m_textIndicator->textRectsInBoundingRectCoordinates();
+    Vector<Path> paths = PathUtilities::pathsWithShrinkWrappedRects(textRectsInBoundingRectCoordinates, cornerRadius);
+
+    context.setFillColor(highlightColor(), ColorSpaceDeviceRGB);
+    for (const auto& path : paths)
+        context.fillPath(path);
+
+    context.drawImage(indicatorImage, ColorSpaceDeviceRGB, overlay.bounds());
 }
 
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
-    IntRect matchRect = enclosingIntRect(selectedFrame.selection().selectionBounds(false));
-    matchRect = selectedFrame.view()->contentsToRootView(matchRect);
-    matchRect.inflateX(totalHorizontalMargin);
-    matchRect.inflateY(totalVerticalMargin);
-
     if (m_findIndicatorOverlay)
         m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_findIndicatorOverlay.get(), PageOverlay::FadeMode::DoNotFade);
 
-    m_findIndicatorOverlayClient = std::make_unique<FindIndicatorOverlayClientIOS>(selectedFrame);
+    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithSelectionInFrame(selectedFrame, findTextIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
+    if (!textIndicator)
+        return false;
+
+    m_findIndicatorOverlayClient = std::make_unique<FindIndicatorOverlayClientIOS>(selectedFrame, textIndicator.get());
     m_findIndicatorOverlay = PageOverlay::create(*m_findIndicatorOverlayClient, PageOverlay::OverlayType::Document);
     m_webPage->mainFrame()->pageOverlayController().installPageOverlay(m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
 
-    m_findIndicatorOverlay->setFrame(matchRect);
+    m_findIndicatorOverlay->setFrame(enclosingIntRect(textIndicator->textBoundingRectInRootViewCoordinates()));
     m_findIndicatorOverlay->setNeedsDisplay();
 
     if (isShowingOverlay || shouldAnimate) {
@@ -106,7 +114,6 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         m_webPage->send(Messages::SmartMagnificationController::Magnify(startRect.center(), renderRect, visibleContentRect, m_webPage->minimumPageScaleFactor(), m_webPage->maximumPageScaleFactor()));
     }
 
-    m_findIndicatorRect = matchRect;
     m_isShowingFindIndicator = true;
     
     return true;
@@ -124,28 +131,38 @@ void FindController::hideFindIndicator()
     didHideFindIndicator();
 }
 
+static void setCompositionSelectionChangeEnabledInAllFrames(WebPage& page, bool enabled)
+{
+    for (Frame* coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext())
+        coreFrame->editor().setIgnoreCompositionSelectionChange(enabled);
+}
+
 void FindController::willFindString()
 {
-    for (Frame* coreFrame = m_webPage->mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
-        coreFrame->editor().setIgnoreCompositionSelectionChange(true);
-        coreFrame->selection().setUpdateAppearanceEnabled(true);
-    }
+    setCompositionSelectionChangeEnabledInAllFrames(*m_webPage, true);
+}
+
+void FindController::didFindString()
+{
+    // If the selection before we enabled appearance updates is equal to the
+    // range that we just found, setSelection will bail and fail to actually call
+    // updateAppearance, so the selection won't have been pushed to the render tree.
+    // Therefore, we need to force an update no matter what.
+
+    Frame& frame = m_webPage->corePage()->focusController().focusedOrMainFrame();
+    frame.selection().setUpdateAppearanceEnabled(true);
+    frame.selection().updateAppearance();
+    frame.selection().setUpdateAppearanceEnabled(false);
 }
 
 void FindController::didFailToFindString()
 {
-    for (Frame* coreFrame = m_webPage->mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
-        coreFrame->selection().setUpdateAppearanceEnabled(false);
-        coreFrame->editor().setIgnoreCompositionSelectionChange(false);
-    }
+    setCompositionSelectionChangeEnabledInAllFrames(*m_webPage, false);
 }
 
 void FindController::didHideFindIndicator()
 {
-    for (Frame* coreFrame = m_webPage->mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
-        coreFrame->selection().setUpdateAppearanceEnabled(false);
-        coreFrame->editor().setIgnoreCompositionSelectionChange(false);
-    }
+    setCompositionSelectionChangeEnabledInAllFrames(*m_webPage, false);
 }
 
 } // namespace WebKit

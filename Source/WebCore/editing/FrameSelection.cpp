@@ -2081,21 +2081,29 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
     if (!root)
         return;
 
+    Vector<FloatRect> textRects;
+    getTextRectangles(textRects, textRectHeight);
+
+    FloatRect visibleContentRect = m_frame->view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+
+    for (const auto& rect : textRects) {
+        FloatRect intersectionRect = intersection(rect, visibleContentRect);
+        if (!intersectionRect.isEmpty())
+            rectangles.append(intersectionRect);
+    }
+}
+
+void FrameSelection::getTextRectangles(Vector<FloatRect>& rectangles, TextRectangleHeight textRectHeight) const
+{
     RefPtr<Range> range = toNormalizedRange();
     if (!range)
         return;
 
-    FloatRect visibleContentRect = m_frame->view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-
     Vector<FloatQuad> quads;
     range->absoluteTextQuads(quads, textRectHeight == TextRectangleHeight::SelectionHeight);
 
-    size_t size = quads.size();
-    for (size_t i = 0; i < size; ++i) {
-        FloatRect intersectionRect = intersection(quads[i].enclosingBoundingBox(), visibleContentRect);
-        if (!intersectionRect.isEmpty())
-            rectangles.append(intersectionRect);
-    }
+    for (const auto& quad : quads)
+        rectangles.append(quad.enclosingBoundingBox());
 }
 
 // Scans logically forward from "start", including any child frames.

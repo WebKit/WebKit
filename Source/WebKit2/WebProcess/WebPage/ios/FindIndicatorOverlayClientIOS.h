@@ -30,12 +30,17 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/PageOverlay.h>
 
+namespace WebCore {
+class TextIndicator;
+}
+
 namespace WebKit {
 
 class FindIndicatorOverlayClientIOS : public WebCore::PageOverlay::Client {
 public:
-    FindIndicatorOverlayClientIOS(WebCore::Frame& frame)
+    FindIndicatorOverlayClientIOS(WebCore::Frame& frame, WebCore::TextIndicator* textIndicator)
         : m_frame(frame)
+        , m_textIndicator(textIndicator)
     {
     }
 
@@ -47,6 +52,7 @@ private:
     virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override { return false; }
 
     WebCore::Frame& m_frame;
+    RefPtr<WebCore::TextIndicator> m_textIndicator;
 };
 
 } // namespace WebKit

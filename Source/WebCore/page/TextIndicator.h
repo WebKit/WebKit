@@ -84,6 +84,10 @@ enum TextIndicatorOption : uint8_t {
     // By default, TextIndicator removes any margin if the given Range matches the
     // selection Range. If this option is set, maintain the margin in any case.
     TextIndicatorOptionIncludeMarginIfRangeMatchesSelection = 1 << 6,
+
+    // By default, TextIndicator clips the indicated rects to the visible content rect.
+    // If this option is set, do not clip the indicated rects.
+    TextIndicatorOptionDoNotClipToVisibleRect = 1 << 7,
 };
 typedef uint8_t TextIndicatorOptions;
 

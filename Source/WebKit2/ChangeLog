@@ -1,3 +1,33 @@
+2015-08-31  Tim Horton  <timothy_horton@apple.com>
+
+        iOS WebKit2 find-in-page doesn't support multi-line results, is often blank
+        https://bugs.webkit.org/show_bug.cgi?id=148599
+        <rdar://problem/17914031>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        (WebKit::FindController::didFindString):
+        * WebProcess/WebPage/FindController.h:
+        Add didFindString() for FindControllerIOS.
+
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindIndicatorOverlayClientIOS::drawRect):
+        (WebKit::FindController::updateFindIndicator):
+        (WebKit::setCompositionSelectionChangeEnabledInAllFrames):
+        (WebKit::FindController::willFindString):
+        (WebKit::FindController::didFindString):
+        (WebKit::FindController::didFailToFindString):
+        (WebKit::FindController::didHideFindIndicator):
+        * WebProcess/WebPage/ios/FindIndicatorOverlayClientIOS.h:
+        (WebKit::FindIndicatorOverlayClientIOS::FindIndicatorOverlayClientIOS):
+        Adopt TextIndicator and shrink-wrapping.
+
+        We'll re-create the indicator if the device/page scale factor change;
+        this is the only case in which a TextIndicator sticks around when
+        page scale changes -- we should come up with a better model!
+
 2015-08-31  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Stale content after back navigation

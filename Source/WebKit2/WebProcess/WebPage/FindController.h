@@ -84,6 +84,7 @@ private:
     void updateFindUIAfterPageScroll(bool found, const String&, FindOptions, unsigned maxMatchCount);
 
     void willFindString();
+    void didFindString();
     void didFailToFindString();
     void didHideFindIndicator();
 

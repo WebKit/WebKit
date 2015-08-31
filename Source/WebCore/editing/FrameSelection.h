@@ -262,6 +262,7 @@ public:
 
     enum class TextRectangleHeight { TextHeight, SelectionHeight };
     WEBCORE_EXPORT void getClippedVisibleTextRectangles(Vector<FloatRect>&, TextRectangleHeight = TextRectangleHeight::SelectionHeight) const;
+    WEBCORE_EXPORT void getTextRectangles(Vector<FloatRect>&, TextRectangleHeight = TextRectangleHeight::SelectionHeight) const;
 
     WEBCORE_EXPORT HTMLFormElement* currentForm() const;
 

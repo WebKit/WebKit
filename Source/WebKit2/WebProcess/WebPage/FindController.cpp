@@ -234,11 +234,15 @@ void FindController::findString(const String& string, FindOptions options, unsig
     else
         found = m_webPage->corePage()->findString(string, coreOptions);
 
-    if (found && !foundStringStartsAfterSelection) {
-        if (options & FindOptionsBackwards)
-            m_foundStringMatchIndex--;
-        else
-            m_foundStringMatchIndex++;
+    if (found) {
+        didFindString();
+
+        if (!foundStringStartsAfterSelection) {
+            if (options & FindOptionsBackwards)
+                m_foundStringMatchIndex--;
+            else
+                m_foundStringMatchIndex++;
+        }
     }
 
     RefPtr<WebPage> protectedWebPage = m_webPage;
@@ -345,6 +349,10 @@ void FindController::hideFindIndicator()
 }
 
 void FindController::willFindString()
+{
+}
+
+void FindController::didFindString()
 {
 }
 
