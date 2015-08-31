@@ -1,3 +1,39 @@
+2015-08-24  Basile Clement  <basile_clement@apple.com>
+
+        ValueRecovery should distinguish between doubles in an FPR and JSValues in an FPR
+        https://bugs.webkit.org/show_bug.cgi?id=148336
+
+        Reviewed by Michael Saboff.
+
+        Currently, ValueRecovery::InFPR means "this is a *double* value in an
+        FPR". Let's change the semantics to be "this is a *JSValue* in an FPR"
+        (to match ValueRecovery::InGPR), and introduce
+        ValueRecovery::UnboxedDoubleInFPR to mean "this is a double value in an
+        FPR".
+
+        * bytecode/ValueRecovery.cpp:
+        (JSC::ValueRecovery::dumpInContext):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::operator bool):
+        (JSC::ValueRecovery::inFPR):
+        (JSC::ValueRecovery::isInGPR):
+        (JSC::ValueRecovery::isInFPR):
+        (JSC::ValueRecovery::isInRegisters):
+        (JSC::ValueRecovery::isInJSStack):
+        (JSC::ValueRecovery::dataFormat):
+        (JSC::ValueRecovery::gpr):
+        (JSC::ValueRecovery::isInJSValueRegs):
+        (JSC::ValueRecovery::jsValueRegs):
+        (JSC::ValueRecovery::fpr):
+        (JSC::ValueRecovery::virtualRegister):
+        (JSC::ValueRecovery::constant):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+
 2015-08-31  Chris Dumez  <cdumez@apple.com>
 
         NodeFilter.SHOW_ALL has wrong value on 32-bit

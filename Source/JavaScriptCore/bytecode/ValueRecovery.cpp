@@ -86,6 +86,9 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
     case InFPR:
         out.print(fpr());
         return;
+    case UnboxedDoubleInFPR:
+        out.print("double(", fpr(), ")");
+        return;
 #if USE(JSVALUE32_64)
     case InPair:
         out.print("pair(", tagGPR(), ", ", payloadGPR(), ")");

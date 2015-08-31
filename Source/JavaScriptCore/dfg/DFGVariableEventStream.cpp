@@ -209,7 +209,7 @@ void VariableEventStream::reconstruct(
         
         if (info.filled) {
             if (info.format == DataFormatDouble) {
-                valueRecoveries[i] = ValueRecovery::inFPR(info.u.fpr);
+                valueRecoveries[i] = ValueRecovery::inFPR(info.u.fpr, DataFormatDouble);
                 continue;
             }
 #if USE(JSVALUE32_64)
