@@ -225,17 +225,19 @@ static AliasStrength strengthOfFirstAlias(const FcPattern& original)
 
     FcUniquePtr<FcLangSet> strongLangSet(FcLangSetCreate());
     FcLangSetAdd(strongLangSet.get(), reinterpret_cast<const FcChar8*>("nomatchlang"));
-    RefPtr<FcPattern> strong = adoptRef(FcPatternDuplicate(pattern.get()));
-    FcPatternAddLangSet(strong.get(), FC_LANG, strongLangSet.get());
+    // Ownership of this FcPattern will be transferred with FcFontSetAdd.
+    FcPattern* strong = FcPatternDuplicate(pattern.get());
+    FcPatternAddLangSet(strong, FC_LANG, strongLangSet.get());
 
     FcUniquePtr<FcLangSet> weakLangSet(FcLangSetCreate());
     FcLangSetAdd(weakLangSet.get(), reinterpret_cast<const FcChar8*>("matchlang"));
-    RefPtr<FcPattern> weak(FcPatternCreate());
-    FcPatternAddString(weak.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>("nomatchstring"));
-    FcPatternAddLangSet(weak.get(), FC_LANG, weakLangSet.get());
+    // Ownership of this FcPattern will be transferred via FcFontSetAdd.
+    FcPattern* weak = FcPatternCreate();
+    FcPatternAddString(weak, FC_FAMILY, reinterpret_cast<const FcChar8*>("nomatchstring"));
+    FcPatternAddLangSet(weak, FC_LANG, weakLangSet.get());
 
-    FcFontSetAdd(fontSet.get(), strong.leakRef());
-    FcFontSetAdd(fontSet.get(), weak.leakRef());
+    FcFontSetAdd(fontSet.get(), strong);
+    FcFontSetAdd(fontSet.get(), weak);
 
     // Add 'matchlang' to the copy of the pattern.
     FcPatternAddLangSet(pattern.get(), FC_LANG, weakLangSet.get());
