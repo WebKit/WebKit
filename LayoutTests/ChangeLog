@@ -1,3 +1,9 @@
+2015-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark new http/tests/w3c/dom/nodes/ParentNode-querySelector-All-xhtml.xhtml as flaky.
+
+        * TestExpectations:
+
 2015-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         Add test expectations for:
