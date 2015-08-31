@@ -79,10 +79,17 @@ if (USE_LD_GOLD)
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags")
     else ()
         message(WARNING "GNU gold linker isn't available, using the default system linker.")
+        set(USE_LD_GOLD OFF)
     endif ()
 endif ()
 
-option(DEBUG_FISSION "Use Debug Fission support")
+set(ENABLE_DEBUG_FISSION_DEFAULT OFF)
+if (USE_LD_GOLD AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(ENABLE_DEBUG_FISSION_DEFAULT ON)
+endif ()
+
+option(DEBUG_FISSION "Use Debug Fission support" ${ENABLE_DEBUG_FISSION_DEFAULT})
+
 if (DEBUG_FISSION)
     if (NOT USE_LD_GOLD)
         message(FATAL_ERROR "Need GNU gold linker for Debug Fission support")
