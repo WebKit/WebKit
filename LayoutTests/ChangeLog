@@ -1,3 +1,18 @@
+2015-08-31  Aleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Add missed tests for invoking the arrow function that created by 'eval' statement.
+        https://bugs.webkit.org/show_bug.cgi?id=148445
+
+        Reviewed by Yusuke Suzuki.
+       
+        Added tests, that cover cases, when arrow function is created by 'eval' statement and then invoking it. 
+        This case was missed in previous patches that are related to arrow function, also it is important to 
+        test different cases of ending arrow function in 'eval' and invoking created arrow function because 
+        of reparsing during function invocation.
+
+        * js/arrowfunction-syntax-endings-expected.txt:
+        * js/script-tests/arrowfunction-syntax-endings.js:
+
 2015-08-31  Zalan Bujtas  <zalan@apple.com>
 
         Repaint cleanup:

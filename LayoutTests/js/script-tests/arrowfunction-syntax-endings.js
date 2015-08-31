@@ -32,4 +32,25 @@ var f = function () {
 
 shouldBe('f()', '39');
 
+eval('var af = x=>x*2');
+debug("eval('var af = x=>x*2')");
+shouldBe('af(10)','20');
+
+eval('var af1 = x=>x*3, af2=x=>x*4');
+debug("eval('var af1 = x=>x*3, af2=x=>x*4')");
+shouldBe('af1(10)','30');
+shouldBe('af2(10)','40');
+
+eval('var af3 = x=>x*3;');
+debug("eval('var af1 = x=>x*3;')");
+shouldBe('af3(10)','30');
+
+eval('var af4 = x=>(x*3)');
+debug("eval('var af4 = x=>(x*3)')");
+shouldBe('af4(10)','30');
+
+eval('var af5 = x => { return x*3; }');
+debug("eval('var af5 = x=> { return x*3; }')");
+shouldBe('af5(10)','30');
+
 var successfullyParsed = true;
