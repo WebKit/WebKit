@@ -87,6 +87,15 @@ void runLockTest(unsigned numThreadGroups, unsigned numThreadsPerGroup, unsigned
     }
 }
 
+bool skipSlow()
+{
+#if PLATFORM(WIN) && !defined(NDEBUG)
+    return true;
+#else
+    return false;
+#endif
+}
+
 TEST(WTF_WordLock, UncontendedShortSection)
 {
     runLockTest<WordLock>(1, 1, 1, 10000000);
@@ -99,21 +108,29 @@ TEST(WTF_WordLock, UncontendedLongSection)
 
 TEST(WTF_WordLock, ContendedShortSection)
 {
+    if (skipSlow())
+        return;
     runLockTest<WordLock>(1, 10, 1, 5000000);
 }
 
 TEST(WTF_WordLock, ContendedLongSection)
 {
+    if (skipSlow())
+        return;
     runLockTest<WordLock>(1, 10, 10000, 10000);
 }
 
 TEST(WTF_WordLock, ManyContendedShortSections)
 {
+    if (skipSlow())
+        return;
     runLockTest<WordLock>(10, 10, 1, 500000);
 }
 
 TEST(WTF_WordLock, ManyContendedLongSections)
 {
+    if (skipSlow())
+        return;
     runLockTest<WordLock>(10, 10, 10000, 500);
 }
 
@@ -129,31 +146,43 @@ TEST(WTF_Lock, UncontendedLongSection)
 
 TEST(WTF_Lock, ContendedShortSection)
 {
+    if (skipSlow())
+        return;
     runLockTest<Lock>(1, 10, 1, 10000000);
 }
 
 TEST(WTF_Lock, ContendedLongSection)
 {
+    if (skipSlow())
+        return;
     runLockTest<Lock>(1, 10, 10000, 10000);
 }
 
 TEST(WTF_Lock, ManyContendedShortSections)
 {
+    if (skipSlow())
+        return;
     runLockTest<Lock>(10, 10, 1, 500000);
 }
 
 TEST(WTF_Lock, ManyContendedLongSections)
 {
+    if (skipSlow())
+        return;
     runLockTest<Lock>(10, 10, 10000, 1000);
 }
 
 TEST(WTF_Lock, ManyContendedLongerSections)
 {
+    if (skipSlow())
+        return;
     runLockTest<Lock>(10, 10, 100000, 1);
 }
 
 TEST(WTF_Lock, SectionAddressCollision)
 {
+    if (skipSlow())
+        return;
     runLockTest<Lock>(4, 2, 10000, 2000);
 }
 

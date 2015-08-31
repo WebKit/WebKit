@@ -1,3 +1,23 @@
+2015-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Skip slow lock tests on Windows/debug
+        https://bugs.webkit.org/show_bug.cgi?id=148643
+
+        Reviewed by Alexey Proskuryakov.
+
+        The lock tests simulate a critical section by doing some floating point math, and then either
+        make those critical sections very long or invoke them many times. This appears to be
+        particularly slow on Windows in debug mode, maybe because Visual Studio's debug build makes
+        that kind of computation slow.
+
+        These tests are almost as useful in release as they are in debug, so it's probably better to
+        just skip the in debug on platforms where this causes timeouts.
+
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::runLockTest):
+        (TestWebKitAPI::skipSlow):
+        (TestWebKitAPI::TEST):
+
 2015-08-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: When navigating the elements of a scrollable element with VoiceOver, the scrollTop() position of the element does not permanently change
