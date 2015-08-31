@@ -406,7 +406,7 @@ void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, Graphics
 {
     context.save();
     context.clip(rectToPaint);
-    core(&m_webView)->mainFrame().view()->paint(&context, enclosingIntRect(rectToPaint));
+    core(&m_webView)->mainFrame().view()->paint(context, enclosingIntRect(rectToPaint));
     context.restore();
 }
 

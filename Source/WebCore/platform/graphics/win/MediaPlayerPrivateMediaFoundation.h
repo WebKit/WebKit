@@ -75,7 +75,7 @@ public:
 
     virtual void setSize(const IntSize&);
 
-    virtual void paint(GraphicsContext*, const FloatRect&);
+    virtual void paint(GraphicsContext&, const FloatRect&) override;
 
 private:
     MediaPlayer* m_player;

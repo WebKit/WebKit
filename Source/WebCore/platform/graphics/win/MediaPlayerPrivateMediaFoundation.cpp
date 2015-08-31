@@ -251,9 +251,9 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
     m_videoDisplay->SetVideoPosition(nullptr, &rc);
 }
 
-void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext* context, const FloatRect& rect)
+void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const FloatRect& rect)
 {
-    if (context->paintingDisabled()
+    if (context.paintingDisabled()
         || !m_player->visible())
         return;
 

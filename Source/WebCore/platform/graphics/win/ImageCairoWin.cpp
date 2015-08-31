@@ -81,7 +81,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     if (size)
         drawFrameMatchingSourceSize(gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), *size, ColorSpaceDeviceRGB, CompositeCopy);
     else
-        draw(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy, BlendModeNormal, ImageOrientationDescription());
+        draw(gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy, BlendModeNormal, ImageOrientationDescription());
 
     // Do cleanup
     cairo_destroy(targetRef);

@@ -1,3 +1,13 @@
+2015-08-31  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Fix the WinCairo build after landing of webkit.org/b/148561.
+        https://bugs.webkit.org/show_bug.cgi?id=148627
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::paintContents):
+
 2015-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the Windows build more after r189144
