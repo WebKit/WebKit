@@ -1545,6 +1545,17 @@ webkit.org/b/140867 [ Debug ] accessibility/focusable-div.html [ Skip ]
 [ Debug ] accessibility/heading-title-includes-links.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/spinbutton-value.html [ Skip ]
 
+# Missing support for scrollTo* methods.
+accessibility/scroll-to-global-point-iframe-nested.html [ Skip ]
+accessibility/scroll-to-global-point-iframe.html [ Skip ]
+accessibility/scroll-to-global-point-main-window.html [ Skip ]
+accessibility/scroll-to-global-point-nested.html [ Skip ]
+accessibility/scroll-to-make-visible-div-overflow.html [ Skip ]
+accessibility/scroll-to-make-visible-iframe.html [ Skip ]
+accessibility/scroll-to-make-visible-nested-2.html [ Skip ]
+accessibility/scroll-to-make-visible-nested.html [ Skip ]
+accessibility/scroll-to-make-visible-with-subfocus.html [ Skip ]
+
 # Apparently missing support for roleDescription on Windows.
 accessibility/aria-roledescription.html [ Failure ]
 
