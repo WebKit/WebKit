@@ -42,6 +42,7 @@
 #include "VM.h"
 #include "JSEnvironmentRecord.h"
 #include "JSGlobalObject.h"
+#include "JSModuleRecord.h"
 #include "JSObject.h"
 #include "JSStack.h"
 #include "JSString.h"

@@ -132,8 +132,8 @@ void Data::performAssertions(VM& vm)
     ASSERT(maxFrameExtentForSlowPathCall == 64);
 #endif
     ASSERT(StringType == 6);
-    ASSERT(ObjectType == 19);
-    ASSERT(FinalObjectType == 20);
+    ASSERT(ObjectType == 21);
+    ASSERT(FinalObjectType == 22);
     ASSERT(MasqueradesAsUndefined == 1);
     ASSERT(ImplementsHasInstance == 2);
     ASSERT(ImplementsDefaultHasInstance == 8);
@@ -141,6 +141,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(GlobalCode == 0);
     ASSERT(EvalCode == 1);
     ASSERT(FunctionCode == 2);
+    ASSERT(ModuleCode == 3);
 
     static_assert(GlobalProperty == 0, "LLInt assumes GlobalProperty ResultType is == 0");
     static_assert(GlobalVar == 1, "LLInt assumes GlobalVar ResultType is == 1");

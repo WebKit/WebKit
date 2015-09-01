@@ -2319,7 +2319,7 @@ template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerT
     }
 
     semanticFailIfTrue(localNameToken.m_type & KeywordTokenFlag, "Cannot use keyword as imported binding name");
-    DeclarationResultMask declarationResult = declareVariable(localName, DeclarationType::ConstDeclaration, DeclarationImportType::Imported);
+    DeclarationResultMask declarationResult = declareVariable(localName, DeclarationType::ConstDeclaration, (specifierType == ImportSpecifierType::NamespaceImport) ? DeclarationImportType::ImportedNamespace : DeclarationImportType::Imported);
     if (declarationResult != DeclarationResult::Valid) {
         failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot declare an imported binding named ", localName->impl(), " in strict mode");
         if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
@@ -2560,10 +2560,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             // does not have effect on the current module's scope. But,
             //   export { A, B, C as D }
             // will reference the current module's bindings.
-            for (const Identifier* localName : maybeLocalNames) {
-                currentScope()->useVariable(localName, m_vm->propertyNames->eval == *localName);
+            for (const Identifier* localName : maybeLocalNames)
                 currentScope()->moduleScopeData().exportBinding(*localName);
-            }
         }
 
         return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName);

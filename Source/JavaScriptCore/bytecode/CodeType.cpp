@@ -42,6 +42,9 @@ void printInternal(PrintStream& out, JSC::CodeType codeType)
     case JSC::FunctionCode:
         out.print("Function");
         return;
+    case JSC::ModuleCode:
+        out.print("Module");
+        return;
     default:
         CRASH();
         return;

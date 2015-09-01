@@ -40,6 +40,7 @@ public:
     ALWAYS_INLINE bool isLet() const { return m_bits & IsLet; }
     ALWAYS_INLINE bool isExported() const { return m_bits & IsExported; }
     ALWAYS_INLINE bool isImported() const { return m_bits & IsImported; }
+    ALWAYS_INLINE bool isImportedNamespace() const { return m_bits & IsImportedNamespace; }
 
     ALWAYS_INLINE void setIsCaptured() { m_bits |= IsCaptured; }
     ALWAYS_INLINE void setIsConst() { m_bits |= IsConst; }
@@ -47,6 +48,7 @@ public:
     ALWAYS_INLINE void setIsLet() { m_bits |= IsLet; }
     ALWAYS_INLINE void setIsExported() { m_bits |= IsExported; }
     ALWAYS_INLINE void setIsImported() { m_bits |= IsImported; }
+    ALWAYS_INLINE void setIsImportedNamespace() { m_bits |= IsImportedNamespace; }
 
     ALWAYS_INLINE void clearIsVar() { m_bits &= ~IsVar; }
 
@@ -57,7 +59,8 @@ private:
         IsVar = 1 << 2,
         IsLet = 1 << 3,
         IsExported = 1 << 4,
-        IsImported = 1 << 5
+        IsImported = 1 << 5,
+        IsImportedNamespace = 1 << 6
     };
     uint8_t m_bits { 0 };
 };
@@ -79,6 +82,8 @@ public:
     ALWAYS_INLINE unsigned size() const { return m_map.size(); }
     ALWAYS_INLINE bool contains(const RefPtr<UniquedStringImpl>& identifier) const { return m_map.contains(identifier); }
     ALWAYS_INLINE bool remove(const RefPtr<UniquedStringImpl>& identifier) { return m_map.remove(identifier); }
+    ALWAYS_INLINE Map::iterator find(const RefPtr<UniquedStringImpl>& identifier) { return m_map.find(identifier); }
+    ALWAYS_INLINE Map::const_iterator find(const RefPtr<UniquedStringImpl>& identifier) const { return m_map.find(identifier); }
     void swap(VariableEnvironment& other);
     void markVariableAsCapturedIfDefined(const RefPtr<UniquedStringImpl>& identifier);
     void markVariableAsCaptured(const RefPtr<UniquedStringImpl>& identifier);

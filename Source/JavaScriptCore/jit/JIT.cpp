@@ -486,6 +486,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     
     switch (m_codeBlock->codeType()) {
     case GlobalCode:
+    case ModuleCode:
     case EvalCode:
         m_codeBlock->m_shouldAlwaysBeInlined = false;
         break;

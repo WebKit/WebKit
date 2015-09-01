@@ -54,8 +54,10 @@ class JSScope;
 class JSWASMModule;
 class LLIntOffsetsExtractor;
 class ProgramCodeBlock;
+class ModuleProgramCodeBlock;
+class JSScope;
 class WebAssemblyCodeBlock;
-    
+
 enum CompilationKind { FirstCompilation, OptimizingCompilation };
 
 inline bool isCall(CodeSpecializationKind kind)
@@ -106,6 +108,11 @@ public:
     {
         return type() == ProgramExecutableType;
     }
+    bool isModuleProgramExecutable()
+    {
+        return type() == ModuleProgramExecutableType;
+    }
+
 
     bool isHostFunction() const
     {
@@ -550,6 +557,49 @@ private:
     RefPtr<ProgramCodeBlock> m_programCodeBlock;
 };
 
+class ModuleProgramExecutable final : public ScriptExecutable {
+    friend class LLIntOffsetsExtractor;
+public:
+    typedef ScriptExecutable Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    static ModuleProgramExecutable* create(ExecState*, const SourceCode&);
+
+    static void destroy(JSCell*);
+
+    ModuleProgramCodeBlock* codeBlock()
+    {
+        return m_moduleProgramCodeBlock.get();
+    }
+
+    PassRefPtr<JITCode> generatedJITCode()
+    {
+        return generatedJITCodeForCall();
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+    {
+        return Structure::create(vm, globalObject, proto, TypeInfo(ModuleProgramExecutableType, StructureFlags), info());
+    }
+
+    DECLARE_INFO;
+
+    void clearCode();
+
+    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, false); }
+    UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock() { return m_unlinkedModuleProgramCodeBlock.get(); }
+
+private:
+    friend class ScriptExecutable;
+
+    ModuleProgramExecutable(ExecState*, const SourceCode&);
+
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    WriteBarrier<UnlinkedModuleProgramCodeBlock> m_unlinkedModuleProgramCodeBlock;
+    RefPtr<ModuleProgramCodeBlock> m_moduleProgramCodeBlock;
+};
+
 class FunctionExecutable final : public ScriptExecutable {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
@@ -742,6 +792,8 @@ inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
     case WebAssemblyExecutableType:
         return jsCast<WebAssemblyExecutable*>(executable)->clearCode();
 #endif
+    case ModuleProgramExecutableType:
+        return jsCast<ModuleProgramExecutable*>(executable)->clearCode();
     default:
         return jsCast<NativeExecutable*>(executable)->clearCode();
     }

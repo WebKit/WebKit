@@ -46,6 +46,7 @@ MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM*);
 MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM*);
 MacroAssemblerCodeRef evalEntryThunkGenerator(VM*);
 MacroAssemblerCodeRef programEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef moduleProgramEntryThunkGenerator(VM*);
 
 } } // namespace JSC::LLInt
 

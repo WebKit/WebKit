@@ -54,8 +54,10 @@ namespace JSC {
     class JSArrowFunction;
     class JSFunction;
     class JSGlobalObject;
+    class JSModuleRecord;
     class LLIntOffsetsExtractor;
     class ProgramExecutable;
+    class ModuleProgramExecutable;
     class Register;
     class JSScope;
     class SamplingTool;
@@ -76,6 +78,7 @@ namespace JSC {
     enum StackFrameCodeType {
         StackFrameGlobalCode,
         StackFrameEvalCode,
+        StackFrameModuleCode,
         StackFrameFunctionCode,
         StackFrameNativeCode
     };

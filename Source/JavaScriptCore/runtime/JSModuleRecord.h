@@ -117,6 +117,8 @@ public:
     void link(ExecState*);
     JSValue execute(ExecState*);
 
+    ModuleProgramExecutable* moduleProgramExecutable() const { return m_moduleProgramExecutable.get(); }
+
 private:
     JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
         : Base(vm, structure)
@@ -154,6 +156,7 @@ private:
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
     OrderedIdentifierSet m_requestedModules;
 
+    WriteBarrier<ModuleProgramExecutable> m_moduleProgramExecutable;
     WriteBarrier<JSMap> m_dependenciesMap;
 };
 

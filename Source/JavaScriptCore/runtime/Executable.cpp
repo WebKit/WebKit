@@ -161,7 +161,18 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
         executable->m_programCodeBlock = codeBlock;
         break;
     }
-        
+
+    case ModuleCode: {
+        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
+        ModuleProgramCodeBlock* codeBlock = static_cast<ModuleProgramCodeBlock*>(genericCodeBlock);
+
+        ASSERT(kind == CodeForCall);
+
+        oldCodeBlock = executable->m_moduleProgramCodeBlock;
+        executable->m_moduleProgramCodeBlock = codeBlock;
+        break;
+    }
+
     case EvalCode: {
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         EvalCodeBlock* codeBlock = static_cast<EvalCodeBlock*>(genericCodeBlock);
@@ -228,7 +239,17 @@ RefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
             executable, executable->m_unlinkedProgramCodeBlock.get(), scope,
             executable->source().provider(), executable->source().startColumn()));
     }
-    
+
+    if (classInfo() == ModuleProgramExecutable::info()) {
+        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
+        RELEASE_ASSERT(kind == CodeForCall);
+        RELEASE_ASSERT(!executable->m_moduleProgramCodeBlock);
+        RELEASE_ASSERT(!function);
+        return adoptRef(new ModuleProgramCodeBlock(
+            executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope,
+            executable->source().provider(), executable->source().startColumn()));
+    }
+
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
     RELEASE_ASSERT(function);
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
@@ -280,6 +301,17 @@ PassRefPtr<CodeBlock> ScriptExecutable::newReplacementCodeBlockFor(
         ProgramCodeBlock* baseline = static_cast<ProgramCodeBlock*>(
             executable->m_programCodeBlock->baselineVersion());
         RefPtr<ProgramCodeBlock> result = adoptRef(new ProgramCodeBlock(
+            CodeBlock::CopyParsedBlock, *baseline));
+        result->setAlternative(baseline);
+        return result;
+    }
+
+    if (classInfo() == ModuleProgramExecutable::info()) {
+        RELEASE_ASSERT(kind == CodeForCall);
+        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
+        ModuleProgramCodeBlock* baseline = static_cast<ModuleProgramCodeBlock*>(
+            executable->m_moduleProgramCodeBlock->baselineVersion());
+        RefPtr<ModuleProgramCodeBlock> result = adoptRef(new ModuleProgramCodeBlock(
             CodeBlock::CopyParsedBlock, *baseline));
         result->setAlternative(baseline);
         return result;
@@ -383,6 +415,36 @@ ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
 void ProgramExecutable::destroy(JSCell* cell)
 {
     static_cast<ProgramExecutable*>(cell)->ProgramExecutable::~ProgramExecutable();
+}
+
+const ClassInfo ModuleProgramExecutable::s_info = { "ModuleProgramExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(ModuleProgramExecutable) };
+
+ModuleProgramExecutable::ModuleProgramExecutable(ExecState* exec, const SourceCode& source)
+    : ScriptExecutable(exec->vm().moduleProgramExecutableStructure.get(), exec->vm(), source, false)
+{
+    m_typeProfilingStartOffset = 0;
+    m_typeProfilingEndOffset = source.length() - 1;
+    if (exec->vm().typeProfiler() || exec->vm().controlFlowProfiler())
+        exec->vm().functionHasExecutedCache()->insertUnexecutedRange(sourceID(), m_typeProfilingStartOffset, m_typeProfilingEndOffset);
+}
+
+ModuleProgramExecutable* ModuleProgramExecutable::create(ExecState* exec, const SourceCode& source)
+{
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    ModuleProgramExecutable* executable = new (NotNull, allocateCell<ModuleProgramExecutable>(*exec->heap())) ModuleProgramExecutable(exec, source);
+    executable->finishCreation(exec->vm());
+
+    UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCode = globalObject->createModuleProgramCodeBlock(exec, executable);
+    if (!unlinkedModuleProgramCode)
+        return nullptr;
+    executable->m_unlinkedModuleProgramCodeBlock.set(exec->vm(), executable, unlinkedModuleProgramCode);
+
+    return executable;
+}
+
+void ModuleProgramExecutable::destroy(JSCell* cell)
+{
+    static_cast<ModuleProgramExecutable*>(cell)->ModuleProgramExecutable::~ModuleProgramExecutable();
 }
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(FunctionExecutable) };
@@ -517,6 +579,23 @@ void ProgramExecutable::clearCode()
     Base::clearCode();
 }
 
+void ModuleProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    ModuleProgramExecutable* thisObject = jsCast<ModuleProgramExecutable*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    ScriptExecutable::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_unlinkedModuleProgramCodeBlock);
+    if (thisObject->m_moduleProgramCodeBlock)
+        thisObject->m_moduleProgramCodeBlock->visitAggregate(visitor);
+}
+
+void ModuleProgramExecutable::clearCode()
+{
+    m_moduleProgramCodeBlock = nullptr;
+    m_unlinkedModuleProgramCodeBlock.clear();
+    Base::clearCode();
+}
+
 FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
 {
     FunctionCodeBlock* result;
@@ -645,6 +724,15 @@ void ExecutableBase::dump(PrintStream& out) const
             out.print(*codeBlock);
         else
             out.print("ProgramExecutable w/o CodeBlock");
+        return;
+    }
+
+    if (classInfo() == ModuleProgramExecutable::info()) {
+        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(realThis);
+        if (CodeBlock* codeBlock = executable->codeBlock())
+            out.print(*codeBlock);
+        else
+            out.print("ModuleProgramExecutable w/o CodeBlock");
         return;
     }
     

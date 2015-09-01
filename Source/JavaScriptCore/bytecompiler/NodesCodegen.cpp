@@ -2878,25 +2878,31 @@ inline void ScopeNode::emitStatementsBytecode(BytecodeGenerator& generator, Regi
     m_statements->emitBytecode(generator, dst);
 }
 
+static void emitProgramNodeBytecode(BytecodeGenerator& generator, ScopeNode& scopeNode)
+{
+    generator.emitDebugHook(WillExecuteProgram, scopeNode.startLine(), scopeNode.startStartOffset(), scopeNode.startLineStartOffset());
+
+    RefPtr<RegisterID> dstRegister = generator.newTemporary();
+    generator.emitLoad(dstRegister.get(), jsUndefined());
+    generator.emitProfileControlFlow(scopeNode.startStartOffset());
+    scopeNode.emitStatementsBytecode(generator, dstRegister.get());
+
+    generator.emitDebugHook(DidExecuteProgram, scopeNode.lastLine(), scopeNode.startOffset(), scopeNode.lineStartOffset());
+    generator.emitEnd(dstRegister.get());
+}
+
 // ------------------------------ ProgramNode -----------------------------
 
 void ProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.emitDebugHook(WillExecuteProgram, startLine(), startStartOffset(), startLineStartOffset());
-
-    RefPtr<RegisterID> dstRegister = generator.newTemporary();
-    generator.emitLoad(dstRegister.get(), jsUndefined());
-    generator.emitProfileControlFlow(startStartOffset());
-    emitStatementsBytecode(generator, dstRegister.get());
-
-    generator.emitDebugHook(DidExecuteProgram, lastLine(), startOffset(), lineStartOffset());
-    generator.emitEnd(dstRegister.get());
+    emitProgramNodeBytecode(generator, *this);
 }
 
 // ------------------------------ ModuleProgramNode --------------------
 
-void ModuleProgramNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+void ModuleProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
+    emitProgramNodeBytecode(generator, *this);
 }
 
 // ------------------------------ EvalNode -----------------------------
@@ -3057,30 +3063,37 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
 void ImportDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
+    // Do nothing at runtime.
 }
 
 // ------------------------------ ExportAllDeclarationNode --------------------
 
 void ExportAllDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
+    // Do nothing at runtime.
 }
 
 // ------------------------------ ExportDefaultDeclarationNode ----------------
 
-void ExportDefaultDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+void ExportDefaultDeclarationNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    ASSERT(m_declaration);
+    generator.emitNode(dst, m_declaration);
 }
 
 // ------------------------------ ExportLocalDeclarationNode ------------------
 
-void ExportLocalDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+void ExportLocalDeclarationNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    ASSERT(m_declaration);
+    generator.emitNode(dst, m_declaration);
 }
 
 // ------------------------------ ExportNamedDeclarationNode ------------------
 
 void ExportNamedDeclarationNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
+    // Do nothing at runtime.
 }
 
 // ------------------------------ DestructuringAssignmentNode -----------------

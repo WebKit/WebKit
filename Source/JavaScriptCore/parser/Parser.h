@@ -100,6 +100,7 @@ enum class DeclarationType {
 
 enum class DeclarationImportType {
     Imported,
+    ImportedNamespace,
     NotImported
 };
 
@@ -335,6 +336,10 @@ struct Scope {
 
         if (importType == DeclarationImportType::Imported)
             addResult.iterator->value.setIsImported();
+        else if (importType == DeclarationImportType::ImportedNamespace) {
+            addResult.iterator->value.setIsImported();
+            addResult.iterator->value.setIsImportedNamespace();
+        }
 
         if (!addResult.isNewEntry)
             result |= DeclarationResult::InvalidDuplicateDeclaration;

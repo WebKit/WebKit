@@ -67,11 +67,19 @@ template <typename T> struct CacheTypes { };
 template <> struct CacheTypes<UnlinkedProgramCodeBlock> {
     typedef JSC::ProgramNode RootNode;
     static const SourceCodeKey::CodeType codeType = SourceCodeKey::ProgramType;
+    static const SourceParseMode parseMode = SourceParseMode::ProgramMode;
 };
 
 template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
     typedef JSC::EvalNode RootNode;
     static const SourceCodeKey::CodeType codeType = SourceCodeKey::EvalType;
+    static const SourceParseMode parseMode = SourceParseMode::ProgramMode;
+};
+
+template <> struct CacheTypes<UnlinkedModuleProgramCodeBlock> {
+    typedef JSC::ModuleProgramNode RootNode;
+    static const SourceCodeKey::CodeType codeType = SourceCodeKey::ModuleType;
+    static const SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
 };
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
@@ -95,7 +103,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(
         &vm, source, Identifier(), builtinMode, strictMode,
-        SourceParseMode::ProgramMode, error, nullptr, ConstructorKind::None, thisTDZMode);
+        CacheTypes<UnlinkedCodeBlockType>::parseMode, error, nullptr, ConstructorKind::None, thisTDZMode);
     if (!rootNode)
         return nullptr;
 
@@ -130,6 +138,12 @@ UnlinkedProgramCodeBlock* CodeCache::getProgramCodeBlock(VM& vm, ProgramExecutab
 UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error, const VariableEnvironment* variablesUnderTDZ)
 {
     return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, thisTDZMode, debuggerMode, profilerMode, error, variablesUnderTDZ);
+}
+
+UnlinkedModuleProgramCodeBlock* CodeCache::getModuleProgramCodeBlock(VM& vm, ModuleProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+{
+    VariableEnvironment emptyParentTDZVariables;
+    return getGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, executable, source, builtinMode, JSParserStrictMode::Strict, ThisTDZMode::CheckIfNeeded, debuggerMode, profilerMode, error, &emptyParentTDZVariables);
 }
 
 // FIXME: There's no need to add the function's name to the key here. It's already in the source code.

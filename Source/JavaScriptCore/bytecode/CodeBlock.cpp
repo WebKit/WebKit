@@ -87,6 +87,8 @@ CString CodeBlock::inferredName() const
         return "<eval>";
     case FunctionCode:
         return jsCast<FunctionExecutable*>(ownerExecutable())->inferredName().utf8();
+    case ModuleCode:
+        return "<module>";
     default:
         CRASH();
         return CString("", 0);
@@ -3062,6 +3064,11 @@ CodeBlock* ProgramCodeBlock::replacement()
     return jsCast<ProgramExecutable*>(ownerExecutable())->codeBlock();
 }
 
+CodeBlock* ModuleProgramCodeBlock::replacement()
+{
+    return jsCast<ModuleProgramExecutable*>(ownerExecutable())->codeBlock();
+}
+
 CodeBlock* EvalCodeBlock::replacement()
 {
     return jsCast<EvalExecutable*>(ownerExecutable())->codeBlock();
@@ -3073,6 +3080,11 @@ CodeBlock* FunctionCodeBlock::replacement()
 }
 
 DFG::CapabilityLevel ProgramCodeBlock::capabilityLevelInternal()
+{
+    return DFG::programCapabilityLevel(this);
+}
+
+DFG::CapabilityLevel ModuleProgramCodeBlock::capabilityLevelInternal()
 {
     return DFG::programCapabilityLevel(this);
 }

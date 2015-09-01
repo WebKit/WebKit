@@ -78,6 +78,7 @@ class JSStack;
 class LLIntOffsetsExtractor;
 class Microtask;
 class ModuleLoaderObject;
+class ModuleProgramExecutable;
 class NativeErrorConstructor;
 class ObjectConstructor;
 class ProgramCodeBlock;
@@ -85,6 +86,7 @@ class ProgramExecutable;
 class RegExpConstructor;
 class RegExpPrototype;
 class SourceCode;
+class UnlinkedModuleProgramCodeBlock;
 class NullGetterFunction;
 class NullSetterFunction;
 enum class ThisTDZMode;
@@ -643,6 +645,7 @@ public:
 
     UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
     UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, ThisTDZMode, const VariableEnvironment*);
+    UnlinkedModuleProgramCodeBlock* createModuleProgramCodeBlock(CallFrame*, ModuleProgramExecutable*);
 
 protected:
     struct GlobalPropertyInfo {

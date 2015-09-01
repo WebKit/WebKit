@@ -157,6 +157,7 @@
         "bytecodes" : [
             { "name" : "llint_program_prologue" },
             { "name" : "llint_eval_prologue" },
+            { "name" : "llint_module_program_prologue" },
             { "name" : "llint_function_for_call_prologue" },
             { "name" : "llint_function_for_construct_prologue" },
             { "name" : "llint_function_for_call_arity_check" },

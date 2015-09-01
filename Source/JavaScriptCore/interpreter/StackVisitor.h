@@ -52,6 +52,7 @@ public:
             Global,
             Eval,
             Function,
+            Module,
             Native
         };
 

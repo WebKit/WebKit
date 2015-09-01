@@ -47,6 +47,7 @@ namespace JSC {
 const ClassInfo UnlinkedCodeBlock::s_info = { "UnlinkedCodeBlock", 0, 0, CREATE_METHOD_TABLE(UnlinkedCodeBlock) };
 const ClassInfo UnlinkedGlobalCodeBlock::s_info = { "UnlinkedGlobalCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedGlobalCodeBlock) };
 const ClassInfo UnlinkedProgramCodeBlock::s_info = { "UnlinkedProgramCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedProgramCodeBlock) };
+const ClassInfo UnlinkedModuleProgramCodeBlock::s_info = { "UnlinkedModuleProgramCodeBlock", &Base::s_info, nullptr, CREATE_METHOD_TABLE(UnlinkedModuleProgramCodeBlock) };
 const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
 const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedFunctionCodeBlock) };
 
@@ -89,7 +90,6 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_symbolTable);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionDecls.begin(), end = thisObject->m_functionDecls.end(); ptr != end; ++ptr)
         visitor.append(ptr);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionExprs.begin(), end = thisObject->m_functionExprs.end(); ptr != end; ++ptr)
@@ -292,6 +292,14 @@ void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
+void UnlinkedModuleProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    UnlinkedModuleProgramCodeBlock* thisObject = jsCast<UnlinkedModuleProgramCodeBlock*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_moduleEnvironmentSymbolTable);
+}
+
 UnlinkedCodeBlock::~UnlinkedCodeBlock()
 {
 }
@@ -299,6 +307,11 @@ UnlinkedCodeBlock::~UnlinkedCodeBlock()
 void UnlinkedProgramCodeBlock::destroy(JSCell* cell)
 {
     jsCast<UnlinkedProgramCodeBlock*>(cell)->~UnlinkedProgramCodeBlock();
+}
+
+void UnlinkedModuleProgramCodeBlock::destroy(JSCell* cell)
+{
+    jsCast<UnlinkedModuleProgramCodeBlock*>(cell)->~UnlinkedModuleProgramCodeBlock();
 }
 
 void UnlinkedEvalCodeBlock::destroy(JSCell* cell)

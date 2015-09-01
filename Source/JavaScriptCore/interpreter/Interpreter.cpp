@@ -97,6 +97,7 @@ String StackFrame::friendlySourceURL() const
     
     switch (codeType) {
     case StackFrameEvalCode:
+    case StackFrameModuleCode:
     case StackFrameFunctionCode:
     case StackFrameGlobalCode:
         if (!sourceURL.isEmpty())
@@ -117,6 +118,9 @@ String StackFrame::friendlyFunctionName(CallFrame* callFrame) const
     switch (codeType) {
     case StackFrameEvalCode:
         traceLine = "eval code";
+        break;
+    case StackFrameModuleCode:
+        traceLine = "module code";
         break;
     case StackFrameNativeCode:
         if (callee)
@@ -451,6 +455,8 @@ static StackFrameCodeType getStackFrameCodeType(StackVisitor& visitor)
     switch (visitor->codeType()) {
     case StackVisitor::Frame::Eval:
         return StackFrameEvalCode;
+    case StackVisitor::Frame::Module:
+        return StackFrameModuleCode;
     case StackVisitor::Frame::Function:
         return StackFrameFunctionCode;
     case StackVisitor::Frame::Global:

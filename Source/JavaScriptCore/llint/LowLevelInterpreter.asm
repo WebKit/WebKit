@@ -161,8 +161,8 @@ const SlowPutArrayStorageShape = 30
 
 # Type constants.
 const StringType = 6
-const ObjectType = 19
-const FinalObjectType = 20
+const ObjectType = 21
+const FinalObjectType = 22
 
 # Type flags constants.
 const MasqueradesAsUndefined = 1
@@ -176,6 +176,7 @@ const FirstConstantRegisterIndex = 0x40000000
 const GlobalCode = 0
 const EvalCode = 1
 const FunctionCode = 2
+const ModuleCode = 3
 
 # The interpreter steals the tag word of the argument count.
 const LLIntReturnPC = ArgumentCount + TagOffset
@@ -880,6 +881,11 @@ _llint_entry:
 end
 
 _llint_program_prologue:
+    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
+    dispatch(0)
+
+
+_llint_module_program_prologue:
     prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
 

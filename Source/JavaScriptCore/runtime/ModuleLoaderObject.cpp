@@ -274,6 +274,9 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectModuleDeclarationInstantiation(Ex
         dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
 
     moduleRecord->link(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     return JSValue::encode(jsUndefined());
 }
 

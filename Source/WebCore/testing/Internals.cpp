@@ -1485,6 +1485,8 @@ String Internals::parserMetaData(Deprecated::ScriptValue value)
         result.append('"');
     } else if (executable->isEvalExecutable())
         result.appendLiteral("eval");
+    else if (executable->isModuleProgramExecutable())
+        result.appendLiteral("module");
     else if (executable->isProgramExecutable())
         result.appendLiteral("program");
 #if ENABLE(WEBASSEMBLY)

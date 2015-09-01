@@ -933,6 +933,25 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     return unlinkedCodeBlock;
 }
 
+UnlinkedModuleProgramCodeBlock* JSGlobalObject::createModuleProgramCodeBlock(CallFrame* callFrame, ModuleProgramExecutable* executable)
+{
+    ParserError error;
+    DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
+    ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
+    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getModuleProgramCodeBlock(
+        vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, profilerMode, error);
+
+    if (hasDebugger())
+        debugger()->sourceParsed(callFrame, executable->source().provider(), error.line(), error.message());
+
+    if (error.isValid()) {
+        throwVMError(callFrame, error.toErrorObject(this, executable->source()));
+        return nullptr;
+    }
+
+    return unlinkedCodeBlock;
+}
+
 void JSGlobalObject::setRemoteDebuggingEnabled(bool enabled)
 {
 #if ENABLE(REMOTE_INSPECTOR)

@@ -45,8 +45,10 @@ class Identifier;
 class JSScope;
 class ParserError;
 class ProgramExecutable;
+class ModuleProgramExecutable;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
+class UnlinkedModuleProgramCodeBlock;
 class UnlinkedFunctionCodeBlock;
 class UnlinkedFunctionExecutable;
 class UnlinkedProgramCodeBlock;
@@ -56,7 +58,7 @@ class SourceProvider;
 
 class SourceCodeKey {
 public:
-    enum CodeType { EvalType, ProgramType, FunctionType };
+    enum CodeType { EvalType, ProgramType, FunctionType, ModuleType };
 
     SourceCodeKey()
     {
@@ -257,6 +259,7 @@ public:
 
     UnlinkedProgramCodeBlock* getProgramCodeBlock(VM&, ProgramExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, EvalExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, ThisTDZMode, DebuggerMode, ProfilerMode, ParserError&, const VariableEnvironment*);
+    UnlinkedModuleProgramCodeBlock* getModuleProgramCodeBlock(VM&, ModuleProgramExecutable*, const SourceCode&, JSParserBuiltinMode, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(VM&, const Identifier&, const SourceCode&, ParserError&);
 
     void clear()

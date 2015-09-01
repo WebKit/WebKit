@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-enum CodeType { GlobalCode, EvalCode, FunctionCode };
+enum CodeType { GlobalCode, EvalCode, FunctionCode, ModuleCode };
 
 } // namespace JSC
 

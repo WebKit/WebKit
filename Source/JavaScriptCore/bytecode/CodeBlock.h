@@ -1102,10 +1102,29 @@ protected:
 #endif
 };
 
+class ModuleProgramCodeBlock : public GlobalCodeBlock {
+public:
+    ModuleProgramCodeBlock(CopyParsedBlockTag, ModuleProgramCodeBlock& other)
+        : GlobalCodeBlock(CopyParsedBlock, other)
+    {
+    }
+
+    ModuleProgramCodeBlock(ModuleProgramExecutable* ownerExecutable, UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock, JSScope* scope, PassRefPtr<SourceProvider> sourceProvider, unsigned firstLineColumnOffset)
+        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, scope, sourceProvider, 0, firstLineColumnOffset)
+    {
+    }
+
+#if ENABLE(JIT)
+protected:
+    virtual CodeBlock* replacement() override;
+    virtual DFG::CapabilityLevel capabilityLevelInternal() override;
+#endif
+};
+
 class EvalCodeBlock : public GlobalCodeBlock {
 public:
     EvalCodeBlock(CopyParsedBlockTag, EvalCodeBlock& other)
-    : GlobalCodeBlock(CopyParsedBlock, other)
+        : GlobalCodeBlock(CopyParsedBlock, other)
     {
     }
         
@@ -1130,7 +1149,7 @@ private:
 class FunctionCodeBlock : public CodeBlock {
 public:
     FunctionCodeBlock(CopyParsedBlockTag, FunctionCodeBlock& other)
-    : CodeBlock(CopyParsedBlock, other)
+        : CodeBlock(CopyParsedBlock, other)
     {
     }
 

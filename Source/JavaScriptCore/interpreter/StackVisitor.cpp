@@ -181,6 +181,8 @@ StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
     switch (codeBlock()->codeType()) {
     case EvalCode:
         return CodeType::Eval;
+    case ModuleCode:
+        return CodeType::Module;
     case FunctionCode:
         return CodeType::Function;
     case GlobalCode:
@@ -198,6 +200,9 @@ String StackVisitor::Frame::functionName()
     switch (codeType()) {
     case CodeType::Eval:
         traceLine = ASCIILiteral("eval code");
+        break;
+    case CodeType::Module:
+        traceLine = ASCIILiteral("module code");
         break;
     case CodeType::Native:
         if (callee)
@@ -219,6 +224,7 @@ String StackVisitor::Frame::sourceURL()
 
     switch (codeType()) {
     case CodeType::Eval:
+    case CodeType::Module:
     case CodeType::Function:
     case CodeType::Global: {
         String sourceURL = codeBlock()->ownerScriptExecutable()->sourceURL();

@@ -70,7 +70,9 @@ ParserError BytecodeGenerator::generate()
     if (m_needToInitializeArguments)
         initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
 
-    pushLexicalScope(m_scopeNode, true);
+    // For ModuleCode, we already instantiated the environment for the lexical variables.
+    if (m_codeType != ModuleCode)
+        pushLexicalScope(m_scopeNode, true);
 
     {
         RefPtr<RegisterID> temp = newTemporary();
@@ -502,6 +504,146 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     codeBlock->adoptVariables(variables);
 
     m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
+}
+
+BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
+    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+    , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
+    , m_scopeNode(moduleProgramNode)
+    , m_codeBlock(vm, codeBlock)
+    , m_thisRegister(CallFrame::thisArgumentOffset())
+    , m_codeType(ModuleCode)
+    , m_vm(&vm)
+    , m_usesNonStrictEval(false)
+{
+    ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables->size());
+
+    for (auto& constantRegister : m_linkTimeConstantRegisters)
+        constantRegister = nullptr;
+
+    if (m_isBuiltinFunction)
+        m_shouldEmitDebugHooks = false;
+
+    // Use the symbol table allocated in the unlinked code block. This symbol table
+    // will be used to allocate and instantiate the module environment.
+    SymbolTable* moduleEnvironmentSymbolTable = codeBlock->moduleEnvironmentSymbolTable();
+    moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
+    moduleEnvironmentSymbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
+
+    bool shouldCaptureSomeOfTheThings = m_shouldEmitDebugHooks || m_codeBlock->needsFullScopeChain();
+    bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
+    if (shouldCaptureAllOfTheThings)
+        moduleProgramNode->varDeclarations().markAllVariablesAsCaptured();
+
+    auto captures = [&] (UniquedStringImpl* uid) -> bool {
+        if (!shouldCaptureSomeOfTheThings)
+            return false;
+        return moduleProgramNode->captures(uid);
+    };
+    auto lookUpVarKind = [&] (UniquedStringImpl* uid, const VariableEnvironmentEntry& entry) -> VarKind {
+        // Allocate the exported variables in the module environment.
+        if (entry.isExported())
+            return VarKind::Scope;
+
+        // Allocate the namespace variables in the module environment to instantiate
+        // it from the outside of the module code.
+        if (entry.isImportedNamespace())
+            return VarKind::Scope;
+
+        if (entry.isCaptured())
+            return VarKind::Scope;
+        return captures(uid) ? VarKind::Scope : VarKind::Stack;
+    };
+
+    emitOpcode(op_enter);
+
+    allocateAndEmitScope();
+
+    m_calleeRegister.setIndex(JSStack::Callee);
+
+    m_codeBlock->setNumParameters(1); // Allocate space for "this"
+
+    // Now declare all variables.
+
+    for (auto& entry : moduleProgramNode->varDeclarations()) {
+        ASSERT(!entry.value.isLet() && !entry.value.isConst());
+        if (!entry.value.isVar()) // This is either a parameter or callee.
+            continue;
+        // Imported bindings are not allocated in the module environment as usual variables' way.
+        // These references remain the "Dynamic" in the unlinked code block. Later, when linking
+        // the code block, we resolve the reference to the "ModuleVar".
+        if (entry.value.isImported() && !entry.value.isImportedNamespace())
+            continue;
+        createVariable(Identifier::fromUid(m_vm, entry.key.get()), lookUpVarKind(entry.key.get(), entry.value), moduleEnvironmentSymbolTable, IgnoreExisting);
+    }
+
+    VariableEnvironment& lexicalVariables = moduleProgramNode->lexicalVariables();
+    instantiateLexicalVariables(lexicalVariables, moduleEnvironmentSymbolTable, ScopeRegisterType::Block, lookUpVarKind);
+
+    RegisterID* constantSymbolTable = nullptr;
+    if (vm.typeProfiler())
+        constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable);
+    else
+        constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable->cloneScopePart(*m_vm));
+
+    m_TDZStack.append(std::make_pair(lexicalVariables, true));
+    m_symbolTableStack.append(SymbolTableStackEntry { Strong<SymbolTable>(*m_vm, moduleEnvironmentSymbolTable), m_topMostScope, false, constantSymbolTable->index() });
+    emitPrefillStackTDZVariables(lexicalVariables, moduleEnvironmentSymbolTable);
+
+    // makeFunction assumes that there's correct TDZ stack entries.
+    // So it should be called after putting our lexical environment to the TDZ stack correctly.
+
+    for (FunctionMetadataNode* function : moduleProgramNode->functionStack()) {
+        const auto& iterator = moduleProgramNode->varDeclarations().find(function->ident().impl());
+        RELEASE_ASSERT(iterator != moduleProgramNode->varDeclarations().end());
+        RELEASE_ASSERT(!iterator->value.isImported());
+
+        VarKind varKind = lookUpVarKind(iterator->key.get(), iterator->value);
+        if (varKind == VarKind::Scope) {
+            // http://www.ecma-international.org/ecma-262/6.0/#sec-moduledeclarationinstantiation
+            // Section 15.2.1.16.4, step 16-a-iv-1.
+            // All heap allocated function declarations should be instantiated when the module environment
+            // is created. They include the exported function declarations and not-exported-but-heap-allocated
+            // function declarations. This is required because exported function should be instantiated before
+            // executing the any module in the dependency graph. This enables the modules to link the imported
+            // bindings before executing the any module code.
+            //
+            // And since function declarations are instantiated before executing the module body code, the spec
+            // allows the functions inside the module to be executed before its module body is executed under
+            // the circular dependencies. The following is the example.
+            //
+            // Module A (executed first):
+            //    import { b } from "B";
+            //    // Here, the module "B" is not executed yet, but the function declaration is already instantiated.
+            //    // So we can call the function exported from "B".
+            //    b();
+            //
+            //    export function a() {
+            //    }
+            //
+            // Module B (executed second):
+            //    import { a } from "A";
+            //
+            //    export function b() {
+            //        c();
+            //    }
+            //
+            //    // c is not exported, but since it is referenced from the b, we should instantiate it before
+            //    // executing the "B" module code.
+            //    function c() {
+            //        a();
+            //    }
+            //
+            // Module EntryPoint (executed last):
+            //    import "B";
+            //    import "A";
+            //
+            m_codeBlock->addFunctionDecl(makeFunction(function));
+        } else {
+            // Stack allocated functions can be allocated when executing the module's body.
+            m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
+        }
+    }
 }
 
 BytecodeGenerator::~BytecodeGenerator()
@@ -1367,6 +1509,71 @@ RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst)
     return m_globalObjectRegister;
 }
 
+template<typename LookUpVarKindFunctor>
+bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& lexicalVariables, SymbolTable* symbolTable, ScopeRegisterType scopeRegisterType, LookUpVarKindFunctor lookUpVarKind)
+{
+    bool hasCapturedVariables = false;
+    {
+        ConcurrentJITLocker locker(symbolTable->m_lock);
+        for (auto& entry : lexicalVariables) {
+            ASSERT(entry.value.isLet() || entry.value.isConst());
+            ASSERT(!entry.value.isVar());
+            SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
+            ASSERT(symbolTableEntry.isNull());
+
+            // Imported bindings which are not the namespace bindings are not allocated
+            // in the module environment as usual variables' way.
+            // And since these types of the variables only seen in the module environment,
+            // other lexical environment need not to take care this.
+            if (entry.value.isImported() && !entry.value.isImportedNamespace())
+                continue;
+
+            VarKind varKind = lookUpVarKind(entry.key.get(), entry.value);
+            VarOffset varOffset;
+            if (varKind == VarKind::Scope) {
+                varOffset = VarOffset(symbolTable->takeNextScopeOffset(locker));
+                hasCapturedVariables = true;
+            } else {
+                ASSERT(varKind == VarKind::Stack);
+                RegisterID* local;
+                if (scopeRegisterType == ScopeRegisterType::Block) {
+                    local = newBlockScopeVariable();
+                    local->ref();
+                } else
+                    local = addVar();
+                varOffset = VarOffset(local->virtualRegister());
+            }
+
+            SymbolTableEntry newEntry(varOffset, entry.value.isConst() ? ReadOnly : 0);
+            symbolTable->add(locker, entry.key.get(), newEntry);
+        }
+    }
+    return hasCapturedVariables;
+}
+
+void BytecodeGenerator::emitPrefillStackTDZVariables(const VariableEnvironment& lexicalVariables, SymbolTable* symbolTable)
+{
+    // Prefill stack variables with the TDZ empty value.
+    // Scope variables will be initialized to the TDZ empty value when JSLexicalEnvironment is allocated.
+    for (auto& entry : lexicalVariables) {
+        // Imported bindings which are not the namespace bindings are not allocated
+        // in the module environment as usual variables' way.
+        // And since these types of the variables only seen in the module environment,
+        // other lexical environment need not to take care this.
+        if (entry.value.isImported() && !entry.value.isImportedNamespace())
+            continue;
+
+        SymbolTableEntry symbolTableEntry = symbolTable->get(entry.key.get());
+        ASSERT(!symbolTableEntry.isNull());
+        VarOffset offset = symbolTableEntry.varOffset();
+        if (offset.isScope())
+            continue;
+
+        ASSERT(offset.isStack());
+        emitMoveEmptyValue(&registerFor(offset.stackOffset()));
+    }
+}
+
 void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult)
 {
     VariableEnvironment& environment = node->lexicalVariables();
@@ -1395,35 +1602,11 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
         break;
     }
 
-    bool hasCapturedVariables = false;
-    {
-        ConcurrentJITLocker locker(symbolTable->m_lock);
-        for (auto& entry : environment) {
-            ASSERT(entry.value.isLet() || entry.value.isConst());
-            ASSERT(!entry.value.isVar());
-            SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
-            ASSERT(symbolTableEntry.isNull());
+    auto lookUpVarKind = [] (UniquedStringImpl*, const VariableEnvironmentEntry& entry) -> VarKind {
+        return entry.isCaptured() ? VarKind::Scope : VarKind::Stack;
+    };
 
-            VarKind varKind = entry.value.isCaptured() ? VarKind::Scope : VarKind::Stack;
-            VarOffset varOffset;
-            if (varKind == VarKind::Scope) {
-                varOffset = VarOffset(symbolTable->takeNextScopeOffset(locker));
-                hasCapturedVariables = true;
-            } else {
-                ASSERT(varKind == VarKind::Stack);
-                RegisterID* local;
-                if (scopeRegisterType == ScopeRegisterType::Block) {
-                    local = newBlockScopeVariable();
-                    local->ref();
-                } else
-                    local = addVar();
-                varOffset = VarOffset(local->virtualRegister());
-            }
-
-            SymbolTableEntry newEntry(varOffset, entry.value.isConst() ? ReadOnly : 0);
-            symbolTable->add(locker, entry.key.get(), newEntry);
-        }
-    }
+    bool hasCapturedVariables = instantiateLexicalVariables(environment, symbolTable.get(), scopeRegisterType, lookUpVarKind);
 
     RegisterID* newScope = nullptr;
     RegisterID* constantSymbolTable = nullptr;
@@ -1461,21 +1644,8 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
     if (tdzRequirement == TDZRequirement::UnderTDZ)
         m_TDZStack.append(std::make_pair(environment, canOptimizeTDZChecks));
 
-    if (tdzRequirement == TDZRequirement::UnderTDZ) {
-        // Prefill stack variables with the TDZ empty value.
-        // Scope variables will be initialized to the TDZ empty value when JSLexicalEnvironment is allocated.
-        for (auto& entry : environment) {
-            SymbolTableEntry symbolTableEntry = symbolTable->get(entry.key.get());
-            ASSERT(!symbolTableEntry.isNull());
-            VarOffset offset = symbolTableEntry.varOffset();
-            if (offset.isScope()) {
-                ASSERT(newScope);
-                continue;
-            }
-            ASSERT(offset.isStack());
-            emitMoveEmptyValue(&registerFor(offset.stackOffset()));
-        }
-    }
+    if (tdzRequirement == TDZRequirement::UnderTDZ)
+        emitPrefillStackTDZVariables(environment, symbolTable.get());
 }
 
 void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)

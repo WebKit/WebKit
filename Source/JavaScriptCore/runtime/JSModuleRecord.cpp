@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSModuleRecord.h"
 
+#include "Error.h"
+#include "Executable.h"
 #include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -58,6 +60,7 @@ void JSModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSModuleRecord* thisObject = jsCast<JSModuleRecord*>(cell);
     Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_moduleProgramExecutable);
     visitor.append(&thisObject->m_dependenciesMap);
 }
 
@@ -90,8 +93,14 @@ JSModuleRecord* JSModuleRecord::hostResolveImportedModule(ExecState* exec, const
     return jsCast<JSModuleRecord*>(pair.get(exec, Identifier::fromString(exec, "value")));
 }
 
-void JSModuleRecord::link(ExecState*)
+void JSModuleRecord::link(ExecState* exec)
 {
+    ModuleProgramExecutable* executable = ModuleProgramExecutable::create(exec, sourceCode());
+    if (!executable) {
+        throwSyntaxError(exec);
+        return;
+    }
+    m_moduleProgramExecutable.set(exec->vm(), this, executable);
 }
 
 JSValue JSModuleRecord::execute(ExecState*)
