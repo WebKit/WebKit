@@ -872,33 +872,6 @@ void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext& context, const Flo
     m_videoFrameHasDrawn = true;
 }
 
-static const HashSet<String>& mimeTypeCache()
-{
-    static NeverDestroyed<HashSet<String>> cache;
-    static bool typeListInitialized = false;
-
-    if (typeListInitialized)
-        return cache;
-    typeListInitialized = true;
-
-    RetainPtr<CFArrayRef> supportedTypes = adoptCF(AVCFURLAssetCopyAudiovisualMIMETypes());
-    
-    ASSERT(supportedTypes);
-    if (!supportedTypes)
-        return cache;
-
-    CFIndex typeCount = CFArrayGetCount(supportedTypes.get());
-    for (CFIndex i = 0; i < typeCount; i++)
-        cache.get().add(static_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
-
-    return cache;
-} 
-
-void MediaPlayerPrivateAVFoundationCF::getSupportedTypes(HashSet<String>& supportedTypes)
-{
-    supportedTypes = mimeTypeCache();
-} 
-
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
 static bool keySystemIsSupported(const String& keySystem)
 {
@@ -912,7 +885,7 @@ static const HashSet<String>& avfMIMETypes()
 {
     static NeverDestroyed<HashSet<String>> cache = []() {
         HashSet<String> types;
-        RetainPtr<CFArrayRef> avTypes = AVCFURLAssetCopyAudiovisualMIMETypes();
+        RetainPtr<CFArrayRef> avTypes = adoptCF(AVCFURLAssetCopyAudiovisualMIMETypes());
 
         CFIndex typeCount = CFArrayGetCount(avTypes.get());
         for (CFIndex i = 0; i < typeCount; ++i) {
@@ -924,6 +897,11 @@ static const HashSet<String>& avfMIMETypes()
     }();
 
     return cache;
+}
+
+void MediaPlayerPrivateAVFoundationCF::getSupportedTypes(HashSet<String>& supportedTypes)
+{
+    supportedTypes = avfMIMETypes();
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationCF::supportsType(const MediaEngineSupportParameters& parameters)
@@ -943,7 +921,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationCF::supportsType(const M
     String typeString = parameters.type + "; codecs=\"" + parameters.codecs + "\"";
     return AVCFURLAssetIsPlayableExtendedMIMEType(typeString.createCFString().get()) ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;
 #else
-    if (mimeTypeCache().contains(parameters.type))
+    if (avfMIMETypes().contains(parameters.type))
         return parameters.codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
     return MediaPlayer::IsNotSupported;
 #endif
@@ -958,7 +936,7 @@ bool MediaPlayerPrivateAVFoundationCF::supportsKeySystem(const String& keySystem
     if (!keySystemIsSupported(keySystem))
         return false;
 
-    if (!mimeType.isEmpty() && !mimeTypeCache().contains(mimeType))
+    if (!mimeType.isEmpty() && !avfMIMETypes().contains(mimeType))
         return false;
 
     return true;
