@@ -1,0 +1,10 @@
+This tests for the existence of a hidden Show Controls button.
+
+This test only runs in DRT!
+
+
+EVENT(canplaythrough)
+EXPECTED (showControlsButtonInfo.name == 'Show Controls') OK
+EXPECTED (showControlsButtonInfo.hidden == 'true') OK
+END OF TEST
+

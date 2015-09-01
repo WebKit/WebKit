@@ -1,3 +1,18 @@
+2015-08-31  Dean Jackson  <dino@apple.com>
+
+        [mediacontrols] Add a test for the show controls button
+        https://bugs.webkit.org/show_bug.cgi?id=148655
+        <rdar://problem/22509688>
+
+        Reviewed by Eric Carlson.
+
+        * media/controls/controls-test-helpers.js: Added. This will
+        hold any helper functions.
+        (statusForControlsElement): Return the status object for
+        a named control.
+        * media/controls/showControlsButton-expected.txt: Added.
+        * media/controls/showControlsButton.html: Added.
+
 2015-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add TestSuite hooks for per-testcase setup and teardown actions

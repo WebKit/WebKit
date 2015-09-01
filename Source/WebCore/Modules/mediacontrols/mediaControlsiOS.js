@@ -30,6 +30,11 @@ ControllerIOS.prototype = {
     MinimumTimelineWidth: 200,
     ButtonWidth: 42,
 
+    get idiom()
+    {
+        return "ios";
+    },
+
     addVideoListeners: function() {
         Controller.prototype.addVideoListeners.call(this);
 

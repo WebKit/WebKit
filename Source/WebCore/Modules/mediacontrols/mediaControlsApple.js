@@ -144,6 +144,11 @@ Controller.prototype = {
         }
     },
 
+    get idiom()
+    {
+        return "apple";
+    },
+
     UIString: function(developmentString, replaceString, replacementString)
     {
         var localized = UIStringTable[developmentString];
@@ -336,10 +341,10 @@ Controller.prototype = {
         this.listenFor(panel, 'click', this.handlePanelClick);
         this.listenFor(panel, 'dblclick', this.handlePanelClick);
         this.listenFor(panel, 'dragstart', this.handlePanelDragStart);
-        
+
         var panelBackgroundContainer = this.controls.panelBackgroundContainer = document.createElement('div');
         panelBackgroundContainer.setAttribute('pseudo', '-webkit-media-controls-panel-background-container');
-        
+
         var panelTint = this.controls.panelTint = document.createElement('div');
         panelTint.setAttribute('pseudo', '-webkit-media-controls-panel-tint');
         this.listenFor(panelTint, 'mousedown', this.handlePanelMouseDown);
@@ -401,7 +406,7 @@ Controller.prototype = {
 
         this.timelineContextName = "_webkit-media-controls-timeline-" + this.host.generateUUID();
         timeline.style.backgroundImage = '-webkit-canvas(' + this.timelineContextName + ')';
-        
+
         var thumbnailTrack = this.controls.thumbnailTrack = document.createElement('div');
         thumbnailTrack.classList.add(this.ClassNames.thumbnailTrack);
 
@@ -438,10 +443,10 @@ Controller.prototype = {
         var volumeBox = this.controls.volumeBox = document.createElement('div');
         volumeBox.setAttribute('pseudo', '-webkit-media-controls-volume-slider-container');
         volumeBox.classList.add(this.ClassNames.volumeBox);
-        
+
         var volumeBoxBackground = this.controls.volumeBoxBackground = document.createElement('div');
         volumeBoxBackground.setAttribute('pseudo', '-webkit-media-controls-volume-slider-container-background');
-        
+
         var volumeBoxTint = this.controls.volumeBoxTint = document.createElement('div');
         volumeBoxTint.setAttribute('pseudo', '-webkit-media-controls-volume-slider-container-tint');
 
@@ -458,7 +463,7 @@ Controller.prototype = {
 
         this.volumeContextName = "_webkit-media-controls-volume-" + this.host.generateUUID();
         volume.style.backgroundImage = '-webkit-canvas(' + this.volumeContextName + ')';
-        
+
         var captionButton = this.controls.captionButton = document.createElement('button');
         captionButton.setAttribute('pseudo', '-webkit-media-controls-toggle-closed-captions-button');
         captionButton.setAttribute('aria-label', this.UIString('Captions'));
@@ -483,10 +488,10 @@ Controller.prototype = {
 
         var inlinePlaybackPlaceholderText = this.controls.inlinePlaybackPlaceholderText = document.createElement('div');
         inlinePlaybackPlaceholderText.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text');
-        
+
         var inlinePlaybackPlaceholderTextTop = this.controls.inlinePlaybackPlaceholderTextTop = document.createElement('p');
         inlinePlaybackPlaceholderTextTop.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text-top');
-        
+
         var inlinePlaybackPlaceholderTextBottom = this.controls.inlinePlaybackPlaceholderTextBottom = document.createElement('p');
         inlinePlaybackPlaceholderTextBottom.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text-bottom');
 
@@ -2092,7 +2097,15 @@ Controller.prototype = {
     getCurrentControlsStatus: function ()
     {
         return JSON.stringify({
-            status: "ok"
+            idiom: this.idiom,
+            status: "ok",
+            elements: [
+                {
+                    name: "Show Controls",
+                    className: this.showControlsButton.className,
+                    hidden: this.showControlsButton.hidden
+                }
+            ]
         });
     }
 
