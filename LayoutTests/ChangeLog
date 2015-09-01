@@ -1,3 +1,42 @@
+2015-09-01  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+        background-generated.html -> reftest
+        background-misaligned.html -> reftest
+        backgroundSizeRepaint.html -> reftest
+        block-no-inflow-children.html -> reftest
+
+        Unreviewed.
+
+        * fast/repaint/background-generated-expected.html: Added.
+        * fast/repaint/background-generated-expected.txt: Removed.
+        * fast/repaint/background-generated.html:
+        * fast/repaint/background-misaligned-expected.html: Added.
+        * fast/repaint/background-misaligned-expected.txt: Removed.
+        * fast/repaint/background-misaligned.html:
+        * fast/repaint/backgroundSizeRepaint-expected.html: Copied from LayoutTests/fast/repaint/backgroundSizeRepaint.html.
+        * fast/repaint/backgroundSizeRepaint.html:
+        * fast/repaint/block-no-inflow-children-expected.html: Added.
+        * fast/repaint/block-no-inflow-children.html:
+        * platform/efl/fast/repaint/background-misaligned-expected.png: Removed.
+        * platform/efl/fast/repaint/backgroundSizeRepaint-expected.png: Removed.
+        * platform/efl/fast/repaint/backgroundSizeRepaint-expected.txt: Removed.
+        * platform/efl/fast/repaint/block-no-inflow-children-expected.png: Removed.
+        * platform/efl/fast/repaint/block-no-inflow-children-expected.txt: Removed.
+        * platform/gtk/fast/repaint/background-misaligned-expected.png: Removed.
+        * platform/gtk/fast/repaint/backgroundSizeRepaint-expected.png: Removed.
+        * platform/gtk/fast/repaint/backgroundSizeRepaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/block-no-inflow-children-expected.png: Removed.
+        * platform/gtk/fast/repaint/block-no-inflow-children-expected.txt: Removed.
+        * platform/mac/fast/repaint/background-generated-expected.png: Removed.
+        * platform/mac/fast/repaint/background-misaligned-expected.png: Removed.
+        * platform/mac/fast/repaint/backgroundSizeRepaint-expected.png: Removed.
+        * platform/mac/fast/repaint/backgroundSizeRepaint-expected.txt: Removed.
+        * platform/mac/fast/repaint/block-no-inflow-children-expected.png: Removed.
+        * platform/mac/fast/repaint/block-no-inflow-children-expected.txt: Removed.
+        * platform/win/fast/repaint/backgroundSizeRepaint-expected.txt: Removed.
+        * platform/win/fast/repaint/block-no-inflow-children-expected.txt: Removed.
+
 2015-09-01  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Layout is wrong for flex factor sum between 0 and 1
