@@ -42,13 +42,11 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         this._scopeBar = new WebInspector.ScopeBar("rendering-frame-scope-bar", scopeBarItems, scopeBarItems[0], true);
         this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
-        var columns = {location: {}, startTime: {}, scriptTime: {}, paintTime: {}, layoutTime: {}, otherTime: {}, totalTime: {}};
+        let columns = {totalTime: {}, scriptTime: {}, layoutTime: {}, paintTime: {}, otherTime: {}, startTime: {}, location: {}};
 
-        columns.location.title = WebInspector.UIString("Location");
-
-        columns.startTime.title = WebInspector.UIString("Start Time");
-        columns.startTime.width = "15%";
-        columns.startTime.aligned = "right";
+        columns.totalTime.title = WebInspector.UIString("Total Time");
+        columns.totalTime.width = "15%";
+        columns.totalTime.aligned = "right";
 
         columns.scriptTime.title = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
         columns.scriptTime.width = "10%";
@@ -66,9 +64,11 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         columns.otherTime.width = "10%";
         columns.otherTime.aligned = "right";
 
-        columns.totalTime.title = WebInspector.UIString("Total Time");
-        columns.totalTime.width = "15%";
-        columns.totalTime.aligned = "right";
+        columns.startTime.title = WebInspector.UIString("Start Time");
+        columns.startTime.width = "15%";
+        columns.startTime.aligned = "right";
+
+        columns.location.title = WebInspector.UIString("Location");
 
         for (var column in columns)
             columns[column].sortable = true;

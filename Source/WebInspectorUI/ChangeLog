@@ -1,3 +1,14 @@
+2015-09-01  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Reorder columns in the Rendering Frames data grid by importance
+        https://bugs.webkit.org/show_bug.cgi?id=148672
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        Updated column order, rearranged the column object setup code to match.
+
 2015-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: rewrite inspector/console/command-line-api.html to use AsyncTestSuite
