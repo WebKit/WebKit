@@ -1,5 +1,21 @@
 2015-08-31  Dean Jackson  <dino@apple.com>
 
+        [mediacontrols] Add tests for the status display label
+        https://bugs.webkit.org/show_bug.cgi?id=148656
+        <rdar://problem/22509779>
+
+        Reviewed by Eric Carlson.
+
+        Add a test for the normal status of the status display,
+        and another for the content when we load a bad URL.
+
+        * media/controls/statusDisplay-expected.txt: Added.
+        * media/controls/statusDisplay.html: Added.
+        * media/controls/statusDisplayBad-expected.txt: Added.
+        * media/controls/statusDisplayBad.html: Added.
+
+2015-08-31  Dean Jackson  <dino@apple.com>
+
         [mediacontrols] Add a test for the show controls button
         https://bugs.webkit.org/show_bug.cgi?id=148655
         <rdar://problem/22509688>

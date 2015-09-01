@@ -1,0 +1,11 @@
+This tests that the status display has the corrent error message.
+
+This test only runs in DRT!
+
+
+EVENT(error)
+EXPECTED (statusDisplayInfo.name == 'Status Display') OK
+EXPECTED (statusDisplayInfo.className == '') OK
+EXPECTED (statusDisplayInfo.content == 'Error') OK
+END OF TEST
+

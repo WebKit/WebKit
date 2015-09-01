@@ -2104,6 +2104,11 @@ Controller.prototype = {
                     name: "Show Controls",
                     className: this.showControlsButton.className,
                     hidden: this.showControlsButton.hidden
+                },
+                {
+                    name: "Status Display",
+                    className: this.controls.statusDisplay.className,
+                    content: this.controls.statusDisplay.textContent
                 }
             ]
         });

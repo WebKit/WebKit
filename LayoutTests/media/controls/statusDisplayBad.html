@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var video;
+            var currentStatus;
+            var statusDisplayInfo;
+
+            function init()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "non-existent-media-file");
+
+                waitForEvent("error", runTest);
+            }
+
+            function runTest()
+            {
+                if (!window.testRunner)
+                    return;
+
+                currentStatus = JSON.parse(internals.getCurrentMediaControlsStatusForElement(video));
+                if (currentStatus) {
+                    if (currentStatus.idiom == "apple") {
+                        statusDisplayInfo = statusForControlsElement(currentStatus, "Status Display");
+                        if (statusDisplayInfo) {
+                            testExpected("statusDisplayInfo.name", "Status Display");
+                            testExpected("statusDisplayInfo.className", "");
+                            testExpected("statusDisplayInfo.content", "Error");
+                        }
+                    }
+                }
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <p>This tests that the status display has the corrent error message.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+This tests for the content in the status display.
+
+This test only runs in DRT!
+
+
+EVENT(canplaythrough)
+EXPECTED (statusDisplayInfo.name == 'Status Display') OK
+EXPECTED (statusDisplayInfo.className == 'hidden') OK
+EXPECTED (statusDisplayInfo.content == '') OK
+END OF TEST
+
