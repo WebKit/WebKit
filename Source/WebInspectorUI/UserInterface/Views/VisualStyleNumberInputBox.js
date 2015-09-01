@@ -75,8 +75,9 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         this._valueNumberInputElement.spellcheck = false;
         this._valueNumberInputElement.addEventListener("focus", this._focusContentElement.bind(this));
         this._valueNumberInputElement.addEventListener("keydown", this._valueNumberInputKeyDown.bind(this));
-        this._valueNumberInputElement.addEventListener("keyup", this._numberInputChanged.bind(this));
+        this._valueNumberInputElement.addEventListener("keyup", this._valueNumberInputKeyUp.bind(this));
         this._valueNumberInputElement.addEventListener("blur", this._blurContentElement.bind(this));
+        this._valueNumberInputElement.addEventListener("change", this._valueNumberInputChanged.bind(this));
         this._numberUnitsContainer.appendChild(this._valueNumberInputElement);
 
         this._unitsElement = document.createElement("span");
@@ -301,7 +302,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         this._valueDidChange();
     }
 
-    _numberInputChanged()
+    _valueNumberInputKeyUp(event)
     {
         if (!this._numberInputIsEditable)
             return;
@@ -374,6 +375,19 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
     _blurContentElement(event)
     {
         this.contentElement.classList.remove("focused");
+    }
+
+    _valueNumberInputChanged(event)
+    {
+        let newValue = this.value;
+        if (!newValue && isNaN(newValue))
+            newValue = this.placeholder && !isNaN(this.placeholder) ? parseFloat(this.placeholder) : 0;
+
+        if (!this._allowNegativeValues && newValue < 0)
+            newValue = 0;
+
+        this.value = Math.round(newValue * 100) / 100;
+        this._valueDidChange();
     }
 
     _toggleTabbingOfSelectableElements(disabled)

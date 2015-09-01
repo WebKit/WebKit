@@ -1,3 +1,16 @@
+2015-09-01  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Visual style editor shouldn't allow alpha characters in numeric input fields
+        https://bugs.webkit.org/show_bug.cgi?id=148580
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox):
+        Added input element "changed" handler, renamed "keyup" handler to match "keydown" handler.
+        (WebInspector.VisualStyleNumberInputBox.prototype._valueNumberInputChanged):
+        Validate input in response to changed event.
+
 2015-08-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Command-Enter for selected JS in Debugger/Sources shouldn't change the focus
