@@ -50,7 +50,7 @@ PASS detachedRange.intersectsNode(document.getElementById('a1')) is false
 PASS intersects is false
 
 2.3 Node has no parent
-PASS range.intersectsNode(document) threw exception Error: NotFoundError: DOM Exception 8.
+PASS range.intersectsNode(document) is true
 
 2.4 Range has no parent
 PASS range.selectNode(document) threw exception Error: InvalidNodeTypeError: DOM Exception 24.

@@ -426,67 +426,67 @@ PASS Node 6 detachedPara1.firstChild, range 56 [detachedComment, 5, detachedComm
 PASS Node 6 detachedPara1.firstChild, range 57 [detachedForeignComment, 4, detachedForeignComment, 4] 
 PASS Node 6 detachedPara1.firstChild, range 58 [foreignDocfrag, 0, foreignDocfrag, 0] 
 PASS Node 6 detachedPara1.firstChild, range 59 [xmlDocfrag, 0, xmlDocfrag, 0] 
-FAIL Node 7 document, detached range NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 10 [document.documentElement, 0, document.documentElement, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 11 [document.documentElement, 0, document.documentElement, 2] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 12 [document.documentElement, 1, document.documentElement, 2] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 13 [document.head, 1, document.head, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 14 [document.body, 4, document.body, 5] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 16 [paras[0], 0, paras[0], 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 17 [detachedPara1, 0, detachedPara1, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 20 [paras[0].firstChild, 3, paras[3], 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 21 [paras[0], 0, paras[0].firstChild, 7] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 22 [testDiv, 2, paras[4], 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 23 [document, 0, document, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 24 [document, 0, document, 2] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 25 [comment, 2, comment, 3] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 26 [testDiv, 0, comment, 5] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 27 [foreignDoc, 1, foreignComment, 2] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 28 [foreignDoc.body, 0, foreignTextNode, 36] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 29 [xmlDoc, 1, xmlComment, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 30 [detachedTextNode, 0, detachedTextNode, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 33 [detachedComment, 3, detachedComment, 4] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 34 [detachedForeignComment, 0, detachedForeignComment, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 35 [detachedXmlComment, 2, detachedXmlComment, 6] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 36 [docfrag, 0, docfrag, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 37 [processingInstruction, 0, processingInstruction, 4] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 42 [foreignDoc.head, 1, foreignDoc.head, 1] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 43 [foreignDoc.body, 0, foreignDoc.body, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 44 [paras[0], 0, paras[0], 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 45 [detachedPara1, 0, detachedPara1, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 46 [testDiv, 1, paras[2].firstChild, 5] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 47 [document.documentElement, 1, document.body, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 49 [document, 1, document, 2] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 50 [paras[2].firstChild, 4, comment, 2] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 51 [paras[3], 1, comment, 8] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 52 [foreignDoc, 0, foreignDoc, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 53 [xmlDoc, 0, xmlDoc, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 56 [detachedComment, 5, detachedComment, 5] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 57 [detachedForeignComment, 4, detachedForeignComment, 4] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 58 [foreignDocfrag, 0, foreignDocfrag, 0] NotFoundError: DOM Exception 8
-FAIL Node 7 document, range 59 [xmlDocfrag, 0, xmlDocfrag, 0] NotFoundError: DOM Exception 8
+PASS Node 7 document, detached range 
+PASS Node 7 document, range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
+PASS Node 7 document, range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] 
+PASS Node 7 document, range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] 
+PASS Node 7 document, range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] 
+PASS Node 7 document, range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] 
+PASS Node 7 document, range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] 
+PASS Node 7 document, range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] 
+PASS Node 7 document, range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] 
+PASS Node 7 document, range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] 
+PASS Node 7 document, range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] 
+PASS Node 7 document, range 10 [document.documentElement, 0, document.documentElement, 1] 
+PASS Node 7 document, range 11 [document.documentElement, 0, document.documentElement, 2] 
+PASS Node 7 document, range 12 [document.documentElement, 1, document.documentElement, 2] 
+PASS Node 7 document, range 13 [document.head, 1, document.head, 1] 
+PASS Node 7 document, range 14 [document.body, 4, document.body, 5] 
+PASS Node 7 document, range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] 
+PASS Node 7 document, range 16 [paras[0], 0, paras[0], 1] 
+PASS Node 7 document, range 17 [detachedPara1, 0, detachedPara1, 1] 
+PASS Node 7 document, range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] 
+PASS Node 7 document, range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] 
+PASS Node 7 document, range 20 [paras[0].firstChild, 3, paras[3], 1] 
+PASS Node 7 document, range 21 [paras[0], 0, paras[0].firstChild, 7] 
+PASS Node 7 document, range 22 [testDiv, 2, paras[4], 1] 
+PASS Node 7 document, range 23 [document, 0, document, 1] 
+PASS Node 7 document, range 24 [document, 0, document, 2] 
+PASS Node 7 document, range 25 [comment, 2, comment, 3] 
+PASS Node 7 document, range 26 [testDiv, 0, comment, 5] 
+PASS Node 7 document, range 27 [foreignDoc, 1, foreignComment, 2] 
+PASS Node 7 document, range 28 [foreignDoc.body, 0, foreignTextNode, 36] 
+PASS Node 7 document, range 29 [xmlDoc, 1, xmlComment, 0] 
+PASS Node 7 document, range 30 [detachedTextNode, 0, detachedTextNode, 8] 
+PASS Node 7 document, range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] 
+PASS Node 7 document, range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] 
+PASS Node 7 document, range 33 [detachedComment, 3, detachedComment, 4] 
+PASS Node 7 document, range 34 [detachedForeignComment, 0, detachedForeignComment, 1] 
+PASS Node 7 document, range 35 [detachedXmlComment, 2, detachedXmlComment, 6] 
+PASS Node 7 document, range 36 [docfrag, 0, docfrag, 0] 
+PASS Node 7 document, range 37 [processingInstruction, 0, processingInstruction, 4] 
+PASS Node 7 document, range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] 
+PASS Node 7 document, range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] 
+PASS Node 7 document, range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] 
+PASS Node 7 document, range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] 
+PASS Node 7 document, range 42 [foreignDoc.head, 1, foreignDoc.head, 1] 
+PASS Node 7 document, range 43 [foreignDoc.body, 0, foreignDoc.body, 0] 
+PASS Node 7 document, range 44 [paras[0], 0, paras[0], 0] 
+PASS Node 7 document, range 45 [detachedPara1, 0, detachedPara1, 0] 
+PASS Node 7 document, range 46 [testDiv, 1, paras[2].firstChild, 5] 
+PASS Node 7 document, range 47 [document.documentElement, 1, document.body, 0] 
+PASS Node 7 document, range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] 
+PASS Node 7 document, range 49 [document, 1, document, 2] 
+PASS Node 7 document, range 50 [paras[2].firstChild, 4, comment, 2] 
+PASS Node 7 document, range 51 [paras[3], 1, comment, 8] 
+PASS Node 7 document, range 52 [foreignDoc, 0, foreignDoc, 0] 
+PASS Node 7 document, range 53 [xmlDoc, 0, xmlDoc, 0] 
+PASS Node 7 document, range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] 
+PASS Node 7 document, range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] 
+PASS Node 7 document, range 56 [detachedComment, 5, detachedComment, 5] 
+PASS Node 7 document, range 57 [detachedForeignComment, 4, detachedForeignComment, 4] 
+PASS Node 7 document, range 58 [foreignDocfrag, 0, foreignDocfrag, 0] 
+PASS Node 7 document, range 59 [xmlDocfrag, 0, xmlDocfrag, 0] 
 PASS Node 8 detachedDiv, detached range 
 PASS Node 8 detachedDiv, range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
 PASS Node 8 detachedDiv, range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] 

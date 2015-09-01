@@ -171,7 +171,7 @@ PASS In-document Element.matches: :empty pseudo-class selector, matching empty p
 PASS In-document Element.matches: :empty pseudo-class selector, matching all empty elements (with no refNodes): #pseudo-empty :empty 
 PASS In-document Element.matches: :link and :visited pseudo-class selectors, matching a and area elements with href attributes (with no refNodes): #pseudo-link :link, #pseudo-link :visited 
 PASS In-document Element.matches: :link and :visited pseudo-class selectors, matching link elements with href attributes (with no refNodes): #head :link, #head :visited 
-FAIL In-document Element.matches: :target pseudo-class selector, matching the element referenced by the URL fragment identifier (with no refNodes): :target assert_true: The element #target should match the selector. expected true got false
+PASS In-document Element.matches: :target pseudo-class selector, matching the element referenced by the URL fragment identifier (with no refNodes): :target 
 PASS In-document Element.matches: :lang pseudo-class selector, matching inherited language (with no refNodes): #pseudo-lang-div1:lang(en) 
 PASS In-document Element.matches: :lang pseudo-class selector, matching specified language with exact value (with no refNodes): #pseudo-lang-div2:lang(fr) 
 PASS In-document Element.matches: :lang pseudo-class selector, matching specified language with partial value (with no refNodes): #pseudo-lang-div3:lang(en) 

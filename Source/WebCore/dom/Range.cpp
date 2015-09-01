@@ -501,12 +501,8 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec) const
     ContainerNode* parentNode = refNode->parentNode();
     unsigned nodeIndex = refNode->computeNodeIndex();
     
-    if (!parentNode) {
-        // if the node is the top document we should return NODE_BEFORE_AND_AFTER
-        // but we throw to match firefox behavior
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
+    if (!parentNode)
+        return true;
 
     if (comparePoint(parentNode, nodeIndex, ec) < 0 && // starts before start
         comparePoint(parentNode, nodeIndex + 1, ec) < 0) { // ends before start
