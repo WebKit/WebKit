@@ -1,3 +1,9 @@
+2015-09-01  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening. Skip new two tests which aren't supported by EFL port.
+
+        * platform/efl/TestExpectations:
+
 2015-08-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189198.
