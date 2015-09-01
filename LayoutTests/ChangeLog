@@ -1,3 +1,11 @@
+2015-09-01  Dean Jackson  <dino@apple.com>
+
+        The new media controls tests are OS X only.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-08-31  Dean Jackson  <dino@apple.com>
 
         [mediacontrols] Add tests for the status display label

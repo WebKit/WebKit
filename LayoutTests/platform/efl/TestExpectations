@@ -2270,3 +2270,6 @@ webkit.org/b/148518 fullscreen [ Skip ]
 
 # [EFL] REGRESSION: userscripts tests crash
 webkit.org/b/148519 userscripts [ Skip ]
+
+# Media controls tests are OS X only
+media/controls [ Skip ]

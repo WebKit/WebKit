@@ -2703,3 +2703,6 @@ fast/text/softbank-emoji.html [ Failure Pass ]
 
 # This test hardcodes the result of the Mac font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
+
+# Media controls tests are OS X only
+media/controls [ Skip ]

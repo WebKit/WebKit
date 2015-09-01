@@ -2467,3 +2467,6 @@ media/video-seek-to-current-time.html [ Skip ]
 
 # This operating system does not have language-sensitive font fallback.
 css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
+
+# Media controls tests are OS X only
+media/controls [ Skip ]
