@@ -114,11 +114,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         this._scrollElementHeight = this.messagesElement.getBoundingClientRect().height;
     }
 
-    shown()
-    {
-        this.prompt.focus();
-    }
-
     get scrollableElements()
     {
         return [this.element];
