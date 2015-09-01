@@ -753,6 +753,8 @@ void FrameLoader::finishedParsing()
 
     m_client.dispatchDidFinishDocumentLoad();
 
+    scrollToFragmentWithParentBoundary(m_frame.document()->url());
+
     checkCompleted();
 
     if (!m_frame.view())
@@ -761,7 +763,6 @@ void FrameLoader::finishedParsing()
     // Check if the scrollbars are really needed for the content.
     // If not, remove them, relayout, and repaint.
     m_frame.view()->restoreScrollbar();
-    scrollToFragmentWithParentBoundary(m_frame.document()->url());
 }
 
 void FrameLoader::loadDone()
