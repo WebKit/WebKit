@@ -500,6 +500,11 @@ double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, c
         availableLogicalSpaceIgnoringFractionTracks += track.m_track->baseSize();
     }
 
+    // Let flex factor sum be the sum of the flex factors of the flexible tracks. If this value
+    // is less than 1, set it to 1 instead.
+    if (accumulatedFractions < 1)
+        return availableLogicalSpaceIgnoringFractionTracks;
+
     return availableLogicalSpaceIgnoringFractionTracks / accumulatedFractions;
 }
 
