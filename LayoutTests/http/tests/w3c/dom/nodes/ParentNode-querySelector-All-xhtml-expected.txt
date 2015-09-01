@@ -553,8 +553,8 @@ PASS Document.querySelectorAll: :link and :visited pseudo-class selectors, match
 PASS Document.querySelector: :link and :visited pseudo-class selectors, matching a and area elements with href attributes: #pseudo-link :link, #pseudo-link :visited 
 PASS Document.querySelectorAll: :link and :visited pseudo-class selectors, matching link elements with href attributes: #head :link, #head :visited 
 PASS Document.querySelector: :link and :visited pseudo-class selectors, matching link elements with href attributes: #head :link, #head :visited 
-PASS Document.querySelectorAll: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target 
-PASS Document.querySelector: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target 
+FAIL Document.querySelectorAll: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target assert_equals: The method should return the expected number of matches. expected 1 but got 0
+FAIL Document.querySelector: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target assert_not_equals: The method should return a match. got disallowed value null
 PASS Document.querySelectorAll: :lang pseudo-class selector, matching inherited language: #pseudo-lang-div1:lang(en) 
 PASS Document.querySelector: :lang pseudo-class selector, matching inherited language: #pseudo-lang-div1:lang(en) 
 PASS Document.querySelectorAll: :lang pseudo-class selector, matching specified language with exact value: #pseudo-lang-div2:lang(fr) 
@@ -1803,8 +1803,8 @@ PASS In-document Element.querySelectorAll: :link and :visited pseudo-class selec
 PASS In-document Element.querySelector: :link and :visited pseudo-class selectors, not matching link elements with href attributes: #head :link, #head :visited 
 PASS In-document Element.querySelectorAll: :link and :visited pseudo-class selectors, chained, mutually exclusive pseudo-classes match nothing: :link:visited 
 PASS In-document Element.querySelector: :link and :visited pseudo-class selectors, chained, mutually exclusive pseudo-classes match nothing: :link:visited 
-PASS In-document Element.querySelectorAll: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target 
-PASS In-document Element.querySelector: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target 
+FAIL In-document Element.querySelectorAll: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target assert_equals: The method should return the expected number of matches. expected 1 but got 0
+FAIL In-document Element.querySelector: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target assert_not_equals: The method should return a match. got disallowed value null
 PASS In-document Element.querySelectorAll: :lang pseudo-class selector, matching inherited language: #pseudo-lang-div1:lang(en) 
 PASS In-document Element.querySelector: :lang pseudo-class selector, matching inherited language: #pseudo-lang-div1:lang(en) 
 PASS In-document Element.querySelectorAll: :lang pseudo-class selector, matching specified language with exact value: #pseudo-lang-div2:lang(fr) 
