@@ -1,3 +1,25 @@
+2015-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: opt the Inspector process out of page visibility-based process suppression when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=148686
+
+        Reviewed by Timothy Hatcher.
+
+        This may be the cause of debug test timeouts and high execution time variance
+        that have been plaguing the bots. Process suppression shouldn't happen for
+        inspector process during tests anyway, so it shouldn't hurt to flip this.
+
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
+            The stated default here is incorrect, the default value is true.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _pageVisibilityBasedProcessSuppressionEnabled]): Added.
+        (-[WKPreferences _setPageVisibilityBasedProcessSuppressionEnabled:]): Added.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2015-09-01  Alexey Proskuryakov  <ap@apple.com>
 
         Update sandbox after r179367

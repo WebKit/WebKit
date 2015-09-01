@@ -267,6 +267,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setHiddenPageDOMTimerThrottlingEnabled(hiddenPageDOMTimerThrottlingEnabled);
 }
 
+- (BOOL)_pageVisibilityBasedProcessSuppressionEnabled
+{
+    return _preferences->pageVisibilityBasedProcessSuppressionEnabled();
+}
+
+- (void)_setPageVisibilityBasedProcessSuppressionEnabled:(BOOL)pageVisibilityBasedProcessSuppressionEnabled
+{
+    _preferences->setPageVisibilityBasedProcessSuppressionEnabled(pageVisibilityBasedProcessSuppressionEnabled);
+}
+
 - (BOOL)_allowFileAccessFromFileURLs
 {
     return _preferences->allowFileAccessFromFileURLs();

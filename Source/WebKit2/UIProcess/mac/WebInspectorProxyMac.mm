@@ -420,8 +420,10 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 #endif
     preferences._allowFileAccessFromFileURLs = YES;
     preferences._javaScriptRuntimeFlags = 0;
-    if (isUnderTest())
+    if (isUnderTest()) {
         preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
+        preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+    }
 
     [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool())];
     [configuration _setGroupIdentifier:inspectorPageGroupIdentifier()];
