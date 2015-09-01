@@ -78,7 +78,25 @@ TestSuite = class TestSuite extends WebInspector.Object
         if (typeof testcase.test !== "function")
             throw new Error("Tried to add test case without `test` function.");
 
+        if (testcase.setup && typeof testcase.setup !== "function")
+            throw new Error("Tried to add test case with invalid `setup` parameter (must be a function).")
+
+        if (testcase.teardown && typeof testcase.teardown !== "function")
+            throw new Error("Tried to add test case with invalid `teardown` parameter (must be a function).")
+
         this.testcases.push(testcase);
+    }
+
+    static messageFromThrownObject(e)
+    {
+        let message = e;
+        if (e instanceof Error)
+            message = e.message;
+
+        if (typeof message !== "string")
+            message = JSON.stringify(message);
+
+        return message;
     }
 };
 
@@ -103,32 +121,42 @@ AsyncTestSuite = class AsyncTestSuite extends TestSuite
         this._startedRunning = true;
 
         this._harness.log("");
-        this._harness.log("== Running test suite: " + this.name);
+        this._harness.log(`== Running test suite: ${this.name}`);
 
         // Avoid adding newlines if nothing was logged.
         let priorLogCount = this._harness.logCount;
         let result = this.testcases.reduce((chain, testcase, i) => {
-            return chain.then(() => {
+            if (testcase.setup) {
+                chain = chain.then(() => {
+                    this._harness.log("-- Running test setup.");
+                    return new Promise(testcase.setup);
+                });
+            }
+
+            chain = chain.then(() => {
                 if (i > 0 && priorLogCount + 1 < this._harness.logCount)
                     this._harness.log("");
 
                 priorLogCount = this._harness.logCount;
-                this._harness.log("-- Running test case: " + testcase.name);
+                this._harness.log(`-- Running test case: ${testcase.name}`);
                 this.runCount++;
                 return new Promise(testcase.test);
             });
+
+            if (testcase.teardown) {
+                chain = chain.then(() => {
+                    this._harness.log("-- Running test teardown.");
+                    return new Promise(testcase.teardown);
+                });
+            }
+            return chain;
         }, Promise.resolve());
 
         return result.catch((e) => {
             this.failCount++;
-            let message = e;
-            if (e instanceof Error)
-                message = e.message;
+            let message = TestSuite.messageFromThrownObject(e);
+            this._harness.log(`!! EXCEPTION: ${message}`);
 
-            if (typeof message !== "string")
-                message = JSON.stringify(message);
-
-            this._harness.log("!! EXCEPTION: " + message);
             throw e; // Reject this promise by re-throwing the error.
         });
     }
@@ -152,7 +180,7 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
         this._startedRunning = true;
 
         this._harness.log("");
-        this._harness.log("== Running test suite: " + this.name);
+        this._harness.log(`== Running test suite: ${this.name}`);
 
         let priorLogCount = this._harness.logCount;
         for (let i = 0; i < this.testcases.length; i++) {
@@ -161,6 +189,22 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
                 this._harness.log("");
 
             priorLogCount = this._harness.logCount;
+
+            // Run the setup action, if one was provided.
+            if (testcase.setup) {
+                this._harness.log("-- Running test setup.");
+                try {
+                    let result = testcase.setup.call(null);
+                    if (result === false) {
+                        this._harness.log("!! EXCEPTION");
+                        return false;
+                    }
+                } catch (e) {
+                    let message = TestSuite.messageFromThrownObject(e);
+                    this._harness.log(`!! EXCEPTION: ${message}`);
+                    return false;
+                }
+            }
 
             this._harness.log("-- Running test case: " + testcase.name);
             this.runCount++;
@@ -172,17 +216,25 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
                 }
             } catch (e) {
                 this.failCount++;
-                let message = e;
-                if (e instanceof Error)
-                    message = e.message;
-                else
-                    e = new Error(e);
-
-                if (typeof message !== "string")
-                    message = JSON.stringify(message);
-
-                this._harness.log("!! EXCEPTION: " + message);
+                let message = TestSuite.messageFromThrownObject(e);
+                this._harness.log(`!! EXCEPTION: ${message}`);
                 return false;
+            }
+
+            // Run the teardown action, if one was provided.
+            if (testcase.teardown) {
+                this._harness.log("-- Running test teardown.");
+                try {
+                    let result = testcase.teardown.call(null);
+                    if (result === false) {
+                        this._harness.log("!! EXCEPTION:");
+                        return false;
+                    }
+                } catch (e) {
+                    let message = TestSuite.messageFromThrownObject(e);
+                    this._harness.log(`!! EXCEPTION: ${message}`);
+                    return false;
+                }
             }
         }
 

@@ -1,3 +1,17 @@
+2015-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add TestSuite hooks for per-testcase setup and teardown actions
+        https://bugs.webkit.org/show_bug.cgi?id=148641
+
+        Reviewed by Timothy Hatcher.
+
+        Extend existing unit tests to also exercise setup and teardown actions.
+
+        * inspector/unit-tests/async-test-suite.html:
+        * inspector/unit-tests/async-test-suite-expected.txt:
+        * inspector/unit-tests/sync-test-suite.html:
+        * inspector/unit-tests/sync-test-suite-expected.txt:
+
 2015-09-01  Zalan Bujtas  <zalan@apple.com>
 
         Repaint cleanup:

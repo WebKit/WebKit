@@ -1,3 +1,24 @@
+2015-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add TestSuite hooks for per-testcase setup and teardown actions
+        https://bugs.webkit.org/show_bug.cgi?id=148641
+
+        Reviewed by Timothy Hatcher.
+
+        It should be possible to run setup and teardown actions for each test case.
+        The use case here is to add listeners, set up testcase-specific state, etc.
+        To match how test functions work in each suite, the sync and async implementations
+        take functions with no arguments and(resolve, reject), respectively.
+
+        * UserInterface/Test/TestSuite.js:
+        (TestSuite.prototype.addTestCase):
+        (TestSuite.messageFromThrownObject):
+        (TestSuite):
+        (AsyncTestSuite.prototype.runTestCases): Stick the extra functions in the chain.
+        (AsyncTestSuite):
+        (SyncTestSuite.prototype.runTestCases):
+        (SyncTestSuite):
+
 2015-09-01  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Visual style editor shouldn't allow alpha characters in numeric input fields

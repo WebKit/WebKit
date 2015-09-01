@@ -7,6 +7,12 @@ PASS: should not be able to add non-object test case.
 PASS: test case should require string name.
 PASS: test case should require non-whitespace name.
 PASS: test case should require test function.
+PASS: should not be able to specify non-Function `setup` parameter.
+PASS: should not be able to specify non-Function `setup` parameter.
+PASS: should not be able to specify non-Function `setup` parameter.
+PASS: should not be able to specify non-Function `teardown` parameter.
+PASS: should not be able to specify non-Function `teardown` parameter.
+PASS: should not be able to specify non-Function `teardown` parameter.
 PASS: should not be able to run empty test suite.
 
 == Running test suite: SyncTestSuite.RunTwiceSuite
@@ -34,4 +40,32 @@ PASS: abortOnFailureSuite should have executed two tests.
 PASS: abortOnFailureSuite should have passed one test.
 PASS: abortOnFailureSuite should have failed one test.
 PASS: abortOnFailureSuite should have skipped one test.
+
+== Running test suite: SyncTestSuite.SetupAndTeardown
+-- Running test setup.
+-- Running test case: TestWithSetupAndTeardown
+PASS: Test should see side effects of running setup() action.
+-- Running test teardown.
+PASS: Teardown should see side effects of running setup() action.
+
+-- Running test case: TestRunningAfterTeardown
+PASS: Test should see side effects of previous test's teardown() action.
+
+== Running test suite: SyncTestSuite.SetupException
+-- Running test setup.
+!! EXCEPTION: 
+
+== Running test suite: SyncTestSuite.SetupFailure
+-- Running test setup.
+!! EXCEPTION
+
+== Running test suite: SyncTestSuite.TeardownException
+-- Running test case: TestWithExceptionDuringTeardown
+-- Running test teardown.
+!! EXCEPTION: 
+
+== Running test suite: SyncTestSuite.TeardownFailure
+-- Running test case: TestWithExceptionDuringTeardown
+-- Running test teardown.
+!! EXCEPTION:
 

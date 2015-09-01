@@ -73,6 +73,66 @@ function test()
     } catch (e) {
         ProtocolTest.log("PASS: test case should require test function.");
     }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            test: () => {},
+            setup: "astd"
+        });
+        ProtocolTest.log("FAIL: should not be able to specify non-Function `setup` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify non-Function `setup` parameter.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            test: () => {},
+            setup: 123
+        });
+        ProtocolTest.log("FAIL: should not be able to specify non-Function `setup` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify non-Function `setup` parameter.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            test: () => {},
+            setup: {}
+        });
+        ProtocolTest.log("FAIL: should not be able to specify non-Function `setup` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify non-Function `setup` parameter.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            test: () => {},
+            teardown: "astd"
+        });
+        ProtocolTest.log("FAIL: should not be able to specify non-Function `teardown` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify non-Function `teardown` parameter.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            test: () => {},
+            teardown: 123
+        });
+        ProtocolTest.log("FAIL: should not be able to specify non-Function `teardown` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify non-Function `teardown` parameter.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            test: () => {},
+            teardown: {}
+        });
+        ProtocolTest.log("FAIL: should not be able to specify non-Function `teardown` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify non-Function `teardown` parameter.");
+    }
 
     let runEmptySuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.RunEmptySuite");
     try {
@@ -173,6 +233,157 @@ function test()
         ProtocolTest.expectThat(abortOnFailureSuite.failCount === 1, "abortOnFailureSuite should have failed one test.");
         ProtocolTest.expectThat(abortOnFailureSuite.skipCount === 1, "abortOnFailureSuite should have skipped one test.");
 
+        return Promise.resolve(); // Continue this test.
+    });
+
+    var setupAndTeardownSymbol = Symbol("async-suite-setup-and-teardown-token");
+    window[setupAndTeardownSymbol] = 0;
+
+    let setupAndTeardownTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.SetupAndTeardown");
+    setupAndTeardownTestSuite.addTestCase({
+        name: "TestWithSetupAndTeardown",
+        description: "Check execution order for setup and teardown actions.",
+        setup: (resolve, reject) => {
+            window[setupAndTeardownSymbol] = 1;
+            resolve();
+        },
+        test: (resolve, reject) => {
+            ProtocolTest.expectThat(window[setupAndTeardownSymbol] === 1, "Test should see side effects of running setup() action.");
+            window[setupAndTeardownSymbol] = 2;
+            resolve();
+        },
+        teardown: (resolve, reject) => {
+            ProtocolTest.expectThat(window[setupAndTeardownSymbol] === 2, "Teardown should see side effects of running setup() action.");
+            window[setupAndTeardownSymbol] = 3;
+            resolve();
+        }
+    });
+    setupAndTeardownTestSuite.addTestCase({
+        name: "TestRunningAfterTeardown",
+        description: "Check execution order for test after a teardown action.",
+        test: (resolve, reject) => {
+            ProtocolTest.expectThat(window[setupAndTeardownSymbol] === 3, "Test should see side effects of previous test's teardown() action.");
+            resolve();
+        },
+    });
+
+    result = result.then(() => {
+        return setupAndTeardownTestSuite.runTestCases();
+    }).then(function resolved() {
+        ProtocolTest.log("PASS: Promise from setupAndTeardownTestSuite.runTestCases() should resolve.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.log("FAIL: Promise from setupAndTeardownTestSuite.runTestCases() should resolve.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    let setupExceptionTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.SetupException");
+    setupExceptionTestSuite.addTestCase({
+        name: "TestWithExceptionDuringSetup",
+        description: "Check execution order for setup action that throws an exception.",
+        setup: (resolve, reject) => { throw new Error() },
+        test: (resolve, reject) => {
+            ProtocolTest.assert(false, "Test should not execute if its setup action threw an exception.");
+            reject();
+        },
+        teardown: (resolve, reject) => {
+            ProtocolTest.assert(false, "Teardown action should not execute if its setup action threw an exception.");
+            reject();           
+        }
+    });
+
+    result = result.then(() => {
+        return setupExceptionTestSuite.runTestCases();
+    }).then(function resolved() {
+        ProtocolTest.log("FAIL: Promise from setupExceptionTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.log("PASS: Promise from setupExceptionTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    let setupFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.SetupFailure");
+    setupFailureTestSuite.addTestCase({
+        name: "TestWithFailureDuringSetup",
+        description: "Check execution order for setup action that has failed.",
+        setup: (resolve, reject) => { reject(); },
+        test: (resolve, reject) => {
+            ProtocolTest.assert(false, "Test should not execute if its setup action failed.")
+            reject();
+        },
+        teardown: (resolve, reject) => {
+            ProtocolTest.assert(false, "Teardown action should not execute if its setup action failed.")
+            reject();
+        }
+    });
+
+    result = result.then(() => {
+        return setupFailureTestSuite.runTestCases();
+    }).then(function resolved() {
+        ProtocolTest.log("FAIL: Promise from setupFailureTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.log("PASS: Promise from setupFailureTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    let teardownExceptionTestSuite = ProtocolTest.createAsyncSuite("SyncTestSuite.TeardownException");
+    teardownExceptionTestSuite.addTestCase({
+        name: "TestWithExceptionDuringTeardown",
+        description: "Check execution order for teardown action that throws an exception.",
+        test: (resolve, reject) => { resolve(); },
+        teardown: (resolve, reject) => { throw new Error() }
+    });
+    teardownExceptionTestSuite.addTestCase({
+        name: "TestAfterTeardownException",
+        descrption: "Check execution order for test after previous test's teardown throws an exception.",
+        setup: (resolve, reject) => {
+            ProtocolTest.assert(false, "Setup action should not execute if previous test's teardown action threw an exception.");
+            reject();
+        },
+        test: (resolve, reject) => {
+            ProtocolTest.assert(false, "Test should not execute if previous test's teardown action threw an exception.");
+            reject();
+        }
+    });
+
+    result = result.then(() => {
+        return teardownExceptionTestSuite.runTestCases();
+    }).then(function resolved() {
+        ProtocolTest.log("FAIL: Promise from teardownExceptionTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.log("PASS: Promise from teardownExceptionTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    let teardownFailureTestSuite = ProtocolTest.createAsyncSuite("SyncTestSuite.TeardownFailure");
+    teardownFailureTestSuite.addTestCase({
+        name: "TestWithExceptionDuringTeardown",
+        description: "Check execution order for teardown action that has failed.",
+        test: (resolve, reject) => { resolve(); },
+        teardown: (resolve, reject) => { reject(); },
+    });
+    teardownFailureTestSuite.addTestCase({
+        name: "TestAfterTeardownException",
+        description: "Check execution order for test after previous test's teardown throws an exception",
+        setup: (resolve, reject) => {
+            ProtocolTest.assert(false, "Setup action should not execute if previous test's teardown action failed.");
+            reject();
+        },
+        test: (resolve, reject) => {
+            ProtocolTest.assert(false, "Test should not execute if previous test's teardown action failed.");
+            reject();
+        }
+    });
+
+    result = result.then(() => {
+        return teardownFailureTestSuite.runTestCases();
+    }).then(function resolved() {
+        ProtocolTest.log("FAIL: Promise from teardownFailureTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.log("PASS: Promise from teardownFailureTestSuite.runTestCases() should reject.");
         return Promise.resolve(); // Continue this test.
     });
 
