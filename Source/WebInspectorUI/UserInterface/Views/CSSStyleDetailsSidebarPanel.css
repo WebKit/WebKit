@@ -67,6 +67,7 @@
 
 .sidebar > .panel.details.css-style > .content + .options-container {
     display: flex;
+    align-items: center;
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -80,10 +81,12 @@
 }
 
 .sidebar > .panel.details.css-style > .content + .options-container > .new-rule {
-    width: 17px;
-    height: 17px;
-    margin: 5px 0 5px 7px;
-    content: url(../Images/Plus.svg);
+    width: 15px;
+    min-width: 15px;
+    height: 15px;
+    margin-left: 6px;
+    content: url(../Images/Plus15.svg);
+    opacity: 0.7;
 }
 
 .sidebar > .panel.details.css-style > .content + .options-container > .filter-bar {

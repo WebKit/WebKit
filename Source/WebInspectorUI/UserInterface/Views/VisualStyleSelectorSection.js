@@ -58,7 +58,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         this._selectors.onselect = this._selectorChanged.bind(this);
         this._focusNextNewInspectorRule = false;
 
-        wrappedSVGDocument("Images/Plus.svg", "visual-style-selector-section-add-rule", WebInspector.UIString("Click to add a new rule."), function(wrapper) {
+        wrappedSVGDocument("Images/Plus13.svg", "visual-style-selector-section-add-rule", WebInspector.UIString("Click to add a new rule."), function(wrapper) {
             wrapper.addEventListener("click", this._addNewRule.bind(this));
             controlElement.appendChild(wrapper);
         }.bind(this));

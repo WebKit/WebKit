@@ -1,3 +1,53 @@
+2015-09-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: New rule button in the style sidebar is blurry and too dark
+        https://bugs.webkit.org/show_bug.cgi?id=148108
+
+        Reviewed by Timothy Hatcher.
+
+        Added support for Plus and Minus icons on non-retina screens.
+        Also removed some CSS rules that no longer apply to anything.
+
+        * UserInterface/Images/Minus.svg:
+        * UserInterface/Images/NewTabPlus.svg:
+        * UserInterface/Images/Plus.svg: Removed.
+        * UserInterface/Images/Plus13.svg: Copied from Source/WebInspectorUI/UserInterface/Images/Plus.svg.
+        * UserInterface/Images/Plus15.svg: Copied from Source/WebInspectorUI/UserInterface/Images/Plus.svg.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content + .options-container):
+        (.sidebar > .panel.details.css-style > .content + .options-container > .new-rule):
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.css:
+        (.details-section.probe-set .options > .probe-add):
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules .new-rule): Deleted.
+        (.sidebar > .panel.details.css-style .rules > *:first-child:matches(.new-rule)): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .new-rule): Deleted.
+        (.sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .style-declaration-section): Deleted.
+        (.sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .label): Deleted.
+        (.sidebar > .panel.details.css-style .rules .new-rule img): Deleted.
+        (.sidebar > .panel.details.css-style .rules .new-rule:hover): Deleted.
+        (.sidebar > .panel.details.css-style .rules .new-rule:active): Deleted.
+        (@media (-webkit-min-device-pixel-ratio: 2)): Deleted.
+        Removed CSS rules that no longer apply.  The new rule button was moved to the Styles sidebar.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (.details-section.watch-expressions .options > .watch-expression-add):
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .item.new-tab-button > .icon):
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-controls > div):
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor):
+
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection):
+
 2015-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add TestSuite hooks for per-testcase setup and teardown actions

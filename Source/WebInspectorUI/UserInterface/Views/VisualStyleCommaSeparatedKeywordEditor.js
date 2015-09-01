@@ -43,7 +43,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         controlContainer.classList.add("visual-style-comma-separated-keyword-controls");
         this.contentElement.appendChild(controlContainer);
 
-        wrappedSVGDocument("Images/Plus.svg", "visual-style-add-comma-separated-keyword", WebInspector.UIString("Click to add a new item."), function(wrapper) {
+        wrappedSVGDocument("Images/Plus13.svg", "visual-style-add-comma-separated-keyword", WebInspector.UIString("Click to add a new item."), function(wrapper) {
             wrapper.addEventListener("click", this._addEmptyCommaSeparatedKeyword.bind(this));
             controlContainer.appendChild(wrapper);
         }.bind(this));

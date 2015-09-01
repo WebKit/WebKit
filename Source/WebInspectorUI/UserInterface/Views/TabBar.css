@@ -206,6 +206,13 @@ body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-but
     opacity: 0.35;
 }
 
+.tab-bar > .item.new-tab-button > .icon {
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+    min-height: 15px;
+}
+
 .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon,
 .tab-bar > .item.new-tab-button:not(.disabled):hover > .icon {
     opacity: 0.6;

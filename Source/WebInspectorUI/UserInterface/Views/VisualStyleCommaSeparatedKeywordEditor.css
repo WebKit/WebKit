@@ -110,7 +110,7 @@
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-controls > div {
     width: 20px;
     height: 19px;
-    padding: 4px;
+    padding: 3px;
     border-right: 1px solid hsl(0, 0%, 83%);
     opacity: 0.7;
 }
