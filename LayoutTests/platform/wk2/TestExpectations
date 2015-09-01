@@ -42,9 +42,6 @@
 ########################################
 ### START OF (1) Classified failures with bug reports
 
-# Flaky pixel tests due to caching issues.
-webkit.org/b/101773 fast/repaint/body-background-image.html [ ImageOnlyFailure Pass ]
-
 # AX tests that require hit testing do not work in WK2.
 webkit.org/b/71298 accessibility/loading-iframe-updates-axtree.html
 webkit.org/b/71298 accessibility/mac/html-slider-indicator.html

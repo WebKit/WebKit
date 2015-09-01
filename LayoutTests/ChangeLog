@@ -1,3 +1,61 @@
+2015-09-01  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+        block-selection-gap-in-composited-layer.html -> reftest
+        body-background-image.html -> reftest
+        border-fit-lines.html -> reftest
+        border-radius-repaint.html -> reftest
+        border-repaint-glitch.html -> reftest
+
+        Unreviewed.
+
+        * fast/repaint/block-selection-gap-in-composited-layer-expected.html: Added.
+        * fast/repaint/block-selection-gap-in-composited-layer.html:
+        * fast/repaint/body-background-image-expected.html: Copied from LayoutTests/fast/repaint/body-background-image.html.
+        * fast/repaint/body-background-image.html:
+        * fast/repaint/border-fit-lines-expected.html: Added.
+        * fast/repaint/border-fit-lines.html:
+        * fast/repaint/border-radius-repaint-expected.html: Copied from LayoutTests/fast/repaint/border-radius-repaint.html.
+        * fast/repaint/border-radius-repaint.html:
+        * fast/repaint/border-repaint-glitch-expected.html: Copied from LayoutTests/fast/repaint/border-repaint-glitch.html.
+        * fast/repaint/border-repaint-glitch.html:
+        * platform/efl/fast/repaint/block-selection-gap-in-composited-layer-expected.png: Removed.
+        * platform/efl/fast/repaint/block-selection-gap-in-composited-layer-expected.txt: Removed.
+        * platform/efl/fast/repaint/body-background-image-expected.png: Removed.
+        * platform/efl/fast/repaint/body-background-image-expected.txt: Removed.
+        * platform/efl/fast/repaint/border-fit-lines-expected.png: Removed.
+        * platform/efl/fast/repaint/border-fit-lines-expected.txt: Removed.
+        * platform/efl/fast/repaint/border-radius-repaint-expected.png: Removed.
+        * platform/efl/fast/repaint/border-radius-repaint-expected.txt: Removed.
+        * platform/efl/fast/repaint/border-repaint-glitch-expected.png: Removed.
+        * platform/efl/fast/repaint/border-repaint-glitch-expected.txt: Removed.
+        * platform/gtk/fast/repaint/block-selection-gap-in-composited-layer-expected.png: Removed.
+        * platform/gtk/fast/repaint/block-selection-gap-in-composited-layer-expected.txt: Removed.
+        * platform/gtk/fast/repaint/body-background-image-expected.png: Removed.
+        * platform/gtk/fast/repaint/body-background-image-expected.txt: Removed.
+        * platform/gtk/fast/repaint/border-fit-lines-expected.png: Removed.
+        * platform/gtk/fast/repaint/border-fit-lines-expected.txt: Removed.
+        * platform/gtk/fast/repaint/border-radius-repaint-expected.png: Removed.
+        * platform/gtk/fast/repaint/border-radius-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/border-repaint-glitch-expected.png: Removed.
+        * platform/gtk/fast/repaint/border-repaint-glitch-expected.txt: Removed.
+        * platform/ios-simulator/fast/repaint/body-background-image-expected.txt: Removed.
+        * platform/mac/fast/repaint/block-selection-gap-in-composited-layer-expected.png: Removed.
+        * platform/mac/fast/repaint/block-selection-gap-in-composited-layer-expected.txt: Removed.
+        * platform/mac/fast/repaint/body-background-image-expected.png: Removed.
+        * platform/mac/fast/repaint/body-background-image-expected.txt: Removed.
+        * platform/mac/fast/repaint/border-fit-lines-expected.png: Removed.
+        * platform/mac/fast/repaint/border-fit-lines-expected.txt: Removed.
+        * platform/mac/fast/repaint/border-radius-repaint-expected.png: Removed.
+        * platform/mac/fast/repaint/border-radius-repaint-expected.txt: Removed.
+        * platform/mac/fast/repaint/border-repaint-glitch-expected.png: Removed.
+        * platform/mac/fast/repaint/border-repaint-glitch-expected.txt: Removed.
+        * platform/win/fast/repaint/block-selection-gap-in-composited-layer-expected.txt: Removed.
+        * platform/win/fast/repaint/body-background-image-expected.txt: Removed.
+        * platform/win/fast/repaint/border-radius-repaint-expected.txt: Removed.
+        * platform/win/fast/repaint/border-repaint-glitch-expected.txt: Removed.
+        * platform/wk2/TestExpectations:
+
 2015-09-01  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up asynchronous behavior in some accessibility tests
