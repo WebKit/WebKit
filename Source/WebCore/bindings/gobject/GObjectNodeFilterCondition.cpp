@@ -29,7 +29,7 @@ GObjectNodeFilterCondition::~GObjectNodeFilterCondition()
     g_object_set_data(G_OBJECT(m_filter.get()), "webkit-core-node-filter", nullptr);
 }
 
-short GObjectNodeFilterCondition::acceptNode(JSC::ExecState*, Node* node) const
+short GObjectNodeFilterCondition::acceptNode(Node* node) const
 {
     if (!node)
         return NodeFilter::FILTER_REJECT;

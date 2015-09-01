@@ -114,7 +114,6 @@
 #include "JSMutationObserverCustom.cpp"
 #include "JSNamedNodeMapCustom.cpp"
 #include "JSNodeCustom.cpp"
-#include "JSNodeFilterCondition.cpp"
 #include "JSNodeFilterCustom.cpp"
 #include "JSNodeIteratorCustom.cpp"
 #include "JSNodeListCustom.cpp"

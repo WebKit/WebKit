@@ -88,7 +88,7 @@ NodeIterator::~NodeIterator()
     root()->document().detachNodeIterator(this);
 }
 
-RefPtr<Node> NodeIterator::nextNode(JSC::ExecState* state)
+RefPtr<Node> NodeIterator::nextNode()
 {
     RefPtr<Node> result;
 
@@ -98,9 +98,7 @@ RefPtr<Node> NodeIterator::nextNode(JSC::ExecState* state)
         // In other words, FILTER_REJECT does not pass over descendants
         // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
         RefPtr<Node> provisionalResult = m_candidateNode.node;
-        bool nodeWasAccepted = acceptNode(state, provisionalResult.get()) == NodeFilter::FILTER_ACCEPT;
-        if (state && state->hadException())
-            break;
+        bool nodeWasAccepted = acceptNode(provisionalResult.get()) == NodeFilter::FILTER_ACCEPT;
         if (nodeWasAccepted) {
             m_referenceNode = m_candidateNode;
             result = provisionalResult.release();
@@ -112,7 +110,7 @@ RefPtr<Node> NodeIterator::nextNode(JSC::ExecState* state)
     return result;
 }
 
-RefPtr<Node> NodeIterator::previousNode(JSC::ExecState* state)
+RefPtr<Node> NodeIterator::previousNode()
 {
     RefPtr<Node> result;
 
@@ -122,9 +120,7 @@ RefPtr<Node> NodeIterator::previousNode(JSC::ExecState* state)
         // In other words, FILTER_REJECT does not pass over descendants
         // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
         RefPtr<Node> provisionalResult = m_candidateNode.node;
-        bool nodeWasAccepted = acceptNode(state, provisionalResult.get()) == NodeFilter::FILTER_ACCEPT;
-        if (state && state->hadException())
-            break;
+        bool nodeWasAccepted = acceptNode(provisionalResult.get()) == NodeFilter::FILTER_ACCEPT;
         if (nodeWasAccepted) {
             m_referenceNode = m_candidateNode;
             result = provisionalResult.release();

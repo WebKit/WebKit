@@ -4401,9 +4401,6 @@
     <ClCompile Include="..\bindings\js\JSNodeCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSNodeFilterCondition.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSNodeFilterCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -11487,9 +11484,6 @@
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSNodeCustom.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bindings\js\JSNodeFilterCondition.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSPluginElementFunctions.h">

@@ -20,7 +20,7 @@
 #include "WebKitDOMNodeFilter.h"
 
 #include "GObjectNodeFilterCondition.h"
-#include "NodeFilter.h"
+#include "NativeNodeFilter.h"
 #include "WebKitDOMNode.h"
 #include "WebKitDOMNodeFilterPrivate.h"
 #include <wtf/HashMap.h>
@@ -72,7 +72,7 @@ RefPtr<WebCore::NodeFilter> core(WebKitDOMNodeFilter* nodeFilter)
 
     RefPtr<WebCore::NodeFilter> coreNodeFilter = static_cast<WebCore::NodeFilter*>(g_object_get_data(G_OBJECT(nodeFilter), "webkit-core-node-filter"));
     if (!coreNodeFilter) {
-        coreNodeFilter = WebCore::NodeFilter::create(WebCore::GObjectNodeFilterCondition::create(nodeFilter));
+        coreNodeFilter = WebCore::NativeNodeFilter::create(WebCore::GObjectNodeFilterCondition::create(nodeFilter));
         nodeFilterMap().add(coreNodeFilter.get(), nodeFilter);
         g_object_weak_ref(G_OBJECT(nodeFilter), nodeFilterObjectDestroyedCallback, coreNodeFilter.get());
         g_object_set_data(G_OBJECT(nodeFilter), "webkit-core-node-filter", coreNodeFilter.get());

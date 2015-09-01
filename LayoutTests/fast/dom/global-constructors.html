@@ -85,7 +85,7 @@ function test()
     try {
       nodeFilter = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, function () {}, false).filter;
     } catch(e) {}
-    shouldBe("window.NodeFilter.prototype.isPrototypeOf(nodeFilter)", true);
+    shouldBe("Function.prototype.isPrototypeOf(nodeFilter)", true);
 
     originalNodePrototype = window.Node.prototype;
     

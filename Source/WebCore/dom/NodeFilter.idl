@@ -20,16 +20,13 @@
 
 // Introduced in DOM Level 2:
 [
-    JSCustomMarkFunction,
-    JSCustomToNativeObject,
     ObjCProtocol,
-    CPPPureInterface,
-    ImplementationLacksVTable,
-] interface NodeFilter {
+    IsWeakCallback,
+] callback interface NodeFilter {
     // Constants returned by acceptNode
-    const short               FILTER_ACCEPT                  = 1;
-    const short               FILTER_REJECT                  = 2;
-    const short               FILTER_SKIP                    = 3;
+    const unsigned short FILTER_ACCEPT = 1;
+    const unsigned short FILTER_REJECT = 2;
+    const unsigned short FILTER_SKIP = 3;
 
     // Constants for whatToShow
     const unsigned long       SHOW_ALL                       = 0xFFFFFFFF;
@@ -46,7 +43,10 @@
     const unsigned long       SHOW_DOCUMENT_FRAGMENT         = 0x00000400;
     const unsigned long       SHOW_NOTATION                  = 0x00000800;
 
-    [CallWith=ScriptState] short acceptNode([Default=Undefined] optional Node n);
-
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    short acceptNode([Default=Undefined] optional Node n);
+#else
+    [Custom] unsigned short acceptNode([Default=Undefined] optional Node n);
+#endif
 };
 

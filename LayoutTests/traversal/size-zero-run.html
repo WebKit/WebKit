@@ -11,7 +11,7 @@ function test() {
     textnode2.nodeValue = "";
     
     var root = document.body;
-    var it = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, NodeFilter.FILTER_ACCEPT, false);
+    var it = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, null, false);
 
     var n = it.nextNode();
     while(n) {

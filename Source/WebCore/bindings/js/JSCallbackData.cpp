@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,51 +33,47 @@
 #include "JSDOMBinding.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
+#include <runtime/Exception.h>
 
 using namespace JSC;
     
 namespace WebCore {
 
-void JSCallbackData::deleteData(void* context)
+JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<Exception>& returnedException)
 {
-    delete static_cast<JSCallbackData*>(context);
-}
+    ASSERT(callback);
 
-JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<Exception>& returnedException)
-{
-    ASSERT(callback());
-    return invokeCallback(callback(), args, method, functionName, returnedException);
-}
+    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(callback->globalObject());
+    ASSERT(globalObject);
 
-JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<Exception>& returnedException)
-{
-    ASSERT(callback());
-    ASSERT(globalObject());
-
-    ExecState* exec = globalObject()->globalExec();
+    ExecState* exec = globalObject->globalExec();
     JSValue function;
     CallData callData;
     CallType callType = CallTypeNone;
 
     if (method != CallbackType::Object) {
-        function = callback();
-        callType = callback()->methodTable()->getCallData(callback(), callData);
+        function = callback;
+        callType = callback->methodTable()->getCallData(callback, callData);
     }
     if (callType == CallTypeNone) {
-        if (method == CallbackType::Function)
+        if (method == CallbackType::Function) {
+            returnedException = Exception::create(exec->vm(), createTypeError(exec));
             return JSValue();
+        }
 
         ASSERT(!functionName.isNull());
-        function = callback()->get(exec, functionName);
+        function = callback->get(exec, functionName);
         callType = getCallData(function, callData);
-        if (callType == CallTypeNone)
+        if (callType == CallTypeNone) {
+            returnedException = Exception::create(exec->vm(), createTypeError(exec));
             return JSValue();
+        }
     }
 
     ASSERT(!function.isEmpty());
     ASSERT(callType != CallTypeNone);
 
-    ScriptExecutionContext* context = globalObject()->scriptExecutionContext();
+    ScriptExecutionContext* context = globalObject->scriptExecutionContext();
     // We will fail to get the context if the frame has been detached.
     if (!context)
         return JSValue();
@@ -86,12 +82,17 @@ JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& 
 
     returnedException = nullptr;
     JSValue result = context->isDocument()
-        ? JSMainThreadExecState::call(exec, function, callType, callData, thisValue, args, returnedException)
-        : JSC::call(exec, function, callType, callData, thisValue, args, returnedException);
+        ? JSMainThreadExecState::call(exec, function, callType, callData, callback, args, returnedException)
+        : JSC::call(exec, function, callType, callData, callback, args, returnedException);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
 
     return result;
+}
+
+bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor& visitor)
+{
+    return visitor.containsOpaqueRoot(context);
 }
 
 } // namespace WebCore

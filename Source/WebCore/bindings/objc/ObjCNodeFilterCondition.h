@@ -43,7 +43,7 @@ namespace WebCore {
             return adoptRef(*new ObjCNodeFilterCondition(filter));
         }
 
-        virtual short acceptNode(JSC::ExecState*, Node*) const;
+        virtual short acceptNode(Node*) const;
 
     private:
         ObjCNodeFilterCondition(id <DOMNodeFilter> filter)

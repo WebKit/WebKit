@@ -3,8 +3,8 @@
 if (window.testRunner)
     testRunner.dumpAsText();
     
-var iterator = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, 0, false);
-var walker = document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, 0, false);
+var iterator = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, null, false);
+var walker = document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, null, false);
 
 // create lots of objects to force a garbage collection
  var i = 0;

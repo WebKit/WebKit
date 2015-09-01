@@ -1,3 +1,52 @@
+2015-09-01  Chris Dumez  <cdumez@apple.com>
+
+        NodeFilter should be a callback interface
+        https://bugs.webkit.org/show_bug.cgi?id=148415
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/TreeWalker/acceptNode-filter-expected.txt:
+        Rebaseline, the new exception message is different but the exception
+        type is the same.
+
+        * fast/dom/constants-expected.txt:
+        * fast/dom/constants.html:
+        Stop checking for constants on NodeFilter instances as those are now
+        Functions (implemented by the JavaScript). Those constants are on
+        window.NodeFilter still. I verified that this is consistant with
+        Firefox.
+
+        * fast/dom/global-constructors.html:
+        Update the check to verify that the prototype of a NodeFilter instance
+        is the Function prototype, not the NodeFilter prototype. NodeFilter
+        should not have a prototype as it is a callback interface.
+
+        * fast/dom/node-filter-gc.html:
+        Pass null for the filter argument instead of 0. The functions expect
+        a nullable NodeFilter object. Passing 0 here throws.
+
+        * fast/dom/node-filter-interface-expected.txt:
+        Rebaseline. window.NodeFilter no longer has a prototype. This is because
+        callback interfaces are not supposed to have a prototype property, as
+        per the Web IDL specification:
+        https://heycam.github.io/webidl/#interface-prototype-object
+
+        I also verified that this is consistent with Firefox.
+
+        * http/tests/w3c/dom/interfaces-expected.txt:
+        * http/tests/w3c/dom/nodes/Document-createTreeWalker-expected.txt:
+        * http/tests/w3c/dom/traversal/NodeIterator-expected.txt:
+        * http/tests/w3c/dom/traversal/TreeWalker-expected.txt:
+        Rebaseline W3C tests. We are now passing a lot of checks because they
+        check that TreeWalker.filter / NodeIterator.filter is a Function.
+
+        * traversal/size-zero-run.html:
+        Fix the test to pass a null node filter instead of NodeFilter.FILTER_ACCEPT.
+        The call was not valid and now correctly throws. The JS is supposed to pass
+        in a nullable NodeFilter, not a constant. I think the code meant to say
+        "function() { return NodeFilter.FILTER_ACCEPT; }", however, I used null as
+        it is shorter and equivalent.
+
 2015-09-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add tests for computed method declarations with side effects

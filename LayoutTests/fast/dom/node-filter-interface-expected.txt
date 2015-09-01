@@ -39,8 +39,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 [Configurable: true, enumerable: false, writable: false, value: 0]
 * name
 [Configurable: true, enumerable: false, writable: false, value: NodeFilter]
-* prototype
-[Configurable: false, enumerable: false, writable: false, value: [object NodeFilterPrototype]]
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -29,12 +29,12 @@
     readonly attribute boolean expandEntityReferences;        
     [SetterRaisesException] attribute Node currentNode;
 
-    [CallWith=ScriptState] Node parentNode();
-    [CallWith=ScriptState] Node firstChild();
-    [CallWith=ScriptState] Node lastChild();
-    [CallWith=ScriptState] Node previousSibling();
-    [CallWith=ScriptState] Node nextSibling();
-    [CallWith=ScriptState] Node previousNode();
-    [CallWith=ScriptState] Node nextNode();
+    Node parentNode();
+    Node firstChild();
+    Node lastChild();
+    Node previousSibling();
+    Node nextSibling();
+    Node previousNode();
+    Node nextNode();
 };
 

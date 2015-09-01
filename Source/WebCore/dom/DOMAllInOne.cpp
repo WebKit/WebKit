@@ -108,7 +108,6 @@
 #include "NamedFlowCollection.cpp"
 #include "NamedNodeMap.cpp"
 #include "Node.cpp"
-#include "NodeFilter.cpp"
 #include "NodeFilterCondition.cpp"
 #include "NodeIterator.cpp"
 #include "NodeOrString.cpp"

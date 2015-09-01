@@ -23,46 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSNodeFilter.h"
+#ifndef NativeNodeFilter_h
+#define NativeNodeFilter_h
 
-#include "JSCallbackData.h"
-#include "JSNode.h"
 #include "NodeFilter.h"
+#include "NodeFilterCondition.h"
 
 namespace WebCore {
 
-using namespace JSC;
-
-// FIXME: The bindings generator is currently not able to generate
-// callback function calls if they return something other than a
-// boolean.
-uint16_t JSNodeFilter::acceptNode(Node* node)
-{
-    Ref<JSNodeFilter> protect(*this);
-
-    JSLockHolder lock(m_data->globalObject()->vm());
-
-    ExecState* exec = m_data->globalObject()->globalExec();
-    MarkedArgumentBuffer args;
-    args.append(toJS(exec, m_data->globalObject(), node));
-    if (exec->hadException())
-        return NodeFilter::FILTER_REJECT;
-
-    NakedPtr<Exception> returnedException;
-    JSValue value = m_data->invokeCallback(args, JSCallbackData::CallbackType::FunctionOrObject, Identifier::fromString(exec, "acceptNode"), returnedException);
-    if (returnedException) {
-        // Rethrow exception.
-        exec->vm().setException(returnedException);
-
-        return NodeFilter::FILTER_REJECT;
+class NativeNodeFilter final : public NodeFilter {
+public:
+    static Ref<NativeNodeFilter> create(RefPtr<NodeFilterCondition>&& condition)
+    {
+        return adoptRef(*new NativeNodeFilter(WTF::move(condition)));
     }
 
-    uint16_t result = toUInt16(exec, value, NormalConversion);
-    if (exec->hadException())
-        return NodeFilter::FILTER_REJECT;
+    static Ref<NativeNodeFilter> create()
+    {
+        return adoptRef(*new NativeNodeFilter());
+    }
 
-    return result;
-}
+    virtual uint16_t acceptNode(Node*) override;
+
+    void setCondition(RefPtr<NodeFilterCondition>&& condition) { ASSERT(!m_condition); m_condition = condition; }
+
+private:
+    explicit NativeNodeFilter(RefPtr<NodeFilterCondition>&&);
+
+    NativeNodeFilter() { }
+
+    RefPtr<NodeFilterCondition> m_condition;
+};
 
 } // namespace WebCore
+
+#endif // NativeNodeFilter_h
+

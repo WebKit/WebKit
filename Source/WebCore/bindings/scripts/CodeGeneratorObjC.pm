@@ -420,6 +420,7 @@ sub GetImplClassName
 {
     my $name = shift;
 
+    return "NativeNodeFilter" if $name eq "NodeFilter";
     return "DOMWindow" if $name eq "AbstractView";
     return $name;
 }
@@ -693,7 +694,7 @@ sub AddIncludesForType
     }
 
     if ($type eq "NodeFilter") {
-        $implIncludes{"NodeFilter.h"} = 1;
+        $implIncludes{"NativeNodeFilter.h"} = 1;
         $implIncludes{"ObjCNodeFilterCondition.h"} = 1;
         return;
     }
@@ -1557,7 +1558,7 @@ sub GenerateImplementation
                 my $paramName = $needsCustom{"NodeFilter"};
                 push(@functionContent, "    RefPtr<WebCore::NodeFilter> nativeNodeFilter;\n");
                 push(@functionContent, "    if ($paramName)\n");
-                push(@functionContent, "        nativeNodeFilter = WebCore::NodeFilter::create(WebCore::ObjCNodeFilterCondition::create($paramName));\n");
+                push(@functionContent, "        nativeNodeFilter = WebCore::NativeNodeFilter::create(WebCore::ObjCNodeFilterCondition::create($paramName));\n");
             }
 
             push(@parameterNames, "ec") if $raisesExceptions;

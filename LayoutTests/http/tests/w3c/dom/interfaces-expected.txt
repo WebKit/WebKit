@@ -1890,41 +1890,41 @@ PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.S
 PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "previousNode" with the proper type (9) 
 PASS TreeWalker interface: document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false) must inherit property "nextNode" with the proper type (10) 
 PASS NodeFilter interface: existence and properties of interface object 
-FAIL NodeFilter interface: existence and properties of interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
-FAIL NodeFilter interface: existence and properties of interface prototype object's "constructor" property assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: existence and properties of interface prototype object 
+PASS NodeFilter interface: existence and properties of interface prototype object's "constructor" property 
 PASS NodeFilter interface: constant FILTER_ACCEPT on interface object 
-FAIL NodeFilter interface: constant FILTER_ACCEPT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant FILTER_ACCEPT on interface prototype object 
 PASS NodeFilter interface: constant FILTER_REJECT on interface object 
-FAIL NodeFilter interface: constant FILTER_REJECT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant FILTER_REJECT on interface prototype object 
 PASS NodeFilter interface: constant FILTER_SKIP on interface object 
-FAIL NodeFilter interface: constant FILTER_SKIP on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant FILTER_SKIP on interface prototype object 
 PASS NodeFilter interface: constant SHOW_ALL on interface object 
-FAIL NodeFilter interface: constant SHOW_ALL on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ALL on interface prototype object 
 PASS NodeFilter interface: constant SHOW_ELEMENT on interface object 
-FAIL NodeFilter interface: constant SHOW_ELEMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ELEMENT on interface prototype object 
 PASS NodeFilter interface: constant SHOW_ATTRIBUTE on interface object 
-FAIL NodeFilter interface: constant SHOW_ATTRIBUTE on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ATTRIBUTE on interface prototype object 
 PASS NodeFilter interface: constant SHOW_TEXT on interface object 
-FAIL NodeFilter interface: constant SHOW_TEXT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_TEXT on interface prototype object 
 PASS NodeFilter interface: constant SHOW_CDATA_SECTION on interface object 
-FAIL NodeFilter interface: constant SHOW_CDATA_SECTION on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_CDATA_SECTION on interface prototype object 
 PASS NodeFilter interface: constant SHOW_ENTITY_REFERENCE on interface object 
-FAIL NodeFilter interface: constant SHOW_ENTITY_REFERENCE on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ENTITY_REFERENCE on interface prototype object 
 PASS NodeFilter interface: constant SHOW_ENTITY on interface object 
-FAIL NodeFilter interface: constant SHOW_ENTITY on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_ENTITY on interface prototype object 
 PASS NodeFilter interface: constant SHOW_PROCESSING_INSTRUCTION on interface object 
-FAIL NodeFilter interface: constant SHOW_PROCESSING_INSTRUCTION on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_PROCESSING_INSTRUCTION on interface prototype object 
 PASS NodeFilter interface: constant SHOW_COMMENT on interface object 
-FAIL NodeFilter interface: constant SHOW_COMMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_COMMENT on interface prototype object 
 PASS NodeFilter interface: constant SHOW_DOCUMENT on interface object 
-FAIL NodeFilter interface: constant SHOW_DOCUMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_DOCUMENT on interface prototype object 
 PASS NodeFilter interface: constant SHOW_DOCUMENT_TYPE on interface object 
-FAIL NodeFilter interface: constant SHOW_DOCUMENT_TYPE on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_DOCUMENT_TYPE on interface prototype object 
 PASS NodeFilter interface: constant SHOW_DOCUMENT_FRAGMENT on interface object 
-FAIL NodeFilter interface: constant SHOW_DOCUMENT_FRAGMENT on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_DOCUMENT_FRAGMENT on interface prototype object 
 PASS NodeFilter interface: constant SHOW_NOTATION on interface object 
-FAIL NodeFilter interface: constant SHOW_NOTATION on interface prototype object assert_false: NodeFilter should not have a "prototype" property expected false got true
-FAIL NodeFilter interface: operation acceptNode(Node) assert_false: NodeFilter should not have a "prototype" property expected false got true
+PASS NodeFilter interface: constant SHOW_NOTATION on interface prototype object 
+PASS NodeFilter interface: operation acceptNode(Node) 
 FAIL DOMTokenList interface: existence and properties of interface object assert_equals: class string of DOMTokenList expected "[object Function]" but got "[object DOMTokenListConstructor]"
 PASS DOMTokenList interface object length 
 PASS DOMTokenList interface: existence and properties of interface prototype object 

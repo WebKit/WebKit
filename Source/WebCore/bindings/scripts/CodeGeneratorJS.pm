@@ -191,6 +191,13 @@ sub GetCallbackClassName
     return "JS$className";
 }
 
+sub GetJSCallbackDataType
+{
+    my $callbackInterface = shift;
+
+    return $callbackInterface->extendedAttributes->{"IsWeakCallback"} ? "JSCallbackDataWeak" : "JSCallbackDataStrong";
+}
+
 sub AddIncludesForTypeInImpl
 {
     my $type = shift;
@@ -3475,6 +3482,8 @@ sub GenerateCallbackHeader
     # Destructor
     push(@headerContent, "    virtual ~$className();\n");
 
+    push(@headerContent, "    " . GetJSCallbackDataType($interface) . "* callbackData() { return m_data; }\n");
+
     # Constructor object getter.
     if (@{$interface->constants}) {
         push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);\n");
@@ -3513,8 +3522,12 @@ sub GenerateCallbackHeader
     push(@headerContent, "    $className(JSC::JSObject* callback, JSDOMGlobalObject*);\n\n");
 
     # Private members
-    push(@headerContent, "    JSCallbackData* m_data;\n");
+    push(@headerContent, "    " . GetJSCallbackDataType($interface) . "* m_data;\n");
     push(@headerContent, "};\n\n");
+
+    # toJS().
+    push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName*);\n");
+    push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $interfaceName& impl) { return toJS(exec, globalObject, &impl); }\n\n");
 
     push(@headerContent, "} // namespace WebCore\n\n");
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
@@ -3549,7 +3562,7 @@ sub GenerateCallbackImplementation
         push(@implContent, "    : ${interfaceName}()\n");
     }
     push(@implContent, "    , ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
-    push(@implContent, "    , m_data(new JSCallbackData(callback, globalObject))\n");
+    push(@implContent, "    , m_data(new " . GetJSCallbackDataType($interface) . "(callback, this))\n");
     push(@implContent, "{\n");
     push(@implContent, "}\n\n");
 
@@ -3564,7 +3577,7 @@ sub GenerateCallbackImplementation
     push(@implContent, "    else\n");
     push(@implContent, "        context->postTask(DeleteCallbackDataTask(m_data));\n");
     push(@implContent, "#ifndef NDEBUG\n");
-    push(@implContent, "    m_data = 0;\n");
+    push(@implContent, "    m_data = nullptr;\n");
     push(@implContent, "#endif\n");
     push(@implContent, "}\n\n");
 
@@ -3688,6 +3701,14 @@ sub GenerateCallbackImplementation
             push(@implContent, "}\n");
         }
     }
+
+    # toJS() implementation.
+    push(@implContent, "\nJSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName* impl)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    if (!impl || !static_cast<${className}&>(*impl).callbackData())\n");
+    push(@implContent, "        return jsNull();\n\n");
+    push(@implContent, "    return static_cast<${className}&>(*impl).callbackData()->callback();\n\n");
+    push(@implContent, "}\n");
 
     push(@implContent, "\n}\n");
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);

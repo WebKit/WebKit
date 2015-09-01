@@ -37,7 +37,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-short ObjCNodeFilterCondition::acceptNode(ExecState*, Node* node) const
+short ObjCNodeFilterCondition::acceptNode(Node* node) const
 {
     if (!node)
         return NodeFilter::FILTER_REJECT;

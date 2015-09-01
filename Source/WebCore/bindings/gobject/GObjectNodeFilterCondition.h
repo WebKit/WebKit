@@ -36,7 +36,7 @@ public:
         return adoptRef(*new GObjectNodeFilterCondition(filter));
     }
 
-    virtual short acceptNode(JSC::ExecState*, Node*) const;
+    virtual short acceptNode(Node*) const override;
 
 private:
     GObjectNodeFilterCondition(WebKitDOMNodeFilter* filter)

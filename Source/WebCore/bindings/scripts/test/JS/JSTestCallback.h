@@ -40,6 +40,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     virtual ~JSTestCallback();
+    JSCallbackDataStrong* callbackData() { return m_data; }
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
 
     // Functions
@@ -55,8 +56,11 @@ public:
 private:
     JSTestCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
-    JSCallbackData* m_data;
+    JSCallbackDataStrong* m_data;
 };
+
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallback*);
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCallback& impl) { return toJS(exec, globalObject, &impl); }
 
 } // namespace WebCore
 

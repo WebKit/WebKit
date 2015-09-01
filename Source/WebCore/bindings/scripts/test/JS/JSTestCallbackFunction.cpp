@@ -41,7 +41,7 @@ namespace WebCore {
 JSTestCallbackFunction::JSTestCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackFunction()
     , ActiveDOMCallback(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackData(callback, globalObject))
+    , m_data(new JSCallbackDataStrong(callback, this))
 {
 }
 
@@ -55,7 +55,7 @@ JSTestCallbackFunction::~JSTestCallbackFunction()
     else
         context->postTask(DeleteCallbackDataTask(m_data));
 #ifndef NDEBUG
-    m_data = 0;
+    m_data = nullptr;
 #endif
 }
 
@@ -187,6 +187,15 @@ bool JSTestCallbackFunction::callbackRequiresThisToPass(int longParam, TestNode*
     if (returnedException)
         reportException(exec, returnedException);
     return !returnedException;
+}
+
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunction* impl)
+{
+    if (!impl || !static_cast<JSTestCallbackFunction&>(*impl).callbackData())
+        return jsNull();
+
+    return static_cast<JSTestCallbackFunction&>(*impl).callbackData()->callback();
+
 }
 
 }

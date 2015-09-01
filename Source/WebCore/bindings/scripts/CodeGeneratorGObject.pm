@@ -305,7 +305,7 @@ sub SkipFunction {
     # sequence<T> parameters, because this code generator doesn't know how to auto-generate
     # MediaQueryListListener or sequence<T>. Skip EventListeners because they are handled elsewhere.
     foreach my $param (@{$function->parameters}) {
-        if ($codeGenerator->IsCallbackInterface($param->type) ||
+        if ($codeGenerator->IsFunctionOnlyCallbackInterface($param->type) ||
             $param->extendedAttributes->{"Clamp"} ||
             $param->type eq "MediaQueryListListener" ||
             $param->type eq "EventListener" ||

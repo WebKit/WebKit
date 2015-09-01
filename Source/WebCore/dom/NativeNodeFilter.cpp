@@ -24,45 +24,18 @@
  */
 
 #include "config.h"
-#include "JSNodeFilter.h"
-
-#include "JSCallbackData.h"
-#include "JSNode.h"
-#include "NodeFilter.h"
+#include "NativeNodeFilter.h"
 
 namespace WebCore {
 
-using namespace JSC;
+NativeNodeFilter::NativeNodeFilter(RefPtr<NodeFilterCondition>&& condition)
+    : m_condition(condition)
+{ }
 
-// FIXME: The bindings generator is currently not able to generate
-// callback function calls if they return something other than a
-// boolean.
-uint16_t JSNodeFilter::acceptNode(Node* node)
+uint16_t NativeNodeFilter::acceptNode(Node* node)
 {
-    Ref<JSNodeFilter> protect(*this);
-
-    JSLockHolder lock(m_data->globalObject()->vm());
-
-    ExecState* exec = m_data->globalObject()->globalExec();
-    MarkedArgumentBuffer args;
-    args.append(toJS(exec, m_data->globalObject(), node));
-    if (exec->hadException())
-        return NodeFilter::FILTER_REJECT;
-
-    NakedPtr<Exception> returnedException;
-    JSValue value = m_data->invokeCallback(args, JSCallbackData::CallbackType::FunctionOrObject, Identifier::fromString(exec, "acceptNode"), returnedException);
-    if (returnedException) {
-        // Rethrow exception.
-        exec->vm().setException(returnedException);
-
-        return NodeFilter::FILTER_REJECT;
-    }
-
-    uint16_t result = toUInt16(exec, value, NormalConversion);
-    if (exec->hadException())
-        return NodeFilter::FILTER_REJECT;
-
-    return result;
+    // cast to short silences "enumeral and non-enumeral types in return" warning
+    return m_condition ? m_condition->acceptNode(node) : static_cast<uint16_t>(FILTER_ACCEPT);
 }
 
 } // namespace WebCore
