@@ -1,3 +1,15 @@
+2015-09-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add tests for computed method declarations with side effects
+        https://bugs.webkit.org/show_bug.cgi?id=148057
+
+        Reviewed by Darin Adler.
+
+        Added test cases for computed method names with side effects.
+
+        * js/class-syntax-method-names-expected.txt:
+        * js/script-tests/class-syntax-method-names.js:
+
 2015-09-01  Brian Burg  <bburg@apple.com>
 
         Unreviewed, the previous commit had incorrect expectations.
