@@ -1,3 +1,21 @@
+2015-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator should not allow non-boolean values for "optional" key
+        https://bugs.webkit.org/show_bug.cgi?id=148679
+
+        Reviewed by Joseph Pecoraro.
+
+        In Python, the 'bool' type inherits from 'int'. In the runtime, True and False are
+        just numbers to Python. So, the existing check for boolean literals was not quite right.
+
+        * inspector/scripts/codegen/models.py: Use isinstance instead.
+        (TypeMember.__init__):
+        (Parameter.__init__):
+        * inspector/scripts/tests/expected/fail-on-number-typed-optional-parameter-flag.json-error: Added.
+        * inspector/scripts/tests/expected/fail-on-number-typed-optional-type-member.json-error: Added.
+        * inspector/scripts/tests/fail-on-number-typed-optional-parameter-flag.json: Added.
+        * inspector/scripts/tests/fail-on-number-typed-optional-type-member.json: Added.
+
 2015-09-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG AI assertions about not having to do type checks at the point of a Known use kind are unsound

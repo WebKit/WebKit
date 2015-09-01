@@ -538,7 +538,7 @@ class TypeMember:
         self.is_optional = is_optional
         self.description = description
 
-        if self.is_optional not in [True, False]:
+        if not isinstance(self.is_optional, bool):
             raise ParseException("The 'optional' flag for a type member must be a boolean literal.")
 
     def resolve_type_references(self, protocol, domain):
@@ -553,7 +553,7 @@ class Parameter:
         self.is_optional = is_optional
         self.description = description
 
-        if self.is_optional not in [True, False]:
+        if not isinstance(self.is_optional, bool):
             raise ParseException("The 'optional' flag for a parameter must be a boolean literal.")
 
     def resolve_type_references(self, protocol, domain):
