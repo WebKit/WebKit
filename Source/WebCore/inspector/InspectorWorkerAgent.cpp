@@ -101,17 +101,15 @@ private:
 
 int InspectorWorkerAgent::WorkerFrontendChannel::s_nextId = 1;
 
-InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents)
+InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents& instrumentingAgents)
     : InspectorAgentBase(ASCIILiteral("Worker"), instrumentingAgents)
-    , m_enabled(false)
-    , m_shouldPauseDedicatedWorkerOnStart(false)
 {
-    m_instrumentingAgents->setInspectorWorkerAgent(this);
+    m_instrumentingAgents.setInspectorWorkerAgent(this);
 }
 
 InspectorWorkerAgent::~InspectorWorkerAgent()
 {
-    m_instrumentingAgents->setInspectorWorkerAgent(nullptr);
+    m_instrumentingAgents.setInspectorWorkerAgent(nullptr);
 }
 
 void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)

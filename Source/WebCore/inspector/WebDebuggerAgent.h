@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +37,14 @@ class WebDebuggerAgent : public Inspector::InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WebDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebDebuggerAgent(Inspector::InjectedScriptManager*, InstrumentingAgents*);
+    WebDebuggerAgent(Inspector::InjectedScriptManager&, InstrumentingAgents&);
     virtual ~WebDebuggerAgent() { }
 
 protected:
     virtual void enable() override;
     virtual void disable(bool isBeingDestroyed) override;
 
-    InstrumentingAgents* m_instrumentingAgents;
+    InstrumentingAgents& m_instrumentingAgents;
 };
 
 } // namespace WebCore

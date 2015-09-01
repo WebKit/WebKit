@@ -1,3 +1,64 @@
+2015-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: tighten up lifetimes for InspectorController-owned objects; add brace initializers to agents
+        https://bugs.webkit.org/show_bug.cgi?id=148612
+
+        Reviewed by Joseph Pecoraro.
+
+        Both InjectedScriptManager and AgentRegistry (thus all agents) are
+        owned by JSGlobalObjectInspectorController. So, use references.
+
+        Add brace initalizers for scalar and pointer members in agent classes.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::addToFrontend):
+        (Inspector::ConsoleMessage::updateRepeatCountInConsole):
+        (Inspector::ConsoleMessage::ConsoleMessage):
+        * inspector/ConsoleMessage.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::InspectorAgent):
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::InspectorConsoleAgent):
+        (Inspector::InspectorConsoleAgent::enable):
+        (Inspector::InspectorConsoleAgent::clearMessages):
+        (Inspector::InspectorConsoleAgent::addMessageToConsole):
+        (Inspector::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (Inspector::InspectorDebuggerAgent::removeBreakpoint):
+        (Inspector::InspectorDebuggerAgent::getFunctionDetails):
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (Inspector::InspectorDebuggerAgent::didPause):
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        (Inspector::InspectorDebuggerAgent::didContinue):
+        (Inspector::InspectorDebuggerAgent::clearExceptionValue):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::getDisplayableProperties):
+        (Inspector::InspectorRuntimeAgent::getCollectionEntries):
+        (Inspector::InspectorRuntimeAgent::saveResult):
+        (Inspector::InspectorRuntimeAgent::releaseObject):
+        (Inspector::InspectorRuntimeAgent::releaseObjectGroup):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectConsoleAgent.cpp:
+        (Inspector::JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent):
+        * inspector/agents/JSGlobalObjectConsoleAgent.h:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        (Inspector::JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent):
+        (Inspector::JSGlobalObjectDebuggerAgent::injectedScriptForEval):
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        (Inspector::JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent):
+        (Inspector::JSGlobalObjectRuntimeAgent::injectedScriptForEval):
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+
 2015-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Introduce ModuleProgramExecutable families and compile Module code to bytecode

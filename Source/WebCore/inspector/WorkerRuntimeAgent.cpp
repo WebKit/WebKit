@@ -46,10 +46,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WorkerRuntimeAgent::WorkerRuntimeAgent(InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* workerGlobalScope)
+WorkerRuntimeAgent::WorkerRuntimeAgent(InjectedScriptManager& injectedScriptManager, WorkerGlobalScope* workerGlobalScope)
     : InspectorRuntimeAgent(injectedScriptManager)
     , m_workerGlobalScope(workerGlobalScope)
-    , m_paused(false)
 {
 }
 
@@ -73,7 +72,7 @@ InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString& error, con
     }
 
     JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
-    return injectedScriptManager()->injectedScriptFor(scriptState);
+    return injectedScriptManager().injectedScriptFor(scriptState);
 }
 
 void WorkerRuntimeAgent::muteConsole()

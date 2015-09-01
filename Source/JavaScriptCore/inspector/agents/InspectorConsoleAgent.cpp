@@ -42,12 +42,9 @@ namespace Inspector {
 static const unsigned maximumConsoleMessages = 1000;
 static const int expireConsoleMessagesStep = 100;
 
-InspectorConsoleAgent::InspectorConsoleAgent(InjectedScriptManager* injectedScriptManager)
+InspectorConsoleAgent::InspectorConsoleAgent(InjectedScriptManager& injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("Console"))
     , m_injectedScriptManager(injectedScriptManager)
-    , m_previousMessage(nullptr)
-    , m_expiredConsoleMessageCount(0)
-    , m_enabled(false)
 {
 }
 
@@ -79,12 +76,12 @@ void InspectorConsoleAgent::enable(ErrorString&)
 
     if (m_expiredConsoleMessageCount) {
         ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount));
-        expiredMessage.addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, false);
+        expiredMessage.addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
     }
 
     size_t messageCount = m_consoleMessages.size();
     for (size_t i = 0; i < messageCount; ++i)
-        m_consoleMessages[i]->addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, false);
+        m_consoleMessages[i]->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
 }
 
 void InspectorConsoleAgent::disable(ErrorString&)
@@ -101,7 +98,7 @@ void InspectorConsoleAgent::clearMessages(ErrorString&)
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = nullptr;
 
-    m_injectedScriptManager->releaseObjectGroup(ASCIILiteral("console"));
+    m_injectedScriptManager.releaseObjectGroup(ASCIILiteral("console"));
 
     if (m_frontendDispatcher && m_enabled)
         m_frontendDispatcher->messagesCleared();
@@ -118,7 +115,7 @@ void InspectorConsoleAgent::reset()
 
 void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> message)
 {
-    if (!m_injectedScriptManager->inspectorEnvironment().developerExtrasEnabled())
+    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
         return;
 
     if (message->type() == MessageType::Clear) {
@@ -200,18 +197,18 @@ static bool isGroupMessage(MessageType type)
 
 void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> consoleMessage)
 {
-    ASSERT(m_injectedScriptManager->inspectorEnvironment().developerExtrasEnabled());
+    ASSERT(m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled());
     ASSERT_ARG(consoleMessage, consoleMessage);
 
     if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
         if (m_frontendDispatcher && m_enabled)
-            m_previousMessage->updateRepeatCountInConsole(m_frontendDispatcher.get());
+            m_previousMessage->updateRepeatCountInConsole(*m_frontendDispatcher);
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(WTF::move(consoleMessage));
         if (m_frontendDispatcher && m_enabled)
-            m_previousMessage->addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, true);
+            m_previousMessage->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, true);
     }
 
     if (!m_frontendDispatcher && m_consoleMessages.size() >= maximumConsoleMessages) {

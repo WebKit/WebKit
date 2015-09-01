@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,12 +56,9 @@ static bool asBool(const bool* const b)
     return b ? *b : false;
 }
 
-InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScriptManager)
+InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager& injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("Runtime"))
     , m_injectedScriptManager(injectedScriptManager)
-    , m_scriptDebugServer(nullptr)
-    , m_enabled(false)
-    , m_isTypeProfilingEnabled(false)
 {
 }
 
@@ -137,7 +134,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
 
 void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const InspectorArray* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         errorString = ASCIILiteral("Inspected frame has gone");
         return;
@@ -163,7 +160,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
 
 void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String& objectId, const bool* const ownProperties, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         errorString = ASCIILiteral("Inspected frame has gone");
         return;
@@ -181,7 +178,7 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
 
 void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, const String& objectId, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         errorString = ASCIILiteral("Inspected frame has gone");
         return;
@@ -199,7 +196,7 @@ void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, c
 
 void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         errorString = ASCIILiteral("Inspected frame has gone");
         return;
@@ -217,7 +214,7 @@ void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const Inspector
 
     String objectId;
     if (callArgument.getString(ASCIILiteral("objectId"), objectId)) {
-        injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+        injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
         if (injectedScript.hasNoValue()) {
             errorString = ASCIILiteral("Inspected frame has gone");
             return;
@@ -233,14 +230,14 @@ void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const Inspector
 
 void InspectorRuntimeAgent::releaseObject(ErrorString&, const String& objectId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (!injectedScript.hasNoValue())
         injectedScript.releaseObject(objectId);
 }
 
 void InspectorRuntimeAgent::releaseObjectGroup(ErrorString&, const String& objectGroup)
 {
-    m_injectedScriptManager->releaseObjectGroup(objectGroup);
+    m_injectedScriptManager.releaseObjectGroup(objectGroup);
 }
 
 void InspectorRuntimeAgent::run(ErrorString&)

@@ -104,7 +104,7 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
+    InspectorDOMAgent(InstrumentingAgents&, InspectorPageAgent*, Inspector::InjectedScriptManager&, InspectorOverlay*);
     virtual ~InspectorDOMAgent();
 
     static String toErrorString(const ExceptionCode&);
@@ -247,12 +247,13 @@ private:
 
     void innerHighlightQuad(std::unique_ptr<FloatQuad>, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* usePageCoordinates);
 
-    InspectorPageAgent* m_pageAgent;
-    Inspector::InjectedScriptManager* m_injectedScriptManager;
-    InspectorOverlay* m_overlay;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
-    DOMListener* m_domListener;
+    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    InspectorPageAgent* m_pageAgent { nullptr };
+
+    InspectorOverlay* m_overlay { nullptr };
+    DOMListener* m_domListener { nullptr };
     NodeToIdMap m_documentNodeToIdMap;
     typedef HashMap<RefPtr<Node>, BackendNodeId> NodeToBackendIdMap;
     HashMap<String, NodeToBackendIdMap> m_nodeGroupToBackendIdMap;
@@ -262,19 +263,19 @@ private:
     HashMap<int, NodeToIdMap*> m_idToNodesMap;
     HashSet<int> m_childrenRequested;
     HashMap<BackendNodeId, std::pair<Node*, String>> m_backendIdToNode;
-    int m_lastNodeId;
-    BackendNodeId m_lastBackendNodeId;
+    int m_lastNodeId { 1 };
+    BackendNodeId m_lastBackendNodeId { -1 };
     RefPtr<Document> m_document;
     typedef HashMap<String, Vector<RefPtr<Node>>> SearchResults;
     SearchResults m_searchResults;
     std::unique_ptr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_nodeToFocus;
-    bool m_searchingForNode;
+    bool m_searchingForNode { false };
     std::unique_ptr<HighlightConfig> m_inspectModeHighlightConfig;
     std::unique_ptr<InspectorHistory> m_history;
     std::unique_ptr<DOMEditor> m_domEditor;
-    bool m_suppressAttributeModifiedEvent;
-    bool m_documentRequested;
+    bool m_suppressAttributeModifiedEvent { false };
+    bool m_documentRequested { false };
 };
 
 } // namespace WebCore

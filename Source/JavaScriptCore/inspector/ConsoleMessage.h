@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
@@ -55,8 +55,8 @@ public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, JSC::ExecState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
-    void addToFrontend(ConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
-    void updateRepeatCountInConsole(ConsoleFrontendDispatcher*);
+    void addToFrontend(ConsoleFrontendDispatcher&, InjectedScriptManager&, bool generatePreview);
+    void updateRepeatCountInConsole(ConsoleFrontendDispatcher&);
 
     MessageSource source() const { return m_source; }
     const String& message() const { return m_message; }
@@ -84,9 +84,9 @@ private:
     RefPtr<ScriptArguments> m_arguments;
     RefPtr<ScriptCallStack> m_callStack;
     String m_url;
-    unsigned m_line;
-    unsigned m_column;
-    unsigned m_repeatCount;
+    unsigned m_line { 0 };
+    unsigned m_column { 0 };
+    unsigned m_repeatCount { 1 };
     String m_requestId;
 };
 

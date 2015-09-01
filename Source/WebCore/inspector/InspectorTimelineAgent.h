@@ -117,7 +117,7 @@ class InspectorTimelineAgent final
 public:
     enum InspectorType { PageInspector, WorkerInspector };
 
-    InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorType, InspectorClient*);
+    InspectorTimelineAgent(InstrumentingAgents&, InspectorPageAgent*, InspectorType, InspectorClient*);
     virtual ~InspectorTimelineAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -231,19 +231,18 @@ private:
     void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);
     Page* page();
 
-    InspectorPageAgent* m_pageAgent;
-    PageScriptDebugServer* m_scriptDebugServer { nullptr };
-
     std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
+    InspectorPageAgent* m_pageAgent;
+
+    PageScriptDebugServer* m_scriptDebugServer { nullptr };
+    InspectorClient* m_client { nullptr };
 
     Vector<TimelineRecordEntry> m_recordStack;
-
     int m_id { 1 };
     int m_callStackDepth { 0 };
     int m_maxCallStackDepth { 5 };
     InspectorType m_inspectorType;
-    InspectorClient* m_client;
 
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 

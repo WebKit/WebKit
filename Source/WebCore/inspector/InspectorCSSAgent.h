@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +82,7 @@ public:
         ContentSecurityPolicy* m_contentSecurityPolicy;
     };
 
-    InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
+    InspectorCSSAgent(InstrumentingAgents&, InspectorDOMAgent*);
     virtual ~InspectorCSSAgent();
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
@@ -169,7 +170,7 @@ private:
 
     std::unique_ptr<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CSSBackendDispatcher> m_backendDispatcher;
-    InspectorDOMAgent* m_domAgent;
+    InspectorDOMAgent* m_domAgent { nullptr };
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;
     CSSStyleSheetToInspectorStyleSheet m_cssStyleSheetToInspectorStyleSheet;
@@ -180,7 +181,7 @@ private:
     HashSet<int> m_namedFlowCollectionsRequested;
     std::unique_ptr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
-    int m_lastStyleSheetId;
+    int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
 };
 

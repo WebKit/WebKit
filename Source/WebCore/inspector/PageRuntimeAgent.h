@@ -53,7 +53,7 @@ typedef String ErrorString;
 class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageRuntimeAgent(Inspector::InjectedScriptManager*, Page*, InspectorPageAgent*);
+    PageRuntimeAgent(Inspector::InjectedScriptManager&, Page*, InspectorPageAgent*);
     virtual ~PageRuntimeAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -72,11 +72,13 @@ private:
     void reportExecutionContextCreation();
     void notifyContextCreated(const String& frameId, JSC::ExecState*, SecurityOrigin*, bool isPageContext);
 
-    Page* m_inspectedPage;
-    InspectorPageAgent* m_pageAgent;
     std::unique_ptr<Inspector::RuntimeFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
-    bool m_mainWorldContextCreated;
+    InspectorPageAgent* m_pageAgent;
+
+    Page* m_inspectedPage;
+
+    bool m_mainWorldContextCreated { false };
 };
 
 } // namespace WebCore

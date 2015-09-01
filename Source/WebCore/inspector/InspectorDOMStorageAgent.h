@@ -54,7 +54,7 @@ typedef String ErrorString;
 class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspector::DOMStorageBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*);
+    InspectorDOMStorageAgent(InstrumentingAgents&, InspectorPageAgent*);
     virtual ~InspectorDOMStorageAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -77,10 +77,11 @@ public:
 private:
     RefPtr<StorageArea> findStorageArea(ErrorString&, const Inspector::InspectorObject&, Frame*&);
 
-    InspectorPageAgent* m_pageAgent;
     std::unique_ptr<Inspector::DOMStorageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMStorageBackendDispatcher> m_backendDispatcher;
-    bool m_enabled;
+    InspectorPageAgent* m_pageAgent { nullptr };
+
+    bool m_enabled { false };
 };
 
 } // namespace WebCore

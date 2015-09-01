@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ class JSGlobalObjectDebuggerAgent final : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JSGlobalObjectDebuggerAgent(InjectedScriptManager*, JSC::JSGlobalObject&, InspectorConsoleAgent*);
+    JSGlobalObjectDebuggerAgent(InjectedScriptManager&, JSC::JSGlobalObject&, InspectorConsoleAgent*);
     virtual ~JSGlobalObjectDebuggerAgent() { }
 
     virtual JSGlobalObjectScriptDebugServer& scriptDebugServer() override { return m_scriptDebugServer; }
@@ -55,7 +55,7 @@ public:
 
 private:
     JSGlobalObjectScriptDebugServer m_scriptDebugServer;
-    InspectorConsoleAgent* m_consoleAgent;
+    InspectorConsoleAgent* m_consoleAgent { nullptr };
 };
 
 } // namespace Inspector

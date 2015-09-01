@@ -50,7 +50,7 @@ typedef String ErrorString;
 class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::IndexedDBBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorIndexedDBAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, InspectorPageAgent*);
+    InspectorIndexedDBAgent(InstrumentingAgents&, Inspector::InjectedScriptManager&, InspectorPageAgent*);
     virtual ~InspectorIndexedDBAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -65,9 +65,9 @@ public:
     virtual void clearObjectStore(ErrorString&, const String& in_securityOrigin, const String& in_databaseName, const String& in_objectStoreName, Ref<ClearObjectStoreCallback>&&) override;
 
 private:
-    Inspector::InjectedScriptManager* m_injectedScriptManager;
-    InspectorPageAgent* m_pageAgent;
     RefPtr<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
+    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    InspectorPageAgent* m_pageAgent { nullptr };
 };
 
 } // namespace WebCore

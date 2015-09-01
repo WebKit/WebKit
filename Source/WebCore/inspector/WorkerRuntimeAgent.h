@@ -40,7 +40,7 @@ typedef String ErrorString;
 
 class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
 public:
-    WorkerRuntimeAgent(Inspector::InjectedScriptManager*, WorkerGlobalScope*);
+    WorkerRuntimeAgent(Inspector::InjectedScriptManager&, WorkerGlobalScope*);
     virtual ~WorkerRuntimeAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -55,9 +55,10 @@ private:
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
-    WorkerGlobalScope* m_workerGlobalScope;
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
-    bool m_paused;
+
+    WorkerGlobalScope* m_workerGlobalScope { nullptr };
+    bool m_paused { false };
 };
 
 } // namespace WebCore

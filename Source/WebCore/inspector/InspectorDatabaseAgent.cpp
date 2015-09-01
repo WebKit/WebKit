@@ -210,16 +210,15 @@ void InspectorDatabaseAgent::clearResources()
     m_resources.clear();
 }
 
-InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents)
+InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents& instrumentingAgents)
     : InspectorAgentBase(ASCIILiteral("Database"), instrumentingAgents)
-    , m_enabled(false)
 {
-    m_instrumentingAgents->setInspectorDatabaseAgent(this);
+    m_instrumentingAgents.setInspectorDatabaseAgent(this);
 }
 
 InspectorDatabaseAgent::~InspectorDatabaseAgent()
 {
-    m_instrumentingAgents->setInspectorDatabaseAgent(nullptr);
+    m_instrumentingAgents.setInspectorDatabaseAgent(nullptr);
 }
 
 void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)

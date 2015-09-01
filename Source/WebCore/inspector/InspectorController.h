@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -137,25 +138,26 @@ public:
 private:
     friend class InspectorInstrumentation;
 
-    RefPtr<InstrumentingAgents> m_instrumentingAgents;
+    Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
-    std::unique_ptr<InspectorOverlay> m_overlay;
-
-    Inspector::InspectorAgent* m_inspectorAgent;
-    InspectorDOMAgent* m_domAgent;
-    InspectorResourceAgent* m_resourceAgent;
-    InspectorPageAgent* m_pageAgent;
-    PageDebuggerAgent* m_debuggerAgent;
-    InspectorDOMDebuggerAgent* m_domDebuggerAgent;
-    InspectorTimelineAgent* m_timelineAgent;
-
     RefPtr<Inspector::BackendDispatcher> m_backendDispatcher;
     Inspector::FrontendChannel* m_frontendChannel { nullptr };
+    std::unique_ptr<InspectorOverlay> m_overlay;
     Ref<WTF::Stopwatch> m_executionStopwatch;
+    Inspector::AgentRegistry m_agents;
+
     Page& m_page;
     InspectorClient* m_inspectorClient;
     InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
-    Inspector::AgentRegistry m_agents;
+
+    Inspector::InspectorAgent* m_inspectorAgent { nullptr };
+    InspectorDOMAgent* m_domAgent { nullptr };
+    InspectorResourceAgent* m_resourceAgent { nullptr };
+    InspectorPageAgent* m_pageAgent { nullptr };
+    PageDebuggerAgent* m_debuggerAgent { nullptr };
+    InspectorDOMDebuggerAgent* m_domDebuggerAgent { nullptr };
+    InspectorTimelineAgent* m_timelineAgent { nullptr };
+
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
     bool m_isUnderTest { false };
     bool m_isAutomaticInspection { false };

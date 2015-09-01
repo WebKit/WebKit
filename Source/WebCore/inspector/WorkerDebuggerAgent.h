@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -43,7 +44,7 @@ class WorkerDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerDebuggerAgent(Inspector::InjectedScriptManager*, InstrumentingAgents*, WorkerGlobalScope*);
+    WorkerDebuggerAgent(Inspector::InjectedScriptManager&, InstrumentingAgents&, WorkerGlobalScope*);
     virtual ~WorkerDebuggerAgent();
 
     static const char* debuggerTaskMode;
@@ -60,7 +61,7 @@ public:
 
 private:
     WorkerScriptDebugServer m_scriptDebugServer;
-    WorkerGlobalScope* m_inspectedWorkerGlobalScope;
+    WorkerGlobalScope* m_inspectedWorkerGlobalScope { nullptr };
 };
 
 } // namespace WebCore

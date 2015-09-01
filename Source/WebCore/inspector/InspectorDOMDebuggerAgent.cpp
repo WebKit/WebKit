@@ -59,12 +59,10 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
+InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents& instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
     : InspectorAgentBase(ASCIILiteral("DOMDebugger"), instrumentingAgents)
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
-    , m_pauseInNextEventListener(false)
-    , m_pauseOnAllXHRsEnabled(false)
 {
     m_debuggerAgent->setListener(this);
 }
@@ -72,13 +70,13 @@ InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instru
 InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent()
 {
     ASSERT(!m_debuggerAgent);
-    ASSERT(!m_instrumentingAgents->inspectorDOMDebuggerAgent());
+    ASSERT(!m_instrumentingAgents.inspectorDOMDebuggerAgent());
 }
 
 // Browser debugger agent enabled only when JS debugger is enabled.
 void InspectorDOMDebuggerAgent::debuggerWasEnabled()
 {
-    m_instrumentingAgents->setInspectorDOMDebuggerAgent(this);
+    m_instrumentingAgents.setInspectorDOMDebuggerAgent(this);
 }
 
 void InspectorDOMDebuggerAgent::debuggerWasDisabled()
@@ -98,7 +96,7 @@ void InspectorDOMDebuggerAgent::didPause()
 
 void InspectorDOMDebuggerAgent::disable()
 {
-    m_instrumentingAgents->setInspectorDOMDebuggerAgent(nullptr);
+    m_instrumentingAgents.setInspectorDOMDebuggerAgent(nullptr);
     clear();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ using namespace JSC;
 
 namespace Inspector {
 
-JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(InjectedScriptManager* injectedScriptManager, JSC::JSGlobalObject& globalObject, InspectorConsoleAgent* consoleAgent)
+JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(InjectedScriptManager& injectedScriptManager, JSC::JSGlobalObject& globalObject, InspectorConsoleAgent* consoleAgent)
     : InspectorDebuggerAgent(injectedScriptManager)
     , m_scriptDebugServer(globalObject)
     , m_consoleAgent(consoleAgent)
@@ -63,7 +63,7 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& e
     }
 
     ExecState* exec = m_scriptDebugServer.globalObject().globalExec();
-    return injectedScriptManager()->injectedScriptFor(exec);
+    return injectedScriptManager().injectedScriptFor(exec);
 }
 
 void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, const String& message)

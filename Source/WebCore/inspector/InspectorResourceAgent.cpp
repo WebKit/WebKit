@@ -160,15 +160,11 @@ private:
 
 } // namespace
 
-InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
+InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
     : InspectorAgentBase(ASCIILiteral("Network"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_client(client)
     , m_resourcesData(std::make_unique<NetworkResourcesData>())
-    , m_enabled(false)
-    , m_cacheDisabled(false)
-    , m_loadingXHRSynchronously(false)
-    , m_isRecalculatingStyle(false)
 {
 }
 
@@ -268,12 +264,12 @@ InspectorResourceAgent::~InspectorResourceAgent()
         ErrorString unused;
         disable(unused);
     }
-    ASSERT(!m_instrumentingAgents->inspectorResourceAgent());
+    ASSERT(!m_instrumentingAgents.inspectorResourceAgent());
 }
 
 double InspectorResourceAgent::timestamp()
 {
-    return m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->elapsedTime();
+    return m_instrumentingAgents.inspectorEnvironment().executionStopwatch()->elapsedTime();
 }
 
 void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentLoader& loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -607,13 +603,13 @@ void InspectorResourceAgent::enable()
     if (!m_frontendDispatcher)
         return;
     m_enabled = true;
-    m_instrumentingAgents->setInspectorResourceAgent(this);
+    m_instrumentingAgents.setInspectorResourceAgent(this);
 }
 
 void InspectorResourceAgent::disable(ErrorString&)
 {
     m_enabled = false;
-    m_instrumentingAgents->setInspectorResourceAgent(nullptr);
+    m_instrumentingAgents.setInspectorResourceAgent(nullptr);
     m_resourcesData->clear();
     m_extraRequestHeaders.clear();
 }

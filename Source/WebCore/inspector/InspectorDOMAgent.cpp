@@ -201,17 +201,11 @@ String InspectorDOMAgent::toErrorString(const ExceptionCode& ec)
     return "";
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager& injectedScriptManager, InspectorOverlay* overlay)
     : InspectorAgentBase(ASCIILiteral("DOM"), instrumentingAgents)
-    , m_pageAgent(pageAgent)
     , m_injectedScriptManager(injectedScriptManager)
+    , m_pageAgent(pageAgent)
     , m_overlay(overlay)
-    , m_domListener(0)
-    , m_lastNodeId(1)
-    , m_lastBackendNodeId(-1)
-    , m_searchingForNode(false)
-    , m_suppressAttributeModifiedEvent(false)
-    , m_documentRequested(false)
 {
 }
 
@@ -229,7 +223,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* 
     m_history = std::make_unique<InspectorHistory>();
     m_domEditor = std::make_unique<DOMEditor>(m_history.get());
 
-    m_instrumentingAgents->setInspectorDOMAgent(this);
+    m_instrumentingAgents.setInspectorDOMAgent(this);
     m_document = m_pageAgent->mainFrame()->document();
 
     if (m_nodeToFocus)
@@ -248,7 +242,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     setSearchingForNode(unused, false, 0);
     hideHighlight(unused);
 
-    m_instrumentingAgents->setInspectorDOMAgent(0);
+    m_instrumentingAgents.setInspectorDOMAgent(0);
     m_documentRequested = false;
     reset();
 }
@@ -1006,7 +1000,7 @@ void InspectorDOMAgent::focusNode()
         return;
 
     JSC::ExecState* scriptState = mainWorldExecState(frame);
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue())
         return;
 
@@ -1482,7 +1476,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         .setHandlerBody(body)
         .release();
     if (objectGroupId && handler && state) {
-        InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(state);
+        InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(state);
         if (!injectedScript.hasNoValue())
             value->setHandler(injectedScript.wrapObject(Deprecated::ScriptValue(state->vm(), handler), *objectGroupId));
     }
@@ -2072,7 +2066,7 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
 
 Node* InspectorDOMAgent::nodeForObjectId(const String& objectId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return nullptr;
 
@@ -2112,7 +2106,7 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNod
         return 0;
 
     JSC::ExecState* scriptState = mainWorldExecState(frame);
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue())
         return 0;
 

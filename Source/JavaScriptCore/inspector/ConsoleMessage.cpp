@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2014, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
@@ -49,9 +49,6 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_level(level)
     , m_message(message)
     , m_url()
-    , m_line(0)
-    , m_column(0)
-    , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
 }
@@ -64,7 +61,6 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_url(url)
     , m_line(line)
     , m_column(column)
-    , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
     autogenerateMetadata(state);
@@ -76,9 +72,6 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_level(level)
     , m_message(message)
     , m_url()
-    , m_line(0)
-    , m_column(0)
-    , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
     m_callStack = callStack;
@@ -98,9 +91,6 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_message(message)
     , m_arguments(arguments)
     , m_url()
-    , m_line(0)
-    , m_column(0)
-    , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
     autogenerateMetadata(state);
@@ -179,7 +169,7 @@ static Inspector::Protocol::Console::ConsoleMessage::Level messageLevelValue(Mes
     return Inspector::Protocol::Console::ConsoleMessage::Level::Log;
 }
 
-void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher* consoleFrontendDispatcher, InjectedScriptManager* injectedScriptManager, bool generatePreview)
+void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDispatcher, InjectedScriptManager& injectedScriptManager, bool generatePreview)
 {
     Ref<Inspector::Protocol::Console::ConsoleMessage> jsonObj = Inspector::Protocol::Console::ConsoleMessage::create()
         .setSource(messageSourceValue(m_source))
@@ -198,7 +188,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher* consoleFrontendDis
         jsonObj->setNetworkRequestId(m_requestId);
 
     if (m_arguments && m_arguments->argumentCount()) {
-        InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
+        InjectedScript injectedScript = injectedScriptManager.injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {
             Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::RemoteObject>> jsonArgs = Inspector::Protocol::Array<Inspector::Protocol::Runtime::RemoteObject>::create();
             if (m_type == MessageType::Table && generatePreview && m_arguments->argumentCount()) {
@@ -229,12 +219,12 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher* consoleFrontendDis
     if (m_callStack)
         jsonObj->setStackTrace(m_callStack->buildInspectorArray());
 
-    consoleFrontendDispatcher->messageAdded(WTF::move(jsonObj));
+    consoleFrontendDispatcher.messageAdded(WTF::move(jsonObj));
 }
 
-void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher* consoleFrontendDispatcher)
+void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher& consoleFrontendDispatcher)
 {
-    consoleFrontendDispatcher->messageRepeatCountUpdated(m_repeatCount);
+    consoleFrontendDispatcher.messageRepeatCountUpdated(m_repeatCount);
 }
 
 bool ConsoleMessage::isEqual(ConsoleMessage* msg) const

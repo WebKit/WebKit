@@ -79,18 +79,17 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     : m_workerGlobalScope(workerGlobalScope)
     , m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
-    , m_runtimeAgent(nullptr)
     , m_executionStopwatch(Stopwatch::create())
 {
-    auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(m_injectedScriptManager.get(), &workerGlobalScope);
+    auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(*m_injectedScriptManager, &workerGlobalScope);
     m_runtimeAgent = runtimeAgent.get();
     m_instrumentingAgents->setWorkerRuntimeAgent(m_runtimeAgent);
     m_agents.append(WTF::move(runtimeAgent));
 
-    auto consoleAgent = std::make_unique<WorkerConsoleAgent>(m_injectedScriptManager.get());
+    auto consoleAgent = std::make_unique<WorkerConsoleAgent>(*m_injectedScriptManager);
     m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
 
-    auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), &workerGlobalScope);
+    auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(*m_injectedScriptManager, m_instrumentingAgents.get(), &workerGlobalScope);
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(WTF::move(debuggerAgent));
 

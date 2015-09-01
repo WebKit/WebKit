@@ -1,6 +1,6 @@
 /*
 * Copyright (C) 2011 Google Inc. All rights reserved.
-* Copyright (C) 2014 Apple Inc. All rights reserved.
+* Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -1261,10 +1261,10 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* page)
 {
-    return page ? instrumentingAgentsForPage(*page) : nullptr;
+    return page ? &instrumentingAgentsForPage(*page) : nullptr;
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page& page)
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForPage(Page& page)
 {
     ASSERT(isMainThread());
     return page.inspectorController().m_instrumentingAgents.get();
@@ -1277,7 +1277,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(Re
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
-    return workerGlobalScope ? workerGlobalScope->workerInspectorController().m_instrumentingAgents.get() : nullptr;
+    return workerGlobalScope ? &workerGlobalScope->workerInspectorController().m_instrumentingAgents.get() : nullptr;
 }
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocumentContext(ScriptExecutionContext* context)

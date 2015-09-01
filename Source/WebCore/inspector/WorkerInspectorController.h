@@ -74,9 +74,9 @@ private:
     friend class InspectorInstrumentation;
 
     WorkerGlobalScope& m_workerGlobalScope;
-    RefPtr<InstrumentingAgents> m_instrumentingAgents;
+    Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
-    WorkerRuntimeAgent* m_runtimeAgent;
+    WorkerRuntimeAgent* m_runtimeAgent { nullptr };
     Inspector::AgentRegistry m_agents;
     std::unique_ptr<Inspector::FrontendChannel> m_frontendChannel;
     Ref<WTF::Stopwatch> m_executionStopwatch;

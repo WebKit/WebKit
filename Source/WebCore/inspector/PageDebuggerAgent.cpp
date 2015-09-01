@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -49,7 +50,7 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageDebuggerAgent::PageDebuggerAgent(InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
+PageDebuggerAgent::PageDebuggerAgent(InjectedScriptManager& injectedScriptManager, InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
     : WebDebuggerAgent(injectedScriptManager, instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_overlay(overlay)
@@ -60,13 +61,13 @@ PageDebuggerAgent::PageDebuggerAgent(InjectedScriptManager* injectedScriptManage
 void PageDebuggerAgent::enable()
 {
     WebDebuggerAgent::enable();
-    m_instrumentingAgents->setPageDebuggerAgent(this);
+    m_instrumentingAgents.setPageDebuggerAgent(this);
 }
 
 void PageDebuggerAgent::disable(bool isBeingDestroyed)
 {
     WebDebuggerAgent::disable(isBeingDestroyed);
-    m_instrumentingAgents->setPageDebuggerAgent(nullptr);
+    m_instrumentingAgents.setPageDebuggerAgent(nullptr);
 }
 
 String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
@@ -124,10 +125,10 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString
 {
     if (!executionContextId) {
         JSC::ExecState* scriptState = mainWorldExecState(m_pageAgent->mainFrame());
-        return injectedScriptManager()->injectedScriptFor(scriptState);
+        return injectedScriptManager().injectedScriptFor(scriptState);
     }
 
-    InjectedScript injectedScript = injectedScriptManager()->injectedScriptForId(*executionContextId);
+    InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         errorString = ASCIILiteral("Execution context with given id not found.");
 

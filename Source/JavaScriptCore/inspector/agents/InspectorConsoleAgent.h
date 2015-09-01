@@ -52,7 +52,7 @@ class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, publi
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorConsoleAgent(InjectedScriptManager*);
+    InspectorConsoleAgent(InjectedScriptManager&);
     virtual ~InspectorConsoleAgent();
 
     virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher*) override;
@@ -80,15 +80,15 @@ public:
 protected:
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);
 
-    InjectedScriptManager* m_injectedScriptManager;
+    InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<ConsoleFrontendDispatcher> m_frontendDispatcher;
     RefPtr<ConsoleBackendDispatcher> m_backendDispatcher;
-    ConsoleMessage* m_previousMessage;
+    ConsoleMessage* m_previousMessage { nullptr };
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
-    int m_expiredConsoleMessageCount;
+    int m_expiredConsoleMessageCount { 0 };
     HashMap<String, unsigned> m_counts;
     HashMap<String, double> m_times;
-    bool m_enabled;
+    bool m_enabled { false };
 };
 
 } // namespace Inspector

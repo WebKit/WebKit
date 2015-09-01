@@ -156,7 +156,7 @@ static Ref<Inspector::Protocol::Replay::SessionSegment> buildInspectorObjectForS
         .release();
 }
 
-InspectorReplayAgent::InspectorReplayAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
+InspectorReplayAgent::InspectorReplayAgent(InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("Replay"), instrumentingAgents)
     , m_page(*pageAgent->page())
 {
@@ -178,7 +178,7 @@ void InspectorReplayAgent::didCreateFrontendAndBackend(Inspector::FrontendChanne
     m_frontendDispatcher = std::make_unique<Inspector::ReplayFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = Inspector::ReplayBackendDispatcher::create(backendDispatcher, this);
 
-    m_instrumentingAgents->setInspectorReplayAgent(this);
+    m_instrumentingAgents.setInspectorReplayAgent(this);
     ASSERT(sessionState() == WebCore::SessionState::Inactive);
 
     // Keep track of the (default) session currently loaded by ReplayController,
@@ -195,7 +195,7 @@ void InspectorReplayAgent::willDestroyFrontendAndBackend(Inspector::DisconnectRe
     m_frontendDispatcher = nullptr;
     m_backendDispatcher = nullptr;
 
-    m_instrumentingAgents->setInspectorReplayAgent(nullptr);
+    m_instrumentingAgents.setInspectorReplayAgent(nullptr);
 
     // Drop references to all sessions and segments.
     m_sessionsMap.clear();

@@ -53,18 +53,16 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
+InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("DOMStorage"), instrumentingAgents)
     , m_pageAgent(pageAgent)
-    , m_enabled(false)
 {
-    m_instrumentingAgents->setInspectorDOMStorageAgent(this);
+    m_instrumentingAgents.setInspectorDOMStorageAgent(this);
 }
 
 InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
 {
-    m_instrumentingAgents->setInspectorDOMStorageAgent(nullptr);
-    m_instrumentingAgents = nullptr;
+    m_instrumentingAgents.setInspectorDOMStorageAgent(nullptr);
 }
 
 void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)

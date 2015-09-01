@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,9 +79,9 @@ public:
     bool enabled() const { return m_enabled; }
 
 protected:
-    InspectorRuntimeAgent(InjectedScriptManager*);
+    InspectorRuntimeAgent(InjectedScriptManager&);
 
-    InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
+    InjectedScriptManager& injectedScriptManager() { return m_injectedScriptManager; }
 
     virtual JSC::VM& globalVM() = 0;
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
@@ -92,10 +92,10 @@ protected:
 private:
     void setTypeProfilerEnabledState(bool);
 
-    InjectedScriptManager* m_injectedScriptManager;
-    ScriptDebugServer* m_scriptDebugServer;
-    bool m_enabled;
-    bool m_isTypeProfilingEnabled;
+    InjectedScriptManager& m_injectedScriptManager;
+    ScriptDebugServer* m_scriptDebugServer { nullptr };
+    bool m_enabled { false };
+    bool m_isTypeProfilingEnabled { false };
 };
 
 } // namespace Inspector

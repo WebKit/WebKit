@@ -47,7 +47,7 @@ typedef String ErrorString;
 class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorLayerTreeAgent(InstrumentingAgents*);
+    explicit InspectorLayerTreeAgent(InstrumentingAgents&);
     virtual ~InspectorLayerTreeAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;

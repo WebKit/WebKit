@@ -34,7 +34,7 @@ using namespace JSC;
 
 namespace Inspector {
 
-JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(InjectedScriptManager* injectedScriptManager, JSGlobalObject& globalObject)
+JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(InjectedScriptManager& injectedScriptManager, JSGlobalObject& globalObject)
     : InspectorRuntimeAgent(injectedScriptManager)
     , m_globalObject(globalObject)
 {
@@ -64,7 +64,7 @@ InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& er
     ASSERT_UNUSED(executionContextId, !executionContextId);
 
     JSC::ExecState* scriptState = m_globalObject.globalExec();
-    InjectedScript injectedScript = injectedScriptManager()->injectedScriptFor(scriptState);
+    InjectedScript injectedScript = injectedScriptManager().injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue())
         errorString = ASCIILiteral("Internal error: main world execution context not found.");
 

@@ -37,13 +37,13 @@ class InstrumentingAgents;
 
 class InspectorAgentBase : public Inspector::InspectorAgentBase {
 protected:
-    InspectorAgentBase(const String& name, InstrumentingAgents* instrumentingAgents)
+    InspectorAgentBase(const String& name, InstrumentingAgents& instrumentingAgents)
         : Inspector::InspectorAgentBase(name)
         , m_instrumentingAgents(instrumentingAgents)
     {
     }
 
-    InstrumentingAgents* m_instrumentingAgents;
+    InstrumentingAgents& m_instrumentingAgents;
 };
     
 } // namespace WebCore

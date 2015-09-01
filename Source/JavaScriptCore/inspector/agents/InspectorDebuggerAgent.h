@@ -109,9 +109,9 @@ public:
     virtual ScriptDebugServer& scriptDebugServer() = 0;
 
 protected:
-    InspectorDebuggerAgent(InjectedScriptManager*);
+    InspectorDebuggerAgent(InjectedScriptManager&);
 
-    InjectedScriptManager* injectedScriptManager() const { return m_injectedScriptManager; }
+    InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
 
     virtual void startListeningScriptDebugServer() = 0;
@@ -154,11 +154,11 @@ private:
     typedef HashMap<String, RefPtr<InspectorObject>> BreakpointIdentifierToBreakpointMap;
     typedef HashMap<JSC::BreakpointID, String> DebugServerBreakpointIDToBreakpointIdentifier;
 
-    InjectedScriptManager* m_injectedScriptManager;
+    InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<DebuggerBackendDispatcher> m_backendDispatcher;
-    Listener* m_listener {nullptr};
-    JSC::ExecState* m_pausedScriptState {nullptr};
+    Listener* m_listener { nullptr };
+    JSC::ExecState* m_pausedScriptState { nullptr };
     Deprecated::ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
@@ -167,10 +167,10 @@ private:
     JSC::BreakpointID m_continueToLocationBreakpointID;
     DebuggerFrontendDispatcher::Reason m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
-    bool m_enabled {false};
-    bool m_javaScriptPauseScheduled {false};
-    bool m_hasExceptionValue {false};
-    bool m_didPauseStopwatch {false};
+    bool m_enabled { false };
+    bool m_javaScriptPauseScheduled { false };
+    bool m_hasExceptionValue { false };
+    bool m_didPauseStopwatch { false };
     RefPtr<WTF::Stopwatch> m_stopwatch;
 };
 

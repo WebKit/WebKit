@@ -50,7 +50,7 @@ typedef String ErrorString;
 class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector::DatabaseBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorDatabaseAgent(InstrumentingAgents*);
+    explicit InspectorDatabaseAgent(InstrumentingAgents&);
     virtual ~InspectorDatabaseAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -74,9 +74,10 @@ private:
 
     std::unique_ptr<Inspector::DatabaseFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DatabaseBackendDispatcher> m_backendDispatcher;
+
     typedef HashMap<String, RefPtr<InspectorDatabaseResource>> DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
-    bool m_enabled;
+    bool m_enabled { false };
 };
 
 } // namespace WebCore

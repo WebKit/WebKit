@@ -55,7 +55,7 @@ class InspectorDOMDebuggerAgent final : public InspectorAgentBase, public Inspec
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorDOMAgent*, Inspector::InspectorDebuggerAgent*);
+    InspectorDOMDebuggerAgent(InstrumentingAgents&, InspectorDOMAgent*, Inspector::InspectorDebuggerAgent*);
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API
@@ -99,14 +99,15 @@ private:
 
     void clear();
 
-    InspectorDOMAgent* m_domAgent;
-    Inspector::InspectorDebuggerAgent* m_debuggerAgent;
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
+    InspectorDOMAgent* m_domAgent { nullptr };
+    Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
+
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;
     HashSet<String> m_xhrBreakpoints;
-    bool m_pauseInNextEventListener;
-    bool m_pauseOnAllXHRsEnabled;
+    bool m_pauseInNextEventListener { false };
+    bool m_pauseOnAllXHRsEnabled { false };
 };
 
 } // namespace WebCore

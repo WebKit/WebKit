@@ -43,7 +43,7 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
+InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("ApplicationCache"), instrumentingAgents)
     , m_pageAgent(pageAgent)
 {
@@ -60,12 +60,12 @@ void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(Inspector::Di
     m_frontendDispatcher = nullptr;
     m_backendDispatcher = nullptr;
 
-    m_instrumentingAgents->setInspectorApplicationCacheAgent(nullptr);
+    m_instrumentingAgents.setInspectorApplicationCacheAgent(nullptr);
 }
 
 void InspectorApplicationCacheAgent::enable(ErrorString&)
 {
-    m_instrumentingAgents->setInspectorApplicationCacheAgent(this);
+    m_instrumentingAgents.setInspectorApplicationCacheAgent(this);
 
     // We need to pass initial navigator.onOnline.
     networkStateChanged();

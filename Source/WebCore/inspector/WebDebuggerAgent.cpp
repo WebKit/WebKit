@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WebDebuggerAgent::WebDebuggerAgent(InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
+WebDebuggerAgent::WebDebuggerAgent(InjectedScriptManager& injectedScriptManager, InstrumentingAgents& instrumentingAgents)
     : InspectorDebuggerAgent(injectedScriptManager)
     , m_instrumentingAgents(instrumentingAgents)
 {
@@ -41,13 +41,13 @@ WebDebuggerAgent::WebDebuggerAgent(InjectedScriptManager* injectedScriptManager,
 void WebDebuggerAgent::enable()
 {
     InspectorDebuggerAgent::enable();
-    m_instrumentingAgents->setInspectorDebuggerAgent(this);
+    m_instrumentingAgents.setInspectorDebuggerAgent(this);
 }
 
 void WebDebuggerAgent::disable(bool isBeingDestroyed)
 {
     InspectorDebuggerAgent::disable(isBeingDestroyed);
-    m_instrumentingAgents->setInspectorDebuggerAgent(nullptr);
+    m_instrumentingAgents.setInspectorDebuggerAgent(nullptr);
 }
 
 } // namespace WebCore

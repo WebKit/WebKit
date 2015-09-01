@@ -51,7 +51,7 @@ typedef String ErrorString;
 class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::WorkerBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorWorkerAgent(InstrumentingAgents*);
+    explicit InspectorWorkerAgent(InstrumentingAgents&);
     virtual ~InspectorWorkerAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -76,12 +76,14 @@ private:
     void createWorkerFrontendChannel(WorkerGlobalScopeProxy*, const String& url);
     void destroyWorkerFrontendChannels();
 
+    class WorkerFrontendChannel;
+
     std::unique_ptr<Inspector::WorkerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
-    bool m_enabled;
-    bool m_shouldPauseDedicatedWorkerOnStart;
 
-    class WorkerFrontendChannel;
+    bool m_enabled { false };
+    bool m_shouldPauseDedicatedWorkerOnStart { false };
+    
     typedef HashMap<int, WorkerFrontendChannel*> WorkerChannels;
     WorkerChannels m_idToChannel;
     typedef HashMap<WorkerGlobalScopeProxy*, String> DedicatedWorkers;

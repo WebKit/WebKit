@@ -50,7 +50,7 @@ typedef String ErrorString;
 class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::ApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
+    InspectorApplicationCacheAgent(InstrumentingAgents&, InspectorPageAgent*);
     virtual ~InspectorApplicationCacheAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
@@ -71,9 +71,9 @@ private:
 
     DocumentLoader* assertFrameWithDocumentLoader(ErrorString&, const String& frameId);
 
-    InspectorPageAgent* m_pageAgent;
     std::unique_ptr<Inspector::ApplicationCacheFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::ApplicationCacheBackendDispatcher> m_backendDispatcher;
+    InspectorPageAgent* m_pageAgent { nullptr };
 };
 
 } // namespace WebCore

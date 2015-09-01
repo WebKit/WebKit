@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -80,7 +81,7 @@ private:
 
 const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
 
-WorkerDebuggerAgent::WorkerDebuggerAgent(InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, WorkerGlobalScope* inspectedWorkerGlobalScope)
+WorkerDebuggerAgent::WorkerDebuggerAgent(InjectedScriptManager& injectedScriptManager, InstrumentingAgents& instrumentingAgents, WorkerGlobalScope* inspectedWorkerGlobalScope)
     : WebDebuggerAgent(injectedScriptManager, instrumentingAgents)
     , m_scriptDebugServer(inspectedWorkerGlobalScope, WorkerDebuggerAgent::debuggerTaskMode)
     , m_inspectedWorkerGlobalScope(inspectedWorkerGlobalScope)
@@ -133,7 +134,7 @@ InjectedScript WorkerDebuggerAgent::injectedScriptForEval(ErrorString& error, co
     }
 
     JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_inspectedWorkerGlobalScope);
-    return injectedScriptManager()->injectedScriptFor(scriptState);
+    return injectedScriptManager().injectedScriptFor(scriptState);
 }
 
 void WorkerDebuggerAgent::muteConsole()

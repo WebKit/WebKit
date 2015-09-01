@@ -564,7 +564,7 @@ public:
 
 } // namespace
 
-InspectorIndexedDBAgent::InspectorIndexedDBAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
+InspectorIndexedDBAgent::InspectorIndexedDBAgent(InstrumentingAgents& instrumentingAgents, InjectedScriptManager& injectedScriptManager, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("IndexedDB"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_pageAgent(pageAgent)
@@ -666,7 +666,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString& errorString, const String
     if (!idbFactory)
         return;
 
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldExecState(frame));
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(mainWorldExecState(frame));
 
     RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange) : nullptr;
     if (keyRange && !idbKeyRange) {

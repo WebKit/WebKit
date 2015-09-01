@@ -325,17 +325,11 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJs
     return resourceTypeJson(cachedResourceType(cachedResource));
 }
 
-InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorClient* client, InspectorOverlay* overlay)
+InspectorPageAgent::InspectorPageAgent(InstrumentingAgents& instrumentingAgents, Page* page, InspectorClient* client, InspectorOverlay* overlay)
     : InspectorAgentBase(ASCIILiteral("Page"), instrumentingAgents)
     , m_page(page)
     , m_client(client)
     , m_overlay(overlay)
-    , m_lastScriptIdentifier(0)
-    , m_enabled(false)
-    , m_isFirstLayoutAfterOnLoad(false)
-    , m_originalScriptExecutionDisabled(false)
-    , m_ignoreScriptsEnabledNotification(false)
-    , m_showPaintRects(false)
 {
 }
 
@@ -359,15 +353,15 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 
 double InspectorPageAgent::timestamp()
 {
-    return m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->elapsedTime();
+    return m_instrumentingAgents.inspectorEnvironment().executionStopwatch()->elapsedTime();
 }
 
 void InspectorPageAgent::enable(ErrorString&)
 {
     m_enabled = true;
-    m_instrumentingAgents->setInspectorPageAgent(this);
+    m_instrumentingAgents.setInspectorPageAgent(this);
 
-    auto stopwatch = m_instrumentingAgents->inspectorEnvironment().executionStopwatch();
+    auto stopwatch = m_instrumentingAgents.inspectorEnvironment().executionStopwatch();
     stopwatch->reset();
     stopwatch->start();
 
@@ -379,7 +373,7 @@ void InspectorPageAgent::disable(ErrorString&)
 {
     m_enabled = false;
     m_scriptsToEvaluateOnLoad = nullptr;
-    m_instrumentingAgents->setInspectorPageAgent(nullptr);
+    m_instrumentingAgents.setInspectorPageAgent(nullptr);
 
     ErrorString unused;
     setScriptExecutionDisabled(unused, m_originalScriptExecutionDisabled);
@@ -824,7 +818,7 @@ void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
 void InspectorPageAgent::frameStartedLoading(Frame& frame)
 {
     if (frame.isMainFrame()) {
-        auto stopwatch = m_instrumentingAgents->inspectorEnvironment().executionStopwatch();
+        auto stopwatch = m_instrumentingAgents.inspectorEnvironment().executionStopwatch();
         stopwatch->reset();
         stopwatch->start();
     }
@@ -1022,7 +1016,7 @@ void InspectorPageAgent::snapshotNode(ErrorString& errorString, int nodeId, Stri
     Frame* frame = mainFrame();
     ASSERT(frame);
 
-    InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent();
+    InspectorDOMAgent* domAgent = m_instrumentingAgents.inspectorDOMAgent();
     ASSERT(domAgent);
     Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)

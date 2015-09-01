@@ -1,6 +1,6 @@
 /*
 * Copyright (C) 2010 Google Inc. All rights reserved.
-* Copyright (C) 2014 Apple Inc. All rights reserved.
+* Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -457,7 +457,7 @@ private:
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
 
-    static InstrumentingAgents* instrumentingAgentsForPage(Page&);
+    static InstrumentingAgents& instrumentingAgentsForPage(Page&);
     static InstrumentingAgents* instrumentingAgentsForFrame(Frame&);
     static InstrumentingAgents* instrumentingAgentsForFrame(Frame*);
     static InstrumentingAgents* instrumentingAgentsForContext(ScriptExecutionContext*);
@@ -639,8 +639,7 @@ inline void InspectorInstrumentation::didUnregisterNamedFlowContentElement(Docum
 inline void InspectorInstrumentation::mouseDidMoveOverElement(Page& page, const HitTestResult& result, unsigned modifierFlags)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        mouseDidMoveOverElementImpl(*instrumentingAgents, result, modifierFlags);
+    mouseDidMoveOverElementImpl(instrumentingAgentsForPage(page), result, modifierFlags);
 }
 
 inline bool InspectorInstrumentation::handleTouchEvent(Frame& frame, Node& node)
@@ -789,8 +788,7 @@ inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumen
 inline void InspectorInstrumentation::scriptsEnabled(Page& page, bool isEnabled)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        return scriptsEnabledImpl(*instrumentingAgents, isEnabled);
+    return scriptsEnabledImpl(instrumentingAgentsForPage(page), isEnabled);
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willFireTimer(ScriptExecutionContext* context, int timerId)
@@ -833,8 +831,7 @@ inline void InspectorInstrumentation::didLayout(const InspectorInstrumentationCo
 inline void InspectorInstrumentation::didScroll(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        didScrollImpl(*instrumentingAgents);
+    didScrollImpl(instrumentingAgentsForPage(page));
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRLoadEvent(ScriptExecutionContext* context, XMLHttpRequest& request)
@@ -937,14 +934,12 @@ inline void InspectorInstrumentation::continueAfterPingLoader(Frame& frame, unsi
 
 inline void InspectorInstrumentation::markResourceAsCached(Page& page, unsigned long identifier)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        markResourceAsCachedImpl(*instrumentingAgents, identifier);
+    markResourceAsCachedImpl(instrumentingAgentsForPage(page), identifier);
 }
 
 inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page& page, DocumentLoader* loader, CachedResource* resource)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        didLoadResourceFromMemoryCacheImpl(*instrumentingAgents, loader, resource);
+    didLoadResourceFromMemoryCacheImpl(instrumentingAgentsForPage(page), loader, resource);
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponse(Frame* frame)
@@ -1103,9 +1098,7 @@ inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame& fra
 inline InspectorInstrumentationCookie InspectorInstrumentation::willRunJavaScriptDialog(Page& page, const String& message)
 {
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        return willRunJavaScriptDialogImpl(*instrumentingAgents, message);
-    return InspectorInstrumentationCookie();
+    return willRunJavaScriptDialogImpl(instrumentingAgentsForPage(page), message);
 }
 
 inline void InspectorInstrumentation::didRunJavaScriptDialog(const InspectorInstrumentationCookie& cookie)
@@ -1211,92 +1204,79 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
 inline void InspectorInstrumentation::sessionCreated(Page& page, RefPtr<ReplaySession>&& session)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        sessionCreatedImpl(*instrumentingAgents, WTF::move(session));
+    sessionCreatedImpl(instrumentingAgentsForPage(page), WTF::move(session));
 }
 
 inline void InspectorInstrumentation::sessionLoaded(Page& page, RefPtr<ReplaySession>&& session)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        sessionLoadedImpl(*instrumentingAgents, WTF::move(session));
+    sessionLoadedImpl(instrumentingAgentsForPage(page), WTF::move(session));
 }
 
 inline void InspectorInstrumentation::sessionModified(Page& page, RefPtr<ReplaySession>&& session)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        sessionModifiedImpl(*instrumentingAgents, WTF::move(session));
+    sessionModifiedImpl(instrumentingAgentsForPage(page), WTF::move(session));
 }
 
 inline void InspectorInstrumentation::segmentCreated(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        segmentCreatedImpl(*instrumentingAgents, WTF::move(segment));
+    segmentCreatedImpl(instrumentingAgentsForPage(page), WTF::move(segment));
 }
 
 inline void InspectorInstrumentation::segmentCompleted(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        segmentCompletedImpl(*instrumentingAgents, WTF::move(segment));
+    segmentCompletedImpl(instrumentingAgentsForPage(page), WTF::move(segment));
 }
 
 inline void InspectorInstrumentation::segmentLoaded(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        segmentLoadedImpl(*instrumentingAgents, WTF::move(segment));
+    segmentLoadedImpl(instrumentingAgentsForPage(page), WTF::move(segment));
 }
 
 inline void InspectorInstrumentation::segmentUnloaded(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        segmentUnloadedImpl(*instrumentingAgents);
+    segmentUnloadedImpl(instrumentingAgentsForPage(page));
 }
 
 inline void InspectorInstrumentation::captureStarted(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        captureStartedImpl(*instrumentingAgents);
+    captureStartedImpl(instrumentingAgentsForPage(page));
 }
 
 inline void InspectorInstrumentation::captureStopped(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        captureStoppedImpl(*instrumentingAgents);
+    captureStoppedImpl(instrumentingAgentsForPage(page));
 }
 
 inline void InspectorInstrumentation::playbackStarted(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        playbackStartedImpl(*instrumentingAgents);
+        playbackStartedImpl(instrumentingAgentsForPage(page));
 }
 
 inline void InspectorInstrumentation::playbackPaused(Page& page, const ReplayPosition& position)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        playbackPausedImpl(*instrumentingAgents, position);
+        playbackPausedImpl(instrumentingAgentsForPage(page), position);
 }
 
 inline void InspectorInstrumentation::playbackFinished(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        playbackFinishedImpl(*instrumentingAgents);
+        playbackFinishedImpl(instrumentingAgentsForPage(page));
 }
 
 inline void InspectorInstrumentation::playbackHitPosition(Page& page, const ReplayPosition& position)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        playbackHitPositionImpl(*instrumentingAgents, position);
+        playbackHitPositionImpl(instrumentingAgentsForPage(page), position);
 }
 #endif // ENABLE(WEB_REPLAY)
 

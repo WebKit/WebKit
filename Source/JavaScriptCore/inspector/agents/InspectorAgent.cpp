@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2010, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
@@ -40,7 +40,6 @@ namespace Inspector {
 InspectorAgent::InspectorAgent(InspectorEnvironment& environment)
     : InspectorAgentBase(ASCIILiteral("Inspector"))
     , m_environment(environment)
-    , m_enabled(false)
 {
 }
 

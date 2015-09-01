@@ -72,9 +72,9 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
 #endif
 {
     auto inspectorAgent = std::make_unique<InspectorAgent>(*this);
-    auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(m_injectedScriptManager.get(), m_globalObject);
-    auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(m_injectedScriptManager.get());
-    auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(m_injectedScriptManager.get(), m_globalObject, consoleAgent.get());
+    auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(*m_injectedScriptManager, m_globalObject);
+    auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(*m_injectedScriptManager);
+    auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(*m_injectedScriptManager, m_globalObject, consoleAgent.get());
 
     m_inspectorAgent = inspectorAgent.get();
     m_debuggerAgent = debuggerAgent.get();

@@ -52,11 +52,10 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageRuntimeAgent::PageRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
+PageRuntimeAgent::PageRuntimeAgent(InjectedScriptManager& injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
     : InspectorRuntimeAgent(injectedScriptManager)
-    , m_inspectedPage(page)
     , m_pageAgent(pageAgent)
-    , m_mainWorldContextCreated(false)
+    , m_inspectedPage(page)
 {
 }
 
@@ -121,13 +120,13 @@ InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString& errorString,
 {
     if (!executionContextId) {
         JSC::ExecState* scriptState = mainWorldExecState(&m_inspectedPage->mainFrame());
-        InjectedScript result = injectedScriptManager()->injectedScriptFor(scriptState);
+        InjectedScript result = injectedScriptManager().injectedScriptFor(scriptState);
         if (result.hasNoValue())
             errorString = ASCIILiteral("Internal error: main world execution context not found.");
         return result;
     }
 
-    InjectedScript injectedScript = injectedScriptManager()->injectedScriptForId(*executionContextId);
+    InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         errorString = ASCIILiteral("Execution context with given id not found.");
     return injectedScript;
@@ -166,11 +165,11 @@ void PageRuntimeAgent::notifyContextCreated(const String& frameId, JSC::ExecStat
 {
     ASSERT(securityOrigin || isPageContext);
 
-    InjectedScript result = injectedScriptManager()->injectedScriptFor(scriptState);
+    InjectedScript result = injectedScriptManager().injectedScriptFor(scriptState);
     if (result.hasNoValue())
         return;
 
-    int executionContextId = injectedScriptManager()->injectedScriptIdFor(scriptState);
+    int executionContextId = injectedScriptManager().injectedScriptIdFor(scriptState);
     String name = securityOrigin ? securityOrigin->toRawString() : String();
     m_frontendDispatcher->executionContextCreated(ExecutionContextDescription::create()
         .setId(executionContextId)

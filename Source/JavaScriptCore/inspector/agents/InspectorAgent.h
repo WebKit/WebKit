@@ -75,7 +75,7 @@ private:
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     RefPtr<Inspector::Protocol::Array<String>> m_pendingExtraDomainsData;
 #endif
-    bool m_enabled;
+    bool m_enabled { false };
 };
 
 } // namespace Inspector

@@ -46,7 +46,7 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents)
+InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents& instrumentingAgents)
     : InspectorAgentBase(ASCIILiteral("LayerTree"), instrumentingAgents)
 {
 }
@@ -81,12 +81,12 @@ void InspectorLayerTreeAgent::reset()
 
 void InspectorLayerTreeAgent::enable(ErrorString&)
 {
-    m_instrumentingAgents->setInspectorLayerTreeAgent(this);
+    m_instrumentingAgents.setInspectorLayerTreeAgent(this);
 }
 
 void InspectorLayerTreeAgent::disable(ErrorString&)
 {
-    m_instrumentingAgents->setInspectorLayerTreeAgent(nullptr);
+    m_instrumentingAgents.setInspectorLayerTreeAgent(nullptr);
 }
 
 void InspectorLayerTreeAgent::layerTreeDidChange()
@@ -108,7 +108,7 @@ void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId
 {
     layers = Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>::create();
 
-    Node* node = m_instrumentingAgents->inspectorDOMAgent()->nodeForId(nodeId);
+    Node* node = m_instrumentingAgents.inspectorDOMAgent()->nodeForId(nodeId);
     if (!node) {
         errorString = ASCIILiteral("Provided node id doesn't match any known node");
         return;
@@ -207,7 +207,7 @@ int InspectorLayerTreeAgent::idForNode(ErrorString& errorString, Node* node)
     if (!node)
         return 0;
 
-    InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent();
+    InspectorDOMAgent* domAgent = m_instrumentingAgents.inspectorDOMAgent();
     
     int nodeId = domAgent->boundNodeId(node);
     if (!nodeId)
