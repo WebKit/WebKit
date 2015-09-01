@@ -1,5 +1,11 @@
 2015-09-01  Brian Burg  <bburg@apple.com>
 
+        Unreviewed, the previous commit had incorrect expectations.
+
+        * inspector/console/command-line-api-expected.txt: Really update it.
+
+2015-09-01  Brian Burg  <bburg@apple.com>
+
         Web Inspector: rewrite inspector/console/command-line-api.html to use AsyncTestSuite
         https://bugs.webkit.org/show_bug.cgi?id=148637
 
