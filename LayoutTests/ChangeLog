@@ -1,6 +1,135 @@
 2015-09-01  Zalan Bujtas  <zalan@apple.com>
 
         Repaint cleanup:
+        button-spurious-layout-hint.html -> reftest
+        change-transform.html -> reftest
+        clip-with-layout-delta.html -> reftest
+        clipped-relative.html -> reftest
+        containing-block-position-change.html -> reftest
+        content-into-overflow.html -> reftest
+        continuation-after-outline.html -> reftest
+        control-clip.html -> reftest
+        create-layer-repaint.html -> reftest
+        dynamic-table-vertical-alignment-change.html -> reftest
+        erase-overflow.html -> reftest
+        fixed-position-transparency-with-overflow.html -> reftest
+
+        Unreviewed.
+
+        * fast/repaint/button-spurious-layout-hint-expected.html: Added.
+        * fast/repaint/button-spurious-layout-hint-expected.png: Removed.
+        * fast/repaint/button-spurious-layout-hint.html:
+        * fast/repaint/change-transform-expected.html: Copied from LayoutTests/fast/repaint/change-transform.html.
+        * fast/repaint/change-transform.html:
+        * fast/repaint/clip-with-layout-delta-expected.html: Copied from LayoutTests/fast/repaint/clip-with-layout-delta.html.
+        * fast/repaint/clip-with-layout-delta-expected.txt: Removed.
+        * fast/repaint/clip-with-layout-delta.html:
+        * fast/repaint/clipped-relative-expected.html: Copied from LayoutTests/fast/repaint/clipped-relative.html.
+        * fast/repaint/clipped-relative.html:
+        * fast/repaint/containing-block-position-change-expected.html: Copied from LayoutTests/fast/repaint/containing-block-position-change.html.
+        * fast/repaint/containing-block-position-change.html:
+        * fast/repaint/content-into-overflow-expected.html: Copied from LayoutTests/fast/repaint/content-into-overflow.html.
+        * fast/repaint/content-into-overflow-expected.png: Removed.
+        * fast/repaint/content-into-overflow-expected.txt: Removed.
+        * fast/repaint/content-into-overflow.html:
+        * fast/repaint/continuation-after-outline-expected.html: Copied from LayoutTests/fast/repaint/continuation-after-outline.html.
+        * fast/repaint/continuation-after-outline.html:
+        * fast/repaint/control-clip-expected.html: Copied from LayoutTests/fast/repaint/control-clip.html.
+        * fast/repaint/control-clip.html:
+        * fast/repaint/create-layer-repaint-expected.html: Copied from LayoutTests/fast/repaint/create-layer-repaint.html.
+        * fast/repaint/create-layer-repaint.html:
+        * fast/repaint/dynamic-table-vertical-alignment-change-expected.html: Copied from LayoutTests/fast/repaint/dynamic-table-vertical-alignment-change.html.
+        * fast/repaint/dynamic-table-vertical-alignment-change.html:
+        * fast/repaint/erase-overflow-expected.html: Copied from LayoutTests/fast/repaint/erase-overflow.html.
+        * fast/repaint/erase-overflow-expected.png: Removed.
+        * fast/repaint/erase-overflow-expected.txt: Removed.
+        * fast/repaint/erase-overflow.html:
+        * fast/repaint/fixed-position-transparency-with-overflow-expected.html: Added.
+        * fast/repaint/fixed-position-transparency-with-overflow-expected.png: Removed.
+        * fast/repaint/fixed-position-transparency-with-overflow-expected.txt: Removed.
+        * fast/repaint/fixed-position-transparency-with-overflow.html:
+        * platform/efl/compositing/repaint/content-into-overflow-expected.png: Removed.
+        * platform/efl/compositing/repaint/content-into-overflow-expected.txt: Removed.
+        * platform/efl/fast/forms/control-clip-expected.png: Removed.
+        * platform/efl/fast/forms/control-clip-expected.txt: Removed.
+        * platform/efl/fast/repaint/button-spurious-layout-hint-expected.txt: Removed.
+        * platform/efl/fast/repaint/change-transform-expected.png: Removed.
+        * platform/efl/fast/repaint/change-transform-expected.txt: Removed.
+        * platform/efl/fast/repaint/clip-with-layout-delta-expected.png: Removed.
+        * platform/efl/fast/repaint/clipped-relative-expected.png: Removed.
+        * platform/efl/fast/repaint/clipped-relative-expected.txt: Removed.
+        * platform/efl/fast/repaint/containing-block-position-change-expected.png: Removed.
+        * platform/efl/fast/repaint/containing-block-position-change-expected.txt: Removed.
+        * platform/efl/fast/repaint/continuation-after-outline-expected.png: Removed.
+        * platform/efl/fast/repaint/continuation-after-outline-expected.txt: Removed.
+        * platform/efl/fast/repaint/control-clip-expected.png: Removed.
+        * platform/efl/fast/repaint/control-clip-expected.txt: Removed.
+        * platform/efl/fast/repaint/create-layer-repaint-expected.png: Removed.
+        * platform/efl/fast/repaint/create-layer-repaint-expected.txt: Removed.
+        * platform/efl/fast/repaint/dynamic-table-vertical-alignment-change-expected.png: Removed.
+        * platform/efl/fast/repaint/dynamic-table-vertical-alignment-change-expected.txt: Removed.
+        * platform/gtk/fast/forms/control-clip-expected.png: Removed.
+        * platform/gtk/fast/forms/control-clip-expected.txt: Removed.
+        * platform/gtk/fast/repaint/button-spurious-layout-hint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/change-transform-expected.png: Removed.
+        * platform/gtk/fast/repaint/change-transform-expected.txt: Removed.
+        * platform/gtk/fast/repaint/clip-with-layout-delta-expected.png: Removed.
+        * platform/gtk/fast/repaint/clipped-relative-expected.png: Removed.
+        * platform/gtk/fast/repaint/clipped-relative-expected.txt: Removed.
+        * platform/gtk/fast/repaint/containing-block-position-change-expected.png: Removed.
+        * platform/gtk/fast/repaint/containing-block-position-change-expected.txt: Removed.
+        * platform/gtk/fast/repaint/continuation-after-outline-expected.png: Removed.
+        * platform/gtk/fast/repaint/continuation-after-outline-expected.txt: Removed.
+        * platform/gtk/fast/repaint/control-clip-expected.png: Removed.
+        * platform/gtk/fast/repaint/control-clip-expected.txt: Removed.
+        * platform/gtk/fast/repaint/create-layer-repaint-expected.png: Removed.
+        * platform/gtk/fast/repaint/create-layer-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/dynamic-table-vertical-alignment-change-expected.png: Removed.
+        * platform/gtk/fast/repaint/dynamic-table-vertical-alignment-change-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/forms/control-clip-expected.txt: Removed.
+        * platform/ios-simulator/compositing/repaint/content-into-overflow-expected.txt: Removed.
+        * platform/ios-simulator/fast/forms/control-clip-expected.txt: Removed.
+        * platform/mac-mavericks/fast/forms/control-clip-expected.png: Removed.
+        * platform/mac-mavericks/fast/forms/control-clip-expected.txt: Removed.
+        * platform/mac-mavericks/fast/repaint/control-clip-expected.png: Removed.
+        * platform/mac-mavericks/fast/repaint/control-clip-expected.txt: Removed.
+        * platform/mac/compositing/repaint/content-into-overflow-expected.png: Removed.
+        * platform/mac/compositing/repaint/content-into-overflow-expected.txt: Removed.
+        * platform/mac/fast/forms/control-clip-expected.png: Removed.
+        * platform/mac/fast/forms/control-clip-expected.txt: Removed.
+        * platform/mac/fast/repaint/button-spurious-layout-hint-expected.png: Removed.
+        * platform/mac/fast/repaint/button-spurious-layout-hint-expected.txt: Removed.
+        * platform/mac/fast/repaint/change-transform-expected.png: Removed.
+        * platform/mac/fast/repaint/change-transform-expected.txt: Removed.
+        * platform/mac/fast/repaint/clip-with-layout-delta-expected.png: Removed.
+        * platform/mac/fast/repaint/clip-with-layout-delta-expected.txt: Removed.
+        * platform/mac/fast/repaint/clipped-relative-expected.png: Removed.
+        * platform/mac/fast/repaint/clipped-relative-expected.txt: Removed.
+        * platform/mac/fast/repaint/containing-block-position-change-expected.png: Removed.
+        * platform/mac/fast/repaint/containing-block-position-change-expected.txt: Removed.
+        * platform/mac/fast/repaint/content-into-overflow-expected.png: Removed.
+        * platform/mac/fast/repaint/continuation-after-outline-expected.png: Removed.
+        * platform/mac/fast/repaint/continuation-after-outline-expected.txt: Removed.
+        * platform/mac/fast/repaint/control-clip-expected.png: Removed.
+        * platform/mac/fast/repaint/control-clip-expected.txt: Removed.
+        * platform/mac/fast/repaint/create-layer-repaint-expected.png: Removed.
+        * platform/mac/fast/repaint/create-layer-repaint-expected.txt: Removed.
+        * platform/mac/fast/repaint/dynamic-table-vertical-alignment-change-expected.png: Removed.
+        * platform/mac/fast/repaint/dynamic-table-vertical-alignment-change-expected.txt: Removed.
+        * platform/mac/fast/repaint/erase-overflow-expected.png: Removed.
+        * platform/mac/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Removed.
+        * platform/win/fast/forms/control-clip-expected.txt: Removed.
+        * platform/win/fast/repaint/change-transform-expected.txt: Removed.
+        * platform/win/fast/repaint/clipped-relative-expected.txt: Removed.
+        * platform/win/fast/repaint/containing-block-position-change-expected.txt: Removed.
+        * platform/win/fast/repaint/control-clip-expected.png: Removed.
+        * platform/win/fast/repaint/control-clip-expected.txt: Removed.
+        * platform/win/fast/repaint/create-layer-repaint-expected.txt: Removed.
+        * platform/win/fast/repaint/dynamic-table-vertical-alignment-change-expected.txt: Removed.
+
+2015-09-01  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
         box-shadow-dynamic.html -> reftest
         box-shadow-inset-repaint.html -> reftest
         bugzilla-3509.html -> reftest

@@ -4,15 +4,18 @@
     <style type="text/css">
         div.square { width: 100px; height: 100px; }
     </style>
-    <script type="text/javascript" src="resources/repaint.js"></script>
     <script type="text/javascript">
-        function repaintTest()
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
         {
             document.getElementById("target").style.overflow = "hidden";
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>
-<body onload="runRepaintTest()">
+<body onload="setTimeout(runTest, 0);">
     <div id="target" class="square">
         <div class="square" style="background-color: green"></div>
         <div class="square" style="background-color: red"></div>

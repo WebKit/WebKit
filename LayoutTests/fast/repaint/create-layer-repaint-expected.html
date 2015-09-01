@@ -12,26 +12,10 @@
       width: 250px;
       margin: 20px;
     }
-    
-    .stretchy.big {
-      background: red;
-      opacity: 1;
-      width: 500px;
-    }
   </style>
-  <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-        function runTest()
-        {
-            document.getElementById('test').className = 'stretchy';
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }
-  </script>
 </head>
-<body onload="setTimeout(runTest, 0)">
+<body onload="runRepaintTest()">
   <p>If you see red, the test failed</p>
-  <div id="test" class="big stretchy"></div>
+  <div class="stretchy"></div>
 </body>
 </html>

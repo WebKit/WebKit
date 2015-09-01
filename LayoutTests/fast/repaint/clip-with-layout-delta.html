@@ -15,16 +15,19 @@
             background: blue;
         }
     </style>
-    <script src="resources/repaint.js" type="text/javascript"></script>
     <script type="text/javascript">
-       function repaintTest()
-       {
-           document.getElementById('t1').removeAttribute("class");
-           document.getElementById('t2').setAttribute("class", "blue");
-       }
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
+        {
+            document.getElementById('t1').removeAttribute("class");
+            document.getElementById('t2').setAttribute("class", "blue");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
     </script>
 </head>
-<body onload="runRepaintTest()">
+<body onload="setTimeout(runTest, 0)">
     <div style="background: green;"><span id="t1" class="blue">&nbsp;</span></div>
     <div style="position: relative; margin: -100px 0 0 100px; background: red;"><span id="t2">&nbsp;</span></div>
 </body>
