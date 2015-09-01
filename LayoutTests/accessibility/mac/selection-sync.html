@@ -57,13 +57,13 @@
                 shouldBe("results[resultIndex][\"AXTextStateSync\"]", "true");
 
                 webArea.removeNotificationListener();
-                window.testRunner.notifyDone();
+                finishJSTest();
             }
         }
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        window.jsTestIsAsync = true;
 
         accessibilityController.enableEnhancedAccessibility(true);
 
@@ -83,10 +83,10 @@
         var extendRange = axTextbox.textMarkerRangeForMarkers(markerThree, markerFour);
         webArea.setSelectedVisibleTextRange(moveRange);
         webArea.setSelectedVisibleTextRange(extendRange);
-    }
+    } else
+        debug("window.accessibilityController is not present");
 
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -3,4 +3,7 @@ This tests that when an element is removed from the DOM while a notification ref
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

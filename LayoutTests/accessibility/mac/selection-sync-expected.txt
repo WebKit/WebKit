@@ -6,22 +6,22 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS addedNotification is true
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
+PASS results[resultIndex]["AXTextStateSync"] is true
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
+PASS results[resultIndex]["AXTextStateSync"] is true
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
+PASS results[resultIndex]["AXTextStateSync"] is true
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
+PASS results[resultIndex]["AXTextStateSync"] is true
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
+PASS results[resultIndex]["AXTextStateSync"] is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
-PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
-PASS results[resultIndex]["AXTextStateSync"] is true
-PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
-PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
-PASS results[resultIndex]["AXTextStateSync"] is true
-PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
-PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
-PASS results[resultIndex]["AXTextStateSync"] is true
-PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
-PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
-PASS results[resultIndex]["AXTextStateSync"] is true
-PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
-PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionDiscontiguous
-PASS results[resultIndex]["AXTextStateSync"] is true
 

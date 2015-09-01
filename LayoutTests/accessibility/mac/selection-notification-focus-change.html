@@ -72,6 +72,9 @@
                     shouldBeTrue("addedNotification");
 
                     eventSender.keyDown("\t");
+                } else {
+                    debug("window.accessibilityController is not present");
+                    finishJSTest();
                 }
             }
             </script>

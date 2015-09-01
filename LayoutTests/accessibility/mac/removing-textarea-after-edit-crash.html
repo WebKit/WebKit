@@ -30,7 +30,7 @@ text
             document.getElementById("div").style.display = "NONE";
 
             // we now have to wait for the value change to be propagated to trigger the crash.
-            setTimeout("window.testRunner.notifyDone();", 1);
+            setTimeout(finishJSTest, 1);
         }
     }
 </script>
@@ -38,7 +38,7 @@ text
 <script>
     var req = 0;
     if (window.accessibilityController) {  
-        window.testRunner.waitUntilDone();
+        window.jsTestIsAsync = true;
         document.getElementById("body").focus();
         body = accessibilityController.focusedElement;
 
@@ -52,10 +52,10 @@ text
         req.open("get", "../../../http/tests/xmlhttprequest/methods.cgi", true);
         // Sending this after a timeout makes is so that the layout does not happen until the value change is sent.
         setTimeout("req.send('')", 1);
-
-    }
+    } else
+        debug("window.accessibilityController is not present");
 
 </script>
-
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

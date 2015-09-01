@@ -1,3 +1,19 @@
+2015-09-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up asynchronous behavior in some accessibility tests
+        https://bugs.webkit.org/show_bug.cgi?id=148682
+
+        Reviewed by Darin Adler.
+
+        * accessibility/mac/removing-textarea-after-edit-crash-expected.txt:
+        * accessibility/mac/removing-textarea-after-edit-crash.html:
+        * accessibility/mac/select-element-selection-with-optgroups.html:
+        * accessibility/mac/selected-rows-table.html:
+        * accessibility/mac/selection-notification-focus-change.html:
+        * accessibility/mac/selection-sync-expected.txt:
+        * accessibility/mac/selection-sync.html:
+        * accessibility/mac/setting-attributes-is-asynchronous.html:
+
 2015-09-01  Dean Jackson  <dino@apple.com>
 
         The new media controls tests are OS X only.

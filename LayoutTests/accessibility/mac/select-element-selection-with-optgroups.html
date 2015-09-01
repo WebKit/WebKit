@@ -23,9 +23,9 @@
 
 <script>
 description("This tests that setting selection within a list box works correctly if there are optgroups");
-window.jsTestIsAsync = true;
 
 if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
     document.getElementById("suite").focus();
     var selectElement = accessibilityController.focusedElement;
 
@@ -51,7 +51,8 @@ if (window.accessibilityController) {
             });
         });
     });
-}
+} else
+    debug("window.accessibilityController is not present");
 </script>
 
 <script src="../../resources/js-test-post.js"></script>
