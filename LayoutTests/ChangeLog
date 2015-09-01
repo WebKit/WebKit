@@ -1,3 +1,10 @@
+2015-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Update Windows expectation for fast/events/wheelevent-basic.html after r188793.
+
+        * platform/win/TestExpectations: This test used to fail, and now that it is
+        asynchronous, it times out.
+
 2015-08-31  Chris Dumez  <cdumez@apple.com>
 
         http/tests/w3c/dom/nodes/Element-matches.html is flaky

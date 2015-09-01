@@ -2705,7 +2705,7 @@ fast/dynamic/window-resize-scrollbars-test.html [ Failure Timeout ]
 
 fast/encoding/parser-tests-110.html [ Pass Timeout ]
 
-fast/events/wheelevent-basic.html [ Failure ]
+fast/events/wheelevent-basic.html [ Timeout ]
 webkit.org/b/103043 fast/events/frame-scroll-fake-mouse-move.html [ Skip ]
 webkit.org/b/97026 [ Release ] fast/events/keydown-leftright-keys.html [ Failure ]
 webkit.org/b/97026 [ Debug ] fast/events/keydown-leftright-keys.html [ Skip ] # Debug Assertion
