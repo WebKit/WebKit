@@ -1,3 +1,27 @@
+2015-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI assertions about not having to do type checks at the point of a Known use kind are unsound
+        https://bugs.webkit.org/show_bug.cgi?id=148649
+
+        Reviewed by Saam Barati.
+
+        We often generate IR like:
+
+        Check(Int32:@x)
+        ...
+        Foo(KnownInt32:@x)
+
+        It would be valid for any optimization that somehow proves the type of @x to remove the
+        Check node entirely. But then, AI might fail on an assertion at Foo() because of the
+        KnownInt32 use kind, if AI isn't smart enough to construct the same proof that the former
+        optimization used for removing the Check.
+
+        The correct solution is to remove the compile-time assertions about Known use kinds
+        having already been checked.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::verifyEdge):
+
 2015-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: tighten up lifetimes for InspectorController-owned objects; add brace initializers to agents
