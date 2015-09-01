@@ -1,3 +1,13 @@
+2015-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: rewrite inspector/console/command-line-api.html to use AsyncTestSuite
+        https://bugs.webkit.org/show_bug.cgi?id=148637
+
+        Reviewed by Darin Adler.
+
+        * inspector/console/command-line-api-expected.txt:
+        * inspector/console/command-line-api.html:
+
 2015-09-01  Chris Dumez  <cdumez@apple.com>
 
         Range.insersectsNode(node) is supposed to return true if node.parent is null

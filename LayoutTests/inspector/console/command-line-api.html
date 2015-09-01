@@ -5,57 +5,116 @@
 <script>
 function test()
 {
-    var currentStepIndex = 0;
-    var steps = [
-        "String(keys([3,4]))",
-        "String(values([3,4]))",
-        "String($0)",
-        "String($('foo'))",
-        "String($('#foo'))",
-        "String($('#foo', document.body))",
-        "String($('#foo', 'non-node'))",
-        "String($('#foo', $('#bar')))",
-        "String($$('p'))",
-        "String($$('p', document.body))",
+    // Each input is wrapped in the String constructor to force stringification.
+    let testInputs = [
+        {
+            title: "ArrayKeys",
+            input: "keys([3,4])",
+        },
+        {
+            title: "ArrayValues",
+            input: "values([3,4])",
+        },
+        {
+            title: "DollarZero",
+            input: "$0",
+            setup: selectElementForDollarZero,
+        },
+        {
+            title: "InvalidSelector",
+            input: "$('foo')",
+            setup: listenForConsoleWarning,
+        },
+        {
+            title: "IdSelector",
+            input: "$('#foo')",
+        },
+        {
+            title: "IdSelectorWithContext",
+            input: "$('#foo', document.body)",
+        },
+        {
+            title: "IdSelectorWithInvalidContext",
+            input: "$('#foo', 'non-node')",
+        },
+        {
+            title: "IdSelectorDynamicContext",
+            input: "$('#foo', $('#bar'))",
+        },
+        {
+            title: "ElementSelectorAll",
+            input: "$$('p')",
+        },
+        {
+            title: "ElementSelectorAllWithContext",
+            input: "$$('p', document.body)",
+        },
     ];
 
-    var consoleMessage = null;
+    let suite = InspectorTest.createAsyncSuite("Console.TestCommandLineAPI");
 
-    function runSteps()
-    {
-        for (var step of steps) {
-            WebInspector.runtimeManager.evaluateInInspectedWindow(step, "test", true, true, false, false, false, function(result, wasThrown) {
-                InspectorTest.log("\nSTEP: " + steps[currentStepIndex]);
-                if (consoleMessage) {
-                    InspectorTest.log("CONSOLE: " + consoleMessage.messageText);
-                    consoleMessage = null;
+    function addAPITestCase(args) {
+        let {title, input, setup} = args;
+        suite.addTestCase({
+            name: `Evaluate${title}`,
+            setup,
+            test: (resolve, reject) => {
+                InspectorTest.log(`Input: ${input}`);
+
+                function callback(result, wasThrown) {
+                    if (result) {
+                        InspectorTest.log(`Output: ${result.description}`);
+                        resolve();
+                    } else
+                        reject();
                 }
-                InspectorTest.log(result.description);
 
-                if (++currentStepIndex >= steps.length)
-                    InspectorTest.completeTest();
-            });
-        }
+                const objectGroup = "test";
+                const includeCommandLineAPI = true;
+                const ignorePauseOnExceptionsAndMute = false;
+                const shouldReturnByValue = false;
+                const shouldGeneratePreview = false;
+                const shouldSaveResult = false;
+                WebInspector.runtimeManager.evaluateInInspectedWindow(`String(${input})`, objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, callback);
+            }
+        })
     }
 
-    // Detect console warning for $('foo').
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
-        consoleMessage = event.data.message;
-        InspectorTest.assert(consoleMessage instanceof WebInspector.ConsoleMessage);
-    });
+    for (let input of testInputs)
+        addAPITestCase(input);
 
-    // Select div#foo for $0.
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "#foo", function(contentNodeId) {
-            if (contentNodeId) {
-                ConsoleAgent.addInspectedNode(contentNodeId);
-                runSteps();
-            } else {
-                InspectorTest.log("FAIL: DOM node not found.");
-                InspectorTest.completeTest();
-            }
+    suite.runTestCasesAndFinish();
+
+    function listenForConsoleWarning(resolve, reject) {
+        // Detect console warning for $('foo').
+        WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+            let message = event.data.message;
+            InspectorTest.assert(message instanceof WebInspector.ConsoleMessage);
+            InspectorTest.log(`CONSOLE: ${message.messageText}`);
         });
-    });
+
+        resolve();
+    }
+
+    function selectElementForDollarZero(resolve, reject) {
+        WebInspector.domTreeManager.requestDocument(function(documentNode) {
+            if (!documentNode) {
+                InspectorTest.log("FAIL: DOM node not found.");
+                return reject();
+            }
+
+            // Select div#foo for $0.
+            WebInspector.domTreeManager.querySelector(documentNode.id, "#foo", function(contentNodeId) {
+                if (!contentNodeId) {
+                    InspectorTest.log("FAIL: DOM node not found.");
+                    return reject();
+                }
+
+                ConsoleAgent.addInspectedNode(contentNodeId);
+                resolve();
+            });
+        });
+    }
 }
 </script>
 </head>

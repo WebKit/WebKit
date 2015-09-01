@@ -1,3 +1,14 @@
+2015-09-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: rewrite inspector/console/command-line-api.html to use AsyncTestSuite
+        https://bugs.webkit.org/show_bug.cgi?id=148637
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.singleFireEventListener):
+        (WebInspector.Object.singleFireEventListener.let.wrappedCallback): Arrow.
+
 2015-09-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: New rule button in the style sidebar is blurry and too dark

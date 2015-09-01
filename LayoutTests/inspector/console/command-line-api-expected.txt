@@ -2,34 +2,44 @@ CONSOLE MESSAGE: line 27: The console function $() has changed from $=getElement
 Tests that command line api works.
 
 
-STEP: String(keys([3,4]))
-0,1
+== Running test suite: Console.TestCommandLineAPI
+-- Running test case: EvaluateArrayKeys
+Input: keys([3,4])
+Output: 0,1
 
-STEP: String(values([3,4]))
-3,4
+-- Running test case: EvaluateArrayValues
+Input: values([3,4])
+Output: 3,4
 
-STEP: String($0)
-[object HTMLParagraphElement]
+-- Running test case: EvaluateDollarZero
+Input: $0
+Output: undefined
 
-STEP: String($('foo'))
-CONSOLE: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
-null
+-- Running test case: EvaluateInvalidSelector
+Input: $('foo')
+Output: null
 
-STEP: String($('#foo'))
-[object HTMLParagraphElement]
+-- Running test case: EvaluateIdSelector
+Input: $('#foo')
+Output: [object HTMLParagraphElement]
 
-STEP: String($('#foo', document.body))
-[object HTMLParagraphElement]
+-- Running test case: EvaluateIdSelectorWithContext
+Input: $('#foo', document.body)
+Output: [object HTMLParagraphElement]
 
-STEP: String($('#foo', 'non-node'))
-[object HTMLParagraphElement]
+-- Running test case: EvaluateIdSelectorWithInvalidContext
+Input: $('#foo', 'non-node')
+Output: [object HTMLParagraphElement]
 
-STEP: String($('#foo', $('#bar')))
-null
+-- Running test case: EvaluateIdSelectorDynamicContext
+Input: $('#foo', $('#bar'))
+Output: null
 
-STEP: String($$('p'))
-[object HTMLParagraphElement],[object HTMLParagraphElement]
+-- Running test case: EvaluateElementSelectorAll
+Input: $$('p')
+Output: [object HTMLParagraphElement],[object HTMLParagraphElement]
 
-STEP: String($$('p', document.body))
-[object HTMLParagraphElement],[object HTMLParagraphElement]
+-- Running test case: EvaluateElementSelectorAllWithContext
+Input: $$('p', document.body)
+Output: [object HTMLParagraphElement],[object HTMLParagraphElement]
 
