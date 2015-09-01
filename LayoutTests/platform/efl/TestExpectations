@@ -419,13 +419,6 @@ perf/array-binary-search.html [ WontFix ]
 perf/array-nested-loop.html [ WontFix ]
 perf/mouse-event.html [ WontFix ]
 
-# Shadow DOM is disabled.
-Bug(EFL) editing/shadow [ WontFix ]
-Bug(EFL) fast/dom/shadow [ WontFix ]
-Bug(EFL) editing/text-iterator/basic-iteration-shadowdom.html [ WontFix ]
-Bug(EFL) accessibility/corresponding-control-deleted-crash.html [ WontFix ]
-Bug(EFL) fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ WontFix ]
-
 # Rounding issues when running on 32-bits machines.
 svg/css/stars-with-shadow.html
 

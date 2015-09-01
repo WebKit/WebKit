@@ -1,3 +1,0 @@
-This test confirms that clicking a shadow reprojected element does not cause a crash.
-
-PASS

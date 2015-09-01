@@ -1,4 +1,0 @@
-contentElementInMeterElement
-PASS
-TEST COMPLETED
-

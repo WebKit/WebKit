@@ -430,14 +430,6 @@ animations/trigger-parsing.html [ Skip ]
 animations/trigger-container-scroll-simple.html [ Skip ]
 animations/trigger-container-scroll-boundaries.html [ Skip ]
 
-# ENABLE(SHADOW_DOM) is disabled.
-Bug(GTK) fast/dom/shadow [ Skip ]
-Bug(GTK) fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ Skip ]
-Bug(GTK) editing/shadow [ Skip ]
-Bug(GTK) accessibility/corresponding-control-deleted-crash.html [ Skip ]
-Bug(GTK) editing/text-iterator/basic-iteration-shadowdom.html [ Skip ]
-#
-
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]

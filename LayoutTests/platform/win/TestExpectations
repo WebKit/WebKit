@@ -455,11 +455,6 @@ webkit.org/b/49142 fast/css/style-scoped/ [ Skip ]
 # TODO ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap/ [ Skip ]
 
-# ENABLE(SHADOW_DOM) is disabled.
-editing/shadow/ [ Skip ]
-fast/dom/shadow/ [ Skip ]
-fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ Skip ]
-
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ]
 
@@ -1477,10 +1472,6 @@ webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
 webkit.org/b/95405 accessibility/win/single-select-children.html [ Skip ]
 accessibility/file-upload-button-stringvalue.html
 webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Skip ] #  [ Timeout ]
-
-# Wants 'webkitCreateShadowRoot()' access:
-webkit.org/b/108249 [ Release ] accessibility/corresponding-control-deleted-crash.html [ Failure ]
-webkit.org/b/108249 [ Debug ] accessibility/corresponding-control-deleted-crash.html [ Skip ] # Crash (Debug Assertion)
 
 # Color Well is not implemented:
 accessibility/color-well.html

@@ -108,11 +108,6 @@ storage/websql/quota-tracking.html
 inspector/ [ Skip ]
 http/tests/inspector/ [ Skip ]
 
-# ShadowDOM is not enabled on iOS
-fast/dom/shadow
-fast/dom/HTMLTemplateElement/cycles-in-shadow.html
-editing/shadow
-
 # Some CSS3 Text tests are not enabled on iOS
 webkit.org/b/76173 fast/css3-text/css3-text-align-last
 webkit.org/b/99945 fast/css3-text/css3-text-justify

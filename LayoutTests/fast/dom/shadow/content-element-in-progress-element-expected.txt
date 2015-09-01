@@ -1,4 +1,0 @@
-contentElementInProgressElement
-PASS
-TEST COMPLETED
-

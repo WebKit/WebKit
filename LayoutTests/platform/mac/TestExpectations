@@ -241,13 +241,6 @@ webkit.org/b/60206 http/tests/navigation/response204.html
 # Styled scope element is not yet enabled.
 webkit.org/b/49142 fast/css/style-scoped
 
-# ENABLE(SHADOW_DOM) is disabled.
-fast/dom/shadow
-fast/dom/HTMLTemplateElement/cycles-in-shadow.html
-editing/shadow
-accessibility/corresponding-control-deleted-crash.html
-editing/text-iterator/basic-iteration-shadowdom.html
-
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
@@ -487,9 +480,6 @@ plugins/npruntime/invoke-failure.html
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
 
 [ Mavericks ] http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
-
-# Needs ENABLE_SHADOW_DOM
-webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-api.html [ Failure ]
 
 # ENABLE(CUSTOM_ELEMENTS) is disabled.
 fast/dom/custom
