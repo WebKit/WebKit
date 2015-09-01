@@ -1,3 +1,13 @@
+2015-09-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update sandbox after r179367
+        https://bugs.webkit.org/show_bug.cgi?id=148683
+        rdar://problem/21767401
+
+        Reviewed by Darin Adler.
+
+        * Resources/PlugInSandboxProfiles/com.apple.ist.ds.appleconnect.webplugin.sb:
+
 2015-08-26  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Determine navigation and content policy before continuing to filter a load
