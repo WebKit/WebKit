@@ -37,7 +37,6 @@
 #include "NodeWithIndex.h"
 #include "Page.h"
 #include "ProcessingInstruction.h"
-#include "RangeException.h"
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
 #include "ScopedEventQueue.h"
@@ -907,11 +906,11 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
     case Node::ATTRIBUTE_NODE:
     case Node::ENTITY_NODE:
     case Node::DOCUMENT_NODE:
-        ec = RangeException::INVALID_NODE_TYPE_ERR;
+        ec = INVALID_NODE_TYPE_ERR;
         return;
     default:
         if (newNode->isShadowRoot()) {
-            ec = RangeException::INVALID_NODE_TYPE_ERR;
+            ec = INVALID_NODE_TYPE_ERR;
             return;
         }
         break;
@@ -1005,7 +1004,7 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
     switch (n->nodeType()) {
         case Node::DOCUMENT_TYPE_NODE:
         case Node::ENTITY_NODE:
-            ec = RangeException::INVALID_NODE_TYPE_ERR;
+            ec = INVALID_NODE_TYPE_ERR;
             return nullptr;
         case Node::CDATA_SECTION_NODE:
         case Node::COMMENT_NODE:
@@ -1043,7 +1042,7 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
         case Node::ENTITY_NODE:
-            ec = RangeException::INVALID_NODE_TYPE_ERR;
+            ec = INVALID_NODE_TYPE_ERR;
             return;
         case Node::CDATA_SECTION_NODE:
         case Node::COMMENT_NODE:
@@ -1074,7 +1073,7 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
         case Node::XPATH_NAMESPACE_NODE:
-            ec = RangeException::INVALID_NODE_TYPE_ERR;
+            ec = INVALID_NODE_TYPE_ERR;
             return;
     }
 }
@@ -1154,7 +1153,7 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
                 break;
             case Node::DOCUMENT_TYPE_NODE:
             case Node::ENTITY_NODE:
-                ec = RangeException::INVALID_NODE_TYPE_ERR;
+                ec = INVALID_NODE_TYPE_ERR;
                 return;
         }
     }
@@ -1173,7 +1172,7 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
         case Node::ENTITY_NODE:
-            ec = RangeException::INVALID_NODE_TYPE_ERR;
+            ec = INVALID_NODE_TYPE_ERR;
             return;
     }
 
@@ -1211,7 +1210,7 @@ void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
                 break;
             case Node::DOCUMENT_TYPE_NODE:
             case Node::ENTITY_NODE:
-                ec = RangeException::INVALID_NODE_TYPE_ERR;
+                ec = INVALID_NODE_TYPE_ERR;
                 return;
         }
     }
@@ -1240,7 +1239,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         case Node::DOCUMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
         case Node::ENTITY_NODE:
-            ec = RangeException::INVALID_NODE_TYPE_ERR;
+            ec = INVALID_NODE_TYPE_ERR;
             return;
         case Node::CDATA_SECTION_NODE:
         case Node::COMMENT_NODE:
@@ -1280,7 +1279,8 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
     // FIXME: Do we need a check if the node would end up with a child node of a type not
     // allowed by the type of node?
 
-    // BAD_BOUNDARYPOINTS_ERR: Raised if the Range partially selects a non-Text node.
+    // INVALID_STATE_ERR: Raised if the Range partially selects a non-Text node.
+    // https://dom.spec.whatwg.org/#dom-range-surroundcontents (step 1).
     Node* startNonTextContainer = &startContainer();
     if (startNonTextContainer->nodeType() == Node::TEXT_NODE)
         startNonTextContainer = startNonTextContainer->parentNode();
@@ -1288,7 +1288,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
     if (endNonTextContainer->nodeType() == Node::TEXT_NODE)
         endNonTextContainer = endNonTextContainer->parentNode();
     if (startNonTextContainer != endNonTextContainer) {
-        ec = RangeException::BAD_BOUNDARYPOINTS_ERR;
+        ec = INVALID_STATE_ERR;
         return;
     }
 

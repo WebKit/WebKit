@@ -317,7 +317,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/dom/ProgressEvent.idl \
     $(WebCore)/dom/ProgressEvent.idl \
     $(WebCore)/dom/Range.idl \
-    $(WebCore)/dom/RangeException.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
     $(WebCore)/dom/StringCallback.idl \

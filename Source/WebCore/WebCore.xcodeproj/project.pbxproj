@@ -3691,7 +3691,6 @@
 		978AD67414130A8D00C7CAE3 /* HTMLSpanElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978AD67114130A8D00C7CAE3 /* HTMLSpanElement.cpp */; };
 		978AD67514130A8D00C7CAE3 /* HTMLSpanElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 978AD67214130A8D00C7CAE3 /* HTMLSpanElement.h */; };
 		978D07B6145A0F030096908D /* FileException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B5145A0F030096908D /* FileException.cpp */; };
-		978D07BA145A0F3C0096908D /* RangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B9145A0F3C0096908D /* RangeException.cpp */; };
 		978D07BC145A0F560096908D /* EventException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07BB145A0F560096908D /* EventException.cpp */; };
 		978D07BE145A0F6C0096908D /* DOMCoreException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07BD145A0F6C0096908D /* DOMCoreException.cpp */; };
 		978D07CA145A10160096908D /* SVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07C9145A10160096908D /* SVGException.cpp */; };
@@ -6006,9 +6005,6 @@
 		D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */ = {isa = PBXBuildFile; fileRef = D0EDA773143E303C0028E383 /* CachedRawResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0FF2A5D11F8C45A007E74E0 /* PingLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */; };
 		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; };
-		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
-		D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */; };
-		D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA56B0AB0EB8D005108A5 /* RangeException.h */; };
 		D302754912A5FE84004BD828 /* RenderDetailsMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D302754512A5FE84004BD828 /* RenderDetailsMarker.cpp */; };
 		D302754A12A5FE84004BD828 /* RenderDetailsMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = D302754612A5FE84004BD828 /* RenderDetailsMarker.h */; };
 		D359D789129CA2710006E5D2 /* HTMLDetailsElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D359D786129CA2710006E5D2 /* HTMLDetailsElement.cpp */; };
@@ -11046,7 +11042,6 @@
 		978AD67214130A8D00C7CAE3 /* HTMLSpanElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSpanElement.h; sourceTree = "<group>"; };
 		978AD67314130A8D00C7CAE3 /* HTMLSpanElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSpanElement.idl; sourceTree = "<group>"; };
 		978D07B5145A0F030096908D /* FileException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileException.cpp; sourceTree = "<group>"; };
-		978D07B9145A0F3C0096908D /* RangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RangeException.cpp; sourceTree = "<group>"; };
 		978D07BB145A0F560096908D /* EventException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventException.cpp; sourceTree = "<group>"; };
 		978D07BD145A0F6C0096908D /* DOMCoreException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCoreException.cpp; sourceTree = "<group>"; };
 		978D07C9145A10160096908D /* SVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGException.cpp; sourceTree = "<group>"; };
@@ -13698,10 +13693,6 @@
 		D0EDA773143E303C0028E383 /* CachedRawResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResource.h; sourceTree = "<group>"; };
 		D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoader.cpp; sourceTree = "<group>"; };
 		D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoader.h; sourceTree = "<group>"; };
-		D23CA5480AB0E983005108A5 /* RangeException.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = RangeException.idl; sourceTree = "<group>"; };
-		D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRangeException.h; sourceTree = "<group>"; };
-		D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRangeException.cpp; sourceTree = "<group>"; };
-		D23CA56B0AB0EB8D005108A5 /* RangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RangeException.h; sourceTree = "<group>"; };
 		D302754512A5FE84004BD828 /* RenderDetailsMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderDetailsMarker.cpp; sourceTree = "<group>"; };
 		D302754612A5FE84004BD828 /* RenderDetailsMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderDetailsMarker.h; sourceTree = "<group>"; };
 		D359D786129CA2710006E5D2 /* HTMLDetailsElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDetailsElement.cpp; sourceTree = "<group>"; };
@@ -21757,8 +21748,6 @@
 			children = (
 				65DF31ED09D1CC60000BE325 /* JSRange.cpp */,
 				65DF31EE09D1CC60000BE325 /* JSRange.h */,
-				D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */,
-				D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */,
 			);
 			name = Ranges;
 			sourceTree = "<group>";
@@ -23464,9 +23453,6 @@
 				F523D30402DE4476018635CA /* Range.h */,
 				936DD03A09CEAC270056AE8C /* Range.idl */,
 				93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */,
-				978D07B9145A0F3C0096908D /* RangeException.cpp */,
-				D23CA56B0AB0EB8D005108A5 /* RangeException.h */,
-				D23CA5480AB0E983005108A5 /* RangeException.idl */,
 				A84D827B11D333ED00972990 /* RawDataDocumentParser.h */,
 				85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */,
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
@@ -25690,7 +25676,6 @@
 				077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */,
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
 				65DF320209D1CC60000BE325 /* JSRange.h in Headers */,
-				D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */,
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
 				6C4C96DF1AD4483500365A50 /* JSReadableStreamController.h in Headers */,
 				7C4C96DF1AD4483500365A50 /* JSReadableStreamReader.h in Headers */,
@@ -26389,7 +26374,6 @@
 				B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */,
 				93F1991808245E59001E9ABC /* Range.h in Headers */,
 				93D9D53C0DA27E180077216C /* RangeBoundaryPoint.h in Headers */,
-				D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */,
 				F55B3DCE1251F12D003EF269 /* RangeInputType.h in Headers */,
 				6E84E9E117668BF100815B68 /* RasterShape.h in Headers */,
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
@@ -29286,7 +29270,6 @@
 				077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */,
-				D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */,
 				7C4C96DC1AD4483500365A50 /* JSReadableStream.cpp in Sources */,
 				6C4C96DE1AD4483500365A50 /* JSReadableStreamController.cpp in Sources */,
 				41189EF91AD8273700B90A0D /* JSReadableStreamControllerCustom.cpp in Sources */,
@@ -29927,7 +29910,6 @@
 				F55B3DCB1251F12D003EF269 /* RadioInputType.cpp in Sources */,
 				B658FFA51522EFAA00DD5595 /* RadioNodeList.cpp in Sources */,
 				93F19AB908245E59001E9ABC /* Range.cpp in Sources */,
-				978D07BA145A0F3C0096908D /* RangeException.cpp in Sources */,
 				F55B3DCD1251F12D003EF269 /* RangeInputType.cpp in Sources */,
 				6E84E9E017668BEE00815B68 /* RasterShape.cpp in Sources */,
 				4198BDF01A81142200B22FB5 /* ReadableJSStream.cpp in Sources */,

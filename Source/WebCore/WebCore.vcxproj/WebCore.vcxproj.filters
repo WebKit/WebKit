@@ -3285,9 +3285,6 @@
     <ClCompile Include="..\dom\Range.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\RangeException.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\RegisteredEventListener.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -5696,9 +5693,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSRange.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSRangeException.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSReadableStream.cpp">
@@ -10403,9 +10397,6 @@
     <ClInclude Include="..\dom\RangeBoundaryPoint.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\RangeException.h">
-      <Filter>dom</Filter>
-    </ClInclude>
     <ClInclude Include="..\dom\RegisteredEventListener.h">
       <Filter>dom</Filter>
     </ClInclude>
@@ -13088,9 +13079,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSRange.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSRangeException.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSRect.h">

@@ -167,8 +167,6 @@ PASS: canGet('Range') should be 'true' and is.
 PASS: canSet('Range') should be 'true' and is.
 PASS: canGet('RangeError') should be 'true' and is.
 PASS: canSet('RangeError') should be 'true' and is.
-PASS: canGet('RangeException') should be 'true' and is.
-PASS: canSet('RangeException') should be 'true' and is.
 PASS: canGet('ReferenceError') should be 'true' and is.
 PASS: canSet('ReferenceError') should be 'true' and is.
 PASS: canGet('SyntaxError') should be 'true' and is.

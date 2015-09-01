@@ -1,24 +1,12 @@
 
-FAIL  current doc: #document node, current doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  current doc: #document node, foreign doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  current doc: #document node, XML doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  current doc: #document node, detached range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** current doc: html node, current doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** current doc: html node, foreign doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** current doc: html node, XML doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** current doc: html node, detached range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
+PASS  current doc: #document node, current doc's range, type 9 
+PASS  current doc: #document node, foreign doc's range, type 9 
+PASS  current doc: #document node, XML doc's range, type 9 
+PASS  current doc: #document node, detached range, type 9 
+PASS ** current doc: html node, current doc's range, type 10 
+PASS ** current doc: html node, foreign doc's range, type 10 
+PASS ** current doc: html node, XML doc's range, type 10 
+PASS ** current doc: html node, detached range, type 10 
 PASS ** current doc: html node, current doc's range, type 1 
 PASS ** current doc: html node, foreign doc's range, type 1 
 PASS ** current doc: html node, XML doc's range, type 1 
@@ -143,26 +131,14 @@ PASS ******** current doc: #text node, current doc's range, type 3
 PASS ******** current doc: #text node, foreign doc's range, type 3 
 PASS ******** current doc: #text node, XML doc's range, type 3 
 PASS ******** current doc: #text node, detached range, type 3 
-FAIL  foreign doc: #document node, current doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  foreign doc: #document node, foreign doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  foreign doc: #document node, XML doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  foreign doc: #document node, detached range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** foreign doc: html node, current doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** foreign doc: html node, foreign doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** foreign doc: html node, XML doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** foreign doc: html node, detached range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
+PASS  foreign doc: #document node, current doc's range, type 9 
+PASS  foreign doc: #document node, foreign doc's range, type 9 
+PASS  foreign doc: #document node, XML doc's range, type 9 
+PASS  foreign doc: #document node, detached range, type 9 
+PASS ** foreign doc: html node, current doc's range, type 10 
+PASS ** foreign doc: html node, foreign doc's range, type 10 
+PASS ** foreign doc: html node, XML doc's range, type 10 
+PASS ** foreign doc: html node, detached range, type 10 
 PASS ** foreign doc: html node, current doc's range, type 1 
 PASS ** foreign doc: html node, foreign doc's range, type 1 
 PASS ** foreign doc: html node, XML doc's range, type 1 
@@ -203,54 +179,34 @@ PASS ** foreign doc: #comment node, current doc's range, type 8
 PASS ** foreign doc: #comment node, foreign doc's range, type 8 
 PASS ** foreign doc: #comment node, XML doc's range, type 8 
 PASS ** foreign doc: #comment node, detached range, type 8 
-FAIL  detached div in current doc: div node, current doc's range, type 1 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  detached div in current doc: div node, foreign doc's range, type 1 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  detached div in current doc: div node, XML doc's range, type 1 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  detached div in current doc: div node, detached range, type 1 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** detached div in current doc: p node, current doc's range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL ** detached div in current doc: p node, foreign doc's range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL ** detached div in current doc: p node, XML doc's range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL ** detached div in current doc: p node, detached range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, current doc's range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, foreign doc's range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, XML doc's range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, detached range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL ** detached div in current doc: p node, current doc's range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL ** detached div in current doc: p node, foreign doc's range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL ** detached div in current doc: p node, XML doc's range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL ** detached div in current doc: p node, detached range, type 1 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, current doc's range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, foreign doc's range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, XML doc's range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL **** detached div in current doc: #text node, detached range, type 3 INVALID_NODE_TYPE_ERR: DOM Range Exception 2
-FAIL  #document node, current doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document node, foreign doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document node, XML doc's range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document node, detached range, type 9 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** qorflesnorf node, current doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** qorflesnorf node, foreign doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** qorflesnorf node, XML doc's range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL ** qorflesnorf node, detached range, type 10 assert_throws: selectNodeContents() on a doctype must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNodeContents(node);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
+PASS  detached div in current doc: div node, current doc's range, type 1 
+PASS  detached div in current doc: div node, foreign doc's range, type 1 
+PASS  detached div in current doc: div node, XML doc's range, type 1 
+PASS  detached div in current doc: div node, detached range, type 1 
+FAIL ** detached div in current doc: p node, current doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL ** detached div in current doc: p node, foreign doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL ** detached div in current doc: p node, XML doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL ** detached div in current doc: p node, detached range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, current doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, foreign doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, XML doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, detached range, type 3 InvalidNodeTypeError: DOM Exception 24
+FAIL ** detached div in current doc: p node, current doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL ** detached div in current doc: p node, foreign doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL ** detached div in current doc: p node, XML doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL ** detached div in current doc: p node, detached range, type 1 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, current doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, foreign doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, XML doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
+FAIL **** detached div in current doc: #text node, detached range, type 3 InvalidNodeTypeError: DOM Exception 24
+PASS  #document node, current doc's range, type 9 
+PASS  #document node, foreign doc's range, type 9 
+PASS  #document node, XML doc's range, type 9 
+PASS  #document node, detached range, type 9 
+PASS ** qorflesnorf node, current doc's range, type 10 
+PASS ** qorflesnorf node, foreign doc's range, type 10 
+PASS ** qorflesnorf node, XML doc's range, type 10 
+PASS ** qorflesnorf node, detached range, type 10 
 PASS ** igiveuponcreativenames node, current doc's range, type 1 
 PASS ** igiveuponcreativenames node, foreign doc's range, type 1 
 PASS ** igiveuponcreativenames node, XML doc's range, type 1 
@@ -275,18 +231,10 @@ PASS ** #text node, current doc's range, type 3
 PASS ** #text node, foreign doc's range, type 3 
 PASS ** #text node, XML doc's range, type 3 
 PASS ** #text node, detached range, type 3 
-FAIL  #text node, current doc's range, type 3 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #text node, foreign doc's range, type 3 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #text node, XML doc's range, type 3 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #text node, detached range, type 3 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
+PASS  #text node, current doc's range, type 3 
+PASS  #text node, foreign doc's range, type 3 
+PASS  #text node, XML doc's range, type 3 
+PASS  #text node, detached range, type 3 
 PASS  #text node, current doc's range, type 3 
 PASS  #text node, foreign doc's range, type 3 
 PASS  #text node, XML doc's range, type 3 
@@ -311,40 +259,16 @@ PASS  #comment node, current doc's range, type 8
 PASS  #comment node, foreign doc's range, type 8 
 PASS  #comment node, XML doc's range, type 8 
 PASS  #comment node, detached range, type 8 
-FAIL  #document-fragment node, current doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, foreign doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, XML doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, detached range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, current doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, foreign doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, XML doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, detached range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, current doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, foreign doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, XML doc's range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL  #document-fragment node, detached range, type 11 assert_throws: selectNode() on a node with no parent must throw INVALID_NODE_TYPE_ERR function "function () {
-            range.selectNode(node);
-        }" threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
+PASS  #document-fragment node, current doc's range, type 11 
+PASS  #document-fragment node, foreign doc's range, type 11 
+PASS  #document-fragment node, XML doc's range, type 11 
+PASS  #document-fragment node, detached range, type 11 
+PASS  #document-fragment node, current doc's range, type 11 
+PASS  #document-fragment node, foreign doc's range, type 11 
+PASS  #document-fragment node, XML doc's range, type 11 
+PASS  #document-fragment node, detached range, type 11 
+PASS  #document-fragment node, current doc's range, type 11 
+PASS  #document-fragment node, foreign doc's range, type 11 
+PASS  #document-fragment node, XML doc's range, type 11 
+PASS  #document-fragment node, detached range, type 11 
 

@@ -15,7 +15,7 @@ PASS Historical DOM features must be removed: NameList
 PASS Historical DOM features must be removed: Notation 
 PASS Historical DOM features must be removed: TypeInfo 
 PASS Historical DOM features must be removed: UserDataHandler 
-FAIL Historical DOM features must be removed: RangeException assert_equals: expected (undefined) undefined but got (object) object "[object RangeExceptionConstructor]"
+PASS Historical DOM features must be removed: RangeException 
 FAIL Historical DOM features must be removed: createCDATASection assert_equals: expected (undefined) undefined but got (function) function "function createCDATASection() {
     [native code]
 }"

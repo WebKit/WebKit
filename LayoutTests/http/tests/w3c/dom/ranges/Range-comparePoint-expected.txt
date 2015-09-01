@@ -4979,366 +4979,186 @@ PASS Point 82 [xmlDocfrag, 0], range 56 [detachedComment, 5, detachedComment, 5]
 PASS Point 82 [xmlDocfrag, 0], range 57 [detachedForeignComment, 4, detachedForeignComment, 4] 
 PASS Point 82 [xmlDocfrag, 0], range 58 [foreignDocfrag, 0, foreignDocfrag, 0] 
 PASS Point 82 [xmlDocfrag, 0], range 59 [xmlDocfrag, 0, xmlDocfrag, 0] 
-FAIL Point 83 [doctype, 0], range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 10 [document.documentElement, 0, document.documentElement, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 11 [document.documentElement, 0, document.documentElement, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 12 [document.documentElement, 1, document.documentElement, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 13 [document.head, 1, document.head, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 14 [document.body, 4, document.body, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 16 [paras[0], 0, paras[0], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 17 [detachedPara1, 0, detachedPara1, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 20 [paras[0].firstChild, 3, paras[3], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 21 [paras[0], 0, paras[0].firstChild, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 22 [testDiv, 2, paras[4], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 23 [document, 0, document, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 24 [document, 0, document, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 25 [comment, 2, comment, 3] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 26 [testDiv, 0, comment, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 27 [foreignDoc, 1, foreignComment, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 28 [foreignDoc.body, 0, foreignTextNode, 36] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 29 [xmlDoc, 1, xmlComment, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 30 [detachedTextNode, 0, detachedTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 33 [detachedComment, 3, detachedComment, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 34 [detachedForeignComment, 0, detachedForeignComment, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 35 [detachedXmlComment, 2, detachedXmlComment, 6] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 36 [docfrag, 0, docfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 37 [processingInstruction, 0, processingInstruction, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 42 [foreignDoc.head, 1, foreignDoc.head, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 43 [foreignDoc.body, 0, foreignDoc.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 44 [paras[0], 0, paras[0], 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 45 [detachedPara1, 0, detachedPara1, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 46 [testDiv, 1, paras[2].firstChild, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 47 [document.documentElement, 1, document.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 49 [document, 1, document, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 50 [paras[2].firstChild, 4, comment, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 51 [paras[3], 1, comment, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 52 [foreignDoc, 0, foreignDoc, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 53 [xmlDoc, 0, xmlDoc, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 56 [detachedComment, 5, detachedComment, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 57 [detachedForeignComment, 4, detachedForeignComment, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 58 [foreignDocfrag, 0, foreignDocfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 83 [doctype, 0], range 59 [xmlDocfrag, 0, xmlDocfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 10 [document.documentElement, 0, document.documentElement, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 11 [document.documentElement, 0, document.documentElement, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 12 [document.documentElement, 1, document.documentElement, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 13 [document.head, 1, document.head, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 14 [document.body, 4, document.body, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 16 [paras[0], 0, paras[0], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 17 [detachedPara1, 0, detachedPara1, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 20 [paras[0].firstChild, 3, paras[3], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 21 [paras[0], 0, paras[0].firstChild, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 22 [testDiv, 2, paras[4], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 23 [document, 0, document, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 24 [document, 0, document, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 25 [comment, 2, comment, 3] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 26 [testDiv, 0, comment, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 27 [foreignDoc, 1, foreignComment, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 28 [foreignDoc.body, 0, foreignTextNode, 36] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 29 [xmlDoc, 1, xmlComment, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 30 [detachedTextNode, 0, detachedTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 33 [detachedComment, 3, detachedComment, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 34 [detachedForeignComment, 0, detachedForeignComment, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 35 [detachedXmlComment, 2, detachedXmlComment, 6] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 36 [docfrag, 0, docfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 37 [processingInstruction, 0, processingInstruction, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 42 [foreignDoc.head, 1, foreignDoc.head, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 43 [foreignDoc.body, 0, foreignDoc.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 44 [paras[0], 0, paras[0], 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 45 [detachedPara1, 0, detachedPara1, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 46 [testDiv, 1, paras[2].firstChild, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 47 [document.documentElement, 1, document.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 49 [document, 1, document, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 50 [paras[2].firstChild, 4, comment, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 51 [paras[3], 1, comment, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 52 [foreignDoc, 0, foreignDoc, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 53 [xmlDoc, 0, xmlDoc, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 56 [detachedComment, 5, detachedComment, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 57 [detachedForeignComment, 4, detachedForeignComment, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 58 [foreignDocfrag, 0, foreignDocfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 84 [doctype, -17], range 59 [xmlDocfrag, 0, xmlDocfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 10 [document.documentElement, 0, document.documentElement, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 11 [document.documentElement, 0, document.documentElement, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 12 [document.documentElement, 1, document.documentElement, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 13 [document.head, 1, document.head, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 14 [document.body, 4, document.body, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 16 [paras[0], 0, paras[0], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 17 [detachedPara1, 0, detachedPara1, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 20 [paras[0].firstChild, 3, paras[3], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 21 [paras[0], 0, paras[0].firstChild, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 22 [testDiv, 2, paras[4], 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 23 [document, 0, document, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 24 [document, 0, document, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 25 [comment, 2, comment, 3] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 26 [testDiv, 0, comment, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 27 [foreignDoc, 1, foreignComment, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 28 [foreignDoc.body, 0, foreignTextNode, 36] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 29 [xmlDoc, 1, xmlComment, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 30 [detachedTextNode, 0, detachedTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 33 [detachedComment, 3, detachedComment, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 34 [detachedForeignComment, 0, detachedForeignComment, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 35 [detachedXmlComment, 2, detachedXmlComment, 6] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 36 [docfrag, 0, docfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 37 [processingInstruction, 0, processingInstruction, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 42 [foreignDoc.head, 1, foreignDoc.head, 1] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 43 [foreignDoc.body, 0, foreignDoc.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 44 [paras[0], 0, paras[0], 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 45 [detachedPara1, 0, detachedPara1, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 46 [testDiv, 1, paras[2].firstChild, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 47 [document.documentElement, 1, document.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 49 [document, 1, document, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 50 [paras[2].firstChild, 4, comment, 2] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 51 [paras[3], 1, comment, 8] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 52 [foreignDoc, 0, foreignDoc, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 53 [xmlDoc, 0, xmlDoc, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 56 [detachedComment, 5, detachedComment, 5] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 57 [detachedForeignComment, 4, detachedForeignComment, 4] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 58 [foreignDocfrag, 0, foreignDocfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
-FAIL Point 85 [doctype, 1], range 59 [xmlDocfrag, 0, xmlDocfrag, 0] assert_throws: Must throw InvalidNodeTypeError if node is a doctype function "function () {
-          range.comparePoint(node, offset);..." threw object "Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2" that is not a DOMException INVALID_NODE_TYPE_ERR: property "code" is equal to 2, expected 24
+PASS Point 83 [doctype, 0], range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
+PASS Point 83 [doctype, 0], range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] 
+PASS Point 83 [doctype, 0], range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] 
+PASS Point 83 [doctype, 0], range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] 
+PASS Point 83 [doctype, 0], range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] 
+PASS Point 83 [doctype, 0], range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] 
+PASS Point 83 [doctype, 0], range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] 
+PASS Point 83 [doctype, 0], range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] 
+PASS Point 83 [doctype, 0], range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] 
+PASS Point 83 [doctype, 0], range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] 
+PASS Point 83 [doctype, 0], range 10 [document.documentElement, 0, document.documentElement, 1] 
+PASS Point 83 [doctype, 0], range 11 [document.documentElement, 0, document.documentElement, 2] 
+PASS Point 83 [doctype, 0], range 12 [document.documentElement, 1, document.documentElement, 2] 
+PASS Point 83 [doctype, 0], range 13 [document.head, 1, document.head, 1] 
+PASS Point 83 [doctype, 0], range 14 [document.body, 4, document.body, 5] 
+PASS Point 83 [doctype, 0], range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] 
+PASS Point 83 [doctype, 0], range 16 [paras[0], 0, paras[0], 1] 
+PASS Point 83 [doctype, 0], range 17 [detachedPara1, 0, detachedPara1, 1] 
+PASS Point 83 [doctype, 0], range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] 
+PASS Point 83 [doctype, 0], range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] 
+PASS Point 83 [doctype, 0], range 20 [paras[0].firstChild, 3, paras[3], 1] 
+PASS Point 83 [doctype, 0], range 21 [paras[0], 0, paras[0].firstChild, 7] 
+PASS Point 83 [doctype, 0], range 22 [testDiv, 2, paras[4], 1] 
+PASS Point 83 [doctype, 0], range 23 [document, 0, document, 1] 
+PASS Point 83 [doctype, 0], range 24 [document, 0, document, 2] 
+PASS Point 83 [doctype, 0], range 25 [comment, 2, comment, 3] 
+PASS Point 83 [doctype, 0], range 26 [testDiv, 0, comment, 5] 
+PASS Point 83 [doctype, 0], range 27 [foreignDoc, 1, foreignComment, 2] 
+PASS Point 83 [doctype, 0], range 28 [foreignDoc.body, 0, foreignTextNode, 36] 
+PASS Point 83 [doctype, 0], range 29 [xmlDoc, 1, xmlComment, 0] 
+PASS Point 83 [doctype, 0], range 30 [detachedTextNode, 0, detachedTextNode, 8] 
+PASS Point 83 [doctype, 0], range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] 
+PASS Point 83 [doctype, 0], range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] 
+PASS Point 83 [doctype, 0], range 33 [detachedComment, 3, detachedComment, 4] 
+PASS Point 83 [doctype, 0], range 34 [detachedForeignComment, 0, detachedForeignComment, 1] 
+PASS Point 83 [doctype, 0], range 35 [detachedXmlComment, 2, detachedXmlComment, 6] 
+PASS Point 83 [doctype, 0], range 36 [docfrag, 0, docfrag, 0] 
+PASS Point 83 [doctype, 0], range 37 [processingInstruction, 0, processingInstruction, 4] 
+PASS Point 83 [doctype, 0], range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] 
+PASS Point 83 [doctype, 0], range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] 
+PASS Point 83 [doctype, 0], range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] 
+PASS Point 83 [doctype, 0], range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] 
+PASS Point 83 [doctype, 0], range 42 [foreignDoc.head, 1, foreignDoc.head, 1] 
+PASS Point 83 [doctype, 0], range 43 [foreignDoc.body, 0, foreignDoc.body, 0] 
+PASS Point 83 [doctype, 0], range 44 [paras[0], 0, paras[0], 0] 
+PASS Point 83 [doctype, 0], range 45 [detachedPara1, 0, detachedPara1, 0] 
+PASS Point 83 [doctype, 0], range 46 [testDiv, 1, paras[2].firstChild, 5] 
+PASS Point 83 [doctype, 0], range 47 [document.documentElement, 1, document.body, 0] 
+PASS Point 83 [doctype, 0], range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] 
+PASS Point 83 [doctype, 0], range 49 [document, 1, document, 2] 
+PASS Point 83 [doctype, 0], range 50 [paras[2].firstChild, 4, comment, 2] 
+PASS Point 83 [doctype, 0], range 51 [paras[3], 1, comment, 8] 
+PASS Point 83 [doctype, 0], range 52 [foreignDoc, 0, foreignDoc, 0] 
+PASS Point 83 [doctype, 0], range 53 [xmlDoc, 0, xmlDoc, 0] 
+PASS Point 83 [doctype, 0], range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] 
+PASS Point 83 [doctype, 0], range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] 
+PASS Point 83 [doctype, 0], range 56 [detachedComment, 5, detachedComment, 5] 
+PASS Point 83 [doctype, 0], range 57 [detachedForeignComment, 4, detachedForeignComment, 4] 
+PASS Point 83 [doctype, 0], range 58 [foreignDocfrag, 0, foreignDocfrag, 0] 
+PASS Point 83 [doctype, 0], range 59 [xmlDocfrag, 0, xmlDocfrag, 0] 
+PASS Point 84 [doctype, -17], range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
+PASS Point 84 [doctype, -17], range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] 
+PASS Point 84 [doctype, -17], range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] 
+PASS Point 84 [doctype, -17], range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] 
+PASS Point 84 [doctype, -17], range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] 
+PASS Point 84 [doctype, -17], range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] 
+PASS Point 84 [doctype, -17], range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] 
+PASS Point 84 [doctype, -17], range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] 
+PASS Point 84 [doctype, -17], range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] 
+PASS Point 84 [doctype, -17], range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] 
+PASS Point 84 [doctype, -17], range 10 [document.documentElement, 0, document.documentElement, 1] 
+PASS Point 84 [doctype, -17], range 11 [document.documentElement, 0, document.documentElement, 2] 
+PASS Point 84 [doctype, -17], range 12 [document.documentElement, 1, document.documentElement, 2] 
+PASS Point 84 [doctype, -17], range 13 [document.head, 1, document.head, 1] 
+PASS Point 84 [doctype, -17], range 14 [document.body, 4, document.body, 5] 
+PASS Point 84 [doctype, -17], range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] 
+PASS Point 84 [doctype, -17], range 16 [paras[0], 0, paras[0], 1] 
+PASS Point 84 [doctype, -17], range 17 [detachedPara1, 0, detachedPara1, 1] 
+PASS Point 84 [doctype, -17], range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] 
+PASS Point 84 [doctype, -17], range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] 
+PASS Point 84 [doctype, -17], range 20 [paras[0].firstChild, 3, paras[3], 1] 
+PASS Point 84 [doctype, -17], range 21 [paras[0], 0, paras[0].firstChild, 7] 
+PASS Point 84 [doctype, -17], range 22 [testDiv, 2, paras[4], 1] 
+PASS Point 84 [doctype, -17], range 23 [document, 0, document, 1] 
+PASS Point 84 [doctype, -17], range 24 [document, 0, document, 2] 
+PASS Point 84 [doctype, -17], range 25 [comment, 2, comment, 3] 
+PASS Point 84 [doctype, -17], range 26 [testDiv, 0, comment, 5] 
+PASS Point 84 [doctype, -17], range 27 [foreignDoc, 1, foreignComment, 2] 
+PASS Point 84 [doctype, -17], range 28 [foreignDoc.body, 0, foreignTextNode, 36] 
+PASS Point 84 [doctype, -17], range 29 [xmlDoc, 1, xmlComment, 0] 
+PASS Point 84 [doctype, -17], range 30 [detachedTextNode, 0, detachedTextNode, 8] 
+PASS Point 84 [doctype, -17], range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] 
+PASS Point 84 [doctype, -17], range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] 
+PASS Point 84 [doctype, -17], range 33 [detachedComment, 3, detachedComment, 4] 
+PASS Point 84 [doctype, -17], range 34 [detachedForeignComment, 0, detachedForeignComment, 1] 
+PASS Point 84 [doctype, -17], range 35 [detachedXmlComment, 2, detachedXmlComment, 6] 
+PASS Point 84 [doctype, -17], range 36 [docfrag, 0, docfrag, 0] 
+PASS Point 84 [doctype, -17], range 37 [processingInstruction, 0, processingInstruction, 4] 
+PASS Point 84 [doctype, -17], range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] 
+PASS Point 84 [doctype, -17], range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] 
+PASS Point 84 [doctype, -17], range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] 
+PASS Point 84 [doctype, -17], range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] 
+PASS Point 84 [doctype, -17], range 42 [foreignDoc.head, 1, foreignDoc.head, 1] 
+PASS Point 84 [doctype, -17], range 43 [foreignDoc.body, 0, foreignDoc.body, 0] 
+PASS Point 84 [doctype, -17], range 44 [paras[0], 0, paras[0], 0] 
+PASS Point 84 [doctype, -17], range 45 [detachedPara1, 0, detachedPara1, 0] 
+PASS Point 84 [doctype, -17], range 46 [testDiv, 1, paras[2].firstChild, 5] 
+PASS Point 84 [doctype, -17], range 47 [document.documentElement, 1, document.body, 0] 
+PASS Point 84 [doctype, -17], range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] 
+PASS Point 84 [doctype, -17], range 49 [document, 1, document, 2] 
+PASS Point 84 [doctype, -17], range 50 [paras[2].firstChild, 4, comment, 2] 
+PASS Point 84 [doctype, -17], range 51 [paras[3], 1, comment, 8] 
+PASS Point 84 [doctype, -17], range 52 [foreignDoc, 0, foreignDoc, 0] 
+PASS Point 84 [doctype, -17], range 53 [xmlDoc, 0, xmlDoc, 0] 
+PASS Point 84 [doctype, -17], range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] 
+PASS Point 84 [doctype, -17], range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] 
+PASS Point 84 [doctype, -17], range 56 [detachedComment, 5, detachedComment, 5] 
+PASS Point 84 [doctype, -17], range 57 [detachedForeignComment, 4, detachedForeignComment, 4] 
+PASS Point 84 [doctype, -17], range 58 [foreignDocfrag, 0, foreignDocfrag, 0] 
+PASS Point 84 [doctype, -17], range 59 [xmlDocfrag, 0, xmlDocfrag, 0] 
+PASS Point 85 [doctype, 1], range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
+PASS Point 85 [doctype, 1], range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] 
+PASS Point 85 [doctype, 1], range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] 
+PASS Point 85 [doctype, 1], range 3 [paras[0].firstChild, 2, paras[0].firstChild, 9] 
+PASS Point 85 [doctype, 1], range 4 [paras[1].firstChild, 0, paras[1].firstChild, 0] 
+PASS Point 85 [doctype, 1], range 5 [paras[1].firstChild, 2, paras[1].firstChild, 9] 
+PASS Point 85 [doctype, 1], range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0] 
+PASS Point 85 [doctype, 1], range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8] 
+PASS Point 85 [doctype, 1], range 8 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0] 
+PASS Point 85 [doctype, 1], range 9 [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8] 
+PASS Point 85 [doctype, 1], range 10 [document.documentElement, 0, document.documentElement, 1] 
+PASS Point 85 [doctype, 1], range 11 [document.documentElement, 0, document.documentElement, 2] 
+PASS Point 85 [doctype, 1], range 12 [document.documentElement, 1, document.documentElement, 2] 
+PASS Point 85 [doctype, 1], range 13 [document.head, 1, document.head, 1] 
+PASS Point 85 [doctype, 1], range 14 [document.body, 4, document.body, 5] 
+PASS Point 85 [doctype, 1], range 15 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] 
+PASS Point 85 [doctype, 1], range 16 [paras[0], 0, paras[0], 1] 
+PASS Point 85 [doctype, 1], range 17 [detachedPara1, 0, detachedPara1, 1] 
+PASS Point 85 [doctype, 1], range 18 [paras[0].firstChild, 0, paras[1].firstChild, 0] 
+PASS Point 85 [doctype, 1], range 19 [paras[0].firstChild, 0, paras[1].firstChild, 8] 
+PASS Point 85 [doctype, 1], range 20 [paras[0].firstChild, 3, paras[3], 1] 
+PASS Point 85 [doctype, 1], range 21 [paras[0], 0, paras[0].firstChild, 7] 
+PASS Point 85 [doctype, 1], range 22 [testDiv, 2, paras[4], 1] 
+PASS Point 85 [doctype, 1], range 23 [document, 0, document, 1] 
+PASS Point 85 [doctype, 1], range 24 [document, 0, document, 2] 
+PASS Point 85 [doctype, 1], range 25 [comment, 2, comment, 3] 
+PASS Point 85 [doctype, 1], range 26 [testDiv, 0, comment, 5] 
+PASS Point 85 [doctype, 1], range 27 [foreignDoc, 1, foreignComment, 2] 
+PASS Point 85 [doctype, 1], range 28 [foreignDoc.body, 0, foreignTextNode, 36] 
+PASS Point 85 [doctype, 1], range 29 [xmlDoc, 1, xmlComment, 0] 
+PASS Point 85 [doctype, 1], range 30 [detachedTextNode, 0, detachedTextNode, 8] 
+PASS Point 85 [doctype, 1], range 31 [detachedForeignTextNode, 0, detachedForeignTextNode, 8] 
+PASS Point 85 [doctype, 1], range 32 [detachedXmlTextNode, 0, detachedXmlTextNode, 8] 
+PASS Point 85 [doctype, 1], range 33 [detachedComment, 3, detachedComment, 4] 
+PASS Point 85 [doctype, 1], range 34 [detachedForeignComment, 0, detachedForeignComment, 1] 
+PASS Point 85 [doctype, 1], range 35 [detachedXmlComment, 2, detachedXmlComment, 6] 
+PASS Point 85 [doctype, 1], range 36 [docfrag, 0, docfrag, 0] 
+PASS Point 85 [doctype, 1], range 37 [processingInstruction, 0, processingInstruction, 4] 
+PASS Point 85 [doctype, 1], range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] 
+PASS Point 85 [doctype, 1], range 39 [paras[1].firstChild, 2, paras[1].firstChild, 8] 
+PASS Point 85 [doctype, 1], range 40 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 1] 
+PASS Point 85 [doctype, 1], range 41 [foreignPara1.firstChild, 0, foreignPara1.firstChild, 1] 
+PASS Point 85 [doctype, 1], range 42 [foreignDoc.head, 1, foreignDoc.head, 1] 
+PASS Point 85 [doctype, 1], range 43 [foreignDoc.body, 0, foreignDoc.body, 0] 
+PASS Point 85 [doctype, 1], range 44 [paras[0], 0, paras[0], 0] 
+PASS Point 85 [doctype, 1], range 45 [detachedPara1, 0, detachedPara1, 0] 
+PASS Point 85 [doctype, 1], range 46 [testDiv, 1, paras[2].firstChild, 5] 
+PASS Point 85 [doctype, 1], range 47 [document.documentElement, 1, document.body, 0] 
+PASS Point 85 [doctype, 1], range 48 [foreignDoc.documentElement, 1, foreignDoc.body, 0] 
+PASS Point 85 [doctype, 1], range 49 [document, 1, document, 2] 
+PASS Point 85 [doctype, 1], range 50 [paras[2].firstChild, 4, comment, 2] 
+PASS Point 85 [doctype, 1], range 51 [paras[3], 1, comment, 8] 
+PASS Point 85 [doctype, 1], range 52 [foreignDoc, 0, foreignDoc, 0] 
+PASS Point 85 [doctype, 1], range 53 [xmlDoc, 0, xmlDoc, 0] 
+PASS Point 85 [doctype, 1], range 54 [detachedForeignTextNode, 7, detachedForeignTextNode, 7] 
+PASS Point 85 [doctype, 1], range 55 [detachedXmlTextNode, 7, detachedXmlTextNode, 7] 
+PASS Point 85 [doctype, 1], range 56 [detachedComment, 5, detachedComment, 5] 
+PASS Point 85 [doctype, 1], range 57 [detachedForeignComment, 4, detachedForeignComment, 4] 
+PASS Point 85 [doctype, 1], range 58 [foreignDocfrag, 0, foreignDocfrag, 0] 
+PASS Point 85 [doctype, 1], range 59 [xmlDocfrag, 0, xmlDocfrag, 0] 
 PASS Point 86 [foreignDoctype, 0], range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
 PASS Point 86 [foreignDoctype, 0], range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] 
 PASS Point 86 [foreignDoctype, 0], range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] 

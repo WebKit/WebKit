@@ -1,3 +1,31 @@
+2015-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Range API is throwing wrong exception type
+        https://bugs.webkit.org/show_bug.cgi?id=148648
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline tests. A lot of w3c tests progressed after this
+        change. However, some of our pre-existing layout tests were relying
+        on RangeException.
+
+        * fast/dom/DOMException/RangeException-expected.txt: Removed.
+        * fast/dom/DOMException/RangeException.html: Removed.
+        * fast/dom/DOMException/resources/RangeException.js: Removed.
+        * fast/dom/Range/range-compareNode.html:
+        * fast/dom/Range/range-exceptions-expected.txt:
+        * fast/dom/Range/range-intersectsNode-expected.txt:
+        * fast/dom/Range/script-tests/range-exceptions.js:
+        * fast/dom/Window/get-set-properties-expected.txt:
+        * fast/dom/Window/get-set-properties.html:
+        * fast/dom/Window/resources/window-properties.js:
+        * http/tests/w3c/dom/ranges/Range-comparePoint-expected.txt:
+        * http/tests/w3c/dom/ranges/Range-isPointInRange-expected.txt:
+        * http/tests/w3c/dom/ranges/Range-selectNode-expected.txt:
+        * http/tests/w3c/dom/ranges/Range-set-expected.txt:
+        * http/tests/w3c/dom/ranges/Range-surroundContents-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+
 2015-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         Update Windows expectation for fast/events/wheelevent-basic.html after r188793.

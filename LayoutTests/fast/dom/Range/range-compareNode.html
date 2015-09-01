@@ -147,7 +147,7 @@ function test()
     try {
         range.selectNode(document);
     } catch (e) {
-        if(e.code == RangeException.INVALID_NODE_TYPE_ERR) {
+        if(e.code == DOMException.INVALID_NODE_TYPE_ERR) {
             document.getElementById("test17").innerHTML = "test 17 passed: the range has no parent";
         } else {
             document.getElementById("test17").innerHTML = "<span style=\"color: red;\">test 17 failed error: " + e.message + "\n Code: " + e.code +"</span>";

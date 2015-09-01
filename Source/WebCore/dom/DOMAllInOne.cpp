@@ -128,7 +128,6 @@
 // https://bugs.webkit.org/show_bug.cgi?id=146586
 // #include "QualifiedName.cpp"
 #include "Range.cpp"
-#include "RangeException.cpp"
 #include "RegisteredEventListener.cpp"
 #include "ScopedEventQueue.cpp"
 #include "ScriptElement.cpp"

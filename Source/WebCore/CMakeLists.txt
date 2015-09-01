@@ -420,7 +420,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
     dom/Range.idl
-    dom/RangeException.idl
     dom/RequestAnimationFrameCallback.idl
     dom/SecurityPolicyViolationEvent.idl
     dom/StringCallback.idl
@@ -1455,7 +1454,6 @@ set(WebCore_SOURCES
     dom/PseudoElement.cpp
     dom/QualifiedName.cpp
     dom/Range.cpp
-    dom/RangeException.cpp
     dom/RegisteredEventListener.cpp
     dom/ScopedEventQueue.cpp
     dom/ScriptElement.cpp

@@ -993,11 +993,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Range').hasOwnProperty('get') is f
 PASS Object.getOwnPropertyDescriptor(global, 'Range').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Range').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Range').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'RangeException').value is RangeException
-PASS Object.getOwnPropertyDescriptor(global, 'RangeException').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'RangeException').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'RangeException').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'RangeException').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ReadableStream').value is ReadableStream
 PASS Object.getOwnPropertyDescriptor(global, 'ReadableStream').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ReadableStream').hasOwnProperty('set') is false

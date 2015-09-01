@@ -129,7 +129,6 @@ var propertyInfo = [
     ["ProcessingInstruction", "object"],
     ["ProgressEvent", "object"],
     ["Range", "object"],
-    ["RangeException", "object"],
     ["Rect", "object"],
     ["SVGAngle", "object"],
     ["SVGColor", "object"],

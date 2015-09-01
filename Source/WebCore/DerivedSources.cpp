@@ -305,7 +305,6 @@
 #include "JSProgressEvent.cpp"
 #include "JSRadioNodeList.cpp"
 #include "JSRange.cpp"
-#include "JSRangeException.cpp"
 #if ENABLE(STREAMS_API)
 #include "JSReadableStream.cpp"
 #include "JSReadableStreamController.cpp"
