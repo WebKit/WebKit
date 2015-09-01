@@ -37,11 +37,6 @@
 #include "WebCoreSystemInterface.h"
 #endif
 
-// We would like a better value for a maximum time_t,
-// but there is no way to do that in C with any certainty.
-// INT_MAX should work well enough for our purposes.
-#define MAX_TIME_T ((time_t)INT_MAX)    
-
 namespace WebCore {
 
 static CFStringRef const commonHeaderFields[] = {
