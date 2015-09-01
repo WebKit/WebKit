@@ -5,30 +5,19 @@
 <style type="text/css">
     div.test { width: 50px; height: 100px; padding: 10px; }
 </style>
-    <script type="text/javascript">
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-        function runTest()
-        {
-           document.getElementById('a').style.height = '50px';
-           document.getElementById('b').style.height = '50px';
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }
-    </script>
 </head>
-<body onload="setTimeout(runTest, 0);">
+<body>
     <p>
         Tests the repainting of box shadows when boxes are resized.
     </p>
     <div class="test">
         <div style="background: #ff7; -webkit-box-shadow: black 5px 5px 0;">
-            <div id="a" style="height: 70px; margin: 10px;"></div>
+            <div id="a" style="height: 50px; margin: 10px;"></div>
         </div>
     </div>
     <div class="test">
         <div style="background: #ff7; -webkit-box-shadow: black 5px 5px 0;">
-            <div id="b" style="height: 30px; margin: 10px;"></div>
+            <div id="b" style="height: 50px; margin: 10px;"></div>
         </div>
     </div>
 </body>

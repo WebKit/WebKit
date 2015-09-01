@@ -1,3 +1,87 @@
+2015-09-01  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+        box-shadow-dynamic.html -> reftest
+        box-shadow-inset-repaint.html -> reftest
+        bugzilla-3509.html -> reftest
+        bugzilla-5699.html -> reftest
+        bugzilla-6278.html -> reftest
+        bugzilla-6388.html -> reftest
+        bugzilla-6473.html -> reftest
+        bugzilla-7235.html -> reftest
+
+        Unreviewed.
+
+        * fast/repaint/box-shadow-dynamic-expected.html: Copied from LayoutTests/fast/repaint/box-shadow-dynamic.html.
+        * fast/repaint/box-shadow-dynamic.html:
+        * fast/repaint/box-shadow-inset-repaint-expected.html: Added.
+        * fast/repaint/box-shadow-inset-repaint-expected.txt: Removed.
+        * fast/repaint/box-shadow-inset-repaint.html:
+        * fast/repaint/bugzilla-3509-expected.html: Copied from LayoutTests/fast/repaint/bugzilla-3509.html.
+        * fast/repaint/bugzilla-3509.html:
+        * fast/repaint/bugzilla-5699-expected.html: Copied from LayoutTests/fast/repaint/bugzilla-5699.html.
+        * fast/repaint/bugzilla-5699.html:
+        * fast/repaint/bugzilla-6278-expected.html: Copied from LayoutTests/fast/repaint/bugzilla-6278.html.
+        * fast/repaint/bugzilla-6278.html:
+        * fast/repaint/bugzilla-6388-expected.html: Copied from LayoutTests/fast/repaint/bugzilla-6388.html.
+        * fast/repaint/bugzilla-6388.html:
+        * fast/repaint/bugzilla-6473-expected.html: Copied from LayoutTests/fast/repaint/bugzilla-6473.html.
+        * fast/repaint/bugzilla-6473.html:
+        * fast/repaint/bugzilla-7235-expected.html: Copied from LayoutTests/fast/repaint/bugzilla-7235.html.
+        * fast/repaint/bugzilla-7235.html:
+        * platform/efl/fast/repaint/box-shadow-dynamic-expected.png: Removed.
+        * platform/efl/fast/repaint/box-shadow-dynamic-expected.txt: Removed.
+        * platform/efl/fast/repaint/box-shadow-inset-repaint-expected.png: Removed.
+        * platform/efl/fast/repaint/bugzilla-3509-expected.png: Removed.
+        * platform/efl/fast/repaint/bugzilla-3509-expected.txt: Removed.
+        * platform/efl/fast/repaint/bugzilla-5699-expected.png: Removed.
+        * platform/efl/fast/repaint/bugzilla-5699-expected.txt: Removed.
+        * platform/efl/fast/repaint/bugzilla-6278-expected.png: Removed.
+        * platform/efl/fast/repaint/bugzilla-6278-expected.txt: Removed.
+        * platform/efl/fast/repaint/bugzilla-6388-expected.png: Removed.
+        * platform/efl/fast/repaint/bugzilla-6388-expected.txt: Removed.
+        * platform/efl/fast/repaint/bugzilla-6473-expected.png: Removed.
+        * platform/efl/fast/repaint/bugzilla-6473-expected.txt: Removed.
+        * platform/efl/fast/repaint/bugzilla-7235-expected.png: Removed.
+        * platform/efl/fast/repaint/bugzilla-7235-expected.txt: Removed.
+        * platform/gtk/fast/repaint/box-shadow-dynamic-expected.png: Removed.
+        * platform/gtk/fast/repaint/box-shadow-dynamic-expected.txt: Removed.
+        * platform/gtk/fast/repaint/box-shadow-inset-repaint-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-3509-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-3509-expected.txt: Removed.
+        * platform/gtk/fast/repaint/bugzilla-5699-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-5699-expected.txt: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6278-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6278-expected.txt: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6388-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6388-expected.txt: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6473-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6473-expected.txt: Removed.
+        * platform/gtk/fast/repaint/bugzilla-7235-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-7235-expected.txt: Removed.
+        * platform/mac/fast/repaint/box-shadow-dynamic-expected.png: Removed.
+        * platform/mac/fast/repaint/box-shadow-dynamic-expected.txt: Removed.
+        * platform/mac/fast/repaint/box-shadow-inset-repaint-expected.png: Removed.
+        * platform/mac/fast/repaint/bugzilla-3509-expected.png: Removed.
+        * platform/mac/fast/repaint/bugzilla-3509-expected.txt: Removed.
+        * platform/mac/fast/repaint/bugzilla-5699-expected.png: Removed.
+        * platform/mac/fast/repaint/bugzilla-5699-expected.txt: Removed.
+        * platform/mac/fast/repaint/bugzilla-6278-expected.png: Removed.
+        * platform/mac/fast/repaint/bugzilla-6278-expected.txt: Removed.
+        * platform/mac/fast/repaint/bugzilla-6388-expected.png: Removed.
+        * platform/mac/fast/repaint/bugzilla-6388-expected.txt: Removed.
+        * platform/mac/fast/repaint/bugzilla-6473-expected.png: Removed.
+        * platform/mac/fast/repaint/bugzilla-6473-expected.txt: Removed.
+        * platform/mac/fast/repaint/bugzilla-7235-expected.png: Removed.
+        * platform/mac/fast/repaint/bugzilla-7235-expected.txt: Removed.
+        * platform/win/fast/repaint/box-shadow-dynamic-expected.txt: Removed.
+        * platform/win/fast/repaint/bugzilla-3509-expected.txt: Removed.
+        * platform/win/fast/repaint/bugzilla-5699-expected.txt: Removed.
+        * platform/win/fast/repaint/bugzilla-6278-expected.txt: Removed.
+        * platform/win/fast/repaint/bugzilla-6388-expected.txt: Removed.
+        * platform/win/fast/repaint/bugzilla-6473-expected.txt: Removed.
+        * platform/win/fast/repaint/bugzilla-7235-expected.txt: Removed.
+
 2015-09-01  Chris Dumez  <cdumez@apple.com>
 
         NodeFilter should be a callback interface

@@ -16,18 +16,8 @@
         background: green;
     }
     </style>
-    <script type="text/javascript">
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-        function runTest()
-        {
-            document.getElementById('t').style.display='block';
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }
-    </script>
 </head>
-<body onload="setTimeout(runTest, 0);">
+<body>
 <p><b>BUG ID:</b> <a href="https://bugs.webkit.org/show_bug.cgi?id=7235">Bugzilla bug 7235</a> Pure CSS Tooltips method renders wrong and creates artifacts</p>
 
 <p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
@@ -41,7 +31,7 @@ The square will remain red and will only change to green when the window is resi
 <p>
 </p>
 <span id="p">&nbsp;<div id="t"></div></span>
-<div style="width: 100px; height: 100px; background: red;"></div>
+<div style="width: 100px; height: 100px; background: green;"></div>
 
 </body>
 </html>
