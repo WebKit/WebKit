@@ -1,3 +1,18 @@
+2015-09-02  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/w3c/dom/nodes/Element-matches.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=148615
+
+        Reviewed by Ryosuke Niwa.
+
+        Unskip the tests and rebaseline them now that the target pseudo selector
+        checks are consistently passing.
+
+        * TestExpectations:
+        * http/tests/w3c/dom/nodes/Element-matches-expected.txt:
+        * http/tests/w3c/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * http/tests/w3c/dom/nodes/ParentNode-querySelector-All-xhtml-expected.txt:
+
 2015-09-02  Daniel Bates  <dabates@apple.com>
 
         Update iOS TestExpectations files
