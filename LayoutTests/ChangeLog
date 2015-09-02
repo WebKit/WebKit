@@ -1,3 +1,11 @@
+2015-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark http/tests/w3c/dom/nodes/ParentNode-querySelector-All.html as flaky.
+
+        This is tracked by Bug 148615.
+
+        * TestExpectations:
+
 2015-09-01  Jeremy Jones  <jeremyj@apple.com>
 
         Update iOS TestExpectations files.
