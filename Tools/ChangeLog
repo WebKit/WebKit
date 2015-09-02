@@ -1,5 +1,24 @@
 2015-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r188548): Some tests crash after r188548 because injected bundle messages are received after the test finishes
+        https://bugs.webkit.org/show_bug.cgi?id=148529
+
+        Reviewed by Darin Adler.
+
+        When there are pending EventSender messages after a test finishes,
+        they could be processed in the main loop started by the
+        resetStateToConsistentValues(), but the old EventSender has been
+        replaced by a new one at that point. The new Eventsender can crash
+        when processing messages that were sent to the old one. To avoid
+        this, we return early when receiving an EventSender message and
+        the TestController state is not RunningTest.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveKeyDownMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+
+2015-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r188548): TestController state is Resseting while tests are running after r188548
         https://bugs.webkit.org/show_bug.cgi?id=148528
 

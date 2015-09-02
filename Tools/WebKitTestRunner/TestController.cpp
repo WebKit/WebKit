@@ -1019,6 +1019,9 @@ void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef 
 void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
+        if (m_state != RunningTest)
+            return;
+
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
 
@@ -1089,6 +1092,9 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
+        if (m_state != RunningTest)
+            return nullptr;
+
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
 
