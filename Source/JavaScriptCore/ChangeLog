@@ -1,5 +1,14 @@
 2015-09-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Fix the no JIT build.
+
+        Unreviewed.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+
+2015-09-02  Geoffrey Garen  <ggaren@apple.com>
+
         CodeBlock should have a more explicit "strongly referenced" state
         https://bugs.webkit.org/show_bug.cgi?id=148714
 
