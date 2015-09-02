@@ -1,5 +1,26 @@
 2015-09-02  Chris Dumez  <cdumez@apple.com>
 
+        document.createProcessingInstruction() does not behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=148710
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing tests.
+
+        * dom/html/level1/core/documentinvalidcharacterexceptioncreatepi-expected.txt:
+        * dom/html/level1/core/documentinvalidcharacterexceptioncreatepi1-expected.txt:
+        * fast/dom/Node/initial-values-expected.txt:
+        * fast/dom/Node/script-tests/initial-values.js:
+        * http/tests/w3c/dom/nodes/CharacterData-remove-expected.txt:
+        * http/tests/w3c/dom/nodes/Document-createProcessingInstruction-expected.txt:
+        * http/tests/w3c/dom/nodes/Document-createProcessingInstruction-xhtml-expected.txt:
+        * http/tests/w3c/dom/nodes/Node-cloneNode-expected.txt:
+        * http/tests/w3c/dom/nodes/Node-insertBefore-expected.txt:
+        * http/tests/w3c/dom/nodes/Node-nodeValue-expected.txt:
+        * http/tests/w3c/dom/nodes/Node-textContent-expected.txt:
+
+2015-09-02  Chris Dumez  <cdumez@apple.com>
+
         http/tests/w3c/dom/nodes/Element-matches.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=148615
 

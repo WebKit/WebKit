@@ -32,7 +32,7 @@ PASS createComment
 PASS createElement with attributes 
 PASS createElementNS HTML 
 PASS createElementNS non-HTML 
-FAIL createProcessingInstruction NotSupportedError: DOM Exception 9
+PASS createProcessingInstruction 
 PASS implementation.createDocumentType 
 PASS implementation.createDocument 
 FAIL implementation.createHTMLDocument assert_equals: expected "" but got "title"

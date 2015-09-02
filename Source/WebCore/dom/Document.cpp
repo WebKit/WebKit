@@ -900,10 +900,12 @@ RefPtr<ProcessingInstruction> Document::createProcessingInstruction(const String
         ec = INVALID_CHARACTER_ERR;
         return nullptr;
     }
-    if (isHTMLDocument()) {
-        ec = NOT_SUPPORTED_ERR;
+
+    if (data.contains("?>")) {
+        ec = INVALID_CHARACTER_ERR;
         return nullptr;
     }
+
     return ProcessingInstruction::create(*this, target, data);
 }
 

@@ -1,7 +1,6 @@
 
 PASS Document.createProcessingInstruction in HTML documents 
-FAIL Should throw an INVALID_CHARACTER_ERR for target "A" and data "?>". assert_throws: function "function () {
-        document.createProcessingInstructio..." threw object "Error: NotSupportedError: DOM Exception 9" that is not a DOMException INVALID_CHARACTER_ERR: property "code" is equal to 9, expected 5
+PASS Should throw an INVALID_CHARACTER_ERR for target "A" and data "?>". 
 PASS Should throw an INVALID_CHARACTER_ERR for target "·A" and data "x". 
 PASS Should throw an INVALID_CHARACTER_ERR for target "×A" and data "x". 
 PASS Should throw an INVALID_CHARACTER_ERR for target "A×" and data "x". 
@@ -9,7 +8,7 @@ PASS Should throw an INVALID_CHARACTER_ERR for target "\\A" and data "x".
 PASS Should throw an INVALID_CHARACTER_ERR for target "\f" and data "x". 
 PASS Should throw an INVALID_CHARACTER_ERR for target 0 and data "x". 
 PASS Should throw an INVALID_CHARACTER_ERR for target "0" and data "x". 
-FAIL Should get a ProcessingInstruction for target "xml:fail" and data "x". NotSupportedError: DOM Exception 9
-FAIL Should get a ProcessingInstruction for target "A·A" and data "x". NotSupportedError: DOM Exception 9
-FAIL Should get a ProcessingInstruction for target "a0" and data "x". NotSupportedError: DOM Exception 9
+PASS Should get a ProcessingInstruction for target "xml:fail" and data "x". 
+PASS Should get a ProcessingInstruction for target "A·A" and data "x". 
+PASS Should get a ProcessingInstruction for target "a0" and data "x". 
 

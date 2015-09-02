@@ -119,7 +119,10 @@ PASS entityReference.localName is null
 PASS entityReference.namespaceURI is null
 PASS entityReference.prefix is null
 PASS entityReference.nodeValue is null
-PASS document.createProcessingInstruction('xml-stylesheet', 'type="text/xsl" href="missing.xsl"') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS processingInstruction.nodeName is 'xml-stylesheet'
+PASS processingInstruction.localName is null
+PASS processingInstruction.namespaceURI is null
+PASS processingInstruction.prefix is null
 PASS processingInstruction.nodeName is 'xml-stylesheet'
 PASS processingInstruction.localName is null
 PASS processingInstruction.namespaceURI is null

@@ -1,7 +1,6 @@
 
 PASS Document.createProcessingInstruction in XML documents 
-FAIL Should throw an INVALID_CHARACTER_ERR for target "A" and data "?>". assert_throws: function "function () {
-        document.createProcessingInstructio..." did not throw
+PASS Should throw an INVALID_CHARACTER_ERR for target "A" and data "?>". 
 PASS Should throw an INVALID_CHARACTER_ERR for target "·A" and data "x". 
 PASS Should throw an INVALID_CHARACTER_ERR for target "×A" and data "x". 
 PASS Should throw an INVALID_CHARACTER_ERR for target "A×" and data "x". 

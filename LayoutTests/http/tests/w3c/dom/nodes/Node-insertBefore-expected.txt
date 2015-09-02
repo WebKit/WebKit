@@ -6,8 +6,8 @@ FAIL Calling insertBefore with a non-Node first argument on a leaf node Text mus
 PASS Calling insertBefore an a leaf node Text must throw HIERARCHY_REQUEST_ERR. 
 FAIL Calling insertBefore with a non-Node first argument on a leaf node Comment must throw TypeError. assert_throws: function "function () { node.insertBefore(null, null) }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Calling insertBefore an a leaf node Comment must throw HIERARCHY_REQUEST_ERR. 
-FAIL Calling insertBefore with a non-Node first argument on a leaf node ProcessingInstruction must throw TypeError. NotSupportedError: DOM Exception 9
-FAIL Calling insertBefore an a leaf node ProcessingInstruction must throw HIERARCHY_REQUEST_ERR. NotSupportedError: DOM Exception 9
+FAIL Calling insertBefore with a non-Node first argument on a leaf node ProcessingInstruction must throw TypeError. assert_throws: function "function () { node.insertBefore(null, null) }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Calling insertBefore an a leaf node ProcessingInstruction must throw HIERARCHY_REQUEST_ERR. 
 PASS Calling insertBefore with an inclusive ancestor of the context object must throw HIERARCHY_REQUEST_ERR. 
 PASS Calling insertBefore with a reference child whose parent is not the context node must throw a NotFoundError. 
 PASS If the context node is a document, inserting a document or text node should throw a HierarchyRequestError. 
