@@ -81,8 +81,6 @@ public:
     }
     
     bool doesCalls() const { return type() == Getter || type() == CustomGetter; }
-    bool isWatched() const { return type() == WatchedStub; }
-    bool isSimple() const { return !doesCalls() && !isWatched(); }
     
     bool visitWeak(RepatchBuffer&) const;
 
