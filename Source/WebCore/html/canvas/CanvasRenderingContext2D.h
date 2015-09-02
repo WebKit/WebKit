@@ -132,18 +132,18 @@ public:
 
     void beginPath();
 
-    void fill(const String& winding = "nonzero");
+    void fill(const String& winding = ASCIILiteral("nonzero"));
     void stroke();
-    void clip(const String& winding = "nonzero");
+    void clip(const String& winding = ASCIILiteral("nonzero"));
 
-    void fill(DOMPath*, const String& winding = "nonzero");
+    void fill(DOMPath*, const String& winding = ASCIILiteral("nonzero"));
     void stroke(DOMPath*);
-    void clip(DOMPath*, const String& winding = "nonzero");
+    void clip(DOMPath*, const String& winding = ASCIILiteral("nonzero"));
 
-    bool isPointInPath(const float x, const float y, const String& winding = "nonzero");
+    bool isPointInPath(const float x, const float y, const String& winding = ASCIILiteral("nonzero"));
     bool isPointInStroke(const float x, const float y);
 
-    bool isPointInPath(DOMPath*, const float x, const float y, const String& winding = "nonzero");
+    bool isPointInPath(DOMPath*, const float x, const float y, const String& winding = ASCIILiteral("nonzero"));
     bool isPointInStroke(DOMPath*, const float x, const float y);
 
     void clearRect(float x, float y, float width, float height);
