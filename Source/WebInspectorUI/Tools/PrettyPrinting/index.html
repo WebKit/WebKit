@@ -245,9 +245,9 @@
     }
     function runJavaScriptTests(callback) {
         _runTests(callback, [
-            "javascript-tests/block-comment.js",
-            "javascript-tests/single-statement-blocks.js",
-            "javascript-tests/switch-case-default.js",
+            "js-tests/block-comment.js",
+            "js-tests/single-statement-blocks.js",
+            "js-tests/switch-case-default.js",
         ]);
     }
     function runCssRuleTests(callback) {
@@ -312,15 +312,14 @@
 
             // Load test and expected results.
             var test = manifest[index];
-            var testURL = "../../../../LayoutTests/inspector/codemirror/resources/prettyprinting/" + test;
-            var expectedURL = testURL.replace(/\.([^\.]+)$/, "-expected.$1");
+            var expected = test.replace(/\.([^\.]+)$/, "-expected.$1");
             var xhr1 = new XMLHttpRequest;
-            xhr1.open("GET", testURL, false);
+            xhr1.open("GET", test, false);
             xhr1.send();
-            var xhr2 = new XMLHttpRequest;
-            xhr2.open("GET", expectedURL, false);
-            xhr2.send();
             var testData = xhr1.responseText;
+            var xhr2 = new XMLHttpRequest;
+            xhr2.open("GET", expected, false);
+            xhr2.send();
             var expectedData = xhr2.responseText;
 
             // Run the test.
