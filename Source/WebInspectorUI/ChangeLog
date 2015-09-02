@@ -1,5 +1,16 @@
 2015-09-01  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION (r187873): Location column icon is missing in timeline data grids
+        https://bugs.webkit.org/show_bug.cgi?id=148691
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+        Added "icon" class name. Was using removed class variable (class="undefined").
+
+2015-09-01  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Show layout/paint pixel area in the Rendering Frames tree outline
         https://bugs.webkit.org/show_bug.cgi?id=148674
 
