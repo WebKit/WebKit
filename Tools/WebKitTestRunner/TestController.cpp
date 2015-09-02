@@ -59,6 +59,7 @@
 #include <string>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
@@ -648,8 +649,7 @@ void TestController::resetPreferencesToConsistentValues()
 
 bool TestController::resetStateToConsistentValues()
 {
-    m_state = Resetting;
-
+    TemporaryChange<State> changeState(m_state, Resetting);
     m_beforeUnloadReturnValue = true;
 
     // This setting differs between the antique and modern Mac WebKit2 API.

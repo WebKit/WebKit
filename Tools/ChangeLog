@@ -1,3 +1,20 @@
+2015-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r188548): TestController state is Resseting while tests are running after r188548
+        https://bugs.webkit.org/show_bug.cgi?id=148528
+
+        Reviewed by Darin Adler.
+
+        Before r188548 resetStateToConsistentValues() was called in
+        TestController::run(), before tests are run, but now it's called
+        for every test in TestInvocation::invoke(), after m_status has
+        changed to RunningTest.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Use
+        TemporaryChange to reset m_state ot its previous value after reset
+        is done.
+
 2015-08-31  Jason Marcell  <jmarcell@apple.com>
 
         Modify prepare-Changelog to be aware of files that are marked as tests as well as files
