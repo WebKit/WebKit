@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/prettyprinting/utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CodeMirror.PrettyPrinting.JavaScript");
+
+    addPrettyPrintingTests(suite, "text/javascript", [
+        "resources/prettyprinting/javascript-tests/block-comment.js",
+        "resources/prettyprinting/javascript-tests/single-statement-blocks.js",
+        "resources/prettyprinting/javascript-tests/switch-case-default.js",
+    ]);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test JavaScript pretty printing with CodeMirror.</p>
+</body>
+</html>
