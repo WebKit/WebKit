@@ -654,7 +654,7 @@ Controller.prototype = {
             this.controls.statusDisplay.innerText = this.UIString('Error');
         else if (this.isLive && this.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
             this.controls.statusDisplay.innerText = this.UIString('Live Broadcast');
-        else if (this.video.networkState === HTMLMediaElement.NETWORK_LOADING)
+        else if (!this.isPlayable() && this.video.networkState === HTMLMediaElement.NETWORK_LOADING)
             this.controls.statusDisplay.innerText = this.UIString('Loading');
         else
             this.controls.statusDisplay.innerText = '';
