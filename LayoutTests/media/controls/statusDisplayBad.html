@@ -2,42 +2,39 @@
 <html>
     <head>
         <script src="../media-file.js"></script>
-        <script src="../video-test.js"></script>
         <script src="controls-test-helpers.js"></script>
         <script>
-            var video;
-            var currentStatus;
-            var statusDisplayInfo;
+            var tester = new ControlsTest("non-existent-media-file", "error")
+                .whenReady(runTests)
+                .start();
 
-            function init()
+            function runTests()
             {
-                findMediaElement();
-                video.src = findMediaFile("video", "non-existent-media-file");
+                currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
 
-                waitForEvent("error", runTest);
-            }
+                tester.startNewSection("Get the status label state");
+                var statusDisplayLabelState = tester.stateForControlsElement("Status Display");
 
-            function runTest()
-            {
-                if (!window.testRunner)
-                    return;
+                tester.test("Name is 'Status Display'")
+                    .value(statusDisplayLabelState.name)
+                    .isEqualTo("Status Display");
 
-                currentStatus = JSON.parse(internals.getCurrentMediaControlsStatusForElement(video));
-                if (currentStatus) {
-                    if (currentStatus.idiom == "apple") {
-                        statusDisplayInfo = statusForControlsElement(currentStatus, "Status Display");
-                        if (statusDisplayInfo) {
-                            testExpected("statusDisplayInfo.name", "Status Display");
-                            testExpected("statusDisplayInfo.className", "");
-                            testExpected("statusDisplayInfo.content", "Error");
-                        }
-                    }
-                }
-                endTest();
+                tester.test("Has empty class")
+                    .value(statusDisplayLabelState.className)
+                    .isEmptyString();
+
+                tester.test("Content is 'Error'")
+                    .value(statusDisplayLabelState.content)
+                    .isEqualTo("Error");
+
+                tester.end();
             }
         </script>
     </head>
-    <body onload="init()">
+    <body>
         <p>This tests that the status display has the corrent error message.</p>
         <p>This test only runs in DRT!</p>
         <video controls></video>

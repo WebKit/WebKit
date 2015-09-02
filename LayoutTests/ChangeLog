@@ -1,3 +1,27 @@
+2015-09-01  Dean Jackson  <dino@apple.com>
+
+        [mediacontrols] Improve media controls testing helpers
+        https://bugs.webkit.org/show_bug.cgi?id=148697
+        <rdar://problem/22530876>
+
+        Reviewed by Eric Carlson.
+
+        Implement a more modern-looking testing API for media
+        controls tests, and update the existing tests to
+        use the new API.
+
+        * media/controls/basic-expected.txt:
+        * media/controls/basic.html:
+        * media/controls/controls-test-helpers.js:
+        (ControlsTest): New class for helping testing.
+        (statusForControlsElement): Deleted.
+        * media/controls/showControlsButton-expected.txt:
+        * media/controls/showControlsButton.html:
+        * media/controls/statusDisplay-expected.txt:
+        * media/controls/statusDisplay.html:
+        * media/controls/statusDisplayBad-expected.txt:
+        * media/controls/statusDisplayBad.html:
+
 2015-09-02  Chris Dumez  <cdumez@apple.com>
 
         document.createProcessingInstruction() does not behave according to specification

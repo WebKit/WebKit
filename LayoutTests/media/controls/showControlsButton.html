@@ -2,42 +2,35 @@
 <html>
     <head>
         <script src="../media-file.js"></script>
-        <script src="../video-test.js"></script>
         <script src="controls-test-helpers.js"></script>
         <script>
-            var video;
-            var currentStatus;
-            var showControlsButtonInfo;
+            var tester = new ControlsTest()
+                .whenReady(runTests)
+                .start("Test for Show Controls button");
 
-            function init()
+            function runTests()
             {
-                findMediaElement();
-                video.src = findMediaFile("video", "../content/test");
+                currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
 
-                waitForEvent("canplaythrough", canplaythrough);
-                waitForEventAndFail("error");
-            }
+                tester.startNewSection("Get the button that shows controls while in Voice Over");
+                var controlsButtonState = tester.stateForControlsElement("Show Controls");
 
-            function canplaythrough()
-            {
-                if (!window.testRunner)
-                    return;
+                tester.test("Name is 'Show Controls'")
+                    .value(controlsButtonState.name)
+                    .isEqualTo("Show Controls");
 
-                currentStatus = JSON.parse(internals.getCurrentMediaControlsStatusForElement(video));
-                if (currentStatus) {
-                    if (currentStatus.idiom == "apple") {
-                        showControlsButtonInfo = statusForControlsElement(currentStatus, "Show Controls");
-                        if (showControlsButtonInfo) {
-                            testExpected("showControlsButtonInfo.name", "Show Controls");
-                            testExpected("showControlsButtonInfo.hidden", true);
-                        }
-                    }
-                }
-                endTest();
+                tester.test("Is hidden")
+                    .value(controlsButtonState.hidden)
+                    .isTrue();
+
+                tester.end();
             }
         </script>
     </head>
-    <body onload="init()">
+    <body>
         <p>This tests for the existence of a hidden Show Controls button.</p>
         <p>This test only runs in DRT!</p>
         <video controls></video>

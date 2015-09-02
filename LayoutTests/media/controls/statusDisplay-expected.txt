@@ -3,9 +3,14 @@ This tests for the content in the status display.
 This test only runs in DRT!
 
 
-EVENT(canplaythrough)
-EXPECTED (statusDisplayInfo.name == 'Status Display') OK
-EXPECTED (statusDisplayInfo.className == 'hidden') OK
-EXPECTED (statusDisplayInfo.content == '') OK
-END OF TEST
+EVENT: canplaythrough
+PASS: We are using the apple idiom
+
+Get the status label state
+
+PASS: Name is 'Status Display'
+PASS: Has hidden class
+PASS: Content is Empty
+
+Testing finished.
 
