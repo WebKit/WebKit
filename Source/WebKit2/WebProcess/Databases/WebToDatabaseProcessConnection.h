@@ -31,7 +31,7 @@
 #include "MessageSender.h"
 #include <wtf/RefCounted.h>
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(DATABASE_PROCESS)
 
 namespace WebKit {
 
@@ -48,8 +48,10 @@ public:
     
     IPC::Connection* connection() const { return m_connection.get(); }
 
+#if ENABLE(INDEXED_DATABASE)
     void registerWebIDBServerConnection(WebIDBServerConnection&);
     void removeWebIDBServerConnection(WebIDBServerConnection&);
+#endif
 
 private:
     WebToDatabaseProcessConnection(IPC::Connection::Identifier);
@@ -67,10 +69,12 @@ private:
 
     RefPtr<IPC::Connection> m_connection;
 
+#if ENABLE(INDEXED_DATABASE)
     HashMap<uint64_t, WebIDBServerConnection*> m_webIDBServerConnections;
+#endif
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(DATABASE_PROCESS)
 #endif // WebToDatabaseProcessConnection_h

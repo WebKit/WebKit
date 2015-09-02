@@ -33,7 +33,7 @@
 #include "WebProcess.h"
 #include <wtf/RunLoop.h>
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(DATABASE_PROCESS)
 
 using namespace WebCore;
 
@@ -51,12 +51,14 @@ WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection()
 
 void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
+#if ENABLE(INDEXED_DATABASE)
     if (decoder.messageReceiverName() == Messages::WebIDBServerConnection::messageReceiverName()) {
         HashMap<uint64_t, WebIDBServerConnection*>::iterator connectionIterator = m_webIDBServerConnections.find(decoder.destinationID());
         if (connectionIterator != m_webIDBServerConnections.end())
             connectionIterator->value->didReceiveWebIDBServerConnectionMessage(connection, decoder);
         return;
     }
+#endif
     
     ASSERT_NOT_REACHED();
 }
@@ -70,6 +72,7 @@ void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection&, 
 {
 }
 
+#if ENABLE(INDEXED_DATABASE)
 void WebToDatabaseProcessConnection::registerWebIDBServerConnection(WebIDBServerConnection& connection)
 {
     ASSERT(!m_webIDBServerConnections.contains(connection.messageSenderDestinationID()));
@@ -85,7 +88,8 @@ void WebToDatabaseProcessConnection::removeWebIDBServerConnection(WebIDBServerCo
 
     m_webIDBServerConnections.remove(connection.messageSenderDestinationID());
 }
+#endif
 
 } // namespace WebKit
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(DATABASE_PROCESS)

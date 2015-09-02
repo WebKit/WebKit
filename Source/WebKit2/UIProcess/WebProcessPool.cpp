@@ -469,15 +469,16 @@ void WebProcessPool::ensureDatabaseProcess()
 
     m_databaseProcess = DatabaseProcessProxy::create(this);
 
-    ASSERT(!m_configuration->indexedDBDatabaseDirectory().isEmpty());
-
     // *********
     // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
     // *********
     DatabaseProcessCreationParameters parameters;
+#if ENABLE(INDEXED_DATABASE)
+    ASSERT(!m_configuration->indexedDBDatabaseDirectory().isEmpty());
     parameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
 
     SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+#endif
 
     m_databaseProcess->send(Messages::DatabaseProcess::InitializeDatabaseProcess(parameters), 0);
 }

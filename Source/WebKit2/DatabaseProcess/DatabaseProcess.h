@@ -43,6 +43,7 @@ class DatabaseToWebProcessConnection;
 class UniqueIDBDatabase;
 
 struct DatabaseProcessCreationParameters;
+struct SecurityOriginData;
 
 class DatabaseProcess : public ChildProcess {
     WTF_MAKE_NONCOPYABLE(DatabaseProcess);
@@ -51,6 +52,7 @@ public:
     static DatabaseProcess& singleton();
     ~DatabaseProcess();
 
+#if ENABLE(INDEXED_DATABASE)
     const String& indexedDatabaseDirectory() const { return m_indexedDatabaseDirectory; }
 
     RefPtr<UniqueIDBDatabase> getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -58,6 +60,7 @@ public:
 
     void ensureIndexedDatabaseRelativePathExists(const String&);
     String absoluteIndexedDatabasePathFromDatabaseRelativePath(const String&);
+#endif
 
     WorkQueue& queue() { return m_queue.get(); }
 
@@ -89,9 +92,11 @@ private:
     void deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, uint64_t callbackID);
 
+#if ENABLE(INDEXED_DATABASE)
     Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();
     void deleteIndexedDatabaseEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&);
     void deleteIndexedDatabaseEntriesModifiedSince(std::chrono::system_clock::time_point modifiedSince);
+#endif
 
     // For execution on work queue thread only
     void performNextDatabaseTask();
@@ -101,9 +106,11 @@ private:
 
     Ref<WorkQueue> m_queue;
 
+#if ENABLE(INDEXED_DATABASE)
     String m_indexedDatabaseDirectory;
 
     HashMap<UniqueIDBDatabaseIdentifier, RefPtr<UniqueIDBDatabase>> m_idbDatabases;
+#endif
 
     Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
     Lock m_databaseTaskMutex;

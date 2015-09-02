@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DatabaseProcessCreationParameters.h"
 
-#if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+#if ENABLE(DATABASE_PROCESS)
 
 #include "ArgumentCoders.h"
 
@@ -38,20 +38,24 @@ DatabaseProcessCreationParameters::DatabaseProcessCreationParameters()
 
 void DatabaseProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 {
+#if ENABLE(INDEXED_DATABASE)
     encoder << indexedDatabaseDirectory;
     encoder << indexedDatabaseDirectoryExtensionHandle;
+#endif
 }
 
 bool DatabaseProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, DatabaseProcessCreationParameters& result)
 {
+#if ENABLE(INDEXED_DATABASE)
     if (!decoder.decode(result.indexedDatabaseDirectory))
         return false;
     if (!decoder.decode(result.indexedDatabaseDirectoryExtensionHandle))
         return false;
+#endif
 
     return true;
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+#endif // ENABLE(DATABASE_PROCESS)

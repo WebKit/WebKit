@@ -1,3 +1,31 @@
+2015-09-02  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        Fix build with ENABLE(DATABASE_PROCESS) and !ENABLE(INDEXED_DATABASE)
+        https://bugs.webkit.org/show_bug.cgi?id=146550
+
+        Reviewed by Brady Eidson.
+
+        Given that INDEXED_DATABASE at the moment is the only user of
+        DATABASE_PROCESS, their guards got inevitably mixed up with various
+        levels of consistency. Since the --no-indexed-database flag from
+        build-webkit leaves DATABASE_PROCESS enabled, this resulted in build
+        failures.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        * Shared/Databases/DatabaseProcessCreationParameters.cpp:
+        * Shared/Databases/DatabaseProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        Add missing ENABLE(INDEXED_DATABASE) guards and moved the
+        misplaced ones.
+
+        * DatabaseProcess/DatabaseProcess.h:
+        Ditto, and also add a forward declaration for SecurityOriginData since
+        with INDEXED_DATABASE off SecurityOriginData.h is no longer included
+        by way of UniqueIDBDatabaseIdentifier.h.
+
 2015-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opt the Inspector process out of page visibility-based process suppression when running tests

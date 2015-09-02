@@ -95,6 +95,7 @@ void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringRefe
     RunLoop::current().stop();
 }
 
+#if ENABLE(INDEXED_DATABASE)
 RefPtr<UniqueIDBDatabase> DatabaseProcess::getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
 {
     auto addResult = m_idbDatabases.add(identifier, nullptr);
@@ -114,9 +115,11 @@ void DatabaseProcess::removeUniqueIDBDatabase(const UniqueIDBDatabase& database)
 
     m_idbDatabases.remove(identifier);
 }
+#endif
 
 void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationParameters& parameters)
 {
+#if ENABLE(INDEXED_DATABASE)
     // *********
     // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
     // *********
@@ -125,12 +128,15 @@ void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationPar
     SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
 
     ensureIndexedDatabaseRelativePathExists(StringImpl::empty());
+#endif
 }
 
+#if ENABLE(INDEXED_DATABASE)
 void DatabaseProcess::ensureIndexedDatabaseRelativePathExists(const String& relativePath)
 {
     postDatabaseTask(createAsyncTask(*this, &DatabaseProcess::ensurePathExists, absoluteIndexedDatabasePathFromDatabaseRelativePath(relativePath)));
 }
+#endif
 
 void DatabaseProcess::ensurePathExists(const String& path)
 {
@@ -140,12 +146,14 @@ void DatabaseProcess::ensurePathExists(const String& path)
         LOG_ERROR("Failed to make all directories for path '%s'", path.utf8().data());
 }
 
+#if ENABLE(INDEXED_DATABASE)
 String DatabaseProcess::absoluteIndexedDatabasePathFromDatabaseRelativePath(const String& relativePath)
 {
     // FIXME: pathByAppendingComponent() was originally designed to append individual atomic components.
     // We don't have a function designed to append a multi-component subpath, but we should.
     return pathByAppendingComponent(m_indexedDatabaseDirectory, relativePath);
 }
+#endif
 
 void DatabaseProcess::postDatabaseTask(std::unique_ptr<AsyncTask> task)
 {
@@ -224,6 +232,7 @@ void DatabaseProcess::fetchWebsiteData(SessionID, uint64_t websiteDataTypes, uin
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
     }));
 
+#if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
         // FIXME: Pick the right database store based on the session ID.
         postDatabaseTask(std::make_unique<AsyncTask>([callbackAggregator, websiteDataTypes, this] {
@@ -236,6 +245,7 @@ void DatabaseProcess::fetchWebsiteData(SessionID, uint64_t websiteDataTypes, uin
             });
         }));
     }
+#endif
 }
 
 void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
@@ -260,6 +270,7 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, uint64_t websiteData
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteData(callbackID), 0);
     }));
 
+#if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
         postDatabaseTask(std::make_unique<AsyncTask>([this, callbackAggregator, modifiedSince] {
 
@@ -267,6 +278,7 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, uint64_t websiteData
             RunLoop::main().dispatch([callbackAggregator] { });
         }));
     }
+#endif
 }
 
 void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
@@ -291,6 +303,7 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t w
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
     }));
 
+#if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
         Vector<RefPtr<WebCore::SecurityOrigin>> securityOrigins;
         for (const auto& securityOriginData : securityOriginDatas)
@@ -302,8 +315,10 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t w
             RunLoop::main().dispatch([callbackAggregator] { });
         }));
     }
+#endif
 }
 
+#if ENABLE(INDEXED_DATABASE)
 Vector<RefPtr<WebCore::SecurityOrigin>> DatabaseProcess::indexedDatabaseOrigins()
 {
     if (m_indexedDatabaseDirectory.isEmpty())
@@ -319,7 +334,9 @@ Vector<RefPtr<WebCore::SecurityOrigin>> DatabaseProcess::indexedDatabaseOrigins(
 
     return securityOrigins;
 }
+#endif
 
+#if ENABLE(INDEXED_DATABASE)
 static void removeAllDatabasesForOriginPath(const String& originPath, std::chrono::system_clock::time_point modifiedSince)
 {
     // FIXME: We should also close/invalidate any live handles to the database files we are about to delete.
@@ -373,6 +390,7 @@ void DatabaseProcess::deleteIndexedDatabaseEntriesModifiedSince(std::chrono::sys
     for (auto& originPath : originPaths)
         removeAllDatabasesForOriginPath(originPath, modifiedSince);
 }
+#endif
 
 #if !PLATFORM(COCOA)
 void DatabaseProcess::initializeProcess(const ChildProcessInitializationParameters&)
