@@ -1,5 +1,25 @@
 2015-09-01  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Show layout/paint pixel area in the Rendering Frames tree outline
+        https://bugs.webkit.org/show_bug.cgi?id=148674
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI string.
+
+        * UserInterface/Views/RenderingFrameTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.rendering-frame .item:not(.paint-record):not(.layout-record) .subtitle):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.rendering-frame .item .subtitle): Deleted.
+        Show subtitles for layout and paint records only. We still want to hide script record subtitles,
+        since that information is already in the 'Location' column.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype._processPendingRecords):
+        Add tree element subtitle for LayoutTimelineRecords that specify width and height.
+
+2015-09-01  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Reorder columns in the Rendering Frames data grid by importance
         https://bugs.webkit.org/show_bug.cgi?id=148672
 
