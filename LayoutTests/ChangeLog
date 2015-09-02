@@ -1,3 +1,12 @@
+2015-09-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Unreviewed, Layout Test http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=148688
+
+        Skip inspector test that times out on windows.
+
+        * platform/win/TestExpectations:
+
 2015-09-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark http/tests/w3c/dom/nodes/ParentNode-querySelector-All.html as flaky.

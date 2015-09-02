@@ -2371,6 +2371,7 @@ http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 # Seems that all inspector tests are timing out on Windows. Skip them all.
 # Comment out detailed expectations until the harness is supported on Windows.
 webkit.org/b/137157 inspector [ Skip ]
+webkit.org/b/137157 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Skip ]
 
 # webkit.org/b/143548 inspector/console [ Skip ]
 # webkit.org/b/137157 inspector/css [ Skip ]
