@@ -61,6 +61,8 @@ public:
     // Clear all mark bits for all CodeBlocks.
     void clearMarksForFullCollection();
 
+    void clearMarks(CodeBlock*);
+
     // Mark a pointer that may be a CodeBlock that belongs to the set of DFG
     // blocks. This is defined in CodeBlock.h.
     void mark(CodeBlock* candidateCodeBlock);

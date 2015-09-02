@@ -1,3 +1,71 @@
+2015-09-02  Geoffrey Garen  <ggaren@apple.com>
+
+        CodeBlock should have a more explicit "strongly referenced" state
+        https://bugs.webkit.org/show_bug.cgi?id=148714
+
+        Reviewed by Filip Pizlo.
+
+        Previously, CodeBlock had a "may be executing" bit, which was used by
+        both the stack visitor and the compiler to indicate "this CodeBlock must
+        not jettison itself".
+
+        Now, CodeBlock has an explicit "is strongly referenced" bit to do the
+        same.
+
+        For now, there is no behavior change. In future, I will use the "is
+        strongly referenced" bit to indicate the set of all references that
+        cause a CodeBlock not to jettison itself. Strong references and stack
+        references will be different because:
+
+            (1) A stack reference requires a write barrier at the end of GC
+            (since CodeBlocks only barrier themselves on function entry,
+            and GC will clear that barrier); but a strong reference does not
+            need or want a write barrier at the end of GC.
+
+            (2) Visiting more heap objects might reveal more strong references
+            but, by definition, it cannot reveal more stack references.
+
+        Also, this patch adds an explicit mark clearing phase for compiler
+        CodeBlocks, which does the work that would normally be done by a write
+        barrier. A compiler CodeBlock can't rely on a normal write barrier 
+        because the compiler writes to CodeBlocks without invoking a write
+        barrier, and because the CodeBlock write barrier operates on an
+        executable, but an in-flight compilation is not pointed to by any
+        executable. This bug does not appear to be noticeable in the current
+        system, but I will probably make it noticeable.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        (JSC::CodeBlock::isKnownToBeLiveDuringGC):
+        * bytecode/CodeBlock.h:
+        (JSC::ExecState::uncheckedR):
+        (JSC::CodeBlockSet::clearMarks):
+        (JSC::CodeBlockSet::mark):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::key):
+        (JSC::DFG::Plan::clearCodeBlockMarks):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        * dfg/DFGPlan.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::completeAllPlansForVM):
+        (JSC::DFG::Worklist::clearCodeBlockMarks):
+        (JSC::DFG::Worklist::suspendAllThreads):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::completeAllPlansForVM):
+        (JSC::DFG::clearCodeBlockMarks):
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::worklistForIndexOrNull):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::clearMarksForEdenCollection):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        (JSC::CodeBlockSet::traceMarked):
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        * heap/CodeBlockSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+
 2015-09-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator should not allow non-boolean values for "optional" key

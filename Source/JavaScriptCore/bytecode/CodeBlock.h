@@ -1005,7 +1005,9 @@ private:
 
     bool m_isStrictMode;
     bool m_needsActivation;
+
     bool m_mayBeExecuting;
+    bool m_isStronglyReferenced;
     Atomic<bool> m_visitAggregateHasBeenCalled;
 
     RefPtr<SourceProvider> m_source;
@@ -1210,6 +1212,16 @@ inline Register& ExecState::uncheckedR(VirtualRegister reg)
     return uncheckedR(reg.offset());
 }
 
+inline void CodeBlockSet::clearMarks(CodeBlock* codeBlock)
+{
+    if (!codeBlock)
+        return;
+
+    codeBlock->m_mayBeExecuting = false;
+    codeBlock->m_isStronglyReferenced = false;
+    codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
+}
+
 inline void CodeBlockSet::mark(void* candidateCodeBlock)
 {
     // We have to check for 0 and -1 because those are used by the HashMap as markers.
@@ -1237,8 +1249,15 @@ inline void CodeBlockSet::mark(CodeBlock* codeBlock)
         return;
     
     codeBlock->m_mayBeExecuting = true;
+
     // We might not have cleared the marks for this CodeBlock, but we need to visit it.
     codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
+
+    // For simplicity, we don't attempt to jettison code blocks during GC if
+    // they are executing. Instead we strongly mark their weak references to
+    // allow them to continue to execute soundly.
+    codeBlock->m_isStronglyReferenced = true;
+
 #if ENABLE(GGC)
     m_currentlyExecuting.append(codeBlock);
 #endif

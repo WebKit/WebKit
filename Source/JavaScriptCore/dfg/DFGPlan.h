@@ -72,6 +72,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     
     CompilationKey key();
     
+    void clearCodeBlockMarks(CodeBlockSet&);
     void checkLivenessAndVisitChildren(SlotVisitor&, CodeBlockSet&);
     bool isKnownToBeLiveDuringGC();
     void cancel();

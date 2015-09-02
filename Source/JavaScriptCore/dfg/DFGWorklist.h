@@ -57,7 +57,9 @@ public:
     // worklist->waitUntilAllPlansForVMAreReady(vm);
     // worklist->completeAllReadyPlansForVM(vm);
     void completeAllPlansForVM(VM&);
-    
+
+    void clearCodeBlockMarks(VM&, CodeBlockSet&);
+
     void waitUntilAllPlansForVMAreReady(VM&);
     State completeAllReadyPlansForVM(VM&, CompilationKey = CompilationKey());
     void removeAllReadyPlansForVM(VM&);
@@ -140,6 +142,7 @@ inline Worklist* worklistForIndexOrNull(unsigned index)
 }
 
 void completeAllPlansForVM(VM&);
+void clearCodeBlockMarks(VM&, CodeBlockSet&);
 
 } } // namespace JSC::DFG
 

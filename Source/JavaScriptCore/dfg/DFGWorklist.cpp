@@ -207,6 +207,17 @@ void Worklist::completeAllPlansForVM(VM& vm)
     completeAllReadyPlansForVM(vm);
 }
 
+void Worklist::clearCodeBlockMarks(VM& vm, CodeBlockSet& codeBlocks)
+{
+    LockHolder locker(m_lock);
+    for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
+        Plan* plan = iter->value.get();
+        if (&plan->vm != &vm)
+            continue;
+        plan->clearCodeBlockMarks(codeBlocks);
+    }
+}
+
 void Worklist::suspendAllThreads()
 {
     m_suspensionLock.lock();
@@ -230,7 +241,7 @@ void Worklist::visitWeakReferences(SlotVisitor& visitor, CodeBlockSet& codeBlock
             Plan* plan = iter->value.get();
             if (&plan->vm != vm)
                 continue;
-            iter->value->checkLivenessAndVisitChildren(visitor, codeBlocks);
+            plan->checkLivenessAndVisitChildren(visitor, codeBlocks);
         }
     }
     // This loop doesn't need locking because:
@@ -453,6 +464,14 @@ void completeAllPlansForVM(VM& vm)
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
             worklist->completeAllPlansForVM(vm);
+    }
+}
+
+void clearCodeBlockMarks(VM& vm, CodeBlockSet& codeBlockSet)
+{
+    for (unsigned i = DFG::numberOfWorklists(); i--;) {
+        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
+            worklist->clearCodeBlockMarks(vm, codeBlockSet);
     }
 }
 

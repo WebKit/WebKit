@@ -1676,6 +1676,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_isStrictMode(other.m_isStrictMode)
     , m_needsActivation(other.m_needsActivation)
     , m_mayBeExecuting(false)
+    , m_isStronglyReferenced(false)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
     , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
@@ -1735,6 +1736,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
     , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
     , m_mayBeExecuting(false)
+    , m_isStronglyReferenced(false)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_firstLineColumnOffset(firstLineColumnOffset)
@@ -2185,6 +2187,7 @@ CodeBlock::CodeBlock(WebAssemblyExecutable* ownerExecutable, VM& vm, JSGlobalObj
     , m_isStrictMode(false)
     , m_needsActivation(false)
     , m_mayBeExecuting(false)
+    , m_isStronglyReferenced(false)
     , m_codeType(FunctionCode)
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
@@ -2336,10 +2339,7 @@ bool CodeBlock::shouldImmediatelyAssumeLivenessDuringScan()
     if (!JITCode::isOptimizingJIT(jitType()))
         return true;
 
-    // For simplicity, we don't attempt to jettison code blocks during GC if
-    // they are executing. Instead we strongly mark their weak references to
-    // allow them to continue to execute soundly.
-    if (m_mayBeExecuting)
+    if (m_isStronglyReferenced)
         return true;
 
     if (Options::forceDFGCodeBlockLiveness())
@@ -2359,8 +2359,8 @@ bool CodeBlock::isKnownToBeLiveDuringGC()
     //   are live.
     // - Code blocks that were running on the stack.
     // - Code blocks that survived the last GC if the current GC is an Eden GC. This is
-    //   because either livenessHasBeenProved would have survived as true or m_mayBeExecuting
-    //   would survive as true.
+    //   because either livenessHasBeenProved would have survived as true or
+    //   m_isStronglyReferenced would survive as true.
     // - Code blocks that don't have any dead weak references.
     
     return shouldImmediatelyAssumeLivenessDuringScan()

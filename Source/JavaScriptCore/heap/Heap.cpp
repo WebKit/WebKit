@@ -538,6 +538,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     Vector<const JSCell*> rememberedSet;
 #endif
 
+    DFG::clearCodeBlockMarks(*m_vm, m_codeBlocks);
     if (m_operationInProgress == EdenCollection)
         m_codeBlocks.clearMarksForEdenCollection(rememberedSet);
     else

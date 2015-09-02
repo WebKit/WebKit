@@ -63,10 +63,8 @@ void CodeBlockSet::promoteYoungCodeBlocks()
 
 void CodeBlockSet::clearMarksForFullCollection()
 {
-    for (CodeBlock* codeBlock : m_oldCodeBlocks) {
-        codeBlock->m_mayBeExecuting = false;
-        codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
-    }
+    for (CodeBlock* codeBlock : m_oldCodeBlocks)
+        clearMarks(codeBlock);
 
     // We promote after we clear marks on the old generation CodeBlocks because
     // none of the young generations CodeBlocks need to be cleared.
@@ -80,9 +78,8 @@ void CodeBlockSet::clearMarksForEdenCollection(const Vector<const JSCell*>& reme
         ScriptExecutable* executable = const_cast<ScriptExecutable*>(jsDynamicCast<const ScriptExecutable*>(cell));
         if (!executable)
             continue;
-        executable->forEachCodeBlock([](CodeBlock* codeBlock) {
-            codeBlock->m_mayBeExecuting = false;
-            codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
+        executable->forEachCodeBlock([this](CodeBlock* codeBlock) {
+            clearMarks(codeBlock);
         });
     }
 }
@@ -102,7 +99,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(HeapOperation collectionType)
         for (CodeBlock* codeBlock : set) {
             if (!codeBlock->hasOneRef())
                 continue;
-            if (codeBlock->m_mayBeExecuting)
+            if (codeBlock->m_isStronglyReferenced)
                 continue;
             codeBlock->deref();
             toRemove.append(codeBlock);
@@ -138,6 +135,7 @@ void CodeBlockSet::traceMarked(SlotVisitor& visitor)
         dataLog("Tracing ", m_currentlyExecuting.size(), " code blocks.\n");
     for (CodeBlock* codeBlock : m_currentlyExecuting) {
         ASSERT(codeBlock->m_mayBeExecuting);
+        ASSERT(codeBlock->m_isStronglyReferenced);
         codeBlock->visitAggregate(visitor);
     }
 }
@@ -148,8 +146,9 @@ void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
     if (verbose)
         dataLog("Remembering ", m_currentlyExecuting.size(), " code blocks.\n");
     for (CodeBlock* codeBlock : m_currentlyExecuting) {
-        heap->addToRememberedSet(codeBlock->ownerExecutable());
         ASSERT(codeBlock->m_mayBeExecuting);
+        ASSERT(codeBlock->m_isStronglyReferenced);
+        heap->addToRememberedSet(codeBlock->ownerExecutable());
     }
     m_currentlyExecuting.clear();
 #else
