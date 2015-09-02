@@ -1,3 +1,19 @@
+2015-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Range API should throw a TypeError for null Node parameters
+        https://bugs.webkit.org/show_bug.cgi?id=148692
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing tests.
+
+        * fast/dom/Range/range-compareNode.html:
+        * fast/dom/Range/range-intersectsNode-expected.txt:
+        * fast/text/text-combine-crash-expected.txt:
+        * http/tests/w3c/dom/interfaces-expected.txt:
+        * http/tests/w3c/dom/ranges/Range-comparePoint-2-expected.txt:
+        * http/tests/w3c/dom/ranges/Range-intersectsNode-binding-expected.txt:
+
 2015-09-01  Jeremy Jones  <jeremyj@apple.com>
 
         Unreviewed, Layout Test http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html is failing

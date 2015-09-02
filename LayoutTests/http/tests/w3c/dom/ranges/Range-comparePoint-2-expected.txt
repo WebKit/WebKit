@@ -1,5 +1,5 @@
 
 PASS Range.comparePoint 
-FAIL Range.comparePoint 1 assert_throws: function "function () { r.comparePoint(null, 0) }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Range.comparePoint 1 
 PASS Range.comparePoint 2 
 

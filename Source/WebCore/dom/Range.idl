@@ -32,17 +32,17 @@
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void setStart([Default=Undefined] optional Node refNode, 
+    [ObjCLegacyUnnamedParameters, RaisesException] void setStart(Node refNode,
                                  [Default=Undefined] optional long offset);
-    [ObjCLegacyUnnamedParameters, RaisesException] void setEnd([Default=Undefined] optional Node refNode, 
+    [ObjCLegacyUnnamedParameters, RaisesException] void setEnd(Node refNode,
                                [Default=Undefined] optional long offset);
-    [RaisesException] void setStartBefore([Default=Undefined] optional Node refNode);
-    [RaisesException] void setStartAfter([Default=Undefined] optional Node refNode);
-    [RaisesException] void setEndBefore([Default=Undefined] optional Node refNode);
-    [RaisesException] void setEndAfter([Default=Undefined] optional Node refNode);
+    [RaisesException] void setStartBefore(Node refNode);
+    [RaisesException] void setStartAfter(Node refNode);
+    [RaisesException] void setEndBefore(Node refNode);
+    [RaisesException] void setEndAfter(Node refNode);
     void collapse([Default=Undefined] optional boolean toStart);
-    [RaisesException] void selectNode([Default=Undefined] optional Node refNode);
-    [RaisesException] void selectNodeContents([Default=Undefined] optional Node refNode);
+    [RaisesException] void selectNode(Node refNode);
+    [RaisesException] void selectNodeContents(Node refNode);
 
     // CompareHow
     const unsigned short START_TO_START = 0;
@@ -50,14 +50,13 @@
     const unsigned short END_TO_END     = 2;
     const unsigned short END_TO_START   = 3;
 
-    [ObjCLegacyUnnamedParameters, RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints([Default=Undefined] optional unsigned short how,
-                                               [Default=Undefined] optional Range sourceRange);
+    [ObjCLegacyUnnamedParameters, RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints([Default=Undefined] optional unsigned short how, Range sourceRange);
 
     [RaisesException] void deleteContents();
     [RaisesException] DocumentFragment extractContents();
     [RaisesException] DocumentFragment cloneContents();
-    [RaisesException] void insertNode([Default=Undefined] optional Node newNode);
-    [RaisesException] void surroundContents([Default=Undefined] optional Node newParent);
+    [RaisesException] void insertNode(Node newNode);
+    [RaisesException] void surroundContents(Node newParent);
     Range cloneRange();
     DOMString toString();
 
@@ -76,9 +75,7 @@
 
     // WebKit extensions
 
-    [RaisesException] boolean intersectsNode([Default=Undefined] optional Node refNode);
-
-    [RaisesException] short compareNode([Default=Undefined] optional Node refNode);
+    [RaisesException] short compareNode(Node refNode);
 
     // CompareResults
     const unsigned short NODE_BEFORE           = 0;
@@ -86,11 +83,9 @@
     const unsigned short NODE_BEFORE_AND_AFTER = 2;
     const unsigned short NODE_INSIDE           = 3;
 
-    [RaisesException] short comparePoint([Default=Undefined] optional Node refNode, 
-                       [Default=Undefined] optional long offset);
-
-    [RaisesException] boolean isPointInRange([Default=Undefined] optional Node refNode, 
-                           [Default=Undefined] optional long offset);
+    [RaisesException] short comparePoint(Node refNode, [Default=Undefined] optional long offset);
+    [RaisesException] boolean intersectsNode(Node refNode);
+    [RaisesException] boolean isPointInRange(Node refNode, [Default=Undefined] optional long offset);
 
     [RaisesException] void expand([Default=Undefined] optional DOMString unit);
 

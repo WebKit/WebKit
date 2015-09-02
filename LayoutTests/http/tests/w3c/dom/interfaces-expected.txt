@@ -1642,15 +1642,15 @@ FAIL Range interface: attribute collapsed assert_throws: getting property on pro
 FAIL Range interface: attribute commonAncestorContainer assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-FAIL Range interface: operation setStart(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Range interface: operation setEnd(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Range interface: operation setStartBefore(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Range interface: operation setStartAfter(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Range interface: operation setEndBefore(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Range interface: operation setEndAfter(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Range interface: operation setStart(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
+FAIL Range interface: operation setEnd(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
+PASS Range interface: operation setStartBefore(Node) 
+PASS Range interface: operation setStartAfter(Node) 
+PASS Range interface: operation setEndBefore(Node) 
+PASS Range interface: operation setEndAfter(Node) 
 PASS Range interface: operation collapse(boolean) 
-FAIL Range interface: operation selectNode(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Range interface: operation selectNodeContents(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Range interface: operation selectNode(Node) 
+PASS Range interface: operation selectNodeContents(Node) 
 PASS Range interface: constant START_TO_START on interface object 
 PASS Range interface: constant START_TO_START on interface prototype object 
 PASS Range interface: constant START_TO_END on interface object 
@@ -1663,13 +1663,13 @@ FAIL Range interface: operation compareBoundaryPoints(unsigned short,Range) asse
 PASS Range interface: operation deleteContents() 
 PASS Range interface: operation extractContents() 
 PASS Range interface: operation cloneContents() 
-FAIL Range interface: operation insertNode(Node) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Range interface: operation surroundContents(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Range interface: operation insertNode(Node) 
+PASS Range interface: operation surroundContents(Node) 
 PASS Range interface: operation cloneRange() 
 PASS Range interface: operation detach() 
-FAIL Range interface: operation isPointInRange(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Range interface: operation comparePoint(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Range interface: operation intersectsNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Range interface: operation isPointInRange(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
+FAIL Range interface: operation comparePoint(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
+PASS Range interface: operation intersectsNode(Node) 
 PASS Range interface: stringifier 
 PASS Range must be primary interface of document.createRange() 
 PASS Stringification of document.createRange() 
@@ -1680,72 +1680,52 @@ PASS Range interface: document.createRange() must inherit property "endOffset" w
 PASS Range interface: document.createRange() must inherit property "collapsed" with the proper type (4) 
 PASS Range interface: document.createRange() must inherit property "commonAncestorContainer" with the proper type (5) 
 PASS Range interface: document.createRange() must inherit property "setStart" with the proper type (6) 
-FAIL Range interface: calling setStart(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling setStart(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+}" did not throw
 PASS Range interface: document.createRange() must inherit property "setEnd" with the proper type (7) 
-FAIL Range interface: calling setEnd(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling setEnd(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+}" did not throw
 PASS Range interface: document.createRange() must inherit property "setStartBefore" with the proper type (8) 
-FAIL Range interface: calling setStartBefore(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setStartBefore(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "setStartAfter" with the proper type (9) 
-FAIL Range interface: calling setStartAfter(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setStartAfter(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "setEndBefore" with the proper type (10) 
-FAIL Range interface: calling setEndBefore(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setEndBefore(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "setEndAfter" with the proper type (11) 
-FAIL Range interface: calling setEndAfter(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setEndAfter(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "collapse" with the proper type (12) 
 PASS Range interface: calling collapse(boolean) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "selectNode" with the proper type (13) 
-FAIL Range interface: calling selectNode(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling selectNode(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "selectNodeContents" with the proper type (14) 
-FAIL Range interface: calling selectNodeContents(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling selectNodeContents(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "START_TO_START" with the proper type (15) 
 PASS Range interface: document.createRange() must inherit property "START_TO_END" with the proper type (16) 
 PASS Range interface: document.createRange() must inherit property "END_TO_END" with the proper type (17) 
 PASS Range interface: document.createRange() must inherit property "END_TO_START" with the proper type (18) 
 PASS Range interface: document.createRange() must inherit property "compareBoundaryPoints" with the proper type (19) 
-FAIL Range interface: calling compareBoundaryPoints(unsigned short,Range) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling compareBoundaryPoints(unsigned short,Range) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "deleteContents" with the proper type (20) 
 PASS Range interface: document.createRange() must inherit property "extractContents" with the proper type (21) 
 PASS Range interface: document.createRange() must inherit property "cloneContents" with the proper type (22) 
 PASS Range interface: document.createRange() must inherit property "insertNode" with the proper type (23) 
-FAIL Range interface: calling insertNode(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling insertNode(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "surroundContents" with the proper type (24) 
-FAIL Range interface: calling surroundContents(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling surroundContents(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range interface: document.createRange() must inherit property "cloneRange" with the proper type (25) 
 PASS Range interface: document.createRange() must inherit property "detach" with the proper type (26) 
 PASS Range interface: document.createRange() must inherit property "isPointInRange" with the proper type (27) 
-FAIL Range interface: calling isPointInRange(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling isPointInRange(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+}" did not throw
 PASS Range interface: document.createRange() must inherit property "comparePoint" with the proper type (28) 
-FAIL Range interface: calling comparePoint(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling comparePoint(Node,unsigned long) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+}" threw object "Error: WrongDocumentError: DOM Exception 4" ("WrongDocumentError") expected object "TypeError" ("TypeError")
 PASS Range interface: document.createRange() must inherit property "intersectsNode" with the proper type (29) 
-FAIL Range interface: calling intersectsNode(Node) on document.createRange() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling intersectsNode(Node) on document.createRange() with too few arguments must throw TypeError 
 PASS Range must be primary interface of detachedRange 
 PASS Stringification of detachedRange 
 PASS Range interface: detachedRange must inherit property "startContainer" with the proper type (0) 
@@ -1755,72 +1735,52 @@ PASS Range interface: detachedRange must inherit property "endOffset" with the p
 PASS Range interface: detachedRange must inherit property "collapsed" with the proper type (4) 
 PASS Range interface: detachedRange must inherit property "commonAncestorContainer" with the proper type (5) 
 PASS Range interface: detachedRange must inherit property "setStart" with the proper type (6) 
-FAIL Range interface: calling setStart(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling setStart(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+}" did not throw
 PASS Range interface: detachedRange must inherit property "setEnd" with the proper type (7) 
-FAIL Range interface: calling setEnd(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling setEnd(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+}" did not throw
 PASS Range interface: detachedRange must inherit property "setStartBefore" with the proper type (8) 
-FAIL Range interface: calling setStartBefore(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setStartBefore(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "setStartAfter" with the proper type (9) 
-FAIL Range interface: calling setStartAfter(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setStartAfter(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "setEndBefore" with the proper type (10) 
-FAIL Range interface: calling setEndBefore(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setEndBefore(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "setEndAfter" with the proper type (11) 
-FAIL Range interface: calling setEndAfter(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling setEndAfter(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "collapse" with the proper type (12) 
 PASS Range interface: calling collapse(boolean) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "selectNode" with the proper type (13) 
-FAIL Range interface: calling selectNode(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling selectNode(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "selectNodeContents" with the proper type (14) 
-FAIL Range interface: calling selectNodeContents(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling selectNodeContents(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "START_TO_START" with the proper type (15) 
 PASS Range interface: detachedRange must inherit property "START_TO_END" with the proper type (16) 
 PASS Range interface: detachedRange must inherit property "END_TO_END" with the proper type (17) 
 PASS Range interface: detachedRange must inherit property "END_TO_START" with the proper type (18) 
 PASS Range interface: detachedRange must inherit property "compareBoundaryPoints" with the proper type (19) 
-FAIL Range interface: calling compareBoundaryPoints(unsigned short,Range) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling compareBoundaryPoints(unsigned short,Range) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "deleteContents" with the proper type (20) 
 PASS Range interface: detachedRange must inherit property "extractContents" with the proper type (21) 
 PASS Range interface: detachedRange must inherit property "cloneContents" with the proper type (22) 
 PASS Range interface: detachedRange must inherit property "insertNode" with the proper type (23) 
-FAIL Range interface: calling insertNode(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling insertNode(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "surroundContents" with the proper type (24) 
-FAIL Range interface: calling surroundContents(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling surroundContents(Node) on detachedRange with too few arguments must throw TypeError 
 PASS Range interface: detachedRange must inherit property "cloneRange" with the proper type (25) 
 PASS Range interface: detachedRange must inherit property "detach" with the proper type (26) 
 PASS Range interface: detachedRange must inherit property "isPointInRange" with the proper type (27) 
-FAIL Range interface: calling isPointInRange(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling isPointInRange(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+}" did not throw
 PASS Range interface: detachedRange must inherit property "comparePoint" with the proper type (28) 
-FAIL Range interface: calling comparePoint(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Range interface: calling comparePoint(Node,unsigned long) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+}" threw object "Error: WrongDocumentError: DOM Exception 4" ("WrongDocumentError") expected object "TypeError" ("TypeError")
 PASS Range interface: detachedRange must inherit property "intersectsNode" with the proper type (29) 
-FAIL Range interface: calling intersectsNode(Node) on detachedRange with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Range interface: calling intersectsNode(Node) on detachedRange with too few arguments must throw TypeError 
 FAIL NodeIterator interface: existence and properties of interface object assert_equals: class string of NodeIterator expected "[object Function]" but got "[object NodeIteratorConstructor]"
 PASS NodeIterator interface object length 
 PASS NodeIterator interface: existence and properties of interface prototype object 

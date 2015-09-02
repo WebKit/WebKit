@@ -157,7 +157,7 @@ static inline bool checkForDifferentRootContainer(const RangeBoundaryPoint& star
 void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -181,7 +181,7 @@ void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -225,7 +225,7 @@ void Range::collapse(bool toStart)
 bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = HIERARCHY_REQUEST_ERR;
+        ec = TypeError;
         return false;
     }
 
@@ -249,7 +249,7 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec) const
     // refNode node and an offset within the node is before, same as, or after the range respectively.
 
     if (!refNode) {
-        ec = HIERARCHY_REQUEST_ERR;
+        ec = TypeError;
         return 0;
     }
 
@@ -285,7 +285,7 @@ Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec) const
     // before and after(surrounds), or inside the range, respectively
 
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return NODE_BEFORE;
     }
 
@@ -323,7 +323,7 @@ Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec) const
 short Range::compareBoundaryPoints(CompareHow how, const Range* sourceRange, ExceptionCode& ec) const
 {
     if (!sourceRange) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return 0;
     }
 
@@ -489,7 +489,7 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec) const
     // Returns a bool if the node intersects the range.
 
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return false;
     }
 
@@ -841,7 +841,7 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
 
     ec = 0;
     if (!newNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -1082,7 +1082,7 @@ Ref<Range> Range::cloneRange() const
 void Range::setStartAfter(Node* refNode, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -1097,7 +1097,7 @@ void Range::setStartAfter(Node* refNode, ExceptionCode& ec)
 void Range::setEndBefore(Node* refNode, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -1112,7 +1112,7 @@ void Range::setEndBefore(Node* refNode, ExceptionCode& ec)
 void Range::setEndAfter(Node* refNode, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -1127,7 +1127,7 @@ void Range::setEndAfter(Node* refNode, ExceptionCode& ec)
 void Range::selectNode(Node* refNode, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -1185,7 +1185,7 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
 void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -1223,7 +1223,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
     RefPtr<Node> newParent = passNewParent;
 
     if (!newParent) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -1309,7 +1309,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
 void Range::setStartBefore(Node* refNode, ExceptionCode& ec)
 {
     if (!refNode) {
-        ec = NOT_FOUND_ERR;
+        ec = TypeError;
         return;
     }
 

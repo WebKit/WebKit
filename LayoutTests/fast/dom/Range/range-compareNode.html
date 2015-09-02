@@ -182,7 +182,7 @@ function test()
     try {
         result = range.compareNode(node);
     } catch (e) {
-        if(e.code == DOMException.NOT_FOUND_ERR) {
+        if(e instanceof TypeError) {
             document.getElementById("test19").innerHTML = "test 19 passed: deleted node";
         } else {
             document.getElementById("test19").innerHTML = "<span style=\"color: red;\">test 19 failed error: " + e.message + "</span>";
