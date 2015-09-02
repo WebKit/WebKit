@@ -1,0 +1,3 @@
+
+PASS IDBIndex.openCursor() - throw InvalidStateError when the index is deleted 
+

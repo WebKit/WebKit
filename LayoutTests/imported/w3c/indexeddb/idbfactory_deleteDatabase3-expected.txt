@@ -1,0 +1,3 @@
+
+FAIL IDBFactory.deleteDatabase() - success event assert_equals: oldVersion expected (number) 9 but got (undefined) undefined
+

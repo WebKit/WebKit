@@ -251,6 +251,7 @@ fast/overflow/scrollbar-restored-and-then-locked.html [ Skip ]
 
 # TODO IndexedDB is not yet enabled.
 storage/indexeddb/ [ Skip ]
+imported/w3c/indexeddb [ Skip ]
 http/tests/security/cross-origin-indexeddb-allowed.html [ Skip ]
 http/tests/security/cross-origin-indexeddb.html [ Skip ]
 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]

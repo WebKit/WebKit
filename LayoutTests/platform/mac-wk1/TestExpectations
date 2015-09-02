@@ -56,6 +56,7 @@ webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/co
 
 # IndexedDB is not yet enabled in Mac WK1
 storage/indexeddb
+imported/w3c/indexeddb
 fast/history/page-cache-indexed-closed-db.html
 fast/history/page-cache-indexed-opened-db.html
 http/tests/security/cross-origin-indexeddb-allowed.html

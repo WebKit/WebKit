@@ -1,0 +1,3 @@
+
+PASS When db.close is called in upgradeneeded, the db is cleaned up on refresh 
+

@@ -334,7 +334,7 @@ void IDBDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion)
     if (m_closePending)
         return;
 
-    ASSERT(newVersion != IDBDatabaseMetadata::NoIntVersion && newVersion != IDBDatabaseMetadata::DefaultIntVersion);
+    ASSERT(newVersion != IDBDatabaseMetadata::NoIntVersion);
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().versionchangeEvent));
 }
 

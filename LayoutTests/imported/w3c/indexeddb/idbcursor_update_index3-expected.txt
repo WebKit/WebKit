@@ -1,0 +1,3 @@
+
+PASS IDBCursor.update() - index - attempt to modify a record in an inactive transaction 
+

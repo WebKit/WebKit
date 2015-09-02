@@ -1,0 +1,3 @@
+
+FAIL IDBObjectStore.add() - add where an index has unique:true specified  assert_unreached: success on adding duplicate indexed record Reached unreachable code
+

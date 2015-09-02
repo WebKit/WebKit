@@ -1,0 +1,3 @@
+
+PASS IDBFactory.open() - no version opens current database 
+
