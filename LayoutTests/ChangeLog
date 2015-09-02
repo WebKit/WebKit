@@ -1,3 +1,79 @@
+2015-09-02  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+        fixed.html
+        fixed-scale.html
+        fixed-table-cell.html
+        fixed-table-overflow.html
+        fixed-table-overflow-zindex.html
+        fixed-to-relative-position-with-absolute-child.html
+        fixed-tranformed.html
+        float-in-new-block-with-layout-delta.html
+        float-move-during-layout.html
+        float-new-in-block.html
+
+        Unreviewed.
+
+        * fast/repaint/fixed-expected.html: Added.
+        * fast/repaint/fixed-scale-expected.html: Added.
+        * fast/repaint/fixed-scale-expected.png: Removed.
+        * fast/repaint/fixed-scale-expected.txt: Removed.
+        * fast/repaint/fixed-scale.html:
+        * fast/repaint/fixed-table-cell-expected.html: Added.
+        * fast/repaint/fixed-table-cell-expected.png: Removed.
+        * fast/repaint/fixed-table-cell-expected.txt: Removed.
+        * fast/repaint/fixed-table-cell.html:
+        * fast/repaint/fixed-table-overflow-expected.html: Added.
+        * fast/repaint/fixed-table-overflow-expected.png: Removed.
+        * fast/repaint/fixed-table-overflow-expected.txt: Removed.
+        * fast/repaint/fixed-table-overflow-zindex-expected.html: Added.
+        * fast/repaint/fixed-table-overflow-zindex-expected.png: Removed.
+        * fast/repaint/fixed-table-overflow-zindex-expected.txt: Removed.
+        * fast/repaint/fixed-table-overflow-zindex.html:
+        * fast/repaint/fixed-table-overflow.html:
+        * fast/repaint/fixed-to-relative-position-with-absolute-child-expected.html: Added.
+        * fast/repaint/fixed-to-relative-position-with-absolute-child-expected.png: Removed.
+        * fast/repaint/fixed-to-relative-position-with-absolute-child-expected.txt: Removed.
+        * fast/repaint/fixed-to-relative-position-with-absolute-child.html:
+        * fast/repaint/fixed-tranformed-expected.html: Added.
+        * fast/repaint/fixed-tranformed-expected.png: Removed.
+        * fast/repaint/fixed-tranformed-expected.txt: Removed.
+        * fast/repaint/fixed-tranformed.html:
+        * fast/repaint/fixed.html:
+        * fast/repaint/float-in-new-block-with-layout-delta-expected.html: Added.
+        * fast/repaint/float-in-new-block-with-layout-delta-expected.png: Removed.
+        * fast/repaint/float-in-new-block-with-layout-delta-expected.txt: Removed.
+        * fast/repaint/float-in-new-block-with-layout-delta.html:
+        * fast/repaint/float-move-during-layout-expected.html: Added.
+        * fast/repaint/float-move-during-layout.html:
+        * fast/repaint/float-new-in-block-expected.html: Added.
+        * fast/repaint/float-new-in-block-expected.txt: Removed.
+        * fast/repaint/float-new-in-block.html:
+        * platform/efl/fast/repaint/fixed-expected.png: Removed.
+        * platform/efl/fast/repaint/fixed-expected.txt: Removed.
+        * platform/efl/fast/repaint/float-move-during-layout-expected.png: Removed.
+        * platform/efl/fast/repaint/float-move-during-layout-expected.txt: Removed.
+        * platform/efl/fast/repaint/float-new-in-block-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-expected.txt: Removed.
+        * platform/gtk/fast/repaint/fixed-to-relative-position-with-absolute-child-expected.png: Removed.
+        * platform/gtk/fast/repaint/float-move-during-layout-expected.png: Removed.
+        * platform/gtk/fast/repaint/float-move-during-layout-expected.txt: Removed.
+        * platform/gtk/fast/repaint/float-new-in-block-expected.png: Removed.
+        * platform/mac/fast/repaint/fixed-expected.png: Removed.
+        * platform/mac/fast/repaint/fixed-expected.txt: Removed.
+        * platform/mac/fast/repaint/fixed-scale-expected.png: Removed.
+        * platform/mac/fast/repaint/fixed-table-cell-expected.png: Removed.
+        * platform/mac/fast/repaint/fixed-table-overflow-expected.png: Removed.
+        * platform/mac/fast/repaint/fixed-table-overflow-zindex-expected.png: Removed.
+        * platform/mac/fast/repaint/fixed-tranformed-expected.png: Removed.
+        * platform/mac/fast/repaint/float-in-new-block-with-layout-delta-expected.png: Removed.
+        * platform/mac/fast/repaint/float-move-during-layout-expected.png: Removed.
+        * platform/mac/fast/repaint/float-move-during-layout-expected.txt: Removed.
+        * platform/mac/fast/repaint/float-new-in-block-expected.png: Removed.
+        * platform/win/fast/repaint/fixed-expected.txt: Removed.
+        * platform/win/fast/repaint/float-move-during-layout-expected.txt: Removed.
+
 2015-09-02  Brady Eidson  <beidson@apple.com>
 
         Import W3C IndexedDB tests.

@@ -6,18 +6,18 @@
         td { background: green; padding: 0px; border-style: none; border: 0px; }
         td.fixed { position: fixed; left: 100px; top: 0px; z-index: 3; }
     </style>
-    <script src="resources/repaint.js"></script>
     <script>
         if (window.testRunner)
-            testRunner.dumpAsText(true);
-
-        function repaintTest()
+            testRunner.waitUntilDone();
+        function runTest()
         {
             document.getElementById('moveMe').className = "fixed";
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>
-<body style="height:2000px;" onload="runRepaintTest()">
+<body style="height:2000px;" onload="setTimeout(runTest, 0);">
     <!-- Repaint test for https://bugs.webkit.org/show_bug.cgi?id=64650: RenderLayer fixed position logic needs more basic testing -->
     <!-- You should see no red on this page. -->
     <table>

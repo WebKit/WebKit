@@ -1,15 +1,18 @@
 <html>
 <head>
     <title></title>
-    <script src="resources/repaint.js" type="text/javascript"></script>
     <script type="text/javascript">
-       function repaintTest()
-       {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
+        {
             document.getElementById('t').style.background='green';
-       }
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
     </script>
 </head>
-<body style="height:2000px;" onload="runRepaintTest()">
+<body style="height:2000px;" onload="setTimeout(runTest, 0);">
     <p style="position: relative; top: 20px;">
         Repaint test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=11452">http://bugs.webkit.org/show_bug.cgi?id=11452</a>
         REGRESSION (r16736-r16801): Incorrect repaint of fixed boxes</i>.
