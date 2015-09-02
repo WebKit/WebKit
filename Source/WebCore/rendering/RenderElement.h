@@ -307,7 +307,7 @@ private:
     
     bool shouldWillChangeCreateStackingContext() const;
 
-    void computeMaxOutlineSize() const;
+    void computeMaxOutlineSize(const RenderStyle&) const;
 
     unsigned m_baseTypeFlags : 6;
     unsigned m_ancestorLineBoxDirty : 1;

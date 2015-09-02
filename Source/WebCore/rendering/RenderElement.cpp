@@ -364,15 +364,15 @@ void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const Shap
 }
 #endif
 
-void RenderElement::computeMaxOutlineSize() const
+void RenderElement::computeMaxOutlineSize(const RenderStyle& style) const
 {
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
     // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
-    if (!m_style->outlineWidth())
+    if (!style.outlineWidth())
         return;
-    int maxOutlineSize = m_style->outlineSize();
-    if (m_style->outlineStyleIsAuto())
-        maxOutlineSize = std::max(theme().platformFocusRingWidth() + m_style->outlineOffset(), maxOutlineSize);
+    int maxOutlineSize = style.outlineSize();
+    if (style.outlineStyleIsAuto())
+        maxOutlineSize = std::max(theme().platformFocusRingWidth() + style.outlineOffset(), maxOutlineSize);
 
     if (maxOutlineSize < view().maximalOutlineSize())
         return;
@@ -396,8 +396,6 @@ void RenderElement::initializeStyle()
     updateShapeImage(nullptr, m_style->shapeOutside());
 #endif
 
-    computeMaxOutlineSize();
-    
     styleDidChange(StyleDifferenceNewStyle, nullptr);
 
     // We shouldn't have any text children that would need styleDidChange at this point.
@@ -446,8 +444,6 @@ void RenderElement::setStyle(Ref<RenderStyle>&& style, StyleDifference minimalSt
 #if ENABLE(CSS_SHAPES)
     updateShapeImage(oldStyle.get().shapeOutside(), m_style->shapeOutside());
 #endif
-
-    computeMaxOutlineSize();
 
     bool doesNotNeedLayout = !parent();
 
@@ -916,6 +912,11 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
 
     if (isRoot() || isBody())
         view().frameView().updateExtendBackgroundIfNecessary();
+
+    if (!oldStyle || (oldStyle->outlineSize() != newStyle.outlineSize()
+        || (oldStyle->outlineStyleIsAuto() && !newStyle.outlineStyleIsAuto())
+        || (!oldStyle->outlineStyleIsAuto() && newStyle.outlineStyleIsAuto())))
+        computeMaxOutlineSize(newStyle);
 }
 
 void RenderElement::handleDynamicFloatPositionChange()
