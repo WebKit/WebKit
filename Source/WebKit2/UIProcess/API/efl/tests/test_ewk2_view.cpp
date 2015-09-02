@@ -33,6 +33,8 @@ static bool fullScreenCallbackCalled;
 static bool obtainedPageContents = false;
 static bool scriptExecuteCallbackCalled;
 
+static const int scrollBarWidth = 10;
+
 static struct {
     const char* expectedMessage;
     bool called;
@@ -1205,7 +1207,7 @@ TEST_F(EWK2ViewTest, ewk_view_contents_size_get)
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
     ewk_view_contents_size_get(webView(), &contentsWidth, &contentsHeight);
 
-    EXPECT_EQ(environment->defaultWidth(), contentsWidth);
+    EXPECT_EQ(environment->defaultWidth() - scrollBarWidth, contentsWidth);
     EXPECT_EQ(environment->defaultHeight(), contentsHeight);
 
 #if HAVE(CAIRO_SURFACE_SET_DEVICE_SCALE)

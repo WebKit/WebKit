@@ -1,3 +1,16 @@
+2015-09-02  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        REGRESSION(r188206): [EFL] Adjust scrollbar width to ewk_view_contents_size_get API test 
+        https://bugs.webkit.org/show_bug.cgi?id=148701
+
+        Reviewed by Csaba Osztrogonác.
+
+        r188206 applied to use non-overlay scrollbar on EFL minibrowser. So we need to
+        adjust scrollwidth to ewk_view_contents_size_get API test as well.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2015-09-02  Emanuele Aina  <emanuele.aina@collabora.com>
 
         Fix build with ENABLE(DATABASE_PROCESS) and !ENABLE(INDEXED_DATABASE)
