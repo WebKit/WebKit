@@ -1,3 +1,11 @@
+2015-09-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Update iOS TestExpectations files.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-01  Zalan Bujtas  <zalan@apple.com>
 
         Repaint cleanup:
