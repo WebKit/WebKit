@@ -329,6 +329,8 @@ webkit.org/b/132297 [ Debug ] svg/custom/bug79798.html [ Skip ]
 svg/custom/image-with-prefix-in-webarchive.svg
 
 # SVG tests that fail:
+imported/mozilla/svg/filters/feColorMatrix-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feColorMatrix-2.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/filters/feConvolveMatrix-1.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/filters/feConvolveMatrix-2.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/filters/feSpecularLighting-1.svg [ ImageOnlyFailure ]
@@ -2186,9 +2188,6 @@ fast/forms/focus-option-control-on-page.html [ Skip ]
 # Skip timeouts
 fast/dom/Geolocation/startUpdatingOnlyWhenPageVisible.html [ Skip ]
 fast/dom/Geolocation/stopUpdatingForHiddenPage.html [ Skip ]
-fast/events/wheelevent-basic.html [ Skip ]
-fast/events/wheelevent-mousewheel-interaction.html [ Skip ]
 http/tests/navigation/ping-cookie.html [ Skip ]
-
-
-
+webkit.org/b/148709 fast/events/wheelevent-basic.html [ Skip ]
+webkit.org/b/148709 fast/events/wheelevent-mousewheel-interaction.html [ Skip ]

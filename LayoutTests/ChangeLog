@@ -1,3 +1,10 @@
+2015-09-02  Daniel Bates  <dabates@apple.com>
+
+        Update iOS TestExpectations files
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-02  Chris Dumez  <cdumez@apple.com>
 
         http/tests/navigation/anchor-frames-same-origin.html is flaky
