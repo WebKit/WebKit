@@ -1660,7 +1660,7 @@ void Element::removeShadowRoot()
 
     elementRareData()->clearShadowRoot();
 
-    oldRoot->setHost(0);
+    oldRoot->setHost(nullptr);
     oldRoot->setParentTreeScope(&document());
 
     ChildNodeRemovalNotifier(*this).notify(*oldRoot);

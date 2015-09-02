@@ -53,8 +53,8 @@ public:
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
-    Element* host() const { return m_hostElement; }
-    void setHost(Element* hostElement) { m_hostElement = hostElement; }
+    Element* host() const { return m_host; }
+    void setHost(Element* host) { m_host = host; }
 
     String innerHTML() const;
     void setInnerHTML(const String&, ExceptionCode&);
@@ -66,7 +66,7 @@ public:
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
     ContentDistributor& distributor() { return m_distributor; }
-    void invalidateDistribution() { m_distributor.invalidateDistribution(m_hostElement); }
+    void invalidateDistribution() { m_distributor.invalidateDistribution(m_host); }
 
     virtual void removeAllEventListeners() override;
 
@@ -79,12 +79,12 @@ private:
     virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
-    bool isOrphan() const { return !m_hostElement; }
+    bool isOrphan() const { return !m_host; }
 
     unsigned m_resetStyleInheritance : 1;
     unsigned m_type : 1;
 
-    Element* m_hostElement;
+    Element* m_host;
 
     ContentDistributor m_distributor;
 };

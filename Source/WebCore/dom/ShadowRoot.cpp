@@ -55,7 +55,7 @@ ShadowRoot::ShadowRoot(Document& document, ShadowRootType type)
     , TreeScope(*this, document)
     , m_resetStyleInheritance(false)
     , m_type(type)
-    , m_hostElement(0)
+    , m_host(0)
 {
 }
 

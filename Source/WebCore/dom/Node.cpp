@@ -1035,7 +1035,7 @@ Element* Node::shadowHost() const
 {
     if (ShadowRoot* root = containingShadowRoot())
         return root->host();
-    return 0;
+    return nullptr;
 }
 
 Node* Node::deprecatedShadowAncestorNode() const
