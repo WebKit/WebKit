@@ -53,8 +53,8 @@ public:
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
-    Element* hostElement() const { return m_hostElement; }
-    void setHostElement(Element* hostElement) { m_hostElement = hostElement; }
+    Element* host() const { return m_hostElement; }
+    void setHost(Element* hostElement) { m_hostElement = hostElement; }
 
     String innerHTML() const;
     void setInnerHTML(const String&, ExceptionCode&);
@@ -66,7 +66,7 @@ public:
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
     ContentDistributor& distributor() { return m_distributor; }
-    void invalidateDistribution() { m_distributor.invalidateDistribution(hostElement()); }
+    void invalidateDistribution() { m_distributor.invalidateDistribution(m_hostElement); }
 
     virtual void removeAllEventListeners() override;
 
@@ -79,7 +79,7 @@ private:
     virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
-    bool isOrphan() const { return !hostElement(); }
+    bool isOrphan() const { return !m_hostElement; }
 
     unsigned m_resetStyleInheritance : 1;
     unsigned m_type : 1;
@@ -105,7 +105,7 @@ inline ContainerNode* Node::parentOrShadowHostNode() const
 {
     ASSERT(isMainThreadOrGCThread());
     if (is<ShadowRoot>(*this))
-        return downcast<ShadowRoot>(*this).hostElement();
+        return downcast<ShadowRoot>(*this).host();
     return parentNode();
 }
 

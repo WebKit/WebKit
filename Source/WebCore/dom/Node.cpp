@@ -1034,14 +1034,14 @@ bool Node::canStartSelection() const
 Element* Node::shadowHost() const
 {
     if (ShadowRoot* root = containingShadowRoot())
-        return root->hostElement();
+        return root->host();
     return 0;
 }
 
 Node* Node::deprecatedShadowAncestorNode() const
 {
     if (ShadowRoot* root = containingShadowRoot())
-        return root->hostElement();
+        return root->host();
 
     return const_cast<Node*>(this);
 }
@@ -1086,7 +1086,7 @@ Element* Node::parentOrShadowHostElement() const
         return nullptr;
 
     if (is<ShadowRoot>(*parent))
-        return downcast<ShadowRoot>(*parent).hostElement();
+        return downcast<ShadowRoot>(*parent).host();
 
     if (!is<Element>(*parent))
         return nullptr;

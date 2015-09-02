@@ -91,7 +91,7 @@ void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
         return;
     }
 
-    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, hostElement(), AllowScriptingContent, ec))
+    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, host(), AllowScriptingContent, ec))
         replaceChildrenWithFragment(*this, fragment.release(), ec);
 }
 
@@ -117,7 +117,7 @@ void ShadowRoot::setResetStyleInheritance(bool value)
 
     if (value != m_resetStyleInheritance) {
         m_resetStyleInheritance = value;
-        if (hostElement())
+        if (host())
             setNeedsStyleRecalc();
     }
 }

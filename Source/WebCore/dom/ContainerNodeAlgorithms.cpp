@@ -44,7 +44,7 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
         return;
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
-        if (node.inDocument() && root->hostElement() == &node)
+        if (node.inDocument() && root->host() == &node)
             notifyNodeInsertedIntoDocument(*root, postInsertionNotificationTargets);
     }
 }
@@ -78,7 +78,7 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
         node.document().setCSSTarget(0);
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
-        if (!node.inDocument() && root->hostElement() == &node)
+        if (!node.inDocument() && root->host() == &node)
             notifyNodeRemovedFromDocument(*root.get());
     }
 }

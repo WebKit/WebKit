@@ -85,7 +85,7 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode& i
     HTMLElement::insertedInto(insertionPoint);
 
     if (ShadowRoot* root = containingShadowRoot()) {
-        root->distributor().didShadowBoundaryChange(root->hostElement());
+        root->distributor().didShadowBoundaryChange(root->host());
         root->distributor().invalidateInsertionPointList();
     }
 
@@ -98,7 +98,7 @@ void InsertionPoint::removedFrom(ContainerNode& insertionPoint)
     if (!root)
         root = insertionPoint.containingShadowRoot();
 
-    if (root && root->hostElement()) {
+    if (root && root->host()) {
         root->invalidateDistribution();
         root->distributor().invalidateInsertionPointList();
     }

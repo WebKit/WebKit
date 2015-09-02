@@ -385,10 +385,10 @@ static void attachDistributedChildren(InsertionPoint& insertionPoint, RenderStyl
 
 static void attachShadowRoot(ShadowRoot& shadowRoot)
 {
-    ASSERT(shadowRoot.hostElement());
-    ASSERT(shadowRoot.hostElement()->renderer());
+    ASSERT(shadowRoot.host());
+    ASSERT(shadowRoot.host()->renderer());
 
-    auto& renderer = *shadowRoot.hostElement()->renderer();
+    auto& renderer = *shadowRoot.host()->renderer();
     RenderTreePosition renderTreePosition(renderer);
     attachChildren(shadowRoot, renderer.style(), renderTreePosition);
 
@@ -678,7 +678,7 @@ void resolveTextNode(Text& text, RenderTreePosition& renderTreePosition)
 
 static void resolveShadowTree(ShadowRoot& shadowRoot, Element& host, Style::Change change)
 {
-    ASSERT(shadowRoot.hostElement() == &host);
+    ASSERT(shadowRoot.host() == &host);
     ASSERT(host.renderer());
     RenderTreePosition renderTreePosition(*host.renderer());
     for (Node* child = shadowRoot.firstChild(); child; child = child->nextSibling()) {

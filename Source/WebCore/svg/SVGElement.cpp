@@ -490,7 +490,7 @@ SVGUseElement* SVGElement::correspondingUseElement() const
         return nullptr;
     if (root->type() != ShadowRoot::UserAgentShadowRoot)
         return nullptr;
-    auto* host = root->hostElement();
+    auto* host = root->host();
     if (!is<SVGUseElement>(host))
         return nullptr;
     return &downcast<SVGUseElement>(*host);

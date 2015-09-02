@@ -133,7 +133,7 @@ static ContainerNode* traverseParent(const Node* node, ShadowRootCrossing shadow
         return nullptr;
 
     if (is<ShadowRoot>(*parent))
-        return shadowRootCrossing == CrossShadowRoot ? downcast<ShadowRoot>(parent)->hostElement() : parent;
+        return shadowRootCrossing == CrossShadowRoot ? downcast<ShadowRoot>(parent)->host() : parent;
 
     if (is<InsertionPoint>(*parent)) {
         const InsertionPoint& insertionPoint = downcast<InsertionPoint>(*parent);

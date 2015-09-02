@@ -1631,7 +1631,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     ShadowRoot& shadowRoot = newShadowRoot.get();
     ensureElementRareData().setShadowRoot(WTF::move(newShadowRoot));
 
-    shadowRoot.setHostElement(this);
+    shadowRoot.setHost(this);
     shadowRoot.setParentTreeScope(&treeScope());
     shadowRoot.distributor().didShadowBoundaryChange(this);
 
@@ -1660,7 +1660,7 @@ void Element::removeShadowRoot()
 
     elementRareData()->clearShadowRoot();
 
-    oldRoot->setHostElement(0);
+    oldRoot->setHost(0);
     oldRoot->setParentTreeScope(&document());
 
     ChildNodeRemovalNotifier(*this).notify(*oldRoot);

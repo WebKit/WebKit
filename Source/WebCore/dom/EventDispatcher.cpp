@@ -143,7 +143,7 @@ public:
 
         if (m_currentTreeScope) {
             ASSERT(is<ShadowRoot>(m_currentTreeScope->rootNode()));
-            ASSERT(&newTarget == downcast<ShadowRoot>(m_currentTreeScope->rootNode()).hostElement());
+            ASSERT(&newTarget == downcast<ShadowRoot>(m_currentTreeScope->rootNode()).host());
             ASSERT(m_currentTreeScope->parentTreeScope() == &newTreeScope);
         }
 
@@ -184,7 +184,7 @@ public:
                 return previousHost;
             }
             if (is<ShadowRoot>(scope->rootNode()))
-                previousHost = downcast<ShadowRoot>(scope->rootNode()).hostElement();
+                previousHost = downcast<ShadowRoot>(scope->rootNode()).host();
             else
                 ASSERT_WITH_SECURITY_IMPLICATION(!scope->parentTreeScope());
         }
@@ -385,7 +385,7 @@ static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shad
         if (Element* element = targetNode->document().webkitCurrentFullScreenElement()) {
             // FIXME: We assume that if the full screen element is a media element that it's
             // the video-only full screen. Both here and elsewhere. But that is probably wrong.
-            if (element->isMediaElement() && shadowRoot.hostElement() == element)
+            if (element->isMediaElement() && shadowRoot.host() == element)
                 return false;
         }
     }
@@ -444,7 +444,7 @@ EventPath::EventPath(Node& targetNode, Event& event)
         }
         if (!node || !shouldEventCrossShadowBoundary(event, downcast<ShadowRoot>(*node), *target))
             return;
-        node = downcast<ShadowRoot>(*node).hostElement();
+        node = downcast<ShadowRoot>(*node).host();
     }
 }
 
