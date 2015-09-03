@@ -112,7 +112,6 @@ http/tests/inspector/ [ Skip ]
 webkit.org/b/76173 fast/css3-text/css3-text-align-last
 webkit.org/b/99945 fast/css3-text/css3-text-justify
 webkit.org/b/112755 fast/css3-text/css3-text-indent
-webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html
 
 # Needs testRunner.enableAutoResizeMode()
 fast/autoresize
@@ -170,30 +169,6 @@ fast/events/prevent-drag-to-navigate.html
 fast/events/standalone-image-drag-to-editable.html
 fast/files/local-file-drag-security.html
 fast/history/page-cache-createObjectURL.html [ Skip ]
-editing/pasteboard/data-transfer-items-drag-drop-entry.html
-editing/pasteboard/data-transfer-items-drag-drop-file.html
-editing/pasteboard/data-transfer-items-drag-drop-string.html
-editing/pasteboard/data-transfer-items-image-png.html
-editing/pasteboard/data-transfer-items.html
-editing/pasteboard/drag-and-drop-attachment-contenteditable.html
-editing/pasteboard/drag-and-drop-image-contenteditable.html
-editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
-editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
-editing/pasteboard/file-drag-to-editable.html
-editing/pasteboard/can-read-in-dragstart-event.html
-editing/pasteboard/drag-drop-input-textarea.html
-editing/pasteboard/drag-drop-list.html
-editing/pasteboard/drag-drop-paragraph-crasher.html
-editing/pasteboard/drag-drop-url-text.html
-editing/pasteboard/drag-drop-url-with-style.html
-editing/pasteboard/drag-files-to-editable-element.html
-editing/pasteboard/drag-image-in-about-blank-frame.html
-editing/pasteboard/drag-list-item.html
-editing/pasteboard/drop-file-svg.html
-editing/pasteboard/drop-inputtext-acquires-style.html
-editing/pasteboard/drop-link.html
-editing/pasteboard/drop-text-events.html
-editing/pasteboard/dataTransfer-setData-getData.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/send-dragged-file.html
 http/tests/local/fileapi/send-sliced-dragged-file.html
@@ -356,7 +331,6 @@ http/tests/local/formdata/send-form-data-with-sliced-file.html [ Failure ]
 http/tests/local/formdata/send-form-data.html [ Failure ]
 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 http/tests/local/link-stylesheet-load-order.html [ Failure ]
-http/tests/misc/copy-resolves-urls.html [ Failure ]
 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
@@ -1573,7 +1547,6 @@ fast/dom/custom/lifecycle-ready-creation-api.html [ Failure ]
 fast/dom/custom/lifecycle-ready-innerHTML.html [ Failure ]
 fast/dom/custom/lifecycle-ready-parser-only.html [ ImageOnlyFailure ]
 fast/dom/custom/lifecycle-ready-parser-script.html [ Failure ]
-fast/dom/custom/lifecycle-ready-paste.html [ Failure ]
 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/dom/horizontal-scrollbar-when-dir-change.html [ Failure ]
 fast/dom/icon-url-property.html [ Failure ]
@@ -2556,23 +2529,11 @@ tables/mozilla_expected_failures/other/test4.html [ Failure ]
 # Editing tests that are flaky:
 editing/selection/extend-selection-home-end.html
 editing/spelling/spellcheck-async.html
-editing/spelling/spellcheck-async-mutation.html
-editing/spelling/spellcheck-queue.html
 editing/style/style-text-node-without-editable-parent.html
 
 # Editing tests that fail:
 editing/deleting/delete-emoji.html [ Failure ]
 editing/inserting/typing-at-end-of-line.html [ Failure ]
-editing/pasteboard/3976872.html [ Failure ]
-editing/pasteboard/4076267-2.html [ Failure ]
-editing/pasteboard/4076267.html [ Failure ]
-editing/pasteboard/4242293.html [ Failure ]
-editing/pasteboard/4641033.html [ Failure ]
-editing/pasteboard/8145-2.html [ Failure ]
-editing/pasteboard/8145-3.html [ Failure ]
-editing/pasteboard/bad-placeholder.html [ Failure ]
-editing/pasteboard/pasting-tabs.html [ Failure ]
-editing/pasteboard/unrendered-br.html [ Failure ]
 editing/undo/undo-combined-delete-boundary.html [ Failure ]
 editing/undo/undo-combined-delete.html [ Failure ]
 editing/undo/undo-forward-delete-boundary.html [ Failure ]
@@ -2707,6 +2668,46 @@ fast/text/fallback-language-han.html [ Skip ]
 # Media controls tests are OS X only
 media/controls [ Skip ]
 
+# Local pasteboard is not implemented on iOS, so pasteboard tests interfere with each other.
+editing/pasteboard [ Pass Failure ]
+editing/mac/pasteboard [ Pass Failure ]
+editing/execCommand/find-after-replace.html [ Pass Failure ]
+editing/execCommand/paste-1.html [ Pass Failure ]
+editing/execCommand/paste-and-match-style-event.html [ Pass Failure ]
+editing/spelling/spellcheck-async-mutation.html [ Pass Failure ]
+editing/spelling/spellcheck-paste-disabled.html [ Pass Failure ]
+editing/spelling/spellcheck-queue.html [ Pass Failure ]
+editing/spelling/spellcheck-sequencenum.html [ Pass Failure ]
+editing/style/5065910.html [ Pass Failure ]
+editing/style/apply-through-end-of-document.html [ Pass Failure ]
+editing/style/font-family-with-space.html [ Pass Failure ]
+editing/style/non-inheritable-styles.html [ Pass Failure ]
+editing/undo/undo-paste-when-caret-is-not-in-range.html [ Pass Failure ]
+fast/dom/custom/lifecycle-ready-paste.html [ Pass Failure ]
+http/tests/misc/copy-resolves-urls.html [ Pass Failure ]
+editing/inserting/insert-3907422-fix.html [ Pass Failure ]
+fast/forms/textarea-paste-newline.html [ Pass Failure ]
+editing/inserting/insert-3786362-fix.html [ Pass Failure ]
+editing/inserting/insert-paste-bidi-control.html [ Pass Failure ]
+editing/style/smoosh-styles-001.html [ Pass Failure ]
+editing/style/smoosh-styles-003.html [ Pass Failure ]
+editing/style/style-boundary-005.html [ Pass Failure ]
+fast/forms/input-paste-undo.html [ Pass Failure ]
+editing/deleting/paste-with-transparent-background-color.html [ Pass Failure ]
+editing/input/paste-text-ending-with-interchange-newline.html [ Pass Failure ]
+editing/spelling/grammar-markers-hidpi.html [ Pass Failure ]
+editing/spelling/grammar-markers.html [ Pass Failure ]
+editing/spelling/grammar-paste.html [ Pass Failure ]
+editing/spelling/spellcheck-paste-continuous-disabled.html [ Pass Failure ]
+editing/spelling/spellcheck-paste.html [ Pass Failure ]
+editing/undo/orphaned-selection-crash-bug32823-2.html [ Pass Failure ]
+fast/events/clipboard-dataTransferItemList.html [ Pass Failure ]
+editing/input/reveal-contenteditable-on-paste-vertically.html [ Pass Failure ]
+editing/input/reveal-edit-on-paste-vertically.html [ Pass Failure ]
+editing/execCommand/clipboard-access.html [ Pass Failure ]
+editing/execCommand/enabling-and-selection.html [ Pass Failure ]
+fast/forms/plaintext-mode-1.html [ Pass Failure ]
+
 # Latest iOS failures as of Sept 1, 2015
 accessibility/ios-simulator/table-cell-ranges.html [ Failure ]
 canvas/philip/tests/2d.imageData.put.unchanged.html [ Failure ]
@@ -2718,7 +2719,6 @@ compositing/layer-creation/fixed-overlap-extent.html [ Failure ]
 compositing/layer-creation/will-change-layer-creation.html [ Failure ]
 css3/scroll-snap/nested-elements.html [ Failure ]
 css3/scroll-snap/scroll-snap-coordinate.html [ Failure ]
-editing/execCommand/paste-1.html [ Failure ]
 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
 fast/css/text-overflow-ellipsis-text-align-center.html [ Failure ]
 fast/css/text-overflow-ellipsis-text-align-left.html [ Failure ]

@@ -1,3 +1,14 @@
+2015-09-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Consolidate iOS pasteboard test failures.
+
+        Per-process pasteboard is not implemented in iOS DumpRenderTree and WebKitTestRunner,
+        so pasteboard tests interfere with each other.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
         Add a test for swiping back after a same-document navigation

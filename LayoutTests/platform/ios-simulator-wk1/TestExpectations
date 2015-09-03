@@ -21,7 +21,6 @@ editing/deleting/delete-select-all-001.html
 editing/deleting/delete-table-cell-contents.html
 editing/deleting/delete-to-select-table.html
 editing/deleting/forward-delete-empty-table-cell.html
-editing/deleting/paste-with-transparent-background-color.html
 editing/deleting/smart-delete-across-editable-boundaries.html
 editing/deleting/table-cells.html
 editing/execCommand/5119244.html
@@ -41,8 +40,6 @@ editing/execCommand/remove-format-in-table-cell.html
 editing/inserting/5058163-1.html
 editing/inserting/6609479-1.html
 editing/inserting/6609479.html
-editing/inserting/insert-3786362-fix.html
-editing/inserting/insert-3907422-fix.html
 editing/inserting/insert-images-in-pre-x-crash.html
 editing/inserting/insert-paragraph-01.html
 editing/inserting/insert-paragraph-02.html
@@ -50,72 +47,6 @@ editing/inserting/insert-without-enclosing-block.html
 editing/inserting/paragraph-separator-in-table-1.html
 editing/inserting/paragraph-separator-in-table-2.html
 editing/inserting/typing-003.html
-editing/pasteboard/19644-2.html
-editing/pasteboard/4242293-1.html
-editing/pasteboard/4922709.html
-editing/pasteboard/5065605.html
-editing/pasteboard/5156401-1.html
-editing/pasteboard/5387578.html
-editing/pasteboard/5761530-1.html
-editing/pasteboard/5780697-1.html
-editing/pasteboard/5780697-2.html
-editing/pasteboard/avoid-copying-body-with-background.html
-editing/pasteboard/block-wrappers-necessary.html
-editing/pasteboard/contenteditable-pre-2.html
-editing/pasteboard/copy-inside-h1-preserves-h1.html
-editing/pasteboard/copy-paste-bidi.html
-editing/pasteboard/copy-paste-content-starting-and-ending-canvas.html
-editing/pasteboard/copy-paste-converts-fixed.html
-editing/pasteboard/copy-paste-converts-sticky.html
-editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy.html
-editing/pasteboard/copy-paste-inserts-clearing-div.html
-editing/pasteboard/copy-paste-with-important-rules.html
-editing/pasteboard/copy-paste-wraps-position-absolute.html
-editing/pasteboard/copy-text-with-backgroundcolor.html
-editing/pasteboard/copy-text-with-wrapped-tag.html
-editing/pasteboard/display-block-on-spans.html
-editing/pasteboard/do-not-copy-unnecessary-styles-2.html
-editing/pasteboard/do-not-copy-unnecessary-styles.html
-editing/pasteboard/heading-crash.html
-editing/pasteboard/line-feed-between-br-and-b-should-not-reorder-pasted-content.html
-editing/pasteboard/paste-4039777-fix.html
-editing/pasteboard/paste-TIFF.html
-editing/pasteboard/paste-code-in-pre.html
-editing/pasteboard/paste-into-anchor-text.html
-editing/pasteboard/paste-into-table-cell-2.html
-editing/pasteboard/paste-into-table-cell.html
-editing/pasteboard/paste-list-001.html
-editing/pasteboard/paste-list-002.html
-editing/pasteboard/paste-list-003.html
-editing/pasteboard/paste-noplugin.html
-editing/pasteboard/paste-noscript-xhtml.xhtml
-editing/pasteboard/paste-table-001.html
-editing/pasteboard/paste-table-003.html
-editing/pasteboard/paste-table-cells.html
-editing/pasteboard/paste-text-001.html
-editing/pasteboard/paste-text-005.html
-editing/pasteboard/paste-text-006.html
-editing/pasteboard/paste-text-007.html
-editing/pasteboard/paste-text-010.html
-editing/pasteboard/paste-text-011.html
-editing/pasteboard/paste-text-015.html
-editing/pasteboard/paste-text-017.html
-editing/pasteboard/paste-text-018.html
-editing/pasteboard/paste-text-with-style-2.html
-editing/pasteboard/paste-text-with-style-3.html
-editing/pasteboard/paste-text-with-style-4.html
-editing/pasteboard/paste-text-with-style-5.html
-editing/pasteboard/paste-text-with-style.html
-editing/pasteboard/paste-unrendered-select.html
-editing/pasteboard/paste-wrapped-blockquote-into-nonblockquote.html
-editing/pasteboard/pasting-into-p-should-not-nest-p.html
-editing/pasteboard/preserve-line-break-at-end-of-pasted-content.html
-editing/pasteboard/preserve-underline-color.html
-editing/pasteboard/simplfiying-markup-should-not-strip-content.html
-editing/pasteboard/smart-paste-003-trailing-whitespace.html
-editing/pasteboard/style-from-rules.html
-editing/pasteboard/testcase-9507.html
-editing/pasteboard/undoable-fragment-removes.html
 editing/selection/3690703-2.html
 editing/selection/3690703.html
 editing/selection/3690719.html
@@ -137,7 +68,6 @@ editing/selection/table-lineboundary.html
 editing/spelling/context-menu-suggestions-subword-selection.html
 editing/spelling/spelling-with-whitespace-selection.html
 editing/style/background-color-retained.html
-editing/style/non-inheritable-styles.html
 editing/style/remove-underline-across-paragraph-in-bold.html
 editing/style/remove-underline-across-paragraph.html
 editing/style/remove-underline-after-paragraph-in-bold.html
@@ -174,25 +104,18 @@ editing/style/apple-style-editable-mix.html [ Failure ]
 editing/deleting/delete-button-background-image-none.html
 editing/input/page-up-down-scrolls.html
 editing/input/reveal-contenteditable-on-input-vertically.html
-editing/pasteboard/copy-backslash-with-euc.html
-editing/pasteboard/copy-standalone-image-crash.html
 editing/selection/caret-at-bidi-boundary.html
 editing/spelling/context-menu-suggestions-multiword-selection.html
 editing/spelling/delete-into-misspelled-word.html
 editing/spelling/design-mode-spellcheck-off.html
 editing/spelling/editing-word-with-marker-2.html
 editing/spelling/grammar-edit-word.html
-editing/spelling/grammar-markers-hidpi.html
-editing/spelling/grammar-markers.html
 editing/spelling/grammar.html
 editing/spelling/inline-spelling-markers-hidpi.html
 editing/spelling/inline-spelling-markers.html
 editing/spelling/markers.html
 editing/spelling/move-cursor-around-misspelled-word.html
 editing/spelling/spellcheck-attribute.html
-editing/spelling/spellcheck-paste-continuous-disabled.html
-editing/spelling/spellcheck-paste-disabled.html
-editing/spelling/spellcheck-paste.html
 editing/spelling/spelling-attribute-at-child.html
 editing/spelling/spelling-attribute-change.html
 editing/spelling/spelling-backspace-between-lines.html
@@ -335,13 +258,10 @@ editing/input/password-echo-passnode.html [ Failure ]
 editing/input/password-echo-passnode2.html [ Failure ]
 editing/input/password-echo-passnode3.html [ Failure ]
 editing/input/password-echo-textnode.html [ Failure ]
-editing/input/paste-text-ending-with-interchange-newline.html [ Failure ]
 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
 editing/input/reveal-caret-of-transformed-multiline-input.html [ Failure ]
-editing/input/reveal-contenteditable-on-paste-vertically.html [ Failure ]
 editing/input/reveal-edit-on-input-vertically.html [ Failure ]
-editing/input/reveal-edit-on-paste-vertically.html [ Failure ]
 editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable.html [ Failure ]
 editing/input/scroll-to-edge-if-paragraph-separator-at-end-of-document-contenteditable.html [ Failure ]
 editing/input/scroll-viewport-page-up-down.html [ Failure ]
@@ -356,112 +276,9 @@ editing/inserting/insert-3800346-fix.html [ Failure ]
 editing/inserting/insert-br-007.html [ Failure ]
 editing/inserting/insert-character-in-first-letter-crash.html [ Failure ]
 editing/inserting/insert-paragraph-selection-outside-contenteditable.html [ Failure ]
-editing/inserting/insert-paste-bidi-control.html [ Failure ]
 editing/inserting/insert-tab-001.html [ Failure ]
 editing/inserting/smart-quote-with-all-configurations.html [ Failure ]
 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
-editing/pasteboard/19644-1.html [ Failure ]
-editing/pasteboard/4076267-3.html [ Failure ]
-editing/pasteboard/4944770-1.html [ Failure ]
-editing/pasteboard/4944770-2.html [ Failure ]
-editing/pasteboard/4989774.html [ Failure ]
-editing/pasteboard/5006779.html [ Failure ]
-editing/pasteboard/5028447.html [ Failure ]
-editing/pasteboard/5071074.html [ Failure ]
-editing/pasteboard/5075944.html [ Failure ]
-editing/pasteboard/5478250.html [ Failure ]
-editing/pasteboard/5601583-1.html [ Failure ]
-editing/pasteboard/8145-1.html [ Failure ]
-editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
-editing/pasteboard/cleanup-on-move.html [ Failure ]
-editing/pasteboard/clipboard-customData.html [ Failure ]
-editing/pasteboard/contenteditable-pre.html [ Failure ]
-editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html [ ImageOnlyFailure ]
-editing/pasteboard/copy-in-password-field.html [ Failure ]
-editing/pasteboard/copy-null-characters.html [ Failure ]
-editing/pasteboard/copy-resolves-urls.html [ Failure ]
-editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
-editing/pasteboard/copy-without-selection.html [ Failure ]
-editing/pasteboard/cut-text-001.html [ Failure ]
-editing/pasteboard/drag-drop-to-data-url.html [ Failure ]
-editing/pasteboard/emacs-cntl-y-001.html [ Failure ]
-editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
-editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
-editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure ]
-editing/pasteboard/file-input-files-access.html [ Failure ]
-editing/pasteboard/files-during-page-drags.html [ Failure ]
-editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
-editing/pasteboard/input-field-1.html [ Failure ]
-editing/pasteboard/input-with-display-none-div.html [ Failure ]
-editing/pasteboard/input-with-visibility-hidden.html [ Failure ]
-editing/pasteboard/insert-div-text-into-text.html [ Failure ]
-editing/pasteboard/interchange-newline-2.html [ Failure ]
-editing/pasteboard/interchange-newline-4.html [ Failure ]
-editing/pasteboard/merge-end-2.html [ Failure ]
-editing/pasteboard/merge-end-3.html [ Failure ]
-editing/pasteboard/merge-end-4.html [ Failure ]
-editing/pasteboard/merge-end-5.html [ Failure ]
-editing/pasteboard/merge-end-list-2.html [ Failure ]
-editing/pasteboard/merge-end-list.html [ Failure ]
-editing/pasteboard/merge-end-table-2.html [ Failure ]
-editing/pasteboard/merge-end-table.html [ Failure ]
-editing/pasteboard/onpaste-text-html-types.html [ Failure ]
-editing/pasteboard/onpaste-text-html.html [ Failure ]
-editing/pasteboard/page-zoom.html [ Failure ]
-editing/pasteboard/paste-2.html [ Failure ]
-editing/pasteboard/paste-4038267-fix.html [ Failure ]
-editing/pasteboard/paste-and-sanitize.html [ Failure ]
-editing/pasteboard/paste-before-tab-span.html [ Failure ]
-editing/pasteboard/paste-blockquote-3.html [ Failure ]
-editing/pasteboard/paste-blockquote-and-paragraph-break.html [ Failure ]
-editing/pasteboard/paste-global-selection.html [ Failure ]
-editing/pasteboard/paste-line-endings-001.html [ Failure ]
-editing/pasteboard/paste-line-endings-002.html [ Failure ]
-editing/pasteboard/paste-line-endings-003.html [ Failure ]
-editing/pasteboard/paste-line-endings-004.html [ Failure ]
-editing/pasteboard/paste-line-endings-005.html [ Failure ]
-editing/pasteboard/paste-line-endings-006.html [ Failure ]
-editing/pasteboard/paste-line-endings-007.html [ Failure ]
-editing/pasteboard/paste-line-endings-008.html [ Failure ]
-editing/pasteboard/paste-line-endings-009.html [ Failure ]
-editing/pasteboard/paste-line-endings-010.html [ Failure ]
-editing/pasteboard/paste-list-004.html [ Failure ]
-editing/pasteboard/paste-noscript-svg.html [ Failure ]
-editing/pasteboard/paste-noscript.html [ Failure ]
-editing/pasteboard/paste-placeholder-input.html [ Failure ]
-editing/pasteboard/paste-plaintext-user-select-none.html [ Failure ]
-editing/pasteboard/paste-pre-001.html [ Failure ]
-editing/pasteboard/paste-sanitize-crash-1.html [ Failure ]
-editing/pasteboard/paste-sanitize-crash-2.html [ Failure ]
-editing/pasteboard/paste-table-002.html [ Failure ]
-editing/pasteboard/paste-text-002.html [ Failure ]
-editing/pasteboard/paste-text-003.html [ Failure ]
-editing/pasteboard/paste-text-004.html [ Failure ]
-editing/pasteboard/paste-text-008.html [ Failure ]
-editing/pasteboard/paste-text-009.html [ Failure ]
-editing/pasteboard/paste-text-012.html [ Failure ]
-editing/pasteboard/paste-text-013.html [ Failure ]
-editing/pasteboard/paste-text-014.html [ Failure ]
-editing/pasteboard/paste-text-016.html [ Failure ]
-editing/pasteboard/paste-text-at-tabspan-001.html [ Failure ]
-editing/pasteboard/paste-text-at-tabspan-002.html [ Failure ]
-editing/pasteboard/paste-text-at-tabspan-003.html [ Failure ]
-editing/pasteboard/paste-text-events.html [ Failure ]
-editing/pasteboard/paste-visible-script.html [ Failure ]
-editing/pasteboard/paste-without-nesting.html [ Failure ]
-editing/pasteboard/paste-xml.xhtml [ Failure ]
-editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
-editing/pasteboard/quirks-mode-br-1.html [ Failure ]
-editing/pasteboard/select-element-1.html [ Failure ]
-editing/pasteboard/smart-paste-001.html [ Failure ]
-editing/pasteboard/smart-paste-002.html [ Failure ]
-editing/pasteboard/smart-paste-003.html [ Failure ]
-editing/pasteboard/smart-paste-004.html [ Failure ]
-editing/pasteboard/smart-paste-005.html [ Failure ]
-editing/pasteboard/smart-paste-006.html [ Failure ]
-editing/pasteboard/smart-paste-007.html [ Failure ]
-editing/pasteboard/smart-paste-008.html [ Failure ]
-editing/pasteboard/styled-element-markup.html [ Failure ]
 editing/secure-input/password-input-changed-type.html [ Failure ]
 editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
 editing/secure-input/password-input-focusing.html [ Failure ]
@@ -557,14 +374,11 @@ editing/spelling/spellcheck-input-search-crash.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
 editing/spelling/spelling.html [ Failure ]
 editing/style/5046875-2.html [ Failure ]
-editing/style/5065910.html [ Failure ]
 editing/style/5084241.html [ Failure ]
-editing/style/apply-through-end-of-document.html [ Failure ]
 editing/style/create-block-for-style-001.html [ Failure ]
 editing/style/create-block-for-style-004.html [ Failure ]
 editing/style/create-block-for-style-009.html [ Failure ]
 editing/style/create-block-for-style-011.html [ Failure ]
-editing/style/font-family-with-space.html [ Failure ]
 editing/style/fore-color-by-name.html [ Failure ]
 editing/style/make-text-writing-direction-inline-mac.html [ Failure ]
 editing/style/push-down-font-styles-mac.html [ Failure ]
@@ -572,14 +386,11 @@ editing/style/push-down-font-styles-win.html [ Failure ]
 editing/style/push-down-implicit-styles-around-list-mac.html [ Failure ]
 editing/style/push-down-implicit-styles-around-list-win.html [ Failure ]
 editing/style/push-down-implicit-styles-mac.html [ Failure ]
-editing/style/smoosh-styles-001.html [ Failure ]
-editing/style/smoosh-styles-003.html [ Failure ]
 editing/style/style-3681552-fix-001.html [ Failure ]
 editing/style/style-3681552-fix-002.html [ Failure ]
 editing/style/style-3690704-fix.html [ Failure ]
 editing/style/style-boundary-002.html [ Failure ]
 editing/style/style-boundary-003.html [ Failure ]
-editing/style/style-boundary-005.html [ Failure ]
 editing/style/stylewithcss-without-selection.html [ Failure ]
 editing/style/text-indent.html [ Failure ]
 editing/style/toggle-style-bold-italic-mixed-editability.html [ Failure ]
@@ -658,8 +469,6 @@ editing/inserting/typing-001.html [ Failure ]
 editing/inserting/typing-002.html [ Failure ]
 editing/inserting/typing-around-br-001.html [ Failure ]
 editing/inserting/typing-around-image-001.html [ Failure ]
-editing/pasteboard/merge-end-blockquote.html [ Failure ]
-editing/pasteboard/paste-match-style-002.html [ Failure ]
 editing/unsupported-content/list-type-after.html [ Failure ]
 editing/unsupported-content/list-type-before.html [ Failure ]
 
@@ -684,7 +493,6 @@ editing/execCommand/5207369.html [ Failure Pass ]
 editing/execCommand/5210032.html [ Failure Pass ]
 editing/execCommand/5573879.html [ Failure Pass ]
 editing/execCommand/5604313.html [ Failure Pass ]
-editing/execCommand/enabling-and-selection.html [ Failure Pass ]
 editing/input/insert-wrapping-space-in-textarea.html [ Failure Pass ]
 editing/input/set-value-on-input-and-delete.html [ Failure Pass ]
 editing/input/set-value-on-input-and-forward-delete.html [ Failure Pass ]
@@ -705,17 +513,6 @@ editing/inserting/6104369-2.html [ Failure Pass ]
 editing/inserting/6104369.html [ Failure Pass ]
 editing/inserting/6703873-2.html [ Failure Pass ]
 editing/inserting/caret-position.html [ Failure Pass ]
-editing/pasteboard/4744008.html [ Failure Pass ]
-editing/pasteboard/4840662.html [ Failure Pass ]
-editing/pasteboard/4930986-1.html [ Failure Pass ]
-editing/pasteboard/4930986-2.html [ Failure Pass ]
-editing/pasteboard/5245519.html [ Failure Pass ]
-editing/pasteboard/5480736.html [ Failure Pass ]
-editing/pasteboard/5521237.html [ Failure Pass ]
-editing/pasteboard/5665299.html [ Failure Pass ]
-editing/pasteboard/6018653.html [ Failure Pass ]
-editing/pasteboard/copy-image-with-alt-text.html [ Failure Pass ]
-editing/pasteboard/copy-paste-float.html [ Failure Pass ]
 editing/selection/51344.html [ Failure Pass ]
 editing/selection/find-in-text-control.html [ Failure Pass ]
 editing/selection/hit-test-on-text-with-line-height.html [ Failure Pass ]
@@ -1029,13 +826,11 @@ fast/forms/datetime/datetime-interactive-validation-required.html [ Failure ]
 fast/forms/datetimelocal/datetimelocal-interactive-validation-required.html [ Failure ]
 fast/forms/input-maxlength-ime-completed.html [ Failure ]
 fast/forms/input-maxlength-ime-preedit.html [ Failure ]
-fast/forms/input-paste-undo.html [ Failure ]
 fast/forms/input-text-scroll-left-on-blur.html [ Failure Pass ]
 fast/forms/interactive-validation-assertion-by-validate-twice.html [ Failure ]
 fast/forms/interactive-validation-prevented.html [ Failure ]
 fast/forms/month/month-interactive-validation-required.html [ Failure ]
 fast/forms/number/number-interactive-validation-required.html [ Failure ]
-fast/forms/plaintext-mode-1.html [ Failure ]
 fast/forms/textarea-newline.html [ Failure ]
 fast/forms/time/time-interactive-validation-required.html [ Failure ]
 fast/forms/validation-message-on-checkbox.html [ Failure ]
@@ -1110,7 +905,6 @@ fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-resize-contents.html
-fast/events/clipboard-dataTransferItemList.html
 fast/forms/interactive-validation-crash-by-style-override.html
 fast/forms/interactive-validation-select-crash.html
 fast/forms/select-empty-optgroup.html
@@ -1497,24 +1291,9 @@ accessibility/ios-simulator/iframe-access.html [ Failure ]
 animations/simultaneous-start-transform.html [ Failure ]
 compositing/iframes/display-none-subframe.html [ Failure ]
 css3/blending/blend-mode-simple-composited.html [ Failure ]
-editing/execCommand/find-after-replace.html [ Failure ]
-editing/pasteboard/cjk-line-height.html [ Failure ]
-editing/pasteboard/copy-paste-attachment.html [ Failure ]
-editing/pasteboard/copy-paste-first-line-in-textarea.html [ Failure ]
-editing/pasteboard/copy-paste-pre-line-content.html [ Failure ]
-editing/pasteboard/copy-paste-ruby-text-with-block.html [ Failure ]
-editing/pasteboard/copy-standalone-image.html [ Failure ]
-editing/pasteboard/crash-accessing-clipboardData-types.html [ Failure ]
-editing/pasteboard/get-data-text-plain-paste.html [ Failure ]
-editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
-editing/pasteboard/paste-blockquote-before-blockquote.html [ Failure ]
-editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html [ Failure ]
-editing/pasteboard/paste-match-style-001.html [ Failure ]
-editing/pasteboard/paste-text-019.html [ Failure ]
 editing/selection/caret-mode-document-begin-end.html [ Failure ]
 fast/events/onchange-passwordfield.html [ Failure ]
 fast/forms/input-text-option-delete.html [ Failure ]
-fast/forms/textarea-paste-newline.html [ Failure ]
 fast/xsl/xslt-extra-content-at-end.xml [ Failure ]
 fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
 http/tests/security/video-cross-origin-accesssameorigin.html [ Failure ]
