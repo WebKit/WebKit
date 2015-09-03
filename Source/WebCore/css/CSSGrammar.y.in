@@ -31,6 +31,27 @@
     CSSParserString string;
     CSSSelector::MarginBoxType marginBox;
     CSSParserValue value;
+    CSSParserSelectorCombinator relation;
+    StyleRuleBase* rule;
+    Vector<RefPtr<StyleRuleBase>>* ruleList;
+    MediaQuerySet* mediaList;
+    MediaQuery* mediaQuery;
+    MediaQuery::Restrictor mediaQueryRestrictor;
+    MediaQueryExp* mediaQueryExp;
+    Vector<CSSParser::SourceSize>* sourceSizeList;
+    Vector<std::unique_ptr<MediaQueryExp>>* mediaQueryExpList;
+    StyleKeyframe* keyframe;
+    Vector<RefPtr<StyleKeyframe>>* keyframeRuleList;
+    CSSPropertyID id;
+    CSSParserSelector* selector;
+    Vector<std::unique_ptr<CSSParserSelector>>* selectorList;
+    bool boolean;
+    CSSSelector::Match match;
+    int integer;
+    char character;
+    CSSParserValueList* valueList;
+    Vector<CSSParserString>* stringList;
+    CSSParser::Location location;
 }
 
 %{
@@ -225,14 +246,11 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 %token <string> UNICODERANGE
 
-%union { CSSParserSelectorCombinator relation; }
 %type <relation> combinator
 
-%union { StyleRuleBase* rule; }
 %type <rule> block_rule block_valid_rule font_face import keyframes media page region rule ruleset valid_rule
 %destructor { if ($$) $$->deref(); } block_rule block_valid_rule font_face import keyframes media page region rule ruleset valid_rule
 
-%union { Vector<RefPtr<StyleRuleBase>>* ruleList; }
 %type <ruleList> block_rule_list block_valid_rule_list
 %destructor { delete $$; } block_rule_list block_valid_rule_list
 
@@ -240,22 +258,17 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 %type <marginBox> margin_sym
 
-%union { MediaQuerySet* mediaList; }
 %type <mediaList> media_list maybe_media_list
 %destructor { if ($$) $$->deref(); } media_list maybe_media_list
 
-%union { MediaQuery* mediaQuery; }
 %type <mediaQuery> media_query
 %destructor { delete $$; } media_query
 
-%union { MediaQuery::Restrictor mediaQueryRestrictor; }
 %type <mediaQueryRestrictor> maybe_media_restrictor
 
-%union { MediaQueryExp* mediaQueryExp; }
 %type <mediaQueryExp> media_query_exp base_media_query_exp
 %destructor { delete $$; } media_query_exp base_media_query_exp
 
-%union { Vector<CSSParser::SourceSize>* sourceSizeList; }
 %type <sourceSizeList> source_size_list
 %destructor { delete $$; } source_size_list
 
@@ -265,17 +278,14 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <value> source_size_length
 %destructor { destroy($$); } source_size_length
 
-%union { Vector<std::unique_ptr<MediaQueryExp>>* mediaQueryExpList; }
 %type <mediaQueryExpList> media_query_exp_list maybe_and_media_query_exp_list
 %destructor { delete $$; } media_query_exp_list maybe_and_media_query_exp_list
 
 %type <string> keyframe_name
 
-%union { StyleKeyframe* keyframe; }
 %type <keyframe> keyframe_rule
 %destructor { if ($$) $$->deref(); } keyframe_rule
 
-%union { Vector<RefPtr<StyleKeyframe>>* keyframeRuleList; }
 %type <keyframeRuleList> keyframes_rule
 %destructor { delete $$; } keyframes_rule
 
@@ -286,36 +296,27 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <value> calc_function function min_or_max_function term
 %destructor { destroy($$); } calc_function function min_or_max_function term
 
-%union { CSSPropertyID id; }
 %type <id> property
 
-%union { CSSParserSelector* selector; }
 %type <selector> attrib class page_selector pseudo pseudo_page complex_selector complex_selector_with_trailing_whitespace compound_selector specifier specifier_list
 %destructor { delete $$; } attrib class page_selector pseudo pseudo_page complex_selector complex_selector_with_trailing_whitespace compound_selector specifier specifier_list
 
-%union { Vector<std::unique_ptr<CSSParserSelector>>* selectorList; }
 %type <selectorList> selector_list nested_selector_list simple_selector_list nth_selector_ending
 %destructor { delete $$; } selector_list nested_selector_list simple_selector_list
 %destructor { delete $$; } nth_selector_ending
 
-%union { bool boolean; }
 %type <boolean> attrib_flags declaration declaration_list decl_list priority
 
-%union { CSSSelector::Match match; }
 %type <match> match
 
-%union { int integer; }
 %type <integer> unary_operator maybe_unary_operator
 
-%union { char character; }
 %type <character> operator calc_func_operator
 
-%union { CSSParserValueList* valueList; }
 %type <valueList> calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
 %destructor { delete $$; } calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
 
 %type <string> lang_range
-%union { Vector<CSSParserString>* stringList; }
 %type <stringList> comma_separated_lang_ranges
 %destructor { delete $$; } comma_separated_lang_ranges
 
@@ -323,7 +324,6 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 %type <string> element_name
 
-%union { CSSParser::Location location; }
 %type <location> error_location
 
 #if ENABLE_CSS_GRID_LAYOUT

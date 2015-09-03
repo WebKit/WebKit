@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 # Find common packages (used by all ports)
 # -----------------------------------------------------------------------------
-find_package(BISON 2.3 REQUIRED)
+find_package(BISON 2.1 REQUIRED)
 if (!APPLE)
     find_package(FLEX 2.5.34 REQUIRED)
 endif ()

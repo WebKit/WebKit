@@ -1,3 +1,13 @@
+2015-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Make bison grammar compatible with bison 2.1
+        https://bugs.webkit.org/show_bug.cgi?id=148731
+
+        Reviewed by Tim Horton.
+
+        * Source/cmake/WebKitCommon.cmake:
+        Support bison 2.1.
+
 2015-08-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Build with Debug Fission on by default on Debug builds.

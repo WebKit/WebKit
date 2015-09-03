@@ -51,45 +51,49 @@ using namespace XPath;
 %lex-param { parser }
 %parse-param { Parser& parser }
 
-%union { NumericOp::Opcode numericOpcode; }
+%union { 
+    NumericOp::Opcode numericOpcode; 
+    EqTestOp::Opcode equalityTestOpcode;
+    StringImpl* string;
+    Step::Axis axis;
+    LocationPath* locationPath;
+    Step::NodeTest* nodeTest;
+    Vector<std::unique_ptr<Expression>>* expressionVector;
+    Step* step;
+    Expression* expression; 
+}
 %left <numericOpcode> MULOP
 
-%union { EqTestOp::Opcode equalityTestOpcode; }
 %left <equalityTestOpcode> EQOP RELOP
 
 %left PLUS MINUS
 
 %left OR AND
 
-%union { StringImpl* string; }
 %token <string> FUNCTIONNAME LITERAL NAMETEST NUMBER NODETYPE VARIABLEREFERENCE
 %destructor { if ($$) $$->deref(); } FUNCTIONNAME LITERAL NAMETEST NUMBER NODETYPE VARIABLEREFERENCE
 
-%union { Step::Axis axis; }
 %token <axis> AXISNAME
 %type <axis> AxisSpecifier
 
 %token COMMENT DOTDOT PI NODE SLASHSLASH TEXT XPATH_ERROR
 
-%union { LocationPath* locationPath; }
 %type <locationPath> LocationPath AbsoluteLocationPath RelativeLocationPath
 %destructor { delete $$; } LocationPath AbsoluteLocationPath RelativeLocationPath
 
-%union { Step::NodeTest* nodeTest; }
 %type <nodeTest> NodeTest
 %destructor { delete $$; } NodeTest
 
-%union { Vector<std::unique_ptr<Expression>>* expressionVector; }
 %type <expressionVector> ArgumentList PredicateList OptionalPredicateList
 %destructor { delete $$; } ArgumentList PredicateList OptionalPredicateList
 
-%union { Step* step; }
 %type <step> Step AbbreviatedStep DescendantOrSelf
 %destructor { delete $$; } Step AbbreviatedStep DescendantOrSelf
 
-%union { Expression* expression; }
 %type <expression> AdditiveExpr AndExpr Argument EqualityExpr Expr FilterExpr FunctionCall MultiplicativeExpr OrExpr PathExpr Predicate PrimaryExpr RelationalExpr UnaryExpr UnionExpr
 %destructor { delete $$; } AdditiveExpr AndExpr Argument EqualityExpr Expr FilterExpr FunctionCall MultiplicativeExpr OrExpr PathExpr Predicate PrimaryExpr RelationalExpr UnaryExpr UnionExpr
+
+
 
 %{
 
