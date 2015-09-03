@@ -44,7 +44,7 @@ public:
     
     virtual ~AccessorCallJITStubRoutine();
     
-    virtual bool visitWeak(VM&, RepatchBuffer&) override;
+    virtual bool visitWeak(VM&) override;
     
     std::unique_ptr<CallLinkInfo> m_callLinkInfo;
 };

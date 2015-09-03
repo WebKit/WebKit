@@ -35,7 +35,6 @@
 #include "LinkBuffer.h"
 #include "OperandsInlines.h"
 #include "JSCInlines.h"
-#include "RepatchBuffer.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace DFG {
@@ -167,10 +166,7 @@ void compileOSRExit(ExecState* exec)
                 toCString(ignoringContext<DumpContext>(operands)).data()));
     }
     
-    {
-        RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));
-    }
+    MacroAssembler::repatchJump(exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));
     
     vm->osrExitJumpDestination = exit.m_code.code().executableAddress();
 }

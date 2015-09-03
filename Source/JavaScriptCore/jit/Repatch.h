@@ -42,12 +42,12 @@ void buildPutByIdList(ExecState*, JSValue, Structure*, const Identifier&, const 
 void repatchIn(ExecState*, JSCell*, const Identifier&, bool wasFound, const PropertySlot&, StructureStubInfo&);
 void linkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSFunction* callee, MacroAssemblerCodePtr);
 void linkSlowFor(ExecState*, CallLinkInfo&);
-void unlinkFor(VM&, RepatchBuffer&, CallLinkInfo&);
+void unlinkFor(VM&, CallLinkInfo&);
 void linkVirtualFor(ExecState*, CallLinkInfo&);
 void linkPolymorphicCall(ExecState*, CallLinkInfo&, CallVariant);
-void resetGetByID(RepatchBuffer&, CodeBlock*, StructureStubInfo&);
-void resetPutByID(RepatchBuffer&, CodeBlock*, StructureStubInfo&);
-void resetIn(RepatchBuffer&, CodeBlock*, StructureStubInfo&);
+void resetGetByID(CodeBlock*, StructureStubInfo&);
+void resetPutByID(CodeBlock*, StructureStubInfo&);
+void resetIn(CodeBlock*, StructureStubInfo&);
 
 } // namespace JSC
 

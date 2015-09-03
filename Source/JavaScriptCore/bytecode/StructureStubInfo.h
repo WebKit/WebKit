@@ -165,7 +165,7 @@ struct StructureStubInfo {
     // outgoing GC pointers are known to point to currently marked objects; this method is
     // allowed to accomplish this by either clearing those pointers somehow or by proving that
     // they have already been marked. It is not allowed to mark new objects.
-    bool visitWeakReferences(VM&, RepatchBuffer&);
+    bool visitWeakReferences(VM&);
         
     bool seenOnce()
     {

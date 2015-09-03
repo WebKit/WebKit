@@ -39,8 +39,6 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
-class RepatchBuffer;
-
 class CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
 public:
     enum CallType { None, Call, CallVarargs, Construct, ConstructVarargs };
@@ -90,7 +88,7 @@ public:
     }
 
     bool isLinked() { return m_stub || m_callee; }
-    void unlink(VM&, RepatchBuffer&);
+    void unlink(VM&);
 
     void setUpCall(CallType callType, CodeOrigin codeOrigin, unsigned calleeGPR)
     {
@@ -278,7 +276,7 @@ public:
         return m_codeOrigin;
     }
 
-    void visitWeak(VM&, RepatchBuffer&);
+    void visitWeak(VM&);
 
 private:
     CodeLocationNearCall m_callReturnLocation;

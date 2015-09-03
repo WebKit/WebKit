@@ -82,7 +82,7 @@ public:
     
     bool doesCalls() const { return type() == Getter || type() == CustomGetter; }
     
-    bool visitWeak(VM&, RepatchBuffer&) const;
+    bool visitWeak(VM&) const;
 
 private:
     friend class CodeBlock;
@@ -115,7 +115,7 @@ public:
     
     bool didSelfPatching() const; // Are any of the accesses SimpleInline?
     
-    bool visitWeak(VM&, RepatchBuffer&) const;
+    bool visitWeak(VM&) const;
 
 private:
     friend class CodeBlock;

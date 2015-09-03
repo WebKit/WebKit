@@ -180,10 +180,7 @@ namespace JSC {
         CallLinkInfo* callLinkInfo;
     };
 
-    // Near calls can only be patched to other JIT code, regular calls can be patched to JIT code or relinked to stub functions.
-    void ctiPatchNearCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction);
-    void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction);
-    void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction);
+    void ctiPatchCallByReturnAddress(ReturnAddressPtr, FunctionPtr newCalleeFunction);
 
     class JIT : private JSInterfaceJIT {
         friend class JITSlowPathCall;

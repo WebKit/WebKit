@@ -44,7 +44,6 @@
 #include "JITStubs.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
-#include "RepatchBuffer.h"
 
 namespace JSC { namespace FTL {
 
@@ -619,8 +618,6 @@ static void fixFunctionBasedOnStackMaps(
         });
     }
     
-    RepatchBuffer repatchBuffer(codeBlock);
-
     auto iter = recordMap.find(state.handleStackOverflowExceptionStackmapID);
     // It's sort of remotely possible that we won't have an in-band exception handling
     // path, for some kinds of functions.
@@ -633,7 +630,7 @@ static void fixFunctionBasedOnStackMaps(
 
             RELEASE_ASSERT(stackOverflowException.isSet());
 
-            repatchBuffer.replaceWithJump(source, state.finalizer->handleExceptionsLinkBuffer->locationOf(stackOverflowException));
+            MacroAssembler::replaceWithJump(source, state.finalizer->handleExceptionsLinkBuffer->locationOf(stackOverflowException));
         }
     }
     
@@ -647,7 +644,7 @@ static void fixFunctionBasedOnStackMaps(
             CodeLocationLabel source = CodeLocationLabel(
                 bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
             
-            repatchBuffer.replaceWithJump(source, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
+            MacroAssembler::replaceWithJump(source, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
         }
     }
     
@@ -670,7 +667,7 @@ static void fixFunctionBasedOnStackMaps(
                 if (info.m_isInvalidationPoint)
                     jitCode->common.jumpReplacements.append(JumpReplacement(source, info.m_thunkAddress));
                 else
-                    repatchBuffer.replaceWithJump(source, info.m_thunkAddress);
+                    MacroAssembler::replaceWithJump(source, info.m_thunkAddress);
             }
         }
         

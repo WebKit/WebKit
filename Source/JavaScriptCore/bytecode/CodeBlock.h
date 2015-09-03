@@ -80,7 +80,6 @@ namespace JSC {
 
 class ExecState;
 class LLIntOffsetsExtractor;
-class RepatchBuffer;
 class TypeLocation;
 
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
@@ -982,8 +981,8 @@ private:
     void insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruction, 0, UnsafeVectorOverflow>&);
 
 #if ENABLE(JIT)
-    void resetStubInternal(RepatchBuffer&, StructureStubInfo&);
-    void resetStubDuringGCInternal(RepatchBuffer&, StructureStubInfo&);
+    void resetStubInternal(StructureStubInfo&);
+    void resetStubDuringGCInternal(StructureStubInfo&);
 #endif
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;

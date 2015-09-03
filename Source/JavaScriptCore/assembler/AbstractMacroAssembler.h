@@ -935,6 +935,66 @@ public:
 
     AssemblerType m_assembler;
     
+    static void linkJump(void* code, Jump jump, CodeLocationLabel target)
+    {
+        AssemblerType::linkJump(code, jump.m_label, target.dataLocation());
+    }
+
+    static void linkPointer(void* code, AssemblerLabel label, void* value)
+    {
+        AssemblerType::linkPointer(code, label, value);
+    }
+
+    static void* getLinkerAddress(void* code, AssemblerLabel label)
+    {
+        return AssemblerType::getRelocatedAddress(code, label);
+    }
+
+    static unsigned getLinkerCallReturnOffset(Call call)
+    {
+        return AssemblerType::getCallReturnOffset(call.m_label);
+    }
+
+    static void repatchJump(CodeLocationJump jump, CodeLocationLabel destination)
+    {
+        AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
+    }
+
+    static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)
+    {
+        AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
+    }
+
+    static void repatchCompact(CodeLocationDataLabelCompact dataLabelCompact, int32_t value)
+    {
+        AssemblerType::repatchCompact(dataLabelCompact.dataLocation(), value);
+    }
+    
+    static void repatchInt32(CodeLocationDataLabel32 dataLabel32, int32_t value)
+    {
+        AssemblerType::repatchInt32(dataLabel32.dataLocation(), value);
+    }
+
+    static void repatchPointer(CodeLocationDataLabelPtr dataLabelPtr, void* value)
+    {
+        AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
+    }
+    
+    static void* readPointer(CodeLocationDataLabelPtr dataLabelPtr)
+    {
+        return AssemblerType::readPointer(dataLabelPtr.dataLocation());
+    }
+    
+    static void replaceWithLoad(CodeLocationConvertibleLoad label)
+    {
+        AssemblerType::replaceWithLoad(label.dataLocation());
+    }
+    
+    static void replaceWithAddressComputation(CodeLocationConvertibleLoad label)
+    {
+        AssemblerType::replaceWithAddressComputation(label.dataLocation());
+    }
+
 protected:
     AbstractMacroAssembler()
         : m_randomSource(cryptographicallyRandomNumber())
@@ -1031,67 +1091,6 @@ protected:
     unsigned m_tempRegistersValidBits;
 
     friend class LinkBuffer;
-    friend class RepatchBuffer;
-
-    static void linkJump(void* code, Jump jump, CodeLocationLabel target)
-    {
-        AssemblerType::linkJump(code, jump.m_label, target.dataLocation());
-    }
-
-    static void linkPointer(void* code, AssemblerLabel label, void* value)
-    {
-        AssemblerType::linkPointer(code, label, value);
-    }
-
-    static void* getLinkerAddress(void* code, AssemblerLabel label)
-    {
-        return AssemblerType::getRelocatedAddress(code, label);
-    }
-
-    static unsigned getLinkerCallReturnOffset(Call call)
-    {
-        return AssemblerType::getCallReturnOffset(call.m_label);
-    }
-
-    static void repatchJump(CodeLocationJump jump, CodeLocationLabel destination)
-    {
-        AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
-    }
-
-    static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)
-    {
-        AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
-    }
-
-    static void repatchCompact(CodeLocationDataLabelCompact dataLabelCompact, int32_t value)
-    {
-        AssemblerType::repatchCompact(dataLabelCompact.dataLocation(), value);
-    }
-    
-    static void repatchInt32(CodeLocationDataLabel32 dataLabel32, int32_t value)
-    {
-        AssemblerType::repatchInt32(dataLabel32.dataLocation(), value);
-    }
-
-    static void repatchPointer(CodeLocationDataLabelPtr dataLabelPtr, void* value)
-    {
-        AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
-    }
-    
-    static void* readPointer(CodeLocationDataLabelPtr dataLabelPtr)
-    {
-        return AssemblerType::readPointer(dataLabelPtr.dataLocation());
-    }
-    
-    static void replaceWithLoad(CodeLocationConvertibleLoad label)
-    {
-        AssemblerType::replaceWithLoad(label.dataLocation());
-    }
-    
-    static void replaceWithAddressComputation(CodeLocationConvertibleLoad label)
-    {
-        AssemblerType::replaceWithAddressComputation(label.dataLocation());
-    }
 
 private:
 

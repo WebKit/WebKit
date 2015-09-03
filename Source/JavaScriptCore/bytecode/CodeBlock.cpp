@@ -57,7 +57,6 @@
 #include "ProfilerDatabase.h"
 #include "ReduceWhitespace.h"
 #include "Repatch.h"
-#include "RepatchBuffer.h"
 #include "SlotVisitorInlines.h"
 #include "StackVisitor.h"
 #include "TypeLocationCache.h"
@@ -2686,18 +2685,16 @@ void CodeBlock::finalizeUnconditionally()
 #if ENABLE(JIT)
     // Handle inline caches.
     if (!!jitCode()) {
-        RepatchBuffer repatchBuffer(this);
-        
         for (auto iter = callLinkInfosBegin(); !!iter; ++iter)
-            (*iter)->visitWeak(*vm(), repatchBuffer);
+            (*iter)->visitWeak(*vm());
 
         for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
             StructureStubInfo& stubInfo = **iter;
             
-            if (stubInfo.visitWeakReferences(*vm(), repatchBuffer))
+            if (stubInfo.visitWeakReferences(*vm()))
                 continue;
             
-            resetStubDuringGCInternal(repatchBuffer, stubInfo);
+            resetStubDuringGCInternal(stubInfo);
         }
     }
 #endif
@@ -2784,11 +2781,10 @@ void CodeBlock::resetStub(StructureStubInfo& stubInfo)
     
     ConcurrentJITLocker locker(m_lock);
     
-    RepatchBuffer repatchBuffer(this);
-    resetStubInternal(repatchBuffer, stubInfo);
+    resetStubInternal(stubInfo);
 }
 
-void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+void CodeBlock::resetStubInternal(StructureStubInfo& stubInfo)
 {
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
     
@@ -2801,20 +2797,20 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
     RELEASE_ASSERT(JITCode::isJIT(jitType()));
     
     if (isGetByIdAccess(accessType))
-        resetGetByID(repatchBuffer, this, stubInfo);
+        resetGetByID(this, stubInfo);
     else if (isPutByIdAccess(accessType))
-        resetPutByID(repatchBuffer, this, stubInfo);
+        resetPutByID(this, stubInfo);
     else {
         RELEASE_ASSERT(isInAccess(accessType));
-        resetIn(repatchBuffer, this, stubInfo);
+        resetIn(this, stubInfo);
     }
     
     stubInfo.reset();
 }
 
-void CodeBlock::resetStubDuringGCInternal(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+void CodeBlock::resetStubDuringGCInternal(StructureStubInfo& stubInfo)
 {
-    resetStubInternal(repatchBuffer, stubInfo);
+    resetStubInternal(stubInfo);
     stubInfo.resetByGC = true;
 }
 
@@ -3036,11 +3032,10 @@ void CodeBlock::unlinkIncomingCalls()
 #if ENABLE(JIT)
     if (m_incomingCalls.isEmpty() && m_incomingPolymorphicCalls.isEmpty())
         return;
-    RepatchBuffer repatchBuffer(this);
     while (m_incomingCalls.begin() != m_incomingCalls.end())
-        m_incomingCalls.begin()->unlink(*vm(), repatchBuffer);
+        m_incomingCalls.begin()->unlink(*vm());
     while (m_incomingPolymorphicCalls.begin() != m_incomingPolymorphicCalls.end())
-        m_incomingPolymorphicCalls.begin()->unlink(*vm(), repatchBuffer);
+        m_incomingPolymorphicCalls.begin()->unlink(*vm());
 #endif // ENABLE(JIT)
 }
 

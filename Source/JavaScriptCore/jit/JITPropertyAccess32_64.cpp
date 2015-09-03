@@ -38,7 +38,6 @@
 #include "JSEnvironmentRecord.h"
 #include "JSFunction.h"
 #include "LinkBuffer.h"
-#include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 #include "SlowPathCall.h"

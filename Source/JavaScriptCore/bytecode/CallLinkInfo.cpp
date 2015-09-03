@@ -30,7 +30,6 @@
 #include "DFGThunks.h"
 #include "JSCInlines.h"
 #include "Repatch.h"
-#include "RepatchBuffer.h"
 #include <wtf/ListDump.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -46,7 +45,7 @@ void CallLinkInfo::clearStub()
     m_stub = nullptr;
 }
 
-void CallLinkInfo::unlink(VM& vm, RepatchBuffer& repatchBuffer)
+void CallLinkInfo::unlink(VM& vm)
 {
     if (!isLinked()) {
         // We could be called even if we're not linked anymore because of how polymorphic calls
@@ -55,14 +54,14 @@ void CallLinkInfo::unlink(VM& vm, RepatchBuffer& repatchBuffer)
         return;
     }
     
-    unlinkFor(vm, repatchBuffer, *this);
+    unlinkFor(vm, *this);
 
     // It will be on a list if the callee has a code block.
     if (isOnList())
         remove();
 }
 
-void CallLinkInfo::visitWeak(VM& vm, RepatchBuffer& repatchBuffer)
+void CallLinkInfo::visitWeak(VM& vm)
 {
     auto handleSpecificCallee = [&] (JSFunction* callee) {
         if (Heap::isMarked(callee->executable()))
@@ -73,14 +72,14 @@ void CallLinkInfo::visitWeak(VM& vm, RepatchBuffer& repatchBuffer)
     
     if (isLinked()) {
         if (stub()) {
-            if (!stub()->visitWeak(vm, repatchBuffer)) {
+            if (!stub()->visitWeak(vm)) {
                 if (Options::verboseOSR()) {
                     dataLog(
                         "Clearing closure call to ",
                         listDump(stub()->variants()), ", stub routine ", RawPointer(stub()),
                         ".\n");
                 }
-                unlink(vm, repatchBuffer);
+                unlink(vm);
                 m_clearedByGC = true;
             }
         } else if (!Heap::isMarked(m_callee.get())) {
@@ -92,7 +91,7 @@ void CallLinkInfo::visitWeak(VM& vm, RepatchBuffer& repatchBuffer)
                     ").\n");
             }
             handleSpecificCallee(m_callee.get());
-            unlink(vm, repatchBuffer);
+            unlink(vm);
         }
     }
     if (haveLastSeenCallee() && !Heap::isMarked(lastSeenCallee())) {

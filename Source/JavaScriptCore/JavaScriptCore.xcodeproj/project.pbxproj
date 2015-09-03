@@ -1115,7 +1115,6 @@
 		86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B3C110159D7F002865E7 /* LinkBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B3C210159D7F002865E7 /* RepatchBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E3C612167BABD7006D760A /* JSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C606167BAB87006D760A /* JSValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2963,7 +2962,6 @@
 		86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerBufferWithConstantPool.h; sourceTree = "<group>"; };
 		86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM.h; sourceTree = "<group>"; };
 		86D3B3C110159D7F002865E7 /* LinkBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkBuffer.h; sourceTree = "<group>"; };
-		86D3B3C210159D7F002865E7 /* RepatchBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepatchBuffer.h; sourceTree = "<group>"; };
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
 		86E3C606167BAB87006D760A /* JSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValue.h; sourceTree = "<group>"; };
@@ -5493,7 +5491,6 @@
 				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
 				65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */,
 				86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */,
-				86D3B3C210159D7F002865E7 /* RepatchBuffer.h */,
 				86AE64A7135E5E1C00963012 /* SH4Assembler.h */,
 				9688CB140ED12B4E001D649F /* X86Assembler.h */,
 			);
@@ -6738,7 +6735,6 @@
 				A5BA15EB182340B400A82E69 /* RemoteInspectorDebuggableConnection.h in Headers */,
 				A5BA15ED182340B400A82E69 /* RemoteInspectorXPCConnection.h in Headers */,
 				0F24E55117EE274900ABB217 /* Repatch.h in Headers */,
-				86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				C22B31B9140577D700DB475A /* SamplingCounter.h in Headers */,
 				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,

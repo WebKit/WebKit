@@ -42,7 +42,6 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "JSCInlines.h"
 #include "ProfilerDatabase.h"
-#include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 #include "SlowPathCall.h"
@@ -54,22 +53,11 @@ using namespace std;
 
 namespace JSC {
 
-void ctiPatchNearCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction)
+void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction)
 {
-    RepatchBuffer repatchBuffer(codeblock);
-    repatchBuffer.relinkNearCallerToTrampoline(returnAddress, newCalleeFunction);
-}
-
-void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction)
-{
-    RepatchBuffer repatchBuffer(codeblock);
-    repatchBuffer.relinkCallerToTrampoline(returnAddress, newCalleeFunction);
-}
-
-void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction)
-{
-    RepatchBuffer repatchBuffer(codeblock);
-    repatchBuffer.relinkCallerToFunction(returnAddress, newCalleeFunction);
+    MacroAssembler::repatchCall(
+        CodeLocationCall(MacroAssemblerCodePtr(returnAddress)),
+        newCalleeFunction);
 }
 
 JIT::JIT(VM* vm, CodeBlock* codeBlock)

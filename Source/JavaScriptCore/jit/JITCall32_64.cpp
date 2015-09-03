@@ -36,7 +36,6 @@
 #include "JSFunction.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
-#include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 #include "SetupVarargsFrame.h"

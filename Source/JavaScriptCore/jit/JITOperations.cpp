@@ -54,7 +54,6 @@
 #include "ObjectConstructor.h"
 #include "PropertyName.h"
 #include "Repatch.h"
-#include "RepatchBuffer.h"
 #include "ScopedArguments.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
@@ -646,7 +645,7 @@ void JIT_OPERATION operationPutByValOptimize(ExecState* exec, EncodedJSValue enc
     if (tryPutByValOptimize(exec, baseValue, subscript, byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS)) == OptimizationResult::GiveUp) {
         // Don't ever try to optimize.
         byValInfo->tookSlowPath = true;
-        ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationPutByValGeneric));
+        ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationPutByValGeneric));
     }
     putByVal(exec, baseValue, subscript, value, byValInfo);
 }
@@ -728,7 +727,7 @@ void JIT_OPERATION operationDirectPutByValOptimize(ExecState* exec, EncodedJSVal
     if (tryDirectPutByValOptimize(exec, object, subscript, byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS)) == OptimizationResult::GiveUp) {
         // Don't ever try to optimize.
         byValInfo->tookSlowPath = true;
-        ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationDirectPutByValGeneric));
+        ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationDirectPutByValGeneric));
     }
 
     directPutByVal(exec, object, subscript, value, byValInfo);
@@ -1593,7 +1592,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
         uint32_t i = subscript.asUInt32();
         if (isJSString(baseValue)) {
             if (asString(baseValue)->canGetIndex(i)) {
-                ctiPatchCallByReturnAddress(exec->codeBlock(), returnAddress, FunctionPtr(operationGetByValString));
+                ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(operationGetByValString));
                 return asString(baseValue)->getIndex(exec, i);
             }
             byValInfo->arrayProfile->setOutOfBounds();
@@ -1716,7 +1715,7 @@ EncodedJSValue JIT_OPERATION operationGetByValOptimize(ExecState* exec, EncodedJ
     if (tryGetByValOptimize(exec, baseValue, subscript, byValInfo, returnAddress) == OptimizationResult::GiveUp) {
         // Don't ever try to optimize.
         byValInfo->tookSlowPath = true;
-        ctiPatchCallByReturnAddress(exec->codeBlock(), returnAddress, FunctionPtr(operationGetByValGeneric));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(operationGetByValGeneric));
     }
 
     return JSValue::encode(getByVal(exec, baseValue, subscript, byValInfo, returnAddress));
@@ -1756,7 +1755,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
         if (++byValInfo->slowPathCount >= 10
             || object->structure(vm)->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
             // Don't ever try to optimize.
-            ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationHasIndexedPropertyGeneric));
+            ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationHasIndexedPropertyGeneric));
         }
     }
 
@@ -1805,7 +1804,7 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
             result = baseValue.get(exec, i);
             if (!isJSString(baseValue)) {
                 ASSERT(exec->bytecodeOffset());
-                ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(byValInfo->stubRoutine ? operationGetByValGeneric : operationGetByValOptimize));
+                ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(byValInfo->stubRoutine ? operationGetByValGeneric : operationGetByValOptimize));
             }
         }
     } else {

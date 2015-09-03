@@ -1,3 +1,148 @@
+2015-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of RepatchBuffer and replace it with static functions
+        https://bugs.webkit.org/show_bug.cgi?id=148742
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+
+        RepatchBuffer is an object that doesn't have any state. All of its instance methods are
+        just wrappers for methods on MacroAssembler. So, we should make those MacroAssembler
+        methods public and call them directly.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::linkJump):
+        (JSC::AbstractMacroAssembler::linkPointer):
+        (JSC::AbstractMacroAssembler::getLinkerAddress):
+        (JSC::AbstractMacroAssembler::getLinkerCallReturnOffset):
+        (JSC::AbstractMacroAssembler::repatchJump):
+        (JSC::AbstractMacroAssembler::repatchNearCall):
+        (JSC::AbstractMacroAssembler::repatchCompact):
+        (JSC::AbstractMacroAssembler::repatchInt32):
+        (JSC::AbstractMacroAssembler::repatchPointer):
+        (JSC::AbstractMacroAssembler::readPointer):
+        (JSC::AbstractMacroAssembler::replaceWithLoad):
+        (JSC::AbstractMacroAssembler::replaceWithAddressComputation):
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerARM64::repatchCall):
+        (JSC::MacroAssemblerARM64::makeBranch):
+        (JSC::MacroAssemblerARM64::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerARMv7::repatchCall):
+        (JSC::MacroAssemblerARMv7::linkCall):
+        (JSC::MacroAssemblerARMv7::trustedImm32FromPtr):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerX86::repatchCall):
+        (JSC::MacroAssemblerX86::linkCall):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::repatchCall):
+        (JSC::MacroAssemblerX86_64::linkCall):
+        * assembler/RepatchBuffer.h: Removed.
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::clearStub):
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::registerPreservationMode):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::CallLinkInfo::setUpCall):
+        (JSC::CallLinkInfo::codeOrigin):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetStub):
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::resetStubDuringGCInternal):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        * bytecode/CodeBlock.h:
+        * bytecode/PolymorphicGetByIdList.cpp:
+        (JSC::GetByIdAccess::fromStructureStubInfo):
+        (JSC::GetByIdAccess::visitWeak):
+        (JSC::PolymorphicGetByIdList::didSelfPatching):
+        (JSC::PolymorphicGetByIdList::visitWeak):
+        * bytecode/PolymorphicGetByIdList.h:
+        (JSC::GetByIdAccess::doesCalls):
+        * bytecode/PolymorphicPutByIdList.cpp:
+        (JSC::PutByIdAccess::fromStructureStubInfo):
+        (JSC::PutByIdAccess::visitWeak):
+        (JSC::PolymorphicPutByIdList::addAccess):
+        (JSC::PolymorphicPutByIdList::visitWeak):
+        * bytecode/PolymorphicPutByIdList.h:
+        (JSC::PutByIdAccess::customSetter):
+        (JSC::PolymorphicPutByIdList::kind):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::seenOnce):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * jit/AccessorCallJITStubRoutine.cpp:
+        (JSC::AccessorCallJITStubRoutine::~AccessorCallJITStubRoutine):
+        (JSC::AccessorCallJITStubRoutine::visitWeak):
+        * jit/AccessorCallJITStubRoutine.h:
+        * jit/JIT.cpp:
+        (JSC::ctiPatchCallByReturnAddress):
+        (JSC::JIT::JIT):
+        (JSC::ctiPatchNearCallByReturnAddress): Deleted.
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        * jit/JITStubRoutine.cpp:
+        (JSC::JITStubRoutine::~JITStubRoutine):
+        (JSC::JITStubRoutine::visitWeak):
+        * jit/JITStubRoutine.h:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::~PolymorphicCallNode):
+        (JSC::PolymorphicCallNode::unlink):
+        (JSC::PolymorphicCallStubRoutine::clearCallNodesFor):
+        (JSC::PolymorphicCallStubRoutine::visitWeak):
+        * jit/PolymorphicCallStubRoutine.h:
+        (JSC::PolymorphicCallNode::hasCallLinkInfo):
+        * jit/Repatch.cpp:
+        (JSC::readCallTarget):
+        (JSC::repatchCall):
+        (JSC::repatchByIdSelfAccess):
+        (JSC::checkObjectPropertyConditions):
+        (JSC::replaceWithJump):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::patchJumpToGetByIdStub):
+        (JSC::tryBuildGetByIDList):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::repatchIn):
+        (JSC::linkSlowFor):
+        (JSC::linkFor):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::resetIn):
+        * jit/Repatch.h:
+
 2015-09-03  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Initial implementation of WebAssembly function compiler

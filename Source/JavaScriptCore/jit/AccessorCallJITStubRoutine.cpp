@@ -43,9 +43,9 @@ AccessorCallJITStubRoutine::~AccessorCallJITStubRoutine()
 {
 }
 
-bool AccessorCallJITStubRoutine::visitWeak(VM& vm, RepatchBuffer& repatchBuffer)
+bool AccessorCallJITStubRoutine::visitWeak(VM& vm)
 {
-    m_callLinkInfo->visitWeak(vm, repatchBuffer);
+    m_callLinkInfo->visitWeak(vm);
     return true;
 }
 

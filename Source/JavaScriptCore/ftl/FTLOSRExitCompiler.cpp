@@ -41,7 +41,6 @@
 #include "OperandsInlines.h"
 #include "JSCInlines.h"
 #include "RegisterPreservationWrapperGenerator.h"
-#include "RepatchBuffer.h"
 
 namespace JSC { namespace FTL {
 
@@ -523,8 +522,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     
     compileStub(exitID, jitCode, exit, vm, codeBlock);
     
-    RepatchBuffer repatchBuffer(codeBlock);
-    repatchBuffer.relink(
+    MacroAssembler::repatchJump(
         exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));
     
     return exit.m_code.code().executableAddress();
