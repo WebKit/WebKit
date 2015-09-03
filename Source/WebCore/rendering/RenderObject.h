@@ -252,24 +252,6 @@ public:
     virtual bool createsAnonymousWrapper() const { return false; }
     //////////////////////////////////////////
 
-protected:
-    //////////////////////////////////////////
-    // Helper functions. Dangerous to use!
-    void setPreviousSibling(RenderObject* previous) { m_previous = previous; }
-    void setNextSibling(RenderObject* next) { m_next = next; }
-    void setParent(RenderElement*);
-    //////////////////////////////////////////
-private:
-#ifndef NDEBUG
-    bool isSetNeedsLayoutForbidden() const { return m_setNeedsLayoutForbidden; }
-    void setNeedsLayoutIsForbidden(bool flag) { m_setNeedsLayoutForbidden = flag; }
-#endif
-
-    void addAbsoluteRectForLayer(LayoutRect& result);
-    void setLayerNeedsFullRepaint();
-    void setLayerNeedsFullRepaintForPositionedMovementLayout();
-
-public:
 #if ENABLE(TREE_DEBUGGING)
     void showNodeTreeForThis() const;
     void showRenderTreeForThis() const;
@@ -280,7 +262,6 @@ public:
     void showRegionsInformation() const;
 #endif
 
-public:
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
     bool isRenderElement() const { return !isText(); }
@@ -859,6 +840,12 @@ public:
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
 protected:
+    //////////////////////////////////////////
+    // Helper functions. Dangerous to use!
+    void setPreviousSibling(RenderObject* previous) { m_previous = previous; }
+    void setNextSibling(RenderObject* next) { m_next = next; }
+    void setParent(RenderElement*);
+    //////////////////////////////////////////
     void addPDFURLRect(PaintInfo&, const LayoutPoint&);
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
 
@@ -879,6 +866,15 @@ protected:
     static void calculateBorderStyleColor(const EBorderStyle&, const BoxSide&, Color&);
 
 private:
+#ifndef NDEBUG
+    bool isSetNeedsLayoutForbidden() const { return m_setNeedsLayoutForbidden; }
+    void setNeedsLayoutIsForbidden(bool flag) { m_setNeedsLayoutForbidden = flag; }
+#endif
+
+    void addAbsoluteRectForLayer(LayoutRect& result);
+    void setLayerNeedsFullRepaint();
+    void setLayerNeedsFullRepaintForPositionedMovementLayout();
+
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadIncludingDescendants(bool);
     Node* generatingPseudoHostElement() const;
