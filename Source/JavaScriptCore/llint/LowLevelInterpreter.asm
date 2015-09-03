@@ -21,6 +21,126 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+# Crash course on the language that this is written in (which I just call
+# "assembly" even though it's more than that):
+#
+# - Mostly gas-style operand ordering. The last operand tends to be the
+#   destination. So "a := b" is written as "mov b, a". But unlike gas,
+#   comparisons are in-order, so "if (a < b)" is written as
+#   "bilt a, b, ...".
+#
+# - "b" = byte, "h" = 16-bit word, "i" = 32-bit word, "p" = pointer.
+#   For 32-bit, "i" and "p" are interchangeable except when an op supports one
+#   but not the other.
+#
+# - In general, valid operands for macro invocations and instructions are
+#   registers (eg "t0"), addresses (eg "4[t0]"), base-index addresses
+#   (eg "7[t0, t1, 2]"), absolute addresses (eg "0xa0000000[]"), or labels
+#   (eg "_foo" or ".foo"). Macro invocations can also take anonymous
+#   macros as operands. Instructions cannot take anonymous macros.
+#
+# - Labels must have names that begin with either "_" or ".".  A "." label
+#   is local and gets renamed before code gen to minimize namespace
+#   pollution. A "_" label is an extern symbol (i.e. ".globl"). The "_"
+#   may or may not be removed during code gen depending on whether the asm
+#   conventions for C name mangling on the target platform mandate a "_"
+#   prefix.
+#
+# - A "macro" is a lambda expression, which may be either anonymous or
+#   named. But this has caveats. "macro" can take zero or more arguments,
+#   which may be macros or any valid operands, but it can only return
+#   code. But you can do Turing-complete things via continuation passing
+#   style: "macro foo (a, b) b(a, a) end foo(foo, foo)". Actually, don't do
+#   that, since you'll just crash the assembler.
+#
+# - An "if" is a conditional on settings. Any identifier supplied in the
+#   predicate of an "if" is assumed to be a #define that is available
+#   during code gen. So you can't use "if" for computation in a macro, but
+#   you can use it to select different pieces of code for different
+#   platforms.
+#
+# - Arguments to macros follow lexical scoping rather than dynamic scoping.
+#   Const's also follow lexical scoping and may override (hide) arguments
+#   or other consts. All variables (arguments and constants) can be bound
+#   to operands. Additionally, arguments (but not constants) can be bound
+#   to macros.
+
+# The following general-purpose registers are available:
+#
+#  - cfr and sp hold the call frame and (native) stack pointer respectively.
+#  They are callee-save registers, and guaranteed to be distinct from all other
+#  registers on all architectures.
+#
+#  - lr is defined on non-X86 architectures (ARM64, ARMv7, ARM,
+#  ARMv7_TRADITIONAL, MIPS, SH4 and CLOOP) and holds the return PC
+#
+#  - pc holds the (native) program counter on 32-bits ARM architectures (ARM,
+#  ARMv7, ARMv7_TRADITIONAL)
+#
+#  - t0, t1, t2, t3, t4 and optionally t5 are temporary registers that can get trashed on
+#  calls, and are pairwise distinct registers. t4 holds the JS program counter, so use
+#  with caution in opcodes (actually, don't use it in opcodes at all, except as PC).
+#
+#  - r0 and r1 are the platform's customary return registers, and thus are
+#  two distinct registers
+#
+#  - a0, a1, a2 and a3 are the platform's customary argument registers, and
+#  thus are pairwise distinct registers. Be mindful that:
+#    + On X86, there are no argument registers. a0 and a1 are edx and
+#    ecx following the fastcall convention, but you should still use the stack
+#    to pass your arguments. The cCall2 and cCall4 macros do this for you.
+#    + On X86_64_WIN, you should allocate space on the stack for the arguments,
+#    and the return convention is weird for > 8 bytes types. The only place we
+#    use > 8 bytes return values is on a cCall, and cCall2 and cCall4 handle
+#    this for you.
+#
+#  - The only registers guaranteed to be caller-saved are r0, r1, a0, a1 and a2, and
+#  you should be mindful of that in functions that are called directly from C.
+#  If you need more registers, you should push and pop them like a good
+#  assembly citizen, because any other register will be callee-saved on X86.
+#
+# You can additionally assume:
+#
+#  - a3, t2, t3, t4 and t5 are never return registers; t0, t1, a0, a1 and a2
+#  can be return registers.
+#
+#  - t4 and t5 are never argument registers, t3 can only be a3, t1 can only be
+#  a1; but t0 and t2 can be either a0 or a2.
+#
+#  - On 64 bits, csr0, csr1, csr2 and optionally csr3, csr4, csr5 and csr6
+#  are available as callee-save registers.
+#  csr0 is used to store the PC base, while the last two csr registers are used
+#  to store special tag values. Don't use them for anything else.
+#
+# Additional platform-specific details (you shouldn't rely on this remaining
+# true):
+#
+#  - For consistency with the baseline JIT, t0 is always r0 (and t1 is always
+#  r1 on 32 bits platforms). You should use the r version when you need return
+#  registers, and the t version otherwise: code using t0 (or t1) should still
+#  work if swapped with e.g. t3, while code using r0 (or r1) should not. There
+#  *may* be legacy code relying on this.
+#
+#  - On all platforms other than X86, t0 can only be a0 and t2 can only be a2.
+#
+#  - On all platforms other than X86 and X86_64, a2 is not a return register.
+#  a2 is r0 on X86 (because we have so few registers) and r1 on X86_64 (because
+#  the ABI enforces it).
+#
+# The following floating-point registers are available:
+#
+#  - ft0-ft5 are temporary floating-point registers that get trashed on calls,
+#  and are pairwise distinct.
+#
+#  - fa0 and fa1 are the platform's customary floating-point argument
+#  registers, and are both distinct. On 64-bits platforms, fa2 and fa3 are
+#  additional floating-point argument registers.
+#
+#  - fr is the platform's customary floating-point return register
+#
+# You can assume that ft1-ft5 or fa1-fa3 are never fr, and that ftX is never
+# faY if X != Y.
+
 # First come the common protocols that both interpreters use. Note that each
 # of these must have an ASSERT() in LLIntData.cpp
 
@@ -107,16 +227,25 @@ const IsInvalidated = 2
 if JSVALUE64
     # - Use a pair of registers to represent the PC: one register for the
     #   base of the bytecodes, and one register for the index.
-    # - The PC base (or PB for short) should be stored in the csr. It will
-    #   get clobbered on calls to other JS code, but will get saved on calls
-    #   to C functions.
+    # - The PC base (or PB for short) must be stored in a callee-save register.
     # - C calls are still given the Instruction* rather than the PC index.
     #   This requires an add before the call, and a sub after.
-    const PC = t5
-    const PB = t6
-    const tagTypeNumber = csr1
-    const tagMask = csr2
-    
+    const PC = t4
+    const PB = csr0
+    if ARM64
+        const tagTypeNumber = csr1
+        const tagMask = csr2
+    elsif X86_64
+        const tagTypeNumber = csr3
+        const tagMask = csr4
+    elsif X86_64_WIN
+        const tagTypeNumber = csr5
+        const tagMask = csr6
+    elsif C_LOOP
+        const tagTypeNumber = csr1
+        const tagMask = csr2
+    end
+
     macro loadisFromInstruction(offset, dest)
         loadis offset * 8[PB, PC, 8], dest
     end
@@ -130,7 +259,7 @@ if JSVALUE64
     end
 
 else
-    const PC = t5
+    const PC = t4
     macro loadisFromInstruction(offset, dest)
         loadis offset * 4[PC], dest
     end
@@ -138,6 +267,12 @@ else
     macro loadpFromInstruction(offset, dest)
         loadp offset * 4[PC], dest
     end
+end
+
+if X86_64_WIN
+    const extraTempReg = t0
+else
+    const extraTempReg = t5
 end
 
 # Constants for reasoning about value representation.
@@ -465,12 +600,12 @@ end
 
 macro restoreStackPointerAfterCall()
     loadp CodeBlock[cfr], t2
-    getFrameRegisterSizeForCodeBlock(t2, t4)
+    getFrameRegisterSizeForCodeBlock(t2, t2)
     if ARMv7
-        subp cfr, t4, t4
-        move t4, sp
+        subp cfr, t2, t2
+        move t2, sp
     else
-        subp cfr, t4, sp
+        subp cfr, t2, sp
     end
 end
 
@@ -494,13 +629,13 @@ end
 macro slowPathForCall(slowPath)
     callCallSlowPath(
         slowPath,
-        macro (callee)
-            btpz t1, .dontUpdateSP
+        macro (callee, calleeFrame)
+            btpz calleeFrame, .dontUpdateSP
             if ARMv7
-                addp CallerFrameAndPCSize, t1, t1
-                move t1, sp
+                addp CallerFrameAndPCSize, calleeFrame, calleeFrame
+                move calleeFrame, sp
             else
-                addp CallerFrameAndPCSize, t1, sp
+                addp CallerFrameAndPCSize, calleeFrame, sp
             end
         .dontUpdateSP:
             if C_LOOP
@@ -596,15 +731,19 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     if not C_LOOP
         baddis 5, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t1], .continue
         if JSVALUE64
-            cCall2(osrSlowPath, cfr, PC)
+            move cfr, a0
+            move PC, a1
+            cCall2(osrSlowPath)
         else
             # We are after the function prologue, but before we have set up sp from the CodeBlock.
             # Temporarily align stack pointer for this call.
             subp 8, sp
-            cCall2(osrSlowPath, cfr, PC)
+            move cfr, a0
+            move PC, a1
+            cCall2(osrSlowPath)
             addp 8, sp
         end
-        btpz t0, .recover
+        btpz r0, .recover
         move cfr, sp # restore the previous sp
         # pop the callerFrame since we will jump to a function that wants to save it
         if ARM64
@@ -615,7 +754,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         else
             pop cfr
         end
-        jmp t0
+        jmp r0
     .recover:
         codeBlockGetter(t1)
     .continue:
@@ -640,8 +779,8 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     # Stack height check failed - need to call a slow_path.
     subp maxFrameExtentForSlowPathCall, sp # Set up temporary stack pointer for call
     callSlowPath(_llint_stack_check)
-    bpeq t1, 0, .stackHeightOKGetCodeBlock
-    move t1, cfr
+    bpeq r1, 0, .stackHeightOKGetCodeBlock
+    move r1, cfr
     dispatch(0) # Go to exception handler in PC
 
 .stackHeightOKGetCodeBlock:
@@ -738,27 +877,14 @@ if not C_LOOP
     # void sanitizeStackForVMImpl(VM* vm)
     global _sanitizeStackForVMImpl
     _sanitizeStackForVMImpl:
-        if X86_64
-            const vm = t4
-            const address = t1
-            const zeroValue = t0
-        elsif X86_64_WIN
-            const vm = t2
-            const address = t1
-            const zeroValue = t0
-        elsif X86 or X86_WIN
-            const vm = t2
-            const address = t1
-            const zeroValue = t0
-        else
-            const vm = a0
-            const address = t1
-            const zeroValue = t2
-        end
-    
+        # We need three non-aliased caller-save registers. We are guaranteed
+        # this for a0, a1 and a2 on all architectures.
         if X86 or X86_WIN
-            loadp 4[sp], vm
+            loadp 4[sp], a0
         end
+        const vm = a0
+        const address = a1
+        const zeroValue = a2
     
         loadp VM::m_lastStackTop[vm], address
         bpbeq sp, address, .zeroFillDone
@@ -777,22 +903,11 @@ if not C_LOOP
     # VMEntryRecord* vmEntryRecord(const VMEntryFrame* entryFrame)
     global _vmEntryRecord
     _vmEntryRecord:
-        if X86_64
-            const entryFrame = t4
-            const result = t0
-        elsif X86 or X86_WIN or X86_64_WIN
-            const entryFrame = t2
-            const result = t0
-        else
-            const entryFrame = a0
-            const result = t0
-        end
-    
         if X86 or X86_WIN
-            loadp 4[sp], entryFrame
+            loadp 4[sp], a0
         end
-    
-        vmEntryRecord(entryFrame, result)
+
+        vmEntryRecord(a0, r0)
         ret
 end
 
@@ -800,17 +915,12 @@ if C_LOOP
     # Dummy entry point the C Loop uses to initialize.
     _llint_entry:
         crash()
-    else
+else
     macro initPCRelative(pcBase)
-        if X86_64 or X86_64_WIN
+        if X86_64 or X86_64_WIN or X86 or X86_WIN
             call _relativePCBase
         _relativePCBase:
             pop pcBase
-        elsif X86 or X86_WIN
-            call _relativePCBase
-        _relativePCBase:
-            pop pcBase
-            loadp 20[sp], t4
         elsif ARM64
         elsif ARMv7
         _relativePCBase:
@@ -831,41 +941,39 @@ if C_LOOP
         end
 end
 
+# The PC base is in t1, as this is what _llint_entry leaves behind through
+# initPCRelative(t1)
 macro setEntryAddress(index, label)
-    if X86_64
-        leap (label - _relativePCBase)[t1], t0
-        move index, t2
-        storep t0, [t4, t2, 8]
-    elsif X86_64_WIN
-        leap (label - _relativePCBase)[t1], t0
+    if X86_64 or X86_64_WIN
+        leap (label - _relativePCBase)[t1], t3
         move index, t4
-        storep t0, [t2, t4, 8]
+        storep t3, [a0, t4, 8]
     elsif X86 or X86_WIN
-        leap (label - _relativePCBase)[t1], t0
-        move index, t2
-        storep t0, [t4, t2, 4]
+        leap (label - _relativePCBase)[t1], t3
+        move index, t4
+        storep t3, [a0, t4, 4]
     elsif ARM64
         pcrtoaddr label, t1
-        move index, t2
-        storep t1, [a0, t2, 8]
+        move index, t4
+        storep t1, [a0, t4, 8]
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
-        mvlbl (label - _relativePCBase), t2
-        addp t2, t1, t2
+        mvlbl (label - _relativePCBase), t4
+        addp t4, t1, t4
         move index, t3
-        storep t2, [a0, t3, 4]
+        storep t4, [a0, t3, 4]
     elsif SH4
-        move (label - _relativePCBase), t2
-        addp t2, t1, t2
+        move (label - _relativePCBase), t4
+        addp t4, t1, t4
         move index, t3
-        storep t2, [a0, t3, 4]
+        storep t4, [a0, t3, 4]
         flushcp # Force constant pool flush to avoid "pcrel too far" link error.
     elsif MIPS
-        la label, t2
+        la label, t4
         la _relativePCBase, t3
-        subp t3, t2
-        addp t2, t1, t2
+        subp t3, t4
+        addp t4, t1, t4
         move index, t3
-        storep t2, [a0, t3, 4]
+        storep t4, [a0, t3, 4]
     end
 end
 
@@ -874,6 +982,9 @@ global _llint_entry
 _llint_entry:
     functionPrologue()
     pushCalleeSaves()
+    if X86 or X86_WIN
+        loadp 20[sp], a0
+    end
     initPCRelative(t1)
 
     # Include generated bytecode initialization file.
@@ -1213,16 +1324,16 @@ _llint_op_call_varargs:
     traceExecution()
     callSlowPath(_llint_slow_path_size_frame_for_varargs)
     branchIfException(_llint_throw_from_slow_path_trampoline)
-    # calleeFrame in t1
+    # calleeFrame in r1
     if JSVALUE64
-        move t1, sp
+        move r1, sp
     else
         # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
         if ARMv7
-            subp t1, CallerFrameAndPCSize, t2
+            subp r1, CallerFrameAndPCSize, t2
             move t2, sp
         else
-            subp t1, CallerFrameAndPCSize, sp
+            subp r1, CallerFrameAndPCSize, sp
         end
     end
     slowPathForCall(_llint_slow_path_call_varargs)
@@ -1231,16 +1342,16 @@ _llint_op_construct_varargs:
     traceExecution()
     callSlowPath(_llint_slow_path_size_frame_for_varargs)
     branchIfException(_llint_throw_from_slow_path_trampoline)
-    # calleeFrame in t1
+    # calleeFrame in r1
     if JSVALUE64
-        move t1, sp
+        move r1, sp
     else
         # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
         if ARMv7
-            subp t1, CallerFrameAndPCSize, t2
+            subp r1, CallerFrameAndPCSize, t2
             move t2, sp
         else
-            subp t1, CallerFrameAndPCSize, sp
+            subp r1, CallerFrameAndPCSize, sp
         end
     end
     slowPathForCall(_llint_slow_path_construct_varargs)

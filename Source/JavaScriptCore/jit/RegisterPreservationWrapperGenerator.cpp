@@ -65,6 +65,10 @@ MacroAssemblerCodeRef generateRegisterPreservationWrapper(VM& vm, ExecutableBase
     // We shouldn't ever be generating wrappers for native functions.
     RegisterSet toSave = registersToPreserve();
     ptrdiff_t offset = registerPreservationOffset();
+
+    ASSERT(!toSave.get(GPRInfo::regT1));
+    ASSERT(!toSave.get(GPRInfo::regT2));
+    ASSERT(!toSave.get(GPRInfo::regT3));
     
     AssemblyHelpers jit(&vm, 0);
     
@@ -84,31 +88,30 @@ MacroAssemblerCodeRef generateRegisterPreservationWrapper(VM& vm, ExecutableBase
             JSStack::CallFrameHeaderSize - JSStack::CallerFrameAndPCSize),
         GPRInfo::regT2);
 
-    ASSERT(!toSave.get(GPRInfo::regT4));
-    jit.move(AssemblyHelpers::stackPointerRegister, GPRInfo::regT4);
+    jit.move(AssemblyHelpers::stackPointerRegister, GPRInfo::regT3);
     
     AssemblyHelpers::Label loop = jit.label();
     jit.sub32(AssemblyHelpers::TrustedImm32(1), GPRInfo::regT2);
-    jit.load64(AssemblyHelpers::Address(GPRInfo::regT4, offset), GPRInfo::regT0);
-    jit.store64(GPRInfo::regT0, GPRInfo::regT4);
-    jit.addPtr(AssemblyHelpers::TrustedImm32(sizeof(Register)), GPRInfo::regT4);
+    jit.load64(AssemblyHelpers::Address(GPRInfo::regT3, offset), GPRInfo::regT0);
+    jit.store64(GPRInfo::regT0, GPRInfo::regT3);
+    jit.addPtr(AssemblyHelpers::TrustedImm32(sizeof(Register)), GPRInfo::regT3);
     jit.branchTest32(AssemblyHelpers::NonZero, GPRInfo::regT2).linkTo(loop, &jit);
 
-    // At this point regT4 + offset points to where we save things.
+    // At this point regT3 + offset points to where we save things.
     ptrdiff_t currentOffset = 0;
-    jit.storePtr(GPRInfo::regT1, AssemblyHelpers::Address(GPRInfo::regT4, currentOffset));
+    jit.storePtr(GPRInfo::regT1, AssemblyHelpers::Address(GPRInfo::regT3, currentOffset));
     
     for (GPRReg gpr = AssemblyHelpers::firstRegister(); gpr <= AssemblyHelpers::lastRegister(); gpr = static_cast<GPRReg>(gpr + 1)) {
         if (!toSave.get(gpr))
             continue;
         currentOffset += sizeof(Register);
-        jit.store64(gpr, AssemblyHelpers::Address(GPRInfo::regT4, currentOffset));
+        jit.store64(gpr, AssemblyHelpers::Address(GPRInfo::regT3, currentOffset));
     }
     for (FPRReg fpr = AssemblyHelpers::firstFPRegister(); fpr <= AssemblyHelpers::lastFPRegister(); fpr = static_cast<FPRReg>(fpr + 1)) {
         if (!toSave.get(fpr))
             continue;
         currentOffset += sizeof(Register);
-        jit.storeDouble(fpr, AssemblyHelpers::Address(GPRInfo::regT4, currentOffset));
+        jit.storeDouble(fpr, AssemblyHelpers::Address(GPRInfo::regT3, currentOffset));
     }
     
     // Assume that there aren't any saved FP registers.
@@ -151,7 +154,9 @@ static void generateRegisterRestoration(AssemblyHelpers& jit)
     RegisterSet toSave = registersToPreserve();
     ptrdiff_t offset = registerPreservationOffset();
     
-    ASSERT(!toSave.get(GPRInfo::regT4));
+    ASSERT(!toSave.get(GPRInfo::regT1));
+    ASSERT(!toSave.get(GPRInfo::regT2));
+    ASSERT(!toSave.get(GPRInfo::regT3));
 
     // We need to place the stack pointer back to where the caller thought they left it.
     // But also, in order to recover the registers, we need to figure out how big the
@@ -161,9 +166,9 @@ static void generateRegisterRestoration(AssemblyHelpers& jit)
         AssemblyHelpers::Address(
             AssemblyHelpers::stackPointerRegister,
             (JSStack::ArgumentCount - JSStack::CallerFrameAndPCSize) * sizeof(Register) + PayloadOffset),
-        GPRInfo::regT4);
+        GPRInfo::regT3);
     
-    jit.move(GPRInfo::regT4, GPRInfo::regT2);
+    jit.move(GPRInfo::regT3, GPRInfo::regT2);
     jit.lshift32(AssemblyHelpers::TrustedImm32(3), GPRInfo::regT2);
     
     jit.addPtr(AssemblyHelpers::TrustedImm32(offset), AssemblyHelpers::stackPointerRegister);
@@ -203,7 +208,7 @@ static void generateRegisterRestoration(AssemblyHelpers& jit)
     
     // Thunks like this rely on the ArgumentCount being intact. Pay it forward.
     jit.store32(
-        GPRInfo::regT4,
+        GPRInfo::regT3,
         AssemblyHelpers::Address(
             AssemblyHelpers::stackPointerRegister,
             (JSStack::ArgumentCount - JSStack::CallerFrameAndPCSize) * sizeof(Register) + PayloadOffset));

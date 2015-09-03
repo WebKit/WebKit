@@ -24,6 +24,33 @@
 
 require 'risc'
 
+# GPR conventions, to match the baseline JIT
+#
+#  r0 => t0, r0
+#  r1 => t1, r1
+#  r2 => t4
+#  r3 => t5
+#  r4 =>         a0
+#  r5 =>         a1
+#  r6 => t2,     a2
+#  r7 => t3,     a3
+# r10 =>            (scratch)
+# r11 =>            (scratch)
+# r13 =>            (scratch)
+# r14 => cfr
+# r15 => sp
+#  pr => lr
+
+# FPR conventions, to match the baseline JIT
+# We don't have fa2 or fa3!
+#  dr0 => ft0, fr
+#  dr2 => ft1
+#  dr4 => ft2,   fa0
+#  dr6 => ft3,   fa1
+#  dr8 => ft4
+# dr10 => ft5
+# dr12 =>             (scratch)
+
 class Node
     def sh4SingleHi
         doubleOperand = sh4Operand
@@ -51,32 +78,28 @@ class SpecialRegister < NoChildren
     end
 end
 
-SH4_TMP_GPRS = [ SpecialRegister.new("r3"), SpecialRegister.new("r11"), SpecialRegister.new("r13") ]
-SH4_TMP_FPRS = [ SpecialRegister.new("dr10") ]
+SH4_TMP_GPRS = [ SpecialRegister.new("r10"), SpecialRegister.new("r11"), SpecialRegister.new("r13") ]
+SH4_TMP_FPRS = [ SpecialRegister.new("dr12") ]
 
 class RegisterID
     def sh4Operand
         case name
-        when "t0"
-            "r0"
-        when "t1"
-            "r1"
-        when "t2"
-            "r2"
-        when "t3"
-            "r10"
-        when "t4", "a0"
+        when "a0"
             "r4"
-        when "t5", "a1"
+        when "a1"
             "r5"
-        when "t6", "a2"
+        when "r0", "t0"
+            "r0"
+        when "r1", "t1"
+            "r1"
+        when "a2", "t2"
             "r6"
-        when "t7", "a3"
+        when "a3", "t3"
             "r7"
-        when "t8"
-            "r8"
-        when "t9"
-            "r9"
+        when "t4"
+            "r2"
+        when "t5"
+            "r3"
         when "cfr"
             "r14"
         when "sp"
@@ -96,14 +119,14 @@ class FPRegisterID
             "dr0"
         when "ft1"
             "dr2"
-        when "ft2"
+        when "ft2", "fa0"
             "dr4"
-        when "ft3"
+        when "ft3", "fa1"
             "dr6"
         when "ft4"
             "dr8"
-        when "fa0"
-            "dr12"
+        when "ft5"
+            "dr10"
         else
             raise "Bad register #{name} for SH4 at #{codeOriginString}"
         end

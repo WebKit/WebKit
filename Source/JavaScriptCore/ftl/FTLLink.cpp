@@ -165,14 +165,14 @@ void link(State& state)
         jit.load64(vm.addressOfException(), GPRInfo::regT1);
         jit.jitAssertIsNull(GPRInfo::regT1);
 #endif
-        jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0);
+        jit.move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
         jit.emitFunctionEpilogue();
-        mainPathJumps.append(jit.branchTest32(CCallHelpers::Zero, GPRInfo::regT0));
+        mainPathJumps.append(jit.branchTest32(CCallHelpers::Zero, GPRInfo::argumentGPR0));
         jit.emitFunctionPrologue();
         CodeLocationLabel* arityThunkLabels =
             vm.arityCheckFailReturnThunks->returnPCsFor(vm, codeBlock->numParameters());
-        jit.move(CCallHelpers::TrustedImmPtr(arityThunkLabels), GPRInfo::regT7);
-        jit.loadPtr(CCallHelpers::BaseIndex(GPRInfo::regT7, GPRInfo::regT0, CCallHelpers::timesPtr()), GPRInfo::regT7);
+        jit.move(CCallHelpers::TrustedImmPtr(arityThunkLabels), GPRInfo::argumentGPR1);
+        jit.loadPtr(CCallHelpers::BaseIndex(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0, CCallHelpers::timesPtr()), GPRInfo::argumentGPR1);
         CCallHelpers::Call callArityFixup = jit.call();
         jit.emitFunctionEpilogue();
         mainPathJumps.append(jit.jump());

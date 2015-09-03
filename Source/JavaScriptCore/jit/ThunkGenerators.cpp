@@ -255,8 +255,6 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 #endif
 
 #elif CPU(ARM64)
-    COMPILE_ASSERT(ARM64Registers::x3 != JSInterfaceJIT::regT1, prev_callframe_not_trampled_by_T1);
-    COMPILE_ASSERT(ARM64Registers::x3 != JSInterfaceJIT::regT3, prev_callframe_not_trampled_by_T3);
     COMPILE_ASSERT(ARM64Registers::x0 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_0);
     COMPILE_ASSERT(ARM64Registers::x1 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_1);
     COMPILE_ASSERT(ARM64Registers::x2 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_2);
@@ -355,46 +353,51 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
 {
     JSInterfaceJIT jit(vm);
 
-    // We enter with fixup count, in aligned stack units, in regT0 and the return thunk in
-    // regT5 on 32-bit and regT7 on 64-bit.
+    // We enter with fixup count, in aligned stack units, in argumentGPR0 and the return thunk in argumentGPR1
+    // We have the guarantee that a0, a1, a2, t3, t4 and t5 (or t0 for Windows) are all distinct :-)
 #if USE(JSVALUE64)
+#if OS(WINDOWS)
+    const GPRReg extraTemp = JSInterfaceJIT::regT0;
+#else
+    const GPRReg extraTemp = JSInterfaceJIT::regT5;
+#endif
 #  if CPU(X86_64)
     jit.pop(JSInterfaceJIT::regT4);
 #  endif
-    jit.lshift32(JSInterfaceJIT::TrustedImm32(logStackAlignmentRegisters()), JSInterfaceJIT::regT0);
-    jit.neg64(JSInterfaceJIT::regT0);
-    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT6);
-    jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * sizeof(Register)), JSInterfaceJIT::regT2);
-    jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::regT2);
+    jit.lshift32(JSInterfaceJIT::TrustedImm32(logStackAlignmentRegisters()), JSInterfaceJIT::argumentGPR0);
+    jit.neg64(JSInterfaceJIT::argumentGPR0);
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
+    jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * sizeof(Register)), JSInterfaceJIT::argumentGPR2);
+    jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::argumentGPR2);
 
-    // Move current frame down regT0 number of slots
+    // Move current frame down argumentGPR0 number of slots
     JSInterfaceJIT::Label copyLoop(jit.label());
-    jit.load64(JSInterfaceJIT::regT6, JSInterfaceJIT::regT1);
-    jit.store64(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT6, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT6);
-    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(copyLoop, &jit);
+    jit.load64(JSInterfaceJIT::regT3, extraTemp);
+    jit.store64(extraTemp, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
+    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2).linkTo(copyLoop, &jit);
 
-    // Fill in regT0 - 1 missing arg slots with undefined
-    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::regT2);
-    jit.move(JSInterfaceJIT::TrustedImm64(ValueUndefined), JSInterfaceJIT::regT1);
-    jit.add32(JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2);
+    // Fill in argumentGPR0 - 1 missing arg slots with undefined
+    jit.move(JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::argumentGPR2);
+    jit.move(JSInterfaceJIT::TrustedImm64(ValueUndefined), extraTemp);
+    jit.add32(JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2);
     JSInterfaceJIT::Label fillUndefinedLoop(jit.label());
-    jit.store64(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT6, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT6);
-    jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(fillUndefinedLoop, &jit);
+    jit.store64(extraTemp, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
+    jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2).linkTo(fillUndefinedLoop, &jit);
     
     // Adjust call frame register and stack pointer to account for missing args
-    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::regT1);
-    jit.lshift64(JSInterfaceJIT::TrustedImm32(3), JSInterfaceJIT::regT1);
-    jit.addPtr(JSInterfaceJIT::regT1, JSInterfaceJIT::callFrameRegister);
-    jit.addPtr(JSInterfaceJIT::regT1, JSInterfaceJIT::stackPointerRegister);
+    jit.move(JSInterfaceJIT::argumentGPR0, extraTemp);
+    jit.lshift64(JSInterfaceJIT::TrustedImm32(3), extraTemp);
+    jit.addPtr(extraTemp, JSInterfaceJIT::callFrameRegister);
+    jit.addPtr(extraTemp, JSInterfaceJIT::stackPointerRegister);
 
     // Save the original return PC.
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT1);
-    jit.storePtr(GPRInfo::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT6, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
-    
+    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()), extraTemp);
+    jit.storePtr(extraTemp, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
+
     // Install the new return PC.
-    jit.storePtr(GPRInfo::regT7, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
+    jit.storePtr(GPRInfo::argumentGPR1, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
 
 #  if CPU(X86_64)
     jit.push(JSInterfaceJIT::regT4);
@@ -404,45 +407,45 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
 #  if CPU(X86)
     jit.pop(JSInterfaceJIT::regT4);
 #  endif
-    jit.lshift32(JSInterfaceJIT::TrustedImm32(logStackAlignmentRegisters()), JSInterfaceJIT::regT0);
-    jit.neg32(JSInterfaceJIT::regT0);
+    jit.lshift32(JSInterfaceJIT::TrustedImm32(logStackAlignmentRegisters()), JSInterfaceJIT::argumentGPR0);
+    jit.neg32(JSInterfaceJIT::argumentGPR0);
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
-    jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * sizeof(Register)), JSInterfaceJIT::regT2);
-    jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::regT2);
+    jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * sizeof(Register)), JSInterfaceJIT::argumentGPR2);
+    jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::argumentGPR2);
 
-    // Move current frame down regT0 number of slots
+    // Move current frame down argumentGPR0 number of slots
     JSInterfaceJIT::Label copyLoop(jit.label());
-    jit.load32(JSInterfaceJIT::regT3, JSInterfaceJIT::regT1);
-    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
-    jit.load32(MacroAssembler::Address(JSInterfaceJIT::regT3, 4), JSInterfaceJIT::regT1);
-    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight, 4));
+    jit.load32(JSInterfaceJIT::regT3, JSInterfaceJIT::regT5);
+    jit.store32(JSInterfaceJIT::regT5, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
+    jit.load32(MacroAssembler::Address(JSInterfaceJIT::regT3, 4), JSInterfaceJIT::regT5);
+    jit.store32(JSInterfaceJIT::regT5, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight, 4));
     jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
-    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(copyLoop, &jit);
+    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2).linkTo(copyLoop, &jit);
 
-    // Fill in regT0 - 1 missing arg slots with undefined
-    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::regT2);
-    jit.add32(JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2);
+    // Fill in argumentGPR0 - 1 missing arg slots with undefined
+    jit.move(JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::argumentGPR2);
+    jit.add32(JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2);
     JSInterfaceJIT::Label fillUndefinedLoop(jit.label());
-    jit.move(JSInterfaceJIT::TrustedImm32(0), JSInterfaceJIT::regT1);
-    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
-    jit.move(JSInterfaceJIT::TrustedImm32(JSValue::UndefinedTag), JSInterfaceJIT::regT1);
-    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight, 4));
+    jit.move(JSInterfaceJIT::TrustedImm32(0), JSInterfaceJIT::regT5);
+    jit.store32(JSInterfaceJIT::regT5, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
+    jit.move(JSInterfaceJIT::TrustedImm32(JSValue::UndefinedTag), JSInterfaceJIT::regT5);
+    jit.store32(JSInterfaceJIT::regT5, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight, 4));
 
     jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
-    jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(fillUndefinedLoop, &jit);
+    jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2).linkTo(fillUndefinedLoop, &jit);
 
     // Adjust call frame register and stack pointer to account for missing args
-    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::regT1);
-    jit.lshift32(JSInterfaceJIT::TrustedImm32(3), JSInterfaceJIT::regT1);
-    jit.addPtr(JSInterfaceJIT::regT1, JSInterfaceJIT::callFrameRegister);
-    jit.addPtr(JSInterfaceJIT::regT1, JSInterfaceJIT::stackPointerRegister);
+    jit.move(JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::regT5);
+    jit.lshift32(JSInterfaceJIT::TrustedImm32(3), JSInterfaceJIT::regT5);
+    jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::callFrameRegister);
+    jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::stackPointerRegister);
 
     // Save the original return PC.
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT1);
-    jit.storePtr(GPRInfo::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
+    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT5);
+    jit.storePtr(GPRInfo::regT5, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
     
     // Install the new return PC.
-    jit.storePtr(GPRInfo::regT5, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
+    jit.storePtr(GPRInfo::argumentGPR1, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
     
 #  if CPU(X86)
     jit.push(JSInterfaceJIT::regT4);

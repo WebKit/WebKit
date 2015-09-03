@@ -22,54 +22,6 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# Crash course on the language that this is written in (which I just call
-# "assembly" even though it's more than that):
-#
-# - Mostly gas-style operand ordering. The last operand tends to be the
-#   destination. So "a := b" is written as "mov b, a". But unlike gas,
-#   comparisons are in-order, so "if (a < b)" is written as
-#   "bilt a, b, ...".
-#
-# - "b" = byte, "h" = 16-bit word, "i" = 32-bit word, "p" = pointer.
-#   Currently this is just 32-bit so "i" and "p" are interchangeable
-#   except when an op supports one but not the other.
-#
-# - In general, valid operands for macro invocations and instructions are
-#   registers (eg "t0"), addresses (eg "4[t0]"), base-index addresses
-#   (eg "7[t0, t1, 2]"), absolute addresses (eg "0xa0000000[]"), or labels
-#   (eg "_foo" or ".foo"). Macro invocations can also take anonymous
-#   macros as operands. Instructions cannot take anonymous macros.
-#
-# - Labels must have names that begin with either "_" or ".".  A "." label
-#   is local and gets renamed before code gen to minimize namespace
-#   pollution. A "_" label is an extern symbol (i.e. ".globl"). The "_"
-#   may or may not be removed during code gen depending on whether the asm
-#   conventions for C name mangling on the target platform mandate a "_"
-#   prefix.
-#
-# - A "macro" is a lambda expression, which may be either anonymous or
-#   named. But this has caveats. "macro" can take zero or more arguments,
-#   which may be macros or any valid operands, but it can only return
-#   code. But you can do Turing-complete things via continuation passing
-#   style: "macro foo (a, b) b(a) end foo(foo, foo)". Actually, don't do
-#   that, since you'll just crash the assembler.
-#
-# - An "if" is a conditional on settings. Any identifier supplied in the
-#   predicate of an "if" is assumed to be a #define that is available
-#   during code gen. So you can't use "if" for computation in a macro, but
-#   you can use it to select different pieces of code for different
-#   platforms.
-#
-# - Arguments to macros follow lexical scoping rather than dynamic scoping.
-#   Const's also follow lexical scoping and may override (hide) arguments
-#   or other consts. All variables (arguments and constants) can be bound
-#   to operands. Additionally, arguments (but not constants) can be bound
-#   to macros.
-
-
-# Below we have a bunch of constant declarations. Each constant must have
-# a corresponding ASSERT() in LLIntData.cpp.
-
 # Utilities
 macro dispatch(advance)
     addp advance * 4, PC
@@ -89,60 +41,47 @@ end
 
 macro dispatchAfterCall()
     loadi ArgumentCount + TagOffset[cfr], PC
-    loadi 4[PC], t2
-    storei t1, TagOffset[cfr, t2, 8]
-    storei t0, PayloadOffset[cfr, t2, 8]
-    valueProfile(t1, t0, 4 * (CallOpCodeSize - 1), t3)
+    loadi 4[PC], t3
+    storei r1, TagOffset[cfr, t3, 8]
+    storei r0, PayloadOffset[cfr, t3, 8]
+    valueProfile(r1, r0, 4 * (CallOpCodeSize - 1), t3)
     dispatch(CallOpCodeSize)
 end
 
-macro cCall2(function, arg1, arg2)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
-        move arg1, a0
-        move arg2, a1
+macro cCall2(function)
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         call function
     elsif X86 or X86_WIN
         subp 8, sp
-        push arg2
-        push arg1
+        push a1
+        push a0
         call function
         addp 16, sp
-    elsif SH4
-        setargs arg1, arg2
-        call function
     elsif C_LOOP
-        cloopCallSlowPath function, arg1, arg2
+        cloopCallSlowPath function, a0, a1
     else
         error
     end
 end
 
-macro cCall2Void(function, arg1, arg2)
+macro cCall2Void(function)
     if C_LOOP
-        cloopCallSlowPathVoid function, arg1, arg2
+        cloopCallSlowPathVoid function, a0, a1
     else
-        cCall2(function, arg1, arg2)
+        cCall2(function)
     end
 end
 
-# This barely works. arg3 and arg4 should probably be immediates.
-macro cCall4(function, arg1, arg2, arg3, arg4)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
-        move arg1, a0
-        move arg2, a1
-        move arg3, a2
-        move arg4, a3
+macro cCall4(function)
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         call function
     elsif X86 or X86_WIN
-        push arg4
-        push arg3
-        push arg2
-        push arg1
+        push a3
+        push a2
+        push a1
+        push a0
         call function
         addp 16, sp
-    elsif SH4
-        setargs arg1, arg2, arg3, arg4
-        call function
     elsif C_LOOP
         error
     else
@@ -151,133 +90,105 @@ macro cCall4(function, arg1, arg2, arg3, arg4)
 end
 
 macro callSlowPath(slowPath)
-    cCall2(slowPath, cfr, PC)
-    move t0, PC
+    move cfr, a0
+    move PC, a1
+    cCall2(slowPath)
+    move r0, PC
 end
 
 macro doVMEntry(makeCall)
-    if X86 or X86_WIN
-        const entry = t4
-        const vm = t3
-        const protoCallFrame = t5
-
-        const temp1 = t0
-        const temp2 = t1
-        const temp3 = t2
-        const temp4 = t3 # same as vm
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP
-        const entry = a0
-        const vm = a1
-        const protoCallFrame = a2
-
-        const temp1 = t3
-        const temp2 = t4
-        const temp3 = t5
-        const temp4 = t4 # Same as temp2
-    elsif MIPS
-        const entry = a0
-        const vm = a1
-        const protoCallFrame = a2
-
-        const temp1 = t3
-        const temp2 = t5
-        const temp3 = t4
-        const temp4 = t6
-    elsif SH4
-        const entry = a0
-        const vm = a1
-        const protoCallFrame = a2
-
-        const temp1 = t3
-        const temp2 = a3
-        const temp3 = t8
-        const temp4 = t9
-    end
-
     functionPrologue()
     pushCalleeSaves()
 
+    # x86 needs to load arguments from the stack
     if X86 or X86_WIN
-        loadp 12[cfr], vm
-        loadp 8[cfr], entry
+        loadp 16[cfr], a2
+        loadp 12[cfr], a1
+        loadp 8[cfr], a0
     end
 
+    const entry = a0
+    const vm = a1
+    const protoCallFrame = a2
+
+    # We are using t3, t4 and t5 as temporaries through the function.
+    # Since we have the guarantee that tX != aY when X != Y, we are safe from
+    # aliasing problems with our arguments.
+
     if ARMv7
-        vmEntryRecord(cfr, temp1)
-        move temp1, sp
+        vmEntryRecord(cfr, t3)
+        move t3, sp
     else
         vmEntryRecord(cfr, sp)
     end
 
     storep vm, VMEntryRecord::m_vm[sp]
-    loadp VM::topCallFrame[vm], temp2
-    storep temp2, VMEntryRecord::m_prevTopCallFrame[sp]
-    loadp VM::topVMEntryFrame[vm], temp2
-    storep temp2, VMEntryRecord::m_prevTopVMEntryFrame[sp]
+    loadp VM::topCallFrame[vm], t4
+    storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
+    loadp VM::topVMEntryFrame[vm], t4
+    storep t4, VMEntryRecord::m_prevTopVMEntryFrame[sp]
 
     # Align stack pointer
     if X86_WIN
-        addp CallFrameAlignSlots * SlotSize, sp, temp1
-        andp ~StackAlignmentMask, temp1
-        subp temp1, CallFrameAlignSlots * SlotSize, sp
+        addp CallFrameAlignSlots * SlotSize, sp, t3
+        andp ~StackAlignmentMask, t3
+        subp t3, CallFrameAlignSlots * SlotSize, sp
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
-        addp CallFrameAlignSlots * SlotSize, sp, temp1
-        clrbp temp1, StackAlignmentMask, temp1
+        addp CallFrameAlignSlots * SlotSize, sp, t3
+        clrbp t3, StackAlignmentMask, t3
         if ARMv7
-            subp temp1, CallFrameAlignSlots * SlotSize, temp1
-            move temp1, sp
+            subp t3, CallFrameAlignSlots * SlotSize, t3
+            move t3, sp
         else
-            subp temp1, CallFrameAlignSlots * SlotSize, sp
+            subp t3, CallFrameAlignSlots * SlotSize, sp
         end
     end
 
-    if X86 or X86_WIN
-        loadp 16[cfr], protoCallFrame
-    end
-
-    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], temp2
-    addp CallFrameHeaderSlots, temp2, temp2
-    lshiftp 3, temp2
-    subp sp, temp2, temp1
+    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t4
+    addp CallFrameHeaderSlots, t4, t4
+    lshiftp 3, t4
+    subp sp, t4, t3
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
-    bpaeq temp1, VM::m_jsStackLimit[vm], .stackHeightOK
+    bpaeq t3, VM::m_jsStackLimit[vm], .stackHeightOK
 
     if C_LOOP
-        move entry, temp2
-        move vm, temp3
-        cloopCallSlowPath _llint_stack_check_at_vm_entry, vm, temp1
+        move entry, t4
+        move vm, t5
+        cloopCallSlowPath _llint_stack_check_at_vm_entry, vm, t3
         bpeq t0, 0, .stackCheckFailed
-        move temp2, entry
-        move temp3, vm
+        move t4, entry
+        move t5, vm
         jmp .stackHeightOK
 
 .stackCheckFailed:
-        move temp2, entry
-        move temp3, vm
+        move t4, entry
+        move t5, vm
     end
 
     subp 8, sp # Align stack for cCall2() to make a call.
-    cCall2(_llint_throw_stack_overflow_error, vm, protoCallFrame)
+    move vm, a0
+    move protoCallFrame, a1
+    cCall2(_llint_throw_stack_overflow_error)
 
     if ARMv7
-        vmEntryRecord(cfr, temp1)
-        move temp1, sp
+        vmEntryRecord(cfr, t3)
+        move t3, sp
     else
         vmEntryRecord(cfr, sp)
     end
 
-    loadp VMEntryRecord::m_vm[sp], temp3
-    loadp VMEntryRecord::m_prevTopCallFrame[sp], temp4
-    storep temp4, VM::topCallFrame[temp3]
-    loadp VMEntryRecord::m_prevTopVMEntryFrame[sp], temp4
-    storep temp4, VM::topVMEntryFrame[temp3]
+    loadp VMEntryRecord::m_vm[sp], t5
+    loadp VMEntryRecord::m_prevTopCallFrame[sp], t4
+    storep t4, VM::topCallFrame[t5]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[sp], t4
+    storep t4, VM::topVMEntryFrame[t5]
 
     if ARMv7
-        subp cfr, CalleeRegisterSaveSize, temp3
-        move temp3, sp
+        subp cfr, CalleeRegisterSaveSize, t5
+        move t5, sp
     else
         subp cfr, CalleeRegisterSaveSize, sp
     end
@@ -287,63 +198,63 @@ macro doVMEntry(makeCall)
     ret
 
 .stackHeightOK:
-    move temp1, sp
-    move 4, temp1
+    move t3, sp
+    move 4, t3
 
 .copyHeaderLoop:
-    subi 1, temp1
-    loadi TagOffset[protoCallFrame, temp1, 8], temp3
-    storei temp3, TagOffset + CodeBlock[sp, temp1, 8]
-    loadi PayloadOffset[protoCallFrame, temp1, 8], temp3
-    storei temp3, PayloadOffset + CodeBlock[sp, temp1, 8]
-    btinz temp1, .copyHeaderLoop
+    subi 1, t3
+    loadi TagOffset[protoCallFrame, t3, 8], t5
+    storei t5, TagOffset + CodeBlock[sp, t3, 8]
+    loadi PayloadOffset[protoCallFrame, t3, 8], t5
+    storei t5, PayloadOffset + CodeBlock[sp, t3, 8]
+    btinz t3, .copyHeaderLoop
 
-    loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], temp2
-    subi 1, temp2
-    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], temp3
-    subi 1, temp3
+    loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], t4
+    subi 1, t4
+    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t5
+    subi 1, t5
 
-    bieq temp2, temp3, .copyArgs
+    bieq t4, t5, .copyArgs
 .fillExtraArgsLoop:
-    subi 1, temp3
-    storei UndefinedTag, ThisArgumentOffset + 8 + TagOffset[sp, temp3, 8]
-    storei 0, ThisArgumentOffset + 8 + PayloadOffset[sp, temp3, 8]
-    bineq temp2, temp3, .fillExtraArgsLoop
+    subi 1, t5
+    storei UndefinedTag, ThisArgumentOffset + 8 + TagOffset[sp, t5, 8]
+    storei 0, ThisArgumentOffset + 8 + PayloadOffset[sp, t5, 8]
+    bineq t4, t5, .fillExtraArgsLoop
 
 .copyArgs:
-    loadp ProtoCallFrame::args[protoCallFrame], temp1
+    loadp ProtoCallFrame::args[protoCallFrame], t3
 
 .copyArgsLoop:
-    btiz temp2, .copyArgsDone
-    subi 1, temp2
-    loadi TagOffset[temp1, temp2, 8], temp3
-    storei temp3, ThisArgumentOffset + 8 + TagOffset[sp, temp2, 8]
-    loadi PayloadOffset[temp1, temp2, 8], temp3
-    storei temp3, ThisArgumentOffset + 8 + PayloadOffset[sp, temp2, 8]
+    btiz t4, .copyArgsDone
+    subi 1, t4
+    loadi TagOffset[t3, t4, 8], t5
+    storei t5, ThisArgumentOffset + 8 + TagOffset[sp, t4, 8]
+    loadi PayloadOffset[t3, t4, 8], t5
+    storei t5, ThisArgumentOffset + 8 + PayloadOffset[sp, t4, 8]
     jmp .copyArgsLoop
 
 .copyArgsDone:
     storep sp, VM::topCallFrame[vm]
     storep cfr, VM::topVMEntryFrame[vm]
 
-    makeCall(entry, temp1, temp2)
+    makeCall(entry, t3, t4)
 
     if ARMv7
-        vmEntryRecord(cfr, temp1)
-        move temp1, sp
+        vmEntryRecord(cfr, t3)
+        move t3, sp
     else
         vmEntryRecord(cfr, sp)
     end
 
-    loadp VMEntryRecord::m_vm[sp], temp3
-    loadp VMEntryRecord::m_prevTopCallFrame[sp], temp4
-    storep temp4, VM::topCallFrame[temp3]
-    loadp VMEntryRecord::m_prevTopVMEntryFrame[sp], temp4
-    storep temp4, VM::topVMEntryFrame[temp3]
+    loadp VMEntryRecord::m_vm[sp], t5
+    loadp VMEntryRecord::m_prevTopCallFrame[sp], t4
+    storep t4, VM::topCallFrame[t5]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[sp], t4
+    storep t4, VM::topVMEntryFrame[t5]
 
     if ARMv7
-        subp cfr, CalleeRegisterSaveSize, temp3
-        move temp3, sp
+        subp cfr, CalleeRegisterSaveSize, t5
+        move t5, sp
     else
         subp cfr, CalleeRegisterSaveSize, sp
     end
@@ -355,13 +266,13 @@ end
 
 macro makeJavaScriptCall(entry, temp, unused)
     addp CallerFrameAndPCSize, sp
-    checkStackPointerAlignment(t2, 0xbad0dc02)
+    checkStackPointerAlignment(temp, 0xbad0dc02)
     if C_LOOP
         cloopCallJSFunction entry
     else
         call entry
     end
-    checkStackPointerAlignment(t2, 0xbad0dc03)
+    checkStackPointerAlignment(temp, 0xbad0dc03)
     subp CallerFrameAndPCSize, sp
 end
 
@@ -376,9 +287,9 @@ macro makeHostFunctionCall(entry, temp1, temp2)
         # Put callee frame pointer on stack as arg0, also put it in ecx for "fastcall" targets
         move 0, temp2
         move temp2, 4[sp] # put 0 in ReturnPC
-        move sp, t2 # t2 is ecx
+        move sp, a0 # a0 is ecx
         push temp2 # Push dummy arg1
-        push t2
+        push a0
         call temp1
         addp 8, sp
     else
@@ -429,31 +340,43 @@ end
 # debugging from. operand should likewise be an immediate, and should identify the operand
 # in the instruction stream you'd like to print out.
 macro traceOperand(fromWhere, operand)
-    cCall4(_llint_trace_operand, cfr, PC, fromWhere, operand)
-    move t0, PC
-    move t1, cfr
+    move fromWhere, a2
+    move operand, a3
+    move cfr, a0
+    move PC, a1
+    cCall4(_llint_trace_operand)
+    move r0, PC
+    move r1, cfr
 end
 
 # Debugging operation if you'd like to print the value of an operand in the instruction
 # stream. Same as traceOperand(), but assumes that the operand is a register, and prints its
 # value.
 macro traceValue(fromWhere, operand)
-    cCall4(_llint_trace_value, cfr, PC, fromWhere, operand)
-    move t0, PC
-    move t1, cfr
+    move fromWhere, a2
+    move operand, a3
+    move cfr, a0
+    move PC, a1
+    cCall4(_llint_trace_value)
+    move r0, PC
+    move r1, cfr
 end
 
 # Call a slowPath for call opcodes.
 macro callCallSlowPath(slowPath, action)
     storep PC, ArgumentCount + TagOffset[cfr]
-    cCall2(slowPath, cfr, PC)
-    action(t0)
+    move cfr, a0
+    move PC, a1
+    cCall2(slowPath)
+    action(r0, r1)
 end
 
 macro callWatchdogTimerHandler(throwHandler)
     storei PC, ArgumentCount + TagOffset[cfr]
-    cCall2(_llint_slow_path_handle_watchdog_timer, cfr, PC)
-    btpnz t0, throwHandler
+    move cfr, a0
+    move PC, a1
+    cCall2(_llint_slow_path_handle_watchdog_timer)
+    btpnz r0, throwHandler
     loadi ArgumentCount + TagOffset[cfr], PC
 end
 
@@ -462,10 +385,12 @@ macro checkSwitchToJITForLoop()
         1,
         macro ()
             storei PC, ArgumentCount + TagOffset[cfr]
-            cCall2(_llint_loop_osr, cfr, PC)
-            btpz t0, .recover
-            move t1, sp
-            jmp t0
+            move cfr, a0
+            move PC, a1
+            cCall2(_llint_loop_osr)
+            btpz r0, .recover
+            move r1, sp
+            jmp r0
         .recover:
             loadi ArgumentCount + TagOffset[cfr], PC
         end)
@@ -576,7 +501,9 @@ macro writeBarrierOnOperand(cellOperand)
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp
-                cCall2Void(_llint_write_barrier_slow, cfr, t2)
+                move t2, a1 # t2 can be a0 on x86
+                move cfr, a0
+                cCall2Void(_llint_write_barrier_slow)
                 addp 8, sp
                 pop PC, cfr
             end
@@ -610,7 +537,9 @@ macro writeBarrierOnGlobal(valueOperand, loadHelper)
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp
-                cCall2Void(_llint_write_barrier_slow, cfr, t3)
+                move cfr, a0
+                move t3, a1
+                cCall2Void(_llint_write_barrier_slow)
                 addp 8, sp
                 pop PC, cfr
             end
@@ -649,19 +578,21 @@ end
 macro functionArityCheck(doneLabel, slowPath)
     loadi PayloadOffset + ArgumentCount[cfr], t0
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
-    cCall2(slowPath, cfr, PC)   # This slowPath has a simple protocol: t0 = 0 => no error, t0 != 0 => error
-    btiz t0, .noError
-    move t1, cfr   # t1 contains caller frame
+    move cfr, a0
+    move PC, a1
+    cCall2(slowPath)   # This slowPath has a simple protocol: t0 = 0 => no error, t0 != 0 => error
+    btiz r0, .noError
+    move r1, cfr   # r1 contains caller frame
     jmp _llint_throw_from_slow_path_trampoline
 
 .noError:
-    # t1 points to ArityCheckData.
-    loadp CommonSlowPaths::ArityCheckData::thunkToCall[t1], t2
-    btpz t2, .proceedInline
+    # r1 points to ArityCheckData.
+    loadp CommonSlowPaths::ArityCheckData::thunkToCall[r1], t3
+    btpz t3, .proceedInline
     
-    loadp CommonSlowPaths::ArityCheckData::returnPC[t1], t5
-    loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[t1], t0
-    call t2
+    loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], a0
+    loadp CommonSlowPaths::ArityCheckData::returnPC[r1], a1
+    call t3
     if ASSERT_ENABLED
         loadp ReturnPC[cfr], t0
         loadp [t0], t0
@@ -669,7 +600,7 @@ macro functionArityCheck(doneLabel, slowPath)
     jmp .continue
 
 .proceedInline:
-    loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[t1], t1
+    loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], t1
     btiz t1, .continue
 
     // Move frame up "t1 * 2" slots
@@ -751,14 +682,14 @@ _llint_op_create_this:
     traceExecution()
     loadi 8[PC], t0
     loadp PayloadOffset[cfr, t0, 8], t0
-    loadp JSFunction::m_rareData[t0], t4
-    btpz t4, .opCreateThisSlow
-    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t4], t1
-    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t4], t2
+    loadp JSFunction::m_rareData[t0], t5
+    btpz t5, .opCreateThisSlow
+    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t5], t1
+    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t5], t2
     btpz t1, .opCreateThisSlow
-    loadpFromInstruction(4, t4)
-    bpeq t4, 1, .hasSeenMultipleCallee
-    bpneq t4, t0, .opCreateThisSlow
+    loadpFromInstruction(4, t5)
+    bpeq t5, 1, .hasSeenMultipleCallee
+    bpneq t5, t0, .opCreateThisSlow
 .hasSeenMultipleCallee:
     allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
     loadi 4[PC], t1
@@ -2006,8 +1937,8 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t1
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t3
         storep cfr, VM::topCallFrame[t3]
-        move cfr, t2  # t2 = ecx
-        storep t2, [sp]
+        move cfr, a0  # a0 = ecx
+        storep a0, [sp]
         loadi Callee + PayloadOffset[cfr], t1
         loadp JSFunction::m_executable[t1], t1
         checkStackPointerAlignment(t3, 0xdead0001)
@@ -2022,11 +1953,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t1
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
         storep cfr, VM::topCallFrame[t1]
-        if MIPS or SH4
-            move cfr, a0
-        else
-            move cfr, t0
-        end
+        move cfr, a0
         loadi Callee + PayloadOffset[cfr], t1
         loadp JSFunction::m_executable[t1], t1
         checkStackPointerAlignment(t3, 0xdead0001)
@@ -2269,9 +2196,9 @@ end
 macro putLocalClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
-    loadpFromInstruction(5, t4)
-    btpz t4, .noVariableWatchpointSet
-    notifyWrite(t4, .pDynamic)
+    loadpFromInstruction(5, t5)
+    btpz t5, .noVariableWatchpointSet
+    notifyWrite(t5, .pDynamic)
 .noVariableWatchpointSet:
     loadisFromInstruction(6, t1)
     storei t2, JSEnvironmentRecord_variables + TagOffset[t0, t1, 8]
@@ -2396,9 +2323,9 @@ _llint_op_profile_type:
     # t1 is holding the pointer to the typeProfilerLog.
     loadp VM::m_typeProfilerLog[t1], t1
 
-    # t0 is holding the payload, t4 is holding the tag.
+    # t0 is holding the payload, t5 is holding the tag.
     loadisFromInstruction(1, t2)
-    loadConstantOrVariable(t2, t4, t0)
+    loadConstantOrVariable(t2, t5, t0)
 
     bieq t4, EmptyValueTag, .opProfileTypeDone
 
@@ -2406,14 +2333,14 @@ _llint_op_profile_type:
     loadp TypeProfilerLog::m_currentLogEntryPtr[t1], t2
 
     # Store the JSValue onto the log entry.
-    storei t4, TypeProfilerLog::LogEntry::value + TagOffset[t2]
+    storei t5, TypeProfilerLog::LogEntry::value + TagOffset[t2]
     storei t0, TypeProfilerLog::LogEntry::value + PayloadOffset[t2]
 
     # Store the TypeLocation onto the log entry.
     loadpFromInstruction(2, t3)
     storep t3, TypeProfilerLog::LogEntry::location[t2]
 
-    bieq t4, CellTag, .opProfileTypeIsCell
+    bieq t5, CellTag, .opProfileTypeIsCell
     storei 0, TypeProfilerLog::LogEntry::structureID[t2]
     jmp .opProfileTypeSkipIsCell
 .opProfileTypeIsCell:

@@ -70,9 +70,9 @@ class RegisterID
         case name
         # The cloop is modelled on the ARM implementation. Hence, the a0-a3
         # registers are aliases for r0-r3 i.e. t0-t3 in our case.
-        when "t0", "a0"
+        when "t0", "a0", "r0"
             "t0"
-        when "t1", "a1"
+        when "t1", "a1", "r1"
             "t1"
         when "t2", "a2"
             "t2"
@@ -82,10 +82,8 @@ class RegisterID
             "pc"
         when "t5"
             "t5"
-        when "t6"
+        when "csr0"
             "pcBase"
-        when "t7"
-            "t7"
         when "csr1"
             "tagTypeNumber"
         when "csr2"

@@ -1,3 +1,66 @@
+2015-09-03  Basile Clement  <basile_clement@apple.com> and Michael Saboff  <msaboff@apple.com>
+
+        Clean up register naming
+        https://bugs.webkit.org/show_bug.cgi?id=148658
+
+        Reviewed by Geoffrey Garen.
+
+        This changes register naming conventions in the llint and baseline JIT
+        in order to use as few (native) callee-save registers as possible on
+        64-bits platforms. It also introduces significant changes in the way
+        registers names are defined in the LLint and baseline JIT in order to
+        enable a simpler convention about which registers can be aliased. That
+        convention is valid across all architecture, and described in
+        llint/LowLevelInterpreter.asm.
+
+        Callee save registers are now called out regCS<n> (in the JIT) or
+        csr<n> (in the LLInt) with a common numbering across all tiers. Some
+        registers are unused in some tiers.
+
+        As a part of this change, rdi was removed from the list of temporary
+        registers for X86-64 Windows as it is a callee saves register. This
+        reduced the number of temporary registers for X86-64 Windows.
+
+        This is in preparation for properly handling callee save register
+        preservation and restoration.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/FPRInfo.h:
+        (JSC::FPRInfo::toRegister):
+        (JSC::FPRInfo::toIndex):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toIndex):
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::debugName): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_new_object):
+        * jit/RegisterPreservationWrapperGenerator.cpp:
+        (JSC::generateRegisterPreservationWrapper):
+        (JSC::generateRegisterRestoration):
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixupGenerator):
+        (JSC::nativeForGenerator): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/arm64.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/mips.rb:
+        * offlineasm/registers.rb:
+        * offlineasm/sh4.rb:
+        * offlineasm/x86.rb:
+
 2015-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of RepatchBuffer and replace it with static functions

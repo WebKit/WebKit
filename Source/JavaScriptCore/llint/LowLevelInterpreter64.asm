@@ -46,177 +46,127 @@ macro dispatchAfterCall()
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructions[PB], PB
     loadisFromInstruction(1, t1)
-    storeq t0, [cfr, t1, 8]
-    valueProfile(t0, (CallOpCodeSize - 1), t2)
+    storeq r0, [cfr, t1, 8]
+    valueProfile(r0, (CallOpCodeSize - 1), t3)
     dispatch(CallOpCodeSize)
 end
 
-macro cCall2(function, arg1, arg2)
+macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
-    if X86_64
-        move arg1, t4
-        move arg2, t5
+    if X86_64 or ARM64
         call function
     elsif X86_64_WIN
         # Note: this implementation is only correct if the return type size is > 8 bytes.
         # See macro cCall2Void for an implementation when the return type <= 8 bytes.
         # On Win64, when the return type is larger than 8 bytes, we need to allocate space on the stack for the return value.
-        # On entry rcx (t2), should contain a pointer to this stack space. The other parameters are shifted to the right,
-        # rdx (t1) should contain the first argument, and r8 (t6) should contain the second argument.
-        # On return, rax contains a pointer to this stack value, and we then need to copy the 16 byte return value into rax (t0) and rdx (t1)
+        # On entry rcx (a0), should contain a pointer to this stack space. The other parameters are shifted to the right,
+        # rdx (a1) should contain the first argument, and r8 (a2) should contain the second argument.
+        # On return, rax contains a pointer to this stack value, and we then need to copy the 16 byte return value into rax (r0) and rdx (r1)
         # since the return value is expected to be split between the two.
         # See http://msdn.microsoft.com/en-us/library/7572ztz4.aspx
-        move arg1, t1
-        move arg2, t6
+        move a1, a2
+        move a0, a1
         subp 48, sp
-        move sp, t2
-        addp 32, t2
+        move sp, a0
+        addp 32, a0
         call function
         addp 48, sp
-        move 8[t0], t1
-        move [t0], t0
-    elsif ARM64
-        move arg1, t0
-        move arg2, t1
-        call function
+        move 8[r0], r1
+        move [r0], r0
     elsif C_LOOP
-        cloopCallSlowPath function, arg1, arg2
+        cloopCallSlowPath function, a0, a1
     else
         error
     end
 end
 
-macro cCall2Void(function, arg1, arg2)
+macro cCall2Void(function)
     if C_LOOP
-        cloopCallSlowPathVoid function, arg1, arg2
+        cloopCallSlowPathVoid function, a0, a1
     elsif X86_64_WIN
         # Note: we cannot use the cCall2 macro for Win64 in this case,
         # as the Win64 cCall2 implemenation is only correct when the return type size is > 8 bytes.
         # On Win64, rcx and rdx are used for passing the first two parameters.
         # We also need to make room on the stack for all four parameter registers.
         # See http://msdn.microsoft.com/en-us/library/ms235286.aspx
-        move arg2, t1
-        move arg1, t2
         subp 32, sp 
         call function
         addp 32, sp 
     else
-        cCall2(function, arg1, arg2)
+        cCall2(function)
     end
 end
 
 # This barely works. arg3 and arg4 should probably be immediates.
-macro cCall4(function, arg1, arg2, arg3, arg4)
+macro cCall4(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
-    if X86_64
-        move arg1, t4
-        move arg2, t5
-        move arg3, t1
-        move arg4, t2
+    if X86_64 or ARM64
         call function
     elsif X86_64_WIN
         # On Win64, rcx, rdx, r8, and r9 are used for passing the first four parameters.
         # We also need to make room on the stack for all four parameter registers.
         # See http://msdn.microsoft.com/en-us/library/ms235286.aspx
-        move arg1, t2
-        move arg2, t1
-        move arg3, t6
-        move arg4, t7
-        subp 32, sp 
+        subp 64, sp
         call function
-        addp 32, sp 
-    elsif ARM64
-        move arg1, t0
-        move arg2, t1
-        move arg3, t2
-        move arg4, t3
-        call function
-    elsif C_LOOP
-        error
+        addp 64, sp
     else
         error
     end
 end
 
 macro doVMEntry(makeCall)
-    if X86_64
-        const entry = t4
-        const vm = t5
-        const protoCallFrame = t1
-
-        const previousCFR = t0
-        const previousPC = t6
-        const temp1 = t0
-        const temp2 = t3
-        const temp3 = t6
-    elsif X86_64_WIN
-        const entry = t2
-        const vm = t1
-        const protoCallFrame = t6
-
-        const previousCFR = t0
-        const previousPC = t4
-        const temp1 = t0
-        const temp2 = t3
-        const temp3 = t7
-    elsif ARM64 or C_LOOP
-        const entry = a0
-        const vm = a1
-        const protoCallFrame = a2
-
-        const previousCFR = t5
-        const previousPC = lr
-        const temp1 = t3
-        const temp2 = t4
-        const temp3 = t6
-    end
-
     functionPrologue()
     pushCalleeSaves()
 
+    const entry = a0
+    const vm = a1
+    const protoCallFrame = a2
+
     vmEntryRecord(cfr, sp)
 
-    checkStackPointerAlignment(temp2, 0xbad0dc01)
+    checkStackPointerAlignment(t4, 0xbad0dc01)
 
     storep vm, VMEntryRecord::m_vm[sp]
-    loadp VM::topCallFrame[vm], temp2
-    storep temp2, VMEntryRecord::m_prevTopCallFrame[sp]
-    loadp VM::topVMEntryFrame[vm], temp2
-    storep temp2, VMEntryRecord::m_prevTopVMEntryFrame[sp]
+    loadp VM::topCallFrame[vm], t4
+    storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
+    loadp VM::topVMEntryFrame[vm], t4
+    storep t4, VMEntryRecord::m_prevTopVMEntryFrame[sp]
 
-    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], temp2
-    addp CallFrameHeaderSlots, temp2, temp2
-    lshiftp 3, temp2
-    subp sp, temp2, temp1
+    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t4
+    addp CallFrameHeaderSlots, t4, t4
+    lshiftp 3, t4
+    subp sp, t4, t3
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
-    bpaeq temp1, VM::m_jsStackLimit[vm], .stackHeightOK
+    bpaeq t3, VM::m_jsStackLimit[vm], .stackHeightOK
 
     if C_LOOP
-        move entry, temp2
-        move vm, temp3
-        cloopCallSlowPath _llint_stack_check_at_vm_entry, vm, temp1
+        move entry, t4
+        move vm, t5
+        cloopCallSlowPath _llint_stack_check_at_vm_entry, vm, t3
         bpeq t0, 0, .stackCheckFailed
-        move temp2, entry
-        move temp3, vm
+        move t4, entry
+        move t5, vm
         jmp .stackHeightOK
 
 .stackCheckFailed:
-        move temp2, entry
-        move temp3, vm
+        move t4, entry
+        move t5, vm
     end
 
-    cCall2(_llint_throw_stack_overflow_error, vm, protoCallFrame)
+    move vm, a0
+    move protoCallFrame, a1
+    cCall2(_llint_throw_stack_overflow_error)
 
-    vmEntryRecord(cfr, temp2)
+    vmEntryRecord(cfr, t4)
 
-    loadp VMEntryRecord::m_vm[temp2], vm
-    loadp VMEntryRecord::m_prevTopCallFrame[temp2], temp3
-    storep temp3, VM::topCallFrame[vm]
-    loadp VMEntryRecord::m_prevTopVMEntryFrame[temp2], temp3
-    storep temp3, VM::topVMEntryFrame[vm]
+    loadp VMEntryRecord::m_vm[t4], vm
+    loadp VMEntryRecord::m_prevTopCallFrame[t4], extraTempReg
+    storep extraTempReg, VM::topCallFrame[vm]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[t4], extraTempReg
+    storep extraTempReg, VM::topVMEntryFrame[vm]
 
     subp cfr, CalleeRegisterSaveSize, sp
 
@@ -225,62 +175,65 @@ macro doVMEntry(makeCall)
     ret
 
 .stackHeightOK:
-    move temp1, sp
-    move 4, temp1
+    move t3, sp
+    move 4, t3
 
 .copyHeaderLoop:
-    subi 1, temp1
-    loadq [protoCallFrame, temp1, 8], temp3
-    storeq temp3, CodeBlock[sp, temp1, 8]
-    btinz temp1, .copyHeaderLoop
+    subi 1, t3
+    loadq [protoCallFrame, t3, 8], extraTempReg
+    storeq extraTempReg, CodeBlock[sp, t3, 8]
+    btinz t3, .copyHeaderLoop
 
-    loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], temp2
-    subi 1, temp2
-    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], temp3
-    subi 1, temp3
+    loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], t4
+    subi 1, t4
+    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], extraTempReg
+    subi 1, extraTempReg
 
-    bieq temp2, temp3, .copyArgs
-    move ValueUndefined, temp1
+    bieq t4, extraTempReg, .copyArgs
+    move ValueUndefined, t3
 .fillExtraArgsLoop:
-    subi 1, temp3
-    storeq temp1, ThisArgumentOffset + 8[sp, temp3, 8]
-    bineq temp2, temp3, .fillExtraArgsLoop
+    subi 1, extraTempReg
+    storeq t3, ThisArgumentOffset + 8[sp, extraTempReg, 8]
+    bineq t4, extraTempReg, .fillExtraArgsLoop
 
 .copyArgs:
-    loadp ProtoCallFrame::args[protoCallFrame], temp1
+    loadp ProtoCallFrame::args[protoCallFrame], t3
 
 .copyArgsLoop:
-    btiz temp2, .copyArgsDone
-    subi 1, temp2
-    loadq [temp1, temp2, 8], temp3
-    storeq temp3, ThisArgumentOffset + 8[sp, temp2, 8]
+    btiz t4, .copyArgsDone
+    subi 1, t4
+    loadq [t3, t4, 8], extraTempReg
+    storeq extraTempReg, ThisArgumentOffset + 8[sp, t4, 8]
     jmp .copyArgsLoop
 
 .copyArgsDone:
     if ARM64
-        move sp, temp2
-        storep temp2, VM::topCallFrame[vm]
+        move sp, t4
+        storep t4, VM::topCallFrame[vm]
     else
         storep sp, VM::topCallFrame[vm]
     end
     storep cfr, VM::topVMEntryFrame[vm]
 
-    move 0xffff000000000000, csr1
-    addp 2, csr1, csr2
+    move TagTypeNumber, tagTypeNumber
+    addp TagBitTypeOther, tagTypeNumber, tagMask
 
-    checkStackPointerAlignment(temp3, 0xbad0dc02)
+    checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
-    makeCall(entry, temp1)
+    makeCall(entry, t3)
 
-    checkStackPointerAlignment(temp3, 0xbad0dc03)
+    # We may have just made a call into a JS function, so we can't rely on sp
+    # for anything but the fact that our own locals (ie the VMEntryRecord) are
+    # not below it. It also still has to be aligned, though.
+    checkStackPointerAlignment(t2, 0xbad0dc03)
 
-    vmEntryRecord(cfr, temp2)
+    vmEntryRecord(cfr, t4)
 
-    loadp VMEntryRecord::m_vm[temp2], vm
-    loadp VMEntryRecord::m_prevTopCallFrame[temp2], temp3
-    storep temp3, VM::topCallFrame[vm]
-    loadp VMEntryRecord::m_prevTopVMEntryFrame[temp2], temp3
-    storep temp3, VM::topVMEntryFrame[vm]
+    loadp VMEntryRecord::m_vm[t4], vm
+    loadp VMEntryRecord::m_prevTopCallFrame[t4], t2
+    storep t2, VM::topCallFrame[vm]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[t4], t2
+    storep t2, VM::topVMEntryFrame[vm]
 
     subp cfr, CalleeRegisterSaveSize, sp
 
@@ -305,13 +258,7 @@ end
 macro makeHostFunctionCall(entry, temp)
     move entry, temp
     storep cfr, [sp]
-    if X86_64
-        move sp, t4
-    elsif X86_64_WIN
-        move sp, t2
-    elsif ARM64 or C_LOOP
-        move sp, a0
-    end
+    move sp, a0
     if C_LOOP
         storep lr, 8[sp]
         cloopCallNative temp
@@ -336,10 +283,10 @@ _handleUncaughtException:
     vmEntryRecord(cfr, t2)
 
     loadp VMEntryRecord::m_vm[t2], t3
-    loadp VMEntryRecord::m_prevTopCallFrame[t2], t5
-    storep t5, VM::topCallFrame[t3]
-    loadp VMEntryRecord::m_prevTopVMEntryFrame[t2], t5
-    storep t5, VM::topVMEntryFrame[t3]
+    loadp VMEntryRecord::m_prevTopCallFrame[t2], extraTempReg
+    storep extraTempReg, VM::topCallFrame[t3]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[t2], extraTempReg
+    storep extraTempReg, VM::topVMEntryFrame[t3]
 
     subp cfr, CalleeRegisterSaveSize, sp
 
@@ -350,31 +297,39 @@ _handleUncaughtException:
 
 macro prepareStateForCCall()
     leap [PB, PC, 8], PC
-    move PB, t3
 end
 
 macro restoreStateAfterCCall()
-    move t0, PC
-    move t3, PB
+    move r0, PC
     subp PB, PC
     rshiftp 3, PC
 end
 
 macro callSlowPath(slowPath)
     prepareStateForCCall()
-    cCall2(slowPath, cfr, PC)
+    move cfr, a0
+    move PC, a1
+    cCall2(slowPath)
     restoreStateAfterCCall()
 end
 
 macro traceOperand(fromWhere, operand)
     prepareStateForCCall()
-    cCall4(_llint_trace_operand, cfr, PC, fromWhere, operand)
+    move fromWhere, a2
+    move operand, a3
+    move cfr, a0
+    move PC, a1
+    cCall4(_llint_trace_operand)
     restoreStateAfterCCall()
 end
 
 macro traceValue(fromWhere, operand)
     prepareStateForCCall()
-    cCall4(_llint_trace_value, cfr, PC, fromWhere, operand)
+    move fromWhere, a2
+    move operand, a3
+    move cfr, a0
+    move PC, a1
+    cCall4(_llint_trace_value)
     restoreStateAfterCCall()
 end
 
@@ -382,16 +337,19 @@ end
 macro callCallSlowPath(slowPath, action)
     storei PC, ArgumentCount + TagOffset[cfr]
     prepareStateForCCall()
-    cCall2(slowPath, cfr, PC)
-    action(t0)
+    move cfr, a0
+    move PC, a1
+    cCall2(slowPath)
+    action(r0, r1)
 end
 
 macro callWatchdogTimerHandler(throwHandler)
     storei PC, ArgumentCount + TagOffset[cfr]
     prepareStateForCCall()
-    cCall2(_llint_slow_path_handle_watchdog_timer, cfr, PC)
-    btpnz t0, throwHandler
-    move t3, PB
+    move cfr, a0
+    move PC, a1
+    cCall2(_llint_slow_path_handle_watchdog_timer)
+    btpnz r0, throwHandler
     loadi ArgumentCount + TagOffset[cfr], PC
 end
 
@@ -401,12 +359,13 @@ macro checkSwitchToJITForLoop()
         macro()
             storei PC, ArgumentCount + TagOffset[cfr]
             prepareStateForCCall()
-            cCall2(_llint_loop_osr, cfr, PC)
-            btpz t0, .recover
-            move t1, sp
-            jmp t0
+            move cfr, a0
+            move PC, a1
+            cCall2(_llint_loop_osr)
+            btpz r0, .recover
+            move r1, sp
+            jmp r0
         .recover:
-            move t3, PB
             loadi ArgumentCount + TagOffset[cfr], PC
         end)
 end
@@ -447,7 +406,9 @@ macro writeBarrierOnOperand(cellOperand)
             macro(gcData)
                 btbnz gcData, .writeBarrierDone
                 push PB, PC
-                cCall2Void(_llint_write_barrier_slow, cfr, t2)
+                move t2, a1 # t2 can be a0 (not on 64 bits, but better safe than sorry)
+                move cfr, a0
+                cCall2Void(_llint_write_barrier_slow)
                 pop PC, PB
             end
         )
@@ -477,7 +438,9 @@ macro writeBarrierOnGlobal(valueOperand, loadHelper)
             macro(gcData)
                 btbnz gcData, .writeBarrierDone
                 push PB, PC
-                cCall2Void(_llint_write_barrier_slow, cfr, t3)
+                move cfr, a0
+                move t3, a1
+                cCall2Void(_llint_write_barrier_slow)
                 pop PC, PB
             end
         )
@@ -538,19 +501,21 @@ macro functionArityCheck(doneLabel, slowPath)
     loadi PayloadOffset + ArgumentCount[cfr], t0
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     prepareStateForCCall()
-    cCall2(slowPath, cfr, PC)   # This slowPath has the protocol: t0 = 0 => no error, t0 != 0 => error
-    btiz t0, .noError
-    move t1, cfr   # t1 contains caller frame
+    move cfr, a0
+    move PC, a1
+    cCall2(slowPath)   # This slowPath has the protocol: r0 = 0 => no error, r0 != 0 => error
+    btiz r0, .noError
+    move r1, cfr   # r1 contains caller frame
     jmp _llint_throw_from_slow_path_trampoline
 
 .noError:
-    # t1 points to ArityCheckData.
-    loadp CommonSlowPaths::ArityCheckData::thunkToCall[t1], t2
-    btpz t2, .proceedInline
+    # r1 points to ArityCheckData.
+    loadp CommonSlowPaths::ArityCheckData::thunkToCall[r1], t3
+    btpz t3, .proceedInline
     
-    loadp CommonSlowPaths::ArityCheckData::returnPC[t1], t7
-    loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[t1], t0
-    call t2
+    loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], a0
+    loadp CommonSlowPaths::ArityCheckData::returnPC[r1], a1
+    call t3
     if ASSERT_ENABLED
         loadp ReturnPC[cfr], t0
         loadp [t0], t0
@@ -558,7 +523,7 @@ macro functionArityCheck(doneLabel, slowPath)
     jmp .continue
 
 .proceedInline:
-    loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[t1], t1
+    loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], t1
     btiz t1, .continue
 
     // Move frame up "t1 * 2" slots
@@ -604,7 +569,6 @@ end
 
 
 # Instruction implementations
-
 _llint_op_enter:
     traceExecution()
     checkStackPointerAlignment(t2, 0xdead00e1)
@@ -636,14 +600,14 @@ _llint_op_create_this:
     traceExecution()
     loadisFromInstruction(2, t0)
     loadp [cfr, t0, 8], t0
-    loadp JSFunction::m_rareData[t0], t4
-    btpz t4, .opCreateThisSlow
-    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t4], t1
-    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t4], t2
+    loadp JSFunction::m_rareData[t0], t3
+    btpz t3, .opCreateThisSlow
+    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t3], t1
+    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t3], t2
     btpz t1, .opCreateThisSlow
-    loadpFromInstruction(4, t4)
-    bpeq t4, 1, .hasSeenMultipleCallee
-    bpneq t4, t0, .opCreateThisSlow
+    loadpFromInstruction(4, t3)
+    bpeq t3, 1, .hasSeenMultipleCallee
+    bpneq t3, t0, .opCreateThisSlow
 .hasSeenMultipleCallee:
     allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
     loadisFromInstruction(1, t1)
@@ -1776,7 +1740,7 @@ _llint_op_ret:
     traceExecution()
     checkSwitchToJITForEpilogue()
     loadisFromInstruction(1, t2)
-    loadConstantOrVariable(t2, t0)
+    loadConstantOrVariable(t2, r0)
     doReturn()
 
 
@@ -1839,7 +1803,7 @@ _llint_op_end:
     checkSwitchToJITForEpilogue()
     loadisFromInstruction(1, t0)
     assertNotConstant(t0)
-    loadq [cfr, t0, 8], t0
+    loadq [cfr, t0, 8], r0
     doReturn()
 
 
@@ -1864,56 +1828,31 @@ macro nativeCallTrampoline(executableOffsetToFunction)
 
     functionPrologue()
     storep 0, CodeBlock[cfr]
-    if X86_64 or X86_64_WIN
-        if X86_64
-            const arg1 = t4  # t4 = rdi
-            const arg2 = t5  # t5 = rsi
-            const temp = t1
-        elsif X86_64_WIN
-            const arg1 = t2  # t2 = rcx
-            const arg2 = t1  # t1 = rdx
-            const temp = t0
-        end
-        loadp Callee[cfr], t0
-        andp MarkedBlockMask, t0, t1
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
-        storep cfr, VM::topCallFrame[t1]
-        move cfr, arg1
-        loadp Callee[cfr], arg2
-        loadp JSFunction::m_executable[arg2], temp
-        checkStackPointerAlignment(t3, 0xdead0001)
+    loadp Callee[cfr], t0
+    andp MarkedBlockMask, t0, t1
+    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
+    storep cfr, VM::topCallFrame[t1]
+    if ARM64 or C_LOOP
+        storep lr, ReturnPC[cfr]
+    end
+    move cfr, a0
+    loadp Callee[cfr], t1
+    loadp JSFunction::m_executable[t1], t1
+    checkStackPointerAlignment(t3, 0xdead0001)
+    if C_LOOP
+        cloopCallNative executableOffsetToFunction[t1]
+    else
         if X86_64_WIN
             subp 32, sp
         end
-        call executableOffsetToFunction[temp]
+        call executableOffsetToFunction[t1]
         if X86_64_WIN
             addp 32, sp
         end
-        loadp Callee[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-    elsif ARM64 or C_LOOP
-        loadp Callee[cfr], t0
-        andp MarkedBlockMask, t0, t1
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
-        storep cfr, VM::topCallFrame[t1]
-        preserveReturnAddressAfterCall(t3)
-        storep t3, ReturnPC[cfr]
-        move cfr, t0
-        loadp Callee[cfr], t1
-        loadp JSFunction::m_executable[t1], t1
-        if C_LOOP
-            cloopCallNative executableOffsetToFunction[t1]
-        else
-            call executableOffsetToFunction[t1]
-        end
-        restoreReturnAddressBeforeReturn(t3)
-        loadp Callee[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-    else
-        error
     end
+    loadp Callee[cfr], t3
+    andp MarkedBlockMask, t3
+    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
 
     functionEpilogue()
 

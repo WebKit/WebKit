@@ -24,6 +24,62 @@
 
 require "config"
 
+# GPR conventions, to match the baseline JIT:
+#
+#
+# On x86-32 bits (windows and non-windows)
+# a0, a1, a2, a3 are only there for ease-of-use of offlineasm; they are not
+# actually considered as such by the ABI and we need to push/pop our arguments
+# on the stack. a0 and a1 are ecx and edx to follow fastcall.
+#
+# eax => t0, a2, r0
+# edx => t1, a1, r1
+# ecx => t2, a0
+# ebx => t3, a3     (callee-save)
+# esi => t4         (callee-save)
+# edi => t5         (callee-save)
+# ebp => cfr
+# esp => sp
+#
+# On x86-64 non-windows
+#
+# rax => t0,     r0
+# rdi =>     a0
+# rsi => t1, a1
+# rdx => t2, a2, r1
+# rcx => t3, a3
+#  r8 => t4
+# r10 => t5
+# rbx =>             csr0 (callee-save, PB, unused in baseline)
+# r12 =>             csr1 (callee-save)
+# r13 =>             csr2 (callee-save)
+# r14 =>             csr3 (callee-save, tagTypeNumber)
+# r15 =>             csr4 (callee-save, tagMask)
+# rsp => sp
+# rbp => cfr
+# r11 =>                  (scratch)
+#
+# On x86-64 windows
+# Arguments need to be push/pop'd on the stack in addition to being stored in
+# the registers. Also, >8 return types are returned in a weird way.
+#
+# rax => t0,     r0
+# rcx =>     a0
+# rdx => t1, a1, r1
+#  r8 => t2, a2
+#  r9 => t3, a3
+# r10 => t4
+# rbx =>             csr0 (callee-save, PB, unused in baseline)
+# rsi =>             csr1 (callee-save)
+# rdi =>             csr2 (callee-save)
+# r12 =>             csr3 (callee-save)
+# r13 =>             csr4 (callee-save)
+# r14 =>             csr5 (callee-save, tagTypeNumber)
+# r15 =>             csr6 (callee-save, tagMask)
+# rsp => sp
+# rbp => cfr
+# r11 =>                  (scratch)
+
 def isX64
     case $activeBackend
     when "X86"
@@ -32,6 +88,21 @@ def isX64
         false
     when "X86_64"
         true
+    when "X86_64_WIN"
+        true
+    else
+        raise "bad value for $activeBackend: #{$activeBackend}"
+    end
+end
+
+def isWin
+    case $activeBackend
+    when "X86"
+        false
+    when "X86_WIN"
+        true
+    when "X86_64"
+        false
     when "X86_64_WIN"
         true
     else
@@ -54,20 +125,20 @@ def useX87
     end
 end
 
-def isWindows
+def isCompilingOnWindows
     ENV['OS'] == 'Windows_NT'
 end
 
 def isGCC
-    !isWindows
+    !isCompilingOnWindows
 end
 
 def isMSVC
-    isWindows
+    isCompilingOnWindows
 end
 
 def isIntelSyntax
-    isWindows
+    isCompilingOnWindows
 end
 
 def register(name)
@@ -141,205 +212,133 @@ end
 
 X64_SCRATCH_REGISTER = SpecialRegister.new("r11")
 
+def x86GPRName(name, kind)
+    case name
+    when "eax", "ebx", "ecx", "edx"
+        name8 = name[1] + 'l'
+        name16 = name[1..2]
+    when "esi", "edi", "ebp", "esp"
+        name16 = name[1..2]
+        name8 = name16 + 'l'
+    when "rax", "rbx", "rcx", "rdx"
+        raise "bad GPR name #{name} in 32-bit X86" unless isX64
+        name8 = name[1] + 'l'
+        name16 = name[1..2]
+    when "r8", "r9", "r10", "r12", "r13", "r14", "r15"
+        raise "bad GPR name #{name} in 32-bit X86" unless isX64
+        case kind
+        when :half
+            return register(name + "w")
+        when :int
+            return register(name + "d")
+        when :ptr
+            return register(name)
+        when :quad
+            return register(name)
+        end
+    else
+        raise "bad GPR name #{name}"
+    end
+    case kind
+    when :byte
+        register(name8)
+    when :half
+        register(name16)
+    when :int
+        register("e" + name16)
+    when :ptr
+        register((isX64 ? "r" : "e") + name16)
+    when :quad
+        isX64 ? register("r" + name16) : raise
+    else
+        raise "invalid kind #{kind} for GPR #{name} in X86"
+    end
+end
+
 class RegisterID
     def supports8BitOnX86
-        case name
-        when "t0", "a0", "r0", "t1", "a1", "r1", "t2", "t3", "t4", "t5"
+        case x86GPR
+        when "eax", "ebx", "ecx", "edx", "edi", "esi", "ebp", "esp"
             true
-        when "cfr", "ttnr", "tmr"
+        when "r8", "r9", "r10", "r12", "r13", "r14", "r15"
             false
-        when "t6"
-            isX64
         else
             raise
         end
     end
-    
-    def x86Operand(kind)
-        case name
-        when "t0", "a0", "r0"
-            case kind
-            when :byte
-                register("al")
-            when :half
-                register("ax")
-            when :int
-                register("eax")
-            when :ptr
-                isX64 ? register("rax") : register("eax")
-            when :quad
-                isX64 ? register("rax") : raise
+
+    def x86GPR
+        if isX64
+            case name
+            when "t0", "r0"
+                "eax"
+            when "r1"
+                "edx" # t1 = a1 when isWin, t2 = a2 otherwise
+            when "a0"
+                isWin ? "ecx" : "edi"
+            when "t1", "a1"
+                isWin ? "edx" : "esi"
+            when "t2", "a2"
+                isWin ? "r8" : "edx"
+            when "t3", "a3"
+                isWin ? "r9" : "ecx"
+            when "t4"
+                isWin ? "r10" : "r8"
+            when "t5"
+                raise "cannot use register #{name} on X86-64 Windows" unless not isWin
+                "r10"
+            when "csr0"
+                "ebx"
+            when "csr1"
+                "r12"
+            when "csr2"
+                "r13"
+            when "csr3"
+                isWin ? "esi" : "r14"
+            when "csr4"
+                isWin ? "edi" : "r15"
+                "r15"
+            when "csr5"
+                raise "cannot use register #{name} on X86-64" unless isWin
+                "r14"
+            when "csr6"
+                raise "cannot use register #{name} on X86-64" unless isWin
+                "r15"
+            when "cfr"
+                "ebp"
+            when "sp"
+                "esp"
             else
-                raise "Invalid kind #{kind} for name #{name}"
-            end
-        when "t1", "a1", "r1"
-            case kind
-            when :byte
-                register("dl")
-            when :half
-                register("dx")
-            when :int
-                register("edx")
-            when :ptr
-                isX64 ? register("rdx") : register("edx")
-            when :quad
-                isX64 ? register("rdx") : raise
-            else
-                raise
-            end
-        when "t2"
-            case kind
-            when :byte
-                register("cl")
-            when :half
-                register("cx")
-            when :int
-                register("ecx")
-            when :ptr
-                isX64 ? register("rcx") : register("ecx")
-            when :quad
-                isX64 ? register("rcx") : raise
-            else
-                raise
-            end
-        when "t3"
-            case kind
-            when :byte
-                register("bl")
-            when :half
-                register("bx")
-            when :int
-                register("ebx")
-            when :ptr
-                isX64 ? register("rbx") : register("ebx")
-            when :quad
-                isX64 ? register("rbx") : raise
-            else
-                raise
-            end
-        when "t4"
-            case kind
-            when :byte
-                register("dil")
-            when :half
-                register("di")
-            when :int
-                register("edi")
-            when :ptr
-                isX64 ? register("rdi") : register("edi")
-            when :quad
-                isX64 ? register("rdi") : raise
-            else
-                raise
-            end
-        when "cfr"
-            if isX64
-                case kind
-                when :half
-                    register("bp")
-                when :int
-                    register("ebp")
-                when :ptr
-                    register("rbp")
-                when :quad
-                    register("rbp")
-                else
-                    raise
-                end
-            else
-                case kind
-                when :half
-                    register("bp")
-                when :int
-                    register("ebp")
-                when :ptr
-                    register("ebp")
-                else
-                    raise
-                end
-            end
-        when "sp"
-            case kind
-            when :byte
-                register("spl")
-            when :half
-                register("sp")
-            when :int
-                register("esp")
-            when :ptr
-                isX64 ? register("rsp") : register("esp")
-            when :quad
-                isX64 ? register("rsp") : raise
-            else
-                raise
-            end
-        when "t5"
-            case kind
-            when :byte
-                register("sil")
-            when :half
-                register("si")
-            when :int
-                register("esi")
-            when :ptr
-                isX64 ? register("rsi") : register("esi")
-            when :quad
-                isX64 ? register("rsi") : raise
-            end
-        when "t6"
-            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
-            case kind
-            when :half
-                register("r8w")
-            when :int
-                register("r8d")
-            when :ptr
-                register("r8")
-            when :quad
-                register("r8")
-            end
-        when "t7"
-            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
-            case kind
-            when :half
-                register("r9w")
-            when :int
-                register("r9d")
-            when :ptr
-                register("r9")
-            when :quad
-                register("r9")
-            end
-        when "csr1"
-            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
-            case kind
-            when :half
-                register("r14w")
-            when :int
-                register("r14d")
-            when :ptr
-                register("r14")
-            when :quad
-                register("r14")
-            end
-        when "csr2"
-            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
-            case kind
-            when :half
-                register("r15w")
-            when :int
-                register("r15d")
-            when :ptr
-                register("r15")
-            when :quad
-                register("r15")
+                raise "cannot use register #{name} on X86"
             end
         else
-            raise "Bad register #{name} for X86 at #{codeOriginString}"
+            case name
+            when "t0", "r0", "a2"
+                "eax"
+            when "t1", "r1", "a1"
+                "edx"
+            when "t2", "a0"
+                "ecx"
+            when "t3", "a3"
+                "ebx"
+            when "t4"
+                "esi"
+            when "t5"
+                "edi"
+            when "cfr"
+                "ebp"
+            when "sp"
+                "esp"
+            end
         end
     end
+
+    def x86Operand(kind)
+        x86GPRName(x86GPR, kind)
+    end
+
     def x86CallOperand(kind)
-        isX64 ? "#{callPrefix}#{x86Operand(:quad)}" : "#{callPrefix}#{x86Operand(:ptr)}"
+        "#{callPrefix}#{x86Operand(:ptr)}"
     end
 end
 
@@ -597,13 +596,12 @@ class Instruction
     end
     
     def handleX86Shift(opcode, kind)
-        if operands[0].is_a? Immediate or operands[0] == RegisterID.forName(nil, "t2")
+        if operands[0].is_a? Immediate or operands[0].x86GPR == "ecx"
             $asm.puts "#{opcode} #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(kind))}"
         else
-            cx = RegisterID.forName(nil, "t2")
-            $asm.puts "xchg#{x86Suffix(:ptr)} #{operands[0].x86Operand(:ptr)}, #{cx.x86Operand(:ptr)}"
+            $asm.puts "xchg#{x86Suffix(:ptr)} #{operands[0].x86Operand(:ptr)}, #{x86GPRName("ecx", :ptr)}"
             $asm.puts "#{opcode} #{orderOperands(register("cl"), operands[1].x86Operand(kind))}"
-            $asm.puts "xchg#{x86Suffix(:ptr)} #{operands[0].x86Operand(:ptr)}, #{cx.x86Operand(:ptr)}"
+            $asm.puts "xchg#{x86Suffix(:ptr)} #{operands[0].x86Operand(:ptr)}, #{x86GPRName("ecx", :ptr)}"
         end
     end
     
@@ -647,10 +645,14 @@ class Instruction
                 $asm.puts "movzx #{orderOperands(operand.x86Operand(:byte), operand.x86Operand(:int))}"
             end
         else
-            ax = RegisterID.new(nil, "t0")
+            ax = RegisterID.new(nil, "r0")
             $asm.puts "xchg#{x86Suffix(:ptr)} #{operand.x86Operand(:ptr)}, #{ax.x86Operand(:ptr)}"
-            $asm.puts "#{setOpcode} %al"
-            $asm.puts "movzbl %al, %eax"
+            $asm.puts "#{setOpcode} #{ax.x86Operand(:byte)}"
+            if !isIntelSyntax
+		$asm.puts "movzbl #{ax.x86Operand(:byte)}, #{ax.x86Operand(:int)}"
+            else
+                $asm.puts "movzx #{ax.x86Operand(:int)}, #{ax.x86Operand(:byte)}"
+            end
             $asm.puts "xchg#{x86Suffix(:ptr)} #{operand.x86Operand(:ptr)}, #{ax.x86Operand(:ptr)}"
         end
     end

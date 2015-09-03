@@ -395,18 +395,14 @@ void JITCompiler::compileFunction()
     m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
-    branchTest32(Zero, GPRInfo::regT0).linkTo(fromArityCheck, this);
+    branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
-    GPRReg thunkReg;
-#if USE(JSVALUE64)
-    thunkReg = GPRInfo::regT7;
-#else
-    thunkReg = GPRInfo::regT5;
-#endif
+    GPRReg thunkReg = GPRInfo::argumentGPR1;
     CodeLocationLabel* arityThunkLabels =
         m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters());
     move(TrustedImmPtr(arityThunkLabels), thunkReg);
-    loadPtr(BaseIndex(thunkReg, GPRInfo::regT0, timesPtr()), thunkReg);
+    loadPtr(BaseIndex(thunkReg, GPRInfo::returnValueGPR, timesPtr()), thunkReg);
+    move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
     m_callArityFixup = call();
     jump(fromArityCheck);
     
