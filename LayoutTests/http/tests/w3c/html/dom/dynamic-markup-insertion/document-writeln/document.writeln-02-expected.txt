@@ -1,0 +1,6 @@
+
+
+PASS Calling document.writeln with null and undefined 
+PASS document.writeln(null) 
+PASS document.writeln(undefined) 
+

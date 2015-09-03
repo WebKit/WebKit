@@ -1,0 +1,4 @@
+A
+
+PASS document.write \r\n 
+

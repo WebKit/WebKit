@@ -1,0 +1,7 @@
+a
+b
+
+
+
+FAIL getElementsByName and foreign namespaces assert_equals: expected 1 but got 2
+

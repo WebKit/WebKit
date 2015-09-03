@@ -1,0 +1,6 @@
+
+FAIL Date returned by lastModified is current at page load assert_true: expected true got false
+PASS Date returned by lastModified is in the form "MM/DD/YYYY hh:mm:ss". 
+FAIL Date returned by lastModified is in the user's local time zone. assert_true: Hours and minutes should match local time. expected true got false
+FAIL Date returned by lastModified is current after timeout. assert_true: expected true got false
+

@@ -1,0 +1,3 @@
+
+PASS id and name attributes and getElementById 
+

@@ -1,3 +1,19 @@
+2015-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Import W3C HTML/DOM test suite from github.com/w3c/web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=148736
+        <rdar://problem/22551968>
+
+        Reviewed by Ryosuke Niwa.
+
+        Import W3C HTML/DOM test suite from github.com/w3c/web-platform-tests
+        to get better coverage. This includes 230 tests. They run in ~15 seconds
+        for a release build / ~20 seconds for a debug build on a MacBookPro.
+
+        * TestExpectations:
+        * http/tests/w3c/html/dom/*: Added.
+        New test suite.
+
 2015-09-03  Alexey Proskuryakov  <ap@apple.com>
 
         Remove empty LayoutTests/platform/ios-sim-deprecated

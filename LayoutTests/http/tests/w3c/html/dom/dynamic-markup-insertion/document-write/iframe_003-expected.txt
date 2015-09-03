@@ -1,0 +1,4 @@
+
+
+PASS document.write script into iframe 
+

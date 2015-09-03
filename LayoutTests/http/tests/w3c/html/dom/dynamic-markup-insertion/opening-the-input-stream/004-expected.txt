@@ -1,0 +1,4 @@
+
+
+PASS Reuse of document object after document.open 
+

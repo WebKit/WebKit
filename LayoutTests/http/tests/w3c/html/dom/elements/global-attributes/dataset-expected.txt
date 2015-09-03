@@ -1,0 +1,6 @@
+
+PASS Should return 'undefined' before setting an attribute 
+PASS Should return 'value' if that's the value 
+PASS Should return the empty string if that's the value 
+PASS Should return 'undefined' after removing an attribute 
+

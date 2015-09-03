@@ -1,0 +1,10 @@
+
+PASS If there is one applet, it should be returned (name) 
+PASS If there are two applets, a collection should be returned. (name) 
+PASS If there is one applet, it should be returned (id) 
+PASS If there are two applets, a collection should be returned. (id) 
+PASS If there are two applets, a collection should be returned. (name and id) 
+PASS If there are two applets, a collection should be returned. (id and name) 
+PASS A name shouldn't affect getting an applet by id 
+PASS An id shouldn't affect getting an applet by name 
+
