@@ -158,7 +158,7 @@ void RenderScrollbarTheme::paintThumb(GraphicsContext& context, Scrollbar& scrol
 
 void RenderScrollbarTheme::paintTickmarks(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect)
 {
-    ScrollbarTheme::theme()->paintTickmarks(context, scrollbar, rect);
+    ScrollbarTheme::theme().paintTickmarks(context, scrollbar, rect);
 }
 
 }

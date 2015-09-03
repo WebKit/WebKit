@@ -524,7 +524,7 @@ bool RenderThemeEfl::loadTheme()
 
     const char* thickness = edje_object_data_get(m_edje.get(), "scrollbar.thickness");
     if (thickness && !Settings::mockScrollbarsEnabled())
-        static_cast<ScrollbarThemeEfl*>(ScrollbarTheme::theme())->setScrollbarThickness(atoi(thickness));
+        static_cast<ScrollbarThemeEfl&>(ScrollbarTheme::theme()).setScrollbarThickness(atoi(thickness));
 
     edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/foreground", applyColorCallback, this);
     edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/background", applyColorCallback, this);

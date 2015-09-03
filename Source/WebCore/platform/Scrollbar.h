@@ -107,7 +107,7 @@ public:
 
     WEBCORE_EXPORT bool mouseDown(const PlatformMouseEvent&);
 
-    ScrollbarTheme* theme() const { return m_theme; }
+    ScrollbarTheme& theme() const { return m_theme; }
 
     virtual void invalidateRect(const IntRect&) override;
 
@@ -148,7 +148,7 @@ protected:
     ScrollableArea& m_scrollableArea;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;
-    ScrollbarTheme* m_theme;
+    ScrollbarTheme& m_theme;
 
     int m_visibleSize;
     int m_totalSize;

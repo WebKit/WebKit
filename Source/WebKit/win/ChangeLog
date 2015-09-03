@@ -1,3 +1,14 @@
+2015-09-02  Andreas Kling  <akling@apple.com>
+
+        ScrollbarThemes should be returned by reference.
+        <https://webkit.org/b/147551>
+
+        Reviewed by Zalan Bujtas.
+
+        * WebView.cpp:
+        (WebView::gestureNotify):
+        (WebView::WebViewWndProc):
+
 2015-08-31  Chris Dumez  <cdumez@apple.com>
 
         Range API is throwing wrong exception type

@@ -37,15 +37,15 @@ namespace WebCore {
     
 void ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
 {
-    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
-    if (scrollbarTheme->isMockTheme())
+    ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
+    if (scrollbarTheme.isMockTheme())
         return;
-    ScrollbarThemeMac* macTheme = static_cast<ScrollbarThemeMac*>(scrollbarTheme);
+    ScrollbarThemeMac& macTheme = static_cast<ScrollbarThemeMac&>(scrollbarTheme);
 
     ScrollbarPainter verticalPainter = verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme->painterForScrollbar(*verticalScrollbar) : nullptr;
+        ? macTheme.painterForScrollbar(*verticalScrollbar) : nullptr;
     ScrollbarPainter horizontalPainter = horizontalScrollbar && horizontalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme->painterForScrollbar(*horizontalScrollbar) : nullptr;
+        ? macTheme.painterForScrollbar(*horizontalScrollbar) : nullptr;
 
     if (m_verticalScrollbarPainter == verticalPainter && m_horizontalScrollbarPainter == horizontalPainter)
         return;

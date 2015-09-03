@@ -1,3 +1,13 @@
+2015-09-02  Andreas Kling  <akling@apple.com>
+
+        ScrollbarThemes should be returned by reference.
+        <https://webkit.org/b/147551>
+
+        Reviewed by Zalan Bujtas.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::paintControlForLayerInContext):
+
 2015-09-02  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         REGRESSION(r188206): [EFL] Adjust scrollbar width to ewk_view_contents_size_get API test 

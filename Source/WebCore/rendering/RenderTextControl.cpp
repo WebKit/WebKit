@@ -138,7 +138,7 @@ int RenderTextControl::textBlockLogicalWidth() const
 int RenderTextControl::scrollbarThickness() const
 {
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
-    return ScrollbarTheme::theme()->scrollbarThickness();
+    return ScrollbarTheme::theme().scrollbarThickness();
 }
 
 void RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const

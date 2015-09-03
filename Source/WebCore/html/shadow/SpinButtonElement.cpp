@@ -207,8 +207,8 @@ bool SpinButtonElement::matchesReadWritePseudoClass() const
 void SpinButtonElement::startRepeatingTimer()
 {
     m_pressStartingState = m_upDownState;
-    ScrollbarTheme* theme = ScrollbarTheme::theme();
-    m_repeatingTimer.start(theme->initialAutoscrollTimerDelay(), theme->autoscrollTimerDelay());
+    ScrollbarTheme& theme = ScrollbarTheme::theme();
+    m_repeatingTimer.start(theme.initialAutoscrollTimerDelay(), theme.autoscrollTimerDelay());
 }
 
 void SpinButtonElement::stopRepeatingTimer()

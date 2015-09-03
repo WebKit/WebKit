@@ -1149,7 +1149,7 @@ void ScrollView::updateScrollCorner()
 
 void ScrollView::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
 {
-    ScrollbarTheme::theme()->paintScrollCorner(this, context, cornerRect);
+    ScrollbarTheme::theme().paintScrollCorner(this, context, cornerRect);
 }
 
 void ScrollView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, const IntRect& rect)
@@ -1301,7 +1301,7 @@ void ScrollView::updateOverhangAreas()
 
 void ScrollView::paintOverhangAreas(GraphicsContext& context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
 {
-    ScrollbarTheme::theme()->paintOverhangAreas(*this, context, horizontalOverhangRect, verticalOverhangRect, dirtyRect);
+    ScrollbarTheme::theme().paintOverhangAreas(*this, context, horizontalOverhangRect, verticalOverhangRect, dirtyRect);
 }
 
 void ScrollView::calculateAndPaintOverhangAreas(GraphicsContext& context, const IntRect& dirtyRect)

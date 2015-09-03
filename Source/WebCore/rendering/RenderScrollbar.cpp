@@ -218,7 +218,7 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
 
     if (needRenderer && partStyle->display() != BLOCK) {
         // See if we are a button that should not be visible according to OS settings.
-        ScrollbarButtonsPlacement buttonsPlacement = theme()->buttonsPlacement();
+        ScrollbarButtonsPlacement buttonsPlacement = theme().buttonsPlacement();
         switch (partType) {
             case BackButtonStartPart:
                 needRenderer = (buttonsPlacement == ScrollbarButtonsSingle || buttonsPlacement == ScrollbarButtonsDoubleStart ||

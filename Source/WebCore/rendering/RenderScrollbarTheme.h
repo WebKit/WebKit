@@ -38,21 +38,21 @@ class RenderScrollbarTheme final : public ScrollbarThemeComposite {
 public:
     virtual ~RenderScrollbarTheme() { }
     
-    virtual int scrollbarThickness(ScrollbarControlSize controlSize) override { return ScrollbarTheme::theme()->scrollbarThickness(controlSize); }
+    virtual int scrollbarThickness(ScrollbarControlSize controlSize) override { return ScrollbarTheme::theme().scrollbarThickness(controlSize); }
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const override { return ScrollbarTheme::theme()->buttonsPlacement(); }
+    virtual ScrollbarButtonsPlacement buttonsPlacement() const override { return ScrollbarTheme::theme().buttonsPlacement(); }
 
     virtual bool supportsControlTints() const override { return true; }
 
     virtual void paintScrollCorner(ScrollView*, GraphicsContext&, const IntRect& cornerRect) override;
 
-    virtual bool shouldCenterOnThumb(Scrollbar& scrollbar, const PlatformMouseEvent& event) override { return ScrollbarTheme::theme()->shouldCenterOnThumb(scrollbar, event); }
+    virtual bool shouldCenterOnThumb(Scrollbar& scrollbar, const PlatformMouseEvent& event) override { return ScrollbarTheme::theme().shouldCenterOnThumb(scrollbar, event); }
     
-    virtual double initialAutoscrollTimerDelay() override { return ScrollbarTheme::theme()->initialAutoscrollTimerDelay(); }
-    virtual double autoscrollTimerDelay() override { return ScrollbarTheme::theme()->autoscrollTimerDelay(); }
+    virtual double initialAutoscrollTimerDelay() override { return ScrollbarTheme::theme().initialAutoscrollTimerDelay(); }
+    virtual double autoscrollTimerDelay() override { return ScrollbarTheme::theme().autoscrollTimerDelay(); }
 
-    virtual void registerScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme()->registerScrollbar(scrollbar); }
-    virtual void unregisterScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme()->unregisterScrollbar(scrollbar); }
+    virtual void registerScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme().registerScrollbar(scrollbar); }
+    virtual void unregisterScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme().unregisterScrollbar(scrollbar); }
 
     virtual int minimumThumbLength(Scrollbar&) override;
 

@@ -142,7 +142,7 @@ static void gtkStyleChangedCallback(GObject*, GParamSpec*)
 {
     for (const auto& styleContext : styleContextMap())
         gtk_style_context_invalidate(styleContext.value.get());
-    static_cast<ScrollbarThemeGtk*>(ScrollbarTheme::theme())->themeChanged();
+    static_cast<ScrollbarThemeGtk&>(ScrollbarTheme::theme()).themeChanged();
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 

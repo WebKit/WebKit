@@ -1687,8 +1687,8 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
         // The hit testing above won't detect if we've hit the main frame's vertical scrollbar. Check that manually now.
         RECT webViewRect;
         GetWindowRect(m_viewWindow, &webViewRect);
-        hitScrollbar = (view->verticalScrollbar() && (gestureBeginPoint.x > (webViewRect.right - view->verticalScrollbar()->theme()->scrollbarThickness()))) 
-            || (view->horizontalScrollbar() && (gestureBeginPoint.y > (webViewRect.bottom - view->horizontalScrollbar()->theme()->scrollbarThickness())));  
+        hitScrollbar = (view->verticalScrollbar() && (gestureBeginPoint.x > (webViewRect.right - view->verticalScrollbar()->theme().scrollbarThickness()))) 
+            || (view->horizontalScrollbar() && (gestureBeginPoint.y > (webViewRect.bottom - view->horizontalScrollbar()->theme().scrollbarThickness())));  
     }
 
     bool canBeScrolled = false;
@@ -2467,7 +2467,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             if (Frame* coreFrame = core(mainFrameImpl)) {
                 webView->deleteBackingStore();
                 coreFrame->page()->theme().themeChanged();
-                ScrollbarTheme::theme()->themeChanged();
+                ScrollbarTheme::theme().themeChanged();
                 RECT windowRect;
                 ::GetClientRect(hWnd, &windowRect);
                 ::InvalidateRect(hWnd, &windowRect, false);

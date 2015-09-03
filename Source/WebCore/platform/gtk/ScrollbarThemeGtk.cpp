@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-ScrollbarTheme* ScrollbarTheme::nativeTheme()
+ScrollbarTheme& ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeGtk theme;
-    return &theme;
+    return theme;
 }
 
 ScrollbarThemeGtk::~ScrollbarThemeGtk()

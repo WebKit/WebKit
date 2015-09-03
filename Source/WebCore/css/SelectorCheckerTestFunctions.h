@@ -288,7 +288,7 @@ ALWAYS_INLINE bool scrollbarMatchesDoubleButtonPseudoClass(const SelectorChecker
 {
     if (!context.scrollbar)
         return false;
-    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme()->buttonsPlacement();
+    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme().buttonsPlacement();
     if (context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == ForwardButtonStartPart || context.scrollbarPart == BackTrackPart)
         return buttonsPlacement == ScrollbarButtonsDoubleStart || buttonsPlacement == ScrollbarButtonsDoubleBoth;
     if (context.scrollbarPart == BackButtonEndPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == ForwardTrackPart)
@@ -300,7 +300,7 @@ ALWAYS_INLINE bool scrollbarMatchesSingleButtonPseudoClass(const SelectorChecker
 {
     if (!context.scrollbar)
         return false;
-    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme()->buttonsPlacement();
+    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme().buttonsPlacement();
     if (context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == BackTrackPart || context.scrollbarPart == ForwardTrackPart)
         return buttonsPlacement == ScrollbarButtonsSingle;
     return false;
@@ -310,7 +310,7 @@ ALWAYS_INLINE bool scrollbarMatchesNoButtonPseudoClass(const SelectorChecker::Ch
 {
     if (!context.scrollbar)
         return false;
-    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme()->buttonsPlacement();
+    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme().buttonsPlacement();
     if (context.scrollbarPart == BackTrackPart)
         return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleEnd;
     if (context.scrollbarPart == ForwardTrackPart)

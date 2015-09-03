@@ -2802,7 +2802,7 @@ static LayoutRect cornerRect(const RenderLayer* layer, const LayoutRect& bounds)
     if (!layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
         // FIXME: This isn't right.  We need to know the thickness of custom scrollbars
         // even when they don't exist in order to set the resizer square size properly.
-        horizontalThickness = ScrollbarTheme::theme()->scrollbarThickness();
+        horizontalThickness = ScrollbarTheme::theme().scrollbarThickness();
         verticalThickness = horizontalThickness;
     } else if (layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
         horizontalThickness = layer->verticalScrollbar()->width();
@@ -3382,14 +3382,14 @@ bool RenderLayer::hasVerticalOverflow() const
 static bool styleRequiresScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
 {
     EOverflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme()->usesOverlayScrollbars();
+    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
     return overflow == OSCROLL && !overflowScrollActsLikeAuto;
 }
 
 static bool styleDefinesAutomaticScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
 {
     EOverflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
-    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme()->usesOverlayScrollbars();
+    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme().usesOverlayScrollbars();
     return overflow == OAUTO || overflow == OOVERLAY || overflowScrollActsLikeAuto;
 }
 

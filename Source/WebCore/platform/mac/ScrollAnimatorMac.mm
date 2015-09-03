@@ -63,8 +63,8 @@ static bool supportsContentAreaScrolledInDirection()
 
 static ScrollbarThemeMac* macScrollbarTheme()
 {
-    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
-    return !scrollbarTheme->isMockTheme() ? static_cast<ScrollbarThemeMac*>(scrollbarTheme) : 0;
+    ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
+    return !scrollbarTheme.isMockTheme() ? static_cast<ScrollbarThemeMac*>(&scrollbarTheme) : nullptr;
 }
 
 static ScrollbarPainter scrollbarPainterForScrollbar(Scrollbar& scrollbar)

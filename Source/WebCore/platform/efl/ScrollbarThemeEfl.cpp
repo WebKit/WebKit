@@ -39,10 +39,10 @@
 
 namespace WebCore {
 
-ScrollbarTheme* ScrollbarTheme::nativeTheme()
+ScrollbarTheme& ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeEfl theme;
-    return &theme;
+    return theme;
 }
 
 static const int defaultThickness = 10;

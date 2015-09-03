@@ -352,7 +352,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     if (naturalHeight > maxPopupHeight)
         // We need room for a scrollbar
-        popupWidth += ScrollbarTheme::theme()->scrollbarThickness(SmallScrollbar);
+        popupWidth += ScrollbarTheme::theme().scrollbarThickness(SmallScrollbar);
 
     // Add padding to align the popup text with the <select> text
     popupWidth += std::max<int>(0, client()->clientPaddingRight() - client()->clientInsetRight()) + std::max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
@@ -1287,26 +1287,24 @@ HRESULT AccessiblePopupMenu::accLocation(long* left, long* top, long* width, lon
         Scrollbar& scrollbar = *m_popupMenu.scrollbar();
         WebCore::ScrollbarPart part = static_cast<WebCore::ScrollbarPart>(-vChild.lVal);
 
-        ScrollbarThemeWin* theme = static_cast<ScrollbarThemeWin*>(scrollbar.theme());
-        if (!theme)
-            return E_FAIL;
+        ScrollbarThemeWin& theme = static_cast<ScrollbarThemeWin&>(scrollbar.theme());
 
         IntRect partRect;
 
         switch (part) {
         case BackTrackPart:
         case BackButtonStartPart:
-            partRect = theme->backButtonRect(scrollbar, WebCore::BackTrackPart);
+            partRect = theme.backButtonRect(scrollbar, WebCore::BackTrackPart);
             break;
         case ThumbPart:
-            partRect = theme->thumbRect(scrollbar);
+            partRect = theme.thumbRect(scrollbar);
             break;
         case ForwardTrackPart:
         case ForwardButtonEndPart:
-            partRect = theme->forwardButtonRect(scrollbar, WebCore::ForwardTrackPart);
+            partRect = theme.forwardButtonRect(scrollbar, WebCore::ForwardTrackPart);
             break;
         case ScrollbarBGPart:
-            partRect = theme->trackRect(scrollbar);
+            partRect = theme.trackRect(scrollbar);
             break;
         default:
             return E_FAIL;
@@ -1358,12 +1356,10 @@ HRESULT AccessiblePopupMenu::accHitTest(long x, long y, VARIANT* pvChildAtPoint)
 
     if (m_popupMenu.scrollbar() && scrollRect.contains(pt)) {
         Scrollbar& scrollbar = *m_popupMenu.scrollbar();
-        if (!scrollbar.theme())
-            return E_FAIL;
 
         pt.move(-scrollRect.x(), -scrollRect.y());
 
-        WebCore::ScrollbarPart part = scrollbar.theme()->hitTest(scrollbar, pt);
+        WebCore::ScrollbarPart part = scrollbar.theme().hitTest(scrollbar, pt);
 
         V_VT(pvChildAtPoint) = VT_I4;
         V_I4(pvChildAtPoint) = -part; // Scrollbar parts are encoded as negative, to avoid mixup with item indexes.

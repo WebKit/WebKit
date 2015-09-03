@@ -83,7 +83,7 @@ static int calcScrollbarThicknessUsing(SizeType sizeType, const Length& length, 
 {
     if (!length.isIntrinsicOrAuto() || (sizeType == MinSize && length.isAuto()))
         return minimumValueForLength(length, containingLength);
-    return ScrollbarTheme::theme()->scrollbarThickness();
+    return ScrollbarTheme::theme().scrollbarThickness();
 }
 
 void RenderScrollbarPart::computeScrollbarWidth()
@@ -138,13 +138,13 @@ void RenderScrollbarPart::styleDidChange(StyleDifference diff, const RenderStyle
     setFloating(false);
     setHasOverflowClip(false);
     if (oldStyle && m_scrollbar && m_part != NoPart && diff >= StyleDifferenceRepaint)
-        m_scrollbar->theme()->invalidatePart(*m_scrollbar, m_part);
+        m_scrollbar->theme().invalidatePart(*m_scrollbar, m_part);
 }
 
 void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rect)
 {
     if (m_scrollbar && m_part != NoPart)
-        m_scrollbar->theme()->invalidatePart(*m_scrollbar, m_part);
+        m_scrollbar->theme().invalidatePart(*m_scrollbar, m_part);
     else {
         if (view().frameView().isFrameViewScrollCorner(*this)) {
             view().frameView().invalidateScrollCorner(view().frameView().scrollCornerRect());

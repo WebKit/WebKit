@@ -55,13 +55,13 @@ namespace WebCore {
 
 using namespace SafariTheme;
 
-ScrollbarTheme* ScrollbarTheme::nativeTheme()
+ScrollbarTheme& ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeSafari safariTheme;
     static ScrollbarThemeWin windowsTheme;
     if (Settings::shouldPaintNativeControls())
-        return &windowsTheme;
-    return &safariTheme;
+        return windowsTheme;
+    return safariTheme;
 }
 
 // FIXME: Get these numbers from CoreUI.

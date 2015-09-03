@@ -89,10 +89,10 @@ static void checkAndInitScrollbarTheme()
         scrollbarTheme = OpenThemeData(0, L"Scrollbar");
 }
 
-ScrollbarTheme* ScrollbarTheme::nativeTheme()
+ScrollbarTheme& ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeWin winTheme;
-    return &winTheme;
+    return winTheme;
 }
 
 ScrollbarThemeWin::ScrollbarThemeWin()
