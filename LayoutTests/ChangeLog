@@ -1,3 +1,12 @@
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for swiping back after a same-document navigation
+        https://bugs.webkit.org/show_bug.cgi?id=148751
+
+        Reviewed by Beth Dakin.
+
+        * swipe/pushState-cached-back-swipe.html: Added.
+
 2015-09-03  Andy Estes  <aestes@apple.com>
 
         REGRESSION: http/tests/contentfiltering/block-after-redirect.html is flaky

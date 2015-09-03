@@ -1,0 +1,11 @@
+swipe event (delta 0 0, phase 'maybegin')
+scroll event (delta 1 0, phase 'began')
+scroll event (delta 1 0, phase 'changed')
+didBeginSwipe
+swipe event (delta 1 0, phase 'changed')
+swipe event (delta 256 0, phase 'changed')
+swipe event (delta 0 0, phase 'ended')
+willEndSwipe
+didEndSwipe
+didRemoveSwipeSnapshot
+
