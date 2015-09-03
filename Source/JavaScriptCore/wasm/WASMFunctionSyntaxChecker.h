@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#define UNUSED 0
+
 namespace JSC {
 
 class WASMFunctionSyntaxChecker {
@@ -37,16 +39,48 @@ public:
 
     void startFunction(const Vector<WASMType>& arguments, uint32_t numberOfI32LocalVariables, uint32_t numberOfF32LocalVariables, uint32_t numberOfF64LocalVariables)
     {
-        // FIXME: Need to include the number of temporaries used.
-        m_stackHeight = arguments.size() + numberOfI32LocalVariables + numberOfF32LocalVariables + numberOfF64LocalVariables;
+        m_numberOfLocals = arguments.size() + numberOfI32LocalVariables + numberOfF32LocalVariables + numberOfF64LocalVariables;
     }
 
-    void endFunction() { }
+    void endFunction()
+    {
+        ASSERT(!m_tempStackTop);
+    }
 
-    unsigned stackHeight() { return m_stackHeight; }
+    void buildReturn(int, WASMExpressionType returnType)
+    {
+        if (returnType != WASMExpressionType::Void)
+            m_tempStackTop--;
+    }
+
+    int buildImmediateI32(uint32_t)
+    {
+        m_tempStackTop++;
+        updateTempStackHeight();
+        return UNUSED;
+    }
+
+    int buildBinaryI32(int, int, WASMOpExpressionI32)
+    {
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
+    unsigned stackHeight()
+    {
+        return m_numberOfLocals + m_tempStackHeight;
+    }
 
 private:
-    unsigned m_stackHeight;
+    void updateTempStackHeight()
+    {
+        if (m_tempStackTop > m_tempStackHeight)
+            m_tempStackHeight = m_tempStackTop;
+    }
+
+    unsigned m_numberOfLocals;
+    unsigned m_tempStackTop { 0 };
+    unsigned m_tempStackHeight { 0 };
 };
 
 } // namespace JSC

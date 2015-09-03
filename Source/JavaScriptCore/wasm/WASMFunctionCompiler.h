@@ -33,18 +33,14 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 
+#define UNUSED 0
+
 namespace JSC {
 
 class WASMFunctionCompiler : private CCallHelpers {
 public:
     typedef int Expression;
     typedef int Statement;
-
-    union StackSlot {
-        int32_t intValue;
-        float floatValue;
-        double doubleValue;
-    };
 
     WASMFunctionCompiler(VM& vm, CodeBlock* codeBlock, unsigned stackHeight)
         : CCallHelpers(&vm, codeBlock)
@@ -102,6 +98,8 @@ public:
 
     void endFunction()
     {
+        ASSERT(!m_tempStackTop);
+
         // FIXME: Remove these if the last statement is a return statement.
         move(TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
         emitFunctionEpilogue();
@@ -129,11 +127,66 @@ public:
         m_codeBlock->capabilityLevel();
     }
 
+    void buildReturn(int, WASMExpressionType returnType)
+    {
+        switch (returnType) {
+        case WASMExpressionType::I32:
+            load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::returnValueGPR);
+            or64(GPRInfo::tagTypeNumberRegister, GPRInfo::returnValueGPR);
+            m_tempStackTop--;
+            break;
+        case WASMExpressionType::Void:
+            move(TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        emitFunctionEpilogue();
+        ret();
+    }
+
+    int buildImmediateI32(uint32_t immediate)
+    {
+        store32(TrustedImm32(immediate), temporaryAddress(m_tempStackTop++));
+        return UNUSED;
+    }
+
+    int buildBinaryI32(int, int, WASMOpExpressionI32 op)
+    {
+        load32(temporaryAddress(m_tempStackTop - 2), GPRInfo::regT0);
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT1);
+        switch (op) {
+        case WASMOpExpressionI32::Add:
+            add32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::Sub:
+            sub32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        m_tempStackTop--;
+        store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+        return UNUSED;
+    }
+
 private:
+    union StackSlot {
+        int32_t intValue;
+        float floatValue;
+        double doubleValue;
+    };
+
     Address localAddress(unsigned localIndex) const
     {
         ASSERT(localIndex < m_numberOfLocals);
         return Address(GPRInfo::callFrameRegister, -(localIndex + 1) * sizeof(StackSlot));
+    }
+
+    Address temporaryAddress(unsigned temporaryIndex) const
+    {
+        ASSERT(m_numberOfLocals + temporaryIndex < m_stackHeight);
+        return Address(GPRInfo::callFrameRegister, -(m_numberOfLocals + temporaryIndex + 1) * sizeof(StackSlot));
     }
 
     void throwStackOverflowError()
@@ -156,6 +209,7 @@ private:
 
     unsigned m_stackHeight;
     unsigned m_numberOfLocals;
+    unsigned m_tempStackTop { 0 };
 
     Label m_beginLabel;
     Jump m_stackOverflow;

@@ -226,9 +226,12 @@ ContextStatement WASMFunctionParser::parseSetLocalStatement(Context& context)
 template <class Context>
 ContextStatement WASMFunctionParser::parseReturnStatement(Context& context)
 {
-    if (m_returnType != WASMExpressionType::Void)
-        parseExpression(context, m_returnType);
-    // FIXME: Implement this instruction.
+    ContextExpression expression = 0;
+    if (m_returnType != WASMExpressionType::Void) {
+        expression = parseExpression(context, m_returnType);
+        PROPAGATE_ERROR();
+    }
+    context.buildReturn(expression, m_returnType);
     return UNUSED;
 }
 
@@ -422,6 +425,9 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         switch (op) {
         case WASMOpExpressionI32::Immediate:
             return parseImmediateExpressionI32(context);
+        case WASMOpExpressionI32::Add:
+        case WASMOpExpressionI32::Sub:
+            return parseBinaryExpressionI32(context, op);
         case WASMOpExpressionI32::ConstantPoolIndex:
         case WASMOpExpressionI32::GetLocal:
         case WASMOpExpressionI32::GetGlobal:
@@ -451,8 +457,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::FromF32:
         case WASMOpExpressionI32::FromF64:
         case WASMOpExpressionI32::Negate:
-        case WASMOpExpressionI32::Add:
-        case WASMOpExpressionI32::Sub:
         case WASMOpExpressionI32::Mul:
         case WASMOpExpressionI32::SDiv:
         case WASMOpExpressionI32::UDiv:
@@ -515,10 +519,9 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
 }
 
 template <class Context>
-ContextExpression WASMFunctionParser::parseImmediateExpressionI32(Context&, uint32_t)
+ContextExpression WASMFunctionParser::parseImmediateExpressionI32(Context& context, uint32_t immediate)
 {
-    // FIXME: Implement this instruction.
-    return UNUSED;
+    return context.buildImmediateI32(immediate);
 }
 
 template <class Context>
@@ -527,6 +530,16 @@ ContextExpression WASMFunctionParser::parseImmediateExpressionI32(Context& conte
     uint32_t immediate;
     READ_COMPACT_UINT32_OR_FAIL(immediate, "Cannot read the immediate.");
     return parseImmediateExpressionI32(context, immediate);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseBinaryExpressionI32(Context& context, WASMOpExpressionI32 op)
+{
+    ContextExpression left = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    ContextExpression right = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    return context.buildBinaryI32(left, right, op);
 }
 
 } // namespace JSC

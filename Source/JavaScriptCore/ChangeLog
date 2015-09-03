@@ -1,3 +1,42 @@
+2015-09-03  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement some arithmetic instructions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148737
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements the addition and subtraction instructions in
+        WebAssembly using a stack-based approach: each instruction reads its
+        operands from the top of the 'temporary' stack, pops them, and
+        optionally pushes a return value to the stack. Since operands are passed
+        on the stack, we don't use the arguments that are passed to the methods
+        of WASMFunctionCompiler, and we don't use the return values from these
+        methods. (We will use them when we implement LLVM IR generation for
+        WebAssembly, where each expression is an LLVMValueRef.)
+
+        * tests/stress/wasm-arithmetic.js: Added.
+        * tests/stress/wasm-arithmetic.wasm: Added.
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::endFunction):
+        (JSC::WASMFunctionCompiler::buildReturn):
+        (JSC::WASMFunctionCompiler::buildImmediateI32):
+        (JSC::WASMFunctionCompiler::buildBinaryI32):
+        (JSC::WASMFunctionCompiler::temporaryAddress):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseReturnStatement):
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseImmediateExpressionI32):
+        (JSC::WASMFunctionParser::parseBinaryExpressionI32):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::startFunction):
+        (JSC::WASMFunctionSyntaxChecker::endFunction):
+        (JSC::WASMFunctionSyntaxChecker::buildReturn):
+        (JSC::WASMFunctionSyntaxChecker::buildImmediateI32):
+        (JSC::WASMFunctionSyntaxChecker::buildBinaryI32):
+        (JSC::WASMFunctionSyntaxChecker::stackHeight):
+        (JSC::WASMFunctionSyntaxChecker::updateTempStackHeight):
+
 2015-09-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: should crash on purpose if InjectedScriptSource.js is unparseable
