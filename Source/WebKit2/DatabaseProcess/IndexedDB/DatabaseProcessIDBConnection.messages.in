@@ -23,7 +23,7 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 messages -> DatabaseProcessIDBConnection LegacyReceiver {
-    EstablishConnection(String databaseName, struct WebKit::SecurityOriginData openingOrigin, struct WebKit::SecurityOriginData mainFrameOrigin)
+    EstablishConnection(String databaseName, struct WebCore::SecurityOriginData openingOrigin, struct WebCore::SecurityOriginData mainFrameOrigin)
     GetOrEstablishIDBDatabaseMetadata(uint64_t requestID)
     DeleteDatabase(uint64_t requestID, String databaseName)
 

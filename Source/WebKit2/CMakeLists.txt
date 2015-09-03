@@ -224,7 +224,6 @@ set(WebKit2_SOURCES
     Shared/OriginAndDatabases.cpp
     Shared/PlatformPopupMenuData.cpp
     Shared/PrintInfo.cpp
-    Shared/SecurityOriginData.cpp
     Shared/SessionState.cpp
     Shared/SessionTracker.cpp
     Shared/ShareableBitmap.cpp

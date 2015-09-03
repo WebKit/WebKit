@@ -28,10 +28,10 @@
 
 #include "APIArray.h"
 #include "APISecurityOrigin.h"
-#include "SecurityOriginData.h"
 #include "WebCookieManagerMessages.h"
 #include "WebCookieManagerProxyMessages.h"
 #include "WebProcessPool.h"
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
 

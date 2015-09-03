@@ -2118,6 +2118,8 @@
 		51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBB0C91C90400DC255B /* IconRecord.h */; };
 		51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */; };
 		51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBD0C91C90400DC255B /* PageURLRecord.h */; };
+		51E3AA0A1B98BCAB0036AD81 /* SecurityOriginData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3AA081B98BC9A0036AD81 /* SecurityOriginData.cpp */; };
+		51E3AA0B1B98BCAB0036AD81 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E3AA091B98BC9A0036AD81 /* SecurityOriginData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E3F9C70DA059DC00250911 /* Storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9C50DA059DC00250911 /* Storage.cpp */; };
 		51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9D40DA05E1D00250911 /* JSStorage.cpp */; };
 		51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4143216A6595100C633C7 /* ResourceHandleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9412,6 +9414,8 @@
 		51E1ECBB0C91C90400DC255B /* IconRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconRecord.h; sourceTree = "<group>"; };
 		51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageURLRecord.cpp; sourceTree = "<group>"; };
 		51E1ECBD0C91C90400DC255B /* PageURLRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageURLRecord.h; sourceTree = "<group>"; };
+		51E3AA081B98BC9A0036AD81 /* SecurityOriginData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginData.cpp; sourceTree = "<group>"; };
+		51E3AA091B98BC9A0036AD81 /* SecurityOriginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginData.h; sourceTree = "<group>"; };
 		51E3F9C40DA059DC00250911 /* Storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Storage.h; sourceTree = "<group>"; };
 		51E3F9C50DA059DC00250911 /* Storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Storage.cpp; sourceTree = "<group>"; };
 		51E3F9D10DA05D7100250911 /* Storage.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Storage.idl; sourceTree = "<group>"; };
@@ -17222,6 +17226,8 @@
 				BCEC01BC0C274DAC009F4EC9 /* Screen.idl */,
 				BCD0E0F70E972C3500265DEA /* SecurityOrigin.cpp */,
 				BCD0E0F80E972C3500265DEA /* SecurityOrigin.h */,
+				51E3AA081B98BC9A0036AD81 /* SecurityOriginData.cpp */,
+				51E3AA091B98BC9A0036AD81 /* SecurityOriginData.h */,
 				BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */,
 				974D2DA2146A535D00D51F8B /* SecurityPolicy.cpp */,
 				974D2DA3146A535D00D51F8B /* SecurityPolicy.h */,
@@ -26644,6 +26650,7 @@
 				4998AED213FB224D0090B1AA /* ScriptedAnimationController.h in Headers */,
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
+				51E3AA0B1B98BCAB0036AD81 /* SecurityOriginData.h in Headers */,
 				41F066E40F64BCF600A07EAC /* ScriptGlobalObject.h in Headers */,
 				FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */,
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
@@ -28551,6 +28558,7 @@
 				B275357A0B053814002CE64F /* FloatSizeMac.mm in Sources */,
 				D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */,
 				14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */,
+				51E3AA0A1B98BCAB0036AD81 /* SecurityOriginData.cpp in Sources */,
 				B6D9D23614EABD260090D75E /* FocusEvent.cpp in Sources */,
 				B2C3DA640D006CD600EF6F26 /* Font.cpp in Sources */,
 				B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */,

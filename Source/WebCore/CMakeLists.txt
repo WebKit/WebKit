@@ -1999,6 +1999,7 @@ set(WebCore_SOURCES
     page/PrintContext.cpp
     page/Screen.cpp
     page/SecurityOrigin.cpp
+    page/SecurityOriginData.cpp
     page/SecurityPolicy.cpp
     page/Settings.cpp
     page/SpatialNavigation.cpp

@@ -1,3 +1,58 @@
+2015-09-03  Brady Eidson  <beidson@apple.com>
+
+        Move SecurityOriginData from WK2 to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=148739
+
+        Reviewed by Tim Horton.
+
+        This will be needed for upcoming IndexedDB work.
+
+        * CMakeLists.txt:
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.cpp:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        * Shared/WebCrossThreadCopier.cpp:
+        * Shared/WebCrossThreadCopier.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        * UIProcess/API/APINavigationClient.h:
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        * UIProcess/Storage/StorageManager.cpp:
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/Storage/StorageManager.messages.in:
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.messages.in:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.h:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
         [Mac] Add support for testing swipes

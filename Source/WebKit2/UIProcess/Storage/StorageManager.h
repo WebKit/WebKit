@@ -37,11 +37,11 @@
 
 namespace WebCore {
 class SecurityOrigin;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
 
-struct SecurityOriginData;
 class LocalStorageDatabaseTracker;
 class WebProcessProxy;
 
@@ -79,9 +79,9 @@ private:
     virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>& replyEncoder) override;
 
     // Message handlers.
-    void createLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
-    void createTransientLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& topLevelOriginData, const SecurityOriginData&);
-    void createSessionStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
+    void createLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const WebCore::SecurityOriginData&);
+    void createTransientLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const WebCore::SecurityOriginData& topLevelOriginData, const WebCore::SecurityOriginData&);
+    void createSessionStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const WebCore::SecurityOriginData&);
     void destroyStorageMap(IPC::Connection&, uint64_t storageMapID);
 
     void getValues(IPC::Connection&, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values);

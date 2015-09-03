@@ -50,7 +50,6 @@
 #include "NavigationActionData.h"
 #include "PluginInformation.h"
 #include "PrintInfo.h"
-#include "SecurityOriginData.h"
 #include "WKAPICast.h"
 #include "WKPagePolicyClientInternal.h"
 #include "WKPageRenderingProgressEventsInternal.h"
@@ -67,6 +66,7 @@
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include <WebCore/Page.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/WindowFeatures.h>
 
 #ifdef __BLOCKS__
@@ -2047,7 +2047,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didFailNavigation(toAPI(&page), toAPI(navigation), toAPI(error), toAPI(userData), m_client.base.clientInfo);
         }
 
-        virtual void didFailProvisionalLoadInSubframeWithError(WebPageProxy& page, WebFrameProxy& subframe, const WebKit::SecurityOriginData& securityOriginData, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
+        virtual void didFailProvisionalLoadInSubframeWithError(WebPageProxy& page, WebFrameProxy& subframe, const WebCore::SecurityOriginData& securityOriginData, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
         {
             if (!m_client.didFailProvisionalLoadInSubframe)
                 return;

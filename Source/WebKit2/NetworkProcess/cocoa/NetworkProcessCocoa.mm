@@ -32,12 +32,12 @@
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "SandboxExtension.h"
-#import "SecurityOriginData.h"
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PublicSuffix.h>
 #import <WebCore/ResourceRequestCFNet.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/SecurityOriginData.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RAMSize.h>
 
@@ -197,7 +197,7 @@ Vector<Ref<WebCore::SecurityOrigin>> NetworkProcess::cfURLCacheOrigins()
     return result;
 }
 
-void NetworkProcess::clearCFURLCacheForOrigins(const Vector<SecurityOriginData>& origins)
+void NetworkProcess::clearCFURLCacheForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
 {
     auto hostNames = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
     for (auto& origin : origins)

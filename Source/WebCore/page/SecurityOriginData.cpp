@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,14 @@
 #include "config.h"
 #include "SecurityOriginData.h"
 
-#include "APIArray.h"
-#include "APISecurityOrigin.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebFrame.h"
-#include <WebCore/Document.h>
-#include <WebCore/Frame.h>
+#include "Document.h"
+#include "Frame.h"
+#include "SecurityOrigin.h"
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
 
-namespace WebKit {
+namespace WebCore {
 
 SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& securityOrigin)
 {
@@ -47,14 +44,6 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& 
     securityOriginData.port = securityOrigin.port();
 
     return securityOriginData;
-}
-
-SecurityOriginData SecurityOriginData::fromFrame(WebFrame* frame)
-{
-    if (!frame)
-        return SecurityOriginData();
-    
-    return SecurityOriginData::fromFrame(frame->coreFrame());
 }
 
 SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
@@ -78,25 +67,6 @@ Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const
     return SecurityOrigin::create(protocol.isolatedCopy(), host.isolatedCopy(), port);
 }
 
-void SecurityOriginData::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << protocol;
-    encoder << host;
-    encoder << port;
-}
-
-bool SecurityOriginData::decode(IPC::ArgumentDecoder& decoder, SecurityOriginData& securityOriginData)
-{
-    if (!decoder.decode(securityOriginData.protocol))
-        return false;
-    if (!decoder.decode(securityOriginData.host))
-        return false;
-    if (!decoder.decode(securityOriginData.port))
-        return false;
-
-    return true;
-}
-
 SecurityOriginData SecurityOriginData::isolatedCopy() const
 {
     SecurityOriginData result;
@@ -118,4 +88,4 @@ bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)
         && a.port == b.port;
 }
 
-} // namespace WebKit
+} // namespace WebCore

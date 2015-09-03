@@ -1189,7 +1189,7 @@ void WebProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteDataType
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDeleteWebsiteData(callbackID), 0);
 }
 
-void WebProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, uint64_t websiteDataTypes, const Vector<WebKit::SecurityOriginData>& originDatas, uint64_t callbackID)
+void WebProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, uint64_t websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas, uint64_t callbackID)
 {
     if (websiteDataTypes & WebsiteDataTypeMemoryCache) {
         HashSet<RefPtr<SecurityOrigin>> origins;

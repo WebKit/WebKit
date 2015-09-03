@@ -22,12 +22,12 @@
 
 messages -> WebPageProxy {
     # UI messages
-    CreateNewPage(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (uint64_t newPageID, struct WebKit::WebPageCreationParameters newPageParameters)
+    CreateNewPage(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (uint64_t newPageID, struct WebKit::WebPageCreationParameters newPageParameters)
     ShowPage()
     ClosePage(bool stopResponsivenessTimer)
-    RunJavaScriptAlert(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, String message) -> () Delayed
-    RunJavaScriptConfirm(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, String message) -> (bool result) Delayed
-    RunJavaScriptPrompt(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, String message, String defaultValue) -> (String result) Delayed
+    RunJavaScriptAlert(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> () Delayed
+    RunJavaScriptConfirm(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> (bool result) Delayed
+    RunJavaScriptPrompt(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message, String defaultValue) -> (String result) Delayed
     MouseDidMoveOverElement(WebKit::WebHitTestResult::Data hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
 
     DidBeginTrackingPotentialLongMousePress(WebCore::IntPoint mouseDownPosition, WebKit::WebHitTestResult::Data hitTestResultData, WebKit::UserData userData)
@@ -109,9 +109,9 @@ messages -> WebPageProxy {
 #endif
 
     # Policy messages
-    DecidePolicyForResponseSync(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, uint64_t listenerID, WebKit::UserData userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
-    DecidePolicyForNavigationAction(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, uint64_t originatingFrameID, struct WebKit::SecurityOriginData originatingFrameSecurityOrigin, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::UserData userData) -> (bool receivedPolicyAction, uint64_t newNavigationID, uint64_t policyAction, uint64_t downloadID)
-    DecidePolicyForNewWindowAction(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::UserData userData)
+    DecidePolicyForResponseSync(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, uint64_t listenerID, WebKit::UserData userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
+    DecidePolicyForNavigationAction(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, uint64_t originatingFrameID, struct WebCore::SecurityOriginData originatingFrameSecurityOrigin, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::UserData userData) -> (bool receivedPolicyAction, uint64_t newNavigationID, uint64_t policyAction, uint64_t downloadID)
+    DecidePolicyForNewWindowAction(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::UserData userData)
     UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::UserData userData)
 
     # Progress messages
@@ -129,7 +129,7 @@ messages -> WebPageProxy {
     DidStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, String url, String unreachableURL, WebKit::UserData userData)
     DidReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, String url, WebKit::UserData userData)
     DidChangeProvisionalURLForFrame(uint64_t frameID, uint64_t navigationID, String url)
-    DidFailProvisionalLoadForFrame(uint64_t frameID, struct WebKit::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, WebKit::UserData userData)
+    DidFailProvisionalLoadForFrame(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, WebKit::UserData userData)
     DidCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, String mimeType, bool hasCustomContentProvider, uint32_t loadType, WebCore::CertificateInfo certificateInfo, bool containsPluginDocument, WebKit::UserData userData)
     DidFailLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::ResourceError error, WebKit::UserData userData)
     DidFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navigationID, WebKit::UserData userData)

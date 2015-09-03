@@ -31,13 +31,15 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace WebKit {
 class IDBIdentifier;
 class UniqueIDBDatabaseIdentifier;
 
 enum class UniqueIDBDatabaseShutdownType;
-
-struct SecurityOriginData;
 }
 
 namespace WTF {
@@ -62,8 +64,8 @@ template<> struct CrossThreadCopierBase<false, false, WebKit::UniqueIDBDatabaseS
     }
 };
 
-template<> struct CrossThreadCopierBase<false, false, WebKit::SecurityOriginData> {
-    static WebKit::SecurityOriginData copy(const WebKit::SecurityOriginData& type);
+template<> struct CrossThreadCopierBase<false, false, WebCore::SecurityOriginData> {
+    static WebCore::SecurityOriginData copy(const WebCore::SecurityOriginData& type);
 };
 
 template<> struct CrossThreadCopierBase<false, false, Vector<char>> {

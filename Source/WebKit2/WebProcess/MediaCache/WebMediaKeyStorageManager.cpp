@@ -26,10 +26,10 @@
 #include "config.h"
 #include "WebMediaKeyStorageManager.h"
 
-#include "SecurityOriginData.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/URL.h>
 
 using namespace WebCore;

@@ -50,13 +50,13 @@ class DataReference;
 namespace WebCore {
 class UserScript;
 class UserStyleSheet;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
 
 class WebProcessProxy;
 class WebScriptMessageHandler;
-struct SecurityOriginData;
 
 class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
 public:
@@ -93,7 +93,7 @@ private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
-    void didPostMessage(IPC::Connection&, uint64_t pageID, uint64_t frameID, const SecurityOriginData&, uint64_t messageHandlerID, const IPC::DataReference&);
+    void didPostMessage(IPC::Connection&, uint64_t pageID, uint64_t frameID, const WebCore::SecurityOriginData&, uint64_t messageHandlerID, const IPC::DataReference&);
 
     uint64_t m_identifier;
     HashSet<WebProcessProxy*> m_processes;    

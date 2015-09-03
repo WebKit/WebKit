@@ -31,9 +31,12 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace WebKit {
 
-struct SecurityOriginData;
 class WebProcess;
 
 class WebMediaKeyStorageManager : public WebProcessSupplement {
@@ -45,10 +48,10 @@ public:
     static const char* supplementName();
 
     const String& mediaKeyStorageDirectory() const { return m_mediaKeyStorageDirectory; }
-    String mediaKeyStorageDirectoryForOrigin(const SecurityOriginData&);
+    String mediaKeyStorageDirectoryForOrigin(const WebCore::SecurityOriginData&);
 
-    Vector<SecurityOriginData> getMediaKeyOrigins();
-    void deleteMediaKeyEntriesForOrigin(const SecurityOriginData&);
+    Vector<WebCore::SecurityOriginData> getMediaKeyOrigins();
+    void deleteMediaKeyEntriesForOrigin(const WebCore::SecurityOriginData&);
     void deleteMediaKeyEntriesModifiedBetweenDates(double startDate, double endDate);
     void deleteAllMediaKeyEntries();
 

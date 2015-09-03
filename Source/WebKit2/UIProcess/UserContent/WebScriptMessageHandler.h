@@ -36,6 +36,7 @@ class ArgumentEncoder;
 }
 
 namespace WebCore {
+struct SecurityOriginData;
 class SerializedScriptValue;
 }
 
@@ -43,7 +44,6 @@ namespace WebKit {
 
 class WebPageProxy;
 class WebFrameProxy;
-struct SecurityOriginData;
 
 struct WebScriptMessageHandlerHandle {
     void encode(IPC::ArgumentEncoder&) const;
@@ -58,7 +58,7 @@ public:
     class Client {
     public:
         virtual ~Client() { }
-        virtual void didPostMessage(WebPageProxy&, WebFrameProxy&, const SecurityOriginData&, WebCore::SerializedScriptValue&) = 0;
+        virtual void didPostMessage(WebPageProxy&, WebFrameProxy&, const WebCore::SecurityOriginData&, WebCore::SerializedScriptValue&) = 0;
     };
 
     static PassRefPtr<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name);    

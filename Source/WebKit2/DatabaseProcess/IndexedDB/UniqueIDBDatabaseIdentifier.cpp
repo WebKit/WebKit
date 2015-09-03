@@ -36,7 +36,7 @@ UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier()
 {
 }
 
-UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin)
+UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOriginData& openingOrigin, const WebCore::SecurityOriginData& mainFrameOrigin)
     : m_databaseName(databaseName)
     , m_openingOrigin(openingOrigin)
     , m_mainFrameOrigin(mainFrameOrigin)

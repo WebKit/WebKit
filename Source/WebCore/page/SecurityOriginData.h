@@ -1,5 +1,5 @@
  /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +26,17 @@
 #ifndef SecurityOriginData_h
 #define SecurityOriginData_h
 
-#include "APIObject.h"
 #include <wtf/text/WTFString.h>
-
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
 
 namespace WebCore {
 class Frame;
 class SecurityOrigin;
-}
-
-namespace WebKit {
-
-class WebFrame;
 
 struct SecurityOriginData {
-    static SecurityOriginData fromSecurityOrigin(const WebCore::SecurityOrigin&);
-    static SecurityOriginData fromFrame(WebFrame*);
-    static SecurityOriginData fromFrame(WebCore::Frame*);
+    WEBCORE_EXPORT static SecurityOriginData fromSecurityOrigin(const SecurityOrigin&);
+    WEBCORE_EXPORT static SecurityOriginData fromFrame(Frame*);
 
-    Ref<WebCore::SecurityOrigin> securityOrigin() const;
-
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, SecurityOriginData&);
+    WEBCORE_EXPORT Ref<SecurityOrigin> securityOrigin() const;
 
     // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
     // host, and port.
@@ -60,11 +45,35 @@ struct SecurityOriginData {
     String host;
     int port;
 
-    SecurityOriginData isolatedCopy() const;
+    WEBCORE_EXPORT SecurityOriginData isolatedCopy() const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, SecurityOriginData&);
 };
 
-bool operator==(const SecurityOriginData&, const SecurityOriginData&);
+WEBCORE_EXPORT bool operator==(const SecurityOriginData&, const SecurityOriginData&);
 
-} // namespace WebKit
+template<class Encoder>
+void SecurityOriginData::encode(Encoder& encoder) const
+{
+    encoder << protocol;
+    encoder << host;
+    encoder << port;
+}
+
+template<class Decoder>
+bool SecurityOriginData::decode(Decoder& decoder, SecurityOriginData& securityOriginData)
+{
+    if (!decoder.decode(securityOriginData.protocol))
+        return false;
+    if (!decoder.decode(securityOriginData.host))
+        return false;
+    if (!decoder.decode(securityOriginData.port))
+        return false;
+
+    return true;
+}
+
+} // namespace WebCore
 
 #endif // SecurityOriginData_h

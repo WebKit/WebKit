@@ -28,10 +28,10 @@
 
 #include "LocalStorageDatabase.h"
 #include "LocalStorageDatabaseTracker.h"
-#include "SecurityOriginData.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/TextEncoding.h>

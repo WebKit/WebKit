@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageManager {
-    CreateLocalStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebKit::SecurityOriginData securityOriginData) WantsConnection
-    CreateTransientLocalStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebKit::SecurityOriginData topLevelSecurityOriginData, struct WebKit::SecurityOriginData securityOriginData) WantsConnection
-    CreateSessionStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebKit::SecurityOriginData securityOriginData) WantsConnection
+    CreateLocalStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) WantsConnection
+    CreateTransientLocalStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData topLevelSecurityOriginData, struct WebCore::SecurityOriginData securityOriginData) WantsConnection
+    CreateSessionStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) WantsConnection
     DestroyStorageMap(uint64_t storageMapID) WantsConnection
 
     GetValues(uint64_t storageMapID, uint64_t storageMapSeed) -> (HashMap<String, String> values) WantsConnection

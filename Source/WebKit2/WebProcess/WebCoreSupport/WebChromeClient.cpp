@@ -36,7 +36,6 @@
 #include "LayerTreeHost.h"
 #include "NavigationActionData.h"
 #include "PageBanner.h"
-#include "SecurityOriginData.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
@@ -73,6 +72,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 
 #if PLATFORM(IOS)

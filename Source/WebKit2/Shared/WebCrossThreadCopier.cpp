@@ -28,9 +28,9 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBIdentifier.h"
-#include "SecurityOriginData.h"
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <WebCore/IDBKeyData.h>
+#include <WebCore/SecurityOriginData.h>
 
 using namespace WebKit;
 

@@ -45,7 +45,7 @@ public:
     }
 
 private:
-    virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, WebFrameProxy*, const SecurityOriginData&, const WebCore::ResourceRequest& resourceRequest, const WebCore::WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+    virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest& resourceRequest, const WebCore::WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
     {
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(resourceRequest));
         WebKitNavigationAction navigationAction(request.get(), navigationActionData);
@@ -62,18 +62,18 @@ private:
         webkitWebViewClosePage(m_webView);
     }
 
-    virtual void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, const SecurityOriginData&, std::function<void ()> completionHandler) override
+    virtual void runJavaScriptAlert(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void ()> completionHandler) override
     {
         webkitWebViewRunJavaScriptAlert(m_webView, message.utf8());
         completionHandler();
     }
 
-    virtual void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, const SecurityOriginData&, std::function<void (bool)> completionHandler) override
+    virtual void runJavaScriptConfirm(WebPageProxy*, const String& message, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (bool)> completionHandler) override
     {
         completionHandler(webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8()));
     }
 
-    virtual void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, const SecurityOriginData&, std::function<void (const String&)> completionHandler) override
+    virtual void runJavaScriptPrompt(WebPageProxy*, const String& message, const String& defaultValue, WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (const String&)> completionHandler) override
     {
         CString result = webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8());
         if (result.isNull()) {

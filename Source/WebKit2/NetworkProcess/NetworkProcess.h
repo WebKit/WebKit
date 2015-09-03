@@ -47,6 +47,7 @@ namespace WebCore {
 class CertificateInfo;
 class NetworkStorageSession;
 class SecurityOrigin;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -54,7 +55,6 @@ class AuthenticationManager;
 class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 struct NetworkProcessCreationParameters;
-struct SecurityOriginData;
 
 class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
@@ -93,7 +93,7 @@ public:
 
 #if USE(CFURLCACHE)
     static Vector<Ref<WebCore::SecurityOrigin>> cfURLCacheOrigins();
-    static void clearCFURLCacheForOrigins(const Vector<SecurityOriginData>&);
+    static void clearCFURLCacheForOrigins(const Vector<WebCore::SecurityOriginData>&);
 #endif
 
 #if PLATFORM(COCOA)
@@ -143,7 +143,7 @@ private:
 
     void fetchWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
-    void deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID);
+    void deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID);
 
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
     void clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);

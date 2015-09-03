@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StorageAreaMap.h"
 
-#include "SecurityOriginData.h"
 #include "StorageAreaImpl.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
@@ -39,6 +38,7 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Storage.h>
 #include <WebCore/StorageEventDispatcher.h>
 #include <WebCore/StorageMap.h>

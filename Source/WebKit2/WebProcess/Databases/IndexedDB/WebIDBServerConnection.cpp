@@ -34,13 +34,13 @@
 #include "DatabaseProcessIDBConnectionMessages.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "Logging.h"
-#include "SecurityOriginData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/IDBKeyRangeData.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 

@@ -46,9 +46,12 @@ namespace API {
 class Navigation;
 }
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace WebKit {
 
-struct SecurityOriginData;
 struct WebNavigationDataStore;
 
 class NavigationState final : private PageLoadState::Observer {
@@ -86,7 +89,7 @@ private:
         virtual void didStartProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         virtual void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         virtual void didFailProvisionalNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
-        virtual void didFailProvisionalLoadInSubframeWithError(WebPageProxy&, WebFrameProxy&, const SecurityOriginData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didFailProvisionalLoadInSubframeWithError(WebPageProxy&, WebFrameProxy&, const WebCore::SecurityOriginData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         virtual void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         virtual void didFinishDocumentLoad(WebPageProxy&, API::Navigation*, API::Object*) override;
         virtual void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;

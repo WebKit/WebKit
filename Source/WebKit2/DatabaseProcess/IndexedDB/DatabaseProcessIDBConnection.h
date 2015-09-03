@@ -31,8 +31,8 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 #include "DatabaseProcessIDBConnectionMessages.h"
-#include "SecurityOriginData.h"
 #include "UniqueIDBDatabaseIdentifier.h"
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -68,7 +68,7 @@ private:
     virtual uint64_t messageSenderDestinationID() override { return m_serverConnectionIdentifier; }
 
     // Message handlers.
-    void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);
+    void establishConnection(const String& databaseName, const WebCore::SecurityOriginData& openingOrigin, const WebCore::SecurityOriginData& mainFrameOrigin);
     void getOrEstablishIDBDatabaseMetadata(uint64_t requestID);
     void deleteDatabase(uint64_t requestID, const String& databaseName);
     void openTransaction(uint64_t requestID, int64_t transactionID, const Vector<int64_t>& objectStoreIDs, uint64_t transactionMode);

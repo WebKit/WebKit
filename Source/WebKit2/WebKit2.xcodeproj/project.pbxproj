@@ -728,8 +728,6 @@
 		330934561315B9750097A7BC /* WebCookieManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934531315B9750097A7BC /* WebCookieManagerProxy.h */; };
 		3309345A1315B9980097A7BC /* WKCookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934581315B9980097A7BC /* WKCookieManager.cpp */; };
 		3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934591315B9980097A7BC /* WKCookieManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33152973130D0CB200ED2483 /* SecurityOriginData.cpp */; };
-		33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 33152974130D0CB200ED2483 /* SecurityOriginData.h */; };
 		3336763A130C99DC006C9DE2 /* WKResourceCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33367638130C99DC006C9DE2 /* WKResourceCacheManager.cpp */; };
 		3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */; };
@@ -2883,8 +2881,6 @@
 		330934541315B9750097A7BC /* WebCookieManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCookieManagerProxy.messages.in; sourceTree = "<group>"; };
 		330934581315B9980097A7BC /* WKCookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKCookieManager.cpp; sourceTree = "<group>"; };
 		330934591315B9980097A7BC /* WKCookieManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCookieManager.h; sourceTree = "<group>"; };
-		33152973130D0CB200ED2483 /* SecurityOriginData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginData.cpp; sourceTree = "<group>"; };
-		33152974130D0CB200ED2483 /* SecurityOriginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginData.h; sourceTree = "<group>"; };
 		33367638130C99DC006C9DE2 /* WKResourceCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKResourceCacheManager.cpp; sourceTree = "<group>"; };
 		33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKResourceCacheManager.h; sourceTree = "<group>"; };
 		33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManagerProxyClient.cpp; sourceTree = "<group>"; };
@@ -4728,8 +4724,6 @@
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
-				33152973130D0CB200ED2483 /* SecurityOriginData.cpp */,
-				33152974130D0CB200ED2483 /* SecurityOriginData.h */,
 				1AFDE6571954A42B00C48FFA /* SessionState.cpp */,
 				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				753E3E0B1887397300188496 /* SessionTracker.cpp */,
@@ -7838,7 +7832,6 @@
 				E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */,
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
-				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
@@ -9660,7 +9653,6 @@
 				E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */,
 				E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
-				33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */,
 				514D9F5819119D35000063A7 /* ServicesController.mm in Sources */,
 				1AFDE6591954A42B00C48FFA /* SessionState.cpp in Sources */,
 				1A002D48196B345D00B9AD44 /* SessionStateCoding.mm in Sources */,

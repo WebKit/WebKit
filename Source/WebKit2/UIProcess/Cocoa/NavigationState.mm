@@ -37,7 +37,6 @@
 #import "CompletionHandlerCallChecker.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
-#import "SecurityOriginData.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKFrameInfoInternal.h"
@@ -63,6 +62,7 @@
 #import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
 #import <WebCore/Credential.h>
+#import <WebCore/SecurityOriginData.h>
 #import <WebCore/URL.h>
 #import <wtf/NeverDestroyed.h>
 
