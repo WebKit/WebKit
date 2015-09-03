@@ -129,6 +129,12 @@ EXTERN_C CFArrayRef _CFHTTPParsedCookiesWithResponseHeaderFields(CFAllocatorRef 
 
 #if defined(__OBJC__)
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+@interface NSHTTPCookie ()
++ (NSArray *)_parsedCookiesWithResponseHeaderFields:(NSDictionary *)headerFields forURL:(NSURL *)aURL;
+@end
+#endif
+
 #if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1090)
 @interface NSHTTPCookieStorage (Details)
 - (void)removeCookiesSinceDate:(NSDate *)date;
@@ -144,6 +150,6 @@ EXTERN_C CFArrayRef _CFHTTPParsedCookiesWithResponseHeaderFields(CFAllocatorRef 
 + (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
 @end
 #endif
-#endif
+#endif // defined(__OBJC__)
 
 #endif // CFNetworkSPI_h
