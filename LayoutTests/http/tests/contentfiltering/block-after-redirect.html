@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<body>
 <script>
 if (window.internals) {
     var settings = window.internals.mockContentFilterSettings;
@@ -7,6 +8,15 @@ if (window.internals) {
     settings.decision = settings.DECISION_BLOCK;
     settings.blockedString = "<!DOCTYPE html><body>PASS";
 }
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var iframe = document.createElement("iframe");
+document.body.appendChild(iframe);
+iframe.addEventListener("load", function(event) {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+iframe.src = "/resources/redirect.php?url=/contentfiltering/resources/fail.html";
 </script>
-<body>
-<iframe src="/resources/redirect.php?url=/contentfiltering/resources/fail.html"></iframe>

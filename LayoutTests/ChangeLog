@@ -1,3 +1,15 @@
+2015-09-03  Andy Estes  <aestes@apple.com>
+
+        REGRESSION: http/tests/contentfiltering/block-after-redirect.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=148684
+
+        Reviewed by Alexey Proskuryakov.
+
+        Wait for the iframe to load the blocked page before finishing the test.
+
+        * http/tests/contentfiltering/block-after-redirect.html:
+        * platform/mac-wk2/TestExpectations:
+
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
         [Mac] Add support for testing swipes
