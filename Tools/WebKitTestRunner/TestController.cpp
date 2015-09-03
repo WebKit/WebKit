@@ -295,6 +295,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKPageConfiguration
         0, // didBeginNavigationGesture
         0, // willEndNavigationGesture
         0, // didEndNavigationGesture
+        0, // didRemoveNavigationGestureSnapshot
     };
     WKPageSetPageNavigationClient(newPage, &pageNavigationClient.base);
 
@@ -539,6 +540,7 @@ void TestController::createWebViewWithOptions(const ViewOptions& options)
         0, // didBeginNavigationGesture
         0, // willEndNavigationGesture
         0, // didEndNavigationGesture
+        0, // didRemoveNavigationGestureSnapshot
     };
     WKPageSetPageNavigationClient(m_mainWebView->page(), &pageNavigationClient.base);
 

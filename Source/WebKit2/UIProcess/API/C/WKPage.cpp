@@ -2123,6 +2123,13 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
                 return;
             m_client.willEndNavigationGesture(toAPI(&page), willNavigate ? toAPI(&item) : nullptr, m_client.base.clientInfo);
         }
+
+        virtual void didRemoveNavigationGestureSnapshot(WebPageProxy& page) override
+        {
+            if (!m_client.didRemoveNavigationGestureSnapshot)
+                return;
+            m_client.didRemoveNavigationGestureSnapshot(toAPI(&page), m_client.base.clientInfo);
+        }
         
 #if ENABLE(NETSCAPE_PLUGIN_API)
         virtual PluginModuleLoadPolicy decidePolicyForPluginLoad(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary* pluginInformation, String& unavailabilityDescription) override

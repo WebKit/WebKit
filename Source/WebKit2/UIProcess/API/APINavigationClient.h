@@ -111,6 +111,7 @@ public:
     virtual void didBeginNavigationGesture(WebKit::WebPageProxy&) { }
     virtual void willEndNavigationGesture(WebKit::WebPageProxy&, bool willNavigate, WebKit::WebBackForwardListItem&) { }
     virtual void didEndNavigationGesture(WebKit::WebPageProxy&, bool willNavigate, WebKit::WebBackForwardListItem&) { }
+    virtual void didRemoveNavigationGestureSnapshot(WebKit::WebPageProxy&) { }
 };
 
 } // namespace API

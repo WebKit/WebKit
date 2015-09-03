@@ -200,11 +200,12 @@ protected:
     virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
     virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
 #endif
-    virtual void navigationGestureDidBegin() override { };
-    virtual void navigationGestureWillEnd(bool, WebBackForwardListItem&) override { };
-    virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override { };
-    virtual void navigationGestureDidEnd() override { };
-    virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override { };
+    virtual void navigationGestureDidBegin() override { }
+    virtual void navigationGestureWillEnd(bool, WebBackForwardListItem&) override { }
+    virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override { }
+    virtual void navigationGestureDidEnd() override { }
+    virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override { }
+    virtual void didRemoveNavigationGestureSnapshot() override { }
 
     virtual void didChangeBackgroundColor() override { }
     virtual void didFailLoadForMainFrame() override { }

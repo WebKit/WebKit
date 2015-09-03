@@ -75,6 +75,9 @@ typedef void (*WKPageNavigationWillEndNavigationGesture)(WKPageRef page, WKBackF
 
 typedef void (*WKPageNavigationDidEndNavigationGesture)(WKPageRef page, WKBackForwardListItemRef backForwardListItem, const void* clientInfo);
 
+typedef void (*WKPageNavigationDidRemoveNavigationGestureSnapshot)(WKPageRef page, const void* clientInfo);
+
+
 typedef struct WKPageNavigationClientBase {
     int version;
     const void* clientInfo;
@@ -105,6 +108,7 @@ typedef struct WKPageNavigationClientV0 {
     WKPageNavigationDidBeginNavigationGesture didBeginNavigationGesture;
     WKPageNavigationWillEndNavigationGesture willEndNavigationGesture;
     WKPageNavigationDidEndNavigationGesture didEndNavigationGesture;
+    WKPageNavigationDidRemoveNavigationGestureSnapshot didRemoveNavigationGestureSnapshot;
 } WKPageNavigationClientV0;
 
 #ifdef __cplusplus

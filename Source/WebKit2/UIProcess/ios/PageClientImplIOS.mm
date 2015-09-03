@@ -704,6 +704,11 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
     NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
 }
 
+void PageClientImpl::didRemoveNavigationGestureSnapshot()
+{
+    NavigationState::fromWebPage(*m_webView->_page).navigationGestureSnapshotWasRemoved();
+}
+
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
 }

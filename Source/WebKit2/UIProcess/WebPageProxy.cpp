@@ -5897,6 +5897,7 @@ void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardList
     PageClientProtector protector(m_pageClient);
 
     m_pageClient.navigationGestureDidEnd(willNavigate, item);
+
     if (m_navigationClient)
         m_navigationClient->didEndNavigationGesture(*this, willNavigate, item);
     else
@@ -5920,6 +5921,11 @@ void WebPageProxy::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 void WebPageProxy::navigationGestureSnapshotWasRemoved()
 {
     m_isShowingNavigationGestureSnapshot = false;
+
+    m_pageClient.didRemoveNavigationGestureSnapshot();
+
+    if (m_navigationClient)
+        m_navigationClient->didRemoveNavigationGestureSnapshot(*this);
 }
 
 void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state, uint64_t sourceElementID)

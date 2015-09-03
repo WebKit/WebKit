@@ -321,6 +321,7 @@ public:
     virtual void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) = 0;
     virtual void navigationGestureDidEnd() = 0;
     virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) = 0;
+    virtual void didRemoveNavigationGestureSnapshot() = 0;
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;
     virtual void didFinishLoadForMainFrame() = 0;

@@ -1,3 +1,36 @@
+2015-09-02  Tim Horton  <timothy_horton@apple.com>
+
+        Add a modern API way to know that the navigation gesture snapshot was removed, for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=148693
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didRemoveNavigationGestureSnapshot):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/C/WKPageNavigationClient.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::navigationGestureSnapshotWasRemoved):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::navigationGestureDidEnd):
+        (WebKit::WebPageProxy::navigationGestureSnapshotWasRemoved):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        Add a callback for WKTR when the swipe snapshot is removed.
+
 2015-09-02  Andreas Kling  <akling@apple.com>
 
         ScrollbarThemes should be returned by reference.

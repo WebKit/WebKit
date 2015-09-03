@@ -765,6 +765,14 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 #endif
 }
 
+void PageClientImpl::didRemoveNavigationGestureSnapshot()
+{
+#if WK_API_ENABLED
+    if (m_webView)
+        NavigationState::fromWebPage(*m_webView->_page).navigationGestureSnapshotWasRemoved();
+#endif
+}
+
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
     [m_wkView _didFirstVisuallyNonEmptyLayoutForMainFrame];
