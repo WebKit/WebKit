@@ -245,7 +245,7 @@ void URLUtils<T>::setPathname(const String& value)
     if (!url.canSetPathname())
         return;
 
-    if (value[0] == '/')
+    if (value[0U] == '/')
         url.setPath(value);
     else
         url.setPath("/" + value);
@@ -264,7 +264,7 @@ template <typename T>
 void URLUtils<T>::setSearch(const String& value)
 {
     URL url = href();
-    String newSearch = (value[0] == '?') ? value.substring(1) : value;
+    String newSearch = (value[0U] == '?') ? value.substring(1) : value;
     // Make sure that '#' in the query does not leak to the hash.
     url.setQuery(newSearch.replaceWithLiteral('#', "%23"));
 
@@ -284,7 +284,7 @@ template <typename T>
 void URLUtils<T>::setHash(const String& value)
 {
     URL url = href();
-    if (value[0] == '#')
+    if (value[0U] == '#')
         url.setFragmentIdentifier(value.substring(1));
     else
         url.setFragmentIdentifier(value);

@@ -46,6 +46,7 @@ class ClientRect;
 class ClientRectList;
 class DOMPath;
 class DOMStringList;
+class DOMURL;
 class DOMWindow;
 class Document;
 class Element;
@@ -432,6 +433,8 @@ public:
     String pathStringWithShrinkWrappedRects(Vector<double> rectComponents, double radius, ExceptionCode&);
 
     String getCurrentMediaControlsStatusForElement(HTMLMediaElement*);
+
+    String userVisibleString(const DOMURL*);
 
 private:
     explicit Internals(Document*);

@@ -401,4 +401,6 @@ enum MediaControlEvent {
     [RaisesException] DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
 
     DOMString getCurrentMediaControlsStatusForElement(HTMLMediaElement element);
+
+    DOMString userVisibleString(DOMURL url);
 };

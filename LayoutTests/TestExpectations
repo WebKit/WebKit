@@ -20,6 +20,9 @@ fast/scrolling/latching [ Skip ]
 fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
 fast/forms/search/search-results-hidden-crash.html [ Skip ]
 
+# This doesn't have to be platform-specific, but it's only implemented on Mac now.
+fast/url/user-visible [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

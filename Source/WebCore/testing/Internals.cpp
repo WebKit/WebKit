@@ -3071,4 +3071,12 @@ String Internals::getCurrentMediaControlsStatusForElement(HTMLMediaElement* medi
 #endif
 }
 
+#if !PLATFORM(COCOA)
+String Internals::userVisibleString(const DOMURL*)
+{
+    // Not implemented in WebCore.
+    return String();
+}
+#endif
+
 }

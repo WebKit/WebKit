@@ -248,6 +248,7 @@ my %classesNeedingWebCoreExport = (
     "JSCSSStyleDeclaration" => 1,
     "JSDocument" => 1,
     "JSDOMPath" => 1,
+    "JSDOMURL" => 1,
     "JSDOMWindow" => 1,
     "JSElement" => 1,
     "JSFile" => 1,

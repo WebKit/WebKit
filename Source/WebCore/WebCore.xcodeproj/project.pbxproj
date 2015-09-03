@@ -6168,6 +6168,7 @@
 		E172AF70180F289500FBADB9 /* CryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */; };
 		E172AF8F1811BC3700FBADB9 /* JSDOMPromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */; };
 		E172AF901811BC3700FBADB9 /* JSDOMPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179F0D91B9774FE00ED0A27 /* Internals.mm */; };
 		E17B491516A9B094001C8839 /* TransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E17B491316A9B093001C8839 /* TransitionEvent.cpp */; };
 		E17B491616A9B094001C8839 /* TransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E17B491416A9B093001C8839 /* TransitionEvent.h */; };
 		E17B492116A9B8FF001C8839 /* JSTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E17B491F16A9B8FF001C8839 /* JSTransitionEvent.h */; };
@@ -13869,6 +13870,7 @@
 		E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPromise.cpp; sourceTree = "<group>"; };
 		E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromise.h; sourceTree = "<group>"; };
 		E176580C180DF3A0005A96D1 /* OESElementIndexUint.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OESElementIndexUint.idl; sourceTree = "<group>"; };
+		E179F0D91B9774FE00ED0A27 /* Internals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Internals.mm; sourceTree = "<group>"; };
 		E17B490B16A97269001C8839 /* TransitionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TransitionEvent.idl; sourceTree = "<group>"; };
 		E17B491316A9B093001C8839 /* TransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransitionEvent.cpp; sourceTree = "<group>"; };
 		E17B491416A9B093001C8839 /* TransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitionEvent.h; sourceTree = "<group>"; };
@@ -16059,6 +16061,7 @@
 			children = (
 				41815C1B138319630057AAA4 /* js */,
 				417DA4CF13734326007C57FB /* Internals.cpp */,
+				E179F0D91B9774FE00ED0A27 /* Internals.mm */,
 				417DA4CE13734326007C57FB /* Internals.h */,
 				41813F9113818AD60057AAA4 /* Internals.idl */,
 				A7BF7EDC14C9175A0014489D /* InternalSettings.cpp */,
@@ -27766,6 +27769,7 @@
 				53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */,
 				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
+				E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */,
 				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,
 				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
 				CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */,
