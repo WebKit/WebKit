@@ -1,3 +1,15 @@
+2015-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WK2] Allow tagging tests with metadata which needs to be known at web process creation time
+        https://bugs.webkit.org/show_bug.cgi?id=148723
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::testPath):
+        (WTR::updateViewOptionsFromTestHeader):
+        (WTR::TestController::viewOptionsForTest):
+
 2015-09-03  Lucas Forschler  <lforschler@apple.com>
 
         Test commit.

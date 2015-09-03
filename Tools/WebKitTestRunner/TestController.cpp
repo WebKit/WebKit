@@ -54,6 +54,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <ctype.h>
+#include <fstream>
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <string>
@@ -61,6 +62,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 #include <WebKit/WKContextPrivateMac.h>
@@ -792,6 +794,57 @@ static bool shouldUseFixedLayout(const TestInvocation& test)
     return false;
 }
 
+static std::string testPath(const WKURLRef url)
+{
+    auto scheme = adoptWK(WKURLCopyScheme(url));
+    if (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "file")) {
+        auto path = adoptWK(WKURLCopyPath(url));
+        auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(path.get()));
+        auto length = WKStringGetUTF8CString(path.get(), buffer.data(), buffer.size());
+        return std::string(buffer.data(), length);
+    }
+    return std::string();
+}
+
+static void updateViewOptionsFromTestHeader(ViewOptions& viewOptions, const TestInvocation& test)
+{
+    std::string filename = testPath(test.url());
+    if (filename.empty())
+        return;
+
+    std::string options;
+    std::ifstream testFile(filename.data());
+    if (!testFile.good())
+        return;
+    getline(testFile, options);
+    std::string beginString("webkit-test-runner [ ");
+    std::string endString(" ]");
+    size_t beginLocation = options.find(beginString);
+    if (beginLocation == std::string::npos)
+        return;
+    size_t endLocation = options.find(endString, beginLocation);
+    if (endLocation == std::string::npos) {
+        LOG_ERROR("Could not find end of test header in %s", filename.c_str());
+        return;
+    }
+    std::string pairString = options.substr(beginLocation + beginString.size(), endLocation - (beginLocation + beginString.size()));
+    size_t pairStart = 0;
+    while (pairStart < pairString.size()) {
+        size_t pairEnd = pairString.find(" ", pairStart);
+        if (pairEnd == std::string::npos)
+            pairEnd = pairString.size();
+        size_t equalsLocation = pairString.find("=", pairStart);
+        if (equalsLocation == std::string::npos) {
+            LOG_ERROR("Malformed option in test header (could not find '=' character) in %s", filename.c_str());
+            break;
+        }
+        auto key = pairString.substr(pairStart, equalsLocation - pairStart);
+        auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
+        // Options processing to modify viewOptions goes here.
+        pairStart = pairEnd + 1;
+    }
+}
+
 ViewOptions TestController::viewOptionsForTest(const TestInvocation& test) const
 {
     ViewOptions viewOptions;
@@ -799,6 +852,8 @@ ViewOptions TestController::viewOptionsForTest(const TestInvocation& test) const
     viewOptions.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
     viewOptions.shouldShowWebView = m_shouldShowWebView;
     viewOptions.useFixedLayout = shouldUseFixedLayout(test);
+
+    updateViewOptionsFromTestHeader(viewOptions, test);
 
     updatePlatformSpecificViewOptionsForTest(viewOptions, test);
 
