@@ -21,9 +21,13 @@ function runTest() {
     shouldThrow('observer.observe(null, {attributes: true})');
     shouldThrow('observer.observe(undefined, {attributes: true})');
     shouldThrow('observer.observe(document.body, {subtree: true})');
-    shouldThrow('observer.observe(document.body, {childList: true, attributeOldValue: true})');
-    shouldThrow('observer.observe(document.body, {attributes: true, characterDataOldValue: true})');
-    shouldThrow('observer.observe(document.body, {characterData: true, attributeFilter: ["id"]})');
+    shouldNotThrow('observer.observe(document.body, {childList: true, attributeOldValue: true})');
+    shouldNotThrow('observer.observe(document.body, {attributes: true, characterDataOldValue: true})');
+    shouldNotThrow('observer.observe(document.body, {characterData: true, attributeFilter: ["id"]})');
+
+    shouldThrow('observer.observe(document.body, {attributes: false, attributeOldValue: true})');
+    shouldThrow('observer.observe(document.body, {attributes: false, attributeFilter: ["id"]})');
+    shouldThrow('observer.observe(document.body, {characterData: false, characterDataOldValue: true})');
 }
 
 description('Test that WebKitMutationObserver.observe throws exceptions appropriately');

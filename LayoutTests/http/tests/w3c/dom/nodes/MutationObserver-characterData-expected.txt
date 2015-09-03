@@ -23,5 +23,5 @@ PASS Range (r80) is created
 PASS characterData Range.extractContents: child and data removal mutation 
 PASS Range (r81) is created 
 PASS characterData Range.extractContents: child and data removal mutation (2) 
-FAIL characterData/characterDataOldValue alone Text.data: simple mutation SyntaxError: DOM Exception 12
+PASS characterData/characterDataOldValue alone Text.data: simple mutation 
 

@@ -82,15 +82,13 @@ void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, 
         MutationObserverOptions value;
     } booleanOptions[] = {
         { "childList", ChildList },
-        { "attributes", Attributes },
-        { "characterData", CharacterData },
         { "subtree", Subtree },
         { "attributeOldValue", AttributeOldValue },
         { "characterDataOldValue", CharacterDataOldValue }
     };
     MutationObserverOptions options = 0;
+    bool value = false;
     for (unsigned i = 0; i < sizeof(booleanOptions) / sizeof(booleanOptions[0]); ++i) {
-        bool value = false;
         if (optionsDictionary.get(booleanOptions[i].name, value) && value)
             options |= booleanOptions[i].value;
     }
@@ -98,6 +96,14 @@ void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, 
     HashSet<AtomicString> attributeFilter;
     if (optionsDictionary.get("attributeFilter", attributeFilter))
         options |= AttributeFilter;
+
+    bool attributesOptionIsSet = optionsDictionary.get("attributes", value);
+    if ((attributesOptionIsSet && value) || (!attributesOptionIsSet && (options & (AttributeFilter | AttributeOldValue))))
+        options |= Attributes;
+
+    bool characterDataOptionIsSet = optionsDictionary.get("characterData", value);
+    if ((characterDataOptionIsSet && value) || (!characterDataOptionIsSet && (options & CharacterDataOldValue)))
+        options |= CharacterData;
 
     if (!validateOptions(options)) {
         ec = SYNTAX_ERR;

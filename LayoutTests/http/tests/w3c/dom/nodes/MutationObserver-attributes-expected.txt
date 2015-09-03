@@ -40,7 +40,7 @@ PASS attributes Element.removeAttributeNS: removal no mutation
 PASS attributes Element.removeAttributeNS: prefixed attribute removal no mutation 
 PASS attributes/attributeFilter Element.id/Element.className: update mutation 
 PASS attributes/attributeFilter Element.id/Element.className: multiple filter update mutation 
-FAIL attributeOldValue alone Element.id: update mutation SyntaxError: DOM Exception 12
-FAIL attributeFilter alone Element.id/Element.className: multiple filter update mutation SyntaxError: DOM Exception 12
+PASS attributeOldValue alone Element.id: update mutation 
+PASS attributeFilter alone Element.id/Element.className: multiple filter update mutation 
 PASS childList false: no childList mutation 
 

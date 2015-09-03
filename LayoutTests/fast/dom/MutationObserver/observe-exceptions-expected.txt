@@ -12,9 +12,12 @@ PASS observer.observe(document.body, undefined) threw exception Error: SyntaxErr
 PASS observer.observe(null, {attributes: true}) threw exception Error: NotFoundError: DOM Exception 8.
 PASS observer.observe(undefined, {attributes: true}) threw exception Error: NotFoundError: DOM Exception 8.
 PASS observer.observe(document.body, {subtree: true}) threw exception Error: SyntaxError: DOM Exception 12.
-PASS observer.observe(document.body, {childList: true, attributeOldValue: true}) threw exception Error: SyntaxError: DOM Exception 12.
-PASS observer.observe(document.body, {attributes: true, characterDataOldValue: true}) threw exception Error: SyntaxError: DOM Exception 12.
-PASS observer.observe(document.body, {characterData: true, attributeFilter: ["id"]}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(document.body, {childList: true, attributeOldValue: true}) did not throw exception.
+PASS observer.observe(document.body, {attributes: true, characterDataOldValue: true}) did not throw exception.
+PASS observer.observe(document.body, {characterData: true, attributeFilter: ["id"]}) did not throw exception.
+PASS observer.observe(document.body, {attributes: false, attributeOldValue: true}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(document.body, {attributes: false, attributeFilter: ["id"]}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(document.body, {characterData: false, characterDataOldValue: true}) threw exception Error: SyntaxError: DOM Exception 12.
 PASS successfullyParsed is true
 
 TEST COMPLETE
