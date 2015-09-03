@@ -50,7 +50,7 @@ public:
     
     ~PolymorphicCallNode();
     
-    void unlink(RepatchBuffer&);
+    void unlink(VM&, RepatchBuffer&);
 
     bool hasCallLinkInfo(CallLinkInfo* info) { return m_callLinkInfo == info; }
     void clearCallLinkInfo();
@@ -96,7 +96,7 @@ public:
 
     void clearCallNodesFor(CallLinkInfo*);
     
-    bool visitWeak(RepatchBuffer&) override;
+    bool visitWeak(VM&, RepatchBuffer&) override;
 
 protected:
     virtual void markRequiredObjectsInternal(SlotVisitor&) override;

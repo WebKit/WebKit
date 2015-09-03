@@ -36,7 +36,7 @@ namespace JSC {
 
 JITStubRoutine::~JITStubRoutine() { }
 
-bool JITStubRoutine::visitWeak(RepatchBuffer&)
+bool JITStubRoutine::visitWeak(VM&, RepatchBuffer&)
 {
     return true;
 }

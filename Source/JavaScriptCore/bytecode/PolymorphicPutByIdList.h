@@ -156,7 +156,7 @@ public:
         return m_customSetter;
     }
 
-    bool visitWeak(RepatchBuffer&) const;
+    bool visitWeak(VM&, RepatchBuffer&) const;
     
 private:
     friend class CodeBlock;
@@ -194,7 +194,7 @@ public:
     
     PutKind kind() const { return m_kind; }
     
-    bool visitWeak(RepatchBuffer&) const;
+    bool visitWeak(VM&, RepatchBuffer&) const;
     
 private:
     friend class CodeBlock;

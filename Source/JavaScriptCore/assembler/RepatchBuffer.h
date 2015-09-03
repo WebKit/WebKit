@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,27 +44,14 @@ class RepatchBuffer {
     typedef MacroAssemblerCodePtr CodePtr;
 
 public:
-    RepatchBuffer(CodeBlock* codeBlock)
-        : m_codeBlock(codeBlock)
+    RepatchBuffer(CodeBlock*)
     {
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-        RefPtr<JITCode> code = codeBlock->jitCode();
-        m_start = code->start();
-        m_size = code->size();
-
-        ExecutableAllocator::makeWritable(m_start, m_size);
-#endif
     }
 
     ~RepatchBuffer()
     {
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-        ExecutableAllocator::makeExecutable(m_start, m_size);
-#endif
     }
     
-    CodeBlock* codeBlock() const { return m_codeBlock; }
-
     void relink(CodeLocationJump jump, CodeLocationLabel destination)
     {
         MacroAssembler::repatchJump(jump, destination);
@@ -185,13 +172,6 @@ public:
     {
         MacroAssembler::revertJumpReplacementToPatchableBranch32WithPatch(instructionStart, address, value);
     }
-
-private:
-    CodeBlock* m_codeBlock;
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-    void* m_start;
-    size_t m_size;
-#endif
 };
 
 } // namespace JSC

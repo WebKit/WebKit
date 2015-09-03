@@ -209,7 +209,6 @@ void LinkBuffer::allocate(size_t initialSize, void* ownerUID, JITCompilationEffo
     m_executableMemory = m_vm->executableAllocator.allocate(*m_vm, initialSize, ownerUID, effort);
     if (!m_executableMemory)
         return;
-    ExecutableAllocator::makeWritable(m_executableMemory->start(), m_executableMemory->sizeInBytes());
     m_code = m_executableMemory->start();
     m_size = initialSize;
     m_didAllocate = true;
@@ -232,11 +231,6 @@ void LinkBuffer::performFinalization()
     m_completed = true;
 #endif
     
-#if ENABLE(BRANCH_COMPACTION)
-    ExecutableAllocator::makeExecutable(code(), m_initialSize);
-#else
-    ExecutableAllocator::makeExecutable(code(), m_size);
-#endif
     MacroAssembler::cacheFlush(code(), m_size);
 }
 

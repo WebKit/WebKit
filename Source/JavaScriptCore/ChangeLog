@@ -1,3 +1,95 @@
+2015-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        RepatchBuffer should be stateless
+        https://bugs.webkit.org/show_bug.cgi?id=148741
+
+        Reviewed by Geoffrey Garen.
+
+        This removes our reliance on RepatchBuffer having a pointer to CodeBlock. This is in
+        preparation for removing RepatchBuffer entirely (see
+        https://bugs.webkit.org/show_bug.cgi?id=148742). In the longer term, this is necessary
+        for making inline cache code, particularly in StructureStubInfo, more self-contained.
+        Currently StructureStubInfo relies on very pointless-looking methods in CodeBlock to
+        clear itself, and the only thing that those methods do is create a RepatchBuffer. It's
+        quite silly.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::allocate):
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::RepatchBuffer):
+        (JSC::RepatchBuffer::~RepatchBuffer):
+        (JSC::RepatchBuffer::relink):
+        (JSC::RepatchBuffer::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::RepatchBuffer::codeBlock): Deleted.
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::clearStub):
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::registerPreservationMode):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::CallLinkInfo::setUpCall):
+        (JSC::CallLinkInfo::codeOrigin):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        * bytecode/PolymorphicGetByIdList.cpp:
+        (JSC::GetByIdAccess::fromStructureStubInfo):
+        (JSC::GetByIdAccess::visitWeak):
+        (JSC::PolymorphicGetByIdList::didSelfPatching):
+        (JSC::PolymorphicGetByIdList::visitWeak):
+        * bytecode/PolymorphicGetByIdList.h:
+        (JSC::GetByIdAccess::doesCalls):
+        * bytecode/PolymorphicPutByIdList.cpp:
+        (JSC::PutByIdAccess::fromStructureStubInfo):
+        (JSC::PutByIdAccess::visitWeak):
+        (JSC::PolymorphicPutByIdList::addAccess):
+        (JSC::PolymorphicPutByIdList::visitWeak):
+        * bytecode/PolymorphicPutByIdList.h:
+        (JSC::PutByIdAccess::customSetter):
+        (JSC::PolymorphicPutByIdList::kind):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::seenOnce):
+        * jit/AccessorCallJITStubRoutine.cpp:
+        (JSC::AccessorCallJITStubRoutine::~AccessorCallJITStubRoutine):
+        (JSC::AccessorCallJITStubRoutine::visitWeak):
+        * jit/AccessorCallJITStubRoutine.h:
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::makeWritable): Deleted.
+        (JSC::ExecutableAllocator::makeExecutable): Deleted.
+        (JSC::ExecutableAllocator::allocator): Deleted.
+        * jit/JITStubRoutine.cpp:
+        (JSC::JITStubRoutine::~JITStubRoutine):
+        (JSC::JITStubRoutine::visitWeak):
+        * jit/JITStubRoutine.h:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::~PolymorphicCallNode):
+        (JSC::PolymorphicCallNode::unlink):
+        (JSC::PolymorphicCallStubRoutine::clearCallNodesFor):
+        (JSC::PolymorphicCallStubRoutine::visitWeak):
+        * jit/PolymorphicCallStubRoutine.h:
+        (JSC::PolymorphicCallNode::hasCallLinkInfo):
+        * jit/Repatch.cpp:
+        (JSC::readCallTarget):
+        (JSC::repatchCall):
+        (JSC::repatchByIdSelfAccess):
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::resetIn):
+        * jit/Repatch.h:
+
 2015-09-02  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all the various forms of branchStructure() with a single method in AssemblyHelpers

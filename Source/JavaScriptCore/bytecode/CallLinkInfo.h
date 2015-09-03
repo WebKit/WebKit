@@ -90,7 +90,7 @@ public:
     }
 
     bool isLinked() { return m_stub || m_callee; }
-    void unlink(RepatchBuffer&);
+    void unlink(VM&, RepatchBuffer&);
 
     void setUpCall(CallType callType, CodeOrigin codeOrigin, unsigned calleeGPR)
     {
@@ -278,7 +278,7 @@ public:
         return m_codeOrigin;
     }
 
-    void visitWeak(RepatchBuffer&);
+    void visitWeak(VM&, RepatchBuffer&);
 
 private:
     CodeLocationNearCall m_callReturnLocation;

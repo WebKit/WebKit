@@ -2687,12 +2687,12 @@ void CodeBlock::finalizeUnconditionally()
         RepatchBuffer repatchBuffer(this);
         
         for (auto iter = callLinkInfosBegin(); !!iter; ++iter)
-            (*iter)->visitWeak(repatchBuffer);
+            (*iter)->visitWeak(*vm(), repatchBuffer);
 
         for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
             StructureStubInfo& stubInfo = **iter;
             
-            if (stubInfo.visitWeakReferences(repatchBuffer))
+            if (stubInfo.visitWeakReferences(*vm(), repatchBuffer))
                 continue;
             
             resetStubDuringGCInternal(repatchBuffer, stubInfo);
@@ -2799,12 +2799,12 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
     RELEASE_ASSERT(JITCode::isJIT(jitType()));
     
     if (isGetByIdAccess(accessType))
-        resetGetByID(repatchBuffer, stubInfo);
+        resetGetByID(repatchBuffer, this, stubInfo);
     else if (isPutByIdAccess(accessType))
-        resetPutByID(repatchBuffer, stubInfo);
+        resetPutByID(repatchBuffer, this, stubInfo);
     else {
         RELEASE_ASSERT(isInAccess(accessType));
-        resetIn(repatchBuffer, stubInfo);
+        resetIn(repatchBuffer, this, stubInfo);
     }
     
     stubInfo.reset();
@@ -3036,9 +3036,9 @@ void CodeBlock::unlinkIncomingCalls()
         return;
     RepatchBuffer repatchBuffer(this);
     while (m_incomingCalls.begin() != m_incomingCalls.end())
-        m_incomingCalls.begin()->unlink(repatchBuffer);
+        m_incomingCalls.begin()->unlink(*vm(), repatchBuffer);
     while (m_incomingPolymorphicCalls.begin() != m_incomingPolymorphicCalls.end())
-        m_incomingPolymorphicCalls.begin()->unlink(repatchBuffer);
+        m_incomingPolymorphicCalls.begin()->unlink(*vm(), repatchBuffer);
 #endif // ENABLE(JIT)
 }
 

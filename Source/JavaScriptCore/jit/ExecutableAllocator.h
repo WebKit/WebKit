@@ -56,13 +56,7 @@
 
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (pageSize() * 4)
 
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-#define PROTECTION_FLAGS_RW (PROT_READ | PROT_WRITE)
-#define PROTECTION_FLAGS_RX (PROT_READ | PROT_EXEC)
-#define EXECUTABLE_POOL_WRITABLE false
-#else
 #define EXECUTABLE_POOL_WRITABLE true
-#endif
 
 namespace JSC {
 
@@ -116,34 +110,7 @@ public:
 
     RefPtr<ExecutableMemoryHandle> allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
 
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-    static void makeWritable(void* start, size_t size)
-    {
-        reprotectRegion(start, size, Writable);
-    }
-
-    static void makeExecutable(void* start, size_t size)
-    {
-        reprotectRegion(start, size, Executable);
-    }
-#else
-    static void makeWritable(void*, size_t) {}
-    static void makeExecutable(void*, size_t) {}
-#endif
-
     static size_t committedByteCount();
-
-private:
-
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-    static void reprotectRegion(void*, size_t, ProtectionSetting);
-#if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
-    // We create a MetaAllocator for each JS global object.
-    std::unique_ptr<DemandExecutableAllocator> m_allocator;
-    DemandExecutableAllocator* allocator() { return m_allocator.get(); }
-#endif
-#endif
-
 };
 
 #endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
