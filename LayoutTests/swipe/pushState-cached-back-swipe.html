@@ -53,8 +53,7 @@ function didRemoveSwipeSnapshotCallback()
     shouldBe(true, isFirstPage(), "The swipe should have navigated back to the first page.");
     measuredDurationShouldBeLessThan("snapshotRemoval", 1000, "Because we're using the page cache, it shouldn't be long between the gesture completing and the snapshot being removed.")
 
-    dumpLog();
-    testRunner.notifyDone();
+    testComplete();
 }
 
 function isFirstPage()

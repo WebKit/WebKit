@@ -52,6 +52,12 @@ function dumpLog()
     window.document.body.innerHTML = window.localStorage["swipeLogging"];
 }
 
+function testComplete()
+{
+    dumpLog();
+    window.testRunner.notifyDone();
+}
+
 function initializeLog()
 {
     window.localStorage["swipeLogging"] = "";

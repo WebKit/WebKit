@@ -1,5 +1,19 @@
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
+        Add a test for swipe-start hysteresis
+        https://bugs.webkit.org/show_bug.cgi?id=148756
+
+        Reviewed by Anders Carlsson.
+
+        * swipe/basic-cached-back-swipe.html:
+        * swipe/pushState-cached-back-swipe.html:
+        * swipe/resources/swipe-test.js:
+        (testComplete):
+        * swipe/swipe-start-hysteresis-failures.html: Added.
+        * swipe/swipe-start-hysteresis-failures-expected.txt: Added.
+
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
         Un-skip swipe tests on Mavericks
 
         * platform/mac-mavericks/TestExpectations:

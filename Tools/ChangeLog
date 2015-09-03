@@ -1,3 +1,21 @@
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for swipe-start hysteresis
+        https://bugs.webkit.org/show_bug.cgi?id=148756
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::cacheTestRunnerCallback):
+        (WTR::TestRunner::clearTestRunnerCallbacks):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        Make sure that we log if a client tries to install a callback twice
+        (since we use .add, the second call would not work).
+
+        Also, add clearTestRunnerCallbacks so tests can swap out installed
+        callbacks.
+
 2015-09-03  Anders Carlsson  <andersca@apple.com>
 
         DumpRenderTree should automatically compute HTTP URLs for HTTP tests

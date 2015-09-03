@@ -296,6 +296,8 @@ public:
     void callDidEndSwipeCallback();
     void callDidRemoveSwipeSnapshotCallback();
 
+    void clearTestRunnerCallbacks();
+
 private:
     TestRunner();
 

@@ -1,0 +1,130 @@
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script>
+function doShortSwipeGesture()
+{
+    eventSender.mouseMoveTo(100, 100);
+
+    // Total delta of 10, 0; should not be enough to start a swipe.
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(1, 0, 'began');
+    eventQueue.enqueueScrollEvent(0, 0, 'changed');
+    eventQueue.enqueueScrollEvent(0, 0, 'ended');
+
+    waitForEventDispatch(doDiagonalSwipeGesture);
+}
+
+function doDiagonalSwipeGesture()
+{
+    // Total delta of 20, 20; this is ordinarily sufficient magnitude to start a swipe,
+    // but is too diagonal to start a swipe.
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(2, 2, 'began');
+    eventQueue.enqueueScrollEvent(0, 0, 'changed');
+    eventQueue.enqueueScrollEvent(0, 0, 'ended');
+
+    waitForEventDispatch(doVerticalSwipeGesture);
+}
+
+function doVerticalSwipeGesture()
+{
+    // Total delta of 0, 20; this is ordinarily sufficient magnitude to start a swipe,
+    // but is completely vertical, so we won't start a swipe.
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(0, 2, 'began');
+    eventQueue.enqueueScrollEvent(0, 0, 'changed');
+    eventQueue.enqueueScrollEvent(0, 0, 'ended');
+
+    waitForEventDispatch(doHorizontalThenVerticalSwipeGesture);
+}
+
+function doHorizontalThenVerticalSwipeGesture()
+{
+    // Total delta of 10, 20; this is ordinarily sufficient magnitude to start a swipe,
+    // but is too vertical, so we won't start a swipe.
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(1, 0, 'began');
+    eventQueue.enqueueScrollEvent(0, 2, 'changed');
+    eventQueue.enqueueScrollEvent(0, 0, 'ended');
+
+    waitForEventDispatch(doRegularSwipeGesture);
+}
+
+function doRegularSwipeGesture()
+{
+    // Swap in a different callback that makes sure we *do* reach didBeginSwipe.
+    testRunner.clearTestRunnerCallbacks();
+    testRunner.installDidBeginSwipeCallback(function () {
+        log("didBeginSwipe");
+
+        // Need a swipe-end event to clean up.
+        eventQueue.enqueueSwipeEvent(0, 0, 'ended');
+    });
+
+    testRunner.installDidRemoveSwipeSnapshotCallback(function () {
+        testComplete();
+    });
+
+    // Total delta of 30, 10; this should start a swipe as usual.
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(3, 1, 'began');
+    eventQueue.enqueueScrollEvent(0, 0, 'changed');
+    eventQueue.enqueueScrollEvent(0, 0, 'ended');
+}
+
+function waitForEventDispatch(callback)
+{
+    var interval = setInterval(function () { 
+        if (!eventQueue.hasPendingEvents()) {
+            clearInterval(interval);
+            callback();
+        }
+    }, 0);
+}
+
+function didBeginSwipeNotReachedCallback()
+{
+    log("Failure. Should never begin a swipe, because all of the attempted swipes should fail due to the swipe-start hysteresis.");
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+window.onload = function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    document.body.innerHTML = isFirstPage() ? "first" : "second";
+
+    if (isFirstPage()) {
+        initializeLog();
+
+        testRunner.setNavigationGesturesEnabled(true);
+
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeNotReachedCallback);
+
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        setTimeout(function () { 
+            window.location.href = window.location.href + "?second";
+        }, 0);
+        return;
+    }
+
+    doShortSwipeGesture();
+};
+</script>
+</head>
+<body>
+</body>

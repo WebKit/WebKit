@@ -521,6 +521,11 @@ static void cacheTestRunnerCallback(unsigned index, JSValueRef callback)
     if (!callback)
         return;
 
+    if (callbackMap().contains(index)) {
+        InjectedBundle::singleton().outputText(String::format("FAIL: Tried to install a second TestRunner callback for the same event (id %d)\n\n", index));
+        return;
+    }
+
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(context, callback);
@@ -536,6 +541,18 @@ static void callTestRunnerCallback(unsigned index)
     JSObjectRef callback = JSValueToObject(context, callbackMap().take(index), 0);
     JSObjectCallAsFunction(context, callback, JSContextGetGlobalObject(context), 0, 0, 0);
     JSValueUnprotect(context, callback);
+}
+
+void TestRunner::clearTestRunnerCallbacks()
+{
+    for (auto& iter : callbackMap()) {
+        WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+        JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+        JSObjectRef callback = JSValueToObject(context, iter.value, 0);
+        JSValueUnprotect(context, callback);
+    }
+
+    callbackMap().clear();
 }
 
 void TestRunner::addChromeInputField(JSValueRef callback)

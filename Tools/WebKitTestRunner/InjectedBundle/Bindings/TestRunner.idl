@@ -146,6 +146,8 @@ interface TestRunner {
     void removeChromeInputField(object callback);
     void focusWebView(object callback);
 
+    void clearTestRunnerCallbacks();
+
     void setBackingScaleFactor(double backingScaleFactor, object callback);
 
     void setWindowIsKey(boolean isKey);
