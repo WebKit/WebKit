@@ -138,7 +138,11 @@ LayerOrView *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerI
 
 void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID layerID)
 {
-    m_animationDelegates.remove(layerID);
+    auto iter = m_animationDelegates.find(layerID);
+    if (iter != m_animationDelegates.end()) {
+        [iter->value invalidate];
+        m_animationDelegates.remove(iter);
+    }
     m_layers.remove(layerID);
 }
 
