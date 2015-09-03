@@ -1,3 +1,25 @@
+2015-09-03  Anders Carlsson  <andersca@apple.com>
+
+        DumpRenderTree should automatically compute HTTP URLs for HTTP tests
+        https://bugs.webkit.org/show_bug.cgi?id=148746
+        rdar://problem/22568073
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (computeTestURL):
+        Compute the test URL from the passed in path or URL. Special-case paths that contain /LayoutTests/http/tests. 
+
+        (runTest):
+        Call computeTestURL.
+
+        (testPathFromURL):
+        Get rid of this; computeTestURL does this for us now.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_from_driver_input):
+        Don't convert HTTP test paths to URLS before passing them to DumpRenderTree on Mac. That's handled by DRT itself now.
+
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
         Swipe tests fail on Mavericks

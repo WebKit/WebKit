@@ -1896,25 +1896,40 @@ static void WebThreadLockAfterDelegateCallbacksHaveCompleted()
 }
 #endif
 
-static NSString *testPathFromURL(NSURL* url)
+static NSURL *computeTestURL(NSString *pathOrURLString, NSString **relativeTestPath)
 {
-    if ([url isFileURL]) {
-        NSString *filePath = [url path];
-        NSRange layoutTestsRange = [filePath rangeOfString:@"/LayoutTests/"];
-        if (layoutTestsRange.location == NSNotFound)
-            return nil;
+    *relativeTestPath = nil;
 
-        return [filePath substringFromIndex:NSMaxRange(layoutTestsRange)];
+    if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"] || [pathOrURLString hasPrefix:@"file://"])
+        return [NSURL URLWithString:pathOrURLString];
+
+    NSRange layoutTestsRange = [pathOrURLString rangeOfString:@"/LayoutTests/"];
+    if (layoutTestsRange.location == NSNotFound)
+        return [NSURL fileURLWithPath:pathOrURLString];
+
+    *relativeTestPath = [pathOrURLString substringFromIndex:NSMaxRange(layoutTestsRange)];
+
+    // Convert file URLs in LayoutTests/http/tests to HTTP URLs, except for file URLs in LayoutTests/http/tests/local.
+
+    NSRange httpTestsRange = [pathOrURLString rangeOfString:@"/LayoutTests/http/tests/"];
+    if (httpTestsRange.location == NSNotFound || [pathOrURLString rangeOfString:@"/LayoutTests/http/tests/local/"].location != NSNotFound)
+        return [NSURL fileURLWithPath:pathOrURLString];
+
+    auto components = adoptNS([[NSURLComponents alloc] init]);
+    [components setPath:[pathOrURLString substringFromIndex:NSMaxRange(httpTestsRange) - 1]];
+    [components setHost:@"127.0.0.1"];
+
+    // Paths under /ssl/ should be loaded using HTTPS.
+    BOOL isSecure = [[components path] hasPrefix:@"/ssl/"];
+    if (isSecure) {
+        [components setScheme:@"https"];
+        [components setPort:@(8443)];
+    } else {
+        [components setScheme:@"http"];
+        [components setPort:@(8000)];
     }
-    
-    // HTTP test URLs look like: http://127.0.0.1:8000/inspector/resource-tree/resource-request-content-after-loading-and-clearing-cache.html
-    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
-        return nil;
 
-    if ([[url host] isEqualToString:@"127.0.0.1"] && ([[url port] intValue] == 8000 || [[url port] intValue] == 8443))
-        return [url path];
-
-    return nil;
+    return [components URL];
 }
 
 static void runTest(const string& inputLine)
@@ -1931,19 +1946,15 @@ static void runTest(const string& inputLine)
         return;
     }
 
-    NSURL *url;
-    if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"] || [pathOrURLString hasPrefix:@"file://"])
-        url = [NSURL URLWithString:pathOrURLString];
-    else
-        url = [NSURL fileURLWithPath:pathOrURLString];
+    NSString *testPath;
+    NSURL *url = computeTestURL(pathOrURLString, &testPath);
     if (!url) {
         fprintf(stderr, "Failed to parse \"%s\" as a URL\n", pathOrURL.c_str());
         return;
     }
-
-    NSString *testPath = testPathFromURL(url);
     if (!testPath)
         testPath = [url absoluteString];
+
     NSString *informationString = [@"CRASHING TEST: " stringByAppendingString:testPath];
     WKSetCrashReportApplicationSpecificInformation((CFStringRef)informationString);
 
