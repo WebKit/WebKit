@@ -24,14 +24,14 @@ PASS DocumentFragment without children set to null
 PASS DocumentFragment with empty text node as child set to null 
 PASS DocumentFragment with children set to null 
 PASS DocumentFragment with descendants set to null 
-FAIL Element without children set to undefined assert_equals: expected "" but got "undefined"
-FAIL Element with empty text node as child set to undefined assert_equals: expected "" but got "undefined"
-FAIL Element with children set to undefined assert_equals: expected "" but got "undefined"
-FAIL Element with descendants set to undefined assert_equals: expected "" but got "undefined"
-FAIL DocumentFragment without children set to undefined assert_equals: expected "" but got "undefined"
-FAIL DocumentFragment with empty text node as child set to undefined assert_equals: expected "" but got "undefined"
-FAIL DocumentFragment with children set to undefined assert_equals: expected "" but got "undefined"
-FAIL DocumentFragment with descendants set to undefined assert_equals: expected "" but got "undefined"
+PASS Element without children set to undefined 
+PASS Element with empty text node as child set to undefined 
+PASS Element with children set to undefined 
+PASS Element with descendants set to undefined 
+PASS DocumentFragment without children set to undefined 
+PASS DocumentFragment with empty text node as child set to undefined 
+PASS DocumentFragment with children set to undefined 
+PASS DocumentFragment with descendants set to undefined 
 PASS Element without children set to "" 
 PASS Element with empty text node as child set to "" 
 PASS Element with children set to "" 

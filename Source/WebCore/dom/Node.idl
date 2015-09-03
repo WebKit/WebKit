@@ -91,7 +91,7 @@
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString       baseURI;
 
     // FIXME: the spec says this can also raise on retrieval.
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString textContent;
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, TreatUndefinedAs=NullString, SetterRaisesException] attribute DOMString textContent;
 
     boolean            isSameNode([Default=Undefined] optional Node other);
     boolean            isEqualNode([Default=Undefined] optional Node other);
