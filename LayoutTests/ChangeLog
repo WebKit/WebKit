@@ -1,5 +1,11 @@
 2015-09-03  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove empty LayoutTests/platform/ios-sim-deprecated
+
+        * platform/ios-sim-deprecated: Removed.
+
+2015-09-03  Alexey Proskuryakov  <ap@apple.com>
+
         Consolidate iOS pasteboard test failures.
 
         Per-process pasteboard is not implemented in iOS DumpRenderTree and WebKitTestRunner,
