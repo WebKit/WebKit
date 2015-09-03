@@ -1,5 +1,25 @@
 2015-09-03  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188271.
+
+    2015-08-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            feMorphology is not rendered correctly on Retina display
+            https://bugs.webkit.org/show_bug.cgi?id=147589
+
+            Reviewed by Dean Jackson.
+
+            The result ImageBuffer of any FilterEffect is already scaled up for 2x
+            display. The FEMorphology needs to fix its painting data dimension and
+            radius by multiplying them by the filter scale factor.
+
+            Test: fast/hidpi/filters-morphology.html
+
+            * platform/graphics/filters/FEMorphology.cpp:
+            (WebCore::FEMorphology::platformApplySoftware):
+
+2015-09-03  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188014.
 
     2015-08-05  Chris Dumez  <cdumez@apple.com>
