@@ -1,3 +1,10 @@
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        Un-skip swipe tests on Mavericks
+
+        * platform/mac-mavericks/TestExpectations:
+        This skip didn't work anyway because the fallback order is insane.
+
 2015-09-03  Chris Dumez  <cdumez@apple.com>
 
         Import W3C HTML/DOM test suite from github.com/w3c/web-platform-tests
