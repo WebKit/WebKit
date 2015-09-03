@@ -1090,20 +1090,6 @@ void RenderObject::showRegionsInformation() const
 
 void RenderObject::showRenderObject(bool mark, int depth) const
 {
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wundefined-bool-conversion"
-#endif
-    // As this function is intended to be used when debugging, the |this| pointer may be 0.
-    if (!this) {
-        fprintf(stderr, "(null)\n");
-        return;
-    }
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
-
     if (isPositioned()) {
         if (isRelPositioned())
             fputc('R', stderr);
@@ -1210,18 +1196,6 @@ void RenderObject::showRenderObject(bool mark, int depth) const
 
 void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, int depth) const
 {
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wundefined-bool-conversion"
-#endif
-    // As this function is intended to be used when debugging, the |this| pointer may be nullptr.
-    if (!this)
-        return;
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
-
     showRenderObject(markedObject == this, depth);
     if (is<RenderBlockFlow>(*this))
         downcast<RenderBlockFlow>(*this).showLineTreeAndMark(nullptr, depth + 1);
