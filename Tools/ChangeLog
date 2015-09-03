@@ -1,5 +1,14 @@
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
+        Swipe tests fail on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=148752
+
+        Reviewed by Beth Dakin.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
         Fix the 32-bit build
 
         * WebKitTestRunner/mac/PlatformWebViewMac.mm:

@@ -41,6 +41,7 @@
 @end
 
 #if defined(__LP64__)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 struct WKTRCGSEventRecord {
     char offset1[150];
     uint8_t phase;
@@ -49,6 +50,16 @@ struct WKTRCGSEventRecord {
     float deltaY;
     char offset3[76];
 } __attribute__((packed));
+#else
+struct WKTRCGSEventRecord {
+    char offset1[154];
+    uint8_t phase;
+    char offset2[5];
+    float deltaX;
+    float deltaY;
+    char offset3[80];
+} __attribute__((packed));
+#endif
 #endif
 
 @interface EventSenderSyntheticEvent : NSEvent {
@@ -106,7 +117,7 @@ struct WKTRCGSEventRecord {
     return _eventSender_type;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (NSEventSubtype)subtype
 {
     return (NSEventSubtype)_eventSender_subtype;
