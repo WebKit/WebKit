@@ -215,6 +215,26 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidBeginSwipeCallback")) {
+        m_testRunner->callDidBeginSwipeCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallWillEndSwipeCallback")) {
+        m_testRunner->callWillEndSwipeCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidEndSwipeCallback")) {
+        m_testRunner->callDidEndSwipeCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveSwipeSnapshotCallback")) {
+        m_testRunner->callDidRemoveSwipeSnapshotCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
         if (!topLoadingFrame() && !m_testRunner->waitToDump())
             InjectedBundle::page()->dump();

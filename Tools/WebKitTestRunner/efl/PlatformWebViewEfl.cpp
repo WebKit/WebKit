@@ -156,5 +156,9 @@ void PlatformWebView::didInitializeClients()
 {
 }
 
+void PlatformWebView::setNavigationGesturesEnabled(bool)
+{
+}
+
 } // namespace WTR
 

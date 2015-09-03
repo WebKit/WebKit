@@ -1,3 +1,77 @@
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        [Mac] Add support for testing swipes
+        https://bugs.webkit.org/show_bug.cgi?id=148700
+
+        Reviewed by Beth Dakin.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::cgEventPhaseFromString):
+        (WTR::cgEventMomentumPhaseFromString):
+        (WTR::EventSendingController::mouseScrollByWithWheelAndMomentumPhases):
+        (WTR::EventSendingController::swipeGestureWithWheelAndMomentumPhases):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::installDidBeginSwipeCallback):
+        (WTR::TestRunner::installWillEndSwipeCallback):
+        (WTR::TestRunner::installDidEndSwipeCallback):
+        (WTR::TestRunner::installDidRemoveSwipeSnapshotCallback):
+        (WTR::TestRunner::callDidBeginSwipeCallback):
+        (WTR::TestRunner::callWillEndSwipeCallback):
+        (WTR::TestRunner::callDidEndSwipeCallback):
+        (WTR::TestRunner::callDidRemoveSwipeSnapshotCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        (WTR::TestController::didBeginNavigationGesture):
+        (WTR::TestController::willEndNavigationGesture):
+        (WTR::TestController::didEndNavigationGesture):
+        (WTR::TestController::didRemoveNavigationGestureSnapshot):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didBeginSwipe):
+        (WTR::TestInvocation::willEndSwipe):
+        (WTR::TestInvocation::didEndSwipe):
+        (WTR::TestInvocation::didRemoveSwipeSnapshot):
+        * WebKitTestRunner/TestInvocation.h:
+        Add callbacks when navigation gestures didBegin/willEnd/didEnd, and
+        when the snapshot is removed.
+
+        Add swipeGestureWithWheelAndMomentumPhases, just like the equivalent
+        mouseScrollBy function.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:phase:time:eventNumber:]):
+        (-[EventSenderSyntheticEvent type]):
+        (-[EventSenderSyntheticEvent subtype]):
+        (-[EventSenderSyntheticEvent locationInWindow]):
+        (-[EventSenderSyntheticEvent location]):
+        (-[EventSenderSyntheticEvent momentumPhase]):
+        (-[EventSenderSyntheticEvent _isTouchesEnded]):
+        (-[EventSenderSyntheticEvent _cgsEventRecord]):
+        Rename EventSenderPressureEvent to EventSenderSyntheticEvent and add some
+        more adjustable values.
+
+        (WTR::EventSenderProxy::mouseForceDown):
+        (WTR::EventSenderProxy::mouseForceUp):
+        (WTR::EventSenderProxy::mouseForceChanged):
+        Adopt EventSenderSyntheticEvent.
+
+        (WTR::nsEventPhaseFromCGEventPhase):
+        (WTR::EventSenderProxy::swipeGestureWithWheelAndMomentumPhases):
+        Make use of EventSenderSyntheticEvent to synthesize swipe gesture events.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        Enable swipe.
+
 2015-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WK2] Allow tagging tests with metadata which needs to be known at web process creation time

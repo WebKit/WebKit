@@ -391,6 +391,40 @@ void EventSendingController::mouseScrollBy(int x, int y)
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get());
 }
 
+static uint64_t cgEventPhaseFromString(JSStringRef phaseStr)
+{
+    if (JSStringIsEqualToUTF8CString(phaseStr, "none"))
+        return 0;
+    if (JSStringIsEqualToUTF8CString(phaseStr, "began"))
+        return 1; // kCGScrollPhaseBegan
+    if (JSStringIsEqualToUTF8CString(phaseStr, "changed"))
+        return 2; // kCGScrollPhaseChanged
+    if (JSStringIsEqualToUTF8CString(phaseStr, "ended"))
+        return 4; // kCGScrollPhaseEnded
+    if (JSStringIsEqualToUTF8CString(phaseStr, "cancelled"))
+        return 8; // kCGScrollPhaseCancelled
+    if (JSStringIsEqualToUTF8CString(phaseStr, "maybegin"))
+        return 128; // kCGScrollPhaseMayBegin
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static uint64_t cgEventMomentumPhaseFromString(JSStringRef phaseStr)
+{
+    if (JSStringIsEqualToUTF8CString(phaseStr, "none"))
+        return 0; // kCGMomentumScrollPhaseNone
+    if (JSStringIsEqualToUTF8CString(phaseStr, "begin"))
+        return 1; // kCGMomentumScrollPhaseBegin
+    if (JSStringIsEqualToUTF8CString(phaseStr, "continue"))
+        return 2; // kCGMomentumScrollPhaseContinue
+    if (JSStringIsEqualToUTF8CString(phaseStr, "end"))
+        return 3; // kCGMomentumScrollPhaseEnd
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int y, JSStringRef phaseStr, JSStringRef momentumStr)
 {
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
@@ -408,33 +442,44 @@ void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int 
     WKRetainPtr<WKDoubleRef> yRef(AdoptWK, WKDoubleCreate(y));
     WKDictionarySetItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
-    uint64_t phase = 0;
-    if (JSStringIsEqualToUTF8CString(phaseStr, "none"))
-        phase = 0;
-    else if (JSStringIsEqualToUTF8CString(phaseStr, "began"))
-        phase = 1; // kCGScrollPhaseBegan
-    else if (JSStringIsEqualToUTF8CString(phaseStr, "changed"))
-        phase = 2; // kCGScrollPhaseChanged
-    else if (JSStringIsEqualToUTF8CString(phaseStr, "ended"))
-        phase = 4; // kCGScrollPhaseEnded
-    else if (JSStringIsEqualToUTF8CString(phaseStr, "cancelled"))
-        phase = 8; // kCGScrollPhaseCancelled
-    else if (JSStringIsEqualToUTF8CString(phaseStr, "maybegin"))
-        phase = 128; // kCGScrollPhaseMayBegin
+    uint64_t phase = cgEventPhaseFromString(phaseStr);
+    uint64_t momentum = cgEventMomentumPhaseFromString(momentumStr);
 
     WKRetainPtr<WKStringRef> phaseKey(AdoptWK, WKStringCreateWithUTF8CString("Phase"));
     WKRetainPtr<WKUInt64Ref> phaseRef(AdoptWK, WKUInt64Create(phase));
     WKDictionarySetItem(EventSenderMessageBody.get(), phaseKey.get(), phaseRef.get());
 
-    uint64_t momentum = 0;
-    if (JSStringIsEqualToUTF8CString(momentumStr, "none"))
-        momentum = 0; // kCGMomentumScrollPhaseNone
-    else if (JSStringIsEqualToUTF8CString(momentumStr, "begin"))
-        momentum = 1; // kCGMomentumScrollPhaseBegin
-    else if (JSStringIsEqualToUTF8CString(momentumStr, "continue"))
-        momentum = 2; // kCGMomentumScrollPhaseContinue
-    else if (JSStringIsEqualToUTF8CString(momentumStr, "end"))
-        momentum = 3; // kCGMomentumScrollPhaseEnd
+    WKRetainPtr<WKStringRef> momentumKey(AdoptWK, WKStringCreateWithUTF8CString("Momentum"));
+    WKRetainPtr<WKUInt64Ref> momentumRef(AdoptWK, WKUInt64Create(momentum));
+    WKDictionarySetItem(EventSenderMessageBody.get(), momentumKey.get(), momentumRef.get());
+
+    WKBundlePageForceRepaint(InjectedBundle::singleton().page()->page()); // Triggers a scrolling tree commit.
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get());
+}
+
+void EventSendingController::swipeGestureWithWheelAndMomentumPhases(int x, int y, JSStringRef phaseStr, JSStringRef momentumStr)
+{
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("SwipeGestureWithWheelAndMomentumPhases"));
+    WKDictionarySetItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+
+    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("X"));
+    WKRetainPtr<WKDoubleRef> xRef(AdoptWK, WKDoubleCreate(x));
+    WKDictionarySetItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
+
+    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("Y"));
+    WKRetainPtr<WKDoubleRef> yRef(AdoptWK, WKDoubleCreate(y));
+    WKDictionarySetItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
+
+    uint64_t phase = cgEventPhaseFromString(phaseStr);
+    uint64_t momentum = cgEventMomentumPhaseFromString(momentumStr);
+
+    WKRetainPtr<WKStringRef> phaseKey(AdoptWK, WKStringCreateWithUTF8CString("Phase"));
+    WKRetainPtr<WKUInt64Ref> phaseRef(AdoptWK, WKUInt64Create(phase));
+    WKDictionarySetItem(EventSenderMessageBody.get(), phaseKey.get(), phaseRef.get());
 
     WKRetainPtr<WKStringRef> momentumKey(AdoptWK, WKStringCreateWithUTF8CString("Momentum"));
     WKRetainPtr<WKUInt64Ref> momentumRef(AdoptWK, WKUInt64Create(momentum));

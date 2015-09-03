@@ -509,7 +509,11 @@ enum {
     AddChromeInputFieldCallbackID = 1,
     RemoveChromeInputFieldCallbackID,
     FocusWebViewCallbackID,
-    SetBackingScaleFactorCallbackID
+    SetBackingScaleFactorCallbackID,
+    DidBeginSwipeCallbackID,
+    WillEndSwipeCallbackID,
+    DidEndSwipeCallbackID,
+    DidRemoveSwipeSnapshotCallbackID
 };
 
 static void cacheTestRunnerCallback(unsigned index, JSValueRef callback)
@@ -858,6 +862,53 @@ void TestRunner::setShouldDecideNavigationPolicyAfterDelay(bool value)
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetShouldDecideNavigationPolicyAfterDelay"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::setNavigationGesturesEnabled(bool value)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetNavigationGesturesEnabled"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::installDidBeginSwipeCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(DidBeginSwipeCallbackID, callback);
+}
+
+void TestRunner::installWillEndSwipeCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(WillEndSwipeCallbackID, callback);
+}
+
+void TestRunner::installDidEndSwipeCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(DidEndSwipeCallbackID, callback);
+}
+
+void TestRunner::installDidRemoveSwipeSnapshotCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID, callback);
+}
+
+void TestRunner::callDidBeginSwipeCallback()
+{
+    callTestRunnerCallback(DidBeginSwipeCallbackID);
+}
+
+void TestRunner::callWillEndSwipeCallback()
+{
+    callTestRunnerCallback(WillEndSwipeCallbackID);
+}
+
+void TestRunner::callDidEndSwipeCallback()
+{
+    callTestRunnerCallback(DidEndSwipeCallbackID);
+}
+
+void TestRunner::callDidRemoveSwipeSnapshotCallback()
+{
+    callTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID);
 }
 
 } // namespace WTR

@@ -86,6 +86,15 @@ void TestController::platformResetPreferencesToConsistentValues()
 {
 }
 
+void TestController::platformResetStateToConsistentValues()
+{
+    cocoaResetStateToConsistentValues();
+
+    while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSScrollWheelMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {
+        // Clear out (and ignore) any pending gesture and scroll wheel events.
+    }
+}
+
 void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions& viewOptions, const TestInvocation& test) const
 {
     viewOptions.useThreadedScrolling = shouldUseThreadedScrolling(test);

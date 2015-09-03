@@ -40,25 +40,42 @@
 - (void)_setCurrentEvent:(NSEvent *)event;
 @end
 
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
-@interface EventSenderPressureEvent : NSEvent {
+#if defined(__LP64__)
+struct WKTRCGSEventRecord {
+    char offset1[150];
+    uint8_t phase;
+    char offset2[13];
+    float deltaX;
+    float deltaY;
+    char offset3[76];
+} __attribute__((packed));
+#endif
+
+@interface EventSenderSyntheticEvent : NSEvent {
 @public
     NSPoint _eventSender_locationInWindow;
     NSPoint _eventSender_location;
     NSInteger _eventSender_stage;
     float _eventSender_pressure;
     NSEventPhase _eventSender_phase;
+    NSEventPhase _eventSender_momentumPhase;
     NSTimeInterval _eventSender_timestamp;
     NSInteger _eventSender_eventNumber;
+    short _eventSender_subtype;
+    NSEventType _eventSender_type;
+
+#if defined(__LP64__)
+    WKTRCGSEventRecord _eventSender_cgsEventRecord;
+#endif
 }
 
-- (id)initAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber;
+- (id)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber;
 - (NSTimeInterval)timestamp;
 @end
 
-@implementation EventSenderPressureEvent
+@implementation EventSenderSyntheticEvent
 
-- (id)initAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber
+- (id)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber
 {
     self = [super init];
 
@@ -72,6 +89,9 @@
     _eventSender_phase = phase;
     _eventSender_timestamp = time;
     _eventSender_eventNumber = eventNumber;
+#if defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
+    _eventSender_type = NSEventTypePressure;
+#endif
 
     return self;
 }
@@ -83,17 +103,29 @@
 
 - (NSEventType)type
 {
-    return NSEventTypePressure;
+    return _eventSender_type;
 }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+- (NSEventSubtype)subtype
+{
+    return (NSEventSubtype)_eventSender_subtype;
+}
+#else
+- (short)subtype
+{
+    return _eventSender_subtype;
+}
+#endif
 
 - (NSPoint)locationInWindow
 {
-    return self->_eventSender_location;
+    return _eventSender_location;
 }
 
 - (NSPoint)location
 {
-    return self->_eventSender_locationInWindow;
+    return _eventSender_locationInWindow;
 }
 
 - (NSInteger)stage
@@ -111,13 +143,29 @@
     return _eventSender_phase;
 }
 
+- (NSEventPhase)momentumPhase
+{
+    return _eventSender_momentumPhase;
+}
+
 - (NSInteger)eventNumber
 {
     return _eventSender_eventNumber;
 }
 
+- (BOOL)_isTouchesEnded
+{
+    return false;
+}
+
+#if defined(__LP64__)
+- (WKTRCGSEventRecord)_cgsEventRecord
+{
+    return _eventSender_cgsEventRecord;
+}
+#endif
+
 @end
-#endif // defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
 
 namespace WTR {
 
@@ -290,17 +338,17 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     m_clickPosition = m_position;
 }
 
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
 void EventSenderProxy::mouseForceDown()
 {
-    EventSenderPressureEvent *firstEvent = [[EventSenderPressureEvent alloc] initAtLocation:NSMakePoint(m_position.x, m_position.y)
+    EventSenderSyntheticEvent *firstEvent = [[EventSenderSyntheticEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         stage:1
         pressure:0.9
         phase:NSEventPhaseChanged
         time:absoluteTimeForEventTime(currentEventTime())
         eventNumber:++eventNumber];
-    EventSenderPressureEvent *secondEvent = [[EventSenderPressureEvent alloc] initAtLocation:NSMakePoint(m_position.x, m_position.y)
+    EventSenderSyntheticEvent *secondEvent = [[EventSenderSyntheticEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         stage:2
         pressure:0.1
@@ -332,14 +380,14 @@ void EventSenderProxy::mouseForceDown()
 
 void EventSenderProxy::mouseForceUp()
 {
-    EventSenderPressureEvent *firstEvent = [[EventSenderPressureEvent alloc] initAtLocation:NSMakePoint(m_position.x, m_position.y)
+    EventSenderSyntheticEvent *firstEvent = [[EventSenderSyntheticEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         stage:2
         pressure:0.1
         phase:NSEventPhaseChanged
         time:absoluteTimeForEventTime(currentEventTime())
         eventNumber:++eventNumber];
-    EventSenderPressureEvent *secondEvent = [[EventSenderPressureEvent alloc] initAtLocation:NSMakePoint(m_position.x, m_position.y)
+    EventSenderSyntheticEvent *secondEvent = [[EventSenderSyntheticEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         stage:1
         pressure:0.9
@@ -372,7 +420,7 @@ void EventSenderProxy::mouseForceUp()
 
 void EventSenderProxy::mouseForceChanged(float force)
 {
-    EventSenderPressureEvent *event = [[EventSenderPressureEvent alloc] initAtLocation:NSMakePoint(m_position.x, m_position.y)
+    EventSenderSyntheticEvent *event = [[EventSenderSyntheticEvent alloc] initPressureEventAtLocation:NSMakePoint(m_position.x, m_position.y)
         globalLocation:([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
         stage:force < 1 ? 1 : 2
         pressure:force
@@ -407,7 +455,7 @@ void EventSenderProxy::mouseForceUp()
 void EventSenderProxy::mouseForceChanged(float)
 {
 }
-#endif // defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#endif // defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
 
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {
@@ -703,6 +751,53 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
         NSPoint windowLocation = [event locationInWindow];
         WTFLogAlways("mouseScrollByWithWheelAndMomentumPhases failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
     }
+}
+
+static NSEventPhase nsEventPhaseFromCGEventPhase(int phase)
+{
+    switch (phase) {
+    case 0: // kCGSGesturePhaseNone
+        return NSEventPhaseNone;
+    case 1: // kCGSGesturePhaseBegan
+        return NSEventPhaseBegan;
+    case 2: // kCGSGesturePhaseChanged
+        return NSEventPhaseChanged;
+    case 4: // kCGSGesturePhaseEnded
+        return NSEventPhaseEnded;
+    case 8: // kCGSGesturePhaseCancelled
+        return NSEventPhaseCancelled;
+    case 128: // kCGSGesturePhaseMayBegin
+        return NSEventPhaseMayBegin;
+    }
+
+    ASSERT_NOT_REACHED();
+    return NSEventPhaseNone;
+}
+
+void EventSenderProxy::swipeGestureWithWheelAndMomentumPhases(int x, int y, int phase, int momentum)
+{
+    EventSenderSyntheticEvent *event = [[EventSenderSyntheticEvent alloc] init];
+
+    // "mayBegin" a swipe is actually a scroll wheel event.
+    event->_eventSender_type = (phase == 128) ? NSScrollWheel : NSEventTypeGesture;
+    event->_eventSender_subtype = 6; // kIOHIDEventTypeScroll
+    event->_eventSender_locationInWindow = NSMakePoint(m_position.x, m_position.y);
+    event->_eventSender_location = ([m_testController->mainWebView()->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin);
+    event->_eventSender_phase = nsEventPhaseFromCGEventPhase(phase);
+    event->_eventSender_momentumPhase = nsEventPhaseFromCGEventPhase(momentum);
+    event->_eventSender_timestamp = absoluteTimeForEventTime(currentEventTime());
+    event->_eventSender_eventNumber = ++eventNumber;
+
+#if defined(__LP64__)
+    event->_eventSender_cgsEventRecord.phase = phase;
+    event->_eventSender_cgsEventRecord.deltaX = (float)x;
+    event->_eventSender_cgsEventRecord.deltaY = (float)y;
+#else
+    NSLog(@"Synthetic swipe gestures are not implemented for 32-bit WebKitTestRunner.");
+#endif
+
+    NSLog(@"sending swipe event %d %d phase %d", x, y, phase);
+    [NSApp sendEvent:event];
 }
 
 } // namespace WTR

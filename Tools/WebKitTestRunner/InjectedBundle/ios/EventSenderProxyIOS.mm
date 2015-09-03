@@ -103,6 +103,11 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     // Write me.
 }
 
+void EventSenderProxy::swipeGestureWithWheelAndMomentumPhases(int, int, int, int)
+{
+    // Write me.
+}
+
 void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 {
     // Write me.

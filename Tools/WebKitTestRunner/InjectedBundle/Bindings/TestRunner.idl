@@ -76,6 +76,7 @@ interface TestRunner {
     void setAsynchronousSpellCheckingEnabled(boolean value);
     void setPrinting();
     void setShouldDecideNavigationPolicyAfterDelay(boolean value);
+    void setNavigationGesturesEnabled(boolean value);
 
     // Special DOM functions.
     void clearBackForwardList();
@@ -204,5 +205,11 @@ interface TestRunner {
     // Hooks to the JSC compiler.
     object numberOfDFGCompiles(object function);
     object neverInlineFunction(object function);
+
+    // Swipe gestures
+    void installDidBeginSwipeCallback(object callback);
+    void installWillEndSwipeCallback(object callback);
+    void installDidEndSwipeCallback(object callback);
+    void installDidRemoveSwipeSnapshotCallback(object callback);
 };
 

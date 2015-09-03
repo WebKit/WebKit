@@ -22,3 +22,6 @@ fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 
 # Colorspaces on CA OpenGL layers not available in Mavericks and Yosemite
 fast/canvas/webgl/match-page-color-space.html [ Skip ]
+
+# Swipe tests don't work on Mavericks (needs investigation)
+swipe [ Skip ]

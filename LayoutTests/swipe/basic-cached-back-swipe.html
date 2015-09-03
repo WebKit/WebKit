@@ -1,0 +1,98 @@
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script>
+function startSwipeGesture()
+{
+    eventSender.mouseMoveTo(100, 100);
+
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(1, 0, 'began');
+    eventQueue.enqueueScrollEvent(1, 0, 'changed');
+}
+
+function completeSwipeGesture()
+{
+    eventQueue.enqueueSwipeEvent(1, 0, 'changed');
+    eventQueue.enqueueSwipeEvent(256, 0, 'changed');
+    eventQueue.enqueueSwipeEvent(0, 0, 'ended');
+}
+
+function didBeginSwipeCallback()
+{
+    log("didBeginSwipe");
+
+    shouldBe(false, eventQueue.hasPendingEvents(), "Event queue should be empty. Both scroll events should be required to start the swipe because of the swipe-start hysteresis.");
+
+    completeSwipeGesture();
+}
+
+function willEndSwipeCallback()
+{
+    log("willEndSwipe");
+
+    shouldBe(false, isFirstPage(), "The swipe should not yet have navigated away from the second page.");
+}
+
+function didEndSwipeCallback()
+{
+    log("didEndSwipe");
+
+    shouldBe(0, eventQueue.hasPendingEvents(), "Event queue should be empty. The swipe isn't complete until we see the end of the gesture.");
+    startMeasuringDuration("snapshotRemoval");
+}
+
+function didRemoveSwipeSnapshotCallback()
+{
+    log("didRemoveSwipeSnapshot");
+    
+    shouldBe(true, isFirstPage(), "The swipe should have navigated back to the first page.");
+    measuredDurationShouldBeLessThan("snapshotRemoval", 1000, "Because we're using the page cache, it shouldn't be long between the gesture completing and the snapshot being removed.")
+
+    dumpLog();
+    testRunner.notifyDone();
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+window.onload = function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    document.body.innerHTML = isFirstPage() ? "first" : "second";
+
+    if (isFirstPage()) {
+        initializeLog();
+
+        testRunner.setNavigationGesturesEnabled(true);
+
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        setTimeout(function () { 
+            window.location.href = window.location.href + "?second";
+        }, 0);
+        return;
+    }
+
+    startSwipeGesture();
+};
+</script>
+</head>
+<body>
+</body>

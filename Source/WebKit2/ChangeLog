@@ -1,3 +1,17 @@
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        [Mac] Add support for testing swipes
+        https://bugs.webkit.org/show_bug.cgi?id=148700
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/mac/WKView.mm:
+        (takeWindowSnapshot):
+        (-[WKView _takeViewSnapshot]):
+        Fall back to the non-hardware snapshotting path if the hardware path fails,
+        which usually happens if the view is fully off-screen (as in the case
+        of WebKitTestRunner).
+
 2015-09-02  Tim Horton  <timothy_horton@apple.com>
 
         Add a modern API way to know that the navigation gesture snapshot was removed, for WebKitTestRunner

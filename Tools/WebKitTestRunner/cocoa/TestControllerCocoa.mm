@@ -108,7 +108,7 @@ void TestController::platformRunUntil(bool& done, double timeout)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];
 }
 
-void TestController::platformResetStateToConsistentValues()
+void TestController::cocoaResetStateToConsistentValues()
 {
 #if WK_API_ENABLED
     __block bool doneRemoving = false;

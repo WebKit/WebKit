@@ -158,5 +158,9 @@ void PlatformWebView::dismissAllPopupMenus()
     }, nullptr);
 }
 
+void PlatformWebView::setNavigationGesturesEnabled(bool)
+{
+}
+
 } // namespace WTR
 

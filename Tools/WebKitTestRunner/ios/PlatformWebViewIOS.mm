@@ -207,4 +207,8 @@ bool PlatformWebView::viewSupportsOptions(const ViewOptions& options) const
     return true;
 }
 
+void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
+{
+}
+
 } // namespace WTR

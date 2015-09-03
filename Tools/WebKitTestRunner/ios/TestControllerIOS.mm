@@ -86,6 +86,11 @@ void TestController::platformResetPreferencesToConsistentValues()
     WKPreferencesSetMinimumZoomFontSize(preferences, 0);
 }
 
+void TestController::platformResetStateToConsistentValues()
+{
+    cocoaResetStateToConsistentValues();
+}
+
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
     if (shouldMakeViewportFlexible(test)) {

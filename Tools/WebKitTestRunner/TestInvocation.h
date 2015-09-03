@@ -54,6 +54,12 @@ public:
     void dumpWebProcessUnresponsiveness();
     static void dumpWebProcessUnresponsiveness(const char* errorMessage);
     void outputText(const WTF::String&);
+
+    void didBeginSwipe();
+    void willEndSwipe();
+    void didEndSwipe();
+    void didRemoveSwipeSnapshot();
+
 private:
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);

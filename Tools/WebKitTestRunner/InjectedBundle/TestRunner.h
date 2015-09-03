@@ -285,6 +285,16 @@ public:
 
     bool shouldDecideNavigationPolicyAfterDelay() const { return m_shouldDecideNavigationPolicyAfterDelay; }
     void setShouldDecideNavigationPolicyAfterDelay(bool);
+    void setNavigationGesturesEnabled(bool);
+
+    void installDidBeginSwipeCallback(JSValueRef);
+    void installWillEndSwipeCallback(JSValueRef);
+    void installDidEndSwipeCallback(JSValueRef);
+    void installDidRemoveSwipeSnapshotCallback(JSValueRef);
+    void callDidBeginSwipeCallback();
+    void callWillEndSwipeCallback();
+    void callDidEndSwipeCallback();
+    void callDidRemoveSwipeSnapshotCallback();
 
 private:
     TestRunner();

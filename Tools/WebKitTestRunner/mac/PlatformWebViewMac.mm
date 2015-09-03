@@ -269,4 +269,9 @@ void PlatformWebView::forceWindowFramesChanged()
     setWindowFrame(wkFrame);
 }
 
+void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
+{
+    [platformView() setAllowsBackForwardNavigationGestures:enabled];
+}
+
 } // namespace WTR
