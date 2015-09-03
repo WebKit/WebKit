@@ -255,6 +255,15 @@ bool PlatformMediaSession::isHidden() const
     return m_client.elementIsHidden();
 }
 
+void PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged(bool isWireless)
+{
+    if (isWireless == m_isPlayingToWirelessPlaybackTarget)
+        return;
+
+    m_isPlayingToWirelessPlaybackTarget = isWireless;
+    PlatformMediaSessionManager::sharedManager().sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
+}
+
 PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
 {
     return m_client.displayType();

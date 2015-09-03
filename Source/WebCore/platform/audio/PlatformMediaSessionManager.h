@@ -88,6 +88,8 @@ public:
     void setCurrentSession(PlatformMediaSession&);
     PlatformMediaSession* currentSession();
 
+    void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
+
 protected:
     friend class PlatformMediaSession;
     explicit PlatformMediaSessionManager();
@@ -126,6 +128,7 @@ private:
 #endif
 
     bool m_interrupted { false };
+    mutable bool m_isApplicationInBackground { false };
 };
 
 }
