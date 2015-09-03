@@ -796,7 +796,6 @@ void EventSenderProxy::swipeGestureWithWheelAndMomentumPhases(int x, int y, int 
     NSLog(@"Synthetic swipe gestures are not implemented for 32-bit WebKitTestRunner.");
 #endif
 
-    NSLog(@"sending swipe event %d %d phase %d", x, y, phase);
     [NSApp sendEvent:event];
 }
 

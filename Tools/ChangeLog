@@ -1,5 +1,12 @@
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
+        Remove some logging that wasn't meant to be in the tree
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::swipeGestureWithWheelAndMomentumPhases):
+
+2015-09-03  Tim Horton  <timothy_horton@apple.com>
+
         [Mac] Add support for testing swipes
         https://bugs.webkit.org/show_bug.cgi?id=148700
 
