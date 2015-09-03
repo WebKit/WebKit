@@ -1,5 +1,51 @@
 2015-09-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Replace all the various forms of branchStructure() with a single method in AssemblyHelpers
+        https://bugs.webkit.org/show_bug.cgi?id=148725
+
+        Reviewed by Saam Barati.
+
+        Previously there were the following branchStructure() implementations:
+
+        JSC::JIT::branchStructure()
+        JSC::branchStructure()
+        JSC::DFG::JITCompiler::branchStructurePtr()
+
+        They all did the same thing.  Now there is only one, AssemblyHelpers::branchStructure().
+
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::branchWeakStructure):
+        (JSC::DFG::JITCompiler::jitCode):
+        (JSC::DFG::JITCompiler::branchStructurePtr): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfEmpty):
+        (JSC::AssemblyHelpers::branchStructure):
+        (JSC::AssemblyHelpers::addressForByteOffset):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::branchStructure): Deleted.
+        (JSC::branchStructure): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/Repatch.cpp:
+        (JSC::checkObjectPropertyCondition):
+        (JSC::checkObjectPropertyConditions):
+        (JSC::generateByIdStub):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        (JSC::tryRepatchIn):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadJSStringArgument):
+
+2015-09-02  Filip Pizlo  <fpizlo@apple.com>
+
         Remove some unused methods from GetByIdAccess.
 
         Rubber stamped by Michael Saboff.

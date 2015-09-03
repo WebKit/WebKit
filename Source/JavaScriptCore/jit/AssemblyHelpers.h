@@ -564,6 +564,16 @@ public:
 #endif
     }
     
+    template<typename T>
+    Jump branchStructure(RelationalCondition condition, T leftHandSide, Structure* structure)
+    {
+#if USE(JSVALUE64)
+        return branch32(condition, leftHandSide, TrustedImm32(structure->id()));
+#else
+        return branchPtr(condition, leftHandSide, TrustedImmPtr(structure));
+#endif
+    }
+    
     static Address addressForByteOffset(ptrdiff_t byteOffset)
     {
         return Address(GPRInfo::callFrameRegister, byteOffset);

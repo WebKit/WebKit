@@ -254,16 +254,6 @@ public:
 #endif
     }
 
-    template<typename T>
-    Jump branchStructurePtr(RelationalCondition cond, T left, Structure* structure)
-    {
-#if USE(JSVALUE64)
-        return branch32(cond, left, TrustedImm32(structure->id()));
-#else
-        return branchPtr(cond, left, TrustedImmPtr(structure));
-#endif
-    }
-
     void noticeOSREntry(BasicBlock&, JITCompiler::Label blockHead, LinkBuffer&);
     
     RefPtr<JITCode> jitCode() { return m_jitCode; }

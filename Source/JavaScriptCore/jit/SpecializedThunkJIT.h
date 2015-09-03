@@ -69,7 +69,7 @@ namespace JSC {
         void loadJSStringArgument(VM& vm, int argument, RegisterID dst)
         {
             loadCellArgument(argument, dst);
-            m_failures.append(branchStructure(*this, NotEqual, 
+            m_failures.append(branchStructure(NotEqual, 
                 Address(dst, JSCell::structureIDOffset()), 
                 vm.stringStructure.get()));
         }

@@ -134,7 +134,7 @@ static void repatchByIdSelfAccess(
 
 static void checkObjectPropertyCondition(
     const ObjectPropertyCondition& condition, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
-    MacroAssembler& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
+    CCallHelpers& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
 {
     if (condition.isWatchableAssumingImpurePropertyWatchpoint()) {
         condition.object()->structure()->addTransitionWatchpoint(
@@ -146,14 +146,14 @@ static void checkObjectPropertyCondition(
     RELEASE_ASSERT(condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(structure));
     jit.move(MacroAssembler::TrustedImmPtr(condition.object()), scratchGPR);
     failureCases.append(
-        branchStructure(
-            jit, MacroAssembler::NotEqual,
+        jit.branchStructure(
+            MacroAssembler::NotEqual,
             MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()), structure));
 }
 
 static void checkObjectPropertyConditions(
     const ObjectPropertyConditionSet& set, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
-    MacroAssembler& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
+    CCallHelpers& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
 {
     for (const ObjectPropertyCondition& condition : set) {
         checkObjectPropertyCondition(
@@ -320,14 +320,14 @@ static bool generateByIdStub(
 
         stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
         
-        failureCases.append(branchStructure(stubJit,
+        failureCases.append(stubJit.branchStructure(
             MacroAssembler::NotEqual, 
             MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()),
             structure));
     } else {
         baseForGetGPR = baseGPR;
 
-        failureCases.append(branchStructure(stubJit,
+        failureCases.append(stubJit.branchStructure(
             MacroAssembler::NotEqual, 
             MacroAssembler::Address(baseForGetGPR, JSCell::structureIDOffset()), 
             structure));
@@ -918,7 +918,7 @@ static bool emitPutReplaceStub(
 
     size_t numberOfPaddingBytes = allocator.preserveReusedRegistersByPushing(stubJit);
 
-    MacroAssembler::Jump badStructure = branchStructure(stubJit,
+    MacroAssembler::Jump badStructure = stubJit.branchStructure(
         MacroAssembler::NotEqual,
         MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()),
         structure);
@@ -1059,7 +1059,7 @@ static bool emitPutTransitionStub(
             
     ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
     
-    failureCases.append(branchStructure(stubJit,
+    failureCases.append(stubJit.branchStructure(
         MacroAssembler::NotEqual, 
         MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()), 
         oldStructure));
@@ -1532,7 +1532,7 @@ static InlineCacheAction tryRepatchIn(
             needToRestoreScratch = false;
         
         MacroAssembler::JumpList failureCases;
-        failureCases.append(branchStructure(stubJit,
+        failureCases.append(stubJit.branchStructure(
             MacroAssembler::NotEqual,
             MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()),
             structure));

@@ -5351,7 +5351,7 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOnCell(Node* node)
         GPRReg resultGPR = result.gpr();
 
         m_jit.load32(JITCompiler::Address(op1GPR, JSCell::structureIDOffset()), resultGPR);
-        JITCompiler::Jump isString = m_jit.branchStructurePtr(
+        JITCompiler::Jump isString = m_jit.branchStructure(
             JITCompiler::Equal,
             resultGPR,
             m_jit.vm()->stringStructure.get());
@@ -5771,7 +5771,7 @@ void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
     GPRReg structureIDGPR = structureID.gpr();
 
     m_jit.load32(JITCompiler::Address(gpr, JSCell::structureIDOffset()), structureIDGPR); 
-    JITCompiler::Jump isString = m_jit.branchStructurePtr(
+    JITCompiler::Jump isString = m_jit.branchStructure(
         JITCompiler::Equal,
         structureIDGPR, 
         m_jit.vm()->stringStructure.get());

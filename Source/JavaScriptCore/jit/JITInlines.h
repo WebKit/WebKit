@@ -1259,26 +1259,6 @@ ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 
 #endif // USE(JSVALUE32_64)
 
-template <typename T>
-JIT::Jump JIT::branchStructure(RelationalCondition condition, T leftHandSide, Structure* structure)
-{
-#if USE(JSVALUE64)
-    return branch32(condition, leftHandSide, TrustedImm32(structure->id()));
-#else
-    return branchPtr(condition, leftHandSide, TrustedImmPtr(structure));
-#endif
-}
-
-template <typename T>
-MacroAssembler::Jump branchStructure(MacroAssembler& jit, MacroAssembler::RelationalCondition condition, T leftHandSide, Structure* structure)
-{
-#if USE(JSVALUE64)
-    return jit.branch32(condition, leftHandSide, MacroAssembler::TrustedImm32(structure->id()));
-#else
-    return jit.branchPtr(condition, leftHandSide, MacroAssembler::TrustedImmPtr(structure));
-#endif
-}
-
 } // namespace JSC
 
 #endif // ENABLE(JIT)

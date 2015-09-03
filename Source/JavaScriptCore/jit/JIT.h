@@ -404,8 +404,6 @@ namespace JSC {
 
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
-        template <typename T> Jump branchStructure(RelationalCondition, T leftHandSide, Structure*);
-
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(int op1, int op2, int& op, int32_t& constant);
 
