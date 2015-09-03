@@ -177,6 +177,12 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ExecState* inspectedExec
 
     int id = injectedScriptIdFor(inspectedExecState);
     Deprecated::ScriptObject injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedExecState, id);
+    if (injectedScriptObject.scriptState() != inspectedExecState) {
+        WTFLogAlways("Failed to parse/execute InjectedScriptSource.js!");
+        WTFLogAlways("%s\n", injectedScriptSource().ascii().data());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     InjectedScript result(injectedScriptObject, &m_environment);
     m_idToInjectedScript.set(id, result);
     didCreateInjectedScript(result);

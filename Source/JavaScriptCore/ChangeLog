@@ -1,3 +1,17 @@
+2015-09-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: should crash on purpose if InjectedScriptSource.js is unparseable
+        https://bugs.webkit.org/show_bug.cgi?id=148750
+
+        Reviewed by Timothy Hatcher.
+
+        If an injected script cannot be parsed or executed without exception, we should abort as
+        soon as possible. This patch adds a release assertion after creating the injected
+        script and dumps the bad injected script's source as it was embedded into the binary.
+
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptFor):
+
 2015-09-03  Basile Clement  <basile_clement@apple.com> and Michael Saboff  <msaboff@apple.com>
 
         Clean up register naming
