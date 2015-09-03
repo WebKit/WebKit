@@ -1,5 +1,22 @@
 2015-09-03  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188014.
+
+    2015-08-05  Chris Dumez  <cdumez@apple.com>
+
+            Crash when removing children of a MathMLSelectElement
+            https://bugs.webkit.org/show_bug.cgi?id=147704
+            <rdar://problem/21940321>
+
+            Reviewed by Ryosuke Niwa.
+
+            Add layout test that reproduces the crash under guardmalloc.
+
+            * mathml/maction-removeChild-expected.txt: Added.
+            * mathml/maction-removeChild.html: Added.
+
+2015-09-03  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187564.
 
     2015-07-29  Zalan Bujtas  <zalan@apple.com>
