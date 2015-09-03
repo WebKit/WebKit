@@ -1928,15 +1928,6 @@ char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState* exec, Enc
     return reinterpret_cast<char*>(result);
 }
 
-EncodedJSValue JIT_OPERATION operationResolveScope(ExecState* exec, int32_t scopeReg, int32_t identifierIndex)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    const Identifier& ident = exec->codeBlock()->identifier(identifierIndex);
-    JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
-    return JSValue::encode(JSScope::resolve(exec, scope, ident));
-}
-
 EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction* bytecodePC)
 {
     VM& vm = exec->vm();
@@ -1946,29 +1937,30 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction*
 
     const Identifier& ident = codeBlock->identifier(pc[3].u.operand);
     JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[2].u.operand).jsValue());
-    ResolveModeAndType modeAndType(pc[4].u.operand);
+    GetPutInfo getPutInfo(pc[4].u.operand);
 
     PropertySlot slot(scope);
     if (!scope->getPropertySlot(exec, ident, slot)) {
-        if (modeAndType.mode() == ThrowIfNotFound)
+        if (getPutInfo.resolveMode() == ThrowIfNotFound)
             vm.throwException(exec, createUndefinedVariableError(exec, ident));
         return JSValue::encode(jsUndefined());
     }
 
-    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
-    if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure(vm)->propertyAccessesAreCacheable()) {
-        if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
-            Structure* structure = scope->structure(vm);
-            {
-                ConcurrentJITLocker locker(codeBlock->m_lock);
-                pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), structure);
-                pc[6].u.operand = slot.cachedOffset();
-            }
-            structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
+    JSValue result = JSValue();
+    if (jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)) {
+        // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+        result = slot.getValue(exec, ident);
+        if (result == jsTDZValue()) {
+            exec->vm().throwException(exec, createTDZError(exec));
+            return JSValue::encode(jsUndefined());
         }
     }
 
-    return JSValue::encode(slot.getValue(exec, ident));
+    CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
+
+    if (!result)
+        result = slot.getValue(exec, ident);
+    return JSValue::encode(result);
 }
 
 void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
@@ -1981,26 +1973,40 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
     JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[1].u.operand).jsValue());
     JSValue value = exec->r(pc[3].u.operand).jsValue();
-    ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
-    if (modeAndType.type() == LocalClosureVar) {
+    GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
+    if (getPutInfo.resolveType() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
         environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);
         if (WatchpointSet* set = pc[5].u.watchpointSet)
             set->touch("Executed op_put_scope<LocalClosureVar>");
         return;
     }
-    if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident)) {
+
+    bool hasProperty = scope->hasProperty(exec, ident);
+    if (hasProperty
+        && jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)
+        && getPutInfo.initializationMode() != Initialization) {
+        // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+        PropertySlot slot(scope);
+        JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
+        if (slot.getValue(exec, ident) == jsTDZValue()) {
+            exec->vm().throwException(exec, createTDZError(exec));
+            return;
+        }
+    }
+
+    if (getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty) {
         exec->vm().throwException(exec, createUndefinedVariableError(exec, ident));
         return;
     }
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode());
+    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, getPutInfo.initializationMode() == Initialization);
     scope->methodTable()->put(scope, exec, ident, value, slot);
     
     if (exec->vm().exception())
         return;
 
-    CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, modeAndType, slot);
+    CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, getPutInfo, slot, ident);
 }
 
 void JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExceptionValue)

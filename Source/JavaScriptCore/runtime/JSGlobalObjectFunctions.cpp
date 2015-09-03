@@ -585,7 +585,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     if (!eval)
         return JSValue::encode(jsUndefined());
 
-    return JSValue::encode(exec->interpreter()->execute(eval, exec, calleeGlobalObject->globalThis(), calleeGlobalObject));
+    return JSValue::encode(exec->interpreter()->execute(eval, exec, calleeGlobalObject->globalThis(), calleeGlobalObject->globalScope()));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)

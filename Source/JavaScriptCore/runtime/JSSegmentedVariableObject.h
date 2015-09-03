@@ -77,7 +77,7 @@ public:
     
     // Adds numberOfRegistersToAdd registers, initializes them to Undefined, and returns
     // the index of the first one added.
-    JS_EXPORT_PRIVATE ScopeOffset addVariables(unsigned numberOfVariablesToAdd);
+    JS_EXPORT_PRIVATE ScopeOffset addVariables(unsigned numberOfVariablesToAdd, JSValue);
     
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 

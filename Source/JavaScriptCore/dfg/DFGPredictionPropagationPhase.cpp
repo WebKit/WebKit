@@ -200,6 +200,7 @@ private:
         case CallForwardVarargs:
         case ConstructForwardVarargs:
         case GetGlobalVar:
+        case GetGlobalLexicalVariable:
         case GetClosureVar:
         case GetFromArguments: {
             changed |= setPrediction(node->getHeapPrediction());
@@ -660,7 +661,7 @@ private:
         case VarInjectionWatchpoint:
         case Phantom:
         case Check:
-        case PutGlobalVar:
+        case PutGlobalVariable:
         case CheckWatchdogTimer:
         case Unreachable:
         case LoopHint:

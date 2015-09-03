@@ -26,6 +26,7 @@
 #include "JSArray.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
+#include "JSGlobalLexicalEnvironment.h"
 #include "JSProxy.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
@@ -193,6 +194,7 @@ protected:
 
     WriteBarrier<JSObject> m_globalThis;
 
+    WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
     WriteBarrier<JSObject> m_globalCallee;
     WriteBarrier<RegExpConstructor> m_regExpConstructor;
     WriteBarrier<ErrorConstructor> m_errorConstructor;
@@ -385,16 +387,15 @@ public:
     JS_EXPORT_PRIVATE static void defineSetter(JSObject*, ExecState*, PropertyName, JSObject* setterFunc, unsigned attributes);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-    // We use this in the code generator as we perform symbol table
-    // lookups prior to initializing the properties
-    bool symbolTableHasProperty(PropertyName);
-
     void addVar(ExecState* exec, const Identifier& propertyName)
     {
         if (!hasProperty(exec, propertyName))
             addGlobalVar(propertyName);
     }
     void addFunction(ExecState*, const Identifier&);
+
+    JSScope* globalScope() { return m_globalLexicalEnvironment.get(); }
+    JSGlobalLexicalEnvironment* globalLexicalEnvironment() { return m_globalLexicalEnvironment.get(); }
 
     // The following accessors return pristine values, even if a script 
     // replaces the global object's associated property.
@@ -691,12 +692,6 @@ inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, PropertyName
         return true;
     bool slotIsWriteable;
     return symbolTableGet(this, propertyName, slot, slotIsWriteable);
-}
-
-inline bool JSGlobalObject::symbolTableHasProperty(PropertyName propertyName)
-{
-    SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
-    return !entry.isNull();
 }
 
 inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0)

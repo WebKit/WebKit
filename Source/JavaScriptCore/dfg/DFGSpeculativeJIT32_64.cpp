@@ -4110,6 +4110,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetGlobalLexicalVariable:
     case GetGlobalVar: {
         GPRTemporary resultPayload(this);
         GPRTemporary resultTag(this);
@@ -4122,7 +4123,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case PutGlobalVar: {
+    case PutGlobalVariable: {
         JSValueOperand value(this, node->child2());
 
         // FIXME: if we happen to have a spare register - and _ONLY_ if we happen to have

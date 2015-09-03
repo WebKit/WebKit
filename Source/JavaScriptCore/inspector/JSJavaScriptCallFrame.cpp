@@ -99,8 +99,8 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
     for (DebuggerScope::iterator iter = scopeChain->begin(); iter != end; ++iter) {
         DebuggerScope* scope = iter.get();
 
-        if (!foundLocalScope && scope->isFunctionOrEvalScope()) {
-            // First function scope is the local scope, each successive one is a closure.
+        if (!foundLocalScope && scope->isClosureScope()) {
+            // First closure scope is the local scope, each successive one is a true closure.
             if (!index)
                 return jsNumber(JSJavaScriptCallFrame::LOCAL_SCOPE);
             foundLocalScope = true;
@@ -113,11 +113,16 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
                 return jsNumber(JSJavaScriptCallFrame::FUNCTION_NAME_SCOPE);
             if (scope->isWithScope())
                 return jsNumber(JSJavaScriptCallFrame::WITH_SCOPE);
+            if (scope->isGlobalLexicalEnvironment()) {
+                // FIXME: We need a way to better describe this scope.
+                // It's currently best described as a "closure" scope.
+                return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
+            }
             if (scope->isGlobalScope()) {
                 ASSERT(++iter == end);
                 return jsNumber(JSJavaScriptCallFrame::GLOBAL_SCOPE);
             }
-            ASSERT(scope->isFunctionOrEvalScope());
+            ASSERT(scope->isClosureScope());
             return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
         }
 

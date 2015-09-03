@@ -70,22 +70,25 @@ ParserError BytecodeGenerator::generate()
     if (m_needToInitializeArguments)
         initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
 
-    // For ModuleCode, we already instantiated the environment for the lexical variables.
-    if (m_codeType != ModuleCode)
-        pushLexicalScope(m_scopeNode, true);
-
     {
         RefPtr<RegisterID> temp = newTemporary();
-        RefPtr<RegisterID> globalScope = m_topMostScope;
+        RefPtr<RegisterID> globalScope;
         for (auto functionPair : m_functionsToInitialize) {
             FunctionMetadataNode* metadata = functionPair.first;
             FunctionVariableType functionType = functionPair.second;
             emitNewFunction(temp.get(), metadata);
             if (functionType == NormalFunctionVariable)
-                initializeVariable(variable(metadata->ident()) , temp.get());
-            else if (functionType == GlobalFunctionVariable)
-                emitPutToScope(globalScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound);
-            else
+                initializeVariable(variable(metadata->ident()), temp.get());
+            else if (functionType == GlobalFunctionVariable) {
+                if (!globalScope) {
+                    // We know this will resolve to the global object because our parser/global initialization code 
+                    // doesn't allow let/const/class variables to have the same names as functions.
+                    RefPtr<RegisterID> globalObjectScope = emitResolveScope(nullptr, Variable(metadata->ident())); 
+                    globalScope = newBlockScopeVariable(); 
+                    emitMove(globalScope.get(), globalObjectScope.get());
+                }
+                emitPutToScope(globalScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, NotInitialization);
+            } else
                 RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -172,6 +175,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
             RELEASE_ASSERT(entry.value.isVar());
     }
     codeBlock->setVariableDeclarations(programNode->varDeclarations());
+    codeBlock->setLexicalDeclarations(programNode->lexicalVariables());
+    // Even though this program may have lexical variables that go under TDZ, when linking the get_from_scope/put_to_scope
+    // operations we emit we will have ResolveTypes that implictly do TDZ checks. Therefore, we don't need
+    // additional TDZ checks on top of those. This is why we can omit pushing programNode->lexicalVariables()
+    // to the TDZ stack.
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
@@ -318,7 +326,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 instructions().append(m_lexicalEnvironmentRegister->index());
                 instructions().append(UINT_MAX);
                 instructions().append(virtualRegisterForArgument(1 + i).offset());
-                instructions().append(ResolveModeAndType(ThrowIfNotFound, LocalClosureVar).operand());
+                instructions().append(GetPutInfo(ThrowIfNotFound, LocalClosureVar, NotInitialization).operand());
                 instructions().append(symbolTableConstantIndex);
                 instructions().append(offset.offset());
             }
@@ -365,7 +373,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             instructions().append(m_lexicalEnvironmentRegister->index());
             instructions().append(addConstant(ident));
             instructions().append(virtualRegisterForArgument(1 + i).offset());
-            instructions().append(ResolveModeAndType(ThrowIfNotFound, LocalClosureVar).operand());
+            instructions().append(GetPutInfo(ThrowIfNotFound, LocalClosureVar, NotInitialization).operand());
             instructions().append(symbolTableConstantIndex);
             instructions().append(offset.offset());
         }
@@ -467,6 +475,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // because a function's default parameter ExpressionNodes will use temporary registers.
     m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
     initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, functionNode, functionSymbolTable, symbolTableConstantIndex, captures);
+
+    pushLexicalScope(m_scopeNode, true);
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
@@ -504,6 +514,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     codeBlock->adoptVariables(variables);
 
     m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
+
+    pushLexicalScope(m_scopeNode, true);
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
@@ -725,7 +737,7 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         ASSERT(parameters.hasDefaultParameterValues());
         Variable var = variable(valuesToMoveIntoVars[i].first);
         RegisterID* scope = emitResolveScope(nullptr, var);
-        emitPutToScope(scope, var, valuesToMoveIntoVars[i].second.get(), DoNotThrowIfNotFound);
+        emitPutToScope(scope, var, valuesToMoveIntoVars[i].second.get(), DoNotThrowIfNotFound, NotInitialization);
     }
 
     if (!parameters.hasDefaultParameterValues()) {
@@ -1760,7 +1772,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
             SymbolTableEntry entry = symbolTable->get(locker, identifier.impl());
             RELEASE_ASSERT(!entry.isNull());
             RegisterID* transitionValue = pair.first;
-            emitPutToScope(loopScope, variableForLocalEntry(identifier, entry, loopSymbolTable->index(), true), transitionValue, DoNotThrowIfNotFound);
+            emitPutToScope(loopScope, variableForLocalEntry(identifier, entry, loopSymbolTable->index(), true), transitionValue, DoNotThrowIfNotFound, NotInitialization);
             transitionValue->deref();
         }
     }
@@ -1979,12 +1991,12 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
     case VarKind::Invalid: {
         m_codeBlock->addPropertyAccessInstruction(instructions().size());
         
-        // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
+        // get_from_scope dst, scope, id, GetPutInfo, Structure, Operand
         UnlinkedValueProfile profile = emitProfiledOpcode(op_get_from_scope);
         instructions().append(kill(dst));
         instructions().append(scope->index());
         instructions().append(addConstant(variable.ident()));
-        instructions().append(ResolveModeAndType(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType()).operand());
+        instructions().append(GetPutInfo(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType(), NotInitialization).operand());
         instructions().append(localScopeDepth());
         instructions().append(variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
         instructions().append(profile);
@@ -1994,7 +2006,7 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable& variable, RegisterID* value, ResolveMode resolveMode)
+RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable& variable, RegisterID* value, ResolveMode resolveMode, InitializationMode initializationMode)
 {
     switch (variable.offset().kind()) {
     case VarKind::Stack:
@@ -2012,7 +2024,7 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
     case VarKind::Invalid: {
         m_codeBlock->addPropertyAccessInstruction(instructions().size());
         
-        // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
+        // put_to_scope scope, id, value, GetPutInfo, Structure, Operand
         emitOpcode(op_put_to_scope);
         instructions().append(scope->index());
         instructions().append(addConstant(variable.ident()));
@@ -2020,11 +2032,11 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
         ScopeOffset offset;
         if (variable.offset().isScope()) {
             offset = variable.offset().scopeOffset();
-            instructions().append(ResolveModeAndType(resolveMode, LocalClosureVar).operand());
+            instructions().append(GetPutInfo(resolveMode, LocalClosureVar, initializationMode).operand());
             instructions().append(variable.symbolTableConstantIndex());
         } else {
             ASSERT(resolveType() != LocalClosureVar);
-            instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
+            instructions().append(GetPutInfo(resolveMode, resolveType(), initializationMode).operand());
             instructions().append(localScopeDepth());
         }
         instructions().append(!!offset ? offset.offset() : 0);
@@ -2038,7 +2050,7 @@ RegisterID* BytecodeGenerator::initializeVariable(const Variable& variable, Regi
 {
     RELEASE_ASSERT(variable.offset().kind() != VarKind::Invalid);
     RegisterID* scope = emitResolveScope(nullptr, variable);
-    return emitPutToScope(scope, variable, value, ThrowIfNotFound);
+    return emitPutToScope(scope, variable, value, ThrowIfNotFound, NotInitialization);
 }
 
 RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* basePrototype)
@@ -3277,7 +3289,7 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     ASSERT_UNUSED(numVars, m_codeBlock->m_numVars == static_cast<int>(numVars + 1)); // Should have only created one new "var" for the function name scope.
     bool shouldTreatAsLexicalVariable = isStrictMode();
     Variable functionVar = variableForLocalEntry(property, m_symbolTableStack.last().m_symbolTable->get(property.impl()), m_symbolTableStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
-    emitPutToScope(m_symbolTableStack.last().m_scope, functionVar, callee, ThrowIfNotFound);
+    emitPutToScope(m_symbolTableStack.last().m_scope, functionVar, callee, ThrowIfNotFound, NotInitialization);
 }
 
 void BytecodeGenerator::pushScopedControlFlowContext()
@@ -3303,7 +3315,7 @@ void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterI
     Variable exceptionVar = variable(property);
     RELEASE_ASSERT(exceptionVar.isResolved());
     RefPtr<RegisterID> scope = emitResolveScope(nullptr, exceptionVar);
-    emitPutToScope(scope.get(), exceptionVar, exceptionValue, ThrowIfNotFound);
+    emitPutToScope(scope.get(), exceptionVar, exceptionValue, ThrowIfNotFound, NotInitialization);
 }
 
 void BytecodeGenerator::emitPopCatchScope(VariableEnvironment& environment) 

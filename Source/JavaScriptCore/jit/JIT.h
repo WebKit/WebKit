@@ -670,11 +670,15 @@ namespace JSC {
         void emitResolveClosure(int dst, int scope, bool needsVarInjectionChecks, unsigned depth);
         void emitLoadWithStructureCheck(int scope, Structure** structureSlot);
         void emitGetGlobalProperty(uintptr_t* operandSlot);
-        void emitGetGlobalVar(uintptr_t operand);
+#if USE(JSVALUE64)
+        void emitGetVarFromPointer(uintptr_t operand, GPRReg);
+#else
+        void emitGetVarFromPointer(uintptr_t operand, GPRReg tag, GPRReg payload);
+#endif
         void emitGetClosureVar(int scope, uintptr_t operand);
         void emitPutGlobalProperty(uintptr_t* operandSlot, int value);
         void emitNotifyWrite(WatchpointSet*);
-        void emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet*);
+        void emitPutGlobalVariable(uintptr_t operand, int value, WatchpointSet*);
         void emitPutClosureVar(int scope, uintptr_t operand, int value, WatchpointSet*);
 
         void emitInitRegister(int dst);

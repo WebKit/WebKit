@@ -196,7 +196,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetClosureVar:
     case PutClosureVar:
     case GetGlobalVar:
-    case PutGlobalVar:
+    case GetGlobalLexicalVariable:
+    case PutGlobalVariable:
     case VarInjectionWatchpoint:
     case CheckCell:
     case CheckBadCell:

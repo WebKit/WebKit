@@ -2365,9 +2365,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetGlobalVar:
         forNode(node).makeHeapTop();
         break;
+    case GetGlobalLexicalVariable:
+        forNode(node).makeBytecodeTop();
+        break;
         
     case VarInjectionWatchpoint:
-    case PutGlobalVar:
+    case PutGlobalVariable:
     case NotifyWrite:
         break;
             

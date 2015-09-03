@@ -989,7 +989,7 @@ struct Node {
     
     bool hasRegisterPointer()
     {
-        return op() == GetGlobalVar || op() == PutGlobalVar;
+        return op() == GetGlobalVar || op() == GetGlobalLexicalVariable || op() == PutGlobalVariable;
     }
     
     WriteBarrier<Unknown>* variablePointer()
@@ -1262,6 +1262,7 @@ struct Node {
         case RegExpExec:
         case RegExpTest:
         case GetGlobalVar:
+        case GetGlobalLexicalVariable:
             return true;
         default:
             return false;

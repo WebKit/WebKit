@@ -186,7 +186,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     //         @#   - a NodeIndex referencing a prior node in the graph.
     //         arg# - an argument number.
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
-    //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
+    //         var# - the index of a var on the global object, used by GetGlobalVar/GetGlobalLexicalVariable/PutGlobalVariable operations.
     out.printf("% 4d:<%c%u:", (int)node->index(), mustGenerate ? '!' : ' ', refCount);
     if (node->hasResult() && node->hasVirtualRegister() && node->virtualRegister().isValid())
         out.print(node->virtualRegister());
@@ -222,7 +222,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     if (node->hasDirectArgumentsOffset())
         out.print(comma, node->capturedArgumentsOffset());
     if (node->hasRegisterPointer())
-        out.print(comma, "global", globalObjectFor(node->origin.semantic)->findVariableIndex(node->variablePointer()), "(", RawPointer(node->variablePointer()), ")");
+        out.print(comma, "global", "(", RawPointer(node->variablePointer()), ")");
     if (node->hasIdentifier())
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
     if (node->hasPromotedLocationDescriptor())

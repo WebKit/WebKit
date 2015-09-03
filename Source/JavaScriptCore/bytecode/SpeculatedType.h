@@ -86,7 +86,7 @@ static const SpeculatedType SpecOther              = 0x20000000; // It's definit
 static const SpeculatedType SpecMisc               = 0x30000000; // It's definitely either a boolean, Null, or Undefined.
 static const SpeculatedType SpecHeapTop            = 0x3bbfffff; // It can be any of the above, except for SpecInt52.
 static const SpeculatedType SpecEmpty              = 0x40000000; // It's definitely an empty value marker.
-static const SpeculatedType SpecBytecodeTop        = 0x7bbfffff; // It can be any of the above, except for SpecInt52.
+static const SpeculatedType SpecBytecodeTop        = 0x7bbfffff; // It can be any of the above, except for SpecInt52. This is (SpecHeapTop | SpecEmpty).
 static const SpeculatedType SpecFullTop            = 0x7fffffff; // It can be any of the above plus anything the DFG chooses.
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);

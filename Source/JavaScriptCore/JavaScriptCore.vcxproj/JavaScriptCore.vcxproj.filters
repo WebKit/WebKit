@@ -717,6 +717,9 @@
     <ClCompile Include="..\runtime\JSGlobalObjectFunctions.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSGlobalLexicalEnvironment.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSJob.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2757,6 +2760,9 @@
     <ClInclude Include="..\runtime\FunctionRareData.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\GetPutInfo.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\GetterSetter.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -2863,6 +2869,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSGlobalObjectFunctions.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSGlobalLexicalEnvironment.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSJob.h">

@@ -1,3 +1,300 @@
+2015-09-03  Saam barati  <sbarati@apple.com>
+
+        Block scoped variables should be visible across scripts
+        https://bugs.webkit.org/show_bug.cgi?id=147813
+
+        Reviewed by Filip Pizlo.
+
+        This patch properly implements the global lexical tier described in
+        http://www.ecma-international.org/ecma-262/6.0/index.html#sec-globaldeclarationinstantiation.
+        The sepcification mandates that there is a global lexical environment
+        that wrtaps all program execution. This global lexical environment
+        holds let/const/class variables defined at the top-level scope
+        inside a program. These variables can never shadow other program-level
+        "var"s, global object properties, or other global lexical environment
+        declarations. Doing so is a SyntaxError.
+
+        This patch adds new ResolveTypes that describe the global lexical environment:
+        GlobalLexicalVar and GlobalLexiclaVarWithInjectionChecks. Resolving to
+        these means we're doing a load/store from the JSGlobalLexicalEnvironment.
+        This patch also addes new ResolveTypes: UnresolvedProperty and
+        UnresolvedPropertyWithVarInjectionChecks. Before, we used GlobalProperty
+        to encompass this category because if JSScope::abstractAccess didn't
+        resolve to anything, we could safely assume that this property is
+        on the global object. Such an assumption is no longer true in ES6.
+        When we have a resolve_scope/put_to_scope/get_from_scope with this
+        ResolveType, we try to transition it to either a GlobalProperty
+        ResolveType or a GlobalLexicalVar resolve type.
+
+        JSGlobalLexicalEnvironment is a subclass of JSSegmentedVariableObject.
+        This means get_from_scopes are direct pointer reads and
+        put_to_scopes are direct pointer stores.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::clear):
+        (JSC::EvalCodeCache::isCacheableScope):
+        (JSC::EvalCodeCache::isCacheable):
+        * bytecode/SpeculatedType.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::initializeVariable):
+        (JSC::BytecodeGenerator::emitInstanceOf):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::pushScopedControlFlowContext):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        (JSC::BytecodeGenerator::emitPopCatchScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::EmptyLetExpression::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::isGlobalScope):
+        (JSC::DebuggerScope::isGlobalLexicalEnvironment):
+        (JSC::DebuggerScope::isClosureScope):
+        (JSC::DebuggerScope::caughtValue):
+        (JSC::DebuggerScope::isFunctionOrEvalScope): Deleted.
+        * debugger/DebuggerScope.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasRegisterPointer):
+        (JSC::DFG::Node::variablePointer):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetGlobalVariable):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutGlobalVariable):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetGlobalVar): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutGlobalVar): Deleted.
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeType):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        (JSC::JIT::emitLoadWithStructureCheck):
+        (JSC::JIT::emitGetGlobalProperty):
+        (JSC::JIT::emitGetVarFromPointer):
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emitPutGlobalProperty):
+        (JSC::JIT::emitPutGlobalVariable):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::emitGetGlobalVar): Deleted.
+        (JSC::JIT::emitPutGlobalVar): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        (JSC::JIT::emitLoadWithStructureCheck):
+        (JSC::JIT::emitGetGlobalProperty):
+        (JSC::JIT::emitGetVarFromPointer):
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emitPutGlobalProperty):
+        (JSC::JIT::emitPutGlobalVariable):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::emitGetGlobalVar): Deleted.
+        (JSC::JIT::emitPutGlobalVar): Deleted.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/GetPutInfo.h: Added.
+        (JSC::resolveModeName):
+        (JSC::resolveTypeName):
+        (JSC::initializationModeName):
+        (JSC::makeType):
+        (JSC::needsVarInjectionChecks):
+        (JSC::ResolveOp::ResolveOp):
+        (JSC::GetPutInfo::GetPutInfo):
+        (JSC::GetPutInfo::resolveType):
+        (JSC::GetPutInfo::initializationMode):
+        (JSC::GetPutInfo::resolveMode):
+        (JSC::GetPutInfo::operand):
+        * runtime/JSGlobalLexicalEnvironment.cpp: Added.
+        (JSC::JSGlobalLexicalEnvironment::getOwnPropertySlot):
+        (JSC::JSGlobalLexicalEnvironment::put):
+        * runtime/JSGlobalLexicalEnvironment.h: Added.
+        (JSC::JSGlobalLexicalEnvironment::create):
+        (JSC::JSGlobalLexicalEnvironment::isEmpty):
+        (JSC::JSGlobalLexicalEnvironment::createStructure):
+        (JSC::JSGlobalLexicalEnvironment::JSGlobalLexicalEnvironment):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::put):
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addVar):
+        (JSC::JSGlobalObject::globalScope):
+        (JSC::JSGlobalObject::globalLexicalEnvironment):
+        (JSC::JSGlobalObject::hasOwnPropertyForWrite):
+        (JSC::constructEmptyArray):
+        (JSC::JSGlobalObject::symbolTableHasProperty): Deleted.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        (JSC::globalFuncParseInt):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::createStructure):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isGlobalObject):
+        (JSC::JSObject::isErrorInstance):
+        (JSC::JSObject::isVariableObject): Deleted.
+        (JSC::JSObject::isStaticScopeObject): Deleted.
+        (JSC::JSObject::isNameScopeObject): Deleted.
+        (JSC::JSObject::isActivationObject): Deleted.
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::visitChildren):
+        (JSC::abstractAccess):
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::abstractResolve):
+        (JSC::JSScope::collectVariablesUnderTDZ):
+        (JSC::isScopeType):
+        (JSC::JSScope::isVarScope):
+        (JSC::JSScope::isLexicalScope):
+        (JSC::JSScope::isCatchScope):
+        (JSC::JSScope::isFunctionNameScopeObject):
+        (JSC::JSScope::isGlobalLexicalEnvironment):
+        (JSC::JSScope::constantScopeForCodeBlock):
+        (JSC::resolveModeName): Deleted.
+        (JSC::resolveTypeName): Deleted.
+        * runtime/JSScope.h:
+        (JSC::makeType): Deleted.
+        (JSC::needsVarInjectionChecks): Deleted.
+        (JSC::ResolveOp::ResolveOp): Deleted.
+        (JSC::ResolveModeAndType::ResolveModeAndType): Deleted.
+        (JSC::ResolveModeAndType::mode): Deleted.
+        (JSC::ResolveModeAndType::type): Deleted.
+        (JSC::ResolveModeAndType::operand): Deleted.
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findVariableIndex):
+        (JSC::JSSegmentedVariableObject::addVariables):
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePut):
+        * runtime/JSType.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::isCacheablePut):
+        (JSC::PutPropertySlot::isCacheableSetter):
+        (JSC::PutPropertySlot::isCacheableCustom):
+        (JSC::PutPropertySlot::isInitialization):
+        (JSC::PutPropertySlot::cachedOffset):
+        * runtime/SymbolTable.h:
+        * tests/stress/global-lexical-let-no-rhs.js: Added.
+        (assert):
+        (foo):
+        * tests/stress/global-lexical-redeclare-variable.js: Added.
+        (globalFunction):
+        (globalClass):
+        (assert):
+        (assertExpectations):
+        (assertProperError):
+        * tests/stress/global-lexical-redefine-const.js: Added.
+        * tests/stress/global-lexical-var-injection.js: Added.
+        (assert):
+        (baz):
+        * tests/stress/global-lexical-variable-tdz.js: Added.
+        * tests/stress/global-lexical-variable-unresolved-property.js: Added.
+        * tests/stress/global-lexical-variable-with-statement.js: Added.
+        (assert):
+        (shouldThrowInvalidConstAssignment):
+        (makeObj):
+        * tests/stress/multiple-files-tests: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/fifth.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/first.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/fourth.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/second.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/sixth.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redeclare-variable/third.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redefine-const: Added.
+        * tests/stress/multiple-files-tests/global-lexical-redefine-const/first.js: Added.
+        (assert):
+        (shouldThrowInvalidConstAssignment):
+        * tests/stress/multiple-files-tests/global-lexical-redefine-const/second.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * tests/stress/multiple-files-tests/global-lexical-variable-tdz: Added.
+        * tests/stress/multiple-files-tests/global-lexical-variable-tdz/first.js: Added.
+        (assert):
+        (shouldThrowTDZ):
+        (foo):
+        (bar):
+        * tests/stress/multiple-files-tests/global-lexical-variable-tdz/second.js: Added.
+        * tests/stress/multiple-files-tests/global-lexical-variable-unresolved-property: Added.
+        * tests/stress/multiple-files-tests/global-lexical-variable-unresolved-property/first.js: Added.
+        (assert):
+        (shouldThrowTDZ):
+        (foo):
+        * tests/stress/multiple-files-tests/global-lexical-variable-unresolved-property/second.js: Added.
+
 2015-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         RepatchBuffer should be stateless

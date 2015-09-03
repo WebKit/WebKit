@@ -757,7 +757,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
 {
     SamplingScope samplingScope(this);
 
-    JSScope* scope = thisObj->globalObject();
+    JSScope* scope = thisObj->globalObject()->globalScope();
     VM& vm = *scope->vm();
 
     ASSERT(!vm.exception());
@@ -1142,13 +1142,34 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 }
             }
         }
-        ASSERT(!variableObject->isNameScopeObject());
     }
 
     JSObject* compileError = eval->prepareForExecution(callFrame, nullptr, scope, CodeForCall);
     if (UNLIKELY(!!compileError))
         return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
     EvalCodeBlock* codeBlock = eval->codeBlock();
+
+    // We can't declare a "var"/"function" that overwrites a global "let"/"const"/"class" in a sloppy-mode eval.
+    if (variableObject->isGlobalObject() && !eval->isStrictMode() && (numVariables || numFunctions)) {
+        JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalObject*>(variableObject)->globalLexicalEnvironment();
+        for (unsigned i = 0; i < numVariables; ++i) {
+            const Identifier& ident = codeBlock->variable(i);
+            PropertySlot slot(globalLexicalEnvironment);
+            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, callFrame, ident, slot)) {
+                return checkedReturn(callFrame->vm().throwException(callFrame,
+                    createTypeError(callFrame, makeString("Can't create duplicate global variable in eval: '", String(ident.impl()), "'"))));
+            }
+        }
+
+        for (int i = 0; i < numFunctions; ++i) {
+            FunctionExecutable* function = codeBlock->functionDecl(i);
+            PropertySlot slot(globalLexicalEnvironment);
+            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, callFrame, function->name(), slot)) {
+                return checkedReturn(callFrame->vm().throwException(callFrame,
+                    createTypeError(callFrame, makeString("Can't create duplicate global variable in eval: '", String(function->name().impl()), "'"))));
+            }
+        }
+    }
 
     if (numVariables || numFunctions) {
         BatchedTransitionOptimizer optimizer(vm, variableObject);

@@ -105,7 +105,8 @@ bool doesGC(Graph& graph, Node* node)
     case GetClosureVar:
     case PutClosureVar:
     case GetGlobalVar:
-    case PutGlobalVar:
+    case GetGlobalLexicalVariable:
+    case PutGlobalVariable:
     case VarInjectionWatchpoint:
     case CheckCell:
     case CheckNotEmpty:

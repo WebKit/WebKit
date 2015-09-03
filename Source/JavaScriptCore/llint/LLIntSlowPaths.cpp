@@ -1358,44 +1358,34 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
     LLINT_END_IMPL();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_resolve_scope)
-{
-    LLINT_BEGIN();
-    const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
-    JSScope* scope = LLINT_OP(2).Register::scope();
-    LLINT_RETURN(JSScope::resolve(exec, scope, ident));
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
 {
     LLINT_BEGIN();
 
     const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(2).jsValue());
-    ResolveModeAndType modeAndType(pc[4].u.operand);
+    GetPutInfo getPutInfo(pc[4].u.operand);
 
     PropertySlot slot(scope);
     if (!scope->getPropertySlot(exec, ident, slot)) {
-        if (modeAndType.mode() == ThrowIfNotFound)
+        if (getPutInfo.resolveMode() == ThrowIfNotFound)
             LLINT_RETURN(exec->vm().throwException(exec, createUndefinedVariableError(exec, ident)));
         LLINT_RETURN(jsUndefined());
     }
 
-    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
-    if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure()->propertyAccessesAreCacheable()) {
-        if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
-            CodeBlock* codeBlock = exec->codeBlock();
-            Structure* structure = scope->structure(vm);
-            {
-                ConcurrentJITLocker locker(codeBlock->m_lock);
-                pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), structure);
-                pc[6].u.operand = slot.cachedOffset();
-            }
-            structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
-        }
+    JSValue result = JSValue();
+    if (jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)) {
+        // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+        result = slot.getValue(exec, ident);
+        if (result == jsTDZValue())
+            LLINT_THROW(createTDZError(exec));
     }
 
-    LLINT_RETURN(slot.getValue(exec, ident));
+    CommonSlowPaths::tryCacheGetFromScopeGlobal(exec, vm, pc, scope, slot, ident);
+
+    if (!result)
+        result = slot.getValue(exec, ident);
+    LLINT_RETURN(result);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
@@ -1406,8 +1396,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(1).jsValue());
     JSValue value = LLINT_OP_C(3).jsValue();
-    ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
-    if (modeAndType.type() == LocalClosureVar) {
+    GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
+    if (getPutInfo.resolveType() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
         environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);
         
@@ -1419,13 +1409,24 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
         LLINT_END();
     }
 
-    if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident))
+    bool hasProperty = scope->hasProperty(exec, ident);
+    if (hasProperty
+        && jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)
+        && getPutInfo.initializationMode() != Initialization) {
+        // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+        PropertySlot slot(scope);
+        JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
+        if (slot.getValue(exec, ident) == jsTDZValue())
+            LLINT_THROW(createTDZError(exec));
+    }
+
+    if (getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)
         LLINT_THROW(createUndefinedVariableError(exec, ident));
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode());
+    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, getPutInfo.initializationMode() == Initialization);
     scope->methodTable()->put(scope, exec, ident, value, slot);
     
-    CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, modeAndType, slot);
+    CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, getPutInfo, slot, ident);
 
     LLINT_END();
 }

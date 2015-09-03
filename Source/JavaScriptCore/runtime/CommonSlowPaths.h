@@ -90,29 +90,81 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
 
 inline void tryCachePutToScopeGlobal(
     ExecState* exec, CodeBlock* codeBlock, Instruction* pc, JSObject* scope,
-    ResolveModeAndType modeAndType, PutPropertySlot& slot)
+    GetPutInfo getPutInfo, PutPropertySlot& slot, const Identifier& ident)
 {
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
     
-    if (modeAndType.type() != GlobalProperty && modeAndType.type() != GlobalPropertyWithVarInjectionChecks)
+    ResolveType resolveType = getPutInfo.resolveType();
+    if (resolveType != GlobalProperty && resolveType != GlobalPropertyWithVarInjectionChecks 
+        && resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
         return;
-    
-    if (!slot.isCacheablePut()
-        || slot.base() != scope
-        || !scope->structure()->propertyAccessesAreCacheable())
-        return;
-    
-    if (slot.type() == PutPropertySlot::NewProperty) {
-        // Don't cache if we've done a transition. We want to detect the first replace so that we
-        // can invalidate the watchpoint.
-        return;
-    }
-    
-    scope->structure()->didCachePropertyReplacement(exec->vm(), slot.cachedOffset());
 
-    ConcurrentJITLocker locker(codeBlock->m_lock);
-    pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
-    pc[6].u.operand = slot.cachedOffset();
+    if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
+        if (JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)) {
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalLexicalVar : GlobalLexicalVarWithVarInjectionChecks;
+            pc[4].u.operand = GetPutInfo(getPutInfo.resolveMode(), newResolveType, getPutInfo.initializationMode()).operand();
+            SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
+            ASSERT(!entry.isNull());
+            pc[5].u.watchpointSet = entry.watchpointSet();
+            pc[6].u.pointer = static_cast<void*>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
+        } else if (jsDynamicCast<JSGlobalObject*>(scope)) {
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalProperty : GlobalPropertyWithVarInjectionChecks;
+            pc[4].u.operand = GetPutInfo(getPutInfo.resolveMode(), newResolveType, getPutInfo.initializationMode()).operand();
+
+            if (!slot.isCacheablePut()
+                || slot.base() != scope
+                || !scope->structure()->propertyAccessesAreCacheable())
+                return;
+            
+            if (slot.type() == PutPropertySlot::NewProperty) {
+                // Don't cache if we've done a transition. We want to detect the first replace so that we
+                // can invalidate the watchpoint.
+                return;
+            }
+            
+            scope->structure()->didCachePropertyReplacement(exec->vm(), slot.cachedOffset());
+
+            ConcurrentJITLocker locker(codeBlock->m_lock);
+            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+            pc[6].u.operand = slot.cachedOffset();
+        }
+    }
+}
+
+inline void tryCacheGetFromScopeGlobal(
+    ExecState* exec, VM& vm, Instruction* pc, JSObject* scope, PropertySlot& slot, const Identifier& ident)
+{
+    GetPutInfo getPutInfo(pc[4].u.operand);
+    ResolveType resolveType = getPutInfo.resolveType();
+
+    if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
+        if (JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)) {
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalLexicalVar : GlobalLexicalVarWithVarInjectionChecks;
+            pc[4].u.operand = GetPutInfo(getPutInfo.resolveMode(), newResolveType, getPutInfo.initializationMode()).operand();
+            SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
+            ASSERT(!entry.isNull());
+            pc[5].u.watchpointSet = entry.watchpointSet();
+            pc[6].u.pointer = static_cast<void*>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
+        } else if (jsDynamicCast<JSGlobalObject*>(scope)) {
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalProperty : GlobalPropertyWithVarInjectionChecks;
+            resolveType = newResolveType; // Allow bottom caching mechanism to kick in.
+            pc[4].u.operand = GetPutInfo(getPutInfo.resolveMode(), newResolveType, getPutInfo.initializationMode()).operand();
+        }
+    }
+
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+        if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+            CodeBlock* codeBlock = exec->codeBlock();
+            Structure* structure = scope->structure(vm);
+            {
+                ConcurrentJITLocker locker(codeBlock->m_lock);
+                pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), structure);
+                pc[6].u.operand = slot.cachedOffset();
+            }
+            structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
+        }
+    }
 }
 
 } // namespace CommonSlowPaths
@@ -235,6 +287,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_to_index_string);
 SLOW_PATH_HIDDEN_DECL(slow_path_profile_type_clear_log);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_lexical_environment);
 SLOW_PATH_HIDDEN_DECL(slow_path_push_with_scope);
+SLOW_PATH_HIDDEN_DECL(slow_path_resolve_scope);
 
 } // namespace JSC
 

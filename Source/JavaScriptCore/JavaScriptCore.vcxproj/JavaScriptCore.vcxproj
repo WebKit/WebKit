@@ -778,6 +778,7 @@
     <ClCompile Include="..\runtime\JSFunction.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObject.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObjectFunctions.cpp" />
+    <ClCompile Include="..\runtime\JSGlobalLexicalEnvironment.cpp" />
     <ClCompile Include="..\runtime\JSInternalPromise.cpp" />
     <ClCompile Include="..\runtime\JSInternalPromiseConstructor.cpp" />
     <ClCompile Include="..\runtime\JSInternalPromiseDeferred.cpp" />
@@ -1570,6 +1571,7 @@
     <ClInclude Include="..\runtime\GenericOffset.h" />
     <ClInclude Include="..\runtime\GenericTypedArrayView.h" />
     <ClInclude Include="..\runtime\GenericTypedArrayViewInlines.h" />
+    <ClInclude Include="..\runtime\GetPutInfo.h" />
     <ClInclude Include="..\runtime\GetterSetter.h" />
     <ClInclude Include="..\runtime\Identifier.h" />
     <ClInclude Include="..\runtime\IndexingHeader.h" />
@@ -1629,6 +1631,7 @@
     <ClInclude Include="..\runtime\JSGenericTypedArrayViewPrototypeInlines.h" />
     <ClInclude Include="..\runtime\JSGlobalObject.h" />
     <ClInclude Include="..\runtime\JSGlobalObjectFunctions.h" />
+    <ClInclude Include="..\runtime\JSGlobalLexicalEnvironment.h" />
     <ClInclude Include="..\runtime\JSJob.h" />
     <ClInclude Include="..\runtime\JSInt16Array.h" />
     <ClInclude Include="..\runtime\JSInt32Array.h" />

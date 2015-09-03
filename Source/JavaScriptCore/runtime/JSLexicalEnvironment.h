@@ -75,7 +75,7 @@ public:
 
     DECLARE_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(ActivationObjectType, StructureFlags), info()); }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(ClosureObjectType, StructureFlags), info()); }
 
 private:
     bool symbolTableGet(PropertyName, PropertySlot&);

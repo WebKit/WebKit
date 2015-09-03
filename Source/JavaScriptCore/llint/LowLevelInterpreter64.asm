@@ -466,14 +466,13 @@ macro writeBarrierOnOperands(cellOperand, valueOperand)
     end
 end
 
-macro writeBarrierOnGlobalObject(valueOperand)
+macro writeBarrierOnGlobal(valueOperand, loadHelper)
     if GGC
         loadisFromInstruction(valueOperand, t1)
         loadConstantOrVariableCell(t1, t0, .writeBarrierDone)
         btpz t0, .writeBarrierDone
     
-        loadp CodeBlock[cfr], t3
-        loadp CodeBlock::m_globalObject[t3], t3
+        loadHelper(t3)
         skipIfIsRememberedOrInEden(t3, t1, t2,
             macro(gcData)
                 btbnz gcData, .writeBarrierDone
@@ -484,6 +483,23 @@ macro writeBarrierOnGlobalObject(valueOperand)
         )
     .writeBarrierDone:
     end
+end
+
+macro writeBarrierOnGlobalObject(valueOperand)
+    writeBarrierOnGlobal(valueOperand,
+        macro(registerToStoreGlobal)
+            loadp CodeBlock[cfr], registerToStoreGlobal
+            loadp CodeBlock::m_globalObject[registerToStoreGlobal], registerToStoreGlobal
+        end)
+end
+
+macro writeBarrierOnGlobalLexicalEnvironment(valueOperand)
+    writeBarrierOnGlobal(valueOperand,
+        macro(registerToStoreGlobal)
+            loadp CodeBlock[cfr], registerToStoreGlobal
+            loadp CodeBlock::m_globalObject[registerToStoreGlobal], registerToStoreGlobal
+            loadp JSGlobalObject::m_globalLexicalEnvironment[registerToStoreGlobal], registerToStoreGlobal
+        end)
 end
 
 macro valueProfile(value, operand, scratch)
@@ -1910,10 +1926,8 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     jmp _llint_throw_from_slow_path_trampoline
 end
 
-
-macro getGlobalObject(dst)
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_globalObject[t0], t0
+macro getConstantScope(dst)
+    loadpFromInstruction(6, t0)
     loadisFromInstruction(dst, t1)
     storeq t0, [cfr, t1, 8]
 end
@@ -1948,12 +1962,17 @@ _llint_op_resolve_scope:
 
 #rGlobalProperty:
     bineq t0, GlobalProperty, .rGlobalVar
-    getGlobalObject(1)
+    getConstantScope(1)
     dispatch(7)
 
 .rGlobalVar:
-    bineq t0, GlobalVar, .rClosureVar
-    getGlobalObject(1)
+    bineq t0, GlobalVar, .rGlobalLexicalVar
+    getConstantScope(1)
+    dispatch(7)
+
+.rGlobalLexicalVar:
+    bineq t0, GlobalLexicalVar, .rClosureVar
+    getConstantScope(1)
     dispatch(7)
 
 .rClosureVar:
@@ -1964,13 +1983,19 @@ _llint_op_resolve_scope:
 .rGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic)
-    getGlobalObject(1)
+    getConstantScope(1)
     dispatch(7)
 
 .rGlobalVarWithVarInjectionChecks:
-    bineq t0, GlobalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
+    bineq t0, GlobalVarWithVarInjectionChecks, .rGlobalLexicalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic)
-    getGlobalObject(1)
+    getConstantScope(1)
+    dispatch(7)
+
+.rGlobalLexicalVarWithVarInjectionChecks:
+    bineq t0, GlobalLexicalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic)
+    getConstantScope(1)
     dispatch(7)
 
 .rClosureVarWithVarInjectionChecks:
@@ -1980,7 +2005,7 @@ _llint_op_resolve_scope:
     dispatch(7)
 
 .rDynamic:
-    callSlowPath(_llint_slow_path_resolve_scope)
+    callSlowPath(_slow_path_resolve_scope)
     dispatch(7)
 
 
@@ -2000,9 +2025,10 @@ macro getProperty()
     storeq t2, [cfr, t0, 8]
 end
 
-macro getGlobalVar()
+macro getGlobalVar(tdzCheckIfNecessary)
     loadpFromInstruction(6, t0)
     loadq [t0], t0
+    tdzCheckIfNecessary(t0)
     valueProfile(t0, 7, t1)
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
@@ -2019,7 +2045,7 @@ end
 _llint_op_get_from_scope:
     traceExecution()
     loadisFromInstruction(4, t0)
-    andi ResolveModeMask, t0
+    andi ResolveTypeMask, t0
 
 #gGlobalProperty:
     bineq t0, GlobalProperty, .gGlobalVar
@@ -2028,8 +2054,16 @@ _llint_op_get_from_scope:
     dispatch(8)
 
 .gGlobalVar:
-    bineq t0, GlobalVar, .gClosureVar
-    getGlobalVar()
+    bineq t0, GlobalVar, .gGlobalLexicalVar
+    getGlobalVar(macro(v) end)
+    dispatch(8)
+
+.gGlobalLexicalVar:
+    bineq t0, GlobalLexicalVar, .gClosureVar
+    getGlobalVar(
+        macro (value)
+            bqeq value, ValueEmpty, .gDynamic
+        end)
     dispatch(8)
 
 .gClosureVar:
@@ -2045,9 +2079,18 @@ _llint_op_get_from_scope:
     dispatch(8)
 
 .gGlobalVarWithVarInjectionChecks:
-    bineq t0, GlobalVarWithVarInjectionChecks, .gClosureVarWithVarInjectionChecks
+    bineq t0, GlobalVarWithVarInjectionChecks, .gGlobalLexicalVarWithVarInjectionChecks
     varInjectionCheck(.gDynamic)
-    getGlobalVar()
+    getGlobalVar(macro(v) end)
+    dispatch(8)
+
+.gGlobalLexicalVarWithVarInjectionChecks:
+    bineq t0, GlobalLexicalVarWithVarInjectionChecks, .gClosureVarWithVarInjectionChecks
+    varInjectionCheck(.gDynamic)
+    getGlobalVar(
+        macro (value)
+            bqeq value, ValueEmpty, .gDynamic
+        end)
     dispatch(8)
 
 .gClosureVarWithVarInjectionChecks:
@@ -2069,7 +2112,7 @@ macro putProperty()
     storePropertyAtVariableOffset(t1, t0, t2)
 end
 
-macro putGlobalVar()
+macro putGlobalVariable()
     loadisFromInstruction(3, t0)
     loadConstantOrVariable(t0, t1)
     loadpFromInstruction(5, t2)
@@ -2096,11 +2139,22 @@ macro putLocalClosureVar()
     storeq t2, JSEnvironmentRecord_variables[t0, t1, 8]
 end
 
+macro checkTDZInGlobalPutToScopeIfNecessary()
+    loadisFromInstruction(4, t0)
+    andi InitializationModeMask, t0
+    rshifti InitializationModeShift, t0
+    bieq t0, Initialization, .noNeedForTDZCheck
+    loadpFromInstruction(6, t0)
+    loadq [t0], t0
+    bqeq t0, ValueEmpty, .pDynamic
+.noNeedForTDZCheck:
+end
+
 
 _llint_op_put_to_scope:
     traceExecution()
     loadisFromInstruction(4, t0)
-    andi ResolveModeMask, t0
+    andi ResolveTypeMask, t0
 
 #pLocalClosureVar:
     bineq t0, LocalClosureVar, .pGlobalProperty
@@ -2117,9 +2171,16 @@ _llint_op_put_to_scope:
     dispatch(7)
 
 .pGlobalVar:
-    bineq t0, GlobalVar, .pClosureVar
+    bineq t0, GlobalVar, .pGlobalLexicalVar
     writeBarrierOnGlobalObject(3)
-    putGlobalVar()
+    putGlobalVariable()
+    dispatch(7)
+
+.pGlobalLexicalVar:
+    bineq t0, GlobalLexicalVar, .pClosureVar
+    writeBarrierOnGlobalLexicalEnvironment(3)
+    checkTDZInGlobalPutToScopeIfNecessary()
+    putGlobalVariable()
     dispatch(7)
 
 .pClosureVar:
@@ -2137,10 +2198,18 @@ _llint_op_put_to_scope:
     dispatch(7)
 
 .pGlobalVarWithVarInjectionChecks:
-    bineq t0, GlobalVarWithVarInjectionChecks, .pClosureVarWithVarInjectionChecks
+    bineq t0, GlobalVarWithVarInjectionChecks, .pGlobalLexicalVarWithVarInjectionChecks
     writeBarrierOnGlobalObject(3)
     varInjectionCheck(.pDynamic)
-    putGlobalVar()
+    putGlobalVariable()
+    dispatch(7)
+
+.pGlobalLexicalVarWithVarInjectionChecks:
+    bineq t0, GlobalLexicalVarWithVarInjectionChecks, .pClosureVarWithVarInjectionChecks
+    writeBarrierOnGlobalLexicalEnvironment(3)
+    varInjectionCheck(.pDynamic)
+    checkTDZInGlobalPutToScopeIfNecessary()
+    putGlobalVariable()
     dispatch(7)
 
 .pClosureVarWithVarInjectionChecks:

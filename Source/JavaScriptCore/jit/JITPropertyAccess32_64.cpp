@@ -41,6 +41,7 @@
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include "SlowPathCall.h"
 #include <wtf/StringPrintStream.h>
 
 
@@ -724,17 +725,25 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
     switch (resolveType) {
     case GlobalProperty:
     case GlobalVar:
+    case GlobalLexicalVar:
     case GlobalPropertyWithVarInjectionChecks:
-    case GlobalVarWithVarInjectionChecks:
+    case GlobalVarWithVarInjectionChecks: 
+    case GlobalLexicalVarWithVarInjectionChecks: {
+        JSScope* constantScope = JSScope::constantScopeForCodeBlock(resolveType, m_codeBlock);
+        RELEASE_ASSERT(constantScope);
+        RELEASE_ASSERT(static_cast<JSScope*>(currentInstruction[6].u.pointer) == constantScope);
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         move(TrustedImm32(JSValue::CellTag), regT1);
-        move(TrustedImmPtr(m_codeBlock->globalObject()), regT0);
+        move(TrustedImmPtr(constantScope), regT0);
         emitStore(dst, regT1, regT0);
         break;
+    }
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
         emitResolveClosure(dst, scope, needsVarInjectionChecks(resolveType), depth);
         break;
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks:
     case Dynamic:
         addSlowCase(jump());
         break;
@@ -745,16 +754,14 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
     ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
 
-    if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar)
+    if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar || resolveType == GlobalLexicalVar)
         return;
 
     linkSlowCase(iter);
-    int32_t scope = currentInstruction[2].u.operand;
-    int32_t identifierIndex = currentInstruction[3].u.operand;
-    callOperation(operationResolveScope, dst, scope, identifierIndex);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_resolve_scope);
+    slowPathCall.call();
 }
 
 void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
@@ -771,10 +778,10 @@ void JIT::emitGetGlobalProperty(uintptr_t* operandSlot)
     compileGetDirectOffset(regT2, regT1, regT0, regT3, KnownNotFinal);
 }
 
-void JIT::emitGetGlobalVar(uintptr_t operand)
+void JIT::emitGetVarFromPointer(uintptr_t operand, GPRReg tag, GPRReg payload)
 {
-    load32(reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), regT1);
-    load32(reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), regT0);
+    load32(reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), tag);
+    load32(reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), payload);
 }
 
 void JIT::emitGetClosureVar(int scope, uintptr_t operand)
@@ -788,7 +795,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int scope = currentInstruction[2].u.operand;
-    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+    ResolveType resolveType = GetPutInfo(currentInstruction[4].u.operand).resolveType();
     Structure** structureSlot = currentInstruction[5].u.structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);
 
@@ -800,14 +807,20 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
         break;
     case GlobalVar:
     case GlobalVarWithVarInjectionChecks:
+    case GlobalLexicalVar:
+    case GlobalLexicalVarWithVarInjectionChecks:
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-        emitGetGlobalVar(*operandSlot);
+        emitGetVarFromPointer(*operandSlot, regT1, regT0);
+        if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks) // TDZ check.
+            addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
         break;
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         emitGetClosureVar(scope, *operandSlot);
         break;
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks:
     case Dynamic:
         addSlowCase(jump());
         break;
@@ -821,10 +834,13 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
 void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int dst = currentInstruction[1].u.operand;
-    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+    ResolveType resolveType = GetPutInfo(currentInstruction[4].u.operand).resolveType();
 
     if (resolveType == GlobalVar || resolveType == ClosureVar)
         return;
+
+    if (resolveType == GlobalLexicalVarWithVarInjectionChecks) // Var Injections check.
+        linkSlowCase(iter);
 
     linkSlowCase(iter);
     callOperation(WithProfile, operationGetFromScope, dst, currentInstruction);
@@ -841,7 +857,7 @@ void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
     store32(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 }
 
-void JIT::emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet* set)
+void JIT::emitPutGlobalVariable(uintptr_t operand, int value, WatchpointSet* set)
 {
     emitLoad(value, regT1, regT0);
     emitNotifyWrite(set);
@@ -862,7 +878,8 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
 {
     int scope = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
-    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+    GetPutInfo getPutInfo = GetPutInfo(currentInstruction[4].u.operand);
+    ResolveType resolveType = getPutInfo.resolveType();
     Structure** structureSlot = currentInstruction[5].u.structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);
 
@@ -875,10 +892,20 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
         break;
     case GlobalVar:
     case GlobalVarWithVarInjectionChecks:
-        emitWriteBarrier(m_codeBlock->globalObject(), value, ShouldFilterValue);
+    case GlobalLexicalVar:
+    case GlobalLexicalVarWithVarInjectionChecks: {
+        JSScope* constantScope = JSScope::constantScopeForCodeBlock(resolveType, m_codeBlock);
+        RELEASE_ASSERT(constantScope);
+        emitWriteBarrier(constantScope, value, ShouldFilterValue);
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-        emitPutGlobalVar(*operandSlot, value, currentInstruction[5].u.watchpointSet);
+        if (getPutInfo.initializationMode() != Initialization && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
+            // We need to do a TDZ check here because we can't always prove we need to emit TDZ checks statically.
+            emitGetVarFromPointer(*operandSlot, regT1, regT0);
+            addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
+        }
+        emitPutGlobalVariable(*operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
+    }
     case LocalClosureVar:
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
@@ -886,6 +913,8 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         emitPutClosureVar(scope, *operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks:
     case Dynamic:
         addSlowCase(jump());
         break;
@@ -894,12 +923,16 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+    GetPutInfo getPutInfo = GetPutInfo(currentInstruction[4].u.operand);
+    ResolveType resolveType = getPutInfo.resolveType();
     unsigned linkCount = 0;
-    if (resolveType != GlobalVar && resolveType != ClosureVar && resolveType != LocalClosureVar)
+    if (resolveType != GlobalVar && resolveType != ClosureVar && resolveType != LocalClosureVar && resolveType != GlobalLexicalVar)
         linkCount++;
-    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar)
+    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar
+        || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
         && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
+        linkCount++;
+    if (getPutInfo.initializationMode() != Initialization && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) // TDZ check.
         linkCount++;
     if (!linkCount)
         return;

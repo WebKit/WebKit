@@ -525,6 +525,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSDateMath.cpp
     runtime/JSEnvironmentRecord.cpp
     runtime/JSFunction.cpp
+    runtime/JSGlobalLexicalEnvironment.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectDebuggable.cpp
     runtime/JSGlobalObjectFunctions.cpp

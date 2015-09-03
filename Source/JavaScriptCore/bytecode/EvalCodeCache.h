@@ -31,6 +31,7 @@
 
 #include "Executable.h"
 #include "JSGlobalObject.h"
+#include "JSScope.h"
 #include "Options.h"
 #include "SourceCode.h"
 #include <wtf/HashMap.h>
@@ -74,15 +75,18 @@ namespace JSC {
         }
 
     private:
-        ALWAYS_INLINE bool isCacheable(bool inStrictContext, const String& evalSource, JSScope* scope) const
+        ALWAYS_INLINE bool isCacheableScope(JSScope* scope)
+        {
+            return scope->isGlobalLexicalEnvironment() || scope->isFunctionNameScopeObject() || scope->isVarScope();
+        }
+
+        ALWAYS_INLINE bool isCacheable(bool inStrictContext, const String& evalSource, JSScope* scope)
         {
             // If eval() is called and it has access to a lexical scope, we can't soundly cache it.
             // If the eval() only has access to the "var" scope, then we can cache it.
             return !inStrictContext 
                 && evalSource.length() < Options::maximumEvalCacheableSourceLength() 
-                && scope->begin()->isVariableObject()
-                && !scope->isLexicalScope()
-                && !scope->isCatchScope();
+                && isCacheableScope(scope);
         }
         static const int maxCacheEntries = 64;
 

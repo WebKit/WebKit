@@ -4105,6 +4105,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetGlobalLexicalVariable:
     case GetGlobalVar: {
         GPRTemporary result(this);
 
@@ -4114,7 +4115,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case PutGlobalVar: {
+    case PutGlobalVariable: {
         JSValueOperand value(this, node->child2());
 
         m_jit.store64(value.gpr(), node->variablePointer());

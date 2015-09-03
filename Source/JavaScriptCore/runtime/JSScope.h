@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2015  Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef JSScope_h
 #define JSScope_h
 
+#include "GetPutInfo.h"
 #include "JSObject.h"
 #include "VariableEnvironment.h"
 
@@ -33,119 +34,6 @@ namespace JSC {
 
 class ScopeChainIterator;
 class WatchpointSet;
-
-enum ResolveMode {
-    ThrowIfNotFound,
-    DoNotThrowIfNotFound
-};
-
-enum ResolveType {
-    // Lexical scope guaranteed a certain type of variable access.
-    GlobalProperty,
-    GlobalVar,
-    ClosureVar,
-    LocalClosureVar,
-
-    // Ditto, but at least one intervening scope used non-strict eval, which
-    // can inject an intercepting var delcaration at runtime.
-    GlobalPropertyWithVarInjectionChecks,
-    GlobalVarWithVarInjectionChecks,
-    ClosureVarWithVarInjectionChecks,
-
-    // Lexical scope didn't prove anything -- probably because of a 'with' scope.
-    Dynamic
-};
-
-const char* resolveModeName(ResolveMode mode);
-const char* resolveTypeName(ResolveType type);
-
-inline ResolveType makeType(ResolveType type, bool needsVarInjectionChecks)
-{
-    if (!needsVarInjectionChecks)
-        return type;
-
-    switch (type) {
-    case GlobalProperty:
-        return GlobalPropertyWithVarInjectionChecks;
-    case GlobalVar:
-        return GlobalVarWithVarInjectionChecks;
-    case ClosureVar:
-    case LocalClosureVar:
-        return ClosureVarWithVarInjectionChecks;
-    case GlobalPropertyWithVarInjectionChecks:
-    case GlobalVarWithVarInjectionChecks:
-    case ClosureVarWithVarInjectionChecks:
-    case Dynamic:
-        return type;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-    return type;
-}
-
-inline bool needsVarInjectionChecks(ResolveType type)
-{
-    switch (type) {
-    case GlobalProperty:
-    case GlobalVar:
-    case ClosureVar:
-    case LocalClosureVar:
-        return false;
-    case GlobalPropertyWithVarInjectionChecks:
-    case GlobalVarWithVarInjectionChecks:
-    case ClosureVarWithVarInjectionChecks:
-    case Dynamic:
-        return true;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return true;
-    }
-}
-
-struct ResolveOp {
-    ResolveOp(ResolveType type, size_t depth, Structure* structure, JSLexicalEnvironment* lexicalEnvironment, WatchpointSet* watchpointSet, uintptr_t operand)
-        : type(type)
-        , depth(depth)
-        , structure(structure)
-        , lexicalEnvironment(lexicalEnvironment)
-        , watchpointSet(watchpointSet)
-        , operand(operand)
-    {
-    }
-
-    ResolveType type;
-    size_t depth;
-    Structure* structure;
-    JSLexicalEnvironment* lexicalEnvironment;
-    WatchpointSet* watchpointSet;
-    uintptr_t operand;
-};
-
-class ResolveModeAndType {
-    typedef unsigned Operand;
-public:
-    static const size_t shift = sizeof(Operand) * 8 / 2;
-    static const unsigned mask = (1 << shift) - 1;
-
-    ResolveModeAndType(ResolveMode resolveMode, ResolveType resolveType)
-        : m_operand((resolveMode << shift) | resolveType)
-    {
-    }
-
-    explicit ResolveModeAndType(unsigned operand)
-        : m_operand(operand)
-    {
-    }
-
-    ResolveMode mode() { return static_cast<ResolveMode>(m_operand >> shift); }
-    ResolveType type() { return static_cast<ResolveType>(m_operand & mask); }
-    unsigned operand() { return m_operand; }
-
-private:
-    Operand m_operand;
-};
-
-enum GetOrPut { Get, Put };
 
 class JSScope : public JSNonFinalObject {
 public:
@@ -158,13 +46,18 @@ public:
     static JSObject* objectAtScope(JSScope*);
 
     static JSValue resolve(ExecState*, JSScope*, const Identifier&);
-    static ResolveOp abstractResolve(ExecState*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType);
+    static ResolveOp abstractResolve(ExecState*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
+
+    static bool hasConstantScope(ResolveType);
+    static JSScope* constantScopeForCodeBlock(ResolveType, CodeBlock*);
 
     static void collectVariablesUnderTDZ(JSScope*, VariableEnvironment& result);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    bool isVarScope();
     bool isLexicalScope();
+    bool isGlobalLexicalEnvironment();
     bool isCatchScope();
     bool isFunctionNameScopeObject();
 

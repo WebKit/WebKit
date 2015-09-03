@@ -1033,6 +1033,9 @@
 		70ECA6071AFDBEA200449739 /* TemplateRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA6021AFDBEA200449739 /* TemplateRegistry.cpp */; };
 		70ECA6081AFDBEA200449739 /* TemplateRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6031AFDBEA200449739 /* TemplateRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6091AFDBEA200449739 /* TemplateRegistryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6041AFDBEA200449739 /* TemplateRegistryKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 796465681B952FF0003059EE /* GetPutInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */; };
+		797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B0247551B8682DD00542440 /* WASMConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B0247521B8682D500542440 /* WASMConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2855,6 +2858,9 @@
 		70ECA6021AFDBEA200449739 /* TemplateRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemplateRegistry.cpp; sourceTree = "<group>"; };
 		70ECA6031AFDBEA200449739 /* TemplateRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateRegistry.h; sourceTree = "<group>"; };
 		70ECA6041AFDBEA200449739 /* TemplateRegistryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateRegistryKey.h; sourceTree = "<group>"; };
+		796465681B952FF0003059EE /* GetPutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPutInfo.h; sourceTree = "<group>"; };
+		797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalLexicalEnvironment.cpp; sourceTree = "<group>"; };
+		797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalLexicalEnvironment.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
 		7B0247521B8682D500542440 /* WASMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMConstants.h; sourceTree = "<group>"; };
@@ -4655,6 +4661,7 @@
 				0FE050131AA9091100D33B33 /* GenericOffset.h */,
 				0F2B66B217B6B5AB00A7AE3F /* GenericTypedArrayView.h */,
 				0F2B66B317B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h */,
+				796465681B952FF0003059EE /* GetPutInfo.h */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
 				BC337BDE0E1AF0B80076918A /* GetterSetter.h */,
 				933A349D038AE80F008635CE /* Identifier.cpp */,
@@ -4752,6 +4759,8 @@
 				0F2B66C817B6B5AB00A7AE3F /* JSGenericTypedArrayViewPrototypeInlines.h */,
 				14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */,
 				A8E894330CD0603F00367179 /* JSGlobalObject.h */,
+				797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */,
+				797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */,
 				A59455901824744700CC3843 /* JSGlobalObjectDebuggable.cpp */,
 				A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */,
 				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
@@ -5892,6 +5901,8 @@
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				0F898F321B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
+				7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */,
+				797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */,
 				0FE050281AA9095600D33B33 /* ScopedArguments.h in Headers */,
 				52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
@@ -7348,6 +7359,7 @@
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
 				0F6B1CC918641DF800845D97 /* ArityCheckFailReturnThunks.cpp in Sources */,
+				797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */,
 				E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,

@@ -841,11 +841,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
         
     case GetGlobalVar:
+    case GetGlobalLexicalVariable:
         read(AbstractHeap(Absolute, node->variablePointer()));
         def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->variablePointer())), LazyNode(node));
         return;
         
-    case PutGlobalVar:
+    case PutGlobalVariable:
         write(AbstractHeap(Absolute, node->variablePointer()));
         def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->variablePointer())), LazyNode(node->child2().node()));
         return;

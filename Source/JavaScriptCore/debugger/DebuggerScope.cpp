@@ -184,12 +184,17 @@ bool DebuggerScope::isGlobalScope() const
     return m_scope->isGlobalObject();
 }
 
-bool DebuggerScope::isFunctionOrEvalScope() const
+bool DebuggerScope::isGlobalLexicalEnvironment() const
+{
+    return m_scope->isGlobalLexicalEnvironment();
+}
+
+bool DebuggerScope::isClosureScope() const
 {
     // In the current debugger implementation, every function or eval will create an
     // lexical environment object. Hence, a lexical environment object implies a
     // function or eval scope.
-    return m_scope->isActivationObject() && !isCatchScope();
+    return m_scope->isVarScope() || m_scope->isLexicalScope();
 }
 
 JSValue DebuggerScope::caughtValue(ExecState* exec) const

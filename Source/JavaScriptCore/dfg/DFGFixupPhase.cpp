@@ -1191,7 +1191,7 @@ private:
             DFG_CRASH(m_graph, node, "Unexpected node during fixup");
             break;
         
-        case PutGlobalVar: {
+        case PutGlobalVariable: {
             fixEdge<CellUse>(node->child1());
             speculateForBarrier(node->child2());
             break;
@@ -1336,6 +1336,7 @@ private:
         case PhantomLocal:
         case GetLocalUnlinked:
         case GetGlobalVar:
+        case GetGlobalLexicalVariable:
         case NotifyWrite:
         case VarInjectionWatchpoint:
         case Call:

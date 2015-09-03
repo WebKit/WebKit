@@ -190,14 +190,18 @@ const firstOutOfLineOffset = 100
 # ResolveType
 const GlobalProperty = 0
 const GlobalVar = 1
-const ClosureVar = 2
-const LocalClosureVar = 3
-const GlobalPropertyWithVarInjectionChecks = 4
-const GlobalVarWithVarInjectionChecks = 5
-const ClosureVarWithVarInjectionChecks = 6
-const Dynamic = 7
+const GlobalLexicalVar = 2
+const ClosureVar = 3
+const LocalClosureVar = 4
+const GlobalPropertyWithVarInjectionChecks = 5
+const GlobalVarWithVarInjectionChecks = 6
+const GlobalLexicalVarWithVarInjectionChecks = 7
+const ClosureVarWithVarInjectionChecks = 8
 
-const ResolveModeMask = 0xffff
+const ResolveTypeMask = 0x3ff
+const InitializationModeMask = 0xffc00
+const InitializationModeShift = 10
+const Initialization = 0
 
 const MarkedBlockSize = 16 * 1024
 const MarkedBlockMask = ~(MarkedBlockSize - 1)

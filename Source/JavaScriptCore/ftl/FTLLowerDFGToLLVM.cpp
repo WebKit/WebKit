@@ -665,10 +665,11 @@ private:
             compileMultiPutByOffset();
             break;
         case GetGlobalVar:
-            compileGetGlobalVar();
+        case GetGlobalLexicalVariable:
+            compileGetGlobalVariable();
             break;
-        case PutGlobalVar:
-            compilePutGlobalVar();
+        case PutGlobalVariable:
+            compilePutGlobalVariable();
             break;
         case NotifyWrite:
             compileNotifyWrite();
@@ -4056,12 +4057,12 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
-    void compileGetGlobalVar()
+    void compileGetGlobalVariable()
     {
         setJSValue(m_out.load64(m_out.absolute(m_node->variablePointer())));
     }
     
-    void compilePutGlobalVar()
+    void compilePutGlobalVariable()
     {
         m_out.store64(
             lowJSValue(m_node->child2()), m_out.absolute(m_node->variablePointer()));

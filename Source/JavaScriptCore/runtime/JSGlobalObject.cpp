@@ -262,8 +262,9 @@ void JSGlobalObject::init(VM& vm)
     m_functionPrototype.set(vm, this, FunctionPrototype::create(vm, FunctionPrototype::createStructure(vm, this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
     m_calleeStructure.set(vm, this, JSCallee::createStructure(vm, this, jsNull()));
 
+    m_globalLexicalEnvironment.set(vm, this, JSGlobalLexicalEnvironment::create(vm, JSGlobalLexicalEnvironment::createStructure(vm, this), this));
     // Need to create the callee structure (above) before creating the callee.
-    m_globalCallee.set(vm, this, JSCallee::create(vm, this, this));
+    m_globalCallee.set(vm, this, JSCallee::create(vm, this, globalScope()));
     exec->setCallee(m_globalCallee.get());
 
     m_functionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
@@ -552,7 +553,7 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (symbolTablePut(thisObject, exec, propertyName, value, slot.isStrictMode()))
+    if (symbolTablePut(thisObject, exec, propertyName, value, slot.isStrictMode(), false))
         return;
     Base::put(thisObject, exec, propertyName, value, slot);
 }
@@ -579,7 +580,7 @@ void JSGlobalObject::addGlobalVar(const Identifier& ident)
     newEntry.prepareToWatch();
     symbolTable()->add(locker, ident.impl(), newEntry);
     
-    ScopeOffset offsetForAssert = addVariables(1);
+    ScopeOffset offsetForAssert = addVariables(1, jsUndefined());
     RELEASE_ASSERT(offsetForAssert == offset);
 }
 
@@ -754,6 +755,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(&thisObject->m_globalThis);
 
+    visitor.append(&thisObject->m_globalLexicalEnvironment);
     visitor.append(&thisObject->m_globalCallee);
     visitor.append(&thisObject->m_regExpConstructor);
     visitor.append(&thisObject->m_errorConstructor);
@@ -855,7 +857,7 @@ ExecState* JSGlobalObject::globalExec()
 
 void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 {
-    ScopeOffset startOffset = addVariables(count);
+    ScopeOffset startOffset = addVariables(count, jsUndefined());
 
     for (int i = 0; i < count; ++i) {
         GlobalPropertyInfo& global = globals[i];

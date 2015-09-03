@@ -41,6 +41,7 @@
 #include "DFGWorklist.h"
 #include "Debugger.h"
 #include "FunctionExecutableDump.h"
+#include "GetPutInfo.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JIT.h"
@@ -1518,20 +1519,18 @@ void CodeBlock::dumpBytecode(
             int r0 = (++it)->u.operand;
             int scope = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            ResolveModeAndType modeAndType = ResolveModeAndType((++it)->u.operand);
+            ResolveType resolveType = static_cast<ResolveType>((++it)->u.operand);
             int depth = (++it)->u.operand;
+            void* pointer = (++it)->u.pointer;
             printLocationAndOp(out, exec, location, it, "resolve_scope");
-            out.printf("%s, %s, %s, %u<%s|%s>, %d", registerName(r0).data(), registerName(scope).data(), idName(id0, identifier(id0)).data(),
-                modeAndType.operand(), resolveModeName(modeAndType.mode()), resolveTypeName(modeAndType.type()),
-                depth);
-            ++it;
+            out.printf("%s, %s, %s, <%s>, %d, %p", registerName(r0).data(), registerName(scope).data(), idName(id0, identifier(id0)).data(), resolveTypeName(resolveType), depth, pointer);
             break;
         }
         case op_get_from_scope: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            ResolveModeAndType modeAndType = ResolveModeAndType((++it)->u.operand);
+            GetPutInfo getPutInfo = GetPutInfo((++it)->u.operand);
             ++it; // Structure
             int operand = (++it)->u.operand; // Operand
             printLocationAndOp(out, exec, location, it, "get_from_scope");
@@ -1540,7 +1539,7 @@ void CodeBlock::dumpBytecode(
                 out.print(", anonymous");
             else
                 out.print(", ", idName(id0, identifier(id0)));
-            out.print(", ", modeAndType.operand(), "<", resolveModeName(modeAndType.mode()), "|", resolveTypeName(modeAndType.type()), ">, ", operand);
+            out.print(", ", getPutInfo.operand(), "<", resolveModeName(getPutInfo.resolveMode()), "|", resolveTypeName(getPutInfo.resolveType()), "|", initializationModeName(getPutInfo.initializationMode()), ">, ", operand);
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
@@ -1548,7 +1547,7 @@ void CodeBlock::dumpBytecode(
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            ResolveModeAndType modeAndType = ResolveModeAndType((++it)->u.operand);
+            GetPutInfo getPutInfo = GetPutInfo((++it)->u.operand);
             ++it; // Structure
             int operand = (++it)->u.operand; // Operand
             printLocationAndOp(out, exec, location, it, "put_to_scope");
@@ -1557,7 +1556,7 @@ void CodeBlock::dumpBytecode(
                 out.print(", anonymous");
             else
                 out.print(", ", idName(id0, identifier(id0)));
-            out.print(", ", registerName(r1), ", ", modeAndType.operand(), "<", resolveModeName(modeAndType.mode()), "|", resolveTypeName(modeAndType.type()), ">, <structure>, ", operand);
+            out.print(", ", registerName(r1), ", ", getPutInfo.operand(), "<", resolveModeName(getPutInfo.resolveMode()), "|", resolveTypeName(getPutInfo.resolveType()), "|", initializationModeName(getPutInfo.initializationMode()), ">, <structure>, ", operand);
             break;
         }
         case op_get_from_arguments: {
@@ -1971,11 +1970,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             RELEASE_ASSERT(type != LocalClosureVar);
             int localScopeDepth = pc[5].u.operand;
 
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type);
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, NotInitialization);
             instructions[i + 4].u.operand = op.type;
             instructions[i + 5].u.operand = op.depth;
             if (op.lexicalEnvironment)
                 instructions[i + 6].u.symbolTable.set(*vm(), ownerExecutable, op.lexicalEnvironment->symbolTable());
+            else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this))
+                instructions[i + 6].u.jsCell.set(*vm(), ownerExecutable, constantScope);
             else
                 instructions[i + 6].u.pointer = nullptr;
             break;
@@ -1987,22 +1988,23 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
 
-            // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
+            // get_from_scope dst, scope, id, GetPutInfo, Structure, Operand
 
             int localScopeDepth = pc[5].u.operand;
             instructions[i + 5].u.pointer = nullptr;
 
-            ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
-            if (modeAndType.type() == LocalClosureVar) {
-                instructions[i + 4] = ResolveModeAndType(modeAndType.mode(), ClosureVar).operand();
+            GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
+            ASSERT(getPutInfo.initializationMode() == NotInitialization);
+            if (getPutInfo.resolveType() == LocalClosureVar) {
+                instructions[i + 4] = GetPutInfo(getPutInfo.resolveMode(), ClosureVar, getPutInfo.initializationMode()).operand();
                 break;
             }
 
             const Identifier& ident = identifier(pc[3].u.operand);
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, modeAndType.type());
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, getPutInfo.resolveType(), NotInitialization);
 
-            instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
-            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks)
+            instructions[i + 4].u.operand = GetPutInfo(getPutInfo.resolveMode(), op.type, getPutInfo.initializationMode()).operand();
+            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
             else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
@@ -2011,9 +2013,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_put_to_scope: {
-            // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
-            ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
-            if (modeAndType.type() == LocalClosureVar) {
+            // put_to_scope scope, id, value, GetPutInfo, Structure, Operand
+            GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
+            if (getPutInfo.resolveType() == LocalClosureVar) {
                 // Only do watching if the property we're putting to is not anonymous.
                 if (static_cast<unsigned>(pc[2].u.operand) != UINT_MAX) {
                     int symbolTableIndex = pc[5].u.operand;
@@ -2033,10 +2035,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             const Identifier& ident = identifier(pc[2].u.operand);
             int localScopeDepth = pc[5].u.operand;
             instructions[i + 5].u.pointer = nullptr;
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Put, modeAndType.type());
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Put, getPutInfo.resolveType(), getPutInfo.initializationMode());
 
-            instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
-            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks)
+            instructions[i + 4].u.operand = GetPutInfo(getPutInfo.resolveMode(), op.type, getPutInfo.initializationMode()).operand();
+            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
             else if (op.type == ClosureVar || op.type == ClosureVarWithVarInjectionChecks) {
                 if (op.watchpointSet)
@@ -2067,7 +2069,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 ResolveType type = static_cast<ResolveType>(pc[5].u.operand);
                 // Even though type profiling may be profiling either a Get or a Put, we can always claim a Get because
                 // we're abstractly "read"ing from a JSScope.
-                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type);
+                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, NotInitialization);
 
                 if (op.type == ClosureVar)
                     symbolTable = op.lexicalEnvironment->symbolTable();
@@ -2621,9 +2623,9 @@ void CodeBlock::finalizeUnconditionally()
             }
             case op_get_from_scope:
             case op_put_to_scope: {
-                ResolveModeAndType modeAndType =
-                    ResolveModeAndType(curInstruction[4].u.operand);
-                if (modeAndType.type() == GlobalVar || modeAndType.type() == GlobalVarWithVarInjectionChecks || modeAndType.type() == LocalClosureVar)
+                GetPutInfo getPutInfo = GetPutInfo(curInstruction[4].u.operand);
+                if (getPutInfo.resolveType() == GlobalVar || getPutInfo.resolveType() == GlobalVarWithVarInjectionChecks 
+                    || getPutInfo.resolveType() == LocalClosureVar || getPutInfo.resolveType() == GlobalLexicalVar || getPutInfo.resolveType() == GlobalLexicalVarWithVarInjectionChecks)
                     continue;
                 WriteBarrierBase<Structure>& structure = curInstruction[5].u.structure;
                 if (!structure || Heap::isMarked(structure.get()))

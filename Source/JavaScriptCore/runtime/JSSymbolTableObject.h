@@ -127,7 +127,7 @@ inline bool symbolTableGet(
 template<typename SymbolTableObjectType>
 inline bool symbolTablePut(
     SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value,
-    bool shouldThrow)
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors)
 {
     VM& vm = exec->vm();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
@@ -145,8 +145,8 @@ inline bool symbolTablePut(
         bool wasFat;
         SymbolTableEntry::Fast fastEntry = iter->value.getFast(wasFat);
         ASSERT(!fastEntry.isNull());
-        if (fastEntry.isReadOnly()) {
-            if (shouldThrow)
+        if (fastEntry.isReadOnly() && !ignoreReadOnlyErrors) {
+            if (shouldThrowReadOnlyError)
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return true;
         }

@@ -77,7 +77,8 @@ inline CapabilityLevel canCompile(Node* node)
     case GetSetter:
     case PutByOffset:
     case GetGlobalVar:
-    case PutGlobalVar:
+    case GetGlobalLexicalVariable:
+    case PutGlobalVariable:
     case ValueAdd:
     case StrCat:
     case ArithAdd:

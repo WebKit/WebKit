@@ -539,6 +539,40 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     if (exception)
         return exception;
 
+    JSGlobalLexicalEnvironment* globalLexicalEnvironment = globalObject->globalLexicalEnvironment();
+    const VariableEnvironment& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
+    const VariableEnvironment& lexicalDeclarations = unlinkedCodeBlock->lexicalDeclarations();
+    // The ES6 spec says that no vars/global properties/let/const can be duplicated in the global scope.
+    // This carried out section 15.1.8 of the ES6 spec: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-globaldeclarationinstantiation
+    {
+        ExecState* exec = globalObject->globalExec();
+        // Check for intersection of "var" and "let"/"const"/"class"
+        for (auto& entry : lexicalDeclarations) {
+            if (variableDeclarations.contains(entry.key))
+                return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+        }
+
+        // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names, or "var"/"let"/"const" variables.
+        // It's an error to introduce a shadow.
+        for (auto& entry : lexicalDeclarations) {
+            if (globalObject->hasProperty(exec, entry.key.get()))
+                return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
+
+            if (globalLexicalEnvironment->hasProperty(exec, entry.key.get()))
+                return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+        }
+
+        // Check if any new "var"s will shadow any previous "let"/"const"/"class" names.
+        // It's an error to introduce a shadow.
+        if (!globalLexicalEnvironment->isEmpty()) {
+            for (auto& entry : variableDeclarations) {
+                if (globalLexicalEnvironment->hasProperty(exec, entry.key.get()))
+                    return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+            }
+        }
+    }
+
+
     m_unlinkedProgramCodeBlock.set(vm, this, unlinkedCodeBlock);
 
     BatchedTransitionOptimizer optimizer(vm, globalObject);
@@ -554,10 +588,24 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         }
     }
 
-    const VariableEnvironment& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
     for (auto& entry : variableDeclarations) {
         ASSERT(entry.value.isVar());
         globalObject->addVar(callFrame, Identifier::fromUid(&vm, entry.key.get()));
+    }
+
+    {
+        JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(globalObject->globalScope());
+        SymbolTable* symbolTable = globalLexicalEnvironment->symbolTable();
+        ConcurrentJITLocker locker(symbolTable->m_lock);
+        for (auto& entry : lexicalDeclarations) {
+            ScopeOffset offset = symbolTable->takeNextScopeOffset(locker);
+            SymbolTableEntry newEntry(VarOffset(offset), entry.value.isConst() ? ReadOnly : 0);
+            newEntry.prepareToWatch();
+            symbolTable->add(locker, entry.key.get(), newEntry);
+            
+            ScopeOffset offsetForAssert = globalLexicalEnvironment->addVariables(1, jsTDZValue());
+            RELEASE_ASSERT(offsetForAssert == offset);
+        }
     }
     return 0;
 }

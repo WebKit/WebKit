@@ -597,10 +597,6 @@ public:
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
     bool isGlobalObject() const;
-    bool isVariableObject() const;
-    bool isStaticScopeObject() const;
-    bool isNameScopeObject() const;
-    bool isActivationObject() const;
     bool isErrorInstance() const;
     bool isWithScope() const;
 
@@ -1010,27 +1006,6 @@ inline size_t JSObject::offsetOfInlineStorage()
 inline bool JSObject::isGlobalObject() const
 {
     return type() == GlobalObjectType;
-}
-
-inline bool JSObject::isVariableObject() const
-{
-    return type() == GlobalObjectType || type() == ActivationObjectType;
-}
-
-inline bool JSObject::isStaticScopeObject() const
-{
-    JSType type = this->type();
-    return type == NameScopeObjectType || type == ActivationObjectType;
-}
-
-inline bool JSObject::isNameScopeObject() const
-{
-    return type() == NameScopeObjectType;
-}
-
-inline bool JSObject::isActivationObject() const
-{
-    return type() == ActivationObjectType;
 }
 
 inline bool JSObject::isErrorInstance() const

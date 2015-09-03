@@ -46,7 +46,7 @@ ScopeOffset JSSegmentedVariableObject::findVariableIndex(void* variableAddress)
     return ScopeOffset();
 }
 
-ScopeOffset JSSegmentedVariableObject::addVariables(unsigned numberOfVariablesToAdd)
+ScopeOffset JSSegmentedVariableObject::addVariables(unsigned numberOfVariablesToAdd, JSValue initialValue)
 {
     ConcurrentJITLocker locker(m_lock);
     
@@ -54,7 +54,7 @@ ScopeOffset JSSegmentedVariableObject::addVariables(unsigned numberOfVariablesTo
     m_variables.grow(oldSize + numberOfVariablesToAdd);
     
     for (size_t i = numberOfVariablesToAdd; i--;)
-        m_variables[oldSize + i].setWithoutWriteBarrier(jsUndefined());
+        m_variables[oldSize + i].setWithoutWriteBarrier(initialValue);
     
     return ScopeOffset(oldSize);
 }

@@ -546,7 +546,7 @@ namespace JSC {
         RegisterID* emitResolveConstantLocal(RegisterID* dst, const Variable&);
         RegisterID* emitResolveScope(RegisterID* dst, const Variable&);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable&, ResolveMode);
-        RegisterID* emitPutToScope(RegisterID* scope, const Variable&, RegisterID* value, ResolveMode);
+        RegisterID* emitPutToScope(RegisterID* scope, const Variable&, RegisterID* value, ResolveMode, InitializationMode);
         RegisterID* initializeVariable(const Variable&, RegisterID* value);
 
         PassRefPtr<Label> emitLabel(Label*);

@@ -1,3 +1,13 @@
+2015-09-03  Saam barati  <sbarati@apple.com>
+
+        Block scoped variables should be visible across scripts
+        https://bugs.webkit.org/show_bug.cgi?id=147813
+
+        Reviewed by Filip Pizlo.
+
+        * js/dom/const-expected.txt:
+        * js/dom/const.html:
+
 2015-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         MutationObserver should accept attributeFilter, attributeOldValue, and characterDataOldValue on their own

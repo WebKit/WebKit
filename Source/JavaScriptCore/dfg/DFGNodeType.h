@@ -207,7 +207,8 @@ namespace JSC { namespace DFG {
     macro(GetClosureVar, NodeResultJS) \
     macro(PutClosureVar, NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS) \
-    macro(PutGlobalVar, NodeMustGenerate) \
+    macro(GetGlobalLexicalVariable, NodeResultJS) \
+    macro(PutGlobalVariable, NodeMustGenerate) \
     macro(NotifyWrite, NodeMustGenerate) \
     macro(VarInjectionWatchpoint, NodeMustGenerate) \
     macro(CheckCell, NodeMustGenerate) \

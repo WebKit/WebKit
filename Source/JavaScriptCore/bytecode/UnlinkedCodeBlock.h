@@ -490,6 +490,9 @@ public:
     void setVariableDeclarations(const VariableEnvironment& environment) { m_varDeclarations = environment; }
     const VariableEnvironment& variableDeclarations() const { return m_varDeclarations; }
 
+    void setLexicalDeclarations(const VariableEnvironment& environment) { m_lexicalDeclarations = environment; }
+    const VariableEnvironment& lexicalDeclarations() const { return m_lexicalDeclarations; }
+
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
@@ -499,6 +502,7 @@ private:
     }
 
     VariableEnvironment m_varDeclarations;
+    VariableEnvironment m_lexicalDeclarations;
 
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
