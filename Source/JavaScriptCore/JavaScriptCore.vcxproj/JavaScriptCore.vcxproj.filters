@@ -4457,6 +4457,9 @@
     <ClInclude Include="..\wasm\WASMFormat.h">
       <Filter>wasm</Filter>
     </ClInclude>
+    <ClInclude Include="..\wasm\WASMFunctionCompiler.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
     <ClInclude Include="..\wasm\WASMFunctionParser.h">
       <Filter>wasm</Filter>
     </ClInclude>

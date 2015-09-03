@@ -220,6 +220,8 @@ void WASMModuleParser::parseFunctionDeclarationSection()
     READ_COMPACT_UINT32_OR_FAIL(numberOfFunctionDeclarations, "Cannot read the number of function declarations.");
     m_module->functionDeclarations().reserveInitialCapacity(numberOfFunctionDeclarations);
     m_module->functions().reserveInitialCapacity(numberOfFunctionDeclarations);
+    m_module->functionStartOffsetsInSource().reserveInitialCapacity(numberOfFunctionDeclarations);
+    m_module->functionStackHeights().reserveInitialCapacity(numberOfFunctionDeclarations);
     for (uint32_t i = 0; i < numberOfFunctionDeclarations; ++i) {
         WASMFunctionDeclaration functionDeclaration;
         READ_COMPACT_UINT32_OR_FAIL(functionDeclaration.signatureIndex, "Cannot read the signature index.");
@@ -262,8 +264,9 @@ void WASMModuleParser::parseFunctionDefinition(size_t functionIndex)
 {
     unsigned startOffsetInSource = m_reader.offset();
     unsigned endOffsetInSource;
+    unsigned stackHeight;
     String errorMessage;
-    if (!WASMFunctionParser::checkSyntax(m_module.get(), m_source, functionIndex, startOffsetInSource, endOffsetInSource, errorMessage)) {
+    if (!WASMFunctionParser::checkSyntax(m_module.get(), m_source, functionIndex, startOffsetInSource, endOffsetInSource, stackHeight, errorMessage)) {
         m_errorMessage = errorMessage;
         return;
     }
@@ -272,6 +275,8 @@ void WASMModuleParser::parseFunctionDefinition(size_t functionIndex)
     WebAssemblyExecutable* webAssemblyExecutable = WebAssemblyExecutable::create(m_vm, m_source, m_module.get(), functionIndex);
     JSFunction* function = JSFunction::create(m_vm, webAssemblyExecutable, m_globalObject.get());
     m_module->functions().uncheckedAppend(WriteBarrier<JSFunction>(m_vm, m_module.get(), function));
+    m_module->functionStartOffsetsInSource().uncheckedAppend(startOffsetInSource);
+    m_module->functionStackHeights().uncheckedAppend(stackHeight);
 }
 
 void WASMModuleParser::parseExportSection()

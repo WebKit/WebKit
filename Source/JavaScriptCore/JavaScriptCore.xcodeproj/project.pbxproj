@@ -1042,6 +1042,7 @@
 		7B0247561B8682E100542440 /* WASMFunctionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B0247531B8682D500542440 /* WASMFunctionParser.cpp */; };
 		7B0247571B8682E400542440 /* WASMFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B0247541B8682D500542440 /* WASMFunctionParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B0247591B868EB700542440 /* WASMFunctionSyntaxChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B0247581B868EAE00542440 /* WASMFunctionSyntaxChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B2E010E1B97AA6900EF5D5C /* WASMFunctionCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B2E010D1B97AA5800EF5D5C /* WASMFunctionCompiler.h */; };
 		7B39F76D1B62DE2E00360FB4 /* WASMModuleParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B39F7691B62DE2200360FB4 /* WASMModuleParser.cpp */; };
 		7B39F76E1B62DE3200360FB4 /* WASMModuleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B39F76A1B62DE2200360FB4 /* WASMModuleParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B39F7701B62DE3200360FB4 /* WASMReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B39F76C1B62DE2200360FB4 /* WASMReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2867,6 +2868,7 @@
 		7B0247531B8682D500542440 /* WASMFunctionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMFunctionParser.cpp; sourceTree = "<group>"; };
 		7B0247541B8682D500542440 /* WASMFunctionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFunctionParser.h; sourceTree = "<group>"; };
 		7B0247581B868EAE00542440 /* WASMFunctionSyntaxChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFunctionSyntaxChecker.h; sourceTree = "<group>"; };
+		7B2E010D1B97AA5800EF5D5C /* WASMFunctionCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFunctionCompiler.h; sourceTree = "<group>"; };
 		7B39F7691B62DE2200360FB4 /* WASMModuleParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMModuleParser.cpp; sourceTree = "<group>"; };
 		7B39F76A1B62DE2200360FB4 /* WASMModuleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMModuleParser.h; sourceTree = "<group>"; };
 		7B39F76C1B62DE2200360FB4 /* WASMReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMReader.h; sourceTree = "<group>"; };
@@ -4477,6 +4479,7 @@
 				7B98D1351B60CD5A0023B1A4 /* JSWASMModule.h */,
 				7B0247521B8682D500542440 /* WASMConstants.h */,
 				7BC547D21B69599B00959B58 /* WASMFormat.h */,
+				7B2E010D1B97AA5800EF5D5C /* WASMFunctionCompiler.h */,
 				7B0247531B8682D500542440 /* WASMFunctionParser.cpp */,
 				7B0247541B8682D500542440 /* WASMFunctionParser.h */,
 				7B0247581B868EAE00542440 /* WASMFunctionSyntaxChecker.h */,
@@ -6870,6 +6873,7 @@
 				0F3A1BFA1A9ECB7D000DE01A /* DFGPutStackSinkingPhase.h in Headers */,
 				451539B912DC994500EF7AC4 /* Yarr.h in Headers */,
 				86704B8512DBA33700A9FE7B /* YarrInterpreter.h in Headers */,
+				7B2E010E1B97AA6900EF5D5C /* WASMFunctionCompiler.h in Headers */,
 				86704B8712DBA33700A9FE7B /* YarrJIT.h in Headers */,
 				86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */,
 				86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */,

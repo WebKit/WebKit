@@ -65,6 +65,8 @@ public:
     Vector<WASMFunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
 
     Vector<WriteBarrier<JSFunction>>& functions() { return m_functions; }
+    Vector<unsigned>& functionStartOffsetsInSource() { return m_functionStartOffsetsInSource; }
+    Vector<unsigned>& functionStackHeights() { return m_functionStackHeights; }
 
 private:
     JSWASMModule(VM& vm, Structure* structure)
@@ -83,6 +85,8 @@ private:
     Vector<WASMFunctionPointerTable> m_functionPointerTables;
 
     Vector<WriteBarrier<JSFunction>> m_functions;
+    Vector<unsigned> m_functionStartOffsetsInSource;
+    Vector<unsigned> m_functionStackHeights;
 };
 
 } // namespace JSC

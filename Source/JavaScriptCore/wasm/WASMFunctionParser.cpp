@@ -28,9 +28,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "CCallHelpers.h"
 #include "JSWASMModule.h"
-#include "LinkBuffer.h"
+#include "WASMFunctionCompiler.h"
 #include "WASMFunctionSyntaxChecker.h"
 
 #define PROPAGATE_ERROR() do { if (!m_errorMessage.isNull()) return 0; } while (0)
@@ -47,7 +46,7 @@
 
 namespace JSC {
 
-bool WASMFunctionParser::checkSyntax(JSWASMModule* module, const SourceCode& source, size_t functionIndex, unsigned startOffsetInSource, unsigned& endOffsetInSource, String& errorMessage)
+bool WASMFunctionParser::checkSyntax(JSWASMModule* module, const SourceCode& source, size_t functionIndex, unsigned startOffsetInSource, unsigned& endOffsetInSource, unsigned& stackHeight, String& errorMessage)
 {
     WASMFunctionParser parser(module, source, functionIndex);
     WASMFunctionSyntaxChecker syntaxChecker;
@@ -58,28 +57,17 @@ bool WASMFunctionParser::checkSyntax(JSWASMModule* module, const SourceCode& sou
         return false;
     }
     endOffsetInSource = parser.m_reader.offset();
+    stackHeight = syntaxChecker.stackHeight();
     return true;
 }
 
-void WASMFunctionParser::compile(VM& vm, CodeBlock* codeBlock, JSWASMModule* module, const SourceCode&, size_t functionIndex)
+void WASMFunctionParser::compile(VM& vm, CodeBlock* codeBlock, JSWASMModule* module, const SourceCode& source, size_t functionIndex)
 {
-    // FIXME: Actually compile the code.
-    CCallHelpers jit(&vm, codeBlock);
-    MacroAssembler::Label beginLabel = jit.label();
-    jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(0))), GPRInfo::returnValueGPR);
-    jit.ret();
-    MacroAssembler::Label arityCheck = jit.label();
-    jit.jump(beginLabel);
-
-    LinkBuffer patchBuffer(vm, jit, codeBlock, JITCompilationMustSucceed);
-    MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(arityCheck);
-    MacroAssembler::CodeRef result = FINALIZE_CODE(patchBuffer, ("Baseline JIT code for WebAssembly"));
-    codeBlock->setJITCode(adoptRef(new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
-    codeBlock->capabilityLevel();
-
-    uint32_t signatureIndex = module->functionDeclarations()[functionIndex].signatureIndex;
-    const WASMSignature& signature = module->signatures()[signatureIndex];
-    codeBlock->setNumParameters(1 + signature.arguments.size());
+    WASMFunctionParser parser(module, source, functionIndex);
+    WASMFunctionCompiler compiler(vm, codeBlock, module->functionStackHeights()[functionIndex]);
+    parser.m_reader.setOffset(module->functionStartOffsetsInSource()[functionIndex]);
+    parser.parseFunction(compiler);
+    ASSERT(parser.m_errorMessage.isNull());
 }
 
 template <class Context>
@@ -102,7 +90,12 @@ bool WASMFunctionParser::parseFunction(Context& context)
     for (uint32_t i = 0; i < m_numberOfF64LocalVariables; ++i)
         m_localTypes.append(WASMType::F64);
 
+    context.startFunction(arguments, m_numberOfI32LocalVariables, m_numberOfF32LocalVariables, m_numberOfF64LocalVariables);
+
     parseBlockStatement(context);
+    PROPAGATE_ERROR();
+
+    context.endFunction();
     return true;
 }
 

@@ -1,3 +1,47 @@
+2015-09-03  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Initial implementation of WebAssembly function compiler
+        https://bugs.webkit.org/show_bug.cgi?id=148734
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces WASMFunctionCompiler, a class for generating
+        baseline JIT code for WebAssembly functions. The source for each
+        WebAssembly function is parsed in two passes.
+        - The first pass is done by WASMFunctionSyntaxChecker when the
+          WebAssembly module is initialized. It validates the syntax,
+          determines the start and the end offsets in the source, and
+          calculates the stack height of the function.
+        - The second pass is done by WASMFunctionCompiler when the function
+          is about to be executed.
+        This patch doesn't calculate the correct stack height nor generate
+        the correct code. That will be done in a subsequent patch.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/JSWASMModule.h:
+        (JSC::JSWASMModule::functionStartOffsetsInSource):
+        (JSC::JSWASMModule::functionStackHeights):
+        * wasm/WASMFunctionCompiler.h: Added.
+        (JSC::WASMFunctionCompiler::WASMFunctionCompiler):
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::endFunction):
+        (JSC::WASMFunctionCompiler::throwStackOverflowError):
+        (JSC::WASMFunctionCompiler::localAddress):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::checkSyntax):
+        (JSC::WASMFunctionParser::compile):
+        (JSC::WASMFunctionParser::parseFunction):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::startFunction):
+        (JSC::WASMFunctionSyntaxChecker::endFunction):
+        (JSC::WASMFunctionSyntaxChecker::stackHeight):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::parseFunctionDeclarationSection):
+        (JSC::WASMModuleParser::parseFunctionDefinition):
+
 2015-09-03  Saam barati  <sbarati@apple.com>
 
         Block scoped variables should be visible across scripts

@@ -34,6 +34,19 @@ class WASMFunctionSyntaxChecker {
 public:
     typedef int Expression;
     typedef int Statement;
+
+    void startFunction(const Vector<WASMType>& arguments, uint32_t numberOfI32LocalVariables, uint32_t numberOfF32LocalVariables, uint32_t numberOfF64LocalVariables)
+    {
+        // FIXME: Need to include the number of temporaries used.
+        m_stackHeight = arguments.size() + numberOfI32LocalVariables + numberOfF32LocalVariables + numberOfF64LocalVariables;
+    }
+
+    void endFunction() { }
+
+    unsigned stackHeight() { return m_stackHeight; }
+
+private:
+    unsigned m_stackHeight;
 };
 
 } // namespace JSC

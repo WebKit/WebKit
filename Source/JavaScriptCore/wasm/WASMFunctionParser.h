@@ -42,7 +42,7 @@ class VM;
 
 class WASMFunctionParser {
 public:
-    static bool checkSyntax(JSWASMModule*, const SourceCode&, size_t functionIndex, unsigned startOffsetInSource, unsigned& endOffsetInSource, String& errorMessage);
+    static bool checkSyntax(JSWASMModule*, const SourceCode&, size_t functionIndex, unsigned startOffsetInSource, unsigned& endOffsetInSource, unsigned& stackHeight, String& errorMessage);
     static void compile(VM&, CodeBlock*, JSWASMModule*, const SourceCode&, size_t functionIndex);
 
 private:
