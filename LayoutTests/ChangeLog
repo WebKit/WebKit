@@ -1,3 +1,15 @@
+2015-09-03  Chris Dumez  <cdumez@apple.com>
+
+        document.createEvent("eventname") should do a case-insensitive match on the event name
+        https://bugs.webkit.org/show_bug.cgi?id=148738
+        <rdar://problem/22558709>
+
+        Reviewed by Andreas Kling.
+
+        Rebaseline test now that some checks are passing.
+
+        * http/tests/w3c/dom/nodes/Document-createEvent-expected.txt:
+
 2015-09-03  Saam barati  <sbarati@apple.com>
 
         Block scoped variables should be visible across scripts
