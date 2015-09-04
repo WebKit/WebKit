@@ -1432,6 +1432,16 @@ public:
         UNREACHABLE_FOR_PLATFORM();
     }
 
+    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
+    {
+        ARMAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
+
+    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
+    {
+        ARMAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
+
 #if ENABLE(MASM_PROBE)
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
 #endif // ENABLE(MASM_PROBE)
@@ -1481,15 +1491,6 @@ private:
         ARMAssembler::linkCall(code, call.m_label, function.value());
     }
 
-    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
-    {
-        ARMAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
-    }
-
-    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
-    {
-        ARMAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
-    }
 
 #if ENABLE(MASM_PROBE)
     inline TrustedImm32 trustedImm32FromPtr(void* ptr)
