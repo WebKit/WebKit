@@ -1,0 +1,8 @@
+Tests if the volume slider thumb is rendered properly when the volume is uninitialized but media is muted.
+
+
+EXPECTED (video.volume == '1') OK
+EXPECTED (video.muted == 'true') OK
+EXPECTED (volumeSlider.value == '0') OK
+END OF TEST
+

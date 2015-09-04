@@ -1,3 +1,75 @@
+2015-09-04  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; enabling media/ and http/tests/media/ tests (with expected failures) on ios-simulator
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/http/tests/media/hls/video-controls-live-stream-expected.txt: Added.
+        * platform/ios-simulator/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Added.
+        * platform/ios-simulator/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt: Added.
+        * platform/ios-simulator/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt: Added.
+        * platform/ios-simulator/media/audio-controls-rendering-expected.png: Added.
+        * platform/ios-simulator/media/audio-controls-rendering-expected.txt: Added.
+        * platform/ios-simulator/media/audio-repaint-expected.txt: Added.
+        * platform/ios-simulator/media/controls-after-reload-expected.png: Added.
+        * platform/ios-simulator/media/controls-after-reload-expected.txt: Added.
+        * platform/ios-simulator/media/controls-layout-direction-expected.png: Added.
+        * platform/ios-simulator/media/controls-strict-expected.png: Added.
+        * platform/ios-simulator/media/controls-strict-expected.txt: Added.
+        * platform/ios-simulator/media/controls-strict-mode-expected.txt: Added.
+        * platform/ios-simulator/media/controls-styling-expected.png: Added.
+        * platform/ios-simulator/media/controls-styling-expected.txt: Added.
+        * platform/ios-simulator/media/controls-styling-strict-expected.png: Added.
+        * platform/ios-simulator/media/controls-styling-strict-expected.txt: Added.
+        * platform/ios-simulator/media/controls-without-preload-expected.png: Added.
+        * platform/ios-simulator/media/controls-without-preload-expected.txt: Added.
+        * platform/ios-simulator/media/encrypted-media/encrypted-media-can-play-type-expected.txt: Added.
+        * platform/ios-simulator/media/media-can-play-wav-audio-expected.txt: Added.
+        * platform/ios-simulator/media/media-can-play-webm-expected.txt: Added.
+        * platform/ios-simulator/media/media-controls-clone-expected.png: Added.
+        * platform/ios-simulator/media/media-controls-clone-expected.txt: Added.
+        * platform/ios-simulator/media/media-document-audio-repaint-expected.png: Added.
+        * platform/ios-simulator/media/track/track-cue-rendering-horizontal-expected.png: Added.
+        * platform/ios-simulator/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/ios-simulator/media/track/track-cue-rendering-vertical-expected.png: Added.
+        * platform/ios-simulator/media/track/track-cue-rendering-vertical-expected.txt: Added.
+        * platform/ios-simulator/media/track/track-in-band-subtitles-too-large-expected.png: Added.
+        * platform/ios-simulator/media/video-aspect-ratio-expected.png: Added.
+        * platform/ios-simulator/media/video-aspect-ratio-expected.txt: Added.
+        * platform/ios-simulator/media/video-canvas-alpha-expected.png: Added.
+        * platform/ios-simulator/media/video-canvas-drawing-expected.png: Added.
+        * platform/ios-simulator/media/video-colorspace-yuv420-expected.png: Added.
+        * platform/ios-simulator/media/video-colorspace-yuv422-expected.png: Added.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-expected.txt: Added.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-hide-on-click-expected.txt: Added.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-localized-expected.txt: Added.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles-expected.txt: Added.
+        * platform/ios-simulator/media/video-controls-captions-trackmenu-sorted-expected.txt: Added.
+        * platform/ios-simulator/media/video-controls-no-scripting-expected.txt: Added.
+        * platform/ios-simulator/media/video-controls-rendering-expected.png: Added.
+        * platform/ios-simulator/media/video-controls-rendering-expected.txt: Added.
+        * platform/ios-simulator/media/video-display-toggle-expected.png: Added.
+        * platform/ios-simulator/media/video-display-toggle-expected.txt: Added.
+        * platform/ios-simulator/media/video-empty-source-expected.png: Added.
+        * platform/ios-simulator/media/video-empty-source-expected.txt: Added.
+        * platform/ios-simulator/media/video-frame-accurate-seek-expected.png: Added.
+        * platform/ios-simulator/media/video-layer-crash-expected.png: Added.
+        * platform/ios-simulator/media/video-layer-crash-expected.txt: Added.
+        * platform/ios-simulator/media/video-no-audio-expected.png: Added.
+        * platform/ios-simulator/media/video-no-audio-expected.txt: Added.
+        * platform/ios-simulator/media/video-playing-and-pause-expected.png: Added.
+        * platform/ios-simulator/media/video-playing-and-pause-expected.txt: Added.
+        * platform/ios-simulator/media/video-remove-insert-repaints-expected.png: Added.
+        * platform/ios-simulator/media/video-replaces-poster-expected.png: Added.
+        * platform/ios-simulator/media/video-transformed-expected.png: Added.
+        * platform/ios-simulator/media/video-transformed-expected.txt: Added.
+        * platform/ios-simulator/media/video-volume-slider-expected.png: Added.
+        * platform/ios-simulator/media/video-volume-slider-expected.txt: Added.
+        * platform/ios-simulator/media/video-zoom-controls-expected.png: Added.
+        * platform/ios-simulator/media/video-zoom-controls-expected.txt: Added.
+        * platform/ios-simulator/media/video-zoom-expected.png: Added.
+        * platform/ios-simulator/media/video-zoom-expected.txt: Added.
+        * platform/ios-simulator/media/volume-bar-empty-when-muted-expected.txt: Added.
+
 2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Test RuntimeAgent.parse, detecting if a script parse error is recoverable
