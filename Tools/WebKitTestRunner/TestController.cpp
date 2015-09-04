@@ -1211,6 +1211,11 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
         }
 
 #if PLATFORM(MAC)
+        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceClick")) {
+            m_eventSenderProxy->mouseForceClick();
+            return 0;
+        }
+
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceDown")) {
             m_eventSenderProxy->mouseForceDown();
             return 0;

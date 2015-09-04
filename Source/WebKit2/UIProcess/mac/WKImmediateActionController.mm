@@ -173,10 +173,10 @@ using namespace WebKit;
 
     _page->setMaintainsInactiveSelection(true);
 
-    _page->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
-
     _state = ImmediateActionState::Pending;
     immediateActionRecognizer.animationController = nil;
+
+    _page->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
 }
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer

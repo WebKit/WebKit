@@ -29,6 +29,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(GTK)
@@ -37,6 +38,10 @@
 #include <wtf/HashSet.h>
 #elif PLATFORM(EFL)
 #include "EWebKit2.h"
+#endif
+
+#if PLATFORM(COCOA)
+OBJC_CLASS NSEvent;
 #endif
 
 namespace WTR {
@@ -61,6 +66,7 @@ public:
     void mouseForceDown();
     void mouseForceUp();
     void mouseForceChanged(float);
+    void mouseForceClick();
     void mouseMoveTo(double x, double y);
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum);
@@ -94,6 +100,14 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
     void replaySavedEvents();
+#endif
+
+    void sendMouseDownToStartPressureEvents();
+#if PLATFORM(COCOA)
+    enum class PressureChangeDirection { Increasing, Decreasing };
+    RetainPtr<NSEvent> beginPressureEvent(int stage);
+    RetainPtr<NSEvent> pressureChangeEvent(int stage, PressureChangeDirection);
+    RetainPtr<NSEvent> pressureChangeEvent(int stage, float pressure, PressureChangeDirection);
 #endif
 
 #if PLATFORM(GTK)

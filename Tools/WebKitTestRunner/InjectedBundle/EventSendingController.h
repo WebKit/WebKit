@@ -46,6 +46,7 @@ public:
     void mouseDown(int button, JSValueRef modifierArray);
     void mouseUp(int button, JSValueRef modifierArray);
     void mouseMoveTo(int x, int y);
+    void mouseForceClick();
     void mouseForceDown();
     void mouseForceUp();
     void mouseForceChanged(double force);

@@ -1,3 +1,65 @@
+2015-09-04  Beth Dakin  <bdakin@apple.com>
+
+        Need to be able to test default behaviors on force click
+        https://bugs.webkit.org/show_bug.cgi?id=148758
+
+        Reviewed by Tim Horton.
+
+        This patch adds a new eventSender method to do a full, completed force click, 
+        and it re-works all of the existing force methods to dispatch their events in 
+        such a way that they will trigger the NSImmediateAction gesture recognizer. 
+        To do this, first we need to send the events to the app rather than straight 
+        to the view, and also needed to tweak some state and send the events in a 
+        delayed fashion.
+
+        New public function mouseForceClick() and private helper functions to make 
+        NSEvents.
+        * WebKitTestRunner/EventSenderProxy.h:
+
+        New public function mouseForceClick().
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseMoveTo):
+        (WTR::EventSendingController::mouseForceClick):
+        (WTR::EventSendingController::mouseForceDown):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+
+        initPressureEventAtLocation needs to take a stageTransition and a window.
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:stageTransition:phase:time:eventNumber:window:]):
+        (-[EventSenderSyntheticEvent stageTransition]):
+        (-[EventSenderSyntheticEvent timestamp]):
+        (-[EventSenderSyntheticEvent _cgsEventRecord]):
+        (-[EventSenderSyntheticEvent window]):
+
+        In order to enter the gesture recognizer, we need to start with a mouse down 
+        that has a NSEventMaskPressure modifier.
+        (WTR::EventSenderProxy::sendMouseDownToStartPressureEvents):
+
+        This ensures that the events queue properly for the force monitor in AppKit.
+        (WTR::spinRunLoopForForce):
+
+         We need to start the pressure change events with a began.
+        (WTR::EventSenderProxy::beginPressureEvent):
+
+        These functions can be used to create the NSEvent for a pressure change every 
+        time we need one.
+        (WTR::EventSenderProxy::pressureChangeEvent):
+
+        Send the right series of events to emulate a full, completed force click.
+        (WTR::EventSenderProxy::mouseForceClick):
+
+        Use all of the new things for these existing functions.
+        (WTR::EventSenderProxy::mouseForceDown):
+        (WTR::EventSenderProxy::mouseForceUp):
+        (WTR::EventSenderProxy::mouseForceChanged):
+
+        Set NSFakeForceTouchDevice to YES.
+        * WebKitTestRunner/mac/main.mm:
+        (setDefaultsToConsistentValuesForTesting):
+
 2015-09-04  Jason Marcell  <jmarcell@apple.com>
 
         prepare-ChangeLog needs to know how to parse Swift files.

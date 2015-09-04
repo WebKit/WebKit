@@ -39,4 +39,8 @@ enum {
 
 #endif
 
+@interface NSEvent (ForTestRunner)
+- (void)_postDelayed;
+@end
+
 #endif
