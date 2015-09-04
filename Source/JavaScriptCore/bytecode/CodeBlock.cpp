@@ -2690,11 +2690,7 @@ void CodeBlock::finalizeUnconditionally()
 
         for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
             StructureStubInfo& stubInfo = **iter;
-            
-            if (stubInfo.visitWeakReferences(*vm()))
-                continue;
-            
-            resetStubDuringGCInternal(stubInfo);
+            stubInfo.visitWeakReferences(this);
         }
     }
 #endif
@@ -2772,46 +2768,6 @@ CallLinkInfo* CodeBlock::addCallLinkInfo()
 {
     ConcurrentJITLocker locker(m_lock);
     return m_callLinkInfos.add();
-}
-
-void CodeBlock::resetStub(StructureStubInfo& stubInfo)
-{
-    if (stubInfo.accessType == access_unset)
-        return;
-    
-    ConcurrentJITLocker locker(m_lock);
-    
-    resetStubInternal(stubInfo);
-}
-
-void CodeBlock::resetStubInternal(StructureStubInfo& stubInfo)
-{
-    AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
-    
-    if (Options::verboseOSR()) {
-        // This can be called from GC destructor calls, so we don't try to do a full dump
-        // of the CodeBlock.
-        dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", RawPointer(this), ".\n");
-    }
-    
-    RELEASE_ASSERT(JITCode::isJIT(jitType()));
-    
-    if (isGetByIdAccess(accessType))
-        resetGetByID(this, stubInfo);
-    else if (isPutByIdAccess(accessType))
-        resetPutByID(this, stubInfo);
-    else {
-        RELEASE_ASSERT(isInAccess(accessType));
-        resetIn(this, stubInfo);
-    }
-    
-    stubInfo.reset();
-}
-
-void CodeBlock::resetStubDuringGCInternal(StructureStubInfo& stubInfo)
-{
-    resetStubInternal(stubInfo);
-    stubInfo.resetByGC = true;
 }
 
 CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(unsigned index)

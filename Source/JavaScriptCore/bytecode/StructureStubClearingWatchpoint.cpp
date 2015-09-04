@@ -51,7 +51,8 @@ void StructureStubClearingWatchpoint::fireInternal(const FireDetail&)
         // This will implicitly cause my own demise: stub reset removes all watchpoints.
         // That works, because deleting a watchpoint removes it from the set's list, and
         // the set's list traversal for firing is robust against the set changing.
-        m_holder.codeBlock()->resetStub(*m_holder.stubInfo());
+        ConcurrentJITLocker locker(m_holder.codeBlock()->m_lock);
+        m_holder.stubInfo()->reset(m_holder.codeBlock());
         return;
     }
 

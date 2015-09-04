@@ -29,6 +29,7 @@
 #include "JSObject.h"
 #include "PolymorphicGetByIdList.h"
 #include "PolymorphicPutByIdList.h"
+#include "Repatch.h"
 
 namespace JSC {
 
@@ -63,46 +64,75 @@ void StructureStubInfo::deref()
     }
 }
 
-bool StructureStubInfo::visitWeakReferences(VM& vm)
+void StructureStubInfo::reset(CodeBlock* codeBlock)
 {
+    if (accessType == access_unset)
+        return;
+    
+    if (Options::verboseOSR()) {
+        // This can be called from GC destructor calls, so we don't try to do a full dump
+        // of the CodeBlock.
+        dataLog("Clearing structure cache (kind ", static_cast<int>(accessType), ") in ", RawPointer(codeBlock), ".\n");
+    }
+    
+    if (isGetByIdAccess(static_cast<AccessType>(accessType)))
+        resetGetByID(codeBlock, *this);
+    else if (isPutByIdAccess(static_cast<AccessType>(accessType)))
+        resetPutByID(codeBlock, *this);
+    else {
+        RELEASE_ASSERT(isInAccess(static_cast<AccessType>(accessType)));
+        resetIn(codeBlock, *this);
+    }
+    
+    deref();
+    accessType = access_unset;
+    stubRoutine = nullptr;
+    watchpoints = nullptr;
+}
+
+void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
+{
+    VM& vm = *codeBlock->vm();
+    
     switch (accessType) {
     case access_get_by_id_self:
-        if (!Heap::isMarked(u.getByIdSelf.baseObjectStructure.get()))
-            return false;
+        if (Heap::isMarked(u.getByIdSelf.baseObjectStructure.get()))
+            return;
         break;
     case access_get_by_id_list: {
-        if (!u.getByIdList.list->visitWeak(vm))
-            return false;
+        if (u.getByIdList.list->visitWeak(vm))
+            return;
         break;
     }
     case access_put_by_id_transition_normal:
     case access_put_by_id_transition_direct:
-        if (!Heap::isMarked(u.putByIdTransition.previousStructure.get())
-            || !Heap::isMarked(u.putByIdTransition.structure.get()))
-            return false;
-        if (!ObjectPropertyConditionSet::fromRawPointer(u.putByIdTransition.rawConditionSet).areStillLive())
-            return false;
+        if (Heap::isMarked(u.putByIdTransition.previousStructure.get())
+            && Heap::isMarked(u.putByIdTransition.structure.get())
+            && ObjectPropertyConditionSet::fromRawPointer(u.putByIdTransition.rawConditionSet).areStillLive())
+            return;
         break;
     case access_put_by_id_replace:
-        if (!Heap::isMarked(u.putByIdReplace.baseObjectStructure.get()))
-            return false;
+        if (Heap::isMarked(u.putByIdReplace.baseObjectStructure.get()))
+            return;
         break;
     case access_put_by_id_list:
-        if (!u.putByIdList.list->visitWeak(vm))
-            return false;
+        if (u.putByIdList.list->visitWeak(vm))
+            return;
         break;
     case access_in_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.inList.structureList;
-        if (!polymorphicStructures->visitWeak(u.inList.listSize))
-            return false;
+        if (polymorphicStructures->visitWeak(u.inList.listSize))
+            return;
         break;
     }
     default:
         // The rest of the instructions don't require references, so there is no need to
         // do anything.
-        break;
+        return;
     }
-    return true;
+
+    reset(codeBlock);
+    resetByGC = true;
 }
 #endif
 

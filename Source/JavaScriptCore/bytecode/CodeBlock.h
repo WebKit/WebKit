@@ -215,8 +215,6 @@ public:
     // stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
 
-    void resetStub(StructureStubInfo&);
-
     ByValInfo* addByValInfo();
 
     CallLinkInfo* addCallLinkInfo();
@@ -980,10 +978,6 @@ private:
 
     void insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruction, 0, UnsafeVectorOverflow>&);
 
-#if ENABLE(JIT)
-    void resetStubInternal(StructureStubInfo&);
-    void resetStubDuringGCInternal(StructureStubInfo&);
-#endif
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;
     union {

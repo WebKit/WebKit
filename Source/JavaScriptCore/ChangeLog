@@ -1,3 +1,42 @@
+2015-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        StructureStubInfo should be able to reset itself without going through CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=148743
+
+        Reviewed by Geoffrey Garen.
+
+        We had some resetStub...() methods in CodeBlock that didn't really do anything that
+        StructureStubInfo couldn't do by itself. It makes sense for the functionality to reset a
+        stub to be in the stub class, not in CodeBlock.
+
+        It's still true that:
+
+        - In order to mess with a StructureStubInfo, you either have to be in GC or you have to
+          be holding the owning CodeBlock's lock.
+
+        - StructureStubInfo doesn't remember which CodeBlock owns it (to save space), and all
+          of the callers of StructureStubInfo methods know which CodeBlock own it. So, many stub
+          methods take CodeBlock* as an argument.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::addCallLinkInfo):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::resetStub): Deleted.
+        (JSC::CodeBlock::resetStubInternal): Deleted.
+        (JSC::CodeBlock::resetStubDuringGCInternal): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initInList):
+        (JSC::StructureStubInfo::seenOnce):
+        (JSC::StructureStubInfo::reset): Deleted.
+
 2015-09-03  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement some arithmetic instructions in WebAssembly

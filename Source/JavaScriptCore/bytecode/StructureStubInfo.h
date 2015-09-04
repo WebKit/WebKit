@@ -147,25 +147,13 @@ struct StructureStubInfo {
         u.inList.listSize = listSize;
     }
         
-    void reset()
-    {
-        deref();
-        accessType = access_unset;
-        stubRoutine = nullptr;
-        watchpoints = nullptr;
-    }
+    void reset(CodeBlock*);
 
     void deref();
 
-    // Check if the stub has weak references that are dead. If there are dead ones that imply
-    // that the stub should be entirely reset, this should return false. If there are dead ones
-    // that can be handled internally by the stub and don't require a full reset, then this
-    // should reset them and return true. If there are no dead weak references, return true.
-    // If this method returns true it means that it has left the stub in a state where all
-    // outgoing GC pointers are known to point to currently marked objects; this method is
-    // allowed to accomplish this by either clearing those pointers somehow or by proving that
-    // they have already been marked. It is not allowed to mark new objects.
-    bool visitWeakReferences(VM&);
+    // Check if the stub has weak references that are dead. If it does, then it resets itself,
+    // either entirely or just enough to ensure that those dead pointers don't get used anymore.
+    void visitWeakReferences(CodeBlock*);
         
     bool seenOnce()
     {
