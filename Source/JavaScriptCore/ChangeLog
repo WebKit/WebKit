@@ -1,3 +1,57 @@
+2015-08-25  Basile Clement  <basile_clement@apple.com>
+
+        Get rid of FTLValueFormat
+        https://bugs.webkit.org/show_bug.cgi?id=148448
+
+        Reviewed by Michael Saboff.
+
+        FTL::ValueFormat is nothing more than DataFormat (and is actually
+        slightly less). Let's get rid of it.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/DataFormat.cpp: Renamed from Source/JavaScriptCore/ftl/FTLValueFormat.h.
+        (WTF::printInternal):
+        * bytecode/DataFormat.h:
+        * ftl/FTLAvailableRecovery.h:
+        (JSC::FTL::AvailableRecovery::AvailableRecovery):
+        (JSC::FTL::AvailableRecovery::format):
+        * ftl/FTLExitArgument.h:
+        (JSC::FTL::ExitArgument::ExitArgument):
+        (JSC::FTL::ExitArgument::operator!):
+        (JSC::FTL::ExitArgument::format):
+        (JSC::FTL::ExitArgument::withFormat):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dataFormat):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::recovery):
+        (JSC::FTL::ExitValue::recoveryFormat):
+        * ftl/FTLFormattedValue.h:
+        (JSC::FTL::FormattedValue::FormattedValue):
+        (JSC::FTL::FormattedValue::operator!):
+        (JSC::FTL::FormattedValue::format):
+        (JSC::FTL::int32Value):
+        (JSC::FTL::booleanValue):
+        (JSC::FTL::jsValueValue):
+        (JSC::FTL::doubleValue):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::convertDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitArgument):
+        (JSC::FTL::DFG::LowerDFGToLLVM::addAvailableRecovery):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::OSRExit):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+        (JSC::FTL::compileRecovery):
+        (JSC::FTL::compileStub):
+        * ftl/FTLValueFormat.cpp: Removed.
+
 2015-09-04  Basile Clement  <basile_clement@apple.com>
 
         Introduce RegisterMap<T>

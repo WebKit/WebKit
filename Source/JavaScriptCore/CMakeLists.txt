@@ -87,6 +87,7 @@ set(JavaScriptCore_SOURCES
     bytecode/CodeOrigin.cpp
     bytecode/CodeType.cpp
     bytecode/ComplexGetStatus.cpp
+    bytecode/DataFormat.cpp
     bytecode/DFGExitProfile.cpp
     bytecode/DeferredCompilationCallback.cpp
     bytecode/DeferredSourceDump.cpp
@@ -908,7 +909,6 @@ if (ENABLE_FTL_JIT)
         ftl/FTLState.cpp
         ftl/FTLThunks.cpp
         ftl/FTLUnwindInfo.cpp
-        ftl/FTLValueFormat.cpp
         ftl/FTLValueRange.cpp
 
         llvm/InitializeLLVM.cpp

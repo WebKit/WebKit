@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLValueFormat_h
-#define FTLValueFormat_h
+#include "config.h"
+#include "DataFormat.h"
 
-#if ENABLE(FTL_JIT)
-
-#include "GPRInfo.h"
+#include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
-
-namespace JSC {
-
-class AssemblyHelpers;
-
-namespace FTL {
-
-// Note that this is awkwardly similar to DataFormat in other parts of JSC, except that
-// unlike DataFormat and like ValueRecovery, it distinguishes between UInt32 and Int32.
-
-enum ValueFormat {
-    InvalidValueFormat,
-    ValueFormatInt32,
-    ValueFormatInt52,
-    ValueFormatStrictInt52,
-    ValueFormatBoolean,
-    ValueFormatJSValue,
-    ValueFormatDouble
-};
-
-void reboxAccordingToFormat(
-    ValueFormat, AssemblyHelpers&, GPRReg value, GPRReg scratch1, GPRReg scratch2);
-
-} } // namespace JSC::FTL
 
 namespace WTF {
 
-void printInternal(PrintStream&, JSC::FTL::ValueFormat);
+void printInternal(PrintStream& out, JSC::DataFormat dataFormat)
+{
+    out.print(dataFormatToString(dataFormat));
+}
 
 } // namespace WTF
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLValueFormat_h
-

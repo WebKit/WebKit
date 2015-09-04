@@ -28,13 +28,13 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLValueFormat.h"
+#include "DataFormat.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace FTL {
 
 struct ExitArgumentRepresentation {
-    ValueFormat format;
+    DataFormat format;
     unsigned argument;
 };
 
@@ -42,10 +42,10 @@ class ExitArgument {
 public:
     ExitArgument()
     {
-        m_representation.format = InvalidValueFormat;
+        m_representation.format = DataFormatNone;
     }
     
-    ExitArgument(ValueFormat format, unsigned argument)
+    ExitArgument(DataFormat format, unsigned argument)
     {
         m_representation.format = format;
         m_representation.argument = argument;
@@ -56,9 +56,9 @@ public:
         m_representation = representation;
     }
     
-    bool operator!() const { return m_representation.format == InvalidValueFormat; }
+    bool operator!() const { return m_representation.format == DataFormatNone; }
     
-    ValueFormat format() const
+    DataFormat format() const
     {
         ASSERT(*this);
         return m_representation.format;
@@ -70,7 +70,7 @@ public:
         return m_representation.argument;
     }
     
-    ExitArgument withFormat(ValueFormat format)
+    ExitArgument withFormat(DataFormat format)
     {
         return ExitArgument(format, argument());
     }

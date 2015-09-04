@@ -28,8 +28,8 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DataFormat.h"
 #include "FTLAbbreviations.h"
-#include "FTLValueFormat.h"
 
 namespace JSC { namespace FTL {
 
@@ -43,12 +43,12 @@ namespace JSC { namespace FTL {
 class FormattedValue {
 public:
     FormattedValue()
-        : m_format(InvalidValueFormat)
+        : m_format(DataFormatNone)
         , m_value(0)
     {
     }
     
-    FormattedValue(ValueFormat format, LValue value)
+    FormattedValue(DataFormat format, LValue value)
         : m_format(format)
         , m_value(value)
     {
@@ -56,23 +56,23 @@ public:
     
     bool operator!() const
     {
-        ASSERT((m_format == InvalidValueFormat) == !m_value);
-        return m_format == InvalidValueFormat;
+        ASSERT((m_format == DataFormatNone) == !m_value);
+        return m_format == DataFormatNone;
     }
     
-    ValueFormat format() const { return m_format; }
+    DataFormat format() const { return m_format; }
     LValue value() const { return m_value; }
 
 private:
-    ValueFormat m_format;
+    DataFormat m_format;
     LValue m_value;
 };
 
 static inline FormattedValue noValue() { return FormattedValue(); }
-static inline FormattedValue int32Value(LValue value) { return FormattedValue(ValueFormatInt32, value); }
-static inline FormattedValue booleanValue(LValue value) { return FormattedValue(ValueFormatBoolean, value); }
-static inline FormattedValue jsValueValue(LValue value) { return FormattedValue(ValueFormatJSValue, value); }
-static inline FormattedValue doubleValue(LValue value) { return FormattedValue(ValueFormatDouble, value); }
+static inline FormattedValue int32Value(LValue value) { return FormattedValue(DataFormatInt32, value); }
+static inline FormattedValue booleanValue(LValue value) { return FormattedValue(DataFormatBoolean, value); }
+static inline FormattedValue jsValueValue(LValue value) { return FormattedValue(DataFormatJS, value); }
+static inline FormattedValue doubleValue(LValue value) { return FormattedValue(DataFormatDouble, value); }
 
 } } // namespace JSC::FTL
 

@@ -326,6 +326,7 @@
     <ClCompile Include="..\bytecode\CodeOrigin.cpp" />
     <ClCompile Include="..\bytecode\CodeType.cpp" />
     <ClCompile Include="..\bytecode\ComplexGetStatus.cpp" />
+    <ClCompile Include="..\bytecode\DataFormat.cpp" />
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
     <ClCompile Include="..\bytecode\DeferredSourceDump.cpp" />
     <ClCompile Include="..\bytecode\DFGExitProfile.cpp" />
@@ -551,7 +552,6 @@
     <ClCompile Include="..\ftl\FTLState.cpp" />
     <ClCompile Include="..\ftl\FTLThunks.cpp" />
     <ClCompile Include="..\ftl\FTLUnwindInfo.cpp" />
-    <ClCompile Include="..\ftl\FTLValueFormat.cpp" />
     <ClCompile Include="..\ftl\FTLValueRange.cpp" />
     <ClCompile Include="..\heap\CodeBlockSet.cpp" />
     <ClCompile Include="..\heap\ConservativeRoots.cpp" />
@@ -1303,7 +1303,6 @@
     <ClInclude Include="..\ftl\FTLThunks.h" />
     <ClInclude Include="..\ftl\FTLTypedPointer.h" />
     <ClInclude Include="..\ftl\FTLUnwindInfo.h" />
-    <ClInclude Include="..\ftl\FTLValueFormat.h" />
     <ClInclude Include="..\ftl\FTLValueFromBlock.h" />
     <ClInclude Include="..\ftl\FTLValueRange.h" />
     <ClInclude Include="..\ftl\FTLWeight.h" />

@@ -1359,11 +1359,11 @@ private:
                 if (doesKill(m_node->child2())) {
                     addAvailableRecovery(
                         m_node->child2(), SubRecovery,
-                        m_out.extractValue(result, 0), left, ValueFormatInt32);
+                        m_out.extractValue(result, 0), left, DataFormatInt32);
                 } else if (doesKill(m_node->child1())) {
                     addAvailableRecovery(
                         m_node->child1(), SubRecovery,
-                        m_out.extractValue(result, 0), right, ValueFormatInt32);
+                        m_out.extractValue(result, 0), right, DataFormatInt32);
                 }
             } else {
                 result = m_out.subWithOverflow32(left, right);
@@ -1374,13 +1374,13 @@ private:
                     // right = left - result
                     addAvailableRecovery(
                         m_node->child2(), SubRecovery,
-                        left, m_out.extractValue(result, 0), ValueFormatInt32);
+                        left, m_out.extractValue(result, 0), DataFormatInt32);
                 } else if (doesKill(m_node->child1())) {
                     // result = left - right
                     // result + right = left
                     addAvailableRecovery(
                         m_node->child1(), AddRecovery,
-                        m_out.extractValue(result, 0), right, ValueFormatInt32);
+                        m_out.extractValue(result, 0), right, DataFormatInt32);
                 }
             }
 
@@ -1409,11 +1409,11 @@ private:
                 if (doesKill(m_node->child2())) {
                     addAvailableRecovery(
                         m_node->child2(), SubRecovery,
-                        m_out.extractValue(result, 0), left, ValueFormatInt52);
+                        m_out.extractValue(result, 0), left, DataFormatInt52);
                 } else if (doesKill(m_node->child1())) {
                     addAvailableRecovery(
                         m_node->child1(), SubRecovery,
-                        m_out.extractValue(result, 0), right, ValueFormatInt52);
+                        m_out.extractValue(result, 0), right, DataFormatInt52);
                 }
             } else {
                 result = m_out.subWithOverflow64(left, right);
@@ -1424,13 +1424,13 @@ private:
                     // right = left - result
                     addAvailableRecovery(
                         m_node->child2(), SubRecovery,
-                        left, m_out.extractValue(result, 0), ValueFormatInt52);
+                        left, m_out.extractValue(result, 0), DataFormatInt52);
                 } else if (doesKill(m_node->child1())) {
                     // result = left - right
                     // result + right = left
                     addAvailableRecovery(
                         m_node->child1(), AddRecovery,
-                        m_out.extractValue(result, 0), right, ValueFormatInt52);
+                        m_out.extractValue(result, 0), right, DataFormatInt52);
                 }
             }
 
@@ -4761,7 +4761,7 @@ private:
         DFG_ASSERT(m_graph, m_node, m_origin.exitOK);
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
-            UncountableInvalidation, InvalidValueFormat, MethodOfGettingAValueProfile(),
+            UncountableInvalidation, DataFormatNone, MethodOfGettingAValueProfile(),
             m_origin.forExit, m_origin.semantic,
             availabilityMap().m_locals.numberOfArguments(),
             availabilityMap().m_locals.numberOfLocals()));
@@ -7379,7 +7379,7 @@ private:
         LValue integerValue = m_out.fpToInt32(value);
         LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
         LValue valueNotConvertibleToInteger = m_out.doubleNotEqualOrUnordered(value, integerValueConvertedToDouble);
-        speculate(Overflow, FormattedValue(ValueFormatDouble, value), m_node, valueNotConvertibleToInteger);
+        speculate(Overflow, FormattedValue(DataFormatDouble, value), m_node, valueNotConvertibleToInteger);
 
         if (shouldCheckNegativeZero) {
             LBasicBlock valueIsZero = FTL_NEW_BLOCK(m_out, ("ConvertDoubleToInt32 on zero"));
@@ -7391,7 +7391,7 @@ private:
             LValue doubleBitcastToInt64 = m_out.bitCast(value, m_out.int64);
             LValue signBitSet = m_out.lessThan(doubleBitcastToInt64, m_out.constInt64(0));
 
-            speculate(NegativeZero, FormattedValue(ValueFormatDouble, value), m_node, signBitSet);
+            speculate(NegativeZero, FormattedValue(DataFormatDouble, value), m_node, signBitSet);
             m_out.jump(continuation);
             m_out.appendTo(continuation, lastNext);
         }
@@ -8305,35 +8305,35 @@ private:
         
         LoweredNodeValue value = m_int32Values.get(node);
         if (isValid(value))
-            return exitArgument(arguments, ValueFormatInt32, value.value());
+            return exitArgument(arguments, DataFormatInt32, value.value());
         
         value = m_int52Values.get(node);
         if (isValid(value))
-            return exitArgument(arguments, ValueFormatInt52, value.value());
+            return exitArgument(arguments, DataFormatInt52, value.value());
         
         value = m_strictInt52Values.get(node);
         if (isValid(value))
-            return exitArgument(arguments, ValueFormatStrictInt52, value.value());
+            return exitArgument(arguments, DataFormatStrictInt52, value.value());
         
         value = m_booleanValues.get(node);
         if (isValid(value)) {
             LValue valueToPass = m_out.zeroExt(value.value(), m_out.int32);
-            return exitArgument(arguments, ValueFormatBoolean, valueToPass);
+            return exitArgument(arguments, DataFormatBoolean, valueToPass);
         }
         
         value = m_jsValueValues.get(node);
         if (isValid(value))
-            return exitArgument(arguments, ValueFormatJSValue, value.value());
+            return exitArgument(arguments, DataFormatJS, value.value());
         
         value = m_doubleValues.get(node);
         if (isValid(value))
-            return exitArgument(arguments, ValueFormatDouble, value.value());
+            return exitArgument(arguments, DataFormatDouble, value.value());
 
         DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
         return ExitValue::dead();
     }
     
-    ExitValue exitArgument(ExitArgumentList& arguments, ValueFormat format, LValue value)
+    ExitValue exitArgument(ExitArgumentList& arguments, DataFormat format, LValue value)
     {
         ExitValue result = ExitValue::exitArgument(ExitArgument(format, arguments.size()));
         arguments.append(value);
@@ -8352,13 +8352,13 @@ private:
     }
 
     void addAvailableRecovery(
-        Node* node, RecoveryOpcode opcode, LValue left, LValue right, ValueFormat format)
+        Node* node, RecoveryOpcode opcode, LValue left, LValue right, DataFormat format)
     {
         m_availableRecoveries.append(AvailableRecovery(node, opcode, left, right, format));
     }
     
     void addAvailableRecovery(
-        Edge edge, RecoveryOpcode opcode, LValue left, LValue right, ValueFormat format)
+        Edge edge, RecoveryOpcode opcode, LValue left, LValue right, DataFormat format)
     {
         addAvailableRecovery(edge.node(), opcode, left, right, format);
     }

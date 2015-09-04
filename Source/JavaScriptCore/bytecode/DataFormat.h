@@ -121,6 +121,13 @@ inline bool isJSBoolean(DataFormat format)
     return isJSFormat(format, DataFormatJSBoolean);
 }
 
-}
+} // namespace JSC
+
+namespace WTF {
+
+class PrintStream;
+void printInternal(PrintStream&, JSC::DataFormat);
+
+} // namespace WTF
 
 #endif // DataFormat_h

@@ -46,6 +46,57 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
+static void reboxAccordingToFormat(
+    DataFormat format, AssemblyHelpers& jit, GPRReg value, GPRReg scratch1, GPRReg scratch2)
+{
+    switch (format) {
+    case DataFormatInt32: {
+        jit.zeroExtend32ToPtr(value, value);
+        jit.or64(GPRInfo::tagTypeNumberRegister, value);
+        break;
+    }
+
+    case DataFormatInt52: {
+        jit.rshift64(AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), value);
+        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
+        jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
+
+    case DataFormatStrictInt52: {
+        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
+        jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
+
+    case DataFormatBoolean: {
+        jit.zeroExtend32ToPtr(value, value);
+        jit.or32(MacroAssembler::TrustedImm32(ValueFalse), value);
+        break;
+    }
+
+    case DataFormatJS: {
+        // Done already!
+        break;
+    }
+
+    case DataFormatDouble: {
+        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch1);
+        jit.move64ToDouble(value, FPRInfo::fpRegT0);
+        jit.purifyNaN(FPRInfo::fpRegT0);
+        jit.boxDouble(FPRInfo::fpRegT0, value);
+        jit.move64ToDouble(scratch1, FPRInfo::fpRegT0);
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 static void compileRecovery(
     CCallHelpers& jit, const ExitValue& value, StackMaps::Record* record, StackMaps& stackmaps,
     char* registerScratch,
@@ -80,10 +131,10 @@ static void compileRecovery(
         switch (value.recoveryOpcode()) {
         case AddRecovery:
             switch (value.recoveryFormat()) {
-            case ValueFormatInt32:
+            case DataFormatInt32:
                 jit.add32(GPRInfo::regT1, GPRInfo::regT0);
                 break;
-            case ValueFormatInt52:
+            case DataFormatInt52:
                 jit.add64(GPRInfo::regT1, GPRInfo::regT0);
                 break;
             default:
@@ -93,10 +144,10 @@ static void compileRecovery(
             break;
         case SubRecovery:
             switch (value.recoveryFormat()) {
-            case ValueFormatInt32:
+            case DataFormatInt32:
                 jit.sub32(GPRInfo::regT1, GPRInfo::regT0);
                 break;
-            case ValueFormatInt52:
+            case DataFormatInt52:
                 jit.sub64(GPRInfo::regT1, GPRInfo::regT0);
                 break;
             default:
@@ -120,7 +171,7 @@ static void compileRecovery(
     }
         
     reboxAccordingToFormat(
-        value.valueFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+        value.dataFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
 }
 
 static void compileStub(
@@ -203,10 +254,10 @@ static void compileStub(
     jit.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
     
     // Do some value profiling.
-    if (exit.m_profileValueFormat != InvalidValueFormat) {
+    if (exit.m_profileDataFormat != DataFormatNone) {
         record->locations[0].restoreInto(jit, jitCode->stackmaps, registerScratch, GPRInfo::regT0);
         reboxAccordingToFormat(
-            exit.m_profileValueFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+            exit.m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
         
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
