@@ -1,3 +1,9 @@
+2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Triage some of the failures of the CSS WG's multicolumn tests imported in r189364.
+
+        * TestExpectations:
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Test Serbian ".срб" domain support
