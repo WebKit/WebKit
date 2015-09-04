@@ -1,5 +1,22 @@
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
+        Should have a test for selection behavior when force clicking text
+        https://bugs.webkit.org/show_bug.cgi?id=148832
+
+        Reviewed by Tim Horton.
+
+        * fast/events/force-click-text-selection-behavior-expected.txt: Added.
+        * fast/events/force-click-text-selection-behavior.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-mavericks/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
+2015-09-04  Beth Dakin  <bdakin@apple.com>
+
         Should have a test for selection behavior when deep clicking a link
         https://bugs.webkit.org/show_bug.cgi?id=148827
 

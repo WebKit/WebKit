@@ -288,6 +288,9 @@ fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
 fast/events/mouse-force-up.html [ Skip ]
 
+# This is a behavioral regression.
+fast/events/force-click-text-selection-behavior.html [ Failure ]
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 
