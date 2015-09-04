@@ -210,8 +210,9 @@ ContextStatement WASMFunctionParser::parseSetLocalStatement(Context& context, ui
 {
     FAIL_IF_FALSE(localIndex < m_localTypes.size(), "The local variable index is incorrect.");
     WASMType type = m_localTypes[localIndex];
-    parseExpression(context, WASMExpressionType(type));
-    // FIXME: Implement this instruction.
+    ContextExpression expression = parseExpression(context, WASMExpressionType(type));
+    PROPAGATE_ERROR();
+    context.buildSetLocal(localIndex, expression, type);
     return UNUSED;
 }
 
@@ -425,11 +426,12 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         switch (op) {
         case WASMOpExpressionI32::Immediate:
             return parseImmediateExpressionI32(context);
+        case WASMOpExpressionI32::GetLocal:
+            return parseGetLocalExpressionI32(context);
         case WASMOpExpressionI32::Add:
         case WASMOpExpressionI32::Sub:
             return parseBinaryExpressionI32(context, op);
         case WASMOpExpressionI32::ConstantPoolIndex:
-        case WASMOpExpressionI32::GetLocal:
         case WASMOpExpressionI32::GetGlobal:
         case WASMOpExpressionI32::SetLocal:
         case WASMOpExpressionI32::SetGlobal:
@@ -507,8 +509,9 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         switch (opWithImmediate) {
         case WASMOpExpressionI32WithImmediate::Immediate:
             return parseImmediateExpressionI32(context, immediate);
-        case WASMOpExpressionI32WithImmediate::ConstantPoolIndex:
         case WASMOpExpressionI32WithImmediate::GetLocal:
+            return parseGetLocalExpressionI32(context, immediate);
+        case WASMOpExpressionI32WithImmediate::ConstantPoolIndex:
             // FIXME: Implement these instructions.
             FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
@@ -530,6 +533,22 @@ ContextExpression WASMFunctionParser::parseImmediateExpressionI32(Context& conte
     uint32_t immediate;
     READ_COMPACT_UINT32_OR_FAIL(immediate, "Cannot read the immediate.");
     return parseImmediateExpressionI32(context, immediate);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseGetLocalExpressionI32(Context& context, uint32_t localIndex)
+{
+    FAIL_IF_FALSE(localIndex < m_localTypes.size(), "The local index is incorrect.");
+    FAIL_IF_FALSE(m_localTypes[localIndex] == WASMType::I32, "Expected a local of type int32.");
+    return context.buildGetLocal(localIndex, WASMType::I32);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseGetLocalExpressionI32(Context& context)
+{
+    uint32_t localIndex;
+    READ_COMPACT_UINT32_OR_FAIL(localIndex, "Cannot read the local index.");
+    return parseGetLocalExpressionI32(context, localIndex);
 }
 
 template <class Context>

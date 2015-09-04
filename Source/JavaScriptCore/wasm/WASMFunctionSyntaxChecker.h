@@ -47,6 +47,11 @@ public:
         ASSERT(!m_tempStackTop);
     }
 
+    void buildSetLocal(uint32_t, int, WASMType)
+    {
+        m_tempStackTop--;
+    }
+
     void buildReturn(int, WASMExpressionType returnType)
     {
         if (returnType != WASMExpressionType::Void)
@@ -54,6 +59,13 @@ public:
     }
 
     int buildImmediateI32(uint32_t)
+    {
+        m_tempStackTop++;
+        updateTempStackHeight();
+        return UNUSED;
+    }
+
+    int buildGetLocal(uint32_t, WASMType)
     {
         m_tempStackTop++;
         updateTempStackHeight();

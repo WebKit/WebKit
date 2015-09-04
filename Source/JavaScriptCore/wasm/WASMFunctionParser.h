@@ -80,6 +80,8 @@ private:
     template <class Context> ContextExpression parseExpressionI32(Context&);
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&, uint32_t immediate);
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&);
+    template <class Context> ContextExpression parseGetLocalExpressionI32(Context&, uint32_t localIndex);
+    template <class Context> ContextExpression parseGetLocalExpressionI32(Context&);
     template <class Context> ContextExpression parseBinaryExpressionI32(Context&, WASMOpExpressionI32);
 
     JSWASMModule* m_module;

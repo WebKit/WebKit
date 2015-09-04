@@ -127,6 +127,19 @@ public:
         m_codeBlock->capabilityLevel();
     }
 
+    void buildSetLocal(uint32_t localIndex, int, WASMType type)
+    {
+        switch (type) {
+        case WASMType::I32:
+            load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT0);
+            m_tempStackTop--;
+            store32(GPRInfo::regT0, localAddress(localIndex));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
     void buildReturn(int, WASMExpressionType returnType)
     {
         switch (returnType) {
@@ -148,6 +161,20 @@ public:
     int buildImmediateI32(uint32_t immediate)
     {
         store32(TrustedImm32(immediate), temporaryAddress(m_tempStackTop++));
+        return UNUSED;
+    }
+
+    int buildGetLocal(uint32_t localIndex, WASMType type)
+    {
+        switch (type) {
+        case WASMType::I32:
+            load32(localAddress(localIndex), GPRInfo::regT0);
+            m_tempStackTop++;
+            store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
         return UNUSED;
     }
 
