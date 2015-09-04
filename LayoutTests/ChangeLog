@@ -1,3 +1,9 @@
+2015-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add bug number for http/tests/w3c/html/semantics/document-metadata/the-style-element/html_style_in_comment.html
+
+        * TestExpectations:
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         These tests should be skipped at the LayoutTests level and re-enabled for 
