@@ -1,5 +1,14 @@
 2015-09-03  Matt Baker  <mattbaker@apple.com>
 
+        Added and updated assets for Introducing the Rendering Frames Timeline blog post.
+
+        * blog-files/rendering-frames-timeline/inspector-rendering-frames-demo.mov: Added.
+        * blog-files/rendering-frames-timeline/inspector-rendering-frames-filtering.png:
+        * blog-files/rendering-frames-timeline/inspector-rendering-frames.png:
+        * blog-files/rendering-frames-timeline/inspector-task-filters.png:
+
+2015-09-03  Matt Baker  <mattbaker@apple.com>
+
         Add assets for Introducing the Rendering Frames Timeline blog post.
 
         * blog-files/rendering-frames-timeline/inspector-15ms-filter-after-2x.png: Added.
