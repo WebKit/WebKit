@@ -1,3 +1,17 @@
+2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Range.isPointInRange check root node before verifying offset
+        https://bugs.webkit.org/show_bug.cgi?id=148776
+
+        isPointInRange should never throw WrongDocumentError
+        https://bugs.webkit.org/show_bug.cgi?id=148779
+
+        Reviewed by Darin Adler.
+
+        Rebaselined the test now that all test cases pass.
+
+        * http/tests/w3c/dom/ranges/Range-isPointInRange-expected.txt:
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         css3/flexbox/csswg/css-flexbox-height-animation-stretch.html is flaky
