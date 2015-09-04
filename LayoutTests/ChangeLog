@@ -1,3 +1,11 @@
+2015-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline http/tests/w3c/html/dom/dynamic-markup-insertion/opening-the-input-stream/007.html
+
+        This is a new test.
+
+        * http/tests/w3c/html/dom/dynamic-markup-insertion/opening-the-input-stream/007-expected.txt:
+
 2015-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Range.comparePoint shouldn't throw an exception if the range and the node are in the same detached tree

@@ -1,4 +1,4 @@
 
 
-FAIL Unregistering event handlers after document.open NotSupportedError: DOM Exception 9
+PASS Unregistering event handlers after document.open 
 
