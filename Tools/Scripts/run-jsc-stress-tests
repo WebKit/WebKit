@@ -413,6 +413,7 @@ def noisyOutputHandler
 end
 
 # Error handler for tests that fail exactly when they return non-zero exit status.
+# This is useful when a test is expected to fail.
 def simpleErrorHandler
     Proc.new {
         | outp, plan |
@@ -422,6 +423,20 @@ def simpleErrorHandler
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
+        outp.puts "fi"
+    }
+end
+
+# Error handler for tests that fail exactly when they return zero exit status.
+def expectedFailErrorHandler
+    Proc.new {
+        | outp, plan |
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    " + plan.successCommand
+        outp.puts "else"
+        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
 end
@@ -869,6 +884,19 @@ def runControlFlowProfiler
     else
         run("no-cjit-type-profiler", "--enableControlFlowProfiler=true", *NO_CJIT_OPTIONS)
     end
+end
+
+def runES6(mode)
+    args = [pathToVM.to_s] + BASE_OPTIONS + [$benchmark.to_s]
+    case mode
+    when :normal
+        errorHandler = simpleErrorHandler
+    when :fail
+        errorHandler = expectedFailErrorHandler
+    else
+        raise "Invalid mode: #{mode}"
+    end
+    addRunCommand("default", args, noisyOutputHandler, errorHandler)
 end
 
 def runLayoutTest(kind, *options)

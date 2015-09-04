@@ -283,7 +283,8 @@ sub runJSCStressTests
         "PerformanceTests/SunSpider/profiler-test.yaml",
         "LayoutTests/jsc-layout-tests.yaml",
         "Source/JavaScriptCore/tests/typeProfiler.yaml",
-        "Source/JavaScriptCore/tests/controlFlowProfiler.yaml"
+        "Source/JavaScriptCore/tests/controlFlowProfiler.yaml",
+        "Source/JavaScriptCore/tests/es6.yaml",
     );
     if (isWindows() && !isCygwin()) {
         shift @jscStressDriverCmd; # Remove /usr/bin/env

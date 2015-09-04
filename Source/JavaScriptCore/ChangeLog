@@ -1,3 +1,1494 @@
+2015-09-03  Geoffrey Garen  <ggaren@apple.com>
+
+        JavaScriptCore should have some ES6 conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=148771
+
+        Reviewed by Chris Dumez.
+
+        I created 590 independent, reduced test cases that collectively tell us
+        whether we pass or fail the conformance matrix @ http://kangax.github.io/compat-table/es6/.
+
+        * tests/es6: Added.
+        * tests/es6.yaml: Added.
+        * tests/es6/Array.prototype_methods_Array.prototype.copyWithin.js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype.entries.js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype.fill.js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype.find.js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype.findIndex.js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype.keys.js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype.values.js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype[Symbol.iterator].js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array.prototype[Symbol.unscopables].js: Added.
+        (test):
+        * tests/es6/Array.prototype_methods_Array_iterator_prototype_chain.js: Added.
+        (test):
+        * tests/es6/Array_is_subclassable_Array.from.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_Array.isArray_support.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_Array.of.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_Array.prototype.concat.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_Array.prototype.filter.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_Array.prototype.map.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_Array.prototype.slice.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_Array.prototype.splice.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_correct_prototype_chain.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_length_property_accessing.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_is_subclassable_length_property_setting.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Array_static_methods_Array.from_array-like_objects.js: Added.
+        (test):
+        * tests/es6/Array_static_methods_Array.from_generator_instances.js: Added.
+        (test.iterable):
+        (test):
+        * tests/es6/Array_static_methods_Array.from_generic_iterables.js: Added.
+        (test):
+        * tests/es6/Array_static_methods_Array.from_instances_of_generic_iterables.js: Added.
+        (test):
+        * tests/es6/Array_static_methods_Array.from_iterator_closing.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Array_static_methods_Array.from_map_function_array-like_objects.js: Added.
+        (test):
+        * tests/es6/Array_static_methods_Array.from_map_function_generator_instances.js: Added.
+        (test.iterable):
+        (test):
+        * tests/es6/Array_static_methods_Array.from_map_function_generic_iterables.js: Added.
+        (test):
+        * tests/es6/Array_static_methods_Array.from_map_function_instances_of_iterables.js: Added.
+        (test):
+        * tests/es6/Array_static_methods_Array.of.js: Added.
+        (test):
+        * tests/es6/Array_static_methods_Array[Symbol.species].js: Added.
+        (test):
+        * tests/es6/Function_is_subclassable_Function.prototype.apply.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Function_is_subclassable_Function.prototype.bind.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Function_is_subclassable_Function.prototype.call.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Function_is_subclassable_can_be_called.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Function_is_subclassable_can_be_used_with_new.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Function_is_subclassable_correct_prototype_chain.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/HTML-style_comments.js: Added.
+        (test):
+        * tests/es6/Map_-0_key_converts_to_+0.js: Added.
+        (test.set var):
+        * tests/es6/Map_Map.prototype.clear.js: Added.
+        (test):
+        * tests/es6/Map_Map.prototype.delete.js: Added.
+        (test):
+        * tests/es6/Map_Map.prototype.entries.js: Added.
+        (test):
+        * tests/es6/Map_Map.prototype.forEach.js: Added.
+        (test):
+        * tests/es6/Map_Map.prototype.keys.js: Added.
+        (test):
+        * tests/es6/Map_Map.prototype.set_returns_this.js: Added.
+        * tests/es6/Map_Map.prototype.size.js: Added.
+        * tests/es6/Map_Map.prototype.values.js: Added.
+        (test):
+        * tests/es6/Map_Map.prototype[Symbol.iterator].js: Added.
+        (test):
+        * tests/es6/Map_Map[Symbol.species].js: Added.
+        (test):
+        * tests/es6/Map_Map_iterator_prototype_chain.js: Added.
+        (test):
+        * tests/es6/Map_basic_functionality.js: Added.
+        * tests/es6/Map_constructor_accepts_null.js: Added.
+        (test):
+        * tests/es6/Map_constructor_arguments.js: Added.
+        * tests/es6/Map_constructor_invokes_set.js: Added.
+        * tests/es6/Map_constructor_requires_new.js: Added.
+        (test):
+        * tests/es6/Map_iterator_closing.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Math_methods_Math.acosh.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.asinh.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.atanh.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.cbrt.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.clz32.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.cosh.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.expm1.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.fround.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.hypot.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.imul.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.log10.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.log1p.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.log2.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.sign.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.sinh.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.tanh.js: Added.
+        (test):
+        * tests/es6/Math_methods_Math.trunc.js: Added.
+        (test):
+        * tests/es6/Number_properties_Number.EPSILON.js: Added.
+        (test):
+        * tests/es6/Number_properties_Number.MAX_SAFE_INTEGER.js: Added.
+        (test):
+        * tests/es6/Number_properties_Number.MIN_SAFE_INTEGER.js: Added.
+        (test):
+        * tests/es6/Number_properties_Number.isFinite.js: Added.
+        (test):
+        * tests/es6/Number_properties_Number.isInteger.js: Added.
+        (test):
+        * tests/es6/Number_properties_Number.isNaN.js: Added.
+        (test):
+        * tests/es6/Number_properties_Number.isSafeInteger.js: Added.
+        (test):
+        * tests/es6/Object.prototype.__proto___absent_from_Object.createnull.js: Added.
+        (test):
+        * tests/es6/Object.prototype.__proto___correct_property_descriptor.js: Added.
+        (test.A):
+        (test):
+        * tests/es6/Object.prototype.__proto___get_prototype.js: Added.
+        (test.A):
+        (test):
+        * tests/es6/Object.prototype.__proto___present_in_Object.getOwnPropertyNames.js: Added.
+        (test):
+        * tests/es6/Object.prototype.__proto___present_in_hasOwnProperty.js: Added.
+        (test):
+        * tests/es6/Object.prototype.__proto___set_prototype.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_Object.assign.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_Object.getOwnPropertySymbols.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_Object.is.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_Object.setPrototypeOf.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.freeze.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.getOwnPropertyDescriptor.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.getOwnPropertyNames.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.getPrototypeOf.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.isExtensible.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.isFrozen.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.isSealed.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.keys.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.preventExtensions.js: Added.
+        (test):
+        * tests/es6/Object_static_methods_accept_primitives_Object.seal.js: Added.
+        (test):
+        * tests/es6/Promise_Promise.all.js: Added.
+        (test):
+        * tests/es6/Promise_Promise.all_generic_iterables.js: Added.
+        (test):
+        * tests/es6/Promise_Promise.race.js: Added.
+        (test):
+        * tests/es6/Promise_Promise.race_generic_iterables.js: Added.
+        (test):
+        * tests/es6/Promise_Promise[Symbol.species].js: Added.
+        (test):
+        * tests/es6/Promise_basic_functionality.js: Added.
+        (test.thenFn):
+        (test.catchFn):
+        (test.shouldNotRun):
+        (test):
+        * tests/es6/Promise_constructor_requires_new.js: Added.
+        (test):
+        * tests/es6/Promise_is_subclassable_Promise.all.js: Added.
+        (test.P):
+        (test):
+        * tests/es6/Promise_is_subclassable_Promise.race.js: Added.
+        (test.P):
+        (test):
+        * tests/es6/Promise_is_subclassable_basic_functionality.js: Added.
+        (test.P):
+        (test):
+        (test.catchFn):
+        (test.shouldNotRun):
+        * tests/es6/Promise_is_subclassable_correct_prototype_chain.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/Proxy_Array.isArray_support.js: Added.
+        (test):
+        * tests/es6/Proxy_JSON.stringify_support.js: Added.
+        (test):
+        * tests/es6/Proxy_Proxy.revocable.js: Added.
+        (test.):
+        (test.get var):
+        (test):
+        * tests/es6/Proxy_apply_handler.js: Added.
+        (test.proxied):
+        (test.host.):
+        (test):
+        * tests/es6/Proxy_construct_handler.js: Added.
+        (test.proxied):
+        (test.):
+        (test):
+        * tests/es6/Proxy_constructor_requires_new.js: Added.
+        (test):
+        * tests/es6/Proxy_defineProperty_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_deleteProperty_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_enumerate_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_getOwnPropertyDescriptor_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_getPrototypeOf_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_get_handler.js: Added.
+        (test.):
+        * tests/es6/Proxy_get_handler_instances_of_proxies.js: Added.
+        (test.):
+        * tests/es6/Proxy_has_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_has_handler_instances_of_proxies.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_defineProperty_calls_SetIntegrityLevel.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_defineProperty_calls_[[Set]].js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_deleteProperty_calls_Array.prototype.copyWithin.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_deleteProperty_calls_Array.prototype.pop.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_deleteProperty_calls_Array.prototype.reverse.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_deleteProperty_calls_Array.prototype.shift.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_deleteProperty_calls_Array.prototype.splice.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_deleteProperty_calls_Array.prototype.unshift.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_getOwnPropertyDescriptor_calls_Function.prototype.bind.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.assign.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.prototype.hasOwnProperty.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_getOwnPropertyDescriptor_calls_[[Set]].js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_get_calls_Array.from.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_Array.prototype.concat.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_get_calls_Array.prototype.pop.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_get_calls_Array.prototype.reverse.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_get_calls_Array.prototype.shift.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_get_calls_Array.prototype.splice.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_get_calls_Array.prototype.toString.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_Array.prototype_iteration_methods.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_ClassDefinitionEvaluation.js: Added.
+        (test.):
+        (test.get var):
+        (test):
+        * tests/es6/Proxy_internal_get_calls_CreateDynamicFunction.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_get_calls_CreateListFromArrayLike.js: Added.
+        (test.get var):
+        (test.):
+        (test.get Function):
+        * tests/es6/Proxy_internal_get_calls_Date.prototype.toJSON.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_Error.prototype.toString.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_Function.prototype.bind.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_get_calls_HasBinding.js: Added.
+        (test.get var):
+        (test.):
+        (test.get p):
+        * tests/es6/Proxy_internal_get_calls_IteratorComplete_IteratorValue.js: Added.
+        (test.get var):
+        (test.iterable.Symbol.iterator.return.next.):
+        (test.iterable.Symbol.iterator.return.next):
+        (test.iterable.Symbol.iterator):
+        * tests/es6/Proxy_internal_get_calls_JSON.stringify.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_Object.assign.js: Added.
+        (test.get var):
+        (test.):
+        (test.get Object):
+        * tests/es6/Proxy_internal_get_calls_Object.defineProperties.js: Added.
+        (test.get var):
+        (test.):
+        (test.get Object):
+        * tests/es6/Proxy_internal_get_calls_Promise_resolve_functions.js: Added.
+        (test.get var):
+        (test.):
+        (test.get new):
+        * tests/es6/Proxy_internal_get_calls_RegExp.prototype.flags.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_RegExp.prototype.test.js: Added.
+        (test.get var.p.new.Proxy):
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.match].js: Added.
+        (test.get var.p.new.Proxy):
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.replace].js: Added.
+        (test.get var.p.new.Proxy):
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.search].js: Added.
+        (test.get var.p.new.Proxy):
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.split].js: Added.
+        (test.p.new.Proxy):
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_RegExp_constructor.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_String.prototype.match.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_String.prototype.replace.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_String.prototype.search.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_String.prototype.split.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_String.raw.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_ToPrimitive.js: Added.
+        (test.get var):
+        (test.):
+        * tests/es6/Proxy_internal_get_calls_ToPropertyDescriptor.js: Added.
+        (test.get var):
+        (test.):
+        (test.set get try):
+        * tests/es6/Proxy_internal_get_calls_instanceof_operator.js: Added.
+        (test.):
+        (test.get var):
+        * tests/es6/Proxy_internal_ownKeys_calls_SerializeJSONObject.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_ownKeys_calls_SetIntegrityLevel.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_ownKeys_calls_TestIntegrityLevel.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_internal_set_calls_Array.from.js: Added.
+        (test.set var):
+        (test.):
+        (test.set Array):
+        * tests/es6/Proxy_internal_set_calls_Array.of.js: Added.
+        (test.set var):
+        (test.):
+        (test.set Array):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.copyWithin.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.fill.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.pop.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.push.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.reverse.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.shift.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.splice.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Array.prototype.unshift.js: Added.
+        (test.):
+        (test.set var):
+        * tests/es6/Proxy_internal_set_calls_Object.assign.js: Added.
+        (test.set var):
+        (test.):
+        (test.set Object):
+        * tests/es6/Proxy_isExtensible_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_ownKeys_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_preventExtensions_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_setPrototypeOf_handler.js: Added.
+        (test.):
+        (test):
+        * tests/es6/Proxy_set_handler.js: Added.
+        (test.):
+        * tests/es6/Proxy_set_handler_instances_of_proxies.js: Added.
+        (test.):
+        * tests/es6/Reflect_Reflect.apply.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.construct.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.construct_creates_instance_from_newTarget_argument.js: Added.
+        (test.F):
+        (test):
+        * tests/es6/Reflect_Reflect.construct_sets_new.target_meta_property.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.defineProperty.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.deleteProperty.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.enumerate.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.get.js: Added.
+        * tests/es6/Reflect_Reflect.getOwnPropertyDescriptor.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.getPrototypeOf.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.has.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.isExtensible.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.ownKeys_string_keys.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.ownKeys_symbol_keys.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.preventExtensions.js: Added.
+        (test):
+        * tests/es6/Reflect_Reflect.set.js: Added.
+        * tests/es6/Reflect_Reflect.setPrototypeOf.js: Added.
+        (test):
+        * tests/es6/RegExp.prototype.compile.js: Added.
+        (test):
+        * tests/es6/RegExp.prototype_properties_RegExp.prototype.flags.js: Added.
+        (test):
+        * tests/es6/RegExp.prototype_properties_RegExp.prototype[Symbol.match].js: Added.
+        (test):
+        * tests/es6/RegExp.prototype_properties_RegExp.prototype[Symbol.replace].js: Added.
+        (test):
+        * tests/es6/RegExp.prototype_properties_RegExp.prototype[Symbol.search].js: Added.
+        (test):
+        * tests/es6/RegExp.prototype_properties_RegExp.prototype[Symbol.split].js: Added.
+        (test):
+        * tests/es6/RegExp.prototype_properties_RegExp[Symbol.species].js: Added.
+        (test):
+        * tests/es6/RegExp_is_subclassable_RegExp.prototype.exec.js: Added.
+        (test.R):
+        (test):
+        * tests/es6/RegExp_is_subclassable_RegExp.prototype.test.js: Added.
+        (test.R):
+        (test):
+        * tests/es6/RegExp_is_subclassable_basic_functionality.js: Added.
+        (test.R):
+        (test):
+        * tests/es6/RegExp_is_subclassable_correct_prototype_chain.js: Added.
+        (test.R):
+        (test):
+        * tests/es6/RegExp_syntax_extensions_hyphens_in_character_sets.js: Added.
+        (test):
+        * tests/es6/RegExp_syntax_extensions_incomplete_patterns_and_quantifiers.js: Added.
+        * tests/es6/RegExp_syntax_extensions_invalid_Unicode_escapes.js: Added.
+        (test):
+        * tests/es6/RegExp_syntax_extensions_invalid_backreferences_become_octal_escapes.js: Added.
+        (test):
+        * tests/es6/RegExp_syntax_extensions_invalid_character_escapes.js: Added.
+        (test):
+        * tests/es6/RegExp_syntax_extensions_invalid_control-character_escapes.js: Added.
+        (test):
+        * tests/es6/RegExp_syntax_extensions_invalid_hexadecimal_escapes.js: Added.
+        (test):
+        * tests/es6/RegExp_syntax_extensions_octal_escape_sequences.js: Added.
+        (test):
+        * tests/es6/RegExp_y_and_u_flags_u_flag.js: Added.
+        (test):
+        * tests/es6/RegExp_y_and_u_flags_u_flag_Unicode_code_point_escapes.js: Added.
+        (test):
+        * tests/es6/RegExp_y_and_u_flags_y_flag.js: Added.
+        (test):
+        * tests/es6/RegExp_y_and_u_flags_y_flag_lastIndex.js: Added.
+        (test):
+        * tests/es6/Set_-0_key_converts_to_+0.js: Added.
+        (test.set forEach):
+        * tests/es6/Set_Set.prototype.add_returns_this.js: Added.
+        * tests/es6/Set_Set.prototype.clear.js: Added.
+        (test):
+        * tests/es6/Set_Set.prototype.delete.js: Added.
+        (test):
+        * tests/es6/Set_Set.prototype.entries.js: Added.
+        (test):
+        * tests/es6/Set_Set.prototype.forEach.js: Added.
+        (test):
+        * tests/es6/Set_Set.prototype.keys.js: Added.
+        (test):
+        * tests/es6/Set_Set.prototype.size.js: Added.
+        * tests/es6/Set_Set.prototype.values.js: Added.
+        (test):
+        * tests/es6/Set_Set.prototype[Symbol.iterator].js: Added.
+        (test):
+        * tests/es6/Set_Set[Symbol.species].js: Added.
+        (test):
+        * tests/es6/Set_Set_iterator_prototype_chain.js: Added.
+        (test):
+        * tests/es6/Set_basic_functionality.js: Added.
+        * tests/es6/Set_constructor_accepts_null.js: Added.
+        (test):
+        * tests/es6/Set_constructor_arguments.js: Added.
+        * tests/es6/Set_constructor_invokes_add.js: Added.
+        (test.Set.prototype.add):
+        (test):
+        * tests/es6/Set_constructor_requires_new.js: Added.
+        (test):
+        * tests/es6/Set_iterator_closing.js: Added.
+        (test.):
+        (test.Set.prototype.add):
+        (test):
+        * tests/es6/String.prototype_HTML_methods_existence.js: Added.
+        (test):
+        * tests/es6/String.prototype_HTML_methods_quotes_in_arguments_are_escaped.js: Added.
+        (test):
+        * tests/es6/String.prototype_HTML_methods_tags_names_are_lowercase.js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String.prototype.codePointAt.js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String.prototype.endsWith.js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String.prototype.includes.js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String.prototype.normalize.js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String.prototype.repeat.js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String.prototype.startsWith.js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String.prototype[Symbol.iterator].js: Added.
+        (test):
+        * tests/es6/String.prototype_methods_String_iterator_prototype_chain.js: Added.
+        (test):
+        * tests/es6/String_static_methods_String.fromCodePoint.js: Added.
+        (test):
+        * tests/es6/String_static_methods_String.raw.js: Added.
+        (test):
+        * tests/es6/Symbol_JSON.stringify_ignores_symbols.js: Added.
+        (test):
+        * tests/es6/Symbol_Object.defineProperty_support.js: Added.
+        (test):
+        * tests/es6/Symbol_Objectsymbol.js: Added.
+        (test):
+        * tests/es6/Symbol_basic_functionality.js: Added.
+        (test):
+        * tests/es6/Symbol_can_convert_with_String.js: Added.
+        (test):
+        * tests/es6/Symbol_cannot_coerce_to_string_or_number.js: Added.
+        (test):
+        * tests/es6/Symbol_global_symbol_registry.js: Added.
+        (test):
+        * tests/es6/Symbol_new_Symbol_throws.js: Added.
+        (test):
+        * tests/es6/Symbol_symbol_keys_are_hidden_to_pre-ES6_code.js: Added.
+        (test):
+        * tests/es6/Symbol_typeof_support.js: Added.
+        (test):
+        * tests/es6/Unicode_code_point_escapes_in_identifiers.js: Added.
+        (test):
+        * tests/es6/Unicode_code_point_escapes_in_strings.js: Added.
+        (test):
+        * tests/es6/WeakMap_WeakMap.prototype.delete.js: Added.
+        (test):
+        * tests/es6/WeakMap_WeakMap.prototype.set_returns_this.js: Added.
+        * tests/es6/WeakMap_basic_functionality.js: Added.
+        * tests/es6/WeakMap_constructor_accepts_null.js: Added.
+        (test):
+        * tests/es6/WeakMap_constructor_arguments.js: Added.
+        * tests/es6/WeakMap_constructor_invokes_set.js: Added.
+        * tests/es6/WeakMap_constructor_requires_new.js: Added.
+        (test):
+        * tests/es6/WeakMap_frozen_objects_as_keys.js: Added.
+        * tests/es6/WeakMap_iterator_closing.js: Added.
+        (test.):
+        (test):
+        * tests/es6/WeakMap_no_WeakMap.prototype.clear_method.js: Added.
+        * tests/es6/WeakSet_WeakSet.prototype.add_returns_this.js: Added.
+        (test):
+        * tests/es6/WeakSet_WeakSet.prototype.delete.js: Added.
+        (test):
+        * tests/es6/WeakSet_basic_functionality.js: Added.
+        (test):
+        * tests/es6/WeakSet_constructor_accepts_null.js: Added.
+        (test):
+        * tests/es6/WeakSet_constructor_arguments.js: Added.
+        (test):
+        * tests/es6/WeakSet_constructor_invokes_add.js: Added.
+        (test.WeakSet.prototype.add):
+        (test):
+        * tests/es6/WeakSet_constructor_requires_new.js: Added.
+        (test):
+        * tests/es6/WeakSet_iterator_closing.js: Added.
+        (test.):
+        (test):
+        * tests/es6/WeakSet_no_WeakSet.prototype.clear_method.js: Added.
+        (test):
+        * tests/es6/__proto___in_object_literals_basic_support.js: Added.
+        (test):
+        * tests/es6/__proto___in_object_literals_multiple___proto___is_an_error.js: Added.
+        (test):
+        * tests/es6/__proto___in_object_literals_not_a_computed_property.js: Added.
+        (test):
+        * tests/es6/__proto___in_object_literals_not_a_shorthand_method.js: Added.
+        (test):
+        * tests/es6/__proto___in_object_literals_not_a_shorthand_property.js: Added.
+        (test):
+        * tests/es6/arrow_functions_0_parameters.js: Added.
+        (test):
+        * tests/es6/arrow_functions_1_parameter_no_brackets.js: Added.
+        (test):
+        * tests/es6/arrow_functions_cant_be_bound_can_be_curried.js: Added.
+        (test.d.y):
+        (test):
+        * tests/es6/arrow_functions_correct_precedence.js: Added.
+        (test):
+        * tests/es6/arrow_functions_lexical_arguments_binding.js: Added.
+        (test.f):
+        (test):
+        * tests/es6/arrow_functions_lexical_new.target_binding.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/arrow_functions_lexical_super_binding.js: Added.
+        (test.B.prototype.qux):
+        (test.B):
+        (test.C.prototype.baz):
+        (test.C):
+        (test):
+        * tests/es6/arrow_functions_lexical_this_binding.js: Added.
+        (test.d.y):
+        (test):
+        * tests/es6/arrow_functions_multiple_parameters.js: Added.
+        (test):
+        * tests/es6/arrow_functions_no_line_break_between_params_and_code_=_code.js: Added.
+        (test):
+        * tests/es6/arrow_functions_no_prototype_property.js: Added.
+        (test):
+        * tests/es6/arrow_functions_this_unchanged_by_call_or_apply.js: Added.
+        (test.d.y):
+        (test):
+        * tests/es6/block-level_function_declaration.js: Added.
+        (test.f):
+        (test):
+        * tests/es6/class_accessor_properties.js: Added.
+        (test.C.prototype.get foo):
+        (test.C.prototype.set bar):
+        (test.C):
+        (test):
+        * tests/es6/class_anonymous_class.js: Added.
+        * tests/es6/class_class_expression.js: Added.
+        (test.return.typeof.C):
+        (test):
+        * tests/es6/class_class_name_is_lexically_scoped.js: Added.
+        (test.C.prototype.method):
+        (test.C):
+        (test):
+        * tests/es6/class_class_statement.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/class_computed_accessor_properties.js: Added.
+        (test.C.prototype.get garply):
+        (test.C.prototype.set grault):
+        (test.C):
+        (test):
+        * tests/es6/class_computed_names_temporal_dead_zone.js: Added.
+        (test.try.B.prototype.C):
+        (test.try.B):
+        (test):
+        * tests/es6/class_computed_prototype_methods.js: Added.
+        (test.C.prototype.foo):
+        (test.C):
+        (test):
+        * tests/es6/class_computed_static_accessor_properties.js: Added.
+        (test.C.prototype.get garply):
+        (test.C.prototype.set grault):
+        (test.C):
+        (test):
+        * tests/es6/class_computed_static_methods.js: Added.
+        (test.C.foo):
+        (test.C):
+        (test):
+        * tests/es6/class_constructor.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/class_constructor_requires_new.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/class_extends.js: Added.
+        (test.B):
+        (test.C):
+        (test):
+        * tests/es6/class_extends_expressions.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/class_extends_null.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/class_implicit_strict_mode.js: Added.
+        (test.C.method):
+        (test.C):
+        (test):
+        * tests/es6/class_is_block-scoped.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/class_methods_arent_enumerable.js: Added.
+        (test.C.prototype.foo):
+        (test.C.bar):
+        (test.C):
+        (test):
+        * tests/es6/class_new.target.js: Added.
+        (test.new.f):
+        (test.A):
+        (test.B):
+        (test):
+        * tests/es6/class_prototype_methods.js: Added.
+        (test.C.prototype.method):
+        (test.C):
+        (test):
+        * tests/es6/class_static_accessor_properties.js: Added.
+        (test.C.prototype.get foo):
+        (test.C.prototype.set bar):
+        (test.C):
+        (test):
+        * tests/es6/class_static_methods.js: Added.
+        (test.C.method):
+        (test.C):
+        (test):
+        * tests/es6/class_string-keyed_methods.js: Added.
+        (test.C.prototype.string_appeared_here):
+        (test.C):
+        (test):
+        * tests/es6/const_basic_support.js: Added.
+        (test):
+        * tests/es6/const_basic_support_strict_mode.js: Added.
+        (test):
+        * tests/es6/const_is_block-scoped.js: Added.
+        (test):
+        * tests/es6/const_is_block-scoped_strict_mode.js: Added.
+        (test):
+        * tests/es6/const_redefining_a_const_is_an_error.js: Added.
+        (test):
+        * tests/es6/const_redefining_a_const_strict_mode.js: Added.
+        (test):
+        * tests/es6/const_temporal_dead_zone.js: Added.
+        (test.passed):
+        (test):
+        * tests/es6/const_temporal_dead_zone_strict_mode.js: Added.
+        (test.passed):
+        (test):
+        * tests/es6/default_function_parameters_arguments_object_interaction.js: Added.
+        (test):
+        * tests/es6/default_function_parameters_basic_functionality.js: Added.
+        (test):
+        * tests/es6/default_function_parameters_defaults_can_refer_to_previous_params.js: Added.
+        (test):
+        * tests/es6/default_function_parameters_explicit_undefined_defers_to_the_default.js: Added.
+        (test):
+        * tests/es6/default_function_parameters_new_Function_support.js: Added.
+        (test):
+        * tests/es6/default_function_parameters_separate_scope.js: Added.
+        (test.return):
+        (test):
+        * tests/es6/default_function_parameters_temporal_dead_zone.js: Added.
+        (test):
+        * tests/es6/destructuring_chained_iterable_destructuring.js: Added.
+        (test):
+        * tests/es6/destructuring_chained_object_destructuring.js: Added.
+        (test):
+        * tests/es6/destructuring_computed_properties.js: Added.
+        (test):
+        * tests/es6/destructuring_defaults.js: Added.
+        (test):
+        * tests/es6/destructuring_defaults_in_parameters.js: Added.
+        (test):
+        * tests/es6/destructuring_defaults_in_parameters_new_Function_support.js: Added.
+        (test):
+        * tests/es6/destructuring_defaults_in_parameters_separate_scope.js: Added.
+        (test.return):
+        (test):
+        * tests/es6/destructuring_defaults_let_temporal_dead_zone.js: Added.
+        (test):
+        * tests/es6/destructuring_empty_patterns.js: Added.
+        (test):
+        * tests/es6/destructuring_empty_patterns_in_parameters.js: Added.
+        (test):
+        * tests/es6/destructuring_in_for-in_loop_heads.js: Added.
+        (test):
+        * tests/es6/destructuring_in_for-of_loop_heads.js: Added.
+        (test):
+        * tests/es6/destructuring_in_parameters.js: Added.
+        (test):
+        * tests/es6/destructuring_in_parameters_arguments_interaction.js: Added.
+        (test):
+        * tests/es6/destructuring_in_parameters_function_length_property.js: Added.
+        (test):
+        * tests/es6/destructuring_in_parameters_new_Function_support.js: Added.
+        (test):
+        * tests/es6/destructuring_iterable_destructuring_expression.js: Added.
+        (test):
+        * tests/es6/destructuring_iterator_closing.js: Added.
+        (test.):
+        (test):
+        * tests/es6/destructuring_multiples_in_a_single_var_statement.js: Added.
+        (test):
+        * tests/es6/destructuring_nested.js: Added.
+        (test):
+        * tests/es6/destructuring_nested_rest.js: Added.
+        (test):
+        * tests/es6/destructuring_object_destructuring_expression.js: Added.
+        (test):
+        * tests/es6/destructuring_object_destructuring_with_primitives.js: Added.
+        (test):
+        * tests/es6/destructuring_parenthesised_left-hand-side_is_a_syntax_error.js: Added.
+        (test):
+        * tests/es6/destructuring_rest.js: Added.
+        (test):
+        * tests/es6/destructuring_throws_on_null_and_undefined.js: Added.
+        (test):
+        * tests/es6/destructuring_trailing_commas_in_iterable_patterns.js: Added.
+        (test):
+        * tests/es6/destructuring_trailing_commas_in_object_patterns.js: Added.
+        (test):
+        * tests/es6/destructuring_with_arrays.js: Added.
+        (test):
+        * tests/es6/destructuring_with_astral_plane_strings.js: Added.
+        (test):
+        * tests/es6/destructuring_with_generator_instances.js: Added.
+        (test.c):
+        (test.e):
+        (test):
+        * tests/es6/destructuring_with_generic_iterables.js: Added.
+        (test):
+        * tests/es6/destructuring_with_instances_of_generic_iterables.js: Added.
+        (test):
+        * tests/es6/destructuring_with_objects.js: Added.
+        (test):
+        * tests/es6/destructuring_with_sparse_arrays.js: Added.
+        (test):
+        * tests/es6/destructuring_with_strings.js: Added.
+        (test):
+        * tests/es6/for..of_loops_iterator_closing_break.js: Added.
+        (test.):
+        (test):
+        * tests/es6/for..of_loops_iterator_closing_throw.js: Added.
+        (test.):
+        (test):
+        * tests/es6/for..of_loops_with_arrays.js: Added.
+        (test):
+        * tests/es6/for..of_loops_with_astral_plane_strings.js: Added.
+        (test):
+        * tests/es6/for..of_loops_with_generator_instances.js: Added.
+        (test.iterable):
+        (test):
+        * tests/es6/for..of_loops_with_generic_iterables.js: Added.
+        (test):
+        * tests/es6/for..of_loops_with_instances_of_generic_iterables.js: Added.
+        (test):
+        * tests/es6/for..of_loops_with_sparse_arrays.js: Added.
+        (test):
+        * tests/es6/for..of_loops_with_strings.js: Added.
+        (test):
+        * tests/es6/function_name_property_accessor_properties.js: Added.
+        (test.o.get foo):
+        (test.o.set foo):
+        * tests/es6/function_name_property_bound_functions.js: Added.
+        (test.foo):
+        (test):
+        * tests/es6/function_name_property_class_expressions.js: Added.
+        (test.return.foo):
+        (test.name.string_appeared_here.typeof.bar.name):
+        (test.name.string_appeared_here.typeof.bar):
+        (test):
+        * tests/es6/function_name_property_class_prototype_methods.js: Added.
+        (test.C.prototype.foo):
+        (test.C):
+        (test):
+        * tests/es6/function_name_property_class_statements.js: Added.
+        (test.foo):
+        (test.bar.name):
+        (test.bar):
+        (test):
+        * tests/es6/function_name_property_class_static_methods.js: Added.
+        (test.C.foo):
+        (test.C):
+        (test):
+        * tests/es6/function_name_property_function_expressions.js: Added.
+        (test):
+        * tests/es6/function_name_property_function_statements.js: Added.
+        (test.foo):
+        (test):
+        * tests/es6/function_name_property_isnt_writable_is_configurable.js: Added.
+        (test):
+        * tests/es6/function_name_property_new_Function.js: Added.
+        (test):
+        * tests/es6/function_name_property_object_methods_class.js: Added.
+        (test.o):
+        * tests/es6/function_name_property_object_methods_function.js: Added.
+        (test.o.foo):
+        (test.o.bar):
+        (test.o.qux):
+        (test):
+        * tests/es6/function_name_property_shorthand_methods.js: Added.
+        (test):
+        * tests/es6/function_name_property_shorthand_methods_no_lexical_binding.js: Added.
+        (test):
+        * tests/es6/function_name_property_symbol-keyed_methods.js: Added.
+        (test.o.sym1):
+        (test.o.sym2):
+        (test):
+        * tests/es6/function_name_property_variables_class.js: Added.
+        (test.bar):
+        (test.qux):
+        * tests/es6/function_name_property_variables_function.js: Added.
+        (test.foo):
+        (test.bar):
+        (test):
+        * tests/es6/generators_%GeneratorPrototype%.constructor.js: Added.
+        (test.g):
+        (test):
+        * tests/es6/generators_%GeneratorPrototype%.js: Added.
+        (test.generatorFn):
+        (test):
+        * tests/es6/generators_%GeneratorPrototype%.return.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/generators_%GeneratorPrototype%.throw.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/generators_basic_functionality.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/generators_cant_use_this_with_new.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/generators_computed_shorthand_generators.js: Added.
+        (test):
+        * tests/es6/generators_computed_shorthand_generators_classes.js: Added.
+        (test.C.prototype.garply):
+        (test.C):
+        (test):
+        * tests/es6/generators_correct_this_binding.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/generators_generator_function_expressions.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/generators_sending.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/generators_shorthand_generator_methods.js: Added.
+        (test):
+        * tests/es6/generators_shorthand_generator_methods_classes.js: Added.
+        (test.C.prototype.generator):
+        (test.C):
+        (test):
+        * tests/es6/generators_string-keyed_shorthand_generator_methods.js: Added.
+        (test):
+        * tests/es6/generators_yield_*_arrays.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_*_astral_plane_strings.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_*_generator_instances.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_*_generic_iterables.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_*_instances_of_iterables.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_*_iterator_closing.js: Added.
+        (test.):
+        (test.gen):
+        (test):
+        * tests/es6/generators_yield_*_iterator_closing_via_throw.js: Added.
+        (test.):
+        (test.gen):
+        (test):
+        * tests/es6/generators_yield_*_on_non-iterables_is_a_runtime_error.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_*_sparse_arrays.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_*_strings.js: Added.
+        (test.iterator):
+        (test):
+        * tests/es6/generators_yield_operator_precedence.js: Added.
+        (test.generator):
+        (test):
+        * tests/es6/let_basic_support.js: Added.
+        (test):
+        * tests/es6/let_basic_support_strict_mode.js: Added.
+        (test):
+        * tests/es6/let_for-loop_iteration_scope.js: Added.
+        (test):
+        * tests/es6/let_for-loop_iteration_scope_strict_mode.js: Added.
+        (test):
+        * tests/es6/let_for-loop_statement_scope.js: Added.
+        (test):
+        * tests/es6/let_for-loop_statement_scope_strict_mode.js: Added.
+        (test):
+        * tests/es6/let_is_block-scoped.js: Added.
+        (test):
+        * tests/es6/let_is_block-scoped_strict_mode.js: Added.
+        (test):
+        * tests/es6/let_temporal_dead_zone.js: Added.
+        (test.passed):
+        (test):
+        * tests/es6/let_temporal_dead_zone_strict_mode.js: Added.
+        (test.passed):
+        (test):
+        * tests/es6/miscellaneous_Invalid_Date.js: Added.
+        (test):
+        * tests/es6/miscellaneous_RegExp_constructor_can_alter_flags.js: Added.
+        (test):
+        * tests/es6/miscellaneous_String.prototype_case_methods_Unicode_support.js: Added.
+        (test):
+        * tests/es6/miscellaneous_accessors_arent_constructors.js: Added.
+        (test.get catch):
+        (test):
+        * tests/es6/miscellaneous_built-in_prototypes_are_not_instances.js: Added.
+        (test):
+        * tests/es6/miscellaneous_duplicate_property_names_in_strict_mode.js: Added.
+        (test):
+        * tests/es6/miscellaneous_function_length_is_configurable.js: Added.
+        (test.fn):
+        (test):
+        * tests/es6/miscellaneous_no_assignments_allowed_in_for-in_head.js: Added.
+        (test):
+        * tests/es6/miscellaneous_no_escaped_reserved_words_as_identifiers.js: Added.
+        (test):
+        * tests/es6/miscellaneous_no_semicolon_needed_after_do-while.js: Added.
+        (test):
+        * tests/es6/miscellaneous_subclassables_Boolean_is_subclassable.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/miscellaneous_subclassables_Map_is_subclassable.js: Added.
+        (test):
+        * tests/es6/miscellaneous_subclassables_Number_is_subclassable.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/miscellaneous_subclassables_Set_is_subclassable.js: Added.
+        (test):
+        * tests/es6/miscellaneous_subclassables_String_is_subclassable.js: Added.
+        (test.C):
+        (test):
+        * tests/es6/new.target_assignment_is_an_early_error.js: Added.
+        (test.new.f):
+        (test):
+        * tests/es6/new.target_in_constructors.js: Added.
+        (test.new.f):
+        (test):
+        * tests/es6/non-strict_function_semantics_function_statements_in_if-statement_clauses.js: Added.
+        (test.foo):
+        (test.else.bar):
+        (test.baz):
+        (test.qux):
+        (test.else.qux):
+        (test):
+        * tests/es6/non-strict_function_semantics_hoisted_block-level_function_declaration.js: Added.
+        (test.f):
+        (test.g):
+        (test.h):
+        (test):
+        * tests/es6/non-strict_function_semantics_labeled_function_statements.js: Added.
+        (test.label):
+        (test):
+        * tests/es6/object_literal_extensions_computed_accessors.js: Added.
+        (test.obj.get x):
+        (test.obj.set x):
+        (test):
+        * tests/es6/object_literal_extensions_computed_properties.js: Added.
+        (test):
+        * tests/es6/object_literal_extensions_computed_shorthand_methods.js: Added.
+        (test):
+        * tests/es6/object_literal_extensions_shorthand_methods.js: Added.
+        (test):
+        * tests/es6/object_literal_extensions_shorthand_properties.js: Added.
+        (test):
+        * tests/es6/object_literal_extensions_string-keyed_shorthand_methods.js: Added.
+        (test):
+        * tests/es6/octal_and_binary_literals_binary_literals.js: Added.
+        (test):
+        * tests/es6/octal_and_binary_literals_binary_supported_by_Number.js: Added.
+        (test):
+        * tests/es6/octal_and_binary_literals_octal_literals.js: Added.
+        (test):
+        * tests/es6/octal_and_binary_literals_octal_supported_by_Number.js: Added.
+        (test):
+        * tests/es6/own_property_order_JSON.parse.js: Added.
+        (test):
+        * tests/es6/own_property_order_JSON.stringify.js: Added.
+        (test):
+        * tests/es6/own_property_order_Object.assign.js: Added.
+        * tests/es6/own_property_order_Object.getOwnPropertyNames.js: Added.
+        (test):
+        * tests/es6/own_property_order_Object.keys.js: Added.
+        (test):
+        * tests/es6/own_property_order_Reflect.ownKeys_string_key_order.js: Added.
+        (test):
+        * tests/es6/own_property_order_Reflect.ownKeys_symbol_key_order.js: Added.
+        (test):
+        * tests/es6/own_property_order_for..in.js: Added.
+        (test):
+        * tests/es6/proper_tail_calls_tail_call_optimisation_direct_recursion.js: Added.
+        (test):
+        * tests/es6/proper_tail_calls_tail_call_optimisation_mutual_recursion.js: Added.
+        (test.f):
+        (test.g):
+        (test):
+        * tests/es6/prototype_of_bound_functions_arrow_functions.js: Added.
+        (test.correctProtoBound):
+        (test):
+        * tests/es6/prototype_of_bound_functions_basic_functions.js: Added.
+        (test.correctProtoBound.f):
+        (test.correctProtoBound):
+        (test):
+        * tests/es6/prototype_of_bound_functions_classes.js: Added.
+        (test.correctProtoBound.C):
+        (test.correctProtoBound):
+        (test):
+        * tests/es6/prototype_of_bound_functions_generator_functions.js: Added.
+        (test.correctProtoBound.f):
+        (test.correctProtoBound):
+        (test):
+        * tests/es6/prototype_of_bound_functions_subclasses.js: Added.
+        (test.correctProtoBound.C):
+        (test.correctProtoBound):
+        (test):
+        * tests/es6/rest_parameters_arguments_object_interaction.js: Added.
+        (test):
+        * tests/es6/rest_parameters_basic_functionality.js: Added.
+        (test):
+        * tests/es6/rest_parameters_cant_be_used_in_setters.js: Added.
+        (test):
+        * tests/es6/rest_parameters_function_length_property.js: Added.
+        (test):
+        * tests/es6/rest_parameters_new_Function_support.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_spreading_non-iterables_is_a_runtime_error.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_arrays_in_array_literals.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_arrays_in_function_calls.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_astral_plane_strings_in_array_literals.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_astral_plane_strings_in_function_calls.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_generator_instances_in_arrays.js: Added.
+        (test.iterable):
+        (test):
+        * tests/es6/spread_..._operator_with_generator_instances_in_calls.js: Added.
+        (test.iterable):
+        (test):
+        * tests/es6/spread_..._operator_with_generic_iterables_in_arrays.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_generic_iterables_in_calls.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_instances_of_iterables_in_arrays.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_instances_of_iterables_in_calls.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_sparse_arrays_in_array_literals.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_sparse_arrays_in_function_calls.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_strings_in_array_literals.js: Added.
+        (test):
+        * tests/es6/spread_..._operator_with_strings_in_function_calls.js: Added.
+        (test):
+        * tests/es6/super_constructor_calls_use_correct_new.target_binding.js: Added.
+        (test.B):
+        (test):
+        * tests/es6/super_expression_in_constructors.js: Added.
+        (test.B):
+        (test.C):
+        (test):
+        * tests/es6/super_in_methods_method_calls.js: Added.
+        (test.B.prototype.qux):
+        (test.B):
+        (test.C.prototype.qux):
+        (test.C):
+        (test):
+        * tests/es6/super_in_methods_property_access.js: Added.
+        (test.B):
+        (test.C.prototype.quux):
+        (test.C):
+        (test):
+        * tests/es6/super_is_statically_bound.js: Added.
+        (test.B.prototype.qux):
+        (test.B):
+        (test.C.prototype.qux):
+        (test.C):
+        (test):
+        * tests/es6/super_method_calls_use_correct_this_binding.js: Added.
+        (test.B.prototype.qux):
+        (test.B):
+        (test.C.prototype.qux):
+        (test.C):
+        (test):
+        * tests/es6/super_statement_in_constructors.js: Added.
+        (test.B):
+        (test):
+        * tests/es6/template_strings_basic_functionality.js: Added.
+        (test):
+        * tests/es6/template_strings_line_break_normalisation.js: Added.
+        (test):
+        * tests/es6/template_strings_passed_array_is_frozen.js: Added.
+        (test):
+        * tests/es6/template_strings_tagged_template_strings.js: Added.
+        (test.fn):
+        (test):
+        * tests/es6/template_strings_toString_conversion.js: Added.
+        (test.a.toString):
+        (test.a.valueOf):
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.from.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.of.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.copyWithin.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.entries.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.every.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.fill.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.filter.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.find.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.findIndex.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.forEach.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.indexOf.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.join.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.keys.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.lastIndexOf.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.map.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.reduce.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.reduceRight.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.reverse.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.slice.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.some.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.sort.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.subarray.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype.values.js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%.prototype[Symbol.iterator].js: Added.
+        (test):
+        * tests/es6/typed_arrays_%TypedArray%[Symbol.species].js: Added.
+        (test):
+        * tests/es6/typed_arrays_ArrayBuffer[Symbol.species].js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Float32.js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Float64.js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Int16.js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Int32.js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Int8.js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Uint16.js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Uint32.js: Added.
+        (test):
+        * tests/es6/typed_arrays_DataView_Uint8.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Float32Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Float64Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Int16Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Int32Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Int8Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Uint16Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Uint32Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Uint8Array.js: Added.
+        (test):
+        * tests/es6/typed_arrays_Uint8ClampedArray.js: Added.
+        (test):
+        * tests/es6/typed_arrays_constructors_require_new.js: Added.
+        (test):
+        * tests/es6/typed_arrays_correct_prototype_chains.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.hasInstance.js: Added.
+        (test.C):
+        (test.):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.isConcatSpreadable.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.iterator_arguments_object.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.iterator_existence.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.match.js: Added.
+        (test.O.Symbol.match):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.replace.js: Added.
+        (test.O.Symbol.replace):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.search.js: Added.
+        (test.O.Symbol.search):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.species_Array.prototype.concat.js: Added.
+        (test.obj.Symbol.species):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.species_Array.prototype.filter.js: Added.
+        (test.obj.Symbol.species):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.species_Array.prototype.map.js: Added.
+        (test.obj.Symbol.species):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.species_Array.prototype.slice.js: Added.
+        (test.obj.Symbol.species):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.species_Array.prototype.splice.js: Added.
+        (test.obj.Symbol.species):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.species_RegExp.prototype[Symbol.split].js: Added.
+        (test.obj.Symbol.species):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.species_existence.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.split.js: Added.
+        (test.O.Symbol.split):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.toPrimitive.js: Added.
+        (test.a.Symbol.toPrimitive):
+        (test.b.Symbol.toPrimitive):
+        (test.c.Symbol.toPrimitive):
+        (test):
+        * tests/es6/well-known_symbols_Symbol.toStringTag.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.toStringTag_misc._built-ins.js: Added.
+        (test):
+        * tests/es6/well-known_symbols_Symbol.unscopables.js: Added.
+        (test):
+
 2015-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         WatchpointsOnStructureStubInfo doesn't need to be reference counted

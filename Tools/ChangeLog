@@ -1,3 +1,19 @@
+2015-09-03  Geoffrey Garen  <ggaren@apple.com>
+
+        JavaScriptCore should have some ES6 conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=148771
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Added es6 as a test suite.
+
+        * Scripts/run-jsc-stress-tests: Added es6 as a test suite.
+
+        Some of these tests currently fail, so I also added a way to expect
+        failure for now. We'll migrate failing tests to expected passes as we
+        fix them.
+
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
         Add a test for swipe-start hysteresis
