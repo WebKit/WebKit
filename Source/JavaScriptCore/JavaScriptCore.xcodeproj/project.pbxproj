@@ -977,6 +977,7 @@
 		5DBB151B131D0B310056AD36 /* testapi.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 14D857740A4696C80032146C /* testapi.js */; };
 		5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 1412110D0A48788700480255 /* minidom.js */; };
 		5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (); }; };
+		623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 623A37EB1B87A7BD00754209 /* RegisterMap.h */; };
 		62D2D38F1ADF103F000206C1 /* FunctionRareData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */; };
 		62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D2D38E1ADF103F000206C1 /* FunctionRareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62F2AA371B0BEDE300610C7A /* DFGLazyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62A9A29E1B0BED4800BD54CA /* DFGLazyNode.cpp */; };
@@ -2778,6 +2779,7 @@
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
 		5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredOffsets.h; path = LLIntOffsets/LLIntDesiredOffsets.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
+		623A37EB1B87A7BD00754209 /* RegisterMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterMap.h; sourceTree = "<group>"; };
 		62A9A29E1B0BED4800BD54CA /* DFGLazyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLazyNode.cpp; path = dfg/DFGLazyNode.cpp; sourceTree = "<group>"; };
 		62A9A29F1B0BED4800BD54CA /* DFGLazyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLazyNode.h; path = dfg/DFGLazyNode.h; sourceTree = "<group>"; };
 		62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionRareData.cpp; sourceTree = "<group>"; };
@@ -4149,6 +4151,7 @@
 				0FE834161A6EF97B00D04847 /* PolymorphicCallStubRoutine.h */,
 				0FA7A8E918B413C80052371D /* Reg.cpp */,
 				0FA7A8EA18B413C80052371D /* Reg.h */,
+				623A37EB1B87A7BD00754209 /* RegisterMap.h */,
 				0F6B1CBB1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp */,
 				0F6B1CBC1861246A00845D97 /* RegisterPreservationWrapperGenerator.h */,
 				0FC3141418146D7000033232 /* RegisterSet.cpp */,
@@ -6427,6 +6430,7 @@
 				FEF68361174343CC00A32E25 /* JITStubsX86.h in Headers */,
 				FEF68360174343CC00A32E25 /* JITStubsX86_64.h in Headers */,
 				ADDB1F6318D77DBE009B58A8 /* OpaqueRootSet.h in Headers */,
+				623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */,
 				A7A4AE1017973B4D005612B1 /* JITStubsX86Common.h in Headers */,
 				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,
 				0FC712E317CD8793008CC93C /* JITToDFGDeferredCompilationCallback.h in Headers */,

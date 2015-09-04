@@ -1446,6 +1446,7 @@
     <ClInclude Include="..\jit\SetupVarargsFrame.h" />
     <ClInclude Include="..\jit\PolymorphicCallStubRoutine.h" />
     <ClInclude Include="..\jit\Reg.h" />
+    <ClInclude Include="..\jit\RegisterMap.h" />
     <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h" />
     <ClInclude Include="..\jit\RegisterSet.h" />
     <ClInclude Include="..\jit\Repatch.h" />

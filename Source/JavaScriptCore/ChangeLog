@@ -1,3 +1,21 @@
+2015-09-04  Basile Clement  <basile_clement@apple.com>
+
+        Introduce RegisterMap<T>
+        https://bugs.webkit.org/show_bug.cgi?id=148335
+
+        Reviewed by Michael Saboff.
+
+        Introduce RegisterMap<T>, GPRMap<T> and FPRMap<T> dense mappings for
+        Reg, GPRReg and FPRReg.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/RegisterMap.h: Added.
+        (JSC::RegisterMap::operator[]):
+        (JSC::GPRMap::operator[]):
+        (JSC::FPRMap::operator[]):
+
 2015-09-04  Andreas Kling  <akling@apple.com>
 
         Remove some unused functions from MarkedBlock and MarkedSpace.
