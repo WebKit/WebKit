@@ -194,10 +194,9 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
         patchBuffer,
-        ("Virtual %s%s slow path thunk at CodePtr(%p)",
+        ("Virtual %s%s slow path thunk",
         callLinkInfo.specializationKind() == CodeForCall ? "call" : "construct",
-        callLinkInfo.registerPreservationMode() == MustPreserveRegisters ? " that preserves registers" : "",
-        callLinkInfo.callReturnLocation().dataLocation()));
+        callLinkInfo.registerPreservationMode() == MustPreserveRegisters ? " that preserves registers" : ""));
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJump };
