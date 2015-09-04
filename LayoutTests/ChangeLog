@@ -1,3 +1,12 @@
+2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import css/css-color-3
+        https://bugs.webkit.org/show_bug.cgi?id=148803
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
 2015-09-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add iOS-specific baselines for a couple of newly imported W3C tests.

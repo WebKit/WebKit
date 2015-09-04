@@ -1,3 +1,110 @@
+2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import css/css-color-3
+        https://bugs.webkit.org/show_bug.cgi?id=148803
+
+        Reviewed by Chris Dumez.
+
+        Imported tests from https://github.com/w3c/csswg-test/tree/master/css-color-3 as of
+        46a095b681f997bef518ebe0a704c0a343a14a05.
+
+        * css/css-color-3: Added.
+        * css/css-color-3/LICENSE: Added.
+        * css/css-color-3/htaccess: Added.
+        * css/css-color-3/t31-color-currentColor-b-expected.html: Added.
+        * css/css-color-3/t31-color-currentColor-b.xht: Added.
+        * css/css-color-3/t32-opacity-offscreen-multiple-boxes-1-c-expected.html: Added.
+        * css/css-color-3/t32-opacity-offscreen-multiple-boxes-1-c.xht: Added.
+        * css/css-color-3/t32-opacity-offscreen-multiple-boxes-2-c-expected.html: Added.
+        * css/css-color-3/t32-opacity-offscreen-multiple-boxes-2-c.xht: Added.
+        * css/css-color-3/t421-rgb-func-int-a-expected.html: Added.
+        * css/css-color-3/t421-rgb-func-int-a.xht: Added.
+        * css/css-color-3/t421-rgb-func-no-mixed-f-expected.html: Added.
+        * css/css-color-3/t421-rgb-func-no-mixed-f.xht: Added.
+        * css/css-color-3/t421-rgb-func-pct-a-expected.html: Added.
+        * css/css-color-3/t421-rgb-func-pct-a.xht: Added.
+        * css/css-color-3/t421-rgb-func-whitespace-b-expected.html: Added.
+        * css/css-color-3/t421-rgb-func-whitespace-b.xht: Added.
+        * css/css-color-3/t421-rgb-hex-parsing-f-expected.html: Added.
+        * css/css-color-3/t421-rgb-hex-parsing-f.xht: Added.
+        * css/css-color-3/t421-rgb-hex3-a-expected.html: Added.
+        * css/css-color-3/t421-rgb-hex3-a.xht: Added.
+        * css/css-color-3/t421-rgb-hex6-a-expected.html: Added.
+        * css/css-color-3/t421-rgb-hex6-a.xht: Added.
+        * css/css-color-3/t422-rgba-a1.0-a-expected.html: Added.
+        * css/css-color-3/t422-rgba-a1.0-a.xht: Added.
+        * css/css-color-3/t422-rgba-clamping-a0.0-b-expected.html: Added.
+        * css/css-color-3/t422-rgba-clamping-a0.0-b.xht: Added.
+        * css/css-color-3/t422-rgba-clamping-a1.0-b-expected.html: Added.
+        * css/css-color-3/t422-rgba-clamping-a1.0-b.xht: Added.
+        * css/css-color-3/t422-rgba-clip-outside-device-gamut-b-expected.html: Added.
+        * css/css-color-3/t422-rgba-clip-outside-device-gamut-b.xht: Added.
+        * css/css-color-3/t422-rgba-func-int-a-expected.html: Added.
+        * css/css-color-3/t422-rgba-func-int-a.xht: Added.
+        * css/css-color-3/t422-rgba-func-no-mixed-f-expected.html: Added.
+        * css/css-color-3/t422-rgba-func-no-mixed-f.xht: Added.
+        * css/css-color-3/t422-rgba-func-pct-a-expected.html: Added.
+        * css/css-color-3/t422-rgba-func-pct-a.xht: Added.
+        * css/css-color-3/t422-rgba-func-whitespace-b-expected.html: Added.
+        * css/css-color-3/t422-rgba-func-whitespace-b.xht: Added.
+        * css/css-color-3/t422-rgba-onscreen-b-expected.html: Added.
+        * css/css-color-3/t422-rgba-onscreen-b.xht: Added.
+        * css/css-color-3/t422-rgba-onscreen-multiple-boxes-c-expected.html: Added.
+        * css/css-color-3/t422-rgba-onscreen-multiple-boxes-c.xht: Added.
+        * css/css-color-3/t423-transparent-1-a-expected.html: Added.
+        * css/css-color-3/t423-transparent-1-a.xht: Added.
+        * css/css-color-3/t423-transparent-2-a-expected.html: Added.
+        * css/css-color-3/t423-transparent-2-a.xht: Added.
+        * css/css-color-3/t424-hsl-basic-a-expected.html: Added.
+        * css/css-color-3/t424-hsl-basic-a.xht: Added.
+        * css/css-color-3/t424-hsl-clip-outside-gamut-b-expected.html: Added.
+        * css/css-color-3/t424-hsl-clip-outside-gamut-b.xht: Added.
+        * css/css-color-3/t424-hsl-parsing-f-expected.html: Added.
+        * css/css-color-3/t424-hsl-parsing-f.xht: Added.
+        * css/css-color-3/t424-hsl-values-b-1-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-1.html: Added.
+        * css/css-color-3/t424-hsl-values-b-10-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-10.html: Added.
+        * css/css-color-3/t424-hsl-values-b-11-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-11.html: Added.
+        * css/css-color-3/t424-hsl-values-b-12-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-12.html: Added.
+        * css/css-color-3/t424-hsl-values-b-13-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-13.html: Added.
+        * css/css-color-3/t424-hsl-values-b-14-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-14.html: Added.
+        * css/css-color-3/t424-hsl-values-b-15-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-15.html: Added.
+        * css/css-color-3/t424-hsl-values-b-2-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-2.html: Added.
+        * css/css-color-3/t424-hsl-values-b-3-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-3.html: Added.
+        * css/css-color-3/t424-hsl-values-b-4-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-4.html: Added.
+        * css/css-color-3/t424-hsl-values-b-5-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-5.html: Added.
+        * css/css-color-3/t424-hsl-values-b-6-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-6.html: Added.
+        * css/css-color-3/t424-hsl-values-b-7-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-7.html: Added.
+        * css/css-color-3/t424-hsl-values-b-8-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-8.html: Added.
+        * css/css-color-3/t424-hsl-values-b-9-expected.html: Added.
+        * css/css-color-3/t424-hsl-values-b-9.html: Added.
+        * css/css-color-3/t425-hsla-clip-outside-device-gamut-b-expected.html: Added.
+        * css/css-color-3/t425-hsla-clip-outside-device-gamut-b.xht: Added.
+        * css/css-color-3/t425-hsla-onscreen-multiple-boxes-c-expected.html: Added.
+        * css/css-color-3/t425-hsla-onscreen-multiple-boxes-c.xht: Added.
+        * css/css-color-3/t425-hsla-parsing-f-expected.html: Added.
+        * css/css-color-3/t425-hsla-parsing-f.xht: Added.
+        * css/css-color-3/t425-hsla-values-b-expected.html: Added.
+        * css/css-color-3/t425-hsla-values-b.xht: Added.
+        * css/css-color-3/t44-currentcolor-background-b-expected.html: Added.
+        * css/css-color-3/t44-currentcolor-background-b.xht: Added.
+        * css/css-color-3/t44-currentcolor-border-b-expected.html: Added.
+        * css/css-color-3/t44-currentcolor-border-b.xht: Added.
+        * css/css-color-3/w3c-import.log: Added.
+
 2015-09-02  Brady Eidson  <beidson@apple.com>
 
         Import W3C IndexedDB tests.

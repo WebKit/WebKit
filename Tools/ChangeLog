@@ -1,3 +1,16 @@
+2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import css/css-color-3
+        https://bugs.webkit.org/show_bug.cgi?id=148803
+
+        Reviewed by Chris Dumez.
+
+        Fixed a bug that the imported reference files used the same extention as tests.
+        This would result in parsing errors if the tests were XML and references were HTML and vice versa.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests):
+
 2015-09-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189338.
