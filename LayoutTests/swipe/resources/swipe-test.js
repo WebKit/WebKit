@@ -21,11 +21,11 @@ var eventQueue = {
 
     callAfterEventDispatch: function (callback) {
         var interval = setInterval(function () { 
-        if (!eventQueue.hasPendingEvents()) {
-            clearInterval(interval);
-            callback();
-        }
-    }, 0);
+            if (!eventQueue.hasPendingEvents()) {
+                clearInterval(interval);
+                callback();
+            }
+        }, 0);
     },
 
     _queue: [],
