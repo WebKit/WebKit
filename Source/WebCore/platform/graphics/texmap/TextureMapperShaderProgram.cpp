@@ -119,8 +119,18 @@ TextureMapperShaderProgram::~TextureMapperShaderProgram()
 }
 
 #define GLSL_DIRECTIVE(...) "#"#__VA_ARGS__"\n"
+
+#define TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE \
+    GLSL_DIRECTIVE(ifdef GL_FRAGMENT_PRECISION_HIGH) \
+        GLSL_DIRECTIVE(define TextureSpaceMatrixPrecision highp) \
+    GLSL_DIRECTIVE(else) \
+        GLSL_DIRECTIVE(define TextureSpaceMatrixPrecision mediump) \
+    GLSL_DIRECTIVE(endif)
+
 static const char* vertexTemplate =
+    TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
     STRINGIFY(
+        precision TextureSpaceMatrixPrecision float;
         attribute vec4 a_vertex;
         uniform mat4 u_modelViewMatrix;
         uniform mat4 u_projectionMatrix;
@@ -207,8 +217,9 @@ static const char* fragmentTemplate =
     RECT_TEXTURE_DIRECTIVE
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
+    TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
     STRINGIFY(
-        precision highp float;
+        precision TextureSpaceMatrixPrecision float;
         uniform mat4 u_textureSpaceMatrix;
         precision mediump float;
         uniform SamplerType s_sampler;
