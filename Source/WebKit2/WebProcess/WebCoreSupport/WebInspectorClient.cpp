@@ -82,19 +82,17 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-Inspector::FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* controller)
+WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* controller)
 {
-    m_page->inspector()->openFrontendConnection(controller->isUnderTest());
+    m_page->inspector()->createInspectorPage(controller->isUnderTest());
 
     return m_page->inspector();
 }
 
 void WebInspectorClient::closeInspectorFrontend()
 {
-    if (m_page->inspector()) {
-        m_page->corePage()->inspectorController().disconnectFrontend(m_page->inspector());
-        m_page->inspector()->closeFrontendConnection();
-    }
+    if (m_page->inspector())
+        m_page->inspector()->closeFrontend();
 }
 
 void WebInspectorClient::bringFrontendToFront()

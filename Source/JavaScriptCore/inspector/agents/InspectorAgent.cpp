@@ -32,7 +32,6 @@
 #include "InspectorAgent.h"
 
 #include "InspectorEnvironment.h"
-#include "InspectorFrontendRouter.h"
 #include "InspectorValues.h"
 #include "ScriptValue.h"
 

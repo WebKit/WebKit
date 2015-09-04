@@ -97,9 +97,9 @@ private:
     bool canAttachWindow();
 
     // Called from WebInspectorClient
-    void openFrontendConnection(bool underTest);
-    void closeFrontendConnection();
+    void createInspectorPage(bool underTest);
 
+    void closeFrontend();
     void bringToFront();
 
     WebPage* m_page;

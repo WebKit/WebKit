@@ -64,7 +64,7 @@ public:
     virtual bool hasLocalDebugger() const = 0;
 
     virtual void connect(FrontendChannel*, bool isAutomaticInspection) = 0;
-    virtual void disconnect(FrontendChannel*) = 0;
+    virtual void disconnect() = 0;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) = 0;
     virtual void setIndicating(bool) { } // Default is to do nothing.
     virtual void pause() { };

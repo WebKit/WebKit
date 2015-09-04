@@ -174,7 +174,7 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
 void WebInspectorClient::closeInspectorFrontend()
 {
     if (m_frontendClient)
-        m_frontendClient->destroyInspectorView();
+        m_frontendClient->destroyInspectorView(false);
 }
 
 void WebInspectorClient::bringFrontendToFront()
@@ -237,7 +237,7 @@ WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView
 
 WebInspectorFrontendClient::~WebInspectorFrontendClient()
 {
-    destroyInspectorView();
+    destroyInspectorView(true);
 }
 
 void WebInspectorFrontendClient::frontendLoaded()
@@ -269,7 +269,7 @@ void WebInspectorFrontendClient::bringToFront()
 
 void WebInspectorFrontendClient::closeWindow()
 {
-    destroyInspectorView();
+    destroyInspectorView(true);
 }
 
 void WebInspectorFrontendClient::attachWindow(DockSide)
@@ -421,7 +421,7 @@ void WebInspectorFrontendClient::showWindowWithoutNotifications()
     m_inspectorClient->updateHighlight();
 }
 
-void WebInspectorFrontendClient::destroyInspectorView()
+void WebInspectorFrontendClient::destroyInspectorView(bool notifyInspectorController)
 {
     m_inspectorClient->releaseFrontend();
 
@@ -431,10 +431,10 @@ void WebInspectorFrontendClient::destroyInspectorView()
 
     closeWindowWithoutNotifications();
 
-    m_inspectedWebView->page()->inspectorController().setInspectorFrontendClient(nullptr);
-    m_inspectedWebView->page()->inspectorController().disconnectFrontend(m_inspectorClient);
-    m_inspectorClient->updateHighlight();
-
+    if (notifyInspectorController) {
+        m_inspectedWebView->page()->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
+        m_inspectorClient->updateHighlight();
+    }
     ::DestroyWindow(m_frontendHwnd);
 }
 

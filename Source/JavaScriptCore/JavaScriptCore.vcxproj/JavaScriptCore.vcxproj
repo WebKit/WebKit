@@ -595,7 +595,6 @@
     <ClCompile Include="..\inspector\InjectedScriptModule.cpp" />
     <ClCompile Include="..\inspector\InspectorAgentRegistry.cpp" />
     <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp" />
-    <ClCompile Include="..\inspector\InspectorFrontendRouter.cpp" />
     <ClCompile Include="..\inspector\InspectorValues.cpp" />
     <ClCompile Include="..\inspector\JSInjectedScriptHost.cpp" />
     <ClCompile Include="..\inspector\JSInjectedScriptHostPrototype.cpp" />
@@ -1386,7 +1385,6 @@
     <ClInclude Include="..\inspector\InspectorBackendDispatcher.h" />
     <ClInclude Include="..\inspector\InspectorEnvironment.h" />
     <ClInclude Include="..\inspector\InspectorFrontendChannel.h" />
-    <ClInclude Include="..\inspector\InspectorFrontendRouter.h" />
     <ClInclude Include="..\inspector\InspectorValues.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHost.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHostPrototype.h" />

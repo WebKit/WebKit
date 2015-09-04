@@ -124,7 +124,7 @@ public:
 
     virtual void bringToFront() override;
     virtual void closeWindow() override;
-    void disconnectFromBackend();
+    virtual void disconnectFromBackend();
 
     virtual void attachWindow(DockSide) override;
     virtual void detachWindow() override;

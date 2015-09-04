@@ -28,7 +28,6 @@
 
 #include "ConsoleMessage.h"
 #include "InjectedScriptManager.h"
-#include "InspectorFrontendRouter.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"

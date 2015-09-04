@@ -56,11 +56,11 @@ void JSGlobalObjectDebuggable::connect(FrontendChannel* frontendChannel, bool au
     m_globalObject.inspectorController().connectFrontend(frontendChannel, automaticInspection);
 }
 
-void JSGlobalObjectDebuggable::disconnect(FrontendChannel* frontendChannel)
+void JSGlobalObjectDebuggable::disconnect()
 {
     JSLockHolder locker(&m_globalObject.vm());
 
-    m_globalObject.inspectorController().disconnectFrontend(frontendChannel);
+    m_globalObject.inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
 }
 
 void JSGlobalObjectDebuggable::pause()

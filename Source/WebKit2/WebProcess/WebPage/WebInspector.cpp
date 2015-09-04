@@ -70,7 +70,7 @@ WebInspector::~WebInspector()
 }
 
 // Called from WebInspectorClient
-void WebInspector::openFrontendConnection(bool underTest)
+void WebInspector::createInspectorPage(bool underTest)
 {
 #if OS(DARWIN)
     mach_port_t listeningPort;
@@ -93,7 +93,7 @@ void WebInspector::openFrontendConnection(bool underTest)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::CreateInspectorPage(connectionClientPort, canAttachWindow(), underTest), m_page->pageID());
 }
 
-void WebInspector::closeFrontendConnection()
+void WebInspector::closeFrontend()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
 
@@ -262,7 +262,8 @@ void WebInspector::remoteFrontendConnected()
 {
     if (m_page->corePage()) {
         m_remoteFrontendConnected = true;
-        m_page->corePage()->inspectorController().connectFrontend(this);
+        bool isAutomaticInspection = false;
+        m_page->corePage()->inspectorController().connectFrontend(this, isAutomaticInspection);
     }
 }
 
@@ -271,7 +272,7 @@ void WebInspector::remoteFrontendDisconnected()
     m_remoteFrontendConnected = false;
 
     if (m_page->corePage())
-        m_page->corePage()->inspectorController().disconnectFrontend(this);
+        m_page->corePage()->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
 }
 #endif
 

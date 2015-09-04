@@ -35,14 +35,15 @@
 namespace Inspector {
 
 class BackendDispatcher;
-class FrontendRouter;
+class FrontendChannel;
 
 typedef String ErrorString;
 
 class SupplementalBackendDispatcher : public RefCounted<SupplementalBackendDispatcher> {
 public:
-    SupplementalBackendDispatcher(BackendDispatcher&);
-    virtual ~SupplementalBackendDispatcher();
+    SupplementalBackendDispatcher(BackendDispatcher& backendDispatcher)
+        : m_backendDispatcher(backendDispatcher) { }
+    virtual ~SupplementalBackendDispatcher() { }
     virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) = 0;
 protected:
     Ref<BackendDispatcher> m_backendDispatcher;
@@ -50,7 +51,7 @@ protected:
 
 class BackendDispatcher : public RefCounted<BackendDispatcher> {
 public:
-    JS_EXPORT_PRIVATE static Ref<BackendDispatcher> create(Ref<FrontendRouter>&&);
+    JS_EXPORT_PRIVATE static Ref<BackendDispatcher> create(FrontendChannel*);
 
     class JS_EXPORT_PRIVATE CallbackBase : public RefCounted<CallbackBase> {
     public:
@@ -68,7 +69,8 @@ public:
         bool m_alreadySent { false };
     };
 
-    bool isActive() const;
+    void clearFrontend() { m_frontendChannel = nullptr; }
+    bool isActive() const { return !!m_frontendChannel; }
 
     bool hasProtocolErrors() const { return m_protocolErrors.size() > 0; }
 
@@ -102,9 +104,12 @@ public:
     RefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound);
 
 private:
-    BackendDispatcher(Ref<FrontendRouter>&&);
+    BackendDispatcher(FrontendChannel* channel)
+        : m_frontendChannel(channel)
+    {
+    }
 
-    Ref<FrontendRouter> m_frontendRouter;
+    FrontendChannel* m_frontendChannel;
     HashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
 
     // Protocol errors reported for the top-level request being processed.

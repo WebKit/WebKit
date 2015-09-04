@@ -45,7 +45,6 @@
 namespace Inspector {
 class BackendDispatcher;
 class FrontendChannel;
-class FrontendRouter;
 class InspectorAgent;
 class InspectorObject;
 
@@ -99,9 +98,8 @@ public:
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
 
-    WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel*, bool isAutomaticInspection = false);
-    WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel*);
-    WEBCORE_EXPORT void disconnectAllFrontends();
+    WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel*, bool isAutomaticInspection);
+    WEBCORE_EXPORT void disconnectFrontend(Inspector::DisconnectReason);
     void setProcessId(long);
 
     void inspect(Node*);
@@ -142,8 +140,8 @@ private:
 
     Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
-    Ref<Inspector::FrontendRouter> m_frontendRouter;
-    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::BackendDispatcher> m_backendDispatcher;
+    Inspector::FrontendChannel* m_frontendChannel { nullptr };
     std::unique_ptr<InspectorOverlay> m_overlay;
     Ref<WTF::Stopwatch> m_executionStopwatch;
     Inspector::AgentRegistry m_agents;
