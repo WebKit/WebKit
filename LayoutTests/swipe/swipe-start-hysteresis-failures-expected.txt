@@ -17,7 +17,6 @@ scroll event (delta 0 0, phase 'ended')
 swipe event (delta 0 0, phase 'maybegin')
 scroll event (delta 3 1, phase 'began')
 scroll event (delta 0 0, phase 'changed')
-didBeginSwipe
 scroll event (delta 0 0, phase 'ended')
 swipe event (delta 0 0, phase 'ended')
 

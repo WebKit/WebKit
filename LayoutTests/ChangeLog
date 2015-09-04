@@ -1,3 +1,15 @@
+2015-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        swipe-start-hysteresis-failures is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=148809
+
+        Reviewed by Alexey Proskuryakov.
+
+        * swipe/swipe-start-hysteresis-failures.html:
+        * swipe/swipe-start-hysteresis-failures-expected.txt:
+        Instead of depending on the specific timing of didStartSwipe vs. the events
+        in this case, just make sure we hit it by the time the test finishes.
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Skip newly imported IndexedDB test on iOS WebKit1, because IndexedDB only works with WebKit2.

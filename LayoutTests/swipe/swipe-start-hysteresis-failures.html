@@ -59,14 +59,15 @@ function doRegularSwipeGesture()
 {
     // Swap in a different callback that makes sure we *do* reach didBeginSwipe.
     testRunner.clearTestRunnerCallbacks();
+    var sawDidBeginSwipe = false;
     testRunner.installDidBeginSwipeCallback(function () {
-        log("didBeginSwipe");
-
+        sawDidBeginSwipe = true;
         // Need a swipe-end event to clean up.
         eventQueue.enqueueSwipeEvent(0, 0, 'ended');
     });
 
     testRunner.installDidRemoveSwipeSnapshotCallback(function () {
+        shouldBe(true, sawDidBeginSwipe, "The last gesture should start a swipe, because it is sufficient magnitude and in the correct direction.")
         testComplete();
     });
 
