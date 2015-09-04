@@ -1,3 +1,12 @@
+2015-09-03  Timothy Hatcher  <timothy@apple.com>
+
+        Update WebKit nightly icon to be more like Safari
+        https://bugs.webkit.org/show_bug.cgi?id=148768
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKitLauncher/webkit.icns:
+
 2015-09-03  Geoffrey Garen  <ggaren@apple.com>
 
         JavaScriptCore should have some ES6 conformance tests
