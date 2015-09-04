@@ -1,3 +1,20 @@
+2015-08-24  Basile Clement  <basile_clement@apple.com>
+
+        Add a bunch of operators
+        https://bugs.webkit.org/show_bug.cgi?id=148337
+
+        Reviewed by Saam Barati.
+
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::operator bool):
+        (JSC::JSValueRegs::operator==):
+        (JSC::JSValueRegs::operator!=):
+        (JSC::JSValueSource::operator bool):
+        (JSC::JSValueRegs::operator!):
+        (JSC::JSValueSource::operator!):
+        * jit/Reg.h:
+        (JSC::Reg::operator bool):
+
 2015-09-04  Basile Clement  <basile_clement@apple.com>
 
         Since r189341, es6.yaml/es6/arrow_functions_no_prototype_property.js is expected to succeed

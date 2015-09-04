@@ -101,6 +101,7 @@ public:
     
     bool isSet() const { return m_index != invalid(); }
     bool operator!() const { return !isSet(); }
+    explicit operator bool() const { return isSet(); }
     
     bool isGPR() const
     {

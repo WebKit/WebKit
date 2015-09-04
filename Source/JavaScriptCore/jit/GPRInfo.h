@@ -65,6 +65,10 @@ public:
     }
     
     bool operator!() const { return m_gpr == InvalidGPRReg; }
+    explicit operator bool() const { return m_gpr != InvalidGPRReg; }
+
+    bool operator==(JSValueRegs other) { return m_gpr == other.m_gpr; }
+    bool operator!=(JSValueRegs other) { return !(*this == other); }
     
     GPRReg gpr() const { return m_gpr; }
     GPRReg tagGPR() const { return InvalidGPRReg; }
@@ -110,6 +114,7 @@ public:
     }
     
     bool operator!() const { return m_base == InvalidGPRReg; }
+    explicit operator bool() const { return m_base != InvalidGPRReg; }
     
     bool isAddress() const { return m_offset != notAddress(); }
     
@@ -166,11 +171,19 @@ public:
         return JSValueRegs(InvalidGPRReg, gpr);
     }
     
-    bool operator!() const
+    bool operator!() const { return !static_cast<bool>(*this); }
+    explicit operator bool() const
     {
-        return static_cast<GPRReg>(m_tagGPR) == InvalidGPRReg
-            && static_cast<GPRReg>(m_payloadGPR) == InvalidGPRReg;
+        return static_cast<GPRReg>(m_tagGPR) != InvalidGPRReg
+            || static_cast<GPRReg>(m_payloadGPR) != InvalidGPRReg;
     }
+
+    bool operator==(JSValueRegs other) const
+    {
+        return m_tagGPR == other.m_tagGPR
+            && m_payloadGPR == other.m_payloadGPR;
+    }
+    bool operator!=(JSValueRegs other) const { return !(*this == other); }
     
     GPRReg tagGPR() const { return static_cast<GPRReg>(m_tagGPR); }
     GPRReg payloadGPR() const { return static_cast<GPRReg>(m_payloadGPR); }
@@ -238,11 +251,12 @@ public:
         result.m_tagType = static_cast<int8_t>(JSValue::CellTag);
         return result;
     }
-    
-    bool operator!() const
+
+    bool operator!() const { return !static_cast<bool>(*this); }
+    explicit operator bool() const
     {
-        return static_cast<GPRReg>(m_baseOrTag) == InvalidGPRReg
-            && static_cast<GPRReg>(m_payload) == InvalidGPRReg;
+        return static_cast<GPRReg>(m_baseOrTag) != InvalidGPRReg
+            || static_cast<GPRReg>(m_payload) != InvalidGPRReg;
     }
     
     bool isAddress() const
