@@ -49,6 +49,7 @@
 #endif
 
 #if PLATFORM(IOS)
+#define DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED false
 #define DEFAULT_FRAME_FLATTENING_ENABLED true
 #define DEFAULT_SHOULD_PRINT_BACKGROUNDS true
 #define DEFAULT_TEXT_AREAS_ARE_RESIZABLE false
@@ -63,6 +64,7 @@
 #define DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM false
 #define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED false
 #else
+#define DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED true
 #define DEFAULT_FRAME_FLATTENING_ENABLED false
 #define DEFAULT_SHOULD_PRINT_BACKGROUNDS false
 #define DEFAULT_TEXT_AREAS_ARE_RESIZABLE true
@@ -146,7 +148,7 @@
     macro(MockScrollbarsEnabled, mockScrollbarsEnabled, Bool, bool, false) \
     macro(WebAudioEnabled, webAudioEnabled, Bool, bool, true) \
     macro(SuppressesIncrementalRendering, suppressesIncrementalRendering, Bool, bool, false) \
-    macro(BackspaceKeyNavigationEnabled, backspaceKeyNavigationEnabled, Bool, bool, true) \
+    macro(BackspaceKeyNavigationEnabled, backspaceKeyNavigationEnabled, Bool, bool, DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED) \
     macro(CaretBrowsingEnabled, caretBrowsingEnabled, Bool, bool, false) \
     macro(ShouldDisplaySubtitles, shouldDisplaySubtitles, Bool, bool, false) \
     macro(ShouldDisplayCaptions, shouldDisplayCaptions, Bool, bool, false) \

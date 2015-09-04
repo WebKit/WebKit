@@ -1,3 +1,14 @@
+2015-09-04  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Disable backspace key navigation by default
+        https://bugs.webkit.org/show_bug.cgi?id=148808
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesDefinitions.h: Defined DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED as
+          false on iOS, true elsewhere, and made it the default value of the
+          backspaceKeyNavigationEnabled preference key.
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         Need to be able to test default behaviors on force click
