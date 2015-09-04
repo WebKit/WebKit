@@ -1,0 +1,17 @@
+This tests for the wireless device picker icon.
+
+This test only runs in DRT!
+
+
+EVENT: canplaythrough
+PASS: We are using the apple idiom
+
+Get the wireless device picker button
+
+PASS: Name is 'AppleTV Device Picker'
+PASS: Has hidden class
+PASS: CSS display: none
+PASS: Aria label is 'Choose Wireless Display'
+
+Testing finished.
+

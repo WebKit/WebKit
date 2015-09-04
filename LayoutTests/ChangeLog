@@ -1,3 +1,13 @@
+2015-09-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [mediacontrols] Test AirPlay picker button
+        https://bugs.webkit.org/show_bug.cgi?id=148836
+
+        Reviewed by Dean Jackson.
+
+        * media/controls/airplay-picker-expected.txt: New test.
+        * media/controls/airplay-picker.html: New results.
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         Should have a test to make sure links don't navigate after a cancelled force 

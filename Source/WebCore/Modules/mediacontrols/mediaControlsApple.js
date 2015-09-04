@@ -2132,7 +2132,13 @@ Controller.prototype = {
             {
                 name: "Fullscreen Button",
                 object: this.controls.fullscreenButton
-            }
+            },
+            {
+                name: "AppleTV Device Picker",
+                object: this.controls.wirelessTargetPicker,
+                styleValues: ["display"],
+                extraProperties: ["hidden"],
+            },
         ];
 
         elements.forEach(function (element) {
@@ -2150,6 +2156,7 @@ Controller.prototype = {
 
             element.bounds = obj.getBoundingClientRect();
             element.className = obj.className;
+            element.ariaLabel = obj.getAttribute('aria-label');
 
             if (element.extraProperties) {
                 element.extraProperties.forEach(function (property) {
