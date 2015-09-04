@@ -138,8 +138,6 @@ namespace JSC {
         void didConsumeFreeList(); // Call this once you've allocated all the items in the free list.
         void stopAllocating(const FreeList&);
         FreeList resumeAllocating(); // Call this if you canonicalized a block for some non-collection related purpose.
-        void didConsumeEmptyFreeList(); // Call this if you sweep a block, but the returned FreeList is empty.
-        void didSweepToNoAvail(); // Call this if you sweep a block and get an empty free list back.
 
         // Returns true if the "newly allocated" bitmap was non-null 
         // and was successfully cleared and false otherwise.
@@ -165,11 +163,6 @@ namespace JSC {
         void setMarked(const void*);
         void clearMarked(const void*);
 
-        void setRemembered(const void*);
-        void clearRemembered(const void*);
-        void atomicClearRemembered(const void*);
-        bool isRemembered(const void*);
-
         bool isNewlyAllocated(const void*);
         void setNewlyAllocated(const void*);
         void clearNewlyAllocated(const void*);
@@ -182,8 +175,6 @@ namespace JSC {
         template <typename Functor> IterationStatus forEachCell(Functor&);
         template <typename Functor> IterationStatus forEachLiveCell(Functor&);
         template <typename Functor> IterationStatus forEachDeadCell(Functor&);
-
-        static ptrdiff_t offsetOfMarks() { return OBJECT_OFFSETOF(MarkedBlock, m_marks); }
 
     private:
         static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.
@@ -296,15 +287,6 @@ namespace JSC {
 
         ASSERT(m_state == FreeListed);
         m_state = Allocated;
-    }
-
-    inline void MarkedBlock::didConsumeEmptyFreeList()
-    {
-        HEAP_LOG_BLOCK_STATE_TRANSITION(this);
-
-        ASSERT(!m_newlyAllocated);
-        ASSERT(m_state == FreeListed);
-        m_state = Marked;
     }
 
     inline size_t MarkedBlock::markCount()

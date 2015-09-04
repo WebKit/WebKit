@@ -1,3 +1,16 @@
+2015-09-04  Andreas Kling  <akling@apple.com>
+
+        Remove some unused functions from MarkedBlock and MarkedSpace.
+        <https://webkit.org/b/148748>
+
+        Reviewed by Darin Adler.
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::offsetOfMarks): Deleted.
+        (JSC::MarkedBlock::didConsumeEmptyFreeList): Deleted.
+        * heap/MarkedSpace.h:
+
 2015-09-04  Basile Clement  <basile_clement@apple.com>
 
         Make a bunch of MacroAssembler operations constexpr

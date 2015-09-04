@@ -94,7 +94,6 @@ public:
     ~MarkedSpace();
     void lastChanceToFinalize();
 
-    MarkedAllocator& firstAllocator();
     MarkedAllocator& allocatorFor(size_t);
     MarkedAllocator& destructorAllocatorFor(size_t);
     void* allocateWithDestructor(size_t);
