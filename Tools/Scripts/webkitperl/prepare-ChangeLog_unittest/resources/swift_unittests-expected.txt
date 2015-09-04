@@ -3,48 +3,48 @@
   'stdout' => '',
   'ranges' => [
     [
-      '4',
-      '5',
+      '22',
+      '23',
       'freeFunction'
     ],
     [
-      '11',
-      '12',
+      '29',
+      '30',
       'MyClass.function'
     ],
     [
-      '18',
-      '19',
+      '36',
+      '37',
       'MyClass.functionWithArgument(_:)'
     ],
     [
-      '24',
-      '25',
+      '42',
+      '43',
       'MyClass.functionWithMoreArguments(_:arg2:)'
     ],
     [
-      '31',
-      '32',
+      '49',
+      '50',
       'MyClass.functionWithNamedFirstArgument(argument:)'
     ],
     [
-      '37',
-      '38',
+      '55',
+      '56',
       'MyClass.functionWithNamedFirstAndSecondArgument(first:second:)'
     ],
     [
-      '45',
-      '46',
+      '63',
+      '64',
       'MyClass.classFunction'
     ],
         [
-      '51',
-      '56',
+      '69',
+      '74',
       'MyClass.readWriteComputedVariable'
     ],
     [
-      '59',
-      '61',
+      '77',
+      '79',
       'MyClass.readOnlyComputedVariable'
     ],
   ]
