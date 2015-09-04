@@ -253,15 +253,20 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec) const
         return 0;
     }
 
-    if (!refNode->inDocument() || &refNode->document() != &ownerDocument()) {
+    if (&refNode->document() != &ownerDocument()) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
 
     ec = 0;
     checkNodeWOffset(refNode, offset, ec);
-    if (ec)
+    if (ec) {
+        // DOM4 spec requires us to check whether refNode and start container have the same root first
+        // but we do it in the reverse order to avoid O(n) operation here in common case.
+        if (!refNode->inDocument() && !commonAncestorContainer(refNode, &startContainer()))
+            ec = WRONG_DOCUMENT_ERR;
         return 0;
+    }
 
     // compare to start, and point comes before
     if (compareBoundaryPoints(refNode, offset, &startContainer(), m_start.offset(), ec) < 0)

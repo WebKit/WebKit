@@ -581,9 +581,9 @@ PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstCh
 PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 13 [paras[1].firstChild, 9] 
 PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 14 [paras[1].firstChild, 10] 
 PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 15 [paras[1].firstChild, 65535] 
-FAIL setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 16 [detachedPara1.firstChild, 0] WrongDocumentError: DOM Exception 4
-FAIL setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 17 [detachedPara1.firstChild, 1] WrongDocumentError: DOM Exception 4
-FAIL setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 18 [detachedPara1.firstChild, 8] WrongDocumentError: DOM Exception 4
+PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 16 [detachedPara1.firstChild, 0] 
+PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 17 [detachedPara1.firstChild, 1] 
+PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 18 [detachedPara1.firstChild, 8] 
 PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 19 [detachedPara1.firstChild, 9] 
 PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 20 [foreignPara1.firstChild, 0] 
 PASS setStart() with range 6 [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], point 21 [foreignPara1.firstChild, 1] 
@@ -669,9 +669,9 @@ PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstCh
 PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 13 [paras[1].firstChild, 9] 
 PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 14 [paras[1].firstChild, 10] 
 PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 15 [paras[1].firstChild, 65535] 
-FAIL setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 16 [detachedPara1.firstChild, 0] WrongDocumentError: DOM Exception 4
-FAIL setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 17 [detachedPara1.firstChild, 1] WrongDocumentError: DOM Exception 4
-FAIL setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 18 [detachedPara1.firstChild, 8] WrongDocumentError: DOM Exception 4
+PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 16 [detachedPara1.firstChild, 0] 
+PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 17 [detachedPara1.firstChild, 1] 
+PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 18 [detachedPara1.firstChild, 8] 
 PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 19 [detachedPara1.firstChild, 9] 
 PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 20 [foreignPara1.firstChild, 0] 
 PASS setStart() with range 7 [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], point 21 [foreignPara1.firstChild, 1] 
@@ -1549,9 +1549,9 @@ PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 12 [pa
 PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 13 [paras[1].firstChild, 9] 
 PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 14 [paras[1].firstChild, 10] 
 PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 15 [paras[1].firstChild, 65535] 
-FAIL setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 16 [detachedPara1.firstChild, 0] WrongDocumentError: DOM Exception 4
-FAIL setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 17 [detachedPara1.firstChild, 1] WrongDocumentError: DOM Exception 4
-FAIL setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 18 [detachedPara1.firstChild, 8] WrongDocumentError: DOM Exception 4
+PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 16 [detachedPara1.firstChild, 0] 
+PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 17 [detachedPara1.firstChild, 1] 
+PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 18 [detachedPara1.firstChild, 8] 
 PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 19 [detachedPara1.firstChild, 9] 
 PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 20 [foreignPara1.firstChild, 0] 
 PASS setStart() with range 17 [detachedPara1, 0, detachedPara1, 1], point 21 [foreignPara1.firstChild, 1] 

@@ -1,3 +1,16 @@
+2015-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Range.comparePoint shouldn't throw an exception if the range and the node are in the same detached tree
+        https://bugs.webkit.org/show_bug.cgi?id=148733
+
+        Reviewed by Chris Dumez.
+
+        Added a regression test and rebaselined a W3C test with more test cases passing.
+
+        * fast/dom/Range/range-comparePoint-detached-nodes-expected.txt: Added.
+        * fast/dom/Range/range-comparePoint-detached-nodes.html: Added.
+        * http/tests/w3c/dom/ranges/Range-set-expected.txt:
+
 2015-09-03  Tim Horton  <timothy_horton@apple.com>
 
         Add a test for swipe-start hysteresis
