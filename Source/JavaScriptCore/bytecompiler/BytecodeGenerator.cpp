@@ -191,6 +191,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     , m_vm(&vm)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
     , m_usesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode())
+    , m_inTailPosition(Options::enableTailCalls() && constructorKind() == ConstructorKind::None && isStrictMode())
 {
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
@@ -2480,6 +2481,14 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
     return emitCall(op_call, dst, func, expectedFunction, callArguments, divot, divotStart, divotEnd);
 }
 
+RegisterID* BytecodeGenerator::emitCallInTailPosition(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
+    // FIXME: We should be emitting a new op_tail_call here when
+    // m_inTailPosition is false
+    // https://bugs.webkit.org/show_bug.cgi?id=148661
+    return emitCall(op_call, dst, func, expectedFunction, callArguments, divot, divotStart, divotEnd);
+}
+
 RegisterID* BytecodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
     return emitCall(op_call_eval, dst, func, NoExpectedFunction, callArguments, divot, divotStart, divotEnd);
@@ -2626,6 +2635,14 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 
 RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
+    return emitCallVarargs(op_call_varargs, dst, func, thisRegister, arguments, firstFreeRegister, firstVarArgOffset, profileHookRegister, divot, divotStart, divotEnd);
+}
+
+RegisterID* BytecodeGenerator::emitCallVarargsInTailPosition(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
+    // FIXME: We should be emitting a new op_tail_call here when
+    // m_inTailPosition is false
+    // https://bugs.webkit.org/show_bug.cgi?id=148661
     return emitCallVarargs(op_call_varargs, dst, func, thisRegister, arguments, firstFreeRegister, firstVarArgOffset, profileHookRegister, divot, divotStart, divotEnd);
 }
 
