@@ -3661,7 +3661,7 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
     case INVALID_NUMERIC_LITERAL_ERRORTOK:
         out.print("Invalid numeric literal: '", getToken(), "'");
         return;
-    case INVALID_OCTAL_NUMBER_ERRORTOK:
+    case UNTERMINATED_OCTAL_NUMBER_ERRORTOK:
         out.print("Invalid use of octal: '", getToken(), "'");
         return;
     case INVALID_STRING_LITERAL_ERRORTOK:

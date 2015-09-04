@@ -1,3 +1,21 @@
+2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Test RuntimeAgent.parse, detecting if a script parse error is recoverable
+        https://bugs.webkit.org/show_bug.cgi?id=148790
+
+        Reviewed by Timothy Hatcher.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/ParserTokens.h:
+        More consistently name and treat unterminated numeric literals.
+
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        Treat multiline capable unterminated literals as recoverable.
+
 2015-08-25  Basile Clement  <basile_clement@apple.com>
 
         Get rid of FTLValueFormat

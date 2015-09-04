@@ -2031,7 +2031,7 @@ start:
         if ((m_current | 0x20) == 'x') {
             if (!isASCIIHexDigit(peek(1))) {
                 m_lexErrorMessage = ASCIILiteral("No hexadecimal digits after '0x'");
-                token = INVALID_HEX_NUMBER_ERRORTOK;
+                token = UNTERMINATED_HEX_NUMBER_ERRORTOK;
                 goto returnError;
             }
 
@@ -2041,7 +2041,7 @@ start:
             parseHex(tokenData->doubleValue);
             if (isIdentStart(m_current)) {
                 m_lexErrorMessage = ASCIILiteral("No space between hexadecimal literal and identifier");
-                token = INVALID_HEX_NUMBER_ERRORTOK;
+                token = UNTERMINATED_HEX_NUMBER_ERRORTOK;
                 goto returnError;
             }
             token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
@@ -2051,7 +2051,7 @@ start:
         if ((m_current | 0x20) == 'b') {
             if (!isASCIIBinaryDigit(peek(1))) {
                 m_lexErrorMessage = ASCIILiteral("No binary digits after '0b'");
-                token = INVALID_BINARY_NUMBER_ERRORTOK;
+                token = UNTERMINATED_BINARY_NUMBER_ERRORTOK;
                 goto returnError;
             }
 
@@ -2061,7 +2061,7 @@ start:
             parseBinary(tokenData->doubleValue);
             if (isIdentStart(m_current)) {
                 m_lexErrorMessage = ASCIILiteral("No space between binary literal and identifier");
-                token = INVALID_BINARY_NUMBER_ERRORTOK;
+                token = UNTERMINATED_BINARY_NUMBER_ERRORTOK;
                 goto returnError;
             }
             token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
@@ -2072,7 +2072,7 @@ start:
         if ((m_current | 0x20) == 'o') {
             if (!isASCIIOctalDigit(peek(1))) {
                 m_lexErrorMessage = ASCIILiteral("No octal digits after '0o'");
-                token = INVALID_OCTAL_NUMBER_ERRORTOK;
+                token = UNTERMINATED_OCTAL_NUMBER_ERRORTOK;
                 goto returnError;
             }
 
@@ -2082,7 +2082,7 @@ start:
             parseOctal(tokenData->doubleValue);
             if (isIdentStart(m_current)) {
                 m_lexErrorMessage = ASCIILiteral("No space between octal literal and identifier");
-                token = INVALID_OCTAL_NUMBER_ERRORTOK;
+                token = UNTERMINATED_OCTAL_NUMBER_ERRORTOK;
                 goto returnError;
             }
             token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
@@ -2093,7 +2093,7 @@ start:
         record8('0');
         if (strictMode && isASCIIDigit(m_current)) {
             m_lexErrorMessage = ASCIILiteral("Decimal integer literals with a leading zero are forbidden in strict mode");
-            token = INVALID_OCTAL_NUMBER_ERRORTOK;
+            token = UNTERMINATED_OCTAL_NUMBER_ERRORTOK;
             goto returnError;
         }
         if (isASCIIOctalDigit(m_current)) {

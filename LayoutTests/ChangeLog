@@ -1,3 +1,13 @@
+2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Test RuntimeAgent.parse, detecting if a script parse error is recoverable
+        https://bugs.webkit.org/show_bug.cgi?id=148790
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/runtime/parse-expected.txt: Added.
+        * inspector/runtime/parse.html: Added.
+
 2015-09-04  Tim Horton  <timothy_horton@apple.com>
 
         swipe-start-hysteresis-failures is flaky
