@@ -11,6 +11,7 @@ ControlsTest = class ControlsTest {
         this.eventTrigger = eventTrigger || "canplaythrough";
         this.currentMessage = "";
         this.currentValue = null;
+        this.cachedCurrentState = null;
     }
 
     whenReady(callback)
@@ -25,8 +26,10 @@ ControlsTest = class ControlsTest {
         if (!this.media)
             return null;
 
-        if (window.internals)
-            return JSON.parse(internals.getCurrentMediaControlsStatusForElement(this.media));
+        if (window.internals) {
+            this.cachedCurrentState = JSON.parse(internals.getCurrentMediaControlsStatusForElement(this.media));
+            return this.cachedCurrentState;
+        }
 
         // This is only for fallback testing. Even then it is pretty useless.
         return { idiom: "apple", status: "fail" };
@@ -34,7 +37,7 @@ ControlsTest = class ControlsTest {
 
     stateForControlsElement(elementName)
     {
-        var state = this.currentState;
+        var state = this.cachedCurrentState || this.currentState;
         if (state.elements && state.elements.length) {
             for (var i = 0; i < state.elements.length; i++) {
                 if (state.elements[i].name == elementName)
@@ -173,6 +176,14 @@ ControlsTest = class ControlsTest {
             this.logSuccess(this.currentMessage);
         else
             this.logFailure(`${this.currentMessage} Expected a non-zero value`);
+    }
+
+    isGreaterThan(value)
+    {
+        if (this.currentValue > value)
+            this.logSuccess(this.currentMessage);
+        else
+            this.logFailure(`${this.currentMessage} Actual: "${this.currentValue}" is not greater than Expected: "${value}"`);
     }
 
 }

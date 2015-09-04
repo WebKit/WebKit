@@ -2112,6 +2112,26 @@ Controller.prototype = {
                 object: this.controls.statusDisplay,
                 styleValues: ["display"],
                 extraProperties: ["textContent"]
+            },
+            {
+                name: "Play Button",
+                object: this.controls.playButton
+            },
+            {
+                name: "Rewind Button",
+                object: this.controls.rewindButton
+            },
+            {
+                name: "Timeline Box",
+                object: this.controls.timelineBox
+            },
+            {
+                name: "Mute Box",
+                object: this.controls.muteBox
+            },
+            {
+                name: "Fullscreen Button",
+                object: this.controls.fullscreenButton
             }
         ];
 
@@ -2125,16 +2145,18 @@ Controller.prototype = {
                 element.styleValues.forEach(function (propertyName) {
                     element.computedStyle[propertyName] = computedStyle[propertyName];
                 });
+                delete element.styleValues;
             }
-            delete element.styleValues;
 
             element.bounds = obj.getBoundingClientRect();
             element.className = obj.className;
 
-            element.extraProperties.forEach(function (property) {
-                element[property] = obj[property];
-            });
-            delete element.extraProperties;
+            if (element.extraProperties) {
+                element.extraProperties.forEach(function (property) {
+                    element[property] = obj[property];
+                });
+                delete element.extraProperties;
+            }
         });
 
         result.elements = elements;

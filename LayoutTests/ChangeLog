@@ -1,3 +1,27 @@
+2015-09-04  Dean Jackson  <dino@apple.com>
+
+        [mediacontrols] Test the ordering of elements in the controls panel
+        https://bugs.webkit.org/show_bug.cgi?id=148804
+        <rdar://problem/22579232>
+
+        Reviewed by Eric Carlson.
+
+        Add a new test that checks the visual order of the buttons and
+        elements in the controls panel. This is helpful because they
+        are not necessarily in that order within the DOM.
+
+        I also added caching of the current state to the testing helper,
+        to save generating the JSON status multiple times in subsequent
+        calls.
+
+        * media/controls/elementOrder.html: New test.
+        * media/controls/elementOrder-expected.txt: New results.
+        * media/controls/controls-test-helpers.js:
+        (ControlsTest):
+        (ControlsTest.prototype.get currentState): Added caching.
+        (ControlsTest.prototype.stateForControlsElement):
+        (ControlsTest.prototype.isGreaterThan): New test helper.
+
 2015-09-03  Dean Jackson  <dino@apple.com>
 
         [mediacontrols] Expose bounding rectangles and computed style to testing
