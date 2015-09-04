@@ -67,6 +67,7 @@ public:
     void mouseForceUp();
     void mouseForceChanged(float);
     void mouseForceClick();
+    void startAndCancelMouseForceClick();
     void mouseMoveTo(double x, double y);
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum);

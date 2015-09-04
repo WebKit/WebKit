@@ -28,6 +28,7 @@ interface EventSendingController {
     void mouseUp(long buttonNumber, object modifierArray);
     void mouseMoveTo(long x, long y);
     void mouseForceClick();
+    void startAndCancelMouseForceClick();
     void mouseForceDown();
     void mouseForceUp();
     void mouseForceChanged(double force);

@@ -467,6 +467,42 @@ void EventSenderProxy::mouseForceClick()
 #pragma clang diagnostic pop
 }
 
+void EventSenderProxy::startAndCancelMouseForceClick()
+{
+    sendMouseDownToStartPressureEvents();
+
+    RetainPtr<NSEvent> beginPressure = beginPressureEvent(1);
+    RetainPtr<NSEvent> increasingPressure = pressureChangeEvent(1, PressureChangeDirection::Increasing);
+    RetainPtr<NSEvent> releasingPressure = pressureChangeEvent(1, PressureChangeDirection::Decreasing);
+    NSEvent *mouseUp = [NSEvent mouseEventWithType:NSLeftMouseUp
+        location:NSMakePoint(m_position.x, m_position.y)
+        modifierFlags:0
+        timestamp:absoluteTimeForEventTime(currentEventTime())
+        windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+        context:[NSGraphicsContext currentContext]
+        eventNumber:++eventNumber
+        clickCount:m_clickCount
+        pressure:0.0];
+
+    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[beginPressure.get() locationInWindow]];
+    targetView = targetView ? targetView : m_testController->mainWebView()->platformView();
+    ASSERT(targetView);
+
+    // Since AppKit does not implement forceup/down as mouse events, we need to send two pressure events to detect
+    // the change in stage that marks those moments.
+    handleForceEventSynchronously(beginPressure.get());
+    handleForceEventSynchronously(increasingPressure.get());
+    handleForceEventSynchronously(releasingPressure.get());
+    [NSApp sendEvent:mouseUp];
+
+    [NSApp _setCurrentEvent:nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    // WKView caches the most recent pressure event, so send it a nil event to clear the cache.
+    [targetView pressureChangeWithEvent:nil];
+#pragma clang diagnostic pop
+}
+
 void EventSenderProxy::mouseForceDown()
 {
     sendMouseDownToStartPressureEvents();
@@ -574,6 +610,10 @@ void EventSenderProxy::mouseForceChanged(float)
 }
 
 void EventSenderProxy::mouseForceClick()
+{
+}
+
+void EventSenderProxy::startAndCancelMouseForceClick()
 {
 }
 #endif // defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
