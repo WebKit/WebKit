@@ -1,9 +1,9 @@
 
 PASS Childless document 
 PASS Childless html element 
-FAIL Body followed by frameset inside the html element assert_equals: expected Element node <body></body> but got Element node <frameset></frameset>
+PASS Body followed by frameset inside the html element 
 PASS Frameset followed by body inside the html element 
-FAIL Body followed by frameset inside a non-HTML html element assert_equals: expected null but got Element node <frameset></frameset>
+FAIL Body followed by frameset inside a non-HTML html element assert_equals: expected null but got Element node <body></body>
 FAIL Frameset followed by body inside a non-HTML html element assert_equals: expected null but got Element node <frameset></frameset>
 PASS Non-HTML body followed by body inside the html element 
 PASS Non-HTML frameset followed by body inside the html element 

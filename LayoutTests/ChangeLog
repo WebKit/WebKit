@@ -1,3 +1,15 @@
+2015-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Document.body should return the first body / frameset child of the html element
+        https://bugs.webkit.org/show_bug.cgi?id=148787
+        <rdar://problem/22566850>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline test now that a new check is passing.
+
+        * http/tests/w3c/html/dom/documents/dom-tree-accessors/document.body-getter-expected.txt:
+
 2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import css/css-color-3
