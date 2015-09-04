@@ -1,3 +1,9 @@
+2015-09-04  Beth Dakin  <bdakin@apple.com>
+
+        Rolling this back in since these tests do still fail on the bots.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-09-04  Chris Dumez  <cdumez@apple.com>
 
         dispatchEvent() should throw an InvalidStateError if the event's initialized flag is not set
