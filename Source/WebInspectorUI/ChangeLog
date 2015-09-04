@@ -1,3 +1,14 @@
+2015-09-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Render Frames "Other" task filter checkbox misaligned with text
+        https://bugs.webkit.org/show_bug.cgi?id=148788
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ChartDetailsSectionRow.css:
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > .color-key):
+        Adjust "fake" checkbox margin to align with label text.
+
 2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expand Console domain test coverage
