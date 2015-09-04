@@ -54,6 +54,7 @@ namespace JSC {
     class JSArrowFunction;
     class JSFunction;
     class JSGlobalObject;
+    class JSModuleEnvironment;
     class JSModuleRecord;
     class LLIntOffsetsExtractor;
     class ProgramExecutable;
@@ -215,6 +216,7 @@ namespace JSC {
         JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
         JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
         JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*);
+        JSValue execute(ModuleProgramExecutable*, CallFrame*, JSModuleEnvironment*);
 
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         

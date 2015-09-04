@@ -57,6 +57,9 @@ class ProgramCodeBlock;
 class ModuleProgramCodeBlock;
 class JSScope;
 class WebAssemblyCodeBlock;
+class ModuleProgramCodeBlock;
+class JSModuleRecord;
+class JSScope;
 
 enum CompilationKind { FirstCompilation, OptimizingCompilation };
 
@@ -589,6 +592,8 @@ public:
     ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, false); }
     UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock() { return m_unlinkedModuleProgramCodeBlock.get(); }
 
+    SymbolTable* moduleEnvironmentSymbolTable() { return m_moduleEnvironmentSymbolTable.get(); }
+
 private:
     friend class ScriptExecutable;
 
@@ -597,6 +602,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<UnlinkedModuleProgramCodeBlock> m_unlinkedModuleProgramCodeBlock;
+    WriteBarrier<SymbolTable> m_moduleEnvironmentSymbolTable;
     RefPtr<ModuleProgramCodeBlock> m_moduleProgramCodeBlock;
 };
 

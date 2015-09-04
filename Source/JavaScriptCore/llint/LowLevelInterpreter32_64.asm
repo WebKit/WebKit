@@ -2035,8 +2035,13 @@ _llint_op_resolve_scope:
     dispatch(7)
 
 .rClosureVar:
-    bineq t0, ClosureVar, .rGlobalPropertyWithVarInjectionChecks
+    bineq t0, ClosureVar, .rModuleVar
     resolveScope()
+    dispatch(7)
+
+.rModuleVar:
+    bineq t0, ModuleVar, .rGlobalPropertyWithVarInjectionChecks
+    getConstantScope(1)
     dispatch(7)
 
 .rGlobalPropertyWithVarInjectionChecks:
@@ -2266,11 +2271,16 @@ _llint_op_put_to_scope:
     dispatch(7)
 
 .pClosureVarWithVarInjectionChecks:
-    bineq t0, ClosureVarWithVarInjectionChecks, .pDynamic
+    bineq t0, ClosureVarWithVarInjectionChecks, .pModuleVar
     writeBarrierOnOperands(1, 3)
     varInjectionCheck(.pDynamic)
     loadVariable(1, t2, t1, t0)
     putClosureVar()
+    dispatch(7)
+
+.pModuleVar:
+    bineq t0, ModuleVar, .pDynamic
+    callSlowPath(_slow_path_throw_strict_mode_readonly_property_write_error)
     dispatch(7)
 
 .pDynamic:

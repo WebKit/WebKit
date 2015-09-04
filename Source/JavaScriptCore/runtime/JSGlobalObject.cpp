@@ -84,6 +84,7 @@
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
+#include "JSModuleEnvironment.h"
 #include "JSModuleRecord.h"
 #include "JSNativeStdFunction.h"
 #include "JSONObject.h"
@@ -313,6 +314,7 @@ void JSGlobalObject::init(VM& vm)
     m_typedArrays[toIndex(TypeDataView)].structure.set(vm, this, JSDataView::createStructure(vm, this, m_typedArrays[toIndex(TypeDataView)].prototype.get()));
     
     m_lexicalEnvironmentStructure.set(vm, this, JSLexicalEnvironment::createStructure(vm, this));
+    m_moduleEnvironmentStructure.set(vm, this, JSModuleEnvironment::createStructure(vm, this));
     m_strictEvalActivationStructure.set(vm, this, StrictEvalActivation::createStructure(vm, this, jsNull()));
     m_debuggerScopeStructure.set(m_vm, this, DebuggerScope::createStructure(m_vm, this));
     m_withScopeStructure.set(vm, this, JSWithScope::createStructure(vm, this, jsNull()));
@@ -793,6 +795,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_withScopeStructure);
     visitor.append(&thisObject->m_strictEvalActivationStructure);
     visitor.append(&thisObject->m_lexicalEnvironmentStructure);
+    visitor.append(&thisObject->m_moduleEnvironmentStructure);
     visitor.append(&thisObject->m_directArgumentsStructure);
     visitor.append(&thisObject->m_scopedArgumentsStructure);
     visitor.append(&thisObject->m_outOfBandArgumentsStructure);

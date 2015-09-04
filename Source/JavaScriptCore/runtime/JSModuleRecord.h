@@ -32,6 +32,7 @@
 #include "VariableEnvironment.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -78,8 +79,8 @@ public:
     };
 
     typedef WTF::ListHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> OrderedIdentifierSet;
-    typedef HashMap<RefPtr<UniquedStringImpl>, ImportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ImportMap;
-    typedef HashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ExportMap;
+    typedef HashMap<RefPtr<UniquedStringImpl>, ImportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ImportEntries;
+    typedef HashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ExportEntries;
 
     DECLARE_EXPORT_INFO;
 
@@ -100,24 +101,48 @@ public:
     void addImportEntry(const ImportEntry&);
     void addExportEntry(const ExportEntry&);
 
-    const ImportEntry& lookUpImportEntry(const RefPtr<UniquedStringImpl>& localName);
+    Optional<ImportEntry> tryGetImportEntry(UniquedStringImpl* localName);
+    Optional<ExportEntry> tryGetExportEntry(UniquedStringImpl* exportName);
 
     const SourceCode& sourceCode() const { return m_sourceCode; }
     const Identifier& moduleKey() const { return m_moduleKey; }
     const OrderedIdentifierSet& requestedModules() const { return m_requestedModules; }
-    const ExportMap& exportEntries() const { return m_exportEntries; }
-    const ImportMap& importEntries() const { return m_importEntries; }
+    const ExportEntries& exportEntries() const { return m_exportEntries; }
+    const ImportEntries& importEntries() const { return m_importEntries; }
+    const OrderedIdentifierSet& starExportEntries() const { return m_starExportEntries; }
 
     const VariableEnvironment& declaredVariables() const { return m_declaredVariables; }
     const VariableEnvironment& lexicalVariables() const { return m_lexicalVariables; }
 
     void dump();
 
+    JSModuleEnvironment* moduleEnvironment()
+    {
+        ASSERT(m_moduleEnvironment);
+        return m_moduleEnvironment.get();
+    }
 
     void link(ExecState*);
     JSValue execute(ExecState*);
 
     ModuleProgramExecutable* moduleProgramExecutable() const { return m_moduleProgramExecutable.get(); }
+
+    struct Resolution {
+        enum class Type { Resolved, NotFound, Ambiguous, Error };
+
+        static Resolution notFound();
+        static Resolution error();
+        static Resolution ambiguous();
+
+        Type type;
+        JSModuleRecord* moduleRecord;
+        Identifier localName;
+    };
+
+    Resolution resolveExport(ExecState*, const Identifier& exportName);
+    Resolution resolveImport(ExecState*, const Identifier& localName);
+
+    JSModuleRecord* hostResolveImportedModule(ExecState*, const Identifier& moduleName);
 
 private:
     JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
@@ -134,7 +159,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
     static void destroy(JSCell*);
 
-    JSModuleRecord* hostResolveImportedModule(ExecState*, const Identifier& moduleName);
+    void instantiateDeclarations(ExecState*, ModuleProgramExecutable*);
 
     // The loader resolves the given module name to the module key. The module key is the unique value to represent this module.
     Identifier m_moduleKey;
@@ -144,46 +169,37 @@ private:
     VariableEnvironment m_declaredVariables;
     VariableEnvironment m_lexicalVariables;
 
+    // Currently, we don't keep the occurrence order of the import / export entries.
+    // So, we does not guarantee the order of the errors.
+    // e.g. The import declaration that occurr later than the another import declaration may
+    //      throw the error even if the former import declaration also has the invalid content.
+    //
+    //      import ... // (1) this has some invalid content.
+    //      import ... // (2) this also has some invalid content.
+    //
+    //      In the above case, (2) may throw the error earlier than (1)
+    //
+    // But, in the all cases, we will throw the syntax error. So except for the content of the syntax error,
+    // there are no difference.
+
     // Map localName -> ImportEntry.
-    ImportMap m_importEntries;
+    ImportEntries m_importEntries;
 
     // Map exportName -> ExportEntry.
-    ExportMap m_exportEntries;
+    ExportEntries m_exportEntries;
 
-    IdentifierSet m_starExportEntries;
+    // Save the occurrence order since resolveExport requires it.
+    OrderedIdentifierSet m_starExportEntries;
 
     // Save the occurrence order since the module loader loads and runs the modules in this order.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
     OrderedIdentifierSet m_requestedModules;
 
-    WriteBarrier<ModuleProgramExecutable> m_moduleProgramExecutable;
     WriteBarrier<JSMap> m_dependenciesMap;
+
+    WriteBarrier<ModuleProgramExecutable> m_moduleProgramExecutable;
+    WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;
 };
-
-inline void JSModuleRecord::appendRequestedModule(const Identifier& moduleName)
-{
-    m_requestedModules.add(moduleName.impl());
-}
-
-inline void JSModuleRecord::addImportEntry(const ImportEntry& entry)
-{
-    m_importEntries.add(entry.localName.impl(), entry);
-}
-
-inline void JSModuleRecord::addExportEntry(const ExportEntry& entry)
-{
-    m_exportEntries.add(entry.exportName.impl(), entry);
-}
-
-inline void JSModuleRecord::addStarExportEntry(const Identifier& moduleName)
-{
-    m_starExportEntries.add(moduleName.impl());
-}
-
-inline auto JSModuleRecord::lookUpImportEntry(const RefPtr<UniquedStringImpl>& localName) -> const ImportEntry&
-{
-    return (*m_importEntries.find(localName)).value;
-}
 
 } // namespace JSC
 

@@ -1,3 +1,155 @@
+2015-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Instantiate Module Environment bindings and execute module
+        https://bugs.webkit.org/show_bug.cgi?id=148053
+
+        Reviewed by Saam Barati.
+
+        This patch implements Module Environment binding instantiation.
+        And since the layout of the module environment is tightly coupled with the variable
+        look up in LLInt / Baseline / DFG, we implement the execution part at the same time.
+
+        For the instantiation, we implement the several operations (like resolveExport)
+        specified in the spec. The original algorithm contains the recursive call, but it is not
+        good for C++ code. We flatten the algorithm by using the manual frames to avoid recursions.
+        By leveraging the information retrieved by the above operations, we instantiate and
+        initialize the slots of the module environment.
+
+        The module namespace object is not implemented yet in this patch. It will be implemented
+        and instantiated in the module environment in the subsequent patch[1].
+
+        To look up the imported module bindings in the JS code, we introduce the "ModuleVar" resolve
+        type for resolve_scope, get_from_scope and put_to_scope. This "ModuleVar" will be filled
+        when linking the CodeBlock. This type is used when treating the imported bindings.
+
+        1. For resolve_scope, when linking, we resolve the actual module environment where
+            looked up variable resides and store it directly to the instruction. And resolve_scope
+            simply retrieve the stored pointer from the instruction.
+
+        2. For get_from_scope, since "ModuleVar" behavior for get_from_scope is completely same
+            to the "ClosureVar", we just store "ClosureVar" for get_from_scope to eliminate
+            unnecessary branch in LLInt layer.
+
+        3. For put_to_scope, we always emit the function call that immediately raises the error.
+            Because all the imported bindings are immutable and module code is always strict code.
+            In DFG, we just emit the ForceOSRExit. We don't make put_to_scope with "ModuleVar"
+            "CannotCompile" because it disables DFG compiling for the function even if this
+            problematic instruction is never executed.
+
+        Exported module variables inside the original module environment are just treated as the
+        usual heap variables. So the types for closure variables are just used. ("ClosureVar" etc.)
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=148705
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedModuleProgramCodeBlock::visitChildren): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * interpreter/Interpreter.h:
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::exportVariable):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Error.cpp:
+        (JSC::throwSyntaxError):
+        * runtime/Error.h:
+        * runtime/Executable.cpp:
+        (JSC::ModuleProgramExecutable::create):
+        (JSC::ModuleProgramExecutable::visitChildren):
+        (JSC::ModuleProgramExecutable::clearCode):
+        * runtime/Executable.h:
+        * runtime/GetPutInfo.h:
+        (JSC::resolveTypeName):
+        (JSC::makeType):
+        (JSC::needsVarInjectionChecks):
+        (JSC::ResolveOp::ResolveOp):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::moduleEnvironmentStructure):
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.cpp: Added.
+        (JSC::JSModuleEnvironment::create):
+        (JSC::JSModuleEnvironment::finishCreation):
+        (JSC::JSModuleEnvironment::visitChildren):
+        (JSC::JSModuleEnvironment::getOwnPropertySlot):
+        (JSC::JSModuleEnvironment::getOwnNonIndexPropertyNames):
+        (JSC::JSModuleEnvironment::put):
+        (JSC::JSModuleEnvironment::deleteProperty):
+        * runtime/JSModuleEnvironment.h: Copied from Source/JavaScriptCore/runtime/JSLexicalEnvironment.h.
+        (JSC::JSModuleEnvironment::create):
+        (JSC::JSModuleEnvironment::createStructure):
+        (JSC::JSModuleEnvironment::offsetOfModuleRecord):
+        (JSC::JSModuleEnvironment::allocationSize):
+        (JSC::JSModuleEnvironment::moduleRecord):
+        (JSC::JSModuleEnvironment::moduleRecordSlot):
+        (JSC::JSModuleEnvironment::JSModuleEnvironment):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::visitChildren):
+        (JSC::JSModuleRecord::appendRequestedModule):
+        (JSC::JSModuleRecord::addStarExportEntry):
+        (JSC::JSModuleRecord::addImportEntry):
+        (JSC::JSModuleRecord::addExportEntry):
+        (JSC::ResolveQuery::ResolveQuery):
+        (JSC::ResolveQuery::isEmptyValue):
+        (JSC::ResolveQuery::isDeletedValue):
+        (JSC::ResolveQueryHash::hash):
+        (JSC::ResolveQueryHash::equal):
+        (JSC::resolveExportLoop):
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        (JSC::JSModuleRecord::execute):
+        (JSC::JSModuleRecord::dump):
+        * runtime/JSModuleRecord.h:
+        (JSC::JSModuleRecord::exportEntries):
+        (JSC::JSModuleRecord::importEntries):
+        (JSC::JSModuleRecord::starExportEntries):
+        (JSC::JSModuleRecord::moduleEnvironment):
+        (JSC::JSModuleRecord::appendRequestedModule): Deleted.
+        (JSC::JSModuleRecord::addImportEntry): Deleted.
+        (JSC::JSModuleRecord::addExportEntry): Deleted.
+        (JSC::JSModuleRecord::addStarExportEntry): Deleted.
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::collectVariablesUnderTDZ):
+        (JSC::JSScope::isModuleScope):
+        * runtime/JSScope.h:
+        * runtime/ModuleLoaderObject.cpp:
+
 2015-09-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorController should support multiple frontend channels

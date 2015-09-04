@@ -42,6 +42,7 @@
 #include "Heap.h"
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
+#include "JSModuleEnvironment.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
 #include "StackAlignment.h"
@@ -3839,6 +3840,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 break;
             }
+            case ModuleVar: {
+                // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
+                // we need not to keep it alive by the Phantom node.
+                JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(currentInstruction[6].u.jsCell.get());
+                // Module environment is already strongly referenced by the CodeBlock.
+                set(VirtualRegister(dst), weakJSConstant(moduleEnvironment));
+                break;
+            }
             case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
@@ -4034,6 +4043,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 set(VirtualRegister(dst), addToGraph(JSConstant, OpInfo(m_constantUndefined)));
                 break;
             }
+            case ModuleVar:
             case Dynamic:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -4128,6 +4138,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
                 break;
             }
+
             case UnresolvedProperty:
             case UnresolvedPropertyWithVarInjectionChecks: {
                 addToGraph(ForceOSRExit);
@@ -4135,6 +4146,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Phantom, scopeNode);
                 break;
             }
+
+            case ModuleVar:
+                // Need not to keep "scope" and "value" register values here by Phantom because
+                // they are not used in LLInt / baseline op_put_to_scope with ModuleVar.
+                addToGraph(ForceOSRExit);
+                break;
+
             case Dynamic:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;

@@ -537,9 +537,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     if (m_isBuiltinFunction)
         m_shouldEmitDebugHooks = false;
 
-    // Use the symbol table allocated in the unlinked code block. This symbol table
-    // will be used to allocate and instantiate the module environment.
-    SymbolTable* moduleEnvironmentSymbolTable = codeBlock->moduleEnvironmentSymbolTable();
+    SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(*m_vm);
     moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     moduleEnvironmentSymbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
 
@@ -593,6 +591,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     VariableEnvironment& lexicalVariables = moduleProgramNode->lexicalVariables();
     instantiateLexicalVariables(lexicalVariables, moduleEnvironmentSymbolTable, ScopeRegisterType::Block, lookUpVarKind);
 
+    // We keep the symbol table in the constant pool.
     RegisterID* constantSymbolTable = nullptr;
     if (vm.typeProfiler())
         constantSymbolTable = addConstantValue(moduleEnvironmentSymbolTable);
@@ -657,6 +656,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
             m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
         }
     }
+
+    // Remember the constant register offset to the top-most symbol table. This symbol table will be
+    // cloned in the code block linking. After that, to create the module environment, we retrieve
+    // the cloned symbol table from the linked code block by using this offset.
+    codeBlock->setModuleEnvironmentSymbolTableConstantRegisterOffset(constantSymbolTable->index());
 }
 
 BytecodeGenerator::~BytecodeGenerator()

@@ -1938,6 +1938,9 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction*
     JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[2].u.operand).jsValue());
     GetPutInfo getPutInfo(pc[4].u.operand);
 
+    // ModuleVar is always converted to ClosureVar for get_from_scope.
+    ASSERT(getPutInfo.resolveType() != ModuleVar);
+
     PropertySlot slot(scope);
     if (!scope->getPropertySlot(exec, ident, slot)) {
         if (getPutInfo.resolveMode() == ThrowIfNotFound)
@@ -1973,6 +1976,10 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
     JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[1].u.operand).jsValue());
     JSValue value = exec->r(pc[3].u.operand).jsValue();
     GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
+
+    // ModuleVar does not keep the scope register value alive in DFG.
+    ASSERT(getPutInfo.resolveType() != ModuleVar);
+
     if (getPutInfo.resolveType() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
         environment->variableAt(ScopeOffset(pc[6].u.operand)).set(vm, environment, value);

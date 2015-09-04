@@ -39,7 +39,7 @@ namespace JSC {
 class Register;
     
 class JSLexicalEnvironment : public JSEnvironmentRecord {
-private:
+protected:
     JSLexicalEnvironment(VM&, Structure*, JSScope*, SymbolTable*);
     
 public:

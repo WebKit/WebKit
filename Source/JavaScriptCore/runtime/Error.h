@@ -74,6 +74,7 @@ JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&)
 // Convenience wrappers, create an throw an exception with a default message.
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
+JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*, const String& errorMessage);
 inline JSObject* throwRangeError(ExecState* state, const String& errorMessage) { return state->vm().throwException(state, createRangeError(state, errorMessage)); }
 
 // Convenience wrappers, wrap result as an EncodedJSValue.

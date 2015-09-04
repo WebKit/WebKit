@@ -82,7 +82,9 @@ void ModuleAnalyzer::exportVariable(const RefPtr<UniquedStringImpl>& localName, 
         return;
     }
 
-    const auto& importEntry = moduleRecord()->lookUpImportEntry(localName);
+    Optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
+    ASSERT(optionalImportEntry);
+    const JSModuleRecord::ImportEntry& importEntry = *optionalImportEntry;
     if (variable.isImportedNamespace()) {
         // Exported namespace binding.
         // import * as namespace from "mod"

@@ -729,6 +729,9 @@
     <ClCompile Include="..\runtime\JSMap.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSModuleEnvironment.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSModuleRecord.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -3509,6 +3512,9 @@
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSMap.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSModuleEnvironment.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSModuleRecord.h">

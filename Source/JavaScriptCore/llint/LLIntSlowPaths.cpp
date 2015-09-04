@@ -1366,6 +1366,9 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(2).jsValue());
     GetPutInfo getPutInfo(pc[4].u.operand);
 
+    // ModuleVar is always converted to ClosureVar for get_from_scope.
+    ASSERT(getPutInfo.resolveType() != ModuleVar);
+
     PropertySlot slot(scope);
     if (!scope->getPropertySlot(exec, ident, slot)) {
         if (getPutInfo.resolveMode() == ThrowIfNotFound)

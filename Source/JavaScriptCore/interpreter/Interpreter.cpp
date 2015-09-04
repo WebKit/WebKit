@@ -49,6 +49,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
+#include "JSModuleEnvironment.h"
 #include "JSNotAnObject.h"
 #include "JSStackInlines.h"
 #include "JSString.h"
@@ -1211,6 +1212,54 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->didExecute(callFrame, eval->sourceURL(), eval->firstLine(), eval->startColumn());
+
+    return checkedReturn(result);
+}
+
+JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* callFrame, JSModuleEnvironment* scope)
+{
+    VM& vm = *scope->vm();
+    SamplingScope samplingScope(this);
+
+    ASSERT(scope->vm() == &callFrame->vm());
+    ASSERT(!vm.exception());
+    ASSERT(!vm.isCollectorBusy());
+    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
+    if (vm.isCollectorBusy())
+        return jsNull();
+
+    VMEntryScope entryScope(vm, scope->globalObject());
+    if (!vm.isSafeToRecurse())
+        return checkedReturn(throwStackOverflowError(callFrame));
+
+    JSObject* compileError = executable->prepareForExecution(callFrame, nullptr, scope, CodeForCall);
+    if (UNLIKELY(!!compileError))
+        return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
+    ModuleProgramCodeBlock* codeBlock = executable->codeBlock();
+
+    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(callFrame)))
+        return throwTerminatedExecutionException(callFrame);
+
+    ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+
+    // The |this| of the module is always `undefined`.
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
+    ProtoCallFrame protoCallFrame;
+    protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(), scope), jsUndefined(), 1);
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(callFrame, executable->sourceURL(), executable->firstLine(), executable->startColumn());
+
+    // Execute the code:
+    JSValue result;
+    {
+        SamplingTool::CallRecord callRecord(m_sampler.get());
+        result = executable->generatedJITCode()->execute(&vm, &protoCallFrame);
+    }
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(callFrame, executable->sourceURL(), executable->firstLine(), executable->startColumn());
 
     return checkedReturn(result);
 }

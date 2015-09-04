@@ -788,6 +788,7 @@
     <ClCompile Include="..\runtime\JSLock.cpp" />
     <ClCompile Include="..\runtime\JSMap.cpp" />
     <ClCompile Include="..\runtime\JSMapIterator.cpp" />
+    <ClCompile Include="..\runtime\JSModuleEnvironment.cpp" />
     <ClCompile Include="..\runtime\JSModuleRecord.cpp" />
     <ClCompile Include="..\runtime\JSNativeStdFunction.cpp" />
     <ClCompile Include="..\runtime\JSNotAnObject.cpp" />
@@ -1644,6 +1645,7 @@
     <ClInclude Include="..\runtime\JSLock.h" />
     <ClInclude Include="..\runtime\JSMap.h" />
     <ClInclude Include="..\runtime\JSMapIterator.h" />
+    <ClInclude Include="..\runtime\JSModuleEnvironment.h" />
     <ClInclude Include="..\runtime\JSModuleRecord.h" />
     <ClInclude Include="..\runtime\JSNativeStdFunction.h" />
     <ClInclude Include="..\runtime\JSNotAnObject.h" />

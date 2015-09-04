@@ -270,6 +270,12 @@ SLOW_PATH_DECL(slow_path_throw_tdz_error)
     THROW(createTDZError(exec));
 }
 
+SLOW_PATH_DECL(slow_path_throw_strict_mode_readonly_property_write_error)
+{
+    BEGIN();
+    THROW(createTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError)));
+}
+
 SLOW_PATH_DECL(slow_path_not)
 {
     BEGIN();
@@ -668,6 +674,10 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     JSValue resolvedScope = JSScope::resolve(exec, scope, ident);
 
     ResolveType resolveType = static_cast<ResolveType>(pc[4].u.operand);
+
+    // ModuleVar does not keep the scope register value alive in DFG.
+    ASSERT(resolveType != ModuleVar);
+
     if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
         if (JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsDynamicCast<JSGlobalLexicalEnvironment*>(resolvedScope)) {
             if (resolveType == UnresolvedProperty)

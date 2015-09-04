@@ -28,6 +28,8 @@
 
 #include "JSGlobalObject.h"
 #include "JSLexicalEnvironment.h"
+#include "JSModuleEnvironment.h"
+#include "JSModuleRecord.h"
 #include "JSWithScope.h"
 #include "JSCInlines.h"
 
@@ -63,6 +65,19 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         if (!entry.isNull()) {
             op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, lexicalEnvironment, entry.watchpointSet(), entry.scopeOffset().offset());
             return true;
+        }
+
+        if (JSModuleEnvironment* moduleEnvironment = jsDynamicCast<JSModuleEnvironment*>(scope)) {
+            JSModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
+            JSModuleRecord::Resolution resolution = moduleRecord->resolveImport(exec, ident);
+            if (resolution.type == JSModuleRecord::Resolution::Type::Resolved) {
+                JSModuleRecord* importedRecord = resolution.moduleRecord;
+                JSModuleEnvironment* importedEnvironment = importedRecord->moduleEnvironment();
+                SymbolTableEntry entry = importedEnvironment->symbolTable()->get(resolution.localName.impl());
+                ASSERT(!entry.isNull());
+                op = ResolveOp(makeType(ModuleVar, needsVarInjectionChecks), depth, 0, importedEnvironment, entry.watchpointSet(), entry.scopeOffset().offset(), resolution.localName.impl());
+                return true;
+            }
         }
 
         if (lexicalEnvironment->symbolTable()->usesNonStrictEval())
@@ -210,6 +225,13 @@ void JSScope::collectVariablesUnderTDZ(JSScope* scope, VariableEnvironment& resu
     for (; scope; scope = scope->next()) {
         if (!scope->isLexicalScope() && !scope->isGlobalLexicalEnvironment())
             continue;
+
+        if (scope->isModuleScope()) {
+            JSModuleRecord* moduleRecord = jsCast<JSModuleEnvironment*>(scope)->moduleRecord();
+            for (const auto& pair : moduleRecord->importEntries())
+                result.add(pair.key);
+        }
+
         SymbolTable* symbolTable = jsCast<JSSymbolTableObject*>(scope)->symbolTable();
         ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::GlobalLexicalScope);
         ConcurrentJITLocker locker(symbolTable->m_lock);
@@ -236,6 +258,11 @@ bool JSScope::isVarScope()
 bool JSScope::isLexicalScope()
 {
     return isScopeType<JSLexicalEnvironment, SymbolTable::ScopeType::LexicalScope>(this);
+}
+
+bool JSScope::isModuleScope()
+{
+    return isScopeType<JSModuleEnvironment, SymbolTable::ScopeType::LexicalScope>(this);
 }
 
 bool JSScope::isCatchScope()

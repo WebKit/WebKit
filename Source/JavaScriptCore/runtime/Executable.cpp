@@ -439,6 +439,8 @@ ModuleProgramExecutable* ModuleProgramExecutable::create(ExecState* exec, const 
         return nullptr;
     executable->m_unlinkedModuleProgramCodeBlock.set(exec->vm(), executable, unlinkedModuleProgramCode);
 
+    executable->m_moduleEnvironmentSymbolTable.set(exec->vm(), executable, jsCast<SymbolTable*>(unlinkedModuleProgramCode->constantRegister(unlinkedModuleProgramCode->moduleEnvironmentSymbolTableConstantRegisterOffset()).get())->cloneScopePart(exec->vm()));
+
     return executable;
 }
 
@@ -633,6 +635,7 @@ void ModuleProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     ScriptExecutable::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_unlinkedModuleProgramCodeBlock);
+    visitor.append(&thisObject->m_moduleEnvironmentSymbolTable);
     if (thisObject->m_moduleProgramCodeBlock)
         thisObject->m_moduleProgramCodeBlock->visitAggregate(visitor);
 }
@@ -641,6 +644,7 @@ void ModuleProgramExecutable::clearCode()
 {
     m_moduleProgramCodeBlock = nullptr;
     m_unlinkedModuleProgramCodeBlock.clear();
+    m_moduleEnvironmentSymbolTable.clear();
     Base::clearCode();
 }
 

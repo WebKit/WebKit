@@ -234,6 +234,7 @@ protected:
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
     WriteBarrier<Structure> m_lexicalEnvironmentStructure;
+    WriteBarrier<Structure> m_moduleEnvironmentStructure;
     WriteBarrier<Structure> m_directArgumentsStructure;
     WriteBarrier<Structure> m_scopedArgumentsStructure;
     WriteBarrier<Structure> m_outOfBandArgumentsStructure;
@@ -450,6 +451,7 @@ public:
     Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
     Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }
     Structure* activationStructure() const { return m_lexicalEnvironmentStructure.get(); }
+    Structure* moduleEnvironmentStructure() const { return m_moduleEnvironmentStructure.get(); }
     Structure* directArgumentsStructure() const { return m_directArgumentsStructure.get(); }
     Structure* scopedArgumentsStructure() const { return m_scopedArgumentsStructure.get(); }
     Structure* outOfBandArgumentsStructure() const { return m_outOfBandArgumentsStructure.get(); }

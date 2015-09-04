@@ -57,6 +57,7 @@ public:
 
     bool isVarScope();
     bool isLexicalScope();
+    bool isModuleScope();
     bool isGlobalLexicalEnvironment();
     bool isCatchScope();
     bool isFunctionNameScopeObject();

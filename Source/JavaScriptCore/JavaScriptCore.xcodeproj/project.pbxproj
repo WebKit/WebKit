@@ -1731,6 +1731,8 @@
 		E3963CEE1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */; };
 		E39DA4A61B7E8B7C0084F33A /* JSModuleRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */; };
 		E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3D239C81B829C1C00BBEF67 /* JSModuleEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */; };
+		E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */; };
 		E3EF88751B66DF23003F26CB /* JSPropertyNameIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E49DC15512EF277200184A1F /* SourceProviderCache.cpp */; };
@@ -3597,6 +3599,8 @@
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleRecord.cpp; sourceTree = "<group>"; };
 		E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleRecord.h; sourceTree = "<group>"; };
+		E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleEnvironment.cpp; sourceTree = "<group>"; };
+		E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleEnvironment.h; sourceTree = "<group>"; };
 		E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
 		E3EF88731B66DF23003F26CB /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
 		E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCacheItem.h; sourceTree = "<group>"; };
@@ -4791,6 +4795,8 @@
 				A700874017CBE8EB00C3E643 /* JSMap.h */,
 				A74DEF8F182D991400522C22 /* JSMapIterator.cpp */,
 				A74DEF90182D991400522C22 /* JSMapIterator.h */,
+				E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */,
+				E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */,
 				E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */,
 				E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */,
 				E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */,
@@ -6157,6 +6163,7 @@
 				0F2B9CE919D0BA7D00B1D1B5 /* DFGObjectMaterializationData.h in Headers */,
 				A7D9A29817A0BC7400EE2618 /* DFGLICMPhase.h in Headers */,
 				A7D89CFC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h in Headers */,
+				E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */,
 				0FF0F19B16B729FA005DF95B /* DFGLongLivedState.h in Headers */,
 				709FB8681AE335C60039D069 /* JSWeakSet.h in Headers */,
 				A767B5B617A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h in Headers */,
@@ -7405,6 +7412,7 @@
 				0F6C73501AC9F99F00BE1682 /* VariableWriteFireDetail.cpp in Sources */,
 				86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */,
 				0F8F943C1667631300D61971 /* CodeSpecializationKind.cpp in Sources */,
+				E3D239C81B829C1C00BBEF67 /* JSModuleEnvironment.cpp in Sources */,
 				0F8F94421667633500D61971 /* CodeType.cpp in Sources */,
 				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
 				0F9C5E5E18E35F5E00D431C3 /* FTLDWARFRegister.cpp in Sources */,

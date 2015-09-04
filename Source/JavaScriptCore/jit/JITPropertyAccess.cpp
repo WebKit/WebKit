@@ -709,6 +709,10 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
     case ClosureVarWithVarInjectionChecks:
         emitResolveClosure(dst, scope, needsVarInjectionChecks(resolveType), depth);
         break;
+    case ModuleVar:
+        move(TrustedImmPtr(currentInstruction[6].u.jsCell.get()), regT0);
+        emitPutVirtualRegister(dst);
+        break;
     case UnresolvedProperty:
     case UnresolvedPropertyWithVarInjectionChecks:
     case Dynamic:
@@ -722,8 +726,9 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
-    if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar || resolveType == GlobalLexicalVar)
+    if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar || resolveType == GlobalLexicalVar || resolveType == ModuleVar)
         return;
+
 
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_resolve_scope);
@@ -789,6 +794,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
     case Dynamic:
         addSlowCase(jump());
         break;
+    case ModuleVar:
     case LocalClosureVar:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -882,6 +888,7 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
         break;
     case UnresolvedProperty:
     case UnresolvedPropertyWithVarInjectionChecks:
+    case ModuleVar:
     case Dynamic:
         addSlowCase(jump());
         break;
@@ -908,7 +915,12 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
         return;
     while (linkCount--)
         linkSlowCase(iter);
-    callOperation(operationPutToScope, currentInstruction);
+
+    if (resolveType == ModuleVar) {
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_throw_strict_mode_readonly_property_write_error);
+        slowPathCall.call();
+    } else
+        callOperation(operationPutToScope, currentInstruction);
 }
 
 void JIT::emit_op_get_from_arguments(Instruction* currentInstruction)

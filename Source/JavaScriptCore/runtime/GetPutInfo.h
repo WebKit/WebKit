@@ -26,6 +26,8 @@
 #ifndef GetPutInfo_h
 #define GetPutInfo_h
 
+#include <wtf/text/UniquedStringImpl.h>
+
 namespace JSC {
 
 class Structure;
@@ -44,6 +46,7 @@ enum ResolveType {
     GlobalLexicalVar,
     ClosureVar,
     LocalClosureVar,
+    ModuleVar,
 
     // Ditto, but at least one intervening scope used non-strict eval, which
     // can inject an intercepting var delcaration at runtime.
@@ -84,6 +87,7 @@ ALWAYS_INLINE const char* resolveTypeName(ResolveType type)
         "GlobalLexicalVar",
         "ClosureVar",
         "LocalClosureVar",
+        "ModuleVar",
         "GlobalPropertyWithVarInjectionChecks",
         "GlobalVarWithVarInjectionChecks",
         "GlobalLexicalVarWithVarInjectionChecks",
@@ -122,6 +126,7 @@ ALWAYS_INLINE ResolveType makeType(ResolveType type, bool needsVarInjectionCheck
         return ClosureVarWithVarInjectionChecks;
     case UnresolvedProperty:
         return UnresolvedPropertyWithVarInjectionChecks;
+    case ModuleVar:
     case GlobalPropertyWithVarInjectionChecks:
     case GlobalVarWithVarInjectionChecks:
     case GlobalLexicalVarWithVarInjectionChecks:
@@ -143,6 +148,7 @@ ALWAYS_INLINE bool needsVarInjectionChecks(ResolveType type)
     case GlobalLexicalVar:
     case ClosureVar:
     case LocalClosureVar:
+    case ModuleVar:
     case UnresolvedProperty:
         return false;
     case GlobalPropertyWithVarInjectionChecks:
@@ -159,13 +165,14 @@ ALWAYS_INLINE bool needsVarInjectionChecks(ResolveType type)
 }
 
 struct ResolveOp {
-    ResolveOp(ResolveType type, size_t depth, Structure* structure, JSLexicalEnvironment* lexicalEnvironment, WatchpointSet* watchpointSet, uintptr_t operand)
+    ResolveOp(ResolveType type, size_t depth, Structure* structure, JSLexicalEnvironment* lexicalEnvironment, WatchpointSet* watchpointSet, uintptr_t operand, UniquedStringImpl* importedName = nullptr)
         : type(type)
         , depth(depth)
         , structure(structure)
         , lexicalEnvironment(lexicalEnvironment)
         , watchpointSet(watchpointSet)
         , operand(operand)
+        , importedName(importedName)
     {
     }
 
@@ -175,6 +182,7 @@ struct ResolveOp {
     JSLexicalEnvironment* lexicalEnvironment;
     WatchpointSet* watchpointSet;
     uintptr_t operand;
+    RefPtr<UniquedStringImpl> importedName;
 };
 
 class GetPutInfo {

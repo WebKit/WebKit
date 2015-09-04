@@ -81,6 +81,7 @@ namespace JSC {
 class ExecState;
 class LLIntOffsetsExtractor;
 class TypeLocation;
+class JSModuleEnvironment;
 
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 

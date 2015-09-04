@@ -328,10 +328,11 @@ const GlobalVar = 1
 const GlobalLexicalVar = 2
 const ClosureVar = 3
 const LocalClosureVar = 4
-const GlobalPropertyWithVarInjectionChecks = 5
-const GlobalVarWithVarInjectionChecks = 6
-const GlobalLexicalVarWithVarInjectionChecks = 7
-const ClosureVarWithVarInjectionChecks = 8
+const ModuleVar = 5
+const GlobalPropertyWithVarInjectionChecks = 6
+const GlobalVarWithVarInjectionChecks = 7
+const GlobalLexicalVarWithVarInjectionChecks = 8
+const ClosureVarWithVarInjectionChecks = 9
 
 const ResolveTypeMask = 0x3ff
 const InitializationModeMask = 0xffc00

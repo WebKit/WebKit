@@ -35,6 +35,7 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseDeferred.h"
 #include "JSMap.h"
+#include "JSModuleEnvironment.h"
 #include "JSModuleRecord.h"
 #include "ModuleAnalyzer.h"
 #include "Nodes.h"

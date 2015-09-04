@@ -539,6 +539,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSLock.cpp
     runtime/JSMap.cpp
     runtime/JSMapIterator.cpp
+    runtime/JSModuleEnvironment.cpp
     runtime/JSModuleRecord.cpp
     runtime/JSNativeStdFunction.cpp
     runtime/JSNotAnObject.cpp

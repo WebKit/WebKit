@@ -49,6 +49,7 @@
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
+#include "JSModuleEnvironment.h"
 #include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
@@ -1785,6 +1786,17 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
     }
 
+    // We already have the cloned symbol table for the module environment since we need to instantiate
+    // the module environments before linking the code block. We replace the stored symbol table with the already cloned one.
+    if (UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock = jsDynamicCast<UnlinkedModuleProgramCodeBlock*>(unlinkedCodeBlock)) {
+        SymbolTable* clonedSymbolTable = jsCast<ModuleProgramExecutable*>(ownerExecutable)->moduleEnvironmentSymbolTable();
+        if (m_vm->typeProfiler()) {
+            ConcurrentJITLocker locker(clonedSymbolTable->m_lock);
+            clonedSymbolTable->prepareForTypeProfiling(locker);
+        }
+        replaceConstant(unlinkedModuleProgramCodeBlock->moduleEnvironmentSymbolTableConstantRegisterOffset(), clonedSymbolTable);
+    }
+
     m_functionDecls.resizeToFit(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
@@ -1862,6 +1874,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     // Copy and translate the UnlinkedInstructions
     unsigned instructionCount = unlinkedCodeBlock->instructions().count();
     UnlinkedInstructionStream::Reader instructionReader(unlinkedCodeBlock->instructions());
+
+    // Bookkeep the strongly referenced module environments.
+    HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
     Vector<Instruction, 0, UnsafeVectorOverflow> instructions(instructionCount);
 
@@ -1972,9 +1987,15 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, NotInitialization);
             instructions[i + 4].u.operand = op.type;
             instructions[i + 5].u.operand = op.depth;
-            if (op.lexicalEnvironment)
-                instructions[i + 6].u.symbolTable.set(*vm(), ownerExecutable, op.lexicalEnvironment->symbolTable());
-            else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this))
+            if (op.lexicalEnvironment) {
+                if (op.type == ModuleVar) {
+                    // Keep the linked module environment strongly referenced.
+                    if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
+                        addConstant(op.lexicalEnvironment);
+                    instructions[i + 6].u.jsCell.set(*vm(), ownerExecutable, op.lexicalEnvironment);
+                } else
+                    instructions[i + 6].u.symbolTable.set(*vm(), ownerExecutable, op.lexicalEnvironment->symbolTable());
+            } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this))
                 instructions[i + 6].u.jsCell.set(*vm(), ownerExecutable, constantScope);
             else
                 instructions[i + 6].u.pointer = nullptr;
@@ -2003,6 +2024,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, getPutInfo.resolveType(), NotInitialization);
 
             instructions[i + 4].u.operand = GetPutInfo(getPutInfo.resolveMode(), op.type, getPutInfo.initializationMode()).operand();
+            if (op.type == ModuleVar)
+                instructions[i + 4].u.operand = GetPutInfo(getPutInfo.resolveMode(), ClosureVar, getPutInfo.initializationMode()).operand();
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
             else if (op.structure)
@@ -2070,17 +2093,18 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 // we're abstractly "read"ing from a JSScope.
                 ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, NotInitialization);
 
-                if (op.type == ClosureVar)
+                if (op.type == ClosureVar || op.type == ModuleVar)
                     symbolTable = op.lexicalEnvironment->symbolTable();
                 else if (op.type == GlobalVar)
                     symbolTable = m_globalObject.get()->symbolTable();
-                
+
+                UniquedStringImpl* impl = (op.type == ModuleVar) ? op.importedName.get() : ident.impl();
                 if (symbolTable) {
                     ConcurrentJITLocker locker(symbolTable->m_lock);
                     // If our parent scope was created while profiling was disabled, it will not have prepared for profiling yet.
                     symbolTable->prepareForTypeProfiling(locker);
-                    globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
-                    globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
+                    globalVariableID = symbolTable->uniqueIDForVariable(locker, impl, *vm());
+                    globalTypeSet = symbolTable->globalTypeSetForVariable(locker, impl, *vm());
                 } else
                     globalVariableID = TypeProfilerNoGlobalIDExists;
 
