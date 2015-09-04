@@ -1,3 +1,9 @@
+2015-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Skip newly imported IndexedDB test on iOS WebKit1, because IndexedDB only works with WebKit2.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         Need to be able to test default behaviors on force click
