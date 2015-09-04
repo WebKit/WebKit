@@ -1,3 +1,9 @@
+2015-09-04  Basile Clement  <basile_clement@apple.com>
+
+        Unreviewed, add missing copyright to file from r189336
+
+        * bytecompiler/SetForScope.h:
+
 2015-09-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorController should support multiple frontend channels
