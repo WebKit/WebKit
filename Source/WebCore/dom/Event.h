@@ -100,6 +100,7 @@ public:
     virtual ~Event();
 
     void initEvent(const AtomicString& type, bool canBubble, bool cancelable);
+    bool isInitialized() const { return m_isInitialized; }
 
     const AtomicString& type() const { return m_type; }
     void setType(const AtomicString& type) { m_type = type; }
@@ -188,6 +189,7 @@ protected:
     bool dispatched() const { return m_target; }
 
 private:
+    bool m_isInitialized { false };
     AtomicString m_type;
     bool m_canBubble;
     bool m_cancelable;

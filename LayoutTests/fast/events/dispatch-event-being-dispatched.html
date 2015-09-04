@@ -1,43 +1,24 @@
 <!DOCTYPE html>
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
 <body>
-<p class="description">
-Tests that dispatchEvent raises DISPATCH_REQUEST_ERR if the event
-being dispatched is already being dispatched.
-</p>
-<pre id="console">
-</pre>
+<script src="../../resources/js-test-pre.js"></script>
+<div class="testDiv"></div>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
+description("Tests that dispatchEvent raises INVALID_STATE_ERR if the event being dispatched is already being dispatched.");
 
 jsTestIsAsync = true;
 
-function shouldBeDispatchRequestErr(exception) {
-    var ok = EventException.prototype.isPrototypeOf(exception) && exception.code == EventException.DISPATCH_REQUEST_ERR;
-    (ok ? testPassed : testFailed)("should have got DISPATCH_REQUEST_ERR EventException");
-}
-
-// try redispatching an event in the process of being dispatched with
-// dispatchEvent
+// try redispatching an event in the process of being dispatched with dispatchEvent
 
 function redispatchCustom(event) {
-    try {
-        window.dispatchEvent(event);
-        testFailed('dispatchEvent of an event being dispatched should throw an exception');
-    } catch (ex) {
-        shouldBeDispatchRequestErr(ex);
-    }
+    shouldThrow("window.dispatchEvent(event)", "'Error: InvalidStateError: DOM Exception 11'");
 
     redispatchCustom.wasInvoked = true;
 }
 
 var customEvent = document.createEvent('CustomEvent');
 customEvent.initCustomEvent('foo', true, true, null);
-var p = document.querySelector('.description');
+var p = document.querySelector('.testDiv');
 p.addEventListener('foo', redispatchCustom);
 p.dispatchEvent(customEvent);
 shouldBeTrue('redispatchCustom.wasInvoked');
@@ -62,15 +43,9 @@ function redispatchLoad(event) {
         return;
     }
 
-    try {
-        redispatchLoad.dispatching = true;
-        document.dispatchEvent(event);
-        testFailed('dispatchEvent of an event being dispatched should throw an exception');
-    } catch (ex) {
-        shouldBeDispatchRequestErr(ex);
-    } finally {
-        delete redispatchLoad.dispatching;
-    }
+    redispatchLoad.dispatching = true;
+    shouldThrow("document.dispatchEvent(event)", "'Error: InvalidStateError: DOM Exception 11'");
+    delete redispatchLoad.dispatching;
 
     finishJSTest();
 }
