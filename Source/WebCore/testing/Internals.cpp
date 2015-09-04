@@ -333,6 +333,7 @@ void Internals::resetToConsistentState(Page* page)
     ApplicationCacheStorage::singleton().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
     PlatformMediaSessionManager::sharedManager().resetRestrictions();
+    PlatformMediaSessionManager::sharedManager().setWillIgnoreSystemInterruptions(true);
 #endif
 #if HAVE(ACCESSIBILITY)
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);

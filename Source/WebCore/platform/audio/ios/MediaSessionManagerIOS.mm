@@ -385,7 +385,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 
 - (void)interruption:(NSNotification *)notification
 {
-    if (!_callback)
+    if (!_callback || _callback->willIgnoreSystemInterruptions())
         return;
 
     NSUInteger type = [[[notification userInfo] objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
@@ -412,7 +412,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     UNUSED_PARAM(notification);
 
-    if (!_callback)
+    if (!_callback || _callback->willIgnoreSystemInterruptions())
         return;
 
     LOG(Media, "-[WebMediaSessionHelper applicationWillEnterForeground]");
@@ -429,7 +429,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     UNUSED_PARAM(notification);
 
-    if (!_callback)
+    if (!_callback || _callback->willIgnoreSystemInterruptions())
         return;
 
     LOG(Media, "-[WebMediaSessionHelper applicationDidBecomeActive]");
@@ -446,7 +446,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     UNUSED_PARAM(notification);
 
-    if (!_callback)
+    if (!_callback || _callback->willIgnoreSystemInterruptions())
         return;
 
     LOG(Media, "-[WebMediaSessionHelper applicationWillResignActive]");
@@ -478,7 +478,7 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 
 - (void)applicationDidEnterBackground:(NSNotification *)notification
 {
-    if (!_callback)
+    if (!_callback || _callback->willIgnoreSystemInterruptions())
         return;
 
     LOG(Media, "-[WebMediaSessionHelper applicationDidEnterBackground]");

@@ -52,6 +52,9 @@ public:
     int count(PlatformMediaSession::MediaType) const;
     bool activeAudioSessionRequired() const;
 
+    bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
+    void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }
+
     WEBCORE_EXPORT void beginInterruption(PlatformMediaSession::InterruptionType);
     WEBCORE_EXPORT void endInterruption(PlatformMediaSession::EndInterruptionFlags);
 
@@ -129,6 +132,7 @@ private:
 
     bool m_interrupted { false };
     mutable bool m_isApplicationInBackground { false };
+    bool m_willIgnoreSystemInterruptions { false };
 };
 
 }
