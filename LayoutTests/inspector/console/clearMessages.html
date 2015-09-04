@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.clearMessages");
+
+    suite.addTestCase({
+        name: "CallClearMessages",
+        description: "Calling the Console.clearMessages command should trigger Console.messagesCleared.",
+        test: (resolve, reject) => {
+            ConsoleAgent.clearMessages();
+
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                InspectorTest.assert(false, "MessageAdded event should not fire.");
+                reject();
+            });
+
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+                InspectorTest.expectThat(event, "Cleared event should fire.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Console.clearMessages command.</p>
+</body>
+</html>

@@ -1,0 +1,21 @@
+Test for the Console.addInspectedNode command.
+
+
+== Running test suite: Console.addInspectedNode
+-- Running test case: Check$0IsUndefined
+PASS: $0 should be undefined.
+
+-- Running test case: SetAndCheckNodeA
+PASS: $0 should be a node.
+PASS: $0 should be Node A.
+
+-- Running test case: SetBadNodeId
+PASS: Should be an error
+PASS: $0 should be a node.
+PASS: $0 should be Node A.
+
+-- Running test case: SetAndCheckNodeB
+PASS: $0 should be a node.
+PASS: $0 should not be Node A.
+PASS: $0 should be Node B.
+

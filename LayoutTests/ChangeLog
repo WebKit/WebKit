@@ -1,3 +1,21 @@
+2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Expand Console domain test coverage
+        https://bugs.webkit.org/show_bug.cgi?id=148740
+
+        Reviewed by Brian Burg.
+
+        Test more Console domain commands and events.
+
+        * inspector/console/addInspectedNode-expected.txt: Added.
+        * inspector/console/addInspectedNode.html: Added.
+        * inspector/console/clearMessages-expected.txt: Added.
+        * inspector/console/clearMessages.html: Added.
+        * inspector/console/messageRepeatCountUpdated-expected.txt: Added.
+        * inspector/console/messageRepeatCountUpdated.html: Added.
+        * inspector/console/messagesCleared-expected.txt: Added.
+        * inspector/console/messagesCleared.html: Added.
+
 2015-09-04  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; enabling media/ and http/tests/media/ tests (with expected failures) on ios-simulator
