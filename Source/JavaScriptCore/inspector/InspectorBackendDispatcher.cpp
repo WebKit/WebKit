@@ -28,12 +28,22 @@
 #include "InspectorBackendDispatcher.h"
 
 #include "InspectorFrontendChannel.h"
+#include "InspectorFrontendRouter.h"
 #include "InspectorValues.h"
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
+
+SupplementalBackendDispatcher::SupplementalBackendDispatcher(BackendDispatcher& backendDispatcher)
+    : m_backendDispatcher(backendDispatcher)
+{
+}
+
+SupplementalBackendDispatcher::~SupplementalBackendDispatcher()
+{
+}
 
 BackendDispatcher::CallbackBase::CallbackBase(Ref<BackendDispatcher>&& backendDispatcher, long requestId)
     : m_backendDispatcher(WTF::move(backendDispatcher))
@@ -69,15 +79,28 @@ void BackendDispatcher::CallbackBase::sendSuccess(RefPtr<InspectorObject>&& part
     m_backendDispatcher->sendResponse(m_requestId, WTF::move(partialMessage));
 }
 
-Ref<BackendDispatcher> BackendDispatcher::create(FrontendChannel* frontendChannel)
+BackendDispatcher::BackendDispatcher(Ref<FrontendRouter>&& router)
+    : m_frontendRouter(WTF::move(router))
 {
-    return adoptRef(*new BackendDispatcher(frontendChannel));
+}
+
+Ref<BackendDispatcher> BackendDispatcher::create(Ref<FrontendRouter>&& router)
+{
+    return adoptRef(*new BackendDispatcher(WTF::move(router)));
+}
+
+bool BackendDispatcher::isActive() const
+{
+    return m_frontendRouter->hasFrontends();
 }
 
 void BackendDispatcher::registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher* dispatcher)
 {
-    auto result = m_dispatchers.add(domain, dispatcher);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    ASSERT_ARG(dispatcher, dispatcher);
+
+    // FIXME: <https://webkit.org/b/148492> Agents should only register with the backend once,
+    // and we should re-add the assertion that only one dispatcher is registered per domain.
+    m_dispatchers.set(domain, dispatcher);
 }
 
 void BackendDispatcher::dispatch(const String& message)
@@ -165,9 +188,6 @@ void BackendDispatcher::dispatch(const String& message)
 
 void BackendDispatcher::sendResponse(long requestId, RefPtr<InspectorObject>&& result)
 {
-    if (!m_frontendChannel)
-        return;
-
     ASSERT(!m_protocolErrors.size());
 
     // The JSON-RPC 2.0 specification requires that the "error" member have the value 'null'
@@ -175,7 +195,7 @@ void BackendDispatcher::sendResponse(long requestId, RefPtr<InspectorObject>&& r
     Ref<InspectorObject> responseMessage = InspectorObject::create();
     responseMessage->setObject(ASCIILiteral("result"), result);
     responseMessage->setInteger(ASCIILiteral("id"), requestId);
-    m_frontendChannel->sendMessageToFrontend(responseMessage->toJSONString());
+    m_frontendRouter->sendResponse(responseMessage->toJSONString());
 }
 
 void BackendDispatcher::sendPendingErrors()
@@ -190,9 +210,6 @@ void BackendDispatcher::sendPendingErrors()
         -32000, // ServerError
     };
 
-    if (!m_frontendChannel)
-        return;
-    
     // To construct the error object, only use the last error's code and message.
     // Per JSON-RPC 2.0, Section 5.1, the 'data' member may contain nested errors,
     // but only one top-level Error object should be sent per request.
@@ -227,7 +244,7 @@ void BackendDispatcher::sendPendingErrors()
         message->setValue(ASCIILiteral("id"), InspectorValue::null());
     }
 
-    m_frontendChannel->sendMessageToFrontend(message->toJSONString());
+    m_frontendRouter->sendResponse(message->toJSONString());
 
     m_protocolErrors.clear();
     m_currentRequestId = Nullopt;

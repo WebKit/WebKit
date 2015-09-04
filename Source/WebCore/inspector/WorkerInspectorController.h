@@ -41,6 +41,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+namespace Inspector {
+class FrontendRouter;
+};
+
 namespace WebCore {
 
 class InspectorInstrumentation;
@@ -78,9 +82,10 @@ private:
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     WorkerRuntimeAgent* m_runtimeAgent { nullptr };
     Inspector::AgentRegistry m_agents;
-    std::unique_ptr<Inspector::FrontendChannel> m_frontendChannel;
+    std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
     Ref<WTF::Stopwatch> m_executionStopwatch;
-    RefPtr<Inspector::BackendDispatcher> m_backendDispatcher;
+    Ref<Inspector::FrontendRouter> m_frontendRouter;
+    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
 };
 

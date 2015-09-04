@@ -2039,6 +2039,13 @@ static void runTest(const string& inputLine)
 
     workQueue.clear();
 
+    // If the test page could have possibly opened the Web Inspector frontend,
+    // then try to close it in case it was accidentally left open.
+    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
+        gTestRunner->closeWebInspector();
+        gTestRunner->setDeveloperExtrasEnabled(false);
+    }
+
     if (gTestRunner->closeRemainingWindowsWhenComplete()) {
         NSArray* array = [DumpRenderTreeWindow openWindows];
 
@@ -2060,12 +2067,6 @@ static void runTest(const string& inputLine)
             [webView close];
             [window close];
         }
-    }
-
-    // If developer extras enabled Web Inspector may have been open by the test.
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
-        gTestRunner->closeWebInspector();
-        gTestRunner->setDeveloperExtrasEnabled(false);
     }
 
     resetWebViewToConsistentStateBeforeTesting();

@@ -80,10 +80,10 @@ void PageDebuggable::connect(Inspector::FrontendChannel* channel, bool isAutomat
     inspectorController.connectFrontend(channel, isAutomaticInspection);
 }
 
-void PageDebuggable::disconnect()
+void PageDebuggable::disconnect(Inspector::FrontendChannel* channel)
 {
     InspectorController& inspectorController = m_page.inspectorController();
-    inspectorController.disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
+    inspectorController.disconnectFrontend(channel);
 
     if (m_forcedDeveloperExtrasEnabled) {
         m_forcedDeveloperExtrasEnabled = false;

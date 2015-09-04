@@ -1735,9 +1735,8 @@ PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
     m_frontendClient = std::make_unique<InspectorFrontendClientDummy>(&page->inspectorController(), frontendPage);
     frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
 
-    bool isAutomaticInspection = false;
     m_frontendChannel = std::make_unique<InspectorFrontendChannelDummy>(frontendPage);
-    page->inspectorController().connectFrontend(m_frontendChannel.get(), isAutomaticInspection);
+    page->inspectorController().connectFrontend(m_frontendChannel.get());
 
     return m_frontendWindow;
 }
@@ -1748,9 +1747,13 @@ void Internals::closeDummyInspectorFrontend()
     ASSERT(page);
     ASSERT(m_frontendWindow);
 
-    page->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
+    Page* frontendPage = m_frontendWindow->document()->page();
+    ASSERT(frontendPage);
 
+    frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
     m_frontendClient = nullptr;
+
+    page->inspectorController().disconnectFrontend(m_frontendChannel.get());
     m_frontendChannel = nullptr;
 
     m_frontendWindow->close(m_frontendWindow->scriptExecutionContext());

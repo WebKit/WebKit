@@ -1,3 +1,23 @@
+2015-09-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorController should support multiple frontend channels
+        https://bugs.webkit.org/show_bug.cgi?id=148538
+
+        Reviewed by Joseph Pecoraro.
+
+        InspectorClients must explicitly disconnect their frontend channel(s) from the
+        inspected page's InspectorController.
+
+        To make this possible, DumpRenderTree should not destroy non-primary views until
+        it has tried to close any abandoned Web Inspector instances. Performing teardown
+        in the reverse order prevents disconnection of the frontend channel because that
+        prematurely destroys the inspector frontend client.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         Need to be able to test default behaviors on force click

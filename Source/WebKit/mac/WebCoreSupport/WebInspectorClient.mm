@@ -87,7 +87,7 @@ static const CGFloat initialWindowHeight = 650;
 - (WebInspectorClient*)inspectorClient;
 - (void)setAttachedWindowHeight:(unsigned)height;
 - (void)setDockingUnavailable:(BOOL)unavailable;
-- (void)destroyInspectorView:(bool)notifyInspectorController;
+- (void)destroyInspectorView;
 @end
 
 
@@ -130,6 +130,7 @@ void WebInspectorClient::closeInspectorFrontend()
 
 void WebInspectorClient::bringFrontendToFront()
 {
+    ASSERT(m_frontendClient);
     m_frontendClient->bringToFront();
 }
 
@@ -252,12 +253,12 @@ void WebInspectorFrontendClient::bringToFront()
 
 void WebInspectorFrontendClient::closeWindow()
 {
-    [m_windowController.get() destroyInspectorView:true];
+    [m_windowController.get() destroyInspectorView];
 }
 
 void WebInspectorFrontendClient::disconnectFromBackend()
 {
-    [m_windowController.get() destroyInspectorView:false];
+    [m_windowController.get() destroyInspectorView];
 }
 
 void WebInspectorFrontendClient::attachWindow(DockSide)
@@ -522,7 +523,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (BOOL)windowShouldClose:(id)sender
 {
-    [self destroyInspectorView:true];
+    [self destroyInspectorView];
 
     return YES;
 }
@@ -676,7 +677,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     // Do nothing.
 }
 
-- (void)destroyInspectorView:(bool)notifyInspectorController
+- (void)destroyInspectorView
 {
     RetainPtr<WebInspectorWindowController> protect(self);
 
@@ -692,9 +693,9 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     _visible = NO;
 
-    if (notifyInspectorController) {
-        if (Page* inspectedPage = [_inspectedWebView.get() page])
-            inspectedPage->inspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
+    if (Page* inspectedPage = [_inspectedWebView.get() page]) {
+        inspectedPage->inspectorController().setInspectorFrontendClient(nullptr);
+        inspectedPage->inspectorController().disconnectFrontend(_inspectorClient);
     }
 
     [_webView close];

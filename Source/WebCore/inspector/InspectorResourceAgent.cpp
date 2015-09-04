@@ -62,6 +62,7 @@
 #include "URL.h"
 #include "WebSocketFrame.h"
 #include <inspector/IdentifiersFactory.h>
+#include <inspector/InspectorFrontendRouter.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>

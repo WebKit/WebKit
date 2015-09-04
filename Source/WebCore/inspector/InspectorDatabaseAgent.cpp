@@ -44,6 +44,7 @@
 #include "SQLTransactionErrorCallback.h"
 #include "SQLValue.h"
 #include "VoidCallback.h"
+#include <inspector/InspectorFrontendRouter.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
 
