@@ -1,3 +1,30 @@
+2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Clean up and modernize DOMTreeManager
+        https://bugs.webkit.org/show_bug.cgi?id=148821
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.requestDocument.onDocumentAvailable):
+        (WebInspector.DOMTreeManager.prototype.requestDocument):
+        (WebInspector.DOMTreeManager.prototype.pushNodeByPathToFrontend):
+        (WebInspector.DOMTreeManager.prototype._wrapClientCallback):
+        (WebInspector.DOMTreeManager.prototype._attributeModified):
+        (WebInspector.DOMTreeManager.prototype._attributeRemoved):
+        (WebInspector.DOMTreeManager.prototype._inlineStyleInvalidated):
+        (WebInspector.DOMTreeManager.prototype._loadNodeAttributes):
+        (WebInspector.DOMTreeManager.prototype.cancelSearch):
+        (WebInspector.DOMTreeManager.prototype.querySelector):
+        (WebInspector.DOMTreeManager.prototype.querySelectorAll):
+        (WebInspector.DOMTreeManager.prototype.highlightDOMNode):
+        (WebInspector.DOMTreeManager.prototype._buildHighlightConfig):
+        Cleanup and modernize where appropriate.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.performSearch):
+        Callback is now required.
+
 2015-09-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Render Frames "Other" task filter checkbox misaligned with text
