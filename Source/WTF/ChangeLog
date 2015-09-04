@@ -1,5 +1,14 @@
 2015-09-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Enable reference qualified functions for GCC
+        https://bugs.webkit.org/show_bug.cgi?id=148526
+
+        Reviewed by Darin Adler.
+
+        * wtf/Compiler.h:
+
+2015-09-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         webkit-unassigned@lists.webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=148525
 
