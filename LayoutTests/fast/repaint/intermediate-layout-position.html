@@ -5,16 +5,19 @@
         .float { float: right; height: 40px; width: 40px; }
         .test { height: 100px; background-color: aliceblue }
     </style>
-    <script src="resources/repaint.js" type="text/javascript"></script>
     <script type="text/javascript">
-        function repaintTest()
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
         {
             document.getElementById('target').style.height='20px';
             document.getElementById('cell').style.height='20px';
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>
-<body onload="runRepaintTest()">
+<body onload="setTimeout(runTest, 0)">
     <div class="test">
         <div class="float"></div>
         <div style="clear: right; background-color: purple; width: 40px; padding: 3px;">

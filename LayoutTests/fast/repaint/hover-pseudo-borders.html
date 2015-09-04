@@ -24,19 +24,20 @@
   color: green; /* Changes the right box's color. */
 }
 </style>
-<script src="resources/repaint.js"></script>
-<script>
-function repaintTest() {
-  if (!window.testRunner)
-    return;
-  eventSender.mouseMoveTo(50, 50);
-  eventSender.mouseDown();
-  eventSender.mouseUp();
-}
-window.addEventListener("load", runRepaintTest);
+<script type="text/javascript">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
+        {
+            eventSender.mouseMoveTo(50, 50);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
 </script>
 </head>
-<body>
+<body onload="setTimeout(runTest, 0);">
 <!--
     REGRESSION: :hover doesn't work on :after content with borders or outlines.
     To test this bug outside DRT, hover on the square below.

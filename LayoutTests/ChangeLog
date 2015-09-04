@@ -1,3 +1,83 @@
+2015-09-04  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+        gradients-em-stops-repaint.html -> reftest
+        hover-pseudo-borders.html -> reftest
+        inline-block-resize.html -> reftest
+        inline-color-change.html -> reftest
+        inline-outline-repaint.html -> reftest
+        inline-relative-positioned.html -> reftest
+        intermediate-layout-position-clip.html -> reftest
+        intermediate-layout-position.html -> reftest
+        invisible-objects.html -> reftest
+
+        Unreviewed.
+
+        * fast/repaint/gradients-em-stops-repaint-expected.html: Added.
+        * fast/repaint/gradients-em-stops-repaint.html:
+        * fast/repaint/hover-pseudo-borders-expected.html: Added.
+        * fast/repaint/hover-pseudo-borders.html:
+        * fast/repaint/inline-block-resize-expected.html: Added.
+        * fast/repaint/inline-block-resize-expected.png: Removed.
+        * fast/repaint/inline-block-resize-expected.txt: Removed.
+        * fast/repaint/inline-block-resize.html:
+        * fast/repaint/inline-color-change-expected.html: Added.
+        * fast/repaint/inline-color-change.html:
+        * fast/repaint/inline-outline-repaint-expected.html: Added.
+        * fast/repaint/inline-outline-repaint.html:
+        * fast/repaint/inline-relative-positioned-expected.html: Added.
+        * fast/repaint/inline-relative-positioned-expected.png: Removed.
+        * fast/repaint/inline-relative-positioned-expected.txt: Removed.
+        * fast/repaint/inline-relative-positioned.html:
+        * fast/repaint/intermediate-layout-position-clip-expected.html: Added.
+        * fast/repaint/intermediate-layout-position-clip-expected.png: Removed.
+        * fast/repaint/intermediate-layout-position-clip-expected.txt: Removed.
+        * fast/repaint/intermediate-layout-position-clip.html:
+        * fast/repaint/intermediate-layout-position-expected.html: Added.
+        * fast/repaint/intermediate-layout-position-expected.txt: Removed.
+        * fast/repaint/intermediate-layout-position.html:
+        * fast/repaint/invisible-objects-expected.html: Added.
+        * fast/repaint/invisible-objects-expected.txt: Removed.
+        * fast/repaint/invisible-objects.html:
+        * platform/efl/fast/repaint/gradients-em-stops-repaint-expected.png: Removed.
+        * platform/efl/fast/repaint/gradients-em-stops-repaint-expected.txt: Removed.
+        * platform/efl/fast/repaint/hover-pseudo-borders-expected.png: Removed.
+        * platform/efl/fast/repaint/hover-pseudo-borders-expected.txt: Removed.
+        * platform/efl/fast/repaint/inline-color-change-expected.png: Removed.
+        * platform/efl/fast/repaint/inline-color-change-expected.txt: Removed.
+        * platform/efl/fast/repaint/inline-outline-repaint-expected.png: Removed.
+        * platform/efl/fast/repaint/inline-outline-repaint-expected.txt: Removed.
+        * platform/efl/fast/repaint/inline-relative-positioned-expected.txt: Removed.
+        * platform/efl/fast/repaint/intermediate-layout-position-expected.png: Removed.
+        * platform/gtk/fast/repaint/gradients-em-stops-repaint-expected.png: Removed.
+        * platform/gtk/fast/repaint/gradients-em-stops-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/hover-pseudo-borders-expected.png: Removed.
+        * platform/gtk/fast/repaint/hover-pseudo-borders-expected.txt: Removed.
+        * platform/gtk/fast/repaint/inline-color-change-expected.png: Removed.
+        * platform/gtk/fast/repaint/inline-color-change-expected.txt: Removed.
+        * platform/gtk/fast/repaint/inline-outline-repaint-expected.png: Removed.
+        * platform/gtk/fast/repaint/inline-outline-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/inline-relative-positioned-expected.png: Removed.
+        * platform/gtk/fast/repaint/inline-relative-positioned-expected.txt: Removed.
+        * platform/gtk/fast/repaint/intermediate-layout-position-expected.png: Removed.
+        * platform/gtk/fast/repaint/repaint/hover-pseudo-borders-expected.png: Removed.
+        * platform/gtk/fast/repaint/repaint/hover-pseudo-borders-expected.txt: Removed.
+        * platform/mac-wk2/fast/repaint/invisible-objects-expected.txt: Removed.
+        * platform/mac/fast/repaint/gradients-em-stops-repaint-expected.png: Removed.
+        * platform/mac/fast/repaint/gradients-em-stops-repaint-expected.txt: Removed.
+        * platform/mac/fast/repaint/hover-pseudo-borders-expected.png: Removed.
+        * platform/mac/fast/repaint/hover-pseudo-borders-expected.txt: Removed.
+        * platform/mac/fast/repaint/inline-block-resize-expected.png: Removed.
+        * platform/mac/fast/repaint/inline-color-change-expected.png: Removed.
+        * platform/mac/fast/repaint/inline-color-change-expected.txt: Removed.
+        * platform/mac/fast/repaint/inline-outline-repaint-expected.png: Removed.
+        * platform/mac/fast/repaint/inline-outline-repaint-expected.txt: Removed.
+        * platform/mac/fast/repaint/intermediate-layout-position-clip-expected.png: Removed.
+        * platform/mac/fast/repaint/intermediate-layout-position-expected.png: Removed.
+        * platform/mac/fast/repaint/invisible-objects-expected.png: Removed.
+        * platform/win/fast/repaint/inline-color-change-expected.txt: Removed.
+        * platform/win/fast/repaint/inline-outline-repaint-expected.txt: Removed.
+
 2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expand Console domain test coverage
