@@ -1,3 +1,11 @@
+2015-09-04  Basile Clement  <basile_clement@apple.com>
+
+        Since r189341, es6.yaml/es6/arrow_functions_no_prototype_property.js is expected to succeed
+
+        Rubber stamped by Michael Saboff.
+
+        * tests/es6.yaml:
+
 2015-09-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Fix the ARM Traditional build after r189288
