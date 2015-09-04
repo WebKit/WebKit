@@ -37,6 +37,13 @@
 
 namespace JSC {
 
+#if !CPU(X86) && !CPU(X86_64)
+static int32_t JIT_OPERATION operationDiv(int32_t left, int32_t right)
+{
+    return left / right;
+}
+#endif
+
 class WASMFunctionCompiler : private CCallHelpers {
 public:
     typedef int Expression;
@@ -108,13 +115,39 @@ public:
         m_stackOverflow.link(this);
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
-        throwStackOverflowError();
+        setupArgumentsWithExecState(TrustedImmPtr(m_codeBlock));
+        appendCallWithExceptionCheck(operationThrowStackOverflowError);
 
         // FIXME: Implement arity check.
         Label arityCheck = label();
         emitFunctionPrologue();
         emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
         jump(m_beginLabel);
+
+        if (!m_divideErrorJumpList.empty()) {
+            m_divideErrorJumpList.link(this);
+
+            if (maxFrameExtentForSlowPathCall)
+                addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+            setupArgumentsExecState();
+            appendCallWithExceptionCheck(operationThrowDivideError);
+        }
+
+        if (!m_exceptionChecks.empty()) {
+            m_exceptionChecks.link(this);
+
+            // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
+            move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
+            move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+
+#if CPU(X86)
+            // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
+            poke(GPRInfo::argumentGPR0);
+            poke(GPRInfo::argumentGPR1, 1);
+#endif
+            m_calls.append(std::make_pair(call(), FunctionPtr(lookupExceptionHandlerFromCallerFrame).value()));
+            jumpToExceptionHandler();
+        }
 
         LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock, JITCompilationMustSucceed);
 
@@ -189,6 +222,25 @@ public:
         case WASMOpExpressionI32::Sub:
             sub32(GPRInfo::regT1, GPRInfo::regT0);
             break;
+        case WASMOpExpressionI32::SDiv: {
+            m_divideErrorJumpList.append(branchTest32(Zero, GPRInfo::regT1));
+            Jump denominatorNotNeg1 = branch32(NotEqual, GPRInfo::regT1, TrustedImm32(-1));
+            m_divideErrorJumpList.append(branch32(Equal, GPRInfo::regT0, TrustedImm32(-2147483647-1)));
+            denominatorNotNeg1.link(this);
+#if CPU(X86) || CPU(X86_64)
+            ASSERT(GPRInfo::regT0 == X86Registers::eax);
+            move(GPRInfo::regT1, X86Registers::ecx);
+            m_assembler.cdq();
+            m_assembler.idivl_r(X86Registers::ecx);
+#else
+            if (maxFrameExtentForSlowPathCall)
+                addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+            callOperation(operationDiv, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
+            if (maxFrameExtentForSlowPathCall)
+                addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
+#endif
+            break;
+        }
         default:
             ASSERT_NOT_REACHED();
         }
@@ -216,22 +268,22 @@ private:
         return Address(GPRInfo::callFrameRegister, -(m_numberOfLocals + temporaryIndex + 1) * sizeof(StackSlot));
     }
 
-    void throwStackOverflowError()
+    void appendCall(const FunctionPtr& function)
     {
-        setupArgumentsWithExecState(TrustedImmPtr(m_codeBlock));
+        m_calls.append(std::make_pair(call(), function.value()));
+    }
 
-        m_calls.append(std::make_pair(call(), FunctionPtr(operationThrowStackOverflowError).value()));
+    void appendCallWithExceptionCheck(const FunctionPtr& function)
+    {
+        appendCall(function);
+        m_exceptionChecks.append(emitExceptionCheck());
+    }
 
-        // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
-        move(TrustedImmPtr(m_vm), GPRInfo::argumentGPR0);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-#if CPU(X86)
-        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
-        poke(GPRInfo::argumentGPR0);
-        poke(GPRInfo::argumentGPR1, 1);
-#endif
-        m_calls.append(std::make_pair(call(), FunctionPtr(lookupExceptionHandlerFromCallerFrame).value()));
-        jumpToExceptionHandler();
+    void callOperation(int32_t JIT_OPERATION (*operation)(int32_t, int32_t), GPRReg src1, GPRReg src2, GPRReg dst)
+    {
+        setupArguments(src1, src2);
+        appendCall(operation);
+        move(GPRInfo::returnValueGPR, dst);
     }
 
     unsigned m_stackHeight;
@@ -240,6 +292,8 @@ private:
 
     Label m_beginLabel;
     Jump m_stackOverflow;
+    JumpList m_divideErrorJumpList;
+    JumpList m_exceptionChecks;
 
     Vector<std::pair<Call, void*>> m_calls;
 };

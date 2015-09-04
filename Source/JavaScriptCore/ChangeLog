@@ -1,5 +1,35 @@
 2015-09-04  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
+        Implement the signed division instruction in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148772
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements the signed division instruction in WebAssembly
+        for 32-bit integers. We use the IDIV instruction on x86 and x86-64 and
+        use a C function on all other platforms. We throw an exception if
+        - the denominator is zero, or
+        - the numerator is -2^31 and the denominator is -1.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * tests/stress/wasm-arithmetic.js:
+        (shouldBe):
+        (shouldThrow):
+        * tests/stress/wasm-arithmetic.wasm:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::operationDiv):
+        (JSC::WASMFunctionCompiler::endFunction):
+        (JSC::WASMFunctionCompiler::buildBinaryI32):
+        (JSC::WASMFunctionCompiler::appendCall):
+        (JSC::WASMFunctionCompiler::appendCallWithExceptionCheck):
+        (JSC::WASMFunctionCompiler::callOperation):
+        (JSC::WASMFunctionCompiler::throwStackOverflowError): Deleted.
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+
+2015-09-04  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
         Implement the GetLocal and SetLocal instructions in WebAssembly
         https://bugs.webkit.org/show_bug.cgi?id=148793
 

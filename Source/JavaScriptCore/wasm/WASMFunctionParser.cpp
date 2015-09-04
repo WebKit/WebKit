@@ -430,6 +430,7 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseGetLocalExpressionI32(context);
         case WASMOpExpressionI32::Add:
         case WASMOpExpressionI32::Sub:
+        case WASMOpExpressionI32::SDiv:
             return parseBinaryExpressionI32(context, op);
         case WASMOpExpressionI32::ConstantPoolIndex:
         case WASMOpExpressionI32::GetGlobal:
@@ -460,7 +461,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::FromF64:
         case WASMOpExpressionI32::Negate:
         case WASMOpExpressionI32::Mul:
-        case WASMOpExpressionI32::SDiv:
         case WASMOpExpressionI32::UDiv:
         case WASMOpExpressionI32::SMod:
         case WASMOpExpressionI32::UMod:

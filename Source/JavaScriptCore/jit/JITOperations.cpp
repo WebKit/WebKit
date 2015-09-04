@@ -95,6 +95,19 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
     vm->throwException(callerFrame, createStackOverflowError(callerFrame));
 }
 
+#if ENABLE(WEBASSEMBLY)
+void JIT_OPERATION operationThrowDivideError(ExecState* exec)
+{
+    VM* vm = &exec->vm();
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
+
+    NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
+    ErrorHandlingScope errorScope(*vm);
+    vm->throwException(callerFrame, createError(callerFrame, ASCIILiteral("Division by zero or division overflow.")));
+}
+#endif
+
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
