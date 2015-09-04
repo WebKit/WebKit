@@ -1903,20 +1903,22 @@ static NSURL *computeTestURL(NSString *pathOrURLString, NSString **relativeTestP
     if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"] || [pathOrURLString hasPrefix:@"file://"])
         return [NSURL URLWithString:pathOrURLString];
 
-    NSRange layoutTestsRange = [pathOrURLString rangeOfString:@"/LayoutTests/"];
-    if (layoutTestsRange.location == NSNotFound)
-        return [NSURL fileURLWithPath:pathOrURLString];
+    NSString *absolutePath = [[[NSURL fileURLWithPath:pathOrURLString] absoluteURL] path];
 
-    *relativeTestPath = [pathOrURLString substringFromIndex:NSMaxRange(layoutTestsRange)];
+    NSRange layoutTestsRange = [absolutePath rangeOfString:@"/LayoutTests/"];
+    if (layoutTestsRange.location == NSNotFound)
+        return [NSURL fileURLWithPath:absolutePath];
+
+    *relativeTestPath = [absolutePath substringFromIndex:NSMaxRange(layoutTestsRange)];
 
     // Convert file URLs in LayoutTests/http/tests to HTTP URLs, except for file URLs in LayoutTests/http/tests/local.
 
-    NSRange httpTestsRange = [pathOrURLString rangeOfString:@"/LayoutTests/http/tests/"];
-    if (httpTestsRange.location == NSNotFound || [pathOrURLString rangeOfString:@"/LayoutTests/http/tests/local/"].location != NSNotFound)
-        return [NSURL fileURLWithPath:pathOrURLString];
+    NSRange httpTestsRange = [absolutePath rangeOfString:@"/LayoutTests/http/tests/"];
+    if (httpTestsRange.location == NSNotFound || [absolutePath rangeOfString:@"/LayoutTests/http/tests/local/"].location != NSNotFound)
+        return [NSURL fileURLWithPath:absolutePath];
 
     auto components = adoptNS([[NSURLComponents alloc] init]);
-    [components setPath:[pathOrURLString substringFromIndex:NSMaxRange(httpTestsRange) - 1]];
+    [components setPath:[absolutePath substringFromIndex:NSMaxRange(httpTestsRange) - 1]];
     [components setHost:@"127.0.0.1"];
 
     // Paths under /ssl/ should be loaded using HTTPS.
