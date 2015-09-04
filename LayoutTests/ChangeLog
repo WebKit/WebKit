@@ -1,3 +1,14 @@
+2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import new multicolumn layout tests from CSS WG testss
+        https://bugs.webkit.org/show_bug.cgi?id=148805
+
+        Reviewed by Chris Dumez.
+
+        Added test expectations for newly imported tests.
+
+        * TestExpectations:
+
 2015-09-04  Dean Jackson  <dino@apple.com>
 
         [mediacontrols] Test the ordering of elements in the controls panel
