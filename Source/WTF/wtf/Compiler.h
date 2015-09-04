@@ -81,9 +81,6 @@
 
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
-#if (defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L))
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#endif
 #endif /* COMPILER(GCC) */
 
 /* COMPILER(MINGW) - MinGW GCC */
