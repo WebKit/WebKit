@@ -33,8 +33,6 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace JSC {
 
@@ -72,7 +70,9 @@ private:
     std::unique_ptr<StructureStubClearingWatchpoint> m_next;
 };
 
-class WatchpointsOnStructureStubInfo : public RefCounted<WatchpointsOnStructureStubInfo> {
+class WatchpointsOnStructureStubInfo {
+    WTF_MAKE_NONCOPYABLE(WatchpointsOnStructureStubInfo);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WatchpointsOnStructureStubInfo(CodeBlock* codeBlock, StructureStubInfo* stubInfo)
         : m_codeBlock(codeBlock)
@@ -85,7 +85,7 @@ public:
     StructureStubClearingWatchpoint* addWatchpoint(const ObjectPropertyCondition& key);
     
     static StructureStubClearingWatchpoint* ensureReferenceAndAddWatchpoint(
-        RefPtr<WatchpointsOnStructureStubInfo>& holderRef,
+        std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef,
         CodeBlock*, StructureStubInfo*, const ObjectPropertyCondition& key);
     
     CodeBlock* codeBlock() const { return m_codeBlock; }

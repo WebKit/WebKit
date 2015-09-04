@@ -76,11 +76,11 @@ StructureStubClearingWatchpoint* WatchpointsOnStructureStubInfo::addWatchpoint(c
 }
 
 StructureStubClearingWatchpoint* WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
-    RefPtr<WatchpointsOnStructureStubInfo>& holderRef, CodeBlock* codeBlock,
+    std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef, CodeBlock* codeBlock,
     StructureStubInfo* stubInfo, const ObjectPropertyCondition& key)
 {
     if (!holderRef)
-        holderRef = adoptRef(new WatchpointsOnStructureStubInfo(codeBlock, stubInfo));
+        holderRef = std::make_unique<WatchpointsOnStructureStubInfo>(codeBlock, stubInfo);
     else {
         ASSERT(holderRef->m_codeBlock == codeBlock);
         ASSERT(holderRef->m_stubInfo == stubInfo);

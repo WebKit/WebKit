@@ -1,3 +1,22 @@
+2015-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        WatchpointsOnStructureStubInfo doesn't need to be reference counted
+        https://bugs.webkit.org/show_bug.cgi?id=148766
+
+        Reviewed by Saam Barati.
+
+        It doesn't need to be reference counted because the only RefPtr to it is in
+        StructureStubInfo. Therefore, it can be a unique_ptr.
+
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::WatchpointsOnStructureStubInfo::addWatchpoint):
+        (JSC::WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint):
+        * bytecode/StructureStubClearingWatchpoint.h:
+        (JSC::WatchpointsOnStructureStubInfo::WatchpointsOnStructureStubInfo):
+        (JSC::WatchpointsOnStructureStubInfo::codeBlock):
+        * bytecode/StructureStubInfo.h:
+        (JSC::getStructureStubInfoCodeOrigin):
+
 2015-09-03  Basile Clement  <basile_clement@apple.com>
 
         JavaScript functions should restore the stack pointer after a call

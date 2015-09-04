@@ -230,7 +230,7 @@ struct StructureStubInfo {
 
     RefPtr<JITStubRoutine> stubRoutine;
     CodeLocationCall callReturnLocation;
-    RefPtr<WatchpointsOnStructureStubInfo> watchpoints;
+    std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)
