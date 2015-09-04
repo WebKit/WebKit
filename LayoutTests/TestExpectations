@@ -240,9 +240,9 @@ webkit.org/b/148822 [ Debug ] http/tests/w3c/html/semantics/interfaces.html [ Sk
 # New W3C ref tests that are failing.
 webkit.org/b/148835 http/tests/w3c/html/semantics/document-metadata/the-style-element/html_style_in_comment.html [ ImageOnlyFailure ]
 webkit.org/b/148847 http/tests/w3c/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html [ ImageOnlyFailure ]
-# FIXME: We need to file separate bugs for these.
-webkit.org/b/148822 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html [ ImageOnlyFailure ]
-webkit.org/b/148822 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ ImageOnlyFailure ]
+webkit.org/b/148853 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html [ ImageOnlyFailure ]
+webkit.org/b/148853 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ ImageOnlyFailure ]
+# FIXME: This needs its own bug.
 webkit.org/b/148822 http/tests/w3c/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
 # @supports W3C Failures
