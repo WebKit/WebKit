@@ -2,6 +2,7 @@
 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html
 
 # No support for force events
+fast/events/force-click-link-selection-behavior.html [ Skip ]
 fast/events/force-click-on-link-navigation.html [ Skip ]
 fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
