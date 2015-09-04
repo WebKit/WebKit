@@ -184,6 +184,7 @@ webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure 
 
 # official flexbox tests
 webkit.org/b/136754 css3/flexbox/csswg/css-box-justify-content.html [ ImageOnlyFailure ]
+webkit.org/b/143294 css3/flexbox/csswg/css-flexbox-height-animation-stretch.html [ Pass ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/css-flexbox-img-expand-evenly.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/css-flexbox-row.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/css-flexbox-test1.html [ ImageOnlyFailure ]
