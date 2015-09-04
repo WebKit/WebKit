@@ -1,0 +1,6 @@
+context.casesensitive
+Context name "2D" is unrecognised; matching is case sensitive
+Actual output:
+
+PASS Context name "2D" is unrecognised; matching is case sensitive 
+

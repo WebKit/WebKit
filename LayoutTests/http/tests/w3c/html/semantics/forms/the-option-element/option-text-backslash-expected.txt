@@ -1,0 +1,4 @@
+
+
+FAIL Test for the backslash sign in option.text assert_equals: expected "\\" but got "¥"
+

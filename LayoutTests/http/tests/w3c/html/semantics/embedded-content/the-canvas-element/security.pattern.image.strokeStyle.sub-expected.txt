@@ -1,0 +1,6 @@
+security.pattern.image.strokeStyle.sub
+Setting strokeStyle to a pattern of a different-origin image makes the canvas origin-unclean
+Actual output:
+
+FAIL Setting strokeStyle to a pattern of a different-origin image makes the canvas origin-unclean assert_throws: function "function () { canvas.toDataURL(); }" did not throw
+

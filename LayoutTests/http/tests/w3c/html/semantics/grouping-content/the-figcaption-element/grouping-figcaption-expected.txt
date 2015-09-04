@@ -1,0 +1,7 @@
+Description
+
+This test validates the figcaption element.
+
+
+PASS The prototype for figcaption is HTMLElement.prototype 
+

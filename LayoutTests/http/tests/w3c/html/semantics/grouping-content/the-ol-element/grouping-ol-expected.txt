@@ -1,0 +1,142 @@
+Description
+
+This test validates the ol element.
+
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+list item
+Ordered List
+
+list item
+list item
+
+
+
+
+
+
+
+
+
+
+
+
+list item
+
+PASS The prototype for OL is HTMLOListElement.prototype 
+FAIL 'reversed' property should be defined on OL. assert_own_property: expected property "reversed" missing
+FAIL 'start' property should be defined on OL. assert_own_property: expected property "start" missing
+FAIL 'type' property should be defined on OL. assert_own_property: expected property "type" missing
+PASS OL's 'reversed' IDL property reflects content attribute. 
+PASS OL's 'start' IDL property reflects content attribute. 
+PASS OL's 'type' IDL property reflects content attribute. 
+PASS IDL 'reversed' attribute value false when content attribute absent 
+PASS IDL 'reversed' attribute value true when content attribute exists 
+PASS Changing IDL 'reversed' property changes list's reversed property. 
+PASS Default start value for non-reversed list should be 1 
+PASS IDL and content attribute parse start of '.5' correctly. 
+PASS IDL and content attribute parse start of 'A' correctly. 
+FAIL Default start value (if none provided) for reversed list = child li elements. assert_equals: no start attribute provided -> 3 expected 3 but got 0
+FAIL Default start value (if failed to parse) for reversed list = child li elements. assert_equals: start of A -> 3 (default) expected 3 but got 0
+FAIL Default start value for reversed list = child li elements (even with tons of other child elements). assert_equals: no start attribute -> 3 (default) expected 3 but got 0
+FAIL Adding child element to reversed list adds 1 to start value assert_equals: Adding child element to reversed list adds 1 to start value expected 4 but got 0
+FAIL Deleting child element from reversed list reduces start value by 1 assert_equals: Deleting child element from reversed list reduces start value by 1 expected 2 but got 0
+PASS IDL and content attribute parse start of '2' correctly. 
+PASS IDL and content attribute parse start of '-10' correctly. 
+PASS IDL and content attribute parse start of '4.03' correctly. 
+PASS IDL and content attribute parse start of '-4.03' correctly. 
+PASS IDL and content attribute parse start of '4.9' correctly. 
+PASS IDL and content attribute parse start of '-4.9' correctly. 
+PASS IDL and content attribute parse start of '7e2' correctly. 
+

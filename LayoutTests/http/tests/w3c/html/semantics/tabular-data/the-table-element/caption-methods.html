@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Creating and deleting captions</title>
+  <link rel="author" title="Erika Navara" href="mailto:edoyle@microsoft.com">
+  <link rel="help" href="https://html.spec.whatwg.org/multipage/#the-table-element" />
+  <link rel="help" href="https://html.spec.whatwg.org/multipage/#dom-table-createcaption" />
+  <link rel="help" href="https://html.spec.whatwg.org/multipage/#dom-table-deletecaption" />
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+  <div id="log"></div>
+  <table id="table0" style="display:none">
+  </table>
+  <table id="table1" style="display:none">
+    <caption id="caption1">caption</caption>
+    <tr>
+      <td>cell</td>
+      <td>cell</td>
+    </tr>
+  </table>
+  <table id="table2" style="display:none">
+    <foo:caption>caption</foo:caption>
+    <tr>
+      <td>cell</td>
+      <td>cell</td>
+    </tr>
+  </table>
+  <table id="table3" style="display:none">
+    <caption id="caption3">caption 3</caption>
+    <tr>
+      <td>cell</td>
+      <td>cell</td>
+    </tr>
+  </table>
+  <table id="table4" style="display:none">
+  </table>
+  <script>
+    test(function () {
+      var table0 = document.getElementById('table0');
+      var caption = document.createElementNS("foo", "caption");
+      table0.appendChild(caption);
+      var table0FirstNode = table0.firstChild;
+      var testCaption = table0.createCaption();
+      assert_not_equals(testCaption, table0FirstNode);
+      assert_equals(testCaption, table0.firstChild);
+    }, "createCaption method creates new caption if existing caption is not in html namespace")
+    test(function () {
+      var table1 = document.getElementById('table1');
+      var testCaption = table1.createCaption();
+      var table1FirstCaption = table1.caption;
+      assert_equals(testCaption, table1FirstCaption);
+    }, "createCaption method returns the first caption element child of the table")
+    test(function () {
+      var table2 = document.getElementById('table2');
+      var test2Caption = table2.createCaption();
+      var table2FirstNode = table2.firstChild;
+      assert_true(test2Caption instanceof  HTMLTableCaptionElement);
+      assert_equals(table2FirstNode, test2Caption);
+    }, "createCaption method creates a new caption and inserts it as the first node of the table element")
+    test(function () {
+      var table = document.createElement('table');
+      assert_equals(table.createCaption(), table.createCaption());
+    }, "createCaption will not create new caption if one exists")
+    test(function () {
+      var table = document.createElementNS("http://www.w3.org/1999/xhtml", "foo:table")
+      var caption = table.createCaption();
+      assert_equals(caption.prefix, null);
+    }, "createCaption will not copy table's prefix")
+    test(function () {
+      var table3 = document.getElementById('table3');
+      assert_equals(table3.caption.textContent, "caption 3");
+      table3.deleteCaption();
+      assert_equals(table3.caption, null);
+    }, "deleteCaption method removes the first caption element child of the table element")
+    test(function () {
+      var table4 = document.getElementById('table4');
+      var caption = document.createElementNS("foo", "caption");
+      table4.appendChild(caption);
+      table4.deleteCaption();
+      assert_equals(caption.parentNode, table4);
+    }, "deleteCaption method not remove caption that is not in html namespace")
+  </script>
+</body>
+</html>

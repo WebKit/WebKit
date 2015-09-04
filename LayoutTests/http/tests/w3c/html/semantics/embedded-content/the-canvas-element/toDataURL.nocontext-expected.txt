@@ -1,0 +1,6 @@
+toDataURL.nocontext
+toDataURL works before any context has been got
+Actual output:
+
+PASS toDataURL works before any context has been got 
+

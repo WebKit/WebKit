@@ -1,0 +1,9 @@
+     
+
+FAIL click on mutable checkbox fires the input and change events assert_true: event should be trusted expected true got undefined
+PASS click on non-mutable checkbox doesn't fire the input or change event 
+PASS pre-activation steps on unchecked checkbox 
+PASS pre-activation steps on checked checkbox 
+FAIL canceled activation steps on unchecked checkbox assert_false: expected false got true
+FAIL canceled activation steps on unchecked checkbox (indeterminate=true in onclick) assert_false: expected false got true
+

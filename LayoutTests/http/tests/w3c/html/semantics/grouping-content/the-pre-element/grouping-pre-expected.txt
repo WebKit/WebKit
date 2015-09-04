@@ -1,0 +1,7 @@
+Description
+
+This test validates the pre element.
+
+
+PASS The prototype for pre is HTMLPreElement.prototype 
+

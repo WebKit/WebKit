@@ -1,0 +1,7 @@
+type.exists
+HTMLCanvasElement is a property of window
+Defined in "Web IDL" (draft)
+Actual output:
+
+PASS HTMLCanvasElement is a property of window 
+

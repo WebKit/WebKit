@@ -1,0 +1,10 @@
+
+PASS HTML parsing should locate 4 time elements in this document 
+FAIL HTMLTimeElement should be exposed for prototyping assert_true: expected true got false
+FAIL the time elements should be instanceof HTMLTimeElement window.HTMLTimeElement is not a function. (evaluating 'makeTime() instanceof window.HTMLTimeElement')
+FAIL the datetime attribute should be reflected by the .dateTime property assert_equals: expected (string) "2000-02-01T03:04:05Z" but got (undefined) undefined
+FAIL the dateTime IDL property should default to an empty string assert_equals: typeof test expected "string" but got "undefined"
+PASS the dateTime property should be read/write 
+FAIL the datetime attribute should be reflected by the .dateTime property even if it is invalid assert_equals: expected (string) "go fish" but got (undefined) undefined
+FAIL the datetime attribute should not reflect the textContent assert_equals: expected (string) "" but got (undefined) undefined
+

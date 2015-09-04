@@ -1,0 +1,3 @@
+
+PASS Should get an error event for a text/plain response. 
+

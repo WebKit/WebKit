@@ -1,0 +1,7 @@
+
+FAIL Getter assert_equals: expected "  TEXT  " but got "  TEXT  ELEMENT"
+PASS Setter (non-empty string) 
+FAIL Setter (empty string) assert_equals: expected null but got Text node ""
+FAIL Setter (null) assert_equals: expected "null" but got ""
+PASS Setter (undefined) 
+

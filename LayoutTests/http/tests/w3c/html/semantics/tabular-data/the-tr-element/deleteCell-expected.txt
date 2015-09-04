@@ -1,0 +1,7 @@
+12345
+
+PASS HTMLTableRowElement deleteCell(0) 
+PASS HTMLTableRowElement deleteCell(-1) 
+PASS HTMLTableRowElement deleteCell(-2) 
+PASS HTMLTableRowElement deleteCell(cells.length) 
+

@@ -1,0 +1,6 @@
+toDataURL.default
+toDataURL with no arguments returns a PNG
+Actual output:
+
+PASS toDataURL with no arguments returns a PNG 
+

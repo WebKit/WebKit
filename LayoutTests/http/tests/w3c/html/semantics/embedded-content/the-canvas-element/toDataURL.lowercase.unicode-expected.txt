@@ -1,0 +1,6 @@
+toDataURL.lowercase.unicode
+toDataURL type is ASCII-case-insensitive
+Actual output:
+
+PASS toDataURL type is ASCII-case-insensitive 
+

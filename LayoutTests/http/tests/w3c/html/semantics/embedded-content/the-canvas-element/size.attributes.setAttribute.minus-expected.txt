@@ -1,0 +1,8 @@
+size.attributes.setAttribute.minus
+Parsing of non-negative integers in setAttribute
+Actual output:
+Expected output:
+
+
+PASS Parsing of non-negative integers in setAttribute 
+

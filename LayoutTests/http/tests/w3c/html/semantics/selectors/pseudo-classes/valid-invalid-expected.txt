@@ -1,0 +1,23 @@
+  
+
+
+
+
+  
+  
+
+PASS ':valid' matches elements that satisfy their constraints 
+PASS ':valid' matches form elements that are not the form owner of any elements that themselves are candidates for constraint validation but do not satisfy their constraints 
+PASS ':valid' matches fieldset elements that have no descendant elements that themselves are candidates for constraint validation but do not satisfy their constraints 
+PASS ':valid' matches elements that satisfy their pattern constraints 
+PASS ':valid' matches elements that satisfy their number constraints 
+PASS ':invalid' matches elements that do not satisfy their simple text  constraints 
+PASS ':invalid' matches form elements that are the form owner of one or more elements that themselves are candidates for constraint validation but do not satisfy their constraints 
+PASS ':invalid' matches fieldset elements that have of one or more descendant elements that themselves are candidates for constraint validation but do not satisfy their constraints 
+PASS ':invalid' matches elements that do not satisfy their pattern constraints 
+PASS ':invalid' matches elements that do not satisfy their number constraints 
+PASS ':valid' matches new elements that satisfy their constraints 
+PASS ':invalid' doesn't match new elements that satisfy their constraints 
+PASS ':valid' doesn't match new elements that do not satisfy their constraints 
+PASS ':invalid' matches new elements that do not satisfy their constraints 
+

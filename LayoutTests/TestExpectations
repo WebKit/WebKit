@@ -227,6 +227,15 @@ webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-isPointInRange.htm
 webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-mutations.html [ Skip ]
 webkit.org/b/148546 [ Debug ] http/tests/w3c/dom/ranges/Range-set.html [ Skip ]
 webkit.org/b/148736 [ Debug ] http/tests/w3c/html/dom/interfaces.html [ Skip ]
+webkit.org/b/148822 [ Debug ] http/tests/w3c/html/semantics/interfaces.html [ Skip ]
+
+# New W3C ref tests that are failing.
+# FIXME: We need to file separate bugs for these.
+webkit.org/b/148822 http/tests/w3c/html/semantics/document-metadata/the-style-element/html_style_in_comment.html [ ImageOnlyFailure ]
+webkit.org/b/148822 http/tests/w3c/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html [ ImageOnlyFailure ]
+webkit.org/b/148822 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html [ ImageOnlyFailure ]
+webkit.org/b/148822 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ ImageOnlyFailure ]
+webkit.org/b/148822 http/tests/w3c/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]

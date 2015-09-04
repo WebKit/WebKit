@@ -1,0 +1,10 @@
+
+PASS If there is any invalid submittable element whose form owner is the form, the form.checkValidity must be false 
+FAIL If there is any invalid submittable element whose form owner is the form, the form.reportValidity must be false assert_true: The reportValidity method is not supported expected true got false
+PASS If all of the submittable elements whose form owner is the form are valid, the form.checkValidity must be true 
+FAIL If all of the submittable elements whose form owner is the form are valid, the form.reportValidity must be true assert_true: The reportValidity method is not supported. expected true got false
+PASS Check the checkValidity method of the form element when it has a fieldset child 
+FAIL Check the reportValidity method of the form element when it has a fieldset child assert_true: The reportValidity method is not supported. expected true got false
+FAIL The invalid event must be fired at the invalid controls assert_equals: The invalid event will be fired if the checkValidity or reportValidity method are called. expected 4 but got 2
+PASS The invalid event must not be fired at the invalid controls 
+

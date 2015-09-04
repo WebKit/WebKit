@@ -1,0 +1,8 @@
+security.dataURI
+data: URIs do not count as different-origin, and do not taint the canvas
+Actual output:
+Expected output:
+
+
+PASS data: URIs do not count as different-origin, and do not taint the canvas 
+

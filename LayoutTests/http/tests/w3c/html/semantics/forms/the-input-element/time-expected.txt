@@ -1,0 +1,36 @@
+Input Time
+
+
+PASS time element of default time value 
+PASS step attribute on default value check 
+PASS max  attribute on default value check 
+PASS min  attribute on default value check 
+FAIL type attribute support on input element assert_equals: expected "time" but got "text"
+PASS max attribute support on input element 
+PASS min attribute support on input element 
+PASS step attribute support on input element 
+PASS stepUp function support on input Element 
+PASS stepDown function support on input Element 
+FAIL stepUp step value empty on default step value  InvalidStateError: DOM Exception 11
+FAIL stepDown step value empty default step value InvalidStateError: DOM Exception 11
+FAIL stepUp on step value minus InvalidStateError: DOM Exception 11
+FAIL stepDown on step value minus InvalidStateError: DOM Exception 11
+FAIL stepUp on step value zero  InvalidStateError: DOM Exception 11
+FAIL stepDown on step value zero  InvalidStateError: DOM Exception 11
+FAIL stepUp on step value 24 hour InvalidStateError: DOM Exception 11
+FAIL stepDown on step value 24 hour  InvalidStateError: DOM Exception 11
+FAIL stepUp on step value hour   InvalidStateError: DOM Exception 11
+FAIL stepDown on step value hour  InvalidStateError: DOM Exception 11
+FAIL stepUp on step value second  InvalidStateError: DOM Exception 11
+FAIL stepDown on step value second  InvalidStateError: DOM Exception 11
+FAIL stepUp on step value miri second  InvalidStateError: DOM Exception 11
+FAIL stepDown on step value miri second  InvalidStateError: DOM Exception 11
+FAIL stepUp argment 2 times InvalidStateError: DOM Exception 11
+FAIL stepDown argment 2 times InvalidStateError: DOM Exception 11
+FAIL stepUp stop because it exceeds the maximum value InvalidStateError: DOM Exception 11
+FAIL stepDown Stop so lower than the minimum value InvalidStateError: DOM Exception 11
+FAIL stop at border on stepUp InvalidStateError: DOM Exception 11
+FAIL stop at border on stepDown InvalidStateError: DOM Exception 11
+FAIL  empty value of stepUp InvalidStateError: DOM Exception 11
+FAIL set value on not time format value assert_equals: expected "" but got "hh:mi:ss.sss"
+

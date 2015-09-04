@@ -1,0 +1,20 @@
+
+FAIL Setting audio.volume to NaN should throw a TypeError assert_throws: function "function () {
+        el.volume = aValue;
+      }" did not throw
+FAIL Setting audio.volume to Infinity should throw a TypeError assert_throws: function "function () {
+        el.volume = aValue;
+      }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+FAIL Setting audio.volume to -Infinity should throw a TypeError assert_throws: function "function () {
+        el.volume = aValue;
+      }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+FAIL Setting video.volume to NaN should throw a TypeError assert_throws: function "function () {
+        el.volume = aValue;
+      }" did not throw
+FAIL Setting video.volume to Infinity should throw a TypeError assert_throws: function "function () {
+        el.volume = aValue;
+      }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+FAIL Setting video.volume to -Infinity should throw a TypeError assert_throws: function "function () {
+        el.volume = aValue;
+      }" threw object "Error: IndexSizeError: DOM Exception 1" ("IndexSizeError") expected object "TypeError" ("TypeError")
+

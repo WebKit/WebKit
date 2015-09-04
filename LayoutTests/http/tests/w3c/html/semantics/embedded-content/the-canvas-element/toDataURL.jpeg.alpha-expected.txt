@@ -1,0 +1,8 @@
+toDataURL.jpeg.alpha
+toDataURL with JPEG composites onto black
+Actual output:
+Expected output:
+
+
+PASS toDataURL with JPEG composites onto black 
+

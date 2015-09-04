@@ -1,0 +1,4 @@
+
+
+PASS Script inside noembed, noframes and iframe 
+

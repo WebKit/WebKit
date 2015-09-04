@@ -1,0 +1,8 @@
+initial.reset.clip
+Resetting the canvas state resets the current clip region
+Actual output:
+Expected output:
+
+
+PASS Resetting the canvas state resets the current clip region 
+

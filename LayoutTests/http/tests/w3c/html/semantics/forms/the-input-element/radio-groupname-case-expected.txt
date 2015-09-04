@@ -1,0 +1,10 @@
+                                          
+
+FAIL radio button group name = sImPlE assert_false: expected false got true
+FAIL radio button group name = paSSfield-killroyß assert_false: expected false got true
+FAIL radio button group name = глупый assert_false: expected false got true
+FAIL radio button group name = åωk assert_false: expected false got true
+FAIL radio button group name = blah1 assert_false: expected false got true
+FAIL radio button group name = tÉdz5アパートFi assert_false: expected false got true
+FAIL radio button group name = ΣΣ assert_false: expected false got true
+

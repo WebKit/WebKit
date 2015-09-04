@@ -1,0 +1,6 @@
+
+
+FAIL RadioNodeList should exist assert_true: RadioNodeList should exist expected true got false
+PASS elements collection should return elements or RadioNodeLists 
+PASS elements collection should include fieldsets 
+

@@ -1,0 +1,14 @@
+
+PASS A label element with a 'for' attribute should only be associated with a labelable element. 
+FAIL A label element not in a document can not label any element in the document. assert_not_equals: A label element not in a document should not label an element in a document. got disallowed value Element node <input id="test1"></input>
+PASS The labeled control for a label element that has no 'for' attribute is the first labelable element which is a descendant of that label element. 
+PASS The 'for' attribute points to an inexistent id. 
+PASS A non-control follows by a control with same ID. 
+PASS The 'for' attribute is an empty string. 
+PASS A form control has multiple labels. 
+PASS A form control has no label 1. 
+PASS A form control has no label 2. 
+PASS A label's form attribute should return its form owner. 
+PASS Check that the labels property of a form control with no label returns a zero-length NodeList. 
+PASS A label's htmlFor attribute must reflect the for content attribute 
+

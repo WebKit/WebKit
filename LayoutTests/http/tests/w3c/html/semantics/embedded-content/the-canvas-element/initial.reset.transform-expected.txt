@@ -1,0 +1,8 @@
+initial.reset.transform
+Resetting the canvas state resets the current transformation matrix
+Actual output:
+Expected output:
+
+
+PASS Resetting the canvas state resets the current transformation matrix 
+

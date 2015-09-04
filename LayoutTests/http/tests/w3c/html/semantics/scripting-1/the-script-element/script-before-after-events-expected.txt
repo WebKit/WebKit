@@ -1,0 +1,4 @@
+
+FAIL 'beforescriptexecute'/'afterscriptexecute' events have been fired assert_true: expected true got false
+FAIL default prevented 'beforescriptexecute' event aborts script execution assert_unreached: script execution not aborted by default prevented 'beforescriptexecute' event Reached unreachable code
+

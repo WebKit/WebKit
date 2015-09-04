@@ -1,0 +1,5 @@
+
+PASS Resetting the form by calling the reset() method 
+PASS Resetting the form by clicking the button in reset status 
+PASS Resetting the form by clicking the input in reset status 
+

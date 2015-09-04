@@ -1,0 +1,4 @@
+
+FAIL TrackEvent created with createEvent assert_throws: function "function () {
+        var ev = document.createEvent('Trac..." did not throw
+

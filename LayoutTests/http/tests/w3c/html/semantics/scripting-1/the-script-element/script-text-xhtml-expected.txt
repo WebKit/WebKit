@@ -1,0 +1,3 @@
+
+FAIL Getter with CDATA section assert_equals: expected "\n\n\n  var x = \"y\";\n\n" but got "\n7;\n\n  var x = \"y\";\n\n"
+

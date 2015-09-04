@@ -1,0 +1,7 @@
+spec reference
+
+
+
+PASS audio.networkState - default state 
+PASS video.networkState - default state 
+

@@ -1,0 +1,6 @@
+
+PASS Image constructor works 
+PASS Image and HTMLImageElement share a prototype 
+PASS Image localName is img 
+PASS Image namespace URI is correct 
+

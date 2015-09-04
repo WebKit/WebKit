@@ -1,0 +1,8 @@
+toBlob.png
+toBlob with image/png returns a PNG Blob
+Actual output:
+
+FAIL toBlob with image/png returns a PNG Blob canvas.toBlob is not a function. (In 'canvas.toBlob(function(data){
+  _assertSame(data.type, "image/png", "data.type", "\"image/png\"");
+}, 'image/png')', 'canvas.toBlob' is undefined)
+

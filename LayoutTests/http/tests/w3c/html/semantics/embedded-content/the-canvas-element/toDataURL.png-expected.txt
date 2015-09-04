@@ -1,0 +1,6 @@
+toDataURL.png
+toDataURL with image/png returns a PNG
+Actual output:
+
+PASS toDataURL with image/png returns a PNG 
+

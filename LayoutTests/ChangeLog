@@ -1,3 +1,17 @@
+2015-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Import html/semantics test cases from W3C
+        https://bugs.webkit.org/show_bug.cgi?id=148822
+        <rdar://problem/22583647>
+
+        Reviewed by Ryosuke Niwa.
+
+        Import 486 html/semantics test cases from W3C.
+        They take ~30 seconds to run on my MacBookPro.
+
+        * TestExpectations:
+        * http/tests/w3c/html/semantics/*: Added.
+
 2015-09-04  Tim Horton  <timothy_horton@apple.com>
 
         Fix style error in last commit.

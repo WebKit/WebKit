@@ -1,0 +1,8 @@
+
+FAIL Check if button.formAction is the document's address when formaction content attribute is missing assert_equals: expected "http://127.0.0.1:8000/w3c/html/semantics/forms/attributes-common-to-form-controls/formAction_document_address.html" but got ""
+FAIL Check if input.formAction is the document's address when formaction content attribute is missing assert_equals: expected "http://127.0.0.1:8000/w3c/html/semantics/forms/attributes-common-to-form-controls/formAction_document_address.html" but got ""
+PASS Check if button.formAction is the document's address when formaction content attribute value is empty string 
+PASS Check if input.formAction is the document's address when formaction content attribute value is empty string 
+PASS Check if button.formAction is the document's address when formaction content attribute value is not assigned 
+PASS Check if input.formAction is the document's address when formaction content attribute value is not assigned 
+
