@@ -1,3 +1,21 @@
+2015-09-03 Aleksandr Skachkov   <gskachkov@gmail.com>
+
+        [ES6] Implement ES6 arrow function syntax. Prototype of arrow function should be undefined
+        https://bugs.webkit.org/show_bug.cgi?id=147742
+
+        Reviewed by Saam Barati.
+
+        Added correct support of prototype property for arrow function. Arrow function 
+        doesn’t have own prototype property, so (() => {}).hasOwnProperty('prototype') === false.
+        Changes prevent from creation of 'prototype' property automatically during initialization 
+        of arrow function and allow to assign & delete it later in js code. 
+
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::deleteProperty):
+        * tests/stress/arrowfunction-prototype.js: Added.
+
 2015-09-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189338.

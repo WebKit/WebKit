@@ -1,3 +1,17 @@
+2015-09-04  Aleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ES6] Implement ES6 arrow function syntax. Prototype of arrow function should be undefined
+        https://bugs.webkit.org/show_bug.cgi?id=147742
+
+        Reviewed by Saam Barati.
+
+        Added tests of prototype property for arrow function. Checks that arrow function does not have 
+        prototype property after creating of it and check if it is possible to add/remove it later.
+
+        * js/arrowfunction-prototype-expected.txt: Added.
+        * js/arrowfunction-prototype.html: Added.
+        * js/script-tests/arrowfunction-prototype.js: Added.
+
 2015-09-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline http/tests/w3c/html/dom/dynamic-markup-insertion/opening-the-input-stream/007.html

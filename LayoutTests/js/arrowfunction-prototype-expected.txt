@@ -1,0 +1,25 @@
+Tests for ES6 arrow function prototype property
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+() =>  {}
+PASS typeof af1.prototype is 'undefined'
+PASS af1.hasOwnProperty('prototype') is false
+(a) => {a + 1}
+PASS typeof af2.prototype is 'undefined'
+PASS af2.hasOwnProperty('prototype') is false
+(x) =>  x + 1
+PASS typeof af3.prototype is 'undefined'
+PASS af3.hasOwnProperty('prototype') is false
+af1.prototype = function (x) { return x + 1;}
+PASS typeof af1.prototype is 'function'
+PASS af1.prototype.toString() is 'function (x) { return x + 1;}'
+PASS af1.hasOwnProperty('prototype') is true
+delete af1.prototype
+PASS typeof af1.prototype is 'undefined'
+PASS af1.hasOwnProperty('prototype') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -343,7 +343,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     if (thisObject->isHostOrBuiltinFunction())
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
-    if (propertyName == exec->propertyNames().prototype) {
+    if (propertyName == exec->propertyNames().prototype && !thisObject->jsExecutable()->isArrowFunction()) {
         VM& vm = exec->vm();
         unsigned attributes;
         PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
@@ -454,13 +454,16 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
-    if (!thisObject->isHostOrBuiltinFunction() && !exec->vm().isInDefineOwnProperty()
-        && (propertyName == exec->propertyNames().arguments
+    if (!thisObject->isHostOrBuiltinFunction() && !exec->vm().isInDefineOwnProperty()) {
+        FunctionExecutable* executable = thisObject->jsExecutable();
+        if (propertyName == exec->propertyNames().arguments
             || propertyName == exec->propertyNames().length
             || propertyName == exec->propertyNames().name
-            || propertyName == exec->propertyNames().prototype
-            || propertyName == exec->propertyNames().caller))
+            || (propertyName == exec->propertyNames().prototype && !executable->isArrowFunction())
+            || propertyName == exec->propertyNames().caller)
         return false;
+    }
+    
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
