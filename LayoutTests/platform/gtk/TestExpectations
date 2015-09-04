@@ -569,14 +569,6 @@ http/tests/contentfiltering [ Skip ]
 
 webkit.org/b/143703 fast/forms/listbox-visible-size.html [ Failure ]
 
-# No support for force events
-fast/events/force-click-link-selection-behavior.html [ Skip ]
-fast/events/force-click-on-link-navigation.html [ Skip ]
-fast/events/force-click-text-selection-behavior.html [ Skip ]
-fast/events/mouse-force-changed.html [ Skip ]
-fast/events/mouse-force-down.html [ Skip ]
-fast/events/mouse-force-up.html [ Skip ]
-
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
 

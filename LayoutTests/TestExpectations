@@ -24,6 +24,14 @@ fast/forms/search/search-results-hidden-crash.html [ Skip ]
 # This doesn't have to be platform-specific, but it's only implemented on Mac now.
 fast/url/user-visible [ Skip ]
 
+# Only Mac supports force tests.
+fast/events/force-click-link-selection-behavior.html [ Skip ]
+fast/events/force-click-on-link-navigation.html [ Skip ]
+fast/events/force-click-text-selection-behavior.html [ Skip ]
+fast/events/mouse-force-changed.html [ Skip ]
+fast/events/mouse-force-down.html [ Skip ]
+fast/events/mouse-force-up.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

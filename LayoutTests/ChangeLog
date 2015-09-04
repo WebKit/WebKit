@@ -1,3 +1,18 @@
+2015-09-04  Beth Dakin  <bdakin@apple.com>
+
+        These tests should be skipped at the LayoutTests level and re-enabled for 
+        WK2.
+
+        Rubber-stamped by Tim Horton.
+
+        * TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-mavericks/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-09-04  Chris Dumez  <cdumez@apple.com>
 
         Import html/semantics test cases from W3C
