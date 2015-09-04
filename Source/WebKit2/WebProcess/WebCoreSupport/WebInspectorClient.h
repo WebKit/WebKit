@@ -27,7 +27,6 @@
 #define WebInspectorClient_h
 
 #include <WebCore/InspectorClient.h>
-#include <WebCore/InspectorForwarding.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/HashSet.h>
 
@@ -53,7 +52,7 @@ private:
     // WebCore::InspectorClient
     void inspectorDestroyed() override;
 
-    WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) override;
+    Inspector::FrontendChannel* openInspectorFrontend(WebCore::InspectorController*) override;
     void closeInspectorFrontend() override;
     void bringFrontendToFront() override;
     void didResizeMainFrame(WebCore::Frame*) override;

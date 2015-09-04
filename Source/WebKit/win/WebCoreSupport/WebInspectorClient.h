@@ -113,7 +113,7 @@ public:
 
     virtual void inspectedURLChanged(const WTF::String& newURL);
 
-    void destroyInspectorView(bool notifyInspectorController);
+    void destroyInspectorView();
 
 private:
     void closeWindowWithoutNotifications();

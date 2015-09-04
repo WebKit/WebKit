@@ -48,6 +48,7 @@
 #include "WorkerThread.h"
 #include <inspector/InspectorBackendDispatcher.h>
 #include <inspector/InspectorFrontendDispatchers.h>
+#include <inspector/InspectorFrontendRouter.h>
 #include <wtf/Stopwatch.h>
 
 using namespace Inspector;
@@ -80,6 +81,8 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     , m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_executionStopwatch(Stopwatch::create())
+    , m_frontendRouter(FrontendRouter::create())
+    , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
     auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(*m_injectedScriptManager, &workerGlobalScope);
     m_runtimeAgent = runtimeAgent.get();
@@ -114,27 +117,27 @@ WorkerInspectorController::~WorkerInspectorController()
 
 void WorkerInspectorController::connectFrontend()
 {
-    ASSERT(!m_frontendChannel);
-    m_frontendChannel = std::make_unique<PageInspectorProxy>(m_workerGlobalScope);
-    m_backendDispatcher = BackendDispatcher::create(m_frontendChannel.get());
-    m_agents.didCreateFrontendAndBackend(m_frontendChannel.get(), m_backendDispatcher.get());
+    ASSERT(!m_frontendRouter->hasFrontends());
+    ASSERT(!m_forwardingChannel);
+
+    m_forwardingChannel = std::make_unique<PageInspectorProxy>(m_workerGlobalScope);
+    m_frontendRouter->connectFrontend(m_forwardingChannel.get());
+    m_agents.didCreateFrontendAndBackend(m_forwardingChannel.get(), &m_backendDispatcher.get());
 }
 
 void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason reason)
 {
-    if (!m_frontendChannel)
-        return;
+    ASSERT(m_frontendRouter->hasFrontends());
+    ASSERT(m_forwardingChannel);
 
     m_agents.willDestroyFrontendAndBackend(reason);
-    m_backendDispatcher->clearFrontend();
-    m_backendDispatcher = nullptr;
-    m_frontendChannel = nullptr;
+    m_frontendRouter->disconnectFrontend(m_forwardingChannel.get());
+    m_forwardingChannel = nullptr;
 }
 
 void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)
 {
-    if (m_backendDispatcher)
-        m_backendDispatcher->dispatch(message);
+    m_backendDispatcher->dispatch(message);
 }
 
 void WorkerInspectorController::resume()

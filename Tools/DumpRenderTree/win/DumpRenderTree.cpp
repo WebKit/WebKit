@@ -1147,6 +1147,13 @@ static void runTest(const string& inputLine)
     // EventSendingController clearSavedEvents
     workQueue.clear();
 
+    // If the test page could have possibly opened the Web Inspector frontend,
+    // then try to close it in case it was accidentally left open.
+    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
+        ::gTestRunner->closeWebInspector();
+        ::gTestRunner->setDeveloperExtrasEnabled(false);
+    }
+
     if (::gTestRunner->closeRemainingWindowsWhenComplete()) {
         Vector<HWND> windows = openWindows();
         unsigned size = windows.size();
@@ -1159,11 +1166,6 @@ static void runTest(const string& inputLine)
 
             ::DestroyWindow(window);
         }
-    }
-
-    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
-        ::gTestRunner->closeWebInspector();
-        ::gTestRunner->setDeveloperExtrasEnabled(false);
     }
 
     resetWebViewToConsistentStateBeforeTesting();

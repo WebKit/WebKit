@@ -1,3 +1,23 @@
+2015-09-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorController should support multiple frontend channels
+        https://bugs.webkit.org/show_bug.cgi?id=148538
+
+        Reviewed by Joseph Pecoraro.
+
+        Remove the notifyInspectorController flag from closeWindow. Since InspectorClients
+        must now manually disconnect their FrontendChannel(s), we should always
+        perform the teardown that was guarded by this flag.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::bringFrontendToFront): Add a missing assertion.
+        (WebInspectorFrontendClient::closeWindow):
+        (WebInspectorFrontendClient::disconnectFromBackend):
+        (-[WebInspectorWindowController windowShouldClose:]):
+        (-[WebInspectorWindowController destroyInspectorView]): Always clear the frontend client.
+        (-[WebInspectorWindowController destroyInspectorView:]): Renamed to above.
+
 2015-08-26  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Determine navigation and content policy before continuing to filter a load

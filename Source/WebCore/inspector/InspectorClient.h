@@ -27,10 +27,13 @@
 #ifndef InspectorClient_h
 #define InspectorClient_h
 
-#include "InspectorForwarding.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+
+namespace Inspector {
+class FrontendChannel;
+}
 
 namespace WebCore {
 
@@ -45,7 +48,7 @@ public:
 
     virtual void inspectorDestroyed() = 0;
 
-    virtual InspectorFrontendChannel* openInspectorFrontend(InspectorController*) = 0;
+    virtual Inspector::FrontendChannel* openInspectorFrontend(InspectorController*) = 0;
     virtual void closeInspectorFrontend() = 0;
     virtual void bringFrontendToFront() = 0;
     virtual void didResizeMainFrame(Frame*) { }

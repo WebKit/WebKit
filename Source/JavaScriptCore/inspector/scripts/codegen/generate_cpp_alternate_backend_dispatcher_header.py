@@ -47,6 +47,7 @@ class CppAlternateBackendDispatcherHeaderGenerator(Generator):
     def generate_output(self):
         headers = [
             '"InspectorProtocolTypes.h"',
+            '<inspector/InspectorFrontendRouter.h>',
             '<JavaScriptCore/InspectorBackendDispatcher.h>',
         ]
 

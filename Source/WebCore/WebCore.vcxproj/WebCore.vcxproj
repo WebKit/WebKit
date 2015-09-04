@@ -20336,6 +20336,7 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorBackendDispatcher.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorEnvironment.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendChannel.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendRouter.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorBackendDispatchers.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendDispatchers.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorProtocolObjects.h" />

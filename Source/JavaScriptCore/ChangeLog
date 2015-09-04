@@ -1,3 +1,82 @@
+2015-09-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorController should support multiple frontend channels
+        https://bugs.webkit.org/show_bug.cgi?id=148538
+
+        Reviewed by Joseph Pecoraro.
+
+        Instead of a singleton, it should be possible to have multiple channels open
+        at the same time and to individually close channels as frontends come and go.
+
+        The FrontendRouter class keeps a list of open FrontendChannels and sends messages
+        to the appropriate frontends based on whether the message is a response or event.
+        Each InspectorController owns a single FrontendRouter and BackendDispatcher instance.
+        Inspector backend code that sends messages to the frontend should switch over to
+        using the router rather than directly using a FrontendChannel.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorBackendDispatcher.cpp: Move constructors/destructors out of the header
+        to avoid including InspectorFrontendRouter everywhere. Use the router instead of a
+        specific frontend channel. Remove guards that are no longer necessary since the router
+        is guaranteed to outlive the backend dispatcher.
+
+        (Inspector::SupplementalBackendDispatcher::SupplementalBackendDispatcher):
+        (Inspector::SupplementalBackendDispatcher::~SupplementalBackendDispatcher):
+        (Inspector::BackendDispatcher::BackendDispatcher):
+        (Inspector::BackendDispatcher::create):
+        (Inspector::BackendDispatcher::isActive):
+        (Inspector::BackendDispatcher::registerDispatcherForDomain):
+        (Inspector::BackendDispatcher::sendResponse):
+        (Inspector::BackendDispatcher::sendPendingErrors):
+        * inspector/InspectorBackendDispatcher.h:
+        (Inspector::SupplementalBackendDispatcher::SupplementalBackendDispatcher): Deleted.
+        (Inspector::SupplementalBackendDispatcher::~SupplementalBackendDispatcher): Deleted.
+        (Inspector::BackendDispatcher::clearFrontend): Deleted, no longer necessary.
+        (Inspector::BackendDispatcher::isActive): Moved to implementation file.
+        (Inspector::BackendDispatcher::BackendDispatcher): Moved to implementation file.
+        * inspector/InspectorFrontendRouter.cpp: Added.
+        (Inspector::FrontendRouter::create):
+        (Inspector::FrontendRouter::connectFrontend):
+        (Inspector::FrontendRouter::disconnectFrontend):
+        (Inspector::FrontendRouter::disconnectAllFrontends):
+        (Inspector::FrontendRouter::leakChannel):
+        (Inspector::FrontendRouter::hasLocalFrontend):
+        (Inspector::FrontendRouter::hasRemoteFrontend):
+        (Inspector::FrontendRouter::sendEvent):
+        (Inspector::FrontendRouter::sendResponse):
+        * inspector/InspectorFrontendRouter.h: Added.
+        * inspector/JSGlobalObjectInspectorController.cpp: Remove guards that are no longer necessary.
+        The frontend router and backend dispatcher now have the same lifetime as the controller.
+        Explicitly connect/disconnect the frontend channel.
+
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::globalObjectDestroyed):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::disconnectAllFrontends):
+        (Inspector::JSGlobalObjectInspectorController::dispatchMessageFromFrontend):
+        (Inspector::JSGlobalObjectInspectorController::appendExtraAgent):
+        (Inspector::JSGlobalObjectInspectorController::pause): Deleted.
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/agents/InspectorAgent.cpp:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        * inspector/augmentable/AugmentableInspectorController.h:
+        (Inspector::AugmentableInspectorController::connected):
+        * inspector/remote/RemoteInspectorDebuggable.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::close):
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event): Use the router.
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::disconnect):
+        * runtime/JSGlobalObjectDebuggable.h:
+
 2015-09-03  Basile Clement  <basile_clement@apple.com>
 
         [ES6] Recognize calls in tail position

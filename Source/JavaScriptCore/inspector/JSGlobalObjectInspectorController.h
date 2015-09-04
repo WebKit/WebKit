@@ -53,6 +53,7 @@ namespace Inspector {
 
 class BackendDispatcher;
 class FrontendChannel;
+class FrontendRouter;
 class InjectedScriptManager;
 class InspectorAgent;
 class InspectorConsoleAgent;
@@ -73,7 +74,9 @@ public:
     ~JSGlobalObjectInspectorController();
 
     void connectFrontend(FrontendChannel*, bool isAutomaticInspection);
-    void disconnectFrontend(DisconnectReason);
+    void disconnectFrontend(FrontendChannel*);
+    void disconnectAllFrontends();
+
     void dispatchMessageFromFrontend(const String&);
 
     void globalObjectDestroyed();
@@ -99,7 +102,7 @@ public:
     virtual AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const override { return m_augmentingClient; } 
     virtual void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient* client) override { m_augmentingClient = client; }
 
-    virtual FrontendChannel* frontendChannel() const override { return m_frontendChannel; }
+    virtual const FrontendRouter& frontendRouter() const override { return m_frontendRouter.get(); }
     virtual void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) override;
 #endif
 
@@ -113,8 +116,8 @@ private:
     InspectorConsoleAgent* m_consoleAgent;
     InspectorDebuggerAgent* m_debuggerAgent;
     AgentRegistry m_agents;
-    FrontendChannel* m_frontendChannel;
-    RefPtr<BackendDispatcher> m_backendDispatcher;
+    Ref<FrontendRouter> m_frontendRouter;
+    Ref<BackendDispatcher> m_backendDispatcher;
     Ref<WTF::Stopwatch> m_executionStopwatch;
     bool m_includeNativeCallStackWithExceptions;
     bool m_isAutomaticInspection;

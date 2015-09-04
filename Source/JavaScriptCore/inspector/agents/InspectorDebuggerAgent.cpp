@@ -33,6 +33,7 @@
 #include "ContentSearchUtilities.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "InspectorFrontendRouter.h"
 #include "InspectorValues.h"
 #include "RegularExpression.h"
 #include "ScriptDebugServer.h"

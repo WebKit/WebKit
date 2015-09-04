@@ -37,6 +37,7 @@
 #include "HeapIterationScope.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "InspectorFrontendRouter.h"
 #include "InspectorValues.h"
 #include "JSLock.h"
 #include "ParserError.h"

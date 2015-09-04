@@ -54,7 +54,7 @@ public:
     virtual bool hasLocalDebugger() const override { return false; }
 
     virtual void connect(Inspector::FrontendChannel*, bool automaticInspection) override;
-    virtual void disconnect() override;
+    virtual void disconnect(Inspector::FrontendChannel*) override;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
     virtual void pause() override;
 

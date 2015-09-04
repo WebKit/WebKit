@@ -1,0 +1,4 @@
+#ifndef WebCore_FWD_InspectorFrontendRouter_h
+#define WebCore_FWD_InspectorFrontendRouter_h
+#include <JavaScriptCore/InspectorFrontendRouter.h>
+#endif
