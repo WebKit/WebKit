@@ -1,3 +1,28 @@
+2015-09-04  Jason Marcell  <jmarcell@apple.com>
+
+        prepare-ChangeLog needs to know how to parse Swift files.
+        https://bugs.webkit.org/show_bug.cgi?id=148784
+        <rdar://problem/22510062>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges): Added entry for get_function_line_ranges_for_swift.
+        (get_function_line_ranges_for_swift): Added function that knows how to parse Swift code.
+        (parseSwiftFunctionArgs): Added function that knows how to parse Swift function arguments.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl: Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/swift_unittests-expected.txt: Ditto.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/swift_unittests.swift: Ditto.
+        (freeFunction): Ditto.
+        (MyClass.function): Ditto.
+        (MyClass.functionWithArgument(_:)): Ditto.
+        (MyClass.functionWithMoreArguments(_:arg2:)): Ditto.
+        (MyClass.functionWithNamedFirstArgument(argument:)): Ditto.
+        (MyClass.functionWithNamedFirstAndSecondArgument(first:second:)): Ditto.
+        (MyClass.classFunction): Ditto.
+        (MyClass.readWriteComputedVariable): Ditto.
+        (MyClass.readOnlyComputedVariable): Ditto.
+
 2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import css/css-color-3

@@ -92,6 +92,8 @@ sub get_function_line_ranges_for_java($$);
 sub get_function_line_ranges_for_javascript($$);
 sub get_function_line_ranges_for_perl($$);
 sub get_selector_line_ranges_for_css($$);
+sub get_function_line_ranges_for_swift($$);
+sub parseSwiftFunctionArgs($);
 sub isAddedStatus($);
 sub isConflictStatus($$$);
 sub isModifiedStatus($);
@@ -639,6 +641,7 @@ sub get_function_line_ranges($$)
     return get_selector_line_ranges_for_css($file_handle, $file_name) if $file_name =~ /\.css$/;
     return get_function_line_ranges_for_perl($file_handle, $file_name) if $file_name =~ /\.p[lm]$/;
     return get_function_line_ranges_for_python($file_handle, $file_name) if $file_name =~ /\.py$/ or $file_name =~ /master\.cfg$/;
+    return get_function_line_ranges_for_swift($file_handle, $file_name) if $file_name =~ /\.swift$/;
 
     # Try to determine the source language based on the script interpreter.
 
@@ -1718,6 +1721,80 @@ sub get_selector_line_ranges_for_css($$)
     }
 
     return @ranges;
+}
+
+# Read a file and get all the line ranges of the things that look like Swift classes, methods,
+# or functions.
+#
+# Result is a list of triples: [ start_line, end_line, function ].
+
+sub get_function_line_ranges_for_swift($$)
+{
+    my ($fileHandle, $fileName) = @_;
+
+    my @ranges;
+
+    my $currentFunction = "";
+    my $currentClass = "";
+    my $functionStart = 0;
+    my $classStart = 0;
+    my $functionScopeDepth = 0;
+    my $classScopeDepth = 0;
+    my $scopeDepth = 0;
+
+    while (<$fileHandle>) {
+        chomp;
+        next if (/^\s*\/\/.*/);
+        if (/func\s+([\w_][\w\d_]*)\((.*)\)/ || /var\s+([\w_][\w\d_]*):\s+/) {
+            $functionScopeDepth = $scopeDepth;
+            $currentFunction = $1;
+            if ($2) {
+                $currentFunction = "$currentFunction(". parseSwiftFunctionArgs($2) . ")";
+            }
+            if ($currentClass) {
+                $currentFunction = "$currentClass.$currentFunction";
+            }
+            $functionStart = $.;
+        } elsif (/class\s+([\w_][\w\d_]*)/) {
+            $classScopeDepth = $scopeDepth;
+            $currentClass = $1;
+            $classStart = $.;
+        }
+        if (index($_, "{") > -1) {
+            $scopeDepth++;
+        }
+        if (index($_, "}") > -1) {
+            $scopeDepth--;
+        }
+        if ($scopeDepth == $functionScopeDepth) {
+            next unless $functionStart;
+            push(@ranges, [$functionStart, $., $currentFunction]);
+            $currentFunction = "";
+            $functionStart = 0;
+        } elsif ($scopeDepth == $classScopeDepth) {
+            next unless $classStart;
+            $currentClass = "";
+            $classStart = 0;
+        }
+    }
+
+    return @ranges;
+}
+
+sub parseSwiftFunctionArgs($)
+{
+    my ($functionArgs) = @_;
+    my @words = split /, /, $functionArgs;
+    my $argCount = scalar(@words);
+    if ($argCount == 0) {
+        return "";
+    } elsif ($argCount > 0) {
+        # If the first argument is unnamed, give it the name "_"
+        $words[0] =~ s/^(\w+: .*)/_ $1/;
+        return join("", map { $_ =~ s/^(\w+).*/$1/; "$_:" } @words);
+    } else {
+        warn "Unknown argument count.\n";
+    }
 }
 
 sub processPaths(\@)

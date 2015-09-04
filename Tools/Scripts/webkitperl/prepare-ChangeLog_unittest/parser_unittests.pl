@@ -43,6 +43,7 @@ my %testFiles = ("perl_unittests.pl" => "get_function_line_ranges_for_perl",
                  "javascript_unittests.js" => "get_function_line_ranges_for_javascript",
                  "css_unittests.css" => "get_selector_line_ranges_for_css",
                  "css_unittests_warning.css" => "get_selector_line_ranges_for_css",
+                 "swift_unittests.swift" => "get_function_line_ranges_for_swift",
                 );
 
 my $resetResults;

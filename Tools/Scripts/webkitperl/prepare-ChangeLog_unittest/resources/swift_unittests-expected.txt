@@ -1,0 +1,51 @@
+{
+  'stderr' => '',
+  'stdout' => '',
+  'ranges' => [
+    [
+      '4',
+      '5',
+      'freeFunction'
+    ],
+    [
+      '11',
+      '12',
+      'MyClass.function'
+    ],
+    [
+      '18',
+      '19',
+      'MyClass.functionWithArgument(_:)'
+    ],
+    [
+      '24',
+      '25',
+      'MyClass.functionWithMoreArguments(_:arg2:)'
+    ],
+    [
+      '31',
+      '32',
+      'MyClass.functionWithNamedFirstArgument(argument:)'
+    ],
+    [
+      '37',
+      '38',
+      'MyClass.functionWithNamedFirstAndSecondArgument(first:second:)'
+    ],
+    [
+      '45',
+      '46',
+      'MyClass.classFunction'
+    ],
+        [
+      '51',
+      '56',
+      'MyClass.readWriteComputedVariable'
+    ],
+    [
+      '59',
+      '61',
+      'MyClass.readOnlyComputedVariable'
+    ],
+  ]
+}
