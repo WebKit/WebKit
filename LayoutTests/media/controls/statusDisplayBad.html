@@ -27,8 +27,16 @@
                     .isEmptyString();
 
                 tester.test("Content is 'Error'")
-                    .value(statusDisplayLabelState.content)
+                    .value(statusDisplayLabelState.textContent)
                     .isEqualTo("Error");
+
+                tester.test("CSS display: block")
+                    .value(statusDisplayLabelState.computedStyle.display)
+                    .isEqualTo("block");
+
+                tester.test("Displayed bounds is non-zero")
+                    .value(statusDisplayLabelState.bounds.width)
+                    .isNotZero();
 
                 tester.end();
             }

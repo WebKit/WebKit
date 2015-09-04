@@ -11,6 +11,8 @@ Get the status label state
 PASS: Name is 'Status Display'
 PASS: Has empty class
 PASS: Content is 'Error'
+PASS: CSS display: block
+PASS: Displayed bounds is non-zero
 
 Testing finished.
 

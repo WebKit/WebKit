@@ -2096,22 +2096,50 @@ Controller.prototype = {
 
     getCurrentControlsStatus: function ()
     {
-        return JSON.stringify({
+        var result = {
             idiom: this.idiom,
-            status: "ok",
-            elements: [
-                {
-                    name: "Show Controls",
-                    className: this.showControlsButton.className,
-                    hidden: this.showControlsButton.hidden
-                },
-                {
-                    name: "Status Display",
-                    className: this.controls.statusDisplay.className,
-                    content: this.controls.statusDisplay.textContent
-                }
-            ]
+            status: "ok"
+        };
+
+        var elements = [
+            {
+                name: "Show Controls",
+                object: this.showControlsButton,
+                extraProperties: ["hidden"]
+            },
+            {
+                name: "Status Display",
+                object: this.controls.statusDisplay,
+                styleValues: ["display"],
+                extraProperties: ["textContent"]
+            }
+        ];
+
+        elements.forEach(function (element) {
+            var obj = element.object;
+            delete element.object;
+
+            element.computedStyle = {};
+            if (element.styleValues) {
+                var computedStyle = window.getComputedStyle(obj);
+                element.styleValues.forEach(function (propertyName) {
+                    element.computedStyle[propertyName] = computedStyle[propertyName];
+                });
+            }
+            delete element.styleValues;
+
+            element.bounds = obj.getBoundingClientRect();
+            element.className = obj.className;
+
+            element.extraProperties.forEach(function (property) {
+                element[property] = obj[property];
+            });
+            delete element.extraProperties;
         });
+
+        result.elements = elements;
+
+        return JSON.stringify(result);
     }
 
 };

@@ -11,6 +11,7 @@ Get the status label state
 PASS: Name is 'Status Display'
 PASS: Has hidden class
 PASS: Content is Empty
+PASS: CSS display: none
 
 Testing finished.
 

@@ -1,3 +1,21 @@
+2015-09-03  Dean Jackson  <dino@apple.com>
+
+        [mediacontrols] Expose bounding rectangles and computed style to testing
+        https://bugs.webkit.org/show_bug.cgi?id=148755
+        <rdar://problems/22567757>
+
+        Reviewed by Eric Carlson.
+
+        Update tests to exercise the computed style and bounding rectangles.
+
+        * media/controls/controls-test-helpers.js:
+        (ControlsTest.prototype.isNotZero):
+        (ControlsTest):
+        * media/controls/statusDisplay-expected.txt:
+        * media/controls/statusDisplay.html:
+        * media/controls/statusDisplayBad-expected.txt:
+        * media/controls/statusDisplayBad.html:
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Add tests for different Unicode normalization forms in domain names

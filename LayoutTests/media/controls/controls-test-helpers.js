@@ -167,4 +167,12 @@ ControlsTest = class ControlsTest {
             this.logFailure(`${this.currentMessage} Expected a false value. Actual: "${this.currentValue}"`);
     }
 
+    isNotZero()
+    {
+        if (this.currentValue)
+            this.logSuccess(this.currentMessage);
+        else
+            this.logFailure(`${this.currentMessage} Expected a non-zero value`);
+    }
+
 }

@@ -27,8 +27,12 @@
                     .isEqualTo("hidden");
 
                 tester.test("Content is Empty")
-                    .value(statusDisplayLabelState.content)
+                    .value(statusDisplayLabelState.textContent)
                     .isEmptyString();
+
+                tester.test("CSS display: none")
+                    .value(statusDisplayLabelState.computedStyle.display)
+                    .isEqualTo("none");
 
                 tester.end();
             }
