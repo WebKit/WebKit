@@ -1,3 +1,9 @@
+2015-09-04  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+
 2015-09-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorController should support multiple frontend channels

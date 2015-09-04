@@ -31,7 +31,6 @@
 #import "StringFunctions.h"
 #import "TestController.h"
 #import <Carbon/Carbon.h>
-#import <WebCore/NSEventSPI.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
@@ -39,6 +38,10 @@
 
 @interface NSApplication (Details)
 - (void)_setCurrentEvent:(NSEvent *)event;
+@end
+
+@interface NSEvent (ForTestRunner)
+- (void)_postDelayed;
 @end
 
 #if defined(__LP64__)
