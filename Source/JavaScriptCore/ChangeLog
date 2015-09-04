@@ -1,3 +1,27 @@
+2015-08-11  Basile Clement  <basile_clement@apple.com>
+
+        Add more strict mode tests
+        https://bugs.webkit.org/show_bug.cgi?id=147850
+
+        Reviewed by Michael Saboff.
+
+        We should have more tests in strict mode to have better test coverage.
+        This adds a copy of the v8-v6 tests from SunSpider as JSC stress tests,
+        with "use strict"; added at the top of the files.
+
+        A few modifications were necessary to make the files valid in strict
+        mode, namely adding a couple of "var" statements and removing some
+        generated code in earley-boyer that was using strings with octal
+        escapes.
+
+        * tests/stress/v8-crypto-strict.js: Added.
+        * tests/stress/v8-deltablue-strict.js: Added.
+        * tests/stress/v8-earley-boyer-strict.js: Added.
+        * tests/stress/v8-raytrace-strict.js: Added.
+        * tests/stress/v8-regexp-strict.js: Added.
+        * tests/stress/v8-richards-strict.js: Added.
+        * tests/stress/v8-splay-strict.js: Added.
+
 2015-09-03  Geoffrey Garen  <ggaren@apple.com>
 
         JavaScriptCore should have some ES6 conformance tests
