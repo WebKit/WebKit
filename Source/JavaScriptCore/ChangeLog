@@ -1,3 +1,34 @@
+2015-09-03  Basile Clement  <basile_clement@apple.com>
+
+        JavaScript functions should restore the stack pointer after a call
+        https://bugs.webkit.org/show_bug.cgi?id=148659
+
+        Reviewed by Michael Saboff.
+
+        This patch makes it so that the various places where we are making a
+        JS-to-JS call restore the stack pointer afterwards. This allows us to
+        no longer rely on the stack pointer still being valid after a call, and
+        is a prerequisite for getting rid of the arity fixup return thunk.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfCall):
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::emit):
+        * ftl/FTLJSCall.h:
+        * ftl/FTLStackMaps.h:
+        (JSC::FTL::StackMaps::stackSizeForLocals):
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        * tests/stress/tail-call-in-inline-cache.js: Added.
+        (tail):
+        (obj.get x):
+
 2015-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         StructureStubInfo should be able to reset itself without going through CodeBlock

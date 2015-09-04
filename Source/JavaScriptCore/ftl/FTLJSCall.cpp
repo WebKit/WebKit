@@ -51,6 +51,13 @@ JSCall::JSCall(unsigned stackmapID, Node* node)
     ASSERT(node->op() == Call || node->op() == Construct);
 }
 
+void JSCall::emit(CCallHelpers& jit, unsigned stackSizeForLocals)
+{
+    JSCallBase::emit(jit);
+
+    jit.addPtr(CCallHelpers::TrustedImm32(- static_cast<int64_t>(stackSizeForLocals)), CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

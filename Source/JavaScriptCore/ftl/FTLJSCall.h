@@ -42,6 +42,8 @@ class JSCall : public JSCallBase {
 public:
     JSCall();
     JSCall(unsigned stackmapID, DFG::Node*);
+
+    void emit(CCallHelpers&, unsigned stackSizeForLocals);
     
     unsigned stackmapID() const { return m_stackmapID; }
     

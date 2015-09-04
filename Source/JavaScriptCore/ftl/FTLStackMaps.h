@@ -127,6 +127,19 @@ struct StackMaps {
     RecordMap computeRecordMap() const;
 
     unsigned stackSize() const;
+
+    unsigned stackSizeForLocals() const
+    {
+#if CPU(X86_64)
+        // LLVM will store fp in the call frame
+        return stackSize() - sizeof(void*);
+#elif CPU(ARM64)
+        // LLVM will store fp & lr in the call frame
+        return stackSize() - 2 * sizeof(void*);
+#else
+        UNREACHABLE_FOR_PLATFORM();
+#endif
+    }
 };
 
 } } // namespace JSC::FTL

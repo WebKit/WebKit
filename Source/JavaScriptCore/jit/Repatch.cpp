@@ -492,9 +492,10 @@ static bool generateByIdStub(
                 MacroAssembler::TrustedImmPtr(0));
             
             fastPathCall = stubJit.nearCall();
-            
+
             stubJit.addPtr(
-                MacroAssembler::TrustedImm32(alignedNumberOfBytesForCall),
+                MacroAssembler::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
+                GPRInfo::callFrameRegister,
                 MacroAssembler::stackPointerRegister);
             if (kind == CallGetter)
                 stubJit.setupResults(valueRegs);
@@ -510,7 +511,8 @@ static bool generateByIdStub(
             slowPathCall = stubJit.nearCall();
             
             stubJit.addPtr(
-                MacroAssembler::TrustedImm32(alignedNumberOfBytesForCall),
+                MacroAssembler::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
+                GPRInfo::callFrameRegister,
                 MacroAssembler::stackPointerRegister);
             if (kind == CallGetter)
                 stubJit.setupResults(valueRegs);
