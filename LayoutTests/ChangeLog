@@ -1,5 +1,11 @@
 2015-09-04  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, add bug number for http/tests/w3c/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html
+
+        * TestExpectations:
+
+2015-09-04  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, add bug number for http/tests/w3c/html/semantics/document-metadata/the-style-element/html_style_in_comment.html
 
         * TestExpectations:
