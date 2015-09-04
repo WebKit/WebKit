@@ -17,9 +17,9 @@ find_package(PythonInterp 2.7.0 REQUIRED)
 # We cannot check for RUBY_FOUND because it is set only when the full package is installed and
 # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
 # for finding only the Ruby interpreter.
-find_package(Ruby 2.0)
-if (NOT RUBY_EXECUTABLE OR RUBY_VERSION VERSION_LESS 2.0)
-    message(FATAL_ERROR "Ruby 2.0 or higher is required.")
+find_package(Ruby 1.9)
+if (NOT RUBY_EXECUTABLE OR RUBY_VERSION VERSION_LESS 1.9)
+    message(FATAL_ERROR "Ruby 1.9 or higher is required.")
 endif ()
 
 include(WebKitMacros)
