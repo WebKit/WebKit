@@ -151,11 +151,11 @@ public:
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
     typedef SegmentedVector<AssemblerLabel, 64> Jumps;
 
-    static RegisterID firstRegister() { return MIPSRegisters::r0; }
-    static RegisterID lastRegister() { return MIPSRegisters::r31; }
+    static constexpr RegisterID firstRegister() { return MIPSRegisters::r0; }
+    static constexpr RegisterID lastRegister() { return MIPSRegisters::r31; }
 
-    static FPRegisterID firstFPRegister() { return MIPSRegisters::f0; }
-    static FPRegisterID lastFPRegister() { return MIPSRegisters::f31; }
+    static constexpr FPRegisterID firstFPRegister() { return MIPSRegisters::f0; }
+    static constexpr FPRegisterID lastFPRegister() { return MIPSRegisters::f31; }
 
     MIPSAssembler()
         : m_indexOfLastWatchpoint(INT_MIN)

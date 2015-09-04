@@ -103,11 +103,11 @@ public:
     typedef typename AssemblerType::RegisterID RegisterID;
     typedef typename AssemblerType::FPRegisterID FPRegisterID;
     
-    static RegisterID firstRegister() { return AssemblerType::firstRegister(); }
-    static RegisterID lastRegister() { return AssemblerType::lastRegister(); }
+    static constexpr RegisterID firstRegister() { return AssemblerType::firstRegister(); }
+    static constexpr RegisterID lastRegister() { return AssemblerType::lastRegister(); }
 
-    static FPRegisterID firstFPRegister() { return AssemblerType::firstFPRegister(); }
-    static FPRegisterID lastFPRegister() { return AssemblerType::lastFPRegister(); }
+    static constexpr FPRegisterID firstFPRegister() { return AssemblerType::firstFPRegister(); }
+    static constexpr FPRegisterID lastFPRegister() { return AssemblerType::lastFPRegister(); }
 
     // Section 1: MacroAssembler operand types
     //

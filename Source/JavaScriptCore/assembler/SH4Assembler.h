@@ -327,11 +327,11 @@ public:
     static const RegisterID scratchReg2 = SH4Registers::r11;
     static const uint32_t maxInstructionSize = 16;
 
-    static RegisterID firstRegister() { return SH4Registers::r0; }
-    static RegisterID lastRegister() { return SH4Registers::r15; }
+    static constexpr RegisterID firstRegister() { return SH4Registers::r0; }
+    static constexpr RegisterID lastRegister() { return SH4Registers::r15; }
 
-    static FPRegisterID firstFPRegister() { return SH4Registers::dr0; }
-    static FPRegisterID lastFPRegister() { return SH4Registers::dr14; }
+    static constexpr FPRegisterID firstFPRegister() { return SH4Registers::dr0; }
+    static constexpr FPRegisterID lastFPRegister() { return SH4Registers::dr14; }
 
     enum {
         padForAlign8 = 0x00,

@@ -1,3 +1,55 @@
+2015-09-04  Basile Clement  <basile_clement@apple.com>
+
+        Make a bunch of MacroAssembler operations constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=148334
+
+        Reviewed by Saam Barati.
+
+        This is in preparation of https://bugs.webkit.org/show_bug.cgi?id=148335 .
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Registers::isSp):
+        (JSC::ARM64Registers::isZr):
+        (JSC::ARM64Assembler::firstRegister):
+        (JSC::ARM64Assembler::lastRegister):
+        (JSC::ARM64Assembler::firstFPRegister):
+        (JSC::ARM64Assembler::lastFPRegister):
+        (JSC::ARM64Assembler::isSp):
+        (JSC::ARM64Assembler::isZr):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::firstRegister):
+        (JSC::ARMAssembler::lastRegister):
+        (JSC::ARMAssembler::firstFPRegister):
+        (JSC::ARMAssembler::lastFPRegister):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::firstRegister):
+        (JSC::AbstractMacroAssembler::lastRegister):
+        (JSC::AbstractMacroAssembler::firstFPRegister):
+        (JSC::AbstractMacroAssembler::lastFPRegister):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::firstRegister):
+        (JSC::MIPSAssembler::lastRegister):
+        (JSC::MIPSAssembler::firstFPRegister):
+        (JSC::MIPSAssembler::lastFPRegister):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::nextRegister):
+        (JSC::MacroAssembler::nextFPRegister):
+        (JSC::MacroAssembler::numberOfRegisters):
+        (JSC::MacroAssembler::registerIndex):
+        (JSC::MacroAssembler::numberOfFPRegisters):
+        (JSC::MacroAssembler::fpRegisterIndex):
+        (JSC::MacroAssembler::totalNumberOfRegisters):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::firstRegister):
+        (JSC::SH4Assembler::lastRegister):
+        (JSC::SH4Assembler::firstFPRegister):
+        (JSC::SH4Assembler::lastFPRegister):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::firstRegister):
+        (JSC::X86Assembler::lastRegister):
+        (JSC::X86Assembler::firstFPRegister):
+        (JSC::X86Assembler::lastFPRegister):
+
 2015-08-24  Basile Clement  <basile_clement@apple.com>
 
         Add a bunch of operators

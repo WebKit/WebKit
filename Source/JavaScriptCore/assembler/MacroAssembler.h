@@ -69,42 +69,42 @@ namespace JSC {
 class MacroAssembler : public MacroAssemblerBase {
 public:
 
-    static RegisterID nextRegister(RegisterID reg)
+    static constexpr RegisterID nextRegister(RegisterID reg)
     {
         return static_cast<RegisterID>(reg + 1);
     }
     
-    static FPRegisterID nextFPRegister(FPRegisterID reg)
+    static constexpr FPRegisterID nextFPRegister(FPRegisterID reg)
     {
         return static_cast<FPRegisterID>(reg + 1);
     }
     
-    static unsigned numberOfRegisters()
+    static constexpr unsigned numberOfRegisters()
     {
         return lastRegister() - firstRegister() + 1;
     }
     
-    static unsigned registerIndex(RegisterID reg)
+    static constexpr unsigned registerIndex(RegisterID reg)
     {
         return reg - firstRegister();
     }
     
-    static unsigned numberOfFPRegisters()
+    static constexpr unsigned numberOfFPRegisters()
     {
         return lastFPRegister() - firstFPRegister() + 1;
     }
     
-    static unsigned fpRegisterIndex(FPRegisterID reg)
+    static constexpr unsigned fpRegisterIndex(FPRegisterID reg)
     {
         return reg - firstFPRegister();
     }
     
-    static unsigned registerIndex(FPRegisterID reg)
+    static constexpr unsigned registerIndex(FPRegisterID reg)
     {
         return fpRegisterIndex(reg) + numberOfRegisters();
     }
     
-    static unsigned totalNumberOfRegisters()
+    static constexpr unsigned totalNumberOfRegisters()
     {
         return numberOfRegisters() + numberOfFPRegisters();
     }
