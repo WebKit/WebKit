@@ -1,0 +1,11 @@
+Test IDN behavior decomposed forms of Cyrillic domain name tags.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test('http://спецодежда.онлайн/') is 'http://спецодежда.онлайн/'
+PASS test('http://спецодежда.онлайн/') is 'http://спецодежда.онлайн/'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
