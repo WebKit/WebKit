@@ -1,3 +1,20 @@
+2015-09-03  Matt Baker  <mattbaker@apple.com>
+
+        Add assets for Introducing the Rendering Frames Timeline blog post.
+
+        * blog-files/rendering-frames-timeline/inspector-15ms-filter-after-2x.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-15ms-filter-after.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-15ms-filter-before-2x.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-15ms-filter-before.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-frames-graph-2x.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-frames-graph.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-rendering-frames-2x.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-rendering-frames-filtering-2x.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-rendering-frames-filtering.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-rendering-frames.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-task-filters-2x.png: Added.
+        * blog-files/rendering-frames-timeline/inspector-task-filters.png: Added.
+
 2015-08-28  Jonathan Davis  <jond@apple.com>
 
         Add assets for Styles Sidebar Refinements in Web Inspector blog post.
