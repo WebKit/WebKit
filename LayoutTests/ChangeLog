@@ -1,3 +1,10 @@
+2015-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add iOS-specific baselines for a couple of newly imported W3C tests.
+
+        * platform/ios-simulator/http/tests/w3c/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/dom/interfaces-expected.txt: Added.
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         iOS test gardening.
