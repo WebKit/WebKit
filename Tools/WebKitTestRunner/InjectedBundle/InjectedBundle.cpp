@@ -289,6 +289,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);
+    m_testRunner->clearTestRunnerCallbacks();
 
     if (m_timeout > 0)
         m_testRunner->setCustomTimeout(m_timeout);

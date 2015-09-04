@@ -19,6 +19,15 @@ var eventQueue = {
         return this._queue.length != 0;
     },
 
+    callAfterEventDispatch: function (callback) {
+        var interval = setInterval(function () { 
+        if (!eventQueue.hasPendingEvents()) {
+            clearInterval(interval);
+            callback();
+        }
+    }, 0);
+    },
+
     _queue: [],
 
     _processEventQueue: function () {
@@ -58,9 +67,11 @@ function testComplete()
     window.testRunner.notifyDone();
 }
 
-function initializeLog()
+function initializeSwipeTest()
 {
     window.localStorage["swipeLogging"] = "";
+    testRunner.setNavigationGesturesEnabled(true);
+    testRunner.clearBackForwardList();
 }
 
 function startMeasuringDuration(key)

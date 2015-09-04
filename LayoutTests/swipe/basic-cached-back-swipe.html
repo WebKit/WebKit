@@ -70,9 +70,7 @@ window.onload = function () {
     document.body.innerHTML = isFirstPage() ? "first" : "second";
 
     if (isFirstPage()) {
-        initializeLog();
-
-        testRunner.setNavigationGesturesEnabled(true);
+        initializeSwipeTest();
 
         testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
         testRunner.installWillEndSwipeCallback(willEndSwipeCallback);

@@ -1,3 +1,14 @@
+2015-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for r179736 (programmatic navigation during swipe causing a crash)
+        https://bugs.webkit.org/show_bug.cgi?id=148830
+
+        Reviewed by Beth Dakin.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        Make sure that TestRunner callbacks don't leak between tests!
+
 2015-09-04  Anders Carlsson  <andersca@apple.com>
 
         It should be possible to pass relative HTTP test paths to DumpRenderTree

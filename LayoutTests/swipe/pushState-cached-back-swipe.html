@@ -74,9 +74,7 @@ window.onload = function () {
 
     updateContent();
 
-    initializeLog();
-
-    testRunner.setNavigationGesturesEnabled(true);
+    initializeSwipeTest();
 
     testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
     testRunner.installWillEndSwipeCallback(willEndSwipeCallback);

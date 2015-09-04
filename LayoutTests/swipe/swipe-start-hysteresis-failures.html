@@ -16,7 +16,7 @@ function doShortSwipeGesture()
     eventQueue.enqueueScrollEvent(0, 0, 'changed');
     eventQueue.enqueueScrollEvent(0, 0, 'ended');
 
-    waitForEventDispatch(doDiagonalSwipeGesture);
+    eventQueue.callAfterEventDispatch(doDiagonalSwipeGesture);
 }
 
 function doDiagonalSwipeGesture()
@@ -28,7 +28,7 @@ function doDiagonalSwipeGesture()
     eventQueue.enqueueScrollEvent(0, 0, 'changed');
     eventQueue.enqueueScrollEvent(0, 0, 'ended');
 
-    waitForEventDispatch(doVerticalSwipeGesture);
+    eventQueue.callAfterEventDispatch(doVerticalSwipeGesture);
 }
 
 function doVerticalSwipeGesture()
@@ -40,7 +40,7 @@ function doVerticalSwipeGesture()
     eventQueue.enqueueScrollEvent(0, 0, 'changed');
     eventQueue.enqueueScrollEvent(0, 0, 'ended');
 
-    waitForEventDispatch(doHorizontalThenVerticalSwipeGesture);
+    eventQueue.callAfterEventDispatch(doHorizontalThenVerticalSwipeGesture);
 }
 
 function doHorizontalThenVerticalSwipeGesture()
@@ -52,7 +52,7 @@ function doHorizontalThenVerticalSwipeGesture()
     eventQueue.enqueueScrollEvent(0, 2, 'changed');
     eventQueue.enqueueScrollEvent(0, 0, 'ended');
 
-    waitForEventDispatch(doRegularSwipeGesture);
+    eventQueue.callAfterEventDispatch(doRegularSwipeGesture);
 }
 
 function doRegularSwipeGesture()
@@ -78,16 +78,6 @@ function doRegularSwipeGesture()
     eventQueue.enqueueScrollEvent(0, 0, 'ended');
 }
 
-function waitForEventDispatch(callback)
-{
-    var interval = setInterval(function () { 
-        if (!eventQueue.hasPendingEvents()) {
-            clearInterval(interval);
-            callback();
-        }
-    }, 0);
-}
-
 function didBeginSwipeNotReachedCallback()
 {
     log("Failure. Should never begin a swipe, because all of the attempted swipes should fail due to the swipe-start hysteresis.");
@@ -107,9 +97,7 @@ window.onload = function () {
     document.body.innerHTML = isFirstPage() ? "first" : "second";
 
     if (isFirstPage()) {
-        initializeLog();
-
-        testRunner.setNavigationGesturesEnabled(true);
+        initializeSwipeTest();
 
         testRunner.installDidBeginSwipeCallback(didBeginSwipeNotReachedCallback);
 

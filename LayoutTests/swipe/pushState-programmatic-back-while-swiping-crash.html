@@ -1,0 +1,89 @@
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script>
+function startSwipeGesture()
+{
+    eventSender.mouseMoveTo(100, 100);
+
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(1, 0, 'began');
+    
+    eventQueue.callAfterEventDispatch(goBack);
+}
+
+function goBack()
+{
+    window.history.back();
+
+    eventQueue.callAfterEventDispatch(continueSwipeGesture);
+}
+
+function continueSwipeGesture()
+{
+    eventQueue.enqueueScrollEvent(1, 0, 'changed');
+
+    eventQueue.callAfterEventDispatch(completeSwipeGesture);
+}
+
+function completeSwipeGesture()
+{
+    eventQueue.enqueueSwipeEvent(1, 0, 'changed');
+    eventQueue.enqueueSwipeEvent(256, 0, 'changed');
+    eventQueue.enqueueSwipeEvent(0, 0, 'ended');
+
+    eventQueue.callAfterEventDispatch(testComplete);
+}
+
+function didBeginSwipeCallback()
+{
+    log("Failed. Should not begin swipe; we've already navigated away from the item where the swipe started, and there is no other back item.");
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+function updateContent()
+{
+    document.body.innerHTML = isFirstPage() ? "first" : "second";
+}
+
+window.onload = function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    updateContent();
+
+    initializeSwipeTest();
+
+    testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    window.addEventListener("popstate", function(e) {
+        updateContent();
+    });
+
+    setTimeout(function () { 
+        history.pushState(null, null, "/second");
+        updateContent();
+
+        setTimeout(function () {
+            startSwipeGesture();
+        }, 0);
+    }, 0);
+};
+</script>
+</head>
+<body>
+</body>

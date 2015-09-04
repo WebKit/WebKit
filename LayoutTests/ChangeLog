@@ -1,3 +1,25 @@
+2015-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for r179736 (programmatic navigation during swipe causing a crash)
+        https://bugs.webkit.org/show_bug.cgi?id=148830
+
+        Reviewed by Beth Dakin.
+
+        * swipe/basic-cached-back-swipe.html:
+        * swipe/pushState-cached-back-swipe.html:
+        * swipe/resources/swipe-test.js:
+        (eventQueue.callAfterEventDispatch):
+        (initializeSwipeTest):
+        (initializeLog): Deleted.
+        * swipe/swipe-start-hysteresis-failures.html:
+        Refactor some things.
+        Make sure that we reset the back forward list before testing, because we expect
+        to start at the "first" item, but there is actually a about:blank before us.
+
+        * swipe/pushState-programmatic-back-while-swiping-crash-expected.txt: Added.
+        * swipe/pushState-programmatic-back-while-swiping-crash.html: Added.
+        Add a test that ensures that r179736 does not recur.
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         Should have a test for selection behavior when force clicking text
