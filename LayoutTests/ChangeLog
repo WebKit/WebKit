@@ -1,5 +1,12 @@
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
+        Newly imported http/tests/w3c/html/semantics/forms/textfieldselection/selection.html
+        is flaky.
+
+        * TestExpectations: Mark it as such.
+
+2015-09-04  Alexey Proskuryakov  <ap@apple.com>
+
         Update expectations for color input tests, which don't work in Mac WebKit1.
 
         * TestExpectations:
