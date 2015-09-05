@@ -180,6 +180,13 @@ function start() {
     }
   }
 
+  function createStylesheet() {
+    var style = document.createElement("style");
+    style.appendChild(document.createTextNode(""));
+    document.head.appendChild(style);
+    return style.sheet;
+  }
+
   function create3DContext(canvas, attrs, version) {
     if (!canvas) {
       canvas = document.createElement("canvas");
@@ -926,6 +933,19 @@ function start() {
     autoScrollEnabled = autoScrollCheckbox.checked;
     autoScroll = autoScrollEnabled;
   };
+
+  var hidePassedSheet = createStylesheet();
+  var hidePassedCheckbox = document.getElementById("hidePassedCheckbox");
+  hidePassedCheckbox.checked = false;
+  hidePassedCheckbox.onclick = function() {
+    var hidePassedTests = hidePassedCheckbox.checked;
+    if (hidePassedTests) {
+        hidePassedSheet.insertRule(".testpagesuccess { display: none; }", 0);
+    } else {
+        hidePassedSheet.deleteRule(0);
+    }
+  };
+
   var textbutton = document.getElementById("showTextSummary");
   textbutton.onclick = function() {
     log("click");
@@ -991,6 +1011,9 @@ function start() {
               <br/>
               <input type="checkbox" id="autoScrollCheckbox"/>
               <label for="autoScrollCheckbox">auto scroll</label>
+              <br/>
+              <input type="checkbox" id="hidePassedCheckbox"/>
+              <label for="hidePassedCheckbox">hide passed tests</label>
               <br/>
               <input type="button" style="visibility: hidden;" value="display text summary" id="showTextSummary"/>
               <div id="nowebgl" class="nowebgl" style="display: none;">

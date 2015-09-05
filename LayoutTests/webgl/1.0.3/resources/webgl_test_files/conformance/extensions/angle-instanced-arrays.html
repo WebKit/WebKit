@@ -77,6 +77,7 @@ var program;
 
 if (!gl) {
     testFailed("WebGL context does not exist");
+    finishTest();
 } else {
     testPassed("WebGL context exists");
 
@@ -88,6 +89,7 @@ if (!gl) {
         testPassed("No ANGLE_instanced_arrays support -- this is legal");
 
         runSupportedTest(false);
+        finishTest();
     } else {
         testPassed("Successfully enabled ANGLE_instanced_arrays extension");
 
@@ -413,10 +415,6 @@ function runANGLECorruptionTest()
 
     cycleAndTest();
 }
-
-var successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>

@@ -1,3 +1,39 @@
+2015-09-04  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Update WebGL 1.0.3 conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=148858
+        <rdar://problem/22588694>
+
+        Reviewed by Beth Dakin.
+
+        Update to the final version of the 1.0.3 WebGL conformance suite.
+        At the same time, unskip the tests (other than the one that crashes)
+        and check in results that we can use as progressions (later).
+
+        * platform/mac/TestExpectations:
+        * webgl/1.0.3/conformance/extensions/oes-texture-half-float-expected.txt:
+        * webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt:
+        * webgl/1.0.3/conformance/extensions/webgl-draw-buffers-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shader-struct-scope-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names-expected.txt:
+        * webgl/1.0.3/conformance/renderbuffers/feedback-loop-expected.txt:
+        * webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/extensions/angle-instanced-arrays.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/glsl/misc/shader-with-for-loop.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/glsl/misc/ternary-operators-in-global-initializers.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/misc/bad-arguments-test.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/more/functions/uniformMatrixBadArgs.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/more/unit.js:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/ogles/ogles-utils.js:
+        (OpenGLESTestRunner):
+        * webgl/1.0.3/resources/webgl_test_files/conformance/textures/tex-image-with-invalid-data.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/typedarrays/array-unit-tests.html:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/typedarrays/resources/typed-array-worker.js:
+        (onmessage):
+        * webgl/1.0.3/resources/webgl_test_files/webgl-conformance-tests.html:
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         Forgot to mark these expectations.
