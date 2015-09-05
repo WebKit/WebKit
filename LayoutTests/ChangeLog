@@ -1,3 +1,9 @@
+2015-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, land baseline for one of the newly imported w3c tests.
+
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-iframe-expected.txt: Added.
+
 2015-09-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Import a Chromium <input type=color> test.
