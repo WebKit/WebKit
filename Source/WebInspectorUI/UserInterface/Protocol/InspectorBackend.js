@@ -43,6 +43,8 @@ InspectorBackendClass = class InspectorBackendClass
         this.dumpInspectorProtocolMessages = false;
         this.warnForLongMessageHandling = false;
         this.longMessageHandlingThreshold = 10; // milliseconds.
+
+        this._log = window.InspectorTest ? InspectorFrontendHost.unbufferedLog.bind(InspectorFrontendHost) : console.log.bind(console);
     }
 
     // Public
@@ -77,7 +79,7 @@ InspectorBackendClass = class InspectorBackendClass
     dispatch(message)
     {
         if (this.dumpInspectorProtocolMessages)
-            console.log("backend: " + ((typeof message === "string") ? message : JSON.stringify(message)));
+            this._log("backend: " + ((typeof message === "string") ? message : JSON.stringify(message)));
 
         var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
 
@@ -173,7 +175,7 @@ InspectorBackendClass = class InspectorBackendClass
     {
         let stringifiedMessage = JSON.stringify(messageObject);
         if (this.dumpInspectorProtocolMessages)
-            console.log("frontend: " + stringifiedMessage);
+            this._log("frontend: " + stringifiedMessage);
 
         InspectorFrontendHost.sendMessageToBackend(stringifiedMessage);
     }

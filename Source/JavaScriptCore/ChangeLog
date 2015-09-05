@@ -1,3 +1,17 @@
+2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Test Runtime.saveResult and $n values
+        https://bugs.webkit.org/show_bug.cgi?id=148837
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._evaluateOn):
+        We don't need to be in the console object group to put the value
+        in the saved results list. That strong reference will ensure $n
+        values are always alive even if other object groups were used
+        when creating and subsequently released.
+
 2015-09-04  Mark Lam  <mark.lam@apple.com>
 
         [Follow up] StackOverflow stack unwinding should stop at native frames.

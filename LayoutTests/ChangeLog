@@ -1,3 +1,14 @@
+2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Test Runtime.saveResult and $n values
+        https://bugs.webkit.org/show_bug.cgi?id=148837
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/runtime/parse.html: Remove unncessary debug flag.
+        * inspector/runtime/saveResult-expected.txt: Added.
+        * inspector/runtime/saveResult.html: Added.
+
 2015-09-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, land baseline for one of the newly imported w3c tests.
