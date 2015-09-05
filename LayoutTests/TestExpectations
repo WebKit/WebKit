@@ -25,6 +25,7 @@ fast/forms/search/search-results-hidden-crash.html [ Skip ]
 fast/url/user-visible [ Skip ]
 
 # Only Mac supports force tests.
+fast/events/cancelled-force-click-link-navigation.html [ Skip ]
 fast/events/force-click-link-selection-behavior.html [ Skip ]
 fast/events/force-click-on-link-navigation.html [ Skip ]
 fast/events/force-click-text-selection-behavior.html [ Skip ]

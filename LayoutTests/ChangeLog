@@ -1,3 +1,10 @@
+2015-09-04  Beth Dakin  <bdakin@apple.com>
+
+        Forgot to mark these expectations.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2015-09-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add bug number for http/tests/w3c/html/semantics/embedded-content/the-video-element/video_initially_paused.html
