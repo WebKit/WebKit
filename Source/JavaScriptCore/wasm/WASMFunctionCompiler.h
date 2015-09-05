@@ -42,6 +42,21 @@ static int32_t JIT_OPERATION operationDiv(int32_t left, int32_t right)
 {
     return left / right;
 }
+
+static int32_t JIT_OPERATION operationMod(int32_t left, int32_t right)
+{
+    return left % right;
+}
+
+static uint32_t JIT_OPERATION operationUnsignedDiv(uint32_t left, uint32_t right)
+{
+    return left / right;
+}
+
+static uint32_t JIT_OPERATION operationUnsignedMod(uint32_t left, uint32_t right)
+{
+    return left % right;
+}
 #endif
 
 class WASMFunctionCompiler : private CCallHelpers {
@@ -222,20 +237,49 @@ public:
         case WASMOpExpressionI32::Sub:
             sub32(GPRInfo::regT1, GPRInfo::regT0);
             break;
-        case WASMOpExpressionI32::SDiv: {
+        case WASMOpExpressionI32::SDiv:
+        case WASMOpExpressionI32::UDiv:
+        case WASMOpExpressionI32::SMod:
+        case WASMOpExpressionI32::UMod: {
             m_divideErrorJumpList.append(branchTest32(Zero, GPRInfo::regT1));
-            Jump denominatorNotNeg1 = branch32(NotEqual, GPRInfo::regT1, TrustedImm32(-1));
-            m_divideErrorJumpList.append(branch32(Equal, GPRInfo::regT0, TrustedImm32(-2147483647-1)));
-            denominatorNotNeg1.link(this);
+            if (op == WASMOpExpressionI32::SDiv || op == WASMOpExpressionI32::SMod) {
+                Jump denominatorNotNeg1 = branch32(NotEqual, GPRInfo::regT1, TrustedImm32(-1));
+                m_divideErrorJumpList.append(branch32(Equal, GPRInfo::regT0, TrustedImm32(-2147483647-1)));
+                denominatorNotNeg1.link(this);
+            }
 #if CPU(X86) || CPU(X86_64)
             ASSERT(GPRInfo::regT0 == X86Registers::eax);
             move(GPRInfo::regT1, X86Registers::ecx);
-            m_assembler.cdq();
-            m_assembler.idivl_r(X86Registers::ecx);
+            if (op == WASMOpExpressionI32::SDiv || op == WASMOpExpressionI32::SMod) {
+                m_assembler.cdq();
+                m_assembler.idivl_r(X86Registers::ecx);
+            } else {
+                ASSERT(op == WASMOpExpressionI32::UDiv || op == WASMOpExpressionI32::UMod);
+                xor32(X86Registers::edx, X86Registers::edx);
+                m_assembler.divl_r(X86Registers::ecx);
+            }
+            if (op == WASMOpExpressionI32::SMod || op == WASMOpExpressionI32::UMod)
+                move(X86Registers::edx, GPRInfo::regT0);
 #else
+            // FIXME: We should be able to do an inline div on ARMv7 and ARM64.
             if (maxFrameExtentForSlowPathCall)
                 addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
-            callOperation(operationDiv, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
+            switch (op) {
+            case WASMOpExpressionI32::SDiv:
+                callOperation(operationDiv, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
+                break;
+            case WASMOpExpressionI32::UDiv:
+                callOperation(operationUnsignedDiv, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
+                break;
+            case WASMOpExpressionI32::SMod:
+                callOperation(operationMod, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
+                break;
+            case WASMOpExpressionI32::UMod:
+                callOperation(operationUnsignedMod, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
             if (maxFrameExtentForSlowPathCall)
                 addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
 #endif
@@ -280,6 +324,13 @@ private:
     }
 
     void callOperation(int32_t JIT_OPERATION (*operation)(int32_t, int32_t), GPRReg src1, GPRReg src2, GPRReg dst)
+    {
+        setupArguments(src1, src2);
+        appendCall(operation);
+        move(GPRInfo::returnValueGPR, dst);
+    }
+
+    void callOperation(uint32_t JIT_OPERATION (*operation)(uint32_t, uint32_t), GPRReg src1, GPRReg src2, GPRReg dst)
     {
         setupArguments(src1, src2);
         appendCall(operation);

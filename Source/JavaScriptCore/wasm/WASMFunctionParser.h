@@ -78,6 +78,8 @@ private:
     template <class Context> ContextExpression parseExpression(Context&, WASMExpressionType);
 
     template <class Context> ContextExpression parseExpressionI32(Context&);
+    template <class Context> ContextExpression parseConstantPoolIndexExpressionI32(Context&, uint32_t constantPoolIndex);
+    template <class Context> ContextExpression parseConstantPoolIndexExpressionI32(Context&);
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&, uint32_t immediate);
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&);
     template <class Context> ContextExpression parseGetLocalExpressionI32(Context&, uint32_t localIndex);

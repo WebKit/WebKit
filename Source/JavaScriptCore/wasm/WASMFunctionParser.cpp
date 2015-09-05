@@ -424,6 +424,8 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
     READ_OP_EXPRESSION_I32_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, "Cannot read the int32 expression opcode.");
     if (!hasImmediate) {
         switch (op) {
+        case WASMOpExpressionI32::ConstantPoolIndex:
+            return parseConstantPoolIndexExpressionI32(context);
         case WASMOpExpressionI32::Immediate:
             return parseImmediateExpressionI32(context);
         case WASMOpExpressionI32::GetLocal:
@@ -431,8 +433,10 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::Add:
         case WASMOpExpressionI32::Sub:
         case WASMOpExpressionI32::SDiv:
+        case WASMOpExpressionI32::UDiv:
+        case WASMOpExpressionI32::SMod:
+        case WASMOpExpressionI32::UMod:
             return parseBinaryExpressionI32(context, op);
-        case WASMOpExpressionI32::ConstantPoolIndex:
         case WASMOpExpressionI32::GetGlobal:
         case WASMOpExpressionI32::SetLocal:
         case WASMOpExpressionI32::SetGlobal:
@@ -461,9 +465,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::FromF64:
         case WASMOpExpressionI32::Negate:
         case WASMOpExpressionI32::Mul:
-        case WASMOpExpressionI32::UDiv:
-        case WASMOpExpressionI32::SMod:
-        case WASMOpExpressionI32::UMod:
         case WASMOpExpressionI32::BitNot:
         case WASMOpExpressionI32::BitOr:
         case WASMOpExpressionI32::BitAnd:
@@ -507,18 +508,32 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         }
     } else {
         switch (opWithImmediate) {
+        case WASMOpExpressionI32WithImmediate::ConstantPoolIndex:
+            return parseConstantPoolIndexExpressionI32(context, immediate);
         case WASMOpExpressionI32WithImmediate::Immediate:
             return parseImmediateExpressionI32(context, immediate);
         case WASMOpExpressionI32WithImmediate::GetLocal:
             return parseGetLocalExpressionI32(context, immediate);
-        case WASMOpExpressionI32WithImmediate::ConstantPoolIndex:
-            // FIXME: Implement these instructions.
-            FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
             ASSERT_NOT_REACHED();
         }
     }
     return 0;
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseConstantPoolIndexExpressionI32(Context& context, uint32_t constantPoolIndex)
+{
+    FAIL_IF_FALSE(constantPoolIndex < m_module->i32Constants().size(), "The constant pool index is incorrect.");
+    return context.buildImmediateI32(m_module->i32Constants()[constantPoolIndex]);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseConstantPoolIndexExpressionI32(Context& context)
+{
+    uint32_t constantPoolIndex;
+    READ_COMPACT_UINT32_OR_FAIL(constantPoolIndex, "Cannot read the constant pool index.");
+    return parseConstantPoolIndexExpressionI32(context, constantPoolIndex);
 }
 
 template <class Context>

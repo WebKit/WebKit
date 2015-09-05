@@ -44,12 +44,52 @@ function asmModule(global, env, buffer) {
         return (-2147483648 / -1) | 0;
     }
 
+    function unsignedDivide() {
+        return ((-1 >>> 0) / 2) | 0;
+    }
+
+    function unsignedDivideByZero() {
+        return ((-1 >>> 0) / 0) | 0;
+    }
+
+    function modulo() {
+        return (42 % 5) | 0;
+    }
+
+    function moduloNegative() {
+        return (-42 % 5) | 0;
+    }
+
+    function moduloZero() {
+        return (1 % 0) | 0;
+    }
+
+    function moduloOverflow() {
+        return (-2147483648 % -1) | 0;
+    }
+
+    function unsignedModulo() {
+        return ((-1 >>> 0) % 100000) | 0;
+    }
+
+    function unsignedModuloZero() {
+        return ((-1 >>> 0) % 0) | 0;
+    }
+
     return {
         addSubtract: addSubtract,
         addOverflow: addOverflow,
         divide: divide,
         divideByZero: divideByZero,
         divideOverflow: divideOverflow,
+        unsignedDivide: unsignedDivide,
+        unsignedDivideByZero: unsignedDivideByZero,
+        modulo: modulo,
+        moduloNegative: moduloNegative,
+        moduloZero: moduloZero,
+        moduloOverflow: moduloOverflow,
+        unsignedModulo: unsignedModulo,
+        unsignedModuloZero: unsignedModuloZero,
     };
 }
 */
@@ -68,4 +108,28 @@ shouldThrow(() => {
 
 shouldThrow(() => {
     module.divideOverflow();
+}, "Error: Division by zero or division overflow.");
+
+shouldBe(module.unsignedDivide(), 2147483647);
+
+shouldThrow(() => {
+    module.unsignedDivideByZero();
+}, "Error: Division by zero or division overflow.");
+
+shouldBe(module.modulo(), 2);
+
+shouldBe(module.moduloNegative(), -2);
+
+shouldThrow(() => {
+    module.moduloZero();
+}, "Error: Division by zero or division overflow.");
+
+shouldThrow(() => {
+    module.moduloOverflow();
+}, "Error: Division by zero or division overflow.");
+
+shouldBe(module.unsignedModulo(), 67295);
+
+shouldThrow(() => {
+    module.unsignedModuloZero();
 }, "Error: Division by zero or division overflow.");

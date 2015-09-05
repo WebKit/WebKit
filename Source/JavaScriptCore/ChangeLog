@@ -1,3 +1,31 @@
+2015-09-04  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement the division and modulo instructions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148791
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements the unsigned division, signed modulo, and unsigned
+        modulo instructions for 32-bit integers in WebAssembly. It also
+        implements the context pool index instructions, which are needed for
+        testing. (pack-asmjs puts numbers that are used more than once in the
+        constant pool.)
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::divl_r):
+        * tests/stress/wasm-arithmetic.js:
+        * tests/stress/wasm-arithmetic.wasm:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::operationMod):
+        (JSC::operationUnsignedDiv):
+        (JSC::operationUnsignedMod):
+        (JSC::WASMFunctionCompiler::buildBinaryI32):
+        (JSC::WASMFunctionCompiler::callOperation):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseConstantPoolIndexExpressionI32):
+        * wasm/WASMFunctionParser.h:
+
 2015-09-04  Basile Clement  <basile_clement@apple.com>
 
         Fix debug output for an eval call

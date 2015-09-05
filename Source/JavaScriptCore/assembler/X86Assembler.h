@@ -311,6 +311,7 @@ private:
         GROUP3_OP_TEST = 0,
         GROUP3_OP_NOT  = 2,
         GROUP3_OP_NEG  = 3,
+        GROUP3_OP_DIV = 6,
         GROUP3_OP_IDIV = 7,
 
         GROUP5_OP_CALLN = 2,
@@ -930,6 +931,11 @@ public:
     {
         m_formatter.oneByteOp(OP_IMUL_GvEvIz, dst, src);
         m_formatter.immediate32(value);
+    }
+
+    void divl_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_DIV, dst);
     }
 
     void idivl_r(RegisterID dst)
