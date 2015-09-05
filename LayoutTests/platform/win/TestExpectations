@@ -1981,6 +1981,9 @@ fast/css/direct-adjacent-style-update-optimization.html [ Failure ]
 fast/css/indirect-adjacent-style-update-optimization.html [ Failure ]
 webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
+# Newly imported W3C CSS test that is off by 1 pixel on Windows.
+imported/w3c/css/css-multicol-1/multicol-span-all-001.xht [ ImageOnlyFailure ]
+
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
 # Many of these may also be wrong due to form element differences in theme (i.e rounded vs. square buttons)

@@ -1,5 +1,11 @@
 2015-09-05  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark imported/w3c/css/css-multicol-1/multicol-span-all-001.xht as failing on Windows.
+
+        * platform/win/TestExpectations:
+
+2015-09-05  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land Windows baselines for the new W3C html tests imported in r189394.
 
         * platform/win/http/tests/w3c/html/dom/interfaces-expected.txt: Added.
