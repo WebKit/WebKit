@@ -1,3 +1,19 @@
+2015-09-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r189372 and r189403.
+        https://bugs.webkit.org/show_bug.cgi?id=148892
+
+        [iOS] All the media tests fail (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Unreviewed gardening; enabling media/ and http/tests/media/
+        tests (with expected failures) on ios-simulator"
+        http://trac.webkit.org/changeset/189372
+
+        "Fix lint warnings on iOS."
+        http://trac.webkit.org/changeset/189403
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Add expectation for some tests that are very flaky on Windows.
