@@ -1,3 +1,13 @@
+2015-09-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove unnecessary compiler guards from mm files
+        https://bugs.webkit.org/show_bug.cgi?id=148797
+
+        Reviewed by Dan Bernstein.
+
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginPackage.mm:
+
 2015-09-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorController should support multiple frontend channels

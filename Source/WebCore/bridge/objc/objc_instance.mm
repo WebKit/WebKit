@@ -56,10 +56,8 @@ static NSString *s_exception;
 static JSGlobalObject* s_exceptionEnvironment; // No need to protect this value, since we just use it for a pointer comparison.
 static NSMapTable *s_instanceWrapperCache;
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif    
 
 static NSMapTable *createInstanceWrapperCache()
 {
@@ -69,9 +67,7 @@ static NSMapTable *createInstanceWrapperCache()
     return [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
 }
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 
 RuntimeObject* ObjcInstance::newRuntimeObject(ExecState* exec)
 {

@@ -88,10 +88,8 @@ using namespace WebCore;
     return [pluginPackage autorelease];
 }
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
 // FIXME: Rewrite this in terms of -[NSURL URLByResolvingBookmarkData:…].
 static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
@@ -120,9 +118,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
     return newPath;
 }
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 
 - (id)initWithPath:(NSString *)pluginPath
 {

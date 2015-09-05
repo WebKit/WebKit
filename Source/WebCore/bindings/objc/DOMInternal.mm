@@ -50,10 +50,8 @@ static NSMapTable* DOMWrapperCache;
 static StaticLock wrapperCacheLock;
 #endif
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif    
 
 NSMapTable* createWrapperCache()
 {
@@ -63,9 +61,7 @@ NSMapTable* createWrapperCache()
     return [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
 }
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 
 NSObject* getDOMWrapper(DOMObjectInternal* impl)
 {
