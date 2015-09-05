@@ -445,6 +445,7 @@ fast/events/mousedown-in-subframe-scrollbar.html [ Skip ]
 webkit.org/b/96828 fast/canvas/webgl/oes-vertex-array-object.html [ Skip ]
 webkit.org/b/96828 webgl/1.0.2/conformance/extensions/oes-vertex-array-object.html [ Skip ]
 
+[ Mavericks ] webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Failure ]
 webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Skip ]
 
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
