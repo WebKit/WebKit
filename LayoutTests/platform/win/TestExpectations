@@ -3193,3 +3193,7 @@ css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 
 # TestRunner::cellForColumnAndRow() not implemented
 webkit.org/b/148354 accessibility/aria-table-content.html [ Skip ]
+
+webkit.org/b/148886 http/tests/navigation/ping-same-origin.html [ Pass Failure ]
+webkit.org/b/148887 http/tests/navigation/success200-reload.html [ Pass Failure ]
+webkit.org/b/148888 http/tests/navigation/slowmetaredirect-basic.html [ Pass Failure ]

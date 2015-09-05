@@ -1,5 +1,11 @@
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
+        Add expectation for some tests that are very flaky on Windows.
+
+        * platform/win/TestExpectations:
+
+2015-09-04  Alexey Proskuryakov  <ap@apple.com>
+
         Get rid of unneeded TestExpectations files.
 
         * platform/mac-mavericks/TestExpectations: Removed.
