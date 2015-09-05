@@ -1,5 +1,13 @@
 2015-09-05  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip http/tests/w3c/html/semantics/embedded-content/media-elements/* tests on Win/Debug.
+
+        Filed Bug 148903 to track the problem.
+
+        * platform/win/TestExpectations:
+
+2015-09-05  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark imported/w3c/css/css-multicol-1/multicol-span-all-001.xht as failing on Windows.
 
         * platform/win/TestExpectations:
