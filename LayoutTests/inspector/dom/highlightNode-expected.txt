@@ -1,0 +1,36 @@
+Tests for the DOM.highlightNode command.
+
+
+
+== Running test suite: DOM.highlightNode
+-- Running test case: CheckEmptyHighlight
+PASS: Should not be a highlight yet.
+
+-- Running test case: MainFrameNodeViaNodeId
+PASS: Should be one highlighted node.
+Highlighted Element Data: {"tagName":"div","idValue":"id-one","className":".class-two","size":{"width":100,"height":200},"role":""}
+
+-- Running test case: ChildFrameNodeViaNodeId
+PASS: Should be one highlighted node.
+Highlighted Element Data: {"tagName":"div","idValue":"id-one","size":{"width":150,"height":250},"role":""}
+
+-- Running test case: MainFrameNodeViaObjectId
+PASS: Should be one highlighted node.
+Highlighted Element Data: {"tagName":"div","idValue":"id-one","className":".class-two","size":{"width":100,"height":200},"role":""}
+
+-- Running test case: ChildFrameNodeViaObjectId
+PASS: Should be one highlighted node.
+Highlighted Element Data: {"tagName":"div","idValue":"id-one","size":{"width":150,"height":250},"role":""}
+
+-- Running test case: MissingNodeAndObjectIdShouldError
+PASS: Should produce an error.
+Error: Either nodeId or objectId must be specified
+
+-- Running test case: BadNodeId
+PASS: Should produce an error.
+Error: Could not find node with given id
+
+-- Running test case: BadObjectId
+PASS: Should produce an error.
+Error: Node for given objectId not found
+

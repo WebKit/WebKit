@@ -1,5 +1,26 @@
 2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add tests for DOM highlight commands
+        https://bugs.webkit.org/show_bug.cgi?id=148786
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/dom/hideHighlight-expected.txt: Added.
+        * inspector/dom/hideHighlight.html: Added.
+        * inspector/dom/highlightFrame-expected.txt: Added.
+        * inspector/dom/highlightFrame.html: Added.
+        * inspector/dom/highlightNode-expected.txt: Added.
+        * inspector/dom/highlightNode.html: Added.
+        * inspector/dom/highlightQuad-expected.txt: Added.
+        * inspector/dom/highlightQuad.html: Added.
+        * inspector/dom/highlightRect-expected.txt: Added.
+        * inspector/dom/highlightRect.html: Added.
+        * inspector/dom/highlightSelector-expected.txt:
+        * inspector/dom/highlightSelector.html:
+        * inspector/dom/resources/highlight-iframe.html: Renamed from LayoutTests/inspector/dom/resources/highlightSelector-iframe.html.
+
+2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Test Runtime.saveResult and $n values
         https://bugs.webkit.org/show_bug.cgi?id=148837
 
