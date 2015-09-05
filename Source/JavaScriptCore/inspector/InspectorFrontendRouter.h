@@ -45,9 +45,6 @@ public:
     void disconnectFrontend(FrontendChannel*);
     void disconnectAllFrontends();
 
-    // FIXME: <https://webkit.org/b/148492> remove this method once agents move to using FrontendRouter directly.
-    FrontendChannel* leakChannel() const;
-
     void sendEvent(const String& message) const;
     void sendResponse(const String& message) const;
 

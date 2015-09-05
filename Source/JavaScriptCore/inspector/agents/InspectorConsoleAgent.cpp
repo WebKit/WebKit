@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,9 +53,9 @@ InspectorConsoleAgent::~InspectorConsoleAgent()
 {
 }
 
-void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
+void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<ConsoleFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<ConsoleFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = ConsoleBackendDispatcher::create(backendDispatcher, this);
 }
 

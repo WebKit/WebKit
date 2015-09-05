@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -169,9 +170,9 @@ InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents& instrumentin
 {
 }
 
-void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::NetworkFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<Inspector::NetworkFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = Inspector::NetworkBackendDispatcher::create(backendDispatcher, this);
 }
 

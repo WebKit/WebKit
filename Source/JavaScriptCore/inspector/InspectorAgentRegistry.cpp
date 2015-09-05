@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,14 @@ AgentRegistry::AgentRegistry()
 {
 }
 
+AgentRegistry::~AgentRegistry()
+{
+    // Allow agents to remove cross-references to other agents that would otherwise
+    // make it difficult to establish a correct destruction order for all agents.
+    for (auto& agent : m_agents)
+        agent->discardAgent();    
+}
+
 void AgentRegistry::append(std::unique_ptr<InspectorAgentBase> agent)
 {
     m_agents.append(WTF::move(agent));
@@ -49,22 +57,16 @@ void AgentRegistry::appendExtraAgent(std::unique_ptr<InspectorAgentBase> agent)
 }
 #endif
 
-void AgentRegistry::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
+void AgentRegistry::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
 {
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->didCreateFrontendAndBackend(frontendChannel, backendDispatcher);
+    for (auto& agent : m_agents)
+        agent->didCreateFrontendAndBackend(frontendRouter, backendDispatcher);
 }
 
 void AgentRegistry::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->willDestroyFrontendAndBackend(reason);
-}
-
-void AgentRegistry::discardAgents()
-{
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->discardAgent();
+    for (auto& agent : m_agents)
+        agent->willDestroyFrontendAndBackend(reason);
 }
 
 } // namespace Inspector

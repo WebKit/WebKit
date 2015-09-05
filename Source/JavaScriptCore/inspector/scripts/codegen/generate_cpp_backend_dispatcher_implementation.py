@@ -49,7 +49,6 @@ class CppBackendDispatcherImplementationGenerator(Generator):
 
     def generate_output(self):
         secondary_headers = [
-            '<inspector/InspectorFrontendChannel.h>',
             '<inspector/InspectorFrontendRouter.h>',
             '<inspector/InspectorValues.h>',
             '<wtf/NeverDestroyed.h>',

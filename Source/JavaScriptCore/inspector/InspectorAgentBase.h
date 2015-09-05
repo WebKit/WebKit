@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@
 namespace Inspector {
 
 class BackendDispatcher;
-class FrontendChannel;
+class FrontendRouter;
 
 enum class DisconnectReason {
     InspectedTargetDestroyed,
@@ -45,7 +45,7 @@ public:
 
     String domainName() const { return m_name; }
 
-    virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher*) = 0;
+    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) = 0;
     virtual void willDestroyFrontendAndBackend(DisconnectReason) = 0;
     virtual void discardAgent() { }
 

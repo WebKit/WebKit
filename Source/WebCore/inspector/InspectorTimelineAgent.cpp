@@ -1,6 +1,7 @@
 /*
 * Copyright (C) 2013 Google Inc. All rights reserved.
 * Copyright (C) 2014 University of Washington.
+* Copyright (C) 2015 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -89,9 +90,9 @@ InspectorTimelineAgent::~InspectorTimelineAgent()
 {
 }
 
-void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::TimelineFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<Inspector::TimelineFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = Inspector::TimelineBackendDispatcher::create(backendDispatcher, this);
 
     m_instrumentingAgents.setPersistentInspectorTimelineAgent(this);

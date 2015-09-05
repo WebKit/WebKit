@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
     {
     }
 
-    virtual void didCreateFrontendAndBackend(FrontendChannel*, BackendDispatcher* backendDispatcher) override
+    virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher* backendDispatcher) override
     {
         m_backendDispatcher = TBackendDispatcher::create(backendDispatcher, nullptr);
         m_backendDispatcher->setAlternateDispatcher(m_alternateDispatcher.get());

@@ -65,15 +65,6 @@ void FrontendRouter::disconnectAllFrontends()
     m_connections.clear();
 }
 
-// FIXME: <https://webkit.org/b/148492> remove this method once agents move to using FrontendRouter directly.
-FrontendChannel* FrontendRouter::leakChannel() const
-{
-    if (m_connections.size())
-        return m_connections.at(0);
-
-    return nullptr;
-}
-
 bool FrontendRouter::hasLocalFrontend() const
 {
     for (auto* connection : m_connections) {

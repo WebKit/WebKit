@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011-2013 University of Washington. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -173,9 +173,9 @@ WebCore::SessionState InspectorReplayAgent::sessionState() const
     return m_page.replayController().sessionState();
 }
 
-void InspectorReplayAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorReplayAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::ReplayFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<Inspector::ReplayFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = Inspector::ReplayBackendDispatcher::create(backendDispatcher, this);
 
     m_instrumentingAgents.setInspectorReplayAgent(this);

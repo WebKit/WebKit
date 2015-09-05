@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,7 +32,6 @@
 #include "config.h"
 #include "InspectorWorkerAgent.h"
 
-#include "InspectorForwarding.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"
 #include "WorkerGlobalScopeProxy.h"
@@ -112,9 +112,9 @@ InspectorWorkerAgent::~InspectorWorkerAgent()
     m_instrumentingAgents.setInspectorWorkerAgent(nullptr);
 }
 
-void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::WorkerFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<Inspector::WorkerFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = Inspector::WorkerBackendDispatcher::create(backendDispatcher, this);
 }
 

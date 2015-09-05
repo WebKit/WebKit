@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,18 +112,21 @@ private:
     JSC::JSGlobalObject& m_globalObject;
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
-    InspectorAgent* m_inspectorAgent;
-    InspectorConsoleAgent* m_consoleAgent;
-    InspectorDebuggerAgent* m_debuggerAgent;
+    Ref<WTF::Stopwatch> m_executionStopwatch;
+
     AgentRegistry m_agents;
+    InspectorAgent* m_inspectorAgent { nullptr };
+    InspectorConsoleAgent* m_consoleAgent { nullptr };
+    InspectorDebuggerAgent* m_debuggerAgent { nullptr };
+
     Ref<FrontendRouter> m_frontendRouter;
     Ref<BackendDispatcher> m_backendDispatcher;
-    Ref<WTF::Stopwatch> m_executionStopwatch;
-    bool m_includeNativeCallStackWithExceptions;
-    bool m_isAutomaticInspection;
+
+    bool m_includeNativeCallStackWithExceptions { false };
+    bool m_isAutomaticInspection { false };
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    AugmentableInspectorControllerClient* m_augmentingClient;
+    AugmentableInspectorControllerClient* m_augmentingClient { nullptr };
 #endif
 };
 

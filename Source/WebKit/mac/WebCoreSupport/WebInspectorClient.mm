@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2008, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,7 @@
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 using namespace WebCore;
+using namespace Inspector;
 
 static const CGFloat minimumWindowWidth = 500;
 static const CGFloat minimumWindowHeight = 400;
@@ -106,7 +107,7 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
+FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
     RetainPtr<WebInspectorWindowController> windowController = adoptNS([[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView isUnderTest:inspectorController->isUnderTest()]);
     [windowController.get() setInspectorClient:this];

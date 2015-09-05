@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@
 #ifndef InspectorWebAgentBase_h
 #define InspectorWebAgentBase_h
 
-#include "InspectorForwarding.h"
 #include <inspector/InspectorAgentBase.h>
 #include <wtf/text/WTFString.h>
 

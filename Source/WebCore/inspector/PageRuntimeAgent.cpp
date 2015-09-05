@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -59,9 +60,9 @@ PageRuntimeAgent::PageRuntimeAgent(InjectedScriptManager& injectedScriptManager,
 {
 }
 
-void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
+void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::RuntimeFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<Inspector::RuntimeFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = Inspector::RuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 

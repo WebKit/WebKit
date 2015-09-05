@@ -204,10 +204,10 @@ ${outParameterAssignments}
     FrontendDispatcherDomainDispatcherDeclaration = (
 """${classAndExportMacro} ${domainName}FrontendDispatcher {
 public:
-    ${domainName}FrontendDispatcher(FrontendChannel* frontendChannel) : m_frontendChannel(frontendChannel) { }
+    ${domainName}FrontendDispatcher(FrontendRouter* frontendRouter) : m_frontendRouter(frontendRouter) { }
 ${eventDeclarations}
 private:
-    FrontendChannel* m_frontendChannel;
+    FrontendRouter* m_frontendRouter;
 };""")
 
     ProtocolObjectBuilderDeclarationPrelude = (

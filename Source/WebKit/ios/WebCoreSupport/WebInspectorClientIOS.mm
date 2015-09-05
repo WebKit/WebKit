@@ -54,7 +54,7 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController*)
+Inspector::FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController*)
 {
     // iOS does not have a local inspector, this should not be reached.
     ASSERT_NOT_REACHED();

@@ -1,5 +1,16 @@
 2015-09-04  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: agents should send messages through FrontendRouter instead of FrontendChannel
+        https://bugs.webkit.org/show_bug.cgi?id=148492
+
+        Reviewed by Joseph Pecoraro.
+
+        Stop using InspectorForwarding.h.
+
+        * WebCoreSupport/WebInspectorClient.h:
+
+2015-09-04  Brian Burg  <bburg@apple.com>
+
         Web Inspector: InspectorController should support multiple frontend channels
         https://bugs.webkit.org/show_bug.cgi?id=148538
 

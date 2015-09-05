@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
- * Copyright (C) 2010-2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,9 +69,9 @@ InspectorDebuggerAgent::~InspectorDebuggerAgent()
 {
 }
 
-void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
+void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<DebuggerFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<DebuggerFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = DebuggerBackendDispatcher::create(backendDispatcher, this);
 }
 

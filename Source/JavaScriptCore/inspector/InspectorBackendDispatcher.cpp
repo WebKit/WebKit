@@ -27,7 +27,6 @@
 #include "config.h"
 #include "InspectorBackendDispatcher.h"
 
-#include "InspectorFrontendChannel.h"
 #include "InspectorFrontendRouter.h"
 #include "InspectorValues.h"
 #include <wtf/TemporaryChange.h>

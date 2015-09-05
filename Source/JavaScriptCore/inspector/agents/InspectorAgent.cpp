@@ -48,9 +48,9 @@ InspectorAgent::~InspectorAgent()
 {
 }
 
-void InspectorAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
+void InspectorAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<InspectorFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<InspectorFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = InspectorBackendDispatcher::create(backendDispatcher, this);
 }
 

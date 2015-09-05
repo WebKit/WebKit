@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -174,7 +174,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 InspectorController::~InspectorController()
 {
     m_instrumentingAgents->reset();
-    m_agents.discardAgents();
     ASSERT(!m_inspectorClient);
 }
 
@@ -235,7 +234,7 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
 
     if (connectedFirstFrontend) {
         InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
-        m_agents.didCreateFrontendAndBackend(frontendChannel, &m_backendDispatcher.get());
+        m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
     }
 
 #if ENABLE(REMOTE_INSPECTOR)

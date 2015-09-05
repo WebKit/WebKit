@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,9 +49,9 @@ InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgen
 {
 }
 
-void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
+void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::ApplicationCacheFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<Inspector::ApplicationCacheFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = Inspector::ApplicationCacheBackendDispatcher::create(backendDispatcher, this);
 }
 

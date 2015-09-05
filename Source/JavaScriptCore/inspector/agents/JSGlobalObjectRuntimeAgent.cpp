@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,9 +40,9 @@ JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(InjectedScriptManager& in
 {
 }
 
-void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChannel, BackendDispatcher* backendDispatcher)
+void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<RuntimeFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<RuntimeFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = RuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 

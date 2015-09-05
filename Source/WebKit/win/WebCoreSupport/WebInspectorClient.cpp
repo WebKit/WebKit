@@ -78,7 +78,7 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
+Inspector::FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
     registerWindowClass();
 

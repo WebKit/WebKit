@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2014, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,9 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/InspectorClient.h>
-#include <WebCore/InspectorForwarding.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/WindowMessageListener.h>
+#include <inspector/InspectorFrontendChannel.h>
 #include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -41,23 +41,21 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
 class Page;
-
 }
 
 class WebInspectorFrontendClient;
 class WebNodeHighlight;
 class WebView;
 
-class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
+class WebInspectorClient : public WebCore::InspectorClient, public Inspector::FrontendChannel {
 public:
     explicit WebInspectorClient(WebView*);
 
     // InspectorClient
     virtual void inspectorDestroyed();
 
-    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
+    virtual Inspector::FrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 

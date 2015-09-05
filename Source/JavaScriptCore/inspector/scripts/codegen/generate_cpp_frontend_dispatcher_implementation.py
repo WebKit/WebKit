@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,10 @@ class CppFrontendDispatcherImplementationGenerator(Generator):
         return filter(lambda domain: len(domain.events) > 0, Generator.domains_to_generate(self))
 
     def generate_output(self):
-        secondary_headers = ['<wtf/text/CString.h>']
+        secondary_headers = [
+            '"InspectorFrontendRouter.h"',
+            '<wtf/text/CString.h>',
+        ]
 
         header_args = {
             'primaryInclude': '"InspectorFrontendDispatchers.h"',
@@ -116,6 +119,6 @@ class CppFrontendDispatcherImplementationGenerator(Generator):
             lines.append('    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));')
 
         lines.append('')
-        lines.append('    m_frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());')
+        lines.append('    m_frontendRouter->sendEvent(jsonMessage->toJSONString());')
         lines.append('}')
         return "\n".join(lines)

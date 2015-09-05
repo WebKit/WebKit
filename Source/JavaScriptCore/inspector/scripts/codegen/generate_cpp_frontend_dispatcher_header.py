@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,14 +51,13 @@ class CppFrontendDispatcherHeaderGenerator(Generator):
     def generate_output(self):
         headers = [
             '"InspectorProtocolObjects.h"',
-            '<inspector/InspectorFrontendChannel.h>',
             '<inspector/InspectorValues.h>',
             '<wtf/text/WTFString.h>']
 
         header_args = {
             'headerGuardString': re.sub('\W+', '_', self.output_filename()),
             'includes': '\n'.join(['#include ' + header for header in headers]),
-            'typedefs': '',
+            'typedefs': 'class FrontendRouter;',
         }
 
         sections = []

@@ -354,9 +354,9 @@ InspectorCSSAgent::~InspectorCSSAgent()
     reset();
 }
 
-void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
 {
-    m_frontendDispatcher = std::make_unique<CSSFrontendDispatcher>(frontendChannel);
+    m_frontendDispatcher = std::make_unique<CSSFrontendDispatcher>(frontendRouter);
     m_backendDispatcher = CSSBackendDispatcher::create(backendDispatcher, this);
 }
 

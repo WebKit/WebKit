@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,7 +34,6 @@
 
 #include "CommandLineAPIHost.h"
 #include "InspectorClient.h"
-#include "InspectorForwarding.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
@@ -47,6 +47,7 @@
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include <inspector/InspectorBackendDispatcher.h>
+#include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorFrontendRouter.h>
 #include <wtf/Stopwatch.h>
@@ -57,7 +58,7 @@ namespace WebCore {
 
 namespace {
 
-class PageInspectorProxy : public InspectorFrontendChannel {
+class PageInspectorProxy : public FrontendChannel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageInspectorProxy(WorkerGlobalScope& workerGlobalScope)
@@ -115,7 +116,6 @@ WorkerInspectorController::~WorkerInspectorController()
     ASSERT(!m_forwardingChannel);
 
     m_instrumentingAgents->reset();
-    m_agents.discardAgents();
 }
 
 void WorkerInspectorController::connectFrontend()
@@ -125,7 +125,7 @@ void WorkerInspectorController::connectFrontend()
 
     m_forwardingChannel = std::make_unique<PageInspectorProxy>(m_workerGlobalScope);
     m_frontendRouter->connectFrontend(m_forwardingChannel.get());
-    m_agents.didCreateFrontendAndBackend(m_forwardingChannel.get(), &m_backendDispatcher.get());
+    m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
 }
 
 void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason reason)

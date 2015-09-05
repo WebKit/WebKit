@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "EventLoop.h"
-#include "InspectorFrontendChannel.h"
 #include "RemoteInspector.h"
 
 namespace Inspector {

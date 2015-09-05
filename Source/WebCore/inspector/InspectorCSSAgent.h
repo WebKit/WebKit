@@ -87,7 +87,7 @@ public:
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
 
-    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
     virtual void discardAgent() override;
     virtual void enable(ErrorString&) override;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,14 +64,9 @@ namespace Inspector {
 JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject)
     : m_globalObject(globalObject)
     , m_injectedScriptManager(std::make_unique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
+    , m_executionStopwatch(Stopwatch::create())
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
-    , m_executionStopwatch(Stopwatch::create())
-    , m_includeNativeCallStackWithExceptions(true)
-    , m_isAutomaticInspection(false)
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    , m_augmentingClient(nullptr)
-#endif
 {
     auto inspectorAgent = std::make_unique<InspectorAgent>(*this);
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(*m_injectedScriptManager, m_globalObject);
@@ -95,7 +90,6 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
 
 JSGlobalObjectInspectorController::~JSGlobalObjectInspectorController()
 {
-    m_agents.discardAgents();
 }
 
 void JSGlobalObjectInspectorController::globalObjectDestroyed()
@@ -117,7 +111,7 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel* fronten
     if (!connectedFirstFrontend)
         return;
 
-    m_agents.didCreateFrontendAndBackend(frontendChannel, &m_backendDispatcher.get());
+    m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     m_inspectorAgent->activateExtraDomains(m_agents.extraDomains());
@@ -277,7 +271,7 @@ void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<Inspect
 {
     String domainName = agent->domainName();
 
-    agent->didCreateFrontendAndBackend(m_frontendRouter->leakChannel(), &m_backendDispatcher.get());
+    agent->didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
 
     m_agents.appendExtraAgent(WTF::move(agent));
 

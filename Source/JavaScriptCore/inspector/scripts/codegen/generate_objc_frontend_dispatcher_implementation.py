@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,6 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
     def generate_output(self):
         secondary_headers = [
             '"%sEnumConversionHelpers.h"' % ObjCGenerator.OBJC_PREFIX,
-            '<JavaScriptCore/InspectorFrontendChannel.h>',
             '<JavaScriptCore/InspectorValues.h>',
         ]
 

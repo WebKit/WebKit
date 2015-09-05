@@ -1,3 +1,14 @@
+2015-09-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: agents should send messages through FrontendRouter instead of FrontendChannel
+        https://bugs.webkit.org/show_bug.cgi?id=148492
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClient.h: Clean up the forward declarations, don't use InspectorForwarding.h.
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::openInspectorFrontend):
+
 2015-09-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove unnecessary compiler guards from mm files
