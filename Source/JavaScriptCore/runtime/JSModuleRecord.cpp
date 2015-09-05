@@ -33,6 +33,7 @@
 #include "JSCellInlines.h"
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
+#include "JSModuleNamespaceObject.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 
@@ -62,6 +63,7 @@ void JSModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSModuleRecord* thisObject = jsCast<JSModuleRecord*>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_moduleEnvironment);
+    visitor.append(&thisObject->m_moduleNamespaceObject);
     visitor.append(&thisObject->m_moduleProgramExecutable);
     visitor.append(&thisObject->m_dependenciesMap);
 }
@@ -421,6 +423,75 @@ auto JSModuleRecord::resolveExport(ExecState* exec, const Identifier& exportName
     return resolveExportLoop(exec, ResolveQuery(this, exportName.impl()));
 }
 
+static void getExportedNames(ExecState* exec, JSModuleRecord* root, IdentifierSet& exportedNames)
+{
+    HashSet<JSModuleRecord*> exportStarSet;
+    Vector<JSModuleRecord*, 8> pendingModules;
+
+    pendingModules.append(root);
+
+    while (!pendingModules.isEmpty()) {
+        JSModuleRecord* moduleRecord = pendingModules.takeLast();
+        if (exportStarSet.contains(moduleRecord))
+            continue;
+        exportStarSet.add(moduleRecord);
+
+        for (const auto& pair : moduleRecord->exportEntries()) {
+            const JSModuleRecord::ExportEntry& exportEntry = pair.value;
+            switch (exportEntry.type) {
+            case JSModuleRecord::ExportEntry::Type::Local:
+            case JSModuleRecord::ExportEntry::Type::Indirect:
+                if (moduleRecord == root || exec->propertyNames().defaultKeyword != exportEntry.exportName)
+                    exportedNames.add(exportEntry.exportName.impl());
+                break;
+
+            case JSModuleRecord::ExportEntry::Type::Namespace:
+                break;
+            }
+        }
+
+        for (const auto& starModuleName : moduleRecord->starExportEntries()) {
+            JSModuleRecord* requestedModuleRecord = moduleRecord->hostResolveImportedModule(exec, Identifier::fromUid(exec, starModuleName.get()));
+            pendingModules.append(requestedModuleRecord);
+        }
+    }
+}
+
+JSModuleNamespaceObject* JSModuleRecord::getModuleNamespace(ExecState* exec)
+{
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-getmodulenamespace
+    if (m_moduleNamespaceObject)
+        return m_moduleNamespaceObject.get();
+
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    IdentifierSet exportedNames;
+    getExportedNames(exec, this, exportedNames);
+
+    IdentifierSet unambiguousNames;
+    for (auto& name : exportedNames) {
+        const JSModuleRecord::Resolution resolution = resolveExport(exec, Identifier::fromUid(exec, name.get()));
+        switch (resolution.type) {
+        case Resolution::Type::NotFound:
+            throwSyntaxError(exec, makeString("Exported binding name '", String(name.get()), "' is not found."));
+            return nullptr;
+
+        case Resolution::Type::Error:
+            throwSyntaxError(exec, makeString("Exported binding name 'default' cannot be resolved by star export entries."));
+            return nullptr;
+
+        case Resolution::Type::Ambiguous:
+            break;
+
+        case Resolution::Type::Resolved:
+            unambiguousNames.add(name);
+            break;
+        }
+    }
+
+    m_moduleNamespaceObject.set(exec->vm(), this, JSModuleNamespaceObject::create(exec, globalObject, globalObject->moduleNamespaceObjectStructure(), this, unambiguousNames));
+    return m_moduleNamespaceObject.get();
+}
+
 void JSModuleRecord::link(ExecState* exec)
 {
     ModuleProgramExecutable* executable = ModuleProgramExecutable::create(exec, sourceCode());
@@ -477,8 +548,10 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
         const ImportEntry& importEntry = pair.value;
         JSModuleRecord* importedModule = hostResolveImportedModule(exec, importEntry.moduleRequest);
         if (importEntry.isNamespace(vm)) {
-            // FIXME: ModuleNamespaceObject will be implemented.
-            // https://bugs.webkit.org/show_bug.cgi?id=148705
+            JSModuleNamespaceObject* namespaceObject = importedModule->getModuleNamespace(exec);
+            if (exec->hadException())
+                return;
+            symbolTablePut(moduleEnvironment, exec, importEntry.localName, namespaceObject, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true);
         } else {
             Resolution resolution = importedModule->resolveExport(exec, importEntry.importName);
             switch (resolution.type) {
@@ -509,7 +582,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
         SymbolTableEntry entry = symbolTable->get(variable.key.get());
         VarOffset offset = entry.varOffset();
         if (!offset.isStack())
-            symbolTablePut(moduleEnvironment, exec, Identifier::fromUid(exec, variable.key.get()), jsUndefined(), false, true);
+            symbolTablePut(moduleEnvironment, exec, Identifier::fromUid(exec, variable.key.get()), jsUndefined(), /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true);
     }
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduledeclarationinstantiation
@@ -529,7 +602,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
                     unlinkedFunctionExecutable->typeProfilingEndOffset());
             }
             JSFunction* function = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable->source()), moduleEnvironment);
-            symbolTablePut(moduleEnvironment, exec, unlinkedFunctionExecutable->name(), function, false, true);
+            symbolTablePut(moduleEnvironment, exec, unlinkedFunctionExecutable->name(), function, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true);
         }
     }
 

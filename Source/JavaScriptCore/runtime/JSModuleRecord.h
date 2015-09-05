@@ -156,6 +156,8 @@ private:
 
     void finishCreation(VM&);
 
+    JSModuleNamespaceObject* getModuleNamespace(ExecState*);
+
     static void visitChildren(JSCell*, SlotVisitor&);
     static void destroy(JSCell*);
 
@@ -199,6 +201,7 @@ private:
 
     WriteBarrier<ModuleProgramExecutable> m_moduleProgramExecutable;
     WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;
+    WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
 };
 
 } // namespace JSC

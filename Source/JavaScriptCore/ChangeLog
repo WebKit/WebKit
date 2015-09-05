@@ -1,3 +1,48 @@
+2015-09-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement ModuleNamespaceObject
+        https://bugs.webkit.org/show_bug.cgi?id=148705
+
+        Reviewed by Geoffrey Garen.
+
+        Implement Module namespace object.
+        That is used when importing the module with the form `import * as namespace from "mod"`.
+        The module namespace object is non-extensible object that has the bindings to the original module
+        as the property.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::moduleNamespaceObjectStructure):
+        * runtime/JSModuleNamespaceObject.cpp: Added.
+        (JSC::JSModuleNamespaceObject::JSModuleNamespaceObject):
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::destroy):
+        (JSC::JSModuleNamespaceObject::visitChildren):
+        (JSC::callbackGetter):
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlot):
+        (JSC::JSModuleNamespaceObject::put):
+        (JSC::JSModuleNamespaceObject::putByIndex):
+        (JSC::JSModuleNamespaceObject::deleteProperty):
+        (JSC::JSModuleNamespaceObject::getOwnPropertyNames):
+        (JSC::JSModuleNamespaceObject::defineOwnProperty):
+        (JSC::moduleNamespaceObjectSymbolIterator):
+        * runtime/JSModuleNamespaceObject.h: Added.
+        (JSC::JSModuleNamespaceObject::create):
+        (JSC::JSModuleNamespaceObject::createStructure):
+        (JSC::JSModuleNamespaceObject::moduleRecord):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::visitChildren):
+        (JSC::getExportedNames):
+        (JSC::JSModuleRecord::getModuleNamespace):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSModuleRecord.h:
+
 2015-09-04  Mark Lam  <mark.lam@apple.com>
 
         Rollout r189411, r189413: Broke JSC tests.
