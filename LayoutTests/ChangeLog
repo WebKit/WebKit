@@ -1,3 +1,16 @@
+2015-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix lint warnings on iOS.
+
+        This enables the correct expectation for fast/events/scroll-in-scaled-page-with-overflow-hidden.html.
+        For other tests, I went with the expectation that was currently in effect.
+
+        Re-landing, as this had to be rolled out together with another patch.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189372 and r189403.
