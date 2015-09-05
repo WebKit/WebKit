@@ -1,3 +1,13 @@
+2015-09-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Import a Chromium <input type=color> test.
+        https://bugs.webkit.org/show_bug.cgi?id=148844
+
+        Reviewed by Andy Estes.
+
+        * fast/forms/color/color-suggestion-picker-crash-on-set-value-expected.txt: Added.
+        * fast/forms/color/color-suggestion-picker-crash-on-set-value.html: Added.
+
 2015-09-04  Dean Jackson  <dino@apple.com>
 
         [WebGL] Update WebGL 1.0.3 conformance tests
