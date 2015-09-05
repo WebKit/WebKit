@@ -1,3 +1,9 @@
+2015-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add bug number for http/tests/w3c/html/semantics/embedded-content/the-video-element/video_initially_paused.html
+
+        * TestExpectations:
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Fix lint warnings on iOS.

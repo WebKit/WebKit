@@ -242,8 +242,7 @@ webkit.org/b/148835 http/tests/w3c/html/semantics/document-metadata/the-style-el
 webkit.org/b/148847 http/tests/w3c/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html [ ImageOnlyFailure ]
 webkit.org/b/148853 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html [ ImageOnlyFailure ]
 webkit.org/b/148853 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ ImageOnlyFailure ]
-# FIXME: This needs its own bug.
-webkit.org/b/148822 http/tests/w3c/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
+webkit.org/b/148856 http/tests/w3c/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
