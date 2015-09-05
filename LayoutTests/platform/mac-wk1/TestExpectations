@@ -77,8 +77,9 @@ editing/secure-input/reset-state-on-navigation.html [ Failure ]
 # Plug-in blocking callback doesn't exist in WebKit1.
 plugins/unavailable-plugin-indicator-obscurity.html
 
-# Color input is not yet enabled on Mac WK1.
-fast/forms/color/input-color-onchange-event.html [ Skip ]
+# Color input is not yet implemented on Mac WK1. Currently, using it erroneously triggers an ASSERT_NOT_REACHED.
+webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Skip ]
+webkit.org/b/119094 fast/forms/color/color-suggestion-picker-crash-on-set-value.html [ Skip ]
 
 # WK1 and WK2 mousemove events are subtly different in ways that break this test on WK1.
 fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
