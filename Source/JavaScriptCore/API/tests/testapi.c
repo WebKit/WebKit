@@ -41,9 +41,9 @@
 
 #include "CompareAndSwapTest.h"
 #include "CustomGlobalObjectClassTest.h"
-#include "ExecutionTimeLimitTest.h"
 #include "GlobalContextWithFinalizerTest.h"
-#include "PingPongStackOverflowTest.h"
+
+#include "ExecutionTimeLimitTest.h"
 
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
@@ -1893,7 +1893,6 @@ int main(int argc, char* argv[])
 
     failed = testExecutionTimeLimit() || failed;
     failed = testGlobalContextWithFinalizer() || failed;
-    failed = testPingPongStackOverflow() || failed;
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
     function = NULL;

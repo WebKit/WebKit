@@ -1,3 +1,45 @@
+2015-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Rollout r189411, r189413: Broke JSC tests.
+
+        Not reviewed.
+
+        * API/tests/PingPongStackOverflowTest.cpp: Removed.
+        * API/tests/PingPongStackOverflowTest.h: Removed.
+        * API/tests/testapi.c:
+        (main):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::operator=):
+        (JSC::ExecState::callerFrame):
+        (JSC::ExecState::argIndexForRegister):
+        (JSC::ExecState::callerFrameOrVMEntryFrame):
+        (JSC::ExecState::callerFrameAndPC):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::unwind):
+        * interpreter/Interpreter.h:
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        (JSC::Interpreter::sampler):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITExceptions.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.h:
+        (JSC::VM::exceptionOffset):
+        (JSC::VM::vmEntryFrameForThrowOffset):
+        (JSC::VM::topVMEntryFrameOffset):
+        (JSC::VM::callFrameForThrowOffset):
+
 2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Test Runtime.saveResult and $n values
