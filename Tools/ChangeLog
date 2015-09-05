@@ -1,3 +1,14 @@
+2015-09-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Enable ES6 Module in JSC shell by default
+        https://bugs.webkit.org/show_bug.cgi?id=148689
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2015-09-04  Basile Clement  <basile_clement@apple.com>
 
         Unreviewed, change my email address.

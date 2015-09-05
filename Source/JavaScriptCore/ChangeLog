@@ -1,5 +1,174 @@
 2015-09-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ES6] Enable ES6 Module in JSC shell by default
+        https://bugs.webkit.org/show_bug.cgi?id=148689
+
+        Reviewed by Geoffrey Garen.
+
+        Enable ES6 Modules in JSC shell by default. Compile time flag is left for WebCore.
+        Since the entry point to evaluate the modules are completely separated from the usual
+        entry point to evaluate the script, we can safely enable ES6 modules in JSC shell.
+
+        And add bunch of tests for ES6 Modules.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionLoadModule):
+        (runWithScripts):
+        (printUsageStatement): Deleted.
+        (CommandLine::parseArguments): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner): Deleted.
+        * tests/modules.yaml: Added.
+        * tests/modules/aliasing.js: Added.
+        * tests/modules/aliasing/drink-2.js: Added.
+        (export.let.Cappuccino.string_appeared_here.export.changeCappuccino):
+        * tests/modules/aliasing/drink.js: Added.
+        (export.changeCocoa):
+        * tests/modules/cyclic-may-produce-tdz.js: Added.
+        * tests/modules/cyclic-may-produce-tdz/1.js: Added.
+        * tests/modules/cyclic-may-produce-tdz/2.js: Added.
+        * tests/modules/default-error/main.js: Added.
+        * tests/modules/default-value-case-should-be-copied.js: Added.
+        * tests/modules/default-value-case-should-be-copied/module.js: Added.
+        (export.changeValue):
+        * tests/modules/defaults.js: Added.
+        * tests/modules/defaults/Cappuccino.js: Added.
+        * tests/modules/defaults/Cocoa.js: Added.
+        (export.default.Cocoa):
+        * tests/modules/defaults/Matcha.js: Added.
+        * tests/modules/destructuring-export.js: Added.
+        * tests/modules/destructuring-export/array.js: Added.
+        * tests/modules/destructuring-export/main.js: Added.
+        * tests/modules/execution-order-cyclic.js: Added.
+        * tests/modules/execution-order-cyclic/1.js: Added.
+        * tests/modules/execution-order-cyclic/10.js: Added.
+        * tests/modules/execution-order-cyclic/11.js: Added.
+        * tests/modules/execution-order-cyclic/2.js: Added.
+        * tests/modules/execution-order-cyclic/3.js: Added.
+        * tests/modules/execution-order-cyclic/4.js: Added.
+        * tests/modules/execution-order-cyclic/5.js: Added.
+        * tests/modules/execution-order-cyclic/6.js: Added.
+        * tests/modules/execution-order-cyclic/7.js: Added.
+        * tests/modules/execution-order-cyclic/8.js: Added.
+        * tests/modules/execution-order-cyclic/9.js: Added.
+        * tests/modules/execution-order-dag.js: Added.
+        * tests/modules/execution-order-dag/1.js: Added.
+        * tests/modules/execution-order-dag/10.js: Added.
+        * tests/modules/execution-order-dag/2.js: Added.
+        * tests/modules/execution-order-dag/3.js: Added.
+        * tests/modules/execution-order-dag/4.js: Added.
+        * tests/modules/execution-order-dag/5.js: Added.
+        * tests/modules/execution-order-dag/6.js: Added.
+        * tests/modules/execution-order-dag/7.js: Added.
+        * tests/modules/execution-order-dag/8.js: Added.
+        * tests/modules/execution-order-dag/9.js: Added.
+        * tests/modules/execution-order-depth.js: Added.
+        * tests/modules/execution-order-depth/1.js: Added.
+        * tests/modules/execution-order-depth/2.js: Added.
+        * tests/modules/execution-order-depth/3.js: Added.
+        * tests/modules/execution-order-self.js: Added.
+        * tests/modules/execution-order-sibling.js: Added.
+        * tests/modules/execution-order-sibling/1.js: Added.
+        * tests/modules/execution-order-sibling/2.js: Added.
+        * tests/modules/execution-order-sibling/3.js: Added.
+        * tests/modules/execution-order-tree.js: Added.
+        * tests/modules/execution-order-tree/1.js: Added.
+        * tests/modules/execution-order-tree/10.js: Added.
+        * tests/modules/execution-order-tree/11.js: Added.
+        * tests/modules/execution-order-tree/2.js: Added.
+        * tests/modules/execution-order-tree/3.js: Added.
+        * tests/modules/execution-order-tree/4.js: Added.
+        * tests/modules/execution-order-tree/5.js: Added.
+        * tests/modules/execution-order-tree/6.js: Added.
+        * tests/modules/execution-order-tree/7.js: Added.
+        * tests/modules/execution-order-tree/8.js: Added.
+        * tests/modules/execution-order-tree/9.js: Added.
+        * tests/modules/export-conflict-ok.js: Added.
+        * tests/modules/export-conflict-ok/A.js: Added.
+        * tests/modules/export-conflict-ok/B.js: Added.
+        * tests/modules/export-conflict-ok/main.js: Added.
+        * tests/modules/export-from.js: Added.
+        * tests/modules/export-from/main.js: Added.
+        * tests/modules/export-from/second.js: Added.
+        * tests/modules/export-with-declarations-list.js: Added.
+        * tests/modules/export-with-declarations-list/main.js: Added.
+        * tests/modules/exported-function-may-be-called-before-module-is-executed.js: Added.
+        * tests/modules/exported-function-may-be-called-before-module-is-executed/1.js: Added.
+        * tests/modules/exported-function-may-be-called-before-module-is-executed/2.js: Added.
+        (export.add):
+        (export.raise):
+        * tests/modules/import-error.js: Added.
+        * tests/modules/import-error/export-ambiguous-1.js: Added.
+        * tests/modules/import-error/export-ambiguous-2.js: Added.
+        * tests/modules/import-error/export-ambiguous.js: Added.
+        * tests/modules/import-error/export-default-from-star-2.js: Added.
+        (export.default.Cocoa):
+        * tests/modules/import-error/export-default-from-star.js: Added.
+        * tests/modules/import-error/export-not-found.js: Added.
+        * tests/modules/import-error/import-ambiguous.js: Added.
+        * tests/modules/import-error/import-default-from-star.js: Added.
+        * tests/modules/import-error/import-not-found.js: Added.
+        * tests/modules/imported-bindings-are-immutable.js: Added.
+        * tests/modules/imported-bindings-are-immutable/bindings.js: Added.
+        (export.functionDeclaration):
+        (export.classDeclaration):
+        * tests/modules/imported-bindings-can-be-changed-in-original-module.js: Added.
+        * tests/modules/imported-bindings-can-be-changed-in-original-module/bindings.js: Added.
+        * tests/modules/indirect-export-error.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-ambiguous-2.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-ambiguous-3.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-ambiguous-4.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-ambiguous.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-default-2.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-default-3.js: Added.
+        (export.default.Cocoa):
+        * tests/modules/indirect-export-error/indirect-export-default.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-not-found-2.js: Added.
+        * tests/modules/indirect-export-error/indirect-export-not-found.js: Added.
+        * tests/modules/module-eval.js: Added.
+        * tests/modules/module-eval/A.js: Added.
+        * tests/modules/module-eval/B.js: Added.
+        * tests/modules/module-eval/drink.js: Added.
+        * tests/modules/module-is-strict-code.js: Added.
+        * tests/modules/namespace-ambiguous.js: Added.
+        * tests/modules/namespace-ambiguous/ambiguous-2.js: Added.
+        * tests/modules/namespace-ambiguous/ambiguous-3.js: Added.
+        * tests/modules/namespace-ambiguous/ambiguous-4.js: Added.
+        * tests/modules/namespace-ambiguous/ambiguous.js: Added.
+        * tests/modules/namespace-error.js: Added.
+        * tests/modules/namespace-error/namespace-local-error-should-hide-global-ambiguity-2.js: Added.
+        * tests/modules/namespace-error/namespace-local-error-should-hide-global-ambiguity-3.js: Added.
+        * tests/modules/namespace-error/namespace-local-error-should-hide-global-ambiguity-4.js: Added.
+        * tests/modules/namespace-error/namespace-local-error-should-hide-global-ambiguity-5.js: Added.
+        * tests/modules/namespace-error/namespace-local-error-should-hide-global-ambiguity-6.js: Added.
+        * tests/modules/namespace-error/namespace-local-error-should-hide-global-ambiguity-7.js: Added.
+        * tests/modules/namespace-error/namespace-local-error-should-hide-global-ambiguity.js: Added.
+        * tests/modules/namespace-tdz.js: Added.
+        * tests/modules/namespace-tdz/A.js: Added.
+        * tests/modules/namespace-tdz/B.js: Added.
+        (export.later):
+        * tests/modules/namespace-tdz/main.js: Added.
+        * tests/modules/namespace.js: Added.
+        * tests/modules/namespace/additional-drink.js: Added.
+        * tests/modules/namespace/drink.js: Added.
+        (export.default.changeCappuccino):
+        * tests/modules/namespace/more-additional-drink.js: Added.
+        * tests/modules/resources/assert.js: Added.
+        (export.shouldBe):
+        (export.shouldThrow):
+        * tests/modules/scopes.js: Added.
+        * tests/modules/scopes/additional-drink.js: Added.
+        * tests/modules/scopes/drink.js: Added.
+        (export.default.changeCappuccino):
+        * tests/modules/scopes/more-additional-drink.js: Added.
+        * tests/modules/this-should-be-undefined.js: Added.
+        * tests/stress/modules-syntax-error-with-names.js:
+        * tests/stress/modules-syntax-error.js:
+        * tests/stress/modules-syntax.js:
+
+2015-09-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Implement ModuleNamespaceObject
         https://bugs.webkit.org/show_bug.cgi?id=148705
 

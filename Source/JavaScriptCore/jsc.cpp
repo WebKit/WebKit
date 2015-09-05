@@ -499,9 +499,8 @@ static EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(ExecState*);
 #if ENABLE(WEBASSEMBLY)
 static EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState*);
 #endif
-#if ENABLE(ES6_MODULES)
+static EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState*);
-#endif
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -678,9 +677,8 @@ protected:
 #if ENABLE(WEBASSEMBLY)
         addFunction(vm, "loadWebAssembly", functionLoadWebAssembly, 1);
 #endif
-#if ENABLE(ES6_MODULES)
+        addFunction(vm, "loadModule", functionLoadModule, 1);
         addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
-#endif
 
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -1360,7 +1358,30 @@ EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
 }
 #endif
 
-#if ENABLE(ES6_MODULES)
+EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
+{
+    String fileName = exec->argument(0).toString(exec)->value(exec);
+    Vector<char> script;
+    if (!fillBufferWithContentsOfFile(fileName, script))
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
+
+    JSInternalPromise* promise = evaluateModule(exec, fileName);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSValue error;
+    JSFunction* errorHandler = JSNativeStdFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, String(), [&](ExecState* exec) {
+        error = exec->argument(0);
+        return JSValue::encode(jsUndefined());
+    });
+
+    promise->then(exec, nullptr, errorHandler);
+    exec->vm().drainMicrotasks();
+    if (error)
+        return JSValue::encode(exec->vm().throwException(exec, error));
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
 {
     String source = exec->argument(0).toString(exec)->value(exec);
@@ -1376,7 +1397,6 @@ EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
         exec->vm().throwException(exec, jsNontrivialString(exec, toString("SyntaxError: ", error.message(), ":", error.line())));
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
-#endif
 
 // Use SEH for Release builds only to get rid of the crash report dialog
 // (luckily the same tests fail in Release and Debug builds so far). Need to
@@ -1504,31 +1524,23 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
     VM& vm = globalObject->vm();
     bool success = true;
 
-#if ENABLE(ES6_MODULES)
     JSFunction* errorHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&](ExecState* exec) {
         success = false;
         dumpException(globalObject, exec->argument(0));
         return JSValue::encode(jsUndefined());
     });
-#endif
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::start();
 #endif
 
     for (size_t i = 0; i < scripts.size(); i++) {
-#if ENABLE(ES6_MODULES)
         JSInternalPromise* promise = nullptr;
-#endif
         if (scripts[i].isFile) {
             fileName = scripts[i].argument;
-            if (module) {
-#if ENABLE(ES6_MODULES)
+            if (module)
                 promise = evaluateModule(globalObject->globalExec(), fileName);
-#else
-                RELEASE_ASSERT_NOT_REACHED();
-#endif
-            } else {
+            else {
                 if (!fillBufferWithContentsOfFile(fileName, scriptBuffer))
                     return false; // fail early so we can catch missing files
                 script = scriptBuffer.data();
@@ -1541,15 +1553,11 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         vm.startSampling();
 
         if (module) {
-#if ENABLE(ES6_MODULES)
             if (!promise)
                 promise = evaluateModule(globalObject->globalExec(), jscSource(script, fileName));
             globalObject->globalExec()->clearException();
             promise->then(globalObject->globalExec(), nullptr, errorHandler);
             globalObject->vm().drainMicrotasks();
-#else
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
         } else {
             NakedPtr<Exception> evaluationException;
             JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), evaluationException);
@@ -1648,9 +1656,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -f         Specifies a source file (deprecated)\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
-#if ENABLE(ES6_MODULES)
     fprintf(stderr, "  -m         Execute as a module\n");
-#endif
 #if HAVE(SIGNAL_H)
     fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only)\n");
 #endif
@@ -1702,12 +1708,10 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_profilerOutput = argv[i];
             continue;
         }
-#if ENABLE(ES6_MODULES)
         if (!strcmp(arg, "-m")) {
             m_module = true;
             continue;
         }
-#endif
         if (!strcmp(arg, "-s")) {
 #if HAVE(SIGNAL_H)
             signal(SIGILL, _exit);

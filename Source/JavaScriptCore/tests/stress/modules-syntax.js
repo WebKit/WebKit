@@ -1,5 +1,3 @@
-//@ skip
-
 checkModuleSyntax(String.raw`
 import "Cocoa";
 `);

@@ -269,10 +269,8 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     if (!hasError()) {
         if (isArrowFunctionBodyExpression)
             sourceElements = parseArrowFunctionSingleExpressionBodySourceElements(context);
-#if ENABLE(ES6_MODULES)
         else if (isModuleParseMode(parseMode))
             sourceElements = parseModuleSourceElements(context, parseMode);
-#endif
         else
             sourceElements = parseSourceElements(context, CheckForStrictMode);
     }

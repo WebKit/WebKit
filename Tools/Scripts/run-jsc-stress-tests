@@ -899,6 +899,28 @@ def runES6(mode)
     addRunCommand("default", args, noisyOutputHandler, errorHandler)
 end
 
+def runModules
+    run("default-modules", "-m")
+    run("always-trigger-copy-phase-modules", "-m", "--minHeapUtilization=2.0", "--minCopiedBlockUtilization=2.0")
+
+    if !$jitTests
+        return
+    end
+
+    run("no-llint-modules", "-m", "--useLLInt=false")
+    run("no-cjit-validate-phases-modules", "-m", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
+    run("dfg-eager-modules", "-m", *EAGER_OPTIONS)
+    run("dfg-eager-no-cjit-validate-modules", "-m", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
+    if $enableFTL
+        run("default-ftl-modules", "-m", *FTL_OPTIONS)
+        run("ftl-no-cjit-validate-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+        run("ftl-no-cjit-no-inline-validate-modules", "-m", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+        run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
+        run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+        run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    end
+end
+
 def runLayoutTest(kind, *options)
     raise unless $benchmark.to_s =~ /\.js$/
     testName = $~.pre_match
