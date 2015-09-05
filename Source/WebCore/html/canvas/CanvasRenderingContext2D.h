@@ -235,14 +235,32 @@ private:
         LTR
     };
 
-    struct State final : FontSelectorClient {
+    class FontProxy : public FontSelectorClient {
+    public:
+        FontProxy() = default;
+        virtual ~FontProxy();
+        FontProxy(const FontProxy&);
+        FontProxy& operator=(const FontProxy&);
+
+        bool realized() const { return m_font.fontSelector(); }
+        void initialize(FontSelector&, RenderStyle&);
+        FontMetrics fontMetrics() const;
+        const FontDescription& fontDescription() const;
+        float width(const TextRun&) const;
+        void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
+
+    private:
+        void update(FontSelector&);
+        virtual void fontsNeedUpdate(FontSelector&) override;
+
+        FontCascade m_font;
+    };
+
+    struct State final {
         State();
-        virtual ~State();
 
         State(const State&);
         State& operator=(const State&);
-
-        virtual void fontsNeedUpdate(FontSelector*) override;
 
         String m_unparsedStrokeColor;
         String m_unparsedFillColor;
@@ -270,8 +288,7 @@ private:
         Direction m_direction;
 
         String m_unparsedFont;
-        FontCascade m_font;
-        bool m_realizedFont;
+        FontProxy m_font;
     };
 
     enum CanvasDidDrawOption {
@@ -308,7 +325,9 @@ private:
 
     void drawTextInternal(const String& text, float x, float y, bool fill, float maxWidth = 0, bool useMaxWidth = false);
 
-    const FontCascade& accessFont();
+    // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
+    // Therefore, all font operations must pass through the State.
+    const FontProxy& fontProxy();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     void clearPathForDashboardBackwardCompatibilityMode();

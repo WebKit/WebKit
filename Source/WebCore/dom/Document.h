@@ -1302,7 +1302,7 @@ private:
     void processArguments(const String& features, void* data, ArgumentsCallback);
 
     // FontSelectorClient
-    virtual void fontsNeedUpdate(FontSelector*) override final;
+    virtual void fontsNeedUpdate(FontSelector&) override final;
 
     virtual bool isDocument() const override final { return true; }
 

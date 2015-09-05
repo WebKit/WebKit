@@ -177,13 +177,11 @@ CanvasRenderingContext2D::State::State()
     , m_textBaseline(AlphabeticTextBaseline)
     , m_direction(Direction::Inherit)
     , m_unparsedFont(defaultFont)
-    , m_realizedFont(false)
 {
 }
 
 CanvasRenderingContext2D::State::State(const State& other)
-    : FontSelectorClient()
-    , m_unparsedStrokeColor(other.m_unparsedStrokeColor)
+    : m_unparsedStrokeColor(other.m_unparsedStrokeColor)
     , m_unparsedFillColor(other.m_unparsedFillColor)
     , m_strokeStyle(other.m_strokeStyle)
     , m_fillStyle(other.m_fillStyle)
@@ -206,19 +204,13 @@ CanvasRenderingContext2D::State::State(const State& other)
     , m_direction(other.m_direction)
     , m_unparsedFont(other.m_unparsedFont)
     , m_font(other.m_font)
-    , m_realizedFont(other.m_realizedFont)
 {
-    if (m_realizedFont)
-        m_font.fontSelector()->registerForInvalidationCallbacks(this);
 }
 
 CanvasRenderingContext2D::State& CanvasRenderingContext2D::State::operator=(const State& other)
 {
     if (this == &other)
         return *this;
-
-    if (m_realizedFont)
-        m_font.fontSelector()->unregisterForInvalidationCallbacks(this);
 
     m_unparsedStrokeColor = other.m_unparsedStrokeColor;
     m_unparsedFillColor = other.m_unparsedFillColor;
@@ -242,26 +234,85 @@ CanvasRenderingContext2D::State& CanvasRenderingContext2D::State::operator=(cons
     m_direction = other.m_direction;
     m_unparsedFont = other.m_unparsedFont;
     m_font = other.m_font;
-    m_realizedFont = other.m_realizedFont;
-
-    if (m_realizedFont)
-        m_font.fontSelector()->registerForInvalidationCallbacks(this);
 
     return *this;
 }
 
-CanvasRenderingContext2D::State::~State()
+CanvasRenderingContext2D::FontProxy::~FontProxy()
 {
-    if (m_realizedFont)
-        m_font.fontSelector()->unregisterForInvalidationCallbacks(this);
+    if (realized())
+        m_font.fontSelector()->unregisterForInvalidationCallbacks(*this);
 }
 
-void CanvasRenderingContext2D::State::fontsNeedUpdate(FontSelector* fontSelector)
+CanvasRenderingContext2D::FontProxy::FontProxy(const FontProxy& other)
+    : m_font(other.m_font)
 {
-    ASSERT_ARG(fontSelector, fontSelector == m_font.fontSelector());
-    ASSERT(m_realizedFont);
+    if (realized())
+        m_font.fontSelector()->registerForInvalidationCallbacks(*this);
+}
 
-    m_font.update(fontSelector);
+auto CanvasRenderingContext2D::FontProxy::operator=(const FontProxy& other) -> FontProxy&
+{
+    if (realized())
+        m_font.fontSelector()->unregisterForInvalidationCallbacks(*this);
+
+    m_font = other.m_font;
+
+    if (realized())
+        m_font.fontSelector()->registerForInvalidationCallbacks(*this);
+
+    return *this;
+}
+
+inline void CanvasRenderingContext2D::FontProxy::update(FontSelector& selector)
+{
+    ASSERT(&selector == m_font.fontSelector()); // This is an invariant. We should only ever be registered for callbacks on m_font.m_fonts.m_fontSelector.
+    if (realized())
+        m_font.fontSelector()->unregisterForInvalidationCallbacks(*this);
+    m_font.update(&selector);
+    if (realized())
+        m_font.fontSelector()->registerForInvalidationCallbacks(*this);
+    ASSERT(&selector == m_font.fontSelector());
+}
+
+void CanvasRenderingContext2D::FontProxy::fontsNeedUpdate(FontSelector& selector)
+{
+    ASSERT_ARG(selector, &selector == m_font.fontSelector());
+    ASSERT(realized());
+
+    update(selector);
+}
+
+inline void CanvasRenderingContext2D::FontProxy::initialize(FontSelector& fontSelector, RenderStyle& newStyle)
+{
+    // Beware! m_font.fontSelector() might not point to document.fontSelector()!
+    ASSERT(newStyle.fontCascade().fontSelector() == &fontSelector);
+    if (realized())
+        m_font.fontSelector()->unregisterForInvalidationCallbacks(*this);
+    m_font = newStyle.fontCascade();
+    m_font.update(&fontSelector);
+    ASSERT(&fontSelector == m_font.fontSelector());
+    m_font.fontSelector()->registerForInvalidationCallbacks(*this);
+}
+
+inline FontMetrics CanvasRenderingContext2D::FontProxy::fontMetrics() const
+{
+    return m_font.fontMetrics();
+}
+
+inline const FontDescription& CanvasRenderingContext2D::FontProxy::fontDescription() const
+{
+    return m_font.fontDescription();
+}
+
+inline float CanvasRenderingContext2D::FontProxy::width(const TextRun& textRun) const
+{
+    return m_font.width(textRun);
+}
+
+inline void CanvasRenderingContext2D::FontProxy::drawBidiText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction action) const
+{
+    context.drawBidiText(m_font, run, point, action);
 }
 
 void CanvasRenderingContext2D::realizeSavesLoop()
@@ -2038,7 +2089,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
 
 String CanvasRenderingContext2D::font() const
 {
-    if (!state().m_realizedFont)
+    if (!state().m_font.realized())
         return defaultFont;
 
     StringBuilder serializedFont;
@@ -2052,11 +2103,11 @@ String CanvasRenderingContext2D::font() const
     serializedFont.appendNumber(fontDescription.computedPixelSize());
     serializedFont.appendLiteral("px");
 
-    for (unsigned i = 0; i < state().m_font.familyCount(); ++i) {
+    for (unsigned i = 0; i < fontDescription.familyCount(); ++i) {
         if (i)
             serializedFont.append(',');
         // FIXME: We should append family directly to serializedFont rather than building a temporary string.
-        String family = state().m_font.familyAt(i);
+        String family = fontDescription.familyAt(i);
         if (family.startsWith("-webkit-"))
             family = family.substring(8);
         if (family.contains(' '))
@@ -2071,7 +2122,7 @@ String CanvasRenderingContext2D::font() const
 
 void CanvasRenderingContext2D::setFont(const String& newFont)
 {
-    if (newFont == state().m_unparsedFont && state().m_realizedFont)
+    if (newFont == state().m_unparsedFont && state().m_font.realized())
         return;
 
     RefPtr<MutableStyleProperties> parsedStyle = MutableStyleProperties::create();
@@ -2093,7 +2144,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
+    Ref<RenderStyle> newStyle = RenderStyle::create();
 
     Document& document = canvas()->document();
     document.updateStyleIfNeeded();
@@ -2109,11 +2160,11 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
         newStyle->setFontDescription(defaultFontDescription);
     }
 
-    newStyle->fontCascade().update(newStyle->fontCascade().fontSelector());
+    newStyle->fontCascade().update(&document.fontSelector());
 
     // Now map the font property longhands into the style.
     StyleResolver& styleResolver = canvas()->document().ensureStyleResolver();
-    styleResolver.applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), newStyle.get());
+    styleResolver.applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), &newStyle.get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontStyle, parsedStyle->getPropertyCSSValue(CSSPropertyFontStyle).get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontVariant, parsedStyle->getPropertyCSSValue(CSSPropertyFontVariant).get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontWeight, parsedStyle->getPropertyCSSValue(CSSPropertyFontWeight).get());
@@ -2126,10 +2177,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     styleResolver.updateFont();
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyLineHeight, parsedStyle->getPropertyCSSValue(CSSPropertyLineHeight).get());
 
-    modifiableState().m_font = newStyle->fontCascade();
-    modifiableState().m_font.update(&document.fontSelector());
-    modifiableState().m_realizedFont = true;
-    document.fontSelector().registerForInvalidationCallbacks(&modifiableState());
+    modifiableState().m_font.initialize(document.fontSelector(), newStyle);
 }
 
 String CanvasRenderingContext2D::textAlign() const
@@ -2265,7 +2313,7 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     String normalizedText = text;
     normalizeSpaces(normalizedText);
 
-    metrics->setWidth(accessFont().width(TextRun(normalizedText)));
+    metrics->setWidth(fontProxy().width(TextRun(normalizedText)));
 
     return metrics;
 }
@@ -2291,8 +2339,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     if (fill && gradient && gradient->isZeroSize())
         return;
 
-    const FontCascade& font = accessFont();
-    const FontMetrics& fontMetrics = font.fontMetrics();
+    const auto& fontProxy = this->fontProxy();
+    const FontMetrics& fontMetrics = fontProxy.fontMetrics();
 
     String normalizedText = text;
     normalizeSpaces(normalizedText);
@@ -2326,7 +2374,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         break;
     }
 
-    float fontWidth = font.width(TextRun(normalizedText, 0, 0, AllowTrailingExpansion, direction, override));
+    float fontWidth = fontProxy.width(TextRun(normalizedText, 0, 0, AllowTrailingExpansion, direction, override));
 
     useMaxWidth = (useMaxWidth && maxWidth < fontWidth);
     float width = useMaxWidth ? maxWidth : fontWidth;
@@ -2388,7 +2436,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             else
                 c->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
 
-            c->drawBidiText(font, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
+            fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
         }
 
         std::unique_ptr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
@@ -2408,10 +2456,10 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             maskImageContext.translate(location.x() - maskRect.x(), location.y() - maskRect.y());
             // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
             maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
-            maskImageContext.drawBidiText(font, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
+            fontProxy.drawBidiText(maskImageContext, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
         } else {
             maskImageContext.translate(-maskRect.x(), -maskRect.y());
-            maskImageContext.drawBidiText(font, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+            fontProxy.drawBidiText(maskImageContext, textRun, location, FontCascade::UseFallbackIfFontNotReady);
         }
 
         GraphicsContextStateSaver stateSaver(*c);
@@ -2434,15 +2482,15 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     if (isFullCanvasCompositeMode(state().m_globalComposite)) {
         beginCompositeLayer();
-        c->drawBidiText(font, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
         endCompositeLayer();
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
-        c->drawBidiText(font, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
         didDrawEntireCanvas();
     } else {
-        c->drawBidiText(font, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
         didDraw(textRect);
     }
 }
@@ -2462,11 +2510,11 @@ void CanvasRenderingContext2D::inflateStrokeRect(FloatRect& rect) const
     rect.inflate(delta);
 }
 
-const FontCascade& CanvasRenderingContext2D::accessFont()
+auto CanvasRenderingContext2D::fontProxy() -> const FontProxy&
 {
     canvas()->document().updateStyleIfNeeded();
 
-    if (!state().m_realizedFont)
+    if (!state().m_font.realized())
         setFont(state().m_unparsedFont);
     return state().m_font;
 }

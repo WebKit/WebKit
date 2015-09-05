@@ -48,8 +48,8 @@ public:
 
     virtual void fontCacheInvalidated() { }
 
-    virtual void registerForInvalidationCallbacks(FontSelectorClient*) = 0;
-    virtual void unregisterForInvalidationCallbacks(FontSelectorClient*) = 0;
+    virtual void registerForInvalidationCallbacks(FontSelectorClient&) = 0;
+    virtual void unregisterForInvalidationCallbacks(FontSelectorClient&) = 0;
 
     virtual unsigned uniqueId() const = 0;
     virtual unsigned version() const = 0;
@@ -59,7 +59,7 @@ class FontSelectorClient {
 public:
     virtual ~FontSelectorClient() { }
 
-    virtual void fontsNeedUpdate(FontSelector*) = 0;
+    virtual void fontsNeedUpdate(FontSelector&) = 0;
 };
 
 } // namespace WebCore
