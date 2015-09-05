@@ -1,4 +1,4 @@
 
-PASS initEvent 
-PASS Constructor 
+FAIL initEvent UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0
+FAIL Constructor UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0
 

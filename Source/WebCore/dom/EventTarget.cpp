@@ -138,13 +138,13 @@ bool EventTarget::clearAttributeEventListener(const AtomicString& eventType)
 
 bool EventTarget::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
 {
-    if (!event) {
-        ec = TypeError;
+    if (!event || event->type().isEmpty()) {
+        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
     }
 
-    if (!event->isInitialized() || event->isBeingDispatched()) {
-        ec = INVALID_STATE_ERR;
+    if (event->isBeingDispatched()) {
+        ec = EventException::DISPATCH_REQUEST_ERR;
         return false;
     }
 
