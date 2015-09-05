@@ -201,6 +201,66 @@
       175,
       192,
       'namespace.MyClass'
+    ],
+    [
+      '195',
+      '195',
+      'Foo.prototype.method1'
+    ],
+    [
+      '198',
+      '199',
+      'Foo.prototype.method2'
+    ],
+    [
+      '203',
+      '205',
+      'Foo.prototype.method3.innerFunction'
+    ],
+    [
+      '202',
+      '207',
+      'Foo.prototype.method3'
+    ],
+    [
+      '211',
+      '213',
+      'insideGlobalAnonymousFunctionExpression'
+    ],
+    [
+      '217',
+      '219',
+      'foo.insideGlobalFunctionExpression'
+    ],
+    [
+      '216',
+      '220',
+      'foo'
+    ],
+    [
+      '227',
+      '227',
+      'IssueWithMapGetAndSet.prototype.method1.nestedFunctionInsideMethod1'
+    ],
+    [
+      '224',
+      '229',
+      'IssueWithMapGetAndSet.prototype.method1'
+    ],
+    [
+      '232',
+      '234',
+      'IssueWithMapGetAndSet.prototype.method2'
+    ],
+    [
+      '237',
+      '238',
+      'IssueWithMapGetAndSet.prototype.method3'
+    ],
+    [
+      '222',
+      '239',
+      'IssueWithMapGetAndSet'
     ]
   ]
 }

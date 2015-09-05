@@ -190,3 +190,50 @@ namespace.MyClass = class IgnoredName {
 
     get getter() { }
 }
+
+Foo.prototype = {
+    method1() { },
+
+    method2(a)
+    {
+    },
+
+    method3(a, b)
+    {
+        function innerFunction() {
+            // ...
+        }
+        return innerFunction();
+    }
+};
+
+(function(asdf) {
+    function insideGlobalAnonymousFunctionExpression(obj)
+    {
+    }
+})();
+
+(function foo(asdf) {
+    function insideGlobalFunctionExpression(obj)
+    {
+    }
+})();
+
+class IssueWithMapGetAndSet {
+    method1()
+    {
+        this.map.set(a, b);
+        let object = {property: value};
+        function nestedFunctionInsideMethod1(){}
+        this._callingSomething();
+    }
+
+    method2()
+    {
+        this.map.get(a);
+    }
+
+    method3()
+    {
+    }
+};

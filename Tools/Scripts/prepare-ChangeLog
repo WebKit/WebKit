@@ -1286,8 +1286,7 @@ sub get_function_line_ranges_for_java($$)
 #    }
 #
 # A method name is the word immediately before parenthesis, with an open
-# curly brace immediately following closing parenthesis. For simplification
-# we only parse for methods inside of a class. And for a class expression
+# curly brace immediately following closing parenthesis. For a class expression
 # we take the assignment identifier instead of the class name for namespacing.
 #
 #    namespace.Foo = class DoesNotMatter extends Bar {
@@ -1300,6 +1299,13 @@ sub get_function_line_ranges_for_java($$)
 #        constructor() {} // (ClassName)
 #        method() {} // (ClassName.prototype.method)
 #    }
+#
+# Methods may exist in object literals, outside of classes.
+#
+#   Foo.prototype = {
+#       method() {}, // (Foo.prototype.method)
+#       otherMethod() {} // (Foo.prototype.otherMethod)
+#   }
 #
 # Comment handling is simple-minded but will work for all but pathological cases.
 #
@@ -1322,7 +1328,9 @@ sub get_function_line_ranges_for_javascript($$)
     my $inQuotedText = "";
     my $inExtends = 0;
     my $inMethod = 0;
+    my $inAnonymousFunctionParameters = 0;
     my $parenthesesDepth = 0;
+    my $globalParenthesesDepth = 0;
     my $bracesDepth = 0;
 
     my $classJustSeen = 0;
@@ -1333,6 +1341,8 @@ sub get_function_line_ranges_for_javascript($$)
     my $assignmentJustSeen = 0;
     my $staticOrContructorSeen = 0;
 
+    my $currentToken = "";
+    my $lastToken = "";
     my $possibleMethodName = "";
     my $word = "";
 
@@ -1370,23 +1380,32 @@ sub get_function_line_ranges_for_javascript($$)
         }
 
         # Find function names.
-        while (m-(\w+|[(){}=:;,])-g) {
+        while (m-(\w+|[(){}=:;,.])-g) {
             # Skip everything until "{" after extends.
             if ($inExtends) {
                 next if $1 ne '{';
                 $inExtends = 0;
             }
 
+            $lastToken = $currentToken;
+            $currentToken = $1;
+
             # Open parenthesis.
             if ($1 eq '(') {
                 $parenthesesDepth++;
+                $globalParenthesesDepth++ if $currentParsingMode[$#currentParsingMode] eq "global";
                 $possibleMethodName = join('.', @currentIdentifiers);
+                $inAnonymousFunctionParameters = 1 if $functionJustSeen;
+                $functionJustSeen = 0;
                 next;
             }
 
             # Close parenthesis.
             if ($1 eq ')') {
                 $parenthesesDepth--;
+                $globalParenthesesDepth-- if $currentParsingMode[$#currentParsingMode] eq "global";
+                @currentIdentifiers = () if $inAnonymousFunctionParameters;
+                $inAnonymousFunctionParameters = 0;
                 $parenthesisJustSeen = 1;
                 next;
             }
@@ -1394,10 +1413,16 @@ sub get_function_line_ranges_for_javascript($$)
             # Open brace.
             if ($1 eq '{') {
                 my $methodName = "";
+                my $mode = $currentParsingMode[$#currentParsingMode];
 
                 # Method.
-                if ($currentParsingMode[$#currentParsingMode] eq 'class' and $parenthesisJustSeen and ($staticOrContructorSeen or $possibleMethodName)) {
-                    $methodName = join('.', $staticOrContructorSeen ? "" : "prototype", $possibleMethodName);
+                if (($mode eq 'class' or $mode eq 'global') and $parenthesisJustSeen and ($staticOrContructorSeen or $possibleMethodName)) {
+                    if ($mode eq 'class') {
+                        $methodName = join('.', $staticOrContructorSeen ? "" : "prototype", $possibleMethodName);
+                    } else {
+                        $methodName = $possibleMethodName;
+                    }
+
                     $methodName =~ s/\.{2,}/\./g; # Removes consecutive periods.
                     $methodName =~ s/\.$//; # Remove trailing period.
 
@@ -1433,12 +1458,19 @@ sub get_function_line_ranges_for_javascript($$)
                     my $currentName = pop(@currentFunctionNames);
                     my $start = pop(@currentFunctionStartLines);
 
+                    $currentName =~ s/^\.//g; # Removes leading periods.
+
                     push(@ranges, [$start, $., $currentName]);
                 }
 
                 pop(@currentScopes);
                 @currentIdentifiers = ();
 
+                next;
+            }
+
+            # Dot.
+            if ($1 eq '.') {
                 next;
             }
 
@@ -1479,12 +1511,14 @@ sub get_function_line_ranges_for_javascript($$)
 
             # Getter prefix.
             if ($1 eq 'get') {
+                next if $lastToken eq '.'; # Avoid map.get(...).
                 $getterJustSeen = 1;
                 next;
             }
 
             # Setter prefix.
             if ($1 eq 'set') {
+                next if $lastToken eq '.'; # Avoid map.set(...).
                 $setterJustSeen = 1;
                 next;
             }
@@ -1501,7 +1535,7 @@ sub get_function_line_ranges_for_javascript($$)
                 next;
             }
 
-            next if $parenthesesDepth;
+            next if $parenthesesDepth > $globalParenthesesDepth;
 
             # Word.
             $word = $1;

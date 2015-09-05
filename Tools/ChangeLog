@@ -1,3 +1,32 @@
+2015-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve prepare-ChangeLog for multiple cases
+        https://bugs.webkit.org/show_bug.cgi?id=148875
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_javascript):
+        - We were ignoring everything inside of an anonymous function expression,
+          such as (function(){ ... }), which made InjectedScriptSource produce nothing.
+          Better handle this by inserting a few tweaks.
+        - Allow method syntax outside of classes as long as they are at the global level.
+        - Avoid treating "get" and "set" as getter/setter functions in bad contexts.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/javascript_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/javascript_unittests.js:
+        (Foo.prototype.method1):
+        (Foo.prototype.method2):
+        (Foo.prototype.method3.innerFunction):
+        (Foo.prototype.method3):
+        (insideGlobalAnonymousFunctionExpression):
+        (foo.insideGlobalFunctionExpression):
+        (IssueWithMapGetAndSet.prototype.method1.nestedFunctionInsideMethod1):
+        (IssueWithMapGetAndSet.prototype.method1):
+        (IssueWithMapGetAndSet.prototype.method2):
+        (IssueWithMapGetAndSet.prototype.method3):
+        (IssueWithMapGetAndSet):
+
 2015-09-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Enable ES6 Module in JSC shell by default
