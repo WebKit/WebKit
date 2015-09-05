@@ -1,3 +1,83 @@
+2015-09-04  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint cleanup:
+
+        layer-child-outline.html -> reftest
+        layer-full-repaint.html -> reftest
+        layer-hide-when-needs-layout.html -> reftest
+        layer-visibility.html -> reftest
+        layout-state-only-positioned.html -> reftest
+        layout-state-relative.html -> reftest
+        layout-state-scrolloffset.html -> reftest
+        layout-state-scrolloffset2.html -> reftest
+        layout-state-scrolloffset3.html -> reftest
+
+        * fast/repaint/layer-child-outline-expected.html: Added.
+        * fast/repaint/layer-child-outline.html:
+        * fast/repaint/layer-full-repaint-expected.html: Added.
+        * fast/repaint/layer-full-repaint-expected.txt: Removed.
+        * fast/repaint/layer-full-repaint.html:
+        * fast/repaint/layer-hide-when-needs-layout-expected.html: Added.
+        * fast/repaint/layer-hide-when-needs-layout-expected.png: Removed.
+        * fast/repaint/layer-hide-when-needs-layout-expected.txt: Removed.
+        * fast/repaint/layer-hide-when-needs-layout.html:
+        * fast/repaint/layer-visibility-expected.html: Added.
+        * fast/repaint/layer-visibility-expected.png: Removed.
+        * fast/repaint/layer-visibility-expected.txt: Removed.
+        * fast/repaint/layer-visibility.html:
+        * fast/repaint/layout-state-only-positioned-expected.html: Added.
+        * fast/repaint/layout-state-only-positioned-expected.txt: Removed.
+        * fast/repaint/layout-state-only-positioned.html:
+        * fast/repaint/layout-state-relative-expected.html: Added.
+        * fast/repaint/layout-state-relative.html:
+        * fast/repaint/layout-state-scrolloffset-expected.html: Added.
+        * fast/repaint/layout-state-scrolloffset.html:
+        * fast/repaint/layout-state-scrolloffset2-expected.html: Added.
+        * fast/repaint/layout-state-scrolloffset2.html:
+        * fast/repaint/layout-state-scrolloffset3-expected.html: Added.
+        * fast/repaint/layout-state-scrolloffset3.html:
+        * platform/efl/fast/repaint/layer-child-outline-expected.png: Removed.
+        * platform/efl/fast/repaint/layer-child-outline-expected.txt: Removed.
+        * platform/efl/fast/repaint/layout-state-only-positioned-expected.png: Removed.
+        * platform/efl/fast/repaint/layout-state-relative-expected.png: Removed.
+        * platform/efl/fast/repaint/layout-state-relative-expected.txt: Removed.
+        * platform/efl/fast/repaint/layout-state-scrolloffset-expected.png: Removed.
+        * platform/efl/fast/repaint/layout-state-scrolloffset-expected.txt: Removed.
+        * platform/efl/fast/repaint/layout-state-scrolloffset2-expected.png: Removed.
+        * platform/efl/fast/repaint/layout-state-scrolloffset2-expected.txt: Removed.
+        * platform/efl/fast/repaint/layout-state-scrolloffset3-expected.png: Removed.
+        * platform/efl/fast/repaint/layout-state-scrolloffset3-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layer-child-outline-expected.png: Removed.
+        * platform/gtk/fast/repaint/layer-child-outline-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layout-state-only-positioned-expected.png: Removed.
+        * platform/gtk/fast/repaint/layout-state-relative-expected.png: Removed.
+        * platform/gtk/fast/repaint/layout-state-relative-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset-expected.png: Removed.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset2-expected.png: Removed.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset2-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset3-expected.png: Removed.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset3-expected.txt: Removed.
+        * platform/mac-wk2/fast/repaint/layer-hide-when-needs-layout-expected.txt: Removed.
+        * platform/mac/fast/repaint/layer-child-outline-expected.png: Removed.
+        * platform/mac/fast/repaint/layer-child-outline-expected.txt: Removed.
+        * platform/mac/fast/repaint/layer-hide-when-needs-layout-expected.png: Removed.
+        * platform/mac/fast/repaint/layer-visibility-expected.png: Removed.
+        * platform/mac/fast/repaint/layout-state-only-positioned-expected.png: Removed.
+        * platform/mac/fast/repaint/layout-state-relative-expected.png: Removed.
+        * platform/mac/fast/repaint/layout-state-relative-expected.txt: Removed.
+        * platform/mac/fast/repaint/layout-state-scrolloffset-expected.png: Removed.
+        * platform/mac/fast/repaint/layout-state-scrolloffset-expected.txt: Removed.
+        * platform/mac/fast/repaint/layout-state-scrolloffset2-expected.png: Removed.
+        * platform/mac/fast/repaint/layout-state-scrolloffset2-expected.txt: Removed.
+        * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.png: Removed.
+        * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.txt: Removed.
+        * platform/win/fast/repaint/layer-child-outline-expected.txt: Removed.
+        * platform/win/fast/repaint/layout-state-relative-expected.txt: Removed.
+        * platform/win/fast/repaint/layout-state-scrolloffset-expected.txt: Removed.
+        * platform/win/fast/repaint/layout-state-scrolloffset2-expected.txt: Removed.
+        * platform/win/fast/repaint/layout-state-scrolloffset3-expected.txt: Removed.
+
 2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add tests for DOM highlight commands
