@@ -747,6 +747,23 @@ struct DirectoryName {
     String queryName;
 };
 
+struct ModuleName {
+    ModuleName(const String& moduleName);
+
+    bool startsWithRoot() const
+    {
+        return !queries.isEmpty() && queries[0].isEmpty();
+    }
+
+    Vector<String> queries;
+};
+
+ModuleName::ModuleName(const String& moduleName)
+{
+    // A module name given from code is represented as the UNIX style path. Like, `./A/B.js`.
+    moduleName.split('/', true, queries);
+}
+
 static bool extractDirectoryName(const String& absolutePathToFile, DirectoryName& directoryName)
 {
     size_t firstSeparatorPosition = absolutePathToFile.find(pathSeparator());
@@ -786,19 +803,16 @@ static bool currentWorkingDirectory(DirectoryName& directoryName)
     return extractDirectoryName(makeString(directoryString, pathSeparator()), directoryName);
 }
 
-static String resolvePath(const DirectoryName& directoryName, const String& query)
+static String resolvePath(const DirectoryName& directoryName, const ModuleName& moduleName)
 {
     Vector<String> directoryPieces;
     directoryName.queryName.split(pathSeparator(), false, directoryPieces);
 
-    Vector<String> queryPieces;
-    query.split(pathSeparator(), true, queryPieces);
-
     // Only first '/' is recognized as the path from the root.
-    if (!queryPieces.isEmpty() && queryPieces[0].isEmpty())
+    if (moduleName.startsWithRoot())
         directoryPieces.clear();
 
-    for (const auto& query : queryPieces) {
+    for (const auto& query : moduleName.queries) {
         if (query == String(ASCIILiteral(".."))) {
             if (!directoryPieces.isEmpty())
                 directoryPieces.removeLast();
@@ -850,7 +864,7 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
         }
     }
 
-    return deferred->resolve(exec, jsString(exec, resolvePath(directoryName, key.impl())));
+    return deferred->resolve(exec, jsString(exec, resolvePath(directoryName, ModuleName(key.impl()))));
 }
 
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
