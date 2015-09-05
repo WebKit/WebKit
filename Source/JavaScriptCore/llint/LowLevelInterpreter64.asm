@@ -131,6 +131,7 @@ macro doVMEntry(makeCall)
     storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
     loadp VM::topVMEntryFrame[vm], t4
     storep t4, VMEntryRecord::m_prevTopVMEntryFrame[sp]
+    storep cfr, VM::topVMEntryFrame[vm]
 
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t4
     addp CallFrameHeaderSlots, t4, t4
@@ -213,7 +214,6 @@ macro doVMEntry(makeCall)
     else
         storep sp, VM::topCallFrame[vm]
     end
-    storep cfr, VM::topVMEntryFrame[vm]
 
     move TagTypeNumber, tagTypeNumber
     addp TagBitTypeOther, tagTypeNumber, tagMask
@@ -1775,8 +1775,6 @@ _llint_op_catch:
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
-    loadp VM::vmEntryFrameForThrow[t3], t0
-    storep t0, VM::topVMEntryFrame[t3]
     restoreStackPointerAfterCall()
 
     loadp CodeBlock[cfr], PB

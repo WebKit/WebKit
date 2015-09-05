@@ -127,6 +127,7 @@ macro doVMEntry(makeCall)
     storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
     loadp VM::topVMEntryFrame[vm], t4
     storep t4, VMEntryRecord::m_prevTopVMEntryFrame[sp]
+    storep cfr, VM::topVMEntryFrame[vm]
 
     # Align stack pointer
     if X86_WIN
@@ -235,7 +236,6 @@ macro doVMEntry(makeCall)
 
 .copyArgsDone:
     storep sp, VM::topCallFrame[vm]
-    storep cfr, VM::topVMEntryFrame[vm]
 
     makeCall(entry, t3, t4)
 
@@ -1879,8 +1879,6 @@ _llint_op_catch:
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
-    loadp VM::vmEntryFrameForThrow[t3], t0
-    storep t0, VM::topVMEntryFrame[t3]
     restoreStackPointerAfterCall()
 
     loadi VM::targetInterpreterPCForThrow[t3], PC

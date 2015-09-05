@@ -67,6 +67,8 @@ namespace JSC {
     struct Instruction;
     struct ProtoCallFrame;
 
+    enum UnwindStart { UnwindFromCurrentFrame, UnwindFromCallerFrame };
+
     enum DebugHookID {
         WillExecuteProgram,
         DidExecuteProgram,
@@ -145,6 +147,7 @@ namespace JSC {
         {
             ASSERT(vm);
             ASSERT(callFrame);
+            ASSERT(callFrame < vm->topVMEntryFrame);
             vm->topCallFrame = callFrame;
         }
     };
@@ -222,7 +225,7 @@ namespace JSC {
         
         SamplingTool* sampler() { return m_sampler.get(); }
 
-        NEVER_INLINE HandlerInfo* unwind(VMEntryFrame*&, CallFrame*&, Exception*);
+        NEVER_INLINE HandlerInfo* unwind(VM&, CallFrame*&, Exception*, UnwindStart);
         NEVER_INLINE void debug(CallFrame*, DebugHookID);
         JSString* stackTraceAsString(ExecState*, Vector<StackFrame>);
 
