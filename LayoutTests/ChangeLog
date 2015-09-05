@@ -1,3 +1,22 @@
+2015-09-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, land Windows baselines for the new W3C html tests imported in r189394.
+
+        * platform/win/http/tests/w3c/html/dom/interfaces-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/embedded-content/the-img-element/srcset/parse-a-srcset-attribute-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/embedded-content/the-img-element/srcset/select-an-image-source-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/constraints/form-validation-willValidate-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/textfieldselection/selection-not-application-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/the-input-element/color-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/the-input-element/input-textselection-01-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/the-input-element/type-change-state-expected.txt: Added.
+        * platform/win/http/tests/w3c/html/semantics/forms/the-input-element/valueMode-expected.txt: Added.
+
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Fix lint warnings on iOS.
