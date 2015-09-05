@@ -1,5 +1,17 @@
 2015-09-04  Mark Lam  <mark.lam@apple.com>
 
+        [Follow up] StackOverflow stack unwinding should stop at native frames.
+        https://bugs.webkit.org/show_bug.cgi?id=148749
+
+        Rubber stamped by Michael Saboff.
+
+        Speculative fix for jsc test failure.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+
+2015-09-04  Mark Lam  <mark.lam@apple.com>
+
         StackOverflow stack unwinding should stop at native frames.
         https://bugs.webkit.org/show_bug.cgi?id=148749
 

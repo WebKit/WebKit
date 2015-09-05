@@ -672,6 +672,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
             return nullptr;
 
         callFrame = callFrame->callerFrame();
+        vm.topCallFrame = callFrame;
     }
 
     CodeBlock* codeBlock = callFrame->codeBlock();
