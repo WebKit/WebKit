@@ -1,5 +1,13 @@
 2015-09-04  Alexey Proskuryakov  <ap@apple.com>
 
+        Get rid of unneeded TestExpectations files.
+
+        * platform/mac-mavericks/TestExpectations: Removed.
+        * platform/mac-yosemite/TestExpectations: Removed.
+        * platform/mac/TestExpectations:
+
+2015-09-04  Alexey Proskuryakov  <ap@apple.com>
+
         REGRESSION (r189407): webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html
         fails on Mavericks.
 
