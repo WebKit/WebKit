@@ -48,7 +48,7 @@ class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorAgent(InspectorEnvironment&);
+    InspectorAgent(AgentContext&);
     virtual ~InspectorAgent();
 
     virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
@@ -69,7 +69,8 @@ public:
 private:
     InspectorEnvironment& m_environment;
     std::unique_ptr<InspectorFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    Ref<InspectorBackendDispatcher> m_backendDispatcher;
+
     Vector<String> m_pendingEvaluateTestCommands;
     std::pair<RefPtr<Protocol::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

@@ -38,9 +38,9 @@ using namespace JSC;
 
 namespace Inspector {
 
-JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(InjectedScriptManager& injectedScriptManager, JSC::JSGlobalObject& globalObject, InspectorConsoleAgent* consoleAgent)
-    : InspectorDebuggerAgent(injectedScriptManager)
-    , m_scriptDebugServer(globalObject)
+JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context, InspectorConsoleAgent* consoleAgent)
+    : InspectorDebuggerAgent(context)
+    , m_scriptDebugServer(context.inspectedGlobalObject)
     , m_consoleAgent(consoleAgent)
 {
 }

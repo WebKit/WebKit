@@ -43,7 +43,6 @@ class DocumentLoader;
 class Event;
 class Frame;
 class InspectorPageAgent;
-class InstrumentingAgents;
 class Page;
 class ReplaySession;
 class ReplaySessionSegment;
@@ -62,7 +61,7 @@ class InspectorReplayAgent final
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(InspectorReplayAgent);
 public:
-    InspectorReplayAgent(InstrumentingAgents&, InspectorPageAgent*);
+    InspectorReplayAgent(PageAgentContext&);
     virtual ~InspectorReplayAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;

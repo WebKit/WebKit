@@ -33,12 +33,45 @@
 namespace WebCore {
 
 class InstrumentingAgents;
+class Page;
+class WorkerGlobalScope;
+
+// FIXME: move this to Inspector namespace when remaining agents move.
+struct WebAgentContext : public Inspector::AgentContext {
+    WebAgentContext(AgentContext& context, InstrumentingAgents& instrumentingAgents)
+        : AgentContext(context)
+        , instrumentingAgents(instrumentingAgents)
+    {
+    }
+
+    InstrumentingAgents& instrumentingAgents;
+};
+
+struct PageAgentContext : public WebAgentContext {
+    PageAgentContext(WebAgentContext& context, Page& inspectedPage)
+        : WebAgentContext(context)
+        , inspectedPage(inspectedPage)
+    {
+    }
+
+    Page& inspectedPage;
+};
+
+struct WorkerAgentContext : public WebAgentContext {
+    WorkerAgentContext(WebAgentContext& context, WorkerGlobalScope& workerGlobalScope)
+        : WebAgentContext(context)
+        , workerGlobalScope(workerGlobalScope)
+    {
+    }
+
+    WorkerGlobalScope& workerGlobalScope;
+};
 
 class InspectorAgentBase : public Inspector::InspectorAgentBase {
 protected:
-    InspectorAgentBase(const String& name, InstrumentingAgents& instrumentingAgents)
+    InspectorAgentBase(const String& name, WebAgentContext& context)
         : Inspector::InspectorAgentBase(name)
-        , m_instrumentingAgents(instrumentingAgents)
+        , m_instrumentingAgents(context.instrumentingAgents)
     {
     }
 

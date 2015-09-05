@@ -39,7 +39,6 @@ namespace WebCore {
 
 class InspectorOverlay;
 class InspectorPageAgent;
-class InstrumentingAgents;
 class Page;
 class PageScriptDebugServer;
 
@@ -47,7 +46,7 @@ class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageDebuggerAgent(Inspector::InjectedScriptManager&, InstrumentingAgents&, InspectorPageAgent*, InspectorOverlay*);
+    PageDebuggerAgent(PageAgentContext&, InspectorPageAgent*, InspectorOverlay*);
     virtual ~PageDebuggerAgent() { }
 
     void didClearMainFrameWindowObject();
@@ -71,8 +70,9 @@ private:
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
     virtual void setOverlayMessage(ErrorString&, const String*) override;
 
-    InspectorPageAgent* m_pageAgent { nullptr };
+    Page& m_page;
 
+    InspectorPageAgent* m_pageAgent;
     InspectorOverlay* m_overlay { nullptr };
     PageScriptDebugServer m_scriptDebugServer;
 };

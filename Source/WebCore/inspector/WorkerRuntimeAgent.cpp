@@ -47,21 +47,19 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WorkerRuntimeAgent::WorkerRuntimeAgent(InjectedScriptManager& injectedScriptManager, WorkerGlobalScope* workerGlobalScope)
-    : InspectorRuntimeAgent(injectedScriptManager)
-    , m_workerGlobalScope(workerGlobalScope)
+WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
+    : InspectorRuntimeAgent(context)
+    , m_backendDispatcher(Inspector::RuntimeBackendDispatcher::create(context.backendDispatcher, this))
+    , m_workerGlobalScope(context.workerGlobalScope)
 {
 }
 
-void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher* backendDispatcher)
+void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
-    m_backendDispatcher = Inspector::RuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
 void WorkerRuntimeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
-    m_backendDispatcher = nullptr;
-
     InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }
 
@@ -72,7 +70,7 @@ InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString& error, con
         return InjectedScript();
     }
 
-    JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
+    JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(&m_workerGlobalScope);
     return injectedScriptManager().injectedScriptFor(scriptState);
 }
 

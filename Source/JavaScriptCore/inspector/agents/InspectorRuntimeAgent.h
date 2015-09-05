@@ -79,7 +79,7 @@ public:
     bool enabled() const { return m_enabled; }
 
 protected:
-    InspectorRuntimeAgent(InjectedScriptManager&);
+    InspectorRuntimeAgent(AgentContext&);
 
     InjectedScriptManager& injectedScriptManager() { return m_injectedScriptManager; }
 

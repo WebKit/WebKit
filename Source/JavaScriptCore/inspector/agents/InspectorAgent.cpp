@@ -38,9 +38,11 @@
 
 namespace Inspector {
 
-InspectorAgent::InspectorAgent(InspectorEnvironment& environment)
+InspectorAgent::InspectorAgent(AgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Inspector"))
-    , m_environment(environment)
+    , m_environment(context.environment)
+    , m_frontendDispatcher(std::make_unique<InspectorFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(InspectorBackendDispatcher::create(context.backendDispatcher, this))
 {
 }
 
@@ -48,17 +50,12 @@ InspectorAgent::~InspectorAgent()
 {
 }
 
-void InspectorAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
+void InspectorAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
-    m_frontendDispatcher = std::make_unique<InspectorFrontendDispatcher>(frontendRouter);
-    m_backendDispatcher = InspectorBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    m_frontendDispatcher = nullptr;
-    m_backendDispatcher = nullptr;
-
     m_pendingEvaluateTestCommands.clear();
 
     ErrorString unused;
@@ -77,12 +74,8 @@ void InspectorAgent::enable(ErrorString&)
         m_frontendDispatcher->activateExtraDomains(m_pendingExtraDomainsData);
 #endif
 
-    for (auto& testCommand : m_pendingEvaluateTestCommands) {
-        if (!m_frontendDispatcher)
-            break;
-
+    for (auto& testCommand : m_pendingEvaluateTestCommands)
         m_frontendDispatcher->evaluateForTestInFrontend(testCommand);
-    }
 
     m_pendingEvaluateTestCommands.clear();
 }
@@ -99,7 +92,7 @@ void InspectorAgent::initialized(ErrorString&)
 
 void InspectorAgent::inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<InspectorObject>&& hints)
 {
-    if (m_enabled && m_frontendDispatcher) {
+    if (m_enabled) {
         m_frontendDispatcher->inspect(objectToInspect, hints);
         m_pendingInspectData.first = nullptr;
         m_pendingInspectData.second = nullptr;
@@ -112,7 +105,7 @@ void InspectorAgent::inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToI
 
 void InspectorAgent::evaluateForTestInFrontend(const String& script)
 {
-    if (m_enabled && m_frontendDispatcher)
+    if (m_enabled)
         m_frontendDispatcher->evaluateForTestInFrontend(script);
     else
         m_pendingEvaluateTestCommands.append(script);

@@ -54,7 +54,6 @@ class FloatQuad;
 class Frame;
 class InspectorClient;
 class InspectorPageAgent;
-class InstrumentingAgents;
 class IntRect;
 class URL;
 class Page;
@@ -118,7 +117,7 @@ class InspectorTimelineAgent final
 public:
     enum InspectorType { PageInspector, WorkerInspector };
 
-    InspectorTimelineAgent(InstrumentingAgents&, InspectorPageAgent*, InspectorType, InspectorClient*);
+    InspectorTimelineAgent(WebAgentContext&, InspectorPageAgent*, InspectorType, InspectorClient*);
     virtual ~InspectorTimelineAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -230,7 +229,6 @@ private:
     void clearRecordStack();
 
     void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);
-    Page* page();
 
     std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;

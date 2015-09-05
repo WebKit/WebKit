@@ -81,21 +81,21 @@ private:
 
 const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
 
-WorkerDebuggerAgent::WorkerDebuggerAgent(InjectedScriptManager& injectedScriptManager, InstrumentingAgents& instrumentingAgents, WorkerGlobalScope* inspectedWorkerGlobalScope)
-    : WebDebuggerAgent(injectedScriptManager, instrumentingAgents)
-    , m_scriptDebugServer(inspectedWorkerGlobalScope, WorkerDebuggerAgent::debuggerTaskMode)
-    , m_inspectedWorkerGlobalScope(inspectedWorkerGlobalScope)
+WorkerDebuggerAgent::WorkerDebuggerAgent(WorkerAgentContext& context)
+    : WebDebuggerAgent(context)
+    , m_scriptDebugServer(context.workerGlobalScope, WorkerDebuggerAgent::debuggerTaskMode)
+    , m_inspectedWorkerGlobalScope(context.workerGlobalScope)
 {
     std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
-    workerDebuggerAgents().set(&inspectedWorkerGlobalScope->thread(), this);
+    workerDebuggerAgents().set(&context.workerGlobalScope.thread(), this);
 }
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent()
 {
     std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
 
-    ASSERT(workerDebuggerAgents().contains(&m_inspectedWorkerGlobalScope->thread()));
-    workerDebuggerAgents().remove(&m_inspectedWorkerGlobalScope->thread());
+    ASSERT(workerDebuggerAgents().contains(&m_inspectedWorkerGlobalScope.thread()));
+    workerDebuggerAgents().remove(&m_inspectedWorkerGlobalScope.thread());
 }
 
 void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* thread)
@@ -103,7 +103,7 @@ void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* th
     std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
 
     if (WorkerDebuggerAgent* agent = workerDebuggerAgents().get(thread))
-        agent->m_scriptDebugServer.interruptAndRunTask(std::make_unique<RunInspectorCommandsTask>(thread, agent->m_inspectedWorkerGlobalScope));
+        agent->m_scriptDebugServer.interruptAndRunTask(std::make_unique<RunInspectorCommandsTask>(thread, &agent->m_inspectedWorkerGlobalScope));
 }
 
 void WorkerDebuggerAgent::startListeningScriptDebugServer()
@@ -118,7 +118,7 @@ void WorkerDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDestroyed)
 
 void WorkerDebuggerAgent::breakpointActionLog(JSC::ExecState*, const String& message)
 {
-    m_inspectedWorkerGlobalScope->addConsoleMessage(MessageSource::JS, MessageLevel::Log, message);
+    m_inspectedWorkerGlobalScope.addConsoleMessage(MessageSource::JS, MessageLevel::Log, message);
 }
 
 WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
@@ -133,7 +133,7 @@ InjectedScript WorkerDebuggerAgent::injectedScriptForEval(ErrorString& error, co
         return InjectedScript();
     }
 
-    JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_inspectedWorkerGlobalScope);
+    JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(&m_inspectedWorkerGlobalScope);
     return injectedScriptManager().injectedScriptFor(scriptState);
 }
 

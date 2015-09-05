@@ -36,7 +36,7 @@ namespace Inspector {
 
 class JSGlobalObjectRuntimeAgent final : public InspectorRuntimeAgent {
 public:
-    JSGlobalObjectRuntimeAgent(InjectedScriptManager&, JSC::JSGlobalObject&);
+    JSGlobalObjectRuntimeAgent(JSAgentContext&);
 
     virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(DisconnectReason) override;

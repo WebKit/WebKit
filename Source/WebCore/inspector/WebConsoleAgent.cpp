@@ -41,8 +41,8 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WebConsoleAgent::WebConsoleAgent(WebInjectedScriptManager& injectedScriptManager)
-    : InspectorConsoleAgent(injectedScriptManager)
+WebConsoleAgent::WebConsoleAgent(AgentContext& context)
+    : InspectorConsoleAgent(context)
 {
 }
 
@@ -71,7 +71,7 @@ void WebConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier, const
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
         return;
 
-    if (m_frontendDispatcher && m_monitoringXHREnabled) {
+    if (m_monitoringXHREnabled) {
         String message = "XHR finished loading: \"" + url + "\".";
         addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Debug, message, sendURL, sendLineNumber, sendColumnNumber, nullptr, requestIdentifier));
     }

@@ -28,8 +28,8 @@
 
 namespace Inspector {
 
-JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent(InjectedScriptManager& injectedScriptManager)
-    : InspectorConsoleAgent(injectedScriptManager)
+JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent(AgentContext& context)
+    : InspectorConsoleAgent(context)
 {
 }
 

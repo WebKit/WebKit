@@ -44,7 +44,7 @@ class WorkerDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerDebuggerAgent(Inspector::InjectedScriptManager&, InstrumentingAgents&, WorkerGlobalScope*);
+    WorkerDebuggerAgent(WorkerAgentContext&);
     virtual ~WorkerDebuggerAgent();
 
     static const char* debuggerTaskMode;
@@ -61,7 +61,7 @@ public:
 
 private:
     WorkerScriptDebugServer m_scriptDebugServer;
-    WorkerGlobalScope* m_inspectedWorkerGlobalScope { nullptr };
+    WorkerGlobalScope& m_inspectedWorkerGlobalScope;
 };
 
 } // namespace WebCore

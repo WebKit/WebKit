@@ -33,14 +33,13 @@ namespace WebCore {
 class DOMWindow;
 class ResourceError;
 class ResourceResponse;
-class WebInjectedScriptManager;
 typedef String ErrorString;
 
 class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(WebConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebConsoleAgent(WebInjectedScriptManager&);
+    WebConsoleAgent(Inspector::AgentContext&);
     virtual ~WebConsoleAgent() { }
 
     virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) override final;

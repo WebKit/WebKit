@@ -26,6 +26,7 @@
 #ifndef WebDebuggerAgent_h
 #define WebDebuggerAgent_h
 
+#include "InspectorWebAgentBase.h"
 #include <inspector/agents/InspectorDebuggerAgent.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class WebDebuggerAgent : public Inspector::InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WebDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebDebuggerAgent(Inspector::InjectedScriptManager&, InstrumentingAgents&);
+    WebDebuggerAgent(WebAgentContext&);
     virtual ~WebDebuggerAgent() { }
 
 protected:

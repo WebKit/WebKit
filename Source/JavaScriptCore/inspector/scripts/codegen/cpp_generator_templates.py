@@ -100,7 +100,7 @@ protected:
     BackendDispatcherHeaderDomainDispatcherDeclaration = (
     """${classAndExportMacro} ${domainName}BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
-    static Ref<${domainName}BackendDispatcher> create(BackendDispatcher*, ${domainName}BackendDispatcherHandler*);
+    static Ref<${domainName}BackendDispatcher> create(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
     virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 ${commandDeclarations}
 private:
@@ -168,9 +168,9 @@ ${dispatchCases}
 }""")
 
     BackendDispatcherImplementationDomainConstructor = (
-    """Ref<${domainName}BackendDispatcher> ${domainName}BackendDispatcher::create(BackendDispatcher* backendDispatcher, ${domainName}BackendDispatcherHandler* agent)
+    """Ref<${domainName}BackendDispatcher> ${domainName}BackendDispatcher::create(BackendDispatcher& backendDispatcher, ${domainName}BackendDispatcherHandler* agent)
 {
-    return adoptRef(*new ${domainName}BackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(*new ${domainName}BackendDispatcher(backendDispatcher, agent));
 }
 
 ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher& backendDispatcher, ${domainName}BackendDispatcherHandler* agent)
@@ -204,10 +204,10 @@ ${outParameterAssignments}
     FrontendDispatcherDomainDispatcherDeclaration = (
 """${classAndExportMacro} ${domainName}FrontendDispatcher {
 public:
-    ${domainName}FrontendDispatcher(FrontendRouter* frontendRouter) : m_frontendRouter(frontendRouter) { }
+    ${domainName}FrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
 ${eventDeclarations}
 private:
-    FrontendRouter* m_frontendRouter;
+    FrontendRouter& m_frontendRouter;
 };""")
 
     ProtocolObjectBuilderDeclarationPrelude = (

@@ -85,19 +85,36 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
-    auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(*m_injectedScriptManager, &workerGlobalScope);
+    AgentContext baseContext = {
+        *this,
+        *m_injectedScriptManager,
+        m_frontendRouter.get(),
+        m_backendDispatcher.get()
+    };
+
+    WebAgentContext webContext = {
+        baseContext,
+        m_instrumentingAgents.get()
+    };
+
+    WorkerAgentContext workerContext = {
+        webContext,
+        workerGlobalScope,
+    };
+
+    auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(workerContext);
     m_runtimeAgent = runtimeAgent.get();
     m_instrumentingAgents->setWorkerRuntimeAgent(m_runtimeAgent);
     m_agents.append(WTF::move(runtimeAgent));
 
-    auto consoleAgent = std::make_unique<WorkerConsoleAgent>(*m_injectedScriptManager);
+    auto consoleAgent = std::make_unique<WorkerConsoleAgent>(workerContext);
     m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
 
-    auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(*m_injectedScriptManager, m_instrumentingAgents.get(), &workerGlobalScope);
+    auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(workerContext);
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(WTF::move(debuggerAgent));
 
-    m_agents.append(std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), nullptr, InspectorTimelineAgent::WorkerInspector, nullptr));
+    m_agents.append(std::make_unique<InspectorTimelineAgent>(workerContext, nullptr, InspectorTimelineAgent::WorkerInspector, nullptr));
     m_agents.append(WTF::move(consoleAgent));
 
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {

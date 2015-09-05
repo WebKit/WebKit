@@ -90,11 +90,8 @@ InspectorTimelineAgent::~InspectorTimelineAgent()
 {
 }
 
-void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::TimelineFrontendDispatcher>(frontendRouter);
-    m_backendDispatcher = Inspector::TimelineBackendDispatcher::create(backendDispatcher, this);
-
     m_instrumentingAgents.setPersistentInspectorTimelineAgent(this);
 
     if (m_scriptDebugServer)
@@ -103,9 +100,6 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRout
 
 void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
-    m_frontendDispatcher = nullptr;
-    m_backendDispatcher = nullptr;
-
     m_instrumentingAgents.setPersistentInspectorTimelineAgent(nullptr);
 
     if (reason != Inspector::DisconnectReason::InspectedTargetDestroyed) {
@@ -185,8 +179,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     m_runLoopNestingLevel = 1;
 #endif
 
-    if (m_frontendDispatcher)
-        m_frontendDispatcher->recordingStarted(timestamp());
+    m_frontendDispatcher->recordingStarted(timestamp());
 }
 
 void InspectorTimelineAgent::internalStop()
@@ -214,8 +207,7 @@ void InspectorTimelineAgent::internalStop()
     m_enabled = false;
     m_startedComposite = false;
 
-    if (m_frontendDispatcher)
-        m_frontendDispatcher->recordingStopped(timestamp());
+    m_frontendDispatcher->recordingStopped(timestamp());
 }
 
 double InspectorTimelineAgent::timestamp()
@@ -730,8 +722,10 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent, InspectorType type, InspectorClient* client)
-    : InspectorAgentBase(ASCIILiteral("Timeline"), instrumentingAgents)
+InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorType type, InspectorClient* client)
+    : InspectorAgentBase(ASCIILiteral("Timeline"), context)
+    , m_frontendDispatcher(std::make_unique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
     , m_client(client)
     , m_inspectorType(type)
@@ -748,9 +742,6 @@ void InspectorTimelineAgent::appendRecord(RefPtr<InspectorObject>&& data, Timeli
 
 void InspectorTimelineAgent::sendEvent(RefPtr<InspectorObject>&& event)
 {
-    if (!m_frontendDispatcher)
-        return;
-
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
     auto recordChecked = BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTF::move(event));
     m_frontendDispatcher->eventRecorded(WTF::move(recordChecked));
@@ -782,11 +773,6 @@ void InspectorTimelineAgent::localToPageQuad(const RenderObject& renderer, const
     quad->setP2(frameView.contentsToRootView(roundedIntPoint(absolute.p2())));
     quad->setP3(frameView.contentsToRootView(roundedIntPoint(absolute.p3())));
     quad->setP4(frameView.contentsToRootView(roundedIntPoint(absolute.p4())));
-}
-
-Page* InspectorTimelineAgent::page()
-{
-    return m_pageAgent ? m_pageAgent->page() : nullptr;
 }
 
 } // namespace WebCore

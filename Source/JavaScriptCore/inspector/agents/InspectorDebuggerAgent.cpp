@@ -56,9 +56,11 @@ static String objectGroupForBreakpointAction(const ScriptBreakpointAction& actio
     return makeString(objectGroup, String::number(action.identifier));
 }
 
-InspectorDebuggerAgent::InspectorDebuggerAgent(InjectedScriptManager& injectedScriptManager)
+InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Debugger"))
-    , m_injectedScriptManager(injectedScriptManager)
+    , m_injectedScriptManager(context.injectedScriptManager)
+    , m_frontendDispatcher(std::make_unique<DebuggerFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(DebuggerBackendDispatcher::create(context.backendDispatcher, this))
     , m_continueToLocationBreakpointID(JSC::noBreakpointID)
 {
     // FIXME: make breakReason optional so that there was no need to init it with "other".
@@ -69,17 +71,12 @@ InspectorDebuggerAgent::~InspectorDebuggerAgent()
 {
 }
 
-void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
+void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
-    m_frontendDispatcher = std::make_unique<DebuggerFrontendDispatcher>(frontendRouter);
-    m_backendDispatcher = DebuggerBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorDebuggerAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
-    m_frontendDispatcher = nullptr;
-    m_backendDispatcher = nullptr;
-
     bool skipRecompile = reason == DisconnectReason::InspectedTargetDestroyed;
     disable(skipRecompile);
 }
@@ -799,8 +796,7 @@ void InspectorDebuggerAgent::didClearGlobalObject()
     // pages have what breakpoints, as the mapping is only sent to DebuggerAgent once.
     clearDebuggerBreakpointState();
 
-    if (m_frontendDispatcher)
-        m_frontendDispatcher->globalObjectCleared();
+    m_frontendDispatcher->globalObjectCleared();
 }
 
 bool InspectorDebuggerAgent::assertPaused(ErrorString& errorString)

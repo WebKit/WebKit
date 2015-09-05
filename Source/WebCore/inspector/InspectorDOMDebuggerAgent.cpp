@@ -60,8 +60,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents& instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
-    : InspectorAgentBase(ASCIILiteral("DOMDebugger"), instrumentingAgents)
+InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
+    : InspectorAgentBase(ASCIILiteral("DOMDebugger"), context)
+    , m_backendDispatcher(Inspector::DOMDebuggerBackendDispatcher::create(context.backendDispatcher, this))
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
 {
@@ -101,15 +102,12 @@ void InspectorDOMDebuggerAgent::disable()
     clear();
 }
 
-void InspectorDOMDebuggerAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorDOMDebuggerAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
-    m_backendDispatcher = Inspector::DOMDebuggerBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    m_backendDispatcher = nullptr;
-
     disable();
 }
 

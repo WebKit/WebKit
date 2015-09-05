@@ -32,6 +32,7 @@
 #ifndef PageRuntimeAgent_h
 #define PageRuntimeAgent_h
 
+#include "InspectorWebAgentBase.h"
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/agents/InspectorRuntimeAgent.h>
 
@@ -54,7 +55,7 @@ typedef String ErrorString;
 class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageRuntimeAgent(Inspector::InjectedScriptManager&, Page*, InspectorPageAgent*);
+    PageRuntimeAgent(PageAgentContext&, InspectorPageAgent*);
     virtual ~PageRuntimeAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -77,7 +78,7 @@ private:
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
     InspectorPageAgent* m_pageAgent;
 
-    Page* m_inspectedPage;
+    Page& m_inspectedPage;
 
     bool m_mainWorldContextCreated { false };
 };

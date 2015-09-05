@@ -36,8 +36,8 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WorkerConsoleAgent::WorkerConsoleAgent(WebInjectedScriptManager& injectedScriptManager)
-    : WebConsoleAgent(injectedScriptManager)
+WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context)
+    : WebConsoleAgent(context)
 {
 }
 

@@ -37,7 +37,7 @@ class JSGlobalObjectDebuggerAgent final : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JSGlobalObjectDebuggerAgent(InjectedScriptManager&, JSC::JSGlobalObject&, InspectorConsoleAgent*);
+    JSGlobalObjectDebuggerAgent(JSAgentContext&, InspectorConsoleAgent*);
     virtual ~JSGlobalObjectDebuggerAgent() { }
 
     virtual JSGlobalObjectScriptDebugServer& scriptDebugServer() override { return m_scriptDebugServer; }

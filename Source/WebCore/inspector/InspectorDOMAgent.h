@@ -31,7 +31,6 @@
 #define InspectorDOMAgent_h
 
 #include "EventTarget.h"
-#include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
 #include "RenderLayer.h"
 #include "Timer.h"
@@ -67,7 +66,6 @@ class InspectorOverlay;
 class InspectorPageAgent;
 class HitTestResult;
 class HTMLElement;
-class InstrumentingAgents;
 class NameNodeMap;
 class Node;
 class RevalidateStyleAttributeTask;
@@ -104,7 +102,7 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    InspectorDOMAgent(InstrumentingAgents&, InspectorPageAgent*, Inspector::InjectedScriptManager&, InspectorOverlay*);
+    InspectorDOMAgent(WebAgentContext&, InspectorPageAgent*, InspectorOverlay*);
     virtual ~InspectorDOMAgent();
 
     static String toErrorString(const ExceptionCode&);
@@ -247,9 +245,9 @@ private:
 
     void innerHighlightQuad(std::unique_ptr<FloatQuad>, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* usePageCoordinates);
 
+    Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent { nullptr };
 
     InspectorOverlay* m_overlay { nullptr };

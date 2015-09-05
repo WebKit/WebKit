@@ -56,7 +56,7 @@ class Frame;
 class Frontend;
 class InspectorClient;
 class InspectorOverlay;
-class InstrumentingAgents;
+class MainFrame;
 class URL;
 class Page;
 class RenderObject;
@@ -69,7 +69,7 @@ class InspectorPageAgent final : public InspectorAgentBase, public Inspector::Pa
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorPageAgent(InstrumentingAgents&, Page*, InspectorClient*, InspectorOverlay*);
+    InspectorPageAgent(PageAgentContext&, InspectorClient*, InspectorOverlay*);
 
     enum ResourceType {
         DocumentResource,
@@ -144,8 +144,8 @@ public:
     virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // Cross-agents API
-    Page* page() { return m_page; }
-    Frame* mainFrame();
+    Page& page() { return m_page; }
+    MainFrame& mainFrame();
     String createIdentifier();
     Frame* frameForId(const String& frameId);
     WEBCORE_EXPORT String frameId(Frame*);
@@ -171,7 +171,7 @@ private:
     std::unique_ptr<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::PageBackendDispatcher> m_backendDispatcher;
 
-    Page* m_page { nullptr };
+    Page& m_page;
     InspectorClient* m_client { nullptr };
     InspectorOverlay* m_overlay { nullptr };
 

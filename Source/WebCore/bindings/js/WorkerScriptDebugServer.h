@@ -40,7 +40,7 @@ class WorkerGlobalScope;
 class WorkerScriptDebugServer final : public Inspector::ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
-    WorkerScriptDebugServer(WorkerGlobalScope*, const String&);
+    WorkerScriptDebugServer(WorkerGlobalScope&, const String&);
     ~WorkerScriptDebugServer() { }
 
     virtual void recompileAllJSFunctions() override;
@@ -58,7 +58,7 @@ private:
     virtual bool isContentScript(JSC::ExecState*) const override { return false; }
     virtual void reportException(JSC::ExecState*, JSC::Exception*) const override;
 
-    WorkerGlobalScope* m_workerGlobalScope;
+    WorkerGlobalScope& m_workerGlobalScope;
     ListenerSet m_listeners;
     String m_debuggerTaskMode;
 };

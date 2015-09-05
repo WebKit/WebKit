@@ -55,7 +55,6 @@ class Frame;
 class HTTPHeaderMap;
 class InspectorClient;
 class InspectorPageAgent;
-class InstrumentingAgents;
 class NetworkResourcesData;
 class Page;
 class ResourceError;
@@ -76,7 +75,7 @@ typedef String ErrorString;
 class InspectorResourceAgent final : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorResourceAgent(InstrumentingAgents&, InspectorPageAgent*, InspectorClient*);
+    InspectorResourceAgent(WebAgentContext&, InspectorPageAgent*, InspectorClient*);
     virtual ~InspectorResourceAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;

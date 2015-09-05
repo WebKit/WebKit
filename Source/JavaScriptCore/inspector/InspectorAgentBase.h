@@ -29,10 +29,33 @@
 
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace Inspector {
 
 class BackendDispatcher;
 class FrontendRouter;
+class InjectedScriptManager;
+class InspectorEnvironment;
+
+struct AgentContext {
+    InspectorEnvironment& environment;
+    InjectedScriptManager& injectedScriptManager;
+    FrontendRouter& frontendRouter;
+    BackendDispatcher& backendDispatcher;
+};
+
+struct JSAgentContext : public AgentContext {
+    JSAgentContext(AgentContext& context, JSC::JSGlobalObject& globalObject)
+        : AgentContext(context)
+        , inspectedGlobalObject(globalObject)
+    {
+    }
+
+    JSC::JSGlobalObject& inspectedGlobalObject;
+};
 
 enum class DisconnectReason {
     InspectedTargetDestroyed,

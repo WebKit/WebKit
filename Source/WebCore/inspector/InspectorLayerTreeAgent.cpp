@@ -46,8 +46,10 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents& instrumentingAgents)
-    : InspectorAgentBase(ASCIILiteral("LayerTree"), instrumentingAgents)
+InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
+    : InspectorAgentBase(ASCIILiteral("LayerTree"), context)
+    , m_frontendDispatcher(std::make_unique<Inspector::LayerTreeFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(Inspector::LayerTreeBackendDispatcher::create(context.backendDispatcher, this))
 {
 }
 
@@ -56,17 +58,12 @@ InspectorLayerTreeAgent::~InspectorLayerTreeAgent()
     reset();
 }
 
-void InspectorLayerTreeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorLayerTreeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::LayerTreeFrontendDispatcher>(frontendRouter);
-    m_backendDispatcher = Inspector::LayerTreeBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorLayerTreeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    m_frontendDispatcher = nullptr;
-    m_backendDispatcher = nullptr;
-
     ErrorString unused;
     disable(unused);
 }

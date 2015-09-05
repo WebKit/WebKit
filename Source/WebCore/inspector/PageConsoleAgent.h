@@ -32,6 +32,7 @@
 #ifndef PageConsoleAgent_h
 #define PageConsoleAgent_h
 
+#include "InspectorWebAgentBase.h"
 #include "WebConsoleAgent.h"
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class PageConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageConsoleAgent(WebInjectedScriptManager&, InspectorDOMAgent*);
+    PageConsoleAgent(WebAgentContext&, InspectorDOMAgent*);
     virtual ~PageConsoleAgent() { }
 
 private:

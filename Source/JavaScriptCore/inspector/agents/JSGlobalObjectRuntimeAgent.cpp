@@ -34,24 +34,20 @@ using namespace JSC;
 
 namespace Inspector {
 
-JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(InjectedScriptManager& injectedScriptManager, JSGlobalObject& globalObject)
-    : InspectorRuntimeAgent(injectedScriptManager)
-    , m_globalObject(globalObject)
+JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(JSAgentContext& context)
+    : InspectorRuntimeAgent(context)
+    , m_frontendDispatcher(std::make_unique<RuntimeFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(RuntimeBackendDispatcher::create(context.backendDispatcher, this))
+    , m_globalObject(context.inspectedGlobalObject)
 {
 }
 
-void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
+void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
-    m_frontendDispatcher = std::make_unique<RuntimeFrontendDispatcher>(frontendRouter);
-    m_backendDispatcher = RuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
+void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    m_frontendDispatcher = nullptr;
-    m_backendDispatcher = nullptr;
-
-    InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }
 
 VM& JSGlobalObjectRuntimeAgent::globalVM()

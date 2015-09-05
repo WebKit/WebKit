@@ -44,8 +44,8 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope* context, const String& mode)
-    : ScriptDebugServer(context->script()->vm(), true)
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope& context, const String& mode)
+    : ScriptDebugServer(context.script()->vm(), true)
     , m_workerGlobalScope(context)
     , m_debuggerTaskMode(mode)
 {
@@ -60,7 +60,7 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
     m_listeners.add(listener);
 
     if (wasEmpty) {
-        m_workerGlobalScope->script()->attachDebugger(this);
+        m_workerGlobalScope.script()->attachDebugger(this);
         recompileAllJSFunctions();
     }
 }
@@ -73,8 +73,8 @@ void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener, bool
     m_listeners.remove(listener);
 
     if (m_listeners.isEmpty()) {
-        if (m_workerGlobalScope->script())
-            m_workerGlobalScope->script()->detachDebugger(this);
+        if (m_workerGlobalScope.script())
+            m_workerGlobalScope.script()->detachDebugger(this);
         if (!skipRecompile)
             recompileAllJSFunctions();
     }
@@ -92,7 +92,7 @@ void WorkerScriptDebugServer::runEventLoopWhilePaused()
 
     MessageQueueWaitResult result;
     do {
-        result = m_workerGlobalScope->thread().runLoop().runInMode(m_workerGlobalScope, m_debuggerTaskMode);
+        result = m_workerGlobalScope.thread().runLoop().runInMode(&m_workerGlobalScope, m_debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }

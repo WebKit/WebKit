@@ -162,25 +162,22 @@ private:
 
 } // namespace
 
-InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents& instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
-    : InspectorAgentBase(ASCIILiteral("Network"), instrumentingAgents)
+InspectorResourceAgent::InspectorResourceAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorClient* client)
+    : InspectorAgentBase(ASCIILiteral("Network"), context)
+    , m_frontendDispatcher(std::make_unique<Inspector::NetworkFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(Inspector::NetworkBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
     , m_client(client)
     , m_resourcesData(std::make_unique<NetworkResourcesData>())
 {
 }
 
-void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter* frontendRouter, Inspector::BackendDispatcher* backendDispatcher)
+void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
-    m_frontendDispatcher = std::make_unique<Inspector::NetworkFrontendDispatcher>(frontendRouter);
-    m_backendDispatcher = Inspector::NetworkBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorResourceAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    m_frontendDispatcher = nullptr;
-    m_backendDispatcher = nullptr;
-
     ErrorString unused;
     disable(unused);
 }
@@ -602,8 +599,6 @@ void InspectorResourceAgent::enable(ErrorString&)
 
 void InspectorResourceAgent::enable()
 {
-    if (!m_frontendDispatcher)
-        return;
     m_enabled = true;
     m_instrumentingAgents.setInspectorResourceAgent(this);
 }

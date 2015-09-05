@@ -57,9 +57,9 @@ static bool asBool(const bool* const b)
     return b ? *b : false;
 }
 
-InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager& injectedScriptManager)
+InspectorRuntimeAgent::InspectorRuntimeAgent(AgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Runtime"))
-    , m_injectedScriptManager(injectedScriptManager)
+    , m_injectedScriptManager(context.injectedScriptManager)
 {
 }
 

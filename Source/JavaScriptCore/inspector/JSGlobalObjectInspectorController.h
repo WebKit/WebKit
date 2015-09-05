@@ -103,13 +103,13 @@ public:
     virtual void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient* client) override { m_augmentingClient = client; }
 
     virtual const FrontendRouter& frontendRouter() const override { return m_frontendRouter.get(); }
+    virtual BackendDispatcher& backendDispatcher() override { return m_backendDispatcher.get(); }
     virtual void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) override;
 #endif
 
 private:
     void appendAPIBacktrace(ScriptCallStack* callStack);
 
-    JSC::JSGlobalObject& m_globalObject;
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
     Ref<WTF::Stopwatch> m_executionStopwatch;
@@ -124,6 +124,10 @@ private:
 
     bool m_includeNativeCallStackWithExceptions { false };
     bool m_isAutomaticInspection { false };
+
+#if ENABLE(REMOTE_INSPECTOR)
+    JSC::JSGlobalObject& m_globalObject;
+#endif
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     AugmentableInspectorControllerClient* m_augmentingClient { nullptr };

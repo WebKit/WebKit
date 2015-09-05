@@ -51,7 +51,6 @@ class CSSStyleSheet;
 class ChangeRegionOversetTask;
 class Document;
 class Element;
-class InstrumentingAgents;
 class Node;
 class NodeList;
 class StyleResolver;
@@ -82,7 +81,7 @@ public:
         ContentSecurityPolicy* m_contentSecurityPolicy;
     };
 
-    InspectorCSSAgent(InstrumentingAgents&, InspectorDOMAgent*);
+    InspectorCSSAgent(WebAgentContext&, InspectorDOMAgent*);
     virtual ~InspectorCSSAgent();
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);

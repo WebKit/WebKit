@@ -45,7 +45,6 @@ namespace WebCore {
 
 class Frame;
 class InspectorPageAgent;
-class InstrumentingAgents;
 class Page;
 class SecurityOrigin;
 class Storage;
@@ -55,7 +54,7 @@ typedef String ErrorString;
 class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspector::DOMStorageBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorDOMStorageAgent(InstrumentingAgents&, InspectorPageAgent*);
+    InspectorDOMStorageAgent(WebAgentContext&, InspectorPageAgent*);
     virtual ~InspectorDOMStorageAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;

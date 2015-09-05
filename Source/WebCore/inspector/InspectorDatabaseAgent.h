@@ -44,14 +44,13 @@ namespace WebCore {
 
 class Database;
 class InspectorDatabaseResource;
-class InstrumentingAgents;
 
 typedef String ErrorString;
 
 class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector::DatabaseBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorDatabaseAgent(InstrumentingAgents&);
+    explicit InspectorDatabaseAgent(WebAgentContext&);
     virtual ~InspectorDatabaseAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;

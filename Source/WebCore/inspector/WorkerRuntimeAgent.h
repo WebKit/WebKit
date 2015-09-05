@@ -32,6 +32,7 @@
 #ifndef WorkerRuntimeAgent_h
 #define WorkerRuntimeAgent_h
 
+#include "InspectorWebAgentBase.h"
 #include <inspector/agents/InspectorRuntimeAgent.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ typedef String ErrorString;
 
 class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
 public:
-    WorkerRuntimeAgent(Inspector::InjectedScriptManager&, WorkerGlobalScope*);
+    WorkerRuntimeAgent(WorkerAgentContext&);
     virtual ~WorkerRuntimeAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -56,9 +57,10 @@ private:
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
-    RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
 
-    WorkerGlobalScope* m_workerGlobalScope { nullptr };
+    RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
+    WorkerGlobalScope& m_workerGlobalScope;
+
     bool m_paused { false };
 };
 

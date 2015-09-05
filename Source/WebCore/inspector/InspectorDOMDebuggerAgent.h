@@ -47,7 +47,6 @@ namespace WebCore {
 
 class Element;
 class InspectorDOMAgent;
-class InstrumentingAgents;
 class Node;
 
 typedef String ErrorString;
@@ -56,7 +55,7 @@ class InspectorDOMDebuggerAgent final : public InspectorAgentBase, public Inspec
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorDOMDebuggerAgent(InstrumentingAgents&, InspectorDOMAgent*, Inspector::InspectorDebuggerAgent*);
+    InspectorDOMDebuggerAgent(WebAgentContext&, InspectorDOMAgent*, Inspector::InspectorDebuggerAgent*);
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API

@@ -119,6 +119,6 @@ class CppFrontendDispatcherImplementationGenerator(Generator):
             lines.append('    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));')
 
         lines.append('')
-        lines.append('    m_frontendRouter->sendEvent(jsonMessage->toJSONString());')
+        lines.append('    m_frontendRouter.sendEvent(jsonMessage->toJSONString());')
         lines.append('}')
         return "\n".join(lines)

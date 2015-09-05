@@ -32,9 +32,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WebDebuggerAgent::WebDebuggerAgent(InjectedScriptManager& injectedScriptManager, InstrumentingAgents& instrumentingAgents)
-    : InspectorDebuggerAgent(injectedScriptManager)
-    , m_instrumentingAgents(instrumentingAgents)
+WebDebuggerAgent::WebDebuggerAgent(WebAgentContext& context)
+    : InspectorDebuggerAgent(context)
+    , m_instrumentingAgents(context.instrumentingAgents)
 {
 }
 

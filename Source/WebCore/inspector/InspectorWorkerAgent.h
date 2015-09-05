@@ -43,7 +43,6 @@ class WorkerFrontendDispatcher;
 }
 
 namespace WebCore {
-class InstrumentingAgents;
 class URL;
 class WorkerGlobalScopeProxy;
 
@@ -52,7 +51,7 @@ typedef String ErrorString;
 class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::WorkerBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorWorkerAgent(InstrumentingAgents&);
+    explicit InspectorWorkerAgent(WebAgentContext&);
     virtual ~InspectorWorkerAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;

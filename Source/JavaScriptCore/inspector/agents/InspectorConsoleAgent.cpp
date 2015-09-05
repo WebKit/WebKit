@@ -43,9 +43,11 @@ namespace Inspector {
 static const unsigned maximumConsoleMessages = 1000;
 static const int expireConsoleMessagesStep = 100;
 
-InspectorConsoleAgent::InspectorConsoleAgent(InjectedScriptManager& injectedScriptManager)
+InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Console"))
-    , m_injectedScriptManager(injectedScriptManager)
+    , m_injectedScriptManager(context.injectedScriptManager)
+    , m_frontendDispatcher(std::make_unique<ConsoleFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(ConsoleBackendDispatcher::create(context.backendDispatcher, this))
 {
 }
 
@@ -53,17 +55,12 @@ InspectorConsoleAgent::~InspectorConsoleAgent()
 {
 }
 
-void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
+void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
-    m_frontendDispatcher = std::make_unique<ConsoleFrontendDispatcher>(frontendRouter);
-    m_backendDispatcher = ConsoleBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorConsoleAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    m_frontendDispatcher = nullptr;
-    m_backendDispatcher = nullptr;
-
     String errorString;
     disable(errorString);
 }
@@ -101,7 +98,7 @@ void InspectorConsoleAgent::clearMessages(ErrorString&)
 
     m_injectedScriptManager.releaseObjectGroup(ASCIILiteral("console"));
 
-    if (m_frontendDispatcher && m_enabled)
+    if (m_enabled)
         m_frontendDispatcher->messagesCleared();
 }
 
@@ -203,16 +200,16 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
 
     if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
-        if (m_frontendDispatcher && m_enabled)
+        if (m_enabled)
             m_previousMessage->updateRepeatCountInConsole(*m_frontendDispatcher);
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(WTF::move(consoleMessage));
-        if (m_frontendDispatcher && m_enabled)
+        if (m_enabled)
             m_previousMessage->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, true);
     }
 
-    if (!m_frontendDispatcher && m_consoleMessages.size() >= maximumConsoleMessages) {
+    if (m_consoleMessages.size() >= maximumConsoleMessages) {
         m_expiredConsoleMessageCount += expireConsoleMessagesStep;
         m_consoleMessages.remove(0, expireConsoleMessagesStep);
     }

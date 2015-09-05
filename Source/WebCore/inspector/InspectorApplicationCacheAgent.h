@@ -41,7 +41,6 @@ namespace WebCore {
 
 class Frame;
 class InspectorPageAgent;
-class InstrumentingAgents;
 class Page;
 class ResourceResponse;
 
@@ -50,7 +49,7 @@ typedef String ErrorString;
 class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::ApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorApplicationCacheAgent(InstrumentingAgents&, InspectorPageAgent*);
+    InspectorApplicationCacheAgent(WebAgentContext&, InspectorPageAgent*);
     virtual ~InspectorApplicationCacheAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
