@@ -1,3 +1,16 @@
+2015-09-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        [iOS] Need a test for bug #145539: Uploading an animated GIF from the
+        photo library uploads a JPEG
+        https://bugs.webkit.org/show_bug.cgi?id=148849
+
+        Reviewed by Daniel Bates.
+
+        * ManualTests/ios/image-file-uploads-as-original-type.html: Added.
+        On the Mac, file upload tests use EventSender::beginDragWithFiles. This
+        functionality doesn't exist on iOS, so we'll add a manual test.
+        This tests that the first few bytes of the selected file are "GIF".
+
 2015-09-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Follow-up patch for r189343.
