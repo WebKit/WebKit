@@ -1,3 +1,9 @@
+2015-09-04  Basile Clement  <basile_clement@apple.com>
+
+        Unreviewed, change my email address.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-09-04  Beth Dakin  <bdakin@apple.com>
 
         Should have a test to make sure links don't navigate after a cancelled force 
