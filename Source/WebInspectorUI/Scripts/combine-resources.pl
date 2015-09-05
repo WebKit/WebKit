@@ -1,5 +1,28 @@
 #!/usr/bin/perl -w
 
+# Copyright (C) 2015 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
 use strict;
 use Getopt::Long;
 use File::Basename;
@@ -42,11 +65,11 @@ our $headContents = $1;
 
 mkpath $outputDirectory;
 
-sub concatinateFiles($$$)
+sub concatenateFiles($$$)
 {
     my $filename = shift;
     my $tagExpression = shift;
-    my $concatinatedTag = shift;
+    my $concatenatedTag = shift;
     my $fileCount = 0;
 
     open OUT, ">", "$outputDirectory/$filename" or die "Can't open $outputDirectory/$filename: $!";
@@ -65,19 +88,19 @@ sub concatinateFiles($$$)
     # Don't use \s so we can control the newlines we consume.
     my $replacementExpression = "([\t ]*)" . $tagExpression . "[\t ]*\n+";
 
-    # Replace the first occurance with a token so we can inject the concatinated tag in the same place
+    # Replace the first occurance with a token so we can inject the concatenated tag in the same place
     # as the first file that got consolidated. This makes sure we preserve some order if there are other
     # items in the head that we didn't consolidate.
-    $headContents =~ s/$replacementExpression/$1%CONCATINATED%\n/i;
+    $headContents =~ s/$replacementExpression/$1%CONCATENATED%\n/i;
     $headContents =~ s/$replacementExpression//gi;
-    $headContents =~ s/%CONCATINATED%/$concatinatedTag/;
+    $headContents =~ s/%CONCATENATED%/$concatenatedTag/;
 }
 
 my $inputDirectoryPattern = "(?!External\/)[^\"]*";
 $inputDirectoryPattern = $inputDirectory . "\/[^\"]*" if $inputDirectory;
 
-concatinateFiles($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;
-concatinateFiles($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", "<script src=\"$outputScriptName\"></script>") if defined $outputScriptName;
+concatenateFiles($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;
+concatenateFiles($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", "<script src=\"$outputScriptName\"></script>") if defined $outputScriptName;
 
 $htmlContents =~ s/<head>.*<\/head>/<head>$headContents<\/head>/si;
 

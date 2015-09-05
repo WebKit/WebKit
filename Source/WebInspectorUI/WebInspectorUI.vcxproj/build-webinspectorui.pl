@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2014 Apple Inc.  All rights reserved.
+# Copyright (C) 2014, 2015 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -62,6 +62,7 @@ $ENV{'DERIVED_SOURCES_DIR'} = $DERIVED_SOURCES_DIR;
 
 $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'} = 'WebInspectorUI';
 
+$ENV{'COMBINE_TEST_RESOURCES'} = 'YES';
 if (($TARGET_BUILD_DIR =~ /Release/) || ($TARGET_BUILD_DIR =~ /Production/)) {
     $ENV{'COMBINE_INSPECTOR_RESOURCES'} = 'YES';
 } 

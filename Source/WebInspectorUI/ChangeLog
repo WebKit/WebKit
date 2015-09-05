@@ -1,3 +1,38 @@
+2015-09-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: combine Test.html resources to make tests run faster
+        https://bugs.webkit.org/show_bug.cgi?id=148726
+
+        Reviewed by Timothy Hatcher.
+
+        In an attempt to make inspector tests run faster, always combine resources
+        on the Test.html page. This cuts down from 110+ resource loads to 5 loads.
+
+        To avoid name clashes, add the 'Combined' suffix to files that would clash
+        with uncombined Test resources, and add the 'Test' prefix when combining
+        or minifying files that would clash with production minification. So, it
+        would be possible for Main.html and Test.html to have different minified
+        versions of CodeMirror or other external libraries if they use different
+        subsets.
+
+        Combining is unlikely to make debugging tests more difficult, since almost
+        all test code is marshalled and eval'd into existence anyway.
+
+        * Configurations/WebInspectorUIFramework.xcconfig:
+        * Scripts/combine-resources.pl: Drive-by spelling.
+        (concatenateFiles):
+        (concatinateFiles): Deleted.
+        * Scripts/copy-user-interface-resources-dryrun.rb:
+        * Scripts/copy-user-interface-resources.pl:
+
+            Drive-by spelling. Add a new code path for combining Test resources, which
+            doesn't require minification or handling CSS, images, or most externals.
+
+        * WebInspectorUI.vcxproj/build-webinspectorui.pl:
+
+            Always combine Test.html, but also ditto everything into place for
+            engineering builds.
+
 2015-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Test Runtime.saveResult and $n values
