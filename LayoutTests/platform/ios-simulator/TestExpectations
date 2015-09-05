@@ -2412,6 +2412,8 @@ fast/forms/file/input-file-directory-upload.html
 fast/forms/file/input-file-re-render.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 fast/forms/file/selected-files-from-history-state.html
+fast/forms/access-key-case-insensitive.html
+fast/forms/access-key-mutated.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/search-event-delay.html
 fast/forms/select/listbox-oninput-fired.html
