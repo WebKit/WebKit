@@ -67,7 +67,7 @@ ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     , m_reachedTerminalState(false)
     , m_notifiedLoadComplete(false)
     , m_cancellationStatus(NotCancelled)
-    , m_defersLoading(frame->page()->defersLoading())
+    , m_defersLoading(options.defersLoadingPolicy() == DefersLoadingPolicy::AllowDefersLoading && frame->page()->defersLoading())
     , m_options(options)
     , m_isQuickLookResource(false)
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -135,7 +135,8 @@ bool ResourceLoader::init(const ResourceRequest& r)
     }
 #endif
     
-    m_defersLoading = m_frame->page()->defersLoading();
+    m_defersLoading = m_options.defersLoadingPolicy() == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
+
     if (m_options.securityCheck() == DoSecurityCheck && !m_frame->document()->securityOrigin()->canDisplay(clientRequest.url())) {
         FrameLoader::reportLocalLoadFailed(m_frame.get(), clientRequest.url().string());
         releaseResources();
@@ -220,6 +221,9 @@ void ResourceLoader::start()
 
 void ResourceLoader::setDefersLoading(bool defers)
 {
+    if (m_options.defersLoadingPolicy() == DefersLoadingPolicy::DisallowDefersLoading)
+        return;
+
     m_defersLoading = defers;
     if (m_handle)
         m_handle->setDefersLoading(defers);

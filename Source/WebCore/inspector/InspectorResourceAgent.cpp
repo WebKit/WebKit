@@ -704,6 +704,7 @@ void InspectorResourceAgent::loadResource(ErrorString& errorString, const String
     ThreadableLoaderOptions options;
     options.setSendLoadCallbacks(SendCallbacks); // So we remove this from m_hiddenRequestIdentifiers on completion.
     options.setAllowCredentials(AllowStoredCredentials);
+    options.setDefersLoadingPolicy(DefersLoadingPolicy::DisallowDefersLoading); // So the request is never deferred.
     options.crossOriginRequestPolicy = AllowCrossOriginRequests;
 
     // InspectorThreadableLoaderClient deletes itself when the load completes.
@@ -714,8 +715,6 @@ void InspectorResourceAgent::loadResource(ErrorString& errorString, const String
         inspectorThreadableLoaderClient->didFailLoaderCreation();
         return;
     }
-
-    loader->setDefersLoading(false);
 
     // If the load already completed, inspectorThreadableLoaderClient will have been deleted and we will have already called the callback.
     if (!callback->isActive())
