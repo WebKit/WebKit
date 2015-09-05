@@ -156,9 +156,7 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ P
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
 webkit.org/b/135071 media/video-seek-with-negative-playback.html [ Pass Timeout ]
-webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Pass Failure Timeout Crash ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
-webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Timeout Crash ]
 webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
 webkit.org/b/139825 media/video-seek-past-end-paused.html [ Pass Timeout ]
 webkit.org/b/141084 http/tests/media/video-preload.html [ Pass Timeout ]
@@ -270,7 +268,6 @@ media/track/track-cue-rendering-horizontal.html [ Failure ]
 media/track/track-cue-rendering-on-resize.html [ Failure ]
 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 media/track/track-forced-subtitles-in-band.html [ Failure ]
-media/track/track-in-band-subtitles-too-large.html [ Failure ]
 media/video-aspect-ratio.html [ Failure ]
 media/video-background-tab-playback.html [ Failure ]
 media/video-controls-audiotracks-trackmenu.html [ Failure ]
@@ -291,7 +288,6 @@ media/video-display-toggle.html [ Failure ]
 media/video-empty-source.html [ Failure ]
 media/video-frame-accurate-seek.html [ Failure ]
 media/video-fullscreeen-only-controls.html [ Failure ]
-media/video-fullscreeen-only-playback.html [ Failure ]
 media/video-initially-hidden-volume-slider-up.html [ Failure ]
 media/video-load-require-user-gesture.html [ Failure ]
 media/video-muted.html [ Failure ]
@@ -322,6 +318,9 @@ media/video-controls-fullscreen-volume.html [ Timeout Failure ]
 media/video-remote-control-playpause.html [ Timeout Failure ]
 media/video-volume-slider-drag.html [ Timeout Failure ]
 media/volume-bar-empty-when-muted.html [ Timeout Failure ]
+
+webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Pass Failure Timeout Crash ]
+webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Timeout Crash ]
 
 ## --- End iOS media test failures ---
 
@@ -622,7 +621,6 @@ http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
 
 # Compositing tests that fail:
 compositing/regions/abs-transformed-dynamic-update.html [ ImageOnlyFailure ]
-compositing/regions/fixed-in-diff-named-flows-zIndex.html [ ImageOnlyFailure ]
 compositing/regions/fixed-in-named-flow-position-changed.html [ ImageOnlyFailure ]
 compositing/regions/fixed-in-named-flow-zIndex.html [ ImageOnlyFailure ]
 compositing/regions/inline-replaced-transformed-in-region.html [ ImageOnlyFailure ]
@@ -638,7 +636,6 @@ compositing/iframes/iframe-content-flipping.html [ Failure ]
 compositing/iframes/nested-iframe-scrolling.html [ Failure ]
 compositing/images/direct-image-object-fit.html [ Failure ]
 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
-compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Failure ]
 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Failure ]
 compositing/reflections/direct-image-object-fit-reflected.html [ Failure ]
 compositing/repaint/page-scale-repaint.html [ Failure ]
@@ -665,7 +662,6 @@ compositing/regions/video-in-overflow-region.html
 compositing/self-painting-layers.html
 compositing/self-painting-layers2.html
 compositing/video-page-visibility.html
-compositing/video/video-background-color.html
 compositing/video/video-object-fit.html
 compositing/video/video-poster.html
 compositing/video/video-reflection.html
@@ -1914,7 +1910,6 @@ fast/events/scale-and-scroll-body.html [ Failure ]
 fast/events/scale-and-scroll-iframe-body.html [ Failure ]
 fast/events/scale-and-scroll-iframe-window.html [ Failure ]
 fast/events/scroll-after-click-on-tab-index.html [ Failure ]
-fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 fast/events/scrollbar-double-click.html [ Failure ]
 fast/events/select-element.html [ Failure ]
 fast/events/selectionchange-user-initiated.html [ Failure ]
@@ -2633,7 +2628,6 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/dynamic/paused-event-dispatch.html
 fast/events/anchor-image-scrolled-x-y.html
 fast/events/autoscroll-should-not-stop-on-keypress.html [ Skip ]
-fast/events/constructors/media-key-event-constructor.html
 fast/events/input-image-scrolled-x-y.html
 fast/events/mouse-cursor-image-set.html
 fast/events/recorded-keydown-event.html
@@ -2971,8 +2965,6 @@ canvas/philip/tests/2d.imageData.put.unchanged.html [ Failure ]
 compositing/backing/form-controls-backing.html [ Failure ]
 compositing/fixed-with-fixed-layout.html [ Failure ]
 compositing/geometry/ancestor-overflow-change.html [ Failure ]
-compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
-compositing/layer-creation/fixed-overlap-extent.html [ Failure ]
 compositing/layer-creation/will-change-layer-creation.html [ Failure ]
 css3/scroll-snap/nested-elements.html [ Failure ]
 css3/scroll-snap/scroll-snap-coordinate.html [ Failure ]
@@ -3010,7 +3002,7 @@ fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 
-# Skip tests that timeout:
+# Skip tests that time out:
 compositing/video/video-clip-change-src.html [ Skip ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Skip ]
 compositing/images/content-image-change.html [ Skip ]
