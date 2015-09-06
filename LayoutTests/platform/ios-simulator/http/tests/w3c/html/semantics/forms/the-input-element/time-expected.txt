@@ -1,0 +1,36 @@
+Input Time
+
+
+PASS time element of default time value 
+PASS step attribute on default value check 
+PASS max  attribute on default value check 
+PASS min  attribute on default value check 
+PASS type attribute support on input element 
+PASS max attribute support on input element 
+PASS min attribute support on input element 
+PASS step attribute support on input element 
+PASS stepUp function support on input Element 
+PASS stepDown function support on input Element 
+PASS stepUp step value empty on default step value  
+PASS stepDown step value empty default step value 
+PASS stepUp on step value minus 
+PASS stepDown on step value minus 
+PASS stepUp on step value zero  
+PASS stepDown on step value zero  
+PASS stepUp on step value 24 hour 
+PASS stepDown on step value 24 hour  
+PASS stepUp on step value hour   
+PASS stepDown on step value hour  
+PASS stepUp on step value second  
+PASS stepDown on step value second  
+PASS stepUp on step value miri second  
+PASS stepDown on step value miri second  
+PASS stepUp argment 2 times 
+PASS stepDown argment 2 times 
+FAIL stepUp stop because it exceeds the maximum value InvalidStateError: DOM Exception 11
+FAIL stepDown Stop so lower than the minimum value InvalidStateError: DOM Exception 11
+FAIL stop at border on stepUp InvalidStateError: DOM Exception 11
+FAIL stop at border on stepDown InvalidStateError: DOM Exception 11
+FAIL  empty value of stepUp InvalidStateError: DOM Exception 11
+PASS set value on not time format value 
+

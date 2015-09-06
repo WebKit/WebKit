@@ -1,5 +1,34 @@
 2015-09-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, land iOS baselines for the newly imported W3C HTML tests.
+
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-reportValidity-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-validity-stepMismatch-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/constraints/form-validation-willValidate-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/textfieldselection/selection-not-application-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/color-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/date-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/datetime-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/datetime-local-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/input-textselection-01-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/month-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/time-2-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/time-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/type-change-state-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/valueMode-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-input-element/week-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-label-element/labelable-elements-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/forms/the-meter-element/meter-expected.txt: Added.
+        * platform/ios-simulator/http/tests/w3c/html/semantics/interfaces-expected.txt: Added.
+
+2015-09-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip new media tests on iOS.
 
         * platform/ios-simulator/TestExpectations:
