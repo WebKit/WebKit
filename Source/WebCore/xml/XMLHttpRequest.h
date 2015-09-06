@@ -114,8 +114,8 @@ public:
     Blob* responseBlob();
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
 #if ENABLE(XHR_TIMEOUT)
-    unsigned long timeout() const { return m_timeoutMilliseconds; }
-    void setTimeout(unsigned long timeout, ExceptionCode&);
+    unsigned timeout() const { return m_timeoutMilliseconds; }
+    void setTimeout(unsigned timeout, ExceptionCode&);
 #endif
 
     bool responseCacheIsValid() const { return m_responseCacheIsValid; }
@@ -216,9 +216,6 @@ private:
     String m_mimeTypeOverride;
     bool m_async;
     bool m_includeCredentials;
-#if ENABLE(XHR_TIMEOUT)
-    unsigned long m_timeoutMilliseconds;
-#endif
     RefPtr<Blob> m_responseBlob;
 
     RefPtr<ThreadableLoader> m_loader;
@@ -259,6 +256,12 @@ private:
 
     Timer m_resumeTimer;
     bool m_dispatchErrorOnResuming;
+
+#if ENABLE(XHR_TIMEOUT)
+    unsigned m_timeoutMilliseconds { 0 };
+    std::chrono::steady_clock::time_point m_sendingTime;
+    Timer m_timeoutTimer;
+#endif
 };
 
 } // namespace WebCore
