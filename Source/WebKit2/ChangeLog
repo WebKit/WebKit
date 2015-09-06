@@ -1,3 +1,15 @@
+2015-09-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Leak in WebContextInjectedBundleClient::getInjectedBundleInitializationUserData
+        https://bugs.webkit.org/show_bug.cgi?id=148769
+
+        Fix suggested by Zan Dobersek.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::getInjectedBundleInitializationUserData):
+
 2015-09-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: agents should send messages through FrontendRouter instead of FrontendChannel

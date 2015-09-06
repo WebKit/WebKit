@@ -57,7 +57,7 @@ PassRefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitial
     if (!m_client.getInjectedBundleInitializationUserData)
         return 0;
 
-    return toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(processPool), m_client.base.clientInfo));
+    return adoptRef(toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(processPool), m_client.base.clientInfo)));
 }
 
 } // namespace WebKit
