@@ -1,3 +1,0 @@
-
-FAIL MediaController events task source assert_array_equals: property 1, expected object "[object MediaController]" but got object "[object MediaController]"
-

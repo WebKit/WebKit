@@ -1,5 +1,16 @@
 2015-09-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop a few more newly imported W3C media tests that are flaky.
+
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState-expected.txt: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState.html: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-not-in-document-expected.txt: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-not-in-document.html: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/synchronising-multiple-media-elements/media-controllers/task-source-expected.txt: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/synchronising-multiple-media-elements/media-controllers/task-source.html: Removed.
+
+2015-09-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop a couple of newly imported W3C media tests as they are flaky.
 
         * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-removes-queued-error-event-expected.txt: Removed.
