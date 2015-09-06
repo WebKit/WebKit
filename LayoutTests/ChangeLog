@@ -1,5 +1,45 @@
 2015-09-06  Chris Dumez  <cdumez@apple.com>
 
+        dispatchEvent() should throw an InvalidStateError if the event's initialized flag is not set
+        https://bugs.webkit.org/show_bug.cgi?id=148800
+        <rdar://problem/22565782>
+        <rdar://problem/22565485>
+
+        Reviewed by Geoffrey Garen.
+
+        * dom/html/level2/events/dispatchEvent02-expected.txt:
+        * dom/html/level2/events/dispatchEvent03-expected.txt:
+        * dom/html/level2/events/dispatchEvent04-expected.txt:
+        * dom/html/level2/events/dispatchEvent05-expected.txt:
+        * dom/html/level2/events/dispatchEvent06-expected.txt:
+        * dom/html/level2/events/dispatchEvent07-expected.txt:
+        * dom/xhtml/level2/events/dispatchEvent02-expected.txt:
+        * dom/xhtml/level2/events/dispatchEvent03-expected.txt:
+        * dom/xhtml/level2/events/dispatchEvent04-expected.txt:
+        * dom/xhtml/level2/events/dispatchEvent05-expected.txt:
+        * dom/xhtml/level2/events/dispatchEvent06-expected.txt:
+        * dom/xhtml/level2/events/dispatchEvent07-expected.txt:
+        Rebaseline, those tests are outdated and their expected results no
+        longer matches the behavior of the latest DOM specification.
+
+        * fast/dom/DOMException/EventException-expected.txt: Removed.
+        * fast/dom/DOMException/EventException.html: Removed.
+        * fast/dom/DOMException/resources/EventException.js: Removed.
+        Drop this test we no longer throw an EventException in this case.
+
+        * fast/dom/Window/dispatchEvent-expected.txt:
+        Rebaseline.
+
+        * fast/events/dispatch-event-being-dispatched-expected.txt:
+        * fast/events/dispatch-event-being-dispatched.html:
+        Fix the test to expect the new exception types.
+
+        * http/tests/w3c/dom/events/Event-type-empty-expected.txt:
+        * http/tests/w3c/dom/events/EventTarget-dispatchEvent-expected.txt:
+        Rebaseline.
+
+2015-09-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop a few more newly imported W3C media tests that are flaky.
 
         * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState-expected.txt: Removed.

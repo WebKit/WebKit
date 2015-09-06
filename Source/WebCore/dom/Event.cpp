@@ -56,7 +56,8 @@ Event::Event()
 }
 
 Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
-    : m_type(eventType)
+    : m_isInitialized(true)
+    , m_type(eventType)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
     , m_propagationStopped(false)
@@ -71,7 +72,8 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
 }
 
 Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, double timestamp)
-    : m_type(eventType)
+    : m_isInitialized(true)
+    , m_type(eventType)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
     , m_propagationStopped(false)
@@ -86,7 +88,8 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
 }
 
 Event::Event(const AtomicString& eventType, const EventInit& initializer)
-    : m_type(eventType)
+    : m_isInitialized(true)
+    , m_type(eventType)
     , m_canBubble(initializer.bubbles)
     , m_cancelable(initializer.cancelable)
     , m_propagationStopped(false)
@@ -109,6 +112,7 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     if (dispatched())
         return;
 
+    m_isInitialized = true;
     m_propagationStopped = false;
     m_immediatePropagationStopped = false;
     m_defaultPrevented = false;

@@ -1,10 +1,13 @@
-Tests that dispatchEvent raises DISPATCH_REQUEST_ERR if the event being dispatched is already being dispatched.
+Tests that dispatchEvent raises INVALID_STATE_ERR if the event being dispatched is already being dispatched.
 
-PASS should have got DISPATCH_REQUEST_ERR EventException
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.dispatchEvent(event) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS redispatchCustom.wasInvoked is true
-PASS should have got DISPATCH_REQUEST_ERR EventException
+PASS window.dispatchEvent(event) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS checkCustom.wasInvoked is true
-PASS should have got DISPATCH_REQUEST_ERR EventException
+PASS document.dispatchEvent(event) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS successfullyParsed is true
 
 TEST COMPLETE
