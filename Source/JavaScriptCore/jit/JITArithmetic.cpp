@@ -611,19 +611,11 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     int op2 = currentInstruction[3].u.operand;
 
     // Make sure registers are correct for x86 IDIV instructions.
-#if CPU(X86)
-    auto edx = regT1;
-    auto ecx = regT2;
-#elif OS(WINDOWS)
-    auto edx = regT1;
-    auto ecx = regT5;
-#else
-    auto edx = regT2;
-    auto ecx = regT3;
-#endif
     ASSERT(regT0 == X86Registers::eax);
-    ASSERT(edx == X86Registers::edx);
-    ASSERT(ecx == X86Registers::ecx);
+    auto edx = X86Registers::edx;
+    auto ecx = X86Registers::ecx;
+    ASSERT(regT4 != edx);
+    ASSERT(regT4 != ecx);
 
     emitGetVirtualRegisters(op1, regT4, op2, ecx);
     emitJumpSlowCaseIfNotImmediateInteger(regT4);
