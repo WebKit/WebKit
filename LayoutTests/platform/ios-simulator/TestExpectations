@@ -75,6 +75,7 @@ http/tests/pointer-lock
 # FIXME: Media tests not supported on iOS
 media
 http/tests/media
+http/tests/w3c/html/semantics/embedded-content/media-elements
 
 # MediaSource is not currently supported on iOS.
 fast/history/page-cache-media-source-closed-2.html [ Skip ]

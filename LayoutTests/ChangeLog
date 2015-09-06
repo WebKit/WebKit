@@ -1,5 +1,11 @@
 2015-09-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip new media tests on iOS.
+
+        * platform/ios-simulator/TestExpectations:
+
+2015-09-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip http/tests/w3c/html/semantics/embedded-content/media-elements/* on Win/Release
 
         Skip http/tests/w3c/html/semantics/embedded-content/media-elements/* on Win/Release
