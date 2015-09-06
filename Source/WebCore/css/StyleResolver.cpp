@@ -205,19 +205,6 @@ private:
 
 static void extractDirectionAndWritingMode(const RenderStyle&, const StyleResolver::MatchResult&, TextDirection&, WritingMode&);
 
-#define HANDLE_INHERIT(prop, Prop) \
-if (isInherit) { \
-    m_state.style()->set##Prop(m_state.parentStyle()->prop()); \
-    return; \
-}
-
-#define HANDLE_INHERIT_AND_INITIAL(prop, Prop) \
-HANDLE_INHERIT(prop, Prop) \
-if (isInitial) { \
-    m_state.style()->set##Prop(RenderStyle::initial##Prop()); \
-    return; \
-}
-
 RenderStyle* StyleResolver::s_styleNotYetAvailable;
 
 inline void StyleResolver::State::cacheBorderAndBackground()
