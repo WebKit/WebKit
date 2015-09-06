@@ -1,3 +1,0 @@
-
-PASS NOT invoking resource selection by inserting into other document with src set 
-

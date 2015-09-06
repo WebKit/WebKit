@@ -1,5 +1,14 @@
 2015-09-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop a couple of newly imported W3C media tests as they are flaky.
+
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-removes-queued-error-event-expected.txt: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-removes-queued-error-event.html: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-iframe-expected.txt: Removed.
+        * http/tests/w3c/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-iframe.html: Removed.
+
+2015-09-06  Chris Dumez  <cdumez@apple.com>
+
         Mark a couple of new W3C ref-tests as failing on iOS.
 
         * platform/ios-simulator/TestExpectations:
