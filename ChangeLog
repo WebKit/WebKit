@@ -1,3 +1,16 @@
+2015-09-06  Andy Estes  <aestes@apple.com>
+
+        WebKit.xcworkspace should be be able to build iOS platforms
+        https://bugs.webkit.org/show_bug.cgi?id=148881
+
+        Reviewed by Daniel Bates.
+
+        Since we don't want to create platform-specific schemes, all projects in the workspace's schemes need to build
+        for all supported platforms.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Tools.xcscheme: Removed the DumpRenderTree target since its All
+        target was already included. Removed the WebKitTestRunner target and replaced it with its All target.
+
 2015-09-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] Need a test for bug #145539: Uploading an animated GIF from the

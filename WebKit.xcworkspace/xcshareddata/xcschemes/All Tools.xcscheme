@@ -31,20 +31,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9340994A08540CAE007F3BC8"
-               BuildableName = "DumpRenderTree"
-               BlueprintName = "DumpRenderTree"
-               ReferencedContainer = "container:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "A84F608D08B1370600E9745F"
                BuildableName = "All"
                BlueprintName = "All"
@@ -101,50 +87,71 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8DD76F960486AA7600D96B5E"
-               BuildableName = "WebKitTestRunner"
-               BlueprintName = "WebKitTestRunner"
+               BlueprintIdentifier = "A18510171B9ADE0B00744AEB"
+               BuildableName = "All"
+               BlueprintName = "All"
                ReferencedContainer = "container:Tools/WebKitTestRunner/WebKitTestRunner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "A84F608D08B1370600E9745F"
+            BuildableName = "All"
+            BlueprintName = "All"
+            ReferencedContainer = "container:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </TestAction>
    <LaunchAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
       customWorkingDirectory = "$(SRCROOT)/../../LayoutTests"
-      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "YES"
       debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9340994A08540CAE007F3BC8"
-            BuildableName = "DumpRenderTree"
-            BlueprintName = "DumpRenderTree"
+            BlueprintIdentifier = "A84F608D08B1370600E9745F"
+            BuildableName = "All"
+            BlueprintName = "All"
             ReferencedContainer = "container:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "A84F608D08B1370600E9745F"
+            BuildableName = "All"
+            BlueprintName = "All"
+            ReferencedContainer = "container:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
