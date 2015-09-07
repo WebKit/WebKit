@@ -1,3 +1,17 @@
+2015-09-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, disable module tests in Windows until name resolution is fixed
+        https://bugs.webkit.org/show_bug.cgi?id=148689
+
+        Until bug[1] is fixed, we disable the module tests.
+        Since the local file system name resolution is just implemented in jsc.cpp and
+        is intended to be used for the module tests, it does not affect JSC framework
+        and WebKit itself.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=148917
+
+        * tests/modules.yaml:
+
 2015-09-06  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Simplify JIT::emit_op_mod()
