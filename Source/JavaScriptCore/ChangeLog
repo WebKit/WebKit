@@ -1,3 +1,29 @@
+2015-09-06  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement the relational instructions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148838
+
+        Reviewed by Saam Barati.
+
+        This patch implements the relational instructions for 32-bit integers in
+        WebAssembly.
+
+        * tests/stress/wasm-arithmetic.js:
+        * tests/stress/wasm-locals.js:
+        * tests/stress/wasm-relational.js: Added.
+        (shouldBe):
+        * tests/stress/wasm/arithmetic.wasm: Renamed from Source/JavaScriptCore/tests/stress/wasm-arithmetic.wasm.
+        * tests/stress/wasm/locals.wasm: Renamed from Source/JavaScriptCore/tests/stress/wasm-locals.wasm.
+        * tests/stress/wasm/relational.wasm: Added.
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildRelationalI32):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseRelationalI32ExpressionI32):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildRelationalI32):
+
 2015-09-06  Mark Lam  <mark.lam@apple.com>
 
         StackOverflow stack unwinding should stop at native frames.

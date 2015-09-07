@@ -437,6 +437,17 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::SMod:
         case WASMOpExpressionI32::UMod:
             return parseBinaryExpressionI32(context, op);
+        case WASMOpExpressionI32::EqualI32:
+        case WASMOpExpressionI32::NotEqualI32:
+        case WASMOpExpressionI32::SLessThanI32:
+        case WASMOpExpressionI32::ULessThanI32:
+        case WASMOpExpressionI32::SLessThanOrEqualI32:
+        case WASMOpExpressionI32::ULessThanOrEqualI32:
+        case WASMOpExpressionI32::SGreaterThanI32:
+        case WASMOpExpressionI32::UGreaterThanI32:
+        case WASMOpExpressionI32::SGreaterThanOrEqualI32:
+        case WASMOpExpressionI32::UGreaterThanOrEqualI32:
+            return parseRelationalI32ExpressionI32(context, op);
         case WASMOpExpressionI32::GetGlobal:
         case WASMOpExpressionI32::SetLocal:
         case WASMOpExpressionI32::SetGlobal:
@@ -474,26 +485,16 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::LogicalRightShift:
         case WASMOpExpressionI32::CountLeadingZeros:
         case WASMOpExpressionI32::LogicalNot:
-        case WASMOpExpressionI32::EqualI32:
         case WASMOpExpressionI32::EqualF32:
         case WASMOpExpressionI32::EqualF64:
-        case WASMOpExpressionI32::NotEqualI32:
         case WASMOpExpressionI32::NotEqualF32:
         case WASMOpExpressionI32::NotEqualF64:
-        case WASMOpExpressionI32::SLessThanI32:
-        case WASMOpExpressionI32::ULessThanI32:
         case WASMOpExpressionI32::LessThanF32:
         case WASMOpExpressionI32::LessThanF64:
-        case WASMOpExpressionI32::SLessThanOrEqualI32:
-        case WASMOpExpressionI32::ULessThanOrEqualI32:
         case WASMOpExpressionI32::LessThanOrEqualF32:
         case WASMOpExpressionI32::LessThanOrEqualF64:
-        case WASMOpExpressionI32::SGreaterThanI32:
-        case WASMOpExpressionI32::UGreaterThanI32:
         case WASMOpExpressionI32::GreaterThanF32:
         case WASMOpExpressionI32::GreaterThanF64:
-        case WASMOpExpressionI32::SGreaterThanOrEqualI32:
-        case WASMOpExpressionI32::UGreaterThanOrEqualI32:
         case WASMOpExpressionI32::GreaterThanOrEqualF32:
         case WASMOpExpressionI32::GreaterThanOrEqualF64:
         case WASMOpExpressionI32::SMin:
@@ -574,6 +575,16 @@ ContextExpression WASMFunctionParser::parseBinaryExpressionI32(Context& context,
     ContextExpression right = parseExpressionI32(context);
     PROPAGATE_ERROR();
     return context.buildBinaryI32(left, right, op);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseRelationalI32ExpressionI32(Context& context, WASMOpExpressionI32 op)
+{
+    ContextExpression left = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    ContextExpression right = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    return context.buildRelationalI32(left, right, op);
 }
 
 } // namespace JSC

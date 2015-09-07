@@ -293,6 +293,51 @@ public:
         return UNUSED;
     }
 
+    int buildRelationalI32(int, int, WASMOpExpressionI32 op)
+    {
+        load32(temporaryAddress(m_tempStackTop - 2), GPRInfo::regT0);
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT1);
+        RelationalCondition condition;
+        switch (op) {
+        case WASMOpExpressionI32::EqualI32:
+            condition = Equal;
+            break;
+        case WASMOpExpressionI32::NotEqualI32:
+            condition = NotEqual;
+            break;
+        case WASMOpExpressionI32::SLessThanI32:
+            condition = LessThan;
+            break;
+        case WASMOpExpressionI32::ULessThanI32:
+            condition = Below;
+            break;
+        case WASMOpExpressionI32::SLessThanOrEqualI32:
+            condition = LessThanOrEqual;
+            break;
+        case WASMOpExpressionI32::ULessThanOrEqualI32:
+            condition = BelowOrEqual;
+            break;
+        case WASMOpExpressionI32::SGreaterThanI32:
+            condition = GreaterThan;
+            break;
+        case WASMOpExpressionI32::UGreaterThanI32:
+            condition = Above;
+            break;
+        case WASMOpExpressionI32::SGreaterThanOrEqualI32:
+            condition = GreaterThanOrEqual;
+            break;
+        case WASMOpExpressionI32::UGreaterThanOrEqualI32:
+            condition = AboveOrEqual;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        compare32(condition, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
+        m_tempStackTop--;
+        store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+        return UNUSED;
+    }
+
 private:
     union StackSlot {
         int32_t intValue;

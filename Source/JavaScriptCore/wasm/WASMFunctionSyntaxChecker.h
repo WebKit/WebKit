@@ -78,6 +78,12 @@ public:
         return UNUSED;
     }
 
+    int buildRelationalI32(int, int, WASMOpExpressionI32)
+    {
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
     unsigned stackHeight()
     {
         return m_numberOfLocals + m_tempStackHeight;
