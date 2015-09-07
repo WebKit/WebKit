@@ -377,16 +377,6 @@ public:
         return OBJECT_OFFSETOF(VM, m_exception);
     }
 
-    static ptrdiff_t vmEntryFrameForThrowOffset()
-    {
-        return OBJECT_OFFSETOF(VM, vmEntryFrameForThrow);
-    }
-
-    static ptrdiff_t topVMEntryFrameOffset()
-    {
-        return OBJECT_OFFSETOF(VM, topVMEntryFrame);
-    }
-
     static ptrdiff_t callFrameForThrowOffset()
     {
         return OBJECT_OFFSETOF(VM, callFrameForThrow);
@@ -451,7 +441,6 @@ public:
     JSValue hostCallReturnValue;
     unsigned varargsLength;
     ExecState* newCallFrameReturnValue;
-    VMEntryFrame* vmEntryFrameForThrow;
     ExecState* callFrameForThrow;
     void* targetMachinePCForThrow;
     Instruction* targetInterpreterPCForThrow;

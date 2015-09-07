@@ -1,3 +1,70 @@
+2015-09-06  Mark Lam  <mark.lam@apple.com>
+
+        StackOverflow stack unwinding should stop at native frames.
+        https://bugs.webkit.org/show_bug.cgi?id=148749
+
+        Reviewed by Michael Saboff.
+
+        In the present code, after ping-pong'ing back and forth between native and JS
+        code a few times, if we have a stack overflow on re-entry into the VM to run
+        JS code's whose stack frame would overflow the JS stack, the code will end up
+        unwinding past the native function that is making the call to re-enter the VM.
+        As a result, any clean up code (e.g. destructors for stack variables) in the
+        skipped native function frame (and its chain of native function callers) will
+        not be called.
+
+        This patch is based on the Michael Saboff's fix of this issue landed on the
+        jsc-tailcall branch: http://trac.webkit.org/changeset/188555
+
+        We now check for the case where there are no JS frames to unwind since the
+        last native frame, and treat the exception as an unhandled exception.  The
+        native function is responsible for further propagating the exception if needed.
+
+        Other supporting work:
+        1. Remove vm->vmEntryFrameForThrow.  It should always be the same as
+           vm->topVMEntryFrame.
+        2. Change operationThrowStackOverflowError() to use the throwStackOverflowError()
+           helper function instead of rolling its own.
+        3. Added a test that exercises this edge case.  The test should not hang or crash.
+
+        * API/tests/PingPongStackOverflowTest.cpp: Added.
+        (PingPongStackOverflowObject_hasInstance):
+        (testPingPongStackOverflow):
+        * API/tests/PingPongStackOverflowTest.h: Added.
+        * API/tests/testapi.c:
+        (main):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::operator=):
+        (JSC::ExecState::callerFrame):
+        (JSC::ExecState::callerFrameOrVMEntryFrame):
+        (JSC::ExecState::argIndexForRegister):
+        (JSC::ExecState::callerFrameAndPC):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::unwind):
+        * interpreter/Interpreter.h:
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        (JSC::Interpreter::sampler):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITExceptions.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.h:
+        (JSC::VM::exceptionOffset):
+        (JSC::VM::callFrameForThrowOffset):
+        (JSC::VM::vmEntryFrameForThrowOffset): Deleted.
+        (JSC::VM::topVMEntryFrameOffset): Deleted.
+
 2015-09-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, disable module tests in Windows until name resolution is fixed
