@@ -1,3 +1,18 @@
+2015-09-07  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Many of the css3/device-adapt/* tests failed after r188548.
+        https://bugs.webkit.org/show_bug.cgi?id=148927
+
+        Reviewed by Csaba Osztrogonác.
+
+        device-adapt/* tests need the fixedLayout option but useFixedLayout option is
+        overwritten by updatePlatformSpecificViewOptionsForTest after r188548.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::shouldUseFixedLayout): Removed the unnecessary indentations.
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::shouldUseFixedLayout): Return true if the test is related with 'device-adapt'.
+
 2015-09-07  Andy Estes  <aestes@apple.com>
 
         Fix the Production build after r189455.

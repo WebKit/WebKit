@@ -789,8 +789,8 @@ const char* TestController::networkProcessName()
 static bool shouldUseFixedLayout(const TestInvocation& test)
 {
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-        if (test.urlContains("device-adapt/") || test.urlContains("device-adapt\\"))
-            return true;
+    if (test.urlContains("device-adapt/") || test.urlContains("device-adapt\\"))
+        return true;
 #endif
 
     return false;

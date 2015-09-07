@@ -136,6 +136,11 @@ const char* TestController::platformLibraryPathForTesting()
 
 static bool shouldUseFixedLayout(const TestInvocation& test)
 {
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    if (test.urlContains("device-adapt/") || test.urlContains("device-adapt\\"))
+        return true;
+#endif
+
 #if USE(COORDINATED_GRAPHICS)
     if (test.urlContains("sticky/") || test.urlContains("sticky\\"))
         return true;
