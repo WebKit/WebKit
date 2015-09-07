@@ -71,7 +71,7 @@ bool GlyphPage::mayUseMixedFontsWhenFilling(const UChar* buffer, unsigned buffer
 #endif
 }
 
-bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font* fontData)
+bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
     bool haveGlyphs = false;
 
@@ -82,11 +82,11 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
         // we pass in must be 512. If we get back more than 256 glyphs though we'll ignore all the ones after 256,
         // this should not happen as the only time we pass in 512 characters is when they are surrogates.
         CGFontGetGlyphsForUnichars(fontData->platformData().cgFont(), buffer, glyphs.data(), bufferLength);
-        for (unsigned i = 0; i < length; ++i) {
+        for (unsigned i = 0; i < GlyphPage::size; ++i) {
             if (!glyphs[i])
-                setGlyphDataForIndex(offset + i, 0, 0);
+                setGlyphDataForIndex(i, 0, 0);
             else {
-                setGlyphDataForIndex(offset + i, glyphs[i], fontData);
+                setGlyphDataForIndex(i, glyphs[i], fontData);
                 haveGlyphs = true;
             }
         }
@@ -99,13 +99,13 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
             CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
         // When buffer consists of surrogate pairs, CTFontGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
         // place the glyphs at indices corresponding to the first character of each pair.
-        ASSERT(!(bufferLength % length) && (bufferLength / length == 1 || bufferLength / length == 2));
-        unsigned glyphStep = bufferLength / length;
-        for (unsigned i = 0; i < length; ++i) {
+        ASSERT(bufferLength == GlyphPage::size || bufferLength == 2 * GlyphPage::size);
+        unsigned glyphStep = bufferLength / GlyphPage::size;
+        for (unsigned i = 0; i < GlyphPage::size; ++i) {
             if (!glyphs[i * glyphStep])
-                setGlyphDataForIndex(offset + i, 0, 0);
+                setGlyphDataForIndex(i, 0, 0);
             else {
-                setGlyphDataForIndex(offset + i, glyphs[i * glyphStep], fontData);
+                setGlyphDataForIndex(i, glyphs[i * glyphStep], fontData);
                 haveGlyphs = true;
             }
         }

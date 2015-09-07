@@ -156,7 +156,7 @@ public:
     }
 
     // Implemented by the platform.
-    bool fill(unsigned offset, unsigned length, UChar* characterBuffer, unsigned bufferLength, const Font*);
+    bool fill(UChar* characterBuffer, unsigned bufferLength, const Font*);
 #if PLATFORM(COCOA)
     static bool mayUseMixedFontsWhenFilling(const UChar* characterBuffer, unsigned bufferLength, const Font*);
 #else

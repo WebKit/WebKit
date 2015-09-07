@@ -535,13 +535,13 @@ void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, co
     }
 }
 
-void OpenTypeVerticalData::substituteWithVerticalGlyphs(const Font* font, GlyphPage* glyphPage, unsigned offset, unsigned length) const
+void OpenTypeVerticalData::substituteWithVerticalGlyphs(const Font* font, GlyphPage* glyphPage) const
 {
     const HashMap<Glyph, Glyph>& map = m_verticalGlyphMap;
     if (map.isEmpty())
         return;
 
-    for (unsigned index = offset, end = offset + length; index < end; ++index) {
+    for (unsigned index = 0; index < GlyphPage::size; ++index) {
         Glyph glyph = glyphPage->glyphAt(index);
         if (glyph) {
             ASSERT(glyphPage->glyphDataForIndex(index).font == font);

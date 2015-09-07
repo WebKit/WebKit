@@ -35,7 +35,7 @@ public:
 
     virtual void initializeFont(Font*, float fontSize) override;
     virtual float widthForSVGGlyph(Glyph, float fontSize) const override;
-    virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font*) const override;
+    virtual bool fillSVGGlyphPage(GlyphPage*, UChar* buffer, unsigned bufferLength, const Font*) const override;
 
     bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) const;
 
@@ -50,8 +50,8 @@ public:
     float verticalAdvanceY() const { return m_verticalAdvanceY; }
 
 private:
-    bool fillBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const Font*) const;
-    bool fillNonBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const Font*) const;
+    bool fillBMPGlyphs(SVGFontElement*, GlyphPage*, UChar* buffer, const Font*) const;
+    bool fillNonBMPGlyphs(SVGFontElement*, GlyphPage*, UChar* buffer, const Font*) const;
 
     bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t, TypesettingFeatures) const = delete;
 

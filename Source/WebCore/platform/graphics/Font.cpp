@@ -149,16 +149,16 @@ Font::~Font()
     removeFromSystemFallbackCache();
 }
 
-static bool fillGlyphPage(GlyphPage& pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font* font)
+static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferLength, const Font* font)
 {
 #if ENABLE(SVG_FONTS)
     if (auto* svgData = font->svgData())
-        return svgData->fillSVGGlyphPage(&pageToFill, offset, length, buffer, bufferLength, font);
+        return svgData->fillSVGGlyphPage(&pageToFill, buffer, bufferLength, font);
 #endif
-    bool hasGlyphs = pageToFill.fill(offset, length, buffer, bufferLength, font);
+    bool hasGlyphs = pageToFill.fill(buffer, bufferLength, font);
 #if ENABLE(OPENTYPE_VERTICAL)
     if (hasGlyphs && font->verticalData())
-        font->verticalData()->substituteWithVerticalGlyphs(font, &pageToFill, offset, length);
+        font->verticalData()->substituteWithVerticalGlyphs(font, &pageToFill);
 #endif
     return hasGlyphs;
 }
@@ -232,7 +232,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font*
     else
         glyphPage = GlyphPage::createForSingleFont(font);
 
-    bool haveGlyphs = fillGlyphPage(*glyphPage, 0, GlyphPage::size, buffer, bufferLength, font);
+    bool haveGlyphs = fillGlyphPage(*glyphPage, buffer, bufferLength, font);
     if (!haveGlyphs)
         return nullptr;
 
