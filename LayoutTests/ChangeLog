@@ -1,3 +1,10 @@
+2015-09-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Mark svg/as-object/svg-in-object-dynamic-attribute-change.html as a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=148922
+
+        * TestExpectations:
+
 2015-09-06  Chris Dumez  <cdumez@apple.com>
 
         dispatchEvent() should throw an InvalidStateError if the event's initialized flag is not set
