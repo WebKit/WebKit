@@ -1,3 +1,33 @@
+2015-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Windows non-cygwin build fix after r189333.
+
+        SVN on Windows (non-cygwin) doesn't like having the * character in file names.
+        I replaced "*" with "star" in some of Geoff's new tests.
+
+        * tests/es6.yaml:
+        Changed all _*_ to _star_
+        * tests/es6/generators_yield_*_arrays.js: Removed.
+        * tests/es6/generators_yield_*_astral_plane_strings.js: Removed.
+        * tests/es6/generators_yield_*_generator_instances.js: Removed.
+        * tests/es6/generators_yield_*_generic_iterables.js: Removed.
+        * tests/es6/generators_yield_*_instances_of_iterables.js: Removed.
+        * tests/es6/generators_yield_*_iterator_closing.js: Removed.
+        * tests/es6/generators_yield_*_iterator_closing_via_throw.js: Removed.
+        * tests/es6/generators_yield_*_on_non-iterables_is_a_runtime_error.js: Removed.
+        * tests/es6/generators_yield_*_sparse_arrays.js: Removed.
+        * tests/es6/generators_yield_*_strings.js: Removed.
+        * tests/es6/generators_yield_star_arrays.js: Copied from tests/es6/generators_yield_*_arrays.js.
+        * tests/es6/generators_yield_star_astral_plane_strings.js: Copied from tests/es6/generators_yield_*_astral_plane_strings.js.
+        * tests/es6/generators_yield_star_generator_instances.js: Copied from tests/es6/generators_yield_*_generator_instances.js.
+        * tests/es6/generators_yield_star_generic_iterables.js: Copied from tests/es6/generators_yield_*_generic_iterables.js.
+        * tests/es6/generators_yield_star_instances_of_iterables.js: Copied from tests/es6/generators_yield_*_instances_of_iterables.js.
+        * tests/es6/generators_yield_star_iterator_closing.js: Copied from tests/es6/generators_yield_*_iterator_closing.js.
+        * tests/es6/generators_yield_star_iterator_closing_via_throw.js: Copied from tests/es6/generators_yield_*_iterator_closing_via_throw.js.
+        * tests/es6/generators_yield_star_on_non-iterables_is_a_runtime_error.js: Copied from tests/es6/generators_yield_*_on_non-iterables_is_a_runtime_error.js.
+        * tests/es6/generators_yield_star_sparse_arrays.js: Copied from tests/es6/generators_yield_*_sparse_arrays.js.
+        * tests/es6/generators_yield_star_strings.js: Copied from tests/es6/generators_yield_*_strings.js.
+
 2015-09-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix broken Windows build after r189454.
