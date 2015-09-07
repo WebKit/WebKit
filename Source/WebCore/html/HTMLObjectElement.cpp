@@ -337,7 +337,12 @@ Node::InsertionNotificationRequest HTMLObjectElement::insertedInto(ContainerNode
 {
     HTMLPlugInImageElement::insertedInto(insertionPoint);
     FormAssociatedElement::insertedInto(insertionPoint);
-    return InsertionDone;
+    return InsertionShouldCallFinishedInsertingSubtree;
+}
+
+void HTMLObjectElement::finishedInsertingSubtree()
+{
+    resetFormOwner();
 }
 
 void HTMLObjectElement::removedFrom(ContainerNode& insertionPoint)

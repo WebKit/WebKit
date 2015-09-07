@@ -1,3 +1,24 @@
+2015-09-07  Daniel Bates  <dabates@apple.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION in WebCore::DocumentOrderedMap::get(); update form
+        association after subtree insertion
+        https://bugs.webkit.org/show_bug.cgi?id=148919
+        <rdar://problem/21868036>
+
+        Reviewed by Andy Estes.
+
+        Add tests to ensure that updating the form association of a form control in a subtree
+        does not cause an assertion failure.
+
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-2-expected.txt: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-2.html: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-3-expected.txt: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-3.html: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-4-expected.txt: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-4.html: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-expected.txt: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure.html: Added.
+
 2015-09-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
