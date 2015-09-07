@@ -51,6 +51,8 @@ DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
+
 SDKROOT = macosx.internal;
 
 WEBKIT_UMBRELLA_FRAMEWORKS_DIR = $(SDKROOT)$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;

@@ -1,3 +1,47 @@
+2015-09-06  Andy Estes  <aestes@apple.com>
+
+        WebKitTestRunner should build for iOS using the default target
+        https://bugs.webkit.org/show_bug.cgi?id=148918
+
+        Reviewed by Daniel Bates.
+
+        When WebKitTestRunner was ported to iOS, a separate target (WebKitTestRunnerApp) was created for building the
+        iOS variant. This is annoying because (1) all tools that invoke xcodebuild need to be taught to build this
+        non-default target, and (2) a single Xcode scheme cannot be used to build both Mac and iOS variants.
+
+        This change adds a new default target (All) and makes it work for both Mac and iOS. Files that were built for
+        both WebKitTestRunner and WebKitTestRunnerApp are now built in a static library target (WebKitTestRunner (Library)),
+        and both apps now link this library. Files that are specific to Mac or iOS are excluded on the other platform.
+        WebKitTestRunnerApp.app (which should be renamed to WebKitTestRunner.app) is skipped when installing on Mac, and
+        WebKitTestRunner is skipped when installing on iOS.
+
+        The target dependency graph now looks like this:
+
+            All
+                WebKitTestRunnerApp
+                    WebKitTestRunner (Library)
+                        WebKitTestRunnerInjectedBundle
+                            Derived Sources
+                WebKitTestRunner
+                    WebKitTestRunner (Library)
+                        WebKitTestRunnerInjectedBundle
+                            Derived Sources
+
+        * Scripts/build-webkit: Stopped building the WebKitTestRunnerApp target on iOS.
+        * Scripts/build-webkittestrunner: Ditto.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Set SUPPORTED_PLATFORMS to macosx, iphoneos, and iphonesimulator.
+        * WebKitTestRunner/Configurations/BaseTarget.xcconfig: Set INSTALL_PATH here since it is the same for all targets.
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig: Stopped setting INSTALL_PATH.
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig: Moved frameworks from the build phase to here,
+        excluded iOS-only files, and skipped installing on iOS.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig: Moved frameworks from the build phase to here,
+        excluded Mac-only files, and skipped installing on Mac.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerLibrary.xcconfig: Skipped installing always.
+        * WebKitTestRunner/Makefile: Stopped building the WebKitTestRunnerApp target on iOS.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Added new targets, removed frameworks from
+        Link Binary With Libraries builds phases, moved common files to the WebKitTestRunner (Library) target, and added
+        new configuration files.
+
 2015-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve prepare-ChangeLog for multiple cases

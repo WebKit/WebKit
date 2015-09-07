@@ -253,9 +253,6 @@ for my $dir (@projects) {
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
         push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
         my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
-        if (isIOSWebKit()){
-            push @local_options, qw(-target WebKitTestRunnerApp) if ($project eq "WebKitTestRunner") && !$clean;
-        }
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit() || isWinCairo()) {
         chdirWebKit();

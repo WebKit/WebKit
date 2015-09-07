@@ -60,8 +60,7 @@ chdir "Tools/WebKitTestRunner" or die;
 
 my $result;
 if (isAppleMacWebKit()) {
-    my @target = isIOSWebKit() ? ("-target", "WebKitTestRunnerApp") : ();
-    $result = buildXCodeProject("WebKitTestRunner", $clean, XcodeOptions(), (@ARGV, @target));
+    $result = buildXCodeProject("WebKitTestRunner", $clean, XcodeOptions(), @ARGV);
 } elsif (isGtk() || isEfl()) {
     # GTK+ and EFL build everything in one shot. No need to build anything here.
     $result = 0;
