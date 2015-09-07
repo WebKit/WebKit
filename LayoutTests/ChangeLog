@@ -1,5 +1,11 @@
 2015-09-06  Alexey Proskuryakov  <ap@apple.com>
 
+        Add one more inspector test that flakily times out.
+
+        * platform/mac/TestExpectations: Added inspector/indexeddb/requestDatabaseNames.html.
+
+2015-09-06  Alexey Proskuryakov  <ap@apple.com>
+
         Mark svg/dom/svg-root-lengths.html as a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=148925
 
