@@ -58,19 +58,6 @@ static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const 
     return false;
 }
 
-bool GlyphPage::mayUseMixedFontsWhenFilling(const UChar* buffer, unsigned bufferLength, const Font* fontData)
-{
-#if USE(APPKIT)
-    // FIXME: This is only really needed for composite font references.
-    return shouldUseCoreText(buffer, bufferLength, fontData);
-#else
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(bufferLength);
-    UNUSED_PARAM(fontData);
-    return false;
-#endif
-}
-
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
     bool haveGlyphs = false;

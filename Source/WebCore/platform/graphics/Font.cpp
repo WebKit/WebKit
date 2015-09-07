@@ -226,11 +226,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font*
     // routine of our glyph map for actually filling in the page with the glyphs.
     // Success is not guaranteed. For example, Times fails to fill page 260, giving glyph data
     // for only 128 out of 256 characters.
-    RefPtr<GlyphPage> glyphPage;
-    if (GlyphPage::mayUseMixedFontsWhenFilling(buffer, bufferLength, font))
-        glyphPage = GlyphPage::createForMixedFonts();
-    else
-        glyphPage = GlyphPage::createForSingleFont(font);
+    RefPtr<GlyphPage> glyphPage = GlyphPage::createForSingleFont(font);
 
     bool haveGlyphs = fillGlyphPage(*glyphPage, buffer, bufferLength, font);
     if (!haveGlyphs)

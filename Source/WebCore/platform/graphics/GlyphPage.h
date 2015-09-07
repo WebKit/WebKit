@@ -157,11 +157,6 @@ public:
 
     // Implemented by the platform.
     bool fill(UChar* characterBuffer, unsigned bufferLength, const Font*);
-#if PLATFORM(COCOA)
-    static bool mayUseMixedFontsWhenFilling(const UChar* characterBuffer, unsigned bufferLength, const Font*);
-#else
-    static bool mayUseMixedFontsWhenFilling(const UChar*, unsigned, const Font*) { return false; }
-#endif
 
 private:
     explicit GlyphPage(const Font* fontForAllGlyphs)
