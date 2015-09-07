@@ -1,3 +1,10 @@
+2015-09-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed, EFL gardening. Many tests have been failed since r188692.
+        Bug 148470 will try to fix this problem.
+
+        * platform/efl/TestExpectations:
+
 2015-09-06  Alexey Proskuryakov  <ap@apple.com>
 
         Add one more inspector test that flakily times out.
@@ -24913,7 +24920,6 @@
         * fast/repaint/multiple-backgrounds-style-change-expected.txt: Added.
         * fast/repaint/multiple-backgrounds-style-change.html: Added.
 
->>>>>>> .r181712
 2015-03-18  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         Unreviewed GTK Gardening 18th March
