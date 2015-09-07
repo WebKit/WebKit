@@ -1,3 +1,12 @@
+2015-09-06  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix broken Windows build after r189454.
+
+        Not reviewed.
+
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters:
+
 2015-09-06  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement the relational instructions in WebAssembly
