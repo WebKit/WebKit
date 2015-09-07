@@ -1,3 +1,14 @@
+2015-09-07  Andy Estes  <aestes@apple.com>
+
+        [Mac] DebugRelease builds should link against libWebKitSystemInterfaceElCapitan.a on 10.11
+        https://bugs.webkit.org/show_bug.cgi?id=148946
+        <rdar://problem/22603981>
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+
 2015-09-07  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Many of the css3/device-adapt/* tests failed after r188548.
