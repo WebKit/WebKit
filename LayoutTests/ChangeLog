@@ -1,3 +1,60 @@
+2015-09-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Report and mark new failures on the GTK TestExpectations file.
+        Move back all the GTK baselines for the general accessibiliy tests to platform/gtk that r187777 wrongly moved inside accessibility/gtk.
+
+        * accessibility/gtk/disabled-controls-not-focusable-expected.txt: Removed. Same baseline than the general one so not need to move it back to platform/gtk/accessibility.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/aria-checkbox-sends-notification-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-checkbox-sends-notification-expected.txt.
+        * platform/gtk/accessibility/aria-fallback-roles-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-fallback-roles-expected.txt.
+        * platform/gtk/accessibility/aria-help-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-help-expected.txt.
+        * platform/gtk/accessibility/aria-hidden-false-works-in-subtrees-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-hidden-false-works-in-subtrees-expected.txt.
+        * platform/gtk/accessibility/aria-inherits-presentational-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-inherits-presentational-expected.txt.
+        * platform/gtk/accessibility/aria-menubar-menuitems-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-menubar-menuitems-expected.txt.
+        * platform/gtk/accessibility/aria-switch-text-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-switch-text-expected.txt.
+        * platform/gtk/accessibility/aria-table-hierarchy-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-table-hierarchy-expected.txt.
+        * platform/gtk/accessibility/aria-toggle-button-with-title-expected.txt: Renamed from LayoutTests/accessibility/gtk/aria-toggle-button-with-title-expected.txt.
+        * platform/gtk/accessibility/color-well-expected.txt: Renamed from LayoutTests/accessibility/gtk/color-well-expected.txt.
+        * platform/gtk/accessibility/css-content-attribute-expected.txt: Renamed from LayoutTests/accessibility/gtk/css-content-attribute-expected.txt.
+        * platform/gtk/accessibility/dimensions-include-descendants-expected.txt: Renamed from LayoutTests/accessibility/gtk/dimensions-include-descendants-expected.txt.
+        * platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt: Renamed from LayoutTests/accessibility/gtk/file-upload-button-stringvalue-expected.txt.
+        * platform/gtk/accessibility/image-link-expected.txt: Renamed from LayoutTests/accessibility/gtk/image-link-expected.txt.
+        * platform/gtk/accessibility/image-map1-expected.txt: Renamed from LayoutTests/accessibility/gtk/image-map1-expected.txt.
+        * platform/gtk/accessibility/image-map2-expected.txt: Renamed from LayoutTests/accessibility/gtk/image-map2-expected.txt.
+        * platform/gtk/accessibility/image-with-alt-and-map-expected.txt: Renamed from LayoutTests/accessibility/gtk/image-with-alt-and-map-expected.txt.
+        * platform/gtk/accessibility/img-fallsback-to-title-expected.txt: Renamed from LayoutTests/accessibility/gtk/img-fallsback-to-title-expected.txt.
+        * platform/gtk/accessibility/inline-continuations-expected.txt: Renamed from LayoutTests/accessibility/gtk/inline-continuations-expected.txt.
+        * platform/gtk/accessibility/list-detection-expected.txt: Renamed from LayoutTests/accessibility/gtk/list-detection-expected.txt.
+        * platform/gtk/accessibility/lists-expected.txt: Renamed from LayoutTests/accessibility/gtk/lists-expected.txt.
+        * platform/gtk/accessibility/math-multiscript-attributes-expected.txt: Renamed from LayoutTests/accessibility/gtk/math-multiscript-attributes-expected.txt.
+        * platform/gtk/accessibility/math-text-expected.txt: Renamed from LayoutTests/accessibility/gtk/math-text-expected.txt.
+        * platform/gtk/accessibility/media-element-expected.txt: Renamed from LayoutTests/accessibility/gtk/media-element-expected.txt.
+        * platform/gtk/accessibility/menu-list-crash2-expected.txt: Renamed from LayoutTests/accessibility/gtk/menu-list-crash2-expected.txt.
+        * platform/gtk/accessibility/menu-list-sends-change-notification-expected.txt: Renamed from LayoutTests/accessibility/gtk/menu-list-sends-change-notification-expected.txt.
+        * platform/gtk/accessibility/meter-element-expected.txt: Renamed from LayoutTests/accessibility/gtk/meter-element-expected.txt.
+        * platform/gtk/accessibility/platform-name-expected.txt: Renamed from LayoutTests/accessibility/gtk/platform-name-expected.txt.
+        * platform/gtk/accessibility/plugin-expected.txt: Renamed from LayoutTests/accessibility/gtk/plugin-expected.txt.
+        * platform/gtk/accessibility/press-targets-center-point-expected.txt: Renamed from LayoutTests/accessibility/gtk/press-targets-center-point-expected.txt.
+        * platform/gtk/accessibility/radio-button-title-label-expected.txt: Renamed from LayoutTests/accessibility/gtk/radio-button-title-label-expected.txt.
+        * platform/gtk/accessibility/render-counter-text-expected.txt: Renamed from LayoutTests/accessibility/gtk/render-counter-text-expected.txt.
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt: Renamed from LayoutTests/accessibility/gtk/roles-computedRoleString-expected.txt.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Renamed from LayoutTests/accessibility/gtk/roles-exposed-expected.txt.
+        * platform/gtk/accessibility/spinbutton-value-expected.txt: Renamed from LayoutTests/accessibility/gtk/spinbutton-value-expected.txt.
+        * platform/gtk/accessibility/tabindex-elements-are-accessible-expected.txt: Renamed from LayoutTests/accessibility/gtk/tabindex-elements-are-accessible-expected.txt.
+        * platform/gtk/accessibility/table-attributes-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-attributes-expected.txt.
+        * platform/gtk/accessibility/table-cell-spans-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-cell-spans-expected.txt.
+        * platform/gtk/accessibility/table-cells-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-cells-expected.txt.
+        * platform/gtk/accessibility/table-column-headers-with-captions-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-column-headers-with-captions-expected.txt.
+        * platform/gtk/accessibility/table-detection-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-detection-expected.txt.
+        * platform/gtk/accessibility/table-hierarchy-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-hierarchy-expected.txt.
+        * platform/gtk/accessibility/table-one-cell-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-one-cell-expected.txt.
+        * platform/gtk/accessibility/table-roles-hierarchy-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-roles-hierarchy-expected.txt.
+        * platform/gtk/accessibility/table-sections-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-sections-expected.txt.
+        * platform/gtk/accessibility/table-with-rules-expected.txt: Renamed from LayoutTests/accessibility/gtk/table-with-rules-expected.txt.
+        * platform/gtk/accessibility/transformed-element-expected.txt: Renamed from LayoutTests/accessibility/gtk/transformed-element-expected.txt.
+
 2015-09-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed, EFL gardening. Many tests have been failed since r188692.
