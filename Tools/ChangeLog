@@ -1,3 +1,10 @@
+2015-09-07  Andy Estes  <aestes@apple.com>
+
+        Fix the Production build after r189455.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Somehow I added the All target using the
+        In-App Purchase template instead of the Aggregate template. Whoops.
+
 2015-09-06  Andy Estes  <aestes@apple.com>
 
         WebKit.xcworkspace should be be able to build iOS platforms
