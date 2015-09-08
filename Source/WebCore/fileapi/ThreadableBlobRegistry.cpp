@@ -194,7 +194,7 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
     }
 }
 
-PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
+RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
 {
     return originMap()->get(url.string());
 }

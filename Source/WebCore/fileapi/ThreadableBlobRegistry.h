@@ -52,7 +52,7 @@ public:
 
     // Returns the origin for the given blob URL. This is because we are not able to embed the unique security origin or the origin of file URL
     // in the blob URL.
-    static PassRefPtr<SecurityOrigin> getCachedOrigin(const URL&);
+    static RefPtr<SecurityOrigin> getCachedOrigin(const URL&);
 };
 
 } // namespace WebCore

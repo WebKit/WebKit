@@ -74,7 +74,7 @@ public:
     virtual void didFail(const ResourceError&);
 
     String stringResult();
-    PassRefPtr<JSC::ArrayBuffer> arrayBufferResult() const;
+    RefPtr<JSC::ArrayBuffer> arrayBufferResult() const;
     unsigned bytesLoaded() const { return m_bytesLoaded; }
     unsigned totalBytes() const { return m_totalBytes; }
     int errorCode() const { return m_errorCode; }

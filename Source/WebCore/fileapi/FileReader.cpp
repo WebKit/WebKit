@@ -241,10 +241,10 @@ void FileReader::fireEvent(const AtomicString& type)
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }
 
-PassRefPtr<ArrayBuffer> FileReader::arrayBufferResult() const
+RefPtr<ArrayBuffer> FileReader::arrayBufferResult() const
 {
     if (!m_loader || m_error)
-        return 0;
+        return nullptr;
     return m_loader->arrayBufferResult();
 }
 

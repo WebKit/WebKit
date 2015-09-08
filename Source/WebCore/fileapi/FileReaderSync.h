@@ -56,7 +56,7 @@ public:
 
     virtual ~FileReaderSync() { }
 
-    PassRefPtr<JSC::ArrayBuffer> readAsArrayBuffer(ScriptExecutionContext*, Blob*, ExceptionCode&);
+    RefPtr<JSC::ArrayBuffer> readAsArrayBuffer(ScriptExecutionContext*, Blob*, ExceptionCode&);
     String readAsBinaryString(ScriptExecutionContext*, Blob*, ExceptionCode&);
     String readAsText(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
     {
