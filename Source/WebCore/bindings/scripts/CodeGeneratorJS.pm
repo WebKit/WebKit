@@ -3388,7 +3388,7 @@ sub GenerateParametersCheck
                 my $outer;
                 my $inner;
                 if ($optional && $defaultAttribute && $defaultAttribute eq "NullString") {
-                    $outer = "exec->argumentCount() <= $argsIndex ? String() : ";
+                    $outer = "exec->argument($argsIndex).isUndefined() ? String() : ";
                     $inner = "exec->uncheckedArgument($argsIndex)";
                 } else {
                     $outer = "";

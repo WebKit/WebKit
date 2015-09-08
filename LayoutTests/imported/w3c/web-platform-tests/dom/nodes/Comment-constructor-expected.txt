@@ -3,7 +3,7 @@
 PASS new Comment(): prototype chain 
 PASS new Comment(): instanceof 
 PASS new Comment(): no arguments 
-FAIL new Comment(): undefined assert_equals: expected "" but got "undefined"
+PASS new Comment(): undefined 
 PASS new Comment(): null 
 PASS new Comment(): 42 
 PASS new Comment(): "" 

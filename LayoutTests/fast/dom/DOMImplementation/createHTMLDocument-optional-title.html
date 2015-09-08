@@ -6,7 +6,7 @@ description('This tests optional title for createHTMLDocument');
 shouldBeNull('document.implementation.createHTMLDocument().querySelector("title")');
 
 shouldBeEqualToString('document.implementation.createHTMLDocument(null).querySelector("title").textContent', 'null');
-shouldBeEqualToString('document.implementation.createHTMLDocument(undefined).querySelector("title").textContent', 'undefined');
+shouldBeNull('document.implementation.createHTMLDocument(undefined).querySelector("title")');
 shouldBeEqualToString('document.implementation.createHTMLDocument("").querySelector("title").textContent', '');
 shouldBeEqualToString('document.implementation.createHTMLDocument("x").querySelector("title").textContent', 'x');
 

@@ -1,3 +1,19 @@
+2015-09-08  Chris Dumez  <cdumez@apple.com>
+
+        new Comment(undefined) / new Text(undefined) should use default's empty string
+        https://bugs.webkit.org/show_bug.cgi?id=148973
+        <rdar://problem/22548042>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a couple of layout tests that were wrongly expecting undefined to
+        be converted to the "undefined" String for optional DOMString parameters.
+
+        * fast/dom/DOMImplementation/createHTMLDocument-optional-title-expected.txt:
+        * fast/dom/DOMImplementation/createHTMLDocument-optional-title.html:
+        * fast/dom/Window/custom-constructors-expected.txt:
+        * fast/dom/Window/custom-constructors.html:
+
 2015-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement computed accessors

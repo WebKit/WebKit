@@ -23,12 +23,12 @@ shouldBeEqualToString("new Option().tagName", "OPTION");
 
 shouldBeEqualToString("new Option().innerText", "");
 shouldBeEqualToString("new Option(null).innerText", "null");
-shouldBeEqualToString("new Option(undefined).innerText", "undefined");
+shouldBeEqualToString("new Option(undefined).innerText", "");
 shouldBeEqualToString("new Option('somedata').innerText", "somedata");
 
 shouldBeEqualToString("new Option().value", "");
 shouldBeEqualToString("new Option('somedata', null).value", "null");
-shouldBeEqualToString("new Option('somedata', undefined).value", "undefined");
+shouldBeEqualToString("new Option('somedata', undefined).value", "somedata");
 shouldBeEqualToString("new Option('somedata', 'somevalue').value", "somevalue");
 
 shouldBeFalse("new Option().defaultSelected");

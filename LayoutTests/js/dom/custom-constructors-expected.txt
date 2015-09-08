@@ -17,11 +17,11 @@ PASS new Option() is non-null.
 PASS new Option().tagName is "OPTION"
 PASS new Option().innerText is ""
 PASS new Option(null).innerText is "null"
-PASS new Option(undefined).innerText is "undefined"
+PASS new Option(undefined).innerText is ""
 PASS new Option('somedata').innerText is "somedata"
 PASS new Option().value is ""
 PASS new Option('somedata', null).value is "null"
-PASS new Option('somedata', undefined).value is "undefined"
+PASS new Option('somedata', undefined).value is "somedata"
 PASS new Option('somedata', 'somevalue').value is "somevalue"
 PASS new Option().defaultSelected is false
 PASS new Option('somedata', 'somevalue').defaultSelected is false

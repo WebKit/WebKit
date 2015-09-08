@@ -1,5 +1,19 @@
 2015-09-08  Chris Dumez  <cdumez@apple.com>
 
+        new Comment(undefined) / new Text(undefined) should use default's empty string
+        https://bugs.webkit.org/show_bug.cgi?id=148973
+        <rdar://problem/22548042>
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/dom/nodes/Comment-constructor-expected.txt:
+        * web-platform-tests/dom/nodes/Text-constructor-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-07-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_constructor-expected.txt:
+        Rebaseline tests now that new checks are passing.
+
+2015-09-08  Chris Dumez  <cdumez@apple.com>
+
         document.importNode(node, deep): deep's default value should be false
         https://bugs.webkit.org/show_bug.cgi?id=148959
         <rdar://problem/22558915>

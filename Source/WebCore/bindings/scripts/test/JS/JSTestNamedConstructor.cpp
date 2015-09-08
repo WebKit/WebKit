@@ -135,7 +135,7 @@ EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJS
     String str2 = exec->argument(1).toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    String str3 = exec->argumentCount() <= 2 ? String() : exec->uncheckedArgument(2).toString(exec)->value(exec);
+    String str3 = exec->argument(2).isUndefined() ? String() : exec->uncheckedArgument(2).toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(*castedThis->document(), str1, str2, str3, ec);

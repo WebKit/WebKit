@@ -1,7 +1,7 @@
 
 PASS createHTMLDocument test 0: "","","" 
 PASS createHTMLDocument test 1: null,"null","null" 
-FAIL createHTMLDocument test 2: undefined,undefined,"" assert_equals: expected "" but got "undefined"
+PASS createHTMLDocument test 2: undefined,undefined,"" 
 PASS createHTMLDocument test 3: "foo  bar baz","foo  bar baz","foo bar baz" 
 PASS createHTMLDocument test 4: "foo\t\tbar baz","foo\t\tbar baz","foo bar baz" 
 PASS createHTMLDocument test 5: "foo\n\nbar baz","foo\n\nbar baz","foo bar baz" 
