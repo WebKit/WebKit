@@ -1,3 +1,13 @@
+2015-09-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Update some paths for tests that were renamed.
+        Remove some tests from the expectations that not longer exist.
+        Report new failures for the Debug build.
+
+        * platform/gtk/TestExpectations:
+
 2015-09-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, land iOS baselines for a couple of html/dom tests.

@@ -557,7 +557,6 @@ webkit.org/b/142142 media/video-volume-slider.html [ Failure ]
 webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure ]
 webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
-webkit.org/b/142288 css3/masking/mask-svg-clipped-fragmentId.html [ ImageOnlyFailure ]
 webkit.org/b/142289 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 
 webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
@@ -697,6 +696,16 @@ webkit.org/b/135051 fast/regions/repaint/region-painting-invalidation.html [ Cra
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
 webkit.org/b/144771 editing/selection/selection-invalid-offset.html [ Crash ]
+
+webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Crash ]
+webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Crash ]
+webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Crash ]
+webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Crash ]
+webkit.org/b/148956 [ Debug ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Crash ]
+webkit.org/b/148956 [ Debug ] fast/dom/Window/window-resize-contents.html [ Crash ]
+webkit.org/b/148956 [ Debug ] fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Crash ]
+webkit.org/b/148956 [ Debug ] fast/dynamic/window-resize-scrollbars-test.html [ Crash ]
+webkit.org/b/148956 [ Debug ] fast/fixed-layout/fixed-layout.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -925,7 +934,7 @@ webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure Timeout Pa
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure Pass ]
 webkit.org/b/132183 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
 webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure Pass ]
-webkit.org/b/132185 platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure Pass ]
+webkit.org/b/132185 editing/pasteboard/gtk/middle-button-paste.html [ Failure Pass ]
 
 # Some media fragment tests are flaky
 webkit.org/b/132248 media/media-fragments/TC0001.html [ Timeout Pass ]
@@ -1121,8 +1130,6 @@ webkit.org/b/143876 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyF
 
 webkit.org/b/143983 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143985 editing/pasteboard/drop-text-events.html [ Failure Timeout Crash ]
-
-webkit.org/b/143988 css3/masking/mask-svg-invalid-fragmentId.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143988 css3/masking/mask-svg-no-fragmentId.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143991 fast/table/multiple-captions-crash3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143995 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
@@ -1763,8 +1770,8 @@ Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.
 Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html [ Failure ]
 
 # r65681 broke a couple GTK+ a11y tests
-webkit.org/b/44316 platform/gtk/accessibility/object-attributes.html [ Failure ]
-webkit.org/b/44316 platform/gtk/accessibility/title-and-alt.html [ Failure ]
+webkit.org/b/44316 accessibility/gtk/object-attributes.html [ Failure ]
+webkit.org/b/44316 accessibility/gtk/title-and-alt.html [ Failure ]
 
 # Expose title direction in WebKit API
 webkit.org/b/58845 fast/dom/title-directionality.html [ Failure ]
@@ -2383,7 +2390,6 @@ webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ 
 
 webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
-webkit.org/b/142666 fast/forms/input-auto-fill-button.html [ Failure ]
 webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
 webkit.org/b/142667 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
 
@@ -2544,13 +2550,6 @@ webkit.org/b/148935 accessibility/scroll-to-make-visible-nested-2.html [ Failure
 webkit.org/b/148935 accessibility/scroll-to-make-visible-nested.html [ Failure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-source.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-text.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Failure ]
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/parse-a-srcset-attribute.html [ Failure ]
