@@ -14,7 +14,7 @@ if (window.testRunner)
 var d = document.createElement("div");
 d.innerHTML = "<span>hello </span><span>world</span>";
 
-imported = document.importNode(d);
+imported = document.importNode(d, true);
 shouldBe('imported.childNodes.length','2');
 shouldBeTrue("imported.textContent == 'hello world'");
 

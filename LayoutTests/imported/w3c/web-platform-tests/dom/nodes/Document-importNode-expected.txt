@@ -1,5 +1,5 @@
 
-FAIL No 'deep' argument. assert_equals: expected null but got Element node <span></span>
+PASS No 'deep' argument. 
 PASS Undefined 'deep' argument. 
 PASS True 'deep' argument. 
 PASS False 'deep' argument. 

@@ -1,3 +1,14 @@
+2015-09-08  Chris Dumez  <cdumez@apple.com>
+
+        document.importNode(node, deep): deep's default value should be false
+        https://bugs.webkit.org/show_bug.cgi?id=148959
+        <rdar://problem/22558915>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * web-platform-tests/dom/nodes/Document-importNode-expected.txt:
+        Rebaseline now that an additional check is passing.
+
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fixup a few recently imported W3C HTML tests.

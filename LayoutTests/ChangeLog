@@ -1,3 +1,14 @@
+2015-09-08  Chris Dumez  <cdumez@apple.com>
+
+        document.importNode(node, deep): deep's default value should be false
+        https://bugs.webkit.org/show_bug.cgi?id=148959
+        <rdar://problem/22558915>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/document-importNode-arguments.html:
+        Explicitly pass deep parameter as the test wants a deep clone.
+
 2015-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move PrettyPrinting tests into LayoutTests
