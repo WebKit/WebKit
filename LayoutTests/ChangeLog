@@ -1,5 +1,14 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html
+
+        This test causes the next one to be flaky. The issue is tracked by
+        Bug 148950.
+
+        * TestExpectations:
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop W3C support files from http/
 
         Drop W3C support files from http/tests/resources/ and

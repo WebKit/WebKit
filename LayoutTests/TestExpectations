@@ -647,6 +647,9 @@ webkit.org/b/148815 imported/w3c/css/css-multicol-1/multicol-rule-style-inset-00
 webkit.org/b/148816 imported/w3c/css/css-multicol-1/multicol-rule-004.xht [ ImageOnlyFailure ]
 webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-003.xht [ ImageOnlyFailure ]
 
+# Causes the following test to be flaky.
+webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
+
 # FIXME: The following failures need individual bugs.
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-003.xht [ ImageOnlyFailure ]
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-004.xht [ ImageOnlyFailure ]
