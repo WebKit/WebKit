@@ -3393,11 +3393,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
 {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     // In case anything we do by changing values causes an alert or other modal
     // behaviors, we need to return now, so that VoiceOver doesn't hang indefinitely.
     dispatch_async(dispatch_get_main_queue(), ^{
         [self _accessibilitySetValue:value forAttribute:attributeName];
     });
+#else
+    // dispatch_async on earlier versions can cause focus not to track.
+    [self _accessibilitySetValue:value forAttribute:attributeName];
+#endif
 }
 
 - (void)_accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
