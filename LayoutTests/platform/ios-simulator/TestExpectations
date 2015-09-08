@@ -95,6 +95,11 @@ http/tests/w3c/webperf
 # IndexedDB tests have numerous unexpected failures on iOS
 webkit.org/b/144475 storage/indexeddb
 
+# TODO Animation triggers not supported
+animations/trigger-container-scroll-boundaries.html [ Failure ]
+animations/trigger-container-scroll-empty.html [ Failure ]
+animations/trigger-container-scroll-simple.html [ Failure ]
+
 # Quota API is not supported on iOS
 storage/domstorage/quota.html
 storage/storageinfo-missing-arguments.html

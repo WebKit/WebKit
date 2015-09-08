@@ -1,3 +1,13 @@
+2015-09-08  Daniel Bates  <dabates@apple.com>
+
+        Mark animations/trigger-container-scroll-boundaries.html as failure on iOS
+
+        According to Dean Jackson this feature is not supported on iOS at this time.
+
+        * platform/ios-simulator-wk1/TestExpectations: Move existing animation trigger failure expectations from here...
+        * platform/ios-simulator-wk2/TestExpectations: and here...
+        * platform/ios-simulator/TestExpectations: to here.
+
 2015-09-08  Alexey Proskuryakov  <ap@apple.com>
 
         Mark fast/dom/rtl-scroll-to-leftmost-and-resize.html as a flaky timeout for

@@ -1164,9 +1164,6 @@ animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass ]
 transitions/transition-hit-test-transform.html [ Timeout Pass ]
 
 # Failures as of 06/08/2015
-animations/trigger-container-scroll-boundaries.html [ Failure ]
-animations/trigger-container-scroll-empty.html [ Failure ]
-animations/trigger-container-scroll-simple.html [ Failure ]
 compositing/contents-scale/animating.html [ Failure ]
 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure ]
 compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
@@ -1337,4 +1334,3 @@ http/tests/contentfiltering/modify-redirect-request-url.html [ Skip ]
 http/tests/incremental/slow-utf8-css.html [ Skip ]
 http/tests/incremental/slow-utf8-html.pl [ Skip ]
 http/tests/incremental/slow-utf8-text.pl [ Skip ]
-

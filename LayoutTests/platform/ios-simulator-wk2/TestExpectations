@@ -1890,7 +1890,6 @@ css3/filters/backdrop/animation.html
 http/tests/cache/disk-cache/disk-cache-validation.html
 
 # Failures as of 06/09/2015
-animations/trigger-container-scroll-empty.html [ Failure ]
 css3/selectors3/xml/css3-modsel-d1.xml [ Failure ]
 css3/selectors3/xml/css3-modsel-d3.xml [ Failure ]
 css3/selectors3/xml/css3-modsel-d4.xml [ Failure ]
