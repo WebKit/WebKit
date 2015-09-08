@@ -28,6 +28,7 @@
 
 #include "InspectorAgentRegistry.h"
 #include "InspectorEnvironment.h"
+#include "InspectorFrontendRouter.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -53,7 +54,6 @@ namespace Inspector {
 
 class BackendDispatcher;
 class FrontendChannel;
-class FrontendRouter;
 class InjectedScriptManager;
 class InspectorAgent;
 class InspectorConsoleAgent;

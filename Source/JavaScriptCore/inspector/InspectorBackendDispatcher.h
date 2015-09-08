@@ -27,6 +27,7 @@
 #ifndef InspectorBackendDispatcher_h
 #define InspectorBackendDispatcher_h
 
+#include "InspectorFrontendRouter.h"
 #include "InspectorProtocolTypes.h"
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
@@ -35,7 +36,6 @@
 namespace Inspector {
 
 class BackendDispatcher;
-class FrontendRouter;
 
 typedef String ErrorString;
 
