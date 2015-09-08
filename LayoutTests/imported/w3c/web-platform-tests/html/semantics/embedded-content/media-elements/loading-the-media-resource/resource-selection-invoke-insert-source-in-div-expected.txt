@@ -1,4 +1,0 @@
-
-
-PASS NOT invoking resource selection by inserting <source> in <div> in <video> 
-

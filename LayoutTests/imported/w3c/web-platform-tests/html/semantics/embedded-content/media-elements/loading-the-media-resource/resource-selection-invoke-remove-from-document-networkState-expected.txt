@@ -1,3 +1,0 @@
-
-PASS NOT invoking resource selection with implicit pause() when networkState is not NETWORK_EMPTY 
-

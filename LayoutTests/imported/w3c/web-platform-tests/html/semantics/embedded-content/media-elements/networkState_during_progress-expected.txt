@@ -1,7 +1,0 @@
-spec reference
-
-  
-
-FAIL audioElement.networkState should be NETWORK_LOADING during progress event assert_equals: expected 2 but got 1
-FAIL videoElement.networkState should be NETWORK_LOADING during progress event assert_equals: expected 2 but got 1
-

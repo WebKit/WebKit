@@ -1,3 +1,0 @@
-
-PASS invoking load by setting src when networkState is not NETWORK_EMPTY 
-

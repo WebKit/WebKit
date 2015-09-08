@@ -1,4 +1,0 @@
-
-
-PASS NOT invoking resource selection by inserting into a document 
-

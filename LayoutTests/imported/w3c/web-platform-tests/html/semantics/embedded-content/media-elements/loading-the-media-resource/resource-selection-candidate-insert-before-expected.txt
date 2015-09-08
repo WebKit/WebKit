@@ -1,3 +1,0 @@
-
-FAIL inserting another source before the candidate assert_equals: expected "#a" but got "#b"
-

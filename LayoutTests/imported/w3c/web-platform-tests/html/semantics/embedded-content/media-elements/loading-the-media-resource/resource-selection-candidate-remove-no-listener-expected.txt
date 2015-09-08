@@ -1,3 +1,0 @@
-
-PASS removing the candidate source, no listener 
-

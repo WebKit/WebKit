@@ -1,5 +1,81 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop several W3C html media that were recently imported as they are flaky.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-insert-before-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-insert-before.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-moved-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-moved.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-remove-addEventListener-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-remove-no-listener-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-remove-no-listener.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor-no-src-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor-no-src.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-in-sync-event-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-in-sync-event.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-fragment-into-document-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-fragment-into-document.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-document-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-document.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-parent-into-document-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-parent-into-document.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-div-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-div.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-namespace-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-namespace.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-networkState-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-networkState.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-not-in-document-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-not-in-document.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-load-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-load.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause-networkState-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause-networkState.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-play-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-play.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document-networkState-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document-networkState.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-src-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-src.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-in-namespace-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-in-namespace.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-networkState-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-networkState.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-source-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-source.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-text-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-text.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-source-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-source.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-src-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-src.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-source-media-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-source-media.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html: Removed.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed fixup after r189471 and r189472.
 
         * web-platform-tests/common/blank.html: Added.

@@ -1,3 +1,0 @@
-
-PASS NOT invoking resource selection by removing from document with NETWORK_EMPTY 
-
