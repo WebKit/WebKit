@@ -1,3 +1,27 @@
+2015-09-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move PrettyPrinting tests into LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=148698
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/*: Renamed from Source/WebInspectorUI/Tools/PrettyPrinting/css-rule-tests/*.
+        * inspector/codemirror/resources/prettyprinting/css-tests/*: Renamed from Source/WebInspectorUI/Tools/PrettyPrinting/css-tests/*.
+        * inspector/codemirror/resources/prettyprinting/javascript-tests/*: Renamed from Source/WebInspectorUI/Tools/PrettyPrinting/js-tests/*.
+        Move tests from PrettyPrinting tools into LayoutTests.
+
+        * inspector/codemirror/prettyprinting-css-expected.txt: Added.
+        * inspector/codemirror/prettyprinting-css-rules-expected.txt: Added.
+        * inspector/codemirror/prettyprinting-css-rules.html: Added.
+        * inspector/codemirror/prettyprinting-css.html: Added.
+        * inspector/codemirror/prettyprinting-javascript-expected.txt: Added.
+        * inspector/codemirror/prettyprinting-javascript.html: Added.
+        Add tests per CodeMirror mode.
+
+        * inspector/codemirror/resources/prettyprinting/utilities.js: Added.
+        (TestPage.registerInitializer):
+        Shared code between the pretty printing tests.
+
 2015-09-08  Daniel Bates  <dabates@apple.com>
 
         Mark animations/trigger-container-scroll-boundaries.html as failure on iOS

@@ -1,0 +1,25 @@
+Test CSS pretty printing with CodeMirror.
+
+
+== Running test suite: CodeMirror.PrettyPrinting.CSS
+-- Running test case: CodeMirror.PrettyPrinting.CSS.basic.css
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.CSS.calc.css
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.CSS.gradient.css
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.CSS.keyframes.css
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.CSS.media-query.css
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.CSS.selectors.css
+PASS
+
+-- Running test case: CodeMirror.PrettyPrinting.CSS.wrapping.css
+PASS
+

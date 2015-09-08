@@ -1,3 +1,16 @@
+2015-09-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move PrettyPrinting tests into LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=148698
+
+        Reviewed by Timothy Hatcher.
+
+        * Tools/PrettyPrinting/index.html:
+        Modify the relative path to the tests which are now in LayoutTests.
+
+        * UserInterface/Test.html:
+        Load CodeMirror and related resources for Formatting.
+
 2015-09-06  Andy Estes  <aestes@apple.com>
 
         WebKit.xcworkspace should be be able to build iOS platforms
