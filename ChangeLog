@@ -1,3 +1,14 @@
+2015-09-08  Daniel Bates  <dabates@apple.com>
+
+        Convert manual test added in http://trac.webkit.org/changeset/70321 to an automated test
+        https://bugs.webkit.org/show_bug.cgi?id=74729
+        <rdar://problem/22550195>
+
+        Reviewed by Jon Honeycutt.
+
+        * ManualTests/compositing/resources/composited-subframe.html: Removed.
+        * ManualTests/compositing/show-composited-iframe-on-back-button.html: Removed.
+
 2015-09-06  Andy Estes  <aestes@apple.com>
 
         WebKit.xcworkspace should be be able to build iOS platforms

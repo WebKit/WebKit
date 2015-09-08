@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Show composited iframe contents when navigating back to page</title>
+<link rel="stylesheet" href="resources/show-composited-iframe-on-back-button.css">
+<script>
+function handleOnPageShow(pageTransitionEvent)
+{
+    console.assert(window.testRunner);
+    if (pageTransitionEvent.persisted)
+        return;
+
+    // First time the page has been loaded.
+    testRunner.queueLoad("about:blank");
+    testRunner.queueBackNavigation(1);
+}
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+    window.onpageshow = handleOnPageShow;
+}
+</script>
+</head>
+<body>
+<p>This page has a composited iframe. When navigating to a new page and then back to this one, the iframe contents should show up.</p>
+<p>To run this test manually, perform the following:</p>
+<ol>
+    <li>Click <a href="http://apple.com">here</a>.</li>
+    <li>Click the back button in the browser.</li>
+</ol>
+<p>This test PASSED if a blue box is visible below. Otherwise, it FAILED.</p>
+<iframe class="container" scrolling="no" src="resources/composited-subframe.html"></iframe>
+</body>
+</html>
