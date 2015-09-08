@@ -1,3 +1,10 @@
+2015-09-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed gardening. tests of imported/w3c/css/ have been passed since r189358.
+        Those tests seem to be failed on other ports though, those are passing on EFL port.
+
+        * platform/efl/TestExpectations:
+
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, move html/dom W3C tests to imported/w3c/web-platform-tests/html/dom/
