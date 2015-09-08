@@ -1,5 +1,72 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix-up for r189472.
+
+        - Add a few missing test expectations.
+        - Rename ref-tests expected results to use proper format: -expected.html
+
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/nested-document-write-1-expected.txt: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/nested-document-write-2-expected.txt: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/004-1-expected.txt: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/016-1-expected.txt: Added.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-bdi-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-bdi-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-bdi-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-bdi-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir_auto-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir_auto-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir_auto-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-dir_auto-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-script-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-script-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-script-L-expected.txt: Removed.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-script-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-script-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-style-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-style-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-style-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-style-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-textarea-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-textarea-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-textarea-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-contained-textarea-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-EN-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-EN-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-EN-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-EN-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-EN-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-N-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-EN-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-EN-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-EN-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-EN-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-EN-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-L-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-L-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-N-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-R-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-input-script-R-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-isolate-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-isolate-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-N-EN-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-N-EN-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-N-between-Rs-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-N-between-Rs-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-mixed-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-mixed-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-EN-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-EN-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-mixed-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-EN-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-EN-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-mixed-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/lang-xmllang-01-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/lang-xmllang-01-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/lang-xyzzy-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/lang-xyzzy-ref.html.
+        * web-platform-tests/html/dom/elements/global-attributes/style-01-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/style-01-ref.html.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, move html/dom W3C tests to imported/w3c/web-platform-tests/html/dom/
         https://bugs.webkit.org/show_bug.cgi?id=148948
 
