@@ -36,6 +36,7 @@ static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible
 static NSString * const SimpleLineLayoutDebugBordersEnabledPreferenceKey = @"SimpleLineLayoutDebugBordersEnabled";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
 static NSString * const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
+static NSString * const AcceleratedDrawingEnabledPreferenceKey = @"AcceleratedDrawingEnabled";
 
 static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
 static NSString * const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"WheelEventHandlerRegionOverlayVisible";
@@ -107,6 +108,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Show Layer Borders" action:@selector(toggleShowLayerBorders:) indented:NO];
     [self _addItemWithTitle:@"Show Simple Line Layout Borders" action:@selector(toggleSimpleLineLayoutDebugBordersEnabled:) indented:NO];
     [self _addItemWithTitle:@"Suppress Incremental Rendering in New Windows" action:@selector(toggleIncrementalRenderingSuppressed:) indented:NO];
+    [self _addItemWithTitle:@"Enable Accelerated Drawing" action:@selector(toggleAcceleratedDrawingEnabled:) indented:NO];
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
@@ -152,6 +154,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self simpleLineLayoutDebugBordersEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleIncrementalRenderingSuppressed:))
         [menuItem setState:[self incrementalRenderingSuppressed] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleAcceleratedDrawingEnabled:))
+        [menuItem setState:[self acceleratedDrawingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
     else if (action == @selector(toggleUseUISideCompositing:))
@@ -262,6 +266,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)simpleLineLayoutDebugBordersEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:SimpleLineLayoutDebugBordersEnabledPreferenceKey];
+}
+
+- (void)toggleAcceleratedDrawingEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:AcceleratedDrawingEnabledPreferenceKey];
+}
+
+- (BOOL)acceleratedDrawingEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AcceleratedDrawingEnabledPreferenceKey];
 }
 
 - (void)toggleShowTiledScrollingIndicator:(id)sender

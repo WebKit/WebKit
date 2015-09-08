@@ -237,6 +237,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setSimpleLineLayoutDebugBordersEnabled(simpleLineLayoutDebugBordersEnabled);
 }
 
+- (BOOL)_acceleratedDrawingEnabled
+{
+    return _preferences->acceleratedDrawingEnabled();
+}
+
+- (void)_setAcceleratedDrawingEnabled:(BOOL)acceleratedDrawingEnabled
+{
+    _preferences->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
+}
+
 - (BOOL)_developerExtrasEnabled
 {
     return _preferences->developerExtrasEnabled();

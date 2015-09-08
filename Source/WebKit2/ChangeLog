@@ -1,3 +1,18 @@
+2015-09-08  Daniel Bates  <dabates@apple.com>
+
+        [Mac] Expose Enable/Disable Accelerated Drawing in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=148980
+
+        Reviewed by Alexey Proskuryakov.
+
+        Expose SPI web preference to enable/disable- and query the state of- accelerated drawing
+        so that we can toggle this setting in MiniBrowser on Mac.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _acceleratedDrawingEnabled]): Added.
+        (-[WKPreferences _setAcceleratedDrawingEnabled:]): Added.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2015-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused file: WebInspectorFrontendClient.h
