@@ -1,3 +1,9 @@
+2015-09-08  Jason Marcell  <jmarcell@apple.com>
+
+        Unreviewed. Added myself as a commiter in contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-09-08  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, added myself to the list of contributors.
@@ -36831,3 +36837,4 @@
         (JSTestCase.test_error):
 
 == Rolled over to ChangeLog-2014-02-20 ==
+contributor
