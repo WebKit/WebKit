@@ -433,12 +433,25 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseImmediateExpressionI32(context);
         case WASMOpExpressionI32::GetLocal:
             return parseGetLocalExpressionI32(context);
+        case WASMOpExpressionI32::Negate:
+        case WASMOpExpressionI32::BitNot:
+        case WASMOpExpressionI32::CountLeadingZeros:
+        case WASMOpExpressionI32::LogicalNot:
+        case WASMOpExpressionI32::Abs:
+            return parseUnaryExpressionI32(context, op);
         case WASMOpExpressionI32::Add:
         case WASMOpExpressionI32::Sub:
+        case WASMOpExpressionI32::Mul:
         case WASMOpExpressionI32::SDiv:
         case WASMOpExpressionI32::UDiv:
         case WASMOpExpressionI32::SMod:
         case WASMOpExpressionI32::UMod:
+        case WASMOpExpressionI32::BitOr:
+        case WASMOpExpressionI32::BitAnd:
+        case WASMOpExpressionI32::BitXor:
+        case WASMOpExpressionI32::LeftShift:
+        case WASMOpExpressionI32::ArithmeticRightShift:
+        case WASMOpExpressionI32::LogicalRightShift:
             return parseBinaryExpressionI32(context, op);
         case WASMOpExpressionI32::EqualI32:
         case WASMOpExpressionI32::NotEqualI32:
@@ -477,17 +490,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::Comma:
         case WASMOpExpressionI32::FromF32:
         case WASMOpExpressionI32::FromF64:
-        case WASMOpExpressionI32::Negate:
-        case WASMOpExpressionI32::Mul:
-        case WASMOpExpressionI32::BitNot:
-        case WASMOpExpressionI32::BitOr:
-        case WASMOpExpressionI32::BitAnd:
-        case WASMOpExpressionI32::BitXor:
-        case WASMOpExpressionI32::LeftShift:
-        case WASMOpExpressionI32::ArithmeticRightShift:
-        case WASMOpExpressionI32::LogicalRightShift:
-        case WASMOpExpressionI32::CountLeadingZeros:
-        case WASMOpExpressionI32::LogicalNot:
         case WASMOpExpressionI32::EqualF32:
         case WASMOpExpressionI32::EqualF64:
         case WASMOpExpressionI32::NotEqualF32:
@@ -504,7 +506,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::UMin:
         case WASMOpExpressionI32::SMax:
         case WASMOpExpressionI32::UMax:
-        case WASMOpExpressionI32::Abs:
             // FIXME: Implement these instructions.
             FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
@@ -568,6 +569,14 @@ ContextExpression WASMFunctionParser::parseGetLocalExpressionI32(Context& contex
     uint32_t localIndex;
     READ_COMPACT_UINT32_OR_FAIL(localIndex, "Cannot read the local index.");
     return parseGetLocalExpressionI32(context, localIndex);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseUnaryExpressionI32(Context& context, WASMOpExpressionI32 op)
+{
+    ContextExpression expression = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    return context.buildUnaryI32(expression, op);
 }
 
 template <class Context>

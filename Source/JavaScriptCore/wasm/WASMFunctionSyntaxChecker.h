@@ -79,6 +79,11 @@ public:
         return UNUSED;
     }
 
+    int buildUnaryI32(int, WASMOpExpressionI32)
+    {
+        return UNUSED;
+    }
+
     int buildBinaryI32(int, int, WASMOpExpressionI32)
     {
         m_tempStackTop--;

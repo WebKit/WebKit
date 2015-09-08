@@ -1,3 +1,25 @@
+2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement all the arithmetic and logical instructions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148882
+
+        Reviewed by Mark Lam.
+
+        This patch implements all the arithmetic and logical instructions for
+        32-bit integers in WebAssembly.
+
+        * tests/stress/wasm-arithmetic.js:
+        * tests/stress/wasm/arithmetic.wasm:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildUnaryI32):
+        (JSC::WASMFunctionCompiler::buildBinaryI32):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseUnaryExpressionI32):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildUnaryI32):
+
 2015-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix debug by removing an assertion that is not correct anymore.

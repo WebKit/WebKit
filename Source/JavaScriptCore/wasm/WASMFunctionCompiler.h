@@ -263,6 +263,43 @@ public:
         return UNUSED;
     }
 
+    int buildUnaryI32(int, WASMOpExpressionI32 op)
+    {
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT0);
+        switch (op) {
+        case WASMOpExpressionI32::Negate:
+            neg32(GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::BitNot:
+            xor32(TrustedImm32(-1), GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::CountLeadingZeros:
+            countLeadingZeros32(GPRInfo::regT0, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::LogicalNot: {
+            // FIXME: Don't use branches.
+            Jump zero = branchTest32(Zero, GPRInfo::regT0);
+            move(TrustedImm32(0), GPRInfo::regT0);
+            Jump end = jump();
+            zero.link(this);
+            move(TrustedImm32(1), GPRInfo::regT0);
+            end.link(this);
+            break;
+        }
+        case WASMOpExpressionI32::Abs: {
+            // FIXME: Don't use branches.
+            Jump end = branchTest32(PositiveOrZero, GPRInfo::regT0);
+            neg32(GPRInfo::regT0);
+            end.link(this);
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+        return UNUSED;
+    }
+
     int buildBinaryI32(int, int, WASMOpExpressionI32 op)
     {
         load32(temporaryAddress(m_tempStackTop - 2), GPRInfo::regT0);
@@ -273,6 +310,9 @@ public:
             break;
         case WASMOpExpressionI32::Sub:
             sub32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::Mul:
+            mul32(GPRInfo::regT1, GPRInfo::regT0);
             break;
         case WASMOpExpressionI32::SDiv:
         case WASMOpExpressionI32::UDiv:
@@ -322,6 +362,24 @@ public:
 #endif
             break;
         }
+        case WASMOpExpressionI32::BitOr:
+            or32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::BitAnd:
+            and32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::BitXor:
+            xor32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::LeftShift:
+            lshift32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::ArithmeticRightShift:
+            rshift32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMOpExpressionI32::LogicalRightShift:
+            urshift32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
         default:
             ASSERT_NOT_REACHED();
         }
