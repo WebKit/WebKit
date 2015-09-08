@@ -1041,7 +1041,6 @@ private:
         case PutByIdFlush:
         case PutByIdDirect: {
             fixEdge<CellUse>(node->child1());
-            speculateForBarrier(node->child2());
             break;
         }
 

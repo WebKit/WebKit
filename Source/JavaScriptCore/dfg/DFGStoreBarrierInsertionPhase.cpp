@@ -260,14 +260,18 @@ private:
                 
             case PutClosureVar:
             case PutToArguments:
-            case PutById:
-            case PutByIdFlush:
-            case PutByIdDirect:
             case MultiPutByOffset: {
                 considerBarrier(m_node->child1(), m_node->child2());
                 break;
             }
                 
+            case PutById:
+            case PutByIdFlush:
+            case PutByIdDirect: {
+                considerBarrier(m_node->child1());
+                break;
+            }
+
             case PutByOffset: {
                 considerBarrier(m_node->child2(), m_node->child3());
                 break;

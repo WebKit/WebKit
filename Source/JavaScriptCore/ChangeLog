@@ -1,3 +1,27 @@
+2015-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        The put_by_id IC store barrier contract should benefit transition over replace
+        https://bugs.webkit.org/show_bug.cgi?id=148943
+
+        Reviewed by Mark Lam.
+
+        Previously, we would only emit a barrier if the value being stored was possibly a cell, so
+        the transition stub code generator would have to emit a barrier for the store of the
+        structure, just in case the structure was newer than the base object.
+
+        This changes the contract so that the put_by_id callsite would always have a barrier on the
+        base (except if it proved that the base was brand new). That way, the transition doesn't have
+        to have a barrier unless it allocates.
+
+        This is meant to be a perf-neutral change that I need for the IC refactoring in
+        https://bugs.webkit.org/show_bug.cgi?id=148717.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * jit/Repatch.cpp:
+        (JSC::emitPutTransitionStub):
+
 2015-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Windows non-cygwin build fix after r189333.

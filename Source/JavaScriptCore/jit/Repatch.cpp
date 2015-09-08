@@ -1133,8 +1133,8 @@ static bool emitPutTransitionStub(
 
 #if ENABLE(GGC)
     MacroAssembler::Call callFlushWriteBarrierBuffer;
-    MacroAssembler::Jump ownerIsRememberedOrInEden = stubJit.jumpIfIsRememberedOrInEden(baseGPR);
-    {
+    if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()) {
+        MacroAssembler::Jump ownerIsRememberedOrInEden = stubJit.jumpIfIsRememberedOrInEden(baseGPR);
         WriteBarrierBuffer& writeBarrierBuffer = stubJit.vm()->heap.writeBarrierBuffer();
         stubJit.load32(writeBarrierBuffer.currentIndexAddress(), scratchGPR2);
         MacroAssembler::Jump needToFlush =
@@ -1157,8 +1157,8 @@ static bool emitPutTransitionStub(
         allocator.restoreUsedRegistersFromScratchBufferForCall(stubJit, scratchBuffer, scratchGPR2);
 
         doneWithBarrier.link(&stubJit);
+        ownerIsRememberedOrInEden.link(&stubJit);
     }
-    ownerIsRememberedOrInEden.link(&stubJit);
 #endif
 
     MacroAssembler::Jump success;
@@ -1203,12 +1203,12 @@ static bool emitPutTransitionStub(
         patchBuffer.link(failure, failureLabel);
     else
         patchBuffer.link(failureCases, failureLabel);
-#if ENABLE(GGC)
-    patchBuffer.link(callFlushWriteBarrierBuffer, operationFlushWriteBarrierBuffer);
-#endif
     if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()) {
         patchBuffer.link(operationCall, operationReallocateStorageAndFinishPut);
         patchBuffer.link(successInSlowPath, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
+#if ENABLE(GGC)
+        patchBuffer.link(callFlushWriteBarrierBuffer, operationFlushWriteBarrierBuffer);
+#endif
     }
     
     stubRoutine =
