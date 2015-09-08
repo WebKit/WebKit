@@ -59,6 +59,7 @@ public:
         , m_hasSeenShouldRepatch(false)
         , m_hasSeenClosure(false)
         , m_clearedByGC(false)
+        , m_allowStubs(true)
         , m_callType(None)
         , m_maxNumArguments(0)
         , m_slowPathCount(0)
@@ -103,6 +104,13 @@ public:
         m_callReturnLocation = callReturnLocation;
         m_hotPathBegin = hotPathBegin;
         m_hotPathOther = hotPathOther;
+    }
+
+    bool allowStubs() const { return m_allowStubs; }
+
+    void disallowStubs()
+    {
+        m_allowStubs = false;
     }
 
     void setUpCallFromFTL(CallType callType, CodeOrigin codeOrigin,
@@ -290,6 +298,7 @@ private:
     bool m_hasSeenShouldRepatch : 1;
     bool m_hasSeenClosure : 1;
     bool m_clearedByGC : 1;
+    bool m_allowStubs : 1;
     unsigned m_callType : 4; // CallType
     unsigned m_calleeGPR : 8;
     uint8_t m_maxNumArguments; // Only used for varargs calls.

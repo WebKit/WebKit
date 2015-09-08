@@ -427,6 +427,17 @@ static bool generateByIdStub(
             // shrink it after.
             
             callLinkInfo = std::make_unique<CallLinkInfo>();
+
+            // FIXME: If we generated a polymorphic call stub that jumped back to the getter
+            // stub, which then jumped back to the main code, then we'd have a reachability
+            // situation that the GC doesn't know about. The GC would ensure that the polymorphic
+            // call stub stayed alive, and it would ensure that the main code stayed alive, but
+            // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
+            // be GC objects, and then we'd be able to say that the polymorphic call stub has a
+            // reference to the getter stub.
+            // https://bugs.webkit.org/show_bug.cgi?id=148914
+            callLinkInfo->disallowStubs();
+            
             callLinkInfo->setUpCall(CallLinkInfo::Call, stubInfo.codeOrigin, loadedValueGPR);
             
             MacroAssembler::JumpList done;
@@ -1615,7 +1626,7 @@ void linkFor(
     if (calleeCodeBlock)
         calleeCodeBlock->linkIncomingCall(exec->callerFrame(), &callLinkInfo);
     
-    if (callLinkInfo.specializationKind() == CodeForCall) {
+    if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs()) {
         linkSlowFor(vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
         return;
     }
@@ -1679,6 +1690,8 @@ struct CallToCodePtr {
 void linkPolymorphicCall(
     ExecState* exec, CallLinkInfo& callLinkInfo, CallVariant newVariant)
 {
+    RELEASE_ASSERT(callLinkInfo.allowStubs());
+    
     // Currently we can't do anything for non-function callees.
     // https://bugs.webkit.org/show_bug.cgi?id=140685
     if (!newVariant || !newVariant.executable()) {
