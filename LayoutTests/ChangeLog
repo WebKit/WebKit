@@ -1,3 +1,12 @@
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed gardening.
+
+        Update Window baselines for a couple of W3C HTML tests.
+
+        * platform/win/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-expected.txt:
+        * platform/win/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt:
+
 2015-09-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Mavericks: Text cursor does not move along with VoiceOver cursor for text fields

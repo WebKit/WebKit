@@ -1,5 +1,19 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fixup a few recently imported W3C HTML tests.
+
+        A few support files were missing.
+
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/sandbox_allow_script.html: Added.
+        * web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr.html:
+        * web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/resources/dirname-ltr-iframe.html: Added.
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/resources/focus-iframe.html: Added.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop unfinished W3C DOM tests.
 
         Those were not meant to be imported.
