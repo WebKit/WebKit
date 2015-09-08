@@ -66,17 +66,18 @@ static const float maximumAttachedHeightRatio = 0.75f;
 static const float minimumAttachedWidth = 500.0f;
 static const float minimumAttachedInspectedWidth = 320.0f;
 
-class InspectorBackendDispatchTask {
+class InspectorBackendDispatchTask : public RefCounted<InspectorBackendDispatchTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorBackendDispatchTask(InspectorController* inspectorController)
-        : m_inspectorController(inspectorController)
-        , m_timer(*this, &InspectorBackendDispatchTask::timerFired)
+    static Ref<InspectorBackendDispatchTask> create(InspectorController* inspectedPageController)
     {
+        return adoptRef(*new InspectorBackendDispatchTask(inspectedPageController));
     }
 
     void dispatch(const String& message)
     {
+        ASSERT_ARG(message, !message.isEmpty());
+
         m_messages.append(message);
         if (!m_timer.isActive())
             m_timer.startOneShot(0);
@@ -86,19 +87,33 @@ public:
     {
         m_messages.clear();
         m_timer.stop();
+        m_inspectedPageController = nullptr;
     }
 
     void timerFired()
     {
-        if (!m_messages.isEmpty()) {
-            // Dispatch can lead to the timer destruction -> schedule the next shot first.
+        ASSERT(m_inspectedPageController);
+
+        // Dispatching a message can possibly close the frontend and destroy
+        // the owning frontend client, so keep a protector reference here.
+        Ref<InspectorBackendDispatchTask> protect(*this);
+
+        if (!m_messages.isEmpty())
+            m_inspectedPageController->dispatchMessageFromFrontend(m_messages.takeFirst());
+
+        if (!m_messages.isEmpty() && m_inspectedPageController)
             m_timer.startOneShot(0);
-            m_inspectorController->dispatchMessageFromFrontend(m_messages.takeFirst());
-        }
     }
 
 private:
-    InspectorController* m_inspectorController;
+    InspectorBackendDispatchTask(InspectorController* inspectedPageController)
+        : m_inspectedPageController(inspectedPageController)
+        , m_timer(*this, &InspectorBackendDispatchTask::timerFired)
+    {
+        ASSERT_ARG(inspectedPageController, inspectedPageController);
+    }
+
+    InspectorController* m_inspectedPageController { nullptr };
     Timer m_timer;
     Deque<String> m_messages;
 };
@@ -112,25 +127,23 @@ void InspectorFrontendClientLocal::Settings::setProperty(const String&, const St
 {
 }
 
-InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectorController, Page* frontendPage, std::unique_ptr<Settings> settings)
-    : m_inspectorController(inspectorController)
+InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
+    : m_inspectorController(inspectedPageController)
     , m_frontendPage(frontendPage)
     , m_settings(WTF::move(settings))
-    , m_frontendLoaded(false)
     , m_dockSide(DockSide::Undocked)
+    , m_dispatchTask(InspectorBackendDispatchTask::create(inspectedPageController))
 {
     m_frontendPage->settings().setAllowFileAccessFromFileURLs(true);
-    m_frontendPage->settings().setJavaScriptRuntimeFlags({
-    });
-    m_dispatchTask = std::make_unique<InspectorBackendDispatchTask>(inspectorController);
 }
 
 InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
 {
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
-    m_frontendPage = 0;
-    m_inspectorController = 0;
+    m_frontendPage = nullptr;
+    m_inspectorController = nullptr;
+    m_dispatchTask->reset();
 }
 
 void InspectorFrontendClientLocal::windowObjectCleared()

@@ -114,15 +114,15 @@ private:
     void evaluateOnLoad(const String& expression);
 
     friend class FrontendMenuProvider;
-    InspectorController* m_inspectorController;
-    Page* m_frontendPage;
+    InspectorController* m_inspectorController { nullptr };
+    Page* m_frontendPage { nullptr };
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
     std::unique_ptr<InspectorFrontendClientLocal::Settings> m_settings;
-    bool m_frontendLoaded;
+    bool m_frontendLoaded { false };
     DockSide m_dockSide;
     Vector<String> m_evaluateOnLoad;
-    std::unique_ptr<InspectorBackendDispatchTask> m_dispatchTask;
+    Ref<InspectorBackendDispatchTask> m_dispatchTask;
 };
 
 } // namespace WebCore
