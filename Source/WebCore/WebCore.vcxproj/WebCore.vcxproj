@@ -7268,7 +7268,6 @@
     <ClCompile Include="..\page\DragController.cpp" />
     <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingCoordinatorCoordinatedGraphics.cpp" />
     <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingStateNodeCoordinatedGraphics.cpp" />
-    <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingStateScrollingNodeCoordinatedGraphics.cpp" />
     <ClCompile Include="..\page\scrolling\ScrollingStateFixedNode.cpp" />
     <ClCompile Include="..\page\scrolling\ScrollingStateNode.cpp" />
     <ClCompile Include="..\page\scrolling\ScrollingStateScrollingNode.cpp" />

@@ -86,7 +86,6 @@ list(APPEND WebCore_SOURCES
 
     page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
     page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
 
     platform/ContextMenuItemNone.cpp
     platform/ContextMenuNone.cpp
