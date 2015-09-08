@@ -1,5 +1,38 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop W3C support files from http/
+
+        Drop W3C support files from http/tests/resources/ and
+        http/tests/w3c/resources/. These were recently added and are not longer
+        needed that that the w3c web-platform-tests were moved to imported/w3c.
+
+        * http/tests/resources/WebIDLParser.js: Removed.
+        * http/tests/resources/idlharness.js: Removed.
+        * http/tests/resources/testharness.css: Removed.
+        * http/tests/resources/testharness.js: Removed.
+        * http/tests/resources/testharnessreport.js: Removed.
+        * http/tests/w3c/resources/css-red.txt: Removed.
+        * http/tests/w3c/resources/media.js: Removed.
+        * http/tests/w3c/resources/media/A4.mp4: Removed.
+        * http/tests/w3c/resources/media/A4.ogv: Removed.
+        * http/tests/w3c/resources/media/foo.vtt: Removed.
+        * http/tests/w3c/resources/media/foo.vtt.headers: Removed.
+        * http/tests/w3c/resources/media/green-at-15.mp4: Removed.
+        * http/tests/w3c/resources/media/green-at-15.ogv: Removed.
+        * http/tests/w3c/resources/media/movie_300.mp4: Removed.
+        * http/tests/w3c/resources/media/movie_300.ogv: Removed.
+        * http/tests/w3c/resources/media/movie_5.mp4: Removed.
+        * http/tests/w3c/resources/media/movie_5.ogv: Removed.
+        * http/tests/w3c/resources/media/poster.png: Removed.
+        * http/tests/w3c/resources/media/sound_5.mp3: Removed.
+        * http/tests/w3c/resources/media/sound_5.oga: Removed.
+        * http/tests/w3c/resources/media/white.mp4: Removed.
+        * http/tests/w3c/resources/media/white.webm: Removed.
+        * http/tests/w3c/resources/stringifiers.js: Removed.
+        * http/tests/w3c/resources/utils.js: Removed.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed fixup after r189471 and r189472.
 
         * platform/win/TestExpectations:
