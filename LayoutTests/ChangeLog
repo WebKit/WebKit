@@ -1,5 +1,11 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, update iOS baseline for imported/w3c/web-platform-tests/html/dom/interfaces.html.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html
 
         This test causes the next one to be flaky. The issue is tracked by
