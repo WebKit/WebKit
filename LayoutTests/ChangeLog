@@ -1,3 +1,37 @@
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, move W3C DOM tests to imported/w3c/web-platform-tests/dom
+        https://bugs.webkit.org/show_bug.cgi?id=148947
+
+        Move W3C DOM tests with other web-platform-tests under:
+        imported/w3c/web-platform-tests/dom.
+
+        * TestExpectations:
+        * http/tests/w3c/dom/collections/w3c-import.log: Removed.
+        * http/tests/w3c/dom/events/w3c-import.log: Removed.
+        * http/tests/w3c/dom/lists/w3c-import.log: Removed.
+        * http/tests/w3c/dom/nodes/Document-URL.sub-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Document-characterSet-normalization-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/DocumentType-literal-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Element-childElementCount-dynamic-add-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Element-childElementCount-nochild-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Element-firstElementChild-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Element-nextElementSibling-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Element-previousElementSibling-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Node-isEqualNode-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/Node-lookupPrefix-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/ProcessingInstruction-literal-1-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/ProcessingInstruction-literal-2-xhtml-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/getElementsByClassName-10-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/getElementsByClassName-11-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/getElementsByClassName-31-expected.txt: Removed.
+        * http/tests/w3c/dom/nodes/w3c-import.log: Removed.
+        * http/tests/w3c/dom/ranges/w3c-import.log: Removed.
+        * http/tests/w3c/dom/traversal/w3c-import.log: Removed.
+        * http/tests/w3c/dom/w3c-import.log: Removed.
+        * platform/efl/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-07  Daniel Bates  <dabates@apple.com>
 
         ASSERT_WITH_SECURITY_IMPLICATION in WebCore::DocumentOrderedMap::get(); update form

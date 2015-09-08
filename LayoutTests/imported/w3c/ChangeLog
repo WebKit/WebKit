@@ -1,3 +1,13 @@
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, move W3C DOM tests to imported/w3c/web-platform-tests/dom
+        https://bugs.webkit.org/show_bug.cgi?id=148947
+
+        Move W3C DOM tests with other web-platform-tests under:
+        imported/w3c/web-platform-tests/dom.
+
+        * web-platform-tests/dom/*: Added.
+
 2015-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import new multicolumn layout tests from CSS WG testss

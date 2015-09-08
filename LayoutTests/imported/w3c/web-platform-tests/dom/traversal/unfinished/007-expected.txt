@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x44
+  RenderBlock {html} at (0,0) size 800x44
+    RenderBody {body} at (8,13) size 784x15
+      RenderBlock {pre} at (0,0) size 784x15
+        RenderText {#text} at (0,0) size 32x15
+          text run at (0,0) width 32: "PASS"
+      RenderBlock {p} at (0,31) size 784x0
+        RenderInline {span} at (0,0) size 0x0
+          RenderInline {span} at (0,0) size 0x0
+            RenderInline {span} at (0,0) size 0x0
+          RenderInline {span} at (0,0) size 0x0

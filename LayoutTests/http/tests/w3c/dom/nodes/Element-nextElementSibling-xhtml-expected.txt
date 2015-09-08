@@ -1,7 +1,0 @@
-Test of nextElementSibling
-
-The result of this test is unknown.
-
-
-PASS nextElementSibling 
-

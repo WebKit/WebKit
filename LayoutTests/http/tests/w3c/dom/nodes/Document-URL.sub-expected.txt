@@ -1,3 +1,0 @@
-
-FAIL Document.URL with redirect assert_equals: expected "http://{{host}}:{{ports[http][0]}}/common/blank.html" but got "http://127.0.0.1:8000/common/redirect.py?location=/common/blank.html"
-

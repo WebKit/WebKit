@@ -38,5 +38,13 @@
         ], 
         "url": "https://github.com/jgraham/six/archive/3b6173c833d217ab0186c355804f5925cbcfca47.tar.gz", 
         "url_subpath": "six-3b6173c833d217ab0186c355804f5925cbcfca47"
+    },
+    {
+        "name": "webidl2",
+        "path": [
+            "resources"
+        ],
+        "url": "https://github.com/darobin/webidl2.js/archive/997fb214e02980ef4c27137553857ae6da533590.tar.gz",
+        "url_subpath": "webidl2.js-997fb214e02980ef4c27137553857ae6da533590"
     }
 ]

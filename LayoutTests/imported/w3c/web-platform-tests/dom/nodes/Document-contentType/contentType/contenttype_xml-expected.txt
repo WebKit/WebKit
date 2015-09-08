@@ -1,0 +1,3 @@
+
+PASS XML document.contentType === 'application/xml' 
+

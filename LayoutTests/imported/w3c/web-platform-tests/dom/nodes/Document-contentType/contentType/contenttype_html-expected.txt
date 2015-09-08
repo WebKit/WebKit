@@ -1,0 +1,3 @@
+
+PASS HTM document.contentType === 'text/html' 
+

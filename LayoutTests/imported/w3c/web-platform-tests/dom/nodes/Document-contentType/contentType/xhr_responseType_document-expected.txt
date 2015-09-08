@@ -1,0 +1,3 @@
+
+PASS XHR - retrieve HTML document: document.contentType === 'application/xml' 
+
