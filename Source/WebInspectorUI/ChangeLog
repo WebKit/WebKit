@@ -1,3 +1,24 @@
+2015-09-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r189189): Missing breakpoint context menu for debugger sidebar tree elements
+        https://bugs.webkit.org/show_bug.cgi?id=148651
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Create BreakpointPopoverController singleton, expose as public property of global WebInspector object.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.oncontextmenu):
+        Use BreakpointPopoverController singleton.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        Don't create BreakpointPopoverController instance.
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+        Use BreakpointPopoverController singleton.
+
 2015-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix inspector/codemirror tests.
