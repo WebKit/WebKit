@@ -56,6 +56,7 @@ public:
     bool readExportFormat(WASMExportFormat& result);
     bool readOpStatement(bool& hasImmediate, WASMOpStatement&, WASMOpStatementWithImmediate&, uint8_t& immediate);
     bool readOpExpressionI32(bool& hasImmediate, WASMOpExpressionI32&, WASMOpExpressionI32WithImmediate&, uint8_t& immediate);
+    bool readOpExpressionF64(bool& hasImmediate, WASMOpExpressionF64&, WASMOpExpressionF64WithImmediate&, uint8_t& immediate);
     bool readVariableTypes(bool& hasImmediate, WASMVariableTypes&, WASMVariableTypesWithImmediate&, uint8_t& immediate);
     bool readSwitchCase(WASMSwitchCase& result);
 

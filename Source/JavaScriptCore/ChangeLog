@@ -1,3 +1,36 @@
+2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Add initial support for doubles in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148913
+
+        Reviewed by Filip Pizlo.
+
+        Implement the ConstantPoolIndex, Immediate, and GetLocal instructions
+        for doubles (float64) in WebAssembly.
+
+        * tests/stress/wasm-arithmetic-float64.js: Added.
+        (shouldBe):
+        * tests/stress/wasm/arithmetic-float64.wasm: Added.
+        * wasm/WASMConstants.h:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildSetLocal):
+        (JSC::WASMFunctionCompiler::buildReturn):
+        (JSC::WASMFunctionCompiler::buildImmediateI32):
+        (JSC::WASMFunctionCompiler::buildImmediateF64):
+        (JSC::WASMFunctionCompiler::buildGetLocal):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpression):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseConstantPoolIndexExpressionF64):
+        (JSC::WASMFunctionParser::parseImmediateExpressionF64):
+        (JSC::WASMFunctionParser::parseGetLocalExpressionF64):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildImmediateF64):
+        * wasm/WASMReader.cpp:
+        (JSC::WASMReader::readOpExpressionF64):
+        * wasm/WASMReader.h:
+
 2015-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         CallLinkInfo inside StructureStubInfo should not use polymorphic stubs

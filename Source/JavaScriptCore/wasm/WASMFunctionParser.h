@@ -87,6 +87,13 @@ private:
     template <class Context> ContextExpression parseBinaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalI32ExpressionI32(Context&, WASMOpExpressionI32);
 
+    template <class Context> ContextExpression parseExpressionF64(Context&);
+    template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&, uint32_t constantIndex);
+    template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&);
+    template <class Context> ContextExpression parseImmediateExpressionF64(Context&);
+    template <class Context> ContextExpression parseGetLocalExpressionF64(Context&, uint32_t localIndex);
+    template <class Context> ContextExpression parseGetLocalExpressionF64(Context&);
+
     JSWASMModule* m_module;
     WASMReader m_reader;
     size_t m_functionIndex;

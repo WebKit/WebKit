@@ -65,6 +65,13 @@ public:
         return UNUSED;
     }
 
+    int buildImmediateF64(uint32_t)
+    {
+        m_tempStackTop++;
+        updateTempStackHeight();
+        return UNUSED;
+    }
+
     int buildGetLocal(uint32_t, WASMType)
     {
         m_tempStackTop++;

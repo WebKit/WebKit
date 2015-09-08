@@ -170,6 +170,56 @@ enum class WASMOpExpressionI32WithImmediate : uint8_t {
     NumberOfWASMOpExpressionI32WithImmediates
 };
 
+enum class WASMOpExpressionF64 : uint8_t {
+    ConstantPoolIndex,
+    Immediate,
+    GetLocal,
+    GetGlobal,
+    SetLocal,
+    SetGlobal,
+    Load,
+    LoadWithOffset,
+    Store,
+    StoreWithOffset,
+    CallInternal,
+    CallIndirect,
+    CallImport,
+    Conditional,
+    Comma,
+    FromS32,
+    FromU32,
+    FromF32,
+    Negate,
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Mod,
+    Min,
+    Max,
+    Abs,
+    Ceil,
+    Floor,
+    Sqrt,
+    Cos,
+    Sin,
+    Tan,
+    ACos,
+    ASin,
+    ATan,
+    ATan2,
+    Exp,
+    Ln,
+    Pow,
+    NumberOfWASMOpExpressionF64s
+};
+
+enum class WASMOpExpressionF64WithImmediate : uint8_t {
+    ConstantPoolIndex,
+    GetLocal,
+    NumberOfWASMOpExpressionF64WithImmediates
+};
+
 enum class WASMVariableTypes : uint8_t {
     I32 = 1 << 0,
     F32 = 1 << 1,

@@ -183,6 +183,11 @@ public:
             m_tempStackTop--;
             store32(GPRInfo::regT0, localAddress(localIndex));
             break;
+        case WASMType::F64:
+            loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
+            m_tempStackTop--;
+            storeDouble(FPRInfo::fpRegT0, localAddress(localIndex));
+            break;
         default:
             ASSERT_NOT_REACHED();
         }
@@ -193,7 +198,20 @@ public:
         switch (returnType) {
         case WASMExpressionType::I32:
             load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::returnValueGPR);
+#if USE(JSVALUE64)
             or64(GPRInfo::tagTypeNumberRegister, GPRInfo::returnValueGPR);
+#else
+            move(TrustedImm32(JSValue::Int32Tag), GPRInfo::returnValueGPR2);
+#endif
+            m_tempStackTop--;
+            break;
+        case WASMExpressionType::F64:
+            loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
+#if USE(JSVALUE64)
+            boxDouble(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+#else
+            boxDouble(FPRInfo::fpRegT0, GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+#endif
             m_tempStackTop--;
             break;
         case WASMExpressionType::Void:
@@ -208,7 +226,23 @@ public:
 
     int buildImmediateI32(uint32_t immediate)
     {
-        store32(TrustedImm32(immediate), temporaryAddress(m_tempStackTop++));
+        store32(Imm32(immediate), temporaryAddress(m_tempStackTop++));
+        return UNUSED;
+    }
+
+    int buildImmediateF64(double immediate)
+    {
+#if USE(JSVALUE64)
+        store64(Imm64(bitwise_cast<int64_t>(immediate)), temporaryAddress(m_tempStackTop++));
+#else
+        union {
+            double doubleValue;
+            int32_t int32Values[2];
+        } u = { immediate };
+        m_tempStackTop++;
+        store32(Imm32(u.int32Values[0]), temporaryAddress(m_tempStackTop - 1));
+        store32(Imm32(u.int32Values[1]), temporaryAddress(m_tempStackTop - 1).withOffset(4));
+#endif
         return UNUSED;
     }
 
@@ -217,8 +251,11 @@ public:
         switch (type) {
         case WASMType::I32:
             load32(localAddress(localIndex), GPRInfo::regT0);
-            m_tempStackTop++;
-            store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+            store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop++));
+            break;
+        case WASMType::F64:
+            loadDouble(localAddress(localIndex), FPRInfo::fpRegT0);
+            storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop++));
             break;
         default:
             ASSERT_NOT_REACHED();
