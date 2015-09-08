@@ -1,4 +1,0 @@
-
-FAIL The href attribute of the base element is specified assert_equals: The href attribute of the base element is incorrect. expected "http://{{domains[www]}}:{{ports[http][0]}}/" but got ""
-FAIL The src attribute of the img element must relative to the href attribute of the base element assert_equals: The src attribute of the img element is incorrect. expected "http://{{domains[www]}}:{{ports[http][0]}}/test.ico" but got "test.ico"
-

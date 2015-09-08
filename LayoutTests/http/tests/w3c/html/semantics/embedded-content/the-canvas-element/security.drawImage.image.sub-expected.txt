@@ -1,6 +1,0 @@
-security.drawImage.image.sub
-drawImage of different-origin image makes the canvas origin-unclean
-Actual output:
-
-FAIL drawImage of different-origin image makes the canvas origin-unclean assert_throws: function "function () { canvas.toDataURL(); }" did not throw
-

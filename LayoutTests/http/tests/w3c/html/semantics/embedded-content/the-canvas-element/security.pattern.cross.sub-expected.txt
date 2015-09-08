@@ -1,6 +1,0 @@
-security.pattern.cross.sub
-Using an unclean pattern makes the target canvas origin-unclean, not the pattern canvas
-Actual output:
-
-FAIL Using an unclean pattern makes the target canvas origin-unclean, not the pattern canvas assert_throws: function "function () { canvas.toDataURL(); }" did not throw
-

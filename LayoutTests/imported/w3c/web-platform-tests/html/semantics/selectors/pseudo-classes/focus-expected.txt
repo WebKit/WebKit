@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 35: TypeError: null is not an object (evaluating 'document.getElementById("iframe").contentDocument.getElementById("inputiframe").focus')
+button1            
+hello
+content
+
+
+Harness Error. harness_status.status = 1 , harness_status.message = TypeError: null is not an object (evaluating 'document.getElementById("iframe").contentDocument.getElementById("inputiframe").focus')

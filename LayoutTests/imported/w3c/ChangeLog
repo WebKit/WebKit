@@ -1,5 +1,12 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, move html/semantics W3C tests to imported/w3c/web-platform-tests/html/semantics
+        https://bugs.webkit.org/show_bug.cgi?id=148949
+
+        * web-platform-tests/html/semantics/*: Added.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix-up for r189472.
 
         - Add a few missing test expectations.

@@ -234,14 +234,13 @@ webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-i
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-set.html [ Skip ]
 webkit.org/b/148736 [ Debug ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Skip ]
-webkit.org/b/148822 [ Debug ] http/tests/w3c/html/semantics/interfaces.html [ Skip ]
+webkit.org/b/148822 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Skip ]
 
 # New W3C ref tests that are failing.
-webkit.org/b/148835 http/tests/w3c/html/semantics/document-metadata/the-style-element/html_style_in_comment.html [ ImageOnlyFailure ]
-webkit.org/b/148847 http/tests/w3c/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html [ ImageOnlyFailure ]
-webkit.org/b/148853 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html [ ImageOnlyFailure ]
-webkit.org/b/148853 http/tests/w3c/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ ImageOnlyFailure ]
-webkit.org/b/148856 http/tests/w3c/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
+webkit.org/b/148847 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html [ ImageOnlyFailure ]
+webkit.org/b/148853 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html [ ImageOnlyFailure ]
+webkit.org/b/148853 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ ImageOnlyFailure ]
+webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
 # @supports W3C Failures
 webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
@@ -667,7 +666,7 @@ webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-fill-auto.xht [ Ima
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-zero-height-001.xht [ ImageOnlyFailure ]
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-child-001.xht [ ImageOnlyFailure ]
 
-webkit.org/b/148884 http/tests/w3c/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
+webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
 

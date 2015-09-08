@@ -1,0 +1,8 @@
+Blocked access to external URL http://www2.localhost:8800/images/yellow.png
+Blocked access to external URL http://www2.localhost:8800/images/yellow.png
+security.drawImage.canvas.sub
+drawImage of unclean canvas makes the canvas origin-unclean
+Actual output:
+
+FAIL drawImage of unclean canvas makes the canvas origin-unclean assert_throws: function "function () { canvas.toDataURL(); }" did not throw
+

@@ -1,0 +1,53 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/button.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/checkbox.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/checked.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/color.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/date.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/datetime-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/datetime-local.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/datetime.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/email.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/files.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/image01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/image01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/input-textselection-01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/input-type-button.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/input-type-checkbox.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/month.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/number.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/password.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/pattern_attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/radio-groupname-case.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/radio.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/range-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/range.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/required_attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/reset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/search_input.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/telephone.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/time-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/time.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/type-change-state.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/valueMode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-input-element/week.html

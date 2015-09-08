@@ -1,0 +1,8 @@
+Blocked access to external URL http://www2.localhost:8800/images/yellow.png
+Blocked access to external URL http://www2.localhost:8800/images/yellow.png
+security.pattern.canvas.fillStyle.sub
+Setting fillStyle to a pattern of an unclean canvas makes the canvas origin-unclean
+Actual output:
+
+FAIL Setting fillStyle to a pattern of an unclean canvas makes the canvas origin-unclean assert_throws: function "function () { canvas.toDataURL(); }" did not throw
+

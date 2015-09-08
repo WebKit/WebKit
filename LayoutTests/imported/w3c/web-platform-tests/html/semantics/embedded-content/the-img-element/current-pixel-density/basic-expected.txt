@@ -1,0 +1,14 @@
+          
+
+PASS <img src="/images/green-256x256.png" data-expect="256"> 
+PASS <img srcset="/images/green-256x256.png 1x" data-expect="256"> 
+PASS <img srcset="/images/green-256x256.png 1.6x" data-expect="160"> 
+PASS <img srcset="/images/green-256x256.png 2x" data-expect="128"> 
+PASS <img srcset="/images/green-256x256.png 10000x" data-expect="0"> 
+PASS <img srcset="/images/green-256x256.png 9e99999999999999999999999x" data-expect="0"> 
+PASS <img srcset="/images/green-256x256.png 256w" sizes="256px" data-expect="256"> 
+PASS <img srcset="/images/green-256x256.png 512w" sizes="256px" data-expect="128"> 
+PASS <img srcset="/images/green-256x256.png 256w" sizes="512px" data-expect="512"> 
+PASS <img srcset="/images/green-256x256.png 256w" sizes="1px" data-expect="1"> 
+PASS <img srcset="/images/green-256x256.png 256w" sizes="0px" data-expect="0"> 
+

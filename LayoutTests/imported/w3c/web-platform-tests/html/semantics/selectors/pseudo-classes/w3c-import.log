@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/checked.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/dir.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/dir01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/enabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/indeterminate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/inrange-outofrange.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/link.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/readwrite-readonly.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/required-optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantic/selectors/pseudo-classes/valid-invalid.html

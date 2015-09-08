@@ -75,7 +75,7 @@ http/tests/pointer-lock
 # FIXME: Media tests not supported on iOS
 media
 http/tests/media
-http/tests/w3c/html/semantics/embedded-content/media-elements
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
 
 # MediaSource is not currently supported on iOS.
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
@@ -1700,7 +1700,7 @@ fast/events/touch/touch-slider.html [ Failure ]
 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
 
 # Ref-test imported from W3C that is failing because type=image input elements have rounded corners on iOS.
-http/tests/w3c/html/semantics/forms/the-input-element/image01.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html [ ImageOnlyFailure ]
 # Ref-test imported form W3C that is failing because the test is off by a couple of pixels on iOS.
 imported/w3c/css/css-multicol-1/multicol-fill-auto-block-children-001.xht [ ImageOnlyFailure ]
 
