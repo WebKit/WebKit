@@ -1,5 +1,17 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, move html/dom W3C tests to imported/w3c/web-platform-tests/html/dom/
+        https://bugs.webkit.org/show_bug.cgi?id=148948
+
+        * TestExpectations:
+        * http/tests/w3c/html/dom/*: Removed.
+        * platform/efl/TestExpectations:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt: Renamed from LayoutTests/platform/ios-simulator/http/tests/w3c/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Renamed from LayoutTests/platform/ios-simulator/http/tests/w3c/html/dom/interfaces-expected.txt.
+        * platform/win/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Renamed from LayoutTests/platform/win/http/tests/w3c/html/dom/interfaces-expected.txt.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, move W3C DOM tests to imported/w3c/web-platform-tests/dom
         https://bugs.webkit.org/show_bug.cgi?id=148947
 

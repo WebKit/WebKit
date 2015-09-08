@@ -1,3 +1,0 @@
-
-FAIL lastModified should return the last modified date and time assert_true: expected true got false
-

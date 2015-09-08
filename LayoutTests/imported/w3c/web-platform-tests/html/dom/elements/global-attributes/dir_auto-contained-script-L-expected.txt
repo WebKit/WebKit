@@ -1,0 +1,39 @@
+CONSOLE MESSAGE: line 43: SyntaxError: Unexpected token '&'
+CONSOLE MESSAGE: line 46: SyntaxError: Unexpected token '&'
+CONSOLE MESSAGE: line 51: SyntaxError: Unexpected token '&'
+CONSOLE MESSAGE: line 54: SyntaxError: Unexpected token '&'
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x309
+  RenderBlock {HTML} at (0,0) size 800x309
+    RenderBody {BODY} at (8,32) size 784x257
+      RenderBlock {DIV} at (0,0) size 784x37
+        RenderBlock {P} at (0,0) size 784x37
+          RenderText {#text} at (0,0) size 737x37
+            text run at (0,0) width 737: "Test passes if the two boxes below look exactly the same."
+      RenderBlock {DIV} at (20,69) size 406x84 [border: (3px solid #808080)]
+        RenderBlock {DIV} at (3,3) size 400x39
+          RenderBlock {DIV} at (0,0) size 400x39
+            RenderText {#text} at (0,2) size 127x37
+              text run at (0,2) width 66: "ABC"
+              text run at (65,2) width 54 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (118,2) width 9: "."
+        RenderBlock {DIV} at (3,42) size 400x39
+          RenderBlock {DIV} at (0,0) size 400x39
+            RenderText {#text} at (0,2) size 127x37
+              text run at (0,2) width 66: "ABC"
+              text run at (65,2) width 54 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (118,2) width 9: "."
+      RenderBlock {DIV} at (20,173) size 406x84 [border: (3px solid #808080)]
+        RenderBlock {DIV} at (3,3) size 400x39
+          RenderBlock {DIV} at (0,0) size 400x39
+            RenderText {#text} at (0,2) size 127x37
+              text run at (0,2) width 66: "ABC"
+              text run at (65,2) width 54 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (118,2) width 9: "."
+        RenderBlock {DIV} at (3,42) size 400x39
+          RenderBlock {DIV} at (0,0) size 400x39
+            RenderText {#text} at (0,2) size 127x37
+              text run at (0,2) width 66: "ABC"
+              text run at (65,2) width 54 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (118,2) width 9: "."

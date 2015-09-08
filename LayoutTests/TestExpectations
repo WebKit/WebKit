@@ -233,7 +233,7 @@ webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-c
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-set.html [ Skip ]
-webkit.org/b/148736 [ Debug ] http/tests/w3c/html/dom/interfaces.html [ Skip ]
+webkit.org/b/148736 [ Debug ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Skip ]
 webkit.org/b/148822 [ Debug ] http/tests/w3c/html/semantics/interfaces.html [ Skip ]
 
 # New W3C ref tests that are failing.
@@ -410,12 +410,6 @@ webkit.org/b/139639 [ Debug ] cssom/non-subpixel-scroll-top-left-values.html [ S
 webkit.org/b/139640 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 
 [ Debug ] fast/workers/worker-cloneport.html [ Slow ]
-
-# Import W3C HTML/DOM ref tests that are failing.
-http/tests/w3c/html/dom/elements/global-attributes/dir_auto-pre-N-between-Rs.html [ ImageOnlyFailure ]
-http/tests/w3c/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs.html [ ImageOnlyFailure ]
-http/tests/w3c/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
-http/tests/w3c/html/dom/elements/global-attributes/style-01.html [ ImageOnlyFailure ]
 
 # Imported Mozilla SVG tests
 webkit.org/b/5968 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]

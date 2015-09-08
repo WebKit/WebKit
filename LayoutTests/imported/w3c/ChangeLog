@@ -1,5 +1,12 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, move html/dom W3C tests to imported/w3c/web-platform-tests/html/dom/
+        https://bugs.webkit.org/show_bug.cgi?id=148948
+
+        * web-platform-tests/html/dom/*: Added.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, move W3C DOM tests to imported/w3c/web-platform-tests/dom
         https://bugs.webkit.org/show_bug.cgi?id=148947
 
