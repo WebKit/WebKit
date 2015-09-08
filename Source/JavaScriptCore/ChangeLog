@@ -1,3 +1,69 @@
+2015-09-08  Saam barati  <sbarati@apple.com>
+
+        baseline JIT should emit better code for UnresolvedProperty in resolve_scope/get_from_scope/put_to_scope
+        https://bugs.webkit.org/show_bug.cgi?id=148895
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, if a resolve_scope/get_from_scope/put_to_scope with
+        UnresolvedProperty made it to the baseline JIT, we would hard compile
+        a jump to the slow path. This is bad and slow. Because UnresolvedProperty
+        tries to update itself to something more useful, and succeeds at doing so
+        with high probability, we should be emitting code that checks to see if the 
+        slow path has performed an update, and if it has, execute more efficient code 
+        and not go to the slow path (unless it needs to for var injection check failure, 
+        or other check failures). This increases the speed of this code greatly because 
+        we may decide to compile a program/function before certain resolve_scope/get_from_scope/put_to_scope 
+        operations ever execute. And now, the baseline JIT code better adapts to such
+        compilation scenarios.
+
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::isBeingWatched):
+        (JSC::WatchpointSet::addressOfState):
+        (JSC::WatchpointSet::offsetOfState):
+        (JSC::WatchpointSet::addressOfSetIsNotEmpty):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitNotifyWrite):
+        (JSC::JIT::assertStackPointerOffset):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        (JSC::JIT::emitGetGlobalProperty):
+        (JSC::JIT::emitGetVarFromPointer):
+        (JSC::JIT::emitGetVarFromIndirectPointer):
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emitPutGlobalProperty):
+        (JSC::JIT::emitPutGlobalVariable):
+        (JSC::JIT::emitPutGlobalVariableIndirect):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        (JSC::JIT::emitGetGlobalProperty):
+        (JSC::JIT::emitGetVarFromPointer):
+        (JSC::JIT::emitGetVarFromIndirectPointer):
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emitPutGlobalProperty):
+        (JSC::JIT::emitPutGlobalVariable):
+        (JSC::JIT::emitPutGlobalVariableIndirect):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        * tests/stress/multiple-files-tests/global-lexical-variable-unresolved-property/first.js:
+        (foo):
+
 2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement all the arithmetic and logical instructions in WebAssembly

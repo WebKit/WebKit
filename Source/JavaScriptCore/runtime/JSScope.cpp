@@ -128,15 +128,21 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         }
 
         PropertySlot slot(globalObject);
-        if (!globalObject->getOwnPropertySlot(globalObject, exec, ident, slot)
-            || !slot.isCacheableValue()
+        bool hasOwnProperty = globalObject->getOwnPropertySlot(globalObject, exec, ident, slot);
+        if (!hasOwnProperty) {
+            op = ResolveOp(makeType(UnresolvedProperty, needsVarInjectionChecks), 0, 0, 0, 0, 0);
+            return true;
+        }
+
+        if (!slot.isCacheableValue()
             || !globalObject->structure()->propertyAccessesAreCacheable()
             || (globalObject->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && getOrPut == Put)) {
             // We know the property will be at global scope, but we don't know how to cache it.
             ASSERT(!scope->next());
-            op = ResolveOp(makeType(UnresolvedProperty, needsVarInjectionChecks), 0, 0, 0, 0, 0);
+            op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), 0, 0, 0, 0, 0);
             return true;
         }
+
         
         WatchpointState state = globalObject->structure()->ensurePropertyReplacementWatchpointSet(exec->vm(), slot.cachedOffset())->state();
         if (state == IsWatched && getOrPut == Put) {

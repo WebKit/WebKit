@@ -19,7 +19,9 @@ noInline(shouldThrowTDZ);
 
 let b = false;
 function foo() {
-    if (b)
+    if (b) {
+        x = x;
         return x;
+    }
 }
 foo(); // Link as UnresolvedProperty.

@@ -194,6 +194,7 @@ public:
     }
     
     int8_t* addressOfState() { return &m_state; }
+    static ptrdiff_t offsetOfState() { return OBJECT_OFFSETOF(WatchpointSet, m_state); }
     int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }
     
     JS_EXPORT_PRIVATE void fireAllSlow(const FireDetail&); // Call only if you've checked isWatched.

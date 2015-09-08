@@ -101,6 +101,11 @@ void JIT::emitNotifyWrite(WatchpointSet* set)
     addSlowCase(branch8(NotEqual, AbsoluteAddress(set->addressOfState()), TrustedImm32(IsInvalidated)));
 }
 
+void JIT::emitNotifyWrite(GPRReg pointerToSet)
+{
+    addSlowCase(branch8(NotEqual, Address(pointerToSet, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
+}
+
 void JIT::assertStackPointerOffset()
 {
     if (ASSERT_DISABLED)
