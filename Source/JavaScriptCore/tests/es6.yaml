@@ -88,9 +88,13 @@
   cmd: runES6 :normal
 - path: es6/class_class_statement.js
   cmd: runES6 :normal
+- path: es6/class_computed_accessor_properties.js
+  cmd: runES6 :normal
 - path: es6/class_computed_names_temporal_dead_zone.js
   cmd: runES6 :normal
 - path: es6/class_computed_prototype_methods.js
+  cmd: runES6 :normal
+- path: es6/class_computed_static_accessor_properties.js
   cmd: runES6 :normal
 - path: es6/class_computed_static_methods.js
   cmd: runES6 :normal
@@ -369,6 +373,8 @@
 - path: es6/Object.prototype.__proto___present_in_Object.getOwnPropertyNames.js
   cmd: runES6 :normal
 - path: es6/Object.prototype.__proto___set_prototype.js
+  cmd: runES6 :normal
+- path: es6/object_literal_extensions_computed_accessors.js
   cmd: runES6 :normal
 - path: es6/object_literal_extensions_computed_properties.js
   cmd: runES6 :normal
@@ -724,10 +730,6 @@
   cmd: runES6 :fail
 - path: es6/class_class_name_is_lexically_scoped.js
   cmd: runES6 :fail
-- path: es6/class_computed_accessor_properties.js
-  cmd: runES6 :fail
-- path: es6/class_computed_static_accessor_properties.js
-  cmd: runES6 :fail
 - path: es6/destructuring_computed_properties.js
   cmd: runES6 :fail
 - path: es6/destructuring_defaults_in_parameters_separate_scope.js
@@ -851,8 +853,6 @@
 - path: es6/new.target_assignment_is_an_early_error.js
   cmd: runES6 :fail
 - path: es6/non-strict_function_semantics_hoisted_block-level_function_declaration.js
-  cmd: runES6 :fail
-- path: es6/object_literal_extensions_computed_accessors.js
   cmd: runES6 :fail
 - path: es6/Promise_basic_functionality.js
   cmd: runES6 :fail

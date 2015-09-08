@@ -1118,6 +1118,24 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s, %d, %s, %s", registerName(r0).data(), idName(id0, identifier(id0)).data(), n0, registerName(r1).data(), registerName(r2).data());
             break;
         }
+        case op_put_getter_by_val: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int n0 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "put_getter_by_val");
+            out.printf("%s, %s, %d, %s", registerName(r0).data(), registerName(r1).data(), n0, registerName(r2).data());
+            break;
+        }
+        case op_put_setter_by_val: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int n0 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "put_setter_by_val");
+            out.printf("%s, %s, %d, %s", registerName(r0).data(), registerName(r1).data(), n0, registerName(r2).data());
+            break;
+        }
         case op_del_by_id: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

@@ -522,9 +522,11 @@ invalid("({get x(a){}})")
 invalid("({get x(a,b){}})")
 invalid("({set x(){}})")
 invalid("({set x(a,b){}})")
-invalid("({get [x](){}})")
+valid("({get [x](){}})")
+invalid("({get [x (){}})")
 invalid("({set [x](){}})")
-invalid("({set [x](x){}})")
+valid("({set [x](x){}})")
+invalid("({set [x (x){}})")
 invalid("({[...x]: 1})")
 invalid("function f({a, a}) {}");
 invalid("function f({a}, a) {}");

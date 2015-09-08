@@ -95,6 +95,32 @@ void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
     callOperation(operationPutGetterSetter, regT1, &m_codeBlock->identifier(property), attribute, regT3, regT4);
 }
 
+void JIT::emit_op_put_getter_by_val(Instruction* currentInstruction)
+{
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
+    int32_t attributes = currentInstruction[3].u.operand;
+    int getter = currentInstruction[4].u.operand;
+
+    emitLoadPayload(base, regT2);
+    emitLoad(property, regT1, regT0);
+    emitLoadPayload(getter, regT3);
+    callOperation(operationPutGetterByVal, regT2, regT1, regT0, attributes, regT3);
+}
+
+void JIT::emit_op_put_setter_by_val(Instruction* currentInstruction)
+{
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
+    int32_t attributes = currentInstruction[3].u.operand;
+    int getter = currentInstruction[4].u.operand;
+
+    emitLoadPayload(base, regT2);
+    emitLoad(property, regT1, regT0);
+    emitLoadPayload(getter, regT3);
+    callOperation(operationPutSetterByVal, regT2, regT1, regT0, attributes, regT3);
+}
+
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

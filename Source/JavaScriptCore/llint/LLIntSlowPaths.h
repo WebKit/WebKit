@@ -82,6 +82,8 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_by_index);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_getter_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_setter_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_getter_setter);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_getter_by_val);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_setter_by_val);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_jtrue);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_jfalse);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_jless);

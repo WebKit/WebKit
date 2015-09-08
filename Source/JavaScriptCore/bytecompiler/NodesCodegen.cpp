@@ -487,19 +487,30 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 continue;
             }
 
-            RegisterID* value = generator.emitNode(node->m_assign);
+            RefPtr<RegisterID> value = generator.emitNode(node->m_assign);
             bool isClassProperty = node->needsSuperBinding();
             if (isClassProperty)
-                emitPutHomeObject(generator, value, dst);
+                emitPutHomeObject(generator, value.get(), dst);
+            unsigned attribute = isClassProperty ? (Accessor | DontEnum) : Accessor;
 
             ASSERT(node->m_type & (PropertyNode::Getter | PropertyNode::Setter));
 
             // This is a get/set property which may be overridden by a computed property later.
             if (hasComputedProperty) {
+                // Computed accessors.
+                if (node->m_type & PropertyNode::Computed) {
+                    RefPtr<RegisterID> propertyName = generator.emitNode(node->m_expression);
+                    if (node->m_type & PropertyNode::Getter)
+                        generator.emitPutGetterByVal(dst, propertyName.get(), attribute, value.get());
+                    else
+                        generator.emitPutSetterByVal(dst, propertyName.get(), attribute, value.get());
+                    continue;
+                }
+
                 if (node->m_type & PropertyNode::Getter)
-                    generator.emitPutGetterById(dst, *node->name(), Accessor, value);
+                    generator.emitPutGetterById(dst, *node->name(), attribute, value.get());
                 else
-                    generator.emitPutSetterById(dst, *node->name(), Accessor, value);
+                    generator.emitPutSetterById(dst, *node->name(), attribute, value.get());
                 continue;
             }
 
@@ -544,7 +555,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             if (isClassProperty && pair.second)
                 emitPutHomeObject(generator, secondReg, dst);
 
-            generator.emitPutGetterSetter(dst, *node->name(), isClassProperty ? (Accessor | DontEnum) : Accessor, getterReg.get(), setterReg.get());
+            generator.emitPutGetterSetter(dst, *node->name(), attribute, getterReg.get(), setterReg.get());
         }
     }
 

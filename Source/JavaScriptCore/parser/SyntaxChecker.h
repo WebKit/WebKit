@@ -280,6 +280,10 @@ public:
             return Property(type);
         return Property(name, type);
     }
+    Property createGetterOrSetterProperty(const JSTokenLocation&, PropertyNode::Type type, bool, int, const ParserFunctionInfo<SyntaxChecker>&, SuperBinding)
+    {
+        return Property(type);
+    }
     Property createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation&, PropertyNode::Type type, bool strict, double name, const ParserFunctionInfo<SyntaxChecker>&, SuperBinding)
     {
         if (!strict)

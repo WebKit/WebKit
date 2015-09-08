@@ -2163,6 +2163,24 @@ void BytecodeGenerator::emitPutGetterSetter(RegisterID* base, const Identifier& 
     instructions().append(setter->index());
 }
 
+void BytecodeGenerator::emitPutGetterByVal(RegisterID* base, RegisterID* property, unsigned attributes, RegisterID* getter)
+{
+    emitOpcode(op_put_getter_by_val);
+    instructions().append(base->index());
+    instructions().append(property->index());
+    instructions().append(attributes);
+    instructions().append(getter->index());
+}
+
+void BytecodeGenerator::emitPutSetterByVal(RegisterID* base, RegisterID* property, unsigned attributes, RegisterID* setter)
+{
+    emitOpcode(op_put_setter_by_val);
+    instructions().append(base->index());
+    instructions().append(property->index());
+    instructions().append(attributes);
+    instructions().append(setter->index());
+}
+
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
     emitOpcode(op_del_by_id);

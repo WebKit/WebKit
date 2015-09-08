@@ -533,6 +533,24 @@ void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
     callOperation(operationPutGetterSetter, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), attribute, regT1, regT2);
 }
 
+void JIT::emit_op_put_getter_by_val(Instruction* currentInstruction)
+{
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT1);
+    int32_t attributes = currentInstruction[3].u.operand;
+    emitGetVirtualRegister(currentInstruction[4].u.operand, regT2);
+    callOperation(operationPutGetterByVal, regT0, regT1, attributes, regT2);
+}
+
+void JIT::emit_op_put_setter_by_val(Instruction* currentInstruction)
+{
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT1);
+    int32_t attributes = currentInstruction[3].u.operand;
+    emitGetVirtualRegister(currentInstruction[4].u.operand, regT2);
+    callOperation(operationPutSetterByVal, regT0, regT1, attributes, regT2);
+}
+
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

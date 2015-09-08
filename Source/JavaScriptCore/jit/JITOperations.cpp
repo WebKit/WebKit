@@ -1410,6 +1410,23 @@ void JIT_OPERATION operationPutByIndex(ExecState* exec, EncodedJSValue encodedAr
     asArray(arrayValue)->putDirectIndex(exec, index, JSValue::decode(encodedValue));
 }
 
+enum class AccessorType {
+    Getter,
+    Setter
+};
+
+static void putAccessorByVal(ExecState* exec, JSObject* base, JSValue subscript, int32_t attribute, JSObject* accessor, AccessorType accessorType)
+{
+    auto propertyKey = subscript.toPropertyKey(exec);
+    if (exec->hadException())
+        return;
+
+    if (accessorType == AccessorType::Getter)
+        base->putGetter(exec, propertyKey, accessor, attribute);
+    else
+        base->putSetter(exec, propertyKey, accessor, attribute);
+}
+
 #if USE(JSVALUE64)
 void JIT_OPERATION operationPutGetterById(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, int32_t options, EncodedJSValue encodedGetterValue)
 {
@@ -1460,6 +1477,27 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue enco
         accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
     baseObj->putDirectAccessor(exec, *identifier, accessor, attribute);
 }
+
+void JIT_OPERATION operationPutGetterByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, int32_t attribute, EncodedJSValue encodedGetter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSObject* base = asObject(JSValue::decode(encodedBase));
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSObject* getter = asObject(JSValue::decode(encodedGetter));
+    putAccessorByVal(exec, base, subscript, attribute, getter, AccessorType::Getter);
+}
+
+void JIT_OPERATION operationPutSetterByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, int32_t attribute, EncodedJSValue encodedSetter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSObject* base = asObject(JSValue::decode(encodedBase));
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSObject* setter = asObject(JSValue::decode(encodedSetter));
+    putAccessorByVal(exec, base, subscript, attribute, setter, AccessorType::Setter);
+}
+
 #else
 void JIT_OPERATION operationPutGetterById(ExecState* exec, JSCell* object, Identifier* identifier, int32_t options, JSCell* getter)
 {
@@ -1505,6 +1543,23 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
         accessor->setSetter(vm, exec->lexicalGlobalObject(), setter->getObject());
     baseObj->putDirectAccessor(exec, *identifier, accessor, attribute);
 }
+
+void JIT_OPERATION operationPutGetterByVal(ExecState* exec, JSCell* base, EncodedJSValue encodedSubscript, int32_t attribute, JSCell* getter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putAccessorByVal(exec, asObject(base), JSValue::decode(encodedSubscript), attribute, asObject(getter), AccessorType::Getter);
+}
+
+void JIT_OPERATION operationPutSetterByVal(ExecState* exec, JSCell* base, EncodedJSValue encodedSubscript, int32_t attribute, JSCell* setter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putAccessorByVal(exec, asObject(base), JSValue::decode(encodedSubscript), attribute, asObject(setter), AccessorType::Setter);
+}
+
 #endif
 
 void JIT_OPERATION operationPopScope(ExecState* exec, int32_t scopeReg)

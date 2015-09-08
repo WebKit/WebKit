@@ -279,6 +279,8 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_getter_by_id)
         DEFINE_OP(op_put_setter_by_id)
         DEFINE_OP(op_put_getter_setter)
+        DEFINE_OP(op_put_getter_by_val)
+        DEFINE_OP(op_put_setter_by_val)
 
         DEFINE_OP(op_ret)
         DEFINE_OP(op_rshift)

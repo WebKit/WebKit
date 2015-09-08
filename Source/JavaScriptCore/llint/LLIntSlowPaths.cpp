@@ -899,6 +899,44 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter)
     LLINT_END();
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_val)
+{
+    LLINT_BEGIN();
+    ASSERT(LLINT_OP(1).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(1).jsValue());
+    JSValue subscript = LLINT_OP_C(2).jsValue();
+
+    unsigned options = pc[3].u.operand;
+
+    JSValue getter = LLINT_OP(4).jsValue();
+    ASSERT(getter.isObject());
+
+    auto property = subscript.toPropertyKey(exec);
+    LLINT_CHECK_EXCEPTION();
+
+    baseObj->putGetter(exec, property, asObject(getter), options);
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_put_setter_by_val)
+{
+    LLINT_BEGIN();
+    ASSERT(LLINT_OP(1).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(1).jsValue());
+    JSValue subscript = LLINT_OP_C(2).jsValue();
+
+    unsigned options = pc[3].u.operand;
+
+    JSValue setter = LLINT_OP(4).jsValue();
+    ASSERT(setter.isObject());
+
+    auto property = subscript.toPropertyKey(exec);
+    LLINT_CHECK_EXCEPTION();
+
+    baseObj->putSetter(exec, property, asObject(setter), options);
+    LLINT_END();
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_jtrue)
 {
     LLINT_BEGIN();

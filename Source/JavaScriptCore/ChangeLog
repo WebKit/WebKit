@@ -1,3 +1,67 @@
+2015-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement computed accessors
+        https://bugs.webkit.org/show_bug.cgi?id=147883
+
+        Reviewed by Geoffrey Garen.
+
+        Patch by Yusuke Suzuki <utatane.tea@gmail.com> and Matthew Mirman <mmirman@apple.com>.
+
+        Implement the computed accessors functionality for class syntax and object literal syntax.
+        Added new opcodes, op_put_getter_by_val and op_put_setter_by_val. LLInt and baseline JIT support them.
+        As the same to the other accessor opcodes (like op_put_getter_by_id etc.), DFG / FTL does not support
+        them. This is handled here[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=148860
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutGetterByVal):
+        (JSC::BytecodeGenerator::emitPutSetterByVal):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_getter_by_val):
+        (JSC::JIT::emit_op_put_setter_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter_by_val):
+        (JSC::JIT::emit_op_put_setter_by_val):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+        * tests/es6.yaml:
+        * tests/stress/computed-accessor-parsing.js: Added.
+        (testShouldNotThrow):
+        (testShouldThrow):
+        (Val.prototype.get string_appeared_here):
+        (Val):
+        * tests/stress/computed-accessor.js: Added.
+        (shouldBe):
+        (.):
+        * tests/stress/duplicate-computed-accessors.js: Added.
+        (shouldBe):
+
 2015-09-08  Saam barati  <sbarati@apple.com>
 
         baseline JIT should emit better code for UnresolvedProperty in resolve_scope/get_from_scope/put_to_scope

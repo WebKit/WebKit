@@ -117,6 +117,13 @@ void computeUsesForBytecodeOffset(
         functor(codeBlock, instruction, opcodeID, instruction[5].u.operand);
         return;
     }
+    case op_put_getter_by_val:
+    case op_put_setter_by_val: {
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
+        return;
+    }
     case op_get_property_enumerator:
     case op_get_enumerable_length:
     case op_new_func_exp:
@@ -278,6 +285,8 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_put_getter_by_id:
     case op_put_setter_by_id:
     case op_put_getter_setter:
+    case op_put_getter_by_val:
+    case op_put_setter_by_val:
     case op_put_by_val:
     case op_put_by_val_direct:
     case op_put_by_index:

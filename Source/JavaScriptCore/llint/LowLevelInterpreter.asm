@@ -1199,6 +1199,18 @@ _llint_op_put_getter_setter:
     dispatch(6)
 
 
+_llint_op_put_getter_by_val:
+    traceExecution()
+    callSlowPath(_llint_slow_path_put_getter_by_val)
+    dispatch(5)
+
+
+_llint_op_put_setter_by_val:
+    traceExecution()
+    callSlowPath(_llint_slow_path_put_setter_by_val)
+    dispatch(5)
+
+
 _llint_op_jtrue:
     traceExecution()
     jumpTrueOrFalse(
