@@ -1631,7 +1631,6 @@ void linkFor(
         return;
     }
     
-    ASSERT(callLinkInfo.specializationKind() == CodeForConstruct);
     linkSlowFor(vm, callLinkInfo);
 }
 

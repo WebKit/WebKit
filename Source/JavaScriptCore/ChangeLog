@@ -1,3 +1,10 @@
+2015-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix debug by removing an assertion that is not correct anymore.
+
+        * jit/Repatch.cpp:
+        (JSC::linkFor):
+
 2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add initial support for doubles in WebAssembly
