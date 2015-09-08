@@ -1,3 +1,57 @@
+2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement control flow statements in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148934
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements if, while, do, label, break, and continue
+        statements in WebAssembly. Switches will be implemented in a subsequent
+        patch.
+
+        * tests/stress/wasm-control-flow.js: Added.
+        (shouldBe):
+        * tests/stress/wasm/control-flow.wasm: Added.
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::linkTarget):
+        (JSC::WASMFunctionCompiler::jumpToTarget):
+        (JSC::WASMFunctionCompiler::jumpToTargetIf):
+        (JSC::WASMFunctionCompiler::startLoop):
+        (JSC::WASMFunctionCompiler::endLoop):
+        (JSC::WASMFunctionCompiler::startSwitch):
+        (JSC::WASMFunctionCompiler::endSwitch):
+        (JSC::WASMFunctionCompiler::startLabel):
+        (JSC::WASMFunctionCompiler::endLabel):
+        (JSC::WASMFunctionCompiler::breakTarget):
+        (JSC::WASMFunctionCompiler::continueTarget):
+        (JSC::WASMFunctionCompiler::breakLabelTarget):
+        (JSC::WASMFunctionCompiler::continueLabelTarget):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseIfStatement):
+        (JSC::WASMFunctionParser::parseIfElseStatement):
+        (JSC::WASMFunctionParser::parseWhileStatement):
+        (JSC::WASMFunctionParser::parseDoStatement):
+        (JSC::WASMFunctionParser::parseLabelStatement):
+        (JSC::WASMFunctionParser::parseBreakStatement):
+        (JSC::WASMFunctionParser::parseBreakLabelStatement):
+        (JSC::WASMFunctionParser::parseContinueStatement):
+        (JSC::WASMFunctionParser::parseContinueLabelStatement):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::linkTarget):
+        (JSC::WASMFunctionSyntaxChecker::jumpToTarget):
+        (JSC::WASMFunctionSyntaxChecker::jumpToTargetIf):
+        (JSC::WASMFunctionSyntaxChecker::startLoop):
+        (JSC::WASMFunctionSyntaxChecker::endLoop):
+        (JSC::WASMFunctionSyntaxChecker::startSwitch):
+        (JSC::WASMFunctionSyntaxChecker::endSwitch):
+        (JSC::WASMFunctionSyntaxChecker::startLabel):
+        (JSC::WASMFunctionSyntaxChecker::endLabel):
+        (JSC::WASMFunctionSyntaxChecker::breakTarget):
+        (JSC::WASMFunctionSyntaxChecker::continueTarget):
+        (JSC::WASMFunctionSyntaxChecker::breakLabelTarget):
+        (JSC::WASMFunctionSyntaxChecker::continueLabelTarget):
+
 2015-09-08  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Compile errors in inspector code.

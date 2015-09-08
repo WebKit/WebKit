@@ -63,6 +63,11 @@ class WASMFunctionCompiler : private CCallHelpers {
 public:
     typedef int Expression;
     typedef int Statement;
+    struct JumpTarget {
+        Label label;
+        JumpList jumpList;
+    };
+    enum class JumpCondition { Zero, NonZero };
 
     WASMFunctionCompiler(VM& vm, CodeBlock* codeBlock, unsigned stackHeight)
         : CCallHelpers(&vm, codeBlock)
@@ -433,6 +438,89 @@ public:
         return UNUSED;
     }
 
+    void linkTarget(JumpTarget& target)
+    {
+        target.label = label();
+        target.jumpList.link(this);
+    }
+
+    void jumpToTarget(JumpTarget& target)
+    {
+        if (target.label.isSet())
+            jump(target.label);
+        else
+            target.jumpList.append(jump());
+    }
+
+    void jumpToTargetIf(JumpCondition condition, int, JumpTarget& target)
+    {
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT0);
+        m_tempStackTop--;
+        Jump taken = branchTest32((condition == JumpCondition::Zero) ? Zero : NonZero, GPRInfo::regT0);
+        if (target.label.isSet())
+            taken.linkTo(target.label, this);
+        else
+            target.jumpList.append(taken);
+    }
+
+    void startLoop()
+    {
+        m_breakTargets.append(JumpTarget());
+        m_continueTargets.append(JumpTarget());
+    }
+
+    void endLoop()
+    {
+        m_breakTargets.removeLast();
+        m_continueTargets.removeLast();
+    }
+
+    void startSwitch()
+    {
+        m_breakTargets.append(JumpTarget());
+    }
+
+    void endSwitch()
+    {
+        m_breakTargets.removeLast();
+    }
+
+    void startLabel()
+    {
+        m_breakLabelTargets.append(JumpTarget());
+        m_continueLabelTargets.append(JumpTarget());
+
+        linkTarget(m_continueLabelTargets.last());
+    }
+
+    void endLabel()
+    {
+        linkTarget(m_breakLabelTargets.last());
+
+        m_breakLabelTargets.removeLast();
+        m_continueLabelTargets.removeLast();
+    }
+
+    JumpTarget& breakTarget()
+    {
+        return m_breakTargets.last();
+    }
+
+    JumpTarget& continueTarget()
+    {
+        return m_continueTargets.last();
+    }
+
+    JumpTarget& breakLabelTarget(uint32_t labelIndex)
+    {
+        return m_breakLabelTargets[labelIndex];
+    }
+
+    JumpTarget& continueLabelTarget(uint32_t labelIndex)
+    {
+        return m_continueLabelTargets[labelIndex];
+    }
+
 private:
     union StackSlot {
         int32_t intValue;
@@ -480,6 +568,11 @@ private:
     unsigned m_stackHeight;
     unsigned m_numberOfLocals;
     unsigned m_tempStackTop { 0 };
+
+    Vector<JumpTarget> m_breakTargets;
+    Vector<JumpTarget> m_continueTargets;
+    Vector<JumpTarget> m_breakLabelTargets;
+    Vector<JumpTarget> m_continueLabelTargets;
 
     Label m_beginLabel;
     Jump m_stackOverflow;

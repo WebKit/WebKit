@@ -253,30 +253,54 @@ ContextStatement WASMFunctionParser::parseBlockStatement(Context& context)
 template <class Context>
 ContextStatement WASMFunctionParser::parseIfStatement(Context& context)
 {
-    parseExpressionI32(context);
+    ContextJumpTarget end;
+
+    ContextExpression expression = parseExpressionI32(context);
     PROPAGATE_ERROR();
+
+    context.jumpToTargetIf(Context::JumpCondition::Zero, expression, end);
+
     parseStatement(context);
-    // FIXME: Implement this instruction.
+    PROPAGATE_ERROR();
+
+    context.linkTarget(end);
     return UNUSED;
 }
 
 template <class Context>
 ContextStatement WASMFunctionParser::parseIfElseStatement(Context& context)
 {
-    parseExpressionI32(context);
+    ContextJumpTarget elseTarget;
+    ContextJumpTarget end;
+
+    ContextExpression expression = parseExpressionI32(context);
     PROPAGATE_ERROR();
+
+    context.jumpToTargetIf(Context::JumpCondition::Zero, expression, elseTarget);
+
     parseStatement(context);
     PROPAGATE_ERROR();
+
+    context.jumpToTarget(end);
+    context.linkTarget(elseTarget);
+
     parseStatement(context);
-    // FIXME: Implement this instruction.
+    PROPAGATE_ERROR();
+
+    context.linkTarget(end);
     return UNUSED;
 }
 
 template <class Context>
 ContextStatement WASMFunctionParser::parseWhileStatement(Context& context)
 {
-    parseExpressionI32(context);
+    context.startLoop();
+    context.linkTarget(context.continueTarget());
+
+    ContextExpression expression = parseExpressionI32(context);
     PROPAGATE_ERROR();
+
+    context.jumpToTargetIf(Context::JumpCondition::Zero, expression, context.breakTarget());
 
     m_breakScopeDepth++;
     m_continueScopeDepth++;
@@ -284,13 +308,22 @@ ContextStatement WASMFunctionParser::parseWhileStatement(Context& context)
     PROPAGATE_ERROR();
     m_continueScopeDepth--;
     m_breakScopeDepth--;
-    // FIXME: Implement this instruction.
+
+    context.jumpToTarget(context.continueTarget());
+
+    context.linkTarget(context.breakTarget());
+    context.endLoop();
     return UNUSED;
 }
 
 template <class Context>
 ContextStatement WASMFunctionParser::parseDoStatement(Context& context)
 {
+    context.startLoop();
+
+    ContextJumpTarget topOfLoop;
+    context.linkTarget(topOfLoop);
+
     m_breakScopeDepth++;
     m_continueScopeDepth++;
     parseStatement(context);
@@ -298,55 +331,63 @@ ContextStatement WASMFunctionParser::parseDoStatement(Context& context)
     m_continueScopeDepth--;
     m_breakScopeDepth--;
 
-    parseExpressionI32(context);
-    // FIXME: Implement this instruction.
+    context.linkTarget(context.continueTarget());
+
+    ContextExpression expression = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+
+    context.jumpToTargetIf(Context::JumpCondition::NonZero, expression, topOfLoop);
+
+    context.linkTarget(context.breakTarget());
+    context.endLoop();
     return UNUSED;
 }
 
 template <class Context>
 ContextStatement WASMFunctionParser::parseLabelStatement(Context& context)
 {
+    context.startLabel();
     m_labelDepth++;
     parseStatement(context);
     PROPAGATE_ERROR();
     m_labelDepth--;
-    // FIXME: Implement this instruction.
+    context.endLabel();
     return UNUSED;
 }
 
 template <class Context>
-ContextStatement WASMFunctionParser::parseBreakStatement(Context&)
+ContextStatement WASMFunctionParser::parseBreakStatement(Context& context)
 {
     FAIL_IF_FALSE(m_breakScopeDepth, "'break' is only valid inside a switch or loop statement.");
-    // FIXME: Implement this instruction.
+    context.jumpToTarget(context.breakTarget());
     return UNUSED;
 }
 
 template <class Context>
-ContextStatement WASMFunctionParser::parseBreakLabelStatement(Context&)
+ContextStatement WASMFunctionParser::parseBreakLabelStatement(Context& context)
 {
     uint32_t labelIndex;
     READ_COMPACT_UINT32_OR_FAIL(labelIndex, "Cannot read the label index.");
     FAIL_IF_FALSE(labelIndex < m_labelDepth, "The label index is incorrect.");
-    // FIXME: Implement this instruction.
+    context.jumpToTarget(context.breakLabelTarget(labelIndex));
     return UNUSED;
 }
 
 template <class Context>
-ContextStatement WASMFunctionParser::parseContinueStatement(Context&)
+ContextStatement WASMFunctionParser::parseContinueStatement(Context& context)
 {
     FAIL_IF_FALSE(m_continueScopeDepth, "'continue' is only valid inside a loop statement.");
-    // FIXME: Implement this instruction.
+    context.jumpToTarget(context.continueTarget());
     return UNUSED;
 }
 
 template <class Context>
-ContextStatement WASMFunctionParser::parseContinueLabelStatement(Context&)
+ContextStatement WASMFunctionParser::parseContinueLabelStatement(Context& context)
 {
     uint32_t labelIndex;
     READ_COMPACT_UINT32_OR_FAIL(labelIndex, "Cannot read the label index.");
     FAIL_IF_FALSE(labelIndex < m_labelDepth, "The label index is incorrect.");
-    // FIXME: Implement this instruction.
+    context.jumpToTarget(context.continueLabelTarget(labelIndex));
     return UNUSED;
 }
 

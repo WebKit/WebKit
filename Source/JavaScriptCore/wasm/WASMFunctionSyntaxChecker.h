@@ -36,6 +36,8 @@ class WASMFunctionSyntaxChecker {
 public:
     typedef int Expression;
     typedef int Statement;
+    typedef int JumpTarget;
+    enum class JumpCondition { Zero, NonZero };
 
     void startFunction(const Vector<WASMType>& arguments, uint32_t numberOfI32LocalVariables, uint32_t numberOfF32LocalVariables, uint32_t numberOfF64LocalVariables)
     {
@@ -95,6 +97,25 @@ public:
         m_tempStackTop--;
         return UNUSED;
     }
+
+    void linkTarget(const int&) { }
+    void jumpToTarget(const int&) { }
+    void jumpToTargetIf(JumpCondition, int, const int&)
+    {
+        m_tempStackTop--;
+    }
+
+    void startLoop() { }
+    void endLoop() { }
+    void startSwitch() { }
+    void endSwitch() { }
+    void startLabel() { }
+    void endLabel() { }
+
+    int breakTarget() { return UNUSED; }
+    int continueTarget() { return UNUSED; }
+    int breakLabelTarget(uint32_t) { return UNUSED; }
+    int continueLabelTarget(uint32_t) { return UNUSED; }
 
     unsigned stackHeight()
     {

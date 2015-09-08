@@ -33,6 +33,7 @@
 
 #define ContextExpression typename Context::Expression
 #define ContextStatement typename Context::Statement
+#define ContextJumpTarget typename Context::JumpTarget
 
 namespace JSC {
 
