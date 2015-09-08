@@ -1,5 +1,17 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed fixup after r189471 and r189472.
+
+        * web-platform-tests/common/blank.html: Added.
+        Add missing file used by some tests.
+
+        * web-platform-tests/dom/nodes/Node-parentNode-iframe-expected.txt: Removed.
+        * web-platform-tests/dom/nodes/Node-parentNode.html:
+        * web-platform-tests/dom/nodes/resources/Node-parentNode-iframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-parentNode-iframe.html.
+        Move html file to resources folder so that WRT does not think it is a test.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, move html/semantics W3C tests to imported/w3c/web-platform-tests/html/semantics
         https://bugs.webkit.org/show_bug.cgi?id=148949
 
