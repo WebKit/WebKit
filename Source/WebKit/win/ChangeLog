@@ -1,3 +1,38 @@
+2015-09-08  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Implement DOMNode::attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=148747
+
+        Reviewed by Brent Fulgham.
+
+        * DOMCoreClasses.cpp:
+        (DOMNode::attributes):
+        (DOMNode::ownerDocument):
+        (DOMRange::detach):
+        (DOMNamedNodeMap::DOMNamedNodeMap):
+        (DOMNamedNodeMap::~DOMNamedNodeMap):
+        (DOMNamedNodeMap::createInstance):
+        (DOMNamedNodeMap::QueryInterface):
+        (DOMNamedNodeMap::getNamedItem):
+        (DOMNamedNodeMap::setNamedItem):
+        (DOMNamedNodeMap::removeNamedItem):
+        (DOMNamedNodeMap::item):
+        (DOMNamedNodeMap::length):
+        (DOMNamedNodeMap::getNamedItemNS):
+        (DOMNamedNodeMap::setNamedItemNS):
+        (DOMNamedNodeMap::removeNamedItemNS):
+        * DOMCoreClasses.h:
+        (DOMNamedNodeMap::AddRef):
+        (DOMNamedNodeMap::Release):
+        (DOMNamedNodeMap::throwException):
+        (DOMNamedNodeMap::callWebScriptMethod):
+        (DOMNamedNodeMap::evaluateWebScript):
+        (DOMNamedNodeMap::removeWebScriptKey):
+        (DOMNamedNodeMap::stringRepresentation):
+        (DOMNamedNodeMap::webScriptValueAtIndex):
+        (DOMNamedNodeMap::setWebScriptValueAtIndex):
+        (DOMNamedNodeMap::setException):
+
 2015-09-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: agents should send messages through FrontendRouter instead of FrontendChannel

@@ -36,6 +36,7 @@ class DOMWindow;
 class Node;
 class NodeList;
 class Range;
+class NamedNodeMap;
 }
 
 
@@ -898,4 +899,72 @@ public:
 protected:
     WebCore::Range* m_range;
 };
+
+class DOMNamedNodeMap : public DOMObject, public IDOMNamedNodeMap {
+protected:
+    DOMNamedNodeMap(WebCore::NamedNodeMap*);
+    ~DOMNamedNodeMap();
+
+public:
+    static IDOMNamedNodeMap* createInstance(WebCore::NamedNodeMap*);
+
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMObject::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
+
+    virtual HRESULT STDMETHODCALLTYPE getNamedItem(_In_ BSTR name, _COM_Outptr_opt_ IDOMNode** result);
+    virtual HRESULT STDMETHODCALLTYPE setNamedItem(_In_opt_ IDOMNode* arg, _COM_Outptr_opt_ IDOMNode** result);
+    virtual HRESULT STDMETHODCALLTYPE removeNamedItem(_In_ BSTR name, _COM_Outptr_opt_ IDOMNode** result);
+    virtual HRESULT STDMETHODCALLTYPE item(_In_ UINT index, _COM_Outptr_opt_ IDOMNode** result);
+    virtual HRESULT STDMETHODCALLTYPE length(_Out_ UINT* result);
+    virtual HRESULT STDMETHODCALLTYPE getNamedItemNS(_In_ BSTR namespaceURI, _In_ BSTR localName, _COM_Outptr_opt_ IDOMNode** result);
+    virtual HRESULT STDMETHODCALLTYPE setNamedItemNS(_In_opt_ IDOMNode* arg, _COM_Outptr_opt_ IDOMNode** result);
+    virtual HRESULT STDMETHODCALLTYPE removeNamedItemNS(_In_ BSTR namespaceURI, _In_ BSTR localName, _COM_Outptr_opt_ IDOMNode** result);
+
+    // IWebScriptObject
+    virtual HRESULT STDMETHODCALLTYPE throwException(_In_ BSTR exceptionMessage, _Out_ BOOL* result)
+    {
+        return DOMObject::throwException(exceptionMessage, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(_In_ BSTR name, _In_ const VARIANT args[], _In_ int cArgs, _Out_ VARIANT* result)
+    {
+        return DOMObject::callWebScriptMethod(name, args, cArgs, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(_In_ BSTR script, _Out_ VARIANT* result)
+    {
+        return DOMObject::evaluateWebScript(script, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(_In_ BSTR name)
+    {
+        return DOMObject::removeWebScriptKey(name);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(_Out_ BSTR* stringRepresentation)
+    {
+        return DOMObject::stringRepresentation(stringRepresentation);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(_In_ unsigned index, _Out_ VARIANT* result)
+    {
+        return DOMObject::webScriptValueAtIndex(index, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(_In_ unsigned index, _In_ VARIANT val)
+    {
+        return DOMObject::setWebScriptValueAtIndex(index, val);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE setException(_In_ BSTR description)
+    {
+        return DOMObject::setException(description);
+    }
+
+protected:
+    WebCore::NamedNodeMap* m_nodeMap;
+};
+
 #endif
