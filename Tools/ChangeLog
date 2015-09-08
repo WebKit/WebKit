@@ -1,3 +1,21 @@
+2015-09-08  Daniel Bates  <dabates@apple.com>
+
+        Dashboard: Remove duplicate gear icon data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=148920
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently we duplicate the SVG data URL for the gear icon up to its fill color in the CSS property
+        background-image associated with each of the three gear icon states: collapsed (.settings), hover
+        (.settings:hover), and expanded (.settings-visible .settings). Instead we should use the gear icon
+        as a mask and make use of the CSS background-color to define the fill color for each of these three
+        states.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (.settings): Use gear icon as mask and define CSS background-color for collapsed state. 
+        (.settings:hover): Override CSS background-color for hover state.
+        (.settings-visible .settings): Override CSS background-color for expanded state.
+
 2015-09-07  Andy Estes  <aestes@apple.com>
 
         [Mac] DebugRelease builds should link against libWebKitSystemInterfaceElCapitan.a on 10.11
