@@ -1,5 +1,33 @@
 2015-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop unfinished W3C DOM tests.
+
+        Those were not meant to be imported.
+
+        * web-platform-tests/dom/traversal/unfinished/001-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/001.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/002-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/002.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/003-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/003.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/004-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/004.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/005-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/005.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/006-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/006.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/007-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/007.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/008-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/008.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/009-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/009.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/010-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/unfinished/010.xml: Removed.
+        * web-platform-tests/dom/traversal/unfinished/TODO: Removed.
+
+2015-09-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop several W3C html media that were recently imported as they are flaky.
 
         * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-insert-before-expected.txt: Removed.
