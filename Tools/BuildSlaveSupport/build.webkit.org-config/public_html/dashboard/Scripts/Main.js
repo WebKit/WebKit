@@ -200,14 +200,14 @@ function documentReady()
         var cell = document.createElement("td");
         cell.classList.add("logo");
 
+        var logoImage = document.createElement("img");
+        logoImage.classList.add("logo");
+        cell.appendChild(logoImage);
+
         var ringImage = document.createElement("img");
         ringImage.classList.add("ring");
         ringImage.title = platform.readableName;
         cell.appendChild(ringImage);
-
-        var logoImage = document.createElement("img");
-        logoImage.classList.add("logo");
-        cell.appendChild(logoImage);
 
         var hideButton = document.createElement("div");
         hideButton.addEventListener("click", function (platformName) { return function () { settings.toggleHiddenPlatform(platformName); }; }(platform.name) );

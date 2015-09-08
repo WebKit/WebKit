@@ -156,7 +156,6 @@ table.queue-grid td.logo img.ring {
     position: absolute;
     top: 20px;
     left: 18px;
-    z-index: 1;
 }
 
 table.queue-grid td.logo img.logo {

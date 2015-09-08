@@ -1,5 +1,24 @@
 2015-09-08  Daniel Bates  <dabates@apple.com>
 
+        Dashboard: Remove use of z-index for ring overlay; use DOM ordering
+        https://bugs.webkit.org/show_bug.cgi?id=148921
+
+        Reviewed by Alexey Proskuryakov.
+
+        The ring image is positioned above the platform icon in markup and we specify the CSS
+        property z-index for the ring image so that it is painted on top of the platform icon
+        instead of below it (by DOM ordering). Instead we can take advantage of the transparency
+        of the ring image, switch the order of these DOM elements and remove the use of the CSS
+        property z-index to achieve a similar effect.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (documentReady): Create the platform icon image element before the ring image such that
+        the ring image is painted on top of the platform icon.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid td.logo img.ring): Removed property z-index.
+
+2015-09-08  Daniel Bates  <dabates@apple.com>
+
         Dashboard: Remove duplicate gear icon data URLs
         https://bugs.webkit.org/show_bug.cgi?id=148920
 
