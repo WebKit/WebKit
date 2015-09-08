@@ -234,8 +234,11 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
     IntPoint positionInWindow(m_lastPaintRect.location());
 
     FrameView* view = nullptr;
-    if (m_player && m_player->cachedResourceLoader() && m_player->cachedResourceLoader()->document())
+    float deviceScaleFactor = 1.0f;
+    if (m_player && m_player->cachedResourceLoader() && m_player->cachedResourceLoader()->document()) {
         view = m_player->cachedResourceLoader()->document()->view();
+        deviceScaleFactor = m_player->cachedResourceLoader()->document()->deviceScaleFactor();
+    }
 
     if (view) {
         scrollOffset = view->scrollOffsetForFixedPosition();
@@ -244,10 +247,15 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
 
     positionInWindow.move(-scrollOffset.width().toInt(), -scrollOffset.height().toInt());
 
-    if (m_hwndVideo && !m_lastPaintRect.isEmpty())
-        ::MoveWindow(m_hwndVideo, positionInWindow.x(), positionInWindow.y(), m_size.width(), m_size.height(), FALSE);
+    int x = positionInWindow.x() * deviceScaleFactor;
+    int y = positionInWindow.y() * deviceScaleFactor;
+    int w = m_size.width() * deviceScaleFactor;
+    int h = m_size.height() * deviceScaleFactor;
 
-    RECT rc = { 0, 0, m_size.width(), m_size.height() };
+    if (m_hwndVideo && !m_lastPaintRect.isEmpty())
+        ::MoveWindow(m_hwndVideo, x, y, w, h, FALSE);
+
+    RECT rc = { 0, 0, w, h };
     m_videoDisplay->SetVideoPosition(nullptr, &rc);
 }
 
