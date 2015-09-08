@@ -102,11 +102,6 @@ bool JSStack::growSlowCase(Register* newTopOfStack)
     return true;
 }
 
-void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
-{
-    conservativeRoots.add(topOfStack() + 1, highAddress());
-}
-
 void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
     conservativeRoots.add(topOfStack() + 1, highAddress(), jitStubRoutines, codeBlocks);

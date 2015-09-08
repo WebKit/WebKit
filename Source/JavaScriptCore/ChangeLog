@@ -1,3 +1,19 @@
+2015-09-08  Andreas Kling  <akling@apple.com>
+
+        [JSC] Remove unused Heap::getConservativeRegisterRoots().
+        <https://webkit.org/b/148974>
+
+        Reviewed by Geoffrey Garen.
+
+        Spotted this unused stack root gathering helper in Heap. Let's lose it.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::getConservativeRegisterRoots): Deleted.
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::gatherConservativeRoots): Deleted.
+        * interpreter/JSStack.h:
+        (JSC::JSStack::gatherConservativeRoots): Deleted.
+
 2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement control flow statements in WebAssembly

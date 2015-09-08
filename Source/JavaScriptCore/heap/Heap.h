@@ -197,7 +197,6 @@ public:
 
     void willStartIterating();
     void didFinishIterating();
-    void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
     double lastFullGCLength() const { return m_lastFullGCLength; }
     double lastEdenGCLength() const { return m_lastEdenGCLength; }

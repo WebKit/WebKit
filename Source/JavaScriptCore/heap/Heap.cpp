@@ -510,20 +510,6 @@ void Heap::didFinishIterating()
     m_objectSpace.didFinishIterating();
 }
 
-void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
-{
-    ASSERT(isValidThreadState(m_vm));
-    ConservativeRoots stackRoots(&m_objectSpace.blocks(), &m_storageSpace);
-    stack().gatherConservativeRoots(stackRoots);
-    size_t stackRootCount = stackRoots.size();
-    JSCell** registerRoots = stackRoots.roots();
-    for (size_t i = 0; i < stackRootCount; i++) {
-        setMarked(registerRoots[i]);
-        registerRoots[i]->setMarked();
-        roots.add(registerRoots[i]);
-    }
-}
-
 void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
 {
     SamplingRegion samplingRegion("Garbage Collection: Marking");
