@@ -80,7 +80,8 @@ HTMLTableCaptionElement* HTMLTableElement::caption() const
 void HTMLTableElement::setCaption(PassRefPtr<HTMLTableCaptionElement> newCaption, ExceptionCode& ec)
 {
     deleteCaption();
-    insertBefore(newCaption, firstChild(), ec);
+    if (newCaption)
+        insertBefore(newCaption, firstChild(), ec);
 }
 
 HTMLTableSectionElement* HTMLTableElement::tHead() const
@@ -94,7 +95,15 @@ HTMLTableSectionElement* HTMLTableElement::tHead() const
 
 void HTMLTableElement::setTHead(PassRefPtr<HTMLTableSectionElement> newHead, ExceptionCode& ec)
 {
+    if (newHead && !newHead->hasTagName(theadTag)) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return;
+    }
+
     deleteTHead();
+
+    if (!newHead)
+        return;
 
     Node* child;
     for (child = firstChild(); child; child = child->nextSibling())
@@ -115,7 +124,15 @@ HTMLTableSectionElement* HTMLTableElement::tFoot() const
 
 void HTMLTableElement::setTFoot(PassRefPtr<HTMLTableSectionElement> newFoot, ExceptionCode& ec)
 {
+    if (newFoot && !newFoot->hasTagName(tfootTag)) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return;
+    }
+
     deleteTFoot();
+
+    if (!newFoot)
+        return;
 
     Node* child;
     for (child = firstChild(); child; child = child->nextSibling())

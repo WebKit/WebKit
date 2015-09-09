@@ -1,3 +1,17 @@
+2015-09-09  Chris Dumez  <cdumez@apple.com>
+
+        HTMLTableElement.tHead / tFoot / caption should be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=148991
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new test that covers the behavior of the following HTMLTableElement
+        attributes: caption / tHead / tFoot.
+
+        * fast/dom/HTMLTableElement/nullable-attributes-expected.txt: Added.
+        * fast/dom/HTMLTableElement/nullable-attributes.html: Added.
+        * fast/dom/setter-type-enforcement-expected.txt:
+
 2015-06-26  Sergio Villar Senin  <svillar@igalia.com>
 
         min-width/height should default to auto for flexbox items
