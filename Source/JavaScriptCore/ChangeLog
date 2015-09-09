@@ -1,3 +1,22 @@
+2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Refactor the test for the arithmetic instructions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148983
+
+        Reviewed by Mark Lam.
+
+        Pass the values into the test functions as Mark Lam suggested in
+        https://bugs.webkit.org/show_bug.cgi?id=148882#c3
+
+        * tests/stress/wasm-arithmetic-int32.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        * tests/stress/wasm-arithmetic.js: Removed.
+        (shouldBe): Deleted.
+        (shouldThrow): Deleted.
+        * tests/stress/wasm/arithmetic-int32.wasm: Added.
+        * tests/stress/wasm/arithmetic.wasm: Removed.
+
 2015-09-08  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] reduce the amount of memory access needed for LivenessAnalysisPhase
