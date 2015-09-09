@@ -35,7 +35,7 @@ namespace JSC {
 const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBoundFunction) };
 
 EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
-{
+{   
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
 
     ASSERT(isJSArray(boundFunction->boundArgs())); // Currently this is true!
@@ -80,8 +80,10 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
     ConstructType constructType = JSC::getConstructData(targetFunction, constructData);
     bool canConstruct = constructType != ConstructTypeNone;
     NativeExecutable* executable = vm.getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor);
-    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, globalObject->boundFunctionStructure(), targetFunction, boundThis, boundArgs);
-
+    JSValue targetPrototype = targetFunction->prototype();
+    Structure* structure = JSBoundFunction::createStructure(vm, globalObject, targetPrototype);
+    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, structure, targetFunction, boundThis, boundArgs);
+    
     function->finishCreation(vm, executable, length, name);
     return function;
 }
