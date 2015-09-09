@@ -1,3 +1,12 @@
+2015-09-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Mark http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html as flaky on Windows
+
+        This test is marked as flaky on gtk and mak-wk2. It fails on Windows more
+        than it fails on any other platform.
+
+        * platform/win/TestExpectations:
+
 2015-09-09  Alexey Proskuryakov  <ap@apple.com>
 
         fast/dom/rtl-scroll-to-leftmost-and-resize.html is a flaky timeout - IPC drops messages

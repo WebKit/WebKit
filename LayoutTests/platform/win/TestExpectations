@@ -726,6 +726,7 @@ http/tests/misc/frame-default-enc-same-domain.html [ Skip ]
 
 # Sensitive to load timing or PHP behavior
 webkit.org/b/44873 http/tests/css/css-image-loading.html [ Skip ]
+webkit.org/b/149007 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Pass Failure ] # Flaky
 
 # Assertion failure in replaySavedEvents http://webkit.org/b/21796
