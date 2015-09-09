@@ -2830,11 +2830,13 @@ void CodeBlock::visitOSRExitTargets(SlotVisitor& visitor)
 
     alternative()->visitStrongly(visitor);
 
+#if ENABLE(DFG_JIT)
     DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
     if (dfgCommon->inlineCallFrames) {
         for (auto* inlineCallFrame : *dfgCommon->inlineCallFrames)
             inlineCallFrame->baselineCodeBlock()->visitStrongly(visitor);
     }
+#endif
 }
 
 void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
