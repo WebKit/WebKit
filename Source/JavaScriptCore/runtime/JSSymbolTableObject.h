@@ -87,7 +87,13 @@ inline bool symbolTableGet(
         return false;
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
-    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(entry.scopeOffset()).get());
+
+    ScopeOffset offset = entry.scopeOffset();
+    // Defend against the inspector asking for a var after it has been optimized out.
+    if (!object->isValidScopeOffset(offset))
+        return false;
+
+    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(offset).get());
     return true;
 }
 
@@ -102,8 +108,13 @@ inline bool symbolTableGet(
         return false;
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
-    descriptor.setDescriptor(
-        object->variableAt(entry.scopeOffset()).get(), entry.getAttributes() | DontDelete);
+
+    ScopeOffset offset = entry.scopeOffset();
+    // Defend against the inspector asking for a var after it has been optimized out.
+    if (!object->isValidScopeOffset(offset))
+        return false;
+
+    descriptor.setDescriptor(object->variableAt(offset).get(), entry.getAttributes() | DontDelete);
     return true;
 }
 
@@ -119,26 +130,37 @@ inline bool symbolTableGet(
         return false;
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
-    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(entry.scopeOffset()).get());
+
+    ScopeOffset offset = entry.scopeOffset();
+    // Defend against the inspector asking for a var after it has been optimized out.
+    if (!object->isValidScopeOffset(offset))
+        return false;
+
+    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(offset).get());
     slotIsWriteable = !entry.isReadOnly();
     return true;
 }
 
-template<typename SymbolTableObjectType>
+enum class SymbolTablePutMode {
+    WithAttributes,
+    WithoutAttributes
+};
+
+template<SymbolTablePutMode symbolTablePutMode, typename SymbolTableObjectType>
 inline bool symbolTablePut(
-    SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value,
-    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors)
+    SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes,
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, WatchpointSet*& set)
 {
-    VM& vm = exec->vm();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
-    
+
+    VM& vm = exec->vm();
+
     WriteBarrierBase<Unknown>* reg;
-    WatchpointSet* set;
     {
         SymbolTable& symbolTable = *object->symbolTable();
         // FIXME: This is very suspicious. We shouldn't need a GC-safe lock here.
         // https://bugs.webkit.org/show_bug.cgi?id=134601
-        GCSafeConcurrentJITLocker locker(symbolTable.m_lock, exec->vm().heap);
+        GCSafeConcurrentJITLocker locker(symbolTable.m_lock, vm.heap);
         SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
         if (iter == symbolTable.end(locker))
             return false;
@@ -150,43 +172,63 @@ inline bool symbolTablePut(
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return true;
         }
+
+        ScopeOffset offset = fastEntry.scopeOffset();
+
+        // Defend against the inspector asking for a var after it has been optimized out.
+        if (!object->isValidScopeOffset(offset))
+            return false;
+
         set = iter->value.watchpointSet();
-        reg = &object->variableAt(fastEntry.scopeOffset());
+        if (symbolTablePutMode == SymbolTablePutMode::WithAttributes)
+            iter->value.setAttributes(attributes);
+        reg = &object->variableAt(offset);
     }
     // I'd prefer we not hold lock while executing barriers, since I prefer to reserve
     // the right for barriers to be able to trigger GC. And I don't want to hold VM
     // locks while GC'ing.
     reg->set(vm, object, value);
-    if (set)
-        VariableWriteFireDetail::touch(set, object, propertyName);
     return true;
 }
 
 template<typename SymbolTableObjectType>
-inline bool symbolTablePutWithAttributes(
-    SymbolTableObjectType* object, VM& vm, PropertyName propertyName,
-    JSValue value, unsigned attributes)
+inline bool symbolTablePutTouchWatchpointSet(
+    SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value,
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors)
 {
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
-
-    WriteBarrierBase<Unknown>* reg;
-    WatchpointSet* set;
-    {
-        SymbolTable& symbolTable = *object->symbolTable();
-        ConcurrentJITLocker locker(symbolTable.m_lock);
-        SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
-        if (iter == symbolTable.end(locker))
-            return false;
-        SymbolTableEntry& entry = iter->value;
-        ASSERT(!entry.isNull());
-        set = entry.watchpointSet();
-        entry.setAttributes(attributes);
-        reg = &object->variableAt(entry.scopeOffset());
-    }
-    reg->set(vm, object, value);
+    WatchpointSet* set = nullptr;
+    unsigned attributes = 0;
+    bool result = symbolTablePut<SymbolTablePutMode::WithoutAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set);
     if (set)
         VariableWriteFireDetail::touch(set, object, propertyName);
-    return true;
+    return result;
+}
+
+template<typename SymbolTableObjectType>
+inline bool symbolTablePutInvalidateWatchpointSet(
+    SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName, JSValue value,
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors)
+{
+    WatchpointSet* set = nullptr;
+    unsigned attributes = 0;
+    bool result = symbolTablePut<SymbolTablePutMode::WithoutAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set);
+    if (set)
+        set->invalidate(VariableWriteFireDetail(object, propertyName)); // Don't mess around - if we had found this statically, we would have invalidated it.
+    return result;
+}
+
+template<typename SymbolTableObjectType>
+inline bool symbolTablePutWithAttributesTouchWatchpointSet(
+    SymbolTableObjectType* object, ExecState* exec, PropertyName propertyName,
+    JSValue value, unsigned attributes)
+{
+    WatchpointSet* set = nullptr;
+    bool shouldThrowReadOnlyError = false;
+    bool ignoreReadOnlyErrors = true;
+    bool result = symbolTablePut<SymbolTablePutMode::WithAttributes>(object, exec, propertyName, value, attributes, shouldThrowReadOnlyError, ignoreReadOnlyErrors, set);
+    if (set)
+        VariableWriteFireDetail::touch(set, object, propertyName);
+    return result;
 }
 
 } // namespace JSC

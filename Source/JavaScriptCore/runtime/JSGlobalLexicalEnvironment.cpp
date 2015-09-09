@@ -44,7 +44,7 @@ void JSGlobalLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
     bool alwaysThrowWhenAssigningToConstProperty = true;
     bool ignoreConstAssignmentError = slot.isInitialization();
-    symbolTablePut(thisObject, exec, propertyName, value, alwaysThrowWhenAssigningToConstProperty, ignoreConstAssignmentError);
+    symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, alwaysThrowWhenAssigningToConstProperty, ignoreConstAssignmentError);
 }
 
 } // namespace JSC

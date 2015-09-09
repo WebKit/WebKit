@@ -76,11 +76,6 @@ public:
     DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(ClosureObjectType, StructureFlags), info()); }
-
-private:
-    bool symbolTableGet(PropertyName, PropertySlot&);
-    bool symbolTablePut(ExecState*, PropertyName, JSValue, bool shouldThrow);
-    bool symbolTablePutWithAttributes(VM&, PropertyName, JSValue, unsigned attributes);
 };
 
 inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable)

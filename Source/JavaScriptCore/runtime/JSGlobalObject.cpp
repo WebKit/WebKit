@@ -556,7 +556,9 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (symbolTablePut(thisObject, exec, propertyName, value, slot.isStrictMode(), false))
+    bool shouldThrowReadOnlyError = slot.isStrictMode();
+    bool ignoreReadOnlyErrors = false;
+    if (symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors))
         return;
     Base::put(thisObject, exec, propertyName, value, slot);
 }

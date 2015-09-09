@@ -1,3 +1,41 @@
+2015-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unify symbolTableGet and Put in JSLexicalEnvironment and JSSymbolTableObject
+        https://bugs.webkit.org/show_bug.cgi?id=148783
+
+        Reviewed by Geoffrey Garen.
+
+        Unify the symbolTableGet and symbolTablePut into JSSymbolTableObject's one.
+        Since symbolTablePutWithAttributes in JSLexicalEnvironment is not used, we drop that function.
+
+        * runtime/JSEnvironmentRecord.h:
+        (JSC::JSEnvironmentRecord::isValidScopeOffset):
+        (JSC::JSEnvironmentRecord::variableAt):
+        (JSC::JSEnvironmentRecord::isValid): Deleted.
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        (JSC::JSGlobalLexicalEnvironment::put):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        (JSC::JSLexicalEnvironment::getOwnPropertySlot):
+        (JSC::JSLexicalEnvironment::put):
+        (JSC::JSLexicalEnvironment::symbolTableGet): Deleted.
+        (JSC::JSLexicalEnvironment::symbolTablePut): Deleted.
+        (JSC::JSLexicalEnvironment::symbolTablePutWithAttributes): Deleted.
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::isValidScopeOffset):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutTouchWatchpointSet):
+        (JSC::symbolTablePutInvalidateWatchpointSet):
+        (JSC::symbolTablePutWithAttributesTouchWatchpointSet):
+        (JSC::symbolTablePutWithAttributes): Deleted.
+
 2015-09-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189516.

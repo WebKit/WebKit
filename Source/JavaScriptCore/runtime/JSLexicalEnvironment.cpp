@@ -39,54 +39,6 @@ namespace JSC {
 
 const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, 0, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
 
-inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
-{
-    SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
-    if (entry.isNull())
-        return false;
-
-    ScopeOffset offset = entry.scopeOffset();
-
-    // Defend against the inspector asking for a var after it has been optimized out.
-    if (!isValid(offset))
-        return false;
-
-    JSValue result = variableAt(offset).get();
-    slot.setValue(this, DontEnum, result);
-    return true;
-}
-
-inline bool JSLexicalEnvironment::symbolTablePut(ExecState* exec, PropertyName propertyName, JSValue value, bool shouldThrow)
-{
-    VM& vm = exec->vm();
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
-    
-    WriteBarrierBase<Unknown>* reg;
-    WatchpointSet* set;
-    {
-        GCSafeConcurrentJITLocker locker(symbolTable()->m_lock, exec->vm().heap);
-        SymbolTable::Map::iterator iter = symbolTable()->find(locker, propertyName.uid());
-        if (iter == symbolTable()->end(locker))
-            return false;
-        ASSERT(!iter->value.isNull());
-        if (iter->value.isReadOnly()) {
-            if (shouldThrow || isLexicalScope())
-                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-            return true;
-        }
-        ScopeOffset offset = iter->value.scopeOffset();
-        // Defend against the inspector asking for a var after it has been optimized out.
-        if (!isValid(offset))
-            return false;
-        set = iter->value.watchpointSet();
-        reg = &variableAt(offset);
-    }
-    reg->set(vm, this, value);
-    if (set)
-        set->invalidate(VariableWriteFireDetail(this, propertyName)); // Don't mess around - if we had found this statically, we would have invalidated it.
-    return true;
-}
-
 void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
@@ -97,7 +49,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
             if (it->value.getAttributes() & DontEnum && !mode.includeDontEnumProperties())
                 continue;
-            if (!thisObject->isValid(it->value.scopeOffset()))
+            if (!thisObject->isValidScopeOffset(it->value.scopeOffset()))
                 continue;
             if (it->key->isSymbol() && !propertyNames.includeSymbolProperties())
                 continue;
@@ -108,35 +60,11 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-inline bool JSLexicalEnvironment::symbolTablePutWithAttributes(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
-{
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
-    
-    WriteBarrierBase<Unknown>* reg;
-    {
-        ConcurrentJITLocker locker(symbolTable()->m_lock);
-        SymbolTable::Map::iterator iter = symbolTable()->find(locker, propertyName.uid());
-        if (iter == symbolTable()->end(locker))
-            return false;
-        SymbolTableEntry& entry = iter->value;
-        ASSERT(!entry.isNull());
-        
-        ScopeOffset offset = entry.scopeOffset();
-        if (!isValid(offset))
-            return false;
-        
-        entry.setAttributes(attributes);
-        reg = &variableAt(offset);
-    }
-    reg->set(vm, this, value);
-    return true;
-}
-
 bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
 
-    if (thisObject->symbolTableGet(propertyName, slot))
+    if (symbolTableGet(thisObject, propertyName, slot))
         return true;
 
     unsigned attributes;
@@ -157,7 +85,9 @@ void JSLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName prope
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (thisObject->symbolTablePut(exec, propertyName, value, slot.isStrictMode()))
+    bool shouldThrowReadOnlyError = slot.isStrictMode() || thisObject->isLexicalScope();
+    bool ignoreReadOnlyErrors = false;
+    if (symbolTablePutInvalidateWatchpointSet(thisObject, exec, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors))
         return;
 
     // We don't call through to JSObject because __proto__ and getter/setter 
