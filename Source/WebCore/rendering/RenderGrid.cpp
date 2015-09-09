@@ -451,7 +451,7 @@ LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(GridTrackSizingDirect
 {
     ASSERT(trackLength.isSpecified());
     if (direction == ForColumns)
-        return valueForLength(trackLength, logicalWidth());
+        return valueForLength(trackLength, logicalWidth() - borderAndPaddingLogicalWidth());
     return valueForLength(trackLength, computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt).valueOr(0));
 }
 
