@@ -1535,10 +1535,11 @@ void Document::setTitle(const String& title)
     if (!isHTMLDocument() && !isXHTMLDocument())
         m_titleElement = nullptr;
     else if (!m_titleElement) {
-        if (HTMLElement* headElement = head()) {
-            m_titleElement = createElement(titleTag, false);
-            headElement->appendChild(m_titleElement, ASSERT_NO_EXCEPTION);
-        }
+        auto* headElement = head();
+        if (!headElement)
+            return;
+        m_titleElement = createElement(titleTag, false);
+        headElement->appendChild(m_titleElement, ASSERT_NO_EXCEPTION);
     }
 
     // The DOM API has no method of specifying direction, so assume LTR.

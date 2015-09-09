@@ -1,6 +1,6 @@
 
 PASS document.title with head blown away 
-FAIL document.title with head blown away 1 assert_equals: expected "" but got "FAIL"
-FAIL Untitled 2 assert_equals: expected "PASS" but got "FAIL"
-FAIL PASS 3 assert_equals: expected "PASS2" but got "FAIL"
+PASS document.title with head blown away 1 
+FAIL Untitled 2 assert_equals: expected "PASS" but got ""
+FAIL PASS 3 assert_equals: expected "PASS2" but got ""
 

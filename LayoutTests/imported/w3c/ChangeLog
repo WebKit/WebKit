@@ -1,3 +1,16 @@
+2015-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Setting document.title when there is no title and no head element should no nothing
+        https://bugs.webkit.org/show_bug.cgi?id=149005
+        <rdar://problem/22567524>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-01-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-02-expected.txt:
+
 2015-09-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html.
