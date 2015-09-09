@@ -1,3 +1,13 @@
+2015-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERTION FAILED: typesettingFeatures & (Kerning | Ligatures) in WebCore::applyFontTransforms
+        https://bugs.webkit.org/show_bug.cgi?id=146194
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/softbank-emoji-no-ligatures-nor-kerning-expected.html: Added
+        * fast/text/softbank-emoji-no-ligatures-nor-kerning.html: Added
+
 2015-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Percentage columns shouldn't include border and padding

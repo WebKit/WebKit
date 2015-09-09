@@ -35,6 +35,9 @@ class GlyphBuffer;
 class Font;
 class TextRun;
 struct GlyphData;
+struct OriginalAdvancesForCharacterTreatedAsSpace;
+
+typedef Vector<std::pair<int, OriginalAdvancesForCharacterTreatedAsSpace>, 64> CharactersTreatedAsSpace;
 
 struct WidthIterator {
     WTF_MAKE_FAST_ALLOCATED;
@@ -90,6 +93,7 @@ private:
 
     enum class TransformsType { None, Forced, NotForced };
     TransformsType shouldApplyFontTransforms(const GlyphBuffer*, int lastGlyphCount, UChar32 previousCharacter) const;
+    float applyFontTransforms(GlyphBuffer*, bool ltr, int& lastGlyphCount, const Font*, TypesettingFeatures, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace&);
 
     TypesettingFeatures m_typesettingFeatures;
     HashSet<const Font*>* m_fallbackFonts;
