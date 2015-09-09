@@ -1746,6 +1746,9 @@
     <ClCompile Include="..\dfg\DFGMayExit.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
+    <ClCompile Include="..\dfg\DFGMaximalFlushInsertionPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
     <ClCompile Include="..\dfg\DFGPureValue.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -4338,6 +4341,9 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGMayExit.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGMaximalFlushInsertionPhase.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGPureValue.h">

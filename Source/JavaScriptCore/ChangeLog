@@ -1,3 +1,35 @@
+2015-09-09  Saam barati  <sbarati@apple.com>
+
+        DFG should have a debugging option that runs a phase that flushes all locals
+        https://bugs.webkit.org/show_bug.cgi?id=148916
+
+        Reviewed by Filip Pizlo.
+
+        There is now an option to enable the DFG's new MaximalFlushInsertionPhase
+        phase to run. This phase ensures that we keep all locals and arguments flushed
+        to the stack at all places in the CFG. This phase is helpful for finding
+        a class of bugs where enabling this phase to run removes the bug.
+        This may also be useful in the development of a faster debugger
+        that doesn't capture all variables.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGMaximalFlushInsertionPhase.cpp: Added.
+        (JSC::DFG::MaximalFlushInsertionPhase::MaximalFlushInsertionPhase):
+        (JSC::DFG::MaximalFlushInsertionPhase::run):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRegularBlock):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRootBlock):
+        (JSC::DFG::MaximalFlushInsertionPhase::newVariableAccessData):
+        (JSC::DFG::performMaximalFlushInsertion):
+        * dfg/DFGMaximalFlushInsertionPhase.h: Added.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Refactor the test for the arithmetic instructions in WebAssembly

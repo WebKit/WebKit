@@ -441,6 +441,7 @@
     <ClCompile Include="..\dfg\DFGLongLivedState.cpp" />
     <ClCompile Include="..\dfg\DFGLoopPreHeaderCreationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGMayExit.cpp" />
+    <ClCompile Include="..\dfg\DFGMaximalFlushInsertionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGMinifiedGraph.cpp" />
     <ClCompile Include="..\dfg\DFGMinifiedNode.cpp" />
     <ClCompile Include="..\dfg\DFGMovHintRemovalPhase.cpp" />
@@ -1173,6 +1174,7 @@
     <ClInclude Include="..\dfg\DFGLongLivedState.h" />
     <ClInclude Include="..\dfg\DFGLoopPreHeaderCreationPhase.h" />
     <ClInclude Include="..\dfg\DFGMayExit.h" />
+    <ClInclude Include="..\dfg\DFGMaximalFlushInsertionPhase.h" />
     <ClInclude Include="..\dfg\DFGMinifiedGraph.h" />
     <ClInclude Include="..\dfg\DFGMinifiedID.h" />
     <ClInclude Include="..\dfg\DFGMinifiedNode.h" />

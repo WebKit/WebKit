@@ -204,6 +204,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGLivenessAnalysisPhase.cpp
     dfg/DFGLongLivedState.cpp
     dfg/DFGLoopPreHeaderCreationPhase.cpp
+    dfg/DFGMaximalFlushInsertionPhase.cpp
     dfg/DFGMayExit.cpp
     dfg/DFGMinifiedGraph.cpp
     dfg/DFGMinifiedNode.cpp

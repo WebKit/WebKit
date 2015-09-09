@@ -238,6 +238,8 @@ typedef const char* optionString;
     v(bool, enablePolyvariantCallInlining, true, nullptr) \
     v(bool, enablePolyvariantByIdInlining, true, nullptr) \
     \
+    v(bool, enableMaximalFlushInsertionPhase, false, "Setting to true enables the DFG's MaximalFlushInsertionPhase to run.") \
+    \
     v(unsigned, maximumBinaryStringSwitchCaseLength, 50, nullptr) \
     v(unsigned, maximumBinaryStringSwitchTotalLength, 2000, nullptr) \
     \

@@ -319,6 +319,10 @@ static void recomputeDependentOptions()
         Options::maximumEvalCacheableSourceLength() = 150000;
         Options::enableConcurrentJIT() = false;
     }
+    if (Options::enableMaximalFlushInsertionPhase()) {
+        Options::enableOSREntryToDFG() = false;
+        Options::enableOSREntryToFTL() = false;
+    }
 
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it

@@ -50,6 +50,7 @@
 #include "DFGLICMPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
+#include "DFGMaximalFlushInsertionPhase.h"
 #include "DFGMovHintRemovalPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
@@ -255,6 +256,9 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         dataLog("Graph after parsing:\n");
         dfg.dump();
     }
+
+    if (Options::enableMaximalFlushInsertionPhase())
+        performMaximalFlushInsertion(dfg);
     
     performCPSRethreading(dfg);
     performUnification(dfg);
