@@ -95,11 +95,11 @@ void TestController::platformResetStateToConsistentValues()
     }
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const TestInvocation& test) const
+void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions& viewOptions, const TestInvocation& test) const
 {
-    options.useThreadedScrolling = shouldUseThreadedScrolling(test);
-    options.useRemoteLayerTree = shouldUseRemoteLayerTree();
-    options.shouldShowWebView = shouldShowWebView();
+    viewOptions.useThreadedScrolling = shouldUseThreadedScrolling(test);
+    viewOptions.useRemoteLayerTree = shouldUseRemoteLayerTree();
+    viewOptions.shouldShowWebView = shouldShowWebView();
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

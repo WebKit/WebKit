@@ -148,9 +148,9 @@ static bool shouldUseFixedLayout(const TestInvocation& test)
     return false;
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& testOptions, const TestInvocation& test) const
+void TestController::updatePlatformSpecificViewOptionsForTest(ViewOptions& viewOptions, const TestInvocation& test) const
 {
-    testOptions.useFixedLayout = shouldUseFixedLayout(test);
+    viewOptions.useFixedLayout = shouldUseFixedLayout(test);
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation&)

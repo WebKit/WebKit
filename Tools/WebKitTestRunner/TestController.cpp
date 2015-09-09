@@ -368,10 +368,7 @@ void TestController::initialize(int argc, const char* argv[])
 
     WKRetainPtr<WKStringRef> pageGroupIdentifier(AdoptWK, WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
-}
 
-WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration() const
-{
     auto configuration = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
     WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(configuration.get(), true);
@@ -388,12 +385,7 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
         WKContextConfigurationSetWebSQLDatabaseDirectory(configuration.get(), toWK(temporaryFolder + separator + "Databases" + separator + "WebSQL").get());
         WKContextConfigurationSetMediaKeysStorageDirectory(configuration.get(), toWK(temporaryFolder + separator + "MediaKeys").get());
     }
-    return configuration;
-}
-
-WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WKContextConfigurationRef configuration)
-{
-    m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(configuration)).get(), configuration);
+    m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(configuration.get())).get(), configuration.get());
 
     m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
@@ -453,24 +445,18 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
     if (m_forceComplexText)
         WKContextSetAlwaysUsesComplexTextCodePath(m_context.get(), true);
 
-    auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
-    WKPageConfigurationSetContext(pageConfiguration.get(), m_context.get());
-    WKPageConfigurationSetPageGroup(pageConfiguration.get(), m_pageGroup.get());
-    WKPageConfigurationSetUserContentController(pageConfiguration.get(), adoptWK(WKUserContentControllerCreate()).get());
-    return pageConfiguration;
-}
-
-void TestController::createWebViewWithOptions(const TestOptions& options)
-{
-    auto contextConfiguration = generateContextConfiguration();
-    // Modify contextConfiguration here.
-    auto configuration = generatePageConfiguration(contextConfiguration.get());
+    m_configuration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(m_configuration.get(), m_context.get());
+    WKPageConfigurationSetPageGroup(m_configuration.get(), m_pageGroup.get());
+    WKPageConfigurationSetUserContentController(m_configuration.get(), adoptWK(WKUserContentControllerCreate()).get());
 
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
-    // FIXME: Migrate these preferences to WKContextConfigurationRef.
     resetPreferencesToConsistentValues();
+}
 
-    platformCreateWebView(configuration.get(), options);
+void TestController::createWebViewWithOptions(const ViewOptions& options)
+{
+    platformCreateWebView(m_configuration.get(), options);
     WKPageUIClientV6 pageUIClient = {
         { 6, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
@@ -578,10 +564,10 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
 
 void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test)
 {
-    auto options = testOptionsForTest(test);
+    auto viewOptions = viewOptionsForTest(test);
 
     if (m_mainWebView) {
-        if (m_mainWebView->viewSupportsOptions(options))
+        if (m_mainWebView->viewSupportsOptions(viewOptions))
             return;
 
         WKPageSetPageUIClient(m_mainWebView->page(), nullptr);
@@ -591,7 +577,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         m_mainWebView = nullptr;
     }
 
-    createWebViewWithOptions(options);
+    createWebViewWithOptions(viewOptions);
 
     if (!resetStateToConsistentValues())
         TestInvocation::dumpWebProcessUnresponsiveness("<unknown> - TestController::run - Failed to reset state to consistent values\n");
@@ -822,7 +808,7 @@ static std::string testPath(const WKURLRef url)
     return std::string();
 }
 
-static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const TestInvocation& test)
+static void updateViewOptionsFromTestHeader(ViewOptions& viewOptions, const TestInvocation& test)
 {
     std::string filename = testPath(test.url());
     if (filename.empty())
@@ -856,24 +842,24 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const Test
         }
         auto key = pairString.substr(pairStart, equalsLocation - pairStart);
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
-        // Options processing to modify testOptions goes here.
+        // Options processing to modify viewOptions goes here.
         pairStart = pairEnd + 1;
     }
 }
 
-TestOptions TestController::testOptionsForTest(const TestInvocation& test) const
+ViewOptions TestController::viewOptionsForTest(const TestInvocation& test) const
 {
-    TestOptions options;
+    ViewOptions viewOptions;
 
-    options.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
-    options.shouldShowWebView = m_shouldShowWebView;
-    options.useFixedLayout = shouldUseFixedLayout(test);
+    viewOptions.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
+    viewOptions.shouldShowWebView = m_shouldShowWebView;
+    viewOptions.useFixedLayout = shouldUseFixedLayout(test);
 
-    updateTestOptionsFromTestHeader(options, test);
+    updateViewOptionsFromTestHeader(viewOptions, test);
 
-    updatePlatformSpecificTestOptionsForTest(options, test);
+    updatePlatformSpecificViewOptionsForTest(viewOptions, test);
 
-    return options;
+    return viewOptions;
 }
 
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
@@ -1781,12 +1767,12 @@ void TestController::platformWillRunTest(const TestInvocation&)
 {
 }
 
-void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const TestOptions& options)
+void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
 {
     m_mainWebView = std::make_unique<PlatformWebView>(configuration, options);
 }
 
-PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const TestOptions& options)
+PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const ViewOptions& options)
 {
     return new PlatformWebView(configuration, options);
 }

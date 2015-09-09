@@ -1,3 +1,21 @@
+2015-09-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r189530 and r189534.
+        https://bugs.webkit.org/show_bug.cgi?id=148996
+
+        Caused assertion failures on Yosemite (Requested by litherum
+        on #webkit).
+
+        Reverted changesets:
+
+        "[WKTR] Allow changing the WKContextConfiguration between
+        successive tests"
+        https://bugs.webkit.org/show_bug.cgi?id=148833
+        http://trac.webkit.org/changeset/189530
+
+        "[Cocoa] Fix the tests after r189530"
+        http://trac.webkit.org/changeset/189534
+
 2015-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Fix the tests after r189530

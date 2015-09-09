@@ -41,7 +41,7 @@ namespace WTR {
 class TestInvocation;
 class PlatformWebView;
 class EventSenderProxy;
-struct TestOptions;
+struct ViewOptions;
 
 // FIXME: Rename this TestRunner?
 class TestController {
@@ -62,8 +62,8 @@ public:
 
     bool verbose() const { return m_verbose; }
 
-    WKStringRef injectedBundlePath() const { return m_injectedBundlePath.get(); }
-    WKStringRef testPluginDirectory() const { return m_testPluginDirectory.get(); }
+    WKStringRef injectedBundlePath() { return m_injectedBundlePath.get(); }
+    WKStringRef testPluginDirectory() { return m_testPluginDirectory.get(); }
 
     PlatformWebView* mainWebView() { return m_mainWebView.get(); }
     WKContextRef context() { return m_context.get(); }
@@ -129,10 +129,8 @@ public:
     void setNavigationGesturesEnabled(bool value);
 
 private:
-    WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
-    WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
     void initialize(int argc, const char* argv[]);
-    void createWebViewWithOptions(const TestOptions&);
+    void createWebViewWithOptions(const ViewOptions&);
     void run();
 
     void runTestingServerLoop();
@@ -142,8 +140,8 @@ private:
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
-    void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
-    static PlatformWebView* platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
+    void platformCreateWebView(WKPageConfigurationRef, const ViewOptions&);
+    static PlatformWebView* platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const ViewOptions&);
     void platformResetPreferencesToConsistentValues();
     void platformResetStateToConsistentValues();
 #if PLATFORM(COCOA)
@@ -158,8 +156,8 @@ private:
     void initializeTestPluginDirectory();
 
     void ensureViewSupportsOptionsForTest(const TestInvocation&);
-    TestOptions testOptionsForTest(const TestInvocation&) const;
-    void updatePlatformSpecificTestOptionsForTest(TestOptions&, const TestInvocation&) const;
+    ViewOptions viewOptionsForTest(const TestInvocation&) const;
+    void updatePlatformSpecificViewOptionsForTest(ViewOptions&, const TestInvocation&) const;
 
     void updateWebViewSizeForTest(const TestInvocation&);
     void updateWindowScaleForTest(PlatformWebView*, const TestInvocation&);
@@ -260,6 +258,7 @@ private:
     std::unique_ptr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
+    WKRetainPtr<WKPageConfigurationRef> m_configuration;
 
     enum State {
         Initial,

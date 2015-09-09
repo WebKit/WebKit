@@ -53,7 +53,7 @@ static Ecore_Evas* initEcoreEvas()
     return ecoreEvas;
 }
 
-PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const TestOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
     : m_options(options)
 {
     WKRetainPtr<WKStringRef> useFixedLayoutKey(AdoptWK, WKStringCreateWithUTF8CString("UseFixedLayout"));
@@ -144,7 +144,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     return adoptWK(WKViewCreateSnapshot(EWKViewGetWKView(m_view)));
 }
 
-bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
+bool PlatformWebView::viewSupportsOptions(const ViewOptions& options) const
 {
     if (m_options.useFixedLayout != options.useFixedLayout)
         return false;

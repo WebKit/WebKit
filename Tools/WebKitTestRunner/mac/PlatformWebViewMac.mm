@@ -114,7 +114,7 @@ enum {
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const TestOptions& options)
+PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const ViewOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
@@ -240,7 +240,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     return adoptWK(WKImageCreateFromCGImage(windowSnapshotImage.get(), 0));
 }
 
-bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
+bool PlatformWebView::viewSupportsOptions(const ViewOptions& options) const
 {
     if (m_options.useThreadedScrolling != options.useThreadedScrolling)
         return false;

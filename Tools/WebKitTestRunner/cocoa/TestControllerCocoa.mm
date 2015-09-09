@@ -50,8 +50,7 @@ static WKWebViewConfiguration *globalWebViewConfiguration;
 void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
 #if WK_API_ENABLED
-    if (globalWebViewConfiguration)
-        [globalWebViewConfiguration release];
+    ASSERT(!globalWebViewConfiguration);
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
     globalWebViewConfiguration.processPool = [[WKProcessPool alloc] _initWithConfiguration:(_WKProcessPoolConfiguration *)contextConfiguration];
@@ -75,12 +74,12 @@ WKPreferencesRef TestController::platformPreferences()
 #endif
 }
 
-void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
+void TestController::platformCreateWebView(WKPageConfigurationRef, const ViewOptions& options)
 {
     m_mainWebView = std::make_unique<PlatformWebView>(globalWebViewConfiguration, options);
 }
 
-PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
+PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const ViewOptions& options)
 {
 #if WK_API_ENABLED
     WKWebViewConfiguration *newConfiguration = [[globalWebViewConfiguration copy] autorelease];
