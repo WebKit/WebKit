@@ -1,5 +1,14 @@
 2015-09-08  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html.
+
+        This recently imported test is flaky.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html: Removed.
+
+2015-09-08  Chris Dumez  <cdumez@apple.com>
+
         new Comment(undefined) / new Text(undefined) should use default's empty string
         https://bugs.webkit.org/show_bug.cgi?id=148973
         <rdar://problem/22548042>
