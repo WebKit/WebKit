@@ -141,8 +141,6 @@ enum class DynamicViewportUpdateMode {
 #import <WebCore/ColorMac.h>
 #endif
 
-NSString * const _WKShouldOpenExternalURLsKey = @"_WKShouldOpenExternalURLsKey";
-
 static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
 {
     static NeverDestroyed<HashMap<WebKit::WebPageProxy*, WKWebView *>> map;

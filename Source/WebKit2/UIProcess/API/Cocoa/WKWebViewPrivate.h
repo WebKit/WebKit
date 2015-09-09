@@ -39,8 +39,6 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(10_11, 9_0);
-
 @class WKBrowsingContextHandle;
 @class _WKRemoteObjectRegistry;
 @class _WKSessionState;

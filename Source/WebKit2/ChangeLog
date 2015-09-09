@@ -1,3 +1,13 @@
+2015-09-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused NSString SPI constant
+        https://bugs.webkit.org/show_bug.cgi?id=149009
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2015-09-09  Dan Bernstein  <mitz@apple.com>
 
         Updated availability annotations for iOS 9 and OS X El Capitan.
