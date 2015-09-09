@@ -1,3 +1,14 @@
+2015-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] Unreviewed iOS gardening.
+
+        * platform/ios-simulator/css3/filters/backdrop: Added.
+        * platform/ios-simulator/css3/filters/backdrop/blur-input-bounds-expected.txt: Added.
+        * platform/ios-simulator/css3/font-feature-settings-preinstalled-fonts-expected.txt: Added.
+        * platform/ios-simulator/fast/css/named-images-expected.txt: Added.
+        * platform/ios-simulator/fast/forms/select-element-focus-ring-expected.txt: Added.
+        * platform/ios-simulator/fast/text/font-weights-expected.txt: Added.
+
 2015-09-08  Chris Dumez  <cdumez@apple.com>
 
         new Comment(undefined) / new Text(undefined) should use default's empty string
