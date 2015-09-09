@@ -27,11 +27,11 @@
 
 #if WK_API_ENABLED
 
-WK_EXTERN NSString * const _WKWebsiteDataTypeHSTSCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const _WKWebsiteDataTypeHSTSCache WK_AVAILABLE(10_11, 9_0);
+WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_AVAILABLE(10_11, 9_0);
 
 #if !TARGET_OS_IPHONE
-WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_AVAILABLE(WK_MAC_TBA, NA);
+WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_AVAILABLE(10_11, NA);
 #endif
 
 #endif

@@ -33,7 +33,7 @@ typedef NS_ENUM(NSInteger, _WKDiagnosticLoggingResultType) {
     _WKDiagnosticLoggingResultPass,
     _WKDiagnosticLoggingResultFail,
     _WKDiagnosticLoggingResultNoop,
-} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+} WK_ENUM_AVAILABLE(10_11, 9_0);
 
 @protocol _WKDiagnosticLoggingDelegate <NSObject>
 @optional

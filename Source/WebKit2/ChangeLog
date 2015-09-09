@@ -1,3 +1,41 @@
+2015-09-09  Dan Bernstein  <mitz@apple.com>
+
+        Updated availability annotations for iOS 9 and OS X El Capitan.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * Shared/API/Cocoa/_WKRenderingProgressEvents.h:
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKErrorPrivate.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKSecurityOrigin.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKLayoutMode.h:
+        * UIProcess/API/Cocoa/_WKOverlayScrollbarStyle.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStore.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+
 2015-09-09  Alexey Proskuryakov  <ap@apple.com>
 
         fast/dom/rtl-scroll-to-leftmost-and-resize.html is a flaky timeout - IPC drops messages

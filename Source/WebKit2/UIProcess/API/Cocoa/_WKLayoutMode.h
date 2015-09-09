@@ -37,6 +37,6 @@ typedef NS_ENUM(NSUInteger, _WKLayoutMode) {
     // Lay out the view at a heuristically-determined size based on the minimum size of the document.
     _WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize = 4,
 
-} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+} WK_ENUM_AVAILABLE(10_11, 9_0);
 
 #endif

@@ -29,7 +29,7 @@
 
 #import <WebKit/WKWebsiteDataRecord.h>
 
-WK_CLASS_DEPRECATED(WK_MAC_TBA, WK_MAC_TBA, WK_IOS_TBA, WK_IOS_TBA, "Please use WKWebsiteDataRecord instead")
+WK_CLASS_DEPRECATED(10_11, 10_11, 9_0, 9_0, "Please use WKWebsiteDataRecord instead")
 @interface _WKWebsiteDataRecord : WKWebsiteDataRecord
 @end
 

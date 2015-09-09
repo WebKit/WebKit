@@ -98,7 +98,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  If readAccessURL references a directory, files inside that file may be loaded by WebKit.
  @result A new navigation for the given file URL.
  */
-- (WK_NULLABLE WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (WK_NULLABLE WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract Sets the webpage contents and base URL.
  @param string The string to use as the contents of the webpage.
@@ -114,7 +114,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @param baseURL A URL that is used to resolve relative URLs within the document.
  @result A new navigation.
  */
-- (WK_NULLABLE WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (WK_NULLABLE WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract Navigates to an item from the back-forward list and sets it
  as the current item.
@@ -169,7 +169,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @discussion The certificates are ordered from leaf (at index 0) to anchor.
  @link WKWebView @/link is key-value observing (KVO) compliant for this property.
  */
-@property (nonatomic, readonly, copy) NSArray *certificateChain WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly, copy) NSArray *certificateChain WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract A Boolean value indicating whether there is a back item in
  the back-forward list that can be navigated to.
@@ -229,13 +229,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The custom user agent string or nil if no custom user agent string has been set.
 */
-@property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *customUserAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *customUserAgent WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract A Boolean value indicating whether link preview is allowed for any
  links inside this WKWebView.
  @discussion The default value is NO on iOS and YES on Mac.
  */
-@property (nonatomic) BOOL allowsLinkPreview WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic) BOOL allowsLinkPreview WK_AVAILABLE(10_11, 9_0);
 
 #if TARGET_OS_IPHONE
 /*! @abstract The scroll view associated with the web view.

@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(10_11, 9_0);
 
 @class WKBrowsingContextHandle;
 @class _WKRemoteObjectRegistry;
@@ -65,19 +65,19 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
 
-@property (nonatomic, readonly) NSArray *_certificateChain WK_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "use -certificateChain");
+@property (nonatomic, readonly) NSArray *_certificateChain WK_DEPRECATED(10_10, 10_11, 8_0, 9_0, "use -certificateChain");
 @property (nonatomic, readonly) NSURL *_committedURL;
 @property (nonatomic, readonly) NSString *_MIMEType;
-@property (nonatomic, readonly) NSString *_userAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly) NSString *_userAgent WK_AVAILABLE(10_11, 9_0);
 
 @property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
 @property (copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
 
-@property (nonatomic, setter=_setUserContentExtensionsEnabled:) BOOL _userContentExtensionsEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setUserContentExtensionsEnabled:) BOOL _userContentExtensionsEnabled WK_AVAILABLE(10_11, 9_0);
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 
-@property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_AVAILABLE(10_11, 9_0);
 
 // FIXME: Remove these once nobody is using them.
 @property (nonatomic, readonly) NSData *_sessionStateData;
@@ -141,9 +141,9 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 // Deprecated: Use [_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:] instead.
 // This function is kept for binary compatibility with iOS 8.0, it can be removed after the bincompat window.
-- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_DEPRECATED(NA, NA, 8_0, WK_IOS_TBA, "use -_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:");
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_DEPRECATED(NA, NA, 8_0, 9_0, "use -_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:");
 
-- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_AVAILABLE(NA, WK_IOS_TBA);
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_AVAILABLE(NA, 9_0);
 
 - (UIView *)_viewForFindUI;
 
@@ -154,11 +154,11 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 // Puts the view into a state where being taken out of the view hierarchy and resigning first responder
 // will not count as becoming inactive and unfocused. The returned block must be called to exit the state.
-- (void (^)(void))_retainActiveFocusedState WK_AVAILABLE(NA, WK_IOS_TBA);
+- (void (^)(void))_retainActiveFocusedState WK_AVAILABLE(NA, 9_0);
 
-- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_AVAILABLE(NA, WK_IOS_TBA);
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_AVAILABLE(NA, 9_0);
 
-- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_AVAILABLE(NA, WK_IOS_TBA);
+- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_AVAILABLE(NA, 9_0);
 
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
@@ -170,7 +170,7 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 #endif
 
 // Default value is 0. A value of 0 means the window's backing scale factor will be used and automatically update when the window moves screens.
-@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(WK_MAC_TBA, NA);
+@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(10_11, NA);
 
 @property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
 
@@ -194,7 +194,7 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 @property (nonatomic, setter=_setTextZoomFactor:) double _textZoomFactor;
 @property (nonatomic, setter=_setPageZoomFactor:) double _pageZoomFactor;
 
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id <_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id <_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate WK_AVAILABLE(10_11, 9_0);
 @property (nonatomic, weak, setter=_setFindDelegate:) id <_WKFindDelegate> _findDelegate;
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
@@ -205,10 +205,10 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneImageDocument) BOOL _displayingStandaloneImageDocument;
 @property (nonatomic, readonly, getter=_isDisplayingStandaloneMediaDocument) BOOL _displayingStandaloneMediaDocument;
 
-@property (nonatomic, setter=_setScrollPerformanceDataCollectionEnabled:) BOOL _scrollPerformanceDataCollectionEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-@property (nonatomic, readonly) NSArray *_scrollPerformanceData WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setScrollPerformanceDataCollectionEnabled:) BOOL _scrollPerformanceDataCollectionEnabled WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, readonly) NSArray *_scrollPerformanceData WK_AVAILABLE(10_11, 9_0);
 
-- (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item WK_AVAILABLE(10_11, 9_0);
 
 @property (nonatomic, getter=_allowsMediaDocumentInlinePlayback, setter=_setAllowsMediaDocumentInlinePlayback:) BOOL _allowsMediaDocumentInlinePlayback;
 

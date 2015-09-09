@@ -29,7 +29,7 @@
 
 @class _WKUserContentFilter;
 
-WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+WK_CLASS_AVAILABLE(10_11, 9_0)
 @interface _WKUserContentExtensionStore : NSObject
 
 + (instancetype)defaultStore;

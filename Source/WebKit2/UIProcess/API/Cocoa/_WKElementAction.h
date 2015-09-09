@@ -41,8 +41,8 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeSaveImage,
 #if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
     _WKElementActionTypeAddToReadingList,
-    _WKElementActionTypeOpenInDefaultBrowser WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA),
-    _WKElementActionTypeOpenInExternalApplication WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA),
+    _WKElementActionTypeOpenInDefaultBrowser WK_ENUM_AVAILABLE(NA, 9_0),
+    _WKElementActionTypeOpenInExternalApplication WK_ENUM_AVAILABLE(NA, 9_0),
 #endif
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
@@ -54,7 +54,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
 
-- (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_AVAILABLE(NA, 9_0);
 
 @property (nonatomic, readonly) _WKElementActionType type;
 @property (nonatomic, readonly) NSString* title;

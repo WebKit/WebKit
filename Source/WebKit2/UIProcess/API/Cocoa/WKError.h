@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorWebContentProcessTerminated,
     WKErrorWebViewInvalidated,
     WKErrorJavaScriptExceptionOccurred,
-    WKErrorJavaScriptResultTypeIsUnsupported WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA),
+    WKErrorJavaScriptResultTypeIsUnsupported WK_ENUM_AVAILABLE(10_11, 9_0),
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
 WK_ASSUME_NONNULL_END

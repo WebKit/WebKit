@@ -142,7 +142,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
 /*! @abstract Invoked when the web view's web content process is terminated.
  @param webView The web view whose underlying web content process was terminated.
  */
-- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView WK_AVAILABLE(10_11, 9_0);
 
 @end
 

@@ -51,7 +51,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The frame's current security origin.
  */
-@property (nonatomic, readonly) WKSecurityOrigin *securityOrigin WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly) WKSecurityOrigin *securityOrigin WK_AVAILABLE(10_11, 9_0);
 
 @end
 

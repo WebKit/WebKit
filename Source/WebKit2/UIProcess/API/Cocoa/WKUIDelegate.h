@@ -62,7 +62,7 @@ WK_ASSUME_NONNULL_BEGIN
   @discussion Your app should remove the web view from the view hierarchy and update
   the UI as needed, such as by closing the containing browser tab or window.
   */
-- (void)webViewDidClose:(WKWebView *)webView WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)webViewDidClose:(WKWebView *)webView WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract Displays a JavaScript alert panel.
  @param webView The web view invoking the delegate method.

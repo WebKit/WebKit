@@ -98,7 +98,7 @@
 
 @property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
 
-@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(WK_MAC_TBA, NA);
+@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(10_11, NA);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 @property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
@@ -108,7 +108,7 @@
 @property (copy, nonatomic) NSColor *underlayColor;
 
 #if WK_API_ENABLED
-@property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_AVAILABLE(WK_MAC_TBA, NA);
+@property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_AVAILABLE(10_11, NA);
 #endif
 
 - (NSView*)fullScreenPlaceholderView;

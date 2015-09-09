@@ -44,9 +44,9 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame;
 
 #if TARGET_OS_IPHONE
-- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_AVAILABLE(10_11, 9_0);
 #else
-- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_AVAILABLE(10_11, 9_0);
 #endif
 
 @property (nonatomic, readonly) CGRect elementBounds;

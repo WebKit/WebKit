@@ -31,9 +31,9 @@
 
 @interface WKUserContentController (WKPrivate)
 
-- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (void)_removeAllUserContentFilters WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_AVAILABLE(10_11, 9_0);
+- (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_AVAILABLE(10_11, 9_0);
+- (void)_removeAllUserContentFilters WK_AVAILABLE(10_11, 9_0);
 
 @end
 

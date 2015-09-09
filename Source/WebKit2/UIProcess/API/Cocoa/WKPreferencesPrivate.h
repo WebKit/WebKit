@@ -40,11 +40,11 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKNonFastScrollableRegion = 1 << 0,
     _WKWheelEventHandlerRegion = 1 << 1
-} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+} WK_ENUM_AVAILABLE(10_11, 9_0);
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
     _WKJavaScriptRuntimeFlagsAllEnabled = 0
-} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+} WK_ENUM_AVAILABLE(10_11, 9_0);
 
 @interface WKPreferences (WKPrivate)
 
@@ -55,30 +55,30 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 @property (nonatomic, setter=_setCompositingBordersVisible:) BOOL _compositingBordersVisible;
 @property (nonatomic, setter=_setCompositingRepaintCountersVisible:) BOOL _compositingRepaintCountersVisible;
 @property (nonatomic, setter=_setTiledScrollingIndicatorVisible:) BOOL _tiledScrollingIndicatorVisible;
-@property (nonatomic, setter=_setVisibleDebugOverlayRegions:) _WKDebugOverlayRegions _visibleDebugOverlayRegions WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-@property (nonatomic, setter=_setSimpleLineLayoutDebugBordersEnabled:) BOOL _simpleLineLayoutDebugBordersEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setVisibleDebugOverlayRegions:) _WKDebugOverlayRegions _visibleDebugOverlayRegions WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, setter=_setSimpleLineLayoutDebugBordersEnabled:) BOOL _simpleLineLayoutDebugBordersEnabled WK_AVAILABLE(10_11, 9_0);
 @property (nonatomic, setter=_setAcceleratedDrawingEnabled:) BOOL _acceleratedDrawingEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-@property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled WK_AVAILABLE(10_11, 9_0);
 
-@property (nonatomic, setter=_setLogsPageMessagesToSystemConsoleEnabled:) BOOL _logsPageMessagesToSystemConsoleEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setLogsPageMessagesToSystemConsoleEnabled:) BOOL _logsPageMessagesToSystemConsoleEnabled WK_AVAILABLE(10_11, 9_0);
 
 @property (nonatomic, setter=_setHiddenPageDOMTimerThrottlingEnabled:) BOOL _hiddenPageDOMTimerThrottlingEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, setter=_setPageVisibilityBasedProcessSuppressionEnabled:) BOOL _pageVisibilityBasedProcessSuppressionEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-@property (nonatomic, setter=_setAllowFileAccessFromFileURLs:) BOOL _allowFileAccessFromFileURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-@property (nonatomic, setter=_setJavaScriptRuntimeFlags:) _WKJavaScriptRuntimeFlags _javaScriptRuntimeFlags WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setAllowFileAccessFromFileURLs:) BOOL _allowFileAccessFromFileURLs WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, setter=_setJavaScriptRuntimeFlags:) _WKJavaScriptRuntimeFlags _javaScriptRuntimeFlags WK_AVAILABLE(10_11, 9_0);
 
-@property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone WK_AVAILABLE(10_11, 9_0);
 
-@property (nonatomic, setter=_setDiagnosticLoggingEnabled:) BOOL _diagnosticLoggingEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setDiagnosticLoggingEnabled:) BOOL _diagnosticLoggingEnabled WK_AVAILABLE(10_11, 9_0);
 
 @property (nonatomic, setter=_setAntialiasedFontDilationEnabled:) BOOL _antialiasedFontDilationEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 // FIXME: This should be configured on the WKWebsiteDataStore.
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
-@property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled WK_AVAILABLE(10_11, 9_0);
 
 @end
 

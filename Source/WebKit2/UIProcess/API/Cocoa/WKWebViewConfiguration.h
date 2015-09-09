@@ -76,7 +76,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The website data store to be used by the web view.
  */
-@property (nonatomic, strong) WKWebsiteDataStore *websiteDataStore WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, strong) WKWebsiteDataStore *websiteDataStore WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract A Boolean value indicating whether the web view suppresses
  content rendering until it is fully loaded into memory.
@@ -86,12 +86,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The name of the application as used in the user agent string.
 */
-@property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *applicationNameForUserAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *applicationNameForUserAgent WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract A Boolean value indicating whether AirPlay is allowed.
  @discussion The default value is YES.
  */
-@property (nonatomic) BOOL allowsAirPlayForMediaPlayback WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic) BOOL allowsAirPlayForMediaPlayback WK_AVAILABLE(10_11, 9_0);
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline
@@ -104,7 +104,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  user to start playing them (YES) or can play automatically (NO).
  @discussion The default value is YES.
  */
-@property (nonatomic) BOOL requiresUserActionForMediaPlayback WK_AVAILABLE(NA, WK_IOS_TBA);
+@property (nonatomic) BOOL requiresUserActionForMediaPlayback WK_AVAILABLE(NA, 9_0);
 
 /*! @abstract The level of granularity with which the user can interactively
  select content in the web view.
@@ -117,7 +117,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  picture-in-picture.
  @discussion The default value is YES.
  */
-@property (nonatomic) BOOL allowsPictureInPictureMediaPlayback WK_AVAILABLE(NA, WK_IOS_TBA);
+@property (nonatomic) BOOL allowsPictureInPictureMediaPlayback WK_AVAILABLE(NA, 9_0);
 
 #endif
 
@@ -126,8 +126,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKWebViewConfiguration (WKDeprecated)
 
 #if TARGET_OS_IPHONE
-@property (nonatomic) BOOL mediaPlaybackRequiresUserAction WK_DEPRECATED(NA, NA, 8_0, WK_IOS_TBA, "Please use requiresUserActionForMediaPlayback");
-@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay WK_DEPRECATED(NA, NA, 8_0, WK_IOS_TBA, "Please use allowsAirPlayForMediaPlayback");
+@property (nonatomic) BOOL mediaPlaybackRequiresUserAction WK_DEPRECATED(NA, NA, 8_0, 9_0, "Please use requiresUserActionForMediaPlayback");
+@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay WK_DEPRECATED(NA, NA, 8_0, 9_0, "Please use allowsAirPlayForMediaPlayback");
 #endif
 
 @end
