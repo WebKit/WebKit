@@ -195,30 +195,16 @@ function testInheritanceHierarchy() {
   // case, assert the new behavior.
   shouldBe('new Uint8ClampedArray(1) instanceof Uint8Array', 'false');
 
-  if (Object.getPrototypeOf(Int8Array.prototype) == Object.prototype) {
-    // ES5 behavior.
-    shouldBe('Object.getPrototypeOf(Int8Array.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Uint8Array.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Uint8ClampedArray.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Int16Array.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Uint16Array.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Int32Array.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Uint32Array.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Float32Array.prototype)', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Float64Array.prototype)', 'Object.prototype');
-  } else {
-    // As of ES6, the prototypes for typed array constructors point to an intrinsic object whose internal
-    // prototype is Object.prototype. Relevant spec section is 22.2.5.2: TypedArray.prototype.
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Int8Array.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint8Array.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint8ClampedArray.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Int16Array.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint16Array.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Int32Array.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint32Array.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Float32Array.prototype))', 'Object.prototype');
-    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Float64Array.prototype))', 'Object.prototype');
-  }
+  shouldBe('Object.getPrototypeOf(Int8Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Uint8Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Uint8ClampedArray.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Int16Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Uint16Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Int32Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Uint32Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Float32Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(Float64Array.prototype)', 'Object.prototype');
+  shouldBe('Object.getPrototypeOf(DataView.prototype)', 'Object.prototype');
 }
 
 //

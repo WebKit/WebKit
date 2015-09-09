@@ -48,7 +48,7 @@ uniform float time;
 uniform vec2 resolution;
 
 // Saw-tooth function that is synced with the demo music (128bpm)
-float gBeat;
+float gBeat=fract(time*3.2/3.);
 
 // Calculate the surface color
 vec3 surfColor(vec2 p)
@@ -74,7 +74,6 @@ vec3 trace(vec3 o,vec3 d)
 
 void main()
 {
-    gBeat=fract(time*3.2/3.);
     // Screen setup
     vec2 p=(2.*gl_FragCoord.xy-resolution)/resolution.y,
          q=2.*gl_FragCoord.xy/resolution-1.;

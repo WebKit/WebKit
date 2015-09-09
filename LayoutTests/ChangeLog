@@ -1,3 +1,21 @@
+2015-09-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r189407 and r189424.
+        https://bugs.webkit.org/show_bug.cgi?id=148993
+
+        Broke some tests, and made others flakily time out (Requested
+        by ap on #webkit).
+
+        Reverted changesets:
+
+        "[WebGL] Update WebGL 1.0.3 conformance tests"
+        https://bugs.webkit.org/show_bug.cgi?id=148858
+        http://trac.webkit.org/changeset/189407
+
+        "REGRESSION (r189407): webgl/1.0.3/conformance/extensions
+        /webgl-draw-buffers.html"
+        http://trac.webkit.org/changeset/189424
+
 2015-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] Unreviewed iOS gardening.
