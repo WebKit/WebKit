@@ -1,3 +1,18 @@
+2015-09-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] reduce the amount of memory access needed for LivenessAnalysisPhase
+        https://bugs.webkit.org/show_bug.cgi?id=148414
+
+        Reviewed by Mark Lam.
+
+        LivenessAnalysisPhase still causes a huge number of cache miss.
+        This patch reduces the amount of accesses needed by the HashTables.
+
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::run):
+        (JSC::DFG::LivenessAnalysisPhase::process):
+
 2015-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Prospective build fix after r189517

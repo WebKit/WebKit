@@ -239,8 +239,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
         AvailabilityMap availabilityAtHead;
         AvailabilityMap availabilityAtTail;
         
-        HashSet<Node*> liveAtHead;
+        bool liveAtTailIsDirty { false };
         HashSet<Node*> liveAtTail;
+        HashSet<Node*> liveAtHead;
         HashMap<Node*, AbstractValue> valuesAtHead;
         HashMap<Node*, AbstractValue> valuesAtTail;
         
