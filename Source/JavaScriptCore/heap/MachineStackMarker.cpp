@@ -524,7 +524,7 @@ static inline int osRedZoneAdjustment()
     // See https://developer.apple.com/library/ios/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARM64FunctionCallingConventions.html#//apple_ref/doc/uid/TP40013702-SW7
     redZoneAdjustment = -128;
 #endif
-#endif // OS(DARWIN)
+#endif // !OS(WINDOWS)
     return redZoneAdjustment;
 }
 
