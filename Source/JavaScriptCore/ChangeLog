@@ -1,3 +1,20 @@
+2015-09-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Remove unused DFG::dfgConvertJSValueToInt32()
+        https://bugs.webkit.org/show_bug.cgi?id=148986
+
+        Reviewed by Geoffrey Garen.
+
+        Remove unused DFG::dfgConvertJSValueToInt32() and also remove
+        DFG::JITCompiler::callOperation(D_JITOperation_EJ operation, ...) which
+        was introduced in Bug 69806 for dfgConvertJSValueToNumber() and is no
+        longer used.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): Deleted.
+
 2015-09-08  Matthew Hill  <matthew.jh@outlook.com>
 
         Function.prototype.bind: Bound functions must use the [[Prototype]] of their target function instead of Function.prototype
