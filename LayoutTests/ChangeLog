@@ -1,3 +1,21 @@
+2015-09-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        CSS general sibling selectors does not work without CSS JIT
+        https://bugs.webkit.org/show_bug.cgi?id=148987
+        rdar://problem/22559860
+
+        Reviewed by Andreas Kling.
+
+        There are multiple variations of the same tests to test
+        cases where we JIT and cases without JIT. 
+
+        * fast/css/indirect-adjacent-style-invalidation-1-expected.txt: Added.
+        * fast/css/indirect-adjacent-style-invalidation-1.html: Added.
+        * fast/css/indirect-adjacent-style-invalidation-2-expected.txt: Added.
+        * fast/css/indirect-adjacent-style-invalidation-2.html: Added.
+        * fast/css/indirect-adjacent-style-invalidation-3-expected.txt: Added.
+        * fast/css/indirect-adjacent-style-invalidation-3.html: Added.
+
 2015-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: typesettingFeatures & (Kerning | Ligatures) in WebCore::applyFontTransforms
