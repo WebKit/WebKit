@@ -1,3 +1,20 @@
+2015-09-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling back in r189516.
+        https://bugs.webkit.org/show_bug.cgi?id=148989
+
+        Restored changeset:
+
+        "GC should be able to discover new strong CodeBlock references
+        during marking"
+        https://bugs.webkit.org/show_bug.cgi?id=148981
+        http://trac.webkit.org/changeset/189516
+
+        This patch caused infinite recursion on Windows because of a pre-existing
+        logical error in the non-parallel GC configuration. Even in non-parallel
+        GC, we must set the mark bit on a CodeBlock to avoid marking it twice
+        (or, in the case of our crash, infinitely recursively).
+
 2015-09-09  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement the relational instructions for doubles in WebAssembly
