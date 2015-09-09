@@ -1,5 +1,19 @@
 2015-09-09  Alexey Proskuryakov  <ap@apple.com>
 
+        Fix bit rot on bot watcher's dashboard page
+        https://bugs.webkit.org/show_bug.cgi?id=149012
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        The code path used by the metrics page was trying to add properties to an undefined.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        Silence an expection that would occur when the step has no logs. This should never
+        happen, but it did (perhaps buildbot was misconfigured for a while).
+
+2015-09-09  Alexey Proskuryakov  <ap@apple.com>
+
         Update LayoutTestRelay xcconfig file.
 
         Rubber-stamped by Dan Bernstein.

@@ -193,6 +193,7 @@ BuildbotIteration.prototype = {
         console.assert(!this.id || this.id === data.number);
         this.id = data.number;
 
+        this.revision = {};
         var revisionProperty = data.properties.findFirst(function(property) {
             return property[0] === "got_revision";
         });

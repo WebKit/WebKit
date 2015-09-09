@@ -39,7 +39,10 @@ BuildbotTestResults.prototype = {
     _parseResults: function(testStep)
     {
         this.name = testStep.name;
-        this.URL = testStep.logs[0][1];
+        try {
+            this.URL = testStep.logs[0][1];
+        } catch (ex) {
+        }
 
         this.allPassed = false;
         this.errorOccurred = false;
