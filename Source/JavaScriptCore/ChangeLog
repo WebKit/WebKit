@@ -1,3 +1,77 @@
+2015-09-08  Geoffrey Garen  <ggaren@apple.com>
+
+        GC should be able to discover new strong CodeBlock references during marking
+        https://bugs.webkit.org/show_bug.cgi?id=148981
+
+        Reviewed by Mark Lam.
+
+        Previously, we required a strong reference to register itself before the
+        first visit to a CodeBlock. Now, we can discover a strong reference at
+        any time during the marking phase.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock): Remove the two strong reference state
+        variables from CodeBlock. Now, a strong reference immediately marks
+        the CodeBlock and its references at the moment of its discovery, and no
+        separate state is required.
+
+        (JSC::CodeBlock::visitStrongly): New helper function for establishing
+        a strong reference to a CodeBlock.
+
+        (JSC::CodeBlock::visitAggregate): Adopt helper function above.
+
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan): Updated
+        for state removal.
+
+        (JSC::CodeBlock::isKnownToBeLiveDuringGC): Ditto.
+
+        (JSC::CodeBlock::stronglyVisitWeakReferences): Be sure to record that
+        we have proven liveness (by virtue of marking all the references the
+        proof would check). This is required so that the CodeBlock knows itself
+        to be live, and it is also an optimization to avoid testing weak references
+        after we have already visited them.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearMarks):
+        (JSC::CodeBlockSet::mark):
+        (JSC::CodeBlockSet::clearMarks): Deleted. Updated for state removal.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::clearCodeBlockMarks):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        * dfg/DFGPlan.h: No need to use a CodeBlockSet in order to mark anymore.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::completeAllPlansForVM):
+        (JSC::DFG::Worklist::clearCodeBlockMarks):
+        (JSC::DFG::Worklist::resumeAllThreads):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::completeAllPlansForVM):
+        (JSC::DFG::clearCodeBlockMarks):
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::worklistForIndexOrNull): No need to use a CodeBlockSet in order
+        to mark anymore.
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::clearMarksForEdenCollection):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        (JSC::CodeBlockSet::traceMarked):
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        (JSC::CodeBlockSet::dump):
+        * heap/CodeBlockSet.h: Keep the currently executing CodeBlocks in RefPtrs
+        since we can no longer rely on the m_currentlyExecuting bit to keep them
+        alive. (A currently executing CodeBlock may not be referenced by its
+        Executable because it may since have been replaced by another CodeBlock.
+        This is common in the cases of OSR entry and exit.)
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitCompilerWorklistWeakReferences):
+        (JSC::Heap::visitWeakHandles): No need to trace the list of CodeBlocks
+        on the stack in the weak reference fixpoint because we no longer overload
+        "on the stack" to include CodeBlocks referenced by the compiler.
+
 2015-09-08  Andreas Kling  <akling@apple.com>
 
         [JSC] Remove unused Heap::getConservativeRegisterRoots().
