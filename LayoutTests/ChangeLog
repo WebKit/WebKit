@@ -1,3 +1,14 @@
+2015-09-09  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION: Inline-block baseline is wrong when zero-width replaced child is present
+        https://bugs.webkit.org/show_bug.cgi?id=147452
+        rdar://problem/21943074
+
+        Reviewed by Myles Maxfield.
+
+        * fast/inline-block/baseline-with-zero-width-replaced-child-expected.html: Added.
+        * fast/inline-block/baseline-with-zero-width-replaced-child.html: Added.
+
 2015-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Percentage columns shouldn't include border and padding

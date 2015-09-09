@@ -58,10 +58,20 @@ public:
     float committedWidth() const { return m_committedWidth; }
     float availableWidth() const { return m_availableWidth; }
     float logicalLeftOffset() const { return m_left; }
+    
+    bool hasCommitted() const { return m_committedWidth > 0 || m_hasCommittedReplaced; }
 
     void updateAvailableWidth(LayoutUnit minimumHeight = 0);
     void shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject*);
-    void addUncommittedWidth(float delta) { m_uncommittedWidth += delta; }
+    void addUncommittedWidth(float delta)
+    {
+        m_uncommittedWidth += delta;
+    }
+    void addUncommittedReplacedWidth(float delta)
+    {
+        addUncommittedWidth(delta);
+        m_hasUncommittedReplaced = true;
+    }
     void commit();
     void applyOverhang(RenderRubyRun*, RenderObject* startRenderer, RenderObject* endRenderer);
     void fitBelowFloats(bool isFirstLine = false);
@@ -86,6 +96,8 @@ private:
     float m_right;
     float m_availableWidth;
     bool m_isFirstLine;
+    bool m_hasUncommittedReplaced { false };
+    bool m_hasCommittedReplaced { false };
     IndentTextOrNot m_shouldIndentText;
 };
 
