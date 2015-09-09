@@ -225,6 +225,36 @@ String InspectorFrontendHost::debuggableType()
     return ASCIILiteral("web");
 }
 
+String InspectorFrontendHost::platform()
+{
+#if PLATFORM(MAC) || PLATFORM(IOS)
+    return ASCIILiteral("mac");
+#elif OS(WINDOWS)
+    return ASCIILiteral("windows");
+#elif OS(LINUX)
+    return ASCIILiteral("linux");
+#elif OS(FREEBSD)
+    return ASCIILiteral("freebsd");
+#elif OS(OPENBSD)
+    return ASCIILiteral("openbsd");
+#elif OS(SOLARIS)
+    return ASCIILiteral("solaris");
+#else
+    return ASCIILiteral("unknown");
+#endif
+}
+
+String InspectorFrontendHost::port()
+{
+#if PLATFORM(GTK)
+    return ASCIILiteral("gtk");
+#elif PLATFORM(EFL)
+    return ASCIILiteral("efl");
+#else
+    return ASCIILiteral("unknown");
+#endif
+}
+
 void InspectorFrontendHost::copyText(const String& text)
 {
     Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);

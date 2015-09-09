@@ -70,6 +70,9 @@ public:
     String localizedStringsURL();
     String debuggableType();
 
+    String platform();
+    String port();
+
     void copyText(const String& text);
     void openInNewTab(const String& url);
     bool canSave();

@@ -59,8 +59,9 @@
     void append(DOMString url, DOMString content);
     void close(DOMString url);
 
-    [Custom] DOMString platform();
-    [Custom] DOMString port();
+    DOMString platform();
+    DOMString port();
+
     [Custom] void showContextMenu(MouseEvent event, any items);
     void dispatchEventAsContextMenuEvent(Event event);
     void sendMessageToBackend(DOMString message);
