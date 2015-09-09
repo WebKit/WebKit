@@ -53,37 +53,14 @@ struct GlyphData {
     const Font* font;
 };
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
-#endif
-
 // A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous
 // range of characters in the Unicode code space. GlyphPages are indexed
 // starting from 0 and incrementing for each 256 glyphs.
-//
-// One page may actually include glyphs from other fonts if the characters are
-// missing in the primary font.
 class GlyphPage : public RefCounted<GlyphPage> {
 public:
-    static PassRefPtr<GlyphPage> createForMixedFonts()
+    static Ref<GlyphPage> create(const Font& font)
     {
-        void* slot = fastMalloc(sizeof(GlyphPage) + sizeof(Font*) * GlyphPage::size);
-        return adoptRef(new (NotNull, slot) GlyphPage(nullptr));
-    }
-
-    static PassRefPtr<GlyphPage> createCopyForMixedFonts(const GlyphPage& original)
-    {
-        RefPtr<GlyphPage> page = createForMixedFonts();
-        for (unsigned i = 0; i < GlyphPage::size; ++i)
-            page->setGlyphDataForIndex(i, original.glyphDataForIndex(i));
-        return page.release();
-    }
-
-    static PassRefPtr<GlyphPage> createForSingleFont(const Font* font)
-    {
-        ASSERT(font);
-        return adoptRef(new GlyphPage(font));
+        return adoptRef(*new GlyphPage(font));
     }
 
     ~GlyphPage()
@@ -91,98 +68,60 @@ public:
         --s_count;
     }
 
-    bool isImmutable() const { return m_isImmutable; }
-    void setImmutable() { m_isImmutable = true; }
-
     static unsigned count() { return s_count; }
 
     static const size_t size = 256; // Covers Latin-1 in a single page.
-    static_assert((!(0xD800 % size)) && (!(0xDC00 % size)) && (!(0xE000 % size)), "GlyphPages must never straddle code-unit length boundaries");
     static unsigned indexForCharacter(UChar32 c) { return c % GlyphPage::size; }
 
-    ALWAYS_INLINE GlyphData glyphDataForCharacter(UChar32 c) const
+    GlyphData glyphDataForCharacter(UChar32 c) const
     {
         return glyphDataForIndex(indexForCharacter(c));
     }
 
-    ALWAYS_INLINE GlyphData glyphDataForIndex(unsigned index) const
+    Glyph glyphForCharacter(UChar32 c) const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(index < size);
-        Glyph glyph = m_glyphs[index];
-        if (hasPerGlyphFontData())
-            return GlyphData(glyph, m_perGlyphFontData[index]);
-        return GlyphData(glyph, glyph ? m_fontForAllGlyphs : 0);
+        return glyphForIndex(indexForCharacter(c));
     }
 
-    ALWAYS_INLINE Glyph glyphAt(unsigned index) const
+    GlyphData glyphDataForIndex(unsigned index) const
+    {
+        Glyph glyph = glyphForIndex(index);
+        return GlyphData(glyph, glyph ? &m_font : nullptr);
+    }
+
+    Glyph glyphForIndex(unsigned index) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         return m_glyphs[index];
     }
 
-    ALWAYS_INLINE const Font* fontForCharacter(UChar32 c) const
-    {
-        unsigned index = indexForCharacter(c);
-        if (hasPerGlyphFontData())
-            return m_perGlyphFontData[index];
-        return m_glyphs[index] ? m_fontForAllGlyphs : 0;
-    }
-
-    void setGlyphDataForCharacter(UChar32 c, Glyph g, const Font* f)
-    {
-        setGlyphDataForIndex(indexForCharacter(c), g, f);
-    }
-
-    void setGlyphDataForIndex(unsigned index, Glyph glyph, const Font* font)
+    // FIXME: Pages are immutable after initialization. This should be private.
+    void setGlyphForIndex(unsigned index, Glyph glyph)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
-        ASSERT(!m_isImmutable);
-        
         m_glyphs[index] = glyph;
-
-        // GlyphPage getters will always return a null Font* for glyph #0 if there's no per-glyph font array.
-        if (hasPerGlyphFontData()) {
-            m_perGlyphFontData[index] = glyph ? font : 0;
-            return;
-        }
-
-        // A single-font GlyphPage already assigned m_fontForAllGlyphs in the constructor.
-        ASSERT(!glyph || font == m_fontForAllGlyphs);
     }
 
-    void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
+    const Font& font() const
     {
-        setGlyphDataForIndex(index, glyphData.glyph, glyphData.font);
+        return m_font;
     }
 
     // Implemented by the platform.
     bool fill(UChar* characterBuffer, unsigned bufferLength, const Font*);
 
 private:
-    explicit GlyphPage(const Font* fontForAllGlyphs)
-        : m_fontForAllGlyphs(fontForAllGlyphs)
+    explicit GlyphPage(const Font& font)
+        : m_font(font)
     {
-        memset(m_glyphs, 0, sizeof(m_glyphs));
-        if (hasPerGlyphFontData())
-            memset(m_perGlyphFontData, 0, sizeof(Font*) * GlyphPage::size);
         ++s_count;
     }
 
-    bool hasPerGlyphFontData() const { return !m_fontForAllGlyphs; }
-
-    const Font* m_fontForAllGlyphs;
-    Glyph m_glyphs[size];
-
-    bool m_isImmutable { false };
-    // NOTE: This array has (GlyphPage::size) elements if m_fontForAllGlyphs is null.
-    const Font* m_perGlyphFontData[0];
+    const Font& m_font;
+    Glyph m_glyphs[size] { };
 
     WEBCORE_EXPORT static unsigned s_count;
 };
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 } // namespace WebCore
 

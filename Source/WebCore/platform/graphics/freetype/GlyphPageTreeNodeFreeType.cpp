@@ -57,9 +57,9 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
 
         Glyph glyph = FcFreeTypeCharIndex(face, character);
         if (!glyph)
-            setGlyphDataForIndex(i, 0, 0);
+            setGlyphForIndex(i, 0);
         else {
-            setGlyphDataForIndex(i, glyph, fontData);
+            setGlyphForIndex(i, glyph);
             haveGlyphs = true;
         }
     }

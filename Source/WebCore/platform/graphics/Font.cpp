@@ -149,27 +149,27 @@ Font::~Font()
     removeFromSystemFallbackCache();
 }
 
-static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferLength, const Font* font)
+static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferLength, const Font& font)
 {
 #if ENABLE(SVG_FONTS)
-    if (auto* svgData = font->svgData())
-        return svgData->fillSVGGlyphPage(&pageToFill, buffer, bufferLength, font);
+    if (auto* svgData = font.svgData())
+        return svgData->fillSVGGlyphPage(&pageToFill, buffer, bufferLength);
 #endif
-    bool hasGlyphs = pageToFill.fill(buffer, bufferLength, font);
+    bool hasGlyphs = pageToFill.fill(buffer, bufferLength, &font);
 #if ENABLE(OPENTYPE_VERTICAL)
-    if (hasGlyphs && font->verticalData())
-        font->verticalData()->substituteWithVerticalGlyphs(font, &pageToFill);
+    if (hasGlyphs && font.verticalData())
+        font.verticalData()->substituteWithVerticalGlyphs(&font, &pageToFill);
 #endif
     return hasGlyphs;
 }
 
-static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font* font)
+static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font& font)
 {
 #if PLATFORM(IOS)
     // FIXME: Times New Roman contains Arabic glyphs, but Core Text doesn't know how to shape them. See <rdar://problem/9823975>.
     // Once we have the fix for <rdar://problem/9823975> then remove this code together with Font::shouldNotBeUsedForArabic()
     // in <rdar://problem/12096835>.
-    if (pageNumber == 6 && font->shouldNotBeUsedForArabic())
+    if (pageNumber == 6 && font.shouldNotBeUsedForArabic())
         return nullptr;
 #endif
 
@@ -226,26 +226,25 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font*
     // routine of our glyph map for actually filling in the page with the glyphs.
     // Success is not guaranteed. For example, Times fails to fill page 260, giving glyph data
     // for only 128 out of 256 characters.
-    RefPtr<GlyphPage> glyphPage = GlyphPage::createForSingleFont(font);
+    Ref<GlyphPage> glyphPage = GlyphPage::create(font);
 
-    bool haveGlyphs = fillGlyphPage(*glyphPage, buffer, bufferLength, font);
+    bool haveGlyphs = fillGlyphPage(glyphPage, buffer, bufferLength, font);
     if (!haveGlyphs)
         return nullptr;
 
-    glyphPage->setImmutable();
-    return glyphPage;
+    return WTF::move(glyphPage);
 }
 
 const GlyphPage* Font::glyphPage(unsigned pageNumber) const
 {
     if (!pageNumber) {
         if (!m_glyphPageZero)
-            m_glyphPageZero = createAndFillGlyphPage(0, this);
+            m_glyphPageZero = createAndFillGlyphPage(0, *this);
         return m_glyphPageZero.get();
     }
     auto addResult = m_glyphPages.add(pageNumber, nullptr);
     if (addResult.isNewEntry)
-        addResult.iterator->value = createAndFillGlyphPage(pageNumber, this);
+        addResult.iterator->value = createAndFillGlyphPage(pageNumber, *this);
 
     return addResult.iterator->value.get();
 }
@@ -255,7 +254,7 @@ Glyph Font::glyphForCharacter(UChar32 character) const
     auto* page = glyphPage(character / GlyphPage::size);
     if (!page)
         return 0;
-    return page->glyphAt(character % GlyphPage::size);
+    return page->glyphForCharacter(character);
 }
 
 GlyphData Font::glyphDataForCharacter(UChar32 character) const

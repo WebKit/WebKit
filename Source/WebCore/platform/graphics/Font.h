@@ -76,7 +76,7 @@ public:
 
         virtual void initializeFont(Font*, float fontSize) = 0;
         virtual float widthForSVGGlyph(Glyph, float fontSize) const = 0;
-        virtual bool fillSVGGlyphPage(GlyphPage*, UChar* buffer, unsigned bufferLength, const Font*) const = 0;
+        virtual bool fillSVGGlyphPage(GlyphPage*, UChar* buffer, unsigned bufferLength) const = 0;
     };
 
     // Used to create platform fonts.

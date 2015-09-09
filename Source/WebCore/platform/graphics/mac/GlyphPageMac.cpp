@@ -60,23 +60,18 @@ static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const 
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
-    bool haveGlyphs = false;
+    ASSERT(fontData == &font());
+    ASSERT(bufferLength == GlyphPage::size || bufferLength == 2 * GlyphPage::size);
 
     Vector<CGGlyph, 512> glyphs(bufferLength);
+    unsigned glyphStep;
     if (!shouldUseCoreText(buffer, bufferLength, fontData)) {
         // We pass in either 256 or 512 UTF-16 characters: 256 for U+FFFF and less, 512 (double character surrogates)
         // for U+10000 and above. It is indeed possible to get back 512 glyphs back from the API, so the glyph buffer
         // we pass in must be 512. If we get back more than 256 glyphs though we'll ignore all the ones after 256,
         // this should not happen as the only time we pass in 512 characters is when they are surrogates.
         CGFontGetGlyphsForUnichars(fontData->platformData().cgFont(), buffer, glyphs.data(), bufferLength);
-        for (unsigned i = 0; i < GlyphPage::size; ++i) {
-            if (!glyphs[i])
-                setGlyphDataForIndex(i, 0, 0);
-            else {
-                setGlyphDataForIndex(i, glyphs[i], fontData);
-                haveGlyphs = true;
-            }
-        }
+        glyphStep = 1;
     } else {
         // Because we know the implementation of shouldUseCoreText(), if the font isn't for text combine and it isn't a system font,
         // we know it must have vertical glyphs.
@@ -84,20 +79,19 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
             CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
         else
             CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
+
         // When buffer consists of surrogate pairs, CTFontGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
         // place the glyphs at indices corresponding to the first character of each pair.
-        ASSERT(bufferLength == GlyphPage::size || bufferLength == 2 * GlyphPage::size);
-        unsigned glyphStep = bufferLength / GlyphPage::size;
-        for (unsigned i = 0; i < GlyphPage::size; ++i) {
-            if (!glyphs[i * glyphStep])
-                setGlyphDataForIndex(i, 0, 0);
-            else {
-                setGlyphDataForIndex(i, glyphs[i * glyphStep], fontData);
-                haveGlyphs = true;
-            }
-        }
+        glyphStep = bufferLength / GlyphPage::size;
     }
 
+    bool haveGlyphs = false;
+    for (unsigned i = 0; i < GlyphPage::size; ++i) {
+        if (glyphs[i * glyphStep]) {
+            setGlyphForIndex(i, glyphs[i * glyphStep]);
+            haveGlyphs = true;
+        }
+    }
     return haveGlyphs;
 }
 

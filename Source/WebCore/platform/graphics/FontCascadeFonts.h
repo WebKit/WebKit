@@ -35,11 +35,12 @@
 
 namespace WebCore {
 
-class GraphicsContext;
-class IntRect;
 class FontDescription;
 class FontPlatformData;
 class FontSelector;
+class GraphicsContext;
+class IntRect;
+class MixedFontGlyphPage;
 
 class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
     WTF_MAKE_NONCOPYABLE(FontCascadeFonts);
@@ -82,8 +83,24 @@ private:
     Vector<FontRanges, 1> m_realizedFallbackRanges;
     unsigned m_lastRealizedFallbackIndex { 0 };
 
-    RefPtr<GlyphPage> m_cachedPageZero;
-    HashMap<int, RefPtr<GlyphPage>> m_cachedPages;
+    class GlyphPageCacheEntry {
+    public:
+        GlyphData glyphDataForCharacter(UChar32);
+
+        void setSingleFontPage(RefPtr<GlyphPage>&&);
+        void setGlyphDataForCharacter(UChar32, GlyphData);
+
+        bool isNull() const { return !m_singleFont && !m_mixedFont; }
+        bool isMixedFont() const { return !!m_mixedFont; }
+    
+    private:
+        // Only one of these is non-null.
+        RefPtr<GlyphPage> m_singleFont;
+        std::unique_ptr<MixedFontGlyphPage> m_mixedFont;
+    };
+
+    GlyphPageCacheEntry m_cachedPageZero;
+    HashMap<int, GlyphPageCacheEntry> m_cachedPages;
 
     HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 

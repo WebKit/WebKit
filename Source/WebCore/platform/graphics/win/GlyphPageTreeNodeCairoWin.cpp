@@ -54,9 +54,9 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
         for (unsigned i = 0; i < GlyphPage::size; i++) {
             Glyph glyph = localGlyphBuffer[i];
             if (glyph == 0xffff)
-                setGlyphDataForIndex(i, 0, 0);
+                setGlyphForIndex(i, 0);
             else {
-                setGlyphDataForIndex(i, glyph, fontData);
+                setGlyphForIndex(i, glyph);
                 haveGlyphs = true;
             }
         }
