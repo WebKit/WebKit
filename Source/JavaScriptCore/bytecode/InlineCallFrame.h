@@ -137,7 +137,6 @@ struct InlineCallFrame {
     CodeSpecializationKind specializationKind() const { return specializationKindFor(static_cast<Kind>(kind)); }
 
     JSFunction* calleeConstant() const;
-    void visitAggregate(SlotVisitor&);
     
     // Get the callee given a machine call frame to which this InlineCallFrame belongs.
     JSFunction* calleeForCallFrame(ExecState*) const;

@@ -2833,21 +2833,6 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
     for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
         m_objectAllocationProfiles[i].visitAggregate(visitor);
 
-#if ENABLE(DFG_JIT)
-    if (JITCode::isOptimizingJIT(jitType())) {
-        // FIXME: This is an antipattern for two reasons. References introduced by the DFG
-        // that aren't in the original CodeBlock being compiled should be weakly referenced.
-        // Inline call frames aren't in the original CodeBlock, so they qualify as weak. Also,
-        // those weak references should already be tracked in the DFG as weak FrozenValues. So,
-        // there is probably no need for this. We already have assertions that this should be
-        // unnecessary.
-        // https://bugs.webkit.org/show_bug.cgi?id=146613
-        DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        if (dfgCommon->inlineCallFrames.get())
-            dfgCommon->inlineCallFrames->visitAggregate(visitor);
-    }
-#endif
-
     updateAllPredictions();
 }
 

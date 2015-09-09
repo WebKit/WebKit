@@ -1,3 +1,27 @@
+2015-09-08  Geoffrey Garen  <ggaren@apple.com>
+
+        InlineCallFrames shouldn't be strongly marked by CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=146613
+
+        Reviewed by Saam Barati.
+
+        This code was vestigial an unnecessary, so I removed it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::calleeConstant):
+        (JSC::InlineCallFrame::calleeForCallFrame):
+        (JSC::InlineCallFrame::visitAggregate): Deleted.
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::specializationKind):
+        * bytecode/InlineCallFrameSet.cpp:
+        (JSC::InlineCallFrameSet::add):
+        (JSC::InlineCallFrameSet::visitAggregate): Deleted.
+        * bytecode/InlineCallFrameSet.h:
+        (JSC::InlineCallFrameSet::begin):
+        (JSC::InlineCallFrameSet::end):
+
 2015-09-08  Mark Lam  <mark.lam@apple.com>
 
         GC stack scan should include ABI red zone.
