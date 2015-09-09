@@ -346,14 +346,4 @@ void InspectorFrontendHost::beep()
     systemBeep();
 }
 
-bool InspectorFrontendHost::canSaveAs()
-{
-    return false;
-}
-
-bool InspectorFrontendHost::canInspectWorkers()
-{
-    return false;
-}
-
 } // namespace WebCore

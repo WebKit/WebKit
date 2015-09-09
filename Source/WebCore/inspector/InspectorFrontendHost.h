@@ -92,9 +92,6 @@ public:
 
     void beep();
 
-    bool canInspectWorkers();
-    bool canSaveAs();
-
 private:
 #if ENABLE(CONTEXT_MENUS)
     friend class FrontendMenuProvider;
