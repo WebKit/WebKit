@@ -531,7 +531,7 @@ static inline int osRedZoneAdjustment()
 std::pair<void*, size_t> MachineThreads::Thread::captureStack(void* stackTop)
 {
     char* begin = reinterpret_cast_ptr<char*>(stackBase);
-    char* end = reinterpret_cast_ptr<char*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackTop)));
+    char* end = bitwise_cast<char*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackTop)));
     ASSERT(begin >= end);
 
     char* endWithRedZone = end + osRedZoneAdjustment();

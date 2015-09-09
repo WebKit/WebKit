@@ -1,3 +1,12 @@
+2015-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Prospective build fix after r189517
+
+        Unreviewed.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::captureStack):
+
 2015-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unify symbolTableGet and Put in JSLexicalEnvironment and JSSymbolTableObject
