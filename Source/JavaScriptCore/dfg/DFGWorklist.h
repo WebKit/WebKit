@@ -38,6 +38,7 @@
 
 namespace JSC {
 
+class CodeBlockSet;
 class SlotVisitor;
 
 namespace DFG {
@@ -57,7 +58,7 @@ public:
     // worklist->completeAllReadyPlansForVM(vm);
     void completeAllPlansForVM(VM&);
 
-    void clearCodeBlockMarks(VM&);
+    void clearCodeBlockMarks(VM&, CodeBlockSet&);
 
     void waitUntilAllPlansForVMAreReady(VM&);
     State completeAllReadyPlansForVM(VM&, CompilationKey = CompilationKey());
@@ -73,7 +74,7 @@ public:
     bool isActiveForVM(VM&) const;
     
     // Only called on the main thread after suspending all threads.
-    void visitWeakReferences(SlotVisitor&);
+    void visitWeakReferences(SlotVisitor&, CodeBlockSet&);
     void removeDeadPlans(VM&);
     
     void dump(PrintStream&) const;
@@ -141,7 +142,7 @@ inline Worklist* worklistForIndexOrNull(unsigned index)
 }
 
 void completeAllPlansForVM(VM&);
-void clearCodeBlockMarks(VM&);
+void clearCodeBlockMarks(VM&, CodeBlockSet&);
 
 } } // namespace JSC::DFG
 

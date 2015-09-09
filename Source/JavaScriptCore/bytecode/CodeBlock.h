@@ -156,9 +156,7 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=123677
     CodeBlock* baselineVersion();
 
-    void clearMarks();
     void visitAggregate(SlotVisitor&);
-    void visitStrongly(SlotVisitor&);
 
     void dumpSource();
     void dumpSource(PrintStream&);
@@ -1002,6 +1000,8 @@ private:
     bool m_isStrictMode;
     bool m_needsActivation;
 
+    bool m_mayBeExecuting;
+    bool m_isStronglyReferenced;
     Atomic<bool> m_visitAggregateHasBeenCalled;
 
     RefPtr<SourceProvider> m_source;
@@ -1206,9 +1206,14 @@ inline Register& ExecState::uncheckedR(VirtualRegister reg)
     return uncheckedR(reg.offset());
 }
 
-inline void CodeBlock::clearMarks()
+inline void CodeBlockSet::clearMarks(CodeBlock* codeBlock)
 {
-    m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
+    if (!codeBlock)
+        return;
+
+    codeBlock->m_mayBeExecuting = false;
+    codeBlock->m_isStronglyReferenced = false;
+    codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
 }
 
 inline void CodeBlockSet::mark(void* candidateCodeBlock)
@@ -1234,14 +1239,21 @@ inline void CodeBlockSet::mark(CodeBlock* codeBlock)
     if (!codeBlock)
         return;
     
-    // Force GC to visit all CodeBlocks on the stack, including old CodeBlocks
-    // that have not executed a barrier. This is overkill, but we have always
-    // done this, and it might help us recover gracefully if we forget to execute
-    // a barrier when a CodeBlock needs it.
+    if (codeBlock->m_mayBeExecuting)
+        return;
+    
+    codeBlock->m_mayBeExecuting = true;
+
+    // We might not have cleared the marks for this CodeBlock, but we need to visit it.
     codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
 
+    // For simplicity, we don't attempt to jettison code blocks during GC if
+    // they are executing. Instead we strongly mark their weak references to
+    // allow them to continue to execute soundly.
+    codeBlock->m_isStronglyReferenced = true;
+
 #if ENABLE(GGC)
-    m_currentlyExecuting.add(codeBlock);
+    m_currentlyExecuting.append(codeBlock);
 #endif
 }
 

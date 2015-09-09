@@ -595,31 +595,25 @@ CompilationKey Plan::key()
     return CompilationKey(codeBlock->alternative(), mode);
 }
 
-void Plan::clearCodeBlockMarks()
+void Plan::clearCodeBlockMarks(CodeBlockSet& codeBlocks)
 {
-    // Compilation writes lots of values to a CodeBlock without performing
-    // an explicit barrier. So, we need to be pessimistic and assume that
-    // all our CodeBlocks must be visited during GC.
-
-    codeBlock->clearMarks();
-    codeBlock->alternative()->clearMarks();
-    if (profiledDFGCodeBlock)
-        profiledDFGCodeBlock->clearMarks();
+    codeBlocks.clearMarks(codeBlock.get());
+    codeBlocks.clearMarks(codeBlock->alternative());
+    codeBlocks.clearMarks(profiledDFGCodeBlock.get());
 }
 
-void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
+void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor, CodeBlockSet& codeBlocks)
 {
     if (!isKnownToBeLiveDuringGC())
         return;
     
     for (unsigned i = mustHandleValues.size(); i--;)
         visitor.appendUnbarrieredValue(&mustHandleValues[i]);
-
-    codeBlock->visitStrongly(visitor);
-    codeBlock->alternative()->visitStrongly(visitor);
-    if (profiledDFGCodeBlock)
-        profiledDFGCodeBlock->visitStrongly(visitor);
-
+    
+    codeBlocks.mark(codeBlock.get());
+    codeBlocks.mark(codeBlock->alternative());
+    codeBlocks.mark(profiledDFGCodeBlock.get());
+    
     weakReferences.visitChildren(visitor);
     transitions.visitChildren(visitor);
 }

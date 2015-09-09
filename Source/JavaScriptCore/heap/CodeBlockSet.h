@@ -61,6 +61,8 @@ public:
     // Clear all mark bits for all CodeBlocks.
     void clearMarksForFullCollection();
 
+    void clearMarks(CodeBlock*);
+
     // Mark a pointer that may be a CodeBlock that belongs to the set of DFG
     // blocks. This is defined in CodeBlock.h.
     void mark(CodeBlock* candidateCodeBlock);
@@ -109,7 +111,7 @@ private:
     // and all, but that seemed like overkill.
     HashSet<CodeBlock*> m_oldCodeBlocks;
     HashSet<CodeBlock*> m_newCodeBlocks;
-    HashSet<RefPtr<CodeBlock>> m_currentlyExecuting;
+    Vector<CodeBlock*> m_currentlyExecuting;
 };
 
 } // namespace JSC

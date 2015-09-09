@@ -44,6 +44,7 @@
 namespace JSC {
 
 class CodeBlock;
+class CodeBlockSet;
 class SlotVisitor;
 
 namespace DFG {
@@ -71,8 +72,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     
     CompilationKey key();
     
-    void clearCodeBlockMarks();
-    void checkLivenessAndVisitChildren(SlotVisitor&);
+    void clearCodeBlockMarks(CodeBlockSet&);
+    void checkLivenessAndVisitChildren(SlotVisitor&, CodeBlockSet&);
     bool isKnownToBeLiveDuringGC();
     void cancel();
     

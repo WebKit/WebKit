@@ -1692,6 +1692,8 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_lexicalEnvironmentRegister(other.m_lexicalEnvironmentRegister)
     , m_isStrictMode(other.m_isStrictMode)
     , m_needsActivation(other.m_needsActivation)
+    , m_mayBeExecuting(false)
+    , m_isStronglyReferenced(false)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
     , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
@@ -1750,6 +1752,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_lexicalEnvironmentRegister(unlinkedCodeBlock->activationRegister())
     , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
     , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
+    , m_mayBeExecuting(false)
+    , m_isStronglyReferenced(false)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_firstLineColumnOffset(firstLineColumnOffset)
@@ -2225,6 +2229,8 @@ CodeBlock::CodeBlock(WebAssemblyExecutable* ownerExecutable, VM& vm, JSGlobalObj
     , m_vm(&vm)
     , m_isStrictMode(false)
     , m_needsActivation(false)
+    , m_mayBeExecuting(false)
+    , m_isStronglyReferenced(false)
     , m_codeType(FunctionCode)
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
@@ -2297,15 +2303,6 @@ CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
 #endif // ENABLE(FTL_JIT)
 }
 
-void CodeBlock::visitStrongly(SlotVisitor& visitor)
-{
-    visitAggregate(visitor);
-
-    stronglyVisitStrongReferences(visitor);
-    stronglyVisitWeakReferences(visitor);
-    propagateTransitions(visitor);
-}
-
 void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
 #if ENABLE(PARALLEL_GC)
@@ -2345,7 +2342,10 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     m_allTransitionsHaveBeenMarked = false;
     
     if (shouldImmediatelyAssumeLivenessDuringScan()) {
-        visitStrongly(visitor);
+        // This code block is live, so scan all references strongly and return.
+        stronglyVisitStrongReferences(visitor);
+        stronglyVisitWeakReferences(visitor);
+        propagateTransitions(visitor);
         return;
     }
     
@@ -2382,6 +2382,9 @@ bool CodeBlock::shouldImmediatelyAssumeLivenessDuringScan()
     if (!JITCode::isOptimizingJIT(jitType()))
         return true;
 
+    if (m_isStronglyReferenced)
+        return true;
+
     if (Options::forceDFGCodeBlockLiveness())
         return true;
 
@@ -2399,7 +2402,8 @@ bool CodeBlock::isKnownToBeLiveDuringGC()
     //   are live.
     // - Code blocks that were running on the stack.
     // - Code blocks that survived the last GC if the current GC is an Eden GC. This is
-    //   because livenessHasBeenProved would have survived as true.
+    //   because either livenessHasBeenProved would have survived as true or
+    //   m_isStronglyReferenced would survive as true.
     // - Code blocks that don't have any dead weak references.
     
     return shouldImmediatelyAssumeLivenessDuringScan()
@@ -2858,8 +2862,6 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
 
     for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i)
         visitor.append(&dfgCommon->weakStructureReferences[i]);
-
-    dfgCommon->livenessHasBeenProved = true;
 #endif    
 }
 
