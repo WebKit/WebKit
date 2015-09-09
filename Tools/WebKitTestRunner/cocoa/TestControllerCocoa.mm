@@ -50,7 +50,8 @@ static WKWebViewConfiguration *globalWebViewConfiguration;
 void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
 #if WK_API_ENABLED
-    ASSERT(!globalWebViewConfiguration);
+    if (globalWebViewConfiguration)
+        [globalWebViewConfiguration release];
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
     globalWebViewConfiguration.processPool = [[WKProcessPool alloc] _initWithConfiguration:(_WKProcessPoolConfiguration *)contextConfiguration];

@@ -1,5 +1,14 @@
 2015-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Fix the tests after r189530
+
+        Unreviewed.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
+2015-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WKTR] Allow changing the WKContextConfiguration between successive tests
         https://bugs.webkit.org/show_bug.cgi?id=148833
 
