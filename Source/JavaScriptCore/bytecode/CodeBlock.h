@@ -972,6 +972,7 @@ private:
         
     void stronglyVisitStrongReferences(SlotVisitor&);
     void stronglyVisitWeakReferences(SlotVisitor&);
+    void visitOSRExitTargets(SlotVisitor&);
 
     void createRareDataIfNecessary()
     {
@@ -1003,6 +1004,7 @@ private:
     bool m_needsActivation;
 
     Atomic<bool> m_visitAggregateHasBeenCalled;
+    Atomic<bool> m_visitStronglyHasBeenCalled;
 
     RefPtr<SourceProvider> m_source;
     unsigned m_sourceOffset;
@@ -1208,6 +1210,7 @@ inline Register& ExecState::uncheckedR(VirtualRegister reg)
 
 inline void CodeBlock::clearMarks()
 {
+    m_visitStronglyHasBeenCalled.store(false, std::memory_order_relaxed);
     m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
 }
 
@@ -1238,7 +1241,7 @@ inline void CodeBlockSet::mark(CodeBlock* codeBlock)
     // that have not executed a barrier. This is overkill, but we have always
     // done this, and it might help us recover gracefully if we forget to execute
     // a barrier when a CodeBlock needs it.
-    codeBlock->m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
+    codeBlock->clearMarks();
 
 #if ENABLE(GGC)
     m_currentlyExecuting.add(codeBlock);

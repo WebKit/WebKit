@@ -1,5 +1,32 @@
 2015-09-09  Geoffrey Garen  <ggaren@apple.com>
 
+        CodeBlocks should strongly visit their OSR exit targets
+        https://bugs.webkit.org/show_bug.cgi?id=148988
+
+        Reviewed by Saam Barati.
+
+        CodeBlocks jump to their OSR exit targets, so we need to keep them alive
+        explicitly.
+
+        This is a step toward throwing away CodeBlocks, which is only safe
+        if we keep alive logically in-use CodeBlocks.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitStrongly): Added a flag to indicate if visit
+        strongly had been performed yet, since we are likely to revisit
+        the same CodeBlock many times now.
+
+        (JSC::CodeBlock::visitOSRExitTargets):
+        (JSC::CodeBlock::stronglyVisitStrongReferences): Do the visiting.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearMarks):
+        (JSC::CodeBlockSet::mark): Added a helper function for clearing out
+        two flags.
+
+2015-09-09  Geoffrey Garen  <ggaren@apple.com>
+
         Unreviewed, rolling back in r189516.
         https://bugs.webkit.org/show_bug.cgi?id=148989
 

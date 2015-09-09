@@ -1708,6 +1708,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
 {
+    m_visitStronglyHasBeenCalled.store(false, std::memory_order_relaxed);
     m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
 
     ASSERT(m_heap->isDeferred());
@@ -1761,6 +1762,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
 {
+    m_visitStronglyHasBeenCalled.store(false, std::memory_order_relaxed);
     m_visitAggregateHasBeenCalled.store(false, std::memory_order_relaxed);
 
     ASSERT(m_heap->isDeferred());
@@ -2299,6 +2301,10 @@ CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
 
 void CodeBlock::visitStrongly(SlotVisitor& visitor)
 {
+    bool setByMe = m_visitStronglyHasBeenCalled.compareExchangeStrong(false, true);
+    if (!setByMe)
+        return;
+
     visitAggregate(visitor);
 
     stronglyVisitStrongReferences(visitor);
@@ -2816,6 +2822,21 @@ CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(unsigned index)
 }
 #endif
 
+void CodeBlock::visitOSRExitTargets(SlotVisitor& visitor)
+{
+    // OSR exits, once compiled, link themselves directly to their targets.
+    // We need to keep those targets alive in order to keep OSR exit from
+    // jumping to an invalid destination.
+
+    alternative()->visitStrongly(visitor);
+
+    DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
+    if (dfgCommon->inlineCallFrames) {
+        for (auto* inlineCallFrame : *dfgCommon->inlineCallFrames)
+            inlineCallFrame->baselineCodeBlock()->visitStrongly(visitor);
+    }
+}
+
 void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
 {
     visitor.append(&m_globalObject);
@@ -2830,6 +2851,11 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
         visitor.append(&m_functionDecls[i]);
     for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
         m_objectAllocationProfiles[i].visitAggregate(visitor);
+
+#if ENABLE(DFG_JIT)
+    if (JITCode::isOptimizingJIT(jitType()))
+        visitOSRExitTargets(visitor);
+#endif
 
     updateAllPredictions();
 }
