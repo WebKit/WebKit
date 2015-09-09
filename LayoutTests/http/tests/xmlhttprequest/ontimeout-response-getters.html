@@ -13,7 +13,7 @@
       test.step(function() {
         var client = new XMLHttpRequest()
         client.timeout = 10
-        var url = "/resources/load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=0.1&mimeType=" + mimeType
+        var url = "/resources/load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=1.0&mimeType=" + mimeType
         client.open("GET", url, true)
         setupClient(test, client)
         client.hasTimedout = false;
