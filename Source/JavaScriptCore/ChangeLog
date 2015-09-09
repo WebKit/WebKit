@@ -1,3 +1,43 @@
+2015-09-08  Mark Lam  <mark.lam@apple.com>
+
+        GC stack scan should include ABI red zone.
+        https://bugs.webkit.org/show_bug.cgi?id=148976
+
+        Reviewed by Geoffrey Garen and Benjamin Poulain.
+
+        The x86_64 ABI section 3.2.2[1] and ARM64 ABI[2] both state that there is a
+        128 byte red zone below the stack pointer (reserved by the OS), and that
+        "functions may use this area for temporary data that is not needed across
+        function calls".
+
+        Hence, it is possible for a thread to store JSCell pointers in the red zone
+        area, and the conservative GC thread scanner needs to scan that area as well.
+
+        Note: the red zone should not be scanned for the GC thread itself (in
+        gatherFromCurrentThread()).  This because we're guaranteed that there will
+        be GC frames below the lowest (top of stack) frame that we need to scan.
+        Hence, we are guaranteed that there are no red zone areas there containing
+        JSObject pointers of relevance.
+
+        No test added for this issue because the issue relies on:
+        1. the compiler tool chain generating code that stores local variables
+           containing the sole reference to a JS object (that needs to be kept
+           alive) in the stack red zone, and
+        2. GC has to run on another thread while that red zone containing the
+           JS object reference is in use. 
+
+        These conditions require a race that cannot be reliably reproduced.
+
+        [1]: http://people.freebsd.org/~obrien/amd64-elf-abi.pdf
+        [2]: https://developer.apple.com/library/ios/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARM64FunctionCallingConventions.html#//apple_ref/doc/uid/TP40013702-SW7
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        (JSC::osRedZoneAdjustment):
+        (JSC::MachineThreads::Thread::captureStack):
+
 2015-09-08  Geoffrey Garen  <ggaren@apple.com>
 
         GC should be able to discover new strong CodeBlock references during marking

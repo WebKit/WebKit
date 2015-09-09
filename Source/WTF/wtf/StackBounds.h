@@ -54,6 +54,12 @@ public:
         return m_origin;
     }
 
+    void* end() const
+    {
+        ASSERT(m_bound);
+        return m_bound;
+    }
+    
     size_t size() const
     {
         if (isGrowingDownward())
