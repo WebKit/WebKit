@@ -136,6 +136,8 @@ private:
 
     void didUpdateActiveOption(int optionIndex);
 
+    bool isFlexibleBoxImpl() const override { return true; }
+
     RenderText* m_buttonText;
     RenderBlock* m_innerBlock;
 

@@ -354,9 +354,6 @@ Ref<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const Render
     innerBlockStyle.get().inheritFrom(startStyle);
 
     innerBlockStyle.get().setFlexGrow(1);
-    // min-width: 0; is needed for correct shrinking.
-    // FIXME: Remove this line when https://bugs.webkit.org/show_bug.cgi?id=111790 is fixed.
-    innerBlockStyle.get().setMinWidth(Length(0, Fixed));
     innerBlockStyle.get().setDisplay(BLOCK);
     innerBlockStyle.get().setDirection(LTR);
 
