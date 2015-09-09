@@ -74,12 +74,12 @@ WKPreferencesRef TestController::platformPreferences()
 #endif
 }
 
-void TestController::platformCreateWebView(WKPageConfigurationRef, const ViewOptions& options)
+void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
 {
     m_mainWebView = std::make_unique<PlatformWebView>(globalWebViewConfiguration, options);
 }
 
-PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const ViewOptions& options)
+PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
 {
 #if WK_API_ENABLED
     WKWebViewConfiguration *newConfiguration = [[globalWebViewConfiguration copy] autorelease];

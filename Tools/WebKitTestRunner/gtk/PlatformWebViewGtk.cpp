@@ -36,7 +36,7 @@
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const ViewOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const TestOptions& options)
     : m_view(WKViewCreate(configuration))
     , m_window(gtk_window_new(GTK_WINDOW_POPUP))
     , m_windowIsKey(true)
@@ -142,7 +142,7 @@ void PlatformWebView::didInitializeClients()
 {
 }
 
-bool PlatformWebView::viewSupportsOptions(const ViewOptions&) const
+bool PlatformWebView::viewSupportsOptions(const TestOptions&) const
 {
     return true;
 }

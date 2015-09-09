@@ -1,3 +1,64 @@
+2015-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WKTR] Allow changing the WKContextConfiguration between successive tests
+        https://bugs.webkit.org/show_bug.cgi?id=148833
+
+        Reviewed by Tim Horton.
+
+        Previously, we were creating a single WKContext and it lived for the life of the entire test runner.
+        However, there are certain tests which require specifying options in this object. This patch makes
+        our existing code for recreating the test runner web view also recreate the WKContext.
+
+        As such, our options to the view are now options to the WKContextConfiguration. This patch renames the
+        class.
+
+        * WebKitTestRunner/ContextConfigurationOptions.h: Renamed from Tools/WebKitTestRunner/ViewOptions.h.
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::options):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::generateContextConfiguration):
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        (WTR::updateContextConfigurationOptionsFromTestHeader):
+        (WTR::TestController::contextConfigurationOptionsForTest):
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::platformCreateOtherPage):
+        (WTR::updateViewOptionsFromTestHeader): Deleted.
+        (WTR::TestController::viewOptionsForTest): Deleted.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::injectedBundlePath):
+        (WTR::TestController::testPluginDirectory):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::platformCreateOtherPage):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::updatePlatformSpecificContextConfigurationOptionsForTest):
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest): Deleted.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::updatePlatformSpecificContextConfigurationOptionsForTest):
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest): Deleted.
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::updatePlatformSpecificContextConfigurationOptionsForTest):
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest): Deleted.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::updatePlatformSpecificContextConfigurationOptionsForTest):
+        (WTR::TestController::updatePlatformSpecificViewOptionsForTest): Deleted.
+
 2015-09-08  Daniel Bates  <dabates@apple.com>
 
         [Mac] Expose Enable/Disable Accelerated Drawing in MiniBrowser
