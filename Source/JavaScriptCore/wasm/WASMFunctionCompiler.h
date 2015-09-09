@@ -438,6 +438,43 @@ public:
         return UNUSED;
     }
 
+    int buildRelationalF64(int, int, WASMOpExpressionI32 op)
+    {
+        loadDouble(temporaryAddress(m_tempStackTop - 2), FPRInfo::fpRegT0);
+        loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT1);
+        DoubleCondition condition;
+        switch (op) {
+        case WASMOpExpressionI32::EqualF64:
+            condition = DoubleEqual;
+            break;
+        case WASMOpExpressionI32::NotEqualF64:
+            condition = DoubleNotEqual;
+            break;
+        case WASMOpExpressionI32::LessThanF64:
+            condition = DoubleLessThan;
+            break;
+        case WASMOpExpressionI32::LessThanOrEqualF64:
+            condition = DoubleLessThanOrEqual;
+            break;
+        case WASMOpExpressionI32::GreaterThanF64:
+            condition = DoubleGreaterThan;
+            break;
+        case WASMOpExpressionI32::GreaterThanOrEqualF64:
+            condition = DoubleGreaterThanOrEqual;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        m_tempStackTop--;
+        Jump trueCase = branchDouble(condition, FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+        store32(TrustedImm32(0), temporaryAddress(m_tempStackTop - 1));
+        Jump end = jump();
+        trueCase.link(this);
+        store32(TrustedImm32(1), temporaryAddress(m_tempStackTop - 1));
+        end.link(this);
+        return UNUSED;
+    }
+
     void linkTarget(JumpTarget& target)
     {
         target.label = label();

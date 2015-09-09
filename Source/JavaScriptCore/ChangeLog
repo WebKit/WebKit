@@ -1,3 +1,26 @@
+2015-09-09  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement the relational instructions for doubles in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=148999
+
+        Reviewed by Filip Pizlo.
+
+        Implements the relational instructions for doubles (float64) in
+        WebAssembly. Also pass the values into the test functions as Mark Lam
+        suggested in https://bugs.webkit.org/show_bug.cgi?id=148882#c3
+
+        * tests/stress/wasm-relational.js:
+        * tests/stress/wasm/relational.wasm:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildRelationalF64):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseRelationalF64ExpressionI32):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildRelationalI32):
+        (JSC::WASMFunctionSyntaxChecker::buildRelationalF64):
+
 2015-09-09  Saam barati  <sbarati@apple.com>
 
         DFG should have a debugging option that runs a phase that flushes all locals

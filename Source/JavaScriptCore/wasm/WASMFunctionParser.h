@@ -88,6 +88,7 @@ private:
     template <class Context> ContextExpression parseUnaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseBinaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalI32ExpressionI32(Context&, WASMOpExpressionI32);
+    template <class Context> ContextExpression parseRelationalF64ExpressionI32(Context&, WASMOpExpressionI32);
 
     template <class Context> ContextExpression parseExpressionF64(Context&);
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&, uint32_t constantIndex);

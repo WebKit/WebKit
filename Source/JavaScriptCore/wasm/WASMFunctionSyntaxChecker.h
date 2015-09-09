@@ -98,6 +98,12 @@ public:
         return UNUSED;
     }
 
+    int buildRelationalF64(int, int, WASMOpExpressionI32)
+    {
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
     void linkTarget(const int&) { }
     void jumpToTarget(const int&) { }
     void jumpToTargetIf(JumpCondition, int, const int&)
