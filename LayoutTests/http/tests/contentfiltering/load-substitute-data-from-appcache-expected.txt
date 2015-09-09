@@ -1,3 +1,0 @@
-This is a regression test for webkit.org/b/147651. The test passes if it does not crash.
-
-

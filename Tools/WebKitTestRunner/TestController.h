@@ -121,8 +121,6 @@ public:
 
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
 
-    void setShouldDecideNavigationPolicyAfterDelay(bool value) { m_shouldDecideNavigationPolicyAfterDelay = value; }
-
 private:
     void initialize(int argc, const char* argv[]);
     void createWebViewWithOptions(WKDictionaryRef);
@@ -274,8 +272,6 @@ private:
 
     bool m_shouldLogHistoryClientCallbacks;
     bool m_shouldShowWebView;
-
-    bool m_shouldDecideNavigationPolicyAfterDelay { false };
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
 
