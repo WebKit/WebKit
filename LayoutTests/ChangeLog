@@ -1,3 +1,79 @@
+2015-09-08  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add layout tests for QuickLook
+        https://bugs.webkit.org/show_bug.cgi?id=148994
+
+        Reviewed by Daniel Bates.
+
+        Add tests that verify WebKit's ability to preview certain document types on iOS using QuickLook.framework.
+        These tests do not cover every document type supported by QuickLook, but they do cover common types like .pages,
+        .numbers, .key, .doc(x), .xls(x), and .ppt(x). These tests should detect regressions in WebKit's conversion code,
+        as well as regressions in QuickLook itself. The expected results might need to be occasionally updated if QuickLook
+        changes its preview markup.
+
+        These files contain text and images from webkit.org.
+
+        * TestExpectations: Skipped quicklook tests on all platforms.
+        * platform/ios-simulator/TestExpectations: Enabled quicklook tests on iOS.
+        * quicklook/excel-expected.html: Added.
+        * quicklook/excel-legacy-expected.html: Added.
+        * quicklook/excel-legacy.html: Added.
+        * quicklook/excel.html: Added.
+        * quicklook/keynote-09-expected.html: Added.
+        * quicklook/keynote-09.html: Added.
+        * quicklook/keynote-expected.html: Added.
+        * quicklook/keynote.html: Added.
+        * quicklook/numbers-09-expected.html: Added.
+        * quicklook/numbers-09.html: Added.
+        * quicklook/numbers-expected.html: Added.
+        * quicklook/numbers.html: Added.
+        * quicklook/pages-09-expected.html: Added.
+        * quicklook/pages-09.html: Added.
+        * quicklook/pages-expected.html: Added.
+        * quicklook/pages.html: Added.
+        * quicklook/powerpoint-expected.html: Added.
+        * quicklook/powerpoint-legacy-expected.html: Added.
+        * quicklook/powerpoint-legacy.html: Added.
+        * quicklook/powerpoint.html: Added.
+        * quicklook/resources/excel-expected.html: Added.
+        * quicklook/resources/excel-legacy-expected.html: Added.
+        * quicklook/resources/excel-legacy.xls: Added.
+        * quicklook/resources/excel.xlsx: Added.
+        * quicklook/resources/keynote-09-expected/index.css: Added.
+        * quicklook/resources/keynote-09-expected/index.html: Added.
+        * quicklook/resources/keynote-09-expected/index.js: Added.
+        * quicklook/resources/keynote-09.key: Added.
+        * quicklook/resources/keynote-expected.pdf: Added.
+        * quicklook/resources/keynote.key: Added.
+        * quicklook/resources/numbers-09-expected/canvas.js: Added.
+        * quicklook/resources/numbers-09-expected/index.html: Added.
+        * quicklook/resources/numbers-09-expected/navigation.css: Added.
+        * quicklook/resources/numbers-09-expected/navigation.html: Added.
+        * quicklook/resources/numbers-09-expected/sheet_1.html: Added.
+        * quicklook/resources/numbers-09.numbers: Added.
+        * quicklook/resources/numbers-expected.pdf: Added.
+        * quicklook/resources/numbers.numbers: Added.
+        * quicklook/resources/pages-09-expected/index.css: Added.
+        * quicklook/resources/pages-09-expected/index.html: Added.
+        * quicklook/resources/pages-09.pages: Added.
+        * quicklook/resources/pages-expected.pdf: Added.
+        * quicklook/resources/pages.pages: Added.
+        * quicklook/resources/powerpoint-expected.html: Added.
+        * quicklook/resources/powerpoint-legacy-expected.html: Added.
+        * quicklook/resources/powerpoint-legacy.ppt: Added.
+        * quicklook/resources/powerpoint.pptx: Added.
+        * quicklook/resources/webkit-icon.pdf: Added.
+        * quicklook/resources/webkit-icon.png: Added.
+        * quicklook/resources/webkit-icon.tiff: Added.
+        * quicklook/resources/word-expected.html: Added.
+        * quicklook/resources/word-legacy-expected.html: Added.
+        * quicklook/resources/word-legacy.doc: Added.
+        * quicklook/resources/word.docx: Added.
+        * quicklook/word-expected.html: Added.
+        * quicklook/word-legacy-expected.html: Added.
+        * quicklook/word-legacy.html: Added.
+        * quicklook/word.html: Added.
+
 2015-09-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189536 and r189538.
