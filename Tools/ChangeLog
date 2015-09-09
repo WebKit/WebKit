@@ -1,3 +1,11 @@
+2015-09-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Update LayoutTestRelay xcconfig file.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * LayoutTestRelay/Configurations/DebugRelease.xcconfig:
+
 2015-09-09  Saam barati  <sbarati@apple.com>
 
         DFG should have a debugging option that runs a phase that flushes all locals
