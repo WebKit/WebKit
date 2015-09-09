@@ -52,7 +52,6 @@ public:
 
 private:
     virtual void layout() override;
-    bool isFlexibleBoxImpl() const override { return true; }
 };
 
 // ----------------------------

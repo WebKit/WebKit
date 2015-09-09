@@ -48,7 +48,6 @@ public:
 private:
     virtual bool isRenderFullScreen() const override { return true; }
     virtual void willBeDestroyed() override;
-    bool isFlexibleBoxImpl() const override { return true; }
 
 protected:
     RenderBlock* m_placeholder;

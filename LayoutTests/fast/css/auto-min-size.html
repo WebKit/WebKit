@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <script src='../../resources/js-test-pre.js'></script>
 <div id=foo></div>
-<div id="flexbox" style="display: flex;"><div id="flexitem"></div></div>
-<button id="button"></button>
 <script>
 div = document.getElementById('foo');
 shouldBe('div.style.minWidth', '""');
@@ -10,7 +8,7 @@ shouldBe('getComputedStyle(div)["min-width"]', '"0px"');
 
 div.style.minWidth = 'auto';
 div.style.maxWidth = 'auto';
-shouldBe('div.style.minWidth', '"auto"');
+shouldBe('div.style.minWidth', '""');
 shouldBe('div.style.maxWidth', '""');
 shouldBe('getComputedStyle(div).minWidth', '"0px"');
 
@@ -23,53 +21,13 @@ shouldBe('getComputedStyle(div)["min-height"]', '"0px"');
 
 div.style.minHeight = 'auto';
 div.style.maxHeight = 'auto';
-shouldBe('div.style.minHeight', '"auto"');
+shouldBe('div.style.minHeight', '""');
 shouldBe('div.style.maxHeight', '""');
 shouldBe('getComputedStyle(div).minHeight', '"0px"');
 
 div.style.minHeight = 0;
 shouldBe('div.style.minHeight', '"0px"');
 shouldBe('getComputedStyle(div)["min-height"]', '"0px"');
-
-var flexitem = document.getElementById("flexitem");
-shouldBe('flexitem.style.minWidth', '""');
-shouldBe('getComputedStyle(flexitem)["min-width"]', '"auto"');
-
-flexitem.style.minWidth = 'auto';
-flexitem.style.maxWidth = 'auto';
-shouldBe('flexitem.style.minWidth', '"auto"');
-shouldBe('flexitem.style.maxWidth', '""');
-shouldBe('getComputedStyle(flexitem).minWidth', '"auto"');
-
-flexitem.style.minWidth = 0;
-shouldBe('flexitem.style.minWidth', '"0px"');
-shouldBe('getComputedStyle(flexitem)["min-width"]', '"0px"');
-
-shouldBe('flexitem.style.minHeight', '""');
-shouldBe('getComputedStyle(flexitem)["min-height"]', '"auto"');
-
-flexitem.style.minHeight = 'auto';
-flexitem.style.maxHeight = 'auto';
-shouldBe('flexitem.style.minHeight', '"auto"');
-shouldBe('flexitem.style.maxHeight', '""');
-shouldBe('getComputedStyle(flexitem).minHeight', '"auto"');
-
-flexitem.style.minHeight = 0;
-shouldBe('flexitem.style.minHeight', '"0px"');
-shouldBe('getComputedStyle(flexitem)["min-height"]', '"0px"');
-
-var button = document.getElementById("button");
-shouldBe('button.style.minWidth', '""');
-shouldBe('getComputedStyle(button)["min-width"]', '"0px"');
-shouldBe('button.style.minHeight', '""');
-shouldBe('getComputedStyle(button)["min-height"]', '"0px"');
-
-button.style.minHeight = 'auto';
-button.style.minWidth = 'auto';
-shouldBe('button.style.minHeight', '"auto"');
-shouldBe('getComputedStyle(button).minHeight', '"0px"');
-shouldBe('button.style.minWidth', '"auto"');
-shouldBe('getComputedStyle(button).minWidth', '"0px"');
 
 </script>
 <script src='../../resources/js-test-post.js'></script>

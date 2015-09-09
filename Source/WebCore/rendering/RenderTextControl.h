@@ -105,8 +105,6 @@ public:
     virtual Optional<int> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
     virtual Optional<int> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
 
-private:
-    bool isFlexibleBoxImpl() const override { return true; }
 };
 
 } // namespace WebCore

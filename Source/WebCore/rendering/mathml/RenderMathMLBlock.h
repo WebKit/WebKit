@@ -67,7 +67,6 @@ public:
 private:
     virtual bool isRenderMathMLBlock() const override final { return true; }
     virtual const char* renderName() const override;
-    bool isFlexibleBoxImpl() const override { return true; }
 };
 
 class RenderMathMLTable final : public RenderTable {

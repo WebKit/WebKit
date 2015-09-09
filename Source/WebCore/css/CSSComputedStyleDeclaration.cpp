@@ -1899,11 +1899,6 @@ static RefPtr<CSSValueList> valueForContentPositionAndDistributionWithOverflowAl
     return result;
 }
 
-inline static bool isFlexOrGrid(ContainerNode* element)
-{
-    return element && element->computedStyle() && element->computedStyle()->isDisplayFlexibleOrGridBox();
-}
-
 RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* styledNode = this->styledNode();
@@ -2497,18 +2492,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return zoomAdjustedPixelValueForLength(maxWidth, *style);
         }
         case CSSPropertyMinHeight:
-            if (style->minHeight().isAuto()) {
-                if (isFlexOrGrid(styledNode->parentNode()))
-                    return cssValuePool.createIdentifierValue(CSSValueAuto);
+            // FIXME: For flex-items, min-height:auto should compute to min-content.
+            if (style->minHeight().isAuto())
                 return zoomAdjustedPixelValue(0, *style);
-            }
             return zoomAdjustedPixelValueForLength(style->minHeight(), *style);
         case CSSPropertyMinWidth:
-            if (style->minWidth().isAuto()) {
-                if (isFlexOrGrid(styledNode->parentNode()))
-                    return cssValuePool.createIdentifierValue(CSSValueAuto);
+            // FIXME: For flex-items, min-width:auto should compute to min-content.
+            if (style->minWidth().isAuto())
                 return zoomAdjustedPixelValue(0, *style);
-            }
             return zoomAdjustedPixelValueForLength(style->minWidth(), *style);
         case CSSPropertyObjectFit:
             return cssValuePool.createValue(style->objectFit());
