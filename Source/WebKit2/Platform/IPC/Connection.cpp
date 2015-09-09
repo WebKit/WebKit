@@ -444,11 +444,11 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
         // Now we wait.
         bool didTimeout = !m_waitForMessageCondition.waitUntil(lock, absoluteTimeout);
         // We timed out, lost our connection, or a sync message came in with InterruptWaitingIfSyncMessageArrives, so stop waiting.
-        if (didTimeout || m_waitingForMessage->messageWaitingInterrupted)
+        if (didTimeout || m_waitingForMessage->messageWaitingInterrupted) {
+            m_waitingForMessage = nullptr;
             break;
+        }
     }
-
-    m_waitingForMessage = nullptr;
 
     return nullptr;
 }
@@ -697,16 +697,18 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
     {
         std::lock_guard<Lock> lock(m_waitForMessageMutex);
 
-        if (m_waitingForMessage && m_waitingForMessage->messageReceiverName == message->messageReceiverName() && m_waitingForMessage->messageName == message->messageName() && m_waitingForMessage->destinationID == message->destinationID()) {
-            m_waitingForMessage->decoder = WTF::move(message);
-            ASSERT(m_waitingForMessage->decoder);
-            m_waitForMessageCondition.notifyOne();
-            return;
-        }
+        if (m_waitingForMessage && !m_waitingForMessage->decoder) {
+            if (m_waitingForMessage->messageReceiverName == message->messageReceiverName() && m_waitingForMessage->messageName == message->messageName() && m_waitingForMessage->destinationID == message->destinationID()) {
+                m_waitingForMessage->decoder = WTF::move(message);
+                ASSERT(m_waitingForMessage->decoder);
+                m_waitForMessageCondition.notifyOne();
+                return;
+            }
 
-        if (m_waitingForMessage && (m_waitingForMessage->waitForMessageFlags & InterruptWaitingIfSyncMessageArrives) && message->isSyncMessage()) {
-            m_waitingForMessage->messageWaitingInterrupted = true;
-            m_waitForMessageCondition.notifyOne();
+            if ((m_waitingForMessage->waitForMessageFlags & InterruptWaitingIfSyncMessageArrives) && message->isSyncMessage()) {
+                m_waitingForMessage->messageWaitingInterrupted = true;
+                m_waitForMessageCondition.notifyOne();
+            }
         }
     }
 

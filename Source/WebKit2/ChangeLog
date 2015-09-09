@@ -1,3 +1,15 @@
+2015-09-09  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/dom/rtl-scroll-to-leftmost-and-resize.html is a flaky timeout - IPC drops messages
+        https://bugs.webkit.org/show_bug.cgi?id=148951
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForMessage): Don't modify m_waitingForMessage without holding
+        a lock. This is not part of this fix, but seems necessary for correctness.
+        (IPC::Connection::processIncomingMessage): Don't interrupt a wait that has already succeeded.
+
 2015-09-08  Daniel Bates  <dabates@apple.com>
 
         [Mac] Expose Enable/Disable Accelerated Drawing in MiniBrowser
