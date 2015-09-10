@@ -944,6 +944,27 @@ RenderBlockFlow::MarginValues RenderBlockFlow::marginValuesForChild(RenderBox& c
     return MarginValues(childBeforePositive, childBeforeNegative, childAfterPositive, childAfterNegative);
 }
 
+bool RenderBlockFlow::childrenPreventSelfCollapsing() const
+{
+    if (!childrenInline())
+        return RenderBlock::childrenPreventSelfCollapsing();
+
+    // If the block has inline children, see if we generated any line boxes. If we have any
+    // line boxes, then we can only be self-collapsing if we have nothing but anonymous inline blocks
+    // that are also self-collapsing inside us.
+    if (!hasLines())
+        return false;
+    
+    if (simpleLineLayout())
+        return true; // We have simple line layout lines, so we can't be self-collapsing.
+    
+    for (auto* child = firstRootBox(); child; child = child->nextRootBox()) {
+        if (!child->hasAnonymousInlineBlock() || !child->anonymousInlineBlock()->isSelfCollapsingBlock())
+            return true;
+    }
+    return false; // We have no line boxes, so we must be self-collapsing.
+}
+
 LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& marginInfo)
 {
     bool childDiscardMarginBefore = mustDiscardMarginBeforeForChild(child);
