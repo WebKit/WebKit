@@ -726,8 +726,6 @@ http/tests/misc/frame-default-enc-same-domain.html [ Skip ]
 
 # Sensitive to load timing or PHP behavior
 webkit.org/b/44873 http/tests/css/css-image-loading.html [ Skip ]
-webkit.org/b/149007 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
-http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Pass Failure ] # Flaky
 
 # Assertion failure in replaySavedEvents http://webkit.org/b/21796
 webkit.org/b/21796 fast/events/dragging-mouse-moves.html [ Skip ]
@@ -752,14 +750,12 @@ fast/workers/worker-document-leak.html [ Skip ] # Timeout
 ################################################################################
 # Deactivate all media tests on Apple Windows due to <rdar://problem/18681688> generating 
 # spam logging output that causes tests to fail. Will re-enable once this is fixed. 
+# FIXME: We now filter out the logging, so many of the tests can likely be re-enabled.
 media [ Skip ] 
 fast/media [ Skip ] 
 http/tests/media [ Skip ] 
 
 fast/layers/video-layer.html [ Skip ] # Skip until video control changes are done.
-
-# "AQMEIOManager::FindIOUnit: error -1" errors in tests output.
-webkit.org/b/148903 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ [ Skip ]
 
 # Assertion failures
 webkit.org/b/48910 [ Debug ] http/tests/media/pdf-served-as-pdf.html [ Skip ]  # Crashing

@@ -328,3 +328,7 @@ class WinPort(ApplePort):
                 pass
 
         return system_pid
+
+    def logging_patterns_to_strip(self):
+        # rdar://problem/18681688
+        return [(re.compile('AQMEIOManager::FindIOUnit: error \-1\n'), '')]

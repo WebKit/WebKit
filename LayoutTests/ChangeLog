@@ -1,3 +1,14 @@
+2015-09-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Spurious output on Windows tests: AQMEIOManager::FindIOUnit: error -1
+        https://bugs.webkit.org/show_bug.cgi?id=142929
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/TestExpectations: Unskip some newly added tests that are affected.
+        We still skip the whole media directory - updating the results and unskipping those
+        tests would be a separate project.
+
 2015-09-10  David Hyatt  <hyatt@apple.com>
 
         [New Block-Inside-Inline Model] Self-collapsing block check needs to account for anonymous inline blocks

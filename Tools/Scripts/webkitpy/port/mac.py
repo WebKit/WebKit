@@ -312,6 +312,7 @@ class MacPort(ApplePort):
 
     def stderr_patterns_to_strip(self):
         worthless_patterns = []
+        # FIXME: We still get CoreMedia stderr logging that doesn't match the below lines. 'defaults write com.apple.coremedia fig_notes 0' may work better for silencing them all, however running tests shouldn't change user's defaults.
         worthless_patterns.append((re.compile('.*(Fig|fig|itemasync|vt|mv_|PullParamSetSPS|ccrp_|client).* signalled err=.*\n'), ''))
         worthless_patterns.append((re.compile('.*<<<< FigFilePlayer >>>>.*\n'), ''))
         worthless_patterns.append((re.compile('.*<<<< FigFile >>>>.*\n'), ''))
