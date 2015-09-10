@@ -1,3 +1,18 @@
+2015-09-10  Daniel Bates  <dabates@apple.com>
+
+        sendProcessWillSuspendImminently uses a wrong message flag
+        https://bugs.webkit.org/show_bug.cgi?id=148995
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove use of flag IPC::InterruptWaitingIfSyncMessageArrives as it does not make
+        sense when sending a sync message.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendProcessWillSuspendImminently):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendProcessWillSuspendImminently):
+
 2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed build fix after r189572.
