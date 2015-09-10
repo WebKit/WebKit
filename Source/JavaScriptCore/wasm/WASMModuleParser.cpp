@@ -191,26 +191,37 @@ void WASMModuleParser::parseGlobalSection()
 
     Vector<WASMType>& globalVariableTypes = m_module->globalVariableTypes();
     globalVariableTypes.reserveInitialCapacity(numberOfGlobalVariables);
-    for (uint32_t i = 0; i < numberOfInternalI32GlobalVariables; ++i)
+    Vector<JSWASMModule::GlobalVariable>& globalVariables = m_module->globalVariables();
+    globalVariables.reserveInitialCapacity(numberOfGlobalVariables);
+    for (uint32_t i = 0; i < numberOfInternalI32GlobalVariables; ++i) {
         globalVariableTypes.uncheckedAppend(WASMType::I32);
-    for (uint32_t i = 0; i < numberOfInternalF32GlobalVariables; ++i)
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0));
+    }
+    for (uint32_t i = 0; i < numberOfInternalF32GlobalVariables; ++i) {
         globalVariableTypes.uncheckedAppend(WASMType::F32);
-    for (uint32_t i = 0; i < numberOfInternalF64GlobalVariables; ++i)
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0.0f));
+    }
+    for (uint32_t i = 0; i < numberOfInternalF64GlobalVariables; ++i) {
         globalVariableTypes.uncheckedAppend(WASMType::F64);
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0.0));
+    }
     for (uint32_t i = 0; i < numberOfImportedI32GlobalVariables; ++i) {
         String importName;
         READ_STRING_OR_FAIL(importName, "Cannot read the import name of an int32 global variable.");
         globalVariableTypes.uncheckedAppend(WASMType::I32);
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0)); // FIXME: Import the value.
     }
     for (uint32_t i = 0; i < numberOfImportedF32GlobalVariables; ++i) {
         String importName;
         READ_STRING_OR_FAIL(importName, "Cannot read the import name of a float32 global variable.");
         globalVariableTypes.uncheckedAppend(WASMType::F32);
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0.0f)); // FIXME: Import the value.
     }
     for (uint32_t i = 0; i < numberOfImportedF64GlobalVariables; ++i) {
         String importName;
         READ_STRING_OR_FAIL(importName, "Cannot read the import name of a float64 global variable.");
         globalVariableTypes.uncheckedAppend(WASMType::F64);
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0.0)); // FIXME: Import the value.
     }
 }
 

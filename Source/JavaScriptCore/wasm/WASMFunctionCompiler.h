@@ -223,6 +223,25 @@ public:
         }
     }
 
+    void buildSetGlobal(uint32_t globalIndex, int, WASMType type)
+    {
+        move(TrustedImmPtr(&m_module->globalVariables()[globalIndex]), GPRInfo::regT0);
+        switch (type) {
+        case WASMType::I32:
+        case WASMType::F32:
+            load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT1);
+            store32(GPRInfo::regT1, GPRInfo::regT0);
+            break;
+        case WASMType::F64:
+            loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
+            storeDouble(FPRInfo::fpRegT0, GPRInfo::regT0);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        m_tempStackTop--;
+    }
+
     void buildReturn(int, WASMExpressionType returnType)
     {
         switch (returnType) {
@@ -285,6 +304,25 @@ public:
             break;
         case WASMType::F64:
             loadDouble(localAddress(localIndex), FPRInfo::fpRegT0);
+            storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop++));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        return UNUSED;
+    }
+
+    int buildGetGlobal(uint32_t globalIndex, WASMType type)
+    {
+        move(TrustedImmPtr(&m_module->globalVariables()[globalIndex]), GPRInfo::regT0);
+        switch (type) {
+        case WASMType::I32:
+        case WASMType::F32:
+            load32(GPRInfo::regT0, GPRInfo::regT0);
+            store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop++));
+            break;
+        case WASMType::F64:
+            loadDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
             storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop++));
             break;
         default:

@@ -137,6 +137,9 @@ ContextStatement WASMFunctionParser::parseStatement(Context& context)
         case WASMOpStatement::SetLocal:
             parseSetLocalStatement(context);
             break;
+        case WASMOpStatement::SetGlobal:
+            parseSetGlobalStatement(context);
+            break;
         case WASMOpStatement::Return:
             parseReturnStatement(context);
             break;
@@ -173,7 +176,6 @@ ContextStatement WASMFunctionParser::parseStatement(Context& context)
         case WASMOpStatement::Switch:
             parseSwitchStatement(context);
             break;
-        case WASMOpStatement::SetGlobal:
         case WASMOpStatement::I32Store8:
         case WASMOpStatement::I32StoreWithOffset8:
         case WASMOpStatement::I32Store16:
@@ -198,8 +200,8 @@ ContextStatement WASMFunctionParser::parseStatement(Context& context)
             parseSetLocalStatement(context, immediate);
             break;
         case WASMOpStatementWithImmediate::SetGlobal:
-            // FIXME: Implement this instruction.
-            FAIL_WITH_MESSAGE("Unsupported instruction.");
+            parseSetGlobalStatement(context, immediate);
+            break;
         default:
             ASSERT_NOT_REACHED();
         }
@@ -224,6 +226,25 @@ ContextStatement WASMFunctionParser::parseSetLocalStatement(Context& context)
     uint32_t localIndex;
     READ_COMPACT_UINT32_OR_FAIL(localIndex, "Cannot read the local index.");
     return parseSetLocalStatement(context, localIndex);
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseSetGlobalStatement(Context& context, uint32_t globalIndex)
+{
+    FAIL_IF_FALSE(globalIndex < m_module->globalVariableTypes().size(), "The global index is incorrect.");
+    WASMType type = m_module->globalVariableTypes()[globalIndex];
+    ContextExpression expression = parseExpression(context, WASMExpressionType(type));
+    PROPAGATE_ERROR();
+    context.buildSetGlobal(globalIndex, expression, type);
+    return UNUSED;
+}
+
+template <class Context>
+ContextStatement WASMFunctionParser::parseSetGlobalStatement(Context& context)
+{
+    uint32_t globalIndex;
+    READ_COMPACT_UINT32_OR_FAIL(globalIndex, "Cannot read the global index.");
+    return parseSetGlobalStatement(context, globalIndex);
 }
 
 template <class Context>
@@ -474,6 +495,8 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseImmediateExpressionI32(context);
         case WASMOpExpressionI32::GetLocal:
             return parseGetLocalExpressionI32(context);
+        case WASMOpExpressionI32::GetGlobal:
+            return parseGetGlobalExpressionI32(context);
         case WASMOpExpressionI32::CallInternal:
             return parseCallInternalExpressionI32(context);
         case WASMOpExpressionI32::Negate:
@@ -514,7 +537,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::GreaterThanF64:
         case WASMOpExpressionI32::GreaterThanOrEqualF64:
             return parseRelationalF64ExpressionI32(context, op);
-        case WASMOpExpressionI32::GetGlobal:
         case WASMOpExpressionI32::SetLocal:
         case WASMOpExpressionI32::SetGlobal:
         case WASMOpExpressionI32::SLoad8:
@@ -615,6 +637,16 @@ ContextExpression WASMFunctionParser::parseGetLocalExpressionI32(Context& contex
 }
 
 template <class Context>
+ContextExpression WASMFunctionParser::parseGetGlobalExpressionI32(Context& context)
+{
+    uint32_t globalIndex;
+    READ_COMPACT_UINT32_OR_FAIL(globalIndex, "Cannot read the global index.");
+    FAIL_IF_FALSE(globalIndex < m_module->globalVariableTypes().size(), "The global index is incorrect.");
+    FAIL_IF_FALSE(m_module->globalVariableTypes()[globalIndex] == WASMType::I32, "Expected a global variable of type int32.");
+    return context.buildGetGlobal(globalIndex, WASMType::I32);
+}
+
+template <class Context>
 ContextExpression WASMFunctionParser::parseCallInternalExpressionI32(Context& context)
 {
     return parseCallInternal(context, WASMExpressionType::I32);
@@ -675,6 +707,7 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::GetLocal:
             return parseGetLocalExpressionF64(context);
         case WASMOpExpressionF64::GetGlobal:
+            return parseGetGlobalExpressionF64(context);
         case WASMOpExpressionF64::SetLocal:
         case WASMOpExpressionF64::SetGlobal:
         case WASMOpExpressionF64::Load:
@@ -766,6 +799,16 @@ ContextExpression WASMFunctionParser::parseGetLocalExpressionF64(Context& contex
     uint32_t localIndex;
     READ_COMPACT_UINT32_OR_FAIL(localIndex, "Cannot read the local index.");
     return parseGetLocalExpressionF64(context, localIndex);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseGetGlobalExpressionF64(Context& context)
+{
+    uint32_t globalIndex;
+    READ_COMPACT_UINT32_OR_FAIL(globalIndex, "Cannot read the global index.");
+    FAIL_IF_FALSE(globalIndex < m_module->globalVariableTypes().size(), "The global index is incorrect.");
+    FAIL_IF_FALSE(m_module->globalVariableTypes()[globalIndex] == WASMType::F64, "Expected a global variable of type float64.");
+    return context.buildGetGlobal(globalIndex, WASMType::F64);
 }
 
 template <class Context>

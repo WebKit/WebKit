@@ -1,3 +1,39 @@
+2015-09-10  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement global variables in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149031
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements global variables in WebAssembly. There are two
+        types of global variables in the current format that we use (the format
+        used by <https://github.com/WebAssembly/polyfill-prototype-1>): internal
+        global variables and imported global variables. This patch does not yet
+        import values for imported global variables. It will be done in a
+        subsequent patch.
+
+        * tests/stress/wasm-globals.js: Added.
+        (shouldBe):
+        * tests/stress/wasm/globals.wasm: Added.
+        * wasm/JSWASMModule.h:
+        (JSC::JSWASMModule::globalVariables):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildSetGlobal):
+        (JSC::WASMFunctionCompiler::buildGetGlobal):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseStatement):
+        (JSC::WASMFunctionParser::parseSetGlobalStatement):
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseGetGlobalExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseGetGlobalExpressionF64):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildSetGlobal):
+        (JSC::WASMFunctionSyntaxChecker::buildGetGlobal):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::parseGlobalSection):
+
 2015-09-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Consider long module path name case in Windows

@@ -64,6 +64,8 @@ private:
     template <class Context> ContextStatement parseStatement(Context&);
     template <class Context> ContextStatement parseSetLocalStatement(Context&, uint32_t localIndex);
     template <class Context> ContextStatement parseSetLocalStatement(Context&);
+    template <class Context> ContextStatement parseSetGlobalStatement(Context&, uint32_t globalIndex);
+    template <class Context> ContextStatement parseSetGlobalStatement(Context&);
     template <class Context> ContextStatement parseReturnStatement(Context&);
     template <class Context> ContextStatement parseBlockStatement(Context&);
     template <class Context> ContextStatement parseIfStatement(Context&);
@@ -86,6 +88,7 @@ private:
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&);
     template <class Context> ContextExpression parseGetLocalExpressionI32(Context&, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpressionI32(Context&);
+    template <class Context> ContextExpression parseGetGlobalExpressionI32(Context&);
     template <class Context> ContextExpression parseCallInternalExpressionI32(Context&);
     template <class Context> ContextExpression parseUnaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseBinaryExpressionI32(Context&, WASMOpExpressionI32);
@@ -98,6 +101,7 @@ private:
     template <class Context> ContextExpression parseImmediateExpressionF64(Context&);
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&);
+    template <class Context> ContextExpression parseGetGlobalExpressionF64(Context&);
 
     template <class Context> ContextExpressionList parseCallArguments(Context&, const Vector<WASMType>& arguments);
     template <class Context> ContextExpression parseCallInternal(Context&, WASMExpressionType returnType);
