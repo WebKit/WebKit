@@ -151,7 +151,7 @@ static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Docum
             return encoding;
     }
 
-    return document.inputEncoding();
+    return TextEncoding(document.encoding());
 }
 
 Ref<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attributes& attributes, PassRefPtr<Event> event, LockHistory lockHistory, FormSubmissionTrigger trigger)

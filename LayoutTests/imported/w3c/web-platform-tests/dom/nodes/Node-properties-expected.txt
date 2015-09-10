@@ -142,8 +142,8 @@ PASS foreignDoc.childNodes[1]
 PASS foreignDoc.childNodes[2] 
 FAIL foreignDoc.URL assert_equals: expected "about:blank" but got ""
 PASS foreignDoc.compatMode 
-FAIL foreignDoc.characterSet assert_equals: expected (string) "UTF-8" but got (object) null
-FAIL foreignDoc.inputEncoding assert_equals: expected (string) "UTF-8" but got (object) null
+PASS foreignDoc.characterSet 
+PASS foreignDoc.inputEncoding 
 PASS foreignDoc.contentType 
 PASS foreignDoc.nodeName 
 PASS foreignDoc.textContent 
@@ -215,8 +215,8 @@ PASS xmlDoc.childNodes[2]
 PASS xmlDoc.childNodes[3] 
 FAIL xmlDoc.URL assert_equals: expected "about:blank" but got ""
 PASS xmlDoc.compatMode 
-FAIL xmlDoc.characterSet assert_equals: expected (string) "UTF-8" but got (object) null
-FAIL xmlDoc.inputEncoding assert_equals: expected (string) "UTF-8" but got (object) null
+PASS xmlDoc.characterSet 
+PASS xmlDoc.inputEncoding 
 PASS xmlDoc.contentType 
 PASS xmlDoc.nodeName 
 PASS xmlDoc.textContent 

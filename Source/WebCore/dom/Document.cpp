@@ -1252,7 +1252,15 @@ AtomicString Document::encoding() const
 {
     if (TextResourceDecoder* d = decoder())
         return d->encoding().domName();
-    return String();
+    return nullAtom;
+}
+
+String Document::characterSetForBindings() const
+{
+    AtomicString name = encoding();
+    if (!name.isNull())
+        return name;
+    return UTF8Encoding().domName();
 }
 
 String Document::defaultCharset() const

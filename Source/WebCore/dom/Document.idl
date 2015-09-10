@@ -64,7 +64,7 @@
 
     // DOM Level 3 Core
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString inputEncoding;
+    [ImplementedAs=characterSetForBindings] readonly attribute DOMString inputEncoding;
 
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString xmlEncoding;
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString xmlVersion;
@@ -188,7 +188,7 @@
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     DOMSelection       getSelection();
 #endif
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString characterSet;
+    [ImplementedAs=characterSetForBindings] readonly attribute DOMString characterSet;
 
     // WebKit extensions
 

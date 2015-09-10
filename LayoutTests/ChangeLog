@@ -1,3 +1,15 @@
+2015-09-09  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Document.characterSet should return "UTF-8" by default.
+        https://bugs.webkit.org/show_bug.cgi?id=148810
+        <rdar://problem/22548727>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update the tests which test the default encoding of document.
+
+        * dom/xhtml/level3/core/documentgetinputencoding02-expected.txt: Obsolete test.
+
 2015-09-09  Benjamin Poulain  <bpoulain@apple.com>
 
         CSS general sibling selectors does not work without CSS JIT

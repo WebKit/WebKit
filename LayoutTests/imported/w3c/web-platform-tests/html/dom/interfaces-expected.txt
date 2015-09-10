@@ -1260,8 +1260,8 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentURI" with the proper type (2) assert_equals: expected "string" but got "object"
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "origin" with the proper type (3) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "compatMode" with the proper type (4) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "characterSet" with the proper type (5) assert_equals: expected "string" but got "object"
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "inputEncoding" with the proper type (6) assert_equals: expected "string" but got "object"
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "characterSet" with the proper type (5) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "inputEncoding" with the proper type (6) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "contentType" with the proper type (7) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "doctype" with the proper type (8) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentElement" with the proper type (9) 

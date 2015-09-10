@@ -187,7 +187,7 @@ bool InspectorPageAgent::mainResourceContent(Frame* frame, bool withBase64Encode
     RefPtr<SharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
     if (!buffer)
         return false;
-    return InspectorPageAgent::dataContent(buffer->data(), buffer->size(), frame->document()->inputEncoding(), withBase64Encode, result);
+    return InspectorPageAgent::dataContent(buffer->data(), buffer->size(), frame->document()->encoding(), withBase64Encode, result);
 }
 
 // static

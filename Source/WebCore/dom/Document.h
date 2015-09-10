@@ -400,9 +400,8 @@ public:
 
     String defaultCharset() const;
 
-    String inputEncoding() const { return Document::encoding(); }
     String charset() const { return Document::encoding(); }
-    String characterSet() const { return Document::encoding(); }
+    String characterSetForBindings() const;
 
     AtomicString encoding() const;
 
