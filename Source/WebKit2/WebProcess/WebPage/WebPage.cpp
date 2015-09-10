@@ -337,7 +337,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_inDynamicSizeUpdate(false)
     , m_volatilityTimer(*this, &WebPage::volatilityTimerFired)
 #endif
-    , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
     , m_maximumRenderingSuppressionToken(0)
     , m_scrollPinningBehavior(DoNotPin)
@@ -370,8 +369,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageConfiguration.dragClient = new WebDragClient(this);
 #endif
     pageConfiguration.backForwardClient = WebBackForwardListProxy::create(this);
-    m_inspectorClient = new WebInspectorClient(this);
-    pageConfiguration.inspectorClient = m_inspectorClient;
+    pageConfiguration.inspectorClient = new WebInspectorClient(this);
 #if USE(AUTOCORRECTION_PANEL)
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(this);
 #endif

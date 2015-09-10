@@ -1381,8 +1381,6 @@ private:
     WebCore::Timer m_volatilityTimer;
 #endif
 
-    WebInspectorClient* m_inspectorClient;
-
     HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomContentProviders;
     WebCore::Color m_backgroundColor;
 
