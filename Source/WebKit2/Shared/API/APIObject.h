@@ -165,7 +165,6 @@ public:
         BundleFrame,
         BundleHitTestResult,
         BundleInspector,
-        BundleInspectorUI,
         BundleNavigationAction,
         BundleNodeHandle,
         BundlePage,
