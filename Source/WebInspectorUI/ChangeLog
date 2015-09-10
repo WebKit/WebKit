@@ -1,3 +1,16 @@
+2015-09-10  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Styles sidebar says Media: all when it should say Media: screen
+        https://bugs.webkit.org/show_bug.cgi?id=148436
+
+        Reviewed by Timothy Hatcher.
+
+        Removed filter that prevented "Media: screen" from being displayed.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.insertMediaOrInheritanceLabel):
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.filteredMediaList): Deleted.
+
 2015-09-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Prefer calling ContentViewContainer.updateLayout directly
