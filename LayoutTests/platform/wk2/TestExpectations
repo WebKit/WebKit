@@ -573,6 +573,9 @@ imported/w3c/indexeddb/interfaces.html [ Pass Timeout ]
 
 # Flaky tests from initial import of w3c IndexedDB tests
 imported/w3c/indexeddb/transaction-lifetime.htm [ Pass Failure ]
+imported/w3c/indexeddb/idbobjectstore_deleteIndex.htm [ Pass Failure ]
+imported/w3c/indexeddb/idbcursor-direction.htm [ Pass Failure ]
+imported/w3c/indexeddb/idbcursor-key.htm [ Pass Failure ]
 
 ### END OF (3) Unclassified failures
 ########################################

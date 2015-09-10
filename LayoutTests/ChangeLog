@@ -1,3 +1,12 @@
+2015-09-10  Brady Eidson  <beidson@apple.com>
+
+        Mark some more W3C IDB tests as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=148713
+
+        Reviewed by NOBODY.
+
+        * platform/wk2/TestExpectations:
+
 2015-09-10  Daniel Bates  <dabates@apple.com>
 
         Write a test to ensure we don't regress processing of tasks when page defers loading
