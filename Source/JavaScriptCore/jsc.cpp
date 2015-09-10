@@ -892,7 +892,7 @@ static void fillBufferWithContentsOfFile(FILE* file, Vector<char>& buffer)
 
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
 {
-    FILE* f = fopen(fileName.utf8().data(), "r");
+    FILE* f = fopen(fileName.utf8().data(), "rb");
     if (!f) {
         fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
         return false;
