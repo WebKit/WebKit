@@ -429,8 +429,12 @@ public:
         
         // - We don't watch Structures that either decided not to be watched, or whose predecessors
         //   decided not to be watched. This happens either when a transition is fired while being
-        //   watched, or if a dictionary transition occurs.
+        //   watched.
         if (transitionWatchpointIsLikelyToBeFired())
+            return false;
+
+        // - Don't watch Structures that had been dictionaries.
+        if (hasBeenDictionary())
             return false;
         
         return true;
@@ -523,6 +527,7 @@ public:
     DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 25);
     DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 26);
     DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 27);
+    DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 28);
 
 private:
     friend class LLIntOffsetsExtractor;
