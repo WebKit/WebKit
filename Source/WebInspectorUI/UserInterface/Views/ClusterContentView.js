@@ -62,9 +62,7 @@ WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.
 
     updateLayout()
     {
-        var currentContentView = this._contentViewContainer.currentContentView;
-        if (currentContentView)
-            currentContentView.updateLayout();
+        this._contentViewContainer.updateLayout();
     }
 
     shown()

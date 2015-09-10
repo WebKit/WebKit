@@ -1,3 +1,17 @@
+2015-09-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Prefer calling ContentViewContainer.updateLayout directly
+        https://bugs.webkit.org/show_bug.cgi?id=149041
+
+        Reviewed by Timothy Hatcher.
+
+        Cleaned up two places where a parent view duplicated logic encapsulated by ContentViewContainer.
+
+        * UserInterface/Views/ClusterContentView.js:
+        (WebInspector.ClusterContentView.prototype.updateLayout):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.updateLayout):
+
 2015-09-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r189189): Missing breakpoint context menu for debugger sidebar tree elements
