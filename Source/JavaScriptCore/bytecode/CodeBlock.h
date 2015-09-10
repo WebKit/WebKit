@@ -1256,13 +1256,13 @@ template <typename Functor> inline void ScriptExecutable::forEachCodeBlock(Funct
             codeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
         break;
     }
-        
+
     case EvalExecutableType: {
         if (CodeBlock* codeBlock = jsCast<EvalExecutable*>(this)->m_evalCodeBlock.get())
             codeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
         break;
     }
-        
+
     case FunctionExecutableType: {
         Functor f(std::forward<Functor>(functor));
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
@@ -1272,6 +1272,13 @@ template <typename Functor> inline void ScriptExecutable::forEachCodeBlock(Funct
             codeBlock->forEachRelatedCodeBlock(f);
         break;
     }
+
+    case ModuleProgramExecutableType: {
+        if (CodeBlock* codeBlock = jsCast<ModuleProgramExecutable*>(this)->m_moduleProgramCodeBlock.get())
+            codeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
+        break;
+    }
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

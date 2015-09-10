@@ -1,3 +1,16 @@
+2015-09-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ModuleProgramExecutable should provide CodeBlock to ScriptExecutable::forEachCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=149028
+
+        Reviewed by Michael Saboff.
+
+        ModuleProgramExecutable should provide CodeBlock since ModuleProgramExecutable inherits
+        ScriptExecutable.
+
+        * bytecode/CodeBlock.h:
+        (JSC::ScriptExecutable::forEachCodeBlock):
+
 2015-09-09  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement internal calls in WebAssembly
