@@ -66,7 +66,7 @@ bool WASMFunctionParser::checkSyntax(JSWASMModule* module, const SourceCode& sou
 void WASMFunctionParser::compile(VM& vm, CodeBlock* codeBlock, JSWASMModule* module, const SourceCode& source, size_t functionIndex)
 {
     WASMFunctionParser parser(module, source, functionIndex);
-    WASMFunctionCompiler compiler(vm, codeBlock, module->functionStackHeights()[functionIndex]);
+    WASMFunctionCompiler compiler(vm, codeBlock, module, module->functionStackHeights()[functionIndex]);
     parser.m_reader.setOffset(module->functionStartOffsetsInSource()[functionIndex]);
     parser.parseFunction(compiler);
     ASSERT(parser.m_errorMessage.isNull());
@@ -474,6 +474,8 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseImmediateExpressionI32(context);
         case WASMOpExpressionI32::GetLocal:
             return parseGetLocalExpressionI32(context);
+        case WASMOpExpressionI32::CallInternal:
+            return parseCallInternalExpressionI32(context);
         case WASMOpExpressionI32::Negate:
         case WASMOpExpressionI32::BitNot:
         case WASMOpExpressionI32::CountLeadingZeros:
@@ -531,7 +533,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::StoreWithOffset16:
         case WASMOpExpressionI32::Store32:
         case WASMOpExpressionI32::StoreWithOffset32:
-        case WASMOpExpressionI32::CallInternal:
         case WASMOpExpressionI32::CallIndirect:
         case WASMOpExpressionI32::CallImport:
         case WASMOpExpressionI32::Conditional:
@@ -611,6 +612,12 @@ ContextExpression WASMFunctionParser::parseGetLocalExpressionI32(Context& contex
     uint32_t localIndex;
     READ_COMPACT_UINT32_OR_FAIL(localIndex, "Cannot read the local index.");
     return parseGetLocalExpressionI32(context, localIndex);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseCallInternalExpressionI32(Context& context)
+{
+    return parseCallInternal(context, WASMExpressionType::I32);
 }
 
 template <class Context>
@@ -759,6 +766,32 @@ ContextExpression WASMFunctionParser::parseGetLocalExpressionF64(Context& contex
     uint32_t localIndex;
     READ_COMPACT_UINT32_OR_FAIL(localIndex, "Cannot read the local index.");
     return parseGetLocalExpressionF64(context, localIndex);
+}
+
+template <class Context>
+ContextExpressionList WASMFunctionParser::parseCallArguments(Context& context, const Vector<WASMType>& arguments)
+{
+    ContextExpressionList argumentList;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        ContextExpression expression = parseExpression(context, WASMExpressionType(arguments[i]));
+        PROPAGATE_ERROR();
+        context.appendExpressionList(argumentList, expression);
+    }
+    return argumentList;
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseCallInternal(Context& context, WASMExpressionType returnType)
+{
+    uint32_t functionIndex;
+    READ_COMPACT_UINT32_OR_FAIL(functionIndex, "Cannot read the function index.");
+    FAIL_IF_FALSE(functionIndex < m_module->functionDeclarations().size(), "The function index is incorrect.");
+    const WASMSignature& signature = m_module->signatures()[m_module->functionDeclarations()[functionIndex].signatureIndex];
+    FAIL_IF_FALSE(signature.returnType == returnType, "Wrong return type.");
+
+    ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
+    PROPAGATE_ERROR();
+    return context.buildCallInternal(functionIndex, argumentList, signature, returnType);
 }
 
 } // namespace JSC

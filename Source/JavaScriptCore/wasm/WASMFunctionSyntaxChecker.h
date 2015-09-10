@@ -36,6 +36,7 @@ class WASMFunctionSyntaxChecker {
 public:
     typedef int Expression;
     typedef int Statement;
+    typedef int ExpressionList;
     typedef int JumpTarget;
     enum class JumpCondition { Zero, NonZero };
 
@@ -103,6 +104,25 @@ public:
         m_tempStackTop--;
         return UNUSED;
     }
+
+    int buildCallInternal(uint32_t, int, const WASMSignature& signature, WASMExpressionType returnType)
+    {
+        size_t argumentCount = signature.arguments.size();
+
+        // Boxed arguments + this argument + call frame header + padding.
+        m_tempStackTop += argumentCount + 1 + JSStack::CallFrameHeaderSize + 1;
+        updateTempStackHeight();
+        m_tempStackTop -= argumentCount + 1 + JSStack::CallFrameHeaderSize + 1;
+
+        m_tempStackTop -= argumentCount;
+        if (returnType != WASMExpressionType::Void) {
+            m_tempStackTop++;
+            updateTempStackHeight();
+        }
+        return UNUSED;
+    }
+
+    void appendExpressionList(int&, int) { }
 
     void linkTarget(const int&) { }
     void jumpToTarget(const int&) { }

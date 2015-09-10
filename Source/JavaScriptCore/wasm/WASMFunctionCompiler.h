@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
+#include "JIT.h"
 #include "JITOperations.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
@@ -63,14 +64,16 @@ class WASMFunctionCompiler : private CCallHelpers {
 public:
     typedef int Expression;
     typedef int Statement;
+    typedef int ExpressionList;
     struct JumpTarget {
         Label label;
         JumpList jumpList;
     };
     enum class JumpCondition { Zero, NonZero };
 
-    WASMFunctionCompiler(VM& vm, CodeBlock* codeBlock, unsigned stackHeight)
+    WASMFunctionCompiler(VM& vm, CodeBlock* codeBlock, JSWASMModule* module, unsigned stackHeight)
         : CCallHelpers(&vm, codeBlock)
+        , m_module(module)
         , m_stackHeight(stackHeight)
     {
     }
@@ -171,8 +174,16 @@ public:
 
         LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock, JITCompilationMustSucceed);
 
-        for (auto iterator : m_calls)
+        for (const auto& iterator : m_calls)
             patchBuffer.link(iterator.first, FunctionPtr(iterator.second));
+
+        for (size_t i = 0; i < m_callCompilationInfo.size(); ++i) {
+            CallCompilationInfo& compilationInfo = m_callCompilationInfo[i];
+            CallLinkInfo& info = *compilationInfo.callLinkInfo;
+            info.setCallLocations(patchBuffer.locationOfNearCall(compilationInfo.callReturnLocation),
+                patchBuffer.locationOf(compilationInfo.hotPathBegin),
+                patchBuffer.locationOfNearCall(compilationInfo.hotPathOther));
+        }
 
         MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(arityCheck);
         CodeRef result = FINALIZE_CODE(patchBuffer, ("Baseline JIT code for WebAssembly"));
@@ -475,6 +486,19 @@ public:
         return UNUSED;
     }
 
+    int buildCallInternal(uint32_t functionIndex, int, const WASMSignature& signature, WASMExpressionType returnType)
+    {
+        boxArgumentsAndAdjustStackPointer(signature.arguments);
+
+        JSFunction* function = m_module->functions()[functionIndex].get();
+        move(TrustedImmPtr(function), GPRInfo::regT0);
+
+        callAndUnboxResult(returnType);
+        return UNUSED;
+    }
+
+    void appendExpressionList(int&, int) { }
+
     void linkTarget(JumpTarget& target)
     {
         target.label = label();
@@ -588,6 +612,13 @@ private:
         m_exceptionChecks.append(emitExceptionCheck());
     }
 
+    Call emitNakedCall(CodePtr function)
+    {
+        Call nakedCall = nearCall();
+        m_calls.append(std::make_pair(nakedCall, function.executableAddress()));
+        return nakedCall;
+    }
+
     void callOperation(int32_t JIT_OPERATION (*operation)(int32_t, int32_t), GPRReg src1, GPRReg src2, GPRReg dst)
     {
         setupArguments(src1, src2);
@@ -602,6 +633,77 @@ private:
         move(GPRInfo::returnValueGPR, dst);
     }
 
+    void boxArgumentsAndAdjustStackPointer(const Vector<WASMType>& arguments)
+    {
+        size_t argumentCount = arguments.size();
+        int stackOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_numberOfLocals + m_tempStackTop + argumentCount + 1 + JSStack::CallFrameHeaderSize);
+
+        storeTrustedValue(jsUndefined(), Address(GPRInfo::callFrameRegister, (stackOffset + CallFrame::thisArgumentOffset()) * sizeof(Register)));
+
+        for (size_t i = 0; i < argumentCount; ++i) {
+            Address address(GPRInfo::callFrameRegister, (stackOffset + CallFrame::argumentOffset(i)) * sizeof(Register));
+            switch (arguments[i]) {
+            case WASMType::I32:
+                load32(temporaryAddress(m_tempStackTop - argumentCount + i), GPRInfo::regT0);
+#if USE(JSVALUE64)
+                or64(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+                store64(GPRInfo::regT0, address);
+#else
+                store32(GPRInfo::regT0, address.withOffset(PayloadOffset));
+                store32(TrustedImm32(JSValue::Int32Tag), address.withOffset(TagOffset));
+#endif
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+        }
+        m_tempStackTop -= argumentCount;
+
+        addPtr(TrustedImm32(stackOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, stackPointerRegister);
+        store32(TrustedImm32(argumentCount + 1), Address(stackPointerRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+    }
+
+    void callAndUnboxResult(WASMExpressionType returnType)
+    {
+        // regT0 holds callee.
+#if USE(JSVALUE64)
+        store64(GPRInfo::regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
+#else
+        store32(regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+        store32(TrustedImm32(CellTag), Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + TagOffset - sizeof(CallerFrameAndPC)));
+#endif
+
+        DataLabelPtr addressOfLinkedFunctionCheck;
+        Jump slowCase = branchPtrWithPatch(NotEqual, GPRInfo::regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(0));
+
+        CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
+        info->setUpCall(CallLinkInfo::Call, CodeOrigin(), GPRInfo::regT0);
+        m_callCompilationInfo.append(CallCompilationInfo());
+        m_callCompilationInfo.last().hotPathBegin = addressOfLinkedFunctionCheck;
+        m_callCompilationInfo.last().callLinkInfo = info;
+        m_callCompilationInfo.last().hotPathOther = nearCall();
+        Jump end = jump();
+
+        slowCase.link(this);
+        move(TrustedImmPtr(info), GPRInfo::regT2);
+        m_callCompilationInfo.last().callReturnLocation = emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).code());
+
+        end.link(this);
+        addPtr(TrustedImm32(-WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot)), GPRInfo::callFrameRegister, stackPointerRegister);
+        checkStackPointerAlignment();
+
+        switch (returnType) {
+        case WASMExpressionType::I32:
+            store32(GPRInfo::returnValueGPR, temporaryAddress(m_tempStackTop++));
+            break;
+        case WASMExpressionType::Void:
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    JSWASMModule* m_module;
     unsigned m_stackHeight;
     unsigned m_numberOfLocals;
     unsigned m_tempStackTop { 0 };
@@ -617,6 +719,7 @@ private:
     JumpList m_exceptionChecks;
 
     Vector<std::pair<Call, void*>> m_calls;
+    Vector<CallCompilationInfo> m_callCompilationInfo;
 };
 
 } // namespace JSC

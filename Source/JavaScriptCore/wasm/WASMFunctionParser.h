@@ -33,6 +33,7 @@
 
 #define ContextExpression typename Context::Expression
 #define ContextStatement typename Context::Statement
+#define ContextExpressionList typename Context::ExpressionList
 #define ContextJumpTarget typename Context::JumpTarget
 
 namespace JSC {
@@ -85,6 +86,7 @@ private:
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&);
     template <class Context> ContextExpression parseGetLocalExpressionI32(Context&, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpressionI32(Context&);
+    template <class Context> ContextExpression parseCallInternalExpressionI32(Context&);
     template <class Context> ContextExpression parseUnaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseBinaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalI32ExpressionI32(Context&, WASMOpExpressionI32);
@@ -96,6 +98,9 @@ private:
     template <class Context> ContextExpression parseImmediateExpressionF64(Context&);
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&);
+
+    template <class Context> ContextExpressionList parseCallArguments(Context&, const Vector<WASMType>& arguments);
+    template <class Context> ContextExpression parseCallInternal(Context&, WASMExpressionType returnType);
 
     JSWASMModule* m_module;
     WASMReader m_reader;
