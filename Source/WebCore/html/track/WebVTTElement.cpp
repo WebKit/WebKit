@@ -80,11 +80,11 @@ Ref<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Document& docu
     return adoptRef(*new WebVTTElement(nodeType, document));
 }
 
-RefPtr<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
-    RefPtr<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), targetDocument);
+    Ref<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), targetDocument);
     clone->setLanguage(m_language);
-    return clone;
+    return WTF::move(clone);
 }
 
 PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)

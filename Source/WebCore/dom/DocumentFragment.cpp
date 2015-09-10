@@ -67,18 +67,18 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
     }
 }
 
-RefPtr<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningOperation type)
+Ref<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
-    RefPtr<DocumentFragment> clone = create(targetDocument);
+    Ref<DocumentFragment> clone = create(targetDocument);
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
-        cloneChildNodes(clone.get());
+        cloneChildNodes(clone);
         break;
     }
-    return clone;
+    return WTF::move(clone);
 }
 
 void DocumentFragment::parseHTML(const String& source, Element* contextElement, ParserContentPolicy parserContentPolicy)

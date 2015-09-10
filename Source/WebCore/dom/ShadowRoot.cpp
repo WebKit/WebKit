@@ -92,7 +92,7 @@ void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
     }
 
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, host(), AllowScriptingContent, ec))
-        replaceChildrenWithFragment(*this, fragment.release(), ec);
+        replaceChildrenWithFragment(*this, fragment.releaseNonNull(), ec);
 }
 
 bool ShadowRoot::childTypeAllowed(NodeType type) const
@@ -131,9 +131,10 @@ void ShadowRoot::childrenChanged(const ChildChange& change)
     invalidateDistribution();
 }
 
-RefPtr<Node> ShadowRoot::cloneNodeInternal(Document&, CloningOperation)
+Ref<Node> ShadowRoot::cloneNodeInternal(Document&, CloningOperation)
 {
-    return nullptr; // ShadowRoots should never be cloned.
+    RELEASE_ASSERT_NOT_REACHED();
+    return *static_cast<Node*>(nullptr); // ShadowRoots should never be cloned.
 }
 
 void ShadowRoot::removeAllEventListeners()

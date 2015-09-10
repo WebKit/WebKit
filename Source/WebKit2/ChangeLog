@@ -1,3 +1,23 @@
+2015-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Node.appendChild(null) / replaceChild(null, null) / removeChild(null) / insertBefore(null, ref) should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=148971
+        <rdar://problem/22560883>
+        <rdar://problem/22559225>
+
+        Reviewed by Ryosuke Niwa.
+
+        ContainerNode::appendChild() now takes a Ref<Node>&& parameter so we
+        need to update the call sites.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::attach):
+        (WebKit::PDFPluginAnnotation::~PDFPluginAnnotation):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement):
+
 2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make WebInspectorProxy inspectorURL path methods static

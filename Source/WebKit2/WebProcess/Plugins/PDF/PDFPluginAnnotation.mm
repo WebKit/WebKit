@@ -74,7 +74,7 @@ void PDFPluginAnnotation::attach(Element* parent)
 
     updateGeometry();
 
-    m_parent->appendChild(m_element);
+    m_parent->appendChild(*m_element);
 
     // FIXME: The text cursor doesn't blink after this. Why?
     m_element->focus();
@@ -92,7 +92,7 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 
     m_eventListener->setAnnotation(0);
 
-    m_parent->removeChild(element());
+    m_parent->removeChild(*element());
 }
 
 void PDFPluginAnnotation::updateGeometry()

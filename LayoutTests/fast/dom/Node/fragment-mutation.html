@@ -36,15 +36,15 @@ function produceNodeNameString(nodes)
     return result;
 }
 
-function expectException(code)
+function expectTypeError()
 {
     return function(stash, exception) {
         if (!exception)
-            return "FAIL, expected exception with code " + code + ". The resulting fragment was: \"" + produceNodeNameString(stash) + "\".";
+            return "FAIL, expected TypeError. The resulting fragment was: \"" + produceNodeNameString(stash) + "\".";
 
-        if (code == exception.code)
+        if (exception.name = "TypeError")
             return "PASS";
-        return "FAIL, expected exception code: " + code + ", was: " + exception + ".";
+        return "FAIL, expected TypeError, was: " + exception.name + ".";
     }
 }
 
@@ -119,10 +119,10 @@ function runTest(methodName, method)
         frag.appendChild(extra);
     }, expectNodes("BUP"));
 
-    testFragment(method, "Continually re-appending removed element to the fragment should eventually throw NOT_FOUND_ERR", function(evt, frag, stash)
+    testFragment(method, "Continually re-appending removed element to the fragment should eventually throw a TypeError", function(evt, frag, stash)
     {
         stash.insertBefore(frag.lastChild, stash.firstChild);
-    }, expectException(8), true);
+    }, expectTypeError(), true);
     printLog(methodName);
 }
 function runTests()

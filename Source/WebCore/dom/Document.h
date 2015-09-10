@@ -746,7 +746,7 @@ public:
     void nodeChildrenWillBeRemoved(ContainerNode&);
     // nodeWillBeRemoved is only safe when removing one node at a time.
     void nodeWillBeRemoved(Node&);
-    bool canReplaceChild(Node* newChild, Node* oldChild);
+    bool canReplaceChild(Node& newChild, Node& oldChild);
 
     void textInserted(Node*, unsigned offset, unsigned length);
     void textRemoved(Node*, unsigned offset, unsigned length);
@@ -1310,7 +1310,7 @@ private:
     virtual String nodeName() const override final;
     virtual NodeType nodeType() const override final;
     virtual bool childTypeAllowed(NodeType) const override final;
-    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override final;
+    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override final;
     void cloneDataFromDocument(const Document&);
 
     virtual void refScriptExecutionContext() override final { ref(); }

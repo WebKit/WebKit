@@ -48,19 +48,19 @@ ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand(PassRefPtr<HTMLElement> e
     ASSERT(m_elementToReplace);
 }
 
-static void swapInNodePreservingAttributesAndChildren(HTMLElement* newNode, HTMLElement* nodeToReplace)
+static void swapInNodePreservingAttributesAndChildren(HTMLElement& newNode, HTMLElement& nodeToReplace)
 {
-    ASSERT(nodeToReplace->inDocument());
-    RefPtr<ContainerNode> parentNode = nodeToReplace->parentNode();
+    ASSERT(nodeToReplace.inDocument());
+    RefPtr<ContainerNode> parentNode = nodeToReplace.parentNode();
 
     // FIXME: Fix this to send the proper MutationRecords when MutationObservers are present.
-    newNode->cloneDataFromElement(*nodeToReplace);
+    newNode.cloneDataFromElement(nodeToReplace);
     NodeVector children;
-    getChildNodes(*nodeToReplace, children);
+    getChildNodes(nodeToReplace, children);
     for (auto& child : children)
-        newNode->appendChild(child.ptr(), ASSERT_NO_EXCEPTION);
+        newNode.appendChild(WTF::move(child), ASSERT_NO_EXCEPTION);
 
-    parentNode->insertBefore(newNode, nodeToReplace, ASSERT_NO_EXCEPTION);
+    parentNode->insertBefore(newNode, &nodeToReplace, ASSERT_NO_EXCEPTION);
     parentNode->removeChild(nodeToReplace, ASSERT_NO_EXCEPTION);
 }
 
@@ -70,14 +70,14 @@ void ReplaceNodeWithSpanCommand::doApply()
         return;
     if (!m_spanElement)
         m_spanElement = createHTMLElement(m_elementToReplace->document(), spanTag);
-    swapInNodePreservingAttributesAndChildren(m_spanElement.get(), m_elementToReplace.get());
+    swapInNodePreservingAttributesAndChildren(*m_spanElement, *m_elementToReplace);
 }
 
 void ReplaceNodeWithSpanCommand::doUnapply()
 {
     if (!m_spanElement->inDocument())
         return;
-    swapInNodePreservingAttributesAndChildren(m_elementToReplace.get(), m_spanElement.get());
+    swapInNodePreservingAttributesAndChildren(*m_elementToReplace, *m_spanElement);
 }
 
 #ifndef NDEBUG

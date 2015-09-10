@@ -71,12 +71,12 @@ RefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document& do
 {
     RefPtr<HTMLOptionElement> element = adoptRef(new HTMLOptionElement(optionTag, document));
 
-    RefPtr<Text> text = Text::create(document, data.isNull() ? "" : data);
+    Ref<Text> text = Text::create(document, data.isNull() ? "" : data);
 
     ec = 0;
-    element->appendChild(text.release(), ec);
+    element->appendChild(WTF::move(text), ec);
     if (ec)
-        return 0;
+        return nullptr;
 
     if (!value.isNull())
         element->setValue(value);
@@ -84,7 +84,7 @@ RefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document& do
         element->setAttribute(selectedAttr, emptyAtom);
     element->setSelected(selected);
 
-    return element.release();
+    return element;
 }
 
 bool HTMLOptionElement::isFocusable() const

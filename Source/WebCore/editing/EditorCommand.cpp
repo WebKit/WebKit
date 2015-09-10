@@ -165,11 +165,11 @@ static bool executeInsertFragment(Frame& frame, PassRefPtr<DocumentFragment> fra
     return true;
 }
 
-static bool executeInsertNode(Frame& frame, PassRefPtr<Node> content)
+static bool executeInsertNode(Frame& frame, Ref<Node>&& content)
 {
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(*frame.document());
     ExceptionCode ec = 0;
-    fragment->appendChild(content, ec);
+    fragment->appendChild(WTF::move(content), ec);
     if (ec)
         return false;
     return executeInsertFragment(frame, fragment.release());
@@ -464,10 +464,10 @@ static bool executeInsertBacktab(Frame& frame, Event* event, EditorCommandSource
 
 static bool executeInsertHorizontalRule(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    RefPtr<HTMLHRElement> rule = HTMLHRElement::create(*frame.document());
+    Ref<HTMLHRElement> rule = HTMLHRElement::create(*frame.document());
     if (!value.isEmpty())
         rule->setIdAttribute(value);
-    return executeInsertNode(frame, rule.release());
+    return executeInsertNode(frame, WTF::move(rule));
 }
 
 static bool executeInsertHTML(Frame& frame, Event*, EditorCommandSource, const String& value)
@@ -478,9 +478,9 @@ static bool executeInsertHTML(Frame& frame, Event*, EditorCommandSource, const S
 static bool executeInsertImage(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
     // FIXME: If userInterface is true, we should display a dialog box and let the user choose a local image.
-    RefPtr<HTMLImageElement> image = HTMLImageElement::create(*frame.document());
+    Ref<HTMLImageElement> image = HTMLImageElement::create(*frame.document());
     image->setSrc(value);
-    return executeInsertNode(frame, image.release());
+    return executeInsertNode(frame, WTF::move(image));
 }
 
 static bool executeInsertLineBreak(Frame& frame, Event* event, EditorCommandSource source, const String&)

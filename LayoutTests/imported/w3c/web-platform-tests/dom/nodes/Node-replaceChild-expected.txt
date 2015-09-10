@@ -1,7 +1,5 @@
 
-FAIL Passing null to replaceChild should throw a TypeError. assert_throws: function "function () {
-    a.replaceChild(null, null);
-  }" did not throw
+PASS Passing null to replaceChild should throw a TypeError. 
 FAIL If child's parent is not the context node, a NotFoundError exception should be thrown assert_throws: function "function () {
     a.replaceChild(a, c);
   }" threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException NotFoundError: property "code" is equal to 3, expected 8

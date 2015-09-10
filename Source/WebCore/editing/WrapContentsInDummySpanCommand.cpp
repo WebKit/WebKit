@@ -40,15 +40,15 @@ WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(PassRefPtr<Elemen
 
 void WrapContentsInDummySpanCommand::executeApply()
 {
-    Vector<RefPtr<Node>> children;
+    Vector<Ref<Node>> children;
     for (Node* child = m_element->firstChild(); child; child = child->nextSibling())
-        children.append(child);
+        children.append(*child);
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_dummySpan->appendChild(children[i].release(), IGNORE_EXCEPTION);
+        m_dummySpan->appendChild(WTF::move(children[i]), IGNORE_EXCEPTION);
 
-    m_element->appendChild(m_dummySpan.get(), IGNORE_EXCEPTION);
+    m_element->appendChild(*m_dummySpan, IGNORE_EXCEPTION);
 }
 
 void WrapContentsInDummySpanCommand::doApply()
@@ -65,13 +65,13 @@ void WrapContentsInDummySpanCommand::doUnapply()
     if (!m_dummySpan || !m_element->hasEditableStyle())
         return;
 
-    Vector<RefPtr<Node>> children;
+    Vector<Ref<Node>> children;
     for (Node* child = m_dummySpan->firstChild(); child; child = child->nextSibling())
-        children.append(child);
+        children.append(*child);
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_element->appendChild(children[i].release(), IGNORE_EXCEPTION);
+        m_element->appendChild(WTF::move(children[i]), IGNORE_EXCEPTION);
 
     m_dummySpan->remove(IGNORE_EXCEPTION);
 }

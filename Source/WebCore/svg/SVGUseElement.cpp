@@ -332,7 +332,7 @@ static void removeDisallowedElementsFromSubtree(SVGElement& subtree)
     for (auto* element : disallowedElements) {
         for (auto& descendant : descendantsOfType<SVGElement>(*element))
             descendant.setCorrespondingElement(nullptr);
-        element->parentNode()->removeChild(element);
+        element->parentNode()->removeChild(*element);
     }
 }
 
@@ -405,7 +405,7 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
 
 void SVGUseElement::cloneTarget(ContainerNode& container, SVGElement& target) const
 {
-    Ref<SVGElement> targetClone = static_pointer_cast<SVGElement>(target.cloneElementWithChildren(document())).releaseNonNull();
+    Ref<SVGElement> targetClone = static_cast<SVGElement&>(target.cloneElementWithChildren(document()).get());
     associateClonesWithOriginals(targetClone.get(), target);
     removeDisallowedElementsFromSubtree(targetClone.get());
     transferSizeAttributesToTargetClone(targetClone.get());
@@ -419,7 +419,7 @@ static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& origi
     ASSERT(!replacementClone.parentNode());
 
     replacementClone.cloneDataFromElement(originalClone);
-    originalClone.cloneChildNodes(&replacementClone);
+    originalClone.cloneChildNodes(replacementClone);
     associateReplacementClonesWithOriginals(replacementClone, originalClone);
     removeDisallowedElementsFromSubtree(replacementClone);
 }
@@ -448,7 +448,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
         if (target)
             originalClone.cloneTarget(replacementClone.get(), *target);
 
-        originalClone.parentNode()->replaceChild(replacementClone.ptr(), &originalClone);
+        originalClone.parentNode()->replaceChild(replacementClone.copyRef(), originalClone);
 
         // Resume iterating, starting just inside the replacement clone.
         it = descendants.from(replacementClone.get());
@@ -472,7 +472,7 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
         auto replacementClone = SVGSVGElement::create(document());
         cloneDataAndChildren(replacementClone.get(), originalClone);
 
-        originalClone.parentNode()->replaceChild(replacementClone.ptr(), &originalClone);
+        originalClone.parentNode()->replaceChild(replacementClone.copyRef(), originalClone);
 
         // Resume iterating, starting just inside the replacement clone.
         it = descendants.from(replacementClone.get());

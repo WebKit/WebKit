@@ -1,12 +1,12 @@
 
-FAIL Calling insertBefore with a non-Node first argument must throw TypeError. assert_throws: function "function () { document.body.insertBefore(null, null) }" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
-FAIL Calling insertBefore with a non-Node first argument on a leaf node DocumentType must throw TypeError. assert_throws: function "function () { node.insertBefore(null, null) }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Calling insertBefore with a non-Node first argument must throw TypeError. 
+PASS Calling insertBefore with a non-Node first argument on a leaf node DocumentType must throw TypeError. 
 PASS Calling insertBefore an a leaf node DocumentType must throw HIERARCHY_REQUEST_ERR. 
-FAIL Calling insertBefore with a non-Node first argument on a leaf node Text must throw TypeError. assert_throws: function "function () { node.insertBefore(null, null) }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Calling insertBefore with a non-Node first argument on a leaf node Text must throw TypeError. 
 PASS Calling insertBefore an a leaf node Text must throw HIERARCHY_REQUEST_ERR. 
-FAIL Calling insertBefore with a non-Node first argument on a leaf node Comment must throw TypeError. assert_throws: function "function () { node.insertBefore(null, null) }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Calling insertBefore with a non-Node first argument on a leaf node Comment must throw TypeError. 
 PASS Calling insertBefore an a leaf node Comment must throw HIERARCHY_REQUEST_ERR. 
-FAIL Calling insertBefore with a non-Node first argument on a leaf node ProcessingInstruction must throw TypeError. assert_throws: function "function () { node.insertBefore(null, null) }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Calling insertBefore with a non-Node first argument on a leaf node ProcessingInstruction must throw TypeError. 
 PASS Calling insertBefore an a leaf node ProcessingInstruction must throw HIERARCHY_REQUEST_ERR. 
 PASS Calling insertBefore with an inclusive ancestor of the context object must throw HIERARCHY_REQUEST_ERR. 
 PASS Calling insertBefore with a reference child whose parent is not the context node must throw a NotFoundError. 

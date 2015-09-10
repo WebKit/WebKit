@@ -28,7 +28,6 @@
 #include "ExceptionCode.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
-#include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableSectionElement.h"
 #include "NodeList.h"
@@ -119,27 +118,27 @@ int HTMLTableRowElement::sectionRowIndex() const
     return rIndex;
 }
 
-RefPtr<HTMLElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec)
+RefPtr<HTMLTableCellElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec)
 {
     Ref<HTMLCollection> children = cells();
     int numCells = children->length();
     if (index < -1 || index > numCells) {
         ec = INDEX_SIZE_ERR;
-        return 0;
+        return nullptr;
     }
 
-    RefPtr<HTMLTableCellElement> cell = HTMLTableCellElement::create(tdTag, document());
+    Ref<HTMLTableCellElement> cell = HTMLTableCellElement::create(tdTag, document());
     if (index < 0 || index >= numCells)
-        appendChild(cell, ec);
+        appendChild(cell.copyRef(), ec);
     else {
         Node* n;
         if (index < 1)
             n = firstChild();
         else
             n = children->item(index);
-        insertBefore(cell, n, ec);
+        insertBefore(cell.copyRef(), n, ec);
     }
-    return cell;
+    return WTF::move(cell);
 }
 
 void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
@@ -150,7 +149,7 @@ void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
         index = numCells-1;
     if (index >= 0 && index < numCells) {
         RefPtr<Node> cell = children->item(index);
-        HTMLElement::removeChild(cell.get(), ec);
+        HTMLElement::removeChild(*cell, ec);
     } else
         ec = INDEX_SIZE_ERR;
 }

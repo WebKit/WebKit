@@ -169,9 +169,9 @@ void HTMLScriptElement::dispatchLoadEvent()
     dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 }
 
-RefPtr<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
-    return adoptRef(new HTMLScriptElement(tagQName(), targetDocument, false, alreadyStarted()));
+    return adoptRef(*new HTMLScriptElement(tagQName(), targetDocument, false, alreadyStarted()));
 }
 
 }

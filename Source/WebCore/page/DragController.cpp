@@ -138,7 +138,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragD
             String title;
             String url = dragData.asURL(DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
-                RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
+                Ref<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
                     // Try the plain text first because the url might be normalized or escaped.
@@ -147,20 +147,19 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragD
                     if (title.isEmpty())
                         title = url;
                 }
-                RefPtr<Node> anchorText = document.createTextNode(title);
-                anchor->appendChild(anchorText, IGNORE_EXCEPTION);
-                RefPtr<DocumentFragment> fragment = document.createDocumentFragment();
-                fragment->appendChild(anchor, IGNORE_EXCEPTION);
-                return fragment.get();
+                anchor->appendChild(document.createTextNode(title), IGNORE_EXCEPTION);
+                Ref<DocumentFragment> fragment = document.createDocumentFragment();
+                fragment->appendChild(WTF::move(anchor), IGNORE_EXCEPTION);
+                return fragment.ptr();
             }
         }
     }
     if (allowPlainText && dragData.containsPlainText()) {
         chosePlainText = true;
-        return createFragmentFromText(context, dragData.asPlainText()).get();
+        return createFragmentFromText(context, dragData.asPlainText()).ptr();
     }
 
-    return 0;
+    return nullptr;
 }
 
 bool DragController::dragIsMove(FrameSelection& selection, DragData& dragData)

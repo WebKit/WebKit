@@ -890,9 +890,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
 
     for (auto* node : nodesVector) {
-        RefPtr<Element> element = createDefaultParagraphElement(*document);
-        element->appendChild(node);
-        fragment->appendChild(element.release());
+        Ref<Element> element = createDefaultParagraphElement(*document);
+        element->appendChild(*node);
+        fragment->appendChild(WTF::move(element));
     }
 
     return kit(fragment.release().get());
@@ -1873,7 +1873,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 {
     RefPtr<Range> range = _private->coreFrame->selection().toNormalizedRange();
 
-    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(*range, text).get()) : nil;
+    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(*range, text).ptr()) : nil;
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
 }
 
@@ -1958,7 +1958,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 {
     RefPtr<Range> range = _private->coreFrame->selection().toNormalizedRange();
     
-    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(*range, text).get()) : nil;
+    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(*range, text).ptr()) : nil;
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
@@ -2264,7 +2264,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 #if PLATFORM(IOS)
 - (DOMDocumentFragment *)_documentFragmentForText:(NSString *)text
 {
-    return kit(createFragmentFromText(*_private->coreFrame->selection().toNormalizedRange().get(), text).get());
+    return kit(createFragmentFromText(*_private->coreFrame->selection().toNormalizedRange().get(), text).ptr());
 }
 
 - (DOMDocumentFragment *)_documentFragmentForWebArchive:(WebArchive *)webArchive

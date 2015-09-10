@@ -429,38 +429,54 @@ Element* Node::nextElementSibling() const
 
 bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec)
 {
+    if (!newChild) {
+        ec = TypeError;
+        return false;
+    }
     if (!is<ContainerNode>(*this)) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return downcast<ContainerNode>(*this).insertBefore(newChild, refChild, ec);
+    return downcast<ContainerNode>(*this).insertBefore(*newChild, refChild, ec);
 }
 
 bool Node::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec)
 {
+    if (!newChild || !oldChild) {
+        ec = TypeError;
+        return false;
+    }
     if (!is<ContainerNode>(*this)) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return downcast<ContainerNode>(*this).replaceChild(newChild, oldChild, ec);
+    return downcast<ContainerNode>(*this).replaceChild(*newChild, *oldChild, ec);
 }
 
 bool Node::removeChild(Node* oldChild, ExceptionCode& ec)
 {
+    if (!oldChild) {
+        ec = TypeError;
+        return false;
+    }
     if (!is<ContainerNode>(*this)) {
         ec = NOT_FOUND_ERR;
         return false;
     }
-    return downcast<ContainerNode>(*this).removeChild(oldChild, ec);
+    return downcast<ContainerNode>(*this).removeChild(*oldChild, ec);
 }
 
 bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
 {
+    if (!newChild) {
+        ec = TypeError;
+        return false;
+    }
     if (!is<ContainerNode>(*this)) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return downcast<ContainerNode>(*this).appendChild(newChild, ec);
+    return downcast<ContainerNode>(*this).appendChild(*newChild, ec);
 }
 
 static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<NodeOrString>& nodeOrStringVector)
@@ -515,7 +531,7 @@ void Node::before(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
     else
         viablePreviousSibling = parent->firstChild();
 
-    parent->insertBefore(node.release(), viablePreviousSibling.get(), ec);
+    parent->insertBefore(node.releaseNonNull(), viablePreviousSibling.get(), ec);
 }
 
 void Node::after(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
@@ -531,7 +547,7 @@ void Node::after(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
     if (ec || !node)
         return;
 
-    parent->insertBefore(node.release(), viableNextSibling.get(), ec);
+    parent->insertBefore(node.releaseNonNull(), viableNextSibling.get(), ec);
 }
 
 void Node::replaceWith(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
@@ -548,15 +564,15 @@ void Node::replaceWith(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode&
         return;
 
     if (parentNode() == parent)
-        parent->replaceChild(node.release(), this, ec);
+        parent->replaceChild(node.releaseNonNull(), *this, ec);
     else
-        parent->insertBefore(node.release(), viableNextSibling.get(), ec);
+        parent->insertBefore(node.releaseNonNull(), viableNextSibling.get(), ec);
 }
 
 void Node::remove(ExceptionCode& ec)
 {
     if (ContainerNode* parent = parentNode())
-        parent->removeChild(this, ec);
+        parent->removeChild(*this, ec);
 }
 
 void Node::normalize()

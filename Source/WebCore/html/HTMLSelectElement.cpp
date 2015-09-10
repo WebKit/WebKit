@@ -227,7 +227,7 @@ void HTMLSelectElement::add(HTMLElement* element, HTMLElement* beforeElement, Ex
     // Make sure the element is ref'd and deref'd so we don't leak it.
     Ref<HTMLElement> protectNewChild(*element);
 
-    insertBefore(element, beforeElement, ec);
+    insertBefore(*element, beforeElement, ec);
     updateValidity();
 }
 
@@ -486,12 +486,12 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
 
         // Removing children fires mutation events, which might mutate the DOM further, so we first copy out a list
         // of elements that we intend to remove then attempt to remove them one at a time.
-        Vector<RefPtr<Element>> itemsToRemove;
+        Vector<Ref<Element>> itemsToRemove;
         size_t optionIndex = 0;
         for (auto& item : items) {
             if (is<HTMLOptionElement>(*item) && optionIndex++ >= newLen) {
                 ASSERT(item->parentNode());
-                itemsToRemove.append(item);
+                itemsToRemove.append(*item);
             }
         }
 

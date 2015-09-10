@@ -26,6 +26,7 @@
 #ifndef HTMLTableRowElement_h
 #define HTMLTableRowElement_h
 
+#include "HTMLTableCellElement.h"
 #include "HTMLTablePartElement.h"
 
 namespace WebCore {
@@ -41,8 +42,8 @@ public:
     int sectionRowIndex() const;
     void setSectionRowIndex(int);
 
-    RefPtr<HTMLElement> insertCell(ExceptionCode& ec) { return insertCell(-1, ec); }
-    RefPtr<HTMLElement> insertCell(int index, ExceptionCode&);
+    RefPtr<HTMLTableCellElement> insertCell(ExceptionCode& ec) { return insertCell(-1, ec); }
+    RefPtr<HTMLTableCellElement> insertCell(int index, ExceptionCode&);
     void deleteCell(int index, ExceptionCode&);
 
     Ref<HTMLCollection> cells();

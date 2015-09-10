@@ -229,16 +229,16 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     ASSERT(!m_value);
 
-    RefPtr<MeterInnerElement> inner = MeterInnerElement::create(document());
-    root->appendChild(inner);
+    Ref<MeterInnerElement> inner = MeterInnerElement::create(document());
+    root->appendChild(inner.copyRef());
 
-    RefPtr<MeterBarElement> bar = MeterBarElement::create(document());
+    Ref<MeterBarElement> bar = MeterBarElement::create(document());
     m_value = MeterValueElement::create(document());
     m_value->setWidthPercentage(0);
     m_value->updatePseudo();
-    bar->appendChild(m_value, ASSERT_NO_EXCEPTION);
+    bar->appendChild(*m_value, ASSERT_NO_EXCEPTION);
 
-    inner->appendChild(bar, ASSERT_NO_EXCEPTION);
+    inner->appendChild(WTF::move(bar), ASSERT_NO_EXCEPTION);
 }
 
 } // namespace

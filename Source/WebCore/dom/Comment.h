@@ -36,7 +36,7 @@ private:
 
     virtual String nodeName() const override;
     virtual NodeType nodeType() const override;
-    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     virtual bool childTypeAllowed(NodeType) const override;
 };
 

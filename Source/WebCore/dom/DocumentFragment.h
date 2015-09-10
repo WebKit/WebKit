@@ -48,7 +48,7 @@ protected:
 
 private:
     virtual NodeType nodeType() const override final;
-    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     virtual bool childTypeAllowed(NodeType) const override;
 };
 

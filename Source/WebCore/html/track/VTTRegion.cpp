@@ -354,7 +354,7 @@ void VTTRegion::appendTextTrackCueBox(PassRefPtr<VTTCueBox> displayBox)
     if (m_cueContainer->contains(displayBox.get()))
         return;
 
-    m_cueContainer->appendChild(displayBox, ASSERT_NO_EXCEPTION);
+    m_cueContainer->appendChild(*displayBox, ASSERT_NO_EXCEPTION);
     displayLastTextTrackCueBox();
 }
 
@@ -404,14 +404,14 @@ void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
     m_cueContainer->setInlineStyleProperty(CSSPropertyTop, m_currentTop, CSSPrimitiveValue::CSS_PX);
 }
 
-PassRefPtr<HTMLDivElement> VTTRegion::getDisplayTree()
+HTMLDivElement& VTTRegion::getDisplayTree()
 {
     if (!m_regionDisplayTree) {
         m_regionDisplayTree = HTMLDivElement::create(*ownerDocument());
         prepareRegionDisplayTree();
     }
 
-    return m_regionDisplayTree;
+    return *m_regionDisplayTree;
 }
 
 void VTTRegion::prepareRegionDisplayTree()
@@ -453,7 +453,7 @@ void VTTRegion::prepareRegionDisplayTree()
     m_cueContainer->setInlineStyleProperty(CSSPropertyTop, 0.0f, CSSPrimitiveValue::CSS_PX);
 
     m_cueContainer->setPseudo(textTrackCueContainerShadowPseudoId());
-    m_regionDisplayTree->appendChild(m_cueContainer);
+    m_regionDisplayTree->appendChild(*m_cueContainer);
 
     // 7.5 Every WebVTT region object is initialised with the following CSS
     m_regionDisplayTree->setPseudo(textTrackRegionShadowPseudoId());

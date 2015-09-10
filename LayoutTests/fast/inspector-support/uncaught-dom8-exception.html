@@ -6,7 +6,7 @@ function onload()
 {
     if (window.testRunner)
         testRunner.dumpAsText();
-    document.appendChild();
+    document.body.removeAttributeNode(document.createAttribute("doesNotExist"));
 }
 
 </script>

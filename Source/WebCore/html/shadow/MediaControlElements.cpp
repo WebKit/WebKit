@@ -807,21 +807,21 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     CaptionUserPreferences* captionPreferences = document().page()->group().captionPreferences();
     Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences->sortedTrackListForMenu(trackList);
 
-    RefPtr<Element> captionsHeader = document().createElement(h3Tag, ASSERT_NO_EXCEPTION);
+    Ref<Element> captionsHeader = document().createElement(h3Tag, ASSERT_NO_EXCEPTION);
     captionsHeader->appendChild(document().createTextNode(textTrackSubtitlesText()));
-    appendChild(captionsHeader);
-    RefPtr<Element> captionsMenuList = document().createElement(ulTag, ASSERT_NO_EXCEPTION);
+    appendChild(WTF::move(captionsHeader));
+    Ref<Element> captionsMenuList = document().createElement(ulTag, ASSERT_NO_EXCEPTION);
 
     for (unsigned i = 0, length = tracksForMenu.size(); i < length; ++i) {
         RefPtr<TextTrack> textTrack = tracksForMenu[i];
-        RefPtr<Element> menuItem = document().createElement(liTag, ASSERT_NO_EXCEPTION);
+        Ref<Element> menuItem = document().createElement(liTag, ASSERT_NO_EXCEPTION);
         menuItem->appendChild(document().createTextNode(captionPreferences->displayNameForTrack(textTrack.get())));
-        captionsMenuList->appendChild(menuItem);
-        m_menuItems.append(menuItem);
-        m_menuToTrackMap.add(menuItem, textTrack);
+        captionsMenuList->appendChild(menuItem.copyRef());
+        m_menuItems.append(menuItem.ptr());
+        m_menuToTrackMap.add(menuItem.ptr(), textTrack);
     }
 
-    appendChild(captionsMenuList);
+    appendChild(WTF::move(captionsMenuList));
 #endif
 }
 
@@ -1186,16 +1186,16 @@ void MediaControlTextTrackContainerElement::updateDisplay()
             // track cue region identifier, run the following substeps:
             if (displayBox->hasChildNodes() && !contains(displayBox.get())) {
                 // Note: the display tree of a cue is removed when the active flag of the cue is unset.
-                appendChild(displayBox, ASSERT_NO_EXCEPTION);
+                appendChild(*displayBox, ASSERT_NO_EXCEPTION);
                 cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
             }
         } else {
             // Let region be the WebVTT region whose region identifier
             // matches the text track cue region identifier of cue.
-            RefPtr<HTMLDivElement> regionNode = region->getDisplayTree();
+            Ref<HTMLDivElement> regionNode = region->getDisplayTree();
 
             // Append the region to the viewport, if it was not already.
-            if (!contains(regionNode.get()))
+            if (!contains(regionNode.ptr()))
                 appendChild(region->getDisplayTree());
 
             region->appendTextTrackCueBox(displayBox);

@@ -201,8 +201,8 @@ public:
         SelfWithTemplateContent,
         Everything,
     };
-    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) = 0;
-    RefPtr<Node> cloneNode(bool deep) { return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf); }
+    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) = 0;
+    Ref<Node> cloneNode(bool deep) { return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf); }
 
     virtual const AtomicString& localName() const;
     virtual const AtomicString& namespaceURI() const;

@@ -130,7 +130,7 @@ private:
 
     virtual HTMLFormElement* virtualForm() const;
 
-    Node* insertAdjacent(const String& where, Node* newChild, ExceptionCode&);
+    Node* insertAdjacent(const String& where, Ref<Node>&& newChild, ExceptionCode&);
     Ref<DocumentFragment> textToFragment(const String&, ExceptionCode&);
 
     void dirAttributeChanged(const AtomicString&);

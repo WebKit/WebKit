@@ -1225,21 +1225,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on iframe.contentDocu
     [native code]
 }" did not throw
 PASS Node interface: iframe.contentDocument must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: iframe.contentDocument must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling appendChild(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Node interface: calling replaceChild(Node,Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Node interface: iframe.contentDocument must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS EventTarget interface: iframe.contentDocument must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -1551,21 +1545,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.implement
     [native code]
 }" did not throw
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling appendChild(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Node interface: calling replaceChild(Node,Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS EventTarget interface: document.implementation.createDocument(null, "", null) must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -2171,21 +2159,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createEle
     [native code]
 }" did not throw
 PASS Node interface: document.createElement("noscript") must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
-PASS Node interface: document.createElement("noscript") must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
-PASS Node interface: document.createElement("noscript") must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
 }" did not throw
+PASS Node interface: document.createElement("noscript") must inherit property "appendChild" with the proper type (41) 
+PASS Node interface: calling appendChild(Node) on document.createElement("noscript") with too few arguments must throw TypeError 
+PASS Node interface: document.createElement("noscript") must inherit property "replaceChild" with the proper type (42) 
+PASS Node interface: calling replaceChild(Node,Node) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Node interface: document.createElement("noscript") must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createElement("noscript") must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]

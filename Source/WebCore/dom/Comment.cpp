@@ -46,7 +46,7 @@ Node::NodeType Comment::nodeType() const
     return COMMENT_NODE;
 }
 
-RefPtr<Node> Comment::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Comment::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
     return create(targetDocument, data());
 }

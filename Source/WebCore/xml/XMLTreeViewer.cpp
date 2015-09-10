@@ -61,8 +61,8 @@ void XMLTreeViewer::transformDocumentToTreeView()
     m_document.frame()->script().evaluate(ScriptSourceCode(AtomicString("prepareWebKitXMLViewer('This XML file does not appear to have any style information associated with it. The document tree is shown below.');")));
 
     String cssString = StringImpl::createWithoutCopying(XMLViewer_css, sizeof(XMLViewer_css));
-    RefPtr<Text> text = m_document.createTextNode(cssString);
-    m_document.getElementById(String(ASCIILiteral("xml-viewer-style")))->appendChild(text, IGNORE_EXCEPTION);
+    Ref<Text> text = m_document.createTextNode(cssString);
+    m_document.getElementById(String(ASCIILiteral("xml-viewer-style")))->appendChild(WTF::move(text), IGNORE_EXCEPTION);
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 

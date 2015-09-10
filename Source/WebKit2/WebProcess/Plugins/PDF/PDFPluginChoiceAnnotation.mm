@@ -83,14 +83,14 @@ PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
     NSString *selectedChoice = choiceAnnotation.stringValue;
 
     for (NSString *choice in choices) {
-        RefPtr<Element> choiceOption = document.createElement(optionTag, false);
+        Ref<Element> choiceOption = document.createElement(optionTag, false);
         choiceOption->setAttribute(valueAttr, choice);
         choiceOption->setTextContent(choice, ASSERT_NO_EXCEPTION);
 
         if (choice == selectedChoice)
             choiceOption->setAttribute(selectedAttr, "selected");
 
-        styledElement->appendChild(choiceOption);
+        styledElement->appendChild(WTF::move(choiceOption));
     }
 
     return element;

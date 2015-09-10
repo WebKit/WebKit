@@ -49,12 +49,12 @@ public:
     HTMLTableSectionElement* tFoot() const;
     void setTFoot(PassRefPtr<HTMLTableSectionElement>, ExceptionCode&);
 
-    RefPtr<HTMLElement> createTHead();
+    Ref<HTMLTableSectionElement> createTHead();
     void deleteTHead();
-    RefPtr<HTMLElement> createTFoot();
+    Ref<HTMLTableSectionElement> createTFoot();
     void deleteTFoot();
-    RefPtr<HTMLElement> createTBody();
-    RefPtr<HTMLElement> createCaption();
+    Ref<HTMLTableSectionElement> createTBody();
+    Ref<HTMLTableCaptionElement> createCaption();
     void deleteCaption();
     RefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
     RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);

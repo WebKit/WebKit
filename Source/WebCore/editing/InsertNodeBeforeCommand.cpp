@@ -55,7 +55,7 @@ void InsertNodeBeforeCommand::doApply()
         return;
     ASSERT(isEditableNode(*parent));
 
-    parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION);
+    parent->insertBefore(*m_insertChild, m_refChild.get(), IGNORE_EXCEPTION);
 
     if (shouldPostAccessibilityNotification()) {
         Position position = is<Text>(m_insertChild.get()) ? Position(downcast<Text>(m_insertChild.get()), 0) : createLegacyEditingPosition(m_insertChild.get(), 0);

@@ -238,7 +238,7 @@ void ReplacementFragment::removeNode(PassRefPtr<Node> node)
     if (!parent)
         return;
     
-    parent->removeChild(node.get(), ASSERT_NO_EXCEPTION);
+    parent->removeChild(*node, ASSERT_NO_EXCEPTION);
 }
 
 void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
@@ -250,14 +250,14 @@ void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
     if (!parent)
         return;
         
-    parent->insertBefore(node, refNode, ASSERT_NO_EXCEPTION);
+    parent->insertBefore(*node, refNode, ASSERT_NO_EXCEPTION);
 }
 
 PassRefPtr<StyledElement> ReplacementFragment::insertFragmentForTestRendering(Node* rootEditableElement)
 {
     RefPtr<StyledElement> holder = createDefaultParagraphElement(document());
 
-    holder->appendChild(m_fragment, ASSERT_NO_EXCEPTION);
+    holder->appendChild(*m_fragment, ASSERT_NO_EXCEPTION);
     rootEditableElement->appendChild(holder.get(), ASSERT_NO_EXCEPTION);
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -270,8 +270,8 @@ void ReplacementFragment::restoreAndRemoveTestRenderingNodesToFragment(StyledEle
         return;
     
     while (RefPtr<Node> node = holder->firstChild()) {
-        holder->removeChild(node.get(), ASSERT_NO_EXCEPTION);
-        m_fragment->appendChild(node.get(), ASSERT_NO_EXCEPTION);
+        holder->removeChild(*node, ASSERT_NO_EXCEPTION);
+        m_fragment->appendChild(*node, ASSERT_NO_EXCEPTION);
     }
 
     removeNode(holder);
@@ -1454,7 +1454,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
     }
 
     while (RefPtr<Node> listItem = listElement->firstChild()) {
-        listElement->removeChild(listItem.get(), ASSERT_NO_EXCEPTION);
+        listElement->removeChild(*listItem, ASSERT_NO_EXCEPTION);
         if (isStart || isMiddle) {
             insertNodeBefore(listItem, lastNode);
             insertedNodes.respondToNodeInsertion(listItem.get());

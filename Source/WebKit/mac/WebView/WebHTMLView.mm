@@ -2267,7 +2267,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     if (pboardType == NSStringPboardType) {
         if (!context)
             return nil;
-        return kit(createFragmentFromText(*core(context), [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]).get());
+        return kit(createFragmentFromText(*core(context), [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]).ptr());
     }
     return nil;
 }

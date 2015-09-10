@@ -406,9 +406,9 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
     Ref<HTMLTextAreaElement> protectFromMutationEvents(*this);
 
     // To preserve comments, remove only the text nodes, then add a single text node.
-    Vector<RefPtr<Text>> textNodes;
+    Vector<Ref<Text>> textNodes;
     for (Text* textNode = TextNodeTraversal::firstChild(*this); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
-        textNodes.append(textNode);
+        textNodes.append(*textNode);
 
     size_t size = textNodes.size();
     for (size_t i = 0; i < size; ++i)
@@ -523,8 +523,8 @@ void HTMLTextAreaElement::updatePlaceholderText()
     String placeholderText = strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
-            userAgentShadowRoot()->removeChild(m_placeholder, ASSERT_NO_EXCEPTION);
-            m_placeholder = 0;
+            userAgentShadowRoot()->removeChild(*m_placeholder, ASSERT_NO_EXCEPTION);
+            m_placeholder = nullptr;
         }
         return;
     }
@@ -533,7 +533,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
         m_placeholder = placeholder.get();
         m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
         m_placeholder->setInlineStyleProperty(CSSPropertyDisplay, isPlaceholderVisible() ? CSSValueBlock : CSSValueNone, true);
-        userAgentShadowRoot()->insertBefore(m_placeholder, innerTextElement()->nextSibling());
+        userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->nextSibling());
     }
     m_placeholder->setInnerText(placeholderText, ASSERT_NO_EXCEPTION);
 }

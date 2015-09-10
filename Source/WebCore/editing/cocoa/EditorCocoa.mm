@@ -56,16 +56,16 @@ RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
     if (!typingStyle || !typingStyle->style())
         return &position.deprecatedNode()->renderer()->style();
 
-    RefPtr<Element> styleElement = frame->document()->createElement(HTMLNames::spanTag, false);
+    Ref<Element> styleElement = frame->document()->createElement(HTMLNames::spanTag, false);
 
     String styleText = typingStyle->style()->asText() + " display: inline";
     styleElement->setAttribute(HTMLNames::styleAttr, styleText);
 
     styleElement->appendChild(frame->document()->createEditingTextNode(""), ASSERT_NO_EXCEPTION);
 
-    position.deprecatedNode()->parentNode()->appendChild(styleElement, ASSERT_NO_EXCEPTION);
+    position.deprecatedNode()->parentNode()->appendChild(styleElement.copyRef(), ASSERT_NO_EXCEPTION);
 
-    nodeToRemove = styleElement.get();
+    nodeToRemove = styleElement.ptr();
 
     frame->document()->updateStyleIfNeeded();
     return styleElement->renderer() ? &styleElement->renderer()->style() : nullptr;

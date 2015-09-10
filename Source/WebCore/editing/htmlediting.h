@@ -206,8 +206,8 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node*, int index);
     
 // Functions returning HTMLElement
     
-WEBCORE_EXPORT PassRefPtr<HTMLElement> createDefaultParagraphElement(Document&);
-PassRefPtr<HTMLElement> createBreakElement(Document&);
+WEBCORE_EXPORT Ref<HTMLElement> createDefaultParagraphElement(Document&);
+Ref<HTMLElement> createBreakElement(Document&);
 PassRefPtr<HTMLElement> createOrderedListElement(Document&);
 PassRefPtr<HTMLElement> createUnorderedListElement(Document&);
 PassRefPtr<HTMLElement> createListItemElement(Document&);
@@ -222,10 +222,10 @@ Node* enclosingListChild(Node*);
 // Element
 // -------------------------------------------------------------------------
 
-PassRefPtr<Element> createTabSpanElement(Document&);
-PassRefPtr<Element> createTabSpanElement(Document&, PassRefPtr<Node> tabTextNode);
-PassRefPtr<Element> createTabSpanElement(Document&, const String& tabText);
-PassRefPtr<Element> createBlockPlaceholderElement(Document&);
+Ref<Element> createTabSpanElement(Document&);
+Ref<Element> createTabSpanElement(Document&, PassRefPtr<Node> tabTextNode);
+Ref<Element> createTabSpanElement(Document&, const String& tabText);
+Ref<Element> createBlockPlaceholderElement(Document&);
 
 Element* editableRootForPosition(const Position&, EditableType = ContentIsEditable);
 Element* unsplittableElementForPosition(const Position&);

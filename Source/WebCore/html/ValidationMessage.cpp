@@ -180,32 +180,32 @@ void ValidationMessage::buildBubbleTree()
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
-    shadowRoot.appendChild(m_bubble.get(), ASSERT_NO_EXCEPTION);
+    shadowRoot.appendChild(*m_bubble, ASSERT_NO_EXCEPTION);
     document.updateLayout();
     adjustBubblePosition(m_element->renderer()->absoluteBoundingBoxRect(), m_bubble.get());
 
-    RefPtr<HTMLDivElement> clipper = HTMLDivElement::create(document);
+    Ref<HTMLDivElement> clipper = HTMLDivElement::create(document);
     clipper->setPseudo(AtomicString("-webkit-validation-bubble-arrow-clipper", AtomicString::ConstructFromLiteral));
-    RefPtr<HTMLDivElement> bubbleArrow = HTMLDivElement::create(document);
+    Ref<HTMLDivElement> bubbleArrow = HTMLDivElement::create(document);
     bubbleArrow->setPseudo(AtomicString("-webkit-validation-bubble-arrow", AtomicString::ConstructFromLiteral));
-    clipper->appendChild(bubbleArrow.release(), ASSERT_NO_EXCEPTION);
-    m_bubble->appendChild(clipper.release(), ASSERT_NO_EXCEPTION);
+    clipper->appendChild(WTF::move(bubbleArrow), ASSERT_NO_EXCEPTION);
+    m_bubble->appendChild(WTF::move(clipper), ASSERT_NO_EXCEPTION);
 
-    RefPtr<HTMLElement> message = HTMLDivElement::create(document);
+    Ref<HTMLElement> message = HTMLDivElement::create(document);
     message->setPseudo(AtomicString("-webkit-validation-bubble-message", AtomicString::ConstructFromLiteral));
-    RefPtr<HTMLElement> icon = HTMLDivElement::create(document);
+    Ref<HTMLElement> icon = HTMLDivElement::create(document);
     icon->setPseudo(AtomicString("-webkit-validation-bubble-icon", AtomicString::ConstructFromLiteral));
-    message->appendChild(icon.release(), ASSERT_NO_EXCEPTION);
-    RefPtr<HTMLElement> textBlock = HTMLDivElement::create(document);
+    message->appendChild(WTF::move(icon), ASSERT_NO_EXCEPTION);
+    Ref<HTMLElement> textBlock = HTMLDivElement::create(document);
     textBlock->setPseudo(AtomicString("-webkit-validation-bubble-text-block", AtomicString::ConstructFromLiteral));
     m_messageHeading = HTMLDivElement::create(document);
     m_messageHeading->setPseudo(AtomicString("-webkit-validation-bubble-heading", AtomicString::ConstructFromLiteral));
-    textBlock->appendChild(m_messageHeading, ASSERT_NO_EXCEPTION);
+    textBlock->appendChild(*m_messageHeading, ASSERT_NO_EXCEPTION);
     m_messageBody = HTMLDivElement::create(document);
     m_messageBody->setPseudo(AtomicString("-webkit-validation-bubble-body", AtomicString::ConstructFromLiteral));
-    textBlock->appendChild(m_messageBody, ASSERT_NO_EXCEPTION);
-    message->appendChild(textBlock.release(), ASSERT_NO_EXCEPTION);
-    m_bubble->appendChild(message.release(), ASSERT_NO_EXCEPTION);
+    textBlock->appendChild(*m_messageBody, ASSERT_NO_EXCEPTION);
+    message->appendChild(WTF::move(textBlock), ASSERT_NO_EXCEPTION);
+    m_bubble->appendChild(WTF::move(message), ASSERT_NO_EXCEPTION);
 
     setMessageDOMAndStartTimer();
 
@@ -237,7 +237,7 @@ void ValidationMessage::deleteBubbleTree()
     if (m_bubble) {
         m_messageHeading = nullptr;
         m_messageBody = nullptr;
-        m_element->userAgentShadowRoot()->removeChild(m_bubble.get(), ASSERT_NO_EXCEPTION);
+        m_element->userAgentShadowRoot()->removeChild(*m_bubble, ASSERT_NO_EXCEPTION);
         m_bubble = nullptr;
     }
     m_message = String();

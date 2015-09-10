@@ -104,27 +104,27 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     RefPtr<Element> rowElement = m_tableElement->insertRow(-1, IGNORE_EXCEPTION);
     rowElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryEntryRow");
 
-    RefPtr<Element> element = document()->createElement(tdTag, false);
+    Ref<Element> element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
     if (isDirectory)
         element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeDirectory");
     else
         element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeFile");
-    rowElement->appendChild(element, IGNORE_EXCEPTION);
+    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
 
     element = createTDForFilename(filename);
     element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileName");
-    rowElement->appendChild(element, IGNORE_EXCEPTION);
+    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), date), IGNORE_EXCEPTION);
     element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileDate");
-    rowElement->appendChild(element, IGNORE_EXCEPTION);
+    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), size), IGNORE_EXCEPTION);
     element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileSize");
-    rowElement->appendChild(element, IGNORE_EXCEPTION);
+    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
 }
 
 Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
@@ -135,12 +135,12 @@ Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filen
     else
         fullURL = fullURL + '/' + filename;
 
-    RefPtr<Element> anchorElement = document()->createElement(aTag, false);
+    Ref<Element> anchorElement = document()->createElement(aTag, false);
     anchorElement->setAttribute(HTMLNames::hrefAttr, fullURL);
     anchorElement->appendChild(Text::create(*document(), filename), IGNORE_EXCEPTION);
 
     Ref<Element> tdElement = document()->createElement(tdTag, false);
-    tdElement->appendChild(anchorElement, IGNORE_EXCEPTION);
+    tdElement->appendChild(WTF::move(anchorElement), IGNORE_EXCEPTION);
 
     return tdElement;
 }
@@ -312,9 +312,9 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     // If that fails for some reason, cram it on the end of the document as a last
     // ditch effort
     if (auto* body = document()->bodyOrFrameset())
-        body->appendChild(m_tableElement, IGNORE_EXCEPTION);
+        body->appendChild(*m_tableElement, IGNORE_EXCEPTION);
     else
-        document()->appendChild(m_tableElement, IGNORE_EXCEPTION);
+        document()->appendChild(*m_tableElement, IGNORE_EXCEPTION);
 
     return true;
 }
@@ -325,16 +325,16 @@ void FTPDirectoryDocumentParser::createBasicDocument()
 
     // FIXME: Make this "basic document" more acceptable
 
-    RefPtr<Element> bodyElement = document()->createElement(bodyTag, false);
+    Ref<Element> bodyElement = document()->createElement(bodyTag, false);
 
-    document()->appendChild(bodyElement, IGNORE_EXCEPTION);
+    document()->appendChild(bodyElement.copyRef(), IGNORE_EXCEPTION);
 
-    RefPtr<Element> tableElement = document()->createElement(tableTag, false);
-    m_tableElement = downcast<HTMLTableElement>(tableElement.get());
+    Ref<Element> tableElement = document()->createElement(tableTag, false);
+    m_tableElement = downcast<HTMLTableElement>(tableElement.ptr());
     m_tableElement->setAttribute(HTMLNames::idAttr, "ftpDirectoryTable");
     m_tableElement->setAttribute(HTMLNames::styleAttr, "width:100%");
 
-    bodyElement->appendChild(m_tableElement, IGNORE_EXCEPTION);
+    bodyElement->appendChild(WTF::move(tableElement), IGNORE_EXCEPTION);
 
     document()->processViewport("width=device-width", ViewportArguments::ViewportMeta);
 }

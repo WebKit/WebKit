@@ -613,8 +613,8 @@ void Editor::setTextAsChildOfElement(const String& text, Element* elem)
             
         RefPtr<Range> context = document().createRange();
         context->selectNodeContents(elem, ec);
-        RefPtr<DocumentFragment> fragment = createFragmentFromText(*context.get(), text);
-        elem->appendChild(fragment, ec);
+        Ref<DocumentFragment> fragment = createFragmentFromText(*context.get(), text);
+        elem->appendChild(WTF::move(fragment), ec);
     
         // restore element to document
         if (parent) {

@@ -47,16 +47,16 @@ void SplitElementCommand::executeApply()
     if (m_atChild->parentNode() != m_element2)
         return;
     
-    Vector<RefPtr<Node>> children;
+    Vector<Ref<Node>> children;
     for (Node* node = m_element2->firstChild(); node != m_atChild; node = node->nextSibling())
-        children.append(node);
+        children.append(*node);
     
     ExceptionCode ec = 0;
     
     ContainerNode* parent = m_element2->parentNode();
     if (!parent || !parent->hasEditableStyle())
         return;
-    parent->insertBefore(m_element1.get(), m_element2.get(), ec);
+    parent->insertBefore(*m_element1, m_element2.get(), ec);
     if (ec)
         return;
 
@@ -65,7 +65,7 @@ void SplitElementCommand::executeApply()
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_element1->appendChild(children[i], ec);
+        m_element1->appendChild(WTF::move(children[i]), ec);
 }
     
 void SplitElementCommand::doApply()
@@ -80,15 +80,15 @@ void SplitElementCommand::doUnapply()
     if (!m_element1 || !m_element1->hasEditableStyle() || !m_element2->hasEditableStyle())
         return;
 
-    Vector<RefPtr<Node>> children;
+    Vector<Ref<Node>> children;
     for (Node* node = m_element1->firstChild(); node; node = node->nextSibling())
-        children.append(node);
+        children.append(*node);
 
     RefPtr<Node> refChild = m_element2->firstChild();
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_element2->insertBefore(children[i].get(), refChild.get(), IGNORE_EXCEPTION);
+        m_element2->insertBefore(WTF::move(children[i]), refChild.get(), IGNORE_EXCEPTION);
 
     // Recover the id attribute of the original element.
     const AtomicString& id = m_element1->getIdAttribute();

@@ -1,3 +1,27 @@
+2015-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Node.appendChild(null) / replaceChild(null, null) / removeChild(null) / insertBefore(null, ref) should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=148971
+        <rdar://problem/22560883>
+        <rdar://problem/22559225>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline tests now that we throw a different exception type.
+
+        * fast/dom/Document/replaceChild-null-oldChild-expected.txt:
+        * fast/dom/Document/script-tests/replaceChild-null-oldChild.js:
+        * fast/dom/Node/fragment-mutation-expected.txt:
+        * fast/dom/Node/fragment-mutation.html:
+        * fast/dom/incompatible-operations-expected.txt:
+        * fast/dom/incompatible-operations.html:
+        * fast/dom/move-nodes-across-documents.html:
+        * fast/dom/processing-instruction-appendChild-exceptions-expected.txt:
+        * fast/dom/processing-instruction-appendChild-exceptions.xhtml:
+        * fast/dom/setter-type-enforcement-expected.txt:
+        * fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt:
+        * fast/inspector-support/uncaught-dom8-exception.html:
+
 2015-09-10  Brady Eidson  <beidson@apple.com>
 
         Mark some more W3C IDB tests as flaky.

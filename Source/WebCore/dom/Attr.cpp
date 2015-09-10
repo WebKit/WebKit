@@ -138,11 +138,11 @@ void Attr::setNodeValue(const String& v, ExceptionCode& ec)
     setValue(v, ec);
 }
 
-RefPtr<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
-    RefPtr<Attr> clone = adoptRef(new Attr(targetDocument, qualifiedName(), value()));
-    cloneChildNodes(clone.get());
-    return clone.release();
+    Ref<Attr> clone = adoptRef(*new Attr(targetDocument, qualifiedName(), value()));
+    cloneChildNodes(clone);
+    return WTF::move(clone);
 }
 
 // DOM Section 1.1.1

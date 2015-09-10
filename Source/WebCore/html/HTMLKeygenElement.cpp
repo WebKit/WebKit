@@ -58,7 +58,7 @@ protected:
     }
 
 private:
-    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) override
+    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) override
     {
         return create(targetDocument);
     }
@@ -73,14 +73,14 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     Vector<String> keys;
     getSupportedKeySizes(keys);
 
-    RefPtr<HTMLSelectElement> select = KeygenSelectElement::create(document);
+    Ref<HTMLSelectElement> select = KeygenSelectElement::create(document);
     for (size_t i = 0; i < keys.size(); ++i) {
-        RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document);
-        select->appendChild(option, IGNORE_EXCEPTION);
+        Ref<HTMLOptionElement> option = HTMLOptionElement::create(document);
+        select->appendChild(option.copyRef(), IGNORE_EXCEPTION);
         option->appendChild(Text::create(document, keys[i]), IGNORE_EXCEPTION);
     }
 
-    ensureUserAgentShadowRoot().appendChild(select, IGNORE_EXCEPTION);
+    ensureUserAgentShadowRoot().appendChild(WTF::move(select), IGNORE_EXCEPTION);
 }
 
 Ref<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)

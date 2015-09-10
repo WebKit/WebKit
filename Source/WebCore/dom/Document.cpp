@@ -1009,7 +1009,7 @@ RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
             }
         }
         if (source->parentNode()) {
-            source->parentNode()->removeChild(source.get(), ec);
+            source->parentNode()->removeChild(*source, ec);
             if (ec)
                 return nullptr;
         }
@@ -1547,7 +1547,7 @@ void Document::setTitle(const String& title)
         if (!headElement)
             return;
         m_titleElement = createElement(titleTag, false);
-        headElement->appendChild(m_titleElement, ASSERT_NO_EXCEPTION);
+        headElement->appendChild(*m_titleElement, ASSERT_NO_EXCEPTION);
     }
 
     // The DOM API has no method of specifying direction, so assume LTR.
@@ -2518,11 +2518,10 @@ void Document::setBodyOrFrameset(PassRefPtr<HTMLElement> prpNewBody, ExceptionCo
         newBody = downcast<HTMLElement>(node.get());
     }
 
-    HTMLElement* b = bodyOrFrameset();
-    if (!b)
-        documentElement()->appendChild(newBody.release(), ec);
+    if (auto* body = bodyOrFrameset())
+        documentElement()->replaceChild(newBody.releaseNonNull(), *body, ec);
     else
-        documentElement()->replaceChild(newBody.release(), b, ec);
+        documentElement()->appendChild(newBody.releaseNonNull(), ec);
 }
 
 HTMLHeadElement* Document::head()
@@ -3326,13 +3325,9 @@ bool Document::childTypeAllowed(NodeType type) const
     return false;
 }
 
-bool Document::canReplaceChild(Node* newChild, Node* oldChild)
+bool Document::canReplaceChild(Node& newChild, Node& oldChild)
 {
-    if (!oldChild)
-        // ContainerNode::replaceChild will raise a NOT_FOUND_ERR.
-        return true;
-
-    if (oldChild->nodeType() == newChild->nodeType())
+    if (oldChild.nodeType() == newChild.nodeType())
         return true;
 
     int numDoctypes = 0;
@@ -3341,7 +3336,7 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     // First, check how many doctypes and elements we have, not counting
     // the child we're about to remove.
     for (Node* c = firstChild(); c; c = c->nextSibling()) {
-        if (c == oldChild)
+        if (c == &oldChild)
             continue;
         
         switch (c->nodeType()) {
@@ -3357,8 +3352,8 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     }
     
     // Then, see how many doctypes and elements might be added by the new child.
-    if (newChild->isDocumentFragment()) {
-        for (Node* c = newChild->firstChild(); c; c = c->nextSibling()) {
+    if (newChild.isDocumentFragment()) {
+        for (Node* c = newChild.firstChild(); c; c = c->nextSibling()) {
             switch (c->nodeType()) {
             case ATTRIBUTE_NODE:
             case CDATA_SECTION_NODE:
@@ -3381,7 +3376,7 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
             }
         }
     } else {
-        switch (newChild->nodeType()) {
+        switch (newChild.nodeType()) {
         case ATTRIBUTE_NODE:
         case CDATA_SECTION_NODE:
         case DOCUMENT_FRAGMENT_NODE:
@@ -3409,7 +3404,7 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     return true;
 }
 
-RefPtr<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
+Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
 {
     Ref<Document> clone = cloneDocumentWithoutChildren();
     clone->cloneDataFromDocument(*this);
@@ -3418,7 +3413,7 @@ RefPtr<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
-        cloneChildNodes(clone.ptr());
+        cloneChildNodes(clone);
         break;
     }
     return WTF::move(clone);

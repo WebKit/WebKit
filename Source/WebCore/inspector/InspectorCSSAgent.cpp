@@ -796,7 +796,7 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     // Set this flag, so when we create it, we put it into the via inspector map.
     m_creatingViaInspectorStyleSheet = true;
     InlineStyleOverrideScope overrideScope(document);
-    targetNode->appendChild(styleElement, ec);
+    targetNode->appendChild(styleElement.releaseNonNull(), ec);
     m_creatingViaInspectorStyleSheet = false;
     if (ec)
         return nullptr;

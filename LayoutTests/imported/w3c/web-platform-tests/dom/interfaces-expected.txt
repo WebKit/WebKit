@@ -634,21 +634,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc with too fe
     [native code]
 }" did not throw
 PASS Node interface: xmlDoc must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: xmlDoc must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling appendChild(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Node interface: calling replaceChild(Node,Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -793,21 +787,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createDoc
     [native code]
 }" did not throw
 PASS Node interface: document.createDocumentFragment() must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
-PASS Node interface: document.createDocumentFragment() must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
-PASS Node interface: document.createDocumentFragment() must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
 }" did not throw
+PASS Node interface: document.createDocumentFragment() must inherit property "appendChild" with the proper type (41) 
+PASS Node interface: calling appendChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
+PASS Node interface: document.createDocumentFragment() must inherit property "replaceChild" with the proper type (42) 
+PASS Node interface: calling replaceChild(Node,Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS Node interface: document.createDocumentFragment() must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on document.createDocumentFragment() with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createDocumentFragment() must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createDocumentFragment() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -915,21 +903,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.doctype w
     [native code]
 }" did not throw
 PASS Node interface: document.doctype must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
 }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.doctype must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling appendChild(Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling replaceChild(Node,Node) on document.doctype with too few arguments must throw TypeError 
 PASS Node interface: document.doctype must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on document.doctype with too few arguments must throw TypeError 
 PASS EventTarget interface: document.doctype must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.doctype with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -1187,21 +1169,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on element with too f
     [native code]
 }" did not throw
 PASS Node interface: element must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
-PASS Node interface: element must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
-PASS Node interface: element must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on element with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
 }" did not throw
+PASS Node interface: element must inherit property "appendChild" with the proper type (41) 
+PASS Node interface: calling appendChild(Node) on element with too few arguments must throw TypeError 
+PASS Node interface: element must inherit property "replaceChild" with the proper type (42) 
+PASS Node interface: calling replaceChild(Node,Node) on element with too few arguments must throw TypeError 
 PASS Node interface: element must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on element with too few arguments must throw TypeError 
 PASS EventTarget interface: element must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on element with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -1409,21 +1385,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createTex
     [native code]
 }" did not throw
 PASS Node interface: document.createTextNode("abc") must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
 }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.createTextNode("abc") must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling appendChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling replaceChild(Node,Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createTextNode("abc") must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createTextNode("abc") must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -1543,21 +1513,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on xmlDoc.createProce
     [native code]
 }" did not throw
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
 }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling appendChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling replaceChild(Node,Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS EventTarget interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -1673,21 +1637,15 @@ FAIL Node interface: calling isDefaultNamespace(DOMString) on document.createCom
     [native code]
 }" did not throw
 PASS Node interface: document.createComment("abc") must inherit property "insertBefore" with the proper type (40) 
-FAIL Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL Node interface: calling insertBefore(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
     [native code]
 }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
 PASS Node interface: document.createComment("abc") must inherit property "appendChild" with the proper type (41) 
-FAIL Node interface: calling appendChild(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling appendChild(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "replaceChild" with the proper type (42) 
-FAIL Node interface: calling replaceChild(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling replaceChild(Node,Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS Node interface: document.createComment("abc") must inherit property "removeChild" with the proper type (43) 
-FAIL Node interface: calling removeChild(Node) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" threw object "Error: NotFoundError: DOM Exception 8" ("NotFoundError") expected object "TypeError" ("TypeError")
+PASS Node interface: calling removeChild(Node) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS EventTarget interface: document.createComment("abc") must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]

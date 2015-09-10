@@ -496,7 +496,7 @@ void VTTCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* p
             clonedNode = downcast<WebVTTElement>(*node).createEquivalentHTMLElement(ownerDocument());
         else
             clonedNode = node->cloneNode(false);
-        parent->appendChild(clonedNode, ASSERT_NO_EXCEPTION);
+        parent->appendChild(*clonedNode, ASSERT_NO_EXCEPTION);
         if (is<ContainerNode>(*node))
             copyWebVTTNodeToDOMTree(downcast<ContainerNode>(node), downcast<ContainerNode>(clonedNode.get()));
     }
@@ -518,10 +518,10 @@ PassRefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
     RefPtr<DocumentFragment> clonedFragment;
     createWebVTTNodeTree();
     if (!m_webVTTNodeTree)
-        return 0;
+        return nullptr;
 
     clonedFragment = DocumentFragment::create(ownerDocument());
-    m_webVTTNodeTree->cloneChildNodes(clonedFragment.get());
+    m_webVTTNodeTree->cloneChildNodes(*clonedFragment);
     return clonedFragment.release();
 }
 
@@ -785,7 +785,7 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
         return;
 
     markFutureAndPastNodes(referenceTree.get(), startMediaTime(), movieTime);
-    m_cueHighlightBox->appendChild(referenceTree);
+    m_cueHighlightBox->appendChild(referenceTree.releaseNonNull());
 }
 
 VTTCueBox* VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
@@ -812,8 +812,8 @@ VTTCueBox* VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
     m_cueHighlightBox->setPseudo(cueShadowPseudoId());
 
     m_cueBackdropBox->setPseudo(cueBackdropShadowPseudoId());
-    m_cueBackdropBox->appendChild(m_cueHighlightBox, ASSERT_NO_EXCEPTION);
-    displayTree->appendChild(m_cueBackdropBox, ASSERT_NO_EXCEPTION);
+    m_cueBackdropBox->appendChild(*m_cueHighlightBox, ASSERT_NO_EXCEPTION);
+    displayTree->appendChild(*m_cueBackdropBox, ASSERT_NO_EXCEPTION);
 
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose

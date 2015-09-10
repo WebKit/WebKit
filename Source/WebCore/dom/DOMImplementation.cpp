@@ -231,9 +231,9 @@ RefPtr<Document> DOMImplementation::createDocument(const String& namespaceURI,
     }
 
     if (doctype)
-        doc->appendChild(doctype);
+        doc->appendChild(*doctype);
     if (documentElement)
-        doc->appendChild(documentElement.release());
+        doc->appendChild(documentElement.releaseNonNull());
 
     return doc;
 }

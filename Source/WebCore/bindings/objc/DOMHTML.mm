@@ -152,7 +152,7 @@ using namespace WebCore;
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text
 {
     // FIXME: Since this is not a contextual fragment, it won't handle whitespace properly.
-    return kit(createFragmentFromText(core(self)->createRange(), text).get());
+    return kit(createFragmentFromText(core(self)->createRange(), text).ptr());
 }
 
 @end

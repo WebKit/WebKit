@@ -527,15 +527,15 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
     for (size_t i = 0; i < size; i++) {
         String text = paths[i];
 #if ENABLE(ATTACHMENT_ELEMENT)
-        RefPtr<HTMLAttachmentElement> attachment = HTMLAttachmentElement::create(attachmentTag, document);
+        Ref<HTMLAttachmentElement> attachment = HTMLAttachmentElement::create(attachmentTag, document);
         attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
-        fragment->appendChild(attachment.release());
+        fragment->appendChild(WTF::move(attachment));
 #else
         text = frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text]);
 
-        RefPtr<HTMLElement> paragraph = createDefaultParagraphElement(document);
+        Ref<HTMLElement> paragraph = createDefaultParagraphElement(document);
         paragraph->appendChild(document.createTextNode(text));
-        fragment->appendChild(paragraph.release());
+        fragment->appendChild(WTF::move(paragraph));
 #endif
     }
 
@@ -594,12 +594,12 @@ bool Editor::WebContentReader::readURL(const URL& url, const String& title)
     if (url.string().isEmpty())
         return false;
 
-    RefPtr<Element> anchor = frame.document()->createElement(HTMLNames::aTag, false);
+    Ref<Element> anchor = frame.document()->createElement(HTMLNames::aTag, false);
     anchor->setAttribute(HTMLNames::hrefAttr, url.string());
     anchor->appendChild(frame.document()->createTextNode([title precomposedStringWithCanonicalMapping]));
 
     fragment = frame.document()->createDocumentFragment();
-    fragment->appendChild(anchor.release());
+    fragment->appendChild(WTF::move(anchor));
     return true;
 }
 
@@ -635,11 +635,11 @@ PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResourc
     if (DocumentLoader* loader = m_frame.loader().documentLoader())
         loader->addArchiveResource(resource.get());
 
-    RefPtr<Element> imageElement = document().createElement(HTMLNames::imgTag, false);
+    Ref<Element> imageElement = document().createElement(HTMLNames::imgTag, false);
     imageElement->setAttribute(HTMLNames::srcAttr, resource->url().string());
 
     RefPtr<DocumentFragment> fragment = document().createDocumentFragment();
-    fragment->appendChild(imageElement.release());
+    fragment->appendChild(WTF::move(imageElement));
 
     return fragment.release();
 }

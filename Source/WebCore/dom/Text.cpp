@@ -73,7 +73,7 @@ RefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     dispatchModifiedEvent(oldStr);
 
     if (parentNode())
-        parentNode()->insertBefore(newText.ptr(), nextSibling(), ec);
+        parentNode()->insertBefore(newText.copyRef(), nextSibling(), ec);
     if (ec)
         return 0;
 
@@ -132,28 +132,28 @@ RefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
     RefPtr<Text> protectedThis(this); // Mutation event handlers could cause our last ref to go away
     RefPtr<ContainerNode> parent = parentNode(); // Protect against mutation handlers moving this node during traversal
     for (RefPtr<Node> n = startText; n && n != this && n->isTextNode() && n->parentNode() == parent;) {
-        RefPtr<Node> nodeToRemove(n.release());
+        Ref<Node> nodeToRemove(n.releaseNonNull());
         n = nodeToRemove->nextSibling();
-        parent->removeChild(nodeToRemove.get(), IGNORE_EXCEPTION);
+        parent->removeChild(WTF::move(nodeToRemove), IGNORE_EXCEPTION);
     }
 
     if (this != endText) {
         Node* onePastEndText = endText->nextSibling();
         for (RefPtr<Node> n = nextSibling(); n && n != onePastEndText && n->isTextNode() && n->parentNode() == parent;) {
-            RefPtr<Node> nodeToRemove(n.release());
+            Ref<Node> nodeToRemove(n.releaseNonNull());
             n = nodeToRemove->nextSibling();
-            parent->removeChild(nodeToRemove.get(), IGNORE_EXCEPTION);
+            parent->removeChild(WTF::move(nodeToRemove), IGNORE_EXCEPTION);
         }
     }
 
     if (newText.isEmpty()) {
         if (parent && parentNode() == parent)
-            parent->removeChild(this, IGNORE_EXCEPTION);
-        return 0;
+            parent->removeChild(*this, IGNORE_EXCEPTION);
+        return nullptr;
     }
 
     setData(newText, IGNORE_EXCEPTION);
-    return protectedThis.release();
+    return protectedThis;
 }
 
 String Text::nodeName() const
@@ -166,7 +166,7 @@ Node::NodeType Text::nodeType() const
     return TEXT_NODE;
 }
 
-RefPtr<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
     return create(targetDocument, data());
 }
