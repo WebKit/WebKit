@@ -42,7 +42,6 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(INSPECTOR_SERVER)
 #include "WebInspectorServer.h"

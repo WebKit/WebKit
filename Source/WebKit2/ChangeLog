@@ -1,3 +1,17 @@
+2015-09-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove dead WebInspectorProxy related code
+        https://bugs.webkit.org/show_bug.cgi?id=149019
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/API/C/mac/WKInspectorPrivateMac.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter attachRight:]): Deleted.
+        (-[WKWebInspectorProxyObjCAdapter attachBottom:]): Deleted.
+
 2015-09-09  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused NSString SPI constant

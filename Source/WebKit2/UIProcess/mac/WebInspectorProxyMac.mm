@@ -42,21 +42,15 @@
 #import "WKViewInternal.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
-#import "WebInspectorMessages.h"
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
-#import <QuartzCore/CoreAnimation.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
-#import <WebKitSystemInterface.h>
-#import <algorithm>
-#import <mach-o/dyld.h>
 #import <wtf/text/Base64.h>
-#import <wtf/text/WTFString.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
@@ -106,16 +100,6 @@ static const unsigned webViewCloseTimeout = 60;
     _inspectorProxy = static_cast<void*>(inspectorProxy); // Not retained to prevent cycles
 
     return self;
-}
-
-- (IBAction)attachRight:(id)sender
-{
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->attach(AttachmentSide::Right);
-}
-
-- (IBAction)attachBottom:(id)sender
-{
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->attach(AttachmentSide::Bottom);
 }
 
 - (void)close

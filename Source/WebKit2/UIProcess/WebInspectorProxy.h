@@ -40,7 +40,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 
-OBJC_CLASS NSButton;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
@@ -60,7 +59,6 @@ OBJC_CLASS WKWebInspectorWKWebView;
 namespace WebKit {
 
 class WebFrameProxy;
-class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
 class WebProcessPool;
