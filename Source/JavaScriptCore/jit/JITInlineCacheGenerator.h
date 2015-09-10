@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "JSCJSValue.h"
 #include "PutKind.h"
 #include "RegisterSet.h"
+#include "StructureStubInfo.h"
 
 namespace JSC {
 
@@ -41,7 +42,7 @@ class CodeBlock;
 class JITInlineCacheGenerator {
 protected:
     JITInlineCacheGenerator() { }
-    JITInlineCacheGenerator(CodeBlock*, CodeOrigin, CallSiteIndex);
+    JITInlineCacheGenerator(CodeBlock*, CodeOrigin, CallSiteIndex, AccessType);
     
 public:
     StructureStubInfo* stubInfo() const { return m_stubInfo; }
@@ -56,8 +57,8 @@ protected:
     JITByIdGenerator() { }
 
     JITByIdGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet&, JSValueRegs base, JSValueRegs value,
-        SpillRegistersMode spillMode);
+        CodeBlock*, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet&, JSValueRegs base,
+        JSValueRegs value, SpillRegistersMode spillMode);
     
 public:
     void reportSlowPathCall(MacroAssembler::Label slowPathBegin, MacroAssembler::Call call)

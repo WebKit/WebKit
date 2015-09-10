@@ -935,7 +935,7 @@ void SpeculativeJIT::compileIn(Node* node)
     
     if (JSString* string = node->child1()->dynamicCastConstant<JSString*>()) {
         if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
-            StructureStubInfo* stubInfo = m_jit.codeBlock()->addStubInfo();
+            StructureStubInfo* stubInfo = m_jit.codeBlock()->addStubInfo(AccessType::In);
             
             GPRTemporary result(this);
             GPRReg resultGPR = result.gpr();
@@ -956,6 +956,9 @@ void SpeculativeJIT::compileIn(Node* node)
             stubInfo->codeOrigin = node->origin.semantic;
             stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
             stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
+#if USE(JSVALUE32_64)
+            stubInfo->patch.valueTagGPR = static_cast<int8_t>(InvalidGPRReg);
+#endif
             stubInfo->patch.usedRegisters = usedRegisters();
             stubInfo->patch.spillMode = NeedToSpill;
 

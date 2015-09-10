@@ -53,8 +53,7 @@
 #include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
-#include "PolymorphicGetByIdList.h"
-#include "PolymorphicPutByIdList.h"
+#include "PolymorphicAccess.h"
 #include "ProfilerDatabase.h"
 #include "ReduceWhitespace.h"
 #include "Repatch.h"
@@ -347,20 +346,19 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         if (stubInfo.seen) {
             out.printf(" jit(");
             
-            Structure* baseStructure = 0;
-            Structure* prototypeStructure = 0;
-            PolymorphicGetByIdList* list = 0;
+            Structure* baseStructure = nullptr;
+            PolymorphicAccess* stub = nullptr;
             
-            switch (stubInfo.accessType) {
-            case access_get_by_id_self:
+            switch (stubInfo.cacheType) {
+            case CacheType::GetByIdSelf:
                 out.printf("self");
-                baseStructure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
+                baseStructure = stubInfo.u.byIdSelf.baseObjectStructure.get();
                 break;
-            case access_get_by_id_list:
-                out.printf("list");
-                list = stubInfo.u.getByIdList.list;
+            case CacheType::Stub:
+                out.printf("stub");
+                stub = stubInfo.u.stub;
                 break;
-            case access_unset:
+            case CacheType::Unset:
                 out.printf("unset");
                 break;
             default:
@@ -372,27 +370,10 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                 out.printf(", ");
                 dumpStructure(out, "struct", baseStructure, ident);
             }
-            
-            if (prototypeStructure) {
-                out.printf(", ");
-                dumpStructure(out, "prototypeStruct", baseStructure, ident);
-            }
-            
-            if (list) {
-                out.printf(", list = %p: [", list);
-                for (unsigned i = 0; i < list->size(); ++i) {
-                    if (i)
-                        out.printf(", ");
-                    out.printf("(");
-                    dumpStructure(out, "base", list->at(i).structure(), ident);
-                    if (!list->at(i).conditionSet().isEmpty()) {
-                        out.printf(", ");
-                        out.print(list->at(i).conditionSet());
-                    }
-                    out.printf(")");
-                }
-                out.printf("]");
-            }
+
+            if (stub)
+                out.print(", ", *stub);
+
             out.printf(")");
         }
     }
@@ -448,53 +429,16 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         if (stubInfo.seen) {
             out.printf(" jit(");
             
-            switch (stubInfo.accessType) {
-            case access_put_by_id_replace:
+            switch (stubInfo.cacheType) {
+            case CacheType::PutByIdReplace:
                 out.print("replace, ");
-                dumpStructure(out, "struct", stubInfo.u.putByIdReplace.baseObjectStructure.get(), ident);
+                dumpStructure(out, "struct", stubInfo.u.byIdSelf.baseObjectStructure.get(), ident);
                 break;
-            case access_put_by_id_transition_normal:
-            case access_put_by_id_transition_direct:
-                out.print("transition, ");
-                dumpStructure(out, "prev", stubInfo.u.putByIdTransition.previousStructure.get(), ident);
-                out.print(", ");
-                dumpStructure(out, "next", stubInfo.u.putByIdTransition.structure.get(), ident);
-                if (stubInfo.u.putByIdTransition.rawConditionSet)
-                    out.print(", ", ObjectPropertyConditionSet::fromRawPointer(stubInfo.u.putByIdTransition.rawConditionSet));
-                break;
-            case access_put_by_id_list: {
-                out.printf("list = [");
-                PolymorphicPutByIdList* list = stubInfo.u.putByIdList.list;
-                CommaPrinter comma;
-                for (unsigned i = 0; i < list->size(); ++i) {
-                    out.print(comma, "(");
-                    const PutByIdAccess& access = list->at(i);
-                    
-                    if (access.isReplace()) {
-                        out.print("replace, ");
-                        dumpStructure(out, "struct", access.oldStructure(), ident);
-                    } else if (access.isSetter()) {
-                        out.print("setter, ");
-                        dumpStructure(out, "struct", access.oldStructure(), ident);
-                    } else if (access.isCustom()) {
-                        out.print("custom, ");
-                        dumpStructure(out, "struct", access.oldStructure(), ident);
-                    } else if (access.isTransition()) {
-                        out.print("transition, ");
-                        dumpStructure(out, "prev", access.oldStructure(), ident);
-                        out.print(", ");
-                        dumpStructure(out, "next", access.newStructure(), ident);
-                        if (!access.conditionSet().isEmpty())
-                            out.print(", ", access.conditionSet());
-                    } else
-                        out.print("unknown");
-                    
-                    out.print(")");
-                }
-                out.print("]");
+            case CacheType::Stub: {
+                out.print("stub, ", *stubInfo.u.stub);
                 break;
             }
-            case access_unset:
+            case CacheType::Unset:
                 out.printf("unset");
                 break;
             default:
@@ -2469,39 +2413,22 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
     if (JITCode::isJIT(jitType())) {
         for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
             StructureStubInfo& stubInfo = **iter;
-            switch (stubInfo.accessType) {
-            case access_put_by_id_transition_normal:
-            case access_put_by_id_transition_direct: {
-                JSCell* origin = stubInfo.codeOrigin.codeOriginOwner();
-                if ((!origin || Heap::isMarked(origin))
-                    && Heap::isMarked(stubInfo.u.putByIdTransition.previousStructure.get()))
-                    visitor.append(&stubInfo.u.putByIdTransition.structure);
+            if (stubInfo.cacheType != CacheType::Stub)
+                continue;
+            PolymorphicAccess* list = stubInfo.u.stub;
+            JSCell* origin = stubInfo.codeOrigin.codeOriginOwner();
+            if (origin && !Heap::isMarked(origin)) {
+                allAreMarkedSoFar = false;
+                continue;
+            }
+            for (unsigned j = list->size(); j--;) {
+                const AccessCase& access = list->at(j);
+                if (access.type() != AccessCase::Transition)
+                    continue;
+                if (Heap::isMarked(access.structure()))
+                    visitor.appendUnbarrieredReadOnlyPointer(access.newStructure());
                 else
                     allAreMarkedSoFar = false;
-                break;
-            }
-
-            case access_put_by_id_list: {
-                PolymorphicPutByIdList* list = stubInfo.u.putByIdList.list;
-                JSCell* origin = stubInfo.codeOrigin.codeOriginOwner();
-                if (origin && !Heap::isMarked(origin)) {
-                    allAreMarkedSoFar = false;
-                    break;
-                }
-                for (unsigned j = list->size(); j--;) {
-                    PutByIdAccess& access = list->m_list[j];
-                    if (!access.isTransition())
-                        continue;
-                    if (Heap::isMarked(access.oldStructure()))
-                        visitor.append(&access.m_newStructure);
-                    else
-                        allAreMarkedSoFar = false;
-                }
-                break;
-            }
-            
-            default:
-                break;
             }
         }
     }
@@ -2793,10 +2720,10 @@ void CodeBlock::getByValInfoMap(ByValInfoMap& result)
 }
 
 #if ENABLE(JIT)
-StructureStubInfo* CodeBlock::addStubInfo()
+StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
 {
     ConcurrentJITLocker locker(m_lock);
-    return m_stubInfos.add();
+    return m_stubInfos.add(accessType);
 }
 
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)

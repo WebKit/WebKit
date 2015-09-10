@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,8 @@ ScratchRegisterAllocator::~ScratchRegisterAllocator() { }
 
 void ScratchRegisterAllocator::lock(GPRReg reg)
 {
+    if (reg == InvalidGPRReg)
+        return;
     unsigned index = GPRInfo::toIndex(reg);
     if (index == GPRInfo::InvalidIndex)
         return;
@@ -52,10 +54,18 @@ void ScratchRegisterAllocator::lock(GPRReg reg)
 
 void ScratchRegisterAllocator::lock(FPRReg reg)
 {
+    if (reg == InvalidFPRReg)
+        return;
     unsigned index = FPRInfo::toIndex(reg);
     if (index == FPRInfo::InvalidIndex)
         return;
     m_lockedRegisters.setFPRByIndex(index);
+}
+
+void ScratchRegisterAllocator::lock(JSValueRegs regs)
+{
+    lock(regs.tagGPR());
+    lock(regs.payloadGPR());
 }
 
 template<typename BankInfo>
@@ -71,7 +81,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
             return reg;
         }
     }
-        
+    
     // Since that failed, try to allocate a register that is not yet
     // locked or used for scratch.
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
@@ -117,6 +127,8 @@ size_t ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler
     size_t totalStackAdjustmentBytes = numberOfBytesPushed + maxFrameExtentForSlowPathCall;
     totalStackAdjustmentBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalStackAdjustmentBytes);
 
+    // FIXME: We shouldn't have to do this.
+    // https://bugs.webkit.org/show_bug.cgi?id=149030
     size_t numberOfPaddingBytes = totalStackAdjustmentBytes - numberOfBytesPushed;
     jit.subPtr(MacroAssembler::TrustedImm32(numberOfPaddingBytes), MacroAssembler::stackPointerRegister);
 

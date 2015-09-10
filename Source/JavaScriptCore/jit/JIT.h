@@ -66,7 +66,6 @@ namespace JSC {
 
     struct Instruction;
     struct OperandTypes;
-    struct PolymorphicAccessStructureList;
     struct SimpleJumpTable;
     struct StringJumpTable;
     struct StructureStubInfo;

@@ -104,8 +104,7 @@ set(JavaScriptCore_SOURCES
     bytecode/ObjectPropertyCondition.cpp
     bytecode/ObjectPropertyConditionSet.cpp
     bytecode/Opcode.cpp
-    bytecode/PolymorphicGetByIdList.cpp
-    bytecode/PolymorphicPutByIdList.cpp
+    bytecode/PolymorphicAccess.cpp
     bytecode/PreciseJumpTargets.cpp
     bytecode/PropertyCondition.cpp
     bytecode/PutByIdStatus.cpp
@@ -357,7 +356,6 @@ set(JavaScriptCore_SOURCES
     interpreter/ProtoCallFrame.cpp
     interpreter/StackVisitor.cpp
 
-    jit/AccessorCallJITStubRoutine.cpp
     jit/AssemblyHelpers.cpp
     jit/BinarySwitch.cpp
     jit/ExecutableAllocationFuzz.cpp

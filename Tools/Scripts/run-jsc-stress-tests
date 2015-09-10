@@ -226,7 +226,7 @@ if $remoteConfigFile
 end
 
 unless jscArg
-    $stderr.puts "Error: must specify -jsc <path>"
+    $stderr.puts "Error: must specify --jsc <path>"
     exit 1
 end
 

@@ -539,7 +539,7 @@ static void fixFunctionBasedOnStackMaps(
                 RegisterSet usedRegisters = usedRegistersFor(record);
                 GPRReg result = record.locations[0].directGPR();
                 GPRReg obj = record.locations[1].directGPR();
-                StructureStubInfo* stubInfo = codeBlock->addStubInfo(); 
+                StructureStubInfo* stubInfo = codeBlock->addStubInfo(AccessType::In); 
                 stubInfo->codeOrigin = codeOrigin;
                 stubInfo->callSiteIndex = checkIn.callSiteIndex();
                 stubInfo->patch.baseGPR = static_cast<int8_t>(obj);

@@ -26,13 +26,12 @@
 #include "config.h"
 #include "PutByIdStatus.h"
 
-#include "AccessorCallJITStubRoutine.h"
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
-#include "PolymorphicPutByIdList.h"
+#include "PolymorphicAccess.h"
 #include "Structure.h"
 #include "StructureChain.h"
 #include <wtf/ListDump.h>
@@ -154,66 +153,43 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
     if (!stubInfo->seen)
         return PutByIdStatus();
     
-    switch (stubInfo->accessType) {
-    case access_unset:
+    switch (stubInfo->cacheType) {
+    case CacheType::Unset:
         // If the JIT saw it but didn't optimize it, then assume that this takes slow path.
         return PutByIdStatus(TakesSlowPath);
         
-    case access_put_by_id_replace: {
+    case CacheType::PutByIdReplace: {
         PropertyOffset offset =
-            stubInfo->u.putByIdReplace.baseObjectStructure->getConcurrently(uid);
+            stubInfo->u.byIdSelf.baseObjectStructure->getConcurrently(uid);
         if (isValidOffset(offset)) {
             return PutByIdVariant::replace(
-                stubInfo->u.putByIdReplace.baseObjectStructure.get(), offset);
+                stubInfo->u.byIdSelf.baseObjectStructure.get(), offset);
         }
         return PutByIdStatus(TakesSlowPath);
     }
         
-    case access_put_by_id_transition_normal:
-    case access_put_by_id_transition_direct: {
-        ASSERT(stubInfo->u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
-        PropertyOffset offset = 
-            stubInfo->u.putByIdTransition.structure->getConcurrently(uid);
-        if (isValidOffset(offset)) {
-            ObjectPropertyConditionSet conditionSet = ObjectPropertyConditionSet::fromRawPointer(
-                stubInfo->u.putByIdTransition.rawConditionSet);
-            if (!conditionSet.structuresEnsureValidity())
-                return PutByIdStatus(TakesSlowPath);
-            return PutByIdVariant::transition(
-                stubInfo->u.putByIdTransition.previousStructure.get(),
-                stubInfo->u.putByIdTransition.structure.get(),
-                conditionSet, offset);
-        }
-        return PutByIdStatus(TakesSlowPath);
-    }
-        
-    case access_put_by_id_list: {
-        PolymorphicPutByIdList* list = stubInfo->u.putByIdList.list;
+    case CacheType::Stub: {
+        PolymorphicAccess* list = stubInfo->u.stub;
         
         PutByIdStatus result;
         result.m_state = Simple;
         
         State slowPathState = TakesSlowPath;
         for (unsigned i = 0; i < list->size(); ++i) {
-            const PutByIdAccess& access = list->at(i);
-            
-            switch (access.type()) {
-            case PutByIdAccess::Setter:
-            case PutByIdAccess::CustomSetter:
+            const AccessCase& access = list->at(i);
+            if (access.doesCalls())
                 slowPathState = MakesCalls;
-                break;
-            default:
-                break;
-            }
         }
         
         for (unsigned i = 0; i < list->size(); ++i) {
-            const PutByIdAccess& access = list->at(i);
+            const AccessCase& access = list->at(i);
+            if (access.viaProxy())
+                return PutByIdStatus(slowPathState);
             
             PutByIdVariant variant;
             
             switch (access.type()) {
-            case PutByIdAccess::Replace: {
+            case AccessCase::Replace: {
                 Structure* structure = access.structure();
                 PropertyOffset offset = structure->getConcurrently(uid);
                 if (!isValidOffset(offset))
@@ -222,7 +198,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 break;
             }
                 
-            case PutByIdAccess::Transition: {
+            case AccessCase::Transition: {
                 PropertyOffset offset =
                     access.newStructure()->getConcurrently(uid);
                 if (!isValidOffset(offset))
@@ -231,11 +207,11 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 if (!conditionSet.structuresEnsureValidity())
                     return PutByIdStatus(slowPathState);
                 variant = PutByIdVariant::transition(
-                    access.oldStructure(), access.newStructure(), conditionSet, offset);
+                    access.structure(), access.newStructure(), conditionSet, offset);
                 break;
             }
                 
-            case PutByIdAccess::Setter: {
+            case AccessCase::Setter: {
                 Structure* structure = access.structure();
                 
                 ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(
@@ -249,12 +225,12 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                     return PutByIdStatus(slowPathState);
                     
                 case ComplexGetStatus::Inlineable: {
-                    AccessorCallJITStubRoutine* stub = static_cast<AccessorCallJITStubRoutine*>(
-                        access.stubRoutine());
+                    CallLinkInfo* callLinkInfo = access.callLinkInfo();
+                    ASSERT(callLinkInfo);
                     std::unique_ptr<CallLinkStatus> callLinkStatus =
                         std::make_unique<CallLinkStatus>(
                             CallLinkStatus::computeFor(
-                                locker, profiledBlock, *stub->m_callLinkInfo, callExitSiteData));
+                                locker, profiledBlock, *callLinkInfo, callExitSiteData));
                     
                     variant = PutByIdVariant::setter(
                         structure, complexGetStatus.offset(), complexGetStatus.conditionSet(),
@@ -263,7 +239,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 break;
             }
                 
-            case PutByIdAccess::CustomSetter:
+            case AccessCase::CustomSetter:
                 return PutByIdStatus(MakesCalls);
 
             default:

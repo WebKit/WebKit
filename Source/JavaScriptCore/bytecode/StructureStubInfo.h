@@ -32,7 +32,7 @@
 #include "MacroAssembler.h"
 #include "ObjectPropertyConditionSet.h"
 #include "Opcode.h"
-#include "PolymorphicAccessStructureList.h"
+#include "PolymorphicAccess.h"
 #include "RegisterSet.h"
 #include "SpillRegistersMode.h"
 #include "Structure.h"
@@ -42,57 +42,25 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
-class PolymorphicGetByIdList;
-class PolymorphicPutByIdList;
+class PolymorphicAccess;
 
-enum AccessType {
-    access_get_by_id_self,
-    access_get_by_id_list,
-    access_put_by_id_transition_normal,
-    access_put_by_id_transition_direct,
-    access_put_by_id_replace,
-    access_put_by_id_list,
-    access_unset,
-    access_in_list
+enum class AccessType : int8_t {
+    Get,
+    Put,
+    In
 };
 
-inline bool isGetByIdAccess(AccessType accessType)
-{
-    switch (accessType) {
-    case access_get_by_id_self:
-    case access_get_by_id_list:
-        return true;
-    default:
-        return false;
-    }
-}
-    
-inline bool isPutByIdAccess(AccessType accessType)
-{
-    switch (accessType) {
-    case access_put_by_id_transition_normal:
-    case access_put_by_id_transition_direct:
-    case access_put_by_id_replace:
-    case access_put_by_id_list:
-        return true;
-    default:
-        return false;
-    }
-}
-
-inline bool isInAccess(AccessType accessType)
-{
-    switch (accessType) {
-    case access_in_list:
-        return true;
-    default:
-        return false;
-    }
-}
+enum class CacheType : int8_t {
+    Unset,
+    GetByIdSelf,
+    PutByIdReplace,
+    Stub
+};
 
 struct StructureStubInfo {
-    StructureStubInfo()
-        : accessType(access_unset)
+    StructureStubInfo(AccessType accessType)
+        : accessType(accessType)
+        , cacheType(CacheType::Unset)
         , seen(false)
         , resetByGC(false)
         , tookSlowPath(false)
@@ -100,53 +68,31 @@ struct StructureStubInfo {
     {
     }
 
-    void initGetByIdSelf(VM& vm, JSCell* owner, Structure* baseObjectStructure)
+    void initGetByIdSelf(VM& vm, JSCell* owner, Structure* baseObjectStructure, PropertyOffset offset)
     {
-        accessType = access_get_by_id_self;
+        cacheType = CacheType::GetByIdSelf;
 
-        u.getByIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
+        u.byIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
+        u.byIdSelf.offset = offset;
     }
 
-    void initGetByIdList(PolymorphicGetByIdList* list)
+    void initPutByIdReplace(VM& vm, JSCell* owner, Structure* baseObjectStructure, PropertyOffset offset)
     {
-        accessType = access_get_by_id_list;
-        u.getByIdList.list = list;
+        cacheType = CacheType::PutByIdReplace;
+
+        u.byIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
+        u.byIdSelf.offset = offset;
     }
 
-    // PutById*
-
-    void initPutByIdTransition(VM& vm, JSCell* owner, Structure* previousStructure, Structure* structure, ObjectPropertyConditionSet conditionSet, bool isDirect)
+    void initStub(std::unique_ptr<PolymorphicAccess> stub)
     {
-        if (isDirect)
-            accessType = access_put_by_id_transition_direct;
-        else
-            accessType = access_put_by_id_transition_normal;
-
-        u.putByIdTransition.previousStructure.set(vm, owner, previousStructure);
-        u.putByIdTransition.structure.set(vm, owner, structure);
-        u.putByIdTransition.rawConditionSet = conditionSet.releaseRawPointer();
+        cacheType = CacheType::Stub;
+        u.stub = stub.release();
     }
 
-    void initPutByIdReplace(VM& vm, JSCell* owner, Structure* baseObjectStructure)
-    {
-        accessType = access_put_by_id_replace;
-    
-        u.putByIdReplace.baseObjectStructure.set(vm, owner, baseObjectStructure);
-    }
-        
-    void initPutByIdList(PolymorphicPutByIdList* list)
-    {
-        accessType = access_put_by_id_list;
-        u.putByIdList.list = list;
-    }
-    
-    void initInList(PolymorphicAccessStructureList* list, int listSize)
-    {
-        accessType = access_in_list;
-        u.inList.structureList = list;
-        u.inList.listSize = listSize;
-    }
-        
+    MacroAssemblerCodePtr addAccessCase(
+        VM&, CodeBlock*, const Identifier&, std::unique_ptr<AccessCase>);
+
     void reset(CodeBlock*);
 
     void deref();
@@ -165,15 +111,9 @@ struct StructureStubInfo {
         seen = true;
     }
         
-    StructureStubClearingWatchpoint* addWatchpoint(
-        CodeBlock* codeBlock, const ObjectPropertyCondition& condition = ObjectPropertyCondition())
-    {
-        return WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
-            watchpoints, codeBlock, this, condition);
-    }
-    
-    int8_t accessType;
-    bool seen : 1;
+    AccessType accessType;
+    CacheType cacheType;
+    bool seen;
     bool resetByGC : 1;
     bool tookSlowPath : 1;
 
@@ -203,34 +143,13 @@ struct StructureStubInfo {
 
     union {
         struct {
-            // It would be unwise to put anything here, as it will surely be overwritten.
-        } unset;
-        struct {
             WriteBarrierBase<Structure> baseObjectStructure;
-        } getByIdSelf;
-        struct {
-            PolymorphicGetByIdList* list;
-        } getByIdList;
-        struct {
-            WriteBarrierBase<Structure> previousStructure;
-            WriteBarrierBase<Structure> structure;
-            void* rawConditionSet;
-        } putByIdTransition;
-        struct {
-            WriteBarrierBase<Structure> baseObjectStructure;
-        } putByIdReplace;
-        struct {
-            PolymorphicPutByIdList* list;
-        } putByIdList;
-        struct {
-            PolymorphicAccessStructureList* structureList;
-            int listSize;
-        } inList;
+            PropertyOffset offset;
+        } byIdSelf;
+        PolymorphicAccess* stub;
     } u;
 
-    RefPtr<JITStubRoutine> stubRoutine;
     CodeLocationCall callReturnLocation;
-    std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

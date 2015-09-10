@@ -26,14 +26,13 @@
 #include "config.h"
 #include "GetByIdStatus.h"
 
-#include "AccessorCallJITStubRoutine.h"
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "JSCInlines.h"
 #include "JSScope.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
-#include "PolymorphicGetByIdList.h"
+#include "PolymorphicAccess.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -139,12 +138,12 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
     if (!stubInfo->seen)
         return GetByIdStatus(NoInformation);
     
-    PolymorphicGetByIdList* list = 0;
+    PolymorphicAccess* list = 0;
     State slowPathState = TakesSlowPath;
-    if (stubInfo->accessType == access_get_by_id_list) {
-        list = stubInfo->u.getByIdList.list;
+    if (stubInfo->cacheType == CacheType::Stub) {
+        list = stubInfo->u.stub;
         for (unsigned i = 0; i < list->size(); ++i) {
-            const GetByIdAccess& access = list->at(i);
+            const AccessCase& access = list->at(i);
             if (access.doesCalls())
                 slowPathState = MakesCalls;
         }
@@ -157,12 +156,12 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
     GetByIdStatus result;
     result.m_state = Simple;
     result.m_wasSeenInJIT = true; // This is interesting for bytecode dumping only.
-    switch (stubInfo->accessType) {
-    case access_unset:
+    switch (stubInfo->cacheType) {
+    case CacheType::Unset:
         return GetByIdStatus(NoInformation);
         
-    case access_get_by_id_self: {
-        Structure* structure = stubInfo->u.getByIdSelf.baseObjectStructure.get();
+    case CacheType::GetByIdSelf: {
+        Structure* structure = stubInfo->u.byIdSelf.baseObjectStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return GetByIdStatus(slowPathState, true);
         unsigned attributesIgnored;
@@ -177,12 +176,25 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
         return result;
     }
         
-    case access_get_by_id_list: {
+    case CacheType::Stub: {
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
-            Structure* structure = list->at(listIndex).structure();
+            const AccessCase& access = list->at(listIndex);
+            if (access.viaProxy())
+                return GetByIdStatus(slowPathState, true);
+            
+            Structure* structure = access.structure();
+            if (!structure) {
+                // The null structure cases arise due to array.length and string.length. We have no way
+                // of creating a GetByIdVariant for those, and we don't really have to since the DFG
+                // handles those cases in FixupPhase using value profiling. That's a bit awkward - we
+                // shouldn't have to use value profiling to discover something that the AccessCase
+                // could have told us. But, it works well enough. So, our only concern here is to not
+                // crash on null structure.
+                return GetByIdStatus(slowPathState, true);
+            }
             
             ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(
-                structure, list->at(listIndex).conditionSet(), uid);
+                structure, access.conditionSet(), uid);
              
             switch (complexGetStatus.kind()) {
             case ComplexGetStatus::ShouldSkip:
@@ -193,29 +205,23 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                  
             case ComplexGetStatus::Inlineable: {
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
-                switch (list->at(listIndex).type()) {
-                case GetByIdAccess::SimpleInline:
-                case GetByIdAccess::SimpleStub: {
+                switch (access.type()) {
+                case AccessCase::Load: {
                     break;
                 }
-                case GetByIdAccess::Getter: {
-                    AccessorCallJITStubRoutine* stub = static_cast<AccessorCallJITStubRoutine*>(
-                        list->at(listIndex).stubRoutine());
+                case AccessCase::Getter: {
+                    CallLinkInfo* callLinkInfo = access.callLinkInfo();
+                    ASSERT(callLinkInfo);
                     callLinkStatus = std::make_unique<CallLinkStatus>(
                         CallLinkStatus::computeFor(
-                            locker, profiledBlock, *stub->m_callLinkInfo, callExitSiteData));
+                            locker, profiledBlock, *callLinkInfo, callExitSiteData));
                     break;
                 }
-                case GetByIdAccess::SimpleMiss:
-                case GetByIdAccess::CustomGetter:
-                case GetByIdAccess::WatchedStub:{
-                    // FIXME: It would be totally sweet to support this at some point in the future.
-                    // https://bugs.webkit.org/show_bug.cgi?id=133052
+                default: {
+                    // FIXME: It would be totally sweet to support more of these at some point in the
+                    // future. https://bugs.webkit.org/show_bug.cgi?id=133052
                     return GetByIdStatus(slowPathState, true);
-                }
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
+                } }
                  
                 GetByIdVariant variant(
                     StructureSet(structure), complexGetStatus.offset(),

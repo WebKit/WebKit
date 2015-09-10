@@ -163,24 +163,6 @@ EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState* exec, EncodedJSV
     return JSValue::encode(baseValue.get(exec, ident, slot));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdBuildList(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-
-    Identifier ident = Identifier::fromUid(vm, uid);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-
-    JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue);
-    bool hasResult = baseValue.getPropertySlot(exec, ident, slot);
-    
-    if (accessType == static_cast<AccessType>(stubInfo->accessType))
-        buildGetByIDList(exec, baseValue, ident, slot, *stubInfo);
-
-    return JSValue::encode(hasResult? slot.getValue(exec, ident) : jsUndefined());
-}
-
 EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
     VM* vm = &exec->vm();
@@ -197,7 +179,6 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
         stubInfo->seen = true;
     
     return JSValue::encode(hasResult? slot.getValue(exec, ident) : jsUndefined());
-
 }
 
 EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubInfo* stubInfo, JSCell* base, UniquedStringImpl* key)
@@ -392,90 +373,6 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
         repatchPutByID(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
     else
         stubInfo->seen = true;
-}
-
-void JIT_OPERATION operationPutByIdStrictBuildList(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    Identifier ident = Identifier::fromUid(vm, uid);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-
-    JSValue value = JSValue::decode(encodedValue);
-    JSValue baseValue = JSValue::decode(encodedBase);
-    PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
-    
-    Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr; 
-    baseValue.put(exec, ident, value, slot);
-
-    if (accessType != static_cast<AccessType>(stubInfo->accessType))
-        return;
-
-    buildPutByIdList(exec, baseValue, structure, ident, slot, *stubInfo, NotDirect);
-}
-
-void JIT_OPERATION operationPutByIdNonStrictBuildList(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    Identifier ident = Identifier::fromUid(vm, uid);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-
-    JSValue value = JSValue::decode(encodedValue);
-    JSValue baseValue = JSValue::decode(encodedBase);
-    PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
-
-    Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr;
-    baseValue.put(exec, ident, value, slot);
-    
-    if (accessType != static_cast<AccessType>(stubInfo->accessType))
-        return;
-    
-    buildPutByIdList(exec, baseValue, structure, ident, slot, *stubInfo, NotDirect);
-}
-
-void JIT_OPERATION operationPutByIdDirectStrictBuildList(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    Identifier ident = Identifier::fromUid(vm, uid);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-    
-    JSValue value = JSValue::decode(encodedValue);
-    JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    PutPropertySlot slot(baseObject, true, exec->codeBlock()->putByIdContext());
-
-    Structure* structure = baseObject->structure(*vm);    
-    baseObject->putDirect(*vm, ident, value, slot);
-    
-    if (accessType != static_cast<AccessType>(stubInfo->accessType))
-        return;
-    
-    buildPutByIdList(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
-}
-
-void JIT_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    Identifier ident = Identifier::fromUid(vm, uid);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-
-    JSValue value = JSValue::decode(encodedValue);
-    JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    PutPropertySlot slot(baseObject, false, exec->codeBlock()->putByIdContext());
-
-    Structure* structure = baseObject->structure(*vm);    
-    baseObject->putDirect(*vm, ident, value, slot);
-
-    if (accessType != static_cast<AccessType>(stubInfo->accessType))
-        return;
-    
-    buildPutByIdList(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
 }
 
 void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObject* base, Structure* structure, PropertyOffset offset, EncodedJSValue value)

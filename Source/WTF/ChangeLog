@@ -1,3 +1,16 @@
+2015-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        There should be one stub hanging off an inline cache that contains code for all of the cases, rather than forming a linked list consisting of one stub per case
+        https://bugs.webkit.org/show_bug.cgi?id=148717
+
+        Reviewed by Michael Saboff.
+
+        Beef up dumping a bit.
+
+        * wtf/PrintStream.h:
+        (WTF::pointerDump):
+        (WTF::printInternal):
+
 2015-09-08  Mark Lam  <mark.lam@apple.com>
 
         GC stack scan should include ABI red zone.

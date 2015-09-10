@@ -27,8 +27,7 @@
 #include "StructureStubInfo.h"
 
 #include "JSObject.h"
-#include "PolymorphicGetByIdList.h"
-#include "PolymorphicPutByIdList.h"
+#include "PolymorphicAccess.h"
 #include "Repatch.h"
 
 namespace JSC {
@@ -36,37 +35,53 @@ namespace JSC {
 #if ENABLE(JIT)
 void StructureStubInfo::deref()
 {
-    switch (accessType) {
-    case access_get_by_id_list: {
-        delete u.getByIdList.list;
+    switch (cacheType) {
+    case CacheType::Stub:
+        delete u.stub;
+        return;
+    case CacheType::Unset:
+    case CacheType::GetByIdSelf:
+    case CacheType::PutByIdReplace:
         return;
     }
-    case access_put_by_id_list:
-        delete u.putByIdList.list;
-        return;
-    case access_in_list: {
-        PolymorphicAccessStructureList* polymorphicStructures = u.inList.structureList;
-        delete polymorphicStructures;
-        return;
-    }
-    case access_put_by_id_transition_normal:
-    case access_put_by_id_transition_direct:
-        ObjectPropertyConditionSet::adoptRawPointer(u.putByIdTransition.rawConditionSet);
-        u.putByIdTransition.rawConditionSet = nullptr;
-        return;
-    case access_get_by_id_self:
-    case access_put_by_id_replace:
-    case access_unset:
-        // These instructions don't have to release any allocated memory
-        return;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
+    VM& vm, CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
+{
+    if (!accessCase)
+        return MacroAssemblerCodePtr();
+    
+    if (cacheType == CacheType::Stub)
+        return u.stub->regenerateWithCase(vm, codeBlock, *this, ident, WTF::move(accessCase));
+
+    std::unique_ptr<PolymorphicAccess> access = std::make_unique<PolymorphicAccess>();
+    
+    Vector<std::unique_ptr<AccessCase>> accessCases;
+    
+    std::unique_ptr<AccessCase> previousCase =
+        AccessCase::fromStructureStubInfo(vm, codeBlock->ownerExecutable(), *this);
+    if (previousCase)
+        accessCases.append(WTF::move(previousCase));
+
+    accessCases.append(WTF::move(accessCase));
+
+    MacroAssemblerCodePtr result =
+        access->regenerateWithCases(vm, codeBlock, *this, ident, WTF::move(accessCases));
+
+    if (!result)
+        return MacroAssemblerCodePtr();
+
+    cacheType = CacheType::Stub;
+    u.stub = access.release();
+    return result;
 }
 
 void StructureStubInfo::reset(CodeBlock* codeBlock)
 {
-    if (accessType == access_unset)
+    if (cacheType == CacheType::Unset)
         return;
     
     if (Options::verboseOSR()) {
@@ -74,60 +89,38 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
         // of the CodeBlock.
         dataLog("Clearing structure cache (kind ", static_cast<int>(accessType), ") in ", RawPointer(codeBlock), ".\n");
     }
-    
-    if (isGetByIdAccess(static_cast<AccessType>(accessType)))
+
+    switch (accessType) {
+    case AccessType::Get:
         resetGetByID(codeBlock, *this);
-    else if (isPutByIdAccess(static_cast<AccessType>(accessType)))
+        break;
+    case AccessType::Put:
         resetPutByID(codeBlock, *this);
-    else {
-        RELEASE_ASSERT(isInAccess(static_cast<AccessType>(accessType)));
+        break;
+    case AccessType::In:
         resetIn(codeBlock, *this);
+        break;
     }
     
     deref();
-    accessType = access_unset;
-    stubRoutine = nullptr;
-    watchpoints = nullptr;
+    cacheType = CacheType::Unset;
 }
 
 void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
 {
     VM& vm = *codeBlock->vm();
-    
-    switch (accessType) {
-    case access_get_by_id_self:
-        if (Heap::isMarked(u.getByIdSelf.baseObjectStructure.get()))
+
+    switch (cacheType) {
+    case CacheType::GetByIdSelf:
+    case CacheType::PutByIdReplace:
+        if (Heap::isMarked(u.byIdSelf.baseObjectStructure.get()))
             return;
         break;
-    case access_get_by_id_list: {
-        if (u.getByIdList.list->visitWeak(vm))
+    case CacheType::Stub:
+        if (u.stub->visitWeak(vm))
             return;
         break;
-    }
-    case access_put_by_id_transition_normal:
-    case access_put_by_id_transition_direct:
-        if (Heap::isMarked(u.putByIdTransition.previousStructure.get())
-            && Heap::isMarked(u.putByIdTransition.structure.get())
-            && ObjectPropertyConditionSet::fromRawPointer(u.putByIdTransition.rawConditionSet).areStillLive())
-            return;
-        break;
-    case access_put_by_id_replace:
-        if (Heap::isMarked(u.putByIdReplace.baseObjectStructure.get()))
-            return;
-        break;
-    case access_put_by_id_list:
-        if (u.putByIdList.list->visitWeak(vm))
-            return;
-        break;
-    case access_in_list: {
-        PolymorphicAccessStructureList* polymorphicStructures = u.inList.structureList;
-        if (polymorphicStructures->visitWeak(u.inList.listSize))
-            return;
-        break;
-    }
     default:
-        // The rest of the instructions don't require references, so there is no need to
-        // do anything.
         return;
     }
 

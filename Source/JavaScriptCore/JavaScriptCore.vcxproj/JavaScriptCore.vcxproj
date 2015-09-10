@@ -343,8 +343,7 @@
     <ClCompile Include="..\bytecode\ObjectPropertyCondition.cpp" />
     <ClCompile Include="..\bytecode\ObjectPropertyConditionSet.cpp" />
     <ClCompile Include="..\bytecode\Opcode.cpp" />
-    <ClCompile Include="..\bytecode\PolymorphicGetByIdList.cpp" />
-    <ClCompile Include="..\bytecode\PolymorphicPutByIdList.cpp" />
+    <ClCompile Include="..\bytecode\PolymorphicAccess.cpp" />
     <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp" />
     <ClCompile Include="..\bytecode\PropertyCondition.cpp" />
     <ClCompile Include="..\bytecode\PutByIdStatus.cpp" />
@@ -617,7 +616,6 @@
     <ClCompile Include="..\interpreter\JSStack.cpp" />
     <ClCompile Include="..\interpreter\ProtoCallFrame.cpp" />
     <ClCompile Include="..\interpreter\StackVisitor.cpp" />
-    <ClCompile Include="..\jit\AccessorCallJITStubRoutine.cpp" />
     <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
     <ClCompile Include="..\jit\BinarySwitch.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocationFuzz.cpp" />
@@ -1045,8 +1043,7 @@
     <ClInclude Include="..\bytecode\ObjectPropertyConditionSet.h" />
     <ClInclude Include="..\bytecode\Opcode.h" />
     <ClInclude Include="..\bytecode\Operands.h" />
-    <ClInclude Include="..\bytecode\PolymorphicGetByIdList.h" />
-    <ClInclude Include="..\bytecode\PolymorphicPutByIdList.h" />
+    <ClInclude Include="..\bytecode\PolymorphicAccess.h" />
     <ClInclude Include="..\bytecode\PreciseJumpTargets.h" />
     <ClInclude Include="..\bytecode\PropertyCondition.h" />
     <ClInclude Include="..\bytecode\PutByIdStatus.h" />
@@ -1417,7 +1414,6 @@
     <ClInclude Include="..\interpreter\ProtoCallFrame.h" />
     <ClInclude Include="..\interpreter\Register.h" />
     <ClInclude Include="..\interpreter\StackVisitor.h" />
-    <ClInclude Include="..\jit\AccessorCallJITStubRoutine.h" />
     <ClInclude Include="..\jit\AssemblyHelpers.h" />
     <ClInclude Include="..\jit\BinarySwitch.h" />
     <ClInclude Include="..\jit\CCallHelpers.h" />

@@ -198,7 +198,7 @@
     <ClCompile Include="..\bytecode\Opcode.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
-    <ClCompile Include="..\bytecode\PolymorphicPutByIdList.cpp">
+    <ClCompile Include="..\bytecode\PolymorphicAccess.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
     <ClCompile Include="..\bytecode\PutByIdStatus.cpp">
@@ -1623,9 +1623,6 @@
     <ClCompile Include="..\llvm\LLVMAPI.cpp">
       <Filter>llvm</Filter>
     </ClCompile>
-    <ClCompile Include="..\jit\AccessorCallJITStubRoutine.cpp">
-      <Filter>jit</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\ConsoleMessage.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -1691,9 +1688,6 @@
     </ClCompile>
     <ClCompile Include="..\inspector\JSJavaScriptCallFramePrototype.cpp">
       <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bytecode\PolymorphicGetByIdList.cpp">
-      <Filter>bytecode</Filter>
     </ClCompile>
     <ClCompile Include="..\profiler\ProfilerJettisonReason.cpp">
       <Filter>profiler</Filter>
@@ -2097,7 +2091,7 @@
     <ClInclude Include="..\bytecode\Operands.h">
       <Filter>bytecode</Filter>
     </ClInclude>
-    <ClInclude Include="..\bytecode\PolymorphicPutByIdList.h">
+    <ClInclude Include="..\bytecode\PolymorphicAccess.h">
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\PutByIdStatus.h">
@@ -4202,9 +4196,6 @@
     <ClInclude Include="..\llvm\LLVMHeaders.h">
       <Filter>llvm</Filter>
     </ClInclude>
-    <ClInclude Include="..\jit\AccessorCallJITStubRoutine.h">
-      <Filter>jit</Filter>
-    </ClInclude>
     <ClInclude Include="..\assembler\AbortReason.h">
       <Filter>assembler</Filter>
     </ClInclude>
@@ -4282,9 +4273,6 @@
     </ClInclude>
     <ClInclude Include="..\runtime\JSCInlines.h">
       <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bytecode\PolymorphicGetByIdList.h">
-      <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\profiler\ProfilerJettisonReason.h">
       <Filter>profiler</Filter>

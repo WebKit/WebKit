@@ -40,11 +40,13 @@ struct ScratchBuffer;
 
 class ScratchRegisterAllocator {
 public:
+    ScratchRegisterAllocator() { }
     ScratchRegisterAllocator(const RegisterSet& usedRegisters);
     ~ScratchRegisterAllocator();
 
-    void lock(GPRReg reg);
-    void lock(FPRReg reg);
+    void lock(GPRReg);
+    void lock(FPRReg);
+    void lock(JSValueRegs);
     
     template<typename BankInfo>
     typename BankInfo::RegisterType allocateScratch();

@@ -29,8 +29,11 @@
 #if ENABLE(JIT)
 
 #include "JSCInlines.h"
+#include <wtf/ListDump.h>
 
 namespace JSC {
+
+static const bool verbose = false;
 
 static unsigned globalCounter; // We use a different seed every time we are invoked.
 
@@ -43,11 +46,17 @@ BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type
 {
     if (cases.isEmpty())
         return;
+
+    if (verbose)
+        dataLog("Original cases: ", listDump(cases), "\n");
     
     for (unsigned i = 0; i < cases.size(); ++i)
         m_cases.append(Case(cases[i], i));
     
     std::sort(m_cases.begin(), m_cases.end());
+
+    if (verbose)
+        dataLog("Sorted cases: ", listDump(m_cases), "\n");
     
     for (unsigned i = 1; i < m_cases.size(); ++i)
         RELEASE_ASSERT(m_cases[i - 1] < m_cases[i]);
@@ -128,6 +137,15 @@ bool BinarySwitch::advance(MacroAssembler& jit)
 
 void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
 {
+    if (verbose)
+        dataLog("Building with start = ", start, ", hardStart = ", hardStart, ", end = ", end, "\n");
+
+    auto append = [&] (const BranchCode& code) {
+        if (verbose)
+            dataLog("==> ", code, "\n");
+        m_branches.append(code);
+    };
+    
     unsigned size = end - start;
     
     RELEASE_ASSERT(size);
@@ -141,6 +159,9 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
     const unsigned leafThreshold = 3;
     
     if (size <= leafThreshold) {
+        if (verbose)
+            dataLog("It's a leaf.\n");
+        
         // It turns out that for exactly three cases or less, it's better to just compare each
         // case individually. This saves 1/6 of a branch on average, and up to 1/3 of a branch in
         // extreme cases where the divide-and-conquer bottoms out in a lot of 3-case subswitches.
@@ -158,12 +179,15 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
             && m_cases[start + size - 1].value == m_cases[start + size].value - 1) {
             allConsecutive = true;
             for (unsigned i = 0; i < size - 1; ++i) {
-                if (m_cases[i].value + 1 != m_cases[i + 1].value) {
+                if (m_cases[start + i].value + 1 != m_cases[start + i + 1].value) {
                     allConsecutive = false;
                     break;
                 }
             }
         }
+
+        if (verbose)
+            dataLog("allConsecutive = ", allConsecutive, "\n");
         
         Vector<unsigned, 3> localCaseIndices;
         for (unsigned i = 0; i < size; ++i)
@@ -178,17 +202,20 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
             });
         
         for (unsigned i = 0; i < size - 1; ++i) {
-            m_branches.append(BranchCode(NotEqualToPush, localCaseIndices[i]));
-            m_branches.append(BranchCode(ExecuteCase, localCaseIndices[i]));
-            m_branches.append(BranchCode(Pop));
+            append(BranchCode(NotEqualToPush, localCaseIndices[i]));
+            append(BranchCode(ExecuteCase, localCaseIndices[i]));
+            append(BranchCode(Pop));
         }
         
         if (!allConsecutive)
-            m_branches.append(BranchCode(NotEqualToFallThrough, localCaseIndices.last()));
+            append(BranchCode(NotEqualToFallThrough, localCaseIndices.last()));
         
-        m_branches.append(BranchCode(ExecuteCase, localCaseIndices.last()));
+        append(BranchCode(ExecuteCase, localCaseIndices.last()));
         return;
     }
+
+    if (verbose)
+        dataLog("It's not a leaf.\n");
         
     // There are two different strategies we could consider here:
     //
@@ -286,7 +313,10 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
     // and get a 1/6 speed-up on average for taking an explicit case.
         
     unsigned medianIndex = (start + end) / 2;
-        
+
+    if (verbose)
+        dataLog("medianIndex = ", medianIndex, "\n");
+
     // We want medianIndex to point to the thing we will do a less-than compare against. We want
     // this less-than compare to split the current sublist into equal-sized sublists, or
     // nearly-equal-sized with some randomness if we're in the odd case. With the above
@@ -317,10 +347,42 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
     RELEASE_ASSERT(medianIndex > start);
     RELEASE_ASSERT(medianIndex + 1 < end);
         
-    m_branches.append(BranchCode(LessThanToPush, medianIndex));
+    if (verbose)
+        dataLog("fixed medianIndex = ", medianIndex, "\n");
+
+    append(BranchCode(LessThanToPush, medianIndex));
     build(medianIndex, true, end);
-    m_branches.append(BranchCode(Pop));
+    append(BranchCode(Pop));
     build(start, hardStart, medianIndex);
+}
+
+void BinarySwitch::Case::dump(PrintStream& out) const
+{
+    out.print("<value: " , value, ", index: ", index, ">");
+}
+
+void BinarySwitch::BranchCode::dump(PrintStream& out) const
+{
+    switch (kind) {
+    case NotEqualToFallThrough:
+        out.print("NotEqualToFallThrough");
+        break;
+    case NotEqualToPush:
+        out.print("NotEqualToPush");
+        break;
+    case LessThanToPush:
+        out.print("LessThanToPush");
+        break;
+    case Pop:
+        out.print("Pop");
+        break;
+    case ExecuteCase:
+        out.print("ExecuteCase");
+        break;
+    }
+
+    if (index != UINT_MAX)
+        out.print("(", index, ")");
 }
 
 } // namespace JSC

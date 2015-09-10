@@ -211,7 +211,7 @@ public:
     void getByValInfoMap(ByValInfoMap& result);
     
 #if ENABLE(JIT)
-    StructureStubInfo* addStubInfo();
+    StructureStubInfo* addStubInfo(AccessType);
     Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
     Bag<StructureStubInfo>::iterator stubInfoEnd() { return m_stubInfos.end(); }
     

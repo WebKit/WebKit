@@ -480,6 +480,7 @@ static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
+static NO_RETURN_DUE_TO_CRASH EncodedJSValue JSC_HOST_CALL functionAbort(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFalse1(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFalse2(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionUndefined1(ExecState*);
@@ -615,6 +616,7 @@ protected:
         addFunction(vm, "describeArray", functionDescribeArray, 1);
         addFunction(vm, "print", functionPrint, 1);
         addFunction(vm, "quit", functionQuit, 0);
+        addFunction(vm, "abort", functionAbort, 0);
         addFunction(vm, "gc", functionGCAndSweep, 0);
         addFunction(vm, "fullGC", functionFullGC, 0);
         addFunction(vm, "edenGC", functionEdenGC, 0);
@@ -1331,6 +1333,11 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
     // Without this, Visual Studio will complain that this method does not return a value.
     return JSValue::encode(jsUndefined());
 #endif
+}
+
+EncodedJSValue JSC_HOST_CALL functionAbort(ExecState*)
+{
+    CRASH();
 }
 
 EncodedJSValue JSC_HOST_CALL functionFalse1(ExecState*) { return JSValue::encode(jsBoolean(false)); }

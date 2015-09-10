@@ -188,6 +188,7 @@ typedef const char* optionString;
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, nullptr) \
     v(bool, assumeAllRegsInFTLICAreLive, false, nullptr) \
     v(bool, enableAccessInlining, true, nullptr) \
+    v(unsigned, maxAccessVariantListSize, 8, nullptr) \
     v(bool, enablePolyvariantDevirtualization, true, nullptr) \
     v(bool, enablePolymorphicAccessInlining, true, nullptr) \
     v(bool, enablePolymorphicCallInlining, true, nullptr) \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef PrintStream_h
 #define PrintStream_h
 
+#include <memory>
 #include <stdarg.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -161,6 +162,12 @@ private:
 
 template<typename T>
 PointerDump<T> pointerDump(const T* ptr) { return PointerDump<T>(ptr); }
+
+template<typename T>
+void printInternal(PrintStream& out, const std::unique_ptr<T>& value)
+{
+    out.print(pointerDump(value.get()));
+}
 
 template<typename T, typename U>
 class ValueInContext {

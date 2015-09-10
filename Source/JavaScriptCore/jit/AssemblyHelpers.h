@@ -718,7 +718,7 @@ public:
         return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
 #endif
     }
-    
+
     template<typename T>
     Jump branchStructure(RelationalCondition condition, T leftHandSide, Structure* structure)
     {
@@ -987,11 +987,31 @@ public:
 #endif
     }
 
+    void boxBooleanPayload(bool value, GPRReg payloadGPR)
+    {
+#if USE(JSVALUE64)
+        move(TrustedImm32(ValueFalse + value), payloadGPR);
+#else
+        move(TrustedImm32(value), payloadGPR);
+#endif
+    }
+
     void boxBoolean(GPRReg boolGPR, JSValueRegs boxedRegs)
     {
         boxBooleanPayload(boolGPR, boxedRegs.payloadGPR());
 #if USE(JSVALUE32_64)
         move(TrustedImm32(JSValue::BooleanTag), boxedRegs.tagGPR());
+#endif
+    }
+
+    void boxInt32(GPRReg intGPR, JSValueRegs boxedRegs)
+    {
+#if USE(JSVALUE64)
+        move(intGPR, boxedRegs.gpr());
+        or64(TrustedImm64(TagTypeNumber), boxedRegs.gpr());
+#else
+        move(intGPR, boxedRegs.payloadGPR());
+        move(TrustedImm32(JSValue::Int32Tag), boxedRegs.tagGPR());
 #endif
     }
     
