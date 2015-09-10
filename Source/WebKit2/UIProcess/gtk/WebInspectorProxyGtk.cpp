@@ -250,17 +250,17 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& url)
         updateInspectorWindowTitle();
 }
 
-String WebInspectorProxy::inspectorPageURL() const
+String WebInspectorProxy::inspectorPageURL()
 {
     return String("resource:///org/webkitgtk/inspector/UserInterface/Main.html");
 }
 
-String WebInspectorProxy::inspectorTestPageURL() const
+String WebInspectorProxy::inspectorTestPageURL()
 {
     return String("resource:///org/webkitgtk/inspector/UserInterface/Test.html");
 }
 
-String WebInspectorProxy::inspectorBaseURL() const
+String WebInspectorProxy::inspectorBaseURL()
 {
     return String("resource:///org/webkitgtk/inspector/UserInterface/");
 }

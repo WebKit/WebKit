@@ -178,7 +178,7 @@ void WebInspectorProxy::close()
 void WebInspectorProxy::didRelaunchInspectorPageProcess()
 {
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
-    m_inspectorPage->process().assumeReadAccessToBaseURL(inspectorBaseURL());
+    m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
 
     // When didRelaunchInspectorPageProcess is called we can assume it is during a load request.
     // Any messages we would have sent to a terminated process need to be re-sent.
@@ -329,24 +329,24 @@ bool WebInspectorProxy::isInspectorPage(WebPageProxy& webPage)
     return pageLevelMap().contains(&webPage);
 }
 
-static bool isMainOrTestInspectorPage(const WebInspectorProxy* webInspectorProxy, WKURLRequestRef requestRef)
+static bool isMainOrTestInspectorPage(WKURLRequestRef requestRef)
 {
     URL requestURL(URL(), toImpl(requestRef)->resourceRequest().url());
     if (!WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(requestURL.protocol()))
         return false;
 
     // Use URL so we can compare just the paths.
-    URL mainPageURL(URL(), webInspectorProxy->inspectorPageURL());
+    URL mainPageURL(URL(), WebInspectorProxy::inspectorPageURL());
     ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(mainPageURL.protocol()));
     if (decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(mainPageURL.path()))
         return true;
 
     // We might not have a Test URL in Production builds.
-    String testPageURLString = webInspectorProxy->inspectorTestPageURL();
+    String testPageURLString = WebInspectorProxy::inspectorTestPageURL();
     if (testPageURLString.isNull())
         return false;
 
-    URL testPageURL(URL(), webInspectorProxy->inspectorTestPageURL());
+    URL testPageURL(URL(), testPageURLString);
     ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(testPageURL.protocol()));
     return decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(testPageURL.path());
 }
@@ -370,7 +370,7 @@ static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFr
     ASSERT(webInspectorProxy);
 
     // Allow loading of the main inspector file.
-    if (isMainOrTestInspectorPage(webInspectorProxy, requestRef)) {
+    if (isMainOrTestInspectorPage(requestRef)) {
         toImpl(listenerRef)->use();
         return;
     }
@@ -474,7 +474,7 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
     WKPageSetPageLoaderClient(toAPI(m_inspectorPage), &loaderClient.base);
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
-    m_inspectorPage->process().assumeReadAccessToBaseURL(inspectorBaseURL());
+    m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
 }
 
 // Called by WebInspectorProxy messages
@@ -517,7 +517,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
         m_inspectorPage->process().send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), m_inspectorPage->pageID());
     }
 
-    m_inspectorPage->loadRequest(URL(URL(), m_underTest ? inspectorTestPageURL() : inspectorPageURL()));
+    m_inspectorPage->loadRequest(URL(URL(), m_underTest ? WebInspectorProxy::inspectorTestPageURL() : WebInspectorProxy::inspectorPageURL()));
 }
 
 void WebInspectorProxy::open()

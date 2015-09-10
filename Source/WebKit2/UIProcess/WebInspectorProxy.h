@@ -139,9 +139,9 @@ public:
     static bool isInspectorPage(WebPageProxy&);
 
     // Provided by platform WebInspectorProxy implementations.
-    String inspectorPageURL() const;
-    String inspectorTestPageURL() const;
-    String inspectorBaseURL() const;
+    static String inspectorPageURL();
+    static String inspectorTestPageURL();
+    static String inspectorBaseURL();
 
 #if ENABLE(INSPECTOR_SERVER)
     void enableRemoteInspection();
