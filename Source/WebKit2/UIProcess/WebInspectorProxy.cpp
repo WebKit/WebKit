@@ -705,19 +705,19 @@ void WebInspectorProxy::platformStartWindowDrag()
     notImplemented();
 }
 
-String WebInspectorProxy::inspectorPageURL() const
+String WebInspectorProxy::inspectorPageURL()
 {
     notImplemented();
     return String();
 }
 
-String WebInspectorProxy::inspectorTestPageURL() const
+String WebInspectorProxy::inspectorTestPageURL()
 {
     notImplemented();
     return String();
 }
 
-String WebInspectorProxy::inspectorBaseURL() const
+String WebInspectorProxy::inspectorBaseURL()
 {
     notImplemented();
     return String();

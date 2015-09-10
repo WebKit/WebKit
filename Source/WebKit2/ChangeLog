@@ -1,3 +1,13 @@
+2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed build fix after r189572.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        Remove the const on the now static methods.
+
 2015-09-10  Chris Dumez  <cdumez@apple.com>
 
         Node.appendChild(null) / replaceChild(null, null) / removeChild(null) / insertBefore(null, ref) should throw a TypeError
