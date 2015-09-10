@@ -49,6 +49,8 @@ private:
     virtual void computePreferredLogicalWidths() override;
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
     virtual void layout() override;
+
+    bool isFlexibleBoxImpl() const override { return true; }
 };
 
 } // namespace WebCore

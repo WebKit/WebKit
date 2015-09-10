@@ -122,6 +122,7 @@ private:
     LayoutUnit mainAxisBorderAndPaddingExtentForChild(RenderBox& child) const;
     LayoutUnit mainAxisScrollbarExtentForChild(RenderBox& child) const;
     LayoutUnit preferredMainAxisContentExtentForChild(RenderBox& child, bool hasInfiniteLineLength);
+    EOverflow mainAxisOverflowForChild(RenderBox&) const;
 
     void layoutFlexItems(bool relayoutChildren, Vector<LineContext>&);
     LayoutUnit autoMarginOffsetInMainAxis(const OrderedFlexItemList&, LayoutUnit& availableFreeSpace);
@@ -156,6 +157,11 @@ private:
     void applyStretchAlignmentToChild(RenderBox&, LayoutUnit lineCrossAxisExtent);
     void flipForRightToLeftColumn();
     void flipForWrapReverse(const Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
+
+    bool mainAxisExtentIsDefinite() const;
+    bool mainAxisLengthIsIndefinite(const Length& flexBasis) const;
+
+    virtual bool isFlexibleBoxImpl() const { return false; };
 
     mutable OrderIterator m_orderIterator;
     int m_numberOfInFlowChildrenOnFirstLine;

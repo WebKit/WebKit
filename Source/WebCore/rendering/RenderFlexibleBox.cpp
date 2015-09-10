@@ -455,7 +455,7 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox&
         // We don't have to check for "auto" here - computeContentLogicalHeight will just return Nullopt for that case anyway.
         if (size.isIntrinsic())
             child.layoutIfNeeded();
-        return child.computeContentLogicalHeight(size, child.logicalHeight() - child.borderAndPaddingLogicalHeight());
+        return child.computeContentLogicalHeight(sizeType, size, child.logicalHeight() - child.borderAndPaddingLogicalHeight());
     }
     // FIXME: Figure out how this should work for regions and pass in the appropriate values.
     RenderRegion* region = nullptr;
@@ -644,6 +644,16 @@ void RenderFlexibleBox::setFlowAwareLocationForChild(RenderBox& child, const Lay
 LayoutUnit RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild(RenderBox& child) const
 {
     return isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
+}
+
+bool RenderFlexibleBox::mainAxisExtentIsDefinite() const
+{
+    return isColumnFlow() ? hasDefiniteLogicalHeight() : hasDefiniteLogicalWidth();
+}
+
+bool RenderFlexibleBox::mainAxisLengthIsIndefinite(const Length& flexBasis) const
+{
+    return flexBasis.isAuto() || (flexBasis.isPercentOrCalculated() && !mainAxisExtentIsDefinite());
 }
 
 LayoutUnit RenderFlexibleBox::mainAxisScrollbarExtentForChild(RenderBox& child) const
@@ -845,12 +855,34 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
 LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, LayoutUnit childSize)
 {
     Length max = isHorizontalFlow() ? child.style().maxWidth() : child.style().maxHeight();
-    if (max.isSpecifiedOrIntrinsic())
-        childSize = std::min(childSize, computeMainAxisExtentForChild(child, MaxSize, max).valueOr(childSize));
+    Optional<LayoutUnit> maxExtent = Nullopt;
+    if (max.isSpecifiedOrIntrinsic()) {
+        maxExtent = computeMainAxisExtentForChild(child, MaxSize, max);
+        childSize = std::min(childSize, maxExtent.valueOr(childSize));
+    }
 
     Length min = isHorizontalFlow() ? child.style().minWidth() : child.style().minHeight();
     if (min.isSpecifiedOrIntrinsic())
         return std::max(childSize, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize));
+
+    if (!isFlexibleBoxImpl() && min.isAuto() && mainAxisOverflowForChild(child) == OVISIBLE) {
+        // This is the implementation of CSS flexbox section 4.5 which defines the minimum size of "pure" flex
+        // items. For any other item the value should be 0, this also includes RenderFlexibleBox's derived clases
+        // (RenderButton, RenderFullScreen...) because that's just an implementation detail.
+        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).valueOr(0);
+        ASSERT(computeMainAxisExtentForChild(child, MinSize, Length(MinContent)));
+        contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
+
+        Length mainSize = isHorizontalFlow() ? child.style().width() : child.style().height();
+        if (!mainAxisLengthIsIndefinite(mainSize)) {
+            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).valueOr(0);
+            ASSERT(computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize));
+            LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.valueOr(resolvedMainSize));
+
+            return std::max(childSize, std::min(specifiedSize, contentSize));
+        }
+        return std::max(childSize, contentSize);
+    }
     return childSize;
 }
 
@@ -1048,6 +1080,13 @@ void RenderFlexibleBox::resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& chil
 {
     if (hasAutoMarginsInCrossAxis(child))
         child.updateLogicalHeight();
+}
+
+EOverflow RenderFlexibleBox::mainAxisOverflowForChild(RenderBox& child) const
+{
+    if (isHorizontalFlow())
+        return child.style().overflowX();
+    return child.style().overflowY();
 }
 
 void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList& children, const Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>& lineContexts)
