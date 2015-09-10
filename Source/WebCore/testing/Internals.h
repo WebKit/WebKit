@@ -418,6 +418,8 @@ public:
     void setPageMuted(bool);
     bool isPagePlayingAudio();
 
+    void setPageDefersLoading(bool);
+
     RefPtr<File> createFile(const String&);
     void queueMicroTask(int);
     bool testPreloaderSettingViewport();

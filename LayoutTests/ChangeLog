@@ -1,3 +1,16 @@
+2015-09-10  Daniel Bates  <dabates@apple.com>
+
+        Write a test to ensure we don't regress processing of tasks when page defers loading
+        https://bugs.webkit.org/show_bug.cgi?id=135882
+        <rdar://problem/22550497>
+
+        Reviewed by Darin Adler.
+
+        Add a test to ensure we do not regress <https://bugs.webkit.org/show_bug.cgi?id=135688>.
+
+        * storage/websql/success-callback-when-page-defers-loading-expected.txt: Added.
+        * storage/websql/success-callback-when-page-defers-loading.html: Added.
+
 2015-09-10  Sergio Villar Senin  <svillar@igalia.com>
 
         min-width/height should default to auto for flexbox items

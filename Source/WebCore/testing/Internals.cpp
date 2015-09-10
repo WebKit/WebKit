@@ -305,6 +305,8 @@ void Internals::resetToConsistentState(Page* page)
 
     page->setPageScaleFactor(1, IntPoint(0, 0));
     page->setPagination(Pagination());
+
+    page->setDefersLoading(false);
     
     page->mainFrame().setTextZoomFactor(1.0f);
     
@@ -2933,6 +2935,15 @@ bool Internals::isPagePlayingAudio()
         return false;
 
     return !!(document->page()->mediaState() & MediaProducer::IsPlayingAudio);
+}
+
+void Internals::setPageDefersLoading(bool defersLoading)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+    if (Page* page = document->page())
+        page->setDefersLoading(defersLoading);
 }
 
 RefPtr<File> Internals::createFile(const String& path)

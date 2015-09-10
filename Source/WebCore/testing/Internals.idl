@@ -387,7 +387,9 @@ enum MediaControlEvent {
 
     void setPageMuted(boolean muted);
     boolean isPagePlayingAudio();
-    
+
+    void setPageDefersLoading(boolean defersLoading);
+
     File createFile(DOMString url);
     void queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();
