@@ -211,9 +211,9 @@ void AudioScheduledSourceNode::finish()
     }
 }
 
-bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
-    bool success = AudioNode::addEventListener(eventType, listener, useCapture);
+    bool success = AudioNode::addEventListener(eventType, WTF::move(listener), useCapture);
     if (success && eventType == eventNames().endedEvent)
         m_hasEndedListener = hasEventListeners(eventNames().endedEvent);
     return success;

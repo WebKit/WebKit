@@ -359,7 +359,7 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role, ListModification li
     case PathSegUnalteredRole:
         if (listModification == ListModificationAppend) {
             ASSERT(!m_pathSegList.value.isEmpty());
-            appendSVGPathByteStreamFromSVGPathSeg(m_pathSegList.value.last(), m_pathByteStream.get(), UnalteredParsing);
+            appendSVGPathByteStreamFromSVGPathSeg(m_pathSegList.value.last().copyRef(), m_pathByteStream.get(), UnalteredParsing);
         } else
             buildSVGPathByteStreamFromSVGPathSegList(m_pathSegList.value, m_pathByteStream.get(), UnalteredParsing);
         break;

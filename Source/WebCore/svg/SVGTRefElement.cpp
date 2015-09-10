@@ -65,7 +65,7 @@ public:
         return listener->type() == SVGTRefTargetEventListenerType ? static_cast<const SVGTRefTargetEventListener*>(listener) : nullptr;
     }
 
-    void attach(PassRefPtr<Element> target);
+    void attach(RefPtr<Element>&& target);
     void detach();
     bool isAttached() const { return m_target.get(); }
 
@@ -86,7 +86,7 @@ SVGTRefTargetEventListener::SVGTRefTargetEventListener(SVGTRefElement& trefEleme
 {
 }
 
-void SVGTRefTargetEventListener::attach(PassRefPtr<Element> target)
+void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
 {
     ASSERT(!isAttached());
     ASSERT(target.get());
@@ -94,7 +94,7 @@ void SVGTRefTargetEventListener::attach(PassRefPtr<Element> target)
 
     target->addEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
     target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
-    m_target = target;
+    m_target = WTF::move(target);
 }
 
 void SVGTRefTargetEventListener::detach()
@@ -249,7 +249,7 @@ void SVGTRefElement::buildPendingResource()
     // expects every element instance to have an associated shadow tree element - which is not the
     // case when we land here from SVGUseElement::buildShadowTree().
     if (!isInShadowTree())
-        m_targetListener->attach(target);
+        m_targetListener->attach(target.copyRef());
 
     updateReferencedText(target.get());
 }

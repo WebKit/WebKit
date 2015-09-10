@@ -187,7 +187,7 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventT
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
         if ((*listenerVector)[i].listener->wasCreatedFromMarkup())
             continue;
-        target->addEventListener(eventType, (*listenerVector)[i].listener, (*listenerVector)[i].useCapture);
+        target->addEventListener(eventType, (*listenerVector)[i].listener.copyRef(), (*listenerVector)[i].useCapture);
     }
 }
 

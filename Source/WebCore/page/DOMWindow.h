@@ -273,7 +273,7 @@ namespace WebCore {
 
         // Events
         // EventTarget API
-        virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
+        virtual bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
         virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
         virtual void removeAllEventListeners() override;
 

@@ -38,7 +38,7 @@ bool buildPathFromByteStream(SVGPathByteStream*, Path&);
 
 // SVGPathSegList/String -> SVGPathByteStream
 bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream*, PathParsingMode);
-bool appendSVGPathByteStreamFromSVGPathSeg(PassRefPtr<SVGPathSeg>, SVGPathByteStream*, PathParsingMode);
+bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&&, SVGPathByteStream*, PathParsingMode);
 bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream*, PathParsingMode);
 
 // SVGPathByteStream/SVGPathSegList -> String

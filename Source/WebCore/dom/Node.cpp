@@ -1867,11 +1867,9 @@ void Node::didMoveToNewDocument(Document* oldDocument)
     }
 }
 
-static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, PassRefPtr<EventListener> prpListener, bool useCapture)
+static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
-    RefPtr<EventListener> listener = prpListener;
-
-    if (!targetNode->EventTarget::addEventListener(eventType, listener, useCapture))
+    if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), useCapture))
         return false;
 
     targetNode->document().addListenerTypeIfNeeded(eventType);
@@ -1889,7 +1887,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     // This code was added to address <rdar://problem/5846492> Onorientationchange event not working for document.body.
     // Forward this call to addEventListener() to the window since these are window-only events.
     if (eventType == eventNames().orientationchangeEvent || eventType == eventNames().resizeEvent)
-        targetNode->document().domWindow()->addEventListener(eventType, listener, useCapture);
+        targetNode->document().domWindow()->addEventListener(eventType, WTF::move(listener), useCapture);
 
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchEventType(eventType))
@@ -1905,9 +1903,9 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     return true;
 }
 
-bool Node::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+bool Node::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
-    return tryAddEventListener(this, eventType, listener, useCapture);
+    return tryAddEventListener(this, eventType, WTF::move(listener), useCapture);
 }
 
 static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener* listener, bool useCapture)

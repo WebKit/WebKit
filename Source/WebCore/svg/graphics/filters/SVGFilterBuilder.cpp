@@ -62,10 +62,8 @@ FilterEffect* SVGFilterBuilder::getEffectById(const AtomicString& id) const
     return m_namedEffects.get(id);
 }
 
-void SVGFilterBuilder::appendEffectToEffectReferences(PassRefPtr<FilterEffect> prpEffect, RenderObject* object)
+void SVGFilterBuilder::appendEffectToEffectReferences(RefPtr<FilterEffect>&& effect, RenderObject* object)
 {
-    RefPtr<FilterEffect> effect = prpEffect;
-
     // The effect must be a newly created filter effect.
     ASSERT(!m_effectReferences.contains(effect));
     ASSERT(object && !m_effectRenderer.contains(object));

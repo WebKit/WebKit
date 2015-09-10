@@ -93,7 +93,7 @@ namespace WebCore {
         // A port gets neutered when it is transferred to a new owner via postMessage().
         bool isNeutered() { return !m_entangledChannel; }
 
-        bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
+        bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
 
     private:
         explicit MessagePort(ScriptExecutionContext&);

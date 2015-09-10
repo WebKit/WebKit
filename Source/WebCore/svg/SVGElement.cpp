@@ -571,12 +571,10 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
-bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> prpListener, bool useCapture)
-{
-    RefPtr<EventListener> listener = prpListener;
-    
+bool SVGElement::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
+{   
     // Add event listener to regular DOM element
-    if (!Node::addEventListener(eventType, listener, useCapture))
+    if (!Node::addEventListener(eventType, listener.copyRef(), useCapture))
         return false;
 
     if (containingShadowRoot())
@@ -586,7 +584,7 @@ bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<Even
     ASSERT(!instanceUpdatesBlocked());
     for (auto* instance : instances()) {
         ASSERT(instance->correspondingElement() == this);
-        bool result = instance->Node::addEventListener(eventType, listener, useCapture);
+        bool result = instance->Node::addEventListener(eventType, listener.copyRef(), useCapture);
         ASSERT_UNUSED(result, result);
     }
 

@@ -239,8 +239,8 @@ void ImageDocument::createDocumentStructure()
 #else
         RefPtr<EventListener> listener = ImageEventListener::create(*this);
         if (DOMWindow* window = this->domWindow())
-            window->addEventListener("resize", listener, false);
-        imageElement->addEventListener("click", listener.release(), false);
+            window->addEventListener("resize", listener.copyRef(), false);
+        imageElement->addEventListener("click", WTF::move(listener), false);
 #endif
     }
 

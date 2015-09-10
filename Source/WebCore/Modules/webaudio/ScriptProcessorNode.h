@@ -73,7 +73,7 @@ private:
 
     void fireProcessEvent();
 
-    bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
+    bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture) override;
     bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
     void removeAllEventListeners() override;
 
