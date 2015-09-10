@@ -1,3 +1,14 @@
+2015-09-10  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r189575): Appears to break ARM64 linux builds
+        https://bugs.webkit.org/show_bug.cgi?id=149044
+
+        Reviewed by Filip Pizlo.
+
+        Changed the use of the ARM64 "fp", a register alias, to be "x29", the real register name.
+
+        * llint/LowLevelInterpreter.asm:
+
 2015-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         There should be one stub hanging off an inline cache that contains code for all of the cases, rather than forming a linked list consisting of one stub per case

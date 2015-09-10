@@ -517,8 +517,8 @@ macro preserveCalleeSavesUsedByLLInt()
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
     elsif ARM64
-        emit "stp x27, x28, [fp, #-16]"
-        emit "stp xzr, x26, [fp, #-32]"
+        emit "stp x27, x28, [x29, #-16]"
+        emit "stp xzr, x26, [x29, #-32]"
     elsif MIPS
     elsif SH4
     elsif X86
@@ -539,8 +539,8 @@ macro restoreCalleeSavesUsedByLLInt()
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
     elsif ARM64
-        emit "ldp xzr, x26, [fp, #-32]"
-        emit "ldp x27, x28, [fp, #-16]"
+        emit "ldp xzr, x26, [x29, #-32]"
+        emit "ldp x27, x28, [x29, #-16]"
     elsif MIPS
     elsif SH4
     elsif X86
