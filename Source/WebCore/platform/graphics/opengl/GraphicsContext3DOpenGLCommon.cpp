@@ -79,7 +79,21 @@
 
 namespace WebCore {
 
-static ShaderNameHash* currentNameHashMapForShader = nullptr;
+static ThreadSpecific<ShaderNameHash*>& getCurrentNameHashMapForShader()
+{
+    static std::once_flag onceFlag;
+    static ThreadSpecific<ShaderNameHash*>* sharedNameHash;
+    std::call_once(onceFlag, [] {
+        sharedNameHash = new ThreadSpecific<ShaderNameHash*>;
+    });
+
+    return *sharedNameHash;
+}
+
+static void setCurrentNameHashMapForShader(ShaderNameHash* shaderNameHash)
+{
+    *getCurrentNameHashMapForShader() = shaderNameHash;
+}
 
 // Hash function used by the ANGLE translator/compiler to do
 // symbol name mangling. Since this is a static method, before
@@ -94,11 +108,10 @@ static uint64_t nameHashForShader(const char* name, size_t length)
     CString nameAsCString = CString(name);
 
     // Look up name in our local map.
-    if (currentNameHashMapForShader) {
-        ShaderNameHash::iterator result = currentNameHashMapForShader->find(nameAsCString);
-        if (result != currentNameHashMapForShader->end())
-            return result->value;
-    }
+    ShaderNameHash*& currentNameHashMapForShader = *getCurrentNameHashMapForShader();
+    ShaderNameHash::iterator findResult = currentNameHashMapForShader->find(nameAsCString);
+    if (findResult != currentNameHashMapForShader->end())
+        return findResult->value;
 
     unsigned hashValue = nameAsCString.hash();
 
@@ -568,14 +581,14 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
 
     if (!nameHashMapForShaders)
         nameHashMapForShaders = std::make_unique<ShaderNameHash>();
-    currentNameHashMapForShader = nameHashMapForShaders.get();
+    setCurrentNameHashMapForShader(nameHashMapForShaders.get());
     m_compiler.setResources(ANGLEResources);
 
     String translatedShaderSource = m_extensions->getTranslatedShaderSourceANGLE(shader);
 
     ANGLEResources.HashFunction = previousHashFunction;
     m_compiler.setResources(ANGLEResources);
-    currentNameHashMapForShader = nullptr;
+    setCurrentNameHashMapForShader(nullptr);
 
     if (!translatedShaderSource.length())
         return;
@@ -877,11 +890,11 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
         // and aren't even required to be used in any shader program.
         if (!nameHashMapForShaders)
             nameHashMapForShaders = std::make_unique<ShaderNameHash>();
-        currentNameHashMapForShader = nameHashMapForShaders.get();
+        setCurrentNameHashMapForShader(nameHashMapForShaders.get());
 
         String generatedName = generateHashedName(name);
 
-        currentNameHashMapForShader = nullptr;
+        setCurrentNameHashMapForShader(nullptr);
 
         m_possiblyUnusedAttributeMap.set(generatedName, name);
 
