@@ -1350,7 +1350,6 @@ webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
 webkit.org/b/142820 fast/images/animated-gif-body-outside-viewport.html [ Timeout Pass ]
-webkit.org/b/142491 media/click-volume-bar-not-pausing.html [ Timeout ]
 webkit.org/b/143473 editing/pasteboard/drag-and-drop-attachment-contenteditable.html [ Timeout ]
 
 webkit.org/b/143477 fast/writing-mode/broken-ideograph-small-caps.html [ Timeout Pass ]
@@ -2233,8 +2232,6 @@ webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnl
 webkit.org/b/132234 fast/regions/scrolling/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
-
-webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
 
 webkit.org/b/132910 editing/pasteboard/drag-drop-paragraph-crasher.html [ Failure ]
 
