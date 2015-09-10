@@ -240,9 +240,9 @@ class Simulator(object):
     """
     device_type_re = re.compile('(?P<name>[^(]+)\((?P<identifier>[^)]+)\)')
     runtime_re = re.compile(
-        '(i|watch)OS (?P<version>[0-9]+\.[0-9])(?P<internal> Internal)? \([0-9]+\.[0-9]+ - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
+        '(i|watch|tv)OS (?P<version>[0-9]+\.[0-9])(?P<internal> Internal)? \([0-9]+\.[0-9]+ - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
     unavailable_version_re = re.compile('-- Unavailable: (?P<identifier>[^ ]+) --')
-    version_re = re.compile('-- (i|watch)OS (?P<version>[0-9]+\.[0-9]+)(?P<internal> Internal)? --')
+    version_re = re.compile('-- (i|watch|tv)OS (?P<version>[0-9]+\.[0-9]+)(?P<internal> Internal)? --')
     devices_re = re.compile(
         '\s*(?P<name>[^(]+ )\((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
 

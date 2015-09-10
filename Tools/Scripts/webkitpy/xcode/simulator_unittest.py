@@ -46,11 +46,13 @@ iPhone 6 (com.apple.CoreSimulator.SimDeviceType.iPhone-6)
 iPad 2 (com.apple.CoreSimulator.SimDeviceType.iPad-2)
 iPad Retina (com.apple.CoreSimulator.SimDeviceType.iPad-Retina)
 iPad Air (com.apple.CoreSimulator.SimDeviceType.iPad-Air)
+Apple TV 1080p (com.apple.CoreSimulator.SimDeviceType.Apple-TV-1080p)
 Apple Watch - 38mm (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-38mm)
 Apple Watch - 42mm (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-42mm)
 == Runtimes ==
 iOS 8.0 (8.0 - 12A465) (com.apple.CoreSimulator.SimRuntime.iOS-8-0)
 iOS 8.0 Internal (8.0 - Unknown) (com.apple.CoreSimulator.SimRuntime.iOS-8-0-Internal) (unavailable, runtime path not found)
+tvOS 9.0 (9.0 - 13T5347l) (com.apple.CoreSimulator.SimRuntime.tvOS-9-0)
 watchOS 2.0 (2.0 - 13S343) (com.apple.CoreSimulator.SimRuntime.watchOS-2-0)
 == Devices ==
 -- iOS 8.0 --
@@ -64,12 +66,14 @@ watchOS 2.0 (2.0 - 13S343) (com.apple.CoreSimulator.SimRuntime.watchOS-2-0)
     iPad Retina (733FC71E-22F4-4077-BF79-25C27EA881FC) (Shutdown)
     iPad Air (67266841-82F3-4545-AED6-568B117E41A8) (Shutdown)
 -- iOS 8.0 Internal --
+-- tvOS 9.0 --
+Apple TV 1080p (55281ABE-9C27-438B-AD50-C540D7BC4BAC) (Shutdown)
 -- watchOS 2.0 --
     Apple Watch - 38mm (00138CD2-D30C-4380-A30E-A70B88E1A3C5) (Shutdown)
     Apple Watch - 42mm (186AD85E-9BE5-4734-BC33-DF50484AAFF0) (Shutdown)
 ''')
         simulator = Simulator(host=self._host)
-        self.assertEqual(10, len(simulator.device_types))
+        self.assertEqual(11, len(simulator.device_types))
 
         device_type_iphone_4s = simulator.device_types[0]
         self.assertEqual('iPhone 4s', device_type_iphone_4s.name)
@@ -103,15 +107,19 @@ watchOS 2.0 (2.0 - 13S343) (com.apple.CoreSimulator.SimRuntime.watchOS-2-0)
         self.assertEqual('iPad Air', device_type_ipad_air.name)
         self.assertEqual('com.apple.CoreSimulator.SimDeviceType.iPad-Air', device_type_ipad_air.identifier)
 
-        device_type_apple_watch_38mm = simulator.device_types[8]
+        device_type_apple_tv_1080p = simulator.device_types[8]
+        self.assertEqual('Apple TV 1080p', device_type_apple_tv_1080p.name)
+        self.assertEqual('com.apple.CoreSimulator.SimDeviceType.Apple-TV-1080p', device_type_apple_tv_1080p.identifier)
+
+        device_type_apple_watch_38mm = simulator.device_types[9]
         self.assertEqual('Apple Watch - 38mm', device_type_apple_watch_38mm.name)
         self.assertEqual('com.apple.CoreSimulator.SimDeviceType.Apple-Watch-38mm', device_type_apple_watch_38mm.identifier)
 
-        device_type_apple_watch_42mm = simulator.device_types[9]
+        device_type_apple_watch_42mm = simulator.device_types[10]
         self.assertEqual('Apple Watch - 42mm', device_type_apple_watch_42mm.name)
         self.assertEqual('com.apple.CoreSimulator.SimDeviceType.Apple-Watch-42mm', device_type_apple_watch_42mm.identifier)
 
-        self.assertEqual(3, len(simulator.runtimes))
+        self.assertEqual(4, len(simulator.runtimes))
 
         runtime_ios_8 = simulator.runtimes[0]
         self.assertEqual('com.apple.CoreSimulator.SimRuntime.iOS-8-0', runtime_ios_8.identifier)
@@ -181,7 +189,20 @@ watchOS 2.0 (2.0 - 13S343) (com.apple.CoreSimulator.SimRuntime.watchOS-2-0)
         self.assertEqual(tuple([8, 0]), runtime_ios_8_internal.version)
         self.assertEqual(0, len(runtime_ios_8_internal.devices))
 
-        runtime_watchos_2 = simulator.runtimes[2]
+        runtime_tvos_9 = simulator.runtimes[2]
+        self.assertEqual('com.apple.CoreSimulator.SimRuntime.tvOS-9-0', runtime_tvos_9.identifier)
+        self.assertEqual(True, runtime_tvos_9.available)
+        self.assertEqual(False, runtime_tvos_9.is_internal_runtime)
+        self.assertEqual(tuple([9, 0]), runtime_tvos_9.version)
+        self.assertEqual(1, len(runtime_tvos_9.devices))
+
+        device_apple_tv_1080p = runtime_tvos_9.devices[0]
+        self.assertEqual('Apple TV 1080p', device_apple_tv_1080p.name)
+        self.assertEqual('55281ABE-9C27-438B-AD50-C540D7BC4BAC', device_apple_tv_1080p.udid)
+        self.assertEqual(True, device_apple_tv_1080p.available)
+        self.assertEqual(runtime_tvos_9, device_apple_tv_1080p.runtime)
+
+        runtime_watchos_2 = simulator.runtimes[3]
         self.assertEqual('com.apple.CoreSimulator.SimRuntime.watchOS-2-0', runtime_watchos_2.identifier)
         self.assertEqual(True, runtime_watchos_2.available)
         self.assertEqual(False, runtime_watchos_2.is_internal_runtime)

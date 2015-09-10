@@ -1,3 +1,15 @@
+2015-09-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Teach run-webkit-tests how to parse `simctl list` when a tvOS SDK is installed
+        https://bugs.webkit.org/show_bug.cgi?id=149029
+        <rdar://problem/22432624>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Taught to parse tvOS runtimes.
+        * Scripts/webkitpy/xcode/simulator_unittest.py: Added tests.
+
 2015-09-09  Alexey Proskuryakov  <ap@apple.com>
 
         Fix bit rot on bot watcher's dashboard page
