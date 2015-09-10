@@ -242,6 +242,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         finalizer = std::make_unique<FailedFinalizer>(*this);
         return FailPath;
     }
+
+    codeBlock->setCalleeSaveRegisters(RegisterSet::dfgCalleeSaveRegisters());
     
     // By this point the DFG bytecode parser will have potentially mutated various tables
     // in the CodeBlock. This is a good time to perform an early shrink, which is more

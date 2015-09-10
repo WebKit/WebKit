@@ -84,7 +84,6 @@ public:
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
     StackMaps stackmaps;
-    UnwindInfo unwindInfo;
     
 private:
     Vector<RefPtr<DataSection>> m_dataSections;

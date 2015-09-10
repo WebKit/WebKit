@@ -329,7 +329,7 @@ void adjustCallICsForStackmaps(Vector<CallType>& calls, StackMaps::RecordMap& re
 
 static void fixFunctionBasedOnStackMaps(
     State& state, CodeBlock* codeBlock, JITCode* jitCode, GeneratedFunction generatedFunction,
-    StackMaps::RecordMap& recordMap, bool didSeeUnwindInfo)
+    StackMaps::RecordMap& recordMap)
 {
     Graph& graph = state.graph;
     VM& vm = graph.m_vm;
@@ -365,12 +365,14 @@ static void fixFunctionBasedOnStackMaps(
         
         // At this point it's perfectly fair to just blow away all state and restore the
         // JS JIT view of the universe.
+        checkJIT.copyCalleeSavesToVMCalleeSavesBuffer();
         checkJIT.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
         checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
         MacroAssembler::Call callLookupExceptionHandler = checkJIT.call();
         checkJIT.jumpToExceptionHandler();
 
         stackOverflowException = checkJIT.label();
+        checkJIT.copyCalleeSavesToVMCalleeSavesBuffer();
         checkJIT.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
         checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
         MacroAssembler::Call callLookupExceptionHandlerFromCallerFrame = checkJIT.call();
@@ -392,7 +394,6 @@ static void fixFunctionBasedOnStackMaps(
     exitThunkGenerator.emitThunks();
     if (exitThunkGenerator.didThings()) {
         RELEASE_ASSERT(state.finalizer->osrExit.size());
-        RELEASE_ASSERT(didSeeUnwindInfo);
         
         auto linkBuffer = std::make_unique<LinkBuffer>(
             vm, exitThunkGenerator, codeBlock, JITCompilationCanFail);
@@ -814,16 +815,14 @@ void compile(State& state, Safepoint::Result& safepointResult)
         }
     }
     
-    bool didSeeUnwindInfo = state.jitCode->unwindInfo.parse(
+    std::unique_ptr<RegisterAtOffsetList> registerOffsets = parseUnwindInfo(
         state.unwindDataSection, state.unwindDataSectionSize,
         state.generatedFunction);
     if (shouldShowDisassembly()) {
         dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");
-        if (didSeeUnwindInfo)
-            dataLog("    ", state.jitCode->unwindInfo, "\n");
-        else
-            dataLog("    <no unwind info>\n");
+        dataLog("    ", *registerOffsets, "\n");
     }
+    state.graph.m_codeBlock->setCalleeSaveRegisters(WTF::move(registerOffsets));
     
     if (state.stackmapsSection && state.stackmapsSection->size()) {
         if (shouldShowDisassembly()) {
@@ -846,7 +845,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         StackMaps::RecordMap recordMap = state.jitCode->stackmaps.computeRecordMap();
         fixFunctionBasedOnStackMaps(
             state, state.graph.m_codeBlock, state.jitCode.get(), state.generatedFunction,
-            recordMap, didSeeUnwindInfo);
+            recordMap);
         if (state.allocationFailed)
             return;
         

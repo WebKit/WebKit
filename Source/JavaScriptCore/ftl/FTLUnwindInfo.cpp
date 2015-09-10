@@ -94,6 +94,9 @@
 #include "config.h"
 #include "FTLUnwindInfo.h"
 
+#include "CodeBlock.h"
+#include "RegisterAtOffsetList.h"
+
 #if ENABLE(FTL_JIT)
 
 #if OS(DARWIN)
@@ -102,10 +105,6 @@
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace FTL {
-
-UnwindInfo::UnwindInfo() { }
-UnwindInfo::~UnwindInfo() { }
-
 
 namespace {
 #if OS(DARWIN)
@@ -654,12 +653,11 @@ static void parseFDEInstructions(const FDE_Info& fdeInfo, const CIE_Info& cieInf
 #endif
 } // anonymous namespace
 
-bool UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFunction)
+std::unique_ptr<RegisterAtOffsetList> parseUnwindInfo(void* section, size_t size, GeneratedFunction generatedFunction)
 {
-    m_registers.clear();
     RELEASE_ASSERT(!!section);
-    if (!section)
-        return false;
+
+    std::unique_ptr<RegisterAtOffsetList> registerOffsets = std::make_unique<RegisterAtOffsetList>();
 
 #if OS(DARWIN)
     RELEASE_ASSERT(size >= sizeof(CompactUnwind));
@@ -689,27 +687,27 @@ bool UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFu
             break;
             
         case UNWIND_X86_64_REG_RBX:
-            m_registers.append(RegisterAtOffset(X86Registers::ebx, offset));
+            registerOffsets->append(RegisterAtOffset(X86Registers::ebx, offset));
             break;
             
         case UNWIND_X86_64_REG_R12:
-            m_registers.append(RegisterAtOffset(X86Registers::r12, offset));
+            registerOffsets->append(RegisterAtOffset(X86Registers::r12, offset));
             break;
             
         case UNWIND_X86_64_REG_R13:
-            m_registers.append(RegisterAtOffset(X86Registers::r13, offset));
+            registerOffsets->append(RegisterAtOffset(X86Registers::r13, offset));
             break;
             
         case UNWIND_X86_64_REG_R14:
-            m_registers.append(RegisterAtOffset(X86Registers::r14, offset));
+            registerOffsets->append(RegisterAtOffset(X86Registers::r14, offset));
             break;
             
         case UNWIND_X86_64_REG_R15:
-            m_registers.append(RegisterAtOffset(X86Registers::r15, offset));
+            registerOffsets->append(RegisterAtOffset(X86Registers::r15, offset));
             break;
             
         case UNWIND_X86_64_REG_RBP:
-            m_registers.append(RegisterAtOffset(X86Registers::ebp, offset));
+            registerOffsets->append(RegisterAtOffset(X86Registers::ebp, offset));
             break;
             
         default:
@@ -721,44 +719,44 @@ bool UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFu
 #elif CPU(ARM64)
     RELEASE_ASSERT((encoding & UNWIND_ARM64_MODE_MASK) == UNWIND_ARM64_MODE_FRAME);
     
-    m_registers.append(RegisterAtOffset(ARM64Registers::fp, 0));
+    registerOffsets->append(RegisterAtOffset(ARM64Registers::fp, 0));
     
     int32_t offset = 0;
     if (encoding & UNWIND_ARM64_FRAME_X19_X20_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::x19, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::x20, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x19, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x20, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_X21_X22_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::x21, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::x22, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x21, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x22, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_X23_X24_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::x23, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::x24, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x23, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x24, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_X25_X26_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::x25, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::x26, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x25, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x26, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_X27_X28_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::x27, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::x28, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x27, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::x28, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D8_D9_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::q8, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::q9, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q8, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q9, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D10_D11_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::q10, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::q11, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q10, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q11, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D12_D13_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::q12, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::q13, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q12, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q13, offset -= 8));
     }
     if (encoding & UNWIND_ARM64_FRAME_D14_D15_PAIR) {
-        m_registers.append(RegisterAtOffset(ARM64Registers::q14, offset -= 8));
-        m_registers.append(RegisterAtOffset(ARM64Registers::q15, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q14, offset -= 8));
+        registerOffsets->append(RegisterAtOffset(ARM64Registers::q15, offset -= 8));
     }
 #else
 #error "Unrecognized architecture"
@@ -782,22 +780,22 @@ bool UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFu
         if (prolog.savedRegisters[i].saved) {
             switch (i) {
             case UNW_X86_64_rbx:
-                m_registers.append(RegisterAtOffset(X86Registers::ebx, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(X86Registers::ebx, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_X86_64_r12:
-                m_registers.append(RegisterAtOffset(X86Registers::r12, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(X86Registers::r12, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_X86_64_r13:
-                m_registers.append(RegisterAtOffset(X86Registers::r13, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(X86Registers::r13, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_X86_64_r14:
-                m_registers.append(RegisterAtOffset(X86Registers::r14, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(X86Registers::r14, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_X86_64_r15:
-                m_registers.append(RegisterAtOffset(X86Registers::r15, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(X86Registers::r15, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_X86_64_rbp:
-                m_registers.append(RegisterAtOffset(X86Registers::ebp, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(X86Registers::ebp, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case DW_X86_64_RET_addr:
                 break;
@@ -816,196 +814,196 @@ bool UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFu
         if (prolog.savedRegisters[i].saved) {
             switch (i) {
             case UNW_ARM64_x0:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x0, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x0, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x1:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x1, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x1, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x2:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x2, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x2, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x3:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x3, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x3, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x4:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x4, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x4, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x5:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x5, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x5, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x6:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x6, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x6, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x7:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x7, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x7, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x8:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x8, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x8, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x9:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x9, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x9, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x10:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x10, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x10, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x11:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x11, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x11, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x12:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x12, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x12, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x13:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x13, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x13, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x14:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x14, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x14, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x15:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x15, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x15, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x16:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x16, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x16, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x17:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x17, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x17, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x18:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x18, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x18, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x19:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x19, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x19, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x20:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x20, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x20, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x21:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x21, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x21, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x22:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x22, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x22, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x23:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x23, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x23, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x24:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x24, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x24, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x25:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x25, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x25, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x26:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x26, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x26, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x27:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x27, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x27, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x28:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x28, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x28, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_fp:
-                m_registers.append(RegisterAtOffset(ARM64Registers::fp, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::fp, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_x30:
-                m_registers.append(RegisterAtOffset(ARM64Registers::x30, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::x30, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_sp:
-                m_registers.append(RegisterAtOffset(ARM64Registers::sp, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::sp, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v0:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q0, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q0, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v1:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q1, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q1, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v2:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q2, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q2, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v3:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q3, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q3, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v4:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q4, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q4, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v5:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q5, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q5, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v6:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q6, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q6, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v7:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q7, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q7, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v8:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q8, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q8, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v9:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q9, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q9, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v10:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q10, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q10, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v11:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q11, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q11, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v12:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q12, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q12, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v13:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q13, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q13, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v14:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q14, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q14, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v15:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q15, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q15, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v16:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q16, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q16, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v17:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q17, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q17, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v18:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q18, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q18, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v19:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q19, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q19, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v20:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q20, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q20, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v21:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q21, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                append(RegisterAtOffset(ARM64Registers::q21, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v22:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q22, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q22, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v23:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q23, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q23, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v24:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q24, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q24, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v25:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q25, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q25, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v26:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q26, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q26, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v27:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q27, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q27, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v28:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q28, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q28, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v29:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q29, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q29, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v30:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q30, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q30, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v31:
-                m_registers.append(RegisterAtOffset(ARM64Registers::q31, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q31, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED(); // non-standard register being saved in prolog
@@ -1017,25 +1015,8 @@ bool UnwindInfo::parse(void* section, size_t size, GeneratedFunction generatedFu
 #endif
 
 #endif
-    std::sort(m_registers.begin(), m_registers.end());
-    return true;
-}
-
-void UnwindInfo::dump(PrintStream& out) const
-{
-    out.print(listDump(m_registers));
-}
-
-RegisterAtOffset* UnwindInfo::find(Reg reg) const
-{
-    return tryBinarySearch<RegisterAtOffset, Reg>(m_registers, m_registers.size(), reg, RegisterAtOffset::getReg);
-}
-
-unsigned UnwindInfo::indexOf(Reg reg) const
-{
-    if (RegisterAtOffset* pointer = find(reg))
-        return pointer - m_registers.begin();
-    return UINT_MAX;
+    registerOffsets->sort();
+    return WTF::move(registerOffsets);
 }
 
 } } // namespace JSC::FTL

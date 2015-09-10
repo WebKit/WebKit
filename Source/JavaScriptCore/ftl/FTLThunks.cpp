@@ -66,8 +66,8 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     saveAllRegisters(jit, buffer);
     
     // Tell GC mark phase how much of the scratch buffer is active during call.
-    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::nonArgGPR1);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
+    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::nonArgGPR0);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR0);
 
     jit.loadPtr(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     jit.peek(

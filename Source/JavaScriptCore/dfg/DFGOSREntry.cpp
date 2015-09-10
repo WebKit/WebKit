@@ -308,8 +308,25 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
             continue;
         pivot[i] = JSValue();
     }
+
+    // 6) Copy our callee saves to buffer.
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+    RegisterAtOffsetList* registerSaveLocations = codeBlock->calleeSaveRegisters();
+    RegisterAtOffsetList* allCalleeSaves = vm->getAllCalleeSaveRegisterOffsets();
+    RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
+
+    unsigned registerCount = registerSaveLocations->size();
+    for (unsigned i = 0; i < registerCount; i++) {
+        RegisterAtOffset currentEntry = registerSaveLocations->at(i);
+        if (dontSaveRegisters.get(currentEntry.reg()))
+            continue;
+        RegisterAtOffset* vmCalleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
+        
+        *(bitwise_cast<intptr_t*>(pivot - 1) - currentEntry.offsetAsIndex()) = vm->calleeSaveRegistersBuffer[vmCalleeSavesEntry->offsetAsIndex()];
+    }
+#endif
     
-    // 6) Fix the call frame to have the right code block.
+    // 7) Fix the call frame to have the right code block.
     
     *bitwise_cast<CodeBlock**>(pivot - 1 - JSStack::CodeBlock) = codeBlock;
     

@@ -107,10 +107,9 @@
 #  - t4 and t5 are never argument registers, t3 can only be a3, t1 can only be
 #  a1; but t0 and t2 can be either a0 or a2.
 #
-#  - On 64 bits, csr0, csr1, csr2 and optionally csr3, csr4, csr5 and csr6
-#  are available as callee-save registers.
-#  csr0 is used to store the PC base, while the last two csr registers are used
-#  to store special tag values. Don't use them for anything else.
+#  - On 64 bits, there are callee-save registers named csr0, csr1, ... csrN.
+#  The last three csr registers are used used to store the PC base and
+#  two special tag values. Don't use them for anything else.
 #
 # Additional platform-specific details (you shouldn't rely on this remaining
 # true):
@@ -218,6 +217,15 @@ elsif X86_64_WIN
     const maxFrameExtentForSlowPathCall = 64
 end
 
+if X86_64 or X86_64_WIN or ARM64
+    const CalleeSaveSpaceAsVirtualRegisters = 3
+else
+    const CalleeSaveSpaceAsVirtualRegisters = 0
+end
+
+const CalleeSaveSpaceStackAligned = (CalleeSaveSpaceAsVirtualRegisters * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
+
+
 # Watchpoint states
 const ClearWatchpoint = 0
 const IsWatched = 1
@@ -231,17 +239,20 @@ if JSVALUE64
     # - C calls are still given the Instruction* rather than the PC index.
     #   This requires an add before the call, and a sub after.
     const PC = t4
-    const PB = csr0
     if ARM64
-        const tagTypeNumber = csr1
-        const tagMask = csr2
+        const PB = csr7
+        const tagTypeNumber = csr8
+        const tagMask = csr9
     elsif X86_64
+        const PB = csr2
         const tagTypeNumber = csr3
         const tagMask = csr4
     elsif X86_64_WIN
+        const PB = csr4
         const tagTypeNumber = csr5
         const tagMask = csr6
     elsif C_LOOP
+        const PB = csr0
         const tagTypeNumber = csr1
         const tagMask = csr2
     end
@@ -398,18 +409,14 @@ macro checkStackPointerAlignment(tempReg, location)
     end
 end
 
-if C_LOOP
+if C_LOOP or ARM64 or X86_64 or X86_64_WIN
     const CalleeSaveRegisterCount = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7
     const CalleeSaveRegisterCount = 7
-elsif ARM64
-    const CalleeSaveRegisterCount = 10
-elsif SH4 or X86_64 or MIPS
+elsif SH4 or MIPS
     const CalleeSaveRegisterCount = 5
 elsif X86 or X86_WIN
     const CalleeSaveRegisterCount = 3
-elsif X86_64_WIN
-    const CalleeSaveRegisterCount = 7
 end
 
 const CalleeRegisterSaveSize = CalleeSaveRegisterCount * PtrSize
@@ -419,17 +426,11 @@ const CalleeRegisterSaveSize = CalleeSaveRegisterCount * PtrSize
 const VMEntryTotalFrameSize = (CalleeRegisterSaveSize + sizeof VMEntryRecord + StackAlignment - 1) & ~StackAlignmentMask
 
 macro pushCalleeSaves()
-    if C_LOOP
+    if C_LOOP or ARM64 or X86_64 or X86_64_WIN
     elsif ARM or ARMv7_TRADITIONAL
         emit "push {r4-r10}"
     elsif ARMv7
         emit "push {r4-r6, r8-r11}"
-    elsif ARM64
-        emit "stp x20, x19, [sp, #-16]!"
-        emit "stp x22, x21, [sp, #-16]!"
-        emit "stp x24, x23, [sp, #-16]!"
-        emit "stp x26, x25, [sp, #-16]!"
-        emit "stp x28, x27, [sp, #-16]!"
     elsif MIPS
         emit "addiu $sp, $sp, -20"
         emit "sw $20, 16($sp)"
@@ -451,35 +452,15 @@ macro pushCalleeSaves()
         emit "push esi"
         emit "push edi"
         emit "push ebx"
-    elsif X86_64
-        emit "push %r12"
-        emit "push %r13"
-        emit "push %r14"
-        emit "push %r15"
-        emit "push %rbx"
-    elsif X86_64_WIN
-        emit "push r12"
-        emit "push r13"
-        emit "push r14"
-        emit "push r15"
-        emit "push rbx"
-        emit "push rdi"
-        emit "push rsi"
     end
 end
 
 macro popCalleeSaves()
-    if C_LOOP
+    if C_LOOP or ARM64 or X86_64 or X86_64_WIN
     elsif ARM or ARMv7_TRADITIONAL
         emit "pop {r4-r10}"
     elsif ARMv7
         emit "pop {r4-r6, r8-r11}"
-    elsif ARM64
-        emit "ldp x28, x27, [sp], #16"
-        emit "ldp x26, x25, [sp], #16"
-        emit "ldp x24, x23, [sp], #16"
-        emit "ldp x22, x21, [sp], #16"
-        emit "ldp x20, x19, [sp], #16"
     elsif MIPS
         emit "lw $16, 0($sp)"
         emit "lw $17, 4($sp)"
@@ -501,20 +482,6 @@ macro popCalleeSaves()
         emit "pop ebx"
         emit "pop edi"
         emit "pop esi"
-    elsif X86_64
-        emit "pop %rbx"
-        emit "pop %r15"
-        emit "pop %r14"
-        emit "pop %r13"
-        emit "pop %r12"
-    elsif X86_64_WIN
-        emit "pop rsi"
-        emit "pop rdi"
-        emit "pop rbx"
-        emit "pop r15"
-        emit "pop r14"
-        emit "pop r13"
-        emit "pop r12"
     end
 end
 
@@ -544,23 +511,137 @@ macro restoreCallerPCAndCFR()
     end
 end
 
+macro preserveCalleeSavesUsedByLLInt()
+    subp CalleeSaveSpaceStackAligned, sp
+    if C_LOOP
+    elsif ARM or ARMv7_TRADITIONAL
+    elsif ARMv7
+    elsif ARM64
+        emit "stp x27, x28, [fp, #-16]"
+        emit "stp xzr, x26, [fp, #-32]"
+    elsif MIPS
+    elsif SH4
+    elsif X86
+    elsif X86_WIN
+    elsif X86_64
+        storep csr4, -8[cfr]
+        storep csr3, -16[cfr]
+        storep csr2, -24[cfr]
+    elsif X86_64_WIN
+        storep csr6, -8[cfr]
+        storep csr5, -16[cfr]
+        storep csr4, -24[cfr]
+    end
+end
+
+macro restoreCalleeSavesUsedByLLInt()
+    if C_LOOP
+    elsif ARM or ARMv7_TRADITIONAL
+    elsif ARMv7
+    elsif ARM64
+        emit "ldp xzr, x26, [fp, #-32]"
+        emit "ldp x27, x28, [fp, #-16]"
+    elsif MIPS
+    elsif SH4
+    elsif X86
+    elsif X86_WIN
+    elsif X86_64
+        loadp -24[cfr], csr2
+        loadp -16[cfr], csr3
+        loadp -8[cfr], csr4
+    elsif X86_64_WIN
+        loadp -24[cfr], csr4
+        loadp -16[cfr], csr5
+        loadp -8[cfr], csr6
+    end
+end
+
+macro copyCalleeSavesToVMCalleeSavesBuffer(vm, temp)
+    if ARM64 or X86_64 or X86_64_WIN
+        leap VM::calleeSaveRegistersBuffer[vm], temp
+        if ARM64
+            storep csr0, [temp]
+            storep csr1, 8[temp]
+            storep csr2, 16[temp]
+            storep csr3, 24[temp]
+            storep csr4, 32[temp]
+            storep csr5, 40[temp]
+            storep csr6, 48[temp]
+            storep csr7, 56[temp]
+            storep csr8, 64[temp]
+            storep csr9, 72[temp]
+            stored csfr0, 80[temp]
+            stored csfr1, 88[temp]
+            stored csfr2, 96[temp]
+            stored csfr3, 104[temp]
+            stored csfr4, 112[temp]
+            stored csfr5, 120[temp]
+            stored csfr6, 128[temp]
+            stored csfr7, 136[temp]
+        elsif X86_64
+            storep csr0, [temp]
+            storep csr1, 8[temp]
+            storep csr2, 16[temp]
+            storep csr3, 24[temp]
+            storep csr4, 32[temp]
+        elsif X86_64_WIN
+            storep csr0, [temp]
+            storep csr1, 8[temp]
+            storep csr2, 16[temp]
+            storep csr3, 24[temp]
+            storep csr4, 32[temp]
+            storep csr5, 40[temp]
+            storep csr6, 48[temp]
+        end
+    end
+end
+
+macro restoreCalleeSavesFromVMCalleeSavesBuffer(vm, temp)
+    if ARM64 or X86_64 or X86_64_WIN
+        leap VM::calleeSaveRegistersBuffer[vm], temp
+        if ARM64
+            loadp [temp], csr0
+            loadp 8[temp], csr1
+            loadp 16[temp], csr2
+            loadp 24[temp], csr3
+            loadp 32[temp], csr4
+            loadp 40[temp], csr5
+            loadp 48[temp], csr6
+            loadp 56[temp], csr7
+            loadp 64[temp], csr8
+            loadp 72[temp], csr9
+            loadd 80[temp], csfr0
+            loadd 88[temp], csfr1
+            loadd 96[temp], csfr2
+            loadd 104[temp], csfr3
+            loadd 112[temp], csfr4
+            loadd 120[temp], csfr5
+            loadd 128[temp], csfr6
+            loadd 136[temp], csfr7
+        elsif X86_64
+            loadp [temp], csr0
+            loadp 8[temp], csr1
+            loadp 16[temp], csr2
+            loadp 24[temp], csr3
+            loadp 32[temp], csr4
+        elsif X86_64_WIN
+            loadp [temp], csr0
+            loadp 8[temp], csr1
+            loadp 16[temp], csr2
+            loadp 24[temp], csr3
+            loadp 32[temp], csr4
+            loadp 40[temp], csr5
+            loadp 48[temp], csr6
+        end
+    end
+end
+
 macro preserveReturnAddressAfterCall(destinationRegister)
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
         # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         pop destinationRegister
-    else
-        error
-    end
-end
-
-macro restoreReturnAddressBeforeReturn(sourceRegister)
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
-        # In C_LOOP case, we're only restoring the bytecode vPC.
-        move sourceRegister, lr
-    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
-        push sourceRegister
     else
         error
     end
@@ -763,6 +844,8 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 
     codeBlockSetter(t1)
 
+    preserveCalleeSavesUsedByLLInt()
+
     # Set up the PC.
     if JSVALUE64
         loadp CodeBlock::m_instructions[t1], PB
@@ -778,7 +861,8 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     bpbeq VM::m_jsStackLimit[t2], t0, .stackHeightOK
 
     # Stack height check failed - need to call a slow_path.
-    subp maxFrameExtentForSlowPathCall, sp # Set up temporary stack pointer for call
+    # Set up temporary stack pointer for call including callee saves
+    subp maxFrameExtentForSlowPathCall, sp
     callSlowPath(_llint_stack_check)
     bpeq r1, 0, .stackHeightOKGetCodeBlock
     move r1, cfr
@@ -793,6 +877,11 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 
 .stackHeightOK:
     move t0, sp
+
+    if JSVALUE64
+        move TagTypeNumber, tagTypeNumber
+        addp TagBitTypeOther, tagTypeNumber, tagMask
+    end
 end
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
@@ -848,6 +937,7 @@ macro allocateJSObject(allocator, structure, result, scratch1, slowCase)
 end
 
 macro doReturn()
+    restoreCalleeSavesUsedByLLInt()
     restoreCallerPCAndCFR()
     ret
 end

@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "CommonSlowPaths.h"
-#include "ArityCheckFailReturnThunks.h"
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "ClonedArguments.h"
@@ -166,15 +165,11 @@ static CommonSlowPaths::ArityCheckData* setupArityCheckData(VM& vm, int slotsToA
     CommonSlowPaths::ArityCheckData* result = vm.arityCheckData.get();
     result->paddedStackSpace = slotsToAdd;
 #if ENABLE(JIT)
-    if (vm.canUseJIT()) {
+    if (vm.canUseJIT())
         result->thunkToCall = vm.getCTIStub(arityFixupGenerator).code().executableAddress();
-        result->returnPC = vm.arityCheckFailReturnThunks->returnPCFor(vm, slotsToAdd * stackAlignmentRegisters()).executableAddress();
-    } else
+    else
 #endif
-    {
         result->thunkToCall = 0;
-        result->returnPC = 0;
-    }
     return result;
 }
 

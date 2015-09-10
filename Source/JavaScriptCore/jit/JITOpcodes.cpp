@@ -70,6 +70,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
 {
     RELEASE_ASSERT(returnValueGPR != callFrameRegister);
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
+    emitRestoreCalleeSaves();
     emitFunctionEpilogue();
     ret();
 }
@@ -255,6 +256,7 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
 
     checkStackPointerAlignment();
+    emitRestoreCalleeSaves();
     emitFunctionEpilogue();
     ret();
 }
@@ -419,6 +421,7 @@ void JIT::emit_op_bitor(Instruction* currentInstruction)
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     ASSERT(regT0 == returnValueGPR);
+    copyCalleeSavesToVMCalleeSavesBuffer();
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
     callOperationNoExceptionCheck(operationThrow, regT0);
     jumpToExceptionHandler();
@@ -494,11 +497,8 @@ void JIT::emit_op_to_string(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    // Gotta restore the tag registers. We could be throwing from FTL, which may
-    // clobber them.
-    move(TrustedImm64(TagTypeNumber), tagTypeNumberRegister);
-    move(TrustedImm64(TagMask), tagMaskRegister);
-    
+    restoreCalleeSavesFromVMCalleeSavesBuffer();
+
     move(TrustedImmPtr(m_vm), regT3);
     load64(Address(regT3, VM::callFrameForThrowOffset()), callFrameRegister);
 
@@ -656,7 +656,7 @@ void JIT::emit_op_enter(Instruction*)
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
     size_t count = m_codeBlock->m_numVars;
-    for (size_t j = 0; j < count; ++j)
+    for (size_t j = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); j < count; ++j)
         emitInitRegister(virtualRegisterForLocal(j).offset());
 
     emitWriteBarrier(m_codeBlock->ownerExecutable());
@@ -922,7 +922,9 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
     // Emit the slow path for the JIT optimization check:
     if (canBeOptimized()) {
         linkSlowCase(iter);
-        
+
+        copyCalleeSavesFromFrameOrRegisterToVMCalleeSavesBuffer();
+
         callOperation(operationOptimize, m_bytecodeOffset);
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
         if (!ASSERT_DISABLED) {

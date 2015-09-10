@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "ArityCheckFailReturnThunks.h"
 #include "CodeBlock.h"
 #include "DFGFailedFinalizer.h"
 #include "DFGInlineCacheWrapperInlines.h"
@@ -102,7 +101,12 @@ void JITCompiler::compileEntry()
     // both normal return code and when jumping to an exception handler).
     emitFunctionPrologue();
     emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
-    jitAssertTagsInPlace();
+}
+
+void JITCompiler::compileSetupRegistersForEntry()
+{
+    emitSaveCalleeSaves();
+    emitMaterializeTagCheckRegisters();    
 }
 
 void JITCompiler::compileBody()
@@ -118,6 +122,8 @@ void JITCompiler::compileExceptionHandlers()
 {
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
+
+        copyCalleeSavesToVMCalleeSavesBuffer();
 
         // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
@@ -136,6 +142,8 @@ void JITCompiler::compileExceptionHandlers()
 
     if (!m_exceptionChecks.empty()) {
         m_exceptionChecks.link(this);
+
+        copyCalleeSavesToVMCalleeSavesBuffer();
 
         // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
@@ -294,6 +302,7 @@ void JITCompiler::compile()
 
     addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
+    compileSetupRegistersForEntry();
     compileBody();
     setEndOfMainPath();
 
@@ -358,6 +367,8 @@ void JITCompiler::compileFunction()
     addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
+    compileSetupRegistersForEntry();
+
     // === Function body code generation ===
     m_speculative = std::make_unique<SpeculativeJIT>(*this);
     compileBody();
@@ -397,11 +408,6 @@ void JITCompiler::compileFunction()
         addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
     branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
-    GPRReg thunkReg = GPRInfo::argumentGPR1;
-    CodeLocationLabel* arityThunkLabels =
-        m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters());
-    move(TrustedImmPtr(arityThunkLabels), thunkReg);
-    loadPtr(BaseIndex(thunkReg, GPRInfo::returnValueGPR, timesPtr()), thunkReg);
     move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
     m_callArityFixup = call();
     jump(fromArityCheck);

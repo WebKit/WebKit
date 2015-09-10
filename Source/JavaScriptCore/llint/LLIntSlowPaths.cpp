@@ -485,8 +485,8 @@ LLINT_SLOW_PATH_DECL(stack_check)
 
     vm.topCallFrame = exec;
     ErrorHandlingScope errorScope(vm);
-    CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
-    pc = returnToThrowForThrownException(exec);
+    vm.throwException(exec, createStackOverflowError(exec));
+    pc = returnToThrow(exec);
     LLINT_RETURN_TWO(pc, exec);
 }
 

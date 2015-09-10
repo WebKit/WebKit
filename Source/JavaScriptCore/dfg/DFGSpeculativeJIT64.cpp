@@ -3190,6 +3190,7 @@ void SpeculativeJIT::compile(Node* node)
         JSValueOperand op1(this, node->child1());
         m_jit.move(op1.gpr(), GPRInfo::returnValueGPR);
 
+        m_jit.emitRestoreCalleeSaves();
         m_jit.emitFunctionEpilogue();
         m_jit.ret();
         
@@ -4790,6 +4791,7 @@ void SpeculativeJIT::compile(Node* node)
             TrustedImm32(m_stream->size()));
         appendCallSetResult(triggerOSREntryNow, tempGPR);
         MacroAssembler::Jump dontEnter = m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR);
+        m_jit.emitRestoreCalleeSaves();
         m_jit.jump(tempGPR);
         dontEnter.link(&m_jit);
         silentFillAllRegisters(tempGPR);

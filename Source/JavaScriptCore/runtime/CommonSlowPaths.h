@@ -49,7 +49,6 @@ namespace CommonSlowPaths {
 struct ArityCheckData {
     unsigned paddedStackSpace;
     void* thunkToCall;
-    void* returnPC;
 };
 
 ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializationKind kind)

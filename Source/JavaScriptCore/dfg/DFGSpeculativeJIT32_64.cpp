@@ -3131,6 +3131,7 @@ void SpeculativeJIT::compile(Node* node)
             }
         }
 
+        m_jit.emitRestoreCalleeSaves();
         m_jit.emitFunctionEpilogue();
         m_jit.ret();
         

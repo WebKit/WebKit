@@ -555,7 +555,9 @@ static bool generateByIdStub(
             if (kind == CallCustomGetter)
                 stubJit.setupResults(valueRegs);
             MacroAssembler::Jump noException = stubJit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
-            
+
+            stubJit.copyCalleeSavesToVMCalleeSavesBuffer();
+
             stubJit.setupArguments(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
             handlerCall = stubJit.call();
             stubJit.jumpToExceptionHandler();

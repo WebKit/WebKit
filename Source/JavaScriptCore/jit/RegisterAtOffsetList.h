@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLRegisterAtOffset.h"
+#ifndef RegisterAtOffsetList_h
+#define RegisterAtOffsetList_h
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(JIT)
 
-namespace JSC { namespace FTL {
+#include "RegisterAtOffset.h"
+#include "RegisterSet.h"
 
-void RegisterAtOffset::dump(PrintStream& out) const
-{
-    out.print(reg(), " at ", offset());
-}
+namespace JSC {
 
-} } // namespace JSC::FTL
+class RegisterAtOffsetList {
+public:
+    enum OffsetBaseType { FramePointerBased, ZeroBased };
 
-#endif // ENABLE(FTL_JIT)
+    RegisterAtOffsetList();
+    RegisterAtOffsetList(RegisterSet, OffsetBaseType = FramePointerBased);
+
+    void dump(PrintStream&) const;
+
+    void clear()
+    {
+        m_registers.clear();
+    }
+
+    size_t size()
+    {
+        return m_registers.size();
+    }
+
+    RegisterAtOffset& at(size_t index)
+    {
+        return m_registers.at(index);
+    }
+    
+    void append(RegisterAtOffset registerAtOffset)
+    {
+        m_registers.append(registerAtOffset);
+    }
+
+    void sort();
+    RegisterAtOffset* find(Reg) const;
+    unsigned indexOf(Reg) const; // Returns UINT_MAX if not found.
+
+private:
+    Vector<RegisterAtOffset> m_registers;
+};
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)
+
+#endif // RegisterAtOffsetList_h
 

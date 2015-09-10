@@ -545,7 +545,6 @@
     <ClCompile Include="..\ftl\FTLOperations.cpp" />
     <ClCompile Include="..\ftl\FTLOutput.cpp" />
     <ClCompile Include="..\ftl\FTLRecoveryOpcode.cpp" />
-    <ClCompile Include="..\ftl\FTLRegisterAtOffset.cpp" />
     <ClCompile Include="..\ftl\FTLSaveRestore.cpp" />
     <ClCompile Include="..\ftl\FTLSlowPathCall.cpp" />
     <ClCompile Include="..\ftl\FTLSlowPathCallKey.cpp" />
@@ -619,7 +618,6 @@
     <ClCompile Include="..\interpreter\ProtoCallFrame.cpp" />
     <ClCompile Include="..\interpreter\StackVisitor.cpp" />
     <ClCompile Include="..\jit\AccessorCallJITStubRoutine.cpp" />
-    <ClCompile Include="..\jit\ArityCheckFailReturnThunks.cpp" />
     <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
     <ClCompile Include="..\jit\BinarySwitch.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocationFuzz.cpp" />
@@ -649,6 +647,8 @@
     <ClCompile Include="..\jit\SetupVarargsFrame.cpp" />
     <ClCompile Include="..\jit\PolymorphicCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\Reg.cpp" />
+    <ClCompile Include="..\jit\RegisterAtOffset.cpp" />
+    <ClCompile Include="..\jit\RegisterAtOffsetList.cpp" />
     <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp" />
     <ClCompile Include="..\jit\RegisterSet.cpp" />
     <ClCompile Include="..\jit\Repatch.cpp" />
@@ -1297,7 +1297,6 @@
     <ClInclude Include="..\ftl\FTLOperations.h" />
     <ClInclude Include="..\ftl\FTLOutput.h" />
     <ClInclude Include="..\ftl\FTLRecoveryOpcode.h" />
-    <ClInclude Include="..\ftl\FTLRegisterAtOffset.h" />
     <ClInclude Include="..\ftl\FTLSaveRestore.h" />
     <ClInclude Include="..\ftl\FTLSlowPathCall.h" />
     <ClInclude Include="..\ftl\FTLSlowPathCallKey.h" />
@@ -1419,7 +1418,6 @@
     <ClInclude Include="..\interpreter\Register.h" />
     <ClInclude Include="..\interpreter\StackVisitor.h" />
     <ClInclude Include="..\jit\AccessorCallJITStubRoutine.h" />
-    <ClInclude Include="..\jit\ArityCheckFailReturnThunks.h" />
     <ClInclude Include="..\jit\AssemblyHelpers.h" />
     <ClInclude Include="..\jit\BinarySwitch.h" />
     <ClInclude Include="..\jit\CCallHelpers.h" />
@@ -1450,6 +1448,8 @@
     <ClInclude Include="..\jit\SetupVarargsFrame.h" />
     <ClInclude Include="..\jit\PolymorphicCallStubRoutine.h" />
     <ClInclude Include="..\jit\Reg.h" />
+    <ClInclude Include="..\jit\RegisterAtOffset.h" />
+    <ClInclude Include="..\jit\RegisterAtOffsetList.h" />
     <ClInclude Include="..\jit\RegisterMap.h" />
     <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h" />
     <ClInclude Include="..\jit\RegisterSet.h" />

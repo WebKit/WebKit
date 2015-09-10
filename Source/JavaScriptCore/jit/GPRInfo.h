@@ -315,6 +315,7 @@ private:
 
 #if CPU(X86)
 #define NUMBER_OF_ARGUMENT_REGISTERS 0u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
 public:
@@ -336,7 +337,6 @@ public:
     static const GPRReg argumentGPR2 = X86Registers::eax; // regT0
     static const GPRReg argumentGPR3 = X86Registers::ebx; // regT3
     static const GPRReg nonArgGPR0 = X86Registers::esi; // regT4
-    static const GPRReg nonArgGPR1 = X86Registers::edi; // regT5
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
@@ -382,8 +382,10 @@ public:
 #if CPU(X86_64)
 #if !OS(WINDOWS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 6u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 5u
 #else
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 7u
 #endif
 
 class GPRInfo {
@@ -445,7 +447,6 @@ public:
     static const GPRReg argumentGPR3 = X86Registers::r9; // regT3
 #endif
     static const GPRReg nonArgGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
-    static const GPRReg nonArgGPR1 = X86Registers::ebx; // Callee save
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
@@ -506,6 +507,7 @@ public:
 
 #if CPU(ARM)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
 public:
@@ -536,7 +538,6 @@ public:
     static const GPRReg argumentGPR3 = ARMRegisters::r3; // regT3
     static const GPRReg nonArgGPR0 = ARMRegisters::r4; // regT8
     static const GPRReg nonArgGPR1 = ARMRegisters::r8; // regT4
-    static const GPRReg nonArgGPR2 = ARMRegisters::r9; // regT5
     static const GPRReg returnValueGPR = ARMRegisters::r0; // regT0
     static const GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
@@ -589,6 +590,8 @@ public:
 
 #if CPU(ARM64)
 #define NUMBER_OF_ARGUMENT_REGISTERS 8u
+// Callee Saves includes x19..x28 and FP registers q8..q15
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 18u
 
 class GPRInfo {
 public:
@@ -617,9 +620,16 @@ public:
     static const GPRReg regT13 = ARM64Registers::x13;
     static const GPRReg regT14 = ARM64Registers::x14;
     static const GPRReg regT15 = ARM64Registers::x15;
-    static const GPRReg regCS0 = ARM64Registers::x26; // Used by LLInt only
-    static const GPRReg regCS1 = ARM64Registers::x27; // tagTypeNumber
-    static const GPRReg regCS2 = ARM64Registers::x28; // tagMask
+    static const GPRReg regCS0 = ARM64Registers::x19; // Used by FTL only
+    static const GPRReg regCS1 = ARM64Registers::x20; // Used by FTL only
+    static const GPRReg regCS2 = ARM64Registers::x21; // Used by FTL only
+    static const GPRReg regCS3 = ARM64Registers::x22; // Used by FTL only
+    static const GPRReg regCS4 = ARM64Registers::x23; // Used by FTL only
+    static const GPRReg regCS5 = ARM64Registers::x24; // Used by FTL only
+    static const GPRReg regCS6 = ARM64Registers::x25; // Used by FTL only
+    static const GPRReg regCS7 = ARM64Registers::x26;
+    static const GPRReg regCS8 = ARM64Registers::x27; // tagTypeNumber
+    static const GPRReg regCS9 = ARM64Registers::x28; // tagMask
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = ARM64Registers::x0; // regT0
     static const GPRReg argumentGPR1 = ARM64Registers::x1; // regT1
@@ -637,7 +647,7 @@ public:
     static const GPRReg nonPreservedNonArgumentGPR = ARM64Registers::x8;
     static const GPRReg patchpointScratchRegister = ARM64Registers::ip0;
 
-    // GPRReg mapping is direct, the machine regsiter numbers can
+    // GPRReg mapping is direct, the machine register numbers can
     // be used directly as indices into the GPR RegisterBank.
     COMPILE_ASSERT(ARM64Registers::q0 == 0, q0_is_0);
     COMPILE_ASSERT(ARM64Registers::q1 == 1, q1_is_1);
@@ -692,6 +702,7 @@ public:
 
 #if CPU(MIPS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
 public:
@@ -719,7 +730,6 @@ public:
     static const GPRReg argumentGPR2 = MIPSRegisters::a2;
     static const GPRReg argumentGPR3 = MIPSRegisters::a3;
     static const GPRReg nonArgGPR0 = regT0;
-    static const GPRReg nonArgGPR1 = regT1;
     static const GPRReg returnValueGPR = regT0;
     static const GPRReg returnValueGPR2 = regT1;
     static const GPRReg nonPreservedNonReturnGPR = regT2;
@@ -764,6 +774,7 @@ public:
 
 #if CPU(SH4)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
 public:
@@ -793,7 +804,6 @@ public:
     static const GPRReg argumentGPR2 = SH4Registers::r6; // regT2
     static const GPRReg argumentGPR3 = SH4Registers::r7; // regT3
     static const GPRReg nonArgGPR0 = regT4;
-    static const GPRReg nonArgGPR1 = regT5;
     static const GPRReg returnValueGPR = regT0;
     static const GPRReg returnValueGPR2 = regT1;
     static const GPRReg nonPreservedNonReturnGPR = regT2;

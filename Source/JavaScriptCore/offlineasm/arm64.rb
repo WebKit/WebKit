@@ -61,6 +61,14 @@ require "risc"
 #  q3  => ft3, fa3
 #  q4  => ft4          (unused in baseline)
 #  q5  => ft5          (unused in baseline)
+#  q8  => csfr0        (Only the lower 64 bits)
+#  q9  => csfr1        (Only the lower 64 bits)
+# q10  => csfr2        (Only the lower 64 bits)
+# q11  => csfr3        (Only the lower 64 bits)
+# q12  => csfr4        (Only the lower 64 bits)
+# q13  => csfr5        (Only the lower 64 bits)
+# q14  => csfr6        (Only the lower 64 bits)
+# q15  => csfr7        (Only the lower 64 bits)
 # q31  => scratch
 
 def arm64GPRName(name, kind)
@@ -116,10 +124,24 @@ class RegisterID
         when 'cfr'
             arm64GPRName('x29', kind)
         when 'csr0'
-            arm64GPRName('x26', kind)
+            arm64GPRName('x19', kind)
         when 'csr1'
-            arm64GPRName('x27', kind)
+            arm64GPRName('x20', kind)
         when 'csr2'
+            arm64GPRName('x21', kind)
+        when 'csr3'
+            arm64GPRName('x22', kind)
+        when 'csr4'
+            arm64GPRName('x23', kind)
+        when 'csr5'
+            arm64GPRName('x24', kind)
+        when 'csr6'
+            arm64GPRName('x25', kind)
+        when 'csr7'
+            arm64GPRName('x26', kind)
+        when 'csr8'
+            arm64GPRName('x27', kind)
+        when 'csr9'
             arm64GPRName('x28', kind)
         when 'sp'
             'sp'
@@ -146,6 +168,22 @@ class FPRegisterID
             arm64FPRName('q4', kind)
         when 'ft5'
             arm64FPRName('q5', kind)
+        when 'csfr0'
+            arm64FPRName('q8', kind)
+        when 'csfr1'
+            arm64FPRName('q9', kind)
+        when 'csfr2'
+            arm64FPRName('q10', kind)
+        when 'csfr3'
+            arm64FPRName('q11', kind)
+        when 'csfr4'
+            arm64FPRName('q12', kind)
+        when 'csfr5'
+            arm64FPRName('q13', kind)
+        when 'csfr6'
+            arm64FPRName('q14', kind)
+        when 'csfr7'
+            arm64FPRName('q15', kind)
         else "Bad register name #{@name} at #{codeOriginString}"
         end
     end

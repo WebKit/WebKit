@@ -117,7 +117,7 @@ public:
         CodeLocationNearCall callReturnLocation, CodeLocationDataLabelPtr hotPathBegin,
         CodeLocationNearCall hotPathOther, unsigned calleeGPR)
     {
-        m_registerPreservationMode = static_cast<unsigned>(MustPreserveRegisters);
+        m_registerPreservationMode = static_cast<unsigned>(RegisterPreservationNotRequired);
         m_callType = callType;
         m_codeOrigin = codeOrigin;
         m_callReturnLocation = callReturnLocation;

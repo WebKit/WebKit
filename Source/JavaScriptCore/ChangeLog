@@ -1,3 +1,307 @@
+2015-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Add support for Callee-Saves registers
+        https://bugs.webkit.org/show_bug.cgi?id=148666
+
+        Reviewed by Filip Pizlo.
+
+        We save platform callee save registers right below the call frame header,
+        in the location(s) starting with VirtualRegister 0.  This local space is
+        allocated in the bytecode compiler.  This space is the maximum space
+        needed for the callee registers that the LLInt and baseline JIT use,
+        rounded up to a stack aligned number of VirtualRegisters.
+        The LLInt explicitly saves and restores the registers in the macros
+        preserveCalleeSavesUsedByLLInt and restoreCalleeSavesUsedByLLInt.
+        The JITs saves and restores callee saves registers by what registers
+        are included in m_calleeSaveRegisters in the code block.
+
+        Added handling of callee save register restoration to exception handling.
+        The basic flow is when an exception is thrown or one is recognized to
+        have been generated in C++ code, we save the current state of all
+        callee save registers to VM::calleeSaveRegistersBuffer.  As we unwind
+        looking for the corresponding catch, we copy the callee saves from call 
+        frames to the same VM::calleeSaveRegistersBuffer.  This is done for all
+        call frames on the stack up to but not including the call frame that has
+        the corresponding catch block.  When we process the catch, we restore
+        the callee save registers with the contents of VM::calleeSaveRegistersBuffer.
+        If there isn't a catch, then handleUncaughtException will restore callee
+        saves before it returns back to the calling C++.
+
+        Eliminated callee saves registers as free registers for various thunk
+        generators as the callee saves may not have been saved by the function
+        calling the thunk.
+
+        Added code to transition callee saves from one VM's format to the another
+        as part of OSR entry and OSR exit.
+
+        Cleaned up the static RegisterSet's including adding one for LLInt and 
+        baseline JIT callee saves and one to be used to allocate local registers
+        not including the callee saves or other special registers.
+
+        Moved ftl/FTLRegisterAtOffset.{cpp,h} to jit/RegisterAtOffset.{cpp,h}.
+        Factored out the vector of RegisterAtOffsets in ftl/FTLUnwindInfo.{cpp,h}
+        into a new class in jit/RegisterAtOffsetList.{cpp,h}.
+        Eliminted UnwindInfo and changed UnwindInfo::parse() into a standalone
+        function named parseUnwindInfo.  That standalone function now returns
+        the callee saves RegisterAtOffsetList.  This is stored in the CodeBlock
+        and used instead of UnwindInfo.
+
+        Turned off register preservation thunks for outgoing calls from FTL
+        generated code.  THey'll be removed in a subsequent patch.
+
+        Changed specialized thinks to save and restore the contents of
+        tagTypeNumberRegister and tagMaskRegister as they can be called by FTL
+        compiled functions.  We materialize those tag registers for the thunk's
+        use and then restore the prior contents on function exit.
+
+        Also removed the arity check fail return thunk since it is now the
+        caller's responsibility to restore the stack pointer.
+
+        Removed saving of callee save registers and materialization of special
+        tag registers for 64 bit platforms from vmEntryToJavaScript and
+        vmEntryToNative.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLJITCode.h:
+        * ftl/FTLRegisterAtOffset.cpp: Removed.
+        * ftl/FTLRegisterAtOffset.h: Removed.
+        * ftl/FTLUnwindInfo.cpp:
+        (JSC::FTL::parseUnwindInfo):
+        (JSC::FTL::UnwindInfo::UnwindInfo): Deleted.
+        (JSC::FTL::UnwindInfo::~UnwindInfo): Deleted.
+        (JSC::FTL::UnwindInfo::parse): Deleted.
+        (JSC::FTL::UnwindInfo::dump): Deleted.
+        (JSC::FTL::UnwindInfo::find): Deleted.
+        (JSC::FTL::UnwindInfo::indexOf): Deleted.
+        * ftl/FTLUnwindInfo.h:
+        (JSC::RegisterAtOffset::dump):
+        * jit/RegisterAtOffset.cpp: Added.
+        * jit/RegisterAtOffset.h: Added.
+        (JSC::RegisterAtOffset::RegisterAtOffset):
+        (JSC::RegisterAtOffset::operator!):
+        (JSC::RegisterAtOffset::reg):
+        (JSC::RegisterAtOffset::offset):
+        (JSC::RegisterAtOffset::offsetAsIndex):
+        (JSC::RegisterAtOffset::operator==):
+        (JSC::RegisterAtOffset::operator<):
+        (JSC::RegisterAtOffset::getReg):
+        * jit/RegisterAtOffsetList.cpp: Added.
+        (JSC::RegisterAtOffsetList::RegisterAtOffsetList):
+        (JSC::RegisterAtOffsetList::sort):
+        (JSC::RegisterAtOffsetList::dump):
+        (JSC::RegisterAtOffsetList::find):
+        (JSC::RegisterAtOffsetList::indexOf):
+        * jit/RegisterAtOffsetList.h: Added.
+        (JSC::RegisterAtOffsetList::clear):
+        (JSC::RegisterAtOffsetList::size):
+        (JSC::RegisterAtOffsetList::at):
+        (JSC::RegisterAtOffsetList::append):
+        Move and refactored use of FTLRegisterAtOffset to RegisterAtOffset.
+        Added RegisterAtOffset and RegisterAtOffsetList to build configurations.
+        Remove FTLRegisterAtOffset files.
+
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setUpCallFromFTL):
+        Turned off FTL register preservation thunks.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::setCalleeSaveRegisters):
+        (JSC::roundCalleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::calleeSaveSpaceAsVirtualRegisters):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfLLIntBaselineCalleeSaveRegisters):
+        (JSC::CodeBlock::calleeSaveRegisters):
+        (JSC::CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::optimizeAfterWarmUp):
+        (JSC::CodeBlock::numberOfDFGCompiles):
+        Methods to manage a set of callee save registers.  Also to allocate the appropriate
+        number of VirtualRegisters for callee saves.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::allocateCalleeSaveSpace):
+        * bytecompiler/BytecodeGenerator.h:
+        Allocate the appropriate number of VirtualRegisters for callee saves needed by LLInt or baseline JIT.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileSetupRegistersForEntry):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator()):
+        (JSC::UnwindFunctor::copyCalleeSavesToVMCalleeSavesBuffer):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::usedRegisters):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        * jit/ArityCheckFailReturnThunks.cpp: Removed.
+        * jit/ArityCheckFailReturnThunks.h: Removed.
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITExceptions.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        * jit/ThunkGenerators.cpp:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::arityFixupGenerator):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::setupArityCheckData):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        Emit code to save and restore callee save registers and materialize tagTypeNumberRegister
+        and tagMaskRegister.
+        Handle callee saves when tiering up.
+        Copy callee saves register contents to VM::calleeSaveRegistersBuffer at beginning of
+        exception processing.
+        Process callee save registers in frames when unwinding from an exception.
+        Restore callee saves register contents from VM::calleeSaveRegistersBuffer on catch.
+        Use appropriate register set to make sure we don't allocate a callee save register when
+        compiling a thunk.
+        Helper to populate tagTypeNumberRegister and tagMaskRegister with the appropriate
+        constants.
+        Removed arity fixup return thunks.
+
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        Restore callee saves from the DFG and save the appropriate ones for the baseline JIT.
+        Materialize the tag registers on 64 bit platforms.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitSaveCalleeSaves):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSaves):
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesFromFrameOrRegisterToVMCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::emitMaterializeTagCheckRegisters):
+        New helpers to save and restore callee saves as well as materialize the tag registers
+        contents.
+
+        * jit/FPRInfo.h:
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        Updated to include FP callee save registers.  Added number of callee saves registers and
+        cleanup register aliases that collide with callee save registers.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        Uses new stubUnavailableRegisters register set to limit what registers are available for 
+        temporaries.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::stubUnavailableRegisters):
+        (JSC::RegisterSet::calleeSaveRegisters):
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        (JSC::RegisterSet::ftlCalleeSaveRegisters):
+        * jit/RegisterSet.h:
+        New register sets with the callee saves used by various tiers as well as one listing registers
+        not availble to stub code.
+
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::loadDoubleArgument):
+        (JSC::SpecializedThunkJIT::returnJSValue):
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::returnInt32):
+        (JSC::SpecializedThunkJIT::returnJSCell):
+        (JSC::SpecializedThunkJIT::callDoubleToDoublePreservingReturn):
+        (JSC::SpecializedThunkJIT::emitSaveThenMaterializeTagRegisters):
+        (JSC::SpecializedThunkJIT::emitRestoreSavedTagRegisters):
+        (JSC::SpecializedThunkJIT::tagReturnAsInt32):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        Changed to save and restore existing tag register contents as the may contain other values.
+        After saving the existing values, we materialize the tag constants.
+
+        * jit/TempRegisterSet.h:
+        (JSC::TempRegisterSet::getFPRByIndex):
+        (JSC::TempRegisterSet::getFreeFPR):
+        (JSC::TempRegisterSet::setByIndex):
+        * offlineasm/arm64.rb:
+        * offlineasm/registers.rb:
+        Added methods for floating point registers to support callee save FP registers.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+        Removed unnecessary #if CPU(X86_64) check to this 32 bit only file.
+
+        * offlineasm/x86.rb:
+        Fixed Windows callee saves naming.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::calleeSaveRegistersBufferOffset):
+        (JSC::VM::getAllCalleeSaveRegistersMap):
+        Provide a RegisterSaveMap that has all registers that might be saved.  Added a callee save buffer to be
+        used for OSR exit and for exception processing in a future patch.
+
 2015-09-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ModuleProgramExecutable should provide CodeBlock to ScriptExecutable::forEachCodeBlock

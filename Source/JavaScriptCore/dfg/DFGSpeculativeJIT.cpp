@@ -311,7 +311,7 @@ RegisterSet SpeculativeJIT::usedRegisters()
             result.set(fpr);
     }
     
-    result.merge(RegisterSet::specialRegisters());
+    result.merge(RegisterSet::stubUnavailableRegisters());
     
     return result;
 }

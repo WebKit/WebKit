@@ -1491,9 +1491,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorProtocolObjects.cpp">
       <Filter>Derived Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\jit\ArityCheckFailReturnThunks.cpp">
-      <Filter>jit</Filter>
-    </ClCompile>
     <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -4037,9 +4034,6 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
-    <ClInclude Include="..\jit\ArityCheckFailReturnThunks.h">
-      <Filter>jit</Filter>
-    </ClInclude>
     <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>

@@ -197,6 +197,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(trueReturnPC), AssemblyHelpers::addressFor(inlineCallFrame->stackOffset + virtualRegisterForArgument(inlineCallFrame->arguments.size()).offset()));
                          
         jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CodeBlock)));
+        jit.emitSaveCalleeSavesFor(baselineCodeBlock, static_cast<VirtualRegister>(inlineCallFrame->stackOffset));
         if (!inlineCallFrame->isVarargs())
             jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
 #if USE(JSVALUE64)
@@ -250,14 +251,14 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 {
 #if ENABLE(GGC) 
-    jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()->ownerExecutable()), GPRInfo::nonArgGPR0);
-    osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1);
+    jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()->ownerExecutable()), GPRInfo::argumentGPR1);
+    osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
     InlineCallFrameSet* inlineCallFrames = jit.codeBlock()->jitCode()->dfgCommon()->inlineCallFrames.get();
     if (inlineCallFrames) {
         for (InlineCallFrame* inlineCallFrame : *inlineCallFrames) {
             ScriptExecutable* ownerExecutable = inlineCallFrame->executable.get();
-            jit.move(AssemblyHelpers::TrustedImmPtr(ownerExecutable), GPRInfo::nonArgGPR0); 
-            osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1);
+            jit.move(AssemblyHelpers::TrustedImmPtr(ownerExecutable), GPRInfo::argumentGPR1);
+            osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
         }
     }
 #endif
@@ -277,8 +278,6 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 
     jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(baselineCodeBlock) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     
-    jit.jitAssertTagsInPlace();
-
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
     jit.jump(GPRInfo::regT2);
 }

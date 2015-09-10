@@ -30,7 +30,6 @@
 #include "VM.h"
 
 #include "ArgList.h"
-#include "ArityCheckFailReturnThunks.h"
 #include "ArrayBufferNeuteringWatchpoint.h"
 #include "BuiltinExecutables.h"
 #include "CodeBlock.h"
@@ -77,6 +76,7 @@
 #include "PropertyMapHashTable.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
+#include "RegisterAtOffsetList.h"
 #include "RuntimeType.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
@@ -253,7 +253,7 @@ VM::VM(VMType vmType, HeapType heapType)
 
 #if ENABLE(JIT)
     jitStubs = std::make_unique<JITThunks>();
-    arityCheckFailReturnThunks = std::make_unique<ArityCheckFailReturnThunks>();
+    allCalleeSaveRegisterOffsets = std::make_unique<RegisterAtOffsetList>(RegisterSet::vmCalleeSaveRegisters(), RegisterAtOffsetList::ZeroBased);
 #endif
     arityCheckData = std::make_unique<CommonSlowPaths::ArityCheckData>();
 

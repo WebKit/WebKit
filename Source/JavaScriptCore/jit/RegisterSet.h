@@ -50,6 +50,11 @@ public:
     static RegisterSet runtimeRegisters();
     static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
     static RegisterSet calleeSaveRegisters();
+    static RegisterSet vmCalleeSaveRegisters(); // Callee save registers that might be saved and used by any tier.
+    static RegisterSet llintBaselineCalleeSaveRegisters(); // Registers saved and used by the LLInt.
+    static RegisterSet dfgCalleeSaveRegisters(); // Registers saved and used by the DFG JIT.
+    static RegisterSet ftlCalleeSaveRegisters(); // Registers that might be saved and used by the FTL JIT.
+    static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
     static RegisterSet allGPRs();
     static RegisterSet allFPRs();
     static RegisterSet allRegisters();

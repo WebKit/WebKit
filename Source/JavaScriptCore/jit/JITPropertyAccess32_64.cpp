@@ -282,7 +282,7 @@ JITGetByIdGenerator JIT::emitGetByValWithCachedId(Instruction* currentInstructio
     emitIdentifierCheck(regT2, regT4, propertyName, slowCases);
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::specialRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), DontSpill);
     gen.generateFastPath(*this);
 
@@ -494,7 +494,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Instruction* currentInstructio
     emitLoad(value, regT3, regT2);
 
     JITPutByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::specialRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), regT1, DontSpill, m_codeBlock->ecmaMode(), putKind);
     gen.generateFastPath(*this);
     doneCases.append(jump());
@@ -587,7 +587,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
         emitArrayProfilingSiteForBytecodeIndexWithCell(regT0, regT2, m_bytecodeOffset);
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::specialRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), DontSpill);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -632,7 +632,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(base, regT1);
 
     JITPutByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::specialRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2),
         regT1, DontSpill, m_codeBlock->ecmaMode(), direct ? Direct : NotDirect);
     

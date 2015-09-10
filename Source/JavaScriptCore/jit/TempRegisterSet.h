@@ -115,6 +115,16 @@ public:
         return getBit(GPRInfo::numberOfRegisters + index);
     }
     
+    // Return the index'th free FPR.
+    FPRReg getFreeFPR(unsigned index = 0) const
+    {
+        for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
+            if (!getFPRByIndex(i) && !index--)
+                return FPRInfo::toRegister(i);
+        }
+        return InvalidFPRReg;
+    }
+
     template<typename BankInfo>
     void setByIndex(unsigned index)
     {

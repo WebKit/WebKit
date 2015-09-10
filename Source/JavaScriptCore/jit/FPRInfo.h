@@ -208,6 +208,14 @@ public:
     static const FPRReg fpRegT20 = ARM64Registers::q28;
     static const FPRReg fpRegT21 = ARM64Registers::q29;
     static const FPRReg fpRegT22 = ARM64Registers::q30;
+    static const FPRReg fpRegCS0 = ARM64Registers::q8;
+    static const FPRReg fpRegCS1 = ARM64Registers::q9;
+    static const FPRReg fpRegCS2 = ARM64Registers::q10;
+    static const FPRReg fpRegCS3 = ARM64Registers::q11;
+    static const FPRReg fpRegCS4 = ARM64Registers::q12;
+    static const FPRReg fpRegCS5 = ARM64Registers::q13;
+    static const FPRReg fpRegCS6 = ARM64Registers::q14;
+    static const FPRReg fpRegCS7 = ARM64Registers::q15;
 
     static const FPRReg argumentFPR0 = ARM64Registers::q0; // fpRegT0
     static const FPRReg argumentFPR1 = ARM64Registers::q1; // fpRegT1

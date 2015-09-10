@@ -697,6 +697,7 @@ namespace JSC {
         ALWAYS_INLINE void rewindBinaryOp();
         ALWAYS_INLINE void rewindUnaryOp();
 
+        void allocateCalleeSaveSpace();
         void allocateAndEmitScope();
         RegisterID* emitLoadArrowFunctionThis(RegisterID*);
         void emitComplexPopScopes(RegisterID*, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
@@ -810,6 +811,7 @@ namespace JSC {
         RegisterID* m_newTargetRegister { nullptr };
         RegisterID* m_linkTimeConstantRegisters[LinkTimeConstantCount];
 
+        SegmentedVector<RegisterID*, 16> m_localRegistersForCalleeSaveRegisters;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;

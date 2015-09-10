@@ -215,9 +215,6 @@ macro doVMEntry(makeCall)
     end
     storep cfr, VM::topVMEntryFrame[vm]
 
-    move TagTypeNumber, tagTypeNumber
-    addp TagBitTypeOther, tagTypeNumber, tagMask
-
     checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
     makeCall(entry, t3)
@@ -277,6 +274,7 @@ _handleUncaughtException:
     loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForThrow[t3], cfr
 
     loadp CallerFrame[cfr], cfr
@@ -509,20 +507,6 @@ macro functionArityCheck(doneLabel, slowPath)
     jmp _llint_throw_from_slow_path_trampoline
 
 .noError:
-    # r1 points to ArityCheckData.
-    loadp CommonSlowPaths::ArityCheckData::thunkToCall[r1], t3
-    btpz t3, .proceedInline
-    
-    loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], a0
-    loadp CommonSlowPaths::ArityCheckData::returnPC[r1], a1
-    call t3
-    if ASSERT_ENABLED
-        loadp ReturnPC[cfr], t0
-        loadp [t0], t0
-    end
-    jmp .continue
-
-.proceedInline:
     loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], t1
     btiz t1, .continue
 
@@ -530,8 +514,9 @@ macro functionArityCheck(doneLabel, slowPath)
     lshiftp 1, t1
     negq t1
     move cfr, t3
+    subp CalleeSaveSpaceAsVirtualRegisters * 8, t3
     loadi PayloadOffset + ArgumentCount[cfr], t2
-    addi CallFrameHeaderSlots, t2
+    addi CallFrameHeaderSlots + CalleeSaveSpaceAsVirtualRegisters, t2
 .copyLoop:
     loadq [t3], t0
     storeq t0, [t3, t1, 8]
@@ -574,12 +559,15 @@ _llint_op_enter:
     checkStackPointerAlignment(t2, 0xdead00e1)
     loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
     loadi CodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
+    subq CalleeSaveSpaceAsVirtualRegisters, t2
+    move cfr, t1
+    subq CalleeSaveSpaceAsVirtualRegisters * 8, t1
     btiz t2, .opEnterDone
     move ValueUndefined, t0
     negi t2
     sxi2q t2, t2
 .opEnterLoop:
-    storeq t0, [cfr, t2, 8]
+    storeq t0, [t1, t2, 8]
     addq 1, t2
     btqnz t2, .opEnterLoop
 .opEnterDone:
@@ -1761,11 +1749,6 @@ _llint_op_to_primitive:
 
 
 _llint_op_catch:
-    # Gotta restore the tag registers. We could be throwing from FTL, which may
-    # clobber them.
-    move TagTypeNumber, tagTypeNumber
-    move TagMask, tagMask
-    
     # This is where we end up from the JIT's throw trampoline (because the
     # machine code return address will be set to _llint_op_catch), and from
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
@@ -1774,6 +1757,7 @@ _llint_op_catch:
     loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForThrow[t3], cfr
     restoreStackPointerAfterCall()
 
@@ -1806,6 +1790,11 @@ _llint_op_end:
 
 
 _llint_throw_from_slow_path_trampoline:
+    loadp Callee[cfr], t1
+    andp MarkedBlockMask, t1
+    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
+    copyCalleeSavesToVMCalleeSavesBuffer(t1, t2)
+
     callSlowPath(_llint_slow_path_handle_exception)
 
     # When throwing from the interpreter (i.e. throwing from LLIntSlowPaths), so

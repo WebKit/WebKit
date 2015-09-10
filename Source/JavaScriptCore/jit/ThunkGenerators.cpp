@@ -66,6 +66,8 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
     // even though we won't use it.
     jit.preserveReturnAddressAfterCall(GPRInfo::nonPreservedNonReturnGPR);
 
+    jit.copyCalleeSavesToVMCalleeSavesBuffer();
+
     jit.setupArguments(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
     jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(lookupExceptionHandler)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0);
@@ -209,6 +211,18 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     if (entryType == EnterViaCall)
         jit.emitFunctionPrologue();
+#if USE(JSVALUE64)
+    else if (entryType == EnterViaJump) {
+        // We're coming from a specialized thunk that has saved the prior tag registers' contents.
+        // Restore them now.
+#if CPU(ARM64)
+        jit.popPair(JSInterfaceJIT::tagTypeNumberRegister, JSInterfaceJIT::tagMaskRegister);
+#else
+        jit.pop(JSInterfaceJIT::tagMaskRegister);
+        jit.pop(JSInterfaceJIT::tagTypeNumberRegister);
+#endif
+    }
+#endif
 
     jit.emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
@@ -306,6 +320,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     // Handle an exception
     exceptionHandler.link(&jit);
 
+    jit.copyCalleeSavesToVMCalleeSavesBuffer();
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
 
 #if CPU(X86) && USE(JSVALUE32_64)
@@ -391,13 +406,6 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
     jit.addPtr(extraTemp, JSInterfaceJIT::callFrameRegister);
     jit.addPtr(extraTemp, JSInterfaceJIT::stackPointerRegister);
 
-    // Save the original return PC.
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()), extraTemp);
-    jit.storePtr(extraTemp, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
-
-    // Install the new return PC.
-    jit.storePtr(GPRInfo::argumentGPR1, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
-
 #  if CPU(X86_64)
     jit.push(JSInterfaceJIT::regT4);
 #  endif
@@ -439,13 +447,6 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
     jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::callFrameRegister);
     jit.addPtr(JSInterfaceJIT::regT5, JSInterfaceJIT::stackPointerRegister);
 
-    // Save the original return PC.
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT5);
-    jit.storePtr(GPRInfo::regT5, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::argumentGPR0, JSInterfaceJIT::TimesEight));
-    
-    // Install the new return PC.
-    jit.storePtr(GPRInfo::argumentGPR1, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
-    
 #  if CPU(X86)
     jit.push(JSInterfaceJIT::regT4);
 #  endif

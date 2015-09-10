@@ -158,6 +158,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
 
+    allocateCalleeSaveSpace();
+
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
 
     emitOpcode(op_enter);
@@ -198,6 +200,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     if (m_isBuiltinFunction)
         m_shouldEmitDebugHooks = false;
+
+    allocateCalleeSaveSpace();
     
     SymbolTable* functionSymbolTable = SymbolTable::create(*m_vm);
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
@@ -493,6 +497,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
 
+    allocateCalleeSaveSpace();
+
     m_codeBlock->setNumParameters(1);
 
     emitOpcode(op_enter);
@@ -536,6 +542,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     if (m_isBuiltinFunction)
         m_shouldEmitDebugHooks = false;
+
+    allocateCalleeSaveSpace();
 
     SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(*m_vm);
     moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
@@ -3062,6 +3070,17 @@ LabelScopePtr BytecodeGenerator::continueTarget(const Identifier& name)
             return result; // may be null.
     }
     return LabelScopePtr::null();
+}
+
+void BytecodeGenerator::allocateCalleeSaveSpace()
+{
+    size_t virtualRegisterCountForCalleeSaves = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
+
+    for (size_t i = 0; i < virtualRegisterCountForCalleeSaves; i++) {
+        RegisterID* localRegister = addVar();
+        localRegister->ref();
+        m_localRegistersForCalleeSaveRegisters.append(localRegister);
+    }
 }
 
 void BytecodeGenerator::allocateAndEmitScope()

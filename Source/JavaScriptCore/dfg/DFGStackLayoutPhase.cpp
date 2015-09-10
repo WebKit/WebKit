@@ -129,7 +129,7 @@ public:
         }
         
         Vector<unsigned> allocation(usedLocals.size());
-        m_graph.m_nextMachineLocal = 0;
+        m_graph.m_nextMachineLocal = codeBlock()->calleeSaveSpaceAsVirtualRegisters();
         for (unsigned i = 0; i < usedLocals.size(); ++i) {
             if (!usedLocals.get(i)) {
                 allocation[i] = UINT_MAX;

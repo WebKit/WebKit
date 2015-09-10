@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
- * Copyright (C) 2014 Samsung Electronics
- * Copyright (C) 2014 University of Szeged
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLUnwindInfo_h
-#define FTLUnwindInfo_h
+#include "config.h"
+#include "RegisterAtOffset.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(JIT)
 
-#include "FTLGeneratedFunction.h"
-class RegisterAtOffsetList;
+namespace JSC {
 
-namespace JSC { namespace FTL {
+void RegisterAtOffset::dump(PrintStream& out) const
+{
+    out.print(reg(), " at ", offset());
+}
 
-std::unique_ptr<RegisterAtOffsetList>  parseUnwindInfo(void*, size_t, GeneratedFunction);
+} // namespace JSC
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLUnwindInfo_h
+#endif // ENABLE(JIT)
 

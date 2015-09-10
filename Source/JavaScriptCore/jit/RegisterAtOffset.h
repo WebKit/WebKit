@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLRegisterAtOffset_h
-#define FTLRegisterAtOffset_h
+#ifndef RegisterAtOffset_h
+#define RegisterAtOffset_h
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(JIT)
 
 #include "Reg.h"
 #include <wtf/PrintStream.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
 
 class RegisterAtOffset {
 public:
@@ -50,6 +50,7 @@ public:
     
     Reg reg() const { return m_reg; }
     ptrdiff_t offset() const { return m_offset; }
+    int offsetAsIndex() const { return offset() / sizeof(void*); }
     
     bool operator==(const RegisterAtOffset& other) const
     {
@@ -72,9 +73,9 @@ private:
     ptrdiff_t m_offset;
 };
 
-} } // namespace JSC::FTL
+} // namespace JSC
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(JIT)
 
-#endif // FTLRegisterAtOffset_h
+#endif // RegisterAtOffset_h
 

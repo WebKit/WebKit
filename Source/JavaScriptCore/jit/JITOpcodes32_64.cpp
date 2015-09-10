@@ -148,6 +148,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
 {
     ASSERT(returnValueGPR != callFrameRegister);
     emitLoad(currentInstruction[1].u.operand, regT1, returnValueGPR);
+    emitRestoreCalleeSaves();
     emitFunctionEpilogue();
     ret();
 }
@@ -741,6 +742,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     ASSERT(regT0 == returnValueGPR);
+    copyCalleeSavesToVMCalleeSavesBuffer();
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     callOperationNoExceptionCheck(operationThrow, regT1, regT0);
     jumpToExceptionHandler();
@@ -800,6 +802,8 @@ void JIT::emitSlow_op_to_string(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
+    restoreCalleeSavesFromVMCalleeSavesBuffer();
+
     move(TrustedImmPtr(m_vm), regT3);
     // operationThrow returns the callFrame for the handler.
     load32(Address(regT3, VM::callFrameForThrowOffset()), callFrameRegister);

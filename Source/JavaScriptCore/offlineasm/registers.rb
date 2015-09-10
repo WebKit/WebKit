@@ -48,7 +48,10 @@ GPRS =
      "csr3",
      "csr4",
      "csr5",
-     "csr6"
+     "csr6",
+     "csr7",
+     "csr8",
+     "csr9"
     ]
 
 FPRS =
@@ -63,6 +66,14 @@ FPRS =
      "fa1",
      "fa2",
      "fa3",
+     "csfr0",
+     "csfr1",
+     "csfr2",
+     "csfr3",
+     "csfr4",
+     "csfr5",
+     "csfr6",
+     "csfr7",
      "fr"
     ]
 

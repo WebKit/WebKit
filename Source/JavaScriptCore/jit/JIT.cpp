@@ -29,7 +29,6 @@
 
 #include "JIT.h"
 
-#include "ArityCheckFailReturnThunks.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGCapabilities.h"
@@ -85,6 +84,9 @@ void JIT::emitEnterOptimizationCheck()
     
     skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     ASSERT(!m_bytecodeOffset);
+
+    copyCalleeSavesFromFrameOrRegisterToVMCalleeSavesBuffer();
+
     callOperation(operationOptimize, m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
     move(returnValueGPR2, stackPointerRegister);
@@ -492,6 +494,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         break;
     }
 
+    m_codeBlock->setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters()); // Might be able to remove as this is probably already set to this value.
+
     // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
     if (m_vm->typeProfiler())
         m_vm->typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for JIT compilation."));
@@ -549,6 +553,9 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     move(regT1, stackPointerRegister);
     checkStackPointerAlignment();
 
+    emitSaveCalleeSaves();
+    emitMaterializeTagCheckRegisters();
+
     privateCompileMainPass();
     privateCompileLinkPass();
     privateCompileSlowCases();
@@ -580,11 +587,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
-        GPRReg thunkReg = GPRInfo::argumentGPR1;
-        CodeLocationLabel* failThunkLabels =
-            m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters());
-        move(TrustedImmPtr(failThunkLabels), thunkReg);
-        loadPtr(BaseIndex(thunkReg, returnValueGPR, timesPtr()), thunkReg);
         move(returnValueGPR, GPRInfo::argumentGPR0);
         emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).code());
 
@@ -722,6 +724,8 @@ void JIT::privateCompileExceptionHandlers()
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
+        copyCalleeSavesToVMCalleeSavesBuffer();
+
         // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
 
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
@@ -738,6 +742,8 @@ void JIT::privateCompileExceptionHandlers()
 
     if (!m_exceptionChecks.empty()) {
         m_exceptionChecks.link(this);
+
+        copyCalleeSavesToVMCalleeSavesBuffer();
 
         // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);

@@ -302,6 +302,7 @@ _handleUncaughtException:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForThrow[t3], cfr
 
     loadp CallerFrame[cfr], cfr
@@ -591,7 +592,6 @@ macro functionArityCheck(doneLabel, slowPath)
     btpz t3, .proceedInline
     
     loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], a0
-    loadp CommonSlowPaths::ArityCheckData::returnPC[r1], a1
     call t3
     if ASSERT_ENABLED
         loadp ReturnPC[cfr], t0
@@ -1878,6 +1878,7 @@ _llint_op_catch:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForThrow[t3], cfr
     restoreStackPointerAfterCall()
 
@@ -1916,6 +1917,7 @@ _llint_throw_from_slow_path_trampoline:
     loadp Callee[cfr], t1
     andp MarkedBlockMask, t1
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
+    copyCalleeSavesToVMCalleeSavesBuffer(t1, t2)
     jmp VM::targetMachinePCForThrow[t1]
 
 

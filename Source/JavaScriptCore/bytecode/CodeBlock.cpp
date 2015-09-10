@@ -69,6 +69,10 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/UniquedStringImpl.h>
 
+#if ENABLE(JIT)
+#include "RegisterAtOffsetList.h"
+#endif
+
 #if ENABLE(DFG_JIT)
 #include "DFGOperations.h"
 #endif
@@ -1887,6 +1891,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (size_t size = unlinkedCodeBlock->numberOfObjectAllocationProfiles())
         m_objectAllocationProfiles.resizeToFit(size);
 
+#if ENABLE(JIT)
+    setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters());
+#endif
+
     // Copy and translate the UnlinkedInstructions
     unsigned instructionCount = unlinkedCodeBlock->instructions().count();
     UnlinkedInstructionStream::Reader instructionReader(unlinkedCodeBlock->instructions());
@@ -3329,6 +3337,33 @@ unsigned CodeBlock::reoptimizationRetryCounter() const
 }
 
 #if ENABLE(JIT)
+void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
+{
+    m_calleeSaveRegisters = std::make_unique<RegisterAtOffsetList>(calleeSaveRegisters);
+}
+
+void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> registerAtOffsetList)
+{
+    m_calleeSaveRegisters = WTF::move(registerAtOffsetList);
+}
+    
+static size_t roundCalleeSaveSpaceAsVirtualRegisters(size_t calleeSaveRegisters)
+{
+    static const unsigned cpuRegisterSize = sizeof(void*);
+    return (WTF::roundUpToMultipleOf(sizeof(Register), calleeSaveRegisters * cpuRegisterSize) / sizeof(Register));
+
+}
+
+size_t CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters()
+{
+    return roundCalleeSaveSpaceAsVirtualRegisters(numberOfLLIntBaselineCalleeSaveRegisters());
+}
+
+size_t CodeBlock::calleeSaveSpaceAsVirtualRegisters()
+{
+    return roundCalleeSaveSpaceAsVirtualRegisters(m_calleeSaveRegisters->size());
+}
+
 void CodeBlock::countReoptimization()
 {
     m_reoptimizationRetryCounter++;

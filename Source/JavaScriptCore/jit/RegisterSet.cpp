@@ -66,6 +66,11 @@ RegisterSet RegisterSet::specialRegisters()
         stackRegisters(), reservedHardwareRegisters(), runtimeRegisters());
 }
 
+RegisterSet RegisterSet::stubUnavailableRegisters()
+{
+    return RegisterSet(specialRegisters(), vmCalleeSaveRegisters());
+}
+
 RegisterSet RegisterSet::calleeSaveRegisters()
 {
     RegisterSet result;
@@ -118,6 +123,153 @@ RegisterSet RegisterSet::calleeSaveRegisters()
         result.set(reg);
 #else
     UNREACHABLE_FOR_PLATFORM();
+#endif
+    return result;
+}
+
+RegisterSet RegisterSet::vmCalleeSaveRegisters()
+{
+    RegisterSet result;
+#if CPU(X86_64)
+    result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
+    result.set(GPRInfo::regCS2);
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+#if OS(WINDOWS)
+    result.set(GPRInfo::regCS5);
+    result.set(GPRInfo::regCS6);
+#endif
+#elif CPU(ARM64)
+    result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
+    result.set(GPRInfo::regCS2);
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+    result.set(GPRInfo::regCS5);
+    result.set(GPRInfo::regCS6);
+    result.set(GPRInfo::regCS7);
+    result.set(GPRInfo::regCS8);
+    result.set(GPRInfo::regCS9);
+    result.set(FPRInfo::fpRegCS0);
+    result.set(FPRInfo::fpRegCS1);
+    result.set(FPRInfo::fpRegCS2);
+    result.set(FPRInfo::fpRegCS3);
+    result.set(FPRInfo::fpRegCS4);
+    result.set(FPRInfo::fpRegCS5);
+    result.set(FPRInfo::fpRegCS6);
+    result.set(FPRInfo::fpRegCS7);
+#endif
+    return result;
+}
+
+RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
+{
+    RegisterSet result;
+#if CPU(X86)
+#elif CPU(X86_64)
+#if !OS(WINDOWS)
+    result.set(GPRInfo::regCS2);
+    ASSERT(GPRInfo::regCS3 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS4 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+#else
+    result.set(GPRInfo::regCS4);
+    ASSERT(GPRInfo::regCS5 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS6 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS5);
+    result.set(GPRInfo::regCS6);
+#endif
+#elif CPU(ARM_THUMB2)
+#elif CPU(ARM_TRADITIONAL)
+#elif CPU(ARM64)
+    result.set(GPRInfo::regCS7);
+    ASSERT(GPRInfo::regCS8 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS9 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS8);
+    result.set(GPRInfo::regCS9);
+#elif CPU(MIPS)
+#elif CPU(SH4)
+#else
+    UNREACHABLE_FOR_PLATFORM();
+#endif
+    return result;
+}
+
+RegisterSet RegisterSet::dfgCalleeSaveRegisters()
+{
+    RegisterSet result;
+#if CPU(X86)
+#elif CPU(X86_64)
+    result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
+    result.set(GPRInfo::regCS2);
+#if !OS(WINDOWS)
+    ASSERT(GPRInfo::regCS3 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS4 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+#else
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+    ASSERT(GPRInfo::regCS5 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS6 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS5);
+    result.set(GPRInfo::regCS6);
+#endif
+#elif CPU(ARM_THUMB2)
+#elif CPU(ARM_TRADITIONAL)
+#elif CPU(ARM64)
+    ASSERT(GPRInfo::regCS8 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS9 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS8);
+    result.set(GPRInfo::regCS9);
+#elif CPU(MIPS)
+#elif CPU(SH4)
+#else
+    UNREACHABLE_FOR_PLATFORM();
+#endif
+    return result;
+}
+
+RegisterSet RegisterSet::ftlCalleeSaveRegisters()
+{
+    RegisterSet result;
+#if ENABLE(FTL_JIT)
+#if CPU(X86_64) && !OS(WINDOWS)
+    result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
+    result.set(GPRInfo::regCS2);
+    ASSERT(GPRInfo::regCS3 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS4 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+#elif CPU(ARM64)
+    // LLVM might save and use all ARM64 callee saves specified in the ABI.
+    result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
+    result.set(GPRInfo::regCS2);
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+    result.set(GPRInfo::regCS5);
+    result.set(GPRInfo::regCS6);
+    result.set(GPRInfo::regCS7);
+    ASSERT(GPRInfo::regCS8 == GPRInfo::tagTypeNumberRegister);
+    ASSERT(GPRInfo::regCS9 == GPRInfo::tagMaskRegister);
+    result.set(GPRInfo::regCS8);
+    result.set(GPRInfo::regCS9);
+    result.set(FPRInfo::fpRegCS0);
+    result.set(FPRInfo::fpRegCS1);
+    result.set(FPRInfo::fpRegCS2);
+    result.set(FPRInfo::fpRegCS3);
+    result.set(FPRInfo::fpRegCS4);
+    result.set(FPRInfo::fpRegCS5);
+    result.set(FPRInfo::fpRegCS6);
+    result.set(FPRInfo::fpRegCS7);
+#else
+    UNREACHABLE_FOR_PLATFORM();
+#endif
 #endif
     return result;
 }

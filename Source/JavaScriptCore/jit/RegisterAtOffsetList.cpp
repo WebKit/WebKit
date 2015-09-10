@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ArityCheckFailReturnThunks_h
-#define ArityCheckFailReturnThunks_h
+#include "config.h"
+#include "RegisterAtOffsetList.h"
 
 #if ENABLE(JIT)
 
-#include "CodeLocation.h"
-#include "ConcurrentJITLock.h"
-#include <wtf/HashMap.h>
+#include <wtf/ListDump.h>
 
 namespace JSC {
+    
+RegisterAtOffsetList::RegisterAtOffsetList() { }
 
-class ArityCheckFailReturnThunks {
-public:
-    ArityCheckFailReturnThunks();
-    ~ArityCheckFailReturnThunks();
+RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseType offsetBaseType)
+{
+    size_t numberOfRegisters = registerSet.numberOfSetRegisters();
+    ptrdiff_t offset = 0;
     
-    // Returns a pointer to an array of return labels indexed by missingArgs.
-    CodeLocationLabel* returnPCsFor(VM&, unsigned numExpectedArgumentsIncludingThis);
-    
-    CodeLocationLabel returnPCFor(VM&, unsigned slotsToAdd);
-    
-private:
-    Vector<std::unique_ptr<CodeLocationLabel[]>> m_returnPCArrays;
-    unsigned m_nextSize;
-    Vector<MacroAssemblerCodeRef> m_refs;
-    ConcurrentJITLock m_lock;
-};
+    if (offsetBaseType == FramePointerBased)
+        offset = -(static_cast<ptrdiff_t>(numberOfRegisters) * sizeof(void*));
+
+    for (Reg reg = Reg::first(); reg <= Reg::last();reg = reg.next()) {
+        if (registerSet.get(reg)) {
+            append(RegisterAtOffset(reg, offset));
+            offset += sizeof(void*);
+        }
+    }
+
+    sort();
+}
+
+void RegisterAtOffsetList::sort()
+{
+    std::sort(m_registers.begin(), m_registers.end());
+}
+
+void RegisterAtOffsetList::dump(PrintStream& out) const
+{
+    out.print(listDump(m_registers));
+}
+
+RegisterAtOffset* RegisterAtOffsetList::find(Reg reg) const
+{
+    return tryBinarySearch<RegisterAtOffset, Reg>(m_registers, m_registers.size(), reg, RegisterAtOffset::getReg);
+}
+
+unsigned RegisterAtOffsetList::indexOf(Reg reg) const
+{
+    if (RegisterAtOffset* pointer = find(reg))
+        return pointer - m_registers.begin();
+    return UINT_MAX;
+}
 
 } // namespace JSC
 
 #endif // ENABLE(JIT)
-
-#endif // ArityCheckFailReturnThunks_h
 

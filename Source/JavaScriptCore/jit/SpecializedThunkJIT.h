@@ -44,6 +44,7 @@ namespace JSC {
             : JSInterfaceJIT(vm)
         {
             emitFunctionPrologue();
+            emitSaveThenMaterializeTagRegisters();
             // Check that we have the expected number of arguments
             m_failures.append(branch32(NotEqual, payloadFor(JSStack::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
         }
@@ -52,6 +53,7 @@ namespace JSC {
             : JSInterfaceJIT(vm)
         {
             emitFunctionPrologue();
+            emitSaveThenMaterializeTagRegisters();
         }
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)
@@ -105,6 +107,8 @@ namespace JSC {
         {
             if (src != regT0)
                 move(src, regT0);
+            
+            emitRestoreSavedTagRegisters();
             emitFunctionEpilogue();
             ret();
         }
@@ -113,6 +117,7 @@ namespace JSC {
         {
             ASSERT_UNUSED(payload, payload == regT0);
             ASSERT_UNUSED(tag, tag == regT1);
+            emitRestoreSavedTagRegisters();
             emitFunctionEpilogue();
             ret();
         }
@@ -137,6 +142,7 @@ namespace JSC {
             lowNonZero.link(this);
             highNonZero.link(this);
 #endif
+            emitRestoreSavedTagRegisters();
             emitFunctionEpilogue();
             ret();
         }
@@ -146,6 +152,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsInt32();
+            emitRestoreSavedTagRegisters();
             emitFunctionEpilogue();
             ret();
         }
@@ -155,6 +162,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsJSCell();
+            emitRestoreSavedTagRegisters();
             emitFunctionEpilogue();
             ret();
         }
@@ -185,7 +193,31 @@ namespace JSC {
         }
 
     private:
+        void emitSaveThenMaterializeTagRegisters()
+        {
+#if USE(JSVALUE64)
+#if CPU(ARM64)
+            pushPair(tagTypeNumberRegister, tagMaskRegister);
+#else
+            push(tagTypeNumberRegister);
+            push(tagMaskRegister);
+#endif
+            emitMaterializeTagCheckRegisters();
+#endif
+        }
 
+        void emitRestoreSavedTagRegisters()
+        {
+#if USE(JSVALUE64)
+#if CPU(ARM64)
+            popPair(tagTypeNumberRegister, tagMaskRegister);
+#else
+            pop(tagMaskRegister);
+            pop(tagTypeNumberRegister);
+#endif
+#endif
+        }
+        
         void tagReturnAsInt32()
         {
 #if USE(JSVALUE64)

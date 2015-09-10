@@ -358,7 +358,6 @@ set(JavaScriptCore_SOURCES
     interpreter/StackVisitor.cpp
 
     jit/AccessorCallJITStubRoutine.cpp
-    jit/ArityCheckFailReturnThunks.cpp
     jit/AssemblyHelpers.cpp
     jit/BinarySwitch.cpp
     jit/ExecutableAllocationFuzz.cpp
@@ -386,6 +385,8 @@ set(JavaScriptCore_SOURCES
     jit/JITToDFGDeferredCompilationCallback.cpp
     jit/PolymorphicCallStubRoutine.cpp
     jit/Reg.cpp
+    jit/RegisterAtOffset.cpp
+    jit/RegisterAtOffsetList.cpp
     jit/RegisterPreservationWrapperGenerator.cpp
     jit/RegisterSet.cpp
     jit/Repatch.cpp
@@ -904,7 +905,6 @@ if (ENABLE_FTL_JIT)
         ftl/FTLOperations.cpp
         ftl/FTLOutput.cpp
         ftl/FTLRecoveryOpcode.cpp
-        ftl/FTLRegisterAtOffset.cpp
         ftl/FTLSaveRestore.cpp
         ftl/FTLSlowPathCall.cpp
         ftl/FTLSlowPathCallKey.cpp

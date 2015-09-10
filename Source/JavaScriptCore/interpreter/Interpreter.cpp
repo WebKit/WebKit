@@ -650,15 +650,55 @@ public:
             if (!unwindCallFrame(visitor)) {
                 if (LegacyProfiler* profiler = vm.enabledProfiler())
                     profiler->exceptionUnwind(m_callFrame);
+
+                copyCalleeSavesToVMCalleeSavesBuffer(visitor);
+
                 return StackVisitor::Done;
             }
         } else
             return StackVisitor::Done;
 
+        copyCalleeSavesToVMCalleeSavesBuffer(visitor);
+
         return StackVisitor::Continue;
     }
 
 private:
+    void copyCalleeSavesToVMCalleeSavesBuffer(StackVisitor& visitor)
+    {
+#if ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+
+        if (!visitor->isJSFrame())
+            return;
+
+#if ENABLE(DFG_JIT)
+        if (visitor->inlineCallFrame())
+            return;
+#endif
+        RegisterAtOffsetList* currentCalleeSaves = m_codeBlock ? m_codeBlock->calleeSaveRegisters() : nullptr;
+
+        if (!currentCalleeSaves)
+            return;
+
+        VM& vm = m_callFrame->vm();
+        RegisterAtOffsetList* allCalleeSaves = vm.getAllCalleeSaveRegisterOffsets();
+        RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
+        intptr_t* frame = reinterpret_cast<intptr_t*>(m_callFrame->registers());
+
+        unsigned registerCount = currentCalleeSaves->size();
+        for (unsigned i = 0; i < registerCount; i++) {
+            RegisterAtOffset currentEntry = currentCalleeSaves->at(i);
+            if (dontCopyRegisters.get(currentEntry.reg()))
+                continue;
+            RegisterAtOffset* vmCalleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
+            
+            vm.calleeSaveRegistersBuffer[vmCalleeSavesEntry->offsetAsIndex()] = *(frame + currentEntry.offsetAsIndex());
+        }
+#else
+        UNUSED_PARAM(visitor);
+#endif
+    }
+
     CallFrame*& m_callFrame;
     bool m_isTermination;
     CodeBlock*& m_codeBlock;

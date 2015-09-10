@@ -382,12 +382,8 @@
 		0F6B1CBA1861244C00845D97 /* RegisterPreservationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CB81861244C00845D97 /* RegisterPreservationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6B1CBD1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CBB1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp */; };
 		0F6B1CBE1861246A00845D97 /* RegisterPreservationWrapperGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CBC1861246A00845D97 /* RegisterPreservationWrapperGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F6B1CC31862C47800845D97 /* FTLRegisterAtOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CBF1862C47800845D97 /* FTLRegisterAtOffset.cpp */; };
-		0F6B1CC41862C47800845D97 /* FTLRegisterAtOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CC01862C47800845D97 /* FTLRegisterAtOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6B1CC51862C47800845D97 /* FTLUnwindInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CC11862C47800845D97 /* FTLUnwindInfo.cpp */; };
 		0F6B1CC61862C47800845D97 /* FTLUnwindInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CC21862C47800845D97 /* FTLUnwindInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F6B1CC918641DF800845D97 /* ArityCheckFailReturnThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CC718641DF800845D97 /* ArityCheckFailReturnThunks.cpp */; };
-		0F6B1CCA18641DF800845D97 /* ArityCheckFailReturnThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CC818641DF800845D97 /* ArityCheckFailReturnThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6C73501AC9F99F00BE1682 /* VariableWriteFireDetail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6C734E1AC9F99F00BE1682 /* VariableWriteFireDetail.cpp */; };
 		0F6C73511AC9F99F00BE1682 /* VariableWriteFireDetail.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6C734F1AC9F99F00BE1682 /* VariableWriteFireDetail.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6E845A19030BEF00562741 /* DFGVariableAccessData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6E845919030BEF00562741 /* DFGVariableAccessData.cpp */; };
@@ -987,6 +983,8 @@
 		6511230714046B0A002B101D /* testRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651122E5140469BA002B101D /* testRegExp.cpp */; };
 		6514F21918B3E1670098FF8B /* Bytecodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6514F21718B3E1670098FF8B /* Bytecodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65303D641447B9E100D3F904 /* ParserTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 65303D631447B9E100D3F904 /* ParserTokens.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6540C7A01B82E1C3000F6B79 /* RegisterAtOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6540C79E1B82D9CE000F6B79 /* RegisterAtOffset.cpp */; };
+		6540C7A11B82E1C3000F6B79 /* RegisterAtOffsetList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6540C79C1B82D99D000F6B79 /* RegisterAtOffsetList.cpp */; };
 		6546F5211A32B313006F07D5 /* NullGetterFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */; };
 		65525FC51A6DD801007B5495 /* NullSetterFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65525FC31A6DD3B3007B5495 /* NullSetterFunction.cpp */; };
 		6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */; };
@@ -2216,12 +2214,8 @@
 		0F6B1CB81861244C00845D97 /* RegisterPreservationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterPreservationMode.h; sourceTree = "<group>"; };
 		0F6B1CBB1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterPreservationWrapperGenerator.cpp; sourceTree = "<group>"; };
 		0F6B1CBC1861246A00845D97 /* RegisterPreservationWrapperGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterPreservationWrapperGenerator.h; sourceTree = "<group>"; };
-		0F6B1CBF1862C47800845D97 /* FTLRegisterAtOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLRegisterAtOffset.cpp; path = ftl/FTLRegisterAtOffset.cpp; sourceTree = "<group>"; };
-		0F6B1CC01862C47800845D97 /* FTLRegisterAtOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLRegisterAtOffset.h; path = ftl/FTLRegisterAtOffset.h; sourceTree = "<group>"; };
 		0F6B1CC11862C47800845D97 /* FTLUnwindInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLUnwindInfo.cpp; path = ftl/FTLUnwindInfo.cpp; sourceTree = "<group>"; };
 		0F6B1CC21862C47800845D97 /* FTLUnwindInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLUnwindInfo.h; path = ftl/FTLUnwindInfo.h; sourceTree = "<group>"; };
-		0F6B1CC718641DF800845D97 /* ArityCheckFailReturnThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArityCheckFailReturnThunks.cpp; sourceTree = "<group>"; };
-		0F6B1CC818641DF800845D97 /* ArityCheckFailReturnThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArityCheckFailReturnThunks.h; sourceTree = "<group>"; };
 		0F6C734E1AC9F99F00BE1682 /* VariableWriteFireDetail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableWriteFireDetail.cpp; sourceTree = "<group>"; };
 		0F6C734F1AC9F99F00BE1682 /* VariableWriteFireDetail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableWriteFireDetail.h; sourceTree = "<group>"; };
 		0F6E845919030BEF00562741 /* DFGVariableAccessData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVariableAccessData.cpp; path = dfg/DFGVariableAccessData.cpp; sourceTree = "<group>"; };
@@ -2801,6 +2795,10 @@
 		652A3A231651C69700A80AFE /* A64DOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = A64DOpcode.h; path = disassembler/ARM64/A64DOpcode.h; sourceTree = "<group>"; };
 		65303D631447B9E100D3F904 /* ParserTokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserTokens.h; sourceTree = "<group>"; };
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
+		6540C79C1B82D99D000F6B79 /* RegisterAtOffsetList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterAtOffsetList.cpp; sourceTree = "<group>"; };
+		6540C79D1B82D99D000F6B79 /* RegisterAtOffsetList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterAtOffsetList.h; sourceTree = "<group>"; };
+		6540C79E1B82D9CE000F6B79 /* RegisterAtOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterAtOffset.cpp; sourceTree = "<group>"; };
+		6540C79F1B82D9CE000F6B79 /* RegisterAtOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterAtOffset.h; sourceTree = "<group>"; };
 		6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NullGetterFunction.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		6546F5201A32A59C006F07D5 /* NullGetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullGetterFunction.h; sourceTree = "<group>"; };
 		65525FC31A6DD3B3007B5495 /* NullSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullSetterFunction.cpp; sourceTree = "<group>"; };
@@ -3972,8 +3970,6 @@
 				0FEA0A06170513DB00BB722C /* FTLOutput.h */,
 				0F485325187DFDEC0083B687 /* FTLRecoveryOpcode.cpp */,
 				0F485326187DFDEC0083B687 /* FTLRecoveryOpcode.h */,
-				0F6B1CBF1862C47800845D97 /* FTLRegisterAtOffset.cpp */,
-				0F6B1CC01862C47800845D97 /* FTLRegisterAtOffset.h */,
 				0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */,
 				0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */,
 				0F25F1AA181635F300522F39 /* FTLSlowPathCall.cpp */,
@@ -4104,8 +4100,6 @@
 				0FF054F81AC35B4400E5BE57 /* ExecutableAllocationFuzz.h */,
 				0F7576D018E1FEE9002EF4CD /* AccessorCallJITStubRoutine.cpp */,
 				0F7576D118E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h */,
-				0F6B1CC718641DF800845D97 /* ArityCheckFailReturnThunks.cpp */,
-				0F6B1CC818641DF800845D97 /* ArityCheckFailReturnThunks.h */,
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
 				0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */,
@@ -4158,12 +4152,14 @@
 				0FC712E117CD878F008CC93C /* JITToDFGDeferredCompilationCallback.h */,
 				A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */,
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
-				0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */,
-				0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */,
 				0FE834151A6EF97B00D04847 /* PolymorphicCallStubRoutine.cpp */,
 				0FE834161A6EF97B00D04847 /* PolymorphicCallStubRoutine.h */,
 				0FA7A8E918B413C80052371D /* Reg.cpp */,
 				0FA7A8EA18B413C80052371D /* Reg.h */,
+				6540C79E1B82D9CE000F6B79 /* RegisterAtOffset.cpp */,
+				6540C79F1B82D9CE000F6B79 /* RegisterAtOffset.h */,
+				6540C79C1B82D99D000F6B79 /* RegisterAtOffsetList.cpp */,
+				6540C79D1B82D99D000F6B79 /* RegisterAtOffsetList.h */,
 				623A37EB1B87A7BD00754209 /* RegisterMap.h */,
 				0F6B1CBB1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp */,
 				0F6B1CBC1861246A00845D97 /* RegisterPreservationWrapperGenerator.h */,
@@ -4173,6 +4169,8 @@
 				0F24E54A17EE274900ABB217 /* Repatch.h */,
 				0FA7A8ED18CE4FD80052371D /* ScratchRegisterAllocator.cpp */,
 				0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */,
+				0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */,
+				0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
 				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
 				A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */,
@@ -5925,7 +5923,6 @@
 				BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */,
 				BCF605140E203EF800B9A64D /* ArgList.h in Headers */,
 				2A88067919107D5500CB0BBB /* DFGFunctionWhitelist.h in Headers */,
-				0F6B1CCA18641DF800845D97 /* ArityCheckFailReturnThunks.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				0F898F321B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.h in Headers */,
@@ -6325,7 +6322,6 @@
 				9E72940B190F0514001A91B5 /* BundlePath.h in Headers */,
 				0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
-				0F6B1CC41862C47800845D97 /* FTLRegisterAtOffset.h in Headers */,
 				0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */,
 				0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */,
 				E354622B1B6065D100545386 /* ConstructAbility.h in Headers */,
@@ -7392,7 +7388,6 @@
 				0FE050151AA9091100D33B33 /* DirectArgumentsOffset.cpp in Sources */,
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
-				0F6B1CC918641DF800845D97 /* ArityCheckFailReturnThunks.cpp in Sources */,
 				797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */,
 				E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
@@ -7655,7 +7650,6 @@
 				8B0F424C1ABD6DE2003917EA /* JSArrowFunction.cpp in Sources */,
 				0FEA0A2A1709629600BB722C /* FTLOutput.cpp in Sources */,
 				0F485329187DFDEC0083B687 /* FTLRecoveryOpcode.cpp in Sources */,
-				0F6B1CC31862C47800845D97 /* FTLRegisterAtOffset.cpp in Sources */,
 				0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */,
 				0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */,
 				0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */,
@@ -7926,6 +7920,8 @@
 				0F3E01AA19D353A500F61B7F /* DFGPrePostNumbering.cpp in Sources */,
 				0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */,
 				0FA7A8EB18B413C80052371D /* Reg.cpp in Sources */,
+				6540C7A11B82E1C3000F6B79 /* RegisterAtOffsetList.cpp in Sources */,
+				6540C7A01B82E1C3000F6B79 /* RegisterAtOffset.cpp in Sources */,
 				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
 				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
 				0FE0502C1AA9095600D33B33 /* VarOffset.cpp in Sources */,
