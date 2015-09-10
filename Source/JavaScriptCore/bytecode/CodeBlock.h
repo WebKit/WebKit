@@ -353,11 +353,7 @@ public:
     
     CodeType codeType() const
     {
-#if ENABLE(WEBASSEMBLY)
-        if (m_ownerExecutable->isWebAssemblyExecutable())
-            return FunctionCode;
-#endif
-        return m_unlinkedCode->codeType();
+        return m_codeType;
     }
 
     PutPropertySlot::Context putByIdContext() const
@@ -1022,7 +1018,7 @@ private:
     RefPtr<SourceProvider> m_source;
     unsigned m_sourceOffset;
     unsigned m_firstLineColumnOffset;
-    unsigned m_codeType;
+    CodeType m_codeType;
 
     Vector<LLIntCallLinkInfo> m_llintCallLinkInfos;
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
