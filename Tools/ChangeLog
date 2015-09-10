@@ -1,5 +1,19 @@
 2015-09-09  Andy Estes  <aestes@apple.com>
 
+        [iOS] Teach run-webkit-tests how to parse simulator runtimes when version numbers contain a revision
+        https://bugs.webkit.org/show_bug.cgi?id=149022
+
+        Reviewed by Daniel Bates.
+
+        Simulator runtime versions can contain a revision number (e.g. 8.4.1), but the regex for matching runtimes
+        did not account for this.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Optionally matched a revision at the end of a runtime version number.
+        * Scripts/webkitpy/xcode/simulator_unittest.py: Added a test.
+
+2015-09-09  Andy Estes  <aestes@apple.com>
+
         [iOS] Teach run-webkit-tests how to parse `simctl list` when a tvOS SDK is installed
         https://bugs.webkit.org/show_bug.cgi?id=149029
         <rdar://problem/22432624>

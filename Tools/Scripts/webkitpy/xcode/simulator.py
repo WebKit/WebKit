@@ -234,15 +234,18 @@ class Device(object):
 #        We should find a better way to query for simulator device state and capabilities. Maybe take a similiar
 #        approach as in webkitdirs.pm and utilize the parsed output from the device.plist files in the sub-
 #        directories of ~/Library/Developer/CoreSimulator/Devices?
+#        Also, simctl has the option to output in JSON format (xcrun simctl list --json).
 class Simulator(object):
     """
     Represents the iOS Simulator infrastructure under the currently select Xcode.app bundle.
     """
     device_type_re = re.compile('(?P<name>[^(]+)\((?P<identifier>[^)]+)\)')
+    # FIXME: runtime_re parses the version from the runtime name, but that does not contain the full version number
+    # (it can omit the revision). We should instead parse the version from the number contained in parentheses.
     runtime_re = re.compile(
-        '(i|watch|tv)OS (?P<version>[0-9]+\.[0-9])(?P<internal> Internal)? \([0-9]+\.[0-9]+ - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
+        '(i|watch|tv)OS (?P<version>\d+\.\d)(?P<internal> Internal)? \(\d+\.\d+(\.\d+)? - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
     unavailable_version_re = re.compile('-- Unavailable: (?P<identifier>[^ ]+) --')
-    version_re = re.compile('-- (i|watch|tv)OS (?P<version>[0-9]+\.[0-9]+)(?P<internal> Internal)? --')
+    version_re = re.compile('-- (i|watch|tv)OS (?P<version>\d+\.\d+)(?P<internal> Internal)? --')
     devices_re = re.compile(
         '\s*(?P<name>[^(]+ )\((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
 
