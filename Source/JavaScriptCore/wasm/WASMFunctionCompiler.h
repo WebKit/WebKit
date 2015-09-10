@@ -38,6 +38,16 @@
 
 namespace JSC {
 
+static int32_t JIT_OPERATION operationConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
+{
+    return JSValue::decode(value).toInt32(exec);
+}
+
+static double JIT_OPERATION operationConvertJSValueToDouble(ExecState* exec, EncodedJSValue value)
+{
+    return JSValue::decode(value).toNumber(exec);
+}
+
 #if !CPU(X86) && !CPU(X86_64)
 static int32_t JIT_OPERATION operationDiv(int32_t left, int32_t right)
 {
@@ -98,18 +108,22 @@ public:
             Address address(GPRInfo::callFrameRegister, CallFrame::argumentOffset(i) * sizeof(Register));
             switch (arguments[i]) {
             case WASMType::I32:
-                load32(address, GPRInfo::regT0);
+#if USE(JSVALUE64)
+                loadValueAndConvertToInt32(address, GPRInfo::regT0);
+#else
+                loadValueAndConvertToInt32(address, GPRInfo::regT0, GPRInfo::regT1);
+#endif
                 store32(GPRInfo::regT0, localAddress(localIndex++));
                 break;
             case WASMType::F32:
-                load64(address, GPRInfo::regT0);
-                unboxDoubleWithoutAssertions(GPRInfo::regT0, FPRInfo::fpRegT0);
-                convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
-                storeDouble(FPRInfo::fpRegT0, localAddress(localIndex++));
-                break;
             case WASMType::F64:
-                load64(address, GPRInfo::regT0);
-                unboxDoubleWithoutAssertions(GPRInfo::regT0, FPRInfo::fpRegT0);
+#if USE(JSVALUE64)
+                loadValueAndConvertToDouble(address, FPRInfo::fpRegT0, GPRInfo::regT0, GPRInfo::regT1);
+#else
+                loadValueAndConvertToDouble(address, FPRInfo::fpRegT0, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2, FPRInfo::fpRegT1);
+#endif
+                if (arguments[i] == WASMType::F32)
+                    convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
                 storeDouble(FPRInfo::fpRegT0, localAddress(localIndex++));
                 break;
             default:
@@ -619,18 +633,69 @@ private:
         return nakedCall;
     }
 
+    void appendCallSetResult(const FunctionPtr& function, GPRReg result)
+    {
+        appendCall(function);
+        move(GPRInfo::returnValueGPR, result);
+    }
+
+#if CPU(X86)
+    void appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    {
+        appendCall(function);
+        m_assembler.fstpl(0, stackPointerRegister);
+        loadDouble(stackPointerRegister, result);
+    }
+#elif CPU(ARM) && !CPU(ARM_HARDFP)
+    void appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    {
+        appendCall(function);
+        m_assembler.vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
+    }
+#else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS) || CPU(SH4)
+    void appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    {
+        appendCall(function);
+        moveDouble(FPRInfo::returnValueFPR, result);
+    }
+#endif
+
+#if USE(JSVALUE64)
+    void callOperation(Z_JITOperation_EJ operation, GPRReg src, GPRReg dst)
+    {
+        setupArgumentsWithExecState(src);
+        appendCallSetResult(operation, dst);
+    }
+
+    void callOperation(D_JITOperation_EJ operation, GPRReg src, FPRReg dst)
+    {
+        setupArgumentsWithExecState(src);
+        appendCallSetResult(operation, dst);
+    }
+#else
+    void callOperation(Z_JITOperation_EJ operation, GPRReg srcTag, GPRReg srcPayload, GPRReg dst)
+    {
+        setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG srcPayload, srcTag);
+        appendCallSetResult(operation, dst);
+    }
+
+    void callOperation(D_JITOperation_EJ operation, GPRReg srcTag, GPRReg srcPayload, FPRReg dst)
+    {
+        setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG srcPayload, srcTag);
+        appendCallSetResult(operation, dst);
+    }
+#endif
+
     void callOperation(int32_t JIT_OPERATION (*operation)(int32_t, int32_t), GPRReg src1, GPRReg src2, GPRReg dst)
     {
         setupArguments(src1, src2);
-        appendCall(operation);
-        move(GPRInfo::returnValueGPR, dst);
+        appendCallSetResult(operation, dst);
     }
 
     void callOperation(uint32_t JIT_OPERATION (*operation)(uint32_t, uint32_t), GPRReg src1, GPRReg src2, GPRReg dst)
     {
         setupArguments(src1, src2);
-        appendCall(operation);
-        move(GPRInfo::returnValueGPR, dst);
+        appendCallSetResult(operation, dst);
     }
 
     void boxArgumentsAndAdjustStackPointer(const Vector<WASMType>& arguments)
@@ -702,6 +767,70 @@ private:
             ASSERT_NOT_REACHED();
         }
     }
+
+#if USE(JSVALUE64)
+    void loadValueAndConvertToInt32(Address address, GPRReg dst)
+    {
+        JSValueRegs tempRegs(dst);
+        loadValue(address, tempRegs);
+        Jump checkJSInt32 = branchIfInt32(tempRegs);
+
+        callOperation(operationConvertJSValueToInt32, dst, dst);
+
+        checkJSInt32.link(this);
+    }
+
+    void loadValueAndConvertToDouble(Address address, FPRReg dst, GPRReg scratch1, GPRReg scratch2)
+    {
+        JSValueRegs tempRegs(scratch1);
+        loadValue(address, tempRegs);
+        Jump checkJSInt32 = branchIfInt32(tempRegs);
+        Jump checkJSNumber = branchIfNumber(tempRegs, scratch2);
+        JumpList end;
+
+        callOperation(operationConvertJSValueToDouble, tempRegs.gpr(), dst);
+        end.append(jump());
+
+        checkJSInt32.link(this);
+        convertInt32ToDouble(tempRegs.gpr(), dst);
+        end.append(jump());
+
+        checkJSNumber.link(this);
+        unboxDoubleWithoutAssertions(tempRegs.gpr(), dst);
+        end.link(this);
+    }
+#else
+    void loadValueAndConvertToInt32(Address address, GPRReg dst, GPRReg scratch)
+    {
+        JSValueRegs tempRegs(scratch, dst);
+        loadValue(address, tempRegs);
+        Jump checkJSInt32 = branchIfInt32(tempRegs);
+
+        callOperation(operationConvertJSValueToInt32, tempRegs.tagGPR(), tempRegs.payloadGPR(), dst);
+
+        checkJSInt32.link(this);
+    }
+
+    void loadValueAndConvertToDouble(Address address, FPRReg dst, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, FPRReg fpScratch)
+    {
+        JSValueRegs tempRegs(scratch2, scratch1);
+        loadValue(address, tempRegs);
+        Jump checkJSInt32 = branchIfInt32(tempRegs);
+        Jump checkJSNumber = branchIfNumber(tempRegs, scratch3);
+        JumpList end;
+
+        callOperation(operationConvertJSValueToDouble, tempRegs.tagGPR(), tempRegs.payloadGPR(), dst);
+        end.append(jump());
+
+        checkJSInt32.link(this);
+        convertInt32ToDouble(tempRegs.payloadGPR(), dst);
+        end.append(jump());
+
+        checkJSNumber.link(this);
+        unboxDouble(tempRegs.tagGPR(), tempRegs.payloadGPR(), dst, fpScratch)
+        end.link(this);
+    }
+#endif
 
     JSWASMModule* m_module;
     unsigned m_stackHeight;

@@ -1,3 +1,32 @@
+2015-09-10  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Convert arguments to WebAssembly functions to the declared types
+        https://bugs.webkit.org/show_bug.cgi?id=149033
+
+        Reviewed by Geoffrey Garen.
+
+        This patch checks the types of arguments to WebAssembly functions and
+        converts them to the declared types. This is necessary because:
+        - For example, if a function expects an argument of type double and we
+          pass 1.0 to it, it will get a JSValue of an integer, not a double.
+        - We should follow asm.js's behavior for now, because we want to be able
+          to test WebAssembly apps against asm.js apps. asm.js does type
+          coercion on arguments by using int|0, Math.fround(float), and +double.
+
+        * jit/JITOperations.h:
+        * tests/stress/wasm-type-conversion.js: Added.
+        (shouldBe):
+        (two.valueOf):
+        * tests/stress/wasm/type-conversion.wasm: Added.
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::operationConvertJSValueToInt32):
+        (JSC::operationConvertJSValueToDouble):
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::appendCallSetResult):
+        (JSC::WASMFunctionCompiler::callOperation):
+        (JSC::WASMFunctionCompiler::loadValueAndConvertToInt32):
+        (JSC::WASMFunctionCompiler::loadValueAndConvertToDouble):
+
 2015-09-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JSInternalPromiseDeferred should inherit JSPromiseDeferred
