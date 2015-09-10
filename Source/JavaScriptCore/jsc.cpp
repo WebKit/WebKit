@@ -565,12 +565,14 @@ long StopWatch::getElapsedMS()
     return static_cast<long>((m_stopTime - m_startTime) * 1000);
 }
 
-static inline String stringFromUTF(const char* utf8)
+template<typename Vector>
+static inline String stringFromUTF(const Vector& utf8)
 {
-    return String::fromUTF8WithLatin1Fallback(utf8, strlen(utf8));
+    return String::fromUTF8WithLatin1Fallback(utf8.data(), utf8.size());
 }
 
-static inline SourceCode jscSource(const char* utf8, const String& filename)
+template<typename Vector>
+static inline SourceCode jscSource(const Vector& utf8, const String& filename)
 {
     String str = stringFromUTF(utf8);
     return makeSource(str, filename);
@@ -701,24 +703,7 @@ protected:
     }
 
     static JSInternalPromise* moduleLoaderResolve(JSGlobalObject*, ExecState*, JSValue, JSValue);
-
-    static JSInternalPromise* moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSValue key)
-    {
-        JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
-        String moduleKey = key.toString(exec)->value(exec);
-        if (exec->hadException()) {
-            JSValue exception = exec->exception();
-            exec->clearException();
-            return deferred->reject(exec, exception);
-        }
-
-        // Here, now we consider moduleKey as the fileName.
-        Vector<char> utf8;
-        if (!fillBufferWithContentsOfFile(moduleKey, utf8))
-            return deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
-
-        return deferred->resolve(exec, jsString(exec, stringFromUTF(utf8.data())));
-    }
+    static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, ExecState*, JSValue);
 };
 
 const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
@@ -774,20 +759,39 @@ static bool extractDirectoryName(const String& absolutePathToFile, DirectoryName
     ASSERT_WITH_MESSAGE(lastSeparatorPosition != notFound, "If the separator is not found, this function already returns when performing the forward search.");
     if (firstSeparatorPosition == lastSeparatorPosition)
         directoryName.queryName = StringImpl::empty();
-    else
-        directoryName.queryName = absolutePathToFile.substring(firstSeparatorPosition + 1, lastSeparatorPosition); // Not include the separator.
+    else {
+        size_t queryStartPosition = firstSeparatorPosition + 1;
+        size_t queryLength = lastSeparatorPosition - queryStartPosition; // Not include the last separator.
+        directoryName.queryName = absolutePathToFile.substring(queryStartPosition, queryLength);
+    }
     return true;
 }
 
 static bool currentWorkingDirectory(DirectoryName& directoryName)
 {
 #if OS(WINDOWS)
-    // https://msdn.microsoft.com/en-us/library/sf98bd4y.aspx
-    char* buffer = nullptr;
-    if (!(buffer = _getcwd(nullptr, 0)))
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/aa364934.aspx
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247.aspx#maxpath
+    // The _MAX_PATH in Windows is 260. If the path of the current working directory is longer than that, _getcwd truncates the result.
+    // And other I/O functions taking a path name also truncate it. To avoid this situation,
+    //
+    // (1). When opening the file in Windows for modules, we always use the abosolute path and add "\\?\" prefix to the path name.
+    // (2). When retrieving the current working directory, use GetCurrentDirectory instead of _getcwd.
+    //
+    // In the path utility functions inside the JSC shell, we does not handle the UNC and UNCW including the network host name.
+    DWORD bufferLength = ::GetCurrentDirectoryW(0, nullptr);
+    if (!bufferLength)
         return false;
-    String directoryString = String::fromUTF8(buffer);
-    free(buffer);
+    // In Windows, wchar_t is the UTF-16LE.
+    // https://msdn.microsoft.com/en-us/library/dd374081.aspx
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
+    auto buffer = std::make_unique<wchar_t[]>(bufferLength);
+    DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.get());
+    static_assert(sizeof(wchar_t) == sizeof(UChar), "In Windows, both are UTF-16LE");
+    String directoryString = String(reinterpret_cast<UChar*>(buffer.get()));
+    // We don't support network path like \\host\share\<path name>.
+    if (directoryString.startsWith("\\\\"))
+        return false;
 #else
     auto buffer = std::make_unique<char[]>(PATH_MAX);
     if (!getcwd(buffer.get(), PATH_MAX))
@@ -866,6 +870,89 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
 
     return deferred->resolve(exec, jsString(exec, resolvePath(directoryName, ModuleName(key.impl()))));
 }
+
+static void convertShebangToJSComment(Vector<char>& buffer)
+{
+    if (buffer.size() >= 2) {
+        if (buffer[0] == '#' && buffer[1] == '!')
+            buffer[0] = buffer[1] = '/';
+    }
+}
+
+static void fillBufferWithContentsOfFile(FILE* file, Vector<char>& buffer)
+{
+    fseek(file, 0, SEEK_END);
+    size_t bufferCapacity = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    buffer.resize(bufferCapacity);
+    fread(buffer.data(), 1, bufferCapacity, file);
+}
+
+static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
+{
+    FILE* f = fopen(fileName.utf8().data(), "r");
+    if (!f) {
+        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
+        return false;
+    }
+
+    fillBufferWithContentsOfFile(f, buffer);
+    fclose(f);
+
+    return true;
+}
+
+static bool fetchScriptFromLocalFileSystem(const String& fileName, Vector<char>& buffer)
+{
+    if (!fillBufferWithContentsOfFile(fileName, buffer))
+        return false;
+    convertShebangToJSComment(buffer);
+    return true;
+}
+
+static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector<char>& buffer)
+{
+    // We assume that fileName is always an absolute path.
+#if OS(WINDOWS)
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247.aspx#maxpath
+    // Use long UNC to pass the long path name to the Windows APIs.
+    String longUNCPathName = WTF::makeString("\\\\?\\", fileName);
+    static_assert(sizeof(wchar_t) == sizeof(UChar), "In Windows, both are UTF-16LE");
+    auto utf16Vector = longUNCPathName.charactersWithNullTermination();
+    FILE* f = _wfopen(reinterpret_cast<wchar_t*>(utf16Vector.data()), L"rb");
+#else
+    FILE* f = fopen(fileName.utf8().data(), "r");
+#endif
+    if (!f) {
+        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
+        return false;
+    }
+
+    fillBufferWithContentsOfFile(f, buffer);
+    convertShebangToJSComment(buffer);
+    fclose(f);
+
+    return true;
+}
+
+JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSValue key)
+{
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    String moduleKey = key.toString(exec)->value(exec);
+    if (exec->hadException()) {
+        JSValue exception = exec->exception();
+        exec->clearException();
+        return deferred->reject(exec, exception);
+    }
+
+    // Here, now we consider moduleKey as the fileName.
+    Vector<char> utf8;
+    if (!fetchModuleFromLocalFileSystem(moduleKey, utf8))
+        return deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
+
+    return deferred->resolve(exec, jsString(exec, stringFromUTF(utf8)));
+}
+
 
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 {
@@ -1076,7 +1163,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
-    if (!fillBufferWithContentsOfFile(fileName, script))
+    if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     GlobalObject* globalObject = GlobalObject::create(exec->vm(), GlobalObject::createStructure(exec->vm(), jsNull()), Vector<String>());
@@ -1090,7 +1177,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     NakedPtr<Exception> exception;
     StopWatch stopWatch;
     stopWatch.start();
-    evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), exception);
+    evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), exception);
     stopWatch.stop();
 
     if (exception) {
@@ -1105,13 +1192,13 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
-    if (!fillBufferWithContentsOfFile(fileName, script))
+    if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
     NakedPtr<Exception> evaluationException;
-    JSValue result = evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), evaluationException);
+    JSValue result = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), evaluationException);
     if (evaluationException)
         exec->vm().throwException(exec, evaluationException);
     return JSValue::encode(result);
@@ -1124,14 +1211,14 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
-    return JSValue::encode(jsString(exec, stringFromUTF(script.data())));
+    return JSValue::encode(jsString(exec, stringFromUTF(script)));
 }
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
-    if (!fillBufferWithContentsOfFile(fileName, script))
+    if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
@@ -1140,7 +1227,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     stopWatch.start();
 
     JSValue syntaxException;
-    bool validSyntax = checkSyntax(globalObject->globalExec(), jscSource(script.data(), fileName), &syntaxException);
+    bool validSyntax = checkSyntax(globalObject->globalExec(), jscSource(script, fileName), &syntaxException);
     stopWatch.stop();
 
     if (!validSyntax)
@@ -1376,7 +1463,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
-    if (!fillBufferWithContentsOfFile(fileName, script))
+    if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSInternalPromise* promise = evaluateModule(exec, fileName);
@@ -1528,7 +1615,6 @@ static void dumpException(GlobalObject* globalObject, NakedPtr<Exception> evalua
 
 static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scripts, bool dump, bool module)
 {
-    const char* script;
     String fileName;
     Vector<char> scriptBuffer;
 
@@ -1555,12 +1641,13 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             if (module)
                 promise = evaluateModule(globalObject->globalExec(), fileName);
             else {
-                if (!fillBufferWithContentsOfFile(fileName, scriptBuffer))
+                if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer))
                     return false; // fail early so we can catch missing files
-                script = scriptBuffer.data();
             }
         } else {
-            script = scripts[i].argument;
+            size_t commandLineLength = strlen(scripts[i].argument);
+            scriptBuffer.resize(commandLineLength);
+            std::copy(scripts[i].argument, scripts[i].argument + commandLineLength, scriptBuffer.begin());
             fileName = ASCIILiteral("[Command Line]");
         }
 
@@ -1568,13 +1655,13 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
         if (module) {
             if (!promise)
-                promise = evaluateModule(globalObject->globalExec(), jscSource(script, fileName));
+                promise = evaluateModule(globalObject->globalExec(), jscSource(scriptBuffer, fileName));
             globalObject->globalExec()->clearException();
             promise->then(globalObject->globalExec(), nullptr, errorHandler);
             globalObject->vm().drainMicrotasks();
         } else {
             NakedPtr<Exception> evaluationException;
-            JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), evaluationException);
+            JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(scriptBuffer, fileName), JSValue(), evaluationException);
             success = success && !evaluationException;
             if (dump && !evaluationException)
                 printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
@@ -1646,10 +1733,9 @@ static void runInteractive(GlobalObject* globalObject)
         }
         if (line.isEmpty())
             break;
-        line.append('\0');
 
         NakedPtr<Exception> evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line.data(), interpreterName), JSValue(), evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, interpreterName), JSValue(), evaluationException);
 #endif
         if (evaluationException)
             printf("Exception: %s\n", evaluationException->value().toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
@@ -1837,35 +1923,6 @@ int jscmain(int argc, char** argv)
     }
     
     return result;
-}
-
-static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
-{
-    FILE* f = fopen(fileName.utf8().data(), "r");
-    if (!f) {
-        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
-        return false;
-    }
-
-    size_t bufferSize = 0;
-    size_t bufferCapacity = 1024;
-
-    buffer.resize(bufferCapacity);
-
-    while (!feof(f) && !ferror(f)) {
-        bufferSize += fread(buffer.data() + bufferSize, 1, bufferCapacity - bufferSize, f);
-        if (bufferSize == bufferCapacity) { // guarantees space for trailing '\0'
-            bufferCapacity *= 2;
-            buffer.resize(bufferCapacity);
-        }
-    }
-    fclose(f);
-    buffer[bufferSize] = '\0';
-
-    if (buffer[0] == '#' && buffer[1] == '!')
-        buffer[0] = buffer[1] = '/';
-
-    return true;
 }
 
 #if OS(WINDOWS)

@@ -22,13 +22,4 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - path: modules
-  cmd: |
-      # FIXME: ES6 Modules in the JSC shell now uses an absolute path as an unique key to each module.
-      # However, the length of the path name in Windows is limited and short; (_MAX_PATH = 260).
-      # As a result, JSC tests for modules in Windows fail because the current working directory path is truncated.
-      # https://bugs.webkit.org/show_bug.cgi?id=148917
-      if ($hostOS == "windows")
-          skip
-      else
-          runModules
-      end
+  cmd: runModules

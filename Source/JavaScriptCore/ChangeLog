@@ -1,3 +1,48 @@
+2015-09-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Consider long module path name case in Windows
+        https://bugs.webkit.org/show_bug.cgi?id=148917
+
+        Reviewed by Alex Christensen.
+
+        The local file system module loader in the JSC shell manages the module files by the absolute path.
+        However, in Windows, _MAX_PATH is defined as 260. So if the path like the current working directory or the path to the module is long,
+        it will be truncated by the API and it fail to open the file.
+        In JSC tests in Apple Windows buildbot, since the current working directory is long enough, the tests failed.
+
+        This patch introduces the following 3 tweaks.
+
+        1. When retrieving the current working path, we use GetCurrentDirectoryW instead of _getcwd.
+           GetCurrentDirectoryW allows the long path while _getcwd automatically truncate the result by the _MAX_PATH.
+
+        2. Before opening the module file, we prepend "\\?\" to the path. It converts the local file path to the long UNC path
+           which allows longer path names.
+
+        3. Since Windows ASCII API accepts the characters in the current code page, we use the Unicode APIs like _wfopen instead.
+
+        And enable the once disabled module tests in Windows.
+
+        Since this functionality is the part of the JSC shell to run the module tests, it is now implemented in jsc.cpp.
+
+        * jsc.cpp:
+        (stringFromUTF):
+        (jscSource):
+        (extractDirectoryName):
+        (currentWorkingDirectory):
+        (convertShebangToJSComment):
+        (fillBufferWithContentsOfFile):
+        (fetchScriptFromLocalFileSystem):
+        (fetchModuleFromLocalFileSystem):
+        (GlobalObject::moduleLoaderFetch):
+        (functionRun):
+        (functionLoad):
+        (functionReadFile):
+        (functionCheckSyntax):
+        (functionLoadModule):
+        (runWithScripts):
+        (runInteractive):
+        * tests/modules.yaml:
+
 2015-09-10  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Convert arguments to WebAssembly functions to the declared types
