@@ -1,3 +1,9 @@
+2015-09-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Test result gardening.
+
+        * platform/mac/TestExpectations:
+
 2015-09-08  Andy Estes  <aestes@apple.com>
 
         Reverted r189001.
