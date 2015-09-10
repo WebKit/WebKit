@@ -1,3 +1,15 @@
+2015-09-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        JSInternalPromiseDeferred should inherit JSPromiseDeferred
+        https://bugs.webkit.org/show_bug.cgi?id=149027
+
+        Reviewed by Darin Adler.
+
+        JSInternalPromiseDeferred is constructed by using JSPromiseDeferred implementation.
+        So the class info of JSInternalPromiseDeferred should inherit JSPromiseDeferred.
+
+        * runtime/JSInternalPromiseDeferred.cpp:
+
 2015-09-10  Michael Saboff  <msaboff@apple.com>
 
         Add support for Callee-Saves registers
