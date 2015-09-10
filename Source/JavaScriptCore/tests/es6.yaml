@@ -881,15 +881,15 @@
 - path: es6/proper_tail_calls_tail_call_optimisation_mutual_recursion.js
   cmd: runES6 :fail
 - path: es6/prototype_of_bound_functions_arrow_functions.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/prototype_of_bound_functions_basic_functions.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/prototype_of_bound_functions_classes.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/prototype_of_bound_functions_generator_functions.js
   cmd: runES6 :fail
 - path: es6/prototype_of_bound_functions_subclasses.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/Proxy_apply_handler.js
   cmd: runES6 :fail
 - path: es6/Proxy_Array.isArray_support.js
