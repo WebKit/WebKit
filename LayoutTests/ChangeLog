@@ -1,3 +1,9 @@
+2015-09-11  Alexey Proskuryakov  <ap@apple.com>
+
+        El Capitan test result gardening.
+
+        * platform/mac/TestExpectations: Remove a test that should pass now.
+
 2015-09-11  Chris Dumez  <cdumez@apple.com>
 
         Element.tagName should be upper-case for HTML elements in HTML documents

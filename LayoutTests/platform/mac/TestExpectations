@@ -1229,9 +1229,6 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 [ Yosemite ] fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]
 
-# <rdar://problem/21857102>
-[ ElCapitan+ ] fast/canvas/canvas-too-large-to-draw.html [ Crash ]
-
 webkit.org/b/147763 [ Mavericks Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]
 
 # Language-specific font fallback is disabled on certain versions of OS X
