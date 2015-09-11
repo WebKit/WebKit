@@ -37,9 +37,7 @@ class WebPage;
 
 class WebInspectorUI : public RefCounted<WebInspectorUI>, public IPC::Connection::Client, public WebCore::InspectorFrontendClient {
 public:
-    static Ref<WebInspectorUI> create(WebPage*);
-
-    WebPage* page() const { return m_page; }
+    static Ref<WebInspectorUI> create(WebPage&);
 
     // Implemented in generated WebInspectorUIMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -104,7 +102,7 @@ public:
     bool isUnderTest() override { return m_underTest; }
 
 private:
-    explicit WebInspectorUI(WebPage*);
+    explicit WebInspectorUI(WebPage&);
 
     void evaluateCommandOnLoad(const String& command, const String& argument = String());
     void evaluateCommandOnLoad(const String& command, const ASCIILiteral& argument) { evaluateCommandOnLoad(command, String(argument)); }
@@ -112,7 +110,7 @@ private:
     void evaluateExpressionOnLoad(const String& expression);
     void evaluatePendingExpressions();
 
-    WebPage* m_page;
+    WebPage& m_page;
 
     RefPtr<IPC::Connection> m_backendConnection;
     uint64_t m_inspectedPageIdentifier;

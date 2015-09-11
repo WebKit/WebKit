@@ -44,12 +44,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebInspectorUI> WebInspectorUI::create(WebPage* page)
+Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
 {
     return adoptRef(*new WebInspectorUI(page));
 }
 
-WebInspectorUI::WebInspectorUI(WebPage* page)
+WebInspectorUI::WebInspectorUI(WebPage& page)
     : m_page(page)
     , m_inspectedPageIdentifier(0)
     , m_underTest(false)
@@ -79,7 +79,7 @@ void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdenti
     m_frontendLoaded = false;
     m_underTest = underTest;
 
-    m_page->corePage()->inspectorController().setInspectorFrontendClient(this);
+    m_page.corePage()->inspectorController().setInspectorFrontendClient(this);
 
     m_backendConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
     m_backendConnection->open();
@@ -90,8 +90,8 @@ void WebInspectorUI::windowObjectCleared()
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
 
-    m_frontendHost = InspectorFrontendHost::create(this, m_page->corePage());
-    ScriptGlobalObject::set(execStateFromPage(mainThreadNormalWorld(), m_page->corePage()), ASCIILiteral("InspectorFrontendHost"), m_frontendHost.get());
+    m_frontendHost = InspectorFrontendHost::create(this, m_page.corePage());
+    ScriptGlobalObject::set(execStateFromPage(mainThreadNormalWorld(), m_page.corePage()), ASCIILiteral("InspectorFrontendHost"), m_frontendHost.get());
 }
 
 void WebInspectorUI::frontendLoaded()
@@ -109,9 +109,9 @@ void WebInspectorUI::startWindowDrag()
 
 void WebInspectorUI::moveWindowBy(float x, float y)
 {
-    FloatRect frameRect = m_page->corePage()->chrome().windowRect();
+    FloatRect frameRect = m_page.corePage()->chrome().windowRect();
     frameRect.move(x, y);
-    m_page->corePage()->chrome().setWindowRect(frameRect);
+    m_page.corePage()->chrome().setWindowRect(frameRect);
 }
 
 void WebInspectorUI::bringToFront()
@@ -274,7 +274,7 @@ void WebInspectorUI::evaluateExpressionOnLoad(const String& expression)
 {
     if (m_frontendLoaded) {
         ASSERT(m_queue.isEmpty());
-        m_page->corePage()->mainFrame().script().executeScript(expression);
+        m_page.corePage()->mainFrame().script().executeScript(expression);
         return;
     }
 
@@ -286,7 +286,7 @@ void WebInspectorUI::evaluatePendingExpressions()
     ASSERT(m_frontendLoaded);
 
     for (const String& expression : m_queue)
-        m_page->corePage()->mainFrame().script().executeScript(expression);
+        m_page.corePage()->mainFrame().script().executeScript(expression);
 
     m_queue.clear();
 }

@@ -1,5 +1,18 @@
 2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        WebInspectorUI should have a WebPage reference
+        https://bugs.webkit.org/show_bug.cgi?id=149046
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        (WebKit::WebInspectorUI::page): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::inspectorUI):
+
+2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: WebInspectorUI does not need to be an API::Object
         https://bugs.webkit.org/show_bug.cgi?id=149045
 

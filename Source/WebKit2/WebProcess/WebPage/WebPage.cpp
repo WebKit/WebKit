@@ -2943,7 +2943,7 @@ WebInspectorUI* WebPage::inspectorUI()
     if (m_isClosed)
         return nullptr;
     if (!m_inspectorUI)
-        m_inspectorUI = WebInspectorUI::create(this);
+        m_inspectorUI = WebInspectorUI::create(*this);
     return m_inspectorUI.get();
 }
 
