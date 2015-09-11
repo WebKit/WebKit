@@ -1,5 +1,13 @@
 2015-09-11  Beth Dakin  <bdakin@apple.com>
 
+        Build fix
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+
+2015-09-11  Beth Dakin  <bdakin@apple.com>
+
         Should use CARenderServerRenderLayerWithTransform for snapshots on iOS
         https://bugs.webkit.org/show_bug.cgi?id=149069
         -and corresponding-
