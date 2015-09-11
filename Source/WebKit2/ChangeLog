@@ -1,5 +1,15 @@
 2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused files
+        https://bugs.webkit.org/show_bug.cgi?id=149049
+
+        Reviewed by Brian Burg.
+
+        * WebProcess/WebPage/efl/WebInspectorEfl.cpp: Removed.
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp: Removed.
+
+2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         WebInspectorUI should have a WebPage reference
         https://bugs.webkit.org/show_bug.cgi?id=149046
 
