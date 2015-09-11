@@ -260,8 +260,12 @@ Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Containe
     setNeedsWillValidateCheck();
     HTMLElement::insertedInto(insertionPoint);
     FormAssociatedElement::insertedInto(insertionPoint);
+    return InsertionShouldCallFinishedInsertingSubtree;
+}
 
-    return InsertionDone;
+void HTMLFormControlElement::finishedInsertingSubtree()
+{
+    resetFormOwner();
 }
 
 void HTMLFormControlElement::removedFrom(ContainerNode& insertionPoint)

@@ -1473,12 +1473,17 @@ void HTMLInputElement::didChangeForm()
 Node::InsertionNotificationRequest HTMLInputElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLTextFormControlElement::insertedInto(insertionPoint);
-    if (insertionPoint.inDocument() && !form())
-        addToRadioButtonGroup();
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
-    return InsertionDone;
+    return InsertionShouldCallFinishedInsertingSubtree;
+}
+
+void HTMLInputElement::finishedInsertingSubtree()
+{
+    HTMLTextFormControlElement::finishedInsertingSubtree();
+    if (inDocument() && !form())
+        addToRadioButtonGroup();
 }
 
 void HTMLInputElement::removedFrom(ContainerNode& insertionPoint)

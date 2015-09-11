@@ -68,7 +68,6 @@ void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
 
 void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
 {
-    resetFormOwner();
     if (!insertionPoint.inDocument())
         return;
 
