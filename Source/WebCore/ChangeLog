@@ -1,3 +1,56 @@
+2015-09-10  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r189469.
+
+    2015-09-07  Daniel Bates  <dabates@apple.com>
+
+            ASSERT_WITH_SECURITY_IMPLICATION in WebCore::DocumentOrderedMap::get(); update form
+            association after subtree insertion
+            https://bugs.webkit.org/show_bug.cgi?id=148919
+            <rdar://problem/21868036>
+
+            Reviewed by Andy Estes.
+
+            Currently we update the form association of a form control upon insertion into
+            the document. Instead we should update the form association of a form control
+            after its containing subtree is inserted into the document to avoid an assertion
+            failure when the containing subtree has an element whose id is identical to both
+            the id of some other element in the document and the name of the form referenced
+            by the inserted form control.
+
+            Tests: fast/forms/update-form-owner-in-moved-subtree-assertion-failure-2.html
+                   fast/forms/update-form-owner-in-moved-subtree-assertion-failure-3.html
+                   fast/forms/update-form-owner-in-moved-subtree-assertion-failure-4.html
+                   fast/forms/update-form-owner-in-moved-subtree-assertion-failure.html
+
+            * html/FormAssociatedElement.cpp:
+            (WebCore::FormAssociatedElement::insertedInto): Moved resetFormOwner() from here
+            to {HTMLFormControlElement, HTMLObjectElement}::finishedInsertingSubtree().
+            * html/HTMLFormControlElement.cpp:
+            (WebCore::HTMLFormControlElement::insertedInto): Return InsertionShouldCallFinishedInsertingSubtree
+            so that HTMLFormControlElement::finishedInsertingSubtree() is called.
+            (WebCore::HTMLFormControlElement::finishedInsertingSubtree): Added; turn around and
+            call FormAssociatedElement::resetFormOwner().
+            * html/HTMLFormControlElement.h:
+            * html/HTMLInputElement.cpp:
+            (WebCore::HTMLInputElement::insertedInto): Return InsertionShouldCallFinishedInsertingSubtree so
+            that HTMLInputElement::finishedInsertingSubtree() is called and move logic to update radio button
+            group from here...
+            (WebCore::HTMLInputElement::finishedInsertingSubtree): to here.
+            * html/HTMLInputElement.h:
+            * html/HTMLObjectElement.cpp:
+            (WebCore::HTMLObjectElement::insertedInto): Return InsertionShouldCallFinishedInsertingSubtree so
+            that HTMLObjectElement::finishedInsertingSubtree() is called.
+            (WebCore::HTMLObjectElement::finishedInsertingSubtree): Added; turn around and
+            call FormAssociatedElement::resetFormOwner().
+            * html/HTMLObjectElement.h:
+            * html/HTMLSelectElement.cpp:
+            (WebCore::HTMLSelectElement::insertedInto): Modified to return the result of
+            HTMLFormControlElementWithState::insertedInto(), which may schedule a callback after subtree
+            insertion.
+            * html/HTMLTextFormControlElement.cpp:
+            (WebCore::HTMLTextFormControlElement::insertedInto): Ditto.
+
 2015-09-03  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r189167.

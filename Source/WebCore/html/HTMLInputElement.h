@@ -335,6 +335,7 @@ private:
     virtual void willChangeForm() override final;
     virtual void didChangeForm() override final;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override final;
+    void finishedInsertingSubtree() override final;
     virtual void removedFrom(ContainerNode&) override final;
     virtual void didMoveToNewDocument(Document* oldDocument) override final;
 
