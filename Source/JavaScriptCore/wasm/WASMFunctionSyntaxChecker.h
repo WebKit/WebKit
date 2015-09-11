@@ -155,6 +155,11 @@ public:
     int breakLabelTarget(uint32_t) { return UNUSED; }
     int continueLabelTarget(uint32_t) { return UNUSED; }
 
+    void buildSwitch(int, const Vector<int64_t>&, const Vector<int>&, const int&)
+    {
+        m_tempStackTop--;
+    }
+
     unsigned stackHeight()
     {
         return m_numberOfLocals + m_tempStackHeight;

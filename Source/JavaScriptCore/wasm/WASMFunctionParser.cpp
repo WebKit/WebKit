@@ -415,10 +415,21 @@ ContextStatement WASMFunctionParser::parseContinueLabelStatement(Context& contex
 template <class Context>
 ContextStatement WASMFunctionParser::parseSwitchStatement(Context& context)
 {
+    context.startSwitch();
     uint32_t numberOfCases;
     READ_COMPACT_UINT32_OR_FAIL(numberOfCases, "Cannot read the number of cases.");
-    parseExpressionI32(context);
+    ContextExpression expression = parseExpressionI32(context);
     PROPAGATE_ERROR();
+
+    ContextJumpTarget compare;
+    context.jumpToTarget(compare);
+
+    Vector<int64_t> cases;
+    Vector<ContextJumpTarget> targets;
+    cases.reserveInitialCapacity(numberOfCases);
+    targets.reserveInitialCapacity(numberOfCases);
+    bool hasDefault = false;
+    ContextJumpTarget defaultTarget;
 
     m_breakScopeDepth++;
     for (uint32_t i = 0; i < numberOfCases; ++i) {
@@ -430,6 +441,10 @@ ContextStatement WASMFunctionParser::parseSwitchStatement(Context& context)
         case WASMSwitchCase::CaseWithBlockStatement: {
             uint32_t value;
             READ_COMPACT_INT32_OR_FAIL(value, "Cannot read the value of the switch case.");
+            cases.uncheckedAppend(value);
+            ContextJumpTarget target;
+            context.linkTarget(target);
+            targets.uncheckedAppend(target);
             if (switchCase == WASMSwitchCase::CaseWithStatement) {
                 parseStatement(context);
                 PROPAGATE_ERROR();
@@ -443,6 +458,8 @@ ContextStatement WASMFunctionParser::parseSwitchStatement(Context& context)
         case WASMSwitchCase::DefaultWithStatement:
         case WASMSwitchCase::DefaultWithBlockStatement: {
             FAIL_IF_FALSE(i == numberOfCases - 1, "The default case must be the last case.");
+            hasDefault = true;
+            context.linkTarget(defaultTarget);
             if (switchCase == WASMSwitchCase::DefaultWithStatement) {
                 parseStatement(context);
                 PROPAGATE_ERROR();
@@ -456,8 +473,18 @@ ContextStatement WASMFunctionParser::parseSwitchStatement(Context& context)
             ASSERT_NOT_REACHED();
         }
     }
+    if (!hasDefault)
+        context.linkTarget(defaultTarget);
+
     m_breakScopeDepth--;
-    // FIXME: Implement this instruction.
+
+    context.jumpToTarget(context.breakTarget());
+    context.linkTarget(compare);
+
+    context.buildSwitch(expression, cases, targets, defaultTarget);
+
+    context.linkTarget(context.breakTarget());
+    context.endSwitch();
     return UNUSED;
 }
 

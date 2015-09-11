@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "BinarySwitch.h"
 #include "CCallHelpers.h"
 #include "JIT.h"
 #include "JITOperations.h"
@@ -632,6 +633,18 @@ public:
     JumpTarget& continueLabelTarget(uint32_t labelIndex)
     {
         return m_continueLabelTargets[labelIndex];
+    }
+
+    void buildSwitch(int, const Vector<int64_t>& cases, Vector<JumpTarget>& targets, JumpTarget defaultTarget)
+    {
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT0);
+        m_tempStackTop--;
+        BinarySwitch binarySwitch(GPRInfo::regT0, cases, BinarySwitch::Int32);
+        while (binarySwitch.advance(*this)) {
+            unsigned index = binarySwitch.caseIndex();
+            jump(targets[index].label);
+        }
+        binarySwitch.fallThrough().linkTo(defaultTarget.label, this);
     }
 
 private:

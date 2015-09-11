@@ -204,6 +204,39 @@ function asmModule(global, env, buffer) {
         return x;
     }
 
+    function switchCase(x) {
+        x = x | 0;
+        var y = 0;
+        switch (x) {
+        case 0:
+            y = 1;
+            break;
+        case 1:
+            y = 2;
+            break;
+        case 2:
+            y = 3;
+            break;
+        }
+        return y;
+    }
+
+    function switchFallThrough(x) {
+        x = x | 0;
+        var y = 0;
+        switch (x) {
+        case 3:
+            y = (y + 1000) | 0;
+        case 2:
+            y = (y + 100) | 0;
+        case 1:
+            y = (y + 10) | 0;
+        default:
+            y = (y + 1) | 0;
+        }
+        return y;
+    }
+
     return {
         ifTrue: ifTrue,
         ifFalse: ifFalse,
@@ -222,6 +255,8 @@ function asmModule(global, env, buffer) {
         labelInLabelBreakInner: labelInLabelBreakInner,
         labelInLabelBreakOuter: labelInLabelBreakOuter,
         whileInWhileBreakOuter: whileInWhileBreakOuter,
+        switchCase: switchCase,
+        switchFallThrough: switchFallThrough,
     };
 }
 */
@@ -233,15 +268,28 @@ shouldBe(module.ifFalse(), 0);
 shouldBe(module.ifElseTrue(), 1);
 shouldBe(module.ifElseFalse(), 2);
 shouldBe(module.ifInIf(), 3);
+
 shouldBe(module.whileLoop(), 5);
 shouldBe(module.whileBreak(), 2);
 shouldBe(module.whileContinue(), 4);
 shouldBe(module.whileInWhile(), 10);
+
 shouldBe(module.doLoop(), 1);
 shouldBe(module.doBreak(), 2);
 shouldBe(module.doContinue(), 4);
+
 shouldBe(module.labelBreak(), 1);
 shouldBe(module.labelContinue(), 1);
 shouldBe(module.labelInLabelBreakInner(), 4);
 shouldBe(module.labelInLabelBreakOuter(), 2);
 shouldBe(module.whileInWhileBreakOuter(), 8);
+
+shouldBe(module.switchCase(0), 1);
+shouldBe(module.switchCase(1), 2);
+shouldBe(module.switchCase(2), 3);
+shouldBe(module.switchCase(3), 0);
+shouldBe(module.switchFallThrough(0), 1);
+shouldBe(module.switchFallThrough(1), 11);
+shouldBe(module.switchFallThrough(2), 111);
+shouldBe(module.switchFallThrough(3), 1111);
+shouldBe(module.switchFallThrough(4), 1);
