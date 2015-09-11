@@ -834,6 +834,8 @@ public:
     void updateAllArrayPredictions();
     void updateAllPredictions();
 
+    void setInstallTime(std::chrono::steady_clock::time_point installTime) { m_installTime = installTime; }
+
     unsigned frameRegisterCount();
     int stackPointerOffset();
 
@@ -917,6 +919,8 @@ public:
 protected:
     virtual void visitWeakReferences(SlotVisitor&) override;
     virtual void finalizeUnconditionally() override;
+    void finalizeLLIntInlineCaches();
+    void finalizeBaselineJITInlineCaches();
 
 #if ENABLE(DFG_JIT)
     void tallyFrequentExitSites();
@@ -974,7 +978,9 @@ private:
     void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
         
-    bool shouldImmediatelyAssumeLivenessDuringScan();
+    bool shouldVisitStrongly();
+    bool shouldJettisonDueToWeakReference();
+    bool shouldJettisonDueToOldAge();
     
     void propagateTransitions(SlotVisitor&);
     void determineLiveness(SlotVisitor&);
@@ -982,6 +988,12 @@ private:
     void stronglyVisitStrongReferences(SlotVisitor&);
     void stronglyVisitWeakReferences(SlotVisitor&);
     void visitOSRExitTargets(SlotVisitor&);
+
+    std::chrono::milliseconds timeSinceInstall()
+    {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - m_installTime);
+    }
 
     void createRareDataIfNecessary()
     {
@@ -1064,7 +1076,9 @@ private:
     uint32_t m_osrExitCounter;
     uint16_t m_optimizationDelayCounter;
     uint16_t m_reoptimizationRetryCounter;
-    
+
+    std::chrono::steady_clock::time_point m_installTime;
+
     mutable CodeBlockHash m_hash;
 
     std::unique_ptr<BytecodeLivenessAnalysis> m_livenessAnalysis;

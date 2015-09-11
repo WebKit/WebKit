@@ -38,7 +38,8 @@ enum JettisonReason {
     JettisonDueToBaselineLoopReoptimizationTriggerOnOSREntryFail,
     JettisonDueToOSRExit,
     JettisonDueToProfiledWatchpoint,
-    JettisonDueToUnprofiledWatchpoint
+    JettisonDueToUnprofiledWatchpoint,
+    JettisonDueToOldAge
 };
 
 } } // namespace JSC::Profiler

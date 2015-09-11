@@ -121,7 +121,19 @@ public:
             return false;
         }
     }
-    
+
+    static std::chrono::milliseconds timeToLive(JITType jitType)
+    {
+        switch (jitType) {
+        case DFGJIT:
+            return std::chrono::milliseconds(10000); // 10s
+        case FTLJIT:
+            return std::chrono::milliseconds(100000); // 100s
+        default:
+            return std::chrono::milliseconds::max();
+        }
+    }
+
     static bool isLowerTier(JITType expectedLower, JITType expectedHigher)
     {
         RELEASE_ASSERT(isExecutableScript(expectedLower));

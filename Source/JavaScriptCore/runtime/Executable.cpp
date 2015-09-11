@@ -208,6 +208,8 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
     if (debugger)
         debugger->registerCodeBlock(genericCodeBlock);
 
+    genericCodeBlock->setInstallTime(std::chrono::steady_clock::now());
+
     Heap::heap(this)->writeBarrier(this);
 }
 
