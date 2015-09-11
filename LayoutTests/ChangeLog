@@ -1,3 +1,14 @@
+2015-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Mavericks: Text cursor does not move along with VoiceOver cursor for text fields
+        https://bugs.webkit.org/show_bug.cgi?id=148891
+
+        Reviewed by Alexey Proskuryakov.
+
+        Mark accessibility focus tests as passing on Yosemite.
+
+        * platform/mac/TestExpectations:
+
 2015-09-10  Alexey Proskuryakov  <ap@apple.com>
 
         Spurious output on Windows tests: AQMEIOManager::FindIOUnit: error -1

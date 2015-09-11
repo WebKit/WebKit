@@ -1194,8 +1194,8 @@ webkit.org/b/142142 media/video-volume-slider-drag.html [ Skip ]
 webkit.org/b/17022 [ MountainLion Mavericks ] fast/images/animated-png.html [ Skip ]
 
 # Pre-Capitan does not support asynchronous attribute setting.
-[ Mavericks Yosemite ] accessibility/mac/setting-attributes-is-asynchronous.html [ Skip ]
-[ Mavericks Yosemite ] accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Skip ]
+[ Mavericks ] accessibility/mac/setting-attributes-is-asynchronous.html [ Skip ]
+[ Mavericks ] accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Skip ]
 
 # OS X 10.10.3+ has the necessary glyphs.
 webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html [ Pass ]
