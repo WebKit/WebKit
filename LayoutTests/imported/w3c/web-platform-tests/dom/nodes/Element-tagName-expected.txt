@@ -1,7 +1,7 @@
 
-FAIL tagName should upper-case for HTML elements in HTML documents. assert_equals: expected "X:B" but got "x:b"
+PASS tagName should upper-case for HTML elements in HTML documents. 
 PASS tagName should not upper-case for SVG elements in HTML documents. 
 PASS tagName should be updated when changing ownerDocument 
 PASS tagName should be updated when changing ownerDocument (createDocument without prefix) 
-FAIL tagName should be updated when changing ownerDocument (createDocument with prefix) assert_equals: tagName should be uppercase in HTML expected "FOO:DIV" but got "foo:div"
+PASS tagName should be updated when changing ownerDocument (createDocument with prefix) 
 

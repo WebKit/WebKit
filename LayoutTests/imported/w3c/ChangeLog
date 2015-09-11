@@ -1,5 +1,20 @@
 2015-09-11  Chris Dumez  <cdumez@apple.com>
 
+        Element.tagName should be upper-case for HTML elements in HTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=148843
+        <rdar://problem/22559081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/Document-createElementNS-expected.txt:
+        * web-platform-tests/dom/nodes/Element-tagName-expected.txt:
+        * web-platform-tests/dom/nodes/Node-nodeName-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/table-insertRow-expected.txt:
+
+2015-09-11  Chris Dumez  <cdumez@apple.com>
+
         document.body = "text" should throw a TypeError, not a HierarchyRequestError
         https://bugs.webkit.org/show_bug.cgi?id=149057
         <rdar://problem/22567157>

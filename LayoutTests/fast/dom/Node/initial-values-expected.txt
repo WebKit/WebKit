@@ -72,7 +72,7 @@ PASS element.prefix is null
 PASS element.nodeValue is null
 PASS element.attributes.toString() is '[object NamedNodeMap]'
 Prefixed element creation using createElementNS on an HTML doc:
-PASS element.nodeName is 'html:pre'
+PASS element.nodeName is 'HTML:PRE'
 PASS element.localName is 'pre'
 PASS element.namespaceURI is 'http://www.w3.org/1999/xhtml'
 PASS element.prefix is 'html'

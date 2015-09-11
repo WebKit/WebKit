@@ -101,7 +101,7 @@ shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
 
 debug("Prefixed element creation using createElementNS on an HTML doc:")
 element = document.createElementNS("http://www.w3.org/1999/xhtml", "html:pre");
-shouldBe("element.nodeName", "'html:pre'");
+shouldBe("element.nodeName", "'HTML:PRE'");
 shouldBe("element.localName", "'pre'");
 shouldBe("element.namespaceURI", "'http://www.w3.org/1999/xhtml'");
 shouldBe("element.prefix", "'html'");

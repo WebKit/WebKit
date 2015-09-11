@@ -1,5 +1,5 @@
 
-FAIL For Element nodes, nodeName should return the same as tagName. assert_equals: expected "X:B" but got "x:b"
+PASS For Element nodes, nodeName should return the same as tagName. 
 PASS For Text nodes, nodeName should return "#text". 
 PASS For Comment nodes, nodeName should return "#comment". 
 PASS For Document nodes, nodeName should return "#document". 

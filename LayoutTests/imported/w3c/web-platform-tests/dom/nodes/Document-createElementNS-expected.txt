@@ -172,11 +172,11 @@ PASS createElementNS test 168: "http://www.w3.org/2000/xmlns/","","INVALID_CHARA
 FAIL createElementNS test 169: "foo:",null,null InvalidCharacterError: DOM Exception 5
 PASS createElementNS test 170: "foo:","","INVALID_CHARACTER_ERR" 
 PASS Lower-case HTML element without a prefix 
-FAIL Lower-case HTML element with a prefix assert_equals: expected "HTML:SPAN" but got "html:span"
+PASS Lower-case HTML element with a prefix 
 PASS Lower-case non-HTML element without a prefix 
 PASS Lower-case non-HTML element with a prefix 
 PASS Upper-case HTML element without a prefix 
-FAIL Upper-case HTML element with a prefix assert_equals: expected "HTML:SPAN" but got "html:SPAN"
+PASS Upper-case HTML element with a prefix 
 PASS Upper-case non-HTML element without a prefix 
 PASS Upper-case non-HTML element with a prefix 
 PASS null namespace 

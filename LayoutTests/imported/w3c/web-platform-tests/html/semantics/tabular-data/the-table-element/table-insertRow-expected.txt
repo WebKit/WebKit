@@ -1,5 +1,5 @@
 
-FAIL insertRow should not copy prefixes assert_equals: Parent tag name should be HTML:TABLE expected "HTML:TABLE" but got "html:table"
+PASS insertRow should not copy prefixes 
 PASS insertRow should insert into a tbody, not into a thead, if table.rows is empty 
 PASS insertRow should insert into a tbody, not into a tfoot, if table.rows is empty 
 
