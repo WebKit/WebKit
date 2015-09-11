@@ -1,3 +1,15 @@
+2015-09-11  Chris Dumez  <cdumez@apple.com>
+
+        document.body = "text" should throw a TypeError, not a HierarchyRequestError
+        https://bugs.webkit.org/show_bug.cgi?id=149057
+        <rdar://problem/22567157>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline test now that a new check is passing.
+
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.body-setter-01-expected.txt:
+
 2015-09-10  Chris Dumez  <cdumez@apple.com>
 
         Node.appendChild(null) / replaceChild(null, null) / removeChild(null) / insertBefore(null, ref) should throw a TypeError
