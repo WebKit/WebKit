@@ -1,5 +1,13 @@
 2015-09-11  Beth Dakin  <bdakin@apple.com>
 
+        Another build fix.
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+        (WebKit::ViewSnapshot::size):
+        (WebKit::ViewSnapshot::imageSizeInBytes):
+
+2015-09-11  Beth Dakin  <bdakin@apple.com>
+
         Still need view snapshotting code for non-IOSurface for the sim
         https://bugs.webkit.org/show_bug.cgi?id=149077
 
