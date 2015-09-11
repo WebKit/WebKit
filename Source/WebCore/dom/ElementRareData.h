@@ -22,7 +22,7 @@
 #ifndef ElementRareData_h
 #define ElementRareData_h
 
-#include "ClassList.h"
+#include "AttributeDOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
@@ -92,14 +92,8 @@ public:
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
     void setComputedStyle(Ref<RenderStyle>&& computedStyle) { m_computedStyle = WTF::move(computedStyle); }
 
-    ClassList* classList() const { return m_classList.get(); }
-    void setClassList(std::unique_ptr<ClassList> classList) { m_classList = WTF::move(classList); }
-    void clearClassListValueForQuirksMode()
-    {
-        if (!m_classList)
-            return;
-        m_classList->clearValueForQuirksMode();
-    }
+    AttributeDOMTokenList* classList() const { return m_classList.get(); }
+    void setClassList(std::unique_ptr<AttributeDOMTokenList> classList) { m_classList = WTF::move(classList); }
 
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
     void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = WTF::move(dataset); }
@@ -140,7 +134,7 @@ private:
     RefPtr<RenderStyle> m_computedStyle;
 
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
-    std::unique_ptr<ClassList> m_classList;
+    std::unique_ptr<AttributeDOMTokenList> m_classList;
     RefPtr<ShadowRoot> m_shadowRoot;
     std::unique_ptr<NamedNodeMap> m_attributeMap;
 

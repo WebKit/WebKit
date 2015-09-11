@@ -16042,6 +16042,7 @@
     </ClCompile>
     <ClCompile Include="..\editing\win\EditorWin.cpp" />
     <ClCompile Include="..\fileapi\AsyncFileStream.cpp" />
+    <ClCompile Include="..\html\AttributeDOMTokenList.cpp" />
     <ClCompile Include="..\html\BaseButtonInputType.cpp" />
     <ClCompile Include="..\html\BaseCheckableInputType.cpp" />
     <ClCompile Include="..\html\BaseClickableWithKeyInputType.cpp" />
@@ -16056,7 +16057,6 @@
     <ClCompile Include="..\html\canvas\CanvasRenderingContext2D.cpp" />
     <ClCompile Include="..\html\canvas\CanvasStyle.cpp" />
     <ClCompile Include="..\html\CheckboxInputType.cpp" />
-    <ClCompile Include="..\html\ClassList.cpp" />
     <ClCompile Include="..\html\ColorInputType.cpp" />
     <ClCompile Include="..\html\DateInputType.cpp" />
     <ClCompile Include="..\html\DateTimeInputType.cpp" />
@@ -17215,7 +17215,6 @@
     <ClCompile Include="..\html\RadioInputType.cpp" />
     <ClCompile Include="..\html\RadioNodeList.cpp" />
     <ClCompile Include="..\html\RangeInputType.cpp" />
-    <ClCompile Include="..\html\RelList.cpp" />
     <ClCompile Include="..\html\ResetInputType.cpp" />
     <ClCompile Include="..\html\RubyElement.cpp" />
     <ClCompile Include="..\html\RubyTextElement.cpp" />
@@ -22178,6 +22177,7 @@
     <ClInclude Include="..\editing\VisibleUnits.h" />
     <ClInclude Include="..\editing\WrapContentsInDummySpanCommand.h" />
     <ClInclude Include="..\fileapi\AsyncFileStream.h" />
+    <ClInclude Include="..\html\AttributeDOMTokenList.h" />
     <ClInclude Include="..\html\BaseButtonInputType.h" />
     <ClInclude Include="..\html\BaseCheckableInputType.h" />
     <ClInclude Include="..\html\BaseClickableWithKeyInputType.h" />
@@ -22192,7 +22192,6 @@
     <ClInclude Include="..\html\canvas\CanvasRenderingContext2D.h" />
     <ClInclude Include="..\html\canvas\CanvasStyle.h" />
     <ClInclude Include="..\html\CheckboxInputType.h" />
-    <ClInclude Include="..\html\ClassList.h" />
     <ClInclude Include="..\html\CollectionType.h" />
     <ClInclude Include="..\html\ColorInputType.h" />
     <ClInclude Include="..\html\DateInputType.h" />
@@ -22325,7 +22324,6 @@
     <ClInclude Include="..\html\RadioInputType.h" />
     <ClInclude Include="..\html\RadioNodeList.h" />
     <ClInclude Include="..\html\RangeInputType.h" />
-    <ClInclude Include="..\html\RelList.h" />
     <ClInclude Include="..\html\ResetInputType.h" />
     <ClInclude Include="..\html\RubyElement.h" />
     <ClInclude Include="..\html\RubyTextElement.h" />

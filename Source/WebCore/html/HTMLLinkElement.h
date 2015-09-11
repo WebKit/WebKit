@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
+class AttributeDOMTokenList;
 class HTMLLinkElement;
-class RelList;
 class URL;
 
 template<typename T> class EventSender;
@@ -140,7 +140,7 @@ private:
 
     PendingSheetType m_pendingSheetType;
 
-    std::unique_ptr<RelList> m_relList;
+    std::unique_ptr<AttributeDOMTokenList> m_relList;
 };
 
 } //namespace

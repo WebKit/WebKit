@@ -1,5 +1,18 @@
 2015-09-11  Chris Dumez  <cdumez@apple.com>
 
+        DOMTokenList update steps for classList don't follow the spec
+        https://bugs.webkit.org/show_bug.cgi?id=148589
+        <rdar://problem/22547443>
+
+        Reviewed by Ryosuke Niwa and Darin Adler.
+
+        Rebaseline W3C tests for DOMTokenList now that more checks are passing.
+
+        * web-platform-tests/dom/lists/DOMTokenList-stringifier-expected.txt:
+        * web-platform-tests/dom/nodes/Element-classlist-expected.txt:
+
+2015-09-11  Chris Dumez  <cdumez@apple.com>
+
         Element.tagName should be upper-case for HTML elements in HTML documents
         https://bugs.webkit.org/show_bug.cgi?id=148843
         <rdar://problem/22559081>

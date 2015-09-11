@@ -7,15 +7,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS String(element.htmlFor) is "x"
 PASS element.htmlFor.length is 0
 PASS element.htmlFor.length is 1
-PASS element.htmlFor.length is 2
+PASS element.htmlFor.length is 1
 PASS element.htmlFor.length is 2
 PASS element.htmlFor.toString() is "x"
 PASS element.htmlFor.toString() is "x"
-PASS element.htmlFor.toString() is "x  x"
+PASS element.htmlFor.toString() is "x"
 PASS element.htmlFor.toString() is "y x"
 PASS element.htmlFor.toString() is ""
 PASS element.htmlFor.toString() is ""
-PASS element.htmlFor.toString() is " y y "
+PASS element.htmlFor.toString() is "y"
 PASS element.htmlFor.toString() is "y"
 - Ensure that we can handle empty form attribute correctly
 PASS list.value is "x"
@@ -26,8 +26,8 @@ PASS element.htmlFor.contains('x') is true
 PASS element.htmlFor[1] is undefined.
 - Testing add in presence of trailing white spaces.
 PASS element.htmlFor.toString() is "x y"
-PASS element.htmlFor.toString() is "x\ty"
-PASS element.htmlFor.toString() is " y"
+PASS element.htmlFor.toString() is "x y"
+PASS element.htmlFor.toString() is "y"
 - Test invalid tokens
 PASS element.htmlFor.contains('') threw expected DOMException with code 12
 PASS element.htmlFor.contains('x y') threw expected DOMException with code 5
@@ -40,8 +40,8 @@ PASS element.htmlFor.toggle('x y') threw expected DOMException with code 5
 - Indexing
 PASS element.htmlFor[0] is "x"
 PASS element.htmlFor.item(0) is "x"
-PASS element.htmlFor[1] is "x"
-PASS element.htmlFor.item(1) is "x"
+PASS element.htmlFor[1] is undefined.
+PASS element.htmlFor.item(1) is null
 PASS element.htmlFor[1] is "y"
 PASS element.htmlFor.item(1) is "y"
 PASS element.htmlFor[0] is undefined.

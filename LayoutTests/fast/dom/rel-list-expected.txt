@@ -26,7 +26,7 @@ PASS element.relList.contains("orange") is false
 PASS String(element.relList) is "x"
 PASS element.relList.length is 0
 PASS element.relList.length is 1
-PASS element.relList.length is 2
+PASS element.relList.length is 1
 PASS element.relList.length is 2
 PASS element.rel is "x"
 PASS element.rel is "x"
@@ -34,7 +34,7 @@ PASS element.rel is "x  x"
 PASS element.rel is "y x"
 PASS element.rel is ""
 PASS element.rel is ""
-PASS element.rel is " y y "
+PASS element.rel is "y"
 PASS element.rel is "y"
 Ensure that we can handle empty rel correctly
 PASS element.relList.toggle('x') is true
@@ -58,8 +58,8 @@ PASS element.relList.toggle("", true) threw exception Error: SyntaxError: DOM Ex
 PASS element.relList.toggle("x y", false) threw exception Error: InvalidCharacterError: DOM Exception 5.
 Testing add in presence of trailing white spaces.
 PASS element.rel is "x y"
-PASS element.rel is "x\ty"
-PASS element.rel is " y"
+PASS element.rel is "x y"
+PASS element.rel is "y"
 Test invalid tokens
 PASS element.relList.contains("") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.relList.contains("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
@@ -71,8 +71,8 @@ PASS element.relList.toggle("") threw exception Error: SyntaxError: DOM Exceptio
 Indexing
 PASS element.relList[0] is "x"
 PASS element.relList.item(0) is "x"
-PASS element.relList[1] is "x"
-PASS element.relList.item(1) is "x"
+PASS element.relList[1] is undefined.
+PASS element.relList.item(1) is null
 PASS element.relList[1] is "y"
 PASS element.relList.item(1) is "y"
 PASS element.relList[0] is undefined.
@@ -115,8 +115,8 @@ PASS element.relList.add("a", {toString: function() { throw new Error("user erro
 PASS element.rel is ""
 PASS element.relList.add() did not throw exception.
 PASS observer.takeRecords().length is 1
-PASS element.rel is "b d  "
-PASS element.rel is "d  "
+PASS element.rel is "b d"
+PASS element.rel is "d"
 PASS element.rel is "a b c"
 PASS element.relList.remove("a", "b", "") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.rel is "a b"
@@ -149,7 +149,7 @@ PASS element.relList.contains("orange") is false
 PASS String(element.relList) is "x"
 PASS element.relList.length is 0
 PASS element.relList.length is 1
-PASS element.relList.length is 2
+PASS element.relList.length is 1
 PASS element.relList.length is 2
 PASS element.rel is "x"
 PASS element.rel is "x"
@@ -157,7 +157,7 @@ PASS element.rel is "x  x"
 PASS element.rel is "y x"
 PASS element.rel is ""
 PASS element.rel is ""
-PASS element.rel is " y y "
+PASS element.rel is "y"
 PASS element.rel is "y"
 Ensure that we can handle empty rel correctly
 PASS element.relList.toggle('x') is true
@@ -181,8 +181,8 @@ PASS element.relList.toggle("", true) threw exception Error: SyntaxError: DOM Ex
 PASS element.relList.toggle("x y", false) threw exception Error: InvalidCharacterError: DOM Exception 5.
 Testing add in presence of trailing white spaces.
 PASS element.rel is "x y"
-PASS element.rel is "x\ty"
-PASS element.rel is " y"
+PASS element.rel is "x y"
+PASS element.rel is "y"
 Test invalid tokens
 PASS element.relList.contains("") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.relList.contains("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
@@ -194,8 +194,8 @@ PASS element.relList.toggle("") threw exception Error: SyntaxError: DOM Exceptio
 Indexing
 PASS element.relList[0] is "x"
 PASS element.relList.item(0) is "x"
-PASS element.relList[1] is "x"
-PASS element.relList.item(1) is "x"
+PASS element.relList[1] is undefined.
+PASS element.relList.item(1) is null
 PASS element.relList[1] is "y"
 PASS element.relList.item(1) is "y"
 PASS element.relList[0] is undefined.
@@ -238,8 +238,8 @@ PASS element.relList.add("a", {toString: function() { throw new Error("user erro
 PASS element.rel is ""
 PASS element.relList.add() did not throw exception.
 PASS observer.takeRecords().length is 1
-PASS element.rel is "b d  "
-PASS element.rel is "d  "
+PASS element.rel is "b d"
+PASS element.rel is "d"
 PASS element.rel is "a b c"
 PASS element.relList.remove("a", "b", "") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.rel is "a b"
@@ -272,7 +272,7 @@ PASS element.relList.contains("orange") is false
 PASS String(element.relList) is "x"
 PASS element.relList.length is 0
 PASS element.relList.length is 1
-PASS element.relList.length is 2
+PASS element.relList.length is 1
 PASS element.relList.length is 2
 PASS element.rel is "x"
 PASS element.rel is "x"
@@ -280,7 +280,7 @@ PASS element.rel is "x  x"
 PASS element.rel is "y x"
 PASS element.rel is ""
 PASS element.rel is ""
-PASS element.rel is " y y "
+PASS element.rel is "y"
 PASS element.rel is "y"
 Ensure that we can handle empty rel correctly
 PASS element.relList.toggle('x') is true
@@ -304,8 +304,8 @@ PASS element.relList.toggle("", true) threw exception Error: SyntaxError: DOM Ex
 PASS element.relList.toggle("x y", false) threw exception Error: InvalidCharacterError: DOM Exception 5.
 Testing add in presence of trailing white spaces.
 PASS element.rel is "x y"
-PASS element.rel is "x\ty"
-PASS element.rel is " y"
+PASS element.rel is "x y"
+PASS element.rel is "y"
 Test invalid tokens
 PASS element.relList.contains("") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.relList.contains("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
@@ -317,8 +317,8 @@ PASS element.relList.toggle("") threw exception Error: SyntaxError: DOM Exceptio
 Indexing
 PASS element.relList[0] is "x"
 PASS element.relList.item(0) is "x"
-PASS element.relList[1] is "x"
-PASS element.relList.item(1) is "x"
+PASS element.relList[1] is undefined.
+PASS element.relList.item(1) is null
 PASS element.relList[1] is "y"
 PASS element.relList.item(1) is "y"
 PASS element.relList[0] is undefined.
@@ -361,8 +361,8 @@ PASS element.relList.add("a", {toString: function() { throw new Error("user erro
 PASS element.rel is ""
 PASS element.relList.add() did not throw exception.
 PASS observer.takeRecords().length is 1
-PASS element.rel is "b d  "
-PASS element.rel is "d  "
+PASS element.rel is "b d"
+PASS element.rel is "d"
 PASS element.rel is "a b c"
 PASS element.relList.remove("a", "b", "") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.rel is "a b"

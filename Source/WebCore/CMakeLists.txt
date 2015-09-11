@@ -1573,6 +1573,7 @@ set(WebCore_SOURCES
     history/HistoryItem.cpp
     history/PageCache.cpp
 
+    html/AttributeDOMTokenList.cpp
     html/BaseButtonInputType.cpp
     html/BaseCheckableInputType.cpp
     html/BaseChooserOnlyDateAndTimeInputType.cpp
@@ -1581,7 +1582,6 @@ set(WebCore_SOURCES
     html/BaseTextInputType.cpp
     html/ButtonInputType.cpp
     html/CheckboxInputType.cpp
-    html/ClassList.cpp
     html/ColorInputType.cpp
     html/DOMFormData.cpp
     html/DOMSettableTokenList.cpp
@@ -1705,7 +1705,6 @@ set(WebCore_SOURCES
     html/RadioInputType.cpp
     html/RadioNodeList.cpp
     html/RangeInputType.cpp
-    html/RelList.cpp
     html/ResetInputType.cpp
     html/RubyElement.cpp
     html/RubyTextElement.cpp

@@ -12,7 +12,7 @@ PASS output2.htmlFor.value is "for-target1"
 PASS output3.htmlFor.length is 2
 PASS output3.htmlFor[0] is "for-target1"
 PASS output3.htmlFor[1] is "for-target2"
-PASS output3.htmlFor.value is " for-target1 for-target2 "
+PASS output3.htmlFor.value is "for-target1 for-target2"
 PASS successfullyParsed is true
 
 TEST COMPLETE

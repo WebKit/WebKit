@@ -31,7 +31,7 @@ shouldEvaluateTo('element.classList.length', 1);
 
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/003.htm
 createElement('x x');
-shouldEvaluateTo('element.classList.length', 2);
+shouldEvaluateTo('element.classList.length', 1);
 
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/004.htm
 createElement('x y');
@@ -70,7 +70,7 @@ shouldBeEqualToString('element.className', '');
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/011.htm
 createElement(' y x  y ');
 element.classList.remove('x');
-shouldBeEqualToString('element.className', ' y y ');
+shouldBeEqualToString('element.className', 'y');
 
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/012.htm
 createElement(' x y  x ');
@@ -121,11 +121,11 @@ shouldBeEqualToString('element.className', 'x y');
 
 createElement('x\t');
 element.classList.add('y');
-shouldBeEqualToString('element.className', 'x\ty');
+shouldBeEqualToString('element.className', 'x y');
 
 createElement(' ');
 element.classList.add('y');
-shouldBeEqualToString('element.className', ' y');
+shouldBeEqualToString('element.className', 'y');
 
 
 debug('Test invalid tokens');
@@ -206,8 +206,8 @@ shouldBeEqualToString('element.classList[0]', 'x');
 shouldBeEqualToString('element.classList.item(0)', 'x');
 
 createElement('x x');
-shouldBeEqualToString('element.classList[1]', 'x');
-shouldBeEqualToString('element.classList.item(1)', 'x');
+shouldBeUndefined('element.classList[1]');
+shouldBeNull('element.classList.item(1)');
 
 createElement('x y');
 shouldBeEqualToString('element.classList[1]', 'y');
@@ -327,10 +327,10 @@ shouldBe('observer.takeRecords().length', '1');
 
 createElement('a b c d  ');
 element.classList.remove('a', 'c');
-shouldBeEqualToString('element.className', 'b d  ');
+shouldBeEqualToString('element.className', 'b d');
 
 element.classList.remove('b', 'b');
-shouldBeEqualToString('element.className', 'd  ');
+shouldBeEqualToString('element.className', 'd');
 
 createElement('a b c null d undefined 0 false');
 element.classList.remove(null, {toString: function() { return 'd' }}, undefined, 0, false);

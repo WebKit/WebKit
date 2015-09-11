@@ -7,7 +7,7 @@ Tests from http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/
 PASS String(element.classList) is "x"
 PASS element.classList.length is 0
 PASS element.classList.length is 1
-PASS element.classList.length is 2
+PASS element.classList.length is 1
 PASS element.classList.length is 2
 PASS element.className is "x"
 PASS element.className is "x"
@@ -15,7 +15,7 @@ PASS element.className is "x  x"
 PASS element.className is "y x"
 PASS element.className is ""
 PASS element.className is ""
-PASS element.className is " y y "
+PASS element.className is "y"
 PASS element.className is "y"
 Ensure that we can handle empty class name correctly
 PASS element.classList.toggle('x') is true
@@ -37,8 +37,8 @@ PASS element.classList.toggle('', true) threw expected DOMException with code 12
 PASS element.classList.toggle('x y', false) threw expected DOMException with code 5
 Testing add in presence of trailing white spaces.
 PASS element.className is "x y"
-PASS element.className is "x\ty"
-PASS element.className is " y"
+PASS element.className is "x y"
+PASS element.className is "y"
 Test invalid tokens
 PASS element.classList.contains('') threw expected DOMException with code 12
 PASS element.classList.contains('x y') threw expected DOMException with code 5
@@ -52,8 +52,8 @@ PASS element.classList.toggle() threw exception TypeError: Not enough arguments.
 Indexing
 PASS element.classList[0] is "x"
 PASS element.classList.item(0) is "x"
-PASS element.classList[1] is "x"
-PASS element.classList.item(1) is "x"
+PASS element.classList[1] is undefined.
+PASS element.classList.item(1) is null
 PASS element.classList[1] is "y"
 PASS element.classList.item(1) is "y"
 PASS element.classList[0] is undefined.
@@ -98,8 +98,8 @@ PASS element.classList.add("a", {toString: function() { throw new Error("user er
 PASS element.className is ""
 PASS element.classList.add() did not throw exception.
 PASS observer.takeRecords().length is 1
-PASS element.className is "b d  "
-PASS element.className is "d  "
+PASS element.className is "b d"
+PASS element.className is "d"
 PASS element.className is "a b c"
 PASS element.classList.remove('a', 'b', '') threw expected DOMException with code 12
 PASS element.className is "a b"

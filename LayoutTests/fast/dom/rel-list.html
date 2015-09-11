@@ -62,7 +62,7 @@ function test()
     shouldEvaluateTo('element.relList.length', 1);
 
     createElement('x x');
-    shouldEvaluateTo('element.relList.length', 2);
+    shouldEvaluateTo('element.relList.length', 1);
 
     createElement('x y');
     shouldEvaluateTo('element.relList.length', 2);
@@ -93,7 +93,7 @@ function test()
 
     createElement(' y x  y ');
     element.relList.remove('x');
-    shouldBeEqualToString('element.rel', ' y y ');
+    shouldBeEqualToString('element.rel', 'y');
 
     createElement(' x y  x ');
     element.relList.remove('x');
@@ -134,11 +134,11 @@ function test()
 
     createElement('x\t');
     element.relList.add('y');
-    shouldBeEqualToString('element.rel', 'x\ty');
+    shouldBeEqualToString('element.rel', 'x y');
 
     createElement(' ');
     element.relList.add('y');
-    shouldBeEqualToString('element.rel', ' y');
+    shouldBeEqualToString('element.rel', 'y');
 
     debug('Test invalid tokens');
 
@@ -169,8 +169,8 @@ function test()
     shouldBeEqualToString('element.relList.item(0)', 'x');
 
     createElement('x x');
-    shouldBeEqualToString('element.relList[1]', 'x');
-    shouldBeEqualToString('element.relList.item(1)', 'x');
+    shouldBeUndefined('element.relList[1]');
+    shouldBeNull('element.relList.item(1)');
 
     createElement('x y');
     shouldBeEqualToString('element.relList[1]', 'y');
@@ -260,10 +260,10 @@ function test()
 
     createElement('a b c d  ');
     element.relList.remove('a', 'c');
-    shouldBeEqualToString('element.rel', 'b d  ');
+    shouldBeEqualToString('element.rel', 'b d');
 
     element.relList.remove('b', 'b');
-    shouldBeEqualToString('element.rel', 'd  ');
+    shouldBeEqualToString('element.rel', 'd');
 
     createElement('a b c null d undefined 0 false');
     element.relList.remove(null, {toString: function() { return 'd' }}, undefined, 0, false);

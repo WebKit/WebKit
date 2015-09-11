@@ -1,3 +1,23 @@
+2015-09-11  Chris Dumez  <cdumez@apple.com>
+
+        DOMTokenList update steps for classList don't follow the spec
+        https://bugs.webkit.org/show_bug.cgi?id=148589
+        <rdar://problem/22547443>
+
+        Reviewed by Ryosuke Niwa and Darin Adler.
+
+        Update / rebaseline existing tests as our behavior changed.
+
+        * fast/dom/HTMLElement/class-list-expected.txt:
+        * fast/dom/HTMLElement/class-list-quirks-expected.txt:
+        * fast/dom/HTMLElement/script-tests/class-list.js:
+        * fast/dom/HTMLOutputElement/dom-settable-token-list-expected.txt:
+        * fast/dom/HTMLOutputElement/htmloutputelement-expected.txt:
+        * fast/dom/HTMLOutputElement/htmloutputelement.html:
+        * fast/dom/HTMLOutputElement/script-tests/dom-settable-token-list.js:
+        * fast/dom/rel-list-expected.txt:
+        * fast/dom/rel-list.html:
+
 2015-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed gardening to make Windows bot green.

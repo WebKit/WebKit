@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,20 +43,12 @@ public:
         return adoptRef(*new DOMSettableTokenList);
     }
 
+    // Make public.
+    using DOMTokenList::value;
+    using DOMTokenList::setValue;
+
     virtual void ref() override;
     virtual void deref() override;
-
-    virtual unsigned length() const override;
-    virtual const AtomicString item(unsigned index) const override;
-
-    virtual AtomicString value() const override;
-    virtual void setValue(const AtomicString&) override;
-
-private:
-    virtual bool containsInternal(const AtomicString&) const override;
-
-    AtomicString m_value;
-    SpaceSplitString m_tokens;
 };
 
 } // namespace WebCore

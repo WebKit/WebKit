@@ -26,6 +26,7 @@
 #include "HTMLLinkElement.h"
 
 #include "Attribute.h"
+#include "AttributeDOMTokenList.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
@@ -46,7 +47,6 @@
 #include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "RelList.h"
 #include "RenderStyle.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -141,7 +141,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
     if (name == relAttr) {
         m_relAttribute = LinkRelAttribute(value);
         if (m_relList)
-            m_relList->updateRelAttribute(value);
+            m_relList->attributeValueChanged(value);
         process();
         return;
     }
@@ -403,7 +403,7 @@ void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
 DOMTokenList& HTMLLinkElement::relList()
 {
     if (!m_relList) 
-        m_relList = std::make_unique<RelList>(*this);
+        m_relList = std::make_unique<AttributeDOMTokenList>(*this, HTMLNames::relAttr);
     return *m_relList;
 }
 

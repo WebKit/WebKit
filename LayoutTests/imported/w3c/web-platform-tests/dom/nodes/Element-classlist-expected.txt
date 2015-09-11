@@ -5,7 +5,7 @@ PASS DOMTokenList should be exposed for prototyping
 PASS prototyping DOMTokenList should work 
 PASS Element.classList must implement DOMTokenList 
 PASS CSS .foo selectors must not match elements without any class 
-FAIL classList must be correct for an element that has classes assert_equals: duplicates in initial string should be removed per https://dom.spec.whatwg.org/#concept-class expected 1 but got 2
+PASS classList must be correct for an element that has classes 
 PASS classList.length must be 0 for an element that has no classes 
 PASS classList must not contain an undefined class 
 PASS classList.item() must return null for out-of-range index 
@@ -13,7 +13,7 @@ PASS classList.item() must return null for negative index
 PASS classList[index] must be undefined for out-of-range index 
 PASS classList[index] must be undefined for negative index 
 PASS className should contain initial markup whitespace 
-FAIL empty classList should return the empty string since the ordered set parser skip the whitespaces assert_equals: implicit expected "" but got " "
+PASS empty classList should return the empty string since the ordered set parser skip the whitespaces 
 PASS .contains(empty_string) must throw a SYNTAX_ERR 
 PASS .add(empty_string) must throw a SYNTAX_ERR 
 PASS .remove(empty_string) must throw a SYNTAX_ERR 
@@ -43,10 +43,10 @@ PASS classList.remove must remove existing tokens
 PASS classList.remove must not break case-sensitive CSS selector matching 
 PASS classList.remove must remove duplicated tokens 
 PASS classList.remove must collapse whitespace around removed tokens 
-FAIL classList.remove must collapse whitespaces around each token assert_equals: implicit expected "token1" but got " token1"
-FAIL classList.remove must collapse whitespaces around each token and remove duplicates assert_equals: implicit expected "token1" but got "  token1 token1  "
+PASS classList.remove must collapse whitespaces around each token 
+PASS classList.remove must collapse whitespaces around each token and remove duplicates 
 PASS classList.remove must collapse whitespace when removing duplicate tokens 
-FAIL classList.add must collapse whitespaces and remove duplicates when adding a token that already exists assert_equals: implicit expected "token1" but got "  token1  token1  "
+PASS classList.add must collapse whitespaces and remove duplicates when adding a token that already exists 
 PASS classList.toggle must toggle tokens case-sensitively when adding 
 PASS classList.toggle must not break case-sensitive CSS selector matching 
 PASS classList.toggle must be able to remove tokens 
@@ -57,10 +57,10 @@ PASS classList must stringify to an empty string when all classes have been remo
 PASS classList.item(0) must return null when all classes have been removed 
 PASS classList[0] must be undefined when all classes have been removed 
 PASS classList.add should treat " " as a space 
-FAIL classList.add should treat \t as a space assert_equals: expected "a b" but got "a\tb"
-FAIL classList.add should treat \r as a space assert_equals: expected "a b" but got "a\rb"
-FAIL classList.add should treat \n as a space assert_equals: expected "a b" but got "a\nb"
-FAIL classList.add should treat \f as a space assert_equals: expected "a b" but got "a\fb"
+PASS classList.add should treat \t as a space 
+PASS classList.add should treat \r as a space 
+PASS classList.add should treat \n as a space 
+PASS classList.add should treat \f as a space 
 PASS classList.length must be read-only 
 PASS classList must be read-only 
 

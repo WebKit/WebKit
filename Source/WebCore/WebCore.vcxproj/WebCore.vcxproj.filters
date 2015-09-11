@@ -3591,6 +3591,9 @@
     <ClCompile Include="..\fileapi\AsyncFileStream.cpp">
       <Filter>html</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\AttributeDOMTokenList.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\BaseButtonInputType.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -3616,9 +3619,6 @@
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="..\html\CheckboxInputType.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\ClassList.cpp">
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="..\html\ColorInputType.cpp">
@@ -3997,9 +3997,6 @@
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="..\html\RangeInputType.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\RelList.cpp">
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="..\html\ResetInputType.cpp">
@@ -10748,6 +10745,9 @@
     <ClInclude Include="..\fileapi\AsyncFileStream.h">
       <Filter>html</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\AttributeDOMTokenList.h">
+      <Filter>html</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\BaseButtonInputType.h">
       <Filter>html</Filter>
     </ClInclude>
@@ -10773,9 +10773,6 @@
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\CheckboxInputType.h">
-      <Filter>html</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\ClassList.h">
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\CollectionType.h">
@@ -11166,9 +11163,6 @@
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\RangeInputType.h">
-      <Filter>html</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\RelList.h">
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\ResetInputType.h">

@@ -1346,8 +1346,10 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
         elementData()->clearClass();
     }
 
-    if (hasRareData())
-        elementRareData()->clearClassListValueForQuirksMode();
+    if (hasRareData()) {
+        if (auto* classList = elementRareData()->classList())
+            classList->attributeValueChanged(newClassString);
+    }
 
     if (shouldInvalidateStyle)
         setNeedsStyleRecalc();
@@ -1514,9 +1516,6 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
 
     if (!insertionPoint.isInTreeScope())
         return InsertionDone;
-
-    if (hasRareData())
-        elementRareData()->clearClassListValueForQuirksMode();
 
     TreeScope* newScope = &insertionPoint.treeScope();
     HTMLDocument* newDocument = !wasInDocument && inDocument() && is<HTMLDocument>(newScope->documentScope()) ? &downcast<HTMLDocument>(newScope->documentScope()) : nullptr;
@@ -2654,7 +2653,7 @@ DOMTokenList& Element::classList()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.classList())
-        data.setClassList(std::make_unique<ClassList>(*this));
+        data.setClassList(std::make_unique<AttributeDOMTokenList>(*this, HTMLNames::classAttr));
     return *data.classList();
 }
 
