@@ -1,3 +1,13 @@
+2015-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the CLOOP build.
+
+        Unreviewed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeBaselineJITInlineCaches):
+        (JSC::CodeBlock::finalizeUnconditionally):
+
 2015-09-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix WASM build

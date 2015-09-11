@@ -2651,6 +2651,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
 
 void CodeBlock::finalizeBaselineJITInlineCaches()
 {
+#if ENABLE(JIT)
     for (auto iter = callLinkInfosBegin(); !!iter; ++iter)
         (*iter)->visitWeak(*vm());
 
@@ -2658,6 +2659,7 @@ void CodeBlock::finalizeBaselineJITInlineCaches()
         StructureStubInfo& stubInfo = **iter;
         stubInfo.visitWeakReferences(this);
     }
+#endif
 }
 
 void CodeBlock::finalizeUnconditionally()
