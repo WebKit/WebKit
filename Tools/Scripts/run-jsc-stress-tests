@@ -819,12 +819,16 @@ def defaultQuickRun
     end
 end
 
-def defaultSpotCheck
+def defaultSpotCheckNoMaximalFlush
     defaultQuickRun
     runFTLNoCJITNoSimpleOpt
     runFTLNoCJITOSRValidation
     runNoCJITNoAccessInlining
     runFTLNoCJITNoAccessInlining
+end
+
+def defaultSpotCheck
+    defaultSpotCheckNoMaximalFlush
     runDFGMaximalFlushPhase
 end
 
