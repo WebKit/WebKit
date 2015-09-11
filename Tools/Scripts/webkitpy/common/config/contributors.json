@@ -2623,6 +2623,16 @@
             "babu"
          ]
       },
+      "Sukolsak Sakshuwong": {
+         "emails" : [
+            "ssakshuwong@apple.com",
+            "sukolsak@gmail.com"
+         ],
+         "expertise" : "JavaScript/ECMAScript, WebAssembly",
+         "nicks" : [
+            "sukol"
+         ]
+      },
       "Szilard Ledan-Muntean" : {
          "emails" : [
             "szledan@inf.u-szeged.hu"
@@ -3449,15 +3459,6 @@
          ],
          "nicks" : [
             "rmondello"
-         ]
-      },
-      "Sukolsak Sakshuwong": {
-         "emails" : [
-            "ssakshuwong@apple.com",
-            "sukolsak@gmail.com"
-         ],
-         "nicks" : [
-            "sukol"
          ]
       },
       "Sungmann Cho" : {
