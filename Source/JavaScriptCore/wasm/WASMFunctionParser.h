@@ -95,6 +95,14 @@ private:
     template <class Context> ContextExpression parseRelationalI32ExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalF64ExpressionI32(Context&, WASMOpExpressionI32);
 
+    template <class Context> ContextExpression parseExpressionF32(Context&);
+    template <class Context> ContextExpression parseConstantPoolIndexExpressionF32(Context&, uint32_t constantIndex);
+    template <class Context> ContextExpression parseConstantPoolIndexExpressionF32(Context&);
+    template <class Context> ContextExpression parseImmediateExpressionF32(Context&);
+    template <class Context> ContextExpression parseGetLocalExpressionF32(Context&, uint32_t localIndex);
+    template <class Context> ContextExpression parseGetLocalExpressionF32(Context&);
+    template <class Context> ContextExpression parseGetGlobalExpressionF32(Context&);
+
     template <class Context> ContextExpression parseExpressionF64(Context&);
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&, uint32_t constantIndex);
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&);

@@ -35,11 +35,13 @@
 
 #define PROPAGATE_ERROR() do { if (!m_errorMessage.isNull()) return 0; } while (0)
 #define FAIL_WITH_MESSAGE(errorMessage) do {  m_errorMessage = errorMessage; return 0; } while (0)
+#define READ_FLOAT_OR_FAIL(result, errorMessage) do { if (!m_reader.readFloat(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_DOUBLE_OR_FAIL(result, errorMessage) do { if (!m_reader.readDouble(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_COMPACT_INT32_OR_FAIL(result, errorMessage) do { if (!m_reader.readCompactInt32(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_COMPACT_UINT32_OR_FAIL(result, errorMessage) do { if (!m_reader.readCompactUInt32(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_STATEMENT_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpStatement(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_EXPRESSION_I32_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpExpressionI32(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
+#define READ_OP_EXPRESSION_F32_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpExpressionF32(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_EXPRESSION_F64_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpExpressionF64(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_VARIABLE_TYPES_OR_FAIL(hasImmediate, variableTypes, variableTypesWithImmediate, immediate, errorMessage) do { if (!m_reader.readVariableTypes(hasImmediate, variableTypes, variableTypesWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_SWITCH_CASE_OR_FAIL(result, errorMessage) do { if (!m_reader.readSwitchCase(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
@@ -495,9 +497,10 @@ ContextExpression WASMFunctionParser::parseExpression(Context& context, WASMExpr
     switch (expressionType) {
     case WASMExpressionType::I32:
         return parseExpressionI32(context);
+    case WASMExpressionType::F32:
+        return parseExpressionF32(context);
     case WASMExpressionType::F64:
         return parseExpressionF64(context);
-    case WASMExpressionType::F32:
     case WASMExpressionType::Void:
         // FIXME: Implement these instructions.
         FAIL_WITH_MESSAGE("Unsupported instruction.");
@@ -716,6 +719,113 @@ ContextExpression WASMFunctionParser::parseRelationalF64ExpressionI32(Context& c
     ContextExpression right = parseExpressionF64(context);
     PROPAGATE_ERROR();
     return context.buildRelationalF64(left, right, op);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
+{
+    bool hasImmediate;
+    WASMOpExpressionF32 op;
+    WASMOpExpressionF32WithImmediate opWithImmediate;
+    uint8_t immediate;
+    READ_OP_EXPRESSION_F32_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, "Cannot read the float32 expression opcode.");
+    if (!hasImmediate) {
+        switch (op) {
+        case WASMOpExpressionF32::ConstantPoolIndex:
+            return parseConstantPoolIndexExpressionF32(context);
+        case WASMOpExpressionF32::Immediate:
+            return parseImmediateExpressionF32(context);
+        case WASMOpExpressionF32::GetLocal:
+            return parseGetLocalExpressionF32(context);
+        case WASMOpExpressionF32::GetGlobal:
+            return parseGetGlobalExpressionF32(context);
+        case WASMOpExpressionF32::SetLocal:
+        case WASMOpExpressionF32::SetGlobal:
+        case WASMOpExpressionF32::Load:
+        case WASMOpExpressionF32::LoadWithOffset:
+        case WASMOpExpressionF32::Store:
+        case WASMOpExpressionF32::StoreWithOffset:
+        case WASMOpExpressionF32::CallInternal:
+        case WASMOpExpressionF32::CallIndirect:
+        case WASMOpExpressionF32::Conditional:
+        case WASMOpExpressionF32::Comma:
+        case WASMOpExpressionF32::FromS32:
+        case WASMOpExpressionF32::FromU32:
+        case WASMOpExpressionF32::FromF64:
+        case WASMOpExpressionF32::Negate:
+        case WASMOpExpressionF32::Add:
+        case WASMOpExpressionF32::Sub:
+        case WASMOpExpressionF32::Mul:
+        case WASMOpExpressionF32::Div:
+        case WASMOpExpressionF32::Abs:
+        case WASMOpExpressionF32::Ceil:
+        case WASMOpExpressionF32::Floor:
+        case WASMOpExpressionF32::Sqrt:
+            // FIXME: Implement these instructions.
+            FAIL_WITH_MESSAGE("Unsupported instruction.");
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    } else {
+        switch (opWithImmediate) {
+        case WASMOpExpressionF32WithImmediate::ConstantPoolIndex:
+            return parseConstantPoolIndexExpressionF32(context, immediate);
+        case WASMOpExpressionF32WithImmediate::GetLocal:
+            return parseGetLocalExpressionF32(context, immediate);
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+    return 0;
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseConstantPoolIndexExpressionF32(Context& context, uint32_t constantIndex)
+{
+    FAIL_IF_FALSE(constantIndex < m_module->f32Constants().size(), "The constant pool index is incorrect.");
+    return context.buildImmediateF32(m_module->f32Constants()[constantIndex]);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseConstantPoolIndexExpressionF32(Context& context)
+{
+    uint32_t constantIndex;
+    READ_COMPACT_UINT32_OR_FAIL(constantIndex, "Cannot read the constant pool index.");
+    return parseConstantPoolIndexExpressionF32(context, constantIndex);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseImmediateExpressionF32(Context& context)
+{
+    float immediate;
+    READ_FLOAT_OR_FAIL(immediate, "Cannot read the immediate.");
+    return context.buildImmediateF32(immediate);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseGetLocalExpressionF32(Context& context, uint32_t localIndex)
+{
+    FAIL_IF_FALSE(localIndex < m_localTypes.size(), "The local index is incorrect.");
+    FAIL_IF_FALSE(m_localTypes[localIndex] == WASMType::F32, "Expected a local of type float32.");
+    return context.buildGetLocal(localIndex, WASMType::F32);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseGetLocalExpressionF32(Context& context)
+{
+    uint32_t localIndex;
+    READ_COMPACT_UINT32_OR_FAIL(localIndex, "Cannot read the local index.");
+    return parseGetLocalExpressionF32(context, localIndex);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseGetGlobalExpressionF32(Context& context)
+{
+    uint32_t globalIndex;
+    READ_COMPACT_UINT32_OR_FAIL(globalIndex, "Cannot read the global index.");
+    FAIL_IF_FALSE(globalIndex < m_module->globalVariableTypes().size(), "The global index is incorrect.");
+    FAIL_IF_FALSE(m_module->globalVariableTypes()[globalIndex] == WASMType::F32, "Expected a global variable of type float32.");
+    return context.buildGetGlobal(globalIndex, WASMType::F32);
 }
 
 template <class Context>

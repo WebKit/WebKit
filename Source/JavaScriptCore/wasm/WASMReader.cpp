@@ -189,6 +189,13 @@ bool WASMReader::readOpExpressionI32(bool& hasImmediate, WASMOpExpressionI32& op
         static_cast<uint8_t>(WASMOpExpressionI32WithImmediate::NumberOfWASMOpExpressionI32WithImmediates));
 }
 
+bool WASMReader::readOpExpressionF32(bool& hasImmediate, WASMOpExpressionF32& op, WASMOpExpressionF32WithImmediate& opWithImmediate, uint8_t& immediate)
+{
+    return readOp(hasImmediate, op, opWithImmediate, immediate,
+        static_cast<uint8_t>(WASMOpExpressionF32::NumberOfWASMOpExpressionF32s),
+        static_cast<uint8_t>(WASMOpExpressionF32WithImmediate::NumberOfWASMOpExpressionF32WithImmediates));
+}
+
 bool WASMReader::readOpExpressionF64(bool& hasImmediate, WASMOpExpressionF64& op, WASMOpExpressionF64WithImmediate& opWithImmediate, uint8_t& immediate)
 {
     return readOp(hasImmediate, op, opWithImmediate, immediate,

@@ -73,6 +73,13 @@ public:
         return UNUSED;
     }
 
+    int buildImmediateF32(uint32_t)
+    {
+        m_tempStackTop++;
+        updateTempStackHeight();
+        return UNUSED;
+    }
+
     int buildImmediateF64(uint32_t)
     {
         m_tempStackTop++;

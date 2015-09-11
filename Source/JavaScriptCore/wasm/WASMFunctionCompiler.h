@@ -210,6 +210,7 @@ public:
     {
         switch (type) {
         case WASMType::I32:
+        case WASMType::F32:
             load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT0);
             m_tempStackTop--;
             store32(GPRInfo::regT0, localAddress(localIndex));
@@ -255,8 +256,11 @@ public:
 #endif
             m_tempStackTop--;
             break;
+        case WASMExpressionType::F32:
         case WASMExpressionType::F64:
             loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
+            if (returnType == WASMExpressionType::F32)
+                convertFloatToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
 #if USE(JSVALUE64)
             boxDouble(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
 #else
@@ -280,6 +284,12 @@ public:
         return UNUSED;
     }
 
+    int buildImmediateF32(float immediate)
+    {
+        store32(Imm32(bitwise_cast<int32_t>(immediate)), temporaryAddress(m_tempStackTop++));
+        return UNUSED;
+    }
+
     int buildImmediateF64(double immediate)
     {
 #if USE(JSVALUE64)
@@ -300,6 +310,7 @@ public:
     {
         switch (type) {
         case WASMType::I32:
+        case WASMType::F32:
             load32(localAddress(localIndex), GPRInfo::regT0);
             store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop++));
             break;

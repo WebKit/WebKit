@@ -1,3 +1,40 @@
+2015-09-11  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Add initial support for floats in WebAsssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149062
+
+        Reviewed by Geoffrey Garen.
+
+        Implement the ConstantPoolIndex, Immediate, GetLocal, and GetGlobal
+        instructions for floats (float32) in WebAssembly.
+
+        * tests/stress/wasm-arithmetic-float32.js: Added.
+        (shouldBe):
+        * tests/stress/wasm-globals.js:
+        * tests/stress/wasm-type-conversion.js:
+        * tests/stress/wasm/arithmetic-float32.wasm: Added.
+        * tests/stress/wasm/globals.wasm:
+        * tests/stress/wasm/type-conversion.wasm:
+        * wasm/WASMConstants.h:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildSetLocal):
+        (JSC::WASMFunctionCompiler::buildReturn):
+        (JSC::WASMFunctionCompiler::buildImmediateF32):
+        (JSC::WASMFunctionCompiler::buildGetLocal):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpression):
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseConstantPoolIndexExpressionF32):
+        (JSC::WASMFunctionParser::parseImmediateExpressionF32):
+        (JSC::WASMFunctionParser::parseGetLocalExpressionF32):
+        (JSC::WASMFunctionParser::parseGetGlobalExpressionF32):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildImmediateF32):
+        * wasm/WASMReader.cpp:
+        (JSC::WASMReader::readOpExpressionF32):
+        * wasm/WASMReader.h:
+
 2015-09-11  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the CLOOP build.
