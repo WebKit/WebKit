@@ -1,3 +1,9 @@
+2015-09-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Test result gardening - correct the paths for the branch.
+
+        * platform/mac/TestExpectations:
+
 2015-09-11  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r189598.
