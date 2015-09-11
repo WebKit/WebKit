@@ -1107,10 +1107,22 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     snapshotSize.scale(deviceScale, deviceScale);
 
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
+
+#if USE(IOSURFACE)
     auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpaceDeviceRGB);
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
 
     return WebKit::ViewSnapshot::create(nullptr);
+#else
+    uint32_t slotID = [WebKit::ViewSnapshotStore::snapshottingContext() createImageSlot:snapshotSize hasAlpha:YES];
+
+    if (!slotID)
+        return nullptr;
+
+    CARenderServerCaptureLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, (uint64_t)self.layer, slotID, 0, 0, &transform);
+    WebCore::IntSize imageSize = WebCore::expandedIntSize(WebCore::FloatSize(snapshotSize));
+    return WebKit::ViewSnapshot::create(slotID, imageSize, imageSize.width() * imageSize.height() * 4);
+#endif
 }
 
 - (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale animated:(BOOL)animated

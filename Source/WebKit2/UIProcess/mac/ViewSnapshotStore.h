@@ -53,7 +53,11 @@ class WebPageProxy;
 
 class ViewSnapshot : public RefCounted<ViewSnapshot> {
 public:
+#if USE(IOSURFACE)
     static Ref<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);
+#else
+    static Ref<ViewSnapshot> create(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
+#endif
 
     ~ViewSnapshot();
 
@@ -70,17 +74,29 @@ public:
     void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
+#if USE(IOSURFACE)
     WebCore::IOSurface* surface() const { return m_surface.get(); }
 
     size_t imageSizeInBytes() const { return m_surface ? m_surface->totalBytes() : 0; }
     WebCore::IntSize size() const { return m_surface ? m_surface->size() : WebCore::IntSize(); }
 
     void setSurface(std::unique_ptr<WebCore::IOSurface>);
+#else
+    WebCore::IntSize size() const { return m_size; }
+#endif
 
 private:
+#if USE(IOSURFACE)
     explicit ViewSnapshot(std::unique_ptr<WebCore::IOSurface>);
 
     std::unique_ptr<WebCore::IOSurface> m_surface;
+#else
+    explicit ViewSnapshot(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
+
+    uint32_t m_slotID;
+    size_t m_imageSizeInBytes;
+    WebCore::IntSize m_size;
+#endif
 
     uint64_t m_renderTreeSize;
     float m_deviceScaleFactor;
@@ -99,6 +115,10 @@ public:
     void recordSnapshot(WebPageProxy&, WebBackForwardListItem&);
 
     void discardSnapshotImages();
+
+#if !USE(IOSURFACE)
+    static CAContext *snapshottingContext();
+#endif
 
 private:
     void didAddImageToSnapshot(ViewSnapshot&);

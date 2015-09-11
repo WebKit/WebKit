@@ -61,6 +61,24 @@ ViewSnapshotStore& ViewSnapshotStore::singleton()
     return store;
 }
 
+#if !USE(IOSURFACE)
+CAContext *ViewSnapshotStore::snapshottingContext()
+{
+    static CAContext *context;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSDictionary *options = @{
+            kCAContextDisplayName: @"WebKitSnapshotting",
+            kCAContextIgnoresHitTest: @YES,
+            kCAContextDisplayId : @20000
+        };
+        context = [[CAContext remoteContextWithOptions:options] retain];
+    });
+
+    return context;
+}
+#endif
+
 void ViewSnapshotStore::didAddImageToSnapshot(ViewSnapshot& snapshot)
 {
     bool isNewEntry = m_snapshotsWithImages.add(&snapshot).isNewEntry;
@@ -113,13 +131,27 @@ void ViewSnapshotStore::discardSnapshotImages()
         m_snapshotsWithImages.first()->clearImage();
 }
 
+#if USE(IOSURFACE)
 Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<IOSurface> surface)
 {
     return adoptRef(*new ViewSnapshot(WTF::move(surface)));
 }
+#else
+Ref<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
+{
+    return adoptRef(*new ViewSnapshot(slotID, size, imageSizeInBytes));
+}
+#endif
 
+#if USE(IOSURFACE)
 ViewSnapshot::ViewSnapshot(std::unique_ptr<IOSurface> surface)
     : m_surface(WTF::move(surface))
+#else
+ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
+    : m_slotID(slotID)
+    , m_imageSizeInBytes(imageSizeInBytes)
+    , m_size(size)
+#endif
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
@@ -130,6 +162,7 @@ ViewSnapshot::~ViewSnapshot()
     clearImage();
 }
 
+#if USE(IOSURFACE)
 void ViewSnapshot::setSurface(std::unique_ptr<WebCore::IOSurface> surface)
 {
     ASSERT(!m_surface);
@@ -141,10 +174,15 @@ void ViewSnapshot::setSurface(std::unique_ptr<WebCore::IOSurface> surface)
     m_surface = WTF::move(surface);
     ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
 }
+#endif
 
 bool ViewSnapshot::hasImage() const
 {
+#if USE(IOSURFACE)
     return !!m_surface;
+#else
+    return m_slotID;
+#endif
 }
 
 void ViewSnapshot::clearImage()
@@ -154,11 +192,18 @@ void ViewSnapshot::clearImage()
 
     ViewSnapshotStore::singleton().willRemoveImageFromSnapshot(*this);
 
+#if USE(IOSURFACE)
     m_surface = nullptr;
+#else
+    [ViewSnapshotStore::snapshottingContext() deleteSlot:m_slotID];
+    m_slotID = 0;
+    m_imageSizeInBytes = 0;
+#endif
 }
 
 id ViewSnapshot::asLayerContents()
 {
+#if USE(IOSURFACE)
     if (!m_surface)
         return nullptr;
 
@@ -168,6 +213,9 @@ id ViewSnapshot::asLayerContents()
     }
 
     return (id)m_surface->surface();
+#else
+    return [CAContext objectForSlot:m_slotID];
+#endif
 }
 
 } // namespace WebKit

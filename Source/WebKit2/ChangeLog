@@ -1,5 +1,38 @@
 2015-09-11  Beth Dakin  <bdakin@apple.com>
 
+        Still need view snapshotting code for non-IOSurface for the sim
+        https://bugs.webkit.org/show_bug.cgi?id=149077
+
+        Reviewed by Tim Horton.
+
+        This fixes the simulator build.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        (-[WKWebView _zoomToPoint:atScale:animated:]):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        (WebKit::ViewSnapshot::setDeviceScaleFactor):
+        (WebKit::ViewSnapshot::deviceScaleFactor):
+        (WebKit::ViewSnapshot::surface):
+        (WebKit::ViewSnapshot::imageSizeInBytes):
+        (WebKit::ViewSnapshot::size):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::singleton):
+        (WebKit::ViewSnapshotStore::snapshottingContext):
+        (WebKit::ViewSnapshotStore::didAddImageToSnapshot):
+        (WebKit::ViewSnapshotStore::discardSnapshotImages):
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::~ViewSnapshot):
+        (WebKit::ViewSnapshot::setSurface):
+        (WebKit::ViewSnapshot::hasImage):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::asLayerContents):
+
+2015-09-11  Beth Dakin  <bdakin@apple.com>
+
         Build fix
 
         * UIProcess/mac/ViewGestureControllerMac.mm:
