@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCJSValueInlines.h"
 #include "JSWASMModule.h"
 #include "WASMFunctionCompiler.h"
 #include "WASMFunctionSyntaxChecker.h"
