@@ -1,3 +1,16 @@
+2015-09-11  Tim Horton  <timothy_horton@apple.com>
+
+        fast/hidpi/image-set-without-specified-width.html flakily tries to install multiple callbacks for the same event
+        https://bugs.webkit.org/show_bug.cgi?id=149067
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/hidpi/image-set-without-specified-width.html:
+        Wait until we've successfully set the deviceScaleFactor
+        before reloading the page; otherwise, we can end up trying to set it
+        again after the reload (and depending on how long it takes the callback
+        to return, again, and again, and again...)
+
 2015-09-11  Alexey Proskuryakov  <ap@apple.com>
 
         El Capitan test result gardening.

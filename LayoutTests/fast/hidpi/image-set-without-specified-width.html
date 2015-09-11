@@ -5,25 +5,20 @@
         if (!window.testRunner || !window.sessionStorage)
             return;
 
-        if (!sessionStorage.scaleFactorIsSet) {
-            testRunner.waitUntilDone();
-            testRunner.setBackingScaleFactor(2, scaleFactorIsSet);
-        }
-        
-        if (sessionStorage.pageReloaded && sessionStorage.scaleFactorIsSet) {
+        if (sessionStorage.pageReloaded) {
             delete sessionStorage.pageReloaded;
-            delete sessionStorage.scaleFactorIsSet;
             testRunner.notifyDone();
         } else {
-            // Right now there is a bug that image-set does not properly deal with dynamic changes to the scale factor,
-            // so to work around that, we must reload the page to get the 2x image.
-            sessionStorage.pageReloaded = true;
-            document.location.reload(true);
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, scaleFactorIsSet);
         }
     }
     
     function scaleFactorIsSet() {
-        sessionStorage.scaleFactorIsSet = true;
+        // Right now there is a bug that image-set does not properly deal with dynamic changes to the scale factor,
+        // so to work around that, we must reload the page to get the 2x image.
+        sessionStorage.pageReloaded = true;
+        document.location.reload(true);
     }
 
     window.onload = runTest;
