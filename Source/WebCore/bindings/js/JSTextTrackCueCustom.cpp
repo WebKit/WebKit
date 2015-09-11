@@ -38,10 +38,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    JSTextTrackCue* jsTextTrackCue = jsCast<JSTextTrackCue*>(handle.slot()->asCell());
-    TextTrackCue& textTrackCue = jsTextTrackCue->impl();
+    auto& jsTextTrackCue = jsCast<JSTextTrackCue&>(cell);
+    TextTrackCue& textTrackCue = jsTextTrackCue.impl();
 
     // If the cue is firing event listeners, its wrapper is reachable because
     // the wrapper is responsible for marking those event listeners.
@@ -49,7 +49,7 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
         return true;
 
     // If the cue has no event listeners and has no custom properties, it is not reachable.
-    if (!textTrackCue.hasEventListeners() && !jsTextTrackCue->hasCustomProperties())
+    if (!textTrackCue.hasEventListeners() && !jsTextTrackCue.hasCustomProperties())
         return false;
 
     // If the cue is not associated with a track, it is not reachable.

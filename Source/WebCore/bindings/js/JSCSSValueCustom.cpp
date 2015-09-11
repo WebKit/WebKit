@@ -44,24 +44,24 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, SlotVisitor& visitor)
+bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void* context, SlotVisitor& visitor)
 {
-    JSCSSValue* jsCSSValue = jsCast<JSCSSValue*>(handle.slot()->asCell());
-    if (!jsCSSValue->hasCustomProperties())
+    auto& jsCSSValue = jsCast<JSCSSValue&>(cell);
+    if (!jsCSSValue.hasCustomProperties())
         return false;
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    void* root = world->m_cssValueRoots.get(&jsCSSValue->impl());
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
+    void* root = world.m_cssValueRoots.get(&jsCSSValue.impl());
     if (!root)
         return false;
     return visitor.containsOpaqueRoot(root);
 }
 
-void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSCSSValueOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    JSCSSValue* jsCSSValue = jsCast<JSCSSValue*>(handle.slot()->asCell());
+    auto& jsCSSValue = jsCast<JSCSSValue&>(*cell);
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    world.m_cssValueRoots.remove(&jsCSSValue->impl());
-    uncacheWrapper(world, &jsCSSValue->impl(), jsCSSValue);
+    world.m_cssValueRoots.remove(&jsCSSValue.impl());
+    uncacheWrapper(world, &jsCSSValue.impl(), &jsCSSValue);
 }
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSValue* value)

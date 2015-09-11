@@ -1,3 +1,14 @@
+2015-09-11  Andreas Kling  <akling@apple.com>
+
+        [JSC] Weak should only accept cell pointees.
+        <https://webkit.org/b/148955>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::finalize):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h:
+
 2015-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused files

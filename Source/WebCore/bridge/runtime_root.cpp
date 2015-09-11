@@ -196,9 +196,9 @@ void RootObject::removeRuntimeObject(RuntimeObject* object)
     weakRemove(m_runtimeObjects, object, object);
 }
 
-void RootObject::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+void RootObject::finalize(JSC::JSCell*& cell, void*)
 {
-    RuntimeObject* object = static_cast<RuntimeObject*>(handle.slot()->asCell());
+    RuntimeObject* object = jsCast<RuntimeObject*>(cell);
 
     Ref<RootObject> protect(*this);
     object->invalidate();

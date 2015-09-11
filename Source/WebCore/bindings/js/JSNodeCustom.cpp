@@ -75,11 +75,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor)
+static inline bool isReachableFromDOM(Node& node, SlotVisitor& visitor)
 {
-    if (!node->inDocument()) {
-        if (is<Element>(*node)) {
-            auto& element = downcast<Element>(*node);
+    if (!node.inDocument()) {
+        if (is<Element>(node)) {
+            auto& element = downcast<Element>(node);
 
             // If a wrapper is the last reference to an image element
             // that is loading but not in the document, the wrapper is observable
@@ -100,17 +100,17 @@ static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor)
 
         // If a node is firing event listeners, its wrapper is observable because
         // its wrapper is responsible for marking those event listeners.
-        if (node->isFiringEventListeners())
+        if (node.isFiringEventListeners())
             return true;
     }
 
-    return visitor.containsOpaqueRoot(root(node));
+    return visitor.containsOpaqueRoot(root(&node));
 }
 
-bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    JSNode* jsNode = jsCast<JSNode*>(handle.slot()->asCell());
-    return isReachableFromDOM(&jsNode->impl(), visitor);
+    auto& jsNode = jsCast<JSNode&>(cell);
+    return isReachableFromDOM(jsNode.impl(), visitor);
 }
 
 JSValue JSNode::insertBefore(ExecState* exec)

@@ -939,20 +939,20 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMetho
 
 #endif
 
-bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
-    if (jsTestInterface->impl().hasPendingActivity())
+    auto& jsTestInterface = jsCast<JSTestInterface&>(cell);
+    if (jsTestInterface.impl().hasPendingActivity())
         return true;
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSTestInterfaceOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
+    auto& wrapper = jsCast<JSTestInterface&>(*cell);
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestInterface->impl(), jsTestInterface);
+    uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)

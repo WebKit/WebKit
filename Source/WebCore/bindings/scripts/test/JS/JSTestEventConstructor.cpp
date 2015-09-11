@@ -241,18 +241,18 @@ JSValue JSTestEventConstructor::getConstructor(VM& vm, JSGlobalObject* globalObj
     return getDOMConstructor<JSTestEventConstructorConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(handle);
+    UNUSED_PARAM(cell);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSTestEventConstructorOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    auto* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.slot()->asCell());
+    auto& wrapper = jsCast<JSTestEventConstructor&>(*cell);
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestEventConstructor->impl(), jsTestEventConstructor);
+    uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

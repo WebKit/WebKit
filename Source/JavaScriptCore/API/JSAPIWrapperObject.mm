@@ -33,10 +33,10 @@
 
 #if JSC_OBJC_API_ENABLED
 
-class JSAPIWrapperObjectHandleOwner : public JSC::WeakHandleOwner {
+class JSAPIWrapperObjectHandleOwner final : public JSC::WeakHandleOwner {
 public:
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void*) override;
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
+    void finalize(JSC::JSCell*&, void*) override;
+    bool isReachableFromOpaqueRoots(JSC::JSCell&, void* context, JSC::SlotVisitor&) override;
 };
 
 static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
@@ -45,24 +45,24 @@ static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
     return &jsWrapperObjectHandleOwner;
 }
 
-void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+void JSAPIWrapperObjectHandleOwner::finalize(JSC::JSCell*& cell, void*)
 {
-    JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
-    if (!wrapperObject->wrappedObject())
+    auto& wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject&>(*cell);
+    if (!wrapperObject.wrappedObject())
         return;
 
-    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(static_cast<id>(wrapperObject->wrappedObject())));
-    JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
+    JSC::Heap::heap(&wrapperObject)->releaseSoon(adoptNS(static_cast<id>(wrapperObject.wrappedObject())));
+    JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(&cell));
 }
 
-bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)
+bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, JSC::SlotVisitor& visitor)
 {
-    JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
+    JSC::JSAPIWrapperObject& wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject&>(cell);
     // We use the JSGlobalObject when processing weak handles to prevent the situation where using
     // the same Objective-C object in multiple global objects keeps all of the global objects alive.
-    if (!wrapperObject->wrappedObject())
+    if (!wrapperObject.wrappedObject())
         return false;
-    return JSC::Heap::isMarked(wrapperObject->structure()->globalObject()) && visitor.containsOpaqueRoot(wrapperObject->wrappedObject());
+    return JSC::Heap::isMarked(wrapperObject.globalObject()) && visitor.containsOpaqueRoot(wrapperObject.wrappedObject());
 }
 
 namespace JSC {
@@ -86,7 +86,7 @@ JSAPIWrapperObject::JSAPIWrapperObject(VM& vm, Structure* structure)
 void JSAPIWrapperObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    WeakSet::allocate(this, jsAPIWrapperObjectHandleOwner(), 0); // Balanced in JSAPIWrapperObjectHandleOwner::finalize.
+    WeakSet::allocate(*this, jsAPIWrapperObjectHandleOwner(), 0); // Balanced in JSAPIWrapperObjectHandleOwner::finalize.
 }
     
 void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)

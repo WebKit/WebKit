@@ -4682,18 +4682,18 @@ void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_cachedAttribute2);
 }
 
-bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(handle);
+    UNUSED_PARAM(cell);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestObjOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSTestObjOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    auto* jsTestObj = jsCast<JSTestObj*>(handle.slot()->asCell());
+    auto& wrapper = jsCast<JSTestObj&>(*cell);
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestObj->impl(), jsTestObj);
+    uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

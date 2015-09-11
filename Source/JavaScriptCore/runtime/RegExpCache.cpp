@@ -56,9 +56,9 @@ RegExpCache::RegExpCache(VM* vm)
 {
 }
 
-void RegExpCache::finalize(Handle<Unknown> handle, void*)
+void RegExpCache::finalize(JSCell*& cell, void*)
 {
-    RegExp* regExp = static_cast<RegExp*>(handle.get().asCell());
+    RegExp* regExp = jsCast<RegExp*>(cell);
     weakRemove(m_weakCache, regExp->key(), regExp);
 }
 

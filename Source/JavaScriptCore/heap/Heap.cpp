@@ -1383,15 +1383,14 @@ bool Heap::isValidAllocation(size_t)
 
 void Heap::addFinalizer(JSCell* cell, Finalizer finalizer)
 {
-    WeakSet::allocate(cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
+    WeakSet::allocate(*cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
 }
 
-void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
+void Heap::FinalizerOwner::finalize(JSCell*& cell, void* context)
 {
-    HandleSlot slot = handle.slot();
     Finalizer finalizer = reinterpret_cast<Finalizer>(context);
-    finalizer(slot->asCell());
-    WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
+    finalizer(cell);
+    WeakSet::deallocate(WeakImpl::asWeakImpl(&cell));
 }
 
 void Heap::addExecutable(ExecutableBase* executable)

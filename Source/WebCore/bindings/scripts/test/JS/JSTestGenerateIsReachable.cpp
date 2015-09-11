@@ -152,18 +152,18 @@ JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, JSGlobalObject* global
     return getDOMConstructor<JSTestGenerateIsReachableConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
-    TestGenerateIsReachable* root = &jsTestGenerateIsReachable->impl();
+    auto& jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable&>(cell);
+    TestGenerateIsReachable* root = &jsTestGenerateIsReachable.impl();
     return visitor.containsOpaqueRoot(root);
 }
 
-void JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSTestGenerateIsReachableOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
+    auto& wrapper = jsCast<JSTestGenerateIsReachable&>(*cell);
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestGenerateIsReachable->impl(), jsTestGenerateIsReachable);
+    uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

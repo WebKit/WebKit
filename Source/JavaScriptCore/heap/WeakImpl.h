@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,40 +46,39 @@ public:
     };
 
     WeakImpl();
-    WeakImpl(JSValue, WeakHandleOwner*, void* context);
+    WeakImpl(JSCell&, WeakHandleOwner*, void* context);
 
-    State state();
+    State state() const;
     void setState(State);
 
-    const JSValue& jsValue();
+    JSCell* cell();
     WeakHandleOwner* weakHandleOwner();
     void* context();
 
-    static WeakImpl* asWeakImpl(JSValue*);
+    static WeakImpl* asWeakImpl(JSCell**);
 
 private:
-    const JSValue m_jsValue;
-    WeakHandleOwner* m_weakHandleOwner;
-    void* m_context;
+    friend class WeakBlock;
+
+    JSCell* m_cell { nullptr };
+    WeakHandleOwner* m_weakHandleOwner { nullptr };
+    void* m_context { nullptr };
 };
 
 inline WeakImpl::WeakImpl()
-    : m_weakHandleOwner(0)
-    , m_context(0)
 {
     setState(Deallocated);
 }
 
-inline WeakImpl::WeakImpl(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
-    : m_jsValue(jsValue)
+inline WeakImpl::WeakImpl(JSCell& cell, WeakHandleOwner* weakHandleOwner, void* context)
+    : m_cell(&cell)
     , m_weakHandleOwner(weakHandleOwner)
     , m_context(context)
 {
     ASSERT(state() == Live);
-    ASSERT(m_jsValue && m_jsValue.isCell());
 }
 
-inline WeakImpl::State WeakImpl::state()
+inline WeakImpl::State WeakImpl::state() const
 {
     return static_cast<State>(reinterpret_cast<uintptr_t>(m_weakHandleOwner) & StateMask);
 }
@@ -90,9 +89,9 @@ inline void WeakImpl::setState(WeakImpl::State state)
     m_weakHandleOwner = reinterpret_cast<WeakHandleOwner*>((reinterpret_cast<uintptr_t>(m_weakHandleOwner) & ~StateMask) | state);
 }
 
-inline const JSValue& WeakImpl::jsValue()
+inline JSCell* WeakImpl::cell()
 {
-    return m_jsValue;
+    return m_cell;
 }
 
 inline WeakHandleOwner* WeakImpl::weakHandleOwner()
@@ -105,9 +104,9 @@ inline void* WeakImpl::context()
     return m_context;
 }
 
-inline WeakImpl* WeakImpl::asWeakImpl(JSValue* slot)
+inline WeakImpl* WeakImpl::asWeakImpl(JSCell** slot)
 {
-    return reinterpret_cast_ptr<WeakImpl*>(reinterpret_cast_ptr<char*>(slot) + OBJECT_OFFSETOF(WeakImpl, m_jsValue));
+    return reinterpret_cast_ptr<WeakImpl*>(reinterpret_cast_ptr<char*>(slot));
 }
 
 } // namespace JSC

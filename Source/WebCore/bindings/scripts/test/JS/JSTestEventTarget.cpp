@@ -320,20 +320,20 @@ void JSTestEventTarget::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->impl().visitJSEventListeners(visitor);
 }
 
-bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    auto* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
-    if (jsTestEventTarget->impl().isFiringEventListeners())
+    auto& jsTestEventTarget = jsCast<JSTestEventTarget&>(cell);
+    if (jsTestEventTarget.impl().isFiringEventListeners())
         return true;
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestEventTargetOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSTestEventTargetOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    auto* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
+    auto& wrapper = jsCast<JSTestEventTarget&>(*cell);
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestEventTarget->impl(), jsTestEventTarget);
+    uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

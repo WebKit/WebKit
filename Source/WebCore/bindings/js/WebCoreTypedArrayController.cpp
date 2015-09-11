@@ -47,17 +47,17 @@ JSC::JSArrayBuffer* WebCoreTypedArrayController::toJS(JSC::ExecState* state, JSC
     return JSC::jsCast<JSC::JSArrayBuffer*>(WebCore::toJS(state, JSC::jsCast<JSDOMGlobalObject*>(globalObject), buffer));
 }
 
-bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)
+bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, JSC::SlotVisitor& visitor)
 {
-    auto& wrapper = *JSC::jsCast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
+    auto& wrapper = JSC::jsCast<JSC::JSArrayBuffer&>(cell);
     if (!wrapper.hasCustomProperties())
         return false;
     return visitor.containsOpaqueRoot(wrapper.impl());
 }
 
-void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    auto& wrapper = *static_cast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
+    auto& wrapper = static_cast<JSC::JSArrayBuffer&>(*cell);
     auto& buffer = *wrapper.impl();
     uncacheWrapper(*static_cast<DOMWrapperWorld*>(context), &buffer, &wrapper);
     buffer.deref();

@@ -152,18 +152,18 @@ JSValue JSreadonly::getConstructor(VM& vm, JSGlobalObject* globalObject)
     return getDOMConstructor<JSreadonlyConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSreadonlyOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSreadonlyOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(handle);
+    UNUSED_PARAM(cell);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSreadonlyOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+void JSreadonlyOwner::finalize(JSC::JSCell*& cell, void* context)
 {
-    auto* jsreadonly = jsCast<JSreadonly*>(handle.slot()->asCell());
+    auto& wrapper = jsCast<JSreadonly&>(*cell);
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsreadonly->impl(), jsreadonly);
+    uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* impl)

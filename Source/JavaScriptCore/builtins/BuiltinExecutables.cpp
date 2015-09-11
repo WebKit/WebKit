@@ -108,7 +108,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const S
     return functionExecutable;
 }
 
-void BuiltinExecutables::finalize(Handle<Unknown>, void* context)
+void BuiltinExecutables::finalize(JSCell*&, void* context)
 {
     static_cast<Weak<UnlinkedFunctionExecutable>*>(context)->clear();
 }

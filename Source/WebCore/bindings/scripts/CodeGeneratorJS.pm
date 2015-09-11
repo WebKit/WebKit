@@ -1191,8 +1191,8 @@ sub GenerateHeader
         }
         $headerIncludes{"<wtf/NeverDestroyed.h>"} = 1;
         push(@headerContent, "public:\n");
-        push(@headerContent, "    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);\n");
-        push(@headerContent, "    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);\n");
+        push(@headerContent, "    bool isReachableFromOpaqueRoots(JSC::JSCell&, void* context, JSC::SlotVisitor&) override;\n");
+        push(@headerContent, "    void finalize(JSC::JSCell*&, void* context) override;\n");
         push(@headerContent, "};\n");
         push(@headerContent, "\n");
         push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, $implType*)\n");
@@ -2945,7 +2945,7 @@ sub GenerateImplementation
 
     if ((!$hasParent && !GetCustomIsReachable($interface)) || GetGenerateIsReachable($interface) || $codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
 
-        push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)\n");
+        push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
         # All ActiveDOMObjects implement hasPendingActivity(), but not all of them
         # increment their C++ reference counts when hasPendingActivity() becomes
@@ -2956,70 +2956,70 @@ sub GenerateImplementation
         # check just above the (GetGenerateIsReachable($interface) eq "Impl") check below.
         my $emittedJSCast = 0;
         if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
-            push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
+            push(@implContent, "    auto& js${interfaceName} = jsCast<JS${interfaceName}&>(cell);\n");
             $emittedJSCast = 1;
-            push(@implContent, "    if (js${interfaceName}->impl().hasPendingActivity())\n");
+            push(@implContent, "    if (js${interfaceName}.impl().hasPendingActivity())\n");
             push(@implContent, "        return true;\n");
         }
         if ($codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
             if (!$emittedJSCast) {
-                push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
+                push(@implContent, "    auto& js${interfaceName} = jsCast<JS${interfaceName}&>(cell);\n");
                 $emittedJSCast = 1;
             }
-            push(@implContent, "    if (js${interfaceName}->impl().isFiringEventListeners())\n");
+            push(@implContent, "    if (js${interfaceName}.impl().isFiringEventListeners())\n");
             push(@implContent, "        return true;\n");
         }
         if ($codeGenerator->InheritsInterface($interface, "Node")) {
             if (!$emittedJSCast) {
-                push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
+                push(@implContent, "    auto& js${interfaceName} = jsCast<JS${interfaceName}&>(cell);\n");
                 $emittedJSCast = 1;
             }
-            push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(handle, 0, visitor))\n");
+            push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(cell, 0, visitor))\n");
             push(@implContent, "        return true;\n");
         }
         if (GetGenerateIsReachable($interface)) {
             if (!$emittedJSCast) {
-                push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
+                push(@implContent, "    auto& js${interfaceName} = jsCast<JS${interfaceName}&>(cell);\n");
                 $emittedJSCast = 1;
             }
 
             my $rootString;
             if (GetGenerateIsReachable($interface) eq "Impl") {
-                $rootString  = "    ${implType}* root = &js${interfaceName}->impl();\n";
+                $rootString  = "    ${implType}* root = &js${interfaceName}.impl();\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplWebGLRenderingContext") {
-                $rootString  = "    WebGLRenderingContextBase* root = WTF::getPtr(js${interfaceName}->impl().context());\n";
+                $rootString  = "    WebGLRenderingContextBase* root = WTF::getPtr(js${interfaceName}.impl().context());\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplFrame") {
-                $rootString  = "    Frame* root = WTF::getPtr(js${interfaceName}->impl().frame());\n";
+                $rootString  = "    Frame* root = WTF::getPtr(js${interfaceName}.impl().frame());\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplDocument") {
-                $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}->impl().document());\n";
+                $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}.impl().document());\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplElementRoot") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    Element* element = WTF::getPtr(js${interfaceName}->impl().element());\n";
+                $rootString  = "    Element* element = WTF::getPtr(js${interfaceName}.impl().element());\n";
                 $rootString .= "    if (!element)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    void* root = WebCore::root(element);\n";
             } elsif ($interfaceName eq "CanvasRenderingContext") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl().canvas());\n";
+                $rootString  = "    void* root = WebCore::root(js${interfaceName}.impl().canvas());\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplOwnerNodeRoot") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl().ownerNode());\n";
+                $rootString  = "    void* root = WebCore::root(js${interfaceName}.impl().ownerNode());\n";
             } else {
-                $rootString  = "    void* root = WebCore::root(&js${interfaceName}->impl());\n";
+                $rootString  = "    void* root = WebCore::root(&js${interfaceName}.impl());\n";
             }
 
             push(@implContent, $rootString);
             push(@implContent, "    return visitor.containsOpaqueRoot(root);\n");
         } else {
             if (!$emittedJSCast) {
-                push(@implContent, "    UNUSED_PARAM(handle);\n");
+                push(@implContent, "    UNUSED_PARAM(cell);\n");
             }
             push(@implContent, "    UNUSED_PARAM(visitor);\n");
             push(@implContent, "    return false;\n");
@@ -3032,11 +3032,11 @@ sub GenerateImplementation
          GetGenerateIsReachable($interface) ||
          GetCustomIsReachable($interface) ||
          $codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject"))) {
-        push(@implContent, "void JS${interfaceName}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
+        push(@implContent, "void JS${interfaceName}Owner::finalize(JSC::JSCell*& cell, void* context)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
+        push(@implContent, "    auto& wrapper = jsCast<JS${interfaceName}&>(*cell);\n");
         push(@implContent, "    auto& world = *static_cast<DOMWrapperWorld*>(context);\n");
-        push(@implContent, "    uncacheWrapper(world, &js${interfaceName}->impl(), js${interfaceName});\n");
+        push(@implContent, "    uncacheWrapper(world, &wrapper.impl(), &wrapper);\n");
         push(@implContent, "}\n\n");
     }
 

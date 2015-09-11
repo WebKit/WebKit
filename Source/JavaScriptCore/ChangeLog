@@ -1,3 +1,70 @@
+2015-09-11  Andreas Kling  <akling@apple.com>
+
+        [JSC] Weak should only accept cell pointees.
+        <https://webkit.org/b/148955>
+
+        Reviewed by Geoffrey Garen.
+
+        Since WeakImpls only support pointing to JSCell derived objects,
+        enforce that at compile time by having the API use JSCell* instead of JSValue.
+
+        WeakHandleOwner callbacks now get JSCell& and JSCell*& respectively instead
+        of wrapping the cell pointer in a Handle<Unknown>.
+
+        Also added a static_assert so Weak<T> can't be instantiated with a T that's
+        not convertible to JSCell.
+
+        * API/JSAPIWrapperObject.mm:
+        (JSAPIWrapperObjectHandleOwner::finalize):
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        (JSC::JSAPIWrapperObject::finishCreation):
+        * API/JSManagedValue.mm:
+        (JSManagedValueHandleOwner::isReachableFromOpaqueRoots):
+        (JSManagedValueHandleOwner::finalize):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::finalize):
+        * builtins/BuiltinExecutables.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::addFinalizer):
+        (JSC::Heap::FinalizerOwner::finalize):
+        * heap/Heap.h:
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visit):
+        (JSC::WeakBlock::reap):
+        * heap/WeakHandleOwner.cpp:
+        (JSC::WeakHandleOwner::isReachableFromOpaqueRoots):
+        (JSC::WeakHandleOwner::finalize):
+        * heap/WeakHandleOwner.h:
+        * heap/WeakImpl.h:
+        (JSC::WeakImpl::WeakImpl):
+        (JSC::WeakImpl::state):
+        (JSC::WeakImpl::cell):
+        (JSC::WeakImpl::asWeakImpl):
+        (JSC::WeakImpl::jsValue): Deleted.
+        * heap/WeakInlines.h:
+        (JSC::Weak<T>::Weak):
+        (JSC::>):
+        (JSC::Weak<T>::operator):
+        (JSC::Weak<T>::get):
+        (JSC::Weak<T>::was):
+        * heap/WeakSet.h:
+        * heap/WeakSetInlines.h:
+        (JSC::WeakSet::allocate):
+        (JSC::WeakBlock::finalize):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::finalize):
+        * jit/JITThunks.h:
+        * jsc.cpp:
+        (WTF::ElementHandleOwner::isReachableFromOpaqueRoots): Deleted.
+        * runtime/JSCell.h:
+        (JSC::jsCast):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::finalize):
+        * runtime/RegExpCache.h:
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::singleTransition):
+        (JSC::StructureTransitionTable::setSingleTransition):
+
 2015-09-10  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement switch statements in WebAssembly
