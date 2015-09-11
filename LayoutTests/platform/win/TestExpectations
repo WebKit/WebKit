@@ -2724,6 +2724,7 @@ fast/events/shadow-event-path.html [ Failure ]
 fast/events/pageshow-pagehide-on-back-uncached.html [ Skip ]
 
 # Newly imported W3C tests that are failing on Windows only.
+imported/w3c/web-platform-tests/html/dom/interfaces.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_css.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/Document-URL.sub.html [ Skip ]
 

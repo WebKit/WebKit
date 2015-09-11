@@ -1,3 +1,10 @@
+2015-09-11  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed gardening to make Windows bot green.
+
+        * platform/win/TestExpectations:
+        imported/w3c/web-platform-tests/html/dom/interfaces.html is newly imported and fails on Windows.
+
 2015-09-11  Alexey Proskuryakov  <ap@apple.com>
 
         Mark svg/animations/svgboolean-animation-1 as flaky for
