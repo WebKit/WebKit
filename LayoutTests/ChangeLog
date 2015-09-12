@@ -1,3 +1,17 @@
+2015-09-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Roll out r189649, and just have custom results for Mavericks instead.
+
+        * platform/mac-mavericks/platform/mac/accessibilityselection-sync-expected.txt: Copied from LayoutTests/platform/mac/accessibility/selection-sync-expected.txt.
+        * platform/mac/accessibility/removing-textarea-after-edit-crash-expected.txt:
+        * platform/mac/accessibility/removing-textarea-after-edit-crash.html:
+        * platform/mac/accessibility/select-element-selection-with-optgroups.html:
+        * platform/mac/accessibility/selected-rows-table.html:
+        * platform/mac/accessibility/selection-notification-focus-change.html:
+        * platform/mac/accessibility/selection-sync-expected.txt:
+        * platform/mac/accessibility/selection-sync.html:
+        * platform/mac/accessibility/setting-attributes-is-asynchronous.html:
+
 2015-09-11  Alexey Proskuryakov  <ap@apple.com>
 
         Merge r189221.

@@ -38,12 +38,12 @@
         document.getElementById("notifications").innerHTML += "Notification: " + notification + "<br>";
         if (notification == "AXSelectedRowsChanged") {
             axTree.removeNotificationListener();
-            finishJSTest();
+            window.testRunner.notifyDone();
         }
     }
 
     if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+        window.testRunner.waitUntilDone();
 
         document.getElementById("grid").focus();
 
@@ -60,8 +60,7 @@
 
         // Change the selected state to ensure the notification is sent.
         document.getElementById("row0").setAttribute("aria-selected", "false");
-    } else
-        debug("window.accessibilityController is not present");
+    }
 
 </script>
 
