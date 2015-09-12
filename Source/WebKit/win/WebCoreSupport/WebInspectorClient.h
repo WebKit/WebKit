@@ -53,10 +53,10 @@ public:
     explicit WebInspectorClient(WebView*);
 
     // InspectorClient
-    virtual void inspectorDestroyed();
+    virtual void inspectedPageDestroyed();
 
-    virtual Inspector::FrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
-    virtual void closeInspectorFrontend();
+    virtual Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*);
+    virtual void closeLocalFrontend();
     virtual void bringFrontendToFront();
 
     virtual void highlight();

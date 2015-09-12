@@ -593,10 +593,10 @@ public:
     EmptyInspectorClient() { }
     virtual ~EmptyInspectorClient() { }
 
-    virtual void inspectorDestroyed() override { }
+    virtual void inspectedPageDestroyed() override { }
     
-    virtual Inspector::FrontendChannel* openInspectorFrontend(InspectorController*) override { return 0; }
-    virtual void closeInspectorFrontend() override { }
+    virtual Inspector::FrontendChannel* openLocalFrontend(InspectorController*) override { return 0; }
+    virtual void closeLocalFrontend() override { }
     virtual void bringFrontendToFront() override { }
 
     virtual void highlight() override { }

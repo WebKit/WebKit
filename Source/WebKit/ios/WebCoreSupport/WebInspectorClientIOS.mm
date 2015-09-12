@@ -42,19 +42,18 @@
 
 using namespace WebCore;
 
-WebInspectorClient::WebInspectorClient(WebView *webView)
-    : m_webView(webView)
-    , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:webView]))
-    , m_frontendPage(0)
+WebInspectorClient::WebInspectorClient(WebView* inpectedWebView)
+    : m_inspectedWebView(inpectedWebView)
+    , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:inpectedWebView]))
 {
 }
 
-void WebInspectorClient::inspectorDestroyed()
+void WebInspectorClient::inspectedPageDestroyed()
 {
     delete this;
 }
 
-Inspector::FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController*)
+Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController*)
 {
     // iOS does not have a local inspector, this should not be reached.
     ASSERT_NOT_REACHED();
@@ -66,7 +65,7 @@ void WebInspectorClient::bringFrontendToFront()
     // iOS does not have a local inspector, nothing to do here.
 }
 
-void WebInspectorClient::closeInspectorFrontend()
+void WebInspectorClient::closeLocalFrontend()
 {
     // iOS does not have a local inspector, nothing to do here.
 }
@@ -88,12 +87,12 @@ void WebInspectorClient::hideHighlight()
 
 void WebInspectorClient::showInspectorIndication()
 {
-    [m_webView setShowingInspectorIndication:YES];
+    [m_inspectedWebView setShowingInspectorIndication:YES];
 }
 
 void WebInspectorClient::hideInspectorIndication()
 {
-    [m_webView setShowingInspectorIndication:NO];
+    [m_inspectedWebView setShowingInspectorIndication:NO];
 }
 
 void WebInspectorClient::setShowPaintRects(bool)
@@ -108,7 +107,7 @@ void WebInspectorClient::showPaintRect(const FloatRect&)
 
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
-    WebInspector *inspector = [m_webView inspector];
+    WebInspector *inspector = [m_inspectedWebView inspector];
     NSString *notificationName = enabled ? WebInspectorDidStartSearchingForNode : WebInspectorDidStopSearchingForNode;
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:inspector];
@@ -118,8 +117,8 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
 #pragma mark -
 #pragma mark WebInspectorFrontendClient Implementation
 
-WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* windowController, InspectorController* inspectorController, Page* frontendPage, std::unique_ptr<Settings> settings)
-    : InspectorFrontendClientLocal(inspectorController,  frontendPage, WTF::move(settings))
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* frontendWindowController, InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
+    : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTF::move(settings))
 {
     // iOS does not have a local inspector, this should not be reached.
     notImplemented();

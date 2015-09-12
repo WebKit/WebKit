@@ -36,11 +36,11 @@ extern NSString *WebInspectorDidStopSearchingForNode;
 
 @interface WebInspector : NSObject
 {
-    WebView *_webView;
+    WebView *_inspectedWebView;
     WebInspectorFrontend *_frontend;
 }
-- (id)initWithWebView:(WebView *)webView;
-- (void)webViewClosed;
+- (id)initWithInspectedWebView:(WebView *)inspectedWebView;
+- (void)inspectedWebViewClosed;
 - (void)show:(id)sender;
 - (void)showConsole:(id)sender;
 - (void)close:(id)sender;

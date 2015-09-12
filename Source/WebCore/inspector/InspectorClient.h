@@ -46,10 +46,10 @@ class InspectorClient {
 public:
     virtual ~InspectorClient() { }
 
-    virtual void inspectorDestroyed() = 0;
+    virtual void inspectedPageDestroyed() = 0;
 
-    virtual Inspector::FrontendChannel* openInspectorFrontend(InspectorController*) = 0;
-    virtual void closeInspectorFrontend() = 0;
+    virtual Inspector::FrontendChannel* openLocalFrontend(InspectorController*) = 0;
+    virtual void closeLocalFrontend() = 0;
     virtual void bringFrontendToFront() = 0;
     virtual void didResizeMainFrame(Frame*) { }
 

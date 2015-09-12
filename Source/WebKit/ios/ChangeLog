@@ -1,3 +1,23 @@
+2015-09-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: disambiguate inspected/frontend controllers and pages in backend code
+        https://bugs.webkit.org/show_bug.cgi?id=149071
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::inspectedPageDestroyed): Renamed.
+        (WebInspectorClient::openLocalFrontend): Renamed.
+        (WebInspectorClient::closeLocalFrontend): Renamed.
+        (WebInspectorClient::inspectorDestroyed): Deleted.
+        (WebInspectorClient::openInspectorFrontend): Deleted.
+        (WebInspectorClient::closeInspectorFrontend): Deleted.
+        (WebInspectorClient::showInspectorIndication):
+        (WebInspectorClient::hideInspectorIndication):
+        (WebInspectorClient::didSetSearchingForNode):
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+
 2015-08-17  Filip Pizlo  <fpizlo@apple.com>
 
         Replace all remaining uses of WTF::Mutex with WTF::Lock

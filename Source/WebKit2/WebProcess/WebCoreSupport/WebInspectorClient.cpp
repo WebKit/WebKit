@@ -76,20 +76,20 @@ WebInspectorClient::~WebInspectorClient()
         m_page->mainFrame()->pageOverlayController().uninstallPageOverlay(m_paintRectOverlay.get(), PageOverlay::FadeMode::Fade);
 }
 
-void WebInspectorClient::inspectorDestroyed()
+void WebInspectorClient::inspectedPageDestroyed()
 {
-    closeInspectorFrontend();
+    closeLocalFrontend();
     delete this;
 }
 
-Inspector::FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* controller)
+Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* controller)
 {
     m_page->inspector()->openFrontendConnection(controller->isUnderTest());
 
     return m_page->inspector();
 }
 
-void WebInspectorClient::closeInspectorFrontend()
+void WebInspectorClient::closeLocalFrontend()
 {
     if (m_page->inspector()) {
         m_page->corePage()->inspectorController().disconnectFrontend(m_page->inspector());

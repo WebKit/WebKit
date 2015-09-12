@@ -1756,7 +1756,7 @@ static bool fastDocumentTeardownEnabled()
     [self setScriptDebugDelegate:nil];
     [self setUIDelegate:nil];
 
-    [_private->inspector webViewClosed];
+    [_private->inspector inspectedWebViewClosed];
 #endif
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_private->immediateActionController webViewClosed];
@@ -1890,7 +1890,7 @@ static bool fastDocumentTeardownEnabled()
 - (WebInspector *)inspector
 {
     if (!_private->inspector)
-        _private->inspector = [[WebInspector alloc] initWithWebView:self];
+        _private->inspector = [[WebInspector alloc] initWithInspectedWebView:self];
     return _private->inspector;
 }
 

@@ -762,9 +762,9 @@ HRESULT WebView::close()
     setUIDelegate(0);
     setFormDelegate(0);
 
-    m_inspectorClient = 0;
+    m_inspectorClient = nullptr;
     if (m_webInspector)
-        m_webInspector->webViewClosed();
+        m_webInspector->inspectedWebViewClosed();
 
     delete m_page;
     m_page = 0;

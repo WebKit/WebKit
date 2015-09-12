@@ -39,9 +39,9 @@ class WebView;
 class WebInspector : public IWebInspector, public IWebInspectorPrivate {
     WTF_MAKE_NONCOPYABLE(WebInspector);
 public:
-    static WebInspector* createInstance(WebView*, WebInspectorClient*);
+    static WebInspector* createInstance(WebView* inspectedWebView, WebInspectorClient*);
 
-    void webViewClosed();
+    void inspectedWebViewClosed();
 
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -69,14 +69,14 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setTimelineProfilingEnabled(BOOL);
 
 private:
-    WebInspector(WebView*, WebInspectorClient*);
+    WebInspector(WebView* inspectedWebView, WebInspectorClient*);
     ~WebInspector();
 
     WebInspectorFrontendClient* frontendClient();
 
     ULONG m_refCount { 0 };
-    WebView* m_webView;
-    WebInspectorClient* m_inspectorClient;
+    WebView* m_inspectedWebView { nullptr };
+    WebInspectorClient* m_inspectorClient { nullptr };
 };
 
 #endif // !defined(WebInspector_h)

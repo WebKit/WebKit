@@ -128,7 +128,7 @@ void InspectorFrontendClientLocal::Settings::setProperty(const String&, const St
 }
 
 InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
-    : m_inspectorController(inspectedPageController)
+    : m_inspectedPageController(inspectedPageController)
     , m_frontendPage(frontendPage)
     , m_settings(WTF::move(settings))
     , m_dockSide(DockSide::Undocked)
@@ -142,7 +142,7 @@ InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
     m_frontendPage = nullptr;
-    m_inspectorController = nullptr;
+    m_inspectedPageController = nullptr;
     m_dispatchTask->reset();
 }
 
@@ -184,7 +184,7 @@ void InspectorFrontendClientLocal::requestSetDockSide(DockSide dockSide)
 bool InspectorFrontendClientLocal::canAttachWindow()
 {
     // Don't allow attaching to another inspector -- two inspectors in one window is too much!
-    bool isInspectorPage = m_inspectorController->hasInspectorFrontendClient();
+    bool isInspectorPage = m_inspectedPageController->hasInspectorFrontendClient();
     if (isInspectorPage)
         return false;
 
@@ -193,8 +193,8 @@ bool InspectorFrontendClientLocal::canAttachWindow()
         return true;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
-    unsigned inspectedPageHeight = m_inspectorController->inspectedPage().mainFrame().view()->visibleHeight();
-    unsigned inspectedPageWidth = m_inspectorController->inspectedPage().mainFrame().view()->visibleWidth();
+    unsigned inspectedPageHeight = m_inspectedPageController->inspectedPage().mainFrame().view()->visibleHeight();
+    unsigned inspectedPageWidth = m_inspectedPageController->inspectedPage().mainFrame().view()->visibleWidth();
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
     return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
 }
@@ -206,7 +206,7 @@ void InspectorFrontendClientLocal::setDockingUnavailable(bool unavailable)
 
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 {
-    unsigned totalHeight = m_frontendPage->mainFrame().view()->visibleHeight() + m_inspectorController->inspectedPage().mainFrame().view()->visibleHeight();
+    unsigned totalHeight = m_frontendPage->mainFrame().view()->visibleHeight() + m_inspectedPageController->inspectedPage().mainFrame().view()->visibleHeight();
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
@@ -214,7 +214,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 
 void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
 {
-    unsigned totalWidth = m_frontendPage->mainFrame().view()->visibleWidth() + m_inspectorController->inspectedPage().mainFrame().view()->visibleWidth();
+    unsigned totalWidth = m_frontendPage->mainFrame().view()->visibleWidth() + m_inspectedPageController->inspectedPage().mainFrame().view()->visibleWidth();
     unsigned attachedWidth = constrainedAttachedWindowWidth(width, totalWidth);
     setAttachedWindowWidth(attachedWidth);
 }
@@ -222,7 +222,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
 void InspectorFrontendClientLocal::openInNewTab(const String& url)
 {
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-    Frame& mainFrame = m_inspectorController->inspectedPage().mainFrame();
+    Frame& mainFrame = m_inspectedPageController->inspectedPage().mainFrame();
     FrameLoadRequest request(mainFrame.document()->securityOrigin(), ResourceRequest(), "_blank", LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 
     bool created;
@@ -269,7 +269,7 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 {
-    unsigned inspectedPageHeight = m_inspectorController->inspectedPage().mainFrame().view()->visibleHeight();
+    unsigned inspectedPageHeight = m_inspectedPageController->inspectedPage().mainFrame().view()->visibleHeight();
     String value = m_settings->getProperty(inspectorAttachedHeightSetting);
     unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : value.toUInt();
     
@@ -332,7 +332,7 @@ void InspectorFrontendClientLocal::showResources()
 
 void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
 {
-    String frameId = m_inspectorController->pageAgent()->frameId(frame);
+    String frameId = m_inspectedPageController->pageAgent()->frameId(frame);
     evaluateOnLoad(String::format("[\"showMainResourceForFrame\", \"%s\"]", frameId.ascii().data()));
 }
 
@@ -353,7 +353,7 @@ void InspectorFrontendClientLocal::sendMessageToBackend(const String& message)
 
 bool InspectorFrontendClientLocal::isUnderTest()
 {
-    return m_inspectorController->isUnderTest();
+    return m_inspectedPageController->isUnderTest();
 }
 
 bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)

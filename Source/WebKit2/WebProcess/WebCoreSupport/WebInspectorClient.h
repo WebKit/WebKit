@@ -50,10 +50,10 @@ public:
 
 private:
     // WebCore::InspectorClient
-    void inspectorDestroyed() override;
+    void inspectedPageDestroyed() override;
 
-    Inspector::FrontendChannel* openInspectorFrontend(WebCore::InspectorController*) override;
-    void closeInspectorFrontend() override;
+    Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*) override;
+    void closeLocalFrontend() override;
     void bringFrontendToFront() override;
     void didResizeMainFrame(WebCore::Frame*) override;
 

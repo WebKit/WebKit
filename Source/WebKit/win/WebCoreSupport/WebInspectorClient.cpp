@@ -72,13 +72,13 @@ WebInspectorClient::~WebInspectorClient()
 {
 }
 
-void WebInspectorClient::inspectorDestroyed()
+void WebInspectorClient::inspectedPageDestroyed()
 {
-    closeInspectorFrontend();
+    closeLocalFrontend();
     delete this;
 }
 
-Inspector::FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
+Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* inspectorController)
 {
     registerWindowClass();
 
@@ -171,7 +171,7 @@ Inspector::FrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorC
     return this;
 }
 
-void WebInspectorClient::closeInspectorFrontend()
+void WebInspectorClient::closeLocalFrontend()
 {
     if (m_frontendClient)
         m_frontendClient->destroyInspectorView();

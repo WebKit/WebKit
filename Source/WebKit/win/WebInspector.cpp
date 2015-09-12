@@ -37,18 +37,18 @@
 
 using namespace WebCore;
 
-WebInspector* WebInspector::createInstance(WebView* webView, WebInspectorClient* inspectorClient)
+WebInspector* WebInspector::createInstance(WebView* inspectedWebView, WebInspectorClient* inspectorClient)
 {
-    WebInspector* inspector = new WebInspector(webView, inspectorClient);
+    WebInspector* inspector = new WebInspector(inspectedWebView, inspectorClient);
     inspector->AddRef();
     return inspector;
 }
 
-WebInspector::WebInspector(WebView* webView, WebInspectorClient* inspectorClient)
-    : m_webView(webView)
+WebInspector::WebInspector(WebView* inspectedWebView, WebInspectorClient* inspectorClient)
+    : m_inspectedWebView(inspectedWebView)
     , m_inspectorClient(inspectorClient)
 {
-    ASSERT_ARG(webView, webView);
+    ASSERT_ARG(inspectedWebView, inspectedWebView);
 
     gClassCount++;
     gClassNameCount().add("WebInspector");
@@ -65,9 +65,9 @@ WebInspectorFrontendClient* WebInspector::frontendClient()
     return m_inspectorClient ? m_inspectorClient->frontendClient() : nullptr;
 }
 
-void WebInspector::webViewClosed()
+void WebInspector::inspectedWebViewClosed()
 {
-    m_webView = nullptr;
+    m_inspectedWebView = nullptr;
     m_inspectorClient = nullptr;
 }
 
@@ -105,8 +105,8 @@ ULONG WebInspector::Release()
 
 HRESULT WebInspector::show()
 {
-    if (m_webView)
-        if (Page* page = m_webView->page())
+    if (m_inspectedWebView)
+        if (Page* page = m_inspectedWebView->page())
             page->inspectorController().show();
 
     return S_OK;
@@ -127,8 +127,8 @@ HRESULT WebInspector::unused1()
 
 HRESULT WebInspector::close()
 {
-    if (m_webView)
-        if (Page* page = m_webView->page())
+    if (m_inspectedWebView)
+        if (Page* page = m_inspectedWebView->page())
             page->inspectorController().close();
 
     return S_OK;
@@ -210,42 +210,42 @@ HRESULT WebInspector::isJavaScriptProfilingEnabled(_Out_ BOOL* isProfilingEnable
 
     *isProfilingEnabled = FALSE;
 
-    if (!m_webView)
+    if (!m_inspectedWebView)
         return S_OK;
 
-    Page* page = m_webView->page();
-    if (!page)
+    Page* inspectedPage = m_inspectedWebView->page();
+    if (!inspectedPage)
         return S_OK;
 
-    *isProfilingEnabled = page->inspectorController().profilerEnabled();
+    *isProfilingEnabled = inspectedPage->inspectorController().profilerEnabled();
     return S_OK;
 }
 
 HRESULT WebInspector::setJavaScriptProfilingEnabled(BOOL enabled)
 {
-    if (!m_webView)
+    if (!m_inspectedWebView)
         return S_OK;
 
-    Page* page = m_webView->page();
-    if (!page)
+    Page* inspectedPage = m_inspectedWebView->page();
+    if (!inspectedPage)
         return S_OK;
 
-    page->inspectorController().setProfilerEnabled(enabled);
+    inspectedPage->inspectorController().setProfilerEnabled(enabled);
 
     return S_OK;
 }
 
 HRESULT WebInspector::evaluateInFrontend(_In_ BSTR bScript)
 {
-    if (!m_webView)
+    if (!m_inspectedWebView)
         return S_OK;
 
-    Page* page = m_webView->page();
-    if (!page)
+    Page* inspectedPage = m_inspectedWebView->page();
+    if (!inspectedPage)
         return S_OK;
 
     String script(bScript, SysStringLen(bScript));
-    page->inspectorController().evaluateForTestInFrontend(script);
+    inspectedPage->inspectorController().evaluateForTestInFrontend(script);
     return S_OK;
 }
 

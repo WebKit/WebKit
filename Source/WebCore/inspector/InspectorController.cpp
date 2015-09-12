@@ -199,7 +199,7 @@ void InspectorController::inspectedPageDestroyed()
     disconnectAllFrontends();
 
     m_injectedScriptManager->disconnect();
-    m_inspectorClient->inspectorDestroyed();
+    m_inspectorClient->inspectedPageDestroyed();
     m_inspectorClient = nullptr;
 }
 
@@ -319,14 +319,14 @@ void InspectorController::show()
 
     if (m_frontendRouter->hasLocalFrontend())
         m_inspectorClient->bringFrontendToFront();
-    else if (Inspector::FrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this))
+    else if (Inspector::FrontendChannel* frontendChannel = m_inspectorClient->openLocalFrontend(this))
         connectFrontend(frontendChannel);
 }
 
 void InspectorController::close()
 {
     if (m_frontendRouter->hasLocalFrontend())
-        m_inspectorClient->closeInspectorFrontend();
+        m_inspectorClient->closeLocalFrontend();
 
     ASSERT(!m_frontendRouter->hasLocalFrontend());
 }

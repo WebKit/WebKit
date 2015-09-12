@@ -43,11 +43,11 @@ NSString *WebInspectorDidStartSearchingForNode = @"WebInspectorDidStartSearching
 NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingForNode";
 
 @implementation WebInspector
-- (id)initWithWebView:(WebView *)webView
+- (id)initWithInspectedWebView:(WebView *)inspectedWebView
 {
     if (!(self = [super init]))
         return nil;
-    _webView = webView; // not retained to prevent a cycle
+    _inspectedWebView = inspectedWebView; // not retained to prevent a cycle
 
     return self;
 }
@@ -58,15 +58,15 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
     [super dealloc];
 }
 
-- (void)webViewClosed
+- (void)inspectedWebViewClosed
 {
-    _webView = nil;
+    _inspectedWebView = nil;
 }
 
 - (void)showWindow
 {
-    if (Page* page = core(_webView))
-        page->inspectorController().show();
+    if (Page* inspectedPage = core(_inspectedWebView))
+        inspectedPage->inspectorController().show();
 }
 
 - (void)show:(id)sender
@@ -157,8 +157,8 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)close:(id)sender 
 {
-    if (Page* page = core(_webView))
-        page->inspectorController().close();
+    if (Page* inspectedPage = core(_inspectedWebView))
+        inspectedPage->inspectorController().close();
 }
 
 - (void)attach:(id)sender
@@ -173,8 +173,8 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)evaluateInFrontend:(id)sender script:(NSString *)script
 {
-    if (Page* page = core(_webView))
-        page->inspectorController().evaluateForTestInFrontend(script);
+    if (Page* inspectedPage = core(_inspectedWebView))
+        inspectedPage->inspectorController().evaluateForTestInFrontend(script);
 }
 
 - (void)setFrontend:(WebInspectorFrontend *)frontend
@@ -185,6 +185,6 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 - (void)releaseFrontend
 {
     [_frontend release];
-    _frontend = 0;
+    _frontend = nil;
 }
 @end

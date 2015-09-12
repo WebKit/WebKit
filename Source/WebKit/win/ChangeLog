@@ -1,3 +1,36 @@
+2015-09-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: disambiguate inspected/frontend controllers and pages in backend code
+        https://bugs.webkit.org/show_bug.cgi?id=149071
+
+        Reviewed by Joseph Pecoraro.
+
+        Be consistent about prefixing pages, inspector controllers, and window controllers
+        with either "frontend" or "inspected", as appropriate. This change makes obvious some bugs
+        in the frontend connection code, which are tracked by https://webkit.org/b/149006.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::inspectedPageDestroyed): Renamed.
+        (WebInspectorClient::openLocalFrontend): Renamed.
+        (WebInspectorClient::closeLocalFrontend): Renamed.
+        (WebInspectorClient::inspectorDestroyed): Deleted.
+        (WebInspectorClient::openInspectorFrontend): Deleted.
+        (WebInspectorClient::closeInspectorFrontend): Deleted.
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebInspector.cpp:
+        (WebInspector::createInstance):
+        (WebInspector::WebInspector):
+        (WebInspector::inspectedWebViewClosed): Renamed.
+        (WebInspector::show):
+        (WebInspector::close):
+        (WebInspector::isJavaScriptProfilingEnabled):
+        (WebInspector::setJavaScriptProfilingEnabled):
+        (WebInspector::evaluateInFrontend):
+        (WebInspector::webViewClosed): Deleted.
+        * WebInspector.h:
+        * WebView.cpp:
+        (WebView::close):
+
 2015-09-08  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Implement DOMNode::attributes.

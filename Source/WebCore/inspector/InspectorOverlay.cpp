@@ -947,7 +947,7 @@ void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<InspectorV
 
 void InspectorOverlay::freePage()
 {
-    m_overlayPage.reset();
+    m_overlayPage = nullptr;
 }
 
 } // namespace WebCore
