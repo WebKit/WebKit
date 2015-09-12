@@ -26,8 +26,8 @@
 #ifndef WebInspectorUI_h
 #define WebInspectorUI_h
 
-#include "APIObject.h"
 #include "Connection.h"
+#include "WebInspectorFrontendAPIDispatcher.h"
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
 
@@ -104,28 +104,18 @@ public:
 private:
     explicit WebInspectorUI(WebPage&);
 
-    void evaluateCommandOnLoad(const String& command, const String& argument = String());
-    void evaluateCommandOnLoad(const String& command, const ASCIILiteral& argument) { evaluateCommandOnLoad(command, String(argument)); }
-    void evaluateCommandOnLoad(const String& command, bool argument);
-    void evaluateExpressionOnLoad(const String& expression);
-    void evaluatePendingExpressions();
-
     WebPage& m_page;
-
-    RefPtr<IPC::Connection> m_backendConnection;
-    uint64_t m_inspectedPageIdentifier;
-
-    bool m_underTest;
-    bool m_frontendLoaded;
-    Deque<String> m_queue;
-
+    WebInspectorFrontendAPIDispatcher m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
+    RefPtr<IPC::Connection> m_backendConnection;
 
-    DockSide m_dockSide;
+    uint64_t m_inspectedPageIdentifier { 0 };
+    bool m_underTest { false };
+    DockSide m_dockSide { DockSide::Undocked };
 
 #if PLATFORM(COCOA)
     mutable String m_localizedStringsURL;
-    mutable bool m_hasLocalizedStringsURL;
+    mutable bool m_hasLocalizedStringsURL { false };
 #endif
 };
 

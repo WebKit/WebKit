@@ -1218,6 +1218,8 @@
 		A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* DownloadClient.h */; };
 		A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */; };
 		A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */; };
+		A55BA8351BA3E70A007CD33D /* WebInspectorFrontendAPIDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */; };
+		A55BA8361BA3E70D007CD33D /* WebInspectorFrontendAPIDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */; };
 		A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */; };
 		A58B6F0918FCA733008CBA53 /* WKFileUploadPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3417,6 +3419,8 @@
 		A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebProcessShim.xcconfig; sourceTree = "<group>"; };
 		A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKInspectorNodeSearchGestureRecognizer.h; path = ios/WKInspectorNodeSearchGestureRecognizer.h; sourceTree = "<group>"; };
 		A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKInspectorNodeSearchGestureRecognizer.mm; path = ios/WKInspectorNodeSearchGestureRecognizer.mm; sourceTree = "<group>"; };
+		A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorFrontendAPIDispatcher.cpp; sourceTree = "<group>"; };
+		A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontendAPIDispatcher.h; sourceTree = "<group>"; };
 		A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFileUploadPanel.h; path = ios/forms/WKFileUploadPanel.h; sourceTree = "<group>"; };
 		A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFileUploadPanel.mm; path = ios/forms/WKFileUploadPanel.mm; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
@@ -6033,6 +6037,8 @@
 				1C8E281F1275D15400BC7BD0 /* WebInspector.cpp */,
 				1C8E281E1275D15400BC7BD0 /* WebInspector.h */,
 				1C8E2A1C1277833F00BC7BD0 /* WebInspector.messages.in */,
+				A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */,
+				A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */,
 				1C891D6219B124FF00BA79DD /* WebInspectorUI.cpp */,
 				1C891D6319B124FF00BA79DD /* WebInspectorUI.h */,
 				1C891D6419B124FF00BA79DD /* WebInspectorUI.messages.in */,
@@ -7933,6 +7939,7 @@
 				1A3DD202125E5A1F004515E6 /* WebFindClient.h in Headers */,
 				1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */,
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
+				A55BA8351BA3E70A007CD33D /* WebInspectorFrontendAPIDispatcher.h in Headers */,
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
 				BC032D8D10F437A00058C15A /* WebFrame.h in Headers */,
 				BCE469771214F27B000B98EB /* WebFrameListenerProxy.h in Headers */,
@@ -9546,6 +9553,7 @@
 				5179556D162877B100FA43B6 /* NetworkProcessProxy.cpp in Sources */,
 				516319921628980A00E22F00 /* NetworkProcessProxyMac.mm in Sources */,
 				513A163C163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp in Sources */,
+				A55BA8361BA3E70D007CD33D /* WebInspectorFrontendAPIDispatcher.cpp in Sources */,
 				51FD18B51651FBAD00DBE1CE /* NetworkResourceLoader.cpp in Sources */,
 				51E3B67F16F266B3009968DC /* NetworkResourceLoaderMac.mm in Sources */,
 				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,

@@ -620,6 +620,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebDocumentLoader.cpp
     WebProcess/WebPage/WebFrame.cpp
     WebProcess/WebPage/WebInspector.cpp
+    WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp
     WebProcess/WebPage/WebInspectorUI.cpp
     WebProcess/WebPage/WebOpenPanelResultListener.cpp
     WebProcess/WebPage/WebPage.cpp

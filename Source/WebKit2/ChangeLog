@@ -1,5 +1,42 @@
 2015-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Extract InspectorFrontendAPI dispatching from WebInspectorUI
+        https://bugs.webkit.org/show_bug.cgi?id=149089
+
+        Reviewed by Brian Burg.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp: Added.
+        (WebKit::WebInspectorFrontendAPIDispatcher::WebInspectorFrontendAPIDispatcher):
+        (WebKit::WebInspectorFrontendAPIDispatcher::reset):
+        (WebKit::WebInspectorFrontendAPIDispatcher::frontendLoaded):
+        (WebKit::WebInspectorFrontendAPIDispatcher::dispatchCommand):
+        (WebKit::WebInspectorFrontendAPIDispatcher::dispatchMessageAsync):
+        (WebKit::WebInspectorFrontendAPIDispatcher::evaluateExpressionOnLoad):
+        * WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.h: Added.
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::WebInspectorUI):
+        (WebKit::WebInspectorUI::establishConnection):
+        (WebKit::WebInspectorUI::frontendLoaded):
+        (WebKit::WebInspectorUI::setDockSide):
+        (WebKit::WebInspectorUI::setDockingUnavailable):
+        (WebKit::WebInspectorUI::showConsole):
+        (WebKit::WebInspectorUI::showResources):
+        (WebKit::WebInspectorUI::showMainResourceForFrame):
+        (WebKit::WebInspectorUI::startPageProfiling):
+        (WebKit::WebInspectorUI::stopPageProfiling):
+        (WebKit::WebInspectorUI::didSave):
+        (WebKit::WebInspectorUI::didAppend):
+        (WebKit::WebInspectorUI::sendMessageToFrontend):
+        (WebKit::WebInspectorUI::evaluateCommandOnLoad): Deleted.
+        (WebKit::WebInspectorUI::evaluateExpressionOnLoad): Deleted.
+        (WebKit::WebInspectorUI::evaluatePendingExpressions): Deleted.
+        * WebProcess/WebPage/WebInspectorUI.h:
+        (WebKit::WebInspectorUI::evaluateCommandOnLoad): Deleted.
+
+2015-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Move Already Generic Inspector Page Context Menu to Generic Setup
         https://bugs.webkit.org/show_bug.cgi?id=149088
 
