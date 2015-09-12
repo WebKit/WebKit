@@ -18,6 +18,7 @@ aria-atomic
 aria-busy
 aria-checked
 aria-controls
+aria-current
 aria-describedby
 aria-disabled
 aria-dropeffect

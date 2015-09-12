@@ -67,6 +67,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
             this._accessibilityNodeCheckedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Checked"));
             this._accessibilityNodeChildrenRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Children"));
             this._accessibilityNodeControlsRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Controls"));
+            this._accessibilityNodeCurrentRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Current"));
             this._accessibilityNodeDisabledRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Disabled"));
             this._accessibilityNodeExpandedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Expanded"));
             this._accessibilityNodeFlowsRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Flows"));
@@ -346,6 +347,31 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                 var childNodeLinkList = linkListForNodeIds(accessibilityProperties.childNodeIds);
                 
                 var controlledNodeLinkList = linkListForNodeIds(accessibilityProperties.controlledNodeIds);
+                
+                var current = "";
+                switch (accessibilityProperties.current) {
+                case DOMAgent.AccessibilityPropertiesCurrent.True:
+                    current = WebInspector.UIString("True");
+                    break;
+                case DOMAgent.AccessibilityPropertiesCurrent.Page:
+                    current = WebInspector.UIString("Page");
+                    break;
+                case DOMAgent.AccessibilityPropertiesCurrent.Location:
+                    current = WebInspector.UIString("Location");
+                    break;
+                case DOMAgent.AccessibilityPropertiesCurrent.Step:
+                    current = WebInspector.UIString("Step");
+                    break;
+                case DOMAgent.AccessibilityPropertiesCurrent.Date:
+                    current = WebInspector.UIString("Date");
+                    break;
+                case DOMAgent.AccessibilityPropertiesCurrent.Time:
+                    current = WebInspector.UIString("Time");
+                    break;
+                default:
+                    current = "";
+                }
+                
                 var disabled = booleanValueToLocalizedStringIfTrue("disabled");
                 var expanded = booleanValueToLocalizedStringIfPropertyDefined("expanded");
                 var flowedNodeLinkList = linkListForNodeIds(accessibilityProperties.flowedNodeIds);
@@ -462,6 +488,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                 this._accessibilityNodeCheckedRow.value = checked;
                 this._accessibilityNodeChildrenRow.value = childNodeLinkList || "";
                 this._accessibilityNodeControlsRow.value = controlledNodeLinkList || "";
+                this._accessibilityNodeCurrentRow.value = current;
                 this._accessibilityNodeDisabledRow.value = disabled;
                 this._accessibilityNodeExpandedRow.value = expanded;
                 this._accessibilityNodeFlowsRow.value = flowedNodeLinkList || "";
@@ -505,6 +532,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                     this._accessibilityNodeFocusedRow,
                     this._accessibilityNodeBusyRow,
                     this._accessibilityNodeLiveRegionStatusRow,
+                    this._accessibilityNodeCurrentRow,
 
                     // Properties exposed for all input-type elements.
                     this._accessibilityNodeDisabledRow,

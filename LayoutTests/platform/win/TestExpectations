@@ -618,6 +618,9 @@ animations/trigger-parsing.html [ Skip ]
 animations/trigger-container-scroll-simple.html [ Skip ]
 animations/trigger-container-scroll-boundaries.html [ Skip ]
 
+# TODO aria-current is not supported
+webkit.org/b/149018 accessibility/aria-current.html [ Skip ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################

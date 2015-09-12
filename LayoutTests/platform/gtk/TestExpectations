@@ -613,6 +613,8 @@ webkit.org/b/146731 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
 webkit.org/b/146731 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
 webkit.org/b/146731 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 
+webkit.org/b/149016 accessibility/aria-current.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -426,6 +426,7 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
                     checked: accessibilityProperties.checked,
                     childNodeIds: accessibilityProperties.childNodeIds,
                     controlledNodeIds: accessibilityProperties.controlledNodeIds,
+                    current: accessibilityProperties.current,
                     disabled: accessibilityProperties.disabled,
                     exists: accessibilityProperties.exists,
                     expanded: accessibilityProperties.expanded,

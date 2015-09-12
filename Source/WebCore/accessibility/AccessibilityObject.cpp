@@ -1820,6 +1820,30 @@ String AccessibilityObject::invalidStatus() const
     return trueValue;
 }
  
+AccessibilityARIACurrentState AccessibilityObject::ariaCurrentState() const
+{
+    // aria-current can return false (default), true, page, step, location, date or time.
+    String currentStateValue = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_currentAttr));
+    
+    // If "false", empty, or missing, return false state.
+    if (currentStateValue.isEmpty() || currentStateValue == "false")
+        return ARIACurrentFalse;
+    
+    if (currentStateValue == "page")
+        return ARIACurrentPage;
+    if (currentStateValue == "step")
+        return ARIACurrentStep;
+    if (currentStateValue == "location")
+        return ARIACurrentLocation;
+    if (currentStateValue == "date")
+        return ARIACurrentDate;
+    if (currentStateValue == "time")
+        return ARIACurrentTime;
+    
+    // Any value not included in the list of allowed values should be treated as "true".
+    return ARIACurrentTrue;
+}
+
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
 {
     Node* node = this->node();

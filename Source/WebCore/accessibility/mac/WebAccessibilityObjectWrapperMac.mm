@@ -248,6 +248,10 @@ using namespace HTMLNames;
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
+#ifndef NSAccessibilityARIACurrentAttribute
+#define NSAccessibilityARIACurrentAttribute @"AXARIACurrent"
+#endif
+
 // Search
 #ifndef NSAccessibilityImmediateDescendantsOnly
 #define NSAccessibilityImmediateDescendantsOnly @"AXImmediateDescendantsOnly"
@@ -1696,6 +1700,10 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
     if ([additionalAttributes count])
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:additionalAttributes];
     
+    // Only expose AXARIACurrent attribute when the element is set to be current item.
+    if (m_object->ariaCurrentState() != ARIACurrentFalse)
+        [objectAttributes arrayByAddingObjectsFromArray:@[ NSAccessibilityARIACurrentAttribute ]];
+    
     return objectAttributes;
 }
 
@@ -2869,6 +2877,26 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute])
         return [NSNumber numberWithBool:m_object->isSelected()];
+    
+    if ([attributeName isEqualToString: NSAccessibilityARIACurrentAttribute]) {
+        switch (m_object->ariaCurrentState()) {
+        case ARIACurrentFalse:
+            return @"false";
+        case ARIACurrentPage:
+            return @"page";
+        case ARIACurrentStep:
+            return @"step";
+        case ARIACurrentLocation:
+            return @"location";
+        case ARIACurrentTime:
+            return @"time";
+        case ARIACurrentDate:
+            return @"date";
+        default:
+        case ARIACurrentTrue:
+            return @"true";
+        }
+    }
     
     if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && m_object->isMenuButton()) {
         AccessibilityObject* uiElement = downcast<AccessibilityRenderObject>(*m_object).menuForMenuButton();

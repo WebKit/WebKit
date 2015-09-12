@@ -1,3 +1,17 @@
+2015-09-11  Nan Wang  <n_wang@apple.com>
+
+        AX: ARIA 1.1 @aria-current
+        https://bugs.webkit.org/show_bug.cgi?id=146012
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-current-expected.txt: Added.
+        * accessibility/aria-current.html: Added.
+        * inspector/dom/getAccessibilityPropertiesForNode_ariaCurrent-expected.txt: Added.
+        * inspector/dom/getAccessibilityPropertiesForNode_ariaCurrent.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-09-11  Alexey Proskuryakov  <ap@apple.com>
 
         Mark http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html as flaky for

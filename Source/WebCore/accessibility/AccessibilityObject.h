@@ -436,6 +436,8 @@ struct AccessibilitySelectTextCriteria {
 enum AccessibilityMathScriptObjectType { Subscript, Superscript };
 enum AccessibilityMathMultiscriptObjectType { PreSubscript, PreSuperscript, PostSubscript, PostSuperscript };
 
+enum AccessibilityARIACurrentState { ARIACurrentFalse, ARIACurrentTrue, ARIACurrentPage, ARIACurrentStep, ARIACurrentLocation, ARIACurrentDate, ARIACurrentTime };
+
 class AccessibilityObject : public RefCounted<AccessibilityObject> {
 protected:
     AccessibilityObject();
@@ -623,6 +625,7 @@ public:
     String identifierAttribute() const;
     void classList(Vector<String>&) const;
     const AtomicString& roleDescription() const;
+    AccessibilityARIACurrentState ariaCurrentState() const;
     
     bool supportsARIASetSize() const;
     bool supportsARIAPosInSet() const;

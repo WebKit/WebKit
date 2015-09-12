@@ -1523,6 +1523,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
     auto checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::False;
     RefPtr<Inspector::Protocol::Array<int>> childNodeIds;
     RefPtr<Inspector::Protocol::Array<int>> controlledNodeIds;
+    auto currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
     bool exists = false;
     bool expanded = false;
     bool disabled = false;
@@ -1586,6 +1587,31 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                     for (Element* controlledElement : controlledElements)
                         controlledNodeIds->addItem(pushNodePathToFrontend(controlledElement));
                 }
+            }
+            
+            switch (axObject->ariaCurrentState()) {
+            case ARIACurrentFalse:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
+                break;
+            case ARIACurrentPage:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Page;
+                break;
+            case ARIACurrentStep:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Step;
+                break;
+            case ARIACurrentLocation:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Location;
+                break;
+            case ARIACurrentDate:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Date;
+                break;
+            case ARIACurrentTime:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Time;
+                break;
+            default:
+            case ARIACurrentTrue:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::True;
+                break;
             }
 
             disabled = !axObject->isEnabled(); 
@@ -1724,6 +1750,8 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             value->setChildNodeIds(childNodeIds);
         if (controlledNodeIds)
             value->setControlledNodeIds(controlledNodeIds);
+        if (currentState != Inspector::Protocol::DOM::AccessibilityProperties::Current::False)
+            value->setCurrent(currentState);
         if (disabled)
             value->setDisabled(disabled);
         if (supportsExpanded)
