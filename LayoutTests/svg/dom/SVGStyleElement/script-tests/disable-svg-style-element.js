@@ -31,11 +31,11 @@ document.body.appendChild(svg);
 
 // Simple case
 shouldBeFalse('styleElement.disabled');
-shouldBe('window.getComputedStyle(rect).fill', '"#0000ff"');
+shouldBe('window.getComputedStyle(rect).fill', '"rgb(0, 0, 255)"');
 
 styleElement.disabled = true
 shouldBeTrue('styleElement.disabled');
-shouldBe('window.getComputedStyle(rect).fill', '"#ff0000"');
+shouldBe('window.getComputedStyle(rect).fill', '"rgb(255, 0, 0)"');
 
 // Test disconnected element
 var newStyleElement = document.createElementNS(xmlns, 'style');

@@ -79,10 +79,10 @@ String SVGColor::customCSSText() const
     case SVG_COLORTYPE_RGBCOLOR_ICCCOLOR:
     case SVG_COLORTYPE_RGBCOLOR:
         // FIXME: No ICC color support.
-        return m_color.serialized();
+        return m_color.cssText();
     case SVG_COLORTYPE_CURRENTCOLOR:
         if (m_color.isValid())
-            return m_color.serialized();
+            return m_color.cssText();
         return "currentColor";
     }
 

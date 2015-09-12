@@ -11,7 +11,7 @@ PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
 PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS stopElement.style.stopColor is "#ff0000"
+PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Try invalid arguments for setColor()
@@ -25,7 +25,7 @@ PASS stopColor.setColor(stopColor) threw exception TypeError: Not enough argumen
 Try assigning to the readonly colorType property, which silently fails
 PASS stopColor.colorType = SVGColor.SVG_COLORTYPE_UNKKNOWN; is undefined.
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
-PASS stopElement.style.stopColor is "#ff0000"
+PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_UNKNOWN
@@ -42,7 +42,7 @@ PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
 PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS stopElement.style.stopColor is "#ff0000"
+PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_CURRENTCOLOR
@@ -53,7 +53,7 @@ PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
 PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS stopElement.style.stopColor is "#ff0000"
+PASS stopElement.style.stopColor is "rgb(255, 0, 0)"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_RGBCOLOR

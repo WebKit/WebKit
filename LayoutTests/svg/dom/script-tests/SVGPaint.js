@@ -23,8 +23,8 @@ function resetStyle() {
     rectElement.setAttribute("style", "color: lime; fill: green");
     shouldBeEqualToString("(fillPaint = rectElement.style.getPropertyCSSValue('fill')).toString()", "[object SVGPaint]");
     shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-    shouldBeEqualToString("rectElement.style.fill", "#008000");
-    shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+    shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+    shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 }
 
 function checkFillColor(type, red, green, blue) {
@@ -41,8 +41,8 @@ shouldBeEqualToString("(fillPaint = rectElement.style.getPropertyCSSValue('fill'
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Try invalid arguments for setPaint()");
@@ -63,8 +63,8 @@ debug("");
 debug("Try assigning to the readonly paintType property, which silently fails");
 shouldBeUndefined("fillPaint.paintType = SVGPaint.SVG_PAINTTYPE_UNKKNOWN;");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_UNKNOWN");
@@ -78,60 +78,60 @@ debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_NONE - a");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', '', '')");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 resetStyle();
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_NONE - b");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, 'url(#foo)', '', '')");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 resetStyle();
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_NONE - c");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', 'rgb(0,128,128)', '')");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 resetStyle();
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_NONE - d");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', '', 'icc-color(myRGB, 0, 1, 2)')");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 resetStyle();
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_NONE - e");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)')");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI - a");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', '', '')");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI - b");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', 'rgb(0,128,128)', '')");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI - c");
 shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', '', 'icc-color(myRGB, 0, 1, 2)')");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI - d");
@@ -139,8 +139,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, 'url(#test)', '', ''
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 resetStyle();
 
 debug("");
@@ -149,8 +149,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, 'url(#foo)', 'rgb(0,
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI_NONE");
@@ -158,8 +158,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_NONE, 'url(#test)', '
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI_CURRENTCOLOR");
@@ -167,8 +167,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_CURRENTCOLOR, 'url(#f
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI_RGBCOLOR");
@@ -176,8 +176,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR, 'url(#test)
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR");
@@ -185,8 +185,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR, 'u
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR");
@@ -194,8 +194,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR, 'url(#
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_CURRENTCOLOR");
@@ -203,8 +203,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR, 'url(#foo)'
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setPaint() and SVG_PAINTTYPE_RGBCOLOR");
@@ -212,8 +212,8 @@ shouldThrow("fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, 'url(#test)', '
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 debug("");
 debug("Test using setUri()");
@@ -221,7 +221,7 @@ shouldBeUndefined("fillPaint.setUri('url(#foobar)');");
 shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_RGBCOLOR");
 shouldBeEqualToString("fillPaint.uri", "");
 checkFillColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 128, 0);
-shouldBeEqualToString("rectElement.style.fill", "#008000");
-shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "#008000");
+shouldBeEqualToString("rectElement.style.fill", "rgb(0, 128, 0)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rectElement).fill", "rgb(0, 128, 0)");
 
 successfullyParsed = true;

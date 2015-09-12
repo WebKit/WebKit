@@ -22,7 +22,7 @@ debug("");
 debug("Check initial color values");
 shouldBeEqualToString("(stopColor = stopElement.style.getPropertyCSSValue('stop-color')).toString()", "[object SVGColor]");
 checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 255, 0, 0);
-shouldBeEqualToString("stopElement.style.stopColor", "#ff0000");
+shouldBeEqualToString("stopElement.style.stopColor", "rgb(255, 0, 0)");
 shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(255, 0, 0)");
 
 debug("");
@@ -38,7 +38,7 @@ debug("");
 debug("Try assigning to the readonly colorType property, which silently fails");
 shouldBeUndefined("stopColor.colorType = SVGColor.SVG_COLORTYPE_UNKKNOWN;");
 shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_RGBCOLOR");
-shouldBeEqualToString("stopElement.style.stopColor", "#ff0000");
+shouldBeEqualToString("stopElement.style.stopColor", "rgb(255, 0, 0)");
 shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(255, 0, 0)");
 
 debug("");
@@ -54,7 +54,7 @@ shouldThrow("stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR, 'rgb(7
 shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_RGBCOLOR");
 // FIXME: No support for ICC colors.
 checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 255, 0, 0);
-shouldBeEqualToString("stopElement.style.stopColor", "#ff0000");
+shouldBeEqualToString("stopElement.style.stopColor", "rgb(255, 0, 0)");
 shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(255, 0, 0)");
 
 debug("");
@@ -62,7 +62,7 @@ debug("Test using setColor() and SVG_COLORTYPE_CURRENTCOLOR");
 shouldThrow("stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)')");
 shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_RGBCOLOR");
 checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 255, 0, 0);
-shouldBeEqualToString("stopElement.style.stopColor", "#ff0000");
+shouldBeEqualToString("stopElement.style.stopColor", "rgb(255, 0, 0)");
 shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(255, 0, 0)");
 
 debug("");

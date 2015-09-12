@@ -93,8 +93,10 @@ public:
     }
 
     // Returns the color serialized according to HTML5
-    // - http://www.whatwg.org/specs/web-apps/current-work/#serialization-of-a-color
+    // <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015)
     WEBCORE_EXPORT String serialized() const;
+
+    String cssText() const;
 
     // Returns the color serialized as either #RRGGBB or #RRGGBBAA
     // The latter format is not a valid CSS color, and should only be seen in DRT dumps.

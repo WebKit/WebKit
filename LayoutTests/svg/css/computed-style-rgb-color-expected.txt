@@ -1,0 +1,11 @@
+PASS getComputedStyle(document.querySelector('div.fully-opaque')).backgroundColor is "rgb(0, 128, 0)"
+PASS getComputedStyle(document.querySelector('div.fully-transparent')).backgroundColor is "rgba(0, 0, 0, 0)"
+PASS getComputedStyle(document.querySelector('div.half-transparent')).backgroundColor is "rgba(0, 128, 0, 0.4)"
+PASS getComputedStyle(document.querySelector('svg>rect#fully-opaque')).fill is "rgb(0, 128, 0)"
+PASS getComputedStyle(document.querySelector('svg>rect#fully-transparent')).fill is "none"
+PASS getComputedStyle(document.querySelector('svg>rect#half-transparent')).fill is "rgba(0, 128, 0, 0.4)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+    
+

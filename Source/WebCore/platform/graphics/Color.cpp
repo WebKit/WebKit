@@ -211,29 +211,37 @@ String Color::serialized() const
         return builder.toString();
     }
 
-    Vector<LChar> result;
-    result.reserveInitialCapacity(28);
-    const char commaSpace[] = ", ";
-    const char rgbaParen[] = "rgba(";
+    return cssText();
+}
 
-    result.append(rgbaParen, 5);
-    appendNumber(result, red());
-    result.append(commaSpace, 2);
-    appendNumber(result, green());
-    result.append(commaSpace, 2);
-    appendNumber(result, blue());
-    result.append(commaSpace, 2);
+String Color::cssText() const
+{
+    StringBuilder builder;
+    builder.reserveCapacity(28);
+    bool colorHasAlpha = hasAlpha();
+    if (colorHasAlpha)
+        builder.appendLiteral("rgba(");
+    else
+        builder.appendLiteral("rgb(");
 
-    if (!alpha())
-        result.append('0');
-    else {
-        NumberToLStringBuffer buffer;
-        unsigned length = DecimalNumber(alpha() / 255.0).toStringDecimal(buffer, WTF::NumberToStringBufferLength);
-        result.append(buffer, length);
+    builder.appendNumber(static_cast<unsigned char>(red()));
+    builder.appendLiteral(", ");
+
+    builder.appendNumber(static_cast<unsigned char>(green()));
+    builder.appendLiteral(", ");
+
+
+    builder.appendNumber(static_cast<unsigned char>(blue()));
+    if (colorHasAlpha) {
+        builder.appendLiteral(", ");
+
+        NumberToStringBuffer buffer;
+        bool shouldTruncateTrailingZeros = true;
+        builder.append(numberToFixedPrecisionString(alpha() / 255.0f, 6, buffer, shouldTruncateTrailingZeros));
     }
-
-    result.append(')');
-    return String::adopt(result);
+        
+    builder.append(')');
+    return builder.toString();
 }
 
 String Color::nameForRenderTreeAsText() const

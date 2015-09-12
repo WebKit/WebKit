@@ -237,7 +237,7 @@ stop-opacity: 1;
 color-interpolation: srgb;
 color-interpolation-filters: linearrgb;
 color-rendering: auto;
-fill: #000000;
+fill: rgb(0, 0, 0);
 fill-opacity: 1;
 fill-rule: nonzero;
 marker-end: none;
