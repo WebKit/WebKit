@@ -1,5 +1,13 @@
 2015-09-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Re-add Mavericks result with the correct path.
+
+        * platform/mac-mavericks/platform/mac/accessibility: Added.
+        * platform/mac-mavericks/platform/mac/accessibility/selection-sync-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/accessibilityselection-sync-expected.txt: Removed.
+
+2015-09-12  Alexey Proskuryakov  <ap@apple.com>
+
         Roll out r189649, and just have custom results for Mavericks instead.
 
         * platform/mac-mavericks/platform/mac/accessibilityselection-sync-expected.txt: Copied from LayoutTests/platform/mac/accessibility/selection-sync-expected.txt.
