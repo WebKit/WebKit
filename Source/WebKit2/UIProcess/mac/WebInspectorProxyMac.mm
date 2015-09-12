@@ -29,8 +29,6 @@
 #if PLATFORM(MAC) && WK_API_ENABLED
 
 #import "WKAPICast.h"
-#import "WKArray.h"
-#import "WKContextMenuItem.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKMutableArray.h"
 #import "WKOpenPanelParameters.h"
@@ -233,30 +231,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         [openPanel beginSheetModalForWindow:webInspectorProxy->inspectorWindow() completionHandler:completionHandler];
     else
         completionHandler([openPanel runModal]);
-}
-
-static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef proposedMenuRef, WKArrayRef* newMenuRef, WKHitTestResultRef, WKTypeRef, const void*)
-{
-    WKMutableArrayRef menuItems = WKMutableArrayCreate();
-
-    size_t count = WKArrayGetSize(proposedMenuRef);
-    for (size_t i = 0; i < count; ++i) {
-        WKContextMenuItemRef contextMenuItem = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(proposedMenuRef, i));
-        switch (WKContextMenuItemGetTag(contextMenuItem)) {
-        case kWKContextMenuItemTagOpenLinkInNewWindow:
-        case kWKContextMenuItemTagOpenImageInNewWindow:
-        case kWKContextMenuItemTagOpenFrameInNewWindow:
-        case kWKContextMenuItemTagOpenMediaInNewWindow:
-        case kWKContextMenuItemTagDownloadLinkToDisk:
-        case kWKContextMenuItemTagDownloadImageToDisk:
-            break;
-        default:
-            WKArrayAppendItem(menuItems, contextMenuItem);
-            break;
-        }
-    }
-
-    *newMenuRef = menuItems;
 }
 
 void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
@@ -484,18 +458,6 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     };
 
     WKPageSetPageUIClient(toAPI(inspectorPage), &uiClient.base);
-
-    WKPageContextMenuClientV3 contextMenuClient = {
-        { 3, this },
-        0, // getContextMenuFromProposedMenu_deprecatedForUseWithV0
-        0, // customContextMenuItemSelected
-        0, // contextMenuDismissed
-        getContextMenuFromProposedMenu,
-        0, // showContextMenu
-        0, // hideContextMenu
-    };
-
-    WKPageSetPageContextMenuClient(toAPI(inspectorPage), &contextMenuClient.base);
 
     return inspectorPage;
 }

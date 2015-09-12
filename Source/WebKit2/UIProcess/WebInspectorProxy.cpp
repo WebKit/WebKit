@@ -29,6 +29,9 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "APIURLRequest.h"
+#include "WKArray.h"
+#include "WKContextMenuItem.h"
+#include "WKMutableArray.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorMessages.h"
@@ -382,6 +385,30 @@ static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFr
     webInspectorProxy->inspectedPage()->loadRequest(toImpl(requestRef)->resourceRequest());
 }
 
+static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef proposedMenuRef, WKArrayRef* newMenuRef, WKHitTestResultRef, WKTypeRef, const void*)
+{
+    WKMutableArrayRef menuItems = WKMutableArrayCreate();
+
+    size_t count = WKArrayGetSize(proposedMenuRef);
+    for (size_t i = 0; i < count; ++i) {
+        WKContextMenuItemRef contextMenuItem = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(proposedMenuRef, i));
+        switch (WKContextMenuItemGetTag(contextMenuItem)) {
+        case kWKContextMenuItemTagOpenLinkInNewWindow:
+        case kWKContextMenuItemTagOpenImageInNewWindow:
+        case kWKContextMenuItemTagOpenFrameInNewWindow:
+        case kWKContextMenuItemTagOpenMediaInNewWindow:
+        case kWKContextMenuItemTagDownloadLinkToDisk:
+        case kWKContextMenuItemTagDownloadImageToDisk:
+            break;
+        default:
+            WKArrayAppendItem(menuItems, contextMenuItem);
+            break;
+        }
+    }
+
+    *newMenuRef = menuItems;
+}
+
 #if ENABLE(INSPECTOR_SERVER)
 void WebInspectorProxy::enableRemoteInspection()
 {
@@ -470,8 +497,19 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
         nullptr, // shouldKeepCurrentBackForwardListItemInList
     };
 
+    WKPageContextMenuClientV3 contextMenuClient = {
+        { 3, this },
+        0, // getContextMenuFromProposedMenu_deprecatedForUseWithV0
+        0, // customContextMenuItemSelected
+        0, // contextMenuDismissed
+        getContextMenuFromProposedMenu,
+        0, // showContextMenu
+        0, // hideContextMenu
+    };
+
     WKPageSetPagePolicyClient(toAPI(m_inspectorPage), &policyClient.base);
     WKPageSetPageLoaderClient(toAPI(m_inspectorPage), &loaderClient.base);
+    WKPageSetPageContextMenuClient(toAPI(m_inspectorPage), &contextMenuClient.base);
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
