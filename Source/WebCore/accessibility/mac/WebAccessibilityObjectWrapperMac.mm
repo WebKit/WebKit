@@ -3607,7 +3607,7 @@ static RenderObject* rendererForView(NSView* view)
     if (!document)
         return nil;
     
-    PassRefPtr<Range> textRange = TextIterator::rangeFromLocationAndLength(document->documentElement(), textIndex, 0);
+    RefPtr<Range> textRange = TextIterator::rangeFromLocationAndLength(document->documentElement(), textIndex, 0);
     if (!textRange || !textRange->boundaryPointsValid())
         return nil;
     

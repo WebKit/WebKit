@@ -82,7 +82,6 @@
 #include "RenderView.h"
 #include "ScrollView.h"
 #include <wtf/DataLog.h>
-#include <wtf/PassRefPtr.h>
 
 #if ENABLE(VIDEO)
 #include "MediaControlElements.h"

@@ -660,8 +660,8 @@ public:
     virtual bool isDescendantOfBarrenParent() const { return false; }
     
     // Text selection
-    PassRefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String>&) const;
-    PassRefPtr<Range> selectionRange() const;
+    RefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String>&) const;
+    RefPtr<Range> selectionRange() const;
     String selectText(AccessibilitySelectTextCriteria*);
     
     virtual AccessibilityObject* observableObject() const { return nullptr; }

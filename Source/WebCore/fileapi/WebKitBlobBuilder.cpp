@@ -39,7 +39,6 @@
 #include "TextEncoding.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -77,7 +76,7 @@ void BlobBuilder::append(ArrayBuffer* arrayBuffer)
     m_appendableData.append(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
 }
 
-void BlobBuilder::append(PassRefPtr<ArrayBufferView> arrayBufferView)
+void BlobBuilder::append(RefPtr<ArrayBufferView>&& arrayBufferView)
 {
     if (!arrayBufferView)
         return;
