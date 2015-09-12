@@ -1,3 +1,26 @@
+2015-09-11  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement the relational instructions for floats in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149080
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements the relational instructions for floats (float32)
+        in WebAssembly by converting float operands to doubles and then
+        comparing them using the existing double comparison instructions in the
+        macro assembler.
+
+        * tests/stress/wasm-relational.js:
+        * tests/stress/wasm/relational.wasm:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildRelationalF32):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseRelationalF32ExpressionI32):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildRelationalF32):
+
 2015-09-11  Nan Wang  <n_wang@apple.com>
 
         AX: ARIA 1.1 @aria-current

@@ -71,6 +71,42 @@ function asmModule(global, env, buffer) {
         return ((x >>> 0) >= (y >>> 0)) | 0;
     }
 
+    function floatEqual(x, y) {
+        x = fround(x);
+        y = fround(y);
+        return (x == y) | 0;
+    }
+
+    function floatNotEqual(x, y) {
+        x = fround(x);
+        y = fround(y);
+        return (x != y) | 0;
+    }
+
+    function floatLessThan(x, y) {
+        x = fround(x);
+        y = fround(y);
+        return (x < y) | 0;
+    }
+
+    function floatLessThanOrEqual(x, y) {
+        x = fround(x);
+        y = fround(y);
+        return (x <= y) | 0;
+    }
+
+    function floatGreaterThan(x, y) {
+        x = fround(x);
+        y = fround(y);
+        return (x > y) | 0;
+    }
+
+    function floatGreaterThanOrEqual(x, y) {
+        x = fround(x);
+        y = fround(y);
+        return (x >= y) | 0;
+    }
+
     function doubleEqual(x, y) {
         x = +x;
         y = +y;
@@ -119,6 +155,13 @@ function asmModule(global, env, buffer) {
         unsignedGreaterThan: unsignedGreaterThan,
         unsignedGreaterThanOrEqual: unsignedGreaterThanOrEqual,
 
+        floatEqual: floatEqual,
+        floatNotEqual: floatNotEqual,
+        floatLessThan: floatLessThan,
+        floatLessThanOrEqual: floatLessThanOrEqual,
+        floatGreaterThan: floatGreaterThan,
+        floatGreaterThanOrEqual: floatGreaterThanOrEqual,
+
         doubleEqual: doubleEqual,
         doubleNotEqual: doubleNotEqual,
         doubleLessThan: doubleLessThan,
@@ -151,6 +194,28 @@ shouldBe(module.unsignedGreaterThan(-1, 2), 1);
 shouldBe(module.unsignedGreaterThan(2, -1), 0);
 shouldBe(module.unsignedGreaterThanOrEqual(-1, 2), 1);
 shouldBe(module.unsignedGreaterThanOrEqual(2, -1), 0);
+
+shouldBe(module.floatEqual(0.1, 0.1), 1);
+shouldBe(module.floatEqual(0.1, 0.2), 0);
+shouldBe(module.floatNotEqual(0.1, 0.2), 1);
+shouldBe(module.floatNotEqual(0.1, 0.1), 0);
+shouldBe(module.floatLessThan(-0.1, 0.2), 1);
+shouldBe(module.floatLessThan(0.1, 0.1), 0);
+shouldBe(module.floatLessThanOrEqual(0.1, 0.1), 1);
+shouldBe(module.floatLessThanOrEqual(0.2, 0.1), 0);
+shouldBe(module.floatGreaterThan(0.2, -0.1), 1);
+shouldBe(module.floatGreaterThan(0.1, 0.1), 0);
+shouldBe(module.floatGreaterThanOrEqual(0.1, 0.1), 1);
+shouldBe(module.floatGreaterThanOrEqual(0.1, 0.2), 0);
+shouldBe(module.floatEqual(NaN, NaN), 0);
+shouldBe(module.floatNotEqual(NaN, NaN), 0);
+shouldBe(module.floatNotEqual(NaN, 0.1), 0);
+shouldBe(module.floatGreaterThan(NaN, 0.1), 0);
+shouldBe(module.floatLessThan(NaN, 0.1), 0);
+shouldBe(module.floatEqual(Infinity, Infinity), 1);
+shouldBe(module.floatGreaterThan(Infinity, 0.1), 1);
+shouldBe(module.floatGreaterThan(Infinity, NaN), 0);
+shouldBe(module.floatLessThan(Infinity, NaN), 0);
 
 shouldBe(module.doubleEqual(0.1, 0.1), 1);
 shouldBe(module.doubleEqual(0.1, 0.2), 0);

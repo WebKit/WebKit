@@ -118,6 +118,12 @@ public:
         return UNUSED;
     }
 
+    int buildRelationalF32(int, int, WASMOpExpressionI32)
+    {
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
     int buildRelationalF64(int, int, WASMOpExpressionI32)
     {
         m_tempStackTop--;

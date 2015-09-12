@@ -561,6 +561,13 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::SGreaterThanOrEqualI32:
         case WASMOpExpressionI32::UGreaterThanOrEqualI32:
             return parseRelationalI32ExpressionI32(context, op);
+        case WASMOpExpressionI32::EqualF32:
+        case WASMOpExpressionI32::NotEqualF32:
+        case WASMOpExpressionI32::LessThanF32:
+        case WASMOpExpressionI32::LessThanOrEqualF32:
+        case WASMOpExpressionI32::GreaterThanF32:
+        case WASMOpExpressionI32::GreaterThanOrEqualF32:
+            return parseRelationalF32ExpressionI32(context, op);
         case WASMOpExpressionI32::EqualF64:
         case WASMOpExpressionI32::NotEqualF64:
         case WASMOpExpressionI32::LessThanF64:
@@ -592,12 +599,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::Comma:
         case WASMOpExpressionI32::FromF32:
         case WASMOpExpressionI32::FromF64:
-        case WASMOpExpressionI32::EqualF32:
-        case WASMOpExpressionI32::NotEqualF32:
-        case WASMOpExpressionI32::LessThanF32:
-        case WASMOpExpressionI32::LessThanOrEqualF32:
-        case WASMOpExpressionI32::GreaterThanF32:
-        case WASMOpExpressionI32::GreaterThanOrEqualF32:
         case WASMOpExpressionI32::SMin:
         case WASMOpExpressionI32::UMin:
         case WASMOpExpressionI32::SMax:
@@ -709,6 +710,16 @@ ContextExpression WASMFunctionParser::parseRelationalI32ExpressionI32(Context& c
     ContextExpression right = parseExpressionI32(context);
     PROPAGATE_ERROR();
     return context.buildRelationalI32(left, right, op);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseRelationalF32ExpressionI32(Context& context, WASMOpExpressionI32 op)
+{
+    ContextExpression left = parseExpressionF32(context);
+    PROPAGATE_ERROR();
+    ContextExpression right = parseExpressionF32(context);
+    PROPAGATE_ERROR();
+    return context.buildRelationalF32(left, right, op);
 }
 
 template <class Context>

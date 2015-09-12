@@ -93,6 +93,7 @@ private:
     template <class Context> ContextExpression parseUnaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseBinaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalI32ExpressionI32(Context&, WASMOpExpressionI32);
+    template <class Context> ContextExpression parseRelationalF32ExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalF64ExpressionI32(Context&, WASMOpExpressionI32);
 
     template <class Context> ContextExpression parseExpressionF32(Context&);

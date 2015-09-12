@@ -513,6 +513,45 @@ public:
         return UNUSED;
     }
 
+    int buildRelationalF32(int, int, WASMOpExpressionI32 op)
+    {
+        loadDouble(temporaryAddress(m_tempStackTop - 2), FPRInfo::fpRegT0);
+        loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT1);
+        convertFloatToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        convertFloatToDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT1);
+        DoubleCondition condition;
+        switch (op) {
+        case WASMOpExpressionI32::EqualF32:
+            condition = DoubleEqual;
+            break;
+        case WASMOpExpressionI32::NotEqualF32:
+            condition = DoubleNotEqual;
+            break;
+        case WASMOpExpressionI32::LessThanF32:
+            condition = DoubleLessThan;
+            break;
+        case WASMOpExpressionI32::LessThanOrEqualF32:
+            condition = DoubleLessThanOrEqual;
+            break;
+        case WASMOpExpressionI32::GreaterThanF32:
+            condition = DoubleGreaterThan;
+            break;
+        case WASMOpExpressionI32::GreaterThanOrEqualF32:
+            condition = DoubleGreaterThanOrEqual;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        m_tempStackTop--;
+        Jump trueCase = branchDouble(condition, FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+        store32(TrustedImm32(0), temporaryAddress(m_tempStackTop - 1));
+        Jump end = jump();
+        trueCase.link(this);
+        store32(TrustedImm32(1), temporaryAddress(m_tempStackTop - 1));
+        end.link(this);
+        return UNUSED;
+    }
+
     int buildRelationalF64(int, int, WASMOpExpressionI32 op)
     {
         loadDouble(temporaryAddress(m_tempStackTop - 2), FPRInfo::fpRegT0);
