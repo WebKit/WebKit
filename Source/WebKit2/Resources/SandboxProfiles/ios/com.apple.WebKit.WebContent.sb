@@ -87,4 +87,4 @@
 (allow file-read* file-write*
     (subpath "/private/var/mobile/Library/Logs/awd"))
 
-(network-client (remote tcp))
+(network-client (remote tcp) (remote udp))

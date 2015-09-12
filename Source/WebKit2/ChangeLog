@@ -1,3 +1,14 @@
+2015-09-12  Alexey Proskuryakov  <ap@apple.com>
+
+        [iOS] Allow UDP networking
+        https://bugs.webkit.org/show_bug.cgi?id=149081
+        rdar://problem/22291743
+
+        Reviewed by Sam Weinig.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2015-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Extract InspectorFrontendAPI dispatching from WebInspectorUI
