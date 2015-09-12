@@ -42,7 +42,7 @@ public:
 
     unsigned length() const;
 
-    PassRefPtr<DOMMimeType> item(unsigned index);
+    RefPtr<DOMMimeType> item(unsigned index);
     RefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
 
 private:

@@ -23,7 +23,6 @@
 #include "FrameDestructionObserver.h"
 #include "PluginData.h"
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -33,16 +32,16 @@ class DOMPlugin;
 
 class DOMMimeType : public RefCounted<DOMMimeType>, public FrameDestructionObserver {
 public:
-    static Ref<DOMMimeType> create(PassRefPtr<PluginData> pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMMimeType(pluginData, frame, index)); }
+    static Ref<DOMMimeType> create(RefPtr<PluginData>&& pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMMimeType(WTF::move(pluginData), frame, index)); }
     ~DOMMimeType();
 
     String type() const;
     String suffixes() const;
     String description() const;
-    PassRefPtr<DOMPlugin> enabledPlugin() const;
+    RefPtr<DOMPlugin> enabledPlugin() const;
 
 private:
-    DOMMimeType(PassRefPtr<PluginData>, Frame*, unsigned index);
+    DOMMimeType(RefPtr<PluginData>&&, Frame*, unsigned index);
     MimeClassInfo m_mimeClassInfo;
     RefPtr<PluginData> m_pluginData;
     PluginInfo m_pluginInfo;

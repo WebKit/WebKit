@@ -56,10 +56,10 @@ unsigned DOMPlugin::length() const
     return m_pluginInfo.mimes.size();
 }
 
-PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
+RefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
 {
     if (index >= m_pluginInfo.mimes.size())
-        return 0;
+        return nullptr;
 
     MimeClassInfo mime = m_pluginInfo.mimes[index];
 
@@ -71,7 +71,7 @@ PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
         if (mimes[i] == mime && plugins[mimePluginIndices[i]] == m_pluginInfo)
             return DOMMimeType::create(m_pluginData.get(), m_frame, i);
     }
-    return 0;
+    return nullptr;
 }
 
 RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)

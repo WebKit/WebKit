@@ -55,18 +55,18 @@ unsigned DOMMimeTypeArray::length() const
     return mimes.size();
 }
 
-PassRefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
+RefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
 {
     PluginData* data = getPluginData();
     if (!data)
-        return 0;
+        return nullptr;
 
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
     data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
 
     if (index >= mimes.size())
-        return 0;
+        return nullptr;
     return DOMMimeType::create(data, m_frame, index);
 }
 

@@ -24,7 +24,6 @@
 #include "DOMMimeType.h"
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ public:
     ~DOMMimeTypeArray();
 
     unsigned length() const;
-    PassRefPtr<DOMMimeType> item(unsigned index);
+    RefPtr<DOMMimeType> item(unsigned index);
     RefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
 
 private:

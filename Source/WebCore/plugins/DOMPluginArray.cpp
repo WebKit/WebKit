@@ -52,15 +52,15 @@ unsigned DOMPluginArray::length() const
     return data->webVisiblePlugins().size();
 }
 
-PassRefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
+RefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
 {
     PluginData* data = pluginData();
     if (!data)
-        return 0;
+        return nullptr;
 
     const Vector<PluginInfo>& plugins = data->webVisiblePlugins();
     if (index >= plugins.size())
-        return 0;
+        return nullptr;
     return DOMPlugin::create(data, m_frame, plugins[index]);
 }
 
