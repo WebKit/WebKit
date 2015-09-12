@@ -63,14 +63,15 @@ static NSURL *colorProfileURLForDisplay(NSString *displayUUIDString)
         return nil;
     }
 
-    CFURLRef profileURL;
+    CFURLRef profileURL = nil;
     CFDictionaryRef profileInfo = (CFDictionaryRef)CFDictionaryGetValue(deviceInfo, kColorSyncCustomProfiles);
     if (profileInfo)
         profileURL = (CFURLRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
     else {
         profileInfo = (CFDictionaryRef)CFDictionaryGetValue(deviceInfo, kColorSyncFactoryProfiles);
         CFDictionaryRef factoryProfile = (CFDictionaryRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
-        profileURL = (CFURLRef)CFDictionaryGetValue(factoryProfile, kColorSyncDeviceProfileURL);
+        if (factoryProfile)
+            profileURL = (CFURLRef)CFDictionaryGetValue(factoryProfile, kColorSyncDeviceProfileURL);
     }
     
     if (!profileURL) {

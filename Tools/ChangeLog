@@ -1,3 +1,15 @@
+2015-09-11  Michael Saboff  <msaboff@apple.com>
+
+        LayoutTestHelper crashes if a color profile isn't set for a 3rd party monitor
+        https://bugs.webkit.org/show_bug.cgi?id=149083
+
+        Reviewed by Alexey Proskuryakov.
+
+        Check to make sure that we have a valid factoryProfile CFDictionaryRef before using it.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (colorProfileURLForDisplay):
+
 2015-09-11  Saam barati  <sbarati@apple.com>
 
         There should be a defaultSpotCheck-like mode that doesn't run the MaximalFlushInsertionPhase in run-jsc-stress-tests
