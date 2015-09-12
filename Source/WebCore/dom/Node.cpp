@@ -560,12 +560,15 @@ void Node::replaceWith(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode&
     auto viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
     auto node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
-    if (ec || !node)
+    if (ec)
         return;
 
-    if (parentNode() == parent)
-        parent->replaceChild(node.releaseNonNull(), *this, ec);
-    else
+    if (parentNode() == parent) {
+        if (node)
+            parent->replaceChild(node.releaseNonNull(), *this, ec);
+        else
+            parent->removeChild(*this);
+    } else if (node)
         parent->insertBefore(node.releaseNonNull(), viableNextSibling.get(), ec);
 }
 

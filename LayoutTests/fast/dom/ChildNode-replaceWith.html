@@ -18,7 +18,7 @@ function test(t, createChild)
     child = createChild();
     parent.appendChild(child);
     child.replaceWith();
-    shouldBe("parent.childNodes.length", "1");
+    shouldBe("parent.childNodes.length", "0");
     debug("");
 
     debug("Test with a single element.");

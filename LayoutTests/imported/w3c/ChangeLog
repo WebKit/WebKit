@@ -1,3 +1,15 @@
+2015-09-12  Chris Dumez  <cdumez@apple.com>
+
+        ChildNode.replaceWith() without argument should replace the node with an empty DocumentFragment
+        https://bugs.webkit.org/show_bug.cgi?id=149073
+        <rdar://problem/22547801>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/ChildNode-replaceWith-expected.txt:
+
 2015-09-11  Chris Dumez  <cdumez@apple.com>
 
         DOMTokenList update steps for classList don't follow the spec
