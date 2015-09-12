@@ -1,5 +1,13 @@
 2015-09-11  Alexey Proskuryakov  <ap@apple.com>
 
+        Update Mavericks test results after r189611.
+
+        This change wasn't needed on trunk because the behavior changed was masked by r189221.
+
+        * platform/mac/accessibility/selection-sync-expected.txt:
+
+2015-09-11  Alexey Proskuryakov  <ap@apple.com>
+
         Test result gardening - correct the paths for the branch.
 
         * platform/mac/TestExpectations:
