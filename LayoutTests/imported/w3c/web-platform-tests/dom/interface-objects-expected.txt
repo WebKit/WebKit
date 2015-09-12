@@ -2,7 +2,7 @@
 PASS Interface objects properties should not be Enumerable 
 PASS Should be able to delete Event. 
 PASS Should be able to delete CustomEvent. 
-FAIL Should be able to delete EventTarget. assert_true: Interface should exist. expected true got false
+PASS Should be able to delete EventTarget. 
 PASS Should be able to delete Node. 
 PASS Should be able to delete Document. 
 PASS Should be able to delete DOMImplementation. 

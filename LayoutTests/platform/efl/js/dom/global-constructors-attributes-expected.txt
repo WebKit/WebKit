@@ -343,6 +343,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'EventSource').hasOwnProperty('get'
 PASS Object.getOwnPropertyDescriptor(global, 'EventSource').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'EventSource').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'EventSource').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'EventTarget').value is EventTarget
+PASS Object.getOwnPropertyDescriptor(global, 'EventTarget').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'EventTarget').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'EventTarget').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'EventTarget').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'File').value is File
 PASS Object.getOwnPropertyDescriptor(global, 'File').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'File').hasOwnProperty('set') is false

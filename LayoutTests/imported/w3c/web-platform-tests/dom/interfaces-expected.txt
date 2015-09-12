@@ -226,13 +226,15 @@ PASS Event interface: new CustomEvent("foo") must inherit property "initEvent" w
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new CustomEvent("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL EventTarget interface: existence and properties of interface object assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface object length assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: existence and properties of interface prototype object assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: operation addEventListener(DOMString,EventListener,boolean) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: operation removeEventListener(DOMString,EventListener,boolean) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: operation dispatchEvent(Event) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+FAIL EventTarget interface: existence and properties of interface object assert_equals: prototype of self's property "EventTarget" is not Function.prototype expected (function) function "function () {
+    [native code]
+}" but got (object) object "[object Object]"
+PASS EventTarget interface object length 
+PASS EventTarget interface: existence and properties of interface prototype object 
+FAIL EventTarget interface: existence and properties of interface prototype object's "constructor" property assert_true: EventTarget.prototype.constructor is not writable expected true got false
+PASS EventTarget interface: operation addEventListener(DOMString,EventListener,boolean) 
+PASS EventTarget interface: operation removeEventListener(DOMString,EventListener,boolean) 
+PASS EventTarget interface: operation dispatchEvent(Event) 
 FAIL NodeList interface: existence and properties of interface object assert_equals: prototype of self's property "NodeList" is not Function.prototype expected (function) function "function () {
     [native code]
 }" but got (object) object "[object Object]"
@@ -312,7 +314,7 @@ FAIL Node interface: existence and properties of interface object assert_equals:
     [native code]
 }" but got (object) object "[object Object]"
 PASS Node interface object length 
-FAIL Node interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL Node interface: existence and properties of interface prototype object assert_equals: prototype of Node.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL Node interface: existence and properties of interface prototype object's "constructor" property assert_true: Node.prototype.constructor is not writable expected true got false
 PASS Node interface: constant ELEMENT_NODE on interface object 
 PASS Node interface: constant ELEMENT_NODE on interface prototype object 

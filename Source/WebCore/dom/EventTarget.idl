@@ -20,7 +20,6 @@
 
 // Introduced in DOM Level 2:
 [
-    NoInterfaceObject,
     ObjCProtocol,
     CPPPureInterface,
     CustomToJSObject,

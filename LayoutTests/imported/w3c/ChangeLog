@@ -1,5 +1,19 @@
 2015-09-12  Chris Dumez  <cdumez@apple.com>
 
+        window.EventTarget should exist
+        https://bugs.webkit.org/show_bug.cgi?id=149085
+        <rdar://problem/22546774>
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/interface-objects-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2015-09-12  Chris Dumez  <cdumez@apple.com>
+
         ChildNode.replaceWith() without argument should replace the node with an empty DocumentFragment
         https://bugs.webkit.org/show_bug.cgi?id=149073
         <rdar://problem/22547801>

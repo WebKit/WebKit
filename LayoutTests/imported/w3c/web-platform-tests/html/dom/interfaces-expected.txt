@@ -3528,7 +3528,7 @@ FAIL MediaController interface: existence and properties of interface object ass
     [native code]
 }" but got (object) object "[object Object]"
 PASS MediaController interface object length 
-FAIL MediaController interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL MediaController interface: existence and properties of interface prototype object assert_equals: prototype of MediaController.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL MediaController interface: existence and properties of interface prototype object's "constructor" property assert_true: MediaController.prototype.constructor is not writable expected true got false
 FAIL MediaController interface: attribute readyState assert_true: The prototype object must have a property "readyState" expected true got false
 FAIL MediaController interface: attribute buffered assert_throws: getting property on prototype object must throw TypeError function "function () {
@@ -3626,7 +3626,7 @@ FAIL TextTrackList interface: existence and properties of interface object asser
     [native code]
 }" but got (object) object "[object Object]"
 PASS TextTrackList interface object length 
-FAIL TextTrackList interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL TextTrackList interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackList.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL TextTrackList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: TextTrackList.prototype does not have own property "constructor" expected property "constructor" missing
 FAIL TextTrackList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TextTrackList interface: operation getTrackById(DOMString) 
@@ -3655,7 +3655,7 @@ FAIL TextTrack interface: existence and properties of interface object assert_eq
     [native code]
 }" but got (object) object "[object Object]"
 PASS TextTrack interface object length 
-FAIL TextTrack interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL TextTrack interface: existence and properties of interface prototype object assert_equals: prototype of TextTrack.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL TextTrack interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrack.prototype.constructor is not writable expected true got false
 FAIL TextTrack interface: attribute kind assert_true: The prototype object must have a property "kind" expected true got false
 FAIL TextTrack interface: attribute label assert_throws: getting property on prototype object must throw TypeError function "function () {
@@ -3724,7 +3724,7 @@ FAIL TextTrackCue interface: existence and properties of interface object assert
     [native code]
 }" but got (object) object "[object Object]"
 FAIL TextTrackCue interface object length assert_equals: wrong value for TextTrackCue.length expected 0 but got 3
-FAIL TextTrackCue interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL TextTrackCue interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackCue.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL TextTrackCue interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrackCue.prototype.constructor is not writable expected true got false
 FAIL TextTrackCue interface: attribute track assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
@@ -5654,7 +5654,7 @@ FAIL Window interface: existence and properties of interface object assert_equal
     [native code]
 }" but got (object) object "[object Object]"
 PASS Window interface object length 
-FAIL Window interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL Window interface: existence and properties of interface prototype object assert_equals: prototype of Window.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL Window interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Window.prototype does not have own property "constructor" expected property "constructor" missing
 FAIL Window interface: attribute self assert_true: The prototype object must have a property "self" expected true got false
 FAIL Window interface: attribute name assert_true: The prototype object must have a property "name" expected true got false
@@ -6256,7 +6256,7 @@ FAIL EventSource interface: existence and properties of interface object assert_
     [native code]
 }" but got (object) object "[object Object]"
 PASS EventSource interface object length 
-FAIL EventSource interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL EventSource interface: existence and properties of interface prototype object assert_equals: prototype of EventSource.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL EventSource interface: existence and properties of interface prototype object's "constructor" property assert_true: EventSource.prototype.constructor is not writable expected true got false
 FAIL EventSource interface: attribute url assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
@@ -6287,7 +6287,7 @@ FAIL WebSocket interface: existence and properties of interface object assert_eq
     [native code]
 }" but got (object) object "[object Object]"
 PASS WebSocket interface object length 
-FAIL WebSocket interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL WebSocket interface: existence and properties of interface prototype object assert_equals: prototype of WebSocket.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL WebSocket interface: existence and properties of interface prototype object's "constructor" property assert_true: WebSocket.prototype.constructor is not writable expected true got false
 FAIL WebSocket interface: attribute url assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
@@ -6363,7 +6363,7 @@ FAIL MessagePort interface: existence and properties of interface object assert_
     [native code]
 }" but got (object) object "[object Object]"
 PASS MessagePort interface object length 
-FAIL MessagePort interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+FAIL MessagePort interface: existence and properties of interface prototype object assert_equals: prototype of MessagePort.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 FAIL MessagePort interface: existence and properties of interface prototype object's "constructor" property assert_true: MessagePort.prototype.constructor is not writable expected true got false
 PASS MessagePort interface: operation postMessage(any,[object Object]) 
 PASS MessagePort interface: operation start() 
@@ -6426,7 +6426,7 @@ FAIL Worker interface: existence and properties of interface object assert_equal
     [native code]
 }" but got (object) object "[object Object]"
 PASS Worker interface object length 
-FAIL Worker interface: existence and properties of interface prototype object assert_own_property: should inherit from EventTarget, but self has no such property expected property "EventTarget" missing
+PASS Worker interface: existence and properties of interface prototype object 
 FAIL Worker interface: existence and properties of interface prototype object's "constructor" property assert_true: Worker.prototype.constructor is not writable expected true got false
 PASS Worker interface: operation terminate() 
 PASS Worker interface: operation postMessage(any,[object Object]) 
