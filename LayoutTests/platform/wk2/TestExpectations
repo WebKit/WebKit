@@ -219,6 +219,8 @@ webkit.org/b/141122 editing/selection/programmatic-selection-on-mac-is-direction
 
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
 
+webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
