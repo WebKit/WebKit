@@ -211,9 +211,14 @@ static InlineCacheAction actionForCell(VM& vm, JSCell* cell)
     return AttemptToCache;
 }
 
+static bool forceICFailure(ExecState*)
+{
+    return Options::forceICFailure();
+}
+
 static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
-    if (Options::forceICFailure())
+    if (forceICFailure(exec))
         return GiveUpOnCache;
     
     // FIXME: Cache property access for immediates.
@@ -236,20 +241,6 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure(vm);
-        
-        // Optimize self access.
-        if (stubInfo.cacheType == CacheType::Unset
-            && slot.isCacheableValue()
-            && slot.slotBase() == baseValue
-            && !slot.watchpointSet()
-            && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))
-            && actionForCell(vm, baseCell) == AttemptToCache
-            && !structure->needImpurePropertyWatchpoint()) {
-            structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
-            repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), operationGetByIdOptimize, true);
-            stubInfo.initGetByIdSelf(vm, codeBlock->ownerExecutable(), structure, slot.cachedOffset());
-            return RetryCacheLater;
-        }
 
         bool loadTargetFromProxy = false;
         if (baseCell->type() == PureForwardingProxyType) {
@@ -262,6 +253,21 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         InlineCacheAction action = actionForCell(vm, baseCell);
         if (action != AttemptToCache)
             return action;
+        
+        // Optimize self access.
+        if (stubInfo.cacheType == CacheType::Unset
+            && slot.isCacheableValue()
+            && slot.slotBase() == baseValue
+            && !slot.watchpointSet()
+            && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))
+            && action == AttemptToCache
+            && !structure->needImpurePropertyWatchpoint()
+            && !loadTargetFromProxy) {
+            structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
+            repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), operationGetByIdOptimize, true);
+            stubInfo.initGetByIdSelf(vm, codeBlock->ownerExecutable(), structure, slot.cachedOffset());
+            return RetryCacheLater;
+        }
 
         PropertyOffset offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
         
@@ -346,7 +352,7 @@ static V_JITOperation_ESsiJJI appropriateOptimizingPutByIdFunction(const PutProp
 
 static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Structure* structure, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
-    if (Options::forceICFailure())
+    if (forceICFailure(exec))
         return GiveUpOnCache;
     
     CodeBlock* codeBlock = exec->codeBlock();
@@ -372,7 +378,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             if (stubInfo.cacheType == CacheType::Unset
                 && MacroAssembler::isPtrAlignedAddressOffset(offsetToPatchedStorage)
                 && !structure->needImpurePropertyWatchpoint()) {
-                
+
                 repatchByIdSelfAccess(
                     codeBlock, stubInfo, structure, slot.cachedOffset(),
                     appropriateOptimizingPutByIdFunction(slot, putKind), false);
@@ -471,7 +477,7 @@ static InlineCacheAction tryRepatchIn(
     ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
     const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
-    if (Options::forceICFailure())
+    if (forceICFailure(exec))
         return GiveUpOnCache;
     
     if (!base->structure()->propertyAccessesAreCacheable())

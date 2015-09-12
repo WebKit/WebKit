@@ -1,3 +1,42 @@
+2015-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r189585): run-perf-tests Speedometer fails with a console error
+        https://bugs.webkit.org/show_bug.cgi?id=149066
+
+        Reviewed by Michael Saboff.
+
+        The bug here was that the new IC code was calling actionForCell() more than once. That's
+        illegal, since when actionForCell() returns RetryCacheLater, it means that it changed some
+        object's Structure. The Repatch code was doing things like "if (actionForCell(blah) ==
+        AttemptToCache)" in more than one place, so that if the first such expression was false, then
+        we'd fall through to the next one. It's possible for the first call to return RetryCacheLater,
+        in which case our view of the world just got clobbered and we need to return, and then the
+        second call will probably return AttemptToCache because it *thinks* that we had bailed the last
+        time and we're now in a future IC invocation.
+
+        The solution is to cache the actionForCell() result. This is a bit tricky, because we need to
+        do this after we check if we're in a proxy.
+
+        Debugging bugs like these requires adding ad hoc bisection code in various places. We already
+        had the basic hooks for this. This patch makes those hooks a bit more useful. In the case of
+        the LLInt->JIT tier-up hooks, it adds a CodeBlock* argument so that we can bisect based on the
+        CodeBlock. In the case of Repatch, it puts the Options::forceICFailure() check in a helper
+        function that also takes ExecState*, which allows us to bisect on either CodeBlock or
+        CodeOrigin.
+
+        * jit/Repatch.cpp:
+        (JSC::actionForCell):
+        (JSC::forceICFailure):
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * tests/stress/retry-cache-later.js:
+
 2015-09-11  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement the relational instructions for floats in WebAssembly

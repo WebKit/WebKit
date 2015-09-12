@@ -286,7 +286,7 @@ LLINT_SLOW_PATH_DECL(special_trace)
 enum EntryKind { Prologue, ArityCheck };
 
 #if ENABLE(JIT)
-inline bool shouldJIT(ExecState* exec)
+inline bool shouldJIT(ExecState* exec, CodeBlock*)
 {
     // You can modify this to turn off JITting without rebuilding the world.
     return exec->vm().canUseJIT();
@@ -299,7 +299,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
     DeferGCForAWhile deferGC(vm.heap); // My callers don't set top callframe, so we don't want to GC here at all.
     
     codeBlock->updateAllValueProfilePredictions();
-    
+
     if (!codeBlock->checkIfJITThresholdReached()) {
         if (Options::verboseOSR())
             dataLogF("    JIT threshold should be lifted.\n");
@@ -347,7 +347,7 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
             codeBlock->llintExecuteCounter(), "\n");
     }
     
-    if (!shouldJIT(exec)) {
+    if (!shouldJIT(exec, codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(0, 0);
     }
@@ -405,7 +405,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
             codeBlock->llintExecuteCounter(), "\n");
     }
     
-    if (!shouldJIT(exec)) {
+    if (!shouldJIT(exec, codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(0, 0);
     }
@@ -443,7 +443,7 @@ LLINT_SLOW_PATH_DECL(replace)
             codeBlock->llintExecuteCounter(), "\n");
     }
     
-    if (shouldJIT(exec))
+    if (shouldJIT(exec, codeBlock))
         jitCompileAndSetHeuristics(codeBlock, exec);
     else
         codeBlock->dontJITAnytimeSoon();
