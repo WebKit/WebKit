@@ -3176,7 +3176,7 @@ fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 fast/text/fallback-language-han.html [ Skip ]
 
 # This test relies on iOS-specific font fallback.
-fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
 
 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]

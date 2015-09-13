@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
+layer at (0,0) size 800x111
+  RenderBlock {HTML} at (0,0) size 800x111
+    RenderBody {BODY} at (8,8) size 784x95
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 720x36
           text run at (0,0) width 720: "This test makes sure punctuation laid out with the system font does not use vertical glyphs. The test passes if the"

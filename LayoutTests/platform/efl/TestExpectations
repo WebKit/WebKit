@@ -2298,7 +2298,7 @@ webkit.org/b/146887 accessibility/table-with-missing-aria-role-rows.html [ Failu
 fast/text/fallback-language-han.html [ Skip ]
 
 # This test relies on iOS-specific font fallback.
-fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
 
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]

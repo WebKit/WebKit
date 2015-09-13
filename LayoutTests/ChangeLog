@@ -1,5 +1,36 @@
 2015-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Add system-language-specific tests
+        https://bugs.webkit.org/show_bug.cgi?id=148775
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch adds (or rewrites) tests to take advantage of our new ability to mock
+        the system language for testing (https://bugs.webkit.org/show_bug.cgi?id=148671).
+
+        It tests these patches:
+        https://bugs.webkit.org/show_bug.cgi?id=148164
+        https://bugs.webkit.org/show_bug.cgi?id=147504
+        https://bugs.webkit.org/show_bug.cgi?id=147862
+        https://bugs.webkit.org/show_bug.cgi?id=147964
+
+        * fast/text/international/system-language/arabic-glyph-cache-fill-combine-expected.html: Renamed from LayoutTests/fast/text/arabic-glyph-cache-fill-combine-expected.html.
+        * fast/text/international/system-language/arabic-glyph-cache-fill-combine.html: Renamed from LayoutTests/fast/text/arabic-glyph-cache-fill-combine.html.
+        * fast/text/international/system-language/han-quotes-expected-mismatch.html: Added.
+        * fast/text/international/system-language/han-quotes.html: Added.
+        * fast/text/international/system-language/hindi-system-font-punctuation-expected.html: Renamed from LayoutTests/fast/text/hindi-system-font-punctuation-expected.html.
+        * fast/text/international/system-language/hindi-system-font-punctuation.html: Renamed from LayoutTests/fast/text/hindi-system-font-punctuation.html.
+        * fast/text/international/system-language/system-font-punctuation.html: Renamed from LayoutTests/fast/text/system-font-punctuation.html.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/fast/text/international/system-language/system-font-punctuation-expected.txt: Renamed from LayoutTests/platform/ios-simulator/fast/text/system-font-punctuation-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/text/international/system-language/system-font-punctuation-expected.txt: Renamed from LayoutTests/platform/mac/fast/text/system-font-punctuation-expected.txt.
+        * platform/win/TestExpectations:
+        * platform/win/fast/text/international/system-language/system-font-punctuation-expected.txt: Renamed from LayoutTests/platform/win/fast/text/system-font-punctuation-expected.txt.
+
+2015-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Allow testing with the system language
         https://bugs.webkit.org/show_bug.cgi?id=148671
 
