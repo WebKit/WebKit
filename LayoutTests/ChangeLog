@@ -1,5 +1,13 @@
 2015-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Another test fix after r189670.
+
+        Unreviewed.
+
+        * platform/mac-wk1/TestExpectations:
+
+2015-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Test fix after r189670.
 
         Unreviewed.
