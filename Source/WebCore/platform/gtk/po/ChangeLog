@@ -1,3 +1,12 @@
+2015-09-12  Matej Urbančič  <mateju@svn.gnome.org>
+
+        Updated Slovenian translation
+        https://bugs.webkit.org/show_bug.cgi?id=123080
+
+        Unreviewed.
+
+        * sl.po:
+
 2015-09-12  Shantha kumar  <shkumar@redhat.com>
 
         Webkit Tamil translations updated
