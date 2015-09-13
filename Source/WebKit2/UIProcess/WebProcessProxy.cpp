@@ -129,8 +129,21 @@ WebProcessProxy::~WebProcessProxy()
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::WebProcess;
+
     if (WebInspectorProxy::isInspectorProcessPool(m_processPool))
         launchOptions.extraInitializationData.add(ASCIILiteral("inspector-process"), ASCIILiteral("1"));
+
+    auto overrideLanguages = m_processPool->configuration().overrideLanguages();
+    if (overrideLanguages.size()) {
+        StringBuilder languageString;
+        for (size_t i = 0; i < overrideLanguages.size(); ++i) {
+            if (i)
+                languageString.append(',');
+            languageString.append(overrideLanguages[i]);
+        }
+        launchOptions.extraInitializationData.add(ASCIILiteral("OverrideLanguages"), languageString.toString());
+    }
+
     platformGetLaunchOptions(launchOptions);
 }
 

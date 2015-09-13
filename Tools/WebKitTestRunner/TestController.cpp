@@ -463,7 +463,12 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
     auto contextConfiguration = generateContextConfiguration();
-    // Modify contextConfiguration here.
+
+    WKRetainPtr<WKMutableArrayRef> overrideLanguages = adoptWK(WKMutableArrayCreate());
+    for (auto& language : options.overrideLanguages)
+        WKArrayAppendItem(overrideLanguages.get(), adoptWK(WKStringCreateWithUTF8CString(language.utf8().data())).get());
+    WKContextConfigurationSetOverrideLanguages(contextConfiguration.get(), overrideLanguages.get());
+
     auto configuration = generatePageConfiguration(contextConfiguration.get());
 
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
@@ -856,7 +861,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const Test
         }
         auto key = pairString.substr(pairStart, equalsLocation - pairStart);
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
-        // Options processing to modify testOptions goes here.
+        if (key == "language")
+            String(value.c_str()).split(",", false, testOptions.overrideLanguages);
         pairStart = pairEnd + 1;
     }
 }

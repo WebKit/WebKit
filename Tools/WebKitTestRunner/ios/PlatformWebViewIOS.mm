@@ -204,6 +204,9 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 
 bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
 {
+    if (m_options.overrideLanguages != options.overrideLanguages)
+        return false;
+
     return true;
 }
 

@@ -1,5 +1,30 @@
 2015-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Allow testing with the system language
+        https://bugs.webkit.org/show_bug.cgi?id=148671
+
+        Reviewed by Anders Carlsson and Alexey Proskuryakov.
+
+        React to tests marked with language=lang1,lang2,etc in their header.
+        Once this information is parsed, pass it to
+        WKContextConfigurationSetOverrideLanguages().
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize): Don't clobber the language
+        list.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions): Call
+        WKContextConfigurationSetOverrideLanguages().
+        (WTR::updateTestOptionsFromTestHeader): Inspect the language option.
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::viewSupportsOptions): Cause a differing language
+        option to restart the web process.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::viewSupportsOptions): Ditto.
+
+2015-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WKTR] Allow changing the WKContextConfiguration between successive tests
         https://bugs.webkit.org/show_bug.cgi?id=148833
 

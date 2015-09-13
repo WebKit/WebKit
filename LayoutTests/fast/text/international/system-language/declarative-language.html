@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ language=ko,zh ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (window.internals) {
+    shouldBe("internals.userPreferredLanguages().length", "2");
+    shouldBeTrue("internals.userPreferredLanguages()[0].startsWith('ko')");
+    shouldBeTrue("internals.userPreferredLanguages()[1].startsWith('zh')");
+    internals.setUserPreferredLanguages(["hi", "jp", "in"]);
+    shouldBe("internals.userPreferredLanguages().length", "3");
+    shouldBeEqualToString("internals.userPreferredLanguages()[0]", "hi");
+    shouldBeEqualToString("internals.userPreferredLanguages()[1]", "jp");
+    shouldBeEqualToString("internals.userPreferredLanguages()[2]", "in");
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

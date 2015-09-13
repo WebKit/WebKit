@@ -58,6 +58,9 @@ WK_EXPORT void WKContextConfigurationSetMediaKeysStorageDirectory(WKContextConfi
 WK_EXPORT bool WKContextConfigurationFullySynchronousModeIsAllowedForTesting(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(WKContextConfigurationRef configuration, bool allowed);
 
+WK_EXPORT WKArrayRef WKContextConfigurationCopyOverrideLanguages(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef configuration, WKArrayRef overrideLanguages);
+
 #ifdef __cplusplus
 }
 #endif

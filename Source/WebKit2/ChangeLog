@@ -1,3 +1,36 @@
+2015-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Allow testing with the system language
+        https://bugs.webkit.org/show_bug.cgi?id=148671
+
+        Reviewed by Anders Carlsson and Alexey Proskuryakov.
+
+        This patch adds two new SPI functions for setting and retrieving a vector of
+        override languages to/from the WKContextConfiguration. The implementation of
+        these functions holds state inside WebProcessPoolConfiguration. Then, when
+        we launch a process, the WebProcessProxy will inject these override languages
+        into the ProcessLauncher::LaunchOptions so that the ProcessLauncher can
+        inject these languages into the XPC Bootstrap message. Then, in the Web
+        Process's main(), the XPC Boostrap message is read, and the platform
+        languages are set via NSUserDefaults setting a volatile domain.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (main): Set the volatile domain with NSUserDefaults.
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h: Hold state for the override
+        languages.
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyOverrideLanguages): SPI.
+        (WKContextConfigurationSetOverrideLanguages): Ditto.
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService): Inject the languages into the XPC Bootstrap
+        message.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions): Inject the override languages
+        into the ProcessLauncher::LaunchOptions.
+
 2015-09-12  Alexey Proskuryakov  <ap@apple.com>
 
         [iOS] Allow UDP networking

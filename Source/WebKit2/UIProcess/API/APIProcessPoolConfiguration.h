@@ -90,6 +90,9 @@ public:
     bool fullySynchronousModeIsAllowedForTesting() const { return m_fullySynchronousModeIsAllowedForTesting; }
     void setFullySynchronousModeIsAllowedForTesting(bool allowed) { m_fullySynchronousModeIsAllowedForTesting = allowed; }
 
+    const Vector<WTF::String>& overrideLanguages() const { return m_overrideLanguages; }
+    void setOverrideLanguages(Vector<WTF::String>&& languages) { m_overrideLanguages = WTF::move(languages); }
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -108,6 +111,7 @@ private:
     WTF::String m_mediaKeysStorageDirectory;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
     bool m_fullySynchronousModeIsAllowedForTesting { false };
+    Vector<WTF::String> m_overrideLanguages;
 };
 
 } // namespace API

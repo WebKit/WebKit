@@ -141,3 +141,6 @@ loader/navigation-policy [ Skip ]
 
 # This test is WebKit2-only
 http/tests/contentfiltering/load-substitute-data-from-appcache.html
+
+# Testing the system language declaratively only makes sense in WK2, because it's implemented in WebKitTestRunner by launching a new WebContent process.
+fast/text/international/system-language [ Failure ]

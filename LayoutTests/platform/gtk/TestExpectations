@@ -2612,3 +2612,6 @@ css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 
 # Media controls tests are OS X only
 media/controls [ Skip ]
+
+# Mocking the system language is not implemented in GTK.
+fast/text/international/system-language [ Failure ]

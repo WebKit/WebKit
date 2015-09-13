@@ -26,6 +26,9 @@
 #ifndef TestOptions_h
 #define TestOptions_h
 
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
 namespace WTR {
 
 struct TestOptions {
@@ -34,6 +37,7 @@ struct TestOptions {
     bool shouldShowWebView { false };
 
     bool useFixedLayout { false };
+    Vector<String> overrideLanguages;
 };
 
 }

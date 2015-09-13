@@ -2548,3 +2548,6 @@ webkit.org/b/148470 svg/text/select-x-list-with-tspans-2.svg [ Failure ]
 webkit.org/b/148470 svg/text/select-x-list-with-tspans-3.svg [ Failure ]
 webkit.org/b/148470 svg/text/select-x-list-with-tspans-4.svg [ Failure ]
 webkit.org/b/148470 svg/text/selection-doubleclick.svg [ Failure ]
+
+# Mocking the system language is not implemented in EFL.
+fast/text/international/system-language [ Failure ]

@@ -243,6 +243,17 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
         xpc_dictionary_set_string(containerEnvironmentVariables.get(), "TMPDIR", environmentTMPDIR);
     xpc_dictionary_set_value(initializationMessage.get(), "ContainerEnvironmentVariables", containerEnvironmentVariables.get());
 #endif
+
+    auto languagesIterator = launchOptions.extraInitializationData.find("OverrideLanguages");
+    if (languagesIterator != launchOptions.extraInitializationData.end()) {
+        auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
+        Vector<String> languageVector;
+        languagesIterator->value.split(",", false, languageVector);
+        for (auto& language : languageVector)
+            xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
+        xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
+    }
+
     xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
 #endif
 

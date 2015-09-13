@@ -32,6 +32,7 @@
 #import <stdio.h>
 #import <stdlib.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
@@ -159,6 +160,22 @@ using namespace WebKit;
 
 int main(int argc, char** argv)
 {
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if (auto bootstrap = adoptOSObject(xpc_copy_bootstrap())) {
+        if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
+            NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
+            NSMutableDictionary *newArguments = [existingArguments mutableCopy];
+            RetainPtr<NSMutableArray *> newLanguages = adoptNS([[NSMutableArray alloc] init]);
+            xpc_array_apply(languages, ^(size_t index, xpc_object_t value) {
+                [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
+                return true;
+            });
+            [newArguments setValue:newLanguages.get() forKey:@"AppleLanguages"];
+            [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments forName:NSArgumentDomain];
+        }
+    }
+#endif
+
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

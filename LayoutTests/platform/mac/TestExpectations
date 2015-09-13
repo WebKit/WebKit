@@ -1284,3 +1284,6 @@ webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validat
 
 # Colorspaces on CA OpenGL layers not available in Mavericks and Yosemite
 [ Mavericks Yosemite ] fast/canvas/webgl/match-page-color-space.html [ Skip ]
+
+# Mocking the system language relies on Bootstrap XPC messages, which are not supported in Mavericks.
+[ Mavericks ] fast/text/international/system-language [ Failure ]

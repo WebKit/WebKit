@@ -242,7 +242,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 
 bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
 {
-    if (m_options.useThreadedScrolling != options.useThreadedScrolling)
+    if (m_options.useThreadedScrolling != options.useThreadedScrolling || m_options.overrideLanguages != options.overrideLanguages)
         return false;
 
     return true;
