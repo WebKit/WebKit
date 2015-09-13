@@ -102,3 +102,11 @@
 #define HAVE_SAFARI_SERVICES_FRAMEWORK 0
 #endif
 #endif
+
+#ifndef HAVE_LINK_PREVIEW
+#if defined TARGET_OS_IOS && TARGET_OS_IOS
+#define HAVE_LINK_PREVIEW 1
+#else
+#define HAVE_LINK_PREVIEW 0
+#endif
+#endif

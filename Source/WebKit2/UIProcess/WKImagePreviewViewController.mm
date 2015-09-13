@@ -30,9 +30,6 @@
 
 #import <UIKitSPI.h>
 #import <WebCore/IntSize.h>
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/LinkPreviewDefines.h>
-#endif
 #import <_WKElementAction.h>
 
 @implementation WKImagePreviewViewController {

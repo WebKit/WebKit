@@ -74,8 +74,6 @@
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 
-#import <WebKitAdditions/LinkPreviewDefines.h>
-
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewItemController.h>
 #endif
