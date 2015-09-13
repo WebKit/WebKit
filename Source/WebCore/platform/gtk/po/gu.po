@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit.gu\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2014-08-28 22:55+0000\n"
-"PO-Revision-Date: 2014-09-04 15:13+0530\n"
+"POT-Creation-Date: 2014-10-25 10:53+0000\n"
+"PO-Revision-Date: 2014-12-11 10:49+0530\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: \n"
@@ -125,12 +125,10 @@ msgid "Open _Audio in New Window"
 msgstr "નવી વિન્ડોમાં ઓડિયો ખોલો (_A)"
 
 #: ../LocalizedStringsGtk.cpp:145
-#| msgid "_Download Linked File"
 msgid "Download _Video"
 msgstr "વિડિઓને ડાઉનલોડ કરો (_V)"
 
 #: ../LocalizedStringsGtk.cpp:150
-#| msgid "_Download Linked File"
 msgid "Download _Audio"
 msgstr "ઓડિયોને ડાઉનલોડ કરો (_A)"
 
@@ -147,12 +145,10 @@ msgid "_Toggle Media Controls"
 msgstr "ટૉગલ મીડિયા નિયંત્રણ (_T)"
 
 #: ../LocalizedStringsGtk.cpp:170
-#| msgid "_Toggle Media Controls"
 msgid "_Show Media Controls"
 msgstr "મીડિયા નિયંત્રણને બતાવો (_S)"
 
 #: ../LocalizedStringsGtk.cpp:175
-#| msgid "_Toggle Media Controls"
 msgid "_Hide Media Controls"
 msgstr "મીડિયા નિયંત્રણને છુપાડો (_H)"
 
@@ -321,7 +317,6 @@ msgid "term"
 msgstr "પદ"
 
 #: ../LocalizedStringsGtk.cpp:446
-#| msgid "definition"
 msgid "description"
 msgstr "વર્ણન"
 
@@ -389,12 +384,10 @@ msgid "Live Broadcast"
 msgstr "જીવંત પ્રસારણ"
 
 #: ../LocalizedStringsGtk.cpp:568
-#| msgid "pause playback"
 msgid "audio playback"
 msgstr "ઓડિયો વગાડો"
 
 #: ../LocalizedStringsGtk.cpp:570
-#| msgid "begin playback"
 msgid "video playback"
 msgstr "વિડિયો વગાડો"
 
@@ -583,7 +576,6 @@ msgid "Unacceptable TLS certificate"
 msgstr "અસ્વીકારી TLS પ્રમાણપત્ર"
 
 #: ../LocalizedStringsGtk.cpp:791
-#| msgid "stop displaying closed captions"
 msgctxt "Closed Captions"
 msgid "Menu section heading for closed captions"
 msgstr "મેનુ વિભાગ બંધ કૅપ્શન માટે મથાળું"
@@ -594,8 +586,7 @@ msgid "Subtitles"
 msgstr "ઉપશીર્ષકો"
 
 #: ../LocalizedStringsGtk.cpp:801
-msgctxt ""
-"Menu item label for the track that represents disabling closed captions"
+msgctxt "Menu item label for the track that represents disabling closed captions"
 msgid "Off"
 msgstr "બંધ"
 
@@ -609,72 +600,86 @@ msgctxt "Menu item label for a closed captions track that has no other name"
 msgid "No label"
 msgstr "લેબલ નથી"
 
-#: ../LocalizedStringsGtk.cpp:817
+#: ../LocalizedStringsGtk.cpp:816
+#| msgctxt "Menu item label for a closed captions track that has no other name"
+#| msgid "No label"
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "No label"
+msgstr "લેબલ નથી"
+
+#: ../LocalizedStringsGtk.cpp:822
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "સ્નેપશોટ થયેલ પ્લગ-ઇન પર બતાવવા માટે લેબલનું શીર્ષક"
 
-#: ../LocalizedStringsGtk.cpp:822
+#: ../LocalizedStringsGtk.cpp:827
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "સ્નેપશોટ થયેલ પ્લગઇન પર બતાવવા માટે લેબલનું ઉપશીર્ષક"
 
-#: ../WebKitAuthenticationWidget.cpp:155
+#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:99
+#, c-format
+msgid "Cannot determine destination URI for download with suggested filename %s"
+msgstr "સૂચિત ફાઇલનામ %s સાથે ડાઉનલોડ માટે લક્ષ્ય URI ને નક્કી કરી શકાતુ નથી"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:114
 #, c-format
 msgid "The site %s:%i requests a username and password"
 msgstr "સાઇટ %s:%i એ વપરાશકર્તાનામ અને પાસવર્ડની માંગણી કરે છે"
 
-#: ../WebKitAuthenticationWidget.cpp:159
-msgid "_Remember password"
-msgstr "પાસવર્ડ યાદ રાખો (_R)"
-
-#: ../WebKitAuthenticationWidget.cpp:167
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
 msgid "Server message:"
 msgstr "સર્વર સંદેશો:"
 
-#: ../WebKitAuthenticationWidget.cpp:168 ../WebKitAuthenticationWidget.cpp:177
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:129
+msgid "_Remember password"
+msgstr "પાસવર્ડ યાદ રાખો (_R)"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:133
 msgid "Username:"
 msgstr "વપરાશકર્તાનામ:"
 
-#: ../WebKitAuthenticationWidget.cpp:169 ../WebKitAuthenticationWidget.cpp:178
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:144
 msgid "Password:"
 msgstr "પાસવર્ડ:"
 
-#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:95
-#, c-format
-msgid ""
-"Cannot determine destination URI for download with suggested filename %s"
-msgstr "સૂચિત ફાઇલનામ %s સાથે ડાઉનલોડ માટે લક્ષ્ય URI ને નક્કી કરી શકાતુ નથી"
-
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:145
-#| msgid "Destination URI"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
 msgid "Destination"
 msgstr "અંતિમ મુકામ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:146
-#| msgid "The URI to which the response will be made."
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:165
 msgid "The local URI to where the download will be saved"
 msgstr "સ્થાનિક URI કે જેમાં ડાઉનલોડ સંગ્રહેલ છે"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:158
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
-#| msgid "Network Response"
 msgid "Response"
 msgstr "જવાબ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:159
-#| msgid "Determines the current progress of the download"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:178
 msgid "The response of the download"
 msgstr "ડાઉનલોડનો જવાબ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:176
-#| msgid "Progress"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:195
 msgid "Estimated Progress"
 msgstr "મર્યાદિત પ્રગતિ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:196
 msgid "Determines the current progress of the download"
 msgstr "ડાઉનલોડની વર્તમાન પ્રગતિ નક્કી કરે છે"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:214
+msgid "Allow Overwrite"
+msgstr "ઓવરરાઇટને પરવાનગી આપો"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
+#| msgid "Whether the window can be resized."
+msgid "Whether the destination may be overwritten"
+msgstr "ક્યાંતો અંતિમ મુકામ ફરીથી લખાઇ શકે છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
@@ -725,12 +730,10 @@ msgid "The list of selected files associated with the request"
 msgstr "સૂચના સાથે સંકળાયેલ પસંદ થયેલ ફાઇલોની યાદી"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:190
-#| msgid "_Search the Web"
 msgid "Search text"
 msgstr "લખાણ માટે શોધો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:191
-#| msgid "The custom encoding of the web view"
 msgid "Text to search for in the view"
 msgstr "દૃશ્યમાં શોધવા લખાણ"
 
@@ -743,22 +746,18 @@ msgid "Search options to be used in the search operation"
 msgstr "શોધ ક્રિયામાં વાપરવા માટે શોધ વિકલ્પો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:217
-#| msgid "Maximum Scale Factor"
 msgid "Maximum matches count"
 msgstr "મહત્તમ ગણતરી બંધબેસે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:218
-#| msgid "The maximum scale of the viewport."
 msgid "The maximum number of matches in a given text to report"
 msgstr "અહેવાલ માટે આપેલ લખાણમાં બંધબેસતી મહત્તમ સંખ્યા"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:230
-#| msgid "Web View"
 msgid "WebView"
 msgstr "WebView"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:231
-#| msgid "The inner DOM node associated with the hit test result."
 msgid "The WebView associated with this find controller"
 msgstr "આ શોધ નિયંત્રક સાથે સંકળાયેલ WebView"
 
@@ -775,12 +774,10 @@ msgid "Link URI"
 msgstr "કડી URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
-#| msgid "Link URI"
 msgid "The link URI"
 msgstr "કડી URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
-#| msgid "Title"
 msgid "Link Title"
 msgstr "કડી શીર્ષક"
 
@@ -801,7 +798,6 @@ msgid "Image URI"
 msgstr "ઇમેજ URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
-#| msgid "Image URI"
 msgid "The image URI"
 msgstr "ઇમેજ URI"
 
@@ -810,7 +806,6 @@ msgid "Media URI"
 msgstr "મીડિયા URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
-#| msgid "Media URI"
 msgid "The media URI"
 msgstr "મીડિયા URI"
 
@@ -851,12 +846,10 @@ msgid "Navigation URI request"
 msgstr "સંશોધક URI  વિનંતી"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:186
-#| msgid "The URI that was requested as the target for the navigation"
 msgid "The URI request that is associated with this navigation"
 msgstr "URI માંગણી કે જે આ સંશોધક સાથે સંકળાયેલ છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:201
-#| msgid "Frame Name"
 msgid "Frame name"
 msgstr "ફ્રેમ નામ"
 
@@ -873,7 +866,6 @@ msgid "The web view that will be printed"
 msgstr "વેબ દૃશ્ય કે જે છાપેલ હશે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
-#| msgid "Settings"
 msgid "Print Settings"
 msgstr "પ્રિન્ટ સુયોજનો"
 
@@ -886,7 +878,6 @@ msgid "Page Setup"
 msgstr "પાનું સુયોજન"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
-#| msgid "The initial scale of the viewport."
 msgid "The initial page setup for the print operation"
 msgstr "છાપન ક્રિયા માટે પ્રારંભિક પાનું સુયોજન"
 
@@ -907,17 +898,14 @@ msgid "The URI response that is associated with this policy decision"
 msgstr "URI જવાબ કે જે આ પોલિસી નિર્ણય સાથે સંકળાયેલ છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:487
-#| msgid "Enable Scripts"
 msgid "Enable JavaScript"
 msgstr "JavaScript સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:488
-#| msgid "Enable Scripts"
 msgid "Enable JavaScript."
 msgstr "JavaScript સક્રિય કરો."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:502
-#| msgid "Auto Load Images"
 msgid "Auto load images"
 msgstr "ચિત્રો આપોઆપ લાવો"
 
@@ -938,52 +926,42 @@ msgid "Enable offline web application cache"
 msgstr "ઓફલાઈન વેબ કાર્યક્રમ કેશ સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:535
-#| msgid "Whether to enable offline web application cache"
 msgid "Whether to enable offline web application cache."
 msgstr "શું ઓફલાઈન વેબ કાર્યક્રમ કેશ સક્રિય કરવી છે."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:551
-#| msgid "Enable HTML5 Local Storage"
 msgid "Enable HTML5 local storage"
 msgstr "HTML5 સ્થાનિય સંગ્રહ સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:552
-#| msgid "Whether to enable HTML5 Local Storage support"
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "શું HTML5 સ્થાનિય સંગ્રહ આધાર સક્રિય કરવો છે."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:569
-#| msgid "Enable HTML5 Database"
 msgid "Enable HTML5 database"
 msgstr "HTML5 ડેટાબેઝ સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:570
-#| msgid "Whether to enable HTML5 database support"
 msgid "Whether to enable HTML5 database support."
 msgstr "શું HTML5 ડેટાબેઝ આધાર સક્રિય કરવો છે."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:583
-#| msgid "Enable XSS Auditor"
 msgid "Enable XSS auditor"
 msgstr "XSS સંપાદક સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:584
-#| msgid "Whether to enable the XSS auditor"
 msgid "Whether to enable the XSS auditor."
 msgstr "શું XSS સંપાદક સક્રિય કરવું છે."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:599
-#| msgid "Enable Frame Flattening"
 msgid "Enable frame flattening"
 msgstr "સપાટ ફ્રેમ સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:600
-#| msgid "Whether to enable Frame Flattening"
 msgid "Whether to enable frame flattening."
 msgstr "શું સપાટ ફ્રેમને સક્રિય કરવુ છે."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:612
-#| msgid "Enable Plugins"
 msgid "Enable plugins"
 msgstr "પ્લગઈનો સક્રિય કરો"
 
@@ -992,12 +970,10 @@ msgid "Enable embedded plugin objects."
 msgstr "જડિત પ્લગઈન ઓબ્જેક્ટો સક્રિય કરો."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:625
-#| msgid "Enable Java Applet"
 msgid "Enable Java"
 msgstr "Java સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:626
-#| msgid "Whether Media Stream should be enabled"
 msgid "Whether Java support should be enabled."
 msgstr "શું Java આધારને સક્રિય કરવુ જોઇએ."
 
@@ -1006,22 +982,18 @@ msgid "JavaScript can open windows automatically"
 msgstr "JavaScript વિન્ડો આપોઆપ ખોલી શકે છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:640
-#| msgid "Whether JavaScript can open windows automatically"
 msgid "Whether JavaScript can open windows automatically."
 msgstr "શું JavaScript વિન્ડો આપોઆપ ખોલી શકે છે."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:655
-#| msgid "Enable Hyperlink Auditing"
 msgid "Enable hyperlink auditing"
 msgstr "હાયપરલિંક ઑડિટિંગ ને સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:656
-#| msgid "Whether <a ping> should be able to send pings"
 msgid "Whether <a ping> should be able to send pings."
 msgstr "શું <a ping> એ પીંગ મોકલવા માટે સક્ષમ હોવુ જોઇએ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:668
-#| msgid "Default Font Family"
 msgid "Default font family"
 msgstr "મૂળભૂત ફોન્ટ પરિવાર"
 
@@ -1029,23 +1001,17 @@ msgstr "મૂળભૂત ફોન્ટ પરિવાર"
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
-msgstr ""
-"સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરવા માટે ફોન્ટ કુટુંબ કે જે ફોન્ટને સ્પષ્ટ "
-"કરતુ નથી."
+msgstr "સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરવા માટે ફોન્ટ કુટુંબ કે જે ફોન્ટને સ્પષ્ટ કરતુ નથી."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:682
-#| msgid "Monospace Font Family"
 msgid "Monospace font family"
 msgstr "મોનોસ્પેસ ફોન્ટ પરિવાર"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:683
-#| msgid "The default font family used to display monospace text."
 msgid "The font family used as the default for content using monospace font."
-msgstr ""
-"મોનોસ્પેસ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
+msgstr "મોનોસ્પેસ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:695
-#| msgid "Serif Font Family"
 msgid "Serif font family"
 msgstr "સેરીફ ફોન્ટ પરિવાર"
 
@@ -1054,17 +1020,14 @@ msgid "The font family used as the default for content using serif font."
 msgstr "સેરિફ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:708
-#| msgid "Sans Serif Font Family"
 msgid "Sans-serif font family"
 msgstr "સાન્સ સેરીફ ફોન્ટ પરિવાર"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:709
 msgid "The font family used as the default for content using sans-serif font."
-msgstr ""
-"સાન્સ-સેરિફ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
+msgstr "સાન્સ-સેરિફ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:721
-#| msgid "Cursive Font Family"
 msgid "Cursive font family"
 msgstr "કર્સીવ ફોન્ટ પરિવાર"
 
@@ -1073,7 +1036,6 @@ msgid "The font family used as the default for content using cursive font."
 msgstr "કર્સિવ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:734
-#| msgid "Fantasy Font Family"
 msgid "Fantasy font family"
 msgstr "ફેન્ટસી ફોન્ટ પરિવાર"
 
@@ -1087,11 +1049,9 @@ msgstr "પિક્ટોગ્રાફ ફોન્ટ પરિવાર"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:748
 msgid "The font family used as the default for content using pictograph font."
-msgstr ""
-"પિક્ટોગ્રાફ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
+msgstr "પિક્ટોગ્રાફ ફોન્ટની મદદથી સમાવિષ્ટ માટે મૂળભૂત તરીકે વાપરેલ ફોન્ટ કુટુંબ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:761
-#| msgid "Default Font Size"
 msgid "Default font size"
 msgstr "મૂળભૂત ફોન્ટ માપ"
 
@@ -1100,7 +1060,6 @@ msgid "The default font size used to display text."
 msgstr "લખાણ દર્શાવવા માટે વપરાતું મૂળભૂત માપ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:775
-#| msgid "Default Monospace Font Size"
 msgid "Default monospace font size"
 msgstr "મૂળભૂત મોનોસ્પેસ ફોન્ટ માપ"
 
@@ -1109,7 +1068,6 @@ msgid "The default font size used to display monospace text."
 msgstr "મોનોસ્પેસ લખાણ દર્શાવવા માટે વપરાતું મૂળભૂત ફોન્ટ માપ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:790
-#| msgid "Minimum Font Size"
 msgid "Minimum font size"
 msgstr "ન્યૂનતમ ફોન્ટ માપ"
 
@@ -1126,56 +1084,45 @@ msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
 msgstr ""
-"મૂળભૂત લખાણ અક્ષરસુયોજન વાપરેલ છે જ્યારે અસ્પષ્ટ અક્ષરસુયોજન સાથે "
-"ઇન્ટરપ્રીટ કરી રહ્યા હોય."
+"મૂળભૂત લખાણ અક્ષરસુયોજન વાપરેલ છે જ્યારે અસ્પષ્ટ અક્ષરસુયોજન સાથે ઇન્ટરપ્રીટ કરી રહ્યા હોય."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:817
-#| msgid "Enable Private Browsing"
 msgid "Enable private browsing"
 msgstr "ખાનગી બ્રાઉઝીંગ સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:818
-#| msgid "Whether to enable Frame Flattening"
 msgid "Whether to enable private browsing"
 msgstr "શું ખાનગી બ્રાઉઝીંગને સક્રિય કરવુ છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:830
-#| msgid "Enable Developer Extras"
 msgid "Enable developer extras"
 msgstr "વિકાસકર્તા ઉમેરાઓ સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:831
-#| msgid "Enable Developer Extras"
 msgid "Whether to enable developer extras"
 msgstr "શું વિકાસકર્તા ઉમેરાઓ સક્રિય કરવુ છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:843
-#| msgid "Resizable Text Areas"
 msgid "Enable resizable text areas"
 msgstr "માપ બદલી શકાય તેવા લખાણ વિસ્તારોને સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:844
-#| msgid "Whether to enable Frame Flattening"
 msgid "Whether to enable resizable text areas"
 msgstr "શું માપ બદલી શકાય તેવા લખાણ વિસ્તારોને સક્રિય કરવા છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:859
-#| msgid "Enable Plugins"
 msgid "Enable tabs to links"
 msgstr "કડીઓના ટૅબને સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:860
-#| msgid "Whether to enable smooth scrolling"
 msgid "Whether to enable tabs to links"
 msgstr "શું કડીઓની ટૅબને સક્રિય કરવી છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:873
-#| msgid "Enable Spell Checking"
 msgid "Enable DNS prefetching"
 msgstr "DNS પ્રીફેચીંગને સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:874
-#| msgid "Whether to enable DOM paste"
 msgid "Whether to enable DNS prefetching"
 msgstr "શું DNS પ્રીફેચીંગ ને સક્રિય કરવુ છે"
 
@@ -1192,7 +1139,6 @@ msgid "Enable Fullscreen"
 msgstr "સંપૂર્ણસ્ક્રીન સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:903
-#| msgid "Whether to enable smooth scrolling"
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "શું  Javascript Fullscreen API ને સક્રિય કરવુ જોઇએ"
 
@@ -1201,7 +1147,6 @@ msgid "Print Backgrounds"
 msgstr "પાશ્વભાગો છાપો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:916
-#| msgid "Whether background images should be printed."
 msgid "Whether background images should be drawn during printing"
 msgstr "શું પાશ્વભાગ ચિત્રો છપાવા દરમ્યાન દોરેલ હતા"
 
@@ -1238,7 +1183,6 @@ msgid "Whether zoom level of web view changes only the text size"
 msgstr "શું વેબ દૃશ્યનું નાનુમોટુ કરવાનું સ્તર ફક્ત લખાણ માપને બદલે છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:998
-#| msgid "JavaScript can access Clipboard"
 msgid "JavaScript can access clipboard"
 msgstr "JavaScript એ ક્લિપબોર્ડને વાપરી શકે છે"
 
@@ -1287,12 +1231,10 @@ msgid "Whether the page cache should be used"
 msgstr "શું પાનાં કેશ વપરાવું જોઈએ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1106
-#| msgid "User Agent"
 msgid "User agent string"
 msgstr "વપરાશકર્તા એજન્ટ શબ્દમાળા"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1107
-#| msgid "The User-Agent string used by WebKitGtk"
 msgid "The user agent string"
 msgstr "વપરાશકર્તા એજન્ટ શબ્દમાળા"
 
@@ -1305,12 +1247,10 @@ msgid "Whether to enable smooth scrolling"
 msgstr "શું સરળ રીતે ખસેડવાનું સક્રિય કરવાનું છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1137
-#| msgid "Enable accelerated compositing"
 msgid "Enable accelerated 2D canvas"
 msgstr "પ્રવેગિક 2D કૅનવાસને સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1138
-#| msgid "Whether to enable Frame Flattening"
 msgid "Whether to enable accelerated 2D canvas"
 msgstr "શું પ્રવેગિક 2D કૅનવાસને સક્રિય કરવુ જોઇએ"
 
@@ -1323,12 +1263,10 @@ msgid "Whether to write console messages on stdout"
 msgstr "ક્યાંતો stdout પર કન્સોલ સંદેશા લખવા છે"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1172
-#| msgid "Enable Media Stream"
 msgid "Enable MediaStream"
 msgstr "MediaStream ને સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1173
-#| msgid "Whether WebAudio content should be handled"
 msgid "Whether MediaStream content should be handled"
 msgstr "શું MediaStream સમાવિષ્ટને સંચાલિત કરવુ જોઇએ"
 
@@ -1337,24 +1275,21 @@ msgid "Enable Spatial Navigation"
 msgstr "અવકાશ સંશોધક સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1193
-#| msgid "Whether to enable Spatial Navigation"
 msgid "Whether to enable Spatial Navigation support."
 msgstr "શું અવકાશ સંશોધન આધારને સક્રિય કરવુ જોઇએ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1212
-#| msgid "Enable Media Stream"
 msgid "Enable MediaSource"
 msgstr "MediaSource ને સક્રિય કરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1213
-#| msgid "Whether Media Stream should be enabled"
 msgid "Whether MediaSource should be enabled."
 msgstr "શું MediaSource ને સક્રિય કરવુ જોઇએ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:743
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:830
 msgid "URI"
 msgstr "URI"
 
@@ -1363,12 +1298,10 @@ msgid "The URI to which the request will be made."
 msgstr "URI કે જેમાં માંગણી થયેલ હશે."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:106
-#| msgid "The URI to which the response will be made."
 msgid "The URI for which the response was made."
 msgstr "URI કે જેની માટે જવાબ હતો."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:117
-#| msgid "Status"
 msgid "Status Code"
 msgstr "પરિસ્થિતિ કોડ"
 
@@ -1381,7 +1314,6 @@ msgid "Content Length"
 msgstr "સમાવિષ્ટ લંબાઇ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:131
-#| msgid "The suggested filename for the response."
 msgid "The expected content length of the response."
 msgstr "જવાબની ઇચ્છિત સમાવિષ્ટ લંબાઇ."
 
@@ -1390,7 +1322,6 @@ msgid "MIME Type"
 msgstr "MIME પ્રકાર"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:144
-#| msgid "The MIME type of the resource"
 msgid "The MIME type of the response"
 msgstr "જવાબનું MIME પ્રકાર"
 
@@ -1399,7 +1330,6 @@ msgid "Suggested Filename"
 msgstr "સૂચનીય ફાઈલનામ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:157
-#| msgid "The suggested filename for the response."
 msgid "The suggested filename for the URI response"
 msgstr "URI જવાબનું સૂચનિય ફાઇલનામ"
 
@@ -1408,130 +1338,127 @@ msgid "HTTP Headers"
 msgstr "HTTP હેડરો"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
-#| msgid "The frame name of the resource"
 msgid "The The HTTP headers of the response"
 msgstr "જવાબનું HTTP હેડર"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
 msgid "Inspected URI"
 msgstr "પરીક્ષિત URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
 msgid "The URI that is currently being inspected"
 msgstr "URI કે જેની વર્તમાનમાં પરીક્ષા કરવામાં આવી છે"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
-#| msgid "Available Height"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
 msgid "Attached Height"
 msgstr "જોડાયેલ ઊંચાઇ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
 msgid "The height that the inspector view should have when it is attached"
 msgstr "ઊંચાઇ કે જે નિરીક્ષક દૃશ્ય પાસે હોવુ જોઇએ જ્યારે તે જોડાયેલ હોય"
 
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "જોડાઇ શકે છે"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr "ક્યાંતો નિરીક્ષક એજ વિન્ડોમાં જોડાઇ શકે છે કે જે નિરીક્ષણ થયેલ દૃશ્યને સમાવે છે"
+
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
-#| msgid "The URI of the resource"
 msgid "The current active URI of the resource"
 msgstr "સ્ત્રોતનું હાલનું સક્રિય URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
-#| msgid "The frame name of the resource"
 msgid "The response of the resource"
 msgstr "સ્ત્રોતનો જવાબ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:460
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:538
 msgid "Select Files"
 msgstr "ફાઈલો પસંદ કરો"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:460
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:538
 msgid "Select File"
 msgstr "ફાઈલ પસંદ કરો"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:633
-#| msgid "Context"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:720
 msgid "Web Context"
 msgstr "વેબ સંદર્ભ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:634
-#| msgid "The width of the viewport."
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:721
 msgid "The web context for the view"
 msgstr "દેખાવ માટે વેબ સંદર્ભ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:651
-#| msgid "Web View"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:738
 msgid "Related WebView"
 msgstr "સંબંધિત WebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:652
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:739
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
 msgstr ""
-"સંબંધિત WebKitWebView વાપરેલ છે જ્યારે એજ વેબ પ્રક્રિયાને વહેંચવા માટે "
-"દૃશ્યને બનાવી રહ્યા હોય"
+"સંબંધિત WebKitWebView વાપરેલ છે જ્યારે એજ વેબ પ્રક્રિયાને વહેંચવા માટે દૃશ્યને બનાવી રહ્યા હોય"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:755
 msgid "WebView settings"
 msgstr "WebView સુયોજનો"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:669
-#| msgid "The height of the viewport."
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:756
 msgid "The WebKitSettings of the view"
 msgstr "WebKitSettings નો દેખાવ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:685
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:772
 msgid "WebView user content manager"
 msgstr "WebView વપરાશકર્તા સમાવિષ્ટ સંચાલક"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:686
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:773
 msgid "The WebKitUserContentManager of the view"
 msgstr "જોવાનું WebKitUserContentManager"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:699
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:786
 msgid "Title"
 msgstr "શીર્ષક"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:700
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:787
 msgid "Main frame document title"
 msgstr "મુખ્ય ફ્રેમ દસ્તાવેજ શીર્ષક"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:718
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:805
 msgid "Estimated Load Progress"
 msgstr "મર્યાદિત લોડ પ્રગતિ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:719
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:806
 msgid "An estimate of the percent completion for a document load"
 msgstr "દસ્તાવેજ લોડ માટે પૂર્ણ ટકાવારીની મર્યાદા"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:731
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:818
 msgid "Favicon"
 msgstr "Favicon"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:732
-#| msgid "The filter currently associated with the request"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:819
 msgid "The favicon associated to the view, if any"
 msgstr "દૃશ્યમાં સંકળાયેલ  favicon, જો કોઇપણ હોય"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:744
-#| msgid "The document title of the frame"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:831
 msgid "The current active URI of the view"
 msgstr "દેખાવ માટે હાલની સક્રિય URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:758
-#| msgid "The level of zoom of the content"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:845
 msgid "The zoom level of the view content"
 msgstr "સમાવિષ્ટનાં દેખાવનું ઝુમ સ્તર"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:776
-#| msgid "Whether the plugin is enabled"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:863
 msgid "Whether the view is loading a page"
 msgstr "ક્યાંતો દેખાવ પાનાંને લાવી રહ્યુ છે"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2725
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2776
 msgid "An exception was raised in JavaScript"
 msgstr "અપવાદ JavaScript માં ઉદ્ભવ્યો હતો"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3232
 msgid "There was an error creating the snapshot"
 msgstr "સ્નેપશોટને બનાવતી વખતે ભૂલ હતી"
 
@@ -1540,7 +1467,6 @@ msgid "Geometry"
 msgstr "ભૂમિતિ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:211
-#| msgid "The number of dots per inch of the screen."
 msgid "The size and position of the window on the screen."
 msgstr "સ્ક્રીન પર વિન્ડોનું માપ અને સ્થાન."
 
@@ -1549,7 +1475,6 @@ msgid "Toolbar Visible"
 msgstr "સાધનપટ્ટી દૃશ્યમાન"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:224
-#| msgid "Whether the Mozilla style API should be enabled."
 msgid "Whether the toolbar should be visible for the window."
 msgstr "ક્યાંતો વિન્ડો માટે સાધનપટ્ટી દૃશ્યમાન હોવી જોઇએ."
 
@@ -1558,7 +1483,6 @@ msgid "Statusbar Visible"
 msgstr "પરિસ્થિતિદર્શક પટ્ટી દૃશ્યમાન"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:237
-#| msgid "Whether the page cache should be used"
 msgid "Whether the statusbar should be visible for the window."
 msgstr "શું વિન્ડો માટે પરિસ્થિતિદર્શકપટ્ટી દૃશ્યમાન હોવી જોઇએ"
 
@@ -1567,7 +1491,6 @@ msgid "Scrollbars Visible"
 msgstr "સરકપટ્ટી દૃશ્યમાન"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:250
-#| msgid "Whether the Mozilla style API should be enabled."
 msgid "Whether the scrollbars should be visible for the window."
 msgstr "શું વિન્ડો માટે સરકપટ્ટી દૃશ્યમાન હોવી જોઇએ."
 
@@ -1576,7 +1499,6 @@ msgid "Menubar Visible"
 msgstr "મેનુપટ્ટી દૃશ્યમાન"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:263
-#| msgid "Whether <a ping> should be able to send pings"
 msgid "Whether the menubar should be visible for the window."
 msgstr "શું વિન્ડો માટે મેનુપટ્ટી દૃશ્યમાન હોવી જોઇએ."
 
@@ -1585,22 +1507,18 @@ msgid "Locationbar Visible"
 msgstr "સ્થાનપટ્ટી દૃશ્યમાન"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:276
-#| msgid "Whether <a ping> should be able to send pings"
 msgid "Whether the locationbar should be visible for the window."
 msgstr "શું વિન્ડો માટે સ્થાનપટ્ટી દૃશ્યમાન હોવી જોઇએ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
-#| msgid "Resizable Text Areas"
 msgid "Resizable"
 msgstr "માપ બદલી શકાય તેવુ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:288
-#| msgid "Whether text areas are resizable."
 msgid "Whether the window can be resized."
 msgstr "શું વિન્ડોનું માપ બદલાવી શકાય."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
-#| msgid "Exit Fullscreen"
 msgid "Fullscreen"
 msgstr "સંપૂર્ણસ્ક્રીન"
 
@@ -1608,8 +1526,9 @@ msgstr "સંપૂર્ણસ્ક્રીન"
 msgid "Whether window will be displayed fullscreen."
 msgstr "ક્યાંતો વિન્ડો પૂર્ણસ્ક્રીનમાં દર્શાવેલ હશે"
 
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:82
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:147
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:132
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:137
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:140
 msgid "Web Inspector"
 msgstr "વેબ પરીક્ષક"
 
