@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2014-09-10 10:57+0000\n"
-"PO-Revision-Date: 2014-09-15 15:44+0630\n"
+"POT-Creation-Date: 2014-10-25 10:53+0000\n"
+"PO-Revision-Date: 2014-12-10 18:57+0530\n"
 "Last-Translator: Shantha kumar <shkumar@redhat.com>\n"
 "Language-Team: Tamil <kde-i18n-doc@kde.org>\n"
 "Language: ta\n"
@@ -599,39 +599,25 @@ msgctxt "Menu item label for a closed captions track that has no other name"
 msgid "No label"
 msgstr "லேபிள் இல்லை"
 
-#: ../LocalizedStringsGtk.cpp:817
+#: ../LocalizedStringsGtk.cpp:816
+#| msgctxt "Menu item label for a closed captions track that has no other name"
+#| msgid "No label"
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "No label"
+msgstr "லேபிள் இல்லை"
+
+#: ../LocalizedStringsGtk.cpp:822
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr ""
 "ஸ்னாப்ஷாட் செய்யப்பட்ட செருகுநிரலில் காண்பிக்கப்பட வேண்டிய லேபிளின் தலைப்பு"
 
-#: ../LocalizedStringsGtk.cpp:822
+#: ../LocalizedStringsGtk.cpp:827
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr ""
 "ஸ்னாப்ஷாட் செய்யப்பட்ட செருகுநிரலில் காண்பிக்கப்பட வேண்டிய லேபிளின் "
 "துணைத்தலைப்பு"
-
-#: ../WebKitAuthenticationWidget.cpp:155
-#, c-format
-msgid "The site %s:%i requests a username and password"
-msgstr "தளம் %s:%i பயனர் பெயரையும் கடவுச்சொலையும் கோருகிறது"
-
-#: ../WebKitAuthenticationWidget.cpp:159
-msgid "_Remember password"
-msgstr "கடவுச்சொல்லை நினைவில் கொள் (_R)"
-
-#: ../WebKitAuthenticationWidget.cpp:167
-msgid "Server message:"
-msgstr "சேவையக செய்தி:"
-
-#: ../WebKitAuthenticationWidget.cpp:168 ../WebKitAuthenticationWidget.cpp:177
-msgid "Username:"
-msgstr "பயனர்பெயர்:"
-
-#: ../WebKitAuthenticationWidget.cpp:169 ../WebKitAuthenticationWidget.cpp:178
-msgid "Password:"
-msgstr "கடவுச்சொல்:"
 
 #: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:99
 #, c-format
@@ -641,6 +627,31 @@ msgstr ""
 "பரிந்துரைக்கப்பட்ட கோப்புப் பெயரான %s ஐக் கொண்டுள்ள பதிவறக்குத்துக்கான இலக்கு "
 "URI ஐத் "
 "தீர்மானிக்க முடியவில்லை"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:114
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr "தளம் %s:%i பயனர் பெயரையும் கடவுச்சொலையும் கோருகிறது"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+msgid "Server message:"
+msgstr "சேவையக செய்தி:"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:129
+msgid "_Remember password"
+msgstr "கடவுச்சொல்லை நினைவில் கொள் (_R)"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:133
+msgid "Username:"
+msgstr "பயனர்பெயர்:"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:144
+msgid "Password:"
+msgstr "கடவுச்சொல்:"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
 msgid "Destination"
@@ -672,7 +683,6 @@ msgid "Allow Overwrite"
 msgstr "மேலெழுத அனுமதிக்கவும்"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
-#| msgid "Whether the window can be resized."
 msgid "Whether the destination may be overwritten"
 msgstr "இலக்கு மேலெழுதப்படலாமா"
 
@@ -807,12 +817,10 @@ msgid "The media URI"
 msgstr "மீடியா URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:113
-#| msgid "Navigation type"
 msgid "Navigation action"
 msgstr "வழிசெலுத்தல் செயல்"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:114
-#| msgid "The type of navigation triggering this decision"
 msgid "The WebKitNavigationAction triggering this decision"
 msgstr "இந்த முடிவைத் தூண்டும் WebKitNavigationAction"
 
@@ -1165,7 +1173,6 @@ msgid "Enable Fullscreen"
 msgstr "முழுத்திரையை செயல்படுத்து"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:903
-#| msgid "Whether to enable the Javascriipt Fullscreen API"
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Javascript முழுத்திரை API ஐ செயல்படுத்த வேண்டுமா"
 
@@ -1302,24 +1309,21 @@ msgid "Enable Spatial Navigation"
 msgstr "இடவியல் வழிசெலுத்தலை செயல்படுத்து"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1193
-#| msgid "Whether to enable Spatial Navigation"
 msgid "Whether to enable Spatial Navigation support."
 msgstr "இடவியல் வழிசெலுத்தலை செயல்படுத்த வேண்டுமா."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1212
-#| msgid "Enable MediaStream"
 msgid "Enable MediaSource"
 msgstr "MediaSource ஐ செயல்படுத்து"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1213
-#| msgid "Whether Media Stream should be enabled"
 msgid "Whether MediaSource should be enabled."
 msgstr "MediaSource ஐ செயல்படுத்த வேண்டுமா."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:743
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:830
 msgid "URI"
 msgstr "URI"
 
@@ -1368,25 +1372,36 @@ msgid "HTTP Headers"
 msgstr "HTTP தலைப்புகள்"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
-#| msgid "The MIME type of the response"
 msgid "The The HTTP headers of the response"
 msgstr "பதிலளிப்பின் HTTP தலைப்புகள்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
 msgid "Inspected URI"
 msgstr "ஆய்வு செய்யப்பட்ட URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
 msgid "The URI that is currently being inspected"
 msgstr "தற்போது ஆய்வு செய்யப்படும் URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
 msgid "Attached Height"
 msgstr "இணைக்கப்பட்ட உயரம்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
 msgid "The height that the inspector view should have when it is attached"
 msgstr "ஆய்விப் பார்வை இணைக்கப்படும் போது இருக்க வேண்டிய அதன் உயரம்"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "இணைக்க முடியும் தன்மை"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr ""
+"ஆய்வு செய்யப்படும் காட்சியைக் கொண்டுள்ள அதே சாளரத்தில், ஆய்வியை இணைக்க "
+"முடியுமா என்ற அமைப்பு"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
 msgid "The current active URI of the resource"
@@ -1396,95 +1411,92 @@ msgstr "வளத்தின் தற்போதைய செயலில் 
 msgid "The response of the resource"
 msgstr "வளத்தின் பதிலளிப்பு"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:460
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:538
 msgid "Select Files"
 msgstr "கோப்புகளை தேர்வு செய்க"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:460
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:538
 msgid "Select File"
 msgstr "கோப்பைத் தேர்ந்தெடுக்கவும்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:633
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:720
 msgid "Web Context"
 msgstr "வலைச் சூழல்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:634
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:721
 msgid "The web context for the view"
 msgstr "பார்வைக்கான வலை சூழல்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:651
-#| msgid "WebView"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:738
 msgid "Related WebView"
 msgstr "தொடர்புடைய WebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:652
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:739
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
 msgstr ""
 "தொடர்புடைய WebKitWebView ஆனது காட்சியை உருவாக்கும் போது அதே வலை "
-"செயலாக்கத்தைப் பகிர பயன்படுத்தப்படுகிறது"
+"செயலாக்கத்தைப் பகிர "
+"பயன்படுத்தப்படுகிறது"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
-#| msgid "WebView"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:755
 msgid "WebView settings"
 msgstr "WebView அமைவுகள்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:669
-#| msgid "The WebKitWebViewGroup of the view"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:756
 msgid "The WebKitSettings of the view"
 msgstr "காட்சியின் WebKitSettings"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:685
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:772
 msgid "WebView user content manager"
 msgstr "WebView பயனர் உள்ளடக்க நிர்வாகி"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:686
-#| msgid "The WebKitWebViewGroup of the view"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:773
 msgid "The WebKitUserContentManager of the view"
 msgstr "காட்சியின் WebKitUserContentManager"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:699
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:786
 msgid "Title"
 msgstr "தலைப்பு"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:700
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:787
 msgid "Main frame document title"
 msgstr "பிரதான ஃபிரேம் ஆவணத் தலைப்பு"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:718
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:805
 msgid "Estimated Load Progress"
 msgstr "கணிக்கப்பட்ட ஏற்றல் முன்னேற்றம்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:719
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:806
 msgid "An estimate of the percent completion for a document load"
 msgstr "ஒரு ஆவண ஏற்றத்திற்கான சதவீத நிறைவின் கணக்கீடு"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:731
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:818
 msgid "Favicon"
 msgstr "ஃபேவைகான்"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:732
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:819
 msgid "The favicon associated to the view, if any"
 msgstr "இந்த பார்வையுடன் சம்பந்தப்பட்ட ஃபேவைகான் ஏதேனும் இருந்தால், அது"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:744
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:831
 msgid "The current active URI of the view"
 msgstr "பார்வையின் தற்போதைய செயலில் உள்ள URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:758
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:845
 msgid "The zoom level of the view content"
 msgstr "பார்வையின் உள்ளடக்கத்தின் உருப்பெருக்க அளவு"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:776
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:863
 msgid "Whether the view is loading a page"
 msgstr "பார்வையானது ஒரு பக்கத்தை ஏற்றுகிறதா"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2725
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2776
 msgid "An exception was raised in JavaScript"
 msgstr "JavaScript இல் ஒரு விலக்கு எழுப்பப்பட்டது"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3232
 msgid "There was an error creating the snapshot"
 msgstr "ஸ்னாப்ஷாட்டை உருவாக்கும் போது ஒரு பிழை ஏற்பட்டது"
 
@@ -1552,8 +1564,9 @@ msgstr "முழுத்திரை"
 msgid "Whether window will be displayed fullscreen."
 msgstr "சாளரம் முழுத்திரையாகக் காண்பிக்கப்படுமா."
 
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:82
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:147
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:132
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:137
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:140
 msgid "Web Inspector"
 msgstr "வலை ஆய்வி"
 

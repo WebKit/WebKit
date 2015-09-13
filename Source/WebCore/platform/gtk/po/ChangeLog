@@ -1,3 +1,12 @@
+2015-09-12  Shantha kumar  <shkumar@redhat.com>
+
+        Webkit Tamil translations updated
+        https://bugs.webkit.org/show_bug.cgi?id=139478
+
+        Unreviewed.
+
+        * ta.po:
+
 2015-09-12  Zahari Yurukov  <zahari.yurukov@gmail.com>
 
         [l10n] Updated Bulgarian translation
