@@ -50,10 +50,10 @@ static WKWebViewConfiguration *globalWebViewConfiguration;
 void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
 #if WK_API_ENABLED
-    ASSERT(!globalWebViewConfiguration);
+    [globalWebViewConfiguration release];
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
-    globalWebViewConfiguration.processPool = [[WKProcessPool alloc] _initWithConfiguration:(_WKProcessPoolConfiguration *)contextConfiguration];
+    globalWebViewConfiguration.processPool = WTF::adoptNS([[WKProcessPool alloc] _initWithConfiguration:(_WKProcessPoolConfiguration *)contextConfiguration]).get();
     globalWebViewConfiguration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
 
 #if TARGET_OS_IPHONE
@@ -74,12 +74,12 @@ WKPreferencesRef TestController::platformPreferences()
 #endif
 }
 
-void TestController::platformCreateWebView(WKPageConfigurationRef, const ViewOptions& options)
+void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
 {
     m_mainWebView = std::make_unique<PlatformWebView>(globalWebViewConfiguration, options);
 }
 
-PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const ViewOptions& options)
+PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
 {
 #if WK_API_ENABLED
     WKWebViewConfiguration *newConfiguration = [[globalWebViewConfiguration copy] autorelease];

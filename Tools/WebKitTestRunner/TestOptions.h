@@ -23,20 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewOptions_h
-#define ViewOptions_h
+#ifndef TestOptions_h
+#define TestOptions_h
 
 namespace WTR {
 
-struct ViewOptions {
+struct TestOptions {
     bool useThreadedScrolling { false };
     bool useRemoteLayerTree { false };
     bool shouldShowWebView { false };
-    bool useTiledDrawing { false };
 
     bool useFixedLayout { false };
 };
 
 }
 
-#endif // ViewOptions_h
+#endif // TestOptions_h
