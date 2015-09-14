@@ -1,5 +1,16 @@
 2015-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Add scroll snap blog post resources.
+
+        * blog-files/scroll-snap/overflow-normal.mp4: Added.
+        * blog-files/scroll-snap/snap-2d-rotated.mp4: Added.
+        * blog-files/scroll-snap/snap-2d.mp4: Added.
+        * blog-files/scroll-snap/snap-coordinates-centered.mp4: Added.
+        * blog-files/scroll-snap/snap-coordinates.mp4: Added.
+        * blog-files/scroll-snap/snap-repeat-100.mp4: Added.
+
+2015-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add scroll snap demo directory and files.
 
         * demos/scroll-snap/images/1.png: Added.
