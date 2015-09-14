@@ -540,9 +540,9 @@ bool ParkingLot::parkConditionally(
     {
         std::unique_lock<std::mutex> locker(me->parkingLock);
         while (me->address && Clock::now() < timeout) {
-            // This is pretty funny. On Linux, if you wait until the max time, it immediately reports that you timed
-            // out. What's particularly bad about this is that it never releases the lock in that case. So, you loop
-            // forever without yielding to the thread that would wake you up.
+            // Falling back to wait() works around a bug in libstdc++ implementation of std::condition_variable. See:
+            // - https://bugs.webkit.org/show_bug.cgi?id=148027
+            // - https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58931
             if (timeout == Clock::time_point::max())
                 me->parkingCondition.wait(locker);
             else
