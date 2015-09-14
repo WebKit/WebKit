@@ -113,6 +113,7 @@ struct _WebKitWebSrcPrivate {
     bool keepAlive;
     GUniquePtr<GstStructure> extraHeaders;
     bool compress;
+    GUniquePtr<gchar> httpMethod;
 
     WebCore::MediaPlayer* player;
 
@@ -152,7 +153,8 @@ enum {
     PROP_LOCATION,
     PROP_KEEP_ALIVE,
     PROP_EXTRA_HEADERS,
-    PROP_COMPRESS
+    PROP_COMPRESS,
+    PROP_METHOD
 };
 
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
@@ -262,6 +264,10 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
         g_param_spec_boolean("compress", "Compress", "Allow compressed content encodings",
             FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
+    g_object_class_install_property(oklass, PROP_METHOD,
+        g_param_spec_string("method", "method", "The HTTP method to use (default: GET)",
+            nullptr, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
     eklass->change_state = webKitWebSrcChangeState;
 
     g_type_class_add_private(klass, sizeof(WebKitWebSrcPrivate));
@@ -358,6 +364,9 @@ static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue*
     case PROP_COMPRESS:
         src->priv->compress = g_value_get_boolean(value);
         break;
+    case PROP_METHOD:
+        src->priv->httpMethod.reset(g_value_dup_string(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
         break;
@@ -394,6 +403,9 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
         break;
     case PROP_COMPRESS:
         g_value_set_boolean(value, priv->compress);
+        break;
+    case PROP_METHOD:
+        g_value_set_string(value, priv->httpMethod.get());
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
@@ -542,6 +554,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     ASSERT(!priv->client);
 
+    GST_DEBUG_OBJECT(src, "Fetching %s", priv->uri);
     URL url = URL(URL(), priv->uri);
 
     ResourceRequest request(url);
@@ -552,6 +565,9 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     if (priv->player)
         request.setHTTPReferrer(priv->player->referrer());
+
+    if (priv->httpMethod.get())
+        request.setHTTPMethod(priv->httpMethod.get());
 
 #if USE(SOUP)
     // By default, HTTP Accept-Encoding is disabled here as we don't
