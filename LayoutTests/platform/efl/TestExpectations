@@ -405,9 +405,6 @@ webkit.org/b/85465 compositing/filters [ Skip ]
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 
-# Some CSS properties not supported on EFL
-fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
-
 # Perf tests are really slow in debug builds and there are few benefits in running them.
 [ Debug ] perf [ WontFix ]
 
@@ -720,7 +717,6 @@ webkit.org/b/131729 http/tests/globalhistory/history-delegate-basic-302-redirect
 webkit.org/b/131729 http/tests/globalhistory/history-delegate-basic-title.html [ Failure ]
 webkit.org/b/131729 http/tests/globalhistory/history-delegate-pushstate.html [ Failure ]
 webkit.org/b/131729 http/tests/globalhistory/history-delegate-replacestate.html [ Failure ]
-webkit.org/b/131729 http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
 webkit.org/b/131729 http/tests/misc/acid3.html [ Failure Pass ]
 webkit.org/b/131729 http/tests/misc/image-blocked-src-change.html [ Failure Pass ]
 webkit.org/b/131729 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
@@ -1461,9 +1457,6 @@ webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html
 webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html
 editing/inserting/smart-quote-with-all-configurations.html
 
-# Tests failing due to rounding problems in colors inside pixman
-webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
-
 # Failing after r119268 on GTK and EFL
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
 
@@ -1565,8 +1558,6 @@ Bug(EFL) fast/dynamic/012.html [ Failure ]
 Bug(EFL) fast/dynamic/layer-hit-test-crash.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility-sublayer.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility.html [ Failure ]
-Bug(EFL) fast/repaint/invisible-objects.html [ Failure ]
-Bug(EFL) fast/repaint/layer-hide-when-needs-layout.html [ Failure ]
 Bug(EFL) fast/text/whitespace/019.html [ Failure ]
 Bug(EFL) fast/text/whitespace/023.html [ Failure ]
 Bug(EFL) fast/text/whitespace/028.html [ Failure ]
@@ -1688,7 +1679,6 @@ webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 # Border-fit should happen at layout time rather than paint time
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
-webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 
 # Started failing on EFL afrer r145025.
 webkit.org/b/111860 fast/forms/number/number-validation-message.html [ Failure ]
@@ -2026,7 +2016,6 @@ webkit.org/b/133860 fast/regions/auto-size/autosize-region-window-resize.html [ 
 webkit.org/b/133974 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
-webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
 
 webkit.org/b/135504 svg/css/parse-height.html [ Failure ]
 webkit.org/b/135504 svg/css/parse-length.html [ Failure ]
@@ -2066,7 +2055,6 @@ webkit.org/b/136406 compositing/contents-scale/scaled-ancestor.html [ Failure ]
 webkit.org/b/136406 compositing/contents-scale/simple-scale.html [ Failure ]
 webkit.org/b/136406 compositing/contents-scale/z-translate.html [ Failure ]
 webkit.org/b/136406 compositing/fixed-image-loading.html [ Failure ]
-webkit.org/b/136406 compositing/geometry/ancestor-overflow-change.html [ Failure ]
 webkit.org/b/136406 compositing/images/direct-image-object-fit.html [ Failure ]
 webkit.org/b/136406 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Failure ]
 webkit.org/b/136406 compositing/layer-creation/overlap-animation-container.html [ Failure ]
@@ -2179,7 +2167,6 @@ webkit.org/b/131044 media/controls-without-preload.html [ Failure ]
 webkit.org/b/131044 media/media-controls-invalid-url.html [ Failure ]
 webkit.org/b/131044 media/media-controls-timeline-updates.html [ Failure ]
 webkit.org/b/131044 media/media-preload-no-delay-loadevent.html [ Failure ]
-webkit.org/b/131044 media/media-volume-slider-rendered-normal.html [ Failure ]
 webkit.org/b/131044 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 webkit.org/b/131044 media/track/track-long-word-container-sizing.html [ Failure ]
 webkit.org/b/131044 media/track/video/video-track-mkv-theora-language.html [ Failure ]
@@ -2296,9 +2283,6 @@ webkit.org/b/146887 accessibility/table-with-missing-aria-role-rows.html [ Failu
 
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
-
-# This test relies on iOS-specific font fallback.
-fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
 
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
@@ -2551,3 +2535,6 @@ webkit.org/b/148470 svg/text/selection-doubleclick.svg [ Failure ]
 
 # Mocking the system language is not implemented in EFL.
 fast/text/international/system-language [ Failure ]
+fast/text/international/system-language/system-font-punctuation.html [ Missing ]
+# This test relies on iOS-specific font fallback.
+fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
