@@ -129,6 +129,7 @@
 #include "SVGElement.h"
 #include "SVGElementFactory.h"
 #include "SVGNames.h"
+#include "SVGTitleElement.h"
 #include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
@@ -453,7 +454,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_frameElementsShouldIgnoreScrolling(false)
     , m_updateFocusAppearanceRestoresSelection(false)
     , m_ignoreDestructiveWriteCount(0)
-    , m_titleSetExplicitly(false)
     , m_markers(std::make_unique<DocumentMarkerController>())
     , m_updateFocusAppearanceTimer(*this, &Document::updateFocusAppearanceTimerFired)
     , m_cssTarget(nullptr)
@@ -1532,10 +1532,23 @@ void Document::updateTitle(const StringWithDirection& title)
         loader->setTitle(m_title);
 }
 
+void Document::updateTitleFromTitleElement()
+{
+    if (!m_titleElement) {
+        updateTitle(StringWithDirection());
+        return;
+    }
+
+    if (is<HTMLTitleElement>(*m_titleElement))
+        updateTitle(downcast<HTMLTitleElement>(*m_titleElement).textWithDirection());
+    else if (is<SVGTitleElement>(*m_titleElement)) {
+        // FIXME: does SVG have a title text direction?
+        updateTitle(StringWithDirection(downcast<SVGTitleElement>(*m_titleElement).textContent(), LTR));
+    }
+}
+
 void Document::setTitle(const String& title)
 {
-    // Title set by JavaScript -- overrides any title elements.
-    m_titleSetExplicitly = true;
     if (!isHTMLDocument() && !isXHTMLDocument())
         m_titleElement = nullptr;
     else if (!m_titleElement) {
@@ -1553,35 +1566,42 @@ void Document::setTitle(const String& title)
         downcast<HTMLTitleElement>(*m_titleElement).setText(title);
 }
 
-void Document::setTitleElement(const StringWithDirection& title, Element* titleElement)
+void Document::updateTitleElement(Element* newTitleElement)
 {
-    if (titleElement != m_titleElement) {
-        if (m_titleElement || m_titleSetExplicitly) {
-            // Only allow the first title element to change the title -- others have no effect.
-            return;
-        }
-        m_titleElement = titleElement;
-    }
+    // Only allow the first title element in tree order to change the title -- others have no effect.
+    if (m_titleElement) {
+        if (isHTMLDocument() || isXHTMLDocument())
+            m_titleElement = descendantsOfType<HTMLTitleElement>(*this).first();
+        else if (isSVGDocument())
+            m_titleElement = descendantsOfType<SVGTitleElement>(*this).first();
+    } else
+        m_titleElement = newTitleElement;
 
-    updateTitle(title);
+    updateTitleFromTitleElement();
 }
 
-void Document::removeTitle(Element* titleElement)
+void Document::titleElementAdded(Element& titleElement)
 {
-    if (m_titleElement != titleElement)
+    if (m_titleElement == &titleElement)
         return;
 
-    m_titleElement = nullptr;
-    m_titleSetExplicitly = false;
+    updateTitleElement(&titleElement);
+}
 
-    // Update title based on first title element in the head, if one exists.
-    if (HTMLElement* headElement = head()) {
-        if (auto firstTitle = childrenOfType<HTMLTitleElement>(*headElement).first())
-            setTitleElement(firstTitle->textWithDirection(), firstTitle);
-    }
+void Document::titleElementRemoved(Element& titleElement)
+{
+    if (m_titleElement != &titleElement)
+        return;
 
-    if (!m_titleElement)
-        updateTitle(StringWithDirection());
+    updateTitleElement(nullptr);
+}
+
+void Document::titleElementTextChanged(Element& titleElement)
+{
+    if (m_titleElement != &titleElement)
+        return;
+
+    updateTitleFromTitleElement();
 }
 
 void Document::registerForVisibilityStateChangedCallbacks(Element* element)

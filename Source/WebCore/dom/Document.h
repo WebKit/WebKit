@@ -832,8 +832,9 @@ public:
     String title() const { return m_title.string(); }
     void setTitle(const String&);
 
-    void setTitleElement(const StringWithDirection&, Element* titleElement);
-    void removeTitle(Element* titleElement);
+    void titleElementAdded(Element& titleElement);
+    void titleElementRemoved(Element& titleElement);
+    void titleElementTextChanged(Element& titleElement);
 
     String cookie(ExceptionCode&);
     void setCookie(const String&, ExceptionCode&);
@@ -1287,6 +1288,8 @@ private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
 
+    void updateTitleElement(Element* newTitleElement);
+
     void commonTeardown();
 
     RenderObject* renderer() const = delete;
@@ -1320,6 +1323,7 @@ private:
 
     virtual double timerAlignmentInterval(bool hasReachedMaxNestingLevel) const override final;
 
+    void updateTitleFromTitleElement();
     void updateTitle(const StringWithDirection&);
     void updateFocusAppearanceTimerFired();
     void updateBaseURL();
@@ -1476,7 +1480,6 @@ private:
 
     StringWithDirection m_title;
     StringWithDirection m_rawTitle;
-    bool m_titleSetExplicitly;
     RefPtr<Element> m_titleElement;
 
     std::unique_ptr<AXObjectCache> m_axObjectCache;
