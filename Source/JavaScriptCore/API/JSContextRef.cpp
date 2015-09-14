@@ -99,9 +99,9 @@ void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, 
     Watchdog& watchdog = vm.ensureWatchdog();
     if (callback) {
         void* callbackPtr = reinterpret_cast<void*>(callback);
-        watchdog.setTimeLimit(vm, std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(limit)), internalScriptTimeoutCallback, callbackPtr, callbackData);
+        watchdog.setTimeLimit(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(limit)), internalScriptTimeoutCallback, callbackPtr, callbackData);
     } else
-        watchdog.setTimeLimit(vm, std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(limit)));
+        watchdog.setTimeLimit(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(limit)));
 }
 
 void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
@@ -109,7 +109,7 @@ void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
     VM& vm = *toJS(group);
     JSLockHolder locker(&vm);
     if (vm.watchdog)
-        vm.watchdog->setTimeLimit(vm, Watchdog::noTimeLimit);
+        vm.watchdog->setTimeLimit(Watchdog::noTimeLimit);
 }
 
 // From the API's perspective, a global context remains alive iff it has been JSGlobalContextRetained.

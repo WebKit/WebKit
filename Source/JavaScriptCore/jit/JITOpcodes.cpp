@@ -906,7 +906,7 @@ void JIT::emit_op_loop_hint(Instruction*)
     }
 
     // Emit the watchdog timer check:
-    if (m_vm->watchdog && m_vm->watchdog->hasTimeLimit())
+    if (m_vm->watchdog)
         addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog->timerDidFireAddress())));
 }
 
@@ -932,7 +932,7 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
 #endif
 
     // Emit the slow path of the watchdog timer check:
-    if (m_vm->watchdog && m_vm->watchdog->hasTimeLimit()) {
+    if (m_vm->watchdog) {
         linkSlowCase(iter);
         callOperation(operationHandleWatchdogTimer);
 

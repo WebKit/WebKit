@@ -57,7 +57,7 @@
 #include "ScopedArguments.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
-#include "Watchdog.h"
+#include "VMInlines.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {
@@ -968,7 +968,7 @@ void JIT_OPERATION operationHandleWatchdogTimer(ExecState* exec)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(exec)))
+    if (UNLIKELY(vm.shouldTriggerTermination(exec)))
         vm.throwException(exec, createTerminatedExecutionException(&vm));
 }
 
