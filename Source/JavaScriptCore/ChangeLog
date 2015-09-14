@@ -1,5 +1,43 @@
 2015-08-20  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should have a KnownBooleanUse for cases where we are required to know that the child is a boolean and it's not OK to speculate
+        https://bugs.webkit.org/show_bug.cgi?id=148286
+
+        Reviewed by Benjamin Poulain.
+
+        This enables us to ensure that the Branch or LogicalNot after an effectful CompareXYZ can
+        be marked as !mayExit(). I need that for https://bugs.webkit.org/show_bug.cgi?id=145204.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateBooleanOperand::SpeculateBooleanOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::shouldNotHaveTypeCheck):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::boolify):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBoolean):
+
+2015-08-20  Filip Pizlo  <fpizlo@apple.com>
+
         Overflow check elimination fails for a simple test case
         https://bugs.webkit.org/show_bug.cgi?id=147387
 

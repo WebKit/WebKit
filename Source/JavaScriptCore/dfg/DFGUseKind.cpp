@@ -70,6 +70,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case BooleanUse:
         out.print("Boolean");
         return;
+    case KnownBooleanUse:
+        out.print("KnownBoolean");
+        return;
     case CellUse:
         out.print("Cell");
         return;
