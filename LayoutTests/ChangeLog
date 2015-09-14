@@ -1,3 +1,16 @@
+2015-09-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Percentage columns should remove scrollbar's width
+        https://bugs.webkit.org/show_bug.cgi?id=149116
+
+        Reviewed by Sergio Villar Senin.
+
+        Added test to check the behavior for both columns and rows.
+        Note that rows (height) were already working fine.
+
+        * fast/css-grid-layout/grid-percent-track-scrollbar-expected.txt: Added.
+        * fast/css-grid-layout/grid-percent-track-scrollbar.html: Added.
+
 2015-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] pipe-to writable stream tests
