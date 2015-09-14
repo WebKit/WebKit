@@ -1,0 +1,5 @@
+
+FAIL Piping with no options and a destination error Can't find variable: WritableStream
+FAIL Piping with { preventCancel: false } and a destination error Can't find variable: WritableStream
+FAIL Piping with { preventCancel: true } and a destination error Can't find variable: WritableStream
+
