@@ -1,5 +1,11 @@
 2015-09-14  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, really fix non-x86 LLInt build without also breaking everything else.
+
+        * llint/LowLevelInterpreter64.asm:
+
+2015-09-14  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix non-x86 LLInt build.
 
         * llint/LowLevelInterpreter64.asm:

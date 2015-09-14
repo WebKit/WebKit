@@ -468,16 +468,16 @@ macro valueProfile(value, operand, scratch)
     storeq value, ValueProfile::m_buckets[scratch]
 end
 
-macro structureIDToStructureWithScratch(structureID, structure, scratch)
+macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
     loadp CodeBlock[cfr], scratch
     loadp CodeBlock::m_vm[scratch], scratch
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
-    loadi structureID, structure
-    loadp [scratch, structure, 8], structure
+    loadp [scratch, structureIDThenStructure, 8], structureIDThenStructure
 end
 
 macro loadStructureWithScratch(cell, structure, scratch)
-    structureIDToStructureWithScratch(JSCell::m_structureID[cell], structure, scratch)
+    loadi JSCell::m_structureID[cell], structure
+    structureIDToStructureWithScratch(structure, scratch)
 end
 
 macro loadStructureAndClobberFirstArg(cell, structure)
@@ -1273,7 +1273,7 @@ _llint_op_put_by_id:
     loadp StructureChain::m_vector[t3], t3
     assert(macro (ok) btpnz t3, ok end)
 
-    structureIDToStructureWithScratch([t2], t2, t1)
+    structureIDToStructureWithScratch(t2, t1)
     loadq Structure::m_prototype[t2], t2
     bqeq t2, ValueNull, .opPutByIdTransitionChainDone
 .opPutByIdTransitionChainLoop:
