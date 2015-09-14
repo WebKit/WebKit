@@ -2812,3 +2812,6 @@ fast/dom/offset-position-writing-modes.html [ Skip ]
 http/tests/navigation/page-cache-pending-image-load-cache-partition.html [ Skip ]
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Skip ]
 http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame.html [ Skip ]
+
+# -webkit-flex off-by-one px
+webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
