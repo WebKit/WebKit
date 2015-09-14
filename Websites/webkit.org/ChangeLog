@@ -1,3 +1,27 @@
+2015-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add scroll snap demo directory and files.
+
+        * demos/scroll-snap/images/1.png: Added.
+        * demos/scroll-snap/images/10.png: Added.
+        * demos/scroll-snap/images/11.png: Added.
+        * demos/scroll-snap/images/12.png: Added.
+        * demos/scroll-snap/images/13.png: Added.
+        * demos/scroll-snap/images/14.png: Added.
+        * demos/scroll-snap/images/15.png: Added.
+        * demos/scroll-snap/images/16.png: Added.
+        * demos/scroll-snap/images/2.png: Added.
+        * demos/scroll-snap/images/3.png: Added.
+        * demos/scroll-snap/images/4.png: Added.
+        * demos/scroll-snap/images/5.png: Added.
+        * demos/scroll-snap/images/6.png: Added.
+        * demos/scroll-snap/images/7.png: Added.
+        * demos/scroll-snap/images/8.png: Added.
+        * demos/scroll-snap/images/9.png: Added.
+        * demos/scroll-snap/images/bluecross.svg: Added.
+        * demos/scroll-snap/images/corner.svg: Added.
+        * demos/scroll-snap/index.html: Added.
+
 2015-09-03  Matt Baker  <mattbaker@apple.com>
 
         Added and updated assets for Introducing the Rendering Frames Timeline blog post.
