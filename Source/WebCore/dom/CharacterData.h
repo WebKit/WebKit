@@ -36,7 +36,7 @@ public:
     WEBCORE_EXPORT void setData(const String&, ExceptionCode&);
     unsigned length() const { return m_data.length(); }
     String substringData(unsigned offset, unsigned count, ExceptionCode&);
-    void appendData(const String&, ExceptionCode&);
+    void appendData(const String&);
     void insertData(unsigned offset, const String&, ExceptionCode&);
     void deleteData(unsigned offset, unsigned count, ExceptionCode&);
     void replaceData(unsigned offset, unsigned count, const String&, ExceptionCode&);

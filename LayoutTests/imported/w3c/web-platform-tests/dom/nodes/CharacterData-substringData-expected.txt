@@ -1,5 +1,5 @@
 
-FAIL Text.substringData() with too few arguments assert_throws: function "function () { node.substringData() }" did not throw
+PASS Text.substringData() with too few arguments 
 PASS Text.substringData() with too many arguments 
 PASS Text.substringData() with invalid offset 
 PASS Text.substringData() with in-bounds offset 
@@ -13,7 +13,7 @@ PASS Text.substringData() with very large count
 FAIL Text.substringData() with negative count IndexSizeError: DOM Exception 1
 PASS Text.substringData() with non-ASCII data 
 PASS Text.substringData() with non-BMP data 
-FAIL Comment.substringData() with too few arguments assert_throws: function "function () { node.substringData() }" did not throw
+PASS Comment.substringData() with too few arguments 
 PASS Comment.substringData() with too many arguments 
 PASS Comment.substringData() with invalid offset 
 PASS Comment.substringData() with in-bounds offset 

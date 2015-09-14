@@ -1260,11 +1260,11 @@ FAIL CharacterData interface: attribute data assert_throws: getting property on 
 FAIL CharacterData interface: attribute length assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-FAIL CharacterData interface: operation substringData(unsigned long,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL CharacterData interface: operation appendData(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL CharacterData interface: operation insertData(unsigned long,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL CharacterData interface: operation deleteData(unsigned long,unsigned long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL CharacterData interface: operation replaceData(unsigned long,unsigned long,DOMString) assert_equals: property has wrong .length expected 3 but got 0
+PASS CharacterData interface: operation substringData(unsigned long,unsigned long) 
+PASS CharacterData interface: operation appendData(DOMString) 
+PASS CharacterData interface: operation insertData(unsigned long,DOMString) 
+PASS CharacterData interface: operation deleteData(unsigned long,unsigned long) 
+PASS CharacterData interface: operation replaceData(unsigned long,unsigned long,DOMString) 
 FAIL CharacterData interface: attribute previousElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -1293,25 +1293,15 @@ PASS Text interface: document.createTextNode("abc") must inherit property "whole
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "data" with the proper type (0) 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "length" with the proper type (1) 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "substringData" with the proper type (2) 
-FAIL CharacterData interface: calling substringData(unsigned long,unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling substringData(unsigned long,unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "appendData" with the proper type (3) 
-FAIL CharacterData interface: calling appendData(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling appendData(DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "insertData" with the proper type (4) 
-FAIL CharacterData interface: calling insertData(unsigned long,DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling insertData(unsigned long,DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "deleteData" with the proper type (5) 
-FAIL CharacterData interface: calling deleteData(unsigned long,unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling deleteData(unsigned long,unsigned long) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "replaceData" with the proper type (6) 
-FAIL CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on document.createTextNode("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "previousElementSibling" with the proper type (7) 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "nextElementSibling" with the proper type (8) 
 PASS CharacterData interface: document.createTextNode("abc") must inherit property "before" with the proper type (9) 
@@ -1421,25 +1411,15 @@ PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "data" with the proper type (0) 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "length" with the proper type (1) 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "substringData" with the proper type (2) 
-FAIL CharacterData interface: calling substringData(unsigned long,unsigned long) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling substringData(unsigned long,unsigned long) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "appendData" with the proper type (3) 
-FAIL CharacterData interface: calling appendData(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling appendData(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "insertData" with the proper type (4) 
-FAIL CharacterData interface: calling insertData(unsigned long,DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling insertData(unsigned long,DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "deleteData" with the proper type (5) 
-FAIL CharacterData interface: calling deleteData(unsigned long,unsigned long) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling deleteData(unsigned long,unsigned long) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "replaceData" with the proper type (6) 
-FAIL CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "previousElementSibling" with the proper type (7) 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "nextElementSibling" with the proper type (8) 
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "before" with the proper type (9) 
@@ -1545,25 +1525,15 @@ PASS Stringification of document.createComment("abc")
 PASS CharacterData interface: document.createComment("abc") must inherit property "data" with the proper type (0) 
 PASS CharacterData interface: document.createComment("abc") must inherit property "length" with the proper type (1) 
 PASS CharacterData interface: document.createComment("abc") must inherit property "substringData" with the proper type (2) 
-FAIL CharacterData interface: calling substringData(unsigned long,unsigned long) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling substringData(unsigned long,unsigned long) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createComment("abc") must inherit property "appendData" with the proper type (3) 
-FAIL CharacterData interface: calling appendData(DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling appendData(DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createComment("abc") must inherit property "insertData" with the proper type (4) 
-FAIL CharacterData interface: calling insertData(unsigned long,DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling insertData(unsigned long,DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createComment("abc") must inherit property "deleteData" with the proper type (5) 
-FAIL CharacterData interface: calling deleteData(unsigned long,unsigned long) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling deleteData(unsigned long,unsigned long) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createComment("abc") must inherit property "replaceData" with the proper type (6) 
-FAIL CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on document.createComment("abc") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS CharacterData interface: calling replaceData(unsigned long,unsigned long,DOMString) on document.createComment("abc") with too few arguments must throw TypeError 
 PASS CharacterData interface: document.createComment("abc") must inherit property "previousElementSibling" with the proper type (7) 
 PASS CharacterData interface: document.createComment("abc") must inherit property "nextElementSibling" with the proper type (8) 
 PASS CharacterData interface: document.createComment("abc") must inherit property "before" with the proper type (9) 

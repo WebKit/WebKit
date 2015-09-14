@@ -23,20 +23,15 @@ interface CharacterData : Node {
 
     readonly attribute unsigned long length;
     
-    [TreatReturnedNullStringAs=Null, ObjCLegacyUnnamedParameters, RaisesException] DOMString substringData([IsIndex, Default=Undefined] optional unsigned long offset, 
-                                                                     [IsIndex, Default=Undefined] optional unsigned long length);
+    [TreatReturnedNullStringAs=Null, ObjCLegacyUnnamedParameters, RaisesException] DOMString substringData([IsIndex] unsigned long offset, [IsIndex] unsigned long length);
 
-    [RaisesException] void appendData([Default=Undefined] optional DOMString data);
+    void appendData(DOMString data);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void insertData([IsIndex, Default=Undefined] optional unsigned long offset, 
-                                   [Default=Undefined] optional DOMString data);
+    [ObjCLegacyUnnamedParameters, RaisesException] void insertData([IsIndex] unsigned long offset, DOMString data);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void deleteData([IsIndex, Default=Undefined] optional unsigned long offset, 
-                                   [IsIndex, Default=Undefined] optional unsigned long length);
+    [ObjCLegacyUnnamedParameters, RaisesException] void deleteData([IsIndex] unsigned long offset, [IsIndex] unsigned long length);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void replaceData([IsIndex, Default=Undefined] optional unsigned long offset, 
-                                    [IsIndex, Default=Undefined] optional unsigned long length,
-                                    [Default=Undefined] optional DOMString data);
+    [ObjCLegacyUnnamedParameters, RaisesException] void replaceData([IsIndex] unsigned long offset, [IsIndex] unsigned long length, DOMString data);
 };
 
 CharacterData implements ChildNode;

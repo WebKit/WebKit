@@ -2286,9 +2286,7 @@ void Element::mergeWithNextTextNode(Text& node, ExceptionCode& ec)
 
     Ref<Text> textNode(node);
     Ref<Text> textNext(downcast<Text>(*next));
-    textNode->appendData(textNext->data(), ec);
-    if (ec)
-        return;
+    textNode->appendData(textNext->data());
     textNext->remove(ec);
 }
 

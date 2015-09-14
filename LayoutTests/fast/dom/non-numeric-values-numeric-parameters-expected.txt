@@ -4,10 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS nonNumericPolicy('document.createTextNode("a").substringData(x, 0)') is 'any type allowed'
-PASS nonNumericPolicy('document.createTextNode("a").substringData(0, x)') is 'any type allowed'
+PASS nonNumericPolicy('document.createTextNode("a").substringData(0, x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.createTextNode("a").insertData(x, "b")') is 'any type allowed'
 PASS nonNumericPolicy('document.createTextNode("a").deleteData(x, 0)') is 'any type allowed'
-PASS nonNumericPolicy('document.createTextNode("a").deleteData(0, x)') is 'any type allowed'
+PASS nonNumericPolicy('document.createTextNode("a").deleteData(0, x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.createTextNode("a").replaceData(x, 0, "b")') is 'any type allowed'
 PASS nonNumericPolicy('document.createTextNode("a").replaceData(0, x, "b")') is 'any type allowed'
 PASS nonNumericPolicy('createCSSMediaRule().insertRule(ruleText, x)') is 'any type allowed'

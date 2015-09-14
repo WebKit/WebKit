@@ -107,7 +107,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     return characterLengthLimit;
 }
 
-void CharacterData::appendData(const String& data, ExceptionCode&)
+void CharacterData::appendData(const String& data)
 {
     String newStr = m_data;
     newStr.append(data);
