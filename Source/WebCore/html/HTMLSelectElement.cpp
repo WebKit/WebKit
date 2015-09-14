@@ -899,6 +899,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
 
     scrollToSelection();
 
+    updateValidity();
     if (usesMenuList()) {
         m_isProcessingUserDrivenChange = flags & UserDriven;
         if (flags & DispatchChangeEvent)
@@ -910,8 +911,6 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
                 downcast<RenderListBox>(*renderer).selectionChanged();
         }
     }
-
-    updateValidity();
 }
 
 int HTMLSelectElement::optionToListIndex(int optionIndex) const
