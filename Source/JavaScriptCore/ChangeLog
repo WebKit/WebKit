@@ -1,3 +1,35 @@
+2015-09-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Eden GC should not try to jettison old CodeBlocks in the remembered set
+        https://bugs.webkit.org/show_bug.cgi?id=149108
+
+        Reviewed by Saam Barati.
+
+        All we know about objects in the remembered set is that they must be
+        visited. We don't know whether they're referenced or not because we
+        won't mark the objects that point to them.
+
+        Therefore, it's incorrect for a CodeBlock to consider jettisoning
+        itself when it's marked as a part of the remembered set: Some
+        old object might have visited the CodeBlock strongly if given the chance.
+
+        I believe this doesn't cause any problems currently because we happen
+        to visit all strong references to all CodeBlocks elligible for jettison
+        during every GC.
+
+        However, this behavior is a logical oddity that tripped me up, and I
+        believe it will start causing real problems once we start to jettison
+        baseline CodeBlocks, since we do not visit all strong references to all
+        baseline CodeBlocks during every GC.
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::clearMarksForEdenCollection):
+        (JSC::CodeBlockSet::traceMarked): Be sure to visit the remembered set
+        strongly, in order to prohibit jettisoning.
+
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        * heap/CodeBlockSet.h: Track the remembered set during eden GCs.
+
 2015-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r189585): run-perf-tests Speedometer fails with a console error

@@ -110,6 +110,7 @@ private:
     HashSet<CodeBlock*> m_oldCodeBlocks;
     HashSet<CodeBlock*> m_newCodeBlocks;
     HashSet<RefPtr<CodeBlock>> m_currentlyExecuting;
+    HashSet<RefPtr<CodeBlock>> m_remembered;
 };
 
 } // namespace JSC

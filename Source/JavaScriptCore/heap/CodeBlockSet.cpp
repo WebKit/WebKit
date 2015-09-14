@@ -80,6 +80,7 @@ void CodeBlockSet::clearMarksForEdenCollection(const Vector<const JSCell*>& reme
             continue;
         executable->forEachCodeBlock([this](CodeBlock* codeBlock) {
             codeBlock->clearMarks();
+            m_remembered.add(codeBlock);
         });
     }
 }
@@ -131,7 +132,17 @@ void CodeBlockSet::traceMarked(SlotVisitor& visitor)
 {
     if (verbose)
         dataLog("Tracing ", m_currentlyExecuting.size(), " code blocks.\n");
+
+    // We strongly visit the currently executing set because jettisoning code
+    // is not valuable once it's on the stack. We're past the point where
+    // jettisoning would avoid the cost of OSR exit.
     for (const RefPtr<CodeBlock>& codeBlock : m_currentlyExecuting)
+        codeBlock->visitStrongly(visitor);
+
+    // We strongly visit the remembered set because jettisoning old code during
+    // Eden GC is unsound. There might be an old object with a strong reference
+    // to the code.
+    for (const RefPtr<CodeBlock>& codeBlock : m_remembered)
         codeBlock->visitStrongly(visitor);
 }
 
@@ -143,10 +154,10 @@ void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
     for (const RefPtr<CodeBlock>& codeBlock : m_currentlyExecuting)
         heap->addToRememberedSet(codeBlock->ownerExecutable());
 
-    // It's safe to clear this RefPtr set because we won't delete the CodeBlocks
-    // in it until the next GC, and we'll recompute m_currentlyExecuting at that
-    // time.
+    // It's safe to clear these RefPtr sets because we won't delete the CodeBlocks
+    // in them until the next GC, and we'll recompute them at that time.
     m_currentlyExecuting.clear();
+    m_remembered.clear();
 #else
     UNUSED_PARAM(heap);
 #endif // ENABLE(GGC)
