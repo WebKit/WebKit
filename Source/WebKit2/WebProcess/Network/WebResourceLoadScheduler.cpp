@@ -141,10 +141,16 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
         return;
     }
 
+    if (resourceLoader->request().url().protocolIsData()) {
+        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be loaded as data.", resourceLoader->url().string().utf8().data());
+        startLocalLoad(*resourceLoader);
+        return;
+    }
+
 #if USE(QUICK_LOOK)
-    if (maybeLoadQuickLookResource(*resourceLoader)) {
+    if (resourceLoader->request().url().protocolIs(QLPreviewProtocol())) {
         LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader->url().string().utf8().data());
-        m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
+        startLocalLoad(*resourceLoader);
         return;
     }
 #endif
@@ -201,6 +207,12 @@ void WebResourceLoadScheduler::internallyFailedLoadTimerFired()
     
     for (size_t i = 0; i < internallyFailedResourceLoaders.size(); ++i)
         internallyFailedResourceLoaders[i]->didFail(internalError(internallyFailedResourceLoaders[i]->url()));
+}
+
+void WebResourceLoadScheduler::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
+{
+    resourceLoader.start();
+    m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(&resourceLoader));
 }
 
 void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)

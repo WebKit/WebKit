@@ -1,3 +1,19 @@
+2015-08-22  Antti Koivisto  <antti@apple.com>
+
+        Decode data URLs in web process
+        https://bugs.webkit.org/show_bug.cgi?id=148128
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
+            Don't send data: loads to the network process, handle them locally.
+
+        (WebKit::WebResourceLoadScheduler::startLocalLoad):
+
+            Call ResourceLoder::start() directly.
+
 2015-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.91 release.
