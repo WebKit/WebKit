@@ -34,24 +34,6 @@ namespace WebCore {
 
 class EvasGLSurface {
 public:
-    static std::unique_ptr<EvasGLSurface> create(Evas_GL* evasGL, Evas_GL_Config* cfg, const WebCore::IntSize& size)
-    {
-        ASSERT(evasGL);
-        ASSERT(cfg);
-
-        Evas_GL_Surface* surface = 0;
-
-        // Ensure that the surface is created with valid size.
-        if (size.width() && size.height())
-            surface = evas_gl_surface_create(evasGL, cfg, size.width(), size.height());
-
-        if (!surface)
-            return nullptr;
-
-        // Ownership of surface is passed to EvasGLSurface.
-        return std::make_unique<EvasGLSurface>(evasGL, surface);
-    }
-
     EvasGLSurface(Evas_GL*, Evas_GL_Surface* passSurface);
     ~EvasGLSurface();
 

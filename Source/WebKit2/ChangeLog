@@ -1,3 +1,19 @@
+2015-09-14  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Remove create() factory function in EvasGLContext and EvasGLSurface
+        https://bugs.webkit.org/show_bug.cgi?id=149110
+
+        Reviewed by Csaba Osztrogonác.
+
+        It is not good implementation we support both create() factory function and public constructor.
+        In EvasGLContext and EvasGLSurface cases, those have supported both. However create() factory is only
+        used by EwkView. Thus let's remove the create() function, then EwkView creates EvasGLContext using
+        std::make_unique<> directly.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::createGLSurface):
+
 2015-09-13  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove all uses of PassRefPtr in crypto, storage, and history

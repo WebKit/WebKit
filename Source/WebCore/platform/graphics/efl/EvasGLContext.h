@@ -32,17 +32,6 @@ namespace WebCore {
 
 class EvasGLContext {
 public:
-    static std::unique_ptr<EvasGLContext> create(Evas_GL* evasGL)
-    {
-        ASSERT(evasGL);
-        Evas_GL_Context* context = evas_gl_context_create(evasGL, 0);
-        if (!context)
-            return nullptr;
-
-        // Ownership of context is passed to EvasGLContext.
-        return std::make_unique<EvasGLContext>(evasGL, context);
-    }
-
     EvasGLContext(Evas_GL*, Evas_GL_Context* passContext);
     ~EvasGLContext();
 
