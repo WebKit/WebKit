@@ -1235,7 +1235,7 @@ webkit.org/b/147763 [ Mavericks Yosemite ] accessibility/mac/loaded-notification
 webkit.org/b/147390 [ Mavericks Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
 
 # This test relies on iOS-specific font fallback.
-[ Mavericks Yosemite ElCapitan ] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+[ Mavericks Yosemite ElCapitan ] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ Pass ImageOnlyFailure ]
 
 # Started to fail after r188390
 webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Failure ]
@@ -1286,6 +1286,6 @@ webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validat
 [ Mavericks Yosemite ] fast/canvas/webgl/match-page-color-space.html [ Skip ]
 
 # Mocking the system language relies on Bootstrap XPC messages, which are not supported in Mavericks.
-[ Mavericks ] fast/text/international/system-language [ Failure ImageOnlyFailure ]
+[ Mavericks ] fast/text/international/system-language [ Pass Failure ImageOnlyFailure ]
 # Han quotes are not different on Mavericks nor Yosemite.
 [ Mavericks Yosemite ] fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]

@@ -1,3 +1,12 @@
+2015-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening after r189670
+
+        Unreviewed.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2015-09-14  Chris Dumez  <cdumez@apple.com>
 
         Disable PICTURE_SIZES on AppleWin
