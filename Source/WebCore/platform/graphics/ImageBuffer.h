@@ -122,7 +122,7 @@ public:
 
     // FIXME: current implementations of this method have the restriction that they only work
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.
-    bool copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC3Denum, bool, bool);
+    bool copyToPlatformTexture(GraphicsContext3D&, GC3Denum, Platform3DObject, GC3Denum, bool, bool);
 
     FloatSize spaceSize() const { return m_space; }
     void setSpaceSize(const FloatSize& space) { m_space = space; }

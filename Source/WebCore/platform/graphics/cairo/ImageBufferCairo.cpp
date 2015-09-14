@@ -431,6 +431,57 @@ PlatformLayer* ImageBuffer::platformLayer() const
     return 0;
 }
 
+bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, GC3Denum target, Platform3DObject destinationTexture, GC3Denum internalformat, bool premultiplyAlpha, bool flipY)
+{
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    if (premultiplyAlpha || flipY)
+        return false;
+
+    if (!m_data.m_texture)
+        return false;
+
+    GC3Denum bindTextureTarget;
+    switch (target) {
+    case GL_TEXTURE_2D:
+        bindTextureTarget = GL_TEXTURE_2D;
+        break;
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
+        bindTextureTarget = GL_TEXTURE_CUBE_MAP;
+        break;
+    default:
+        return false;
+    }
+
+    cairo_surface_flush(m_data.m_surface.get());
+
+    std::unique_ptr<GLContext> context = GLContext::createContextForWindow(0, GLContext::sharingContext());
+    context->makeContextCurrent();
+    uint32_t fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_data.m_texture, 0);
+    glBindTexture(bindTextureTarget, destinationTexture);
+    glCopyTexImage2D(target, 0, internalformat, 0, 0, m_size.width(), m_size.height(), 0);
+    glBindTexture(bindTextureTarget, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glFlush();
+    glDeleteFramebuffers(1, &fbo);
+    return true;
+#else
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(destinationTexture);
+    UNUSED_PARAM(internalformat);
+    UNUSED_PARAM(premultiplyAlpha);
+    UNUSED_PARAM(flipY);
+    return false;
+#endif
+}
+
 } // namespace WebCore
 
 #endif // USE(CAIRO)
