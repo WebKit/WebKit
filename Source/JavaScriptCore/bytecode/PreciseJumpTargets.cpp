@@ -119,6 +119,7 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
         lastValue = value;
     }
     out.resize(toIndex);
+    out.shrinkToFit();
 }
 
 void findJumpTargetsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset, Vector<unsigned, 1>& out)

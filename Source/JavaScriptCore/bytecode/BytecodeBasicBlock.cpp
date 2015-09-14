@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,12 @@
 #include "PreciseJumpTargets.h"
 
 namespace JSC {
+
+void BytecodeBasicBlock::shrinkToFit()
+{
+    m_bytecodeOffsets.shrinkToFit();
+    m_successors.shrinkToFit();
+}
 
 static bool isBranch(OpcodeID opcodeID)
 {
@@ -91,38 +97,36 @@ static bool isThrow(OpcodeID opcodeID)
     }
 }
 
-static bool isJumpTarget(OpcodeID opcodeID, Vector<unsigned, 32>& jumpTargets, unsigned bytecodeOffset)
+static bool isJumpTarget(OpcodeID opcodeID, const Vector<unsigned, 32>& jumpTargets, unsigned bytecodeOffset)
 {
     if (opcodeID == op_catch)
         return true;
 
-    for (unsigned i = 0; i < jumpTargets.size(); i++) {
-        if (bytecodeOffset == jumpTargets[i])
-            return true;
-    }
-    return false;
+    return std::binary_search(jumpTargets.begin(), jumpTargets.end(), bytecodeOffset);
 }
 
 static void linkBlocks(BytecodeBasicBlock* predecessor, BytecodeBasicBlock* successor)
 {
     predecessor->addSuccessor(successor);
-    successor->addPredecessor(predecessor);
 }
 
-void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasicBlock> >& basicBlocks)
+void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks)
 {
     Vector<unsigned, 32> jumpTargets;
     computePreciseJumpTargets(codeBlock, jumpTargets);
 
     // Create the entry and exit basic blocks.
-    BytecodeBasicBlock* entry = new BytecodeBasicBlock(BytecodeBasicBlock::EntryBlock);
-    basicBlocks.append(adoptRef(entry));
-    BytecodeBasicBlock* exit = new BytecodeBasicBlock(BytecodeBasicBlock::ExitBlock);
+    basicBlocks.reserveCapacity(jumpTargets.size() + 2);
 
-    // Find basic block boundaries.
-    BytecodeBasicBlock* current = new BytecodeBasicBlock(0, 0);
-    linkBlocks(entry, current);
-    basicBlocks.append(adoptRef(current));
+    auto entry = std::make_unique<BytecodeBasicBlock>(BytecodeBasicBlock::EntryBlock);
+    auto firstBlock = std::make_unique<BytecodeBasicBlock>(0, 0);
+    linkBlocks(entry.get(), firstBlock.get());
+
+    basicBlocks.append(WTF::move(entry));
+    BytecodeBasicBlock* current = firstBlock.get();
+    basicBlocks.append(WTF::move(firstBlock));
+
+    auto exit = std::make_unique<BytecodeBasicBlock>(BytecodeBasicBlock::ExitBlock);
 
     bool nextInstructionIsLeader = false;
 
@@ -136,9 +140,9 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasi
         bool createdBlock = false;
         // If the current bytecode is a jump target, then it's the leader of its own basic block.
         if (isJumpTarget(opcodeID, jumpTargets, bytecodeOffset) || nextInstructionIsLeader) {
-            BytecodeBasicBlock* block = new BytecodeBasicBlock(bytecodeOffset, opcodeLength);
-            basicBlocks.append(adoptRef(block));
-            current = block;
+            auto newBlock = std::make_unique<BytecodeBasicBlock>(bytecodeOffset, opcodeLength);
+            current = newBlock.get();
+            basicBlocks.append(WTF::move(newBlock));
             createdBlock = true;
             nextInstructionIsLeader = false;
             bytecodeOffset += opcodeLength;
@@ -171,7 +175,7 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasi
             // If we found a terminal bytecode, link to the exit block.
             if (isTerminal(opcodeID)) {
                 ASSERT(bytecodeOffset + opcodeLength == block->leaderBytecodeOffset() + block->totalBytecodeLength());
-                linkBlocks(block, exit);
+                linkBlocks(block, exit.get());
                 fallsThrough = false;
                 break;
             }
@@ -184,7 +188,7 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasi
                 HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset);
                 fallsThrough = false;
                 if (!handler) {
-                    linkBlocks(block, exit);
+                    linkBlocks(block, exit.get());
                     break;
                 }
                 for (unsigned i = 0; i < basicBlocks.size(); i++) {
@@ -225,7 +229,10 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasi
         }
     }
 
-    basicBlocks.append(adoptRef(exit));
+    basicBlocks.append(WTF::move(exit));
+    
+    for (auto& basicBlock : basicBlocks)
+        basicBlock->shrinkToFit();
 }
 
 } // namespace JSC

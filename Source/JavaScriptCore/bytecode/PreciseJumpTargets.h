@@ -30,7 +30,9 @@
 
 namespace JSC {
 
+// Return a sorted list of bytecode index that are the destination of a jump.
 void computePreciseJumpTargets(CodeBlock*, Vector<unsigned, 32>& out);
+
 void findJumpTargetsForBytecodeOffset(CodeBlock*, unsigned bytecodeOffset, Vector<unsigned, 1>& out);
 
 } // namespace JSC
