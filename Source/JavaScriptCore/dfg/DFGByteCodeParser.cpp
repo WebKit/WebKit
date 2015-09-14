@@ -44,6 +44,7 @@
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
 #include "PreciseJumpTargets.h"
+#include "PutByIdFlags.h"
 #include "PutByIdStatus.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
@@ -3513,7 +3514,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_get_by_id:
-        case op_get_by_id_out_of_line:
         case op_get_array_length: {
             SpeculatedType prediction = getPrediction();
             
@@ -3531,16 +3531,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NEXT_OPCODE(op_get_by_id);
         }
-        case op_put_by_id:
-        case op_put_by_id_out_of_line:
-        case op_put_by_id_transition_direct:
-        case op_put_by_id_transition_normal:
-        case op_put_by_id_transition_direct_out_of_line:
-        case op_put_by_id_transition_normal_out_of_line: {
+        case op_put_by_id: {
             Node* value = get(VirtualRegister(currentInstruction[3].u.operand));
             Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
-            bool direct = currentInstruction[8].u.operand;
+            bool direct = currentInstruction[8].u.putByIdFlags & PutByIdIsDirect;
 
             PutByIdStatus putByIdStatus = PutByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,

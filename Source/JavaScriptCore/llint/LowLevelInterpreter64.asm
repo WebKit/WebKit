@@ -468,15 +468,16 @@ macro valueProfile(value, operand, scratch)
     storeq value, ValueProfile::m_buckets[scratch]
 end
 
-macro loadStructure(cell, structure)
-end
-
-macro loadStructureWithScratch(cell, structure, scratch)
+macro structureIDToStructureWithScratch(structureID, structure, scratch)
     loadp CodeBlock[cfr], scratch
     loadp CodeBlock::m_vm[scratch], scratch
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
-    loadi JSCell::m_structureID[cell], structure
+    loadi structureID, structure
     loadp [scratch, structure, 8], structure
+end
+
+macro loadStructureWithScratch(cell, structure, scratch)
+    structureIDToStructureWithScratch(JSCell::m_structureID[cell], structure, scratch)
 end
 
 macro loadStructureAndClobberFirstArg(cell, structure)
@@ -1204,41 +1205,23 @@ macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value
     storeq value, (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
 end
 
-macro getById(getPropertyStorage)
+_llint_op_get_by_id:
     traceExecution()
-    # We only do monomorphic get_by_id caching for now, and we do not modify the
-    # opcode. We do, however, allow for the cache to change anytime if fails, since
-    # ping-ponging is free. At best we get lucky and the get_by_id will continue
-    # to take fast path on the new cache. At worst we take slow path, which is what
-    # we would have been doing anyway.
     loadisFromInstruction(2, t0)
     loadConstantOrVariableCell(t0, t3, .opGetByIdSlow)
-    loadStructureWithScratch(t3, t2, t1)
-    loadpFromInstruction(4, t1)
-    bpneq t2, t1, .opGetByIdSlow
-    getPropertyStorage(
-        t3,
-        t0,
-        macro (propertyStorage, scratch)
-            loadisFromInstruction(5, t2)
-            loadisFromInstruction(1, t1)
-            loadq [propertyStorage, t2], scratch
-            storeq scratch, [cfr, t1, 8]
-            valueProfile(scratch, 8, t1)
-            dispatch(9)
-        end)
-            
-    .opGetByIdSlow:
-        callSlowPath(_llint_slow_path_get_by_id)
-        dispatch(9)
-end
+    loadi JSCell::m_structureID[t3], t1
+    loadisFromInstruction(4, t2)
+    bineq t2, t1, .opGetByIdSlow
+    loadisFromInstruction(5, t1)
+    loadisFromInstruction(1, t2)
+    loadPropertyAtVariableOffset(t1, t3, t0)
+    storeq t0, [cfr, t2, 8]
+    valueProfile(t0, 8, t1)
+    dispatch(9)
 
-_llint_op_get_by_id:
-    getById(withInlineStorage)
-
-
-_llint_op_get_by_id_out_of_line:
-    getById(withOutOfLineStorage)
+.opGetByIdSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(9)
 
 
 _llint_op_get_array_length:
@@ -1264,97 +1247,65 @@ _llint_op_get_array_length:
     dispatch(9)
 
 
-macro putById(getPropertyStorage)
+_llint_op_put_by_id:
     traceExecution()
     writeBarrierOnOperands(1, 3)
     loadisFromInstruction(1, t3)
     loadConstantOrVariableCell(t3, t0, .opPutByIdSlow)
-    loadStructureWithScratch(t0, t2, t1)
-    loadpFromInstruction(4, t1)
-    bpneq t2, t1, .opPutByIdSlow
-    getPropertyStorage(
-        t0,
-        t3,
-        macro (propertyStorage, scratch)
-            loadisFromInstruction(5, t1)
-            loadisFromInstruction(3, t2)
-            loadConstantOrVariable(t2, scratch)
-            storeq scratch, [propertyStorage, t1]
-            dispatch(9)
-        end)
-end
+    loadi JSCell::m_structureID[t0], t2
+    loadisFromInstruction(4, t1)
+    bineq t2, t1, .opPutByIdSlow
 
-_llint_op_put_by_id:
-    putById(withInlineStorage)
+    # At this point, we have:
+    # t1, t2 -> current structure ID
+    # t0 -> object base
+
+    loadisFromInstruction(6, t1)
+    
+    btiz t1, .opPutByIdNotTransition
+
+    # This is the transition case. t1 holds the new structureID. t2 holds the old structure ID.
+    # If we have a chain, we need to check it. t0 is the base. We may clobber t1 to use it as
+    # scratch.
+    loadpFromInstruction(7, t3)
+    btpz t3, .opPutByIdTransitionDirect
+
+    loadp StructureChain::m_vector[t3], t3
+    assert(macro (ok) btpnz t3, ok end)
+
+    structureIDToStructureWithScratch(t2, t2, t1)
+    loadq Structure::m_prototype[t2], t2
+    bqeq t2, ValueNull, .opPutByIdTransitionChainDone
+.opPutByIdTransitionChainLoop:
+    # At this point, t2 contains a prototye, and [t3] contains the Structure* that we want that
+    # prototype to have. We don't want to have to load the Structure* for t2. Instead, we load
+    # the Structure* from [t3], and then we compare its id to the id in the header of t2.
+    loadp [t3], t1
+    loadi JSCell::m_structureID[t2], t2
+    # Now, t1 has the Structure* and t2 has the StructureID that we want that Structure* to have.
+    bineq t2, Structure::m_blob + StructureIDBlob::u.fields.structureID[t1], .opPutByIdSlow
+    addp 8, t3
+    loadq Structure::m_prototype[t1], t2
+    bqneq t2, ValueNull, .opPutByIdTransitionChainLoop
+
+.opPutByIdTransitionChainDone:
+    # Reload the new structure, since we clobbered it above.
+    loadisFromInstruction(6, t1)
+
+.opPutByIdTransitionDirect:
+    storei t1, JSCell::m_structureID[t0]
+
+.opPutByIdNotTransition:
+    # The only thing live right now is t0, which holds the base.
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2)
+    loadisFromInstruction(5, t1)
+    storePropertyAtVariableOffset(t1, t0, t2)
+    dispatch(9)
 
 .opPutByIdSlow:
     callSlowPath(_llint_slow_path_put_by_id)
     dispatch(9)
-
-
-_llint_op_put_by_id_out_of_line:
-    putById(withOutOfLineStorage)
-
-
-macro putByIdTransition(additionalChecks, getPropertyStorage)
-    traceExecution()
-    writeBarrierOnOperand(1)
-    loadisFromInstruction(1, t3)
-    loadpFromInstruction(4, t1)
-    loadConstantOrVariableCell(t3, t0, .opPutByIdSlow)
-    loadStructureWithScratch(t0, t2, t3)
-    bpneq t2, t1, .opPutByIdSlow
-    additionalChecks(t1, t3, t2)
-    loadisFromInstruction(3, t2)
-    loadisFromInstruction(5, t1)
-    getPropertyStorage(
-        t0,
-        t3,
-        macro (propertyStorage, scratch)
-            addp t1, propertyStorage, t3
-            loadConstantOrVariable(t2, t1)
-            storeq t1, [t3]
-            loadpFromInstruction(6, t1)
-            loadi Structure::m_blob + StructureIDBlob::u.words.word1[t1], t1
-            storei t1, JSCell::m_structureID[t0]
-            dispatch(9)
-        end)
-end
-
-macro noAdditionalChecks(oldStructure, scratch, scratch2)
-end
-
-macro structureChainChecks(oldStructure, scratch, scratch2)
-    const protoCell = oldStructure    # Reusing the oldStructure register for the proto
-    loadpFromInstruction(7, scratch)
-    assert(macro (ok) btpnz scratch, ok end)
-    loadp StructureChain::m_vector[scratch], scratch
-    assert(macro (ok) btpnz scratch, ok end)
-    bqeq Structure::m_prototype[oldStructure], ValueNull, .done
-.loop:
-    loadq Structure::m_prototype[oldStructure], protoCell
-    loadStructureAndClobberFirstArg(protoCell, scratch2)
-    move scratch2, oldStructure
-    bpneq oldStructure, [scratch], .opPutByIdSlow
-    addp 8, scratch
-    bqneq Structure::m_prototype[oldStructure], ValueNull, .loop
-.done:
-end
-
-_llint_op_put_by_id_transition_direct:
-    putByIdTransition(noAdditionalChecks, withInlineStorage)
-
-
-_llint_op_put_by_id_transition_direct_out_of_line:
-    putByIdTransition(noAdditionalChecks, withOutOfLineStorage)
-
-
-_llint_op_put_by_id_transition_normal:
-    putByIdTransition(structureChainChecks, withInlineStorage)
-
-
-_llint_op_put_by_id_transition_normal_out_of_line:
-    putByIdTransition(structureChainChecks, withOutOfLineStorage)
 
 
 _llint_op_get_by_val:

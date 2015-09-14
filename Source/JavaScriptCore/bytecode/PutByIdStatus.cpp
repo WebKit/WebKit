@@ -66,37 +66,36 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
+
+    VM& vm = *profiledBlock->vm();
+    
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
 
-    Structure* structure = instruction[4].u.structure.get();
-    if (!structure)
+    StructureID structureID = instruction[4].u.structureID;
+    if (!structureID)
         return PutByIdStatus(NoInformation);
     
-    if (instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id)
-        || instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_out_of_line)) {
+    Structure* structure = vm.heap.structureIDTable().get(structureID);
+
+    StructureID newStructureID = instruction[6].u.structureID;
+    if (!newStructureID) {
         PropertyOffset offset = structure->getConcurrently(uid);
         if (!isValidOffset(offset))
             return PutByIdStatus(NoInformation);
         
         return PutByIdVariant::replace(structure, offset);
     }
+
+    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
     
     ASSERT(structure->transitionWatchpointSetHasBeenInvalidated());
-    
-    ASSERT(instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_direct)
-        || instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_normal)
-        || instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_direct_out_of_line)
-        || instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_normal_out_of_line));
-    
-    Structure* newStructure = instruction[6].u.structure.get();
     
     PropertyOffset offset = newStructure->getConcurrently(uid);
     if (!isValidOffset(offset))
         return PutByIdStatus(NoInformation);
     
     ObjectPropertyConditionSet conditionSet;
-    if (instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_normal)
-        || instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_normal_out_of_line)) {
+    if (!(instruction[8].u.putByIdFlags & PutByIdIsDirect)) {
         conditionSet =
             generateConditionsForPropertySetterMissConcurrently(
                 *profiledBlock->vm(), profiledBlock->globalObject(), structure, uid);

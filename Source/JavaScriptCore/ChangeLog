@@ -1,3 +1,82 @@
+2015-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt get/put inline caches shouldn't use tons of opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=149106
+
+        Reviewed by Geoffrey Garen.
+
+        Our LLInt get/put inline caches currently use separate opcodes to reduce branching. For
+        example, instead of having get_by_id branch on the kind of offset (inline or
+        out-of-line), we have two get_by_id instructions: get_by_id and get_by_id_out_of_line.
+        But the problem with this approach is that it doesn't scale. In the property type
+        inference work (https://bugs.webkit.org/show_bug.cgi?id=148610), we need each kind of put
+        inline cache to support 11 different kinds of type checks. It seemed ridiculous to add 60
+        new put_by_id opcodes (there are currently 6 variants of put_by_id, so after adding type
+        checks, we'd have 6 * 11 = 66 variants of put_by_id).
+
+        So, this patch completely changes the strategy to mostly using branching inside the
+        opcode implementation. It's unlikely to have a performance effect. For example, the long
+        road to generational GC caused a seemingly prohibitive regression in LLInt inline caches,
+        and yet nobody noticed. The regression was because the inline cache was in terms of the
+        structure, not the structure ID, so the code was doing a structure ID table lookup. If we
+        didn't notice that, then we probably won't notice a couple new branches. (Also, this
+        patch fixes that regression - the code no longer does such lookups except in the one
+        unavoidable case in put_by_id transition chain checking.)
+
+        This patch also turns the isDirect operand of put_by_id into a flags field. I will use
+        this flags field to encode the desired type check in bug 148610.
+
+        This patch has no effect on performance according to run-jsc-benchmarks.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::printPutByIdCacheStatus):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/CodeBlock.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        * bytecode/PutByIdFlags.cpp: Added.
+        (WTF::printInternal):
+        * bytecode/PutByIdFlags.h: Added.
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedInstruction::UnlinkedInstruction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2015-09-14  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

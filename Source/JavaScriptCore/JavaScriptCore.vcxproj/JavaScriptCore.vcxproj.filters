@@ -201,6 +201,9 @@
     <ClCompile Include="..\bytecode\PolymorphicAccess.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\PutByIdFlags.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\PutByIdStatus.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -2092,6 +2095,9 @@
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\PolymorphicAccess.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\PutByIdFlags.h">
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\PutByIdStatus.h">

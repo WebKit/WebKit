@@ -607,7 +607,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 {
     int baseVReg = currentInstruction[1].u.operand;
     int valueVReg = currentInstruction[3].u.operand;
-    unsigned direct = currentInstruction[8].u.operand;
+    unsigned direct = currentInstruction[8].u.putByIdFlags & PutByIdIsDirect;
 
     emitWriteBarrier(baseVReg, valueVReg, ShouldFilterBase);
 

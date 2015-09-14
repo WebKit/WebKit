@@ -32,6 +32,7 @@
 #include "BasicBlockLocation.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
+#include "PutByIdFlags.h"
 #include "SymbolTable.h"
 #include "TypeLocation.h"
 #include "PropertySlot.h"
@@ -75,6 +76,11 @@ struct Instruction {
         u.operand = operand;
     }
 
+    Instruction(PutByIdFlags flags)
+    {
+        u.putByIdFlags = flags;
+    }
+
     Instruction(VM& vm, JSCell* owner, Structure* structure)
     {
         u.structure.clear();
@@ -107,6 +113,7 @@ struct Instruction {
         Opcode opcode;
         int operand;
         WriteBarrierBase<Structure> structure;
+        StructureID structureID;
         WriteBarrierBase<SymbolTable> symbolTable;
         WriteBarrierBase<StructureChain> structureChain;
         WriteBarrierBase<JSCell> jsCell;
@@ -125,6 +132,7 @@ struct Instruction {
         ToThisStatus toThisStatus;
         TypeLocation* location;
         BasicBlockLocation* basicBlockLocation;
+        PutByIdFlags putByIdFlags;
     } u;
         
 private:
