@@ -1,3 +1,22 @@
+2015-09-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        min-width/height should default to auto for grid items
+        https://bugs.webkit.org/show_bug.cgi?id=146021
+
+        Reviewed by Darin Adler.
+
+        Based on Blink's r194408, r194863 and r194887 by <rego@igalia.com>.
+
+        Apart from the original tests this includes some extra ones to
+        verify that we behave correctly with vertical writing modes.
+
+        * fast/css-grid-layout/min-width-height-auto-expected.txt: Added.
+        * fast/css-grid-layout/min-width-height-auto-overflow-expected.html: Added.
+        * fast/css-grid-layout/min-width-height-auto-overflow.html: Added.
+        * fast/css-grid-layout/min-width-height-auto.html: Added.
+        * fast/css/auto-min-size-expected.txt:
+        * fast/css/auto-min-size.html:
+
 2015-09-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Percentage columns should remove scrollbar's width

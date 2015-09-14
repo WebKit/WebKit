@@ -2347,7 +2347,17 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     RenderBlock* cb = containingBlock();
     LayoutUnit containerLogicalWidth = std::max<LayoutUnit>(0, containingBlockLogicalWidthForContentInRegion(region));
     bool hasPerpendicularContainingBlock = cb->isHorizontalWritingMode() != isHorizontalWritingMode();
-    
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (parent()->isRenderGrid() && style().logicalWidth().isAuto() && style().logicalMinWidth().isAuto() && style().overflowX() == OVISIBLE) {
+        LayoutUnit minLogicalWidth = minPreferredLogicalWidth();
+        if (containerLogicalWidth < minLogicalWidth) {
+            computedValues.m_extent = constrainLogicalWidthInRegionByMinMax(minLogicalWidth, containerLogicalWidth, cb);
+            return;
+        }
+    }
+#endif
+
     if (isInline() && !isInlineBlockOrInlineTable()) {
         // just calculate margins
         computedValues.m_margins.m_start = minimumValueForLength(styleToUse.marginStart(), containerLogicalWidth);
@@ -2738,9 +2748,17 @@ void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logica
 #if ENABLE(CSS_GRID_LAYOUT)
             || parent()->isRenderGrid()
 #endif
-        ))
-            h = Length(overrideLogicalContentHeight(), Fixed);
-        else if (treatAsReplaced)
+        )) {
+            LayoutUnit contentHeight = overrideLogicalContentHeight();
+#if ENABLE(CSS_GRID_LAYOUT)
+            if (parent()->isRenderGrid() && style().logicalHeight().isAuto() && style().logicalMinHeight().isAuto() && style().overflowX() == OVISIBLE) {
+                LayoutUnit intrinsicContentHeight = computedValues.m_extent - borderAndPaddingLogicalHeight();
+                if (auto minContentHeight = computeContentLogicalHeight(MinSize, Length(MinContent), intrinsicContentHeight))
+                    contentHeight = std::max(contentHeight, constrainLogicalHeightByMinMax(minContentHeight.value(), intrinsicContentHeight));
+            }
+#endif
+            h = Length(contentHeight, Fixed);
+        } else if (treatAsReplaced)
             h = Length(computeReplacedLogicalHeight(), Fixed);
         else {
             h = style().logicalHeight();
