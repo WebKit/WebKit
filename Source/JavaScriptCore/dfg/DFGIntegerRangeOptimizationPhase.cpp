@@ -61,6 +61,11 @@ int clampedSum(Args... args)
             result)));
 }
 
+bool isGeneralOffset(int offset)
+{
+    return offset >= -1 && offset <= 1;
+}
+
 class Relationship {
 public:
     enum Kind {
@@ -69,6 +74,26 @@ public:
         NotEqual,
         GreaterThan
     };
+
+    // Some relationships provide more information than others. When a relationship provides more
+    // information, it is less vague.
+    static unsigned vagueness(Kind kind)
+    {
+        switch (kind) {
+        case Equal:
+            return 0;
+        case LessThan:
+        case GreaterThan:
+            return 1;
+        case NotEqual:
+            return 2;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    static const unsigned minVagueness = 0;
+    static const unsigned maxVagueness = 2;
     
     static Kind flipped(Kind kind)
     {
@@ -118,6 +143,8 @@ public:
     Node* right() const { return m_right; }
     Kind kind() const { return m_kind; }
     int offset() const { return m_offset; }
+
+    unsigned vagueness() const { return vagueness(kind()); }
     
     Relationship flipped() const
     {
@@ -238,15 +265,16 @@ public:
         return true;
     }
 
-    // Attempts to create a relationship that summarizes the union of this relationship and
-    // the other relationship. The null relationship is returned to indicate TOP. This is used
+    // Attempts to create relationships that summarize the union of this relationship and
+    // the other relationship. Relationships are returned by calling the functor with the newly
+    // created relationships. No relationships are created to indicate TOP. This is used
     // for merging the current relationship-at-head for some pair of nodes and a new
     // relationship-at-head being proposed by a predecessor. We wish to create a new
     // relationship that is true whenever either of them are true, which ensuring that we don't
     // do this forever. Anytime we create a relationship that is not equal to either of the
     // previous ones, we will cause the analysis fixpoint to reexecute.
     //
-    // If *this and other are identical, we just return it.
+    // If *this and other are identical, we just pass it to the functor.
     //
     // If they are different, we pick from a finite set of "general" relationships:
     //
@@ -277,13 +305,12 @@ public:
     //   that's how "deep" the general relationship lattice is.
     //
     // Note that C being constrained to -1,0,1 also ensures that we never have to return a
-    // combination of Lt and Gt, as in for example this<other+C && this>other-D. That's why
-    // this function can return zero or one relationships rather than a list of relationships.
-    // The only possible values of C and D where this would work are -1 and 1, but in that case
-    // we just say this==other. That said, the logic for merging two == relationships, like
-    // this==other+C || this==other+D is to attempt to create these two relationships:
-    // this>other+min(C,D)-1 && this<other+max(C,D)+1. But only one of these relationships will
-    // belong to the set of general relationships.
+    // combination of Lt and Gt, as in for example this<other+C && this>other-D. The only possible
+    // values of C and D where this would work are -1 and 1, but in that case we just say
+    // this==other. That said, the logic for merging two == relationships, like this==other+C ||
+    // this==other+D is to attempt to create these two relationships: this>other+min(C,D)-1 &&
+    // this<other+max(C,D)+1. But only one of these relationships will belong to the set of general
+    // relationships.
     //
     // Here's an example of this in action:
     //
@@ -295,14 +322,40 @@ public:
     // iteration and i==a+1 from the second iteration, we create i>a-1 and i<a+2 but then
     // realize that only i>a-1 is a valid general relationship. This gives us exactly what we
     // want: a statement that i>=a.
-    Relationship merge(const Relationship& other) const
+    //
+    // However, this may return a pair of relationships when merging relationships involving
+    // constants. For example, if given:
+    //
+    //     @x == @c
+    //     @x == @d
+    //
+    // where @c and @d are constants, then this may pass two relationships to the functor:
+    //
+    //     @x > min(@c, @d) - 1
+    //     @x < max(@c, @d) + 1
+    //
+    // This still allows for convergence, because just as when merging relationships over
+    // variables, this always picks from a set of general relationships. Hence although this may
+    // produce two relationships as a result of the merge, the total number of relationships that
+    // can be present at head of block is limited by O(graph.size^2).
+    template<typename Functor>
+    void merge(const Relationship& other, const Functor& functor) const
     {
-        if (!sameNodesAs(other))
-            return Relationship();
-        
         // Handle the super obvious case first.
-        if (*this == other)
-            return *this;
+        if (*this == other) {
+            functor(*this);
+            return;
+        }
+        
+        if (m_left != other.m_left)
+            return;
+        
+        if (m_right != other.m_right) {
+            mergeConstantsImpl(other, functor);
+            return;
+        }
+        
+        ASSERT(sameNodesAs(other));
         
         // This does some interesting permutations to reduce the amount of duplicate code. For
         // example:
@@ -329,7 +382,7 @@ public:
             // In rare cases, we might not be able to flip. Just give up on life in those
             // cases.
             if (!a || !b)
-                return Relationship();
+                return;
             
             needFlip = true;
             
@@ -337,7 +390,7 @@ public:
             // @a > @b. That's pretty much always a tautology; we don't attempt to do smart
             // things for that case for now.
             if (a.m_kind == GreaterThan || b.m_kind == GreaterThan)
-                return Relationship();
+                return;
         }
         
         // Make sure that if we have a LessThan, then it's first.
@@ -349,11 +402,13 @@ public:
             std::swap(a, b);
         
         Relationship result = a.mergeImpl(b);
+        if (!result)
+            return;
         
         if (needFlip)
-            return result.flipped();
+            result = result.flipped();
         
-        return result;
+        functor(result);
     }
     
     // Attempts to construct one Relationship that adequately summarizes the intersection of
@@ -455,6 +510,52 @@ public:
         
         ASSERT(m_kind == GreaterThan);
         return filterFlipped();
+    }
+
+    // Come up with a relationship that is the best description of this && other, provided that left() is
+    // the same and right() is a constant. Also requires that this is at least as vague as other. It may
+    // return this or it may return something else, but whatever it returns, it will have the same nodes as
+    // this. This is not automatically done by filter() because it currently only makes sense to call this
+    // during a very particular part of setOneSide().
+    Relationship filterConstant(const Relationship& other) const
+    {
+        ASSERT(m_left == other.m_left);
+        ASSERT(m_right->isInt32Constant());
+        ASSERT(other.m_right->isInt32Constant());
+        ASSERT(vagueness() >= other.vagueness());
+
+        if (vagueness() == other.vagueness())
+            return *this;
+
+        int thisRight = m_right->asInt32();
+        int otherRight = other.m_right->asInt32();
+        
+        // Ignore funny business.
+        if (sumOverflows<int>(otherRight, other.m_offset))
+            return *this;
+
+        int otherEffectiveRight = otherRight + other.m_offset;
+
+        switch (other.m_kind) {
+        case Equal:
+            // Return a version of *this that is Equal to other's constant.
+            return Relationship(m_left, m_right, Equal, otherEffectiveRight - thisRight);
+
+        case LessThan:
+        case GreaterThan:
+            ASSERT(m_kind == NotEqual);
+            // We could do smart things here. But we don't currently have an example of when it would be
+            // valuable. Note that you have to be careful. We could refine NotEqual to LessThan, but only
+            // if the LessThan subsumes the NotEqual.
+            return *this;
+            
+        case NotEqual:
+            RELEASE_ASSERT_NOT_REACHED();
+            return Relationship();
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return Relationship();
     }
     
     int minValueOfLeft() const
@@ -593,7 +694,7 @@ private:
                 
                 // We have something like @a < @b + 2. We can't represent this under the
                 // -1,0,1 rule.
-                if (bestOffset <= 1)
+                if (isGeneralOffset(bestOffset))
                     return Relationship(m_left, m_right, LessThan, std::max(bestOffset, -1));
                 
                 return Relationship();
@@ -618,7 +719,7 @@ private:
             int bestOffset = std::max(m_offset, other.m_offset + 1);
             
             // We have something like @a < @b + 2. We can't do it.
-            if (bestOffset <= 1)
+            if (isGeneralOffset(bestOffset))
                 return Relationship(m_left, m_right, LessThan, std::max(bestOffset, -1));
 
             return Relationship();
@@ -646,7 +747,7 @@ private:
             lessThan = Relationship(
                 m_left, other.m_right, LessThan, lessThanEqOffset + 1);
             
-            ASSERT(lessThan.offset() >= -1 && lessThan.offset() <= 1);
+            ASSERT(isGeneralOffset(lessThan.offset()));
         }
         
         int greaterThanEqOffset = std::min(m_offset, other.m_offset);
@@ -654,7 +755,7 @@ private:
             greaterThan = Relationship(
                 m_left, other.m_right, GreaterThan, greaterThanEqOffset - 1);
             
-            ASSERT(greaterThan.offset() >= -1 && greaterThan.offset() <= 1);
+            ASSERT(isGeneralOffset(greaterThan.offset()));
         }
         
         if (lessThan) {
@@ -665,6 +766,207 @@ private:
         }
         
         return greaterThan;
+    }
+
+    template<typename Functor>
+    void mergeConstantsImpl(const Relationship& other, const Functor& functor) const
+    {
+        ASSERT(m_left == other.m_left);
+
+        // Only deal with constant right.
+        if (!m_right->isInt32Constant() || !other.m_right->isInt32Constant())
+            return;
+
+        // What follows is a fairly conservative merge. We could tune this phase to come up with
+        // all possible inequalities between variables and constants, but we focus mainly on cheap
+        // cases for now.
+
+        // Here are some of the the arrangements we can merge usefully assuming @c < @d:
+        //
+        //     @x == @c || @x == @d   =>   @x >= c && @x <= @d
+        //     @x >= @c || @x <= @d   =>   TOP
+        //     @x == @c || @x != @d   =>   @x != @d
+
+        int thisRight = m_right->asInt32();
+        int otherRight = other.m_right->asInt32();
+
+        // Ignore funny business.
+        if (sumOverflows<int>(thisRight, m_offset))
+            return;
+        if (sumOverflows<int>(otherRight, other.m_offset))
+            return;
+
+        int thisEffectiveRight = thisRight + m_offset;
+        int otherEffectiveRight = otherRight + other.m_offset;
+
+        auto makeUpper = [&] (int64_t upper) {
+            if (upper <= thisRight) {
+                // We want m_right + offset to be equal to upper. Hence we want offset to cancel
+                // with m_right. But there's more to it, since we want +1 to turn the LessThan into
+                // a LessThanOrEqual, and we want to make sure we don't end up with non-general
+                // offsets. 
+                int offset = static_cast<int>(std::max(
+                    static_cast<int64_t>(1) + upper - static_cast<int64_t>(thisRight),
+                    static_cast<int64_t>(-1)));
+                functor(Relationship(m_left, m_right, LessThan, offset));
+            }
+            if (upper <= otherRight) {
+                int offset = static_cast<int>(std::max(
+                    static_cast<int64_t>(1) + upper - static_cast<int64_t>(otherRight),
+                    static_cast<int64_t>(-1)));
+                functor(Relationship(m_left, other.m_right, LessThan, offset));
+            }
+        };
+        auto makeLower = [&] (int64_t lower) {
+            if (lower >= thisRight) {
+                // We want m_right + offset to be equal to lower. Hence we want offset to cancel with
+                // m_right. But there's more to it, since we want -1 to turn the GreaterThan into a
+                // GreaterThanOrEqual, and we want to make sure we don't end up with non-general
+                // offsets.
+                int offset = static_cast<int>(std::min(
+                    static_cast<int64_t>(-1) + lower - static_cast<int64_t>(thisRight),
+                    static_cast<int64_t>(1)));
+                functor(Relationship(m_left, m_right, GreaterThan, offset));
+            }
+            if (lower >= otherRight) {
+                int offset = static_cast<int>(std::min(
+                    static_cast<int64_t>(-1) + lower - static_cast<int64_t>(otherRight),
+                    static_cast<int64_t>(1)));
+                functor(Relationship(m_left, other.m_right, GreaterThan, offset));
+            }
+        };
+
+        switch (m_kind) {
+        case Equal: {
+            switch (other.m_kind) {
+            case Equal: {
+                if (thisEffectiveRight == otherEffectiveRight) {
+                    // This probably won't arise often. We can keep whichever relationship is general.
+                    if (isGeneralOffset(m_offset))
+                        functor(*this);
+                    if (isGeneralOffset(other.m_offset))
+                        functor(other);
+                    return;
+                }
+
+                // What follows is the only case where a merge will create more rules than what it
+                // started with. This is fine for convergence because the LessThan/GreaterThan
+                // rules that this creates are general (i.e. have small offsets) and they never
+                // spawn more rules upon subsequent merging.
+
+                makeUpper(std::max(thisEffectiveRight, otherEffectiveRight));
+                makeLower(std::min(thisEffectiveRight, otherEffectiveRight));
+                return;
+            }
+
+            case LessThan: {
+                // Either the LessThan condition subsumes the equality, or the LessThan condition
+                // and equality merge together to create a looser LessThan condition.
+
+                // This is @x == thisEffectiveRight
+                // Other is: @x < otherEffectiveRight
+
+                // We want to create @x <= upper. Figure out the value of upper.
+                makeUpper(std::max(
+                    static_cast<int64_t>(thisEffectiveRight),
+                    static_cast<int64_t>(otherEffectiveRight) - 1));
+                return;
+            }
+
+            case GreaterThan: {
+                // Opposite of the LessThan case, above.
+
+                // This is: @x == thisEffectiveRight
+                // Other is: @x > otherEffectiveRight
+
+                makeLower(std::min(
+                    static_cast<int64_t>(thisEffectiveRight),
+                    static_cast<int64_t>(otherEffectiveRight) + 1));
+                return;
+            }
+
+            case NotEqual: {
+                // We keep the NotEqual so long as it doesn't contradict our Equal.
+                if (otherEffectiveRight == thisEffectiveRight)
+                    return;
+
+                // But, we only keep the NotEqual if it is general. This simplifies reasoning about
+                // convergence: merging never introduces a new rule unless that rule is general.
+                if (!isGeneralOffset(other.m_offset))
+                    return;
+                
+                functor(other);
+                return;
+            } }
+
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
+        case LessThan: {
+            switch (other.m_kind) {
+            case Equal: {
+                other.mergeConstantsImpl(*this, functor);
+                return;
+            }
+
+            case LessThan: {
+                makeUpper(std::max(
+                    static_cast<int64_t>(thisEffectiveRight) - 1,
+                    static_cast<int64_t>(otherEffectiveRight) - 1));
+                return;
+            }
+
+            case GreaterThan: {
+                // We have a claim that @x > @c || @x < @d. If @d > @c, this is the tautology. If
+                // @d <= @c, it's sort of uninteresting. Just ignore this.
+                return;
+            }
+
+            case NotEqual: {
+                // We have a claim that @x < @c || @x != @d. This isn't interesting.
+                return;
+            } }
+            
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
+        case GreaterThan: {
+            switch (other.m_kind) {
+            case Equal: {
+                other.mergeConstantsImpl(*this, functor);
+                return;
+            }
+
+            case LessThan: {
+                // Not interesting, see above.
+                return;
+            }
+
+            case GreaterThan: {
+                makeLower(std::min(
+                    static_cast<int64_t>(thisEffectiveRight) + 1,
+                    static_cast<int64_t>(otherEffectiveRight) + 1));
+                return;
+            }
+
+            case NotEqual: {
+                // Not interesting, see above.
+                return;
+            } }
+
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
+        case NotEqual: {
+            if (other.m_kind == Equal)
+                other.mergeConstantsImpl(*this, functor);
+            return;
+        } }
+
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     Node* m_left;
@@ -1159,6 +1461,76 @@ private:
         auto result = relationshipMap.add(
             relationship.left(), Vector<Relationship>());
         Vector<Relationship>& relationships = result.iterator->value;
+
+        if (relationship.right()->isInt32Constant()) {
+            // We want to do some work to refine relationships over constants. This is necessary because
+            // when we introduce a constant into the IR, we don't automatically create relationships
+            // between that constant and the other constants. That means that when we do introduce
+            // relationships between a non-constant and a constant, we need to check the other
+            // relationships between that non-constant and other constants to see if we can make some
+            // refinements. Possible constant statement filtrations:
+            //
+            // - @x == @c and @x != @d, where @c > @d:
+            //       @x == @c and @x > @d
+            //
+            // but actually we are more aggressive:
+            //
+            // - @x == @c and @x op @d where @c == @d + k
+            //       @x == @c and @x == @d + k
+            //
+            // And this is also possible:
+            //
+            // - @x > @c and @x != @d where @c == @d + k and k >= 0
+            //
+            //       @x > @c and @x > @d + k
+            //
+            // So, here's what we should do depending on the kind of relationship we're introducing:
+            //
+            // Equal constant: Find all LessThan, NotEqual, and GreaterThan constant operations and refine
+            //     them to be Equal constant. Don't worry about contradictions.
+            //
+            // LessThan, GreaterThan constant: See if there is any Equal constant, and if so, refine to
+            //     that. Otherwise, find all NotEqual constant operations and refine them to be LessThan or
+            //     GreaterThan constant if possible.
+            //
+            // NotEqual constant: See if there is any Equal constant, and if so, refine to that. Otherwise,
+            //     see if there is any LessThan or GreaterThan constant operation, and if so, attempt to
+            //     refine to that.
+            //
+            // Seems that the key thing is to have a filterConstant() operation that returns a refined
+            // version of *this based on other. The code here accomplishes this by using the vagueness
+            // index (Relationship::vagueness()) to first find less vague relationships and refine this one
+            // using them, and then find more vague relationships and refine those to this.
+
+            if (relationship.vagueness() != Relationship::minVagueness) {
+                // We're not minimally vague (maximally specific), so try to refine ourselves based on what
+                // we already know.
+                for (Relationship& otherRelationship : relationships) {
+                    if (otherRelationship.vagueness() < relationship.vagueness()
+                        && otherRelationship.right()->isInt32Constant()) {
+                        Relationship newRelationship = relationship.filterConstant(otherRelationship);
+                        if (verbose && newRelationship != relationship)
+                            dataLog("      Refined to: ", newRelationship, " based on ", otherRelationship, "\n");
+                        relationship = newRelationship;
+                    }
+                }
+            }
+
+            if (relationship.vagueness() != Relationship::maxVagueness) {
+                // We're not maximally value (minimally specific), so try to refine other relationships
+                // based on this one.
+                for (Relationship& otherRelationship : relationships) {
+                    if (otherRelationship.vagueness() > relationship.vagueness()
+                        && otherRelationship.right()->isInt32Constant()) {
+                        Relationship newRelationship = otherRelationship.filterConstant(relationship);
+                        if (verbose && newRelationship != otherRelationship)
+                            dataLog("      Refined ", otherRelationship, " to: ", newRelationship, "\n");
+                        otherRelationship = newRelationship;
+                    }
+                }
+            }
+        }
+
         Vector<Relationship> toAdd;
         bool found = false;
         for (Relationship& otherRelationship : relationships) {
@@ -1169,6 +1541,9 @@ private:
                     found = true;
                 }
             }
+
+            // FIXME: Also add filtration over statements about constants. For example, if we have
+            // @x == @c and @x != @d, where @d > @c, then we want to turn @x != @d into @x < @d.
             
             if (timeToLive && otherRelationship.kind() == Relationship::Equal) {
                 if (verbose)
@@ -1262,50 +1637,48 @@ private:
                 for (Relationship sourceRelationship : iter->value) {
                     if (verbose)
                         dataLog("  Merging ", targetRelationship, " and ", sourceRelationship, ":\n");
-                    Relationship newRelationship =
-                        targetRelationship.merge(sourceRelationship);
-                    
-                    if (verbose)
-                        dataLog("    Got ", newRelationship, "\n");
-                    
-                    if (!newRelationship)
-                        continue;
-                    
-                    // We need to filter() to avoid exponential explosion of identical
-                    // relationships. We do this here to avoid making setOneSide() do
-                    // more work, since we expect setOneSide() will be called more
-                    // frequently. Here's an example. At some point someone might start
-                    // with two relationships like @a > @b - C and @a < @b + D. Then
-                    // someone does a setRelationship() passing something that turns
-                    // both of these into @a == @b. Now we have @a == @b duplicated.
-                    // Let's say that this duplicate @a == @b ends up at the head of a
-                    // loop. If we didn't have this rule, then the loop would propagate
-                    // duplicate @a == @b's onto the existing duplicate @a == @b's.
-                    // There would be four pairs of @a == @b, each of which would
-                    // create a new @a == @b. Now we'd have four of these duplicates
-                    // and the next time around we'd have 8, then 16, etc. We avoid
-                    // this here by doing this filtration. That might be a bit of
-                    // overkill, since it's probably just the identical duplicate
-                    // relationship case we want' to avoid. But, I'll keep this until
-                    // we have evidence that this is a performance problem. Remember -
-                    // we are already dealing with a list that is pruned down to
-                    // relationships with identical left operand. It shouldn't be a
-                    // large list.
-                    bool found = false;
-                    for (Relationship& existingRelationship : mergedRelationships) {
-                        if (existingRelationship.sameNodesAs(newRelationship)) {
-                            Relationship filtered =
-                                existingRelationship.filter(newRelationship);
-                            if (filtered) {
-                                existingRelationship = filtered;
-                                found = true;
-                                break;
+                    targetRelationship.merge(
+                        sourceRelationship,
+                        [&] (Relationship newRelationship) {
+                            if (verbose)
+                                dataLog("    Got ", newRelationship, "\n");
+                            
+                            // We need to filter() to avoid exponential explosion of identical
+                            // relationships. We do this here to avoid making setOneSide() do
+                            // more work, since we expect setOneSide() will be called more
+                            // frequently. Here's an example. At some point someone might start
+                            // with two relationships like @a > @b - C and @a < @b + D. Then
+                            // someone does a setRelationship() passing something that turns
+                            // both of these into @a == @b. Now we have @a == @b duplicated.
+                            // Let's say that this duplicate @a == @b ends up at the head of a
+                            // loop. If we didn't have this rule, then the loop would propagate
+                            // duplicate @a == @b's onto the existing duplicate @a == @b's.
+                            // There would be four pairs of @a == @b, each of which would
+                            // create a new @a == @b. Now we'd have four of these duplicates
+                            // and the next time around we'd have 8, then 16, etc. We avoid
+                            // this here by doing this filtration. That might be a bit of
+                            // overkill, since it's probably just the identical duplicate
+                            // relationship case we want' to avoid. But, I'll keep this until
+                            // we have evidence that this is a performance problem. Remember -
+                            // we are already dealing with a list that is pruned down to
+                            // relationships with identical left operand. It shouldn't be a
+                            // large list.
+                            bool found = false;
+                            for (Relationship& existingRelationship : mergedRelationships) {
+                                if (existingRelationship.sameNodesAs(newRelationship)) {
+                                    Relationship filtered =
+                                        existingRelationship.filter(newRelationship);
+                                    if (filtered) {
+                                        existingRelationship = filtered;
+                                        found = true;
+                                        break;
+                                    }
+                                }
                             }
-                        }
-                    }
-                    
-                    if (!found)
-                        mergedRelationships.append(newRelationship);
+                            
+                            if (!found)
+                                mergedRelationships.append(newRelationship);
+                        });
                 }
             }
             std::sort(mergedRelationships.begin(), mergedRelationships.end());
