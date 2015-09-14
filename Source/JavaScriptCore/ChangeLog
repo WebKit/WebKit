@@ -1,3 +1,42 @@
+2015-09-14  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement the arithmetic instructions for floats in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149102
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements the arithmetic instructions for floats (float32)
+        in WebAssembly by converting the float operands to doubles, performing
+        the equivalent double instructions, and converting the result back to
+        float. The asm.js spec says that "As proved in 'When is double rounding
+        innocuous?' (Figueroa 1995), both the 32- and 64-bit versions of
+        standard arithmetic operations produce equivalent results when given
+        32-bit inputs and coerced to 32-bit outputs."
+        (http://asmjs.org/spec/latest/#floatish)
+
+        This patch also pads WebAssembly call frames by maxFrameExtentForSlowPathCall,
+        so that there is no need to adjust the stack pointer every time we make
+        a slow path call.
+
+        * tests/stress/wasm-arithmetic-float32.js:
+        * tests/stress/wasm/arithmetic-float32.wasm:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::buildUnaryF32):
+        (JSC::WASMFunctionCompiler::buildBinaryF32):
+        (JSC::WASMFunctionCompiler::callOperation):
+        (JSC::WASMFunctionCompiler::callAndUnboxResult):
+        (JSC::WASMFunctionCompiler::endFunction): Deleted.
+        (JSC::WASMFunctionCompiler::buildBinaryI32): Deleted.
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseUnaryExpressionF32):
+        (JSC::WASMFunctionParser::parseBinaryExpressionF32):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildUnaryF32):
+        (JSC::WASMFunctionSyntaxChecker::buildBinaryF32):
+
 2015-09-13  Geoffrey Garen  <ggaren@apple.com>
 
         Eden GC should not try to jettison old CodeBlocks in the remembered set

@@ -106,7 +106,18 @@ public:
         return UNUSED;
     }
 
+    int buildUnaryF32(int, WASMOpExpressionF32)
+    {
+        return UNUSED;
+    }
+
     int buildBinaryI32(int, int, WASMOpExpressionI32)
+    {
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
+    int buildBinaryF32(int, int, WASMOpExpressionF32)
     {
         m_tempStackTop--;
         return UNUSED;

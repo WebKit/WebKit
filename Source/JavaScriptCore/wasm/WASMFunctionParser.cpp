@@ -750,6 +750,17 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
             return parseGetLocalExpressionF32(context);
         case WASMOpExpressionF32::GetGlobal:
             return parseGetGlobalExpressionF32(context);
+        case WASMOpExpressionF32::Negate:
+        case WASMOpExpressionF32::Abs:
+        case WASMOpExpressionF32::Ceil:
+        case WASMOpExpressionF32::Floor:
+        case WASMOpExpressionF32::Sqrt:
+            return parseUnaryExpressionF32(context, op);
+        case WASMOpExpressionF32::Add:
+        case WASMOpExpressionF32::Sub:
+        case WASMOpExpressionF32::Mul:
+        case WASMOpExpressionF32::Div:
+            return parseBinaryExpressionF32(context, op);
         case WASMOpExpressionF32::SetLocal:
         case WASMOpExpressionF32::SetGlobal:
         case WASMOpExpressionF32::Load:
@@ -763,15 +774,6 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
         case WASMOpExpressionF32::FromS32:
         case WASMOpExpressionF32::FromU32:
         case WASMOpExpressionF32::FromF64:
-        case WASMOpExpressionF32::Negate:
-        case WASMOpExpressionF32::Add:
-        case WASMOpExpressionF32::Sub:
-        case WASMOpExpressionF32::Mul:
-        case WASMOpExpressionF32::Div:
-        case WASMOpExpressionF32::Abs:
-        case WASMOpExpressionF32::Ceil:
-        case WASMOpExpressionF32::Floor:
-        case WASMOpExpressionF32::Sqrt:
             // FIXME: Implement these instructions.
             FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
@@ -837,6 +839,24 @@ ContextExpression WASMFunctionParser::parseGetGlobalExpressionF32(Context& conte
     FAIL_IF_FALSE(globalIndex < m_module->globalVariableTypes().size(), "The global index is incorrect.");
     FAIL_IF_FALSE(m_module->globalVariableTypes()[globalIndex] == WASMType::F32, "Expected a global variable of type float32.");
     return context.buildGetGlobal(globalIndex, WASMType::F32);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseUnaryExpressionF32(Context& context, WASMOpExpressionF32 op)
+{
+    ContextExpression expression = parseExpressionF32(context);
+    PROPAGATE_ERROR();
+    return context.buildUnaryF32(expression, op);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseBinaryExpressionF32(Context& context, WASMOpExpressionF32 op)
+{
+    ContextExpression left = parseExpressionF32(context);
+    PROPAGATE_ERROR();
+    ContextExpression right = parseExpressionF32(context);
+    PROPAGATE_ERROR();
+    return context.buildBinaryF32(left, right, op);
 }
 
 template <class Context>

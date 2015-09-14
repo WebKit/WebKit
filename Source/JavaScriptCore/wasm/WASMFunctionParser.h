@@ -103,6 +103,8 @@ private:
     template <class Context> ContextExpression parseGetLocalExpressionF32(Context&, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpressionF32(Context&);
     template <class Context> ContextExpression parseGetGlobalExpressionF32(Context&);
+    template <class Context> ContextExpression parseUnaryExpressionF32(Context&, WASMOpExpressionF32);
+    template <class Context> ContextExpression parseBinaryExpressionF32(Context&, WASMOpExpressionF32);
 
     template <class Context> ContextExpression parseExpressionF64(Context&);
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&, uint32_t constantIndex);

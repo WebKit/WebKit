@@ -96,7 +96,7 @@ public:
 
         m_beginLabel = label();
 
-        addPtr(TrustedImm32(-WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+        addPtr(TrustedImm32(-WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, GPRInfo::regT1);
         m_stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfStackLimit()), GPRInfo::regT1);
 
         move(GPRInfo::regT1, stackPointerRegister);
@@ -165,8 +165,6 @@ public:
         if (!m_divideErrorJumpList.empty()) {
             m_divideErrorJumpList.link(this);
 
-            if (maxFrameExtentForSlowPathCall)
-                addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
             setupArgumentsExecState();
             appendCallWithExceptionCheck(operationThrowDivideError);
         }
@@ -380,6 +378,38 @@ public:
         return UNUSED;
     }
 
+    int buildUnaryF32(int, WASMOpExpressionF32 op)
+    {
+        loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT1);
+        switch (op) {
+        case WASMOpExpressionF32::Negate:
+            convertFloatToDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT1);
+            negateDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF32::Abs:
+            convertFloatToDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT1);
+            absDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF32::Ceil:
+            callOperation(ceilf, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF32::Floor:
+            callOperation(floorf, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF32::Sqrt:
+            convertFloatToDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT1);
+            sqrtDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
+        return UNUSED;
+    }
+
     int buildBinaryI32(int, int, WASMOpExpressionI32 op)
     {
         load32(temporaryAddress(m_tempStackTop - 2), GPRInfo::regT0);
@@ -419,8 +449,6 @@ public:
                 move(X86Registers::edx, GPRInfo::regT0);
 #else
             // FIXME: We should be able to do an inline div on ARMv7 and ARM64.
-            if (maxFrameExtentForSlowPathCall)
-                addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
             switch (op) {
             case WASMOpExpressionI32::SDiv:
                 callOperation(operationDiv, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT0);
@@ -437,8 +465,6 @@ public:
             default:
                 ASSERT_NOT_REACHED();
             }
-            if (maxFrameExtentForSlowPathCall)
-                addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
 #endif
             break;
         }
@@ -465,6 +491,34 @@ public:
         }
         m_tempStackTop--;
         store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+        return UNUSED;
+    }
+
+    int buildBinaryF32(int, int, WASMOpExpressionF32 op)
+    {
+        loadDouble(temporaryAddress(m_tempStackTop - 2), FPRInfo::fpRegT0);
+        loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT1);
+        convertFloatToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        convertFloatToDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT1);
+        switch (op) {
+        case WASMOpExpressionF32::Add:
+            addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF32::Sub:
+            subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF32::Mul:
+            mulDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF32::Div:
+            divDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        m_tempStackTop--;
+        storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
         return UNUSED;
     }
 
@@ -787,6 +841,12 @@ private:
     }
 #endif
 
+    void callOperation(float JIT_OPERATION (*operation)(float), FPRegisterID src, FPRegisterID dst)
+    {
+        setupArguments(src);
+        appendCallSetResult(operation, dst);
+    }
+
     void callOperation(int32_t JIT_OPERATION (*operation)(int32_t, int32_t), GPRReg src1, GPRReg src2, GPRReg dst)
     {
         setupArguments(src1, src2);
@@ -855,7 +915,7 @@ private:
         m_callCompilationInfo.last().callReturnLocation = emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).code());
 
         end.link(this);
-        addPtr(TrustedImm32(-WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot)), GPRInfo::callFrameRegister, stackPointerRegister);
+        addPtr(TrustedImm32(-WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, stackPointerRegister);
         checkStackPointerAlignment();
 
         switch (returnType) {
