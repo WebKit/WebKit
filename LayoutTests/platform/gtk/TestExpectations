@@ -552,7 +552,6 @@ webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 webkit.org/b/142268 editing/pasteboard/copy-paste-attachment.html [ Failure ]
 webkit.org/b/142269 fast/attachment/attachment-dom.html [ Failure ]
 webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-webkit.org/b/142142 media/video-volume-slider.html [ Failure ]
 
 webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure ]
 webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]

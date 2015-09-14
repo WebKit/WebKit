@@ -1,3 +1,12 @@
+2015-09-14  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Layout Test media/video-volume-slider.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=149032
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/TestExpectations: media/video-volume-slider.html is removed.
+
 2015-09-13  Chris Dumez  <cdumez@apple.com>
 
         Document.adoptNode() should be able to explicitly adopt a DocumentType node
