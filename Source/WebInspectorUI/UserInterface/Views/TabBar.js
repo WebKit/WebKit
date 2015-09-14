@@ -543,7 +543,7 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
 
     _handleMouseDown(event)
     {
-        // Only handle left mouse clicks.
+        // Only consider left mouse clicks for tab movement.
         if (event.button !== 0 || event.ctrlKey)
             return;
 
@@ -604,8 +604,10 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
         if (tabBarItem.disabled)
             return;
 
+        const clickedMiddleButton = event.button === 1;
+
         var closeButtonElement = event.target.enclosingNodeOrSelfWithClass(WebInspector.TabBarItem.CloseButtonStyleClassName);
-        if (closeButtonElement)
+        if (closeButtonElement || clickedMiddleButton)
             this.removeTabBarItem(tabBarItem, false, true);
     }
 

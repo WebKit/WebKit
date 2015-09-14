@@ -1,3 +1,16 @@
+2015-09-14  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: middle-clicking a tab in the tab bar should close it
+        https://bugs.webkit.org/show_bug.cgi?id=149135
+
+        Reviewed by Joseph Pecoraro.
+
+        This matches the behavior of the tab bar in Safari and other browsers.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype._handleMouseDown):
+        (WebInspector.TabBar.prototype._handleClick):
+
 2015-09-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Border under the styles filter field is clipped
