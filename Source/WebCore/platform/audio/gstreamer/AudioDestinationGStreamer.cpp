@@ -87,8 +87,6 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
                                                                             "provider", &m_callback,
                                                                             "frames", framesToPull, NULL));
 
-    GRefPtr<GstPad> srcPad = adoptGRef(gst_element_get_static_pad(webkitAudioSrc, "src"));
-
     GRefPtr<GstElement> audioSink = gst_element_factory_make("autoaudiosink", 0);
     m_audioSinkAvailable = audioSink;
     if (!audioSink) {
@@ -111,11 +109,8 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     GstElement* audioResample = gst_element_factory_make("audioresample", 0);
     gst_bin_add_many(GST_BIN(m_pipeline), webkitAudioSrc, audioConvert, audioResample, audioSink.get(), NULL);
 
-    // Link wavparse's src pad to audioconvert sink pad.
-    GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(audioConvert, "sink"));
-    gst_pad_link_full(srcPad.get(), sinkPad.get(), GST_PAD_LINK_CHECK_NOTHING);
-
-    // Link audioconvert to audiosink and roll states.
+    // Link src pads from webkitAudioSrc to audioConvert ! audioResample ! autoaudiosink.
+    gst_element_link_pads_full(webkitAudioSrc, "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioConvert, "src", audioResample, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioResample, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 }
