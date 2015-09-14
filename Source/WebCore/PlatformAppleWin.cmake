@@ -29,7 +29,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
 
     platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp
-    platform/graphics/avfoundation/cf/ImbandTextTrackPrivateLegacyAVCF.cpp
+    platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.cpp
     platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp
     platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp
     platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp

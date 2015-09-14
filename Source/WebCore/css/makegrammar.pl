@@ -73,7 +73,7 @@ if ($suffix eq ".y.in") {
 }
 
 my $fileBase = File::Spec->join($outputDir, $filename);
-system("$bison -d -p $symbolsPrefix $grammarFilePath -o $fileBase.cpp");
+system("\"$bison\" -d -p $symbolsPrefix $grammarFilePath -o $fileBase.cpp");
 
 open HEADER, ">$fileBase.h" or die;
 print HEADER << "EOF";
