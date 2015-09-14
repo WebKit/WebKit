@@ -320,10 +320,10 @@ sub output() {
             my $tableHead = $name;
             $tableHead =~ s/Table$//;
             print " #if JSC_BUILTIN_EXISTS(" . uc($tableHead . $key) .")\n";
-            print "   { \"$key\", (($attrs[$i]) & ~Function) | Builtin, $intrinsic, (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue },\n";
+            print "   { \"$key\", (($attrs[$i]) & ~Function) | Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
             print " #else\n"
         }
-        print "   { \"$key\", $attrs[$i], $intrinsic, (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) },\n";
+        print "   { \"$key\", $attrs[$i], $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
         if ($values[$i]{"type"} eq "Function")  {
             print " #endif\n"
         }

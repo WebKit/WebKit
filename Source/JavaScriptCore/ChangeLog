@@ -1,3 +1,25 @@
+2015-08-31  Chris Dumez  <cdumez@apple.com>
+
+        NodeFilter.SHOW_ALL has wrong value on 32-bit
+        https://bugs.webkit.org/show_bug.cgi?id=148602
+
+        Reviewed by Geoffrey Garen.
+
+        NodeFilter.SHOW_ALL has wrong value on 32-bit. This is because
+        NodeFilter.SHOW_ALL is an unsigned long whose value is 0xFFFFFFFF but
+        our bindings code is casting it to an intptr_t type which is not wide
+        enough on 32-bit.
+
+        * create_hash_table:
+        Add extra curly brackets to initialize the union.
+
+        * runtime/Lookup.h:
+        Use a union type to store either a struct containing 2 intptr_t members
+        (value1 / value2) or a large constant of type unsigned long long. When
+        storing a constant, we only need one of the values so this allows us to
+        support larger constants without increasing the actual HashTableValue
+        size.
+
 2015-08-31  Mark Lam  <mark.lam@apple.com>
 
         Watchdog timer callback should release the lock before deref'ing the watchdog.
