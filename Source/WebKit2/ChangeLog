@@ -1,3 +1,14 @@
+2015-09-14  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Stop importing WebKitAdditions/WKContentViewInteraction.mm
+        https://bugs.webkit.org/show_bug.cgi?id=149127
+
+        Reviewed by Beth Dakin.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+
 2015-09-14  Brady Eidson  <beidson@apple.com>
 
         Rename current concrete IDB implementation to "Legacy".

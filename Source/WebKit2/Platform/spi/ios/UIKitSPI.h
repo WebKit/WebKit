@@ -209,6 +209,7 @@ typedef enum {
 @interface UILongPressGestureRecognizer ()
 @property (nonatomic) CFTimeInterval delay;
 @property (nonatomic, readonly) CGPoint startPoint;
+@property (nonatomic, assign, setter=_setRequiresQuietImpulse:) BOOL _requiresQuietImpulse;
 @end
 
 @interface _UIWebHighlightLongPressGestureRecognizer : UILongPressGestureRecognizer
