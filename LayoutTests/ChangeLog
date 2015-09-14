@@ -1,3 +1,9 @@
+2015-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html on iOS.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
 2015-09-14  Alexey Proskuryakov  <ap@apple.com>
 
         Skip fast/text/international/system-language where unsupported.
