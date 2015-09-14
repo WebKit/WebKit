@@ -986,7 +986,6 @@ RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
     switch (source->nodeType()) {
     case ENTITY_NODE:
     case DOCUMENT_NODE:
-    case DOCUMENT_TYPE_NODE:
     case XPATH_NAMESPACE_NODE:
         ec = NOT_SUPPORTED_ERR;
         return nullptr;

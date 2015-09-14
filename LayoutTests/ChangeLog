@@ -1,5 +1,18 @@
 2015-09-13  Chris Dumez  <cdumez@apple.com>
 
+        Document.adoptNode() should be able to explicitly adopt a DocumentType node
+        https://bugs.webkit.org/show_bug.cgi?id=149097
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline DOM3 tests, those seem to be outdated now.
+
+        * dom/xhtml/level3/core/documentadoptnode10-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode11-expected.txt:
+        * dom/xhtml/level3/core/documentadoptnode12-expected.txt:
+
+2015-09-13  Chris Dumez  <cdumez@apple.com>
+
         document.lastModified should use the user's local time zone
         https://bugs.webkit.org/show_bug.cgi?id=149092
 

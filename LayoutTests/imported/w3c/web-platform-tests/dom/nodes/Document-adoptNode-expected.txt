@@ -1,6 +1,6 @@
 
 PASS Adopting an Element called 'x<' should work. 
 PASS Adopting an Element called ':good:times:' should work. 
-FAIL Explicitly adopting a DocumentType should work. NotSupportedError: DOM Exception 9
+PASS Explicitly adopting a DocumentType should work. 
 PASS Adopting a Document should throw. 
 

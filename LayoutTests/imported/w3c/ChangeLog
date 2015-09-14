@@ -1,5 +1,17 @@
 2015-09-13  Chris Dumez  <cdumez@apple.com>
 
+        Document.adoptNode() should be able to explicitly adopt a DocumentType node
+        https://bugs.webkit.org/show_bug.cgi?id=149097
+        <rdar://problem/22549345>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that a new check is passing. 
+
+        * web-platform-tests/dom/nodes/Document-adoptNode-expected.txt:
+
+2015-09-13  Chris Dumez  <cdumez@apple.com>
+
         Document.title does not behave according to specification
         https://bugs.webkit.org/show_bug.cgi?id=149098
 
