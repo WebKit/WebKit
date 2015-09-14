@@ -484,7 +484,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
     ts << "\n";
 }
 
-static void writeSimpleLine(TextStream& ts, const RenderText& o, const LayoutRect& rect, StringView text)
+static void writeSimpleLine(TextStream& ts, const RenderText& o, const FloatRect& rect, StringView text)
 {
     int x = rect.x();
     int y = rect.y();
