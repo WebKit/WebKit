@@ -166,6 +166,8 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
     if (name == mediaAttr) {
         m_media = value.string().lower();
         process();
+        if (m_sheet && !isDisabled())
+            document().styleResolverChanged(DeferRecalcStyle);
         return;
     }
     if (name == disabledAttr) {
