@@ -396,8 +396,8 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem& item, Page* page)
         return nullptr;
     }
 
-    std::unique_ptr<CachedPage> cachedPage = WTF::move(item.m_cachedPage);
     m_items.remove(&item);
+    std::unique_ptr<CachedPage> cachedPage = WTF::move(item.m_cachedPage);
 
     if (cachedPage->hasExpired()) {
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
@@ -432,17 +432,16 @@ void PageCache::remove(HistoryItem& item)
     if (!item.m_cachedPage)
         return;
 
-    item.m_cachedPage = nullptr;
     m_items.remove(&item);
+    item.m_cachedPage = nullptr;
 }
 
 void PageCache::prune(PruningReason pruningReason)
 {
     while (pageCount() > maxSize()) {
-        auto& oldestItem = m_items.first();
+        auto oldestItem = m_items.takeFirst();
         oldestItem->m_cachedPage = nullptr;
         oldestItem->m_pruningReason = pruningReason;
-        m_items.removeFirst();
     }
 }
 
