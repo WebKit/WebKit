@@ -27,27 +27,6 @@
 
 namespace JSC {
 
-void HashTable::createTable() const
-{
-    ASSERT(!keys);
-    keys = static_cast<const char**>(fastMalloc(sizeof(char*) * numberOfValues));
-
-    for (int i = 0; i < numberOfValues; ++i) {
-        if (values[i].m_key)
-            keys[i] = values[i].m_key;
-        else
-            keys[i] = 0;
-    }
-}
-
-void HashTable::deleteTable() const
-{
-    if (keys) {
-        fastFree(keys);
-        keys = nullptr;
-    }
-}
-
 void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObj, PropertyName propertyName)
 {
     JSGlobalObject* globalObject = thisObj.globalObject();
