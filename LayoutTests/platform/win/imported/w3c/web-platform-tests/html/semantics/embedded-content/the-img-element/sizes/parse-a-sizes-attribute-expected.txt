@@ -1,4 +1,0 @@
-   
-
-PASS img parse a sizes attribute 
-

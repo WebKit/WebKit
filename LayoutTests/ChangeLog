@@ -1,3 +1,16 @@
+2015-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Disable PICTURE_SIZES on AppleWin
+        https://bugs.webkit.org/show_bug.cgi?id=149125
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/win/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Removed.
+        * platform/win/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-expected.txt: Removed.
+        * platform/win/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/parse-a-srcset-attribute-expected.txt: Removed.
+        * platform/win/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/select-an-image-source-expected.txt: Removed.
+        * platform/win/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt: Removed.
+
 2015-09-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, skip fast/text/international/system-language for now.
