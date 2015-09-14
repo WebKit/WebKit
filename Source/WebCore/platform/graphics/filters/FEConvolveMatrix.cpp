@@ -29,6 +29,7 @@
 
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/ParallelJobs.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -408,11 +409,6 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
         fastSetOuterPixels<false>(paintingData, x1, y1, x2, y2);
 }
 
-void FEConvolveMatrix::setInteriorPixelsWorker(InteriorPixelParameters* param)
-{
-    param->filter->setInteriorPixels(*param->paintingData, param->clipRight, param->clipBottom, param->yStart, param->yEnd);
-}
-
 void FEConvolveMatrix::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
@@ -445,50 +441,35 @@ void FEConvolveMatrix::platformApplySoftware()
     int clipRight = paintSize.width() - m_kernelSize.width();
     int clipBottom = paintSize.height() - m_kernelSize.height();
 
-    if (clipRight >= 0 && clipBottom >= 0) {
-
-        int optimalThreadNumber = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
-        if (optimalThreadNumber > 1) {
-            WTF::ParallelJobs<InteriorPixelParameters> parallelJobs(&WebCore::FEConvolveMatrix::setInteriorPixelsWorker, optimalThreadNumber);
-            const int numOfThreads = parallelJobs.numberOfJobs();
-
-            // Split the job into "heightPerThread" jobs but there a few jobs that need to be slightly larger since
-            // heightPerThread * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
-            const int heightPerThread = clipBottom / numOfThreads;
-            const int jobsWithExtra = clipBottom % numOfThreads;
-
-            int startY = 0;
-            for (int job = 0; job < numOfThreads; ++job) {
-                InteriorPixelParameters& param = parallelJobs.parameter(job);
-                param.filter = this;
-                param.paintingData = &paintingData;
-                param.clipRight = clipRight;
-                param.clipBottom = clipBottom;
-                param.yStart = startY;
-                startY += job < jobsWithExtra ? heightPerThread + 1 : heightPerThread;
-                param.yEnd = startY;
-            }
-
-            parallelJobs.execute();
-        } else {
-            // Fallback to single threaded mode.
-            setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
-        }
-
-        clipRight += m_targetOffset.x() + 1;
-        clipBottom += m_targetOffset.y() + 1;
-        if (m_targetOffset.y() > 0)
-            setOuterPixels(paintingData, 0, 0, paintSize.width(), m_targetOffset.y());
-        if (clipBottom < paintSize.height())
-            setOuterPixels(paintingData, 0, clipBottom, paintSize.width(), paintSize.height());
-        if (m_targetOffset.x() > 0)
-            setOuterPixels(paintingData, 0, m_targetOffset.y(), m_targetOffset.x(), clipBottom);
-        if (clipRight < paintSize.width())
-            setOuterPixels(paintingData, clipRight, m_targetOffset.y(), paintSize.width(), clipBottom);
-    } else {
+    if (clipRight < 0 || clipBottom < 0) {
         // Rare situation, not optimizied for speed
         setOuterPixels(paintingData, 0, 0, paintSize.width(), paintSize.height());
+        return;
     }
+
+    if (int iterations = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension) {
+        int stride = clipBottom / iterations;
+        int chunkCount = (clipBottom + stride - 1) / stride;
+
+        WorkQueue::concurrentApply(chunkCount, [&](size_t index) {
+            int yStart = (stride * index);
+            int yEnd = std::min<int>(stride * (index + 1), clipBottom);
+
+            setInteriorPixels(paintingData, clipRight, clipBottom, yStart, yEnd);
+        });
+    } else
+        setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
+
+    clipRight += m_targetOffset.x() + 1;
+    clipBottom += m_targetOffset.y() + 1;
+    if (m_targetOffset.y() > 0)
+        setOuterPixels(paintingData, 0, 0, paintSize.width(), m_targetOffset.y());
+    if (clipBottom < paintSize.height())
+        setOuterPixels(paintingData, 0, clipBottom, paintSize.width(), paintSize.height());
+    if (m_targetOffset.x() > 0)
+        setOuterPixels(paintingData, 0, m_targetOffset.y(), m_targetOffset.x(), clipBottom);
+    if (clipRight < paintSize.width())
+        setOuterPixels(paintingData, clipRight, m_targetOffset.y(), paintSize.width(), clipBottom);
 }
 
 void FEConvolveMatrix::dump()
