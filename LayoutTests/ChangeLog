@@ -1,5 +1,12 @@
 2015-09-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Unreviewed, skip fast/text/international/system-language for now.
+        WebKitTestRunner declarative language setting is broken for iOS.
+
+        * platform/ios-simulator/TestExpectations:
+
+2015-09-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Unreviewed, expect css3/flexbox/image-percent-max-height.html to fail on iOS.
         The test is already expected to fail on mac, windows and gtk.
 
