@@ -90,6 +90,13 @@ function init()
   checkBuffer(0,0,0,255,
       "texture that is not -texture-complete- when " +
       "TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255");
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+
+  gl.activeTexture(gl.TEXTURE1);
+  checkBuffer(0,0,0,255,
+      "meaningless change of the active texture should not affect the black-texture fallback.");
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+  gl.activeTexture(gl.TEXTURE0);
 
   function checkBuffer(r, g, b, a, msg) {
     gl.clearColor(1,1,1,1);
