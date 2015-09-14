@@ -35,14 +35,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-#import <WebKitAdditions/WebPlatformTouchPointIOS.cpp>
-#else
 void WebPlatformTouchPoint::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_identifier;
     encoder << m_location;
     encoder << m_phase;
+#if ENABLE(IOS_TOUCH_EVENTS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    encoder << m_force;
+#endif
 }
 
 bool WebPlatformTouchPoint::decode(IPC::ArgumentDecoder& decoder, WebPlatformTouchPoint& result)
@@ -53,9 +53,12 @@ bool WebPlatformTouchPoint::decode(IPC::ArgumentDecoder& decoder, WebPlatformTou
         return false;
     if (!decoder.decode(result.m_phase))
         return false;
+#if ENABLE(IOS_TOUCH_EVENTS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    if (!decoder.decode(result.m_force))
+        return false;
+#endif
     return true;
 }
-#endif // ENABLE(IOS_TOUCH_EVENTS)
 
 } // namespace WebKit
 

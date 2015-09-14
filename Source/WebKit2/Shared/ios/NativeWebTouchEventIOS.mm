@@ -75,9 +75,6 @@ static inline WebCore::IntPoint positionForCGPoint(CGPoint position)
     return WebCore::IntPoint(position);
 }
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-#import <WebKitAdditions/NativeWebTouchEventIOS.mm>
-#else
 Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _UIWebTouchEvent* event)
 {
     unsigned touchCount = event->touchPointCount;
@@ -89,11 +86,14 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
         unsigned identifier = touchPoint.identifier;
         WebCore::IntPoint location = positionForCGPoint(touchPoint.locationInDocumentCoordinates);
         WebPlatformTouchPoint::TouchPointState phase = convertTouchPhase(touchPoint.phase);
-        touchPointList.uncheckedAppend(WebPlatformTouchPoint(identifier, location, phase));
+        WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
+#if ENABLE(IOS_TOUCH_EVENTS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+        platformTouchPoint.setForce(touchPoint.force);
+#endif
+        touchPointList.uncheckedAppend(platformTouchPoint);
     }
     return touchPointList;
 }
-#endif
 
 NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
     : WebTouchEvent(

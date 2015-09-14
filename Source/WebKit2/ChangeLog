@@ -1,3 +1,21 @@
+2015-09-14  Dan Bernstein  <mitz@apple.com>
+
+        Consolidate touch event code dealing with force.
+
+        Reviewed by Beth Dakin.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebPlatformTouchPoint::state):
+        (WebKit::WebPlatformTouchPoint::setForce):
+        (WebKit::WebPlatformTouchPoint::force):
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::positionForCGPoint):
+        (WebKit::NativeWebTouchEvent::extractWebTouchPoint):
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+        (WebKit::WebPlatformTouchPoint::encode):
+        (WebKit::WebPlatformTouchPoint::decode):
+
 2015-09-14  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.
