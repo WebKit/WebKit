@@ -1,5 +1,15 @@
 2015-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [Streams API] pipe-to writable stream tests
+        https://bugs.webkit.org/show_bug.cgi?id=148296
+
+        Reviewed by Darin Adler.
+
+        * streams/reference-implementation/pipe-to-expected.txt: Added.
+        * streams/reference-implementation/pipe-to.html: Added.
+
+2015-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [Streams API] Add readable stream templated tests for writable streams
         https://bugs.webkit.org/show_bug.cgi?id=148304
 
