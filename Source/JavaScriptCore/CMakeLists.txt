@@ -950,6 +950,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     llint
     parser
     profiler
+    replay
     runtime
     yarr
 

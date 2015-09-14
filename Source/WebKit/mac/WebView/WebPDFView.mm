@@ -65,11 +65,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/CurrentTime.h>
 
-#ifdef BUILDING_WITH_CMAKE
-#import <PDFKit.h>
-#else
 #import <PDFKit/PDFKit.h>
-#endif
 
 #ifdef __has_include
 #if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)

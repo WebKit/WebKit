@@ -1,3 +1,19 @@
+2015-09-14  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=149123
+
+        Reviewed by Chris Dumez.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        Defined and enabled some more features needed on Mac.
+        * Source/cmake/WebKitMacros.cmake:
+        Objective C bindings need special changes when generating:
+        Some of the bindings do not generate a .mm file but the header is needed.
+        Some of the bindings do generate a .mm file that doesn't compile but the header is needed.
+        In order to handle these cases, it is necessary to change the GENERATE_BINDINGS macro just for ObjC.
+
 2015-09-08  Daniel Bates  <dabates@apple.com>
 
         Convert manual test added in http://trac.webkit.org/changeset/70321 to an automated test

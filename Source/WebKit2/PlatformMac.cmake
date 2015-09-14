@@ -1,4 +1,131 @@
-#FIXME: Add Mac-specific sources here.
+add_definitions(-ObjC++)
+
+find_library(PDFKIT_FRAMEWORK PDFKit HINTS ${QUARTZ_LIBRARY}/Versions/*/Frameworks)
+
+find_library(ACCELERATE_LIBRARY accelerate)
+find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
+find_library(AUDIOUNIT_LIBRARY AudioUnit)
+find_library(CARBON_LIBRARY Carbon)
+find_library(COCOA_LIBRARY Cocoa)
+find_library(COREAUDIO_LIBRARY CoreAudio)
+find_library(DISKARBITRATION_LIBRARY DiskArbitration)
+find_library(IOKIT_LIBRARY IOKit)
+find_library(IOSURFACE_LIBRARY IOSurface)
+find_library(OPENGL_LIBRARY OpenGL)
+find_library(QUARTZ_LIBRARY Quartz)
+find_library(QUARTZCORE_LIBRARY QuartzCore)
+find_library(SECURITY_LIBRARY Security)
+find_library(SQLITE3_LIBRARY sqlite3)
+find_library(XML2_LIBRARY XML2)
+find_package(ZLIB REQUIRED)
+
+list(APPEND WebKit2_LIBRARIES
+    ${ACCELERATE_LIBRARY}
+    ${AUDIOTOOLBOX_LIBRARY}
+    ${AUDIOUNIT_LIBRARY}
+    ${CARBON_LIBRARY}
+    ${COCOA_LIBRARY}
+    ${COREAUDIO_LIBRARY}
+    ${DISKARBITRATION_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${IOSURFACE_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${PDFKIT_FRAMEWORK}/PDFKit
+    ${QUARTZ_LIBRARY}
+    ${QUARTZCORE_LIBRARY}
+    ${SECURITY_LIBRARY}
+    ${SQLITE3_LIBRARY}
+    ${WEBKITSYSTEMINTERFACE_LIBRARY}
+    ${XML2_LIBRARY}
+    ${ZLIB_LIBRARIES}
+)
+
+list(APPEND WebKit2_SOURCES
+    NetworkProcess/cocoa/NetworkProcessCocoa.mm
+
+    NetworkProcess/mac/NetworkDiskCacheMonitor.mm
+    NetworkProcess/mac/NetworkProcessMac.mm
+    NetworkProcess/mac/NetworkResourceLoaderMac.mm
+    NetworkProcess/mac/RemoteNetworkingContext.mm
+
+    UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
+    UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm
+    UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
+    UIProcess/API/Cocoa/LegacyBundleForClass.mm
+    UIProcess/API/Cocoa/WKBackForwardList.mm
+    UIProcess/API/Cocoa/WKBackForwardListItem.mm
+    UIProcess/API/Cocoa/WKError.mm
+    UIProcess/API/Cocoa/WKFrameInfo.mm
+    UIProcess/API/Cocoa/WKNavigation.mm
+    UIProcess/API/Cocoa/WKNavigationAction.mm
+    UIProcess/API/Cocoa/WKNavigationResponse.mm
+    UIProcess/API/Cocoa/WKPreferences.mm
+    UIProcess/API/Cocoa/WKProcessPool.mm
+    UIProcess/API/Cocoa/WKScriptMessage.mm
+    UIProcess/API/Cocoa/WKSecurityOrigin.mm
+    UIProcess/API/Cocoa/WKUserContentController.mm
+    UIProcess/API/Cocoa/WKUserScript.mm
+    UIProcess/API/Cocoa/WKWebView.mm
+    UIProcess/API/Cocoa/WKWebViewConfiguration.mm
+    UIProcess/API/Cocoa/WKWebsiteDataRecord.mm
+    UIProcess/API/Cocoa/WKWebsiteDataStore.mm
+    UIProcess/API/Cocoa/WKWindowFeatures.mm
+    UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
+    UIProcess/API/Cocoa/_WKDownload.mm
+    UIProcess/API/Cocoa/_WKElementAction.mm
+    UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
+    UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
+    UIProcess/API/Cocoa/_WKSessionState.mm
+    UIProcess/API/Cocoa/_WKThumbnailView.mm
+    UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm
+    UIProcess/API/Cocoa/_WKUserContentFilter.mm
+    UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
+
+    UIProcess/API/mac/WKView.mm
+
+    UIProcess/Cocoa/DiagnosticLoggingClient.mm
+    UIProcess/Cocoa/DownloadClient.mm
+    UIProcess/Cocoa/FindClient.mm
+    UIProcess/Cocoa/NavigationState.mm
+    UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.mm
+    UIProcess/Cocoa/SessionStateCoding.mm
+    UIProcess/Cocoa/UIDelegate.mm
+    UIProcess/Cocoa/VersionChecks.mm
+    UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
+    UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
+    UIProcess/Cocoa/WebPageProxyCocoa.mm
+    UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
+    UIProcess/Cocoa/WebProcessPoolCocoa.mm
+    UIProcess/Cocoa/WebProcessProxyCocoa.mm
+
+    UIProcess/mac/CorrectionPanel.mm
+    UIProcess/mac/LegacySessionStateCoding.cpp
+    UIProcess/mac/PageClientImpl.mm
+    UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm
+    UIProcess/mac/RemoteLayerTreeHost.mm
+    UIProcess/mac/SecItemShimProxy.cpp
+    UIProcess/mac/ServicesController.mm
+    UIProcess/mac/TextCheckerMac.mm
+    UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
+    UIProcess/mac/ViewGestureControllerMac.mm
+    UIProcess/mac/ViewSnapshotStore.mm
+    UIProcess/mac/WKFullKeyboardAccessWatcher.mm
+    UIProcess/mac/WKFullScreenWindowController.mm
+    UIProcess/mac/WKImmediateActionController.mm
+    UIProcess/mac/WKPrintingView.mm
+    UIProcess/mac/WKSharingServicePickerDelegate.mm
+    UIProcess/mac/WKTextInputWindowController.mm
+    UIProcess/mac/WKViewLayoutStrategy.mm
+    UIProcess/mac/WebColorPickerMac.mm
+    UIProcess/mac/WebContextMenuProxyMac.mm
+    UIProcess/mac/WebCookieManagerProxyMac.mm
+    UIProcess/mac/WebInspectorProxyMac.mm
+    UIProcess/mac/WebPageProxyMac.mm
+    UIProcess/mac/WebPopupMenuProxyMac.mm
+    UIProcess/mac/WebPreferencesMac.mm
+    UIProcess/mac/WebProcessProxyMac.mm
+    UIProcess/mac/WindowServerConnection.mm
+)
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
 
@@ -6,6 +133,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/platform/network/cf"
     "${WEBCORE_DIR}/platform/graphics/opentype"
+    "${WEBKIT2_DIR}/NetworkProcess/cocoa"
+    "${WEBKIT2_DIR}/NetworkProcess/mac"
     "${WEBKIT2_DIR}/UIProcess/mac"
     "${WEBKIT2_DIR}/UIProcess/API/C/mac"
     "${WEBKIT2_DIR}/UIProcess/Cocoa"
@@ -15,6 +144,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/API/Cocoa"
     "${WEBKIT2_DIR}/Shared/API/c/cf"
     "${WEBKIT2_DIR}/Shared/cf"
+    "${WEBKIT2_DIR}/Shared/Cocoa"
     "${WEBKIT2_DIR}/Shared/mac"
     "${WEBKIT2_DIR}/Shared/Plugins/mac"
     "${WEBKIT2_DIR}/WebProcess/Plugins/PDF"

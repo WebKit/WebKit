@@ -62,7 +62,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     win
     win/plugins
     win/WebCoreSupport
-    WebCoreSupport
     WebKit.vcxproj/WebKit
     "${WEBKIT_DIR}/.."
     "${DERIVED_SOURCES_WEBKIT_DIR}/include"
@@ -237,9 +236,6 @@ list(APPEND WebKit_SOURCES_Classes
 )
 
 list(APPEND WebKit_SOURCES_WebCoreSupport
-    WebCoreSupport/WebViewGroup.cpp
-    WebCoreSupport/WebViewGroup.h
-
     win/WebCoreSupport/AcceleratedCompositingContext.cpp
     win/WebCoreSupport/EmbeddedWidget.cpp
     win/WebCoreSupport/EmbeddedWidget.h

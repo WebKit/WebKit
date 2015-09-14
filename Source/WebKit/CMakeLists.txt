@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 2.8.12)
 include(WebKitCommon)
 
 set(WebKit_SOURCES
+    WebCoreSupport/WebViewGroup.cpp
 )
 
 set(WebKit_INCLUDE_DIRECTORIES
+    WebCoreSupport
     "${CMAKE_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
     "${DERIVED_SOURCES_DIR}"

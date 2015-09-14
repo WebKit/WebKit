@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-#if !ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS)
+#if !ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS) && !PLATFORM(MAC)
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
     return std::make_unique<ScrollAnimator>(scrollableArea);

@@ -1245,6 +1245,7 @@ set(WebCore_SOURCES
 
     bridge/jsc/BridgeJSC.cpp
 
+    contentextensions/CombinedFiltersAlphabet.cpp
     contentextensions/CombinedURLFilters.cpp
     contentextensions/CompiledContentExtension.cpp
     contentextensions/ContentExtension.cpp
@@ -1252,10 +1253,14 @@ set(WebCore_SOURCES
     contentextensions/ContentExtensionError.cpp
     contentextensions/ContentExtensionParser.cpp
     contentextensions/ContentExtensionRule.cpp
+    contentextensions/ContentExtensionStyleSheet.cpp
     contentextensions/ContentExtensionsBackend.cpp
     contentextensions/DFA.cpp
     contentextensions/DFABytecodeCompiler.cpp
     contentextensions/DFABytecodeInterpreter.cpp
+    contentextensions/DFACombiner.cpp
+    contentextensions/DFAMinimizer.cpp
+    contentextensions/DFANode.cpp
     contentextensions/NFA.cpp
     contentextensions/NFAToDFA.cpp
     contentextensions/URLFilterParser.cpp
@@ -2033,6 +2038,7 @@ set(WebCore_SOURCES
     page/animation/ImplicitAnimation.cpp
     page/animation/KeyframeAnimation.cpp
 
+    page/scrolling/AxisScrollSnapOffsets.cpp
     page/scrolling/ScrollLatchingState.cpp
     page/scrolling/ScrollingConstraints.cpp
     page/scrolling/ScrollingCoordinator.cpp
@@ -2043,6 +2049,13 @@ set(WebCore_SOURCES
     page/scrolling/ScrollingStateScrollingNode.cpp
     page/scrolling/ScrollingStateStickyNode.cpp
     page/scrolling/ScrollingStateTree.cpp
+    page/scrolling/ScrollingThread.cpp
+    page/scrolling/ScrollingTree.cpp
+    page/scrolling/ScrollingTreeFrameScrollingNode.cpp
+    page/scrolling/ScrollingTreeNode.cpp
+    page/scrolling/ScrollingTreeOverflowScrollingNode.cpp
+    page/scrolling/ScrollingTreeScrollingNode.cpp
+    page/scrolling/ThreadedScrollingTree.cpp
 
     platform/CalculationValue.cpp
     platform/Clock.cpp

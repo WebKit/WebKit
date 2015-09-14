@@ -28,7 +28,6 @@
 
 #import "AnimationUtilities.h"
 #import "BlockExceptions.h"
-#import "FontAntialiasingStateSaver.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
@@ -53,6 +52,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import "FontAntialiasingStateSaver.h"
 #import "WAKWindow.h"
 #import "WKGraphics.h"
 #import "WebCoreThread.h"
