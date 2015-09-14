@@ -163,6 +163,11 @@ private:
 
     void instantiateDeclarations(ExecState*, ModuleProgramExecutable*);
 
+    struct ResolveQuery;
+    static Resolution resolveExportImpl(ExecState*, const ResolveQuery&);
+    Optional<Resolution> tryGetCachedResolution(UniquedStringImpl* exportName);
+    void cacheResolution(UniquedStringImpl* exportName, const Resolution&);
+
     // The loader resolves the given module name to the module key. The module key is the unique value to represent this module.
     Identifier m_moduleKey;
 
@@ -181,7 +186,7 @@ private:
     //
     //      In the above case, (2) may throw the error earlier than (1)
     //
-    // But, in the all cases, we will throw the syntax error. So except for the content of the syntax error,
+    // But, in all the cases, we will throw the syntax error. So except for the content of the syntax error,
     // there are no difference.
 
     // Map localName -> ImportEntry.
@@ -202,6 +207,13 @@ private:
     WriteBarrier<ModuleProgramExecutable> m_moduleProgramExecutable;
     WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
+
+    // We assume that all the JSModuleRecord are retained by ModuleLoaderObject's registry.
+    // So here, we don't visit each object for GC. The resolution cache map caches the once
+    // looked up correctly resolved resolution, since (1) we rarely looked up the non-resolved one,
+    // and (2) if we cache all the attempts the size of the map becomes infinitely large.
+    typedef HashMap<RefPtr<UniquedStringImpl>, Resolution, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> Resolutions;
+    Resolutions m_resolutionCache;
 };
 
 } // namespace JSC

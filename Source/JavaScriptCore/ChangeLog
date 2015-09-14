@@ -1,3 +1,96 @@
+2015-09-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Cache the resolution result in JSModuleRecord
+        https://bugs.webkit.org/show_bug.cgi?id=148896
+
+        Reviewed by Saam Barati.
+
+        The resolveExport operation is frequently called. For example,
+        1. When instantiating the module environment, we call it for each exported name and imported
+           name.
+        2. When linking the imported module environment to the code block, we call it to resolve the
+           resolution.
+        3. When looking up the property from the namespace object, we call it to look up the original
+           module for the imported binding.
+        4. When creating the namespace object, we need to collect all the exported names from the module
+           and need to resolve them by calling resolveExport.
+
+        However, resolveExport takes some cost. It traces the imported modules and resolves the reference
+        queried by the original module.
+
+        The resolveExport operation is pure function; given a module record and an export name,
+        it always returns the same result. So we cache resolution results in the module record to avoid
+        repeated resolveExport calls with the same arguments.
+        Here, we only cache the correctly resolved references, since,
+        1. We rarely looked up the non-correctly-resolved ones. In the linking phase, attempting to
+           resolve non-correctly-resolved ones throws a syntax error. So only namespace object creation
+           phase does it in a syntax valid script.
+        2. This strategy limits the size of the cache map. The number of the correctly exported bindings
+           is defined by the modules' code. So the size does not become infinitely large.
+
+        Currently, the all modules cannot be linked twice. For example,
+
+          graph 1
+
+          -> (A) -> (B)
+
+          graph 2
+
+          -> (C) -> (A) -> (B)
+
+        We cannot test the behavior now because when executing the graph 2, (A) and (B) are already linked,
+        it raises an error in the current loader spec. But it should be allowed[1] since it will occur when
+        there is multiple module tag in WebCore.
+
+        [1]: https://github.com/whatwg/loader/issues/41
+
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::ResolveQuery::Hash::hash):
+        (JSC::JSModuleRecord::ResolveQuery::Hash::equal):
+        (JSC::JSModuleRecord::cacheResolution):
+        (JSC::ResolveQueryHash::hash): Deleted.
+        (JSC::ResolveQueryHash::equal): Deleted.
+        (JSC::resolveExportLoop): Deleted.
+        * runtime/JSModuleRecord.h:
+        * tests/modules/caching-should-not-make-ambiguous.js: Added.
+        * tests/modules/caching-should-not-make-ambiguous/A.js: Added.
+        * tests/modules/caching-should-not-make-ambiguous/B.js: Added.
+        * tests/modules/caching-should-not-make-ambiguous/C.js: Added.
+        * tests/modules/caching-should-not-make-ambiguous/D.js: Added.
+        * tests/modules/caching-should-not-make-ambiguous/main.js: Added.
+        * tests/modules/different-view.js: Added.
+        (from.string_appeared_here.shouldThrow):
+        * tests/modules/different-view/A.js: Added.
+        * tests/modules/different-view/B.js: Added.
+        * tests/modules/different-view/C.js: Added.
+        * tests/modules/different-view/D.js: Added.
+        * tests/modules/different-view/E.js: Added.
+        * tests/modules/different-view/main.js: Added.
+        * tests/modules/fallback-ambiguous.js: Added.
+        (from.string_appeared_here.shouldThrow):
+        * tests/modules/fallback-ambiguous/A.js: Added.
+        * tests/modules/fallback-ambiguous/B.js: Added.
+        * tests/modules/fallback-ambiguous/C.js: Added.
+        * tests/modules/fallback-ambiguous/D.js: Added.
+        * tests/modules/fallback-ambiguous/E.js: Added.
+        * tests/modules/fallback-ambiguous/main.js: Added.
+        * tests/modules/self-star-link.js: Added.
+        * tests/modules/self-star-link/A.js: Added.
+        * tests/modules/self-star-link/B.js: Added.
+        * tests/modules/self-star-link/C.js: Added.
+        * tests/modules/self-star-link/D.js: Added.
+        * tests/modules/self-star-link/E.js: Added.
+        * tests/modules/uncacheable-when-see-star.js: Added.
+        * tests/modules/uncacheable-when-see-star/A-pre.js: Added.
+        * tests/modules/uncacheable-when-see-star/A.js: Added.
+        * tests/modules/uncacheable-when-see-star/B.js: Added.
+        * tests/modules/uncacheable-when-see-star/C.js: Added.
+        * tests/modules/uncacheable-when-see-star/D.js: Added.
+        * tests/modules/uncacheable-when-see-star/E-pre.js: Added.
+        * tests/modules/uncacheable-when-see-star/E.js: Added.
+        * tests/modules/uncacheable-when-see-star/main1.js: Added.
+        * tests/modules/uncacheable-when-see-star/main2.js: Added.
+
 2015-09-14  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement the arithmetic instructions for floats in WebAssembly

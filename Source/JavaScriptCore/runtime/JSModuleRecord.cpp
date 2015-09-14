@@ -164,7 +164,13 @@ auto JSModuleRecord::resolveImport(ExecState* exec, const Identifier& localName)
     return importedModule->resolveExport(exec, importEntry.importName);
 }
 
-struct ResolveQuery {
+struct JSModuleRecord::ResolveQuery {
+    struct Hash {
+        static unsigned hash(const ResolveQuery&);
+        static bool equal(const ResolveQuery&, const ResolveQuery&);
+        static const bool safeToCompareToEmptyOrDeleted = true;
+    };
+
     ResolveQuery(JSModuleRecord* moduleRecord, UniquedStringImpl* exportName)
         : moduleRecord(moduleRecord)
         , exportName(exportName)
@@ -204,25 +210,34 @@ struct ResolveQuery {
     RefPtr<UniquedStringImpl> exportName;
 };
 
-struct ResolveQueryHash {
-    static unsigned hash(const ResolveQuery&);
-    static bool equal(const ResolveQuery&, const ResolveQuery&);
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-inline unsigned ResolveQueryHash::hash(const ResolveQuery& query)
+inline unsigned JSModuleRecord::ResolveQuery::Hash::hash(const ResolveQuery& query)
 {
     return WTF::PtrHash<JSModuleRecord*>::hash(query.moduleRecord) + IdentifierRepHash::hash(query.exportName);
 }
 
-inline bool ResolveQueryHash::equal(const ResolveQuery& lhs, const ResolveQuery& rhs)
+inline bool JSModuleRecord::ResolveQuery::Hash::equal(const ResolveQuery& lhs, const ResolveQuery& rhs)
 {
     return lhs.moduleRecord == rhs.moduleRecord && lhs.exportName == rhs.exportName;
 }
 
-static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const ResolveQuery& root)
+auto JSModuleRecord::tryGetCachedResolution(UniquedStringImpl* exportName) -> Optional<Resolution>
+{
+    const auto iterator = m_resolutionCache.find(exportName);
+    if (iterator == m_resolutionCache.end())
+        return Nullopt;
+    return Optional<Resolution>(iterator->value);
+}
+
+void JSModuleRecord::cacheResolution(UniquedStringImpl* exportName, const Resolution& resolution)
+{
+    m_resolutionCache.add(exportName, resolution);
+}
+
+auto JSModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery& root) -> Resolution
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-resolveexport
+
+    // How to avoid C++ recursion in this function:
     // This function avoids C++ recursion of the naive ResolveExport implementation.
     // Flatten the recursion to the loop with the task queue and frames.
     //
@@ -277,8 +292,185 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
     // To follow the requirement strictly, in this implementation, we keep the local resolution result to produce the
     // correct result under the above complex cases.
 
-    using Resolution = JSModuleRecord::Resolution;
-    typedef WTF::HashSet<ResolveQuery, ResolveQueryHash, WTF::CustomHashTraits<ResolveQuery>> ResolveSet;
+    // Caching strategy:
+    // The resolveExport operation is frequently called. So caching results is important.
+    // We observe the following aspects and based on them construct the caching strategy.
+    // Here, we attempt to cache the resolution by constructing the map in module records.
+    // That means  Module -> ExportName -> Maybe<Resolution>.
+    // Technically, all the JSModuleRecords have the Map<ExportName, Resolution> for caching.
+    //
+    // The important observations are that,
+    //
+    //  - *cacheable* means that traversing to this node from a path will produce the same results as starting from this node.
+    //
+    //    Here, we define the resovling route. We represent [?] as the module that has the local binding.
+    //    And (?) as the module without the local binding.
+    //
+    //      @ -> (A) -> (B) -> [C]
+    //
+    //    We list the resolving route for each node.
+    //
+    //    (A): (A) -> (B) -> [C]
+    //    (B): (B) -> [C]
+    //    [C]: [C]
+    //
+    //    In this case, if we start the tracing from (B), the resolving route becomes (B) -> [C].
+    //    So this is the same. At that time, we can say (B) is cacheable in the first tracing.
+    //
+    //  - The cache ability of a node depends on the resolving route from this node.
+    //
+    // 1. The starting point is always cacheable.
+    //
+    // 2. A module that has resolved a local binding is always cacheable.
+    //
+    //  @ -> (A) -> [B]
+    //
+    //  In the above case, we can see the [B] as cacheable.
+    //  This is because when starting from [B] node, we immediately resolve with the local binding.
+    //  So the resolving route from [B] does not depend on the starting point.
+    //
+    // 3. If we don't follow any star links during the resolution, we can see all the traced nodes are cacheable.
+    //
+    //  If there are non star links, it means that there is *no branch* in the module dependency graph.
+    //  This *no branch* feature makes all the modules cachable.
+    //
+    //  I.e, if we traverse one star link (even if we successfully resolve that star link),
+    //  we must still traverse all other star links. I would also explain we don't run into
+    //  this when resolving a local/indirect link. When resolving a local/indirect link,
+    //  we won't traverse any star links.
+    //  And since the module can hold only one local/indirect link for the specific export name (if there
+    //  are multiple local/indirect links that has the same export name, it should be syntax error in the
+    //  parsing phase.), there is no multiple outgoing links from a module.
+    //
+    //  @ -> (A) --> (B) -> [C] -> (D) -> (E) -+
+    //                ^                        |
+    //                |                        |
+    //                +------------------------+
+    //
+    //  When starting from @, [C] will be found as the module resolving the given binding.
+    //  In this case, (B) can cache this resolution. Since the resolving route is the same to the one when
+    //  starting from (B). After caching the above result, we attempt to resolve the same binding from (D).
+    //
+    //                              @
+    //                              |
+    //                              v
+    //  @ -> (A) --> (B) -> [C] -> (D) -> (E) -+
+    //                ^                        |
+    //                |                        |
+    //                +------------------------+
+    //
+    //  In this case, we can use the (B)'s cached result. And (E) can be cached.
+    //
+    //    (E): The resolving route is now (E) -> (B) -> [C]. That is the same when starting from (E).
+    //
+    //  No branching makes that the problematic *once-visited* node cannot be seen.
+    //  The *once-visited* node makes the resolving route changed since when we see the *once-visited* node,
+    //  we stop tracing this.
+    //
+    //  If there is no star links and if we look *once-visited* node under no branching graph, *once-visited*
+    //  node cannot resolve the requested binding. If the *once-visited* node can resolve the binding, we
+    //  should have already finished the resolution before reaching this *once-visited* node.
+    //
+    // 4. Once we follow star links, we should not retrieve the result from the cache and should not cache.
+    //
+    //  Star links are only the way to introduce branch.
+    //  Once we follow the star links during the resolution, we cannot cache naively.
+    //  This is because the cacheability depends on the resolving route. And branching produces the problematic *once-visited*
+    //  nodes. Since we don't follow the *once-visited* node, the resolving route from the node becomes different from
+    //  the resolving route when starting from this node.
+    //
+    //  The following example explains when we should not retrieve the cache and cache the result.
+    //
+    //               +----> (D) ------+
+    //               |                |
+    //               |                v
+    //      (A) *----+----> (B) ---> [C]
+    //                       ^
+    //                       |
+    //                       @
+    //
+    //  When starting from (B), we find [C]. In this resolving route, we don't find any star link.
+    //  And by definition, (B) and [C] are cachable. (B) is the starting point. And [C] has the local binding.
+    //
+    //               +----> (D) ------+
+    //               |                |
+    //               |                v
+    //  @-> (A) *----+----> (B) ---> [C]
+    //
+    //  But when starting from (A), we should not get the value from the cache. Because,
+    //
+    //    1. When looking (D), we reach [C] and make both resolved.
+    //    2. When looking (B), if we retrieved the last cache from (B), (B) becomes resolved.
+    //    3. But actually, (B) is not-found in this trial because (C) is already *once-visited*.
+    //    4. If we accidentally make (B) resolved, (A) becomes ambiguous. But the correct answer is resolved.
+    //
+    //  Why is this problem caused? This is because the *once-visited* node makes the result not-found.
+    //  In the second trial, (B) -> [C] result is changed from resolved to not-found.
+    //
+    //  When does this become a problem? If the status of the *once-visited* node group is resolved,
+    //  changing the result to not-found makes the result changed.
+    //
+    //  This problem does not happen when we don't see any star link yet. Now, consider the minimum case.
+    //
+    //  @-> (A) -> [ some graph ]
+    //       ^            |
+    //       |            |
+    //       +------------+
+    //
+    //  In (A), we don't see any star link yet. So we can say that all the visited nodes does not have any local
+    //  resolution. Because if they had a local/indirect resolution, we should have already finished the tracing.
+    //
+    //  And even if the some graph will see the *once-visited* node (in this case, (A)), that does not affect the
+    //  result of the resolution. Because even if we follow the link to (A) or not follow the link to (A), the status
+    //  of the link is always not-found since (A) does not have any local resolution.
+    //  In the above case, we can use the result of the [some graph].
+    //
+    // 5. Once we see star links, even if we have not yet traversed that star link path, we should disable caching.
+    //
+    //  Here is the reason why:
+    //
+    //       +-------------+
+    //       |             |
+    //       v             |
+    //      (A) -> (B) -> (C) *-> [E]
+    //       *             ^
+    //       |             |
+    //       v             @
+    //      [D]
+    //
+    //  In the above case, (C) will be resolved with [D].
+    //  (C) will see (A) and (A) gives up in (A) -> (B) -> (C) route. So, (A) will fallback to [D].
+    //
+    //       +-------------+
+    //       |             |
+    //       v             |
+    //  @-> (A) -> (B) -> (C) *-> [E]
+    //       *
+    //       |
+    //       v
+    //      [D]
+    //
+    //  But in this case, (A) will be resolved with [E] (not [D]).
+    //  (C) will attempt to follow the link to (A), but it fails.
+    //  So (C) will fallback to the star link and found [E]. In this senario,
+    //  (C) is now resolved with [E]'s result.
+    //
+    //  The cause of this problem is also the same to 4.
+    //  In the latter case, when looking (C), we cannot use the cached result in (C).
+    //  Because the cached result of (C) depends on the *once-visited* node (A) and
+    //  (A) has the fallback system with the star link.
+    //  In the latter trial, we now assume that (A)'s status is not-found.
+    //  But, actually, in the former trial, (A)'s status becomes resolved due to the fallback to the [D].
+    //
+    // To summarize the observations.
+    //
+    //  1. The starting point is always cacheable.
+    //  2. A module that has resolved a local binding is always cacheable.
+    //  3. If we don't follow any star links during the resolution, we can see all the traced nodes are cacheable.
+    //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
+    //  5. Once we see star links, even if we have not yet traversed that star link path, we should disable caching.
+
+    typedef WTF::HashSet<ResolveQuery, ResolveQuery::Hash, WTF::CustomHashTraits<ResolveQuery>> ResolveSet;
     enum class Type { Query, IndirectFallback, GatherStars };
     struct Task {
         ResolveQuery query;
@@ -288,7 +480,10 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
     Vector<Task, 8> pendingTasks;
     ResolveSet resolveSet;
     HashSet<JSModuleRecord*> starSet;
+
     Vector<Resolution, 8> frames;
+
+    bool foundStarLinks = false;
 
     frames.append(Resolution::notFound());
 
@@ -309,7 +504,9 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
         // Enqueue the task to gather the results of the stars.
         // And append the new Resolution frame to gather the local result of the stars.
         pendingTasks.append(Task { query, Type::GatherStars });
+        foundStarLinks = true;
         frames.append(Resolution::notFound());
+
 
         // Enqueue the tasks in reverse order.
         for (auto iterator = query.moduleRecord->starExportEntries().rbegin(), end = query.moduleRecord->starExportEntries().rend(); iterator != end; ++iterator) {
@@ -343,6 +540,11 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
         return true;
     };
 
+    auto cacheResolutionForQuery = [] (const ResolveQuery& query, const Resolution& resolution) {
+        ASSERT(resolution.type == Resolution::Type::Resolved);
+        query.moduleRecord->cacheResolution(query.exportName.get(), resolution);
+    };
+
     pendingTasks.append(Task { root, Type::Query });
     while (!pendingTasks.isEmpty()) {
         const Task task = pendingTasks.takeLast();
@@ -350,11 +552,25 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
 
         switch (task.type) {
         case Type::Query: {
+            JSModuleRecord* moduleRecord = query.moduleRecord;
+
             if (!resolveSet.add(task.query).isNewEntry)
                 continue;
 
-            JSModuleRecord* moduleRecord = query.moduleRecord;
-            const Optional<JSModuleRecord::ExportEntry> optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
+            //  5. Once we see star links, even if we have not yet traversed that star link path, we should disable caching.
+            if (!moduleRecord->starExportEntries().isEmpty())
+                foundStarLinks = true;
+
+            //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
+            if (!foundStarLinks) {
+                if (Optional<Resolution> cachedResolution = moduleRecord->tryGetCachedResolution(query.exportName.get())) {
+                    if (!mergeToCurrentTop(*cachedResolution))
+                        return Resolution::ambiguous();
+                    continue;
+                }
+            }
+
+            const Optional<ExportEntry> optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
             if (!optionalExportEntry) {
                 // If there is no matched exported binding in the current module,
                 // we need to look into the stars.
@@ -363,15 +579,19 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
                 continue;
             }
 
-            const JSModuleRecord::ExportEntry& exportEntry = *optionalExportEntry;
+            const ExportEntry& exportEntry = *optionalExportEntry;
             switch (exportEntry.type) {
-            case JSModuleRecord::ExportEntry::Type::Local:
-            case JSModuleRecord::ExportEntry::Type::Namespace:
-                if (!mergeToCurrentTop(Resolution { Resolution::Type::Resolved, moduleRecord, exportEntry.localName }))
+            case ExportEntry::Type::Local:
+            case ExportEntry::Type::Namespace: {
+                Resolution resolution { Resolution::Type::Resolved, moduleRecord, exportEntry.localName };
+                //  2. A module that has resolved a local binding is always cacheable.
+                cacheResolutionForQuery(query, resolution);
+                if (!mergeToCurrentTop(resolution))
                     return Resolution::ambiguous();
                 continue;
+            }
 
-            case JSModuleRecord::ExportEntry::Type::Indirect: {
+            case ExportEntry::Type::Indirect: {
                 JSModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(exec, exportEntry.moduleName);
 
                 // When the imported module does not produce any resolved binding, we need to look into the stars in the *current*
@@ -387,7 +607,7 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
         }
 
         case Type::IndirectFallback: {
-            JSModuleRecord::Resolution resolution = frames.takeLast();
+            Resolution resolution = frames.takeLast();
 
             if (resolution.type == Resolution::Type::NotFound) {
                 // Indirect export entry does not produce any resolved binding.
@@ -397,6 +617,13 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
                 continue;
             }
 
+            ASSERT_WITH_MESSAGE(resolution.type == Resolution::Type::Resolved, "When we see Error and Ambiguous, we immediately return from this loop. So here, only Resolved comes.");
+
+            //  3. If we don't follow any star links during the resolution, we can see all the traced nodes are cacheable.
+            //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
+            if (!foundStarLinks)
+                cacheResolutionForQuery(query, resolution);
+
             // If indirect export entry produces Resolved, we should merge it to the upper frame.
             // And do not investigate the stars of the current module.
             if (!mergeToCurrentTop(resolution))
@@ -405,9 +632,11 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
         }
 
         case Type::GatherStars: {
+            Resolution resolution = frames.takeLast();
+            ASSERT_WITH_MESSAGE(resolution.type == Resolution::Type::Resolved || resolution.type == Resolution::Type::NotFound, "When we see Error and Ambiguous, we immediately return from this loop. So here, only Resolved and NotFound comes.");
+
             // Merge the star resolution to the upper frame.
-            JSModuleRecord::Resolution starResolution = frames.takeLast();
-            if (!mergeToCurrentTop(starResolution))
+            if (!mergeToCurrentTop(resolution))
                 return Resolution::ambiguous();
             break;
         }
@@ -415,12 +644,18 @@ static JSModuleRecord::Resolution resolveExportLoop(ExecState* exec, const Resol
     }
 
     ASSERT(frames.size() == 1);
+    //  1. The starting point is always cacheable.
+    if (frames[0].type == Resolution::Type::Resolved)
+        cacheResolutionForQuery(root, frames[0]);
     return frames[0];
 }
 
 auto JSModuleRecord::resolveExport(ExecState* exec, const Identifier& exportName) -> Resolution
 {
-    return resolveExportLoop(exec, ResolveQuery(this, exportName.impl()));
+    // Look up the cached resolution first before entering the resolving loop, since the loop setup takes some cost.
+    if (Optional<Resolution> cachedResolution = tryGetCachedResolution(exportName.impl()))
+        return *cachedResolution;
+    return resolveExportImpl(exec, ResolveQuery(this, exportName.impl()));
 }
 
 static void getExportedNames(ExecState* exec, JSModuleRecord* root, IdentifierSet& exportedNames)
