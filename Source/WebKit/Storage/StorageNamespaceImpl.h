@@ -57,7 +57,7 @@ public:
 private:
     StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
 
-    virtual RefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  override;
+    virtual RefPtr<StorageArea> storageArea(RefPtr<SecurityOrigin>&&)  override;
     virtual RefPtr<StorageNamespace> copy(Page* newPage) override;
 
     typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl>> StorageAreaMap;

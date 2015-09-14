@@ -27,7 +27,6 @@
 #define StorageMap_h
 
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -42,9 +41,9 @@ public:
     WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT String key(unsigned index);
     WEBCORE_EXPORT String getItem(const String&) const;
-    WEBCORE_EXPORT PassRefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
-    WEBCORE_EXPORT PassRefPtr<StorageMap> setItemIgnoringQuota(const String& key, const String& value);
-    WEBCORE_EXPORT PassRefPtr<StorageMap> removeItem(const String&, String& oldValue);
+    WEBCORE_EXPORT RefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
+    WEBCORE_EXPORT RefPtr<StorageMap> setItemIgnoringQuota(const String& key, const String& value);
+    WEBCORE_EXPORT RefPtr<StorageMap> removeItem(const String&, String& oldValue);
 
     WEBCORE_EXPORT bool contains(const String& key) const;
 
@@ -57,7 +56,7 @@ public:
 
 private:
     explicit StorageMap(unsigned quota);
-    PassRefPtr<StorageMap> copy();
+    Ref<StorageMap> copy();
     void invalidateIterator();
     void setIteratorToIndex(unsigned);
 

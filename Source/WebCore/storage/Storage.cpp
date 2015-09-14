@@ -33,19 +33,18 @@
 #include "SchemeRegistry.h"
 #include "Settings.h"
 #include "StorageArea.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Ref<Storage> Storage::create(Frame* frame, PassRefPtr<StorageArea> storageArea)
+Ref<Storage> Storage::create(Frame* frame, RefPtr<StorageArea>&& storageArea)
 {
-    return adoptRef(*new Storage(frame, storageArea));
+    return adoptRef(*new Storage(frame, WTF::move(storageArea)));
 }
 
-Storage::Storage(Frame* frame, PassRefPtr<StorageArea> storageArea)
+Storage::Storage(Frame* frame, RefPtr<StorageArea>&& storageArea)
     : DOMWindowProperty(frame)
-    , m_storageArea(storageArea)
+    , m_storageArea(WTF::move(storageArea))
 {
     ASSERT(m_frame);
     ASSERT(m_storageArea);

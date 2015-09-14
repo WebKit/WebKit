@@ -41,7 +41,7 @@ typedef int ExceptionCode;
 
 class Storage : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
 public:
-    static Ref<Storage> create(Frame*, PassRefPtr<StorageArea>);
+    static Ref<Storage> create(Frame*, RefPtr<StorageArea>&&);
     ~Storage();
 
     unsigned length(ExceptionCode&) const;
@@ -55,7 +55,7 @@ public:
     StorageArea& area() const { return *m_storageArea; }
 
 private:
-    Storage(Frame*, PassRefPtr<StorageArea>);
+    Storage(Frame*, RefPtr<StorageArea>&&);
 
     bool isDisabledByPrivateBrowsing() const;
 

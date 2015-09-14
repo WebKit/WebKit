@@ -72,7 +72,7 @@ void StorageNamespaceImpl::didDestroyStorageAreaMap(StorageAreaMap& map)
     m_storageAreaMaps.remove(&map.securityOrigin());
 }
 
-RefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
+RefPtr<StorageArea> StorageNamespaceImpl::storageArea(RefPtr<SecurityOrigin>&& securityOrigin)
 {
     RefPtr<StorageAreaMap> map;
 

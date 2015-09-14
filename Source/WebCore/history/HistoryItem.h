@@ -130,8 +130,8 @@ public:
     WEBCORE_EXPORT void setTitle(const String&);
     WEBCORE_EXPORT void setIsTargetItem(bool);
     
-    WEBCORE_EXPORT void setStateObject(PassRefPtr<SerializedScriptValue>);
-    PassRefPtr<SerializedScriptValue> stateObject() const { return m_stateObject; }
+    WEBCORE_EXPORT void setStateObject(RefPtr<SerializedScriptValue>&&);
+    RefPtr<SerializedScriptValue> stateObject() const { return m_stateObject; }
 
     void setItemSequenceNumber(long long number) { m_itemSequenceNumber = number; }
     long long itemSequenceNumber() const { return m_itemSequenceNumber; }
@@ -140,7 +140,7 @@ public:
     long long documentSequenceNumber() const { return m_documentSequenceNumber; }
 
     void setFormInfoFromRequest(const ResourceRequest&);
-    WEBCORE_EXPORT void setFormData(PassRefPtr<FormData>);
+    WEBCORE_EXPORT void setFormData(RefPtr<FormData>&&);
     WEBCORE_EXPORT void setFormContentType(const String&);
 
     void setLastVisitWasFailure(bool wasFailure) { m_lastVisitWasFailure = wasFailure; }

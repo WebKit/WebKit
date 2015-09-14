@@ -39,7 +39,7 @@ class Page;
 class BackForwardController {
     WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    BackForwardController(Page&, PassRefPtr<BackForwardClient>);
+    BackForwardController(Page&, RefPtr<BackForwardClient>&&);
     ~BackForwardController();
 
     BackForwardClient* client() const { return m_client.get(); }

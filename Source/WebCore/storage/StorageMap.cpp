@@ -43,12 +43,12 @@ StorageMap::StorageMap(unsigned quota)
 {
 }
 
-PassRefPtr<StorageMap> StorageMap::copy()
+Ref<StorageMap> StorageMap::copy()
 {
-    RefPtr<StorageMap> newMap = create(m_quotaSize);
+    Ref<StorageMap> newMap = create(m_quotaSize);
     newMap->m_map = m_map;
     newMap->m_currentLength = m_currentLength;
-    return newMap.release();
+    return newMap;
 }
 
 void StorageMap::invalidateIterator()
@@ -99,7 +99,7 @@ String StorageMap::getItem(const String& key) const
     return m_map.get(key);
 }
 
-PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, String& oldValue, bool& quotaException)
+RefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, String& oldValue, bool& quotaException)
 {
     ASSERT(!value.isNull());
     quotaException = false;
@@ -109,7 +109,7 @@ PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& valu
     if (refCount() > 1) {
         RefPtr<StorageMap> newStorageMap = copy();
         newStorageMap->setItem(key, value, oldValue, quotaException);
-        return newStorageMap.release();
+        return newStorageMap;
     }
 
     // Quota tracking.  This is done in a couple of steps to keep the overflow tracking simple.
@@ -129,7 +129,7 @@ PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& valu
     bool overQuota = newLength > m_quotaSize / sizeof(UChar);
     if (m_quotaSize != noQuota && (overflow || overQuota)) {
         quotaException = true;
-        return 0;
+        return nullptr;
     }
     m_currentLength = newLength;
 
@@ -139,10 +139,10 @@ PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& valu
 
     invalidateIterator();
 
-    return 0;
+    return nullptr;
 }
 
-PassRefPtr<StorageMap> StorageMap::setItemIgnoringQuota(const String& key, const String& value)
+RefPtr<StorageMap> StorageMap::setItemIgnoringQuota(const String& key, const String& value)
 {
     TemporaryChange<unsigned> quotaSizeChange(m_quotaSize, noQuota);
 
@@ -152,17 +152,17 @@ PassRefPtr<StorageMap> StorageMap::setItemIgnoringQuota(const String& key, const
     RefPtr<StorageMap> map = setItem(key, value, oldValue, quotaException);
     ASSERT(!quotaException);
 
-    return map.release();
+    return map;
 }
 
-PassRefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValue)
+RefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValue)
 {
     // Implement copy-on-write semantics here.  We're guaranteed that the only refs of StorageMaps belong to Storage objects
     // so if more than one Storage object refs this map, copy it before mutating it.
     if (refCount() > 1) {
         RefPtr<StorageMap> newStorage = copy();
         newStorage->removeItem(key, oldValue);
-        return newStorage.release();
+        return newStorage;
     }
 
     oldValue = m_map.take(key);
@@ -174,7 +174,7 @@ PassRefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValu
     ASSERT(m_currentLength - oldValue.length() <= m_currentLength);
     m_currentLength -= oldValue.length();
 
-    return 0;
+    return nullptr;
 }
 
 bool StorageMap::contains(const String& key) const

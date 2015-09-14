@@ -27,7 +27,6 @@
 #define StorageNamespace_h
 
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,7 +39,7 @@ class StorageArea;
 class StorageNamespace : public RefCounted<StorageNamespace> {
 public:
     virtual ~StorageNamespace() { }
-    virtual RefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>) = 0;
+    virtual RefPtr<StorageArea> storageArea(RefPtr<SecurityOrigin>&&) = 0;
     virtual RefPtr<StorageNamespace> copy(Page* newPage) = 0;
 };
 

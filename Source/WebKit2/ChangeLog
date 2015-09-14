@@ -1,3 +1,14 @@
+2015-09-13  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove all uses of PassRefPtr in crypto, storage, and history
+        https://bugs.webkit.org/show_bug.cgi?id=149091
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::storageArea):
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+
 2015-09-13  Dan Bernstein  <mitz@apple.com>
 
         Define HAVE_LINK_PREVIEW in WebKit2

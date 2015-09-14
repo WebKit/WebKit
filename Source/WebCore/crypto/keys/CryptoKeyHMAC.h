@@ -42,7 +42,7 @@ public:
     virtual ~CryptoKeyHMAC();
 
     // If lengthBytes is 0, a recommended length is used, which is the size of the associated hash function's block size.
-    static PassRefPtr<CryptoKeyHMAC> generate(size_t lengthBytes, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
+    static RefPtr<CryptoKeyHMAC> generate(size_t lengthBytes, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
 
     virtual CryptoKeyClass keyClass() const override { return CryptoKeyClass::HMAC; }
 
