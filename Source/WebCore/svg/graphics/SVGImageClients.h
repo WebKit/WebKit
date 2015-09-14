@@ -60,18 +60,6 @@ private:
     SVGImage* m_image;
 };
 
-class SVGFrameLoaderClient final : public EmptyFrameLoaderClient {
-public:
-    SVGFrameLoaderClient(FrameLoader* dataProtocolLoader)
-        : m_dataProtocolLoader(dataProtocolLoader)
-    {
-    }
-
-    virtual FrameLoader* dataProtocolLoader() const override { return m_dataProtocolLoader; }
-private:
-    FrameLoader* m_dataProtocolLoader;
-};
-
-} 
+}
 
 #endif // SVGImageClients_h

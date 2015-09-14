@@ -419,11 +419,8 @@ void CachedImage::finishLoading(SharedBuffer* data)
     if (!m_image && data)
         createImage();
 
-    if (m_image) {
-        if (m_loader && m_image->isSVGImage())
-            downcast<SVGImage>(*m_image).setDataProtocolLoader(&m_loader->dataProtocolFrameLoader());
+    if (m_image)
         m_image->setData(data, true);
-    }
 
     if (!m_image || m_image->isNull()) {
         // Image decoding failed; the image data is malformed.

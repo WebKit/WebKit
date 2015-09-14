@@ -262,15 +262,6 @@ void ResourceLoader::loadDataURL()
     });
 }
 
-// This function should only be called when frameLoader() is non-null.
-FrameLoader& ResourceLoader::dataProtocolFrameLoader() const
-{
-    FrameLoader* loader = frameLoader();
-    ASSERT(loader);
-    FrameLoader* dataProtocolLoader = loader->client().dataProtocolLoader();
-    return *(dataProtocolLoader ? dataProtocolLoader : loader);
-}
-
 void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
 { 
     m_options.setDataBufferingPolicy(dataBufferingPolicy); 
