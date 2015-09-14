@@ -25,8 +25,8 @@
 
 [
     Conditional=INDEXED_DATABASE,
-    ImplementationLacksVTable,
     EnabledAtRuntime=IndexedDB,
+    SkipVTableValidation,
 ] interface IDBFactory {
     [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest open(DOMString name, [EnforceRange] optional unsigned long long version);
     [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest deleteDatabase(DOMString name);

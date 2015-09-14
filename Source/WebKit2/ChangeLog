@@ -1,3 +1,12 @@
+2015-09-14  Brady Eidson  <beidson@apple.com>
+
+        Rename current concrete IDB implementation to "Legacy".
+        https://bugs.webkit.org/show_bug.cgi?id=149118
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2015-09-14  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Remove create() factory function in EvasGLContext and EvasGLSurface

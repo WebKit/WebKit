@@ -6775,7 +6775,7 @@
     <ClCompile Include="..\Modules\indexeddb\DOMWindowIndexedDatabase.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBAny.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBCursor.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\IDBCursorBackend.cpp" />
+    <ClCompile Include="..\Modules\indexeddb\legacy\IDBCursorBackend.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBDatabase.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBFactory.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBIndex.cpp" />

@@ -31,6 +31,7 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     EnabledAtRuntime=IndexedDB,
+    SkipVTableValidation,
 ] interface IDBDatabase : EventTarget {
     readonly attribute DOMString name;
     readonly attribute unsigned long long version;

@@ -33,7 +33,8 @@
     ActiveDOMObject,
     EventTarget,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    SkipVTableValidation,
 ] interface IDBRequest : EventTarget {
     [GetterRaisesException] readonly attribute IDBAny result;
     [GetterRaisesException] readonly attribute DOMError error;

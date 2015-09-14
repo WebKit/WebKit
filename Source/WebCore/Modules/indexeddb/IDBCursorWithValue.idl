@@ -26,6 +26,7 @@
 [
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
+    SkipVTableValidation,
 ] interface IDBCursorWithValue : IDBCursor {
     readonly attribute any value;
 };

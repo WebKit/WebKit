@@ -10,6 +10,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/gamepad/deprecated"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/indexeddb/legacy"
     "${WEBCORE_DIR}/Modules/indieui"
     "${WEBCORE_DIR}/Modules/mediacontrols/"
     "${WEBCORE_DIR}/Modules/mediasession"
@@ -844,12 +845,8 @@ set(WebCore_SOURCES
     Modules/indexeddb/DOMWindowIndexedDatabase.cpp
     Modules/indexeddb/IDBAny.cpp
     Modules/indexeddb/IDBCursor.cpp
-    Modules/indexeddb/IDBCursorBackend.cpp
-    Modules/indexeddb/IDBCursorBackendOperations.cpp
     Modules/indexeddb/IDBCursorWithValue.cpp
     Modules/indexeddb/IDBDatabase.cpp
-    Modules/indexeddb/IDBDatabaseBackend.cpp
-    Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp
     Modules/indexeddb/IDBDatabaseException.cpp
     Modules/indexeddb/IDBDatabaseMetadata.cpp
     Modules/indexeddb/IDBEventDispatcher.cpp
@@ -862,14 +859,30 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBKeyRangeData.cpp
     Modules/indexeddb/IDBObjectStore.cpp
     Modules/indexeddb/IDBOpenDBRequest.cpp
-    Modules/indexeddb/IDBPendingTransactionMonitor.cpp
     Modules/indexeddb/IDBRequest.cpp
     Modules/indexeddb/IDBTransaction.cpp
-    Modules/indexeddb/IDBTransactionBackend.cpp
-    Modules/indexeddb/IDBTransactionBackendOperations.cpp
-    Modules/indexeddb/IDBTransactionCoordinator.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
+
+    Modules/indexeddb/legacy/IDBCursorBackend.cpp
+    Modules/indexeddb/legacy/IDBCursorBackendOperations.cpp
+    Modules/indexeddb/legacy/IDBDatabaseBackend.cpp
+    Modules/indexeddb/legacy/IDBDatabaseCallbacksImpl.cpp
+    Modules/indexeddb/legacy/IDBPendingTransactionMonitor.cpp
+    Modules/indexeddb/legacy/IDBTransactionBackend.cpp
+    Modules/indexeddb/legacy/IDBTransactionBackendOperations.cpp
+    Modules/indexeddb/legacy/IDBTransactionCoordinator.cpp
+    Modules/indexeddb/legacy/LegacyAny.cpp
+    Modules/indexeddb/legacy/LegacyCursor.cpp
+    Modules/indexeddb/legacy/LegacyCursorWithValue.cpp
+    Modules/indexeddb/legacy/LegacyDatabase.cpp
+    Modules/indexeddb/legacy/LegacyFactory.cpp
+    Modules/indexeddb/legacy/LegacyIndex.cpp
+    Modules/indexeddb/legacy/LegacyObjectStore.cpp
+    Modules/indexeddb/legacy/LegacyOpenDBRequest.cpp
+    Modules/indexeddb/legacy/LegacyRequest.cpp
+    Modules/indexeddb/legacy/LegacyTransaction.cpp
+    Modules/indexeddb/legacy/LegacyVersionChangeEvent.cpp
 
     Modules/mediacontrols/MediaControlsHost.cpp
 

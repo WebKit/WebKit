@@ -70,6 +70,8 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebPage"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/battery"
+    "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/indexeddb/legacy"
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/notifications"

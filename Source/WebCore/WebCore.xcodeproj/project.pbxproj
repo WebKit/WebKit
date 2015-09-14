@@ -1906,15 +1906,18 @@
 		510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */; };
 		510192D518B6B9B7007FC7A1 /* ImageControlsRootElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */; };
 		510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */; };
-		510194441836F7E400925523 /* IDBCursorBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510194421836F7E400925523 /* IDBCursorBackendOperations.cpp */; };
-		510194451836F7E500925523 /* IDBCursorBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 510194431836F7E400925523 /* IDBCursorBackendOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51059DDD1820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51059DD91820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp */; };
-		51059DDE1820B17600DFF9B1 /* IDBTransactionBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5103C2B11BA22D1A00E26337 /* LegacyAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B6E1BA0A76100F789CE /* LegacyAny.cpp */; };
+		5103C2B21BA2317400E26337 /* IDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B501B9F889B00F789CE /* IDBTransaction.cpp */; };
+		5103C2B31BA2324D00E26337 /* IDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B541B9F88E800F789CE /* IDBCursor.cpp */; };
+		5103C2B41BA232AE00E26337 /* IDBCursorWithValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B421B9F889B00F789CE /* IDBCursorWithValue.cpp */; };
+		5103C2B51BA232D400E26337 /* IDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B441B9F889B00F789CE /* IDBDatabase.cpp */; };
+		5103C2B61BA233BF00E26337 /* IDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B4E1B9F889B00F789CE /* IDBRequest.cpp */; };
+		5103C2B71BA233C400E26337 /* IDBOpenDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B4C1B9F889B00F789CE /* IDBOpenDBRequest.cpp */; };
+		5103C2B81BA235C500E26337 /* IDBVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B521B9F889B00F789CE /* IDBVersionChangeEvent.cpp */; };
+		5103C2B91BA23A2600E26337 /* LegacyAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B6F1BA0A76100F789CE /* LegacyAny.h */; };
 		5106D7BD18BDB76F000AB166 /* ContextMenuContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */; };
 		5106D7BE18BDB76F000AB166 /* ContextMenuContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A326F18318431003C5326 /* IDBServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A326E18318431003C5326 /* IDBServerConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		510B7DB7182D9F5D009BF957 /* IDBTransactionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510B7DB5182D9F5D009BF957 /* IDBTransactionBackend.cpp */; };
-		510B7DB8182D9F5D009BF957 /* IDBTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 510B7DB6182D9F5D009BF957 /* IDBTransactionBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A33103165EE0049EA54 /* SocketStreamErrorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A2D103165EE0049EA54 /* SocketStreamErrorBase.cpp */; };
 		510D4A34103165EE0049EA54 /* SocketStreamErrorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A2E103165EE0049EA54 /* SocketStreamErrorBase.h */; };
 		510D4A36103165EE0049EA54 /* SocketStreamHandleBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A30103165EE0049EA54 /* SocketStreamHandleBase.cpp */; };
@@ -1952,7 +1955,6 @@
 		512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8F10D91E6AF000F89EE /* ArchiveResource.cpp */; };
 		512DD8FC0D91E6AF000F89EE /* ArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F20D91E6AF000F89EE /* ArchiveResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512DD8FD0D91E6AF000F89EE /* ArchiveFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */; };
-		512EA9BC181F2EE0001D01E0 /* IDBPendingOpenCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 512EA9BB181F2EE0001D01E0 /* IDBPendingOpenCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512EA9BE18202857001D01E0 /* IDBOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 512EA9BD18202857001D01E0 /* IDBOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51327D5E11A33A2B004F9D65 /* SinkDocument.h */; };
 		51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51327D5F11A33A2B004F9D65 /* SinkDocument.cpp */; };
@@ -1989,14 +1991,35 @@
 		514C767D0CE923A1007EF3CD /* ResourceRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76680CE923A1007EF3CD /* ResourceRequestBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */; };
 		514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5157D4641BA24AEE0085CA2F /* IDBFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B461B9F889B00F789CE /* IDBFactory.cpp */; };
+		5157D4651BA24AF80085CA2F /* IDBIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B481B9F889B00F789CE /* IDBIndex.cpp */; };
+		5157D4661BA24AFD0085CA2F /* IDBObjectStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B4A1B9F889B00F789CE /* IDBObjectStore.cpp */; };
 		5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */; };
 		5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */; };
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
 		5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */; };
 		5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5162C7F311F77EFB00612EFE /* SchemeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5163117D1851242B00534647 /* IDBDatabaseMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5163117C1851242B00534647 /* IDBDatabaseMetadata.cpp */; };
-		516730A3182D8FBB003FAF5C /* IDBCursorBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516730A1182D8FBB003FAF5C /* IDBCursorBackend.cpp */; };
-		516730A4182D8FBB003FAF5C /* IDBCursorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 516730A2182D8FBB003FAF5C /* IDBCursorBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51645B5A1B9FA6C800F789CE /* LegacyCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B281B9F639100F789CE /* LegacyCursor.cpp */; };
+		51645B5B1B9FA6C800F789CE /* LegacyCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B291B9F639100F789CE /* LegacyCursor.h */; };
+		51645B5C1B9FA6C800F789CE /* LegacyCursorWithValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B2A1B9F639100F789CE /* LegacyCursorWithValue.cpp */; };
+		51645B5D1B9FA6C800F789CE /* LegacyCursorWithValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B2B1B9F639100F789CE /* LegacyCursorWithValue.h */; };
+		51645B5E1B9FA6C800F789CE /* LegacyDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B2C1B9F639100F789CE /* LegacyDatabase.cpp */; };
+		51645B5F1B9FA6C800F789CE /* LegacyDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B2D1B9F639100F789CE /* LegacyDatabase.h */; };
+		51645B601B9FA6C800F789CE /* LegacyFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B2E1B9F639100F789CE /* LegacyFactory.cpp */; };
+		51645B611B9FA6C800F789CE /* LegacyFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B2F1B9F639100F789CE /* LegacyFactory.h */; };
+		51645B621B9FA6C800F789CE /* LegacyIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B301B9F639100F789CE /* LegacyIndex.cpp */; };
+		51645B631B9FA6C800F789CE /* LegacyIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B311B9F639100F789CE /* LegacyIndex.h */; };
+		51645B641B9FA6C800F789CE /* LegacyObjectStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B321B9F639100F789CE /* LegacyObjectStore.cpp */; };
+		51645B651B9FA6C800F789CE /* LegacyObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B331B9F639100F789CE /* LegacyObjectStore.h */; };
+		51645B661B9FA6C800F789CE /* LegacyOpenDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B341B9F639100F789CE /* LegacyOpenDBRequest.cpp */; };
+		51645B671B9FA6C800F789CE /* LegacyOpenDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B351B9F639100F789CE /* LegacyOpenDBRequest.h */; };
+		51645B681B9FA6C800F789CE /* LegacyRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B361B9F639100F789CE /* LegacyRequest.cpp */; };
+		51645B691B9FA6C800F789CE /* LegacyRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B371B9F639100F789CE /* LegacyRequest.h */; };
+		51645B6A1B9FA6C800F789CE /* LegacyTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B381B9F639100F789CE /* LegacyTransaction.cpp */; };
+		51645B6B1B9FA6C800F789CE /* LegacyTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B391B9F639100F789CE /* LegacyTransaction.h */; };
+		51645B6C1B9FA6C800F789CE /* LegacyVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B3A1B9F639100F789CE /* LegacyVersionChangeEvent.cpp */; };
+		51645B6D1B9FA6C800F789CE /* LegacyVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B3B1B9F639100F789CE /* LegacyVersionChangeEvent.h */; };
 		516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516953951329A3C800B92D04 /* IconDatabaseBase.cpp */; };
 		516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 516953961329A3C800B92D04 /* IconDatabaseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */; };
@@ -2007,8 +2030,6 @@
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
 		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
-		51771C8E182DB4B7008E781E /* IDBDatabaseBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51771C8C182DB4B7008E781E /* IDBDatabaseBackend.cpp */; };
-		51771C8F182DB4B7008E781E /* IDBDatabaseBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 51771C8D182DB4B7008E781E /* IDBDatabaseBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5179CE24195C81420019C198 /* GamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE23195C81420019C198 /* GamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5179CE26195C821D0019C198 /* GamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5179CE25195C821D0019C198 /* GamepadProvider.cpp */; };
 		5179CE2A195C91860019C198 /* GamepadProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE29195C91860019C198 /* GamepadProviderClient.h */; };
@@ -2044,7 +2065,6 @@
 		51ABB5B9186D0ED1008391A1 /* IDBObjectStoreMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABB5B7186D0ED1008391A1 /* IDBObjectStoreMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */; };
 		51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51B07A441823248B00AA8D1A /* IDBPendingDeleteCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B07A431823248B00AA8D1A /* IDBPendingDeleteCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */; };
 		51B454EA1B4DAE7D0085EAA6 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B454E91B4DAE7D0085EAA6 /* PingHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B45D201AB8D1E200117CD2 /* ContentExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B45D1E1AB8D1E200117CD2 /* ContentExtension.cpp */; };
@@ -2062,44 +2082,17 @@
 		51D719B7181106E00016DC51 /* DOMWindowIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7196D181106DF0016DC51 /* DOMWindowIndexedDatabase.h */; };
 		51D719B9181106E00016DC51 /* IDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7196F181106DF0016DC51 /* IDBAny.cpp */; };
 		51D719BA181106E00016DC51 /* IDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71970181106DF0016DC51 /* IDBAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719BE181106E00016DC51 /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71974181106DF0016DC51 /* IDBCallbacks.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719BF181106E00016DC51 /* IDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71975181106DF0016DC51 /* IDBCursor.cpp */; };
-		51D719C0181106E00016DC51 /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71976181106DF0016DC51 /* IDBCursor.h */; };
-		51D719C3181106E00016DC51 /* IDBCursorWithValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71979181106DF0016DC51 /* IDBCursorWithValue.cpp */; };
-		51D719C4181106E00016DC51 /* IDBCursorWithValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7197A181106DF0016DC51 /* IDBCursorWithValue.h */; };
-		51D719C6181106E00016DC51 /* IDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7197C181106DF0016DC51 /* IDBDatabase.cpp */; };
-		51D719C7181106E00016DC51 /* IDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7197D181106DF0016DC51 /* IDBDatabase.h */; };
-		51D719CA181106E00016DC51 /* IDBDatabaseCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71980181106DF0016DC51 /* IDBDatabaseCallbacks.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719CB181106E00016DC51 /* IDBDatabaseCallbacksImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71981181106DF0016DC51 /* IDBDatabaseCallbacksImpl.cpp */; };
-		51D719CC181106E00016DC51 /* IDBDatabaseCallbacksImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71982181106DF0016DC51 /* IDBDatabaseCallbacksImpl.h */; };
 		51D719CD181106E00016DC51 /* IDBDatabaseError.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71983181106DF0016DC51 /* IDBDatabaseError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719CE181106E00016DC51 /* IDBDatabaseException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71984181106DF0016DC51 /* IDBDatabaseException.cpp */; };
 		51D719CF181106E00016DC51 /* IDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71985181106DF0016DC51 /* IDBDatabaseException.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719D0181106E00016DC51 /* IDBEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71986181106DF0016DC51 /* IDBEventDispatcher.cpp */; };
 		51D719D1181106E00016DC51 /* IDBEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71987181106DF0016DC51 /* IDBEventDispatcher.h */; };
-		51D719D2181106E00016DC51 /* IDBFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71988181106DF0016DC51 /* IDBFactory.cpp */; };
-		51D719D3181106E00016DC51 /* IDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71989181106DF0016DC51 /* IDBFactory.h */; };
-		51D719D6181106E00016DC51 /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719D8181106E00016DC51 /* IDBIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7198E181106E00016DC51 /* IDBIndex.cpp */; };
-		51D719D9181106E00016DC51 /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7198F181106E00016DC51 /* IDBIndex.h */; };
 		51D719DB181106E00016DC51 /* IDBKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71991181106E00016DC51 /* IDBKey.cpp */; };
 		51D719DC181106E00016DC51 /* IDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71992181106E00016DC51 /* IDBKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719DD181106E00016DC51 /* IDBKeyPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71993181106E00016DC51 /* IDBKeyPath.cpp */; };
 		51D719DE181106E00016DC51 /* IDBKeyPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71994181106E00016DC51 /* IDBKeyPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719DF181106E00016DC51 /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71995181106E00016DC51 /* IDBKeyRange.cpp */; };
 		51D719E0181106E00016DC51 /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71996181106E00016DC51 /* IDBKeyRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719E3181106E00016DC51 /* IDBObjectStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71999181106E00016DC51 /* IDBObjectStore.cpp */; };
-		51D719E4181106E00016DC51 /* IDBObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7199A181106E00016DC51 /* IDBObjectStore.h */; };
-		51D719E6181106E00016DC51 /* IDBOpenDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7199C181106E00016DC51 /* IDBOpenDBRequest.cpp */; };
-		51D719E7181106E00016DC51 /* IDBOpenDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7199D181106E00016DC51 /* IDBOpenDBRequest.h */; };
-		51D719E9181106E00016DC51 /* IDBPendingTransactionMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7199F181106E00016DC51 /* IDBPendingTransactionMonitor.cpp */; };
-		51D719EA181106E00016DC51 /* IDBPendingTransactionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719A0181106E00016DC51 /* IDBPendingTransactionMonitor.h */; };
-		51D719EB181106E00016DC51 /* IDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719A1181106E00016DC51 /* IDBRequest.cpp */; };
-		51D719EC181106E00016DC51 /* IDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719A2181106E00016DC51 /* IDBRequest.h */; };
-		51D719EE181106E00016DC51 /* IDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719A4181106E00016DC51 /* IDBTransaction.cpp */; };
-		51D719EF181106E00016DC51 /* IDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719A5181106E00016DC51 /* IDBTransaction.h */; };
-		51D719F5181106E00016DC51 /* IDBVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719AB181106E00016DC51 /* IDBVersionChangeEvent.cpp */; };
-		51D719F6181106E00016DC51 /* IDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719AC181106E00016DC51 /* IDBVersionChangeEvent.h */; };
 		51D719F8181106E00016DC51 /* IndexedDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719AE181106E00016DC51 /* IndexedDB.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719FB181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719B1181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp */; };
 		51D719FC181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719B2181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h */; };
@@ -2123,12 +2116,31 @@
 		51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9D40DA05E1D00250911 /* JSStorage.cpp */; };
 		51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4143216A6595100C633C7 /* ResourceHandleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E6820F16387302003BBF3C /* LoaderStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51EAC5671815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EAC5651815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp */; };
-		51EAC5681815ED3E004F1BA4 /* IDBTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EAC5661815ED3E004F1BA4 /* IDBTransactionCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EAC5B218163F4E004F1BA4 /* IDBRecordIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EAC5B018163F4E004F1BA4 /* IDBRecordIdentifier.h */; };
 		51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */; };
 		51EE7B381AA50B0500F92B21 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EE7B3A1AA5123100F92B21 /* ResourceLoadInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EE7B391AA5123100F92B21 /* ResourceLoadInfo.cpp */; };
+		51F41A681BA73B5B002E053B /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A481BA73B2C002E053B /* IDBCallbacks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A691BA73B5B002E053B /* IDBCursorBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F41A491BA73B2C002E053B /* IDBCursorBackend.cpp */; };
+		51F41A6A1BA73B5B002E053B /* IDBCursorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A4A1BA73B2C002E053B /* IDBCursorBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A6B1BA73B5B002E053B /* IDBCursorBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F41A4B1BA73B2C002E053B /* IDBCursorBackendOperations.cpp */; };
+		51F41A6C1BA73B5B002E053B /* IDBCursorBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A4C1BA73B2C002E053B /* IDBCursorBackendOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A6D1BA73B5B002E053B /* IDBDatabaseBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F41A4D1BA73B2C002E053B /* IDBDatabaseBackend.cpp */; };
+		51F41A6E1BA73B5B002E053B /* IDBDatabaseBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A4E1BA73B2C002E053B /* IDBDatabaseBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A6F1BA73B5B002E053B /* IDBDatabaseCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B401B9F695E00F789CE /* IDBDatabaseCallbacks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A701BA73B5B002E053B /* IDBDatabaseCallbacksImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B3E1B9F692300F789CE /* IDBDatabaseCallbacksImpl.cpp */; };
+		51F41A711BA73B5B002E053B /* IDBDatabaseCallbacksImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B3F1B9F692300F789CE /* IDBDatabaseCallbacksImpl.h */; };
+		51F41A721BA73B5B002E053B /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A4F1BA73B2C002E053B /* IDBFactoryBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A731BA73B5B002E053B /* IDBTransactionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F41A521BA73B2C002E053B /* IDBTransactionBackend.cpp */; };
+		51F41A741BA73B5B002E053B /* IDBTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A531BA73B2C002E053B /* IDBTransactionBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A751BA73B5B002E053B /* IDBTransactionBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F41A541BA73B2C002E053B /* IDBTransactionBackendOperations.cpp */; };
+		51F41A761BA73B5B002E053B /* IDBTransactionBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A551BA73B2C002E053B /* IDBTransactionBackendOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A771BA73B5B002E053B /* IDBTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F41A561BA73B2C002E053B /* IDBTransactionCoordinator.cpp */; };
+		51F41A781BA73B5B002E053B /* IDBTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A571BA73B2C002E053B /* IDBTransactionCoordinator.h */; };
+		51F41A791BA73B5B002E053B /* IDBPendingDeleteCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A501BA73B2C002E053B /* IDBPendingDeleteCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A7A1BA73B5B002E053B /* IDBPendingOpenCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A511BA73B2C002E053B /* IDBPendingOpenCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F41A7B1BA73B5B002E053B /* IDBPendingTransactionMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B3C1B9F68CF00F789CE /* IDBPendingTransactionMonitor.cpp */; };
+		51F41A7C1BA73B5B002E053B /* IDBPendingTransactionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B3D1B9F68CF00F789CE /* IDBPendingTransactionMonitor.h */; };
 		51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 517FBA18151AA71B00B57959 /* DOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FB5504113E3E9100821176 /* JSCloseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FB5502113E3E9100821176 /* JSCloseEvent.h */; };
 		51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FB5503113E3E9100821176 /* JSCloseEvent.cpp */; };
@@ -9171,15 +9183,9 @@
 		510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageControlsRootElement.cpp; sourceTree = "<group>"; };
 		510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageControlsRootElement.h; sourceTree = "<group>"; };
 		510192D818B7D7AB007FC7A1 /* imageControlsMac.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = imageControlsMac.css; sourceTree = "<group>"; };
-		510194421836F7E400925523 /* IDBCursorBackendOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackendOperations.cpp; sourceTree = "<group>"; };
-		510194431836F7E400925523 /* IDBCursorBackendOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendOperations.h; sourceTree = "<group>"; };
-		51059DD91820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionBackendOperations.cpp; sourceTree = "<group>"; };
-		51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendOperations.h; sourceTree = "<group>"; };
 		5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuContext.cpp; sourceTree = "<group>"; };
 		5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuContext.h; sourceTree = "<group>"; };
 		510A326E18318431003C5326 /* IDBServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBServerConnection.h; sourceTree = "<group>"; };
-		510B7DB5182D9F5D009BF957 /* IDBTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionBackend.cpp; sourceTree = "<group>"; };
-		510B7DB6182D9F5D009BF957 /* IDBTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackend.h; sourceTree = "<group>"; };
 		510D4A2D103165EE0049EA54 /* SocketStreamErrorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamErrorBase.cpp; sourceTree = "<group>"; };
 		510D4A2E103165EE0049EA54 /* SocketStreamErrorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamErrorBase.h; sourceTree = "<group>"; };
 		510D4A30103165EE0049EA54 /* SocketStreamHandleBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleBase.cpp; sourceTree = "<group>"; };
@@ -9218,7 +9224,6 @@
 		512DD8F10D91E6AF000F89EE /* ArchiveResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArchiveResource.cpp; sourceTree = "<group>"; };
 		512DD8F20D91E6AF000F89EE /* ArchiveResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveResource.h; sourceTree = "<group>"; };
 		512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveFactory.h; sourceTree = "<group>"; };
-		512EA9BB181F2EE0001D01E0 /* IDBPendingOpenCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingOpenCall.h; sourceTree = "<group>"; };
 		512EA9BD18202857001D01E0 /* IDBOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBOperation.h; sourceTree = "<group>"; };
 		51327D5E11A33A2B004F9D65 /* SinkDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinkDocument.h; sourceTree = "<group>"; };
 		51327D5F11A33A2B004F9D65 /* SinkDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinkDocument.cpp; sourceTree = "<group>"; };
@@ -9262,8 +9267,53 @@
 		5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchemeRegistry.cpp; sourceTree = "<group>"; };
 		5162C7F311F77EFB00612EFE /* SchemeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemeRegistry.h; sourceTree = "<group>"; };
 		5163117C1851242B00534647 /* IDBDatabaseMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseMetadata.cpp; sourceTree = "<group>"; };
-		516730A1182D8FBB003FAF5C /* IDBCursorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackend.cpp; sourceTree = "<group>"; };
-		516730A2182D8FBB003FAF5C /* IDBCursorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackend.h; sourceTree = "<group>"; };
+		51645B281B9F639100F789CE /* LegacyCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCursor.cpp; sourceTree = "<group>"; };
+		51645B291B9F639100F789CE /* LegacyCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCursor.h; sourceTree = "<group>"; };
+		51645B2A1B9F639100F789CE /* LegacyCursorWithValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCursorWithValue.cpp; sourceTree = "<group>"; };
+		51645B2B1B9F639100F789CE /* LegacyCursorWithValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCursorWithValue.h; sourceTree = "<group>"; };
+		51645B2C1B9F639100F789CE /* LegacyDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyDatabase.cpp; sourceTree = "<group>"; };
+		51645B2D1B9F639100F789CE /* LegacyDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyDatabase.h; sourceTree = "<group>"; };
+		51645B2E1B9F639100F789CE /* LegacyFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyFactory.cpp; sourceTree = "<group>"; };
+		51645B2F1B9F639100F789CE /* LegacyFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyFactory.h; sourceTree = "<group>"; };
+		51645B301B9F639100F789CE /* LegacyIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyIndex.cpp; sourceTree = "<group>"; };
+		51645B311B9F639100F789CE /* LegacyIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyIndex.h; sourceTree = "<group>"; };
+		51645B321B9F639100F789CE /* LegacyObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyObjectStore.cpp; sourceTree = "<group>"; };
+		51645B331B9F639100F789CE /* LegacyObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyObjectStore.h; sourceTree = "<group>"; };
+		51645B341B9F639100F789CE /* LegacyOpenDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyOpenDBRequest.cpp; sourceTree = "<group>"; };
+		51645B351B9F639100F789CE /* LegacyOpenDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyOpenDBRequest.h; sourceTree = "<group>"; };
+		51645B361B9F639100F789CE /* LegacyRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyRequest.cpp; sourceTree = "<group>"; };
+		51645B371B9F639100F789CE /* LegacyRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyRequest.h; sourceTree = "<group>"; };
+		51645B381B9F639100F789CE /* LegacyTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyTransaction.cpp; sourceTree = "<group>"; };
+		51645B391B9F639100F789CE /* LegacyTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyTransaction.h; sourceTree = "<group>"; };
+		51645B3A1B9F639100F789CE /* LegacyVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyVersionChangeEvent.cpp; sourceTree = "<group>"; };
+		51645B3B1B9F639100F789CE /* LegacyVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyVersionChangeEvent.h; sourceTree = "<group>"; };
+		51645B3C1B9F68CF00F789CE /* IDBPendingTransactionMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBPendingTransactionMonitor.cpp; sourceTree = "<group>"; };
+		51645B3D1B9F68CF00F789CE /* IDBPendingTransactionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingTransactionMonitor.h; sourceTree = "<group>"; };
+		51645B3E1B9F692300F789CE /* IDBDatabaseCallbacksImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseCallbacksImpl.cpp; sourceTree = "<group>"; };
+		51645B3F1B9F692300F789CE /* IDBDatabaseCallbacksImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseCallbacksImpl.h; sourceTree = "<group>"; };
+		51645B401B9F695E00F789CE /* IDBDatabaseCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseCallbacks.h; sourceTree = "<group>"; };
+		51645B411B9F889B00F789CE /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursor.h; sourceTree = "<group>"; };
+		51645B421B9F889B00F789CE /* IDBCursorWithValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorWithValue.cpp; sourceTree = "<group>"; };
+		51645B431B9F889B00F789CE /* IDBCursorWithValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorWithValue.h; sourceTree = "<group>"; };
+		51645B441B9F889B00F789CE /* IDBDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabase.cpp; sourceTree = "<group>"; };
+		51645B451B9F889B00F789CE /* IDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabase.h; sourceTree = "<group>"; };
+		51645B461B9F889B00F789CE /* IDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactory.cpp; sourceTree = "<group>"; };
+		51645B471B9F889B00F789CE /* IDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactory.h; sourceTree = "<group>"; };
+		51645B481B9F889B00F789CE /* IDBIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndex.cpp; sourceTree = "<group>"; };
+		51645B491B9F889B00F789CE /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
+		51645B4A1B9F889B00F789CE /* IDBObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBObjectStore.cpp; sourceTree = "<group>"; };
+		51645B4B1B9F889B00F789CE /* IDBObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStore.h; sourceTree = "<group>"; };
+		51645B4C1B9F889B00F789CE /* IDBOpenDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBOpenDBRequest.cpp; sourceTree = "<group>"; };
+		51645B4D1B9F889B00F789CE /* IDBOpenDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBOpenDBRequest.h; sourceTree = "<group>"; };
+		51645B4E1B9F889B00F789CE /* IDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequest.cpp; sourceTree = "<group>"; };
+		51645B4F1B9F889B00F789CE /* IDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRequest.h; sourceTree = "<group>"; };
+		51645B501B9F889B00F789CE /* IDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransaction.cpp; sourceTree = "<group>"; };
+		51645B511B9F889B00F789CE /* IDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransaction.h; sourceTree = "<group>"; };
+		51645B521B9F889B00F789CE /* IDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
+		51645B531B9F889B00F789CE /* IDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBVersionChangeEvent.h; sourceTree = "<group>"; };
+		51645B541B9F88E800F789CE /* IDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursor.cpp; sourceTree = "<group>"; };
+		51645B6E1BA0A76100F789CE /* LegacyAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyAny.cpp; sourceTree = "<group>"; };
+		51645B6F1BA0A76100F789CE /* LegacyAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyAny.h; sourceTree = "<group>"; };
 		516953951329A3C800B92D04 /* IconDatabaseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabaseBase.cpp; sourceTree = "<group>"; };
 		516953961329A3C800B92D04 /* IconDatabaseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconDatabaseBase.h; sourceTree = "<group>"; };
 		516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTreeWalkerCustom.cpp; sourceTree = "<group>"; };
@@ -9277,8 +9327,6 @@
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
 		5174E20810A1F44F00F95E6F /* PopStateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopStateEvent.h; sourceTree = "<group>"; };
 		5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PopStateEvent.idl; sourceTree = "<group>"; };
-		51771C8C182DB4B7008E781E /* IDBDatabaseBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseBackend.cpp; sourceTree = "<group>"; };
-		51771C8D182DB4B7008E781E /* IDBDatabaseBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseBackend.h; sourceTree = "<group>"; };
 		5179CE23195C81420019C198 /* GamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProvider.h; sourceTree = "<group>"; };
 		5179CE25195C821D0019C198 /* GamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadProvider.cpp; sourceTree = "<group>"; };
 		5179CE29195C91860019C198 /* GamepadProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProviderClient.h; sourceTree = "<group>"; };
@@ -9323,7 +9371,6 @@
 		51ABB5B7186D0ED1008391A1 /* IDBObjectStoreMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStoreMetadata.h; sourceTree = "<group>"; };
 		51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoaderStrategy.cpp; sourceTree = "<group>"; };
 		51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderTypes.h; sourceTree = "<group>"; };
-		51B07A431823248B00AA8D1A /* IDBPendingDeleteCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingDeleteCall.h; sourceTree = "<group>"; };
 		51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyWebArchiveMac.mm; sourceTree = "<group>"; };
 		51B454E91B4DAE7D0085EAA6 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingHandle.h; sourceTree = "<group>"; };
 		51B45D1E1AB8D1E200117CD2 /* ContentExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtension.cpp; sourceTree = "<group>"; };
@@ -9342,30 +9389,15 @@
 		51D7196F181106DF0016DC51 /* IDBAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBAny.cpp; sourceTree = "<group>"; };
 		51D71970181106DF0016DC51 /* IDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBAny.h; sourceTree = "<group>"; };
 		51D71971181106DF0016DC51 /* IDBAny.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBAny.idl; sourceTree = "<group>"; };
-		51D71974181106DF0016DC51 /* IDBCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCallbacks.h; sourceTree = "<group>"; };
-		51D71975181106DF0016DC51 /* IDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursor.cpp; sourceTree = "<group>"; };
-		51D71976181106DF0016DC51 /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursor.h; sourceTree = "<group>"; };
 		51D71977181106DF0016DC51 /* IDBCursor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBCursor.idl; sourceTree = "<group>"; };
-		51D71979181106DF0016DC51 /* IDBCursorWithValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorWithValue.cpp; sourceTree = "<group>"; };
-		51D7197A181106DF0016DC51 /* IDBCursorWithValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorWithValue.h; sourceTree = "<group>"; };
 		51D7197B181106DF0016DC51 /* IDBCursorWithValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBCursorWithValue.idl; sourceTree = "<group>"; };
-		51D7197C181106DF0016DC51 /* IDBDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabase.cpp; sourceTree = "<group>"; };
-		51D7197D181106DF0016DC51 /* IDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabase.h; sourceTree = "<group>"; };
 		51D7197E181106DF0016DC51 /* IDBDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabase.idl; sourceTree = "<group>"; };
-		51D71980181106DF0016DC51 /* IDBDatabaseCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseCallbacks.h; sourceTree = "<group>"; };
-		51D71981181106DF0016DC51 /* IDBDatabaseCallbacksImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseCallbacksImpl.cpp; sourceTree = "<group>"; };
-		51D71982181106DF0016DC51 /* IDBDatabaseCallbacksImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseCallbacksImpl.h; sourceTree = "<group>"; };
 		51D71983181106DF0016DC51 /* IDBDatabaseError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseError.h; sourceTree = "<group>"; };
 		51D71984181106DF0016DC51 /* IDBDatabaseException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseException.cpp; sourceTree = "<group>"; };
 		51D71985181106DF0016DC51 /* IDBDatabaseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseException.h; sourceTree = "<group>"; };
 		51D71986181106DF0016DC51 /* IDBEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBEventDispatcher.cpp; sourceTree = "<group>"; };
 		51D71987181106DF0016DC51 /* IDBEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBEventDispatcher.h; sourceTree = "<group>"; };
-		51D71988181106DF0016DC51 /* IDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactory.cpp; sourceTree = "<group>"; };
-		51D71989181106DF0016DC51 /* IDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactory.h; sourceTree = "<group>"; };
 		51D7198A181106DF0016DC51 /* IDBFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBFactory.idl; sourceTree = "<group>"; };
-		51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryBackendInterface.h; sourceTree = "<group>"; };
-		51D7198E181106E00016DC51 /* IDBIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndex.cpp; sourceTree = "<group>"; };
-		51D7198F181106E00016DC51 /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
 		51D71990181106E00016DC51 /* IDBIndex.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBIndex.idl; sourceTree = "<group>"; };
 		51D71991181106E00016DC51 /* IDBKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKey.cpp; sourceTree = "<group>"; };
 		51D71992181106E00016DC51 /* IDBKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKey.h; sourceTree = "<group>"; };
@@ -9374,22 +9406,10 @@
 		51D71995181106E00016DC51 /* IDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKeyRange.cpp; sourceTree = "<group>"; };
 		51D71996181106E00016DC51 /* IDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyRange.h; sourceTree = "<group>"; };
 		51D71997181106E00016DC51 /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBKeyRange.idl; sourceTree = "<group>"; };
-		51D71999181106E00016DC51 /* IDBObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBObjectStore.cpp; sourceTree = "<group>"; };
-		51D7199A181106E00016DC51 /* IDBObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStore.h; sourceTree = "<group>"; };
 		51D7199B181106E00016DC51 /* IDBObjectStore.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBObjectStore.idl; sourceTree = "<group>"; };
-		51D7199C181106E00016DC51 /* IDBOpenDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBOpenDBRequest.cpp; sourceTree = "<group>"; };
-		51D7199D181106E00016DC51 /* IDBOpenDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBOpenDBRequest.h; sourceTree = "<group>"; };
 		51D7199E181106E00016DC51 /* IDBOpenDBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBOpenDBRequest.idl; sourceTree = "<group>"; };
-		51D7199F181106E00016DC51 /* IDBPendingTransactionMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBPendingTransactionMonitor.cpp; sourceTree = "<group>"; };
-		51D719A0181106E00016DC51 /* IDBPendingTransactionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingTransactionMonitor.h; sourceTree = "<group>"; };
-		51D719A1181106E00016DC51 /* IDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequest.cpp; sourceTree = "<group>"; };
-		51D719A2181106E00016DC51 /* IDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRequest.h; sourceTree = "<group>"; };
 		51D719A3181106E00016DC51 /* IDBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBRequest.idl; sourceTree = "<group>"; };
-		51D719A4181106E00016DC51 /* IDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransaction.cpp; sourceTree = "<group>"; };
-		51D719A5181106E00016DC51 /* IDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransaction.h; sourceTree = "<group>"; };
 		51D719A6181106E00016DC51 /* IDBTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBTransaction.idl; sourceTree = "<group>"; };
-		51D719AB181106E00016DC51 /* IDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
-		51D719AC181106E00016DC51 /* IDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBVersionChangeEvent.h; sourceTree = "<group>"; };
 		51D719AD181106E00016DC51 /* IDBVersionChangeEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBVersionChangeEvent.idl; sourceTree = "<group>"; };
 		51D719AE181106E00016DC51 /* IndexedDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDB.h; sourceTree = "<group>"; };
 		51D719B1181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerGlobalScopeIndexedDatabase.cpp; sourceTree = "<group>"; };
@@ -9419,12 +9439,26 @@
 		51E3F9D50DA05E1D00250911 /* JSStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorage.h; sourceTree = "<group>"; };
 		51E4143216A6595100C633C7 /* ResourceHandleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleTypes.h; sourceTree = "<group>"; };
 		51E6820F16387302003BBF3C /* LoaderStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoaderStrategy.h; sourceTree = "<group>"; };
-		51EAC5651815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionCoordinator.cpp; sourceTree = "<group>"; };
-		51EAC5661815ED3E004F1BA4 /* IDBTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionCoordinator.h; sourceTree = "<group>"; };
 		51EAC5B018163F4E004F1BA4 /* IDBRecordIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRecordIdentifier.h; sourceTree = "<group>"; };
 		51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
 		51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		51EE7B391AA5123100F92B21 /* ResourceLoadInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadInfo.cpp; sourceTree = "<group>"; };
+		51F41A481BA73B2C002E053B /* IDBCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCallbacks.h; sourceTree = "<group>"; };
+		51F41A491BA73B2C002E053B /* IDBCursorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackend.cpp; sourceTree = "<group>"; };
+		51F41A4A1BA73B2C002E053B /* IDBCursorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackend.h; sourceTree = "<group>"; };
+		51F41A4B1BA73B2C002E053B /* IDBCursorBackendOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackendOperations.cpp; sourceTree = "<group>"; };
+		51F41A4C1BA73B2C002E053B /* IDBCursorBackendOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendOperations.h; sourceTree = "<group>"; };
+		51F41A4D1BA73B2C002E053B /* IDBDatabaseBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseBackend.cpp; sourceTree = "<group>"; };
+		51F41A4E1BA73B2C002E053B /* IDBDatabaseBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseBackend.h; sourceTree = "<group>"; };
+		51F41A4F1BA73B2C002E053B /* IDBFactoryBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryBackendInterface.h; sourceTree = "<group>"; };
+		51F41A501BA73B2C002E053B /* IDBPendingDeleteCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingDeleteCall.h; sourceTree = "<group>"; };
+		51F41A511BA73B2C002E053B /* IDBPendingOpenCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingOpenCall.h; sourceTree = "<group>"; };
+		51F41A521BA73B2C002E053B /* IDBTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionBackend.cpp; sourceTree = "<group>"; };
+		51F41A531BA73B2C002E053B /* IDBTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackend.h; sourceTree = "<group>"; };
+		51F41A541BA73B2C002E053B /* IDBTransactionBackendOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionBackendOperations.cpp; sourceTree = "<group>"; };
+		51F41A551BA73B2C002E053B /* IDBTransactionBackendOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendOperations.h; sourceTree = "<group>"; };
+		51F41A561BA73B2C002E053B /* IDBTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionCoordinator.cpp; sourceTree = "<group>"; };
+		51F41A571BA73B2C002E053B /* IDBTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionCoordinator.h; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51FB5502113E3E9100821176 /* JSCloseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCloseEvent.h; sourceTree = "<group>"; };
@@ -16552,6 +16586,56 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		51645B271B9F637E00F789CE /* legacy */ = {
+			isa = PBXGroup;
+			children = (
+				51F41A481BA73B2C002E053B /* IDBCallbacks.h */,
+				51F41A491BA73B2C002E053B /* IDBCursorBackend.cpp */,
+				51F41A4A1BA73B2C002E053B /* IDBCursorBackend.h */,
+				51F41A4B1BA73B2C002E053B /* IDBCursorBackendOperations.cpp */,
+				51F41A4C1BA73B2C002E053B /* IDBCursorBackendOperations.h */,
+				51F41A4D1BA73B2C002E053B /* IDBDatabaseBackend.cpp */,
+				51F41A4E1BA73B2C002E053B /* IDBDatabaseBackend.h */,
+				51645B401B9F695E00F789CE /* IDBDatabaseCallbacks.h */,
+				51645B3E1B9F692300F789CE /* IDBDatabaseCallbacksImpl.cpp */,
+				51645B3F1B9F692300F789CE /* IDBDatabaseCallbacksImpl.h */,
+				51F41A4F1BA73B2C002E053B /* IDBFactoryBackendInterface.h */,
+				51F41A521BA73B2C002E053B /* IDBTransactionBackend.cpp */,
+				51F41A531BA73B2C002E053B /* IDBTransactionBackend.h */,
+				51F41A541BA73B2C002E053B /* IDBTransactionBackendOperations.cpp */,
+				51F41A551BA73B2C002E053B /* IDBTransactionBackendOperations.h */,
+				51F41A561BA73B2C002E053B /* IDBTransactionCoordinator.cpp */,
+				51F41A571BA73B2C002E053B /* IDBTransactionCoordinator.h */,
+				51F41A501BA73B2C002E053B /* IDBPendingDeleteCall.h */,
+				51F41A511BA73B2C002E053B /* IDBPendingOpenCall.h */,
+				51645B3C1B9F68CF00F789CE /* IDBPendingTransactionMonitor.cpp */,
+				51645B3D1B9F68CF00F789CE /* IDBPendingTransactionMonitor.h */,
+				51645B6E1BA0A76100F789CE /* LegacyAny.cpp */,
+				51645B6F1BA0A76100F789CE /* LegacyAny.h */,
+				51645B281B9F639100F789CE /* LegacyCursor.cpp */,
+				51645B291B9F639100F789CE /* LegacyCursor.h */,
+				51645B2A1B9F639100F789CE /* LegacyCursorWithValue.cpp */,
+				51645B2B1B9F639100F789CE /* LegacyCursorWithValue.h */,
+				51645B2C1B9F639100F789CE /* LegacyDatabase.cpp */,
+				51645B2D1B9F639100F789CE /* LegacyDatabase.h */,
+				51645B2E1B9F639100F789CE /* LegacyFactory.cpp */,
+				51645B2F1B9F639100F789CE /* LegacyFactory.h */,
+				51645B301B9F639100F789CE /* LegacyIndex.cpp */,
+				51645B311B9F639100F789CE /* LegacyIndex.h */,
+				51645B321B9F639100F789CE /* LegacyObjectStore.cpp */,
+				51645B331B9F639100F789CE /* LegacyObjectStore.h */,
+				51645B341B9F639100F789CE /* LegacyOpenDBRequest.cpp */,
+				51645B351B9F639100F789CE /* LegacyOpenDBRequest.h */,
+				51645B361B9F639100F789CE /* LegacyRequest.cpp */,
+				51645B371B9F639100F789CE /* LegacyRequest.h */,
+				51645B381B9F639100F789CE /* LegacyTransaction.cpp */,
+				51645B391B9F639100F789CE /* LegacyTransaction.h */,
+				51645B3A1B9F639100F789CE /* LegacyVersionChangeEvent.cpp */,
+				51645B3B1B9F639100F789CE /* LegacyVersionChangeEvent.h */,
+			);
+			path = legacy;
+			sourceTree = "<group>";
+		};
 		51741D080B07257000ED442C /* history */ = {
 			isa = PBXGroup;
 			children = (
@@ -18651,31 +18735,22 @@
 		9712A55315004E3C0048AF10 /* indexeddb */ = {
 			isa = PBXGroup;
 			children = (
+				51645B271B9F637E00F789CE /* legacy */,
 				51D7196C181106DF0016DC51 /* DOMWindowIndexedDatabase.cpp */,
 				51D7196D181106DF0016DC51 /* DOMWindowIndexedDatabase.h */,
 				51D7196E181106DF0016DC51 /* DOMWindowIndexedDatabase.idl */,
 				51D7196F181106DF0016DC51 /* IDBAny.cpp */,
 				51D71970181106DF0016DC51 /* IDBAny.h */,
 				51D71971181106DF0016DC51 /* IDBAny.idl */,
-				51D71974181106DF0016DC51 /* IDBCallbacks.h */,
-				51D71975181106DF0016DC51 /* IDBCursor.cpp */,
-				51D71976181106DF0016DC51 /* IDBCursor.h */,
+				51645B541B9F88E800F789CE /* IDBCursor.cpp */,
+				51645B411B9F889B00F789CE /* IDBCursor.h */,
 				51D71977181106DF0016DC51 /* IDBCursor.idl */,
-				516730A1182D8FBB003FAF5C /* IDBCursorBackend.cpp */,
-				516730A2182D8FBB003FAF5C /* IDBCursorBackend.h */,
-				510194421836F7E400925523 /* IDBCursorBackendOperations.cpp */,
-				510194431836F7E400925523 /* IDBCursorBackendOperations.h */,
-				51D71979181106DF0016DC51 /* IDBCursorWithValue.cpp */,
-				51D7197A181106DF0016DC51 /* IDBCursorWithValue.h */,
+				51645B421B9F889B00F789CE /* IDBCursorWithValue.cpp */,
+				51645B431B9F889B00F789CE /* IDBCursorWithValue.h */,
 				51D7197B181106DF0016DC51 /* IDBCursorWithValue.idl */,
-				51D7197C181106DF0016DC51 /* IDBDatabase.cpp */,
-				51D7197D181106DF0016DC51 /* IDBDatabase.h */,
+				51645B441B9F889B00F789CE /* IDBDatabase.cpp */,
+				51645B451B9F889B00F789CE /* IDBDatabase.h */,
 				51D7197E181106DF0016DC51 /* IDBDatabase.idl */,
-				51771C8C182DB4B7008E781E /* IDBDatabaseBackend.cpp */,
-				51771C8D182DB4B7008E781E /* IDBDatabaseBackend.h */,
-				51D71980181106DF0016DC51 /* IDBDatabaseCallbacks.h */,
-				51D71981181106DF0016DC51 /* IDBDatabaseCallbacksImpl.cpp */,
-				51D71982181106DF0016DC51 /* IDBDatabaseCallbacksImpl.h */,
 				51D71983181106DF0016DC51 /* IDBDatabaseError.h */,
 				51D71984181106DF0016DC51 /* IDBDatabaseException.cpp */,
 				51D71985181106DF0016DC51 /* IDBDatabaseException.h */,
@@ -18683,13 +18758,12 @@
 				51C9611A183D2B8000D2002E /* IDBDatabaseMetadata.h */,
 				51D71986181106DF0016DC51 /* IDBEventDispatcher.cpp */,
 				51D71987181106DF0016DC51 /* IDBEventDispatcher.h */,
-				51D71988181106DF0016DC51 /* IDBFactory.cpp */,
-				51D71989181106DF0016DC51 /* IDBFactory.h */,
+				51645B461B9F889B00F789CE /* IDBFactory.cpp */,
+				51645B471B9F889B00F789CE /* IDBFactory.h */,
 				51D7198A181106DF0016DC51 /* IDBFactory.idl */,
-				51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */,
 				5123AF1C18918AE40031CDC9 /* IDBGetResult.h */,
-				51D7198E181106E00016DC51 /* IDBIndex.cpp */,
-				51D7198F181106E00016DC51 /* IDBIndex.h */,
+				51645B481B9F889B00F789CE /* IDBIndex.cpp */,
+				51645B491B9F889B00F789CE /* IDBIndex.h */,
 				51D71990181106E00016DC51 /* IDBIndex.idl */,
 				51ABB5B6186D0ED1008391A1 /* IDBIndexMetadata.h */,
 				51D71991181106E00016DC51 /* IDBKey.cpp */,
@@ -18703,34 +18777,24 @@
 				51D71997181106E00016DC51 /* IDBKeyRange.idl */,
 				5123AF161890A4CA0031CDC9 /* IDBKeyRangeData.cpp */,
 				5123AF171890A4CA0031CDC9 /* IDBKeyRangeData.h */,
-				51D71999181106E00016DC51 /* IDBObjectStore.cpp */,
-				51D7199A181106E00016DC51 /* IDBObjectStore.h */,
+				51645B4A1B9F889B00F789CE /* IDBObjectStore.cpp */,
+				51645B4B1B9F889B00F789CE /* IDBObjectStore.h */,
 				51D7199B181106E00016DC51 /* IDBObjectStore.idl */,
 				51ABB5B7186D0ED1008391A1 /* IDBObjectStoreMetadata.h */,
-				51D7199C181106E00016DC51 /* IDBOpenDBRequest.cpp */,
-				51D7199D181106E00016DC51 /* IDBOpenDBRequest.h */,
+				51645B4C1B9F889B00F789CE /* IDBOpenDBRequest.cpp */,
+				51645B4D1B9F889B00F789CE /* IDBOpenDBRequest.h */,
 				51D7199E181106E00016DC51 /* IDBOpenDBRequest.idl */,
 				512EA9BD18202857001D01E0 /* IDBOperation.h */,
-				51B07A431823248B00AA8D1A /* IDBPendingDeleteCall.h */,
-				512EA9BB181F2EE0001D01E0 /* IDBPendingOpenCall.h */,
-				51D7199F181106E00016DC51 /* IDBPendingTransactionMonitor.cpp */,
-				51D719A0181106E00016DC51 /* IDBPendingTransactionMonitor.h */,
 				51EAC5B018163F4E004F1BA4 /* IDBRecordIdentifier.h */,
-				51D719A1181106E00016DC51 /* IDBRequest.cpp */,
-				51D719A2181106E00016DC51 /* IDBRequest.h */,
+				51645B4E1B9F889B00F789CE /* IDBRequest.cpp */,
+				51645B4F1B9F889B00F789CE /* IDBRequest.h */,
 				51D719A3181106E00016DC51 /* IDBRequest.idl */,
 				510A326E18318431003C5326 /* IDBServerConnection.h */,
-				51D719A4181106E00016DC51 /* IDBTransaction.cpp */,
-				51D719A5181106E00016DC51 /* IDBTransaction.h */,
+				51645B501B9F889B00F789CE /* IDBTransaction.cpp */,
+				51645B511B9F889B00F789CE /* IDBTransaction.h */,
 				51D719A6181106E00016DC51 /* IDBTransaction.idl */,
-				510B7DB5182D9F5D009BF957 /* IDBTransactionBackend.cpp */,
-				510B7DB6182D9F5D009BF957 /* IDBTransactionBackend.h */,
-				51059DD91820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp */,
-				51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */,
-				51EAC5651815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp */,
-				51EAC5661815ED3E004F1BA4 /* IDBTransactionCoordinator.h */,
-				51D719AB181106E00016DC51 /* IDBVersionChangeEvent.cpp */,
-				51D719AC181106E00016DC51 /* IDBVersionChangeEvent.h */,
+				51645B521B9F889B00F789CE /* IDBVersionChangeEvent.cpp */,
+				51645B531B9F889B00F789CE /* IDBVersionChangeEvent.h */,
 				51D719AD181106E00016DC51 /* IDBVersionChangeEvent.idl */,
 				51D719AE181106E00016DC51 /* IndexedDB.h */,
 				51D719B1181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp */,
@@ -23984,6 +24048,7 @@
 				073AB4B317F8BACA006E0D6F /* AllVideoCapabilities.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
+				51F41A761BA73B5B002E053B /* IDBTransactionBackendOperations.h in Headers */,
 				CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */,
 				FD31603E12B0267600C1A359 /* AnalyserNode.h in Headers */,
 				31A795C71888BCB200382F90 /* ANGLEInstancedArrays.h in Headers */,
@@ -24014,6 +24079,7 @@
 				0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */,
 				37C61F0112095C87007A3C67 /* AtomicStringKeyedMRUCache.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
+				51645B5D1B9FA6C800F789CE /* LegacyCursorWithValue.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				FD31607A12B026F700C1A359 /* AudioArray.h in Headers */,
 				FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */,
@@ -24547,6 +24613,7 @@
 				85B498ED0ADB32FB00925CBB /* DOMCSSRuleInternal.h in Headers */,
 				85032DE30AA8C9BE007D3B7D /* DOMCSSRuleList.h in Headers */,
 				85E711920AC5D5350053270F /* DOMCSSRuleListInternal.h in Headers */,
+				51645B5B1B9FA6C800F789CE /* LegacyCursor.h in Headers */,
 				85032DE50AA8C9BE007D3B7D /* DOMCSSStyleDeclaration.h in Headers */,
 				2DB9C4AA1B3231F40070F27F /* NSEventSPI.h in Headers */,
 				85E711930AC5D5350053270F /* DOMCSSStyleDeclarationInternal.h in Headers */,
@@ -24561,6 +24628,7 @@
 				858C381C0AA8E29600B187A4 /* DOMCSSValue.h in Headers */,
 				85B498F30ADB336A00925CBB /* DOMCSSValueInternal.h in Headers */,
 				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
+				51F41A781BA73B5B002E053B /* IDBTransactionCoordinator.h in Headers */,
 				858C383C0AA8ED8200B187A4 /* DOMCSSValueList.h in Headers */,
 				85909D2B0ACC7D5500DF01F1 /* DOMCSSValueListInternal.h in Headers */,
 				E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */,
@@ -24797,6 +24865,7 @@
 				85ACA99C0A9B575900671E90 /* DOMText.h in Headers */,
 				DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */,
 				85E711D90AC5D5350053270F /* DOMTextInternal.h in Headers */,
+				51645B6D1B9FA6C800F789CE /* LegacyVersionChangeEvent.h in Headers */,
 				188604B40F2E654A000B6443 /* DOMTimer.h in Headers */,
 				05FD69E012845D4300B2BEB3 /* DOMTimeStamp.h in Headers */,
 				8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */,
@@ -24950,6 +25019,7 @@
 				976D6C83122B8A3D001FD1F7 /* FileError.h in Headers */,
 				2EDF369F122C94C8002F7D4E /* FileException.h in Headers */,
 				1A88A90517553CD7000C74F9 /* FileIconLoader.h in Headers */,
+				51645B631B9FA6C800F789CE /* LegacyIndex.h in Headers */,
 				F55B3DBE1251F12D003EF269 /* FileInputType.h in Headers */,
 				976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */,
 				4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */,
@@ -25105,6 +25175,7 @@
 				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
 				A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */,
 				977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */,
+				51F41A6A1BA73B5B002E053B /* IDBCursorBackend.h in Headers */,
 				7C3E510A18DF8F3500C112F7 /* HTMLConverter.h in Headers */,
 				F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */,
 				D359D78A129CA2710006E5D2 /* HTMLDetailsElement.h in Headers */,
@@ -25224,44 +25295,21 @@
 				45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */,
 				51D719BA181106E00016DC51 /* IDBAny.h in Headers */,
 				C585A66311D4FAC5004C3E4B /* IDBBindingUtilities.h in Headers */,
-				51D719BE181106E00016DC51 /* IDBCallbacks.h in Headers */,
-				51D719C0181106E00016DC51 /* IDBCursor.h in Headers */,
-				516730A4182D8FBB003FAF5C /* IDBCursorBackend.h in Headers */,
-				510194451836F7E500925523 /* IDBCursorBackendOperations.h in Headers */,
-				51D719C4181106E00016DC51 /* IDBCursorWithValue.h in Headers */,
-				51D719C7181106E00016DC51 /* IDBDatabase.h in Headers */,
-				51771C8F182DB4B7008E781E /* IDBDatabaseBackend.h in Headers */,
-				51D719CA181106E00016DC51 /* IDBDatabaseCallbacks.h in Headers */,
-				51D719CC181106E00016DC51 /* IDBDatabaseCallbacksImpl.h in Headers */,
 				51D719CD181106E00016DC51 /* IDBDatabaseError.h in Headers */,
 				51D719CF181106E00016DC51 /* IDBDatabaseException.h in Headers */,
 				51C9611B183D2B8000D2002E /* IDBDatabaseMetadata.h in Headers */,
 				51D719D1181106E00016DC51 /* IDBEventDispatcher.h in Headers */,
-				51D719D3181106E00016DC51 /* IDBFactory.h in Headers */,
-				51D719D6181106E00016DC51 /* IDBFactoryBackendInterface.h in Headers */,
 				5123AF1D18918AE40031CDC9 /* IDBGetResult.h in Headers */,
-				51D719D9181106E00016DC51 /* IDBIndex.h in Headers */,
 				51ABB5B8186D0ED1008391A1 /* IDBIndexMetadata.h in Headers */,
 				51D719DC181106E00016DC51 /* IDBKey.h in Headers */,
 				511EC1A6188DACA400BA3EB6 /* IDBKeyData.h in Headers */,
 				51D719DE181106E00016DC51 /* IDBKeyPath.h in Headers */,
 				51D719E0181106E00016DC51 /* IDBKeyRange.h in Headers */,
 				5123AF191890A4CA0031CDC9 /* IDBKeyRangeData.h in Headers */,
-				51D719E4181106E00016DC51 /* IDBObjectStore.h in Headers */,
 				51ABB5B9186D0ED1008391A1 /* IDBObjectStoreMetadata.h in Headers */,
-				51D719E7181106E00016DC51 /* IDBOpenDBRequest.h in Headers */,
 				512EA9BE18202857001D01E0 /* IDBOperation.h in Headers */,
-				51B07A441823248B00AA8D1A /* IDBPendingDeleteCall.h in Headers */,
-				512EA9BC181F2EE0001D01E0 /* IDBPendingOpenCall.h in Headers */,
-				51D719EA181106E00016DC51 /* IDBPendingTransactionMonitor.h in Headers */,
 				51EAC5B218163F4E004F1BA4 /* IDBRecordIdentifier.h in Headers */,
-				51D719EC181106E00016DC51 /* IDBRequest.h in Headers */,
 				510A326F18318431003C5326 /* IDBServerConnection.h in Headers */,
-				51D719EF181106E00016DC51 /* IDBTransaction.h in Headers */,
-				510B7DB8182D9F5D009BF957 /* IDBTransactionBackend.h in Headers */,
-				51059DDE1820B17600DFF9B1 /* IDBTransactionBackendOperations.h in Headers */,
-				51EAC5681815ED3E004F1BA4 /* IDBTransactionCoordinator.h in Headers */,
-				51D719F6181106E00016DC51 /* IDBVersionChangeEvent.h in Headers */,
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
 				C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */,
@@ -25352,6 +25400,7 @@
 				E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */,
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
+				51F41A6C1BA73B5B002E053B /* IDBCursorBackendOperations.h in Headers */,
 				CE12524D1A1A77DE00864480 /* IOPMLibSPI.h in Headers */,
 				44DEF6431A6FF92700D45EEC /* IOReturnSPI.h in Headers */,
 				2D0B4AAB18DA1CCD00434DE1 /* IOSurface.h in Headers */,
@@ -25368,6 +25417,7 @@
 				65DF31DB09D1C123000BE325 /* JSAttr.h in Headers */,
 				FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */,
 				FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */,
+				51645B5F1B9FA6C800F789CE /* LegacyDatabase.h in Headers */,
 				FDA15EA012B03EE1003A583A /* JSAudioBufferSourceNode.h in Headers */,
 				FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */,
 				51B454EA1B4DAE7D0085EAA6 /* PingHandle.h in Headers */,
@@ -25402,6 +25452,7 @@
 				93F9B6E10BA0FB7200854064 /* JSComment.h in Headers */,
 				79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */,
 				FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */,
+				5103C2B91BA23A2600E26337 /* LegacyAny.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
 				930705DA09E0C9BF00B17FE4 /* JSCounter.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
@@ -25486,6 +25537,7 @@
 				5FC7DC26CFE2563200B85AE4 /* JSEventTarget.h in Headers */,
 				3314ACEC10892086000F0E56 /* JSExceptionBase.h in Headers */,
 				724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */,
+				51F41A791BA73B5B002E053B /* IDBPendingDeleteCall.h in Headers */,
 				5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */,
 				7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */,
 				BC00F0150E0A189500FD04E3 /* JSFile.h in Headers */,
@@ -25777,6 +25829,7 @@
 				B2FA3D8B0AB75A6F000E5AC4 /* JSSVGFEOffsetElement.h in Headers */,
 				B2FA3D8D0AB75A6F000E5AC4 /* JSSVGFEPointLightElement.h in Headers */,
 				B2FA3D8F0AB75A6F000E5AC4 /* JSSVGFESpecularLightingElement.h in Headers */,
+				51F41A6E1BA73B5B002E053B /* IDBDatabaseBackend.h in Headers */,
 				B2FA3D910AB75A6F000E5AC4 /* JSSVGFESpotLightElement.h in Headers */,
 				B2FA3D930AB75A6F000E5AC4 /* JSSVGFETileElement.h in Headers */,
 				B2FA3D950AB75A6F000E5AC4 /* JSSVGFETurbulenceElement.h in Headers */,
@@ -25820,6 +25873,7 @@
 				B2FA3DC70AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticAbs.h in Headers */,
 				B2FA3DC90AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticRel.h in Headers */,
 				B2FA3DCB0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.h in Headers */,
+				51645B611B9FA6C800F789CE /* LegacyFactory.h in Headers */,
 				B2FA3DCD0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticSmoothRel.h in Headers */,
 				B2FA3DCF0AB75A6F000E5AC4 /* JSSVGPathSegLinetoAbs.h in Headers */,
 				B2FA3DD10AB75A6F000E5AC4 /* JSSVGPathSegLinetoHorizontalAbs.h in Headers */,
@@ -25933,6 +25987,7 @@
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
 				E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */,
 				E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */,
+				51F41A7C1BA73B5B002E053B /* IDBPendingTransactionMonitor.h in Headers */,
 				150524F41B712FF600696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h in Headers */,
 				E1C36D350EB0A094007410BC /* JSWorkerGlobalScopeBase.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
@@ -26010,6 +26065,7 @@
 				2D413F611A187A3F0041A521 /* LookupSPI.h in Headers */,
 				1A0409DC1A4360B5009E47F3 /* MachSendRight.h in Headers */,
 				CE12524F1A1A78D200864480 /* MachVMSPI.h in Headers */,
+				51645B6B1B9FA6C800F789CE /* LegacyTransaction.h in Headers */,
 				932AD70617EFA2C40038F8FF /* MainFrame.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
@@ -26188,6 +26244,7 @@
 				1A569D0F0D7E2B82007C3983 /* npruntime_impl.h in Headers */,
 				1A569D100D7E2B82007C3983 /* npruntime_internal.h in Headers */,
 				1A569D110D7E2B82007C3983 /* npruntime_priv.h in Headers */,
+				51645B691B9FA6C800F789CE /* LegacyRequest.h in Headers */,
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
 				CE1252511A1BEBD800864480 /* NSCalendarDateSPI.h in Headers */,
 				31DF63571AF187DD0078FD91 /* NSColorSPI.h in Headers */,
@@ -26197,6 +26254,7 @@
 				9321D5901A390704008052BE /* NSImmediateActionGestureRecognizerSPI.h in Headers */,
 				937F4CCE1A2D4B0100BB39F5 /* NSMenuSPI.h in Headers */,
 				CE1252471A16C2C200864480 /* NSPointerFunctionsSPI.h in Headers */,
+				51F41A741BA73B5B002E053B /* IDBTransactionBackend.h in Headers */,
 				93F1E1EC1A40FDDC00348D13 /* NSPopoverSPI.h in Headers */,
 				93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */,
 				2DCB837919F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h in Headers */,
@@ -26246,6 +26304,7 @@
 				2D5C9D0219C7B52E00B3C5C1 /* PageOverlayController.h in Headers */,
 				FBDB61A116D6037E00BB3394 /* PageRuleCollector.h in Headers */,
 				F3820895147D35F90010BC06 /* PageRuntimeAgent.h in Headers */,
+				51F41A6F1BA73B5B002E053B /* IDBDatabaseCallbacks.h in Headers */,
 				A5F36D3B18F758720054C024 /* PageScriptDebugServer.h in Headers */,
 				371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */,
 				A7197F24175689C4007B9442 /* PageThrottler.h in Headers */,
@@ -26419,6 +26478,7 @@
 				A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */,
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
 				A871DED10A1530C700B12A68 /* RenderFrameSet.h in Headers */,
+				51645B671B9FA6C800F789CE /* LegacyOpenDBRequest.h in Headers */,
 				CDEA7C841276230400B846DD /* RenderFullScreen.h in Headers */,
 				0F3F0E5A157030C3006DA57F /* RenderGeometryMap.h in Headers */,
 				BC128A73137C867C00CAC845 /* RenderGrid.h in Headers */,
@@ -26613,6 +26673,7 @@
 				078E092C17D14D1C00420AA1 /* RTCStatsResponse.h in Headers */,
 				078E094617D16E1C00420AA1 /* RTCStatsResponseBase.h in Headers */,
 				078E094717D16E1C00420AA1 /* RTCVoidRequest.h in Headers */,
+				51F41A711BA73B5B002E053B /* IDBDatabaseCallbacksImpl.h in Headers */,
 				078E092D17D14D1C00420AA1 /* RTCVoidRequestImpl.h in Headers */,
 				5824ABA31AE81116009074B7 /* RubyElement.h in Headers */,
 				5824ABA71AE81384009074B7 /* RubyTextElement.h in Headers */,
@@ -26783,6 +26844,7 @@
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
 				97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */,
+				51F41A721BA73B5B002E053B /* IDBFactoryBackendInterface.h in Headers */,
 				97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */,
 				FE8A674816CDD19E00930BF8 /* SQLStatement.h in Headers */,
 				97BC6A491505F081001B74AC /* SQLStatementCallback.h in Headers */,
@@ -27247,6 +27309,7 @@
 				868160D618766A130021E79D /* UserActivity.h in Headers */,
 				26255F0318878E110006E1FD /* UserAgent.h in Headers */,
 				CDAB6D3117C9259500C60B34 /* UserAgentScripts.h in Headers */,
+				51645B651B9FA6C800F789CE /* LegacyObjectStore.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				1AE79D43188DB61F002239C2 /* UserContentController.h in Headers */,
 				003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */,
@@ -27254,6 +27317,7 @@
 				2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */,
 				9920398318B95BC600B39AF9 /* UserInputBridge.h in Headers */,
 				078E092E17D14D1C00420AA1 /* UserMediaClient.h in Headers */,
+				51F41A681BA73B5B002E053B /* IDBCallbacks.h in Headers */,
 				078E092F17D14D1C00420AA1 /* UserMediaController.h in Headers */,
 				078E093017D14D1C00420AA1 /* UserMediaRequest.h in Headers */,
 				7C3B79721908757B00B47A2D /* UserMessageHandler.h in Headers */,
@@ -27337,6 +27401,7 @@
 				A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */,
 				A14832CD187F682E00DA63A6 /* WebCoreThreadSafe.h in Headers */,
 				A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */,
+				51F41A7A1BA73B5B002E053B /* IDBPendingOpenCall.h in Headers */,
 				0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 				44A20DB90F84166C00B3E1FE /* WebCoreURLResponseIOS.h in Headers */,
@@ -28036,6 +28101,7 @@
 				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
 				97627B8D14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp in Sources */,
 				5106D7BD18BDB76F000AB166 /* ContextMenuContext.cpp in Sources */,
+				51F41A6D1BA73B5B002E053B /* IDBDatabaseBackend.cpp in Sources */,
 				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
 				06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */,
 				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,
@@ -28060,6 +28126,7 @@
 				E1C415DE0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp in Sources */,
 				2E4346580F546A9900B0F1BA /* CrossThreadCopier.cpp in Sources */,
 				E16980491133644700894115 /* CRuntimeObject.cpp in Sources */,
+				51645B601B9FA6C800F789CE /* LegacyFactory.cpp in Sources */,
 				975CA28A130365F800E99AD9 /* Crypto.cpp in Sources */,
 				E172AF6D180F24C600FBADB9 /* CryptoAlgorithm.cpp in Sources */,
 				E125F8411824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp in Sources */,
@@ -28134,6 +28201,7 @@
 				A80E6CF50A1989CA007FB8C5 /* CSSPageRule.cpp in Sources */,
 				BC772B3D0C4EA91E0083285F /* CSSParser.cpp in Sources */,
 				BC02A5400E099C5A004B6D2B /* CSSParserValues.cpp in Sources */,
+				5103C2B41BA232AE00E26337 /* IDBCursorWithValue.cpp in Sources */,
 				977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */,
 				A80E6D050A1989CA007FB8C5 /* CSSPrimitiveValue.cpp in Sources */,
 				A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */,
@@ -28373,6 +28441,7 @@
 				52B6C9C215E3F4DF00690B05 /* DOMNamedFlowCollection.cpp in Sources */,
 				8518DD790A9CF31B0091B7A6 /* DOMNamedNodeMap.mm in Sources */,
 				853BF4DC0ABB6B55008647BB /* DOMNode.mm in Sources */,
+				51645B661B9FA6C800F789CE /* LegacyOpenDBRequest.cpp in Sources */,
 				85526C380AB0A17E000302EA /* DOMNodeIterator.mm in Sources */,
 				85ACAA8E0A9B759C00671E90 /* DOMNodeList.mm in Sources */,
 				856C8AE50A912649005C687B /* DOMObject.mm in Sources */,
@@ -28452,6 +28521,7 @@
 				A8C4A80809D563270003AC8D /* Element.cpp in Sources */,
 				B5B7A17017C10AA800E4AA0A /* ElementData.cpp in Sources */,
 				4FFC022D1643B726004E1638 /* ElementRareData.cpp in Sources */,
+				51F41A691BA73B5B002E053B /* IDBCursorBackend.cpp in Sources */,
 				FBDB619B16D6032A00BB3394 /* ElementRuleCollector.cpp in Sources */,
 				A8CFF6CB0A1561CD000A4234 /* EllipsisBox.cpp in Sources */,
 				F55B3DBB1251F12D003EF269 /* EmailInputType.cpp in Sources */,
@@ -28549,6 +28619,7 @@
 				51E3AA0A1B98BCAB0036AD81 /* SecurityOriginData.cpp in Sources */,
 				B6D9D23614EABD260090D75E /* FocusEvent.cpp in Sources */,
 				B2C3DA640D006CD600EF6F26 /* Font.cpp in Sources */,
+				51645B6C1B9FA6C800F789CE /* LegacyVersionChangeEvent.cpp in Sources */,
 				B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */,
 				3727DFD5142AAE4500D449CB /* FontCacheIOS.mm in Sources */,
 				B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */,
@@ -28660,6 +28731,7 @@
 				93309DE7099E64920056E581 /* htmlediting.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
 				A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */,
+				5103C2B51BA232D400E26337 /* IDBDatabase.cpp in Sources */,
 				977B37231228721700B81FF8 /* HTMLElementStack.cpp in Sources */,
 				A871D45F0A127CBC00B12A68 /* HTMLEmbedElement.cpp in Sources */,
 				977B3869122883E900B81FF8 /* HTMLEntityParser.cpp in Sources */,
@@ -28751,6 +28823,7 @@
 				E44613AA0CD6331000FADA75 /* HTMLVideoElement.cpp in Sources */,
 				839AAFEC1A0C0C8D00605F99 /* HTMLWBRElement.cpp in Sources */,
 				0B8C56D40F28627F000502E1 /* HTTPHeaderMap.cpp in Sources */,
+				51645B5A1B9FA6C800F789CE /* LegacyCursor.cpp in Sources */,
 				1AC900C31943C0FC008625B5 /* HTTPHeaderNames.cpp in Sources */,
 				514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */,
 				371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */,
@@ -28764,32 +28837,14 @@
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
 				51D719B9181106E00016DC51 /* IDBAny.cpp in Sources */,
 				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
-				51D719BF181106E00016DC51 /* IDBCursor.cpp in Sources */,
-				516730A3182D8FBB003FAF5C /* IDBCursorBackend.cpp in Sources */,
-				510194441836F7E400925523 /* IDBCursorBackendOperations.cpp in Sources */,
-				51D719C3181106E00016DC51 /* IDBCursorWithValue.cpp in Sources */,
-				51D719C6181106E00016DC51 /* IDBDatabase.cpp in Sources */,
-				51771C8E182DB4B7008E781E /* IDBDatabaseBackend.cpp in Sources */,
-				51D719CB181106E00016DC51 /* IDBDatabaseCallbacksImpl.cpp in Sources */,
 				51D719CE181106E00016DC51 /* IDBDatabaseException.cpp in Sources */,
 				5163117D1851242B00534647 /* IDBDatabaseMetadata.cpp in Sources */,
 				51D719D0181106E00016DC51 /* IDBEventDispatcher.cpp in Sources */,
-				51D719D2181106E00016DC51 /* IDBFactory.cpp in Sources */,
-				51D719D8181106E00016DC51 /* IDBIndex.cpp in Sources */,
 				51D719DB181106E00016DC51 /* IDBKey.cpp in Sources */,
 				511EC1A8188DAE7B00BA3EB6 /* IDBKeyData.cpp in Sources */,
 				51D719DD181106E00016DC51 /* IDBKeyPath.cpp in Sources */,
 				51D719DF181106E00016DC51 /* IDBKeyRange.cpp in Sources */,
 				5123AF181890A4CA0031CDC9 /* IDBKeyRangeData.cpp in Sources */,
-				51D719E3181106E00016DC51 /* IDBObjectStore.cpp in Sources */,
-				51D719E6181106E00016DC51 /* IDBOpenDBRequest.cpp in Sources */,
-				51D719E9181106E00016DC51 /* IDBPendingTransactionMonitor.cpp in Sources */,
-				51D719EB181106E00016DC51 /* IDBRequest.cpp in Sources */,
-				51D719EE181106E00016DC51 /* IDBTransaction.cpp in Sources */,
-				510B7DB7182D9F5D009BF957 /* IDBTransactionBackend.cpp in Sources */,
-				51059DDD1820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp in Sources */,
-				51EAC5671815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp in Sources */,
-				51D719F5181106E00016DC51 /* IDBVersionChangeEvent.cpp in Sources */,
 				1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */,
 				C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */,
 				C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */,
@@ -28842,6 +28897,7 @@
 				1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */,
 				82AB1743124B99EC00C5069D /* InspectorCSSAgent.cpp in Sources */,
 				4A9CC82016BF9BB400EC645A /* InspectorCSSOMWrappers.cpp in Sources */,
+				51F41A771BA73B5B002E053B /* IDBTransactionCoordinator.cpp in Sources */,
 				7AB0B1C01211A62200A76940 /* InspectorDatabaseAgent.cpp in Sources */,
 				41F062150F5F192600A07EAC /* InspectorDatabaseResource.cpp in Sources */,
 				7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */,
@@ -29351,6 +29407,7 @@
 				B2FA3D520AB75A6F000E5AC4 /* JSSVGAnimateElement.cpp in Sources */,
 				4496E39D1398136C003EE32A /* JSSVGAnimateMotionElement.cpp in Sources */,
 				B2FA3D540AB75A6F000E5AC4 /* JSSVGAnimateTransformElement.cpp in Sources */,
+				5103C2B31BA2324D00E26337 /* IDBCursor.cpp in Sources */,
 				B2FA3D560AB75A6F000E5AC4 /* JSSVGAnimationElement.cpp in Sources */,
 				B2FA3D580AB75A6F000E5AC4 /* JSSVGCircleElement.cpp in Sources */,
 				B2FA3D5A0AB75A6F000E5AC4 /* JSSVGClipPathElement.cpp in Sources */,
@@ -29448,6 +29505,7 @@
 				B2FA3DE20AB75A6F000E5AC4 /* JSSVGPointList.cpp in Sources */,
 				B2FA3DE50AB75A6F000E5AC4 /* JSSVGPolygonElement.cpp in Sources */,
 				B2FA3DE70AB75A6F000E5AC4 /* JSSVGPolylineElement.cpp in Sources */,
+				51F41A701BA73B5B002E053B /* IDBDatabaseCallbacksImpl.cpp in Sources */,
 				B2FA3DE90AB75A6F000E5AC4 /* JSSVGPreserveAspectRatio.cpp in Sources */,
 				B2FA3DEB0AB75A6F000E5AC4 /* JSSVGRadialGradientElement.cpp in Sources */,
 				8542A7940AE5C94000DF58DF /* JSSVGRect.cpp in Sources */,
@@ -29466,6 +29524,7 @@
 				B22362280C3AF04A0008CA9B /* JSSVGTextPathElement.cpp in Sources */,
 				B2FA3E060AB75A6F000E5AC4 /* JSSVGTextPositioningElement.cpp in Sources */,
 				B2FA3E080AB75A6F000E5AC4 /* JSSVGTitleElement.cpp in Sources */,
+				5103C2B21BA2317400E26337 /* IDBTransaction.cpp in Sources */,
 				B2FA3E0A0AB75A6F000E5AC4 /* JSSVGTransform.cpp in Sources */,
 				B2FA3E0C0AB75A6F000E5AC4 /* JSSVGTransformList.cpp in Sources */,
 				B2FA3E0E0AB75A6F000E5AC4 /* JSSVGTRefElement.cpp in Sources */,
@@ -29568,6 +29627,7 @@
 				463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */,
 				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,
 				BC348BD30DB7F804004ABAB9 /* JSXMLHttpRequest.cpp in Sources */,
+				5157D4661BA24AFD0085CA2F /* IDBObjectStore.cpp in Sources */,
 				BC348BBE0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp in Sources */,
 				BC60DA390D2A302800B9918F /* JSXMLHttpRequestException.cpp in Sources */,
 				F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */,
@@ -29620,6 +29680,7 @@
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				7EE6846812D26E3800E79415 /* LoaderRunLoopCF.cpp in Sources */,
 				51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */,
+				5103C2B81BA235C500E26337 /* IDBVersionChangeEvent.cpp in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
 				F5973DE115CFB2030027F804 /* LocaleMac.mm in Sources */,
 				7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */,
@@ -29785,6 +29846,7 @@
 				1A569D1A0D7E2B82007C3983 /* objc_utility.mm in Sources */,
 				1CF6BDFB0E9BB26A0025E1CD /* ObjCEventListener.mm in Sources */,
 				1CF6BE140E9BB4670025E1CD /* ObjCNodeFilterCondition.mm in Sources */,
+				51645B5C1B9FA6C800F789CE /* LegacyCursorWithValue.cpp in Sources */,
 				E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */,
 				7E5D7A76161D3F8F00896C34 /* OESElementIndexUint.cpp in Sources */,
 				9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */,
@@ -29814,10 +29876,12 @@
 				9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */,
 				7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */,
 				1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */,
+				5103C2B61BA233BF00E26337 /* IDBRequest.cpp in Sources */,
 				2D5C9CFF19C7B52E00B3C5C1 /* PageOverlay.cpp in Sources */,
 				2D5C9D0119C7B52E00B3C5C1 /* PageOverlayController.cpp in Sources */,
 				FBDB619D16D6034600BB3394 /* PageRuleCollector.cpp in Sources */,
 				F3820894147D35F90010BC06 /* PageRuntimeAgent.cpp in Sources */,
+				51645B621B9FA6C800F789CE /* LegacyIndex.cpp in Sources */,
 				A5F36D3A18F758720054C024 /* PageScriptDebugServer.cpp in Sources */,
 				371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */,
 				A7197F2617568AE5007B9442 /* PageThrottler.cpp in Sources */,
@@ -29861,6 +29925,7 @@
 				41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */,
 				C5278B0C17F212EA003A2998 /* PlatformPasteboardIOS.mm in Sources */,
 				C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */,
+				51F41A731BA73B5B002E053B /* IDBTransactionBackend.cpp in Sources */,
 				E45390430EAFD637003695C8 /* PlatformScreenIOS.mm in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
 				2934940B16C02C0A00901318 /* PlatformSpeechSynthesisUtterance.cpp in Sources */,
@@ -30007,6 +30072,7 @@
 				BC3BE9930E9C1C7C00835588 /* RenderScrollbar.cpp in Sources */,
 				BC3BE9AB0E9C242000835588 /* RenderScrollbarPart.cpp in Sources */,
 				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,
+				51F41A751BA73B5B002E053B /* IDBTransactionBackendOperations.cpp in Sources */,
 				458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */,
 				58DEED8619873FF000888FF3 /* RenderSelectionInfo.cpp in Sources */,
 				AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */,
@@ -30036,6 +30102,7 @@
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
 				BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */,
 				A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */,
+				51F41A7B1BA73B5B002E053B /* IDBPendingTransactionMonitor.cpp in Sources */,
 				F5528DA61AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp in Sources */,
 				F5528DA91AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.cpp in Sources */,
 				A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */,
@@ -30046,6 +30113,7 @@
 				99CC0B5818BE984A006CEBCC /* ReplayInputDispatchMethods.cpp in Sources */,
 				99CC0B5918BE984A006CEBCC /* ReplaySession.cpp in Sources */,
 				99CC0B5B18BE984A006CEBCC /* ReplaySessionSegment.cpp in Sources */,
+				51645B5E1B9FA6C800F789CE /* LegacyDatabase.cpp in Sources */,
 				F55B3DCF1251F12D003EF269 /* ResetInputType.cpp in Sources */,
 				934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */,
 				7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */,
@@ -30196,6 +30264,7 @@
 				E18DF33818AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm in Sources */,
 				077AF14418F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.mm in Sources */,
 				A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */,
+				51645B6A1B9FA6C800F789CE /* LegacyTransaction.cpp in Sources */,
 				2D93AEE419DF5641002A86C3 /* ServicesOverlayController.mm in Sources */,
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
 				B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */,
@@ -30235,6 +30304,7 @@
 				CD3A496117A9D01B00274E42 /* SourceBuffer.cpp in Sources */,
 				CD3A496417A9D01B00274E42 /* SourceBufferList.cpp in Sources */,
 				CDC8B5AA18047FF10016E685 /* SourceBufferPrivateAVFObjC.mm in Sources */,
+				5157D4641BA24AEE0085CA2F /* IDBFactory.cpp in Sources */,
 				84A81F410FC7E02700955300 /* SourceGraphic.cpp in Sources */,
 				076306D717E149CF005A7C4E /* SourceInfo.cpp in Sources */,
 				536D5A25193F40FC00CE4CAB /* SourceSizeList.cpp in Sources */,
@@ -30246,6 +30316,7 @@
 				AA2A5ACD16A485FA00975A25 /* SpeechSynthesisVoice.cpp in Sources */,
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
 				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
+				5103C2B11BA22D1A00E26337 /* LegacyAny.cpp in Sources */,
 				4512502215DCE37D002F84E2 /* SpinButtonElement.cpp in Sources */,
 				93309E11099E64920056E581 /* SplitElementCommand.cpp in Sources */,
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
@@ -30282,6 +30353,7 @@
 				BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */,
 				8386A97019F61E4F00E1EC4A /* StyleBuilder.cpp in Sources */,
 				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
+				5103C2B71BA233C400E26337 /* IDBOpenDBRequest.cpp in Sources */,
 				9393E604151A9A1800066F06 /* StyleCachedImageSet.cpp in Sources */,
 				A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */,
 				BC5EB8B80E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp in Sources */,
@@ -30484,12 +30556,14 @@
 				150524F71B712FFF00696AA9 /* MediaStreamPrivateAVFObjC.mm in Sources */,
 				B2227AD00D00BF220071B782 /* SVGTextPositioningElement.cpp in Sources */,
 				B2227AD30D00BF220071B782 /* SVGTitleElement.cpp in Sources */,
+				5157D4651BA24AF80085CA2F /* IDBIndex.cpp in Sources */,
 				1CCDF5BD1990332400BCEBAD /* SVGToOTFFontConversion.cpp in Sources */,
 				B2227AD60D00BF220071B782 /* SVGTransform.cpp in Sources */,
 				B2227AD90D00BF220071B782 /* SVGTransformable.cpp in Sources */,
 				B2227ADC0D00BF220071B782 /* SVGTransformDistance.cpp in Sources */,
 				B2227ADE0D00BF220071B782 /* SVGTransformList.cpp in Sources */,
 				DEC297611B4F2F8D005F5945 /* JSCustomEventCustom.cpp in Sources */,
+				51645B641B9FA6C800F789CE /* LegacyObjectStore.cpp in Sources */,
 				B2227AE10D00BF220071B782 /* SVGTRefElement.cpp in Sources */,
 				B2227AE40D00BF220071B782 /* SVGTSpanElement.cpp in Sources */,
 				B2227AE90D00BF220071B782 /* SVGURIReference.cpp in Sources */,
@@ -30574,6 +30648,7 @@
 				7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
+				51645B681B9FA6C800F789CE /* LegacyRequest.cpp in Sources */,
 				A1DE71321861322200734192 /* TouchConstructors.cpp in Sources */,
 				A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */,
 				070334D9145A006F008D8D45 /* TrackBase.cpp in Sources */,
@@ -30733,6 +30808,7 @@
 				D7613A501474F13F00DB8606 /* WebKitNamedFlow.cpp in Sources */,
 				7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */,
 				A5DEBDA316FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.cpp in Sources */,
+				51F41A6B1BA73B5B002E053B /* IDBCursorBackendOperations.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
 				0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */,
 				0709D78E1AE55554004E42F8 /* WebMediaSessionManager.cpp in Sources */,

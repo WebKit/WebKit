@@ -26,6 +26,7 @@
 [
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
+    SkipVTableValidation,
 ] interface IDBCursor {
     readonly attribute IDBAny source;
     readonly attribute DOMString direction;
