@@ -1,3 +1,39 @@
+2015-08-26  Saam barati  <sbarati@apple.com>
+
+        MarkedBlock::allocateBlock will have the wrong allocation size when (sizeof(MarkedBlock) + bytes) is divisible by WTF::pageSize()
+        https://bugs.webkit.org/show_bug.cgi?id=148500
+
+        Reviewed by Mark Lam.
+
+        Consider the following scenario:
+        - On OS X, WTF::pageSize() is 4*1024 bytes.
+        - JSEnvironmentRecord::allocationSizeForScopeSize(6621) == 53000
+        - sizeof(MarkedBlock) == 248
+        - (248 + 53000) is a multiple of 4*1024.
+        - (248 + 53000)/(4*1024) == 13
+
+        We will allocate a chunk of memory of size 53248 bytes that looks like this:
+        0            248       256                       53248       53256
+        [Marked Block | 8 bytes |  payload     ......      ]  8 bytes  |
+                                ^                                      ^
+                           Our Environment record starts here.         ^
+                                                                       ^
+                                                                 Our last JSValue in the environment record will go from byte 53248 to 53256. But, we don't own this memory.
+
+        We need to ensure that we round up sizeof(MarkedBlock) to an
+        atomSize boundary. We need to do this because the first atom
+        inside the MarkedBlock will start at the rounded up multiple
+        of atomSize past MarkedBlock. If we end up with an allocation
+        that is perfectly aligned to the page size, then we will be short
+        8 bytes (in the current implementation where atomSize is 16 bytes,
+        and MarkedBlock is 248 bytes).
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock):
+        * tests/stress/heap-allocator-allocates-incorrect-size-for-activation.js: Added.
+        (use):
+        (makeFunction):
+
 2015-08-26  Mark Lam  <mark.lam@apple.com>
 
         watchdog m_didFire state erroneously retained.
