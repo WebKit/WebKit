@@ -71,6 +71,8 @@ public:
     WTF_EXPORT_PRIVATE virtual void dispatch(std::function<void ()>) override;
     WTF_EXPORT_PRIVATE void dispatchAfter(std::chrono::nanoseconds, std::function<void ()>);
 
+    WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void (size_t index)>&);
+
 #if OS(DARWIN)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
 #elif PLATFORM(GTK)
