@@ -88,7 +88,8 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
             continue;
         TextRun textRun(run.text());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-        textRun.setXPos(run.rect().x());
+        // x position indicates the line offset from the rootbox. It's always 0 in case of simple line layout.
+        textRun.setXPos(0);
         FloatPoint textOrigin = FloatPoint(rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor));
         context.drawText(font, textRun, textOrigin);
         if (debugBordersEnabled)

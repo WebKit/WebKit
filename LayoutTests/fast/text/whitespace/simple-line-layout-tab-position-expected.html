@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple line layout renderes tab positions properly</title>
+<script>
+  if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+<style>
+  body { 
+    margin: 0px; 
+  }
+
+  div {
+    padding-left: 10px;
+    font-size: 22px;
+    white-space: pre;
+  }
+</style>
+</head>
+<body>
+<div>	a	b	c	e	f	g	h	i	j	k</div>
+<div style="text-align: center">	a	b	c	e	f	g	h	i	j	k</div>
+<div style="text-align: right">	a	b	c	e	f	g	h	i	j	k</div>
+</body>
+</html>
