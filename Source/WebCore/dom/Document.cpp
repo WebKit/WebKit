@@ -161,6 +161,7 @@
 #include "XPathResult.h"
 #include "htmlediting.h"
 #include <JavaScriptCore/Profile.h>
+#include <ctime>
 #include <inspector/ScriptCallStack.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
@@ -4236,34 +4237,30 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
 // http://www.whatwg.org/specs/web-apps/current-work/#dom-document-lastmodified
 String Document::lastModified() const
 {
-    DateComponents date;
-    bool foundDate = false;
-    if (m_frame) {
-        auto lastModifiedDate = loader() ? loader()->response().lastModified() : Nullopt;
-        if (lastModifiedDate) {
-            using namespace std::chrono;
-            date.setMillisecondsSinceEpochForDateTime(duration_cast<milliseconds>(lastModifiedDate.value().time_since_epoch()).count());
-            foundDate = true;
-        }
-    }
+    using namespace std::chrono;
+    Optional<system_clock::time_point> dateTime;
+    if (m_frame && loader())
+        dateTime = loader()->response().lastModified();
+
     // FIXME: If this document came from the file system, the HTML5
-    // specificiation tells us to read the last modification date from the file
+    // specification tells us to read the last modification date from the file
     // system.
-    if (!foundDate) {
-        double fallbackDate = currentTimeMS();
+    if (!dateTime) {
+        dateTime = system_clock::now();
 #if ENABLE(WEB_REPLAY)
         InputCursor& cursor = inputCursor();
         if (cursor.isCapturing())
-            cursor.appendInput<DocumentLastModifiedDate>(fallbackDate);
+            cursor.appendInput<DocumentLastModifiedDate>(duration_cast<milliseconds>(dateTime.value().time_since_epoch()).count());
         else if (cursor.isReplaying()) {
             if (DocumentLastModifiedDate* input = cursor.fetchInput<DocumentLastModifiedDate>())
-                fallbackDate = input->fallbackValue();
+                dateTime = system_clock::time_point(milliseconds(static_cast<long long>(input->fallbackValue())));
         }
 #endif
-        date.setMillisecondsSinceEpochForDateTime(fallbackDate);
     }
 
-    return String::format("%02d/%02d/%04d %02d:%02d:%02d", date.month() + 1, date.monthDay(), date.fullYear(), date.hour(), date.minute(), date.second());
+    auto ctime = system_clock::to_time_t(dateTime.value());
+    auto localDateTime = std::localtime(&ctime);
+    return String::format("%02d/%02d/%04d %02d:%02d:%02d", localDateTime->tm_mon + 1, localDateTime->tm_mday, 1900 + localDateTime->tm_year, localDateTime->tm_hour, localDateTime->tm_min, localDateTime->tm_sec);
 }
 
 void Document::setCookieURL(const URL& url)

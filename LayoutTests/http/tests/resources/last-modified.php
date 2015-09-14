@@ -3,5 +3,5 @@
     header("Last-Modified: $date");
 ?>
 <script>
-document.write(document.lastModified);
+document.write((new Date(document.lastModified)).toUTCString());
 </script>

@@ -1,3 +1,17 @@
+2015-09-13  Chris Dumez  <cdumez@apple.com>
+
+        document.lastModified should use the user's local time zone
+        https://bugs.webkit.org/show_bug.cgi?id=149092
+
+        Reviewed by Ryosuke Niwa.
+
+        Update test so that it converts document.lastModified to UTF before
+        printing it. This is so that we can consistent layout tests results, no
+        matter the system's timezone.
+
+        * http/tests/misc/last-modified-parsing-expected.txt:
+        * http/tests/resources/last-modified.php:
+
 2015-09-13  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL gardening.
