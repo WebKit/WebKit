@@ -1,0 +1,14 @@
+
+FAIL Aborting a WritableStream immediately prevents future writes Can't find variable: WritableStream
+FAIL Aborting a WritableStream prevents further writes after any that are in progress Can't find variable: WritableStream
+FAIL Fulfillment value of ws.abort() call must be undefined even if the underlying sink returns a non-undefined value Can't find variable: WritableStream
+FAIL WritableStream if sink's abort throws, the promise returned by ws.abort() rejects Can't find variable: WritableStream
+FAIL Aborting a WritableStream passes through the given reason Can't find variable: WritableStream
+FAIL Aborting a WritableStream puts it in an errored state, with stored error equal to the abort reason Can't find variable: WritableStream
+FAIL Aborting a WritableStream causes any outstanding ready promises to be fulfilled immediately Can't find variable: WritableStream
+FAIL Aborting a WritableStream causes any outstanding write() promises to be rejected with the abort reason Can't find variable: WritableStream
+FAIL Closing but then immediately aborting a WritableStream causes the stream to error Can't find variable: WritableStream
+FAIL Closing a WritableStream and aborting it while it closes causes the stream to error Can't find variable: WritableStream
+FAIL Aborting a WritableStream after it is closed is a no-op Can't find variable: WritableStream
+FAIL WritableStream should call underlying sink's close if no abort is supplied Can't find variable: WritableStream
+
