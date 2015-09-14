@@ -273,6 +273,9 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
     case op_get_by_id:
         op = "get_by_id";
         break;
+    case op_get_by_id_out_of_line:
+        op = "get_by_id_out_of_line";
+        break;
     case op_get_array_length:
         op = "array_length";
         break;
@@ -328,8 +331,7 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
     
     if (exec->interpreter()->getOpcodeID(instruction[0].u.opcode) == op_get_array_length)
         out.printf(" llint(array_length)");
-    else if (StructureID structureID = instruction[4].u.structureID) {
-        Structure* structure = m_vm->heap.structureIDTable().get(structureID);
+    else if (Structure* structure = instruction[4].u.structure.get()) {
         out.printf(" llint(");
         dumpStructure(out, "struct", structure, ident);
         out.printf(")");
@@ -380,31 +382,42 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
 #endif
 }
 
-void CodeBlock::printPutByIdCacheStatus(PrintStream& out, int location, const StubInfoMap& map)
+void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int location, const StubInfoMap& map)
 {
     Instruction* instruction = instructions().begin() + location;
 
     const Identifier& ident = identifier(instruction[2].u.operand);
     
     UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
-
-    out.print(", ", instruction[8].u.putByIdFlags);
     
-    if (StructureID structureID = instruction[4].u.structureID) {
-        Structure* structure = m_vm->heap.structureIDTable().get(structureID);
-        out.print(" llint(");
-        if (StructureID newStructureID = instruction[6].u.structureID) {
-            Structure* newStructure = m_vm->heap.structureIDTable().get(newStructureID);
+    if (Structure* structure = instruction[4].u.structure.get()) {
+        switch (exec->interpreter()->getOpcodeID(instruction[0].u.opcode)) {
+        case op_put_by_id:
+        case op_put_by_id_out_of_line:
+            out.print(" llint(");
+            dumpStructure(out, "struct", structure, ident);
+            out.print(")");
+            break;
+            
+        case op_put_by_id_transition_direct:
+        case op_put_by_id_transition_normal:
+        case op_put_by_id_transition_direct_out_of_line:
+        case op_put_by_id_transition_normal_out_of_line:
+            out.print(" llint(");
             dumpStructure(out, "prev", structure, ident);
             out.print(", ");
-            dumpStructure(out, "next", newStructure, ident);
+            dumpStructure(out, "next", instruction[6].u.structure.get(), ident);
             if (StructureChain* chain = instruction[7].u.structureChain.get()) {
                 out.print(", ");
                 dumpChain(out, chain, ident);
             }
-        } else
-            dumpStructure(out, "struct", structure, ident);
-        out.print(")");
+            out.print(")");
+            break;
+            
+        default:
+            out.print(" llint(unknown)");
+            break;
+        }
     }
 
 #if ENABLE(JIT)
@@ -988,6 +1001,7 @@ void CodeBlock::dumpBytecode(
             break;
         }
         case op_get_by_id:
+        case op_get_by_id_out_of_line:
         case op_get_array_length: {
             printGetByIdOp(out, exec, location, it);
             printGetByIdCacheStatus(out, exec, location, stubInfos);
@@ -996,7 +1010,32 @@ void CodeBlock::dumpBytecode(
         }
         case op_put_by_id: {
             printPutByIdOp(out, exec, location, it, "put_by_id");
-            printPutByIdCacheStatus(out, location, stubInfos);
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
+            break;
+        }
+        case op_put_by_id_out_of_line: {
+            printPutByIdOp(out, exec, location, it, "put_by_id_out_of_line");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
+            break;
+        }
+        case op_put_by_id_transition_direct: {
+            printPutByIdOp(out, exec, location, it, "put_by_id_transition_direct");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
+            break;
+        }
+        case op_put_by_id_transition_direct_out_of_line: {
+            printPutByIdOp(out, exec, location, it, "put_by_id_transition_direct_out_of_line");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
+            break;
+        }
+        case op_put_by_id_transition_normal: {
+            printPutByIdOp(out, exec, location, it, "put_by_id_transition_normal");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
+            break;
+        }
+        case op_put_by_id_transition_normal_out_of_line: {
+            printPutByIdOp(out, exec, location, it, "put_by_id_transition_normal_out_of_line");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
         case op_put_getter_by_id: {
@@ -1897,6 +1936,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 1] = profile;
             break;
         }
+        case op_get_by_id_out_of_line:
         case op_get_array_length:
             CRASH();
 
@@ -2377,17 +2417,12 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
         for (size_t i = 0; i < propertyAccessInstructions.size(); ++i) {
             Instruction* instruction = &instructions()[propertyAccessInstructions[i]];
             switch (interpreter->getOpcodeID(instruction[0].u.opcode)) {
-            case op_put_by_id: {
-                StructureID oldStructureID = instruction[4].u.structureID;
-                StructureID newStructureID = instruction[6].u.structureID;
-                if (!oldStructureID || !newStructureID)
-                    break;
-                Structure* oldStructure =
-                    m_vm->heap.structureIDTable().get(oldStructureID);
-                Structure* newStructure =
-                    m_vm->heap.structureIDTable().get(newStructureID);
-                if (Heap::isMarked(oldStructure))
-                    visitor.appendUnbarrieredReadOnlyPointer(newStructure);
+            case op_put_by_id_transition_direct:
+            case op_put_by_id_transition_normal:
+            case op_put_by_id_transition_direct_out_of_line:
+            case op_put_by_id_transition_normal_out_of_line: {
+                if (Heap::isMarked(instruction[4].u.structure.get()))
+                    visitor.append(&instruction[6].u.structure);
                 else
                     allAreMarkedSoFar = false;
                 break;
@@ -2518,32 +2553,36 @@ void CodeBlock::finalizeLLIntInlineCaches()
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
         Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
         switch (interpreter->getOpcodeID(curInstruction[0].u.opcode)) {
-        case op_get_by_id: {
-            StructureID oldStructureID = curInstruction[4].u.structureID;
-            if (!oldStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(oldStructureID)))
+        case op_get_by_id:
+        case op_get_by_id_out_of_line:
+        case op_put_by_id:
+        case op_put_by_id_out_of_line:
+            if (!curInstruction[4].u.structure || Heap::isMarked(curInstruction[4].u.structure.get()))
                 break;
             if (Options::verboseOSR())
-                dataLogF("Clearing LLInt property access.\n");
-            curInstruction[4].u.structureID = 0;
+                dataLogF("Clearing LLInt property access with structure %p.\n", curInstruction[4].u.structure.get());
+            curInstruction[4].u.structure.clear();
             curInstruction[5].u.operand = 0;
             break;
-        }
-        case op_put_by_id: {
-            StructureID oldStructureID = curInstruction[4].u.structureID;
-            StructureID newStructureID = curInstruction[6].u.structureID;
-            StructureChain* chain = curInstruction[7].u.structureChain.get();
-            if ((!oldStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(oldStructureID))) &&
-                (!newStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(newStructureID))) &&
-                (!chain || Heap::isMarked(chain)))
+        case op_put_by_id_transition_direct:
+        case op_put_by_id_transition_normal:
+        case op_put_by_id_transition_direct_out_of_line:
+        case op_put_by_id_transition_normal_out_of_line:
+            if (Heap::isMarked(curInstruction[4].u.structure.get())
+                && Heap::isMarked(curInstruction[6].u.structure.get())
+                && Heap::isMarked(curInstruction[7].u.structureChain.get()))
                 break;
-            if (Options::verboseOSR())
-                dataLogF("Clearing LLInt put transition.\n");
-            curInstruction[4].u.structureID = 0;
-            curInstruction[5].u.operand = 0;
-            curInstruction[6].u.structureID = 0;
+            if (Options::verboseOSR()) {
+                dataLogF("Clearing LLInt put transition with structures %p -> %p, chain %p.\n",
+                    curInstruction[4].u.structure.get(),
+                    curInstruction[6].u.structure.get(),
+                    curInstruction[7].u.structureChain.get());
+            }
+            curInstruction[4].u.structure.clear();
+            curInstruction[6].u.structure.clear();
             curInstruction[7].u.structureChain.clear();
+            curInstruction[0].u.opcode = interpreter->getOpcode(op_put_by_id);
             break;
-        }
         case op_get_array_length:
             break;
         case op_to_this:

@@ -1323,23 +1323,37 @@ end
 # to take fast path on the new cache. At worst we take slow path, which is what
 # we would have been doing anyway.
 
-_llint_op_get_by_id:
+macro getById(getPropertyStorage)
     traceExecution()
     loadi 8[PC], t0
     loadi 16[PC], t1
     loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdSlow)
     loadi 20[PC], t2
-    bineq JSCell::m_structureID[t3], t1, .opGetByIdSlow
-    loadPropertyAtVariableOffset(t2, t3, t0, t1)
-    loadi 4[PC], t2
-    storei t0, TagOffset[cfr, t2, 8]
-    storei t1, PayloadOffset[cfr, t2, 8]
-    valueProfile(t0, t1, 32, t2)
-    dispatch(9)
+    getPropertyStorage(
+        t3,
+        t0,
+        macro (propertyStorage, scratch)
+            bpneq JSCell::m_structureID[t3], t1, .opGetByIdSlow
+            loadi 4[PC], t1
+            loadi TagOffset[propertyStorage, t2], scratch
+            loadi PayloadOffset[propertyStorage, t2], t2
+            storei scratch, TagOffset[cfr, t1, 8]
+            storei t2, PayloadOffset[cfr, t1, 8]
+            valueProfile(scratch, t2, 32, t1)
+            dispatch(9)
+        end)
 
-.opGetByIdSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(9)
+    .opGetByIdSlow:
+        callSlowPath(_llint_slow_path_get_by_id)
+        dispatch(9)
+end
+
+_llint_op_get_by_id:
+    getById(withInlineStorage)
+
+
+_llint_op_get_by_id_out_of_line:
+    getById(withOutOfLineStorage)
 
 
 _llint_op_get_array_length:
@@ -1365,57 +1379,100 @@ _llint_op_get_array_length:
     dispatch(9)
 
 
-_llint_op_put_by_id:
+macro putById(getPropertyStorage)
     traceExecution()
     writeBarrierOnOperands(1, 3)
     loadi 4[PC], t3
+    loadi 16[PC], t1
     loadConstantOrVariablePayload(t3, CellTag, t0, .opPutByIdSlow)
-    loadi JSCell::m_structureID[t0], t2
-    bineq t2, 16[PC], .opPutByIdSlow
+    loadi 12[PC], t2
+    getPropertyStorage(
+        t0,
+        t3,
+        macro (propertyStorage, scratch)
+            bpneq JSCell::m_structureID[t0], t1, .opPutByIdSlow
+            loadi 20[PC], t1
+            loadConstantOrVariable2Reg(t2, scratch, t2)
+            storei scratch, TagOffset[propertyStorage, t1]
+            storei t2, PayloadOffset[propertyStorage, t1]
+            dispatch(9)
+        end)
 
-    # At this point, we have:
-    # t2 -> currentStructureID
-    # t0 -> object base
+    .opPutByIdSlow:
+        callSlowPath(_llint_slow_path_put_by_id)
+        dispatch(9)
+end
 
-    loadi 24[PC], t1
+_llint_op_put_by_id:
+    putById(withInlineStorage)
 
-    btiz t1, .opPutByIdNotTransition
 
-    # This is the transition case. t1 holds the new Structure*. t2 holds the old Structure*.
-    # If we have a chain, we need to check it. t0 is the base. We may clobber t1 to use it as
-    # scratch.
-    loadp 28[PC], t3
-    btpz t3, .opPutByIdTransitionDirect
+_llint_op_put_by_id_out_of_line:
+    putById(withOutOfLineStorage)
 
-    loadp StructureChain::m_vector[t3], t3
-    assert(macro (ok) btpnz t3, ok end)
 
-    loadp Structure::m_prototype[t2], t2
-    btpz t2, .opPutByIdTransitionChainDone
-.opPutByIdTransitionChainLoop:
-    loadp [t3], t1
-    bpneq t1, JSCell::m_structureID[t2], .opPutByIdSlow
-    addp 4, t3
-    loadp Structure::m_prototype[t1], t2
-    btpnz t2, .opPutByIdTransitionChainLoop
-
-.opPutByIdTransitionChainDone:
-    loadi 24[PC], t1
-
-.opPutByIdTransitionDirect:
-    storei t1, JSCell::m_structureID[t0]
-
-.opPutByIdNotTransition:
-    # The only thing live right now is t0, which holds the base.
-    loadi 12[PC], t1
-    loadConstantOrVariable(t1, t2, t3)
+macro putByIdTransition(additionalChecks, getPropertyStorage)
+    traceExecution()
+    writeBarrierOnOperand(1)
+    loadi 4[PC], t3
+    loadi 16[PC], t1
+    loadConstantOrVariablePayload(t3, CellTag, t0, .opPutByIdSlow)
+    loadi 12[PC], t2
+    bpneq JSCell::m_structureID[t0], t1, .opPutByIdSlow
+    additionalChecks(t1, t3, .opPutByIdSlow)
     loadi 20[PC], t1
-    storePropertyAtVariableOffset(t1, t0, t2, t3)
-    dispatch(9)
+    getPropertyStorage(
+        t0,
+        t3,
+        macro (propertyStorage, scratch)
+            addp t1, propertyStorage, t3
+            loadConstantOrVariable2Reg(t2, t1, t2)
+            storei t1, TagOffset[t3]
+            loadi 24[PC], t1
+            storei t2, PayloadOffset[t3]
+            storep t1, JSCell::m_structureID[t0]
+            dispatch(9)
+        end)
 
-.opPutByIdSlow:
-    callSlowPath(_llint_slow_path_put_by_id)
-    dispatch(9)
+    .opPutByIdSlow:
+        callSlowPath(_llint_slow_path_put_by_id)
+        dispatch(9)
+end
+
+macro noAdditionalChecks(oldStructure, scratch, slowPath)
+end
+
+macro structureChainChecks(oldStructure, scratch, slowPath)
+    const protoCell = oldStructure   # Reusing the oldStructure register for the proto
+
+    loadp 28[PC], scratch
+    assert(macro (ok) btpnz scratch, ok end)
+    loadp StructureChain::m_vector[scratch], scratch
+    assert(macro (ok) btpnz scratch, ok end)
+    bieq Structure::m_prototype + TagOffset[oldStructure], NullTag, .done
+.loop:
+    loadi Structure::m_prototype + PayloadOffset[oldStructure], protoCell
+    loadp JSCell::m_structureID[protoCell], oldStructure
+    bpneq oldStructure, [scratch], slowPath
+    addp 4, scratch
+    bineq Structure::m_prototype + TagOffset[oldStructure], NullTag, .loop
+.done:
+end
+
+_llint_op_put_by_id_transition_direct:
+    putByIdTransition(noAdditionalChecks, withInlineStorage)
+
+
+_llint_op_put_by_id_transition_direct_out_of_line:
+    putByIdTransition(noAdditionalChecks, withOutOfLineStorage)
+
+
+_llint_op_put_by_id_transition_normal:
+    putByIdTransition(structureChainChecks, withInlineStorage)
+
+
+_llint_op_put_by_id_transition_normal_out_of_line:
+    putByIdTransition(structureChainChecks, withOutOfLineStorage)
 
 
 _llint_op_get_by_val:

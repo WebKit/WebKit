@@ -623,7 +623,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     
     int base = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
-    int direct = currentInstruction[8].u.putByIdFlags & PutByIdIsDirect;
+    int direct = currentInstruction[8].u.operand;
     
     emitWriteBarrier(base, value, ShouldFilterBase);
 

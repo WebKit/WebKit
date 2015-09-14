@@ -107,7 +107,6 @@ set(JavaScriptCore_SOURCES
     bytecode/PolymorphicAccess.cpp
     bytecode/PreciseJumpTargets.cpp
     bytecode/PropertyCondition.cpp
-    bytecode/PutByIdFlags.cpp
     bytecode/PutByIdStatus.cpp
     bytecode/PutByIdVariant.cpp
     bytecode/ReduceWhitespace.cpp

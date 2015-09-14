@@ -70,19 +70,14 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
-
-    VM& vm = *profiledBlock->vm();
-    
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
     
     if (instruction[0].u.opcode == LLInt::getOpcode(op_get_array_length))
         return GetByIdStatus(NoInformation, false);
 
-    StructureID structureID = instruction[4].u.structureID;
-    if (!structureID)
+    Structure* structure = instruction[4].u.structure.get();
+    if (!structure)
         return GetByIdStatus(NoInformation, false);
-
-    Structure* structure = vm.heap.structureIDTable().get(structureID);
 
     if (structure->takesSlowPathInDFGForImpureProperty())
         return GetByIdStatus(NoInformation, false);

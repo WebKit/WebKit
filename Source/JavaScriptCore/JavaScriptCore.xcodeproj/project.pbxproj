@@ -105,8 +105,6 @@
 		0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F13912616771C30009CCB07 /* ProfilerProfiledBytecodes.cpp */; };
 		0F13912C16771C3D009CCB07 /* ProfilerProfiledBytecodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F13912716771C30009CCB07 /* ProfilerProfiledBytecodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13E04E16164A1F00DC8DE7 /* IndexingType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F13E04C16164A1B00DC8DE7 /* IndexingType.cpp */; };
-		0F15CD221BA5F9860031FFD3 /* PutByIdFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F15CD201BA5F9860031FFD3 /* PutByIdFlags.cpp */; };
-		0F15CD231BA5F9860031FFD3 /* PutByIdFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15CD211BA5F9860031FFD3 /* PutByIdFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1725FF1B48719A00AC3A55 /* DFGMinifiedGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F1725FE1B48719A00AC3A55 /* DFGMinifiedGraph.cpp */; };
 		0F18D3CF1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18D3CD1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp */; };
@@ -1934,8 +1932,6 @@
 		0F13912616771C30009CCB07 /* ProfilerProfiledBytecodes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerProfiledBytecodes.cpp; path = profiler/ProfilerProfiledBytecodes.cpp; sourceTree = "<group>"; };
 		0F13912716771C30009CCB07 /* ProfilerProfiledBytecodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerProfiledBytecodes.h; path = profiler/ProfilerProfiledBytecodes.h; sourceTree = "<group>"; };
 		0F13E04C16164A1B00DC8DE7 /* IndexingType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexingType.cpp; sourceTree = "<group>"; };
-		0F15CD201BA5F9860031FFD3 /* PutByIdFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByIdFlags.cpp; sourceTree = "<group>"; };
-		0F15CD211BA5F9860031FFD3 /* PutByIdFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByIdFlags.h; sourceTree = "<group>"; };
 		0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPaths.h; sourceTree = "<group>"; };
 		0F1725FE1B48719A00AC3A55 /* DFGMinifiedGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMinifiedGraph.cpp; path = dfg/DFGMinifiedGraph.cpp; sourceTree = "<group>"; };
 		0F18D3CD1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAdaptiveStructureWatchpoint.cpp; path = dfg/DFGAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
@@ -5604,8 +5600,6 @@
 				0F98205E16BFE37F00240D02 /* PreciseJumpTargets.h */,
 				0FD3E4071B618B6600C80E1E /* PropertyCondition.cpp */,
 				0FD3E4081B618B6600C80E1E /* PropertyCondition.h */,
-				0F15CD201BA5F9860031FFD3 /* PutByIdFlags.cpp */,
-				0F15CD211BA5F9860031FFD3 /* PutByIdFlags.h */,
 				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
 				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
 				0F93B4A718B92C4D00178A3F /* PutByIdVariant.cpp */,
@@ -6746,7 +6740,6 @@
 				0F682FB319BCB36400FA3BAD /* DFGSSACalculator.h in Headers */,
 				0FB7F39D15ED8E4600F167B2 /* Reject.h in Headers */,
 				0F2D4DEA19832DAC007D4B19 /* TypeLocation.h in Headers */,
-				0F15CD231BA5F9860031FFD3 /* PutByIdFlags.h in Headers */,
 				A5BA15E8182340B300A82E69 /* RemoteInspector.h in Headers */,
 				A5BA15EA182340B400A82E69 /* RemoteInspectorConstants.h in Headers */,
 				A5BA15F0182345AF00A82E69 /* RemoteInspectorDebuggable.h in Headers */,
@@ -7479,7 +7472,6 @@
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
 				0F2FC77216E12F710038D976 /* DFGDCEPhase.cpp in Sources */,
 				0F8F2B99172F04FF007DBDA5 /* DFGDesiredIdentifiers.cpp in Sources */,
-				0F15CD221BA5F9860031FFD3 /* PutByIdFlags.cpp in Sources */,
 				C2C0F7CD17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp in Sources */,
 				0FE8534B1723CDA500B618F5 /* DFGDesiredWatchpoints.cpp in Sources */,
 				C2981FD817BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp in Sources */,

@@ -217,6 +217,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_load_arrowfunction_this)
         DEFINE_OP(op_eq)
         DEFINE_OP(op_eq_null)
+        case op_get_by_id_out_of_line:
         case op_get_array_length:
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_by_val)
@@ -268,6 +269,11 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_push_with_scope)
         DEFINE_OP(op_create_lexical_environment)
         DEFINE_OP(op_get_parent_scope)
+        case op_put_by_id_out_of_line:
+        case op_put_by_id_transition_direct:
+        case op_put_by_id_transition_normal:
+        case op_put_by_id_transition_direct_out_of_line:
+        case op_put_by_id_transition_normal_out_of_line:
         DEFINE_OP(op_put_by_id)
         DEFINE_OP(op_put_by_index)
         case op_put_by_val_direct:
@@ -380,6 +386,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_create_this)
         DEFINE_SLOWCASE_OP(op_div)
         DEFINE_SLOWCASE_OP(op_eq)
+        case op_get_by_id_out_of_line:
         case op_get_array_length:
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_by_val)
@@ -406,6 +413,11 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_nstricteq)
         DEFINE_SLOWCASE_OP(op_dec)
         DEFINE_SLOWCASE_OP(op_inc)
+        case op_put_by_id_out_of_line:
+        case op_put_by_id_transition_direct:
+        case op_put_by_id_transition_normal:
+        case op_put_by_id_transition_direct_out_of_line:
+        case op_put_by_id_transition_normal_out_of_line:
         DEFINE_SLOWCASE_OP(op_put_by_id)
         case op_put_by_val_direct:
         DEFINE_SLOWCASE_OP(op_put_by_val)

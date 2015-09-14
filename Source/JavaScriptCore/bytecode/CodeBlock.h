@@ -969,7 +969,7 @@ private:
     enum CacheDumpMode { DumpCaches, DontDumpCaches };
     void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode, bool& hasPrintedProfiling, const CallLinkInfoMap&);
     void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
-    void printPutByIdCacheStatus(PrintStream&, int location, const StubInfoMap&);
+    void printPutByIdCacheStatus(PrintStream&, ExecState*, int location, const StubInfoMap&);
     void printLocationAndOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
     void printLocationOpAndRegisterOperand(PrintStream&, ExecState*, int location, const Instruction*& it, const char* op, int operand);
 

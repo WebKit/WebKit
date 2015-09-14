@@ -346,7 +346,6 @@
     <ClCompile Include="..\bytecode\PolymorphicAccess.cpp" />
     <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp" />
     <ClCompile Include="..\bytecode\PropertyCondition.cpp" />
-    <ClCompile Include="..\bytecode\PutByIdFlags.cpp" />
     <ClCompile Include="..\bytecode\PutByIdStatus.cpp" />
     <ClCompile Include="..\bytecode\PutByIdVariant.cpp" />
     <ClCompile Include="..\bytecode\ReduceWhitespace.cpp" />
@@ -1047,7 +1046,6 @@
     <ClInclude Include="..\bytecode\PolymorphicAccess.h" />
     <ClInclude Include="..\bytecode\PreciseJumpTargets.h" />
     <ClInclude Include="..\bytecode\PropertyCondition.h" />
-    <ClInclude Include="..\bytecode\PutByIdFlags.h" />
     <ClInclude Include="..\bytecode\PutByIdStatus.h" />
     <ClInclude Include="..\bytecode\PutByIdVariant.h" />
     <ClInclude Include="..\bytecode\PutKind.h" />

@@ -1,3 +1,24 @@
+2015-09-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r189751, r189752, and r189754.
+        https://bugs.webkit.org/show_bug.cgi?id=149143
+
+        caused crashes everywhere (Requested by alexchristensen on
+        #webkit).
+
+        Reverted changesets:
+
+        "LLInt get/put inline caches shouldn't use tons of opcodes"
+        https://bugs.webkit.org/show_bug.cgi?id=149106
+        http://trac.webkit.org/changeset/189751
+
+        "Unreviewed, fix non-x86 LLInt build."
+        http://trac.webkit.org/changeset/189752
+
+        "Unreviewed, really fix non-x86 LLInt build without also
+        breaking everything else."
+        http://trac.webkit.org/changeset/189754
+
 2015-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, really fix non-x86 LLInt build without also breaking everything else.

@@ -570,20 +570,20 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();
         
-        // Start out by clearing out the old cache.
-        pc[0].u.opcode = LLInt::getOpcode(op_get_by_id);
-        pc[4].u.pointer = nullptr; // old structure
-        pc[5].u.pointer = nullptr; // offset
-        
         if (!structure->isUncacheableDictionary()
             && !structure->typeInfo().prohibitsPropertyCaching()
             && !structure->typeInfo().newImpurePropertyFiresWatchpoints()) {
-            vm.heap.writeBarrier(codeBlock->ownerExecutable());
-            
             ConcurrentJITLocker locker(codeBlock->m_lock);
 
-            pc[4].u.structureID = structure->id();
-            pc[5].u.operand = slot.cachedOffset();
+            pc[4].u.structure.set(
+                vm, codeBlock->ownerExecutable(), structure);
+            if (isInlineOffset(slot.cachedOffset())) {
+                pc[0].u.opcode = LLInt::getOpcode(op_get_by_id);
+                pc[5].u.operand = offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + JSObject::offsetOfInlineStorage();
+            } else {
+                pc[0].u.opcode = LLInt::getOpcode(op_get_by_id_out_of_line);
+                pc[5].u.operand = offsetInButterfly(slot.cachedOffset()) * sizeof(JSValue);
+            }
         }
     }
 
@@ -618,7 +618,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     
     JSValue baseValue = LLINT_OP_C(1).jsValue();
     PutPropertySlot slot(baseValue, codeBlock->isStrictMode(), codeBlock->putByIdContext());
-    if (pc[8].u.putByIdFlags & PutByIdIsDirect)
+    if (pc[8].u.operand)
         asObject(baseValue)->putDirect(vm, ident, LLINT_OP_C(3).jsValue(), slot);
     else
         baseValue.put(exec, ident, LLINT_OP_C(3).jsValue(), slot);
@@ -627,12 +627,6 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
         && slot.isCacheablePut()) {
-
-        // Start out by clearing out the old cache.
-        pc[4].u.pointer = nullptr; // old structure
-        pc[5].u.pointer = nullptr; // offset
-        pc[6].u.pointer = nullptr; // new structure
-        pc[7].u.pointer = nullptr; // structure chain
         
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();
@@ -640,32 +634,56 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         if (!structure->isUncacheableDictionary()
             && !structure->typeInfo().prohibitsPropertyCaching()
             && baseCell == slot.base()) {
-
-            vm.heap.writeBarrier(codeBlock->ownerExecutable());
             
             if (slot.type() == PutPropertySlot::NewProperty) {
                 GCSafeConcurrentJITLocker locker(codeBlock->m_lock, vm.heap);
             
                 if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
                     ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
+                    
+                    // This is needed because some of the methods we call
+                    // below may GC.
+                    pc[0].u.opcode = LLInt::getOpcode(op_put_by_id);
 
                     if (normalizePrototypeChain(exec, structure) != InvalidPrototypeChain) {
                         ASSERT(structure->previousID()->isObject());
-                        pc[4].u.structureID = structure->previousID()->id();
-                        pc[5].u.operand = slot.cachedOffset();
-                        pc[6].u.structureID = structure->id();
-                        if (!(pc[8].u.putByIdFlags & PutByIdIsDirect)) {
-                            StructureChain* chain = structure->prototypeChain(exec);
-                            ASSERT(chain);
-                            pc[7].u.structureChain.set(
-                                vm, codeBlock->ownerExecutable(), chain);
+                        pc[4].u.structure.set(
+                            vm, codeBlock->ownerExecutable(), structure->previousID());
+                        if (isInlineOffset(slot.cachedOffset()))
+                            pc[5].u.operand = offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + JSObject::offsetOfInlineStorage();
+                        else
+                            pc[5].u.operand = offsetInButterfly(slot.cachedOffset()) * sizeof(JSValue);
+                        pc[6].u.structure.set(
+                            vm, codeBlock->ownerExecutable(), structure);
+                        StructureChain* chain = structure->prototypeChain(exec);
+                        ASSERT(chain);
+                        pc[7].u.structureChain.set(
+                            vm, codeBlock->ownerExecutable(), chain);
+                    
+                        if (pc[8].u.operand) {
+                            if (isInlineOffset(slot.cachedOffset()))
+                                pc[0].u.opcode = LLInt::getOpcode(op_put_by_id_transition_direct);
+                            else
+                                pc[0].u.opcode = LLInt::getOpcode(op_put_by_id_transition_direct_out_of_line);
+                        } else {
+                            if (isInlineOffset(slot.cachedOffset()))
+                                pc[0].u.opcode = LLInt::getOpcode(op_put_by_id_transition_normal);
+                            else
+                                pc[0].u.opcode = LLInt::getOpcode(op_put_by_id_transition_normal_out_of_line);
                         }
                     }
                 }
             } else {
                 structure->didCachePropertyReplacement(vm, slot.cachedOffset());
-                pc[4].u.structureID = structure->id();
-                pc[5].u.operand = slot.cachedOffset();
+                pc[4].u.structure.set(
+                    vm, codeBlock->ownerExecutable(), structure);
+                if (isInlineOffset(slot.cachedOffset())) {
+                    pc[0].u.opcode = LLInt::getOpcode(op_put_by_id);
+                    pc[5].u.operand = offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + JSObject::offsetOfInlineStorage();
+                } else {
+                    pc[0].u.opcode = LLInt::getOpcode(op_put_by_id_out_of_line);
+                    pc[5].u.operand = offsetInButterfly(slot.cachedOffset()) * sizeof(JSValue);
+                }
             }
         }
     }
