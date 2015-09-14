@@ -11,33 +11,17 @@ PASS Calling insertBefore an a leaf node ProcessingInstruction must throw HIERAR
 PASS Calling insertBefore with an inclusive ancestor of the context object must throw HIERARCHY_REQUEST_ERR. 
 PASS Calling insertBefore with a reference child whose parent is not the context node must throw a NotFoundError. 
 PASS If the context node is a document, inserting a document or text node should throw a HierarchyRequestError. 
-FAIL If the context node is a document, appending a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(df, null);
-  }" did not throw
-FAIL If the context node is a document, inserting a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(df, doc.firstChild);
-  }" did not throw
+PASS If the context node is a document, appending a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. 
+PASS If the context node is a document, inserting a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. 
 PASS If the context node is a document, inserting a DocumentFragment with an element if there already is an element child should throw a HierarchyRequestError. 
-FAIL If the context node is a document and a doctype is following the reference child, inserting a DocumentFragment with an element should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(df, doc.doctype);
-  }" did not throw
-FAIL If the context node is a document, inserting a DocumentFragment with an element before the doctype should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(df, comment);
-  }" did not throw
+PASS If the context node is a document and a doctype is following the reference child, inserting a DocumentFragment with an element should throw a HierarchyRequestError. 
+PASS If the context node is a document, inserting a DocumentFragment with an element before the doctype should throw a HierarchyRequestError. 
 PASS If the context node is a document, inserting an element if there already is an element child should throw a HierarchyRequestError. 
-FAIL If the context node is a document, inserting an element before the doctype should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(a, doc.doctype);
-  }" did not throw
-FAIL If the context node is a document and a doctype is following the reference child, inserting an element should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(a, comment);
-  }" did not throw
+PASS If the context node is a document, inserting an element before the doctype should throw a HierarchyRequestError. 
+PASS If the context node is a document and a doctype is following the reference child, inserting an element should throw a HierarchyRequestError. 
 PASS If the context node is a document, inserting a doctype if there already is a doctype child should throw a HierarchyRequestError. 
-FAIL If the context node is a document, inserting a doctype after the document element should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(doctype, comment);
-  }" did not throw
-FAIL If the context node is a document with and element child, appending a doctype should throw a HierarchyRequestError. assert_throws: function "function () {
-    doc.insertBefore(doctype, null);
-  }" did not throw
+PASS If the context node is a document, inserting a doctype after the document element should throw a HierarchyRequestError. 
+PASS If the context node is a document with and element child, appending a doctype should throw a HierarchyRequestError. 
 PASS If the context node is a DocumentFragment, inserting a document or a doctype should throw a HierarchyRequestError. 
 PASS If the context node is an element, inserting a document or a doctype should throw a HierarchyRequestError. 
 PASS Inserting a node before itself should not move the node 

@@ -1,5 +1,20 @@
 2015-09-13  Chris Dumez  <cdumez@apple.com>
 
+        Improve Node pre-insertion validation when the parent is a Document
+        https://bugs.webkit.org/show_bug.cgi?id=149109
+        <rdar://problem/22560436>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/Node-insertBefore-expected.txt:
+        * web-platform-tests/dom/nodes/Node-replaceChild-expected.txt:
+        * web-platform-tests/dom/nodes/append-on-Document-expected.txt:
+        * web-platform-tests/dom/nodes/prepend-on-Document-expected.txt:
+
+2015-09-13  Chris Dumez  <cdumez@apple.com>
+
         Document.adoptNode() should be able to explicitly adopt a DocumentType node
         https://bugs.webkit.org/show_bug.cgi?id=149097
         <rdar://problem/22549345>

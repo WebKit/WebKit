@@ -176,7 +176,7 @@ static inline bool containsConsideringHostElements(const Node& newChild, const N
         : newChild.contains(&newParent);
 }
 
-static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& newChild, Node* oldChild)
+static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation)
 {
     // Use common case fast path if possible.
     if ((newChild.isElementNode() || newChild.isTextNode()) && newParent.isElementNode()) {
@@ -198,8 +198,8 @@ static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& new
     if (containsConsideringHostElements(newChild, newParent))
         return HIERARCHY_REQUEST_ERR;
 
-    if (oldChild && is<Document>(newParent)) {
-        if (!downcast<Document>(newParent).canReplaceChild(newChild, *oldChild))
+    if (is<Document>(newParent)) {
+        if (!downcast<Document>(newParent).canAcceptChild(newChild, refChild, operation))
             return HIERARCHY_REQUEST_ERR;
     } else if (!isChildTypeAllowed(newParent, newChild))
         return HIERARCHY_REQUEST_ERR;
@@ -220,15 +220,15 @@ static inline bool checkAcceptChildGuaranteedNodeTypes(ContainerNode& newParent,
     return true;
 }
 
-static inline bool checkAddChild(ContainerNode& newParent, Node& newChild, ExceptionCode& ec)
+static inline bool checkAddChild(ContainerNode& newParent, Node& newChild, Node* refChild, ExceptionCode& ec)
 {
-    ec = checkAcceptChild(newParent, newChild, nullptr);
+    ec = checkAcceptChild(newParent, newChild, refChild, Document::AcceptChildOperation::InsertOrAdd);
     return !ec;
 }
 
 static inline bool checkReplaceChild(ContainerNode& newParent, Node& newChild, Node& oldChild, ExceptionCode& ec)
 {
-    ec = checkAcceptChild(newParent, newChild, &oldChild);
+    ec = checkAcceptChild(newParent, newChild, &oldChild, Document::AcceptChildOperation::Replace);
     return !ec;
 }
 
@@ -247,7 +247,7 @@ bool ContainerNode::insertBefore(Ref<Node>&& newChild, Node* refChild, Exception
         return appendChild(WTF::move(newChild), ec);
 
     // Make sure adding the new child is OK.
-    if (!checkAddChild(*this, newChild, ec))
+    if (!checkAddChild(*this, newChild, refChild, ec))
         return false;
 
     // NOT_FOUND_ERR: Raised if refChild is not a child of this node
@@ -666,7 +666,7 @@ bool ContainerNode::appendChild(Ref<Node>&& newChild, ExceptionCode& ec)
     ec = 0;
 
     // Make sure adding the new child is ok
-    if (!checkAddChild(*this, newChild, ec))
+    if (!checkAddChild(*this, newChild, nullptr, ec))
         return false;
 
     if (newChild.ptr() == m_lastChild) // nothing to do
