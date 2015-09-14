@@ -223,8 +223,17 @@ void NetworkResourceLoader::abort()
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_handle && !m_didConvertHandleToDownload)
+    if (m_handle && !m_didConvertHandleToDownload) {
         m_handle->cancel();
+
+#if ENABLE(NETWORK_CACHE)
+        if (NetworkCache::singleton().isEnabled()) {
+            // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.
+            if (!m_response.isNull())
+                NetworkCache::singleton().remove(originalRequest());
+        }
+#endif
+    }
 
     cleanup();
 }
