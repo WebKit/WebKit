@@ -432,8 +432,6 @@ public:
     String documentURI() const { return m_documentURI; }
     void setDocumentURI(const String&);
 
-    virtual URL baseURI() const override final;
-
 #if ENABLE(WEB_REPLAY)
     JSC::InputCursor& inputCursor() const { return *m_inputCursor; }
     void setInputCursor(PassRefPtr<JSC::InputCursor>);

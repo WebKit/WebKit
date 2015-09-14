@@ -197,8 +197,6 @@ public:
     virtual const AtomicString& prefix() const override final { return m_tagName.prefix(); }
     virtual const AtomicString& namespaceURI() const override final { return m_tagName.namespaceURI(); }
 
-    virtual URL baseURI() const override final;
-
     virtual String nodeName() const override;
 
     Ref<Element> cloneElementWithChildren(Document&);

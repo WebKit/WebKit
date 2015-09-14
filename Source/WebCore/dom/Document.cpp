@@ -1319,11 +1319,6 @@ void Document::setDocumentURI(const String& uri)
     updateBaseURL();
 }
 
-URL Document::baseURI() const
-{
-    return m_baseURL;
-}
-
 void Document::setContent(const String& content)
 {
     open();

@@ -36,11 +36,6 @@ DocumentType::DocumentType(Document& document, const String& name, const String&
 {
 }
 
-URL DocumentType::baseURI() const
-{
-    return URL();
-}
-
 String DocumentType::nodeName() const
 {
     return name();

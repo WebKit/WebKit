@@ -1,5 +1,20 @@
 2015-09-13  Chris Dumez  <cdumez@apple.com>
 
+        Node.baseURI should not return null for detached nodes
+        https://bugs.webkit.org/show_bug.cgi?id=149104
+        <rdar://problem/22559535>
+
+        Reviewed by Sam Weinig.
+
+        * dom/xhtml/level3/core/nodegetbaseuri03-expected.txt:
+        Rebaseline outdated DOM3 test.
+
+        * svg/custom/image-base-uri-expected.txt: Removed.
+        * svg/custom/image-base-uri.svg: Removed.
+        Drop outdated SVG test. SVG2 no longer support xml:base.
+
+2015-09-13  Chris Dumez  <cdumez@apple.com>
+
         CharacterData API parameters should not be optional
         https://bugs.webkit.org/show_bug.cgi?id=149101
         <rdar://problem/22546954>

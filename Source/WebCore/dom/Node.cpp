@@ -1165,7 +1165,7 @@ Document* Node::ownerDocument() const
 
 URL Node::baseURI() const
 {
-    return parentNode() ? parentNode()->baseURI() : URL();
+    return document().baseURL();
 }
 
 bool Node::isEqualNode(Node* other) const

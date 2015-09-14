@@ -99,7 +99,7 @@ function nodegetbaseuri03() {
 
       baseURI = docType.baseURI;
 
-      assertNull("nodegetbaseuri03",baseURI);
+      assertTrue("nodegetbaseuri03", baseURI == null);
     
 }
 
