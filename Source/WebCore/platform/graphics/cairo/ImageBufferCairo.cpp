@@ -117,9 +117,12 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float /* resolutionScale */, Col
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    if (renderingMode == Accelerated)
+    if (renderingMode == Accelerated) {
         m_data.m_surface = createCairoGLSurface(size, m_data.m_texture);
-    else
+        if (!m_data.m_surface || cairo_surface_status(m_data.m_surface.get()) != CAIRO_STATUS_SUCCESS)
+            renderingMode = Unaccelerated; // If allocation fails, fall back to non-accelerated path.
+    }
+    if (renderingMode == Unaccelerated)
 #else
     ASSERT_UNUSED(renderingMode, renderingMode != Accelerated);
 #endif
