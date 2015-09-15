@@ -1,5 +1,18 @@
 2015-09-13  Chris Dumez  <cdumez@apple.com>
 
+        document.lastModified should use the user's local time zone
+        https://bugs.webkit.org/show_bug.cgi?id=149092
+        <rdar://problem/22567705>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline a couple of W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-01-expected.txt:
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-expected.txt:
+
+2015-09-13  Chris Dumez  <cdumez@apple.com>
+
         Node.baseURI should not return null for detached nodes
         https://bugs.webkit.org/show_bug.cgi?id=149104
         <rdar://problem/22559535>
