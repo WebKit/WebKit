@@ -9,7 +9,7 @@ PASS document.documentElement.getAttribute("FooBar") is "WebKit"
 PASS document.documentElement.hasAttribute("FooBar") is true
 PASS document.documentElement.getAttributeNS("", "foobar") is "WebKit"
 PASS document.documentElement.hasAttributeNS("", "foobar") is true
-FAIL document.documentElement.getAttributeNS("", "FooBar") should be null (of type object). Was  (of type string).
+PASS document.documentElement.getAttributeNS("", "FooBar") is null
 PASS document.documentElement.hasAttributeNS("", "FooBar") is false
 PASS document.documentElement.attributes.length is 1
 PASS camelCaseFoobar is not oldAttributeNode
@@ -17,7 +17,7 @@ PASS document.documentElement.getAttribute("foobar") is null
 PASS document.documentElement.hasAttribute("foobar") is false
 PASS document.documentElement.getAttribute("FooBar") is null
 PASS document.documentElement.hasAttribute("FooBar") is false
-FAIL document.documentElement.getAttributeNS("", "foobar") should be null (of type object). Was  (of type string).
+PASS document.documentElement.getAttributeNS("", "foobar") is null
 PASS document.documentElement.hasAttributeNS("", "foobar") is false
 PASS document.documentElement.getAttributeNS("", "FooBar") is "Rocks!"
 PASS document.documentElement.hasAttributeNS("", "FooBar") is true

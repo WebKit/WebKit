@@ -29,10 +29,10 @@ PASS setAttributeNS http://www.w3.org/1999/xhtml,abc,abc
 PASS getAttributeNS http://www.w3.org/1999/xhtml,abc,abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,abc,Abc 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,abc,Abc 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,abc,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,abc,Abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,abc,ABC 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,abc,ABC 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,abc,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,abc,ABC 
 PASS createElementNS http://www.w3.org/1999/xhtml,abc,ä 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,abc,ä 
 PASS getAttributeNS http://www.w3.org/1999/xhtml,abc,ä 
@@ -44,10 +44,10 @@ PASS setAttributeNS http://www.w3.org/1999/xhtml,Abc,abc
 PASS getAttributeNS http://www.w3.org/1999/xhtml,Abc,abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,Abc,Abc 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,Abc,Abc 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,Abc,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,Abc,Abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,Abc,ABC 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,Abc,ABC 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,Abc,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,Abc,ABC 
 PASS createElementNS http://www.w3.org/1999/xhtml,Abc,ä 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,Abc,ä 
 PASS getAttributeNS http://www.w3.org/1999/xhtml,Abc,ä 
@@ -59,10 +59,10 @@ PASS setAttributeNS http://www.w3.org/1999/xhtml,ABC,abc
 PASS getAttributeNS http://www.w3.org/1999/xhtml,ABC,abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,ABC,Abc 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,ABC,Abc 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,ABC,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,ABC,Abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,ABC,ABC 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,ABC,ABC 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,ABC,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,ABC,ABC 
 PASS createElementNS http://www.w3.org/1999/xhtml,ABC,ä 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,ABC,ä 
 PASS getAttributeNS http://www.w3.org/1999/xhtml,ABC,ä 
@@ -74,10 +74,10 @@ PASS setAttributeNS http://www.w3.org/1999/xhtml,ä,abc
 PASS getAttributeNS http://www.w3.org/1999/xhtml,ä,abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,ä,Abc 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,ä,Abc 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,ä,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,ä,Abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,ä,ABC 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,ä,ABC 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,ä,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,ä,ABC 
 PASS createElementNS http://www.w3.org/1999/xhtml,ä,ä 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,ä,ä 
 PASS getAttributeNS http://www.w3.org/1999/xhtml,ä,ä 
@@ -89,10 +89,10 @@ PASS setAttributeNS http://www.w3.org/1999/xhtml,Ä,abc
 PASS getAttributeNS http://www.w3.org/1999/xhtml,Ä,abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,Ä,Abc 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,Ä,Abc 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,Ä,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,Ä,Abc 
 PASS createElementNS http://www.w3.org/1999/xhtml,Ä,ABC 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,Ä,ABC 
-FAIL getAttributeNS http://www.w3.org/1999/xhtml,Ä,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/1999/xhtml,Ä,ABC 
 PASS createElementNS http://www.w3.org/1999/xhtml,Ä,ä 
 PASS setAttributeNS http://www.w3.org/1999/xhtml,Ä,ä 
 PASS getAttributeNS http://www.w3.org/1999/xhtml,Ä,ä 
@@ -104,10 +104,10 @@ PASS setAttributeNS http://www.w3.org/2000/svg,abc,abc
 PASS getAttributeNS http://www.w3.org/2000/svg,abc,abc 
 PASS createElementNS http://www.w3.org/2000/svg,abc,Abc 
 PASS setAttributeNS http://www.w3.org/2000/svg,abc,Abc 
-FAIL getAttributeNS http://www.w3.org/2000/svg,abc,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,abc,Abc 
 PASS createElementNS http://www.w3.org/2000/svg,abc,ABC 
 PASS setAttributeNS http://www.w3.org/2000/svg,abc,ABC 
-FAIL getAttributeNS http://www.w3.org/2000/svg,abc,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,abc,ABC 
 PASS createElementNS http://www.w3.org/2000/svg,abc,ä 
 PASS setAttributeNS http://www.w3.org/2000/svg,abc,ä 
 PASS getAttributeNS http://www.w3.org/2000/svg,abc,ä 
@@ -119,10 +119,10 @@ PASS setAttributeNS http://www.w3.org/2000/svg,Abc,abc
 PASS getAttributeNS http://www.w3.org/2000/svg,Abc,abc 
 PASS createElementNS http://www.w3.org/2000/svg,Abc,Abc 
 PASS setAttributeNS http://www.w3.org/2000/svg,Abc,Abc 
-FAIL getAttributeNS http://www.w3.org/2000/svg,Abc,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,Abc,Abc 
 PASS createElementNS http://www.w3.org/2000/svg,Abc,ABC 
 PASS setAttributeNS http://www.w3.org/2000/svg,Abc,ABC 
-FAIL getAttributeNS http://www.w3.org/2000/svg,Abc,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,Abc,ABC 
 PASS createElementNS http://www.w3.org/2000/svg,Abc,ä 
 PASS setAttributeNS http://www.w3.org/2000/svg,Abc,ä 
 PASS getAttributeNS http://www.w3.org/2000/svg,Abc,ä 
@@ -134,10 +134,10 @@ PASS setAttributeNS http://www.w3.org/2000/svg,ABC,abc
 PASS getAttributeNS http://www.w3.org/2000/svg,ABC,abc 
 PASS createElementNS http://www.w3.org/2000/svg,ABC,Abc 
 PASS setAttributeNS http://www.w3.org/2000/svg,ABC,Abc 
-FAIL getAttributeNS http://www.w3.org/2000/svg,ABC,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,ABC,Abc 
 PASS createElementNS http://www.w3.org/2000/svg,ABC,ABC 
 PASS setAttributeNS http://www.w3.org/2000/svg,ABC,ABC 
-FAIL getAttributeNS http://www.w3.org/2000/svg,ABC,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,ABC,ABC 
 PASS createElementNS http://www.w3.org/2000/svg,ABC,ä 
 PASS setAttributeNS http://www.w3.org/2000/svg,ABC,ä 
 PASS getAttributeNS http://www.w3.org/2000/svg,ABC,ä 
@@ -149,10 +149,10 @@ PASS setAttributeNS http://www.w3.org/2000/svg,ä,abc
 PASS getAttributeNS http://www.w3.org/2000/svg,ä,abc 
 PASS createElementNS http://www.w3.org/2000/svg,ä,Abc 
 PASS setAttributeNS http://www.w3.org/2000/svg,ä,Abc 
-FAIL getAttributeNS http://www.w3.org/2000/svg,ä,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,ä,Abc 
 PASS createElementNS http://www.w3.org/2000/svg,ä,ABC 
 PASS setAttributeNS http://www.w3.org/2000/svg,ä,ABC 
-FAIL getAttributeNS http://www.w3.org/2000/svg,ä,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,ä,ABC 
 PASS createElementNS http://www.w3.org/2000/svg,ä,ä 
 PASS setAttributeNS http://www.w3.org/2000/svg,ä,ä 
 PASS getAttributeNS http://www.w3.org/2000/svg,ä,ä 
@@ -164,10 +164,10 @@ PASS setAttributeNS http://www.w3.org/2000/svg,Ä,abc
 PASS getAttributeNS http://www.w3.org/2000/svg,Ä,abc 
 PASS createElementNS http://www.w3.org/2000/svg,Ä,Abc 
 PASS setAttributeNS http://www.w3.org/2000/svg,Ä,Abc 
-FAIL getAttributeNS http://www.w3.org/2000/svg,Ä,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,Ä,Abc 
 PASS createElementNS http://www.w3.org/2000/svg,Ä,ABC 
 PASS setAttributeNS http://www.w3.org/2000/svg,Ä,ABC 
-FAIL getAttributeNS http://www.w3.org/2000/svg,Ä,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://www.w3.org/2000/svg,Ä,ABC 
 PASS createElementNS http://www.w3.org/2000/svg,Ä,ä 
 PASS setAttributeNS http://www.w3.org/2000/svg,Ä,ä 
 PASS getAttributeNS http://www.w3.org/2000/svg,Ä,ä 
@@ -179,10 +179,10 @@ PASS setAttributeNS http://FOO,abc,abc
 PASS getAttributeNS http://FOO,abc,abc 
 PASS createElementNS http://FOO,abc,Abc 
 PASS setAttributeNS http://FOO,abc,Abc 
-FAIL getAttributeNS http://FOO,abc,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,abc,Abc 
 PASS createElementNS http://FOO,abc,ABC 
 PASS setAttributeNS http://FOO,abc,ABC 
-FAIL getAttributeNS http://FOO,abc,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,abc,ABC 
 PASS createElementNS http://FOO,abc,ä 
 PASS setAttributeNS http://FOO,abc,ä 
 PASS getAttributeNS http://FOO,abc,ä 
@@ -194,10 +194,10 @@ PASS setAttributeNS http://FOO,Abc,abc
 PASS getAttributeNS http://FOO,Abc,abc 
 PASS createElementNS http://FOO,Abc,Abc 
 PASS setAttributeNS http://FOO,Abc,Abc 
-FAIL getAttributeNS http://FOO,Abc,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,Abc,Abc 
 PASS createElementNS http://FOO,Abc,ABC 
 PASS setAttributeNS http://FOO,Abc,ABC 
-FAIL getAttributeNS http://FOO,Abc,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,Abc,ABC 
 PASS createElementNS http://FOO,Abc,ä 
 PASS setAttributeNS http://FOO,Abc,ä 
 PASS getAttributeNS http://FOO,Abc,ä 
@@ -209,10 +209,10 @@ PASS setAttributeNS http://FOO,ABC,abc
 PASS getAttributeNS http://FOO,ABC,abc 
 PASS createElementNS http://FOO,ABC,Abc 
 PASS setAttributeNS http://FOO,ABC,Abc 
-FAIL getAttributeNS http://FOO,ABC,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,ABC,Abc 
 PASS createElementNS http://FOO,ABC,ABC 
 PASS setAttributeNS http://FOO,ABC,ABC 
-FAIL getAttributeNS http://FOO,ABC,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,ABC,ABC 
 PASS createElementNS http://FOO,ABC,ä 
 PASS setAttributeNS http://FOO,ABC,ä 
 PASS getAttributeNS http://FOO,ABC,ä 
@@ -224,10 +224,10 @@ PASS setAttributeNS http://FOO,ä,abc
 PASS getAttributeNS http://FOO,ä,abc 
 PASS createElementNS http://FOO,ä,Abc 
 PASS setAttributeNS http://FOO,ä,Abc 
-FAIL getAttributeNS http://FOO,ä,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,ä,Abc 
 PASS createElementNS http://FOO,ä,ABC 
 PASS setAttributeNS http://FOO,ä,ABC 
-FAIL getAttributeNS http://FOO,ä,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,ä,ABC 
 PASS createElementNS http://FOO,ä,ä 
 PASS setAttributeNS http://FOO,ä,ä 
 PASS getAttributeNS http://FOO,ä,ä 
@@ -239,10 +239,10 @@ PASS setAttributeNS http://FOO,Ä,abc
 PASS getAttributeNS http://FOO,Ä,abc 
 PASS createElementNS http://FOO,Ä,Abc 
 PASS setAttributeNS http://FOO,Ä,Abc 
-FAIL getAttributeNS http://FOO,Ä,Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,Ä,Abc 
 PASS createElementNS http://FOO,Ä,ABC 
 PASS setAttributeNS http://FOO,Ä,ABC 
-FAIL getAttributeNS http://FOO,Ä,ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS http://FOO,Ä,ABC 
 PASS createElementNS http://FOO,Ä,ä 
 PASS setAttributeNS http://FOO,Ä,ä 
 PASS getAttributeNS http://FOO,Ä,ä 
@@ -274,10 +274,10 @@ PASS setAttributeNS abc
 PASS getAttributeNS abc 
 PASS createElementNS Abc 
 PASS setAttributeNS Abc 
-FAIL getAttributeNS Abc assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS Abc 
 PASS createElementNS ABC 
 PASS setAttributeNS ABC 
-FAIL getAttributeNS ABC assert_equals: expected (object) null but got (string) ""
+PASS getAttributeNS ABC 
 PASS createElementNS ä 
 PASS setAttributeNS ä 
 PASS getAttributeNS ä 

@@ -29,7 +29,7 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=1075702
   document.documentElement.setAttributeNode(a2);
 
   shouldBeFalse('document.documentElement.hasAttributeNS("", "aa")');
-  shouldBeEqualToString('document.documentElement.getAttributeNS("", "aa")', '');
+  shouldBeNull('document.documentElement.getAttributeNS("", "aa")');
   shouldBeTrue('document.documentElement.hasAttributeNS("", "AA")');
   shouldBeEqualToString('document.documentElement.getAttributeNS("", "AA")', 'UPPERCASE');
 

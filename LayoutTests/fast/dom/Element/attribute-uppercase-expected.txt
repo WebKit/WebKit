@@ -23,7 +23,7 @@ The following should be non-empty, true, or non-null.
 
 The following should be empty, false, or null.
 
-    getAttributeNS(ATTR_NAME) = 
+    getAttributeNS(ATTR_NAME) = null
     hasAttributeNS(ATTR_NAME) = false
     getAttributeNodeNS(ATTR_NAME) = null
     attributes.getNamedItemNS(ATTR_NAME) = null

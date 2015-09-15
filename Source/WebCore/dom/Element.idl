@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@
 
     // DOM Level 2 Core
 
-    [ObjCLegacyUnnamedParameters] DOMString getAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, TreatReturnedNullStringAs=Null] DOMString getAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                             [Default=Undefined] optional DOMString localName);
     [ObjCLegacyUnnamedParameters, RaisesException] void setAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                        [Default=Undefined] optional DOMString qualifiedName, 

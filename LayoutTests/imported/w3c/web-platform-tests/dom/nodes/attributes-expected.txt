@@ -1,8 +1,8 @@
 
 FAIL AttrExodus assert_false: expected false got true
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttribute) 
-FAIL setAttribute should lowercase its name argument (upper case attribute) assert_equals: expected (object) null but got (string) ""
-FAIL setAttribute should lowercase its name argument (mixed case attribute) assert_equals: expected (object) null but got (string) ""
+PASS setAttribute should lowercase its name argument (upper case attribute) 
+PASS setAttribute should lowercase its name argument (mixed case attribute) 
 PASS setAttribute should not throw even when qualifiedName starts with 'xmlns' 
 PASS Basic functionality should be intact. 
 PASS setAttribute should not change the order of previously set attributes. 
@@ -26,11 +26,11 @@ PASS Attributes should work in document fragments.
 PASS Attribute values should not be parsed. 
 PASS Specified attributes should be accessible. 
 PASS Entities in attributes should have been expanded while parsing. 
-FAIL Unset attributes return null assert_equals: expected (object) null but got (string) ""
-FAIL First set attribute is returned by getAttribute assert_equals: expected (object) null but got (string) ""
+PASS Unset attributes return null 
+PASS First set attribute is returned by getAttribute 
 PASS Style attributes are not normalized 
-FAIL Only lowercase attributes are returned on HTML elements (upper case attribute) assert_equals: expected (object) null but got (string) ""
-FAIL Only lowercase attributes are returned on HTML elements (mixed case attribute) assert_equals: expected (object) null but got (string) ""
+PASS Only lowercase attributes are returned on HTML elements (upper case attribute) 
+PASS Only lowercase attributes are returned on HTML elements (mixed case attribute) 
 PASS First set attribute is returned with mapped attribute set first 
 PASS First set attribute is returned with mapped attribute set later 
 FAIL Non-HTML element with upper-case attribute assert_equals: el.hasAttributeNS(undefined) expected true but got false

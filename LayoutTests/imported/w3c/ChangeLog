@@ -1,3 +1,16 @@
+2015-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Element.getAttributeNS() should return null if the attribute does not exist
+        https://bugs.webkit.org/show_bug.cgi?id=149180
+        <rdar://problem/22561011>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several W3C DOM tests now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/attributes-expected.txt:
+        * web-platform-tests/dom/nodes/case-expected.txt:
+
 2015-09-14  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard [IsIndex] WebKit IDL extended attribute
