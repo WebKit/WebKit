@@ -147,6 +147,9 @@
 
 #if ENABLE(INTL)
 #include "IntlObject.h"
+#include <unicode/ucol.h>
+#include <unicode/udat.h>
+#include <unicode/unum.h>
 #endif // ENABLE(INTL)
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1006,6 +1009,50 @@ void JSGlobalObject::setName(const String& name)
     m_inspectorDebuggable->update();
 #endif
 }
+
+# if ENABLE(INTL)
+const HashSet<String>& JSGlobalObject::intlCollatorAvailableLocales()
+{
+    if (m_intlCollatorAvailableLocales.isEmpty()) {
+        int32_t count = ucol_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale(ucol_getAvailable(i));
+            // Change from ICU format to BCP47.
+            locale.replace('_', '-');
+            m_intlCollatorAvailableLocales.add(locale);
+        }
+    }
+    return m_intlCollatorAvailableLocales;
+}
+
+const HashSet<String>& JSGlobalObject::intlDateTimeFormatAvailableLocales()
+{
+    if (m_intlDateTimeFormatAvailableLocales.isEmpty()) {
+        int32_t count = udat_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale(udat_getAvailable(i));
+            // Change from ICU format to BCP47.
+            locale.replace('_', '-');
+            m_intlDateTimeFormatAvailableLocales.add(locale);
+        }
+    }
+    return m_intlDateTimeFormatAvailableLocales;
+}
+
+const HashSet<String>& JSGlobalObject::intlNumberFormatAvailableLocales()
+{
+    if (m_intlNumberFormatAvailableLocales.isEmpty()) {
+        int32_t count = unum_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale(unum_getAvailable(i));
+            // Change from ICU format to BCP47.
+            locale.replace('_', '-');
+            m_intlNumberFormatAvailableLocales.add(locale);
+        }
+    }
+    return m_intlNumberFormatAvailableLocales;
+}
+#endif // ENABLE(INTL)
 
 void JSGlobalObject::queueMicrotask(PassRefPtr<Microtask> task)
 {

@@ -56,6 +56,18 @@ double JSValue::toIntegerPreserveNaN(ExecState* exec) const
     return trunc(toNumber(exec));
 }
 
+double JSValue::toLength(ExecState* exec) const
+{
+    // ECMA 7.1.15
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-tolength
+    double d = toInteger(exec);
+    if (d <= 0)
+        return 0.0;
+    if (std::isinf(d))
+        return 9007199254740991.0; // 2 ** 53 - 1
+    return std::min(d, 9007199254740991.0);
+}
+
 double JSValue::toNumberSlowCase(ExecState* exec) const
 {
     ASSERT(!isInt32() && !isDouble());

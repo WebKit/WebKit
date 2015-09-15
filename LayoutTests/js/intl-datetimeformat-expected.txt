@@ -18,6 +18,31 @@ PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat, 'prototype').enumerabl
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat, 'prototype').configurable is false
 PASS Intl.DateTimeFormat.supportedLocalesOf.length is 1
 PASS Intl.DateTimeFormat.supportedLocalesOf() is an instance of Array
+PASS Intl.DateTimeFormat.supportedLocalesOf.call(null, 'en') is [ 'en' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf.call({}, 'en') is [ 'en' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf.call(1, 'en') is [ 'en' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf(9) is []
+PASS Intl.DateTimeFormat.supportedLocalesOf('en') is [ 'en' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' }) is [ 'es', 'en', 'de' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ]) is [ 'en', 'pt', 'es' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED') is [ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf('no-bok') is [ 'nb' ]
+PASS Intl.DateTimeFormat.supportedLocalesOf('x-some-thing') is []
+PASS Intl.DateTimeFormat.supportedLocalesOf(Object.create(null, { length: { get() { throw Error('a') } } })) threw exception Error: a.
+PASS Intl.DateTimeFormat.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } })) threw exception Error: b.
+PASS Intl.DateTimeFormat.supportedLocalesOf([ { toString() { throw Error('c') } } ]) threw exception Error: c.
+PASS Intl.DateTimeFormat.supportedLocalesOf([ 5 ]) threw exception TypeError: locale value must be a string or object.
+PASS Intl.DateTimeFormat.supportedLocalesOf('') threw exception RangeError: invalid language tag: .
+PASS Intl.DateTimeFormat.supportedLocalesOf('a') threw exception RangeError: invalid language tag: a.
+PASS Intl.DateTimeFormat.supportedLocalesOf('abcdefghij') threw exception RangeError: invalid language tag: abcdefghij.
+PASS Intl.DateTimeFormat.supportedLocalesOf('#$') threw exception RangeError: invalid language tag: #$.
+PASS Intl.DateTimeFormat.supportedLocalesOf('en-@-abc') threw exception RangeError: invalid language tag: en-@-abc.
+PASS Intl.DateTimeFormat.supportedLocalesOf('en-u') threw exception RangeError: invalid language tag: en-u.
+PASS Intl.DateTimeFormat.supportedLocalesOf('en-u-kn-true-u-ko-true') threw exception RangeError: invalid language tag: en-u-kn-true-u-ko-true.
+PASS Intl.DateTimeFormat.supportedLocalesOf('en-x') threw exception RangeError: invalid language tag: en-x.
+PASS Intl.DateTimeFormat.supportedLocalesOf('en-*') threw exception RangeError: invalid language tag: en-*.
+PASS Intl.DateTimeFormat.supportedLocalesOf('en-') threw exception RangeError: invalid language tag: en-.
+PASS Intl.DateTimeFormat.supportedLocalesOf('en--US') threw exception RangeError: invalid language tag: en--US.
 PASS Intl.DateTimeFormat.prototype.constructor is Intl.DateTimeFormat
 PASS Intl.DateTimeFormat.prototype.format is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').get is an instance of Function

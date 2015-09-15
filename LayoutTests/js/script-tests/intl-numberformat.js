@@ -37,6 +37,41 @@ shouldBe("Intl.NumberFormat.supportedLocalesOf.length", "1");
 
 // Returns SupportedLocales
 shouldBeType("Intl.NumberFormat.supportedLocalesOf()", "Array");
+// Doesn't care about `this`.
+shouldBe("Intl.NumberFormat.supportedLocalesOf.call(null, 'en')", "[ 'en' ]");
+shouldBe("Intl.NumberFormat.supportedLocalesOf.call({}, 'en')", "[ 'en' ]");
+shouldBe("Intl.NumberFormat.supportedLocalesOf.call(1, 'en')", "[ 'en' ]");
+// Ignores non-object, non-string list.
+shouldBe("Intl.NumberFormat.supportedLocalesOf(9)", "[]");
+// Makes an array of tags.
+shouldBe("Intl.NumberFormat.supportedLocalesOf('en')", "[ 'en' ]");
+// Handles array-like objects with holes.
+shouldBe("Intl.NumberFormat.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' })", "[ 'es', 'en', 'de' ]");
+// Deduplicates tags.
+shouldBe("Intl.NumberFormat.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ])", "[ 'en', 'pt', 'es' ]");
+// Canonicalizes tags.
+shouldBe("Intl.NumberFormat.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED')", "[ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]");
+// Replaces outdated tags.
+shouldBe("Intl.NumberFormat.supportedLocalesOf('no-bok')", "[ 'nb' ]");
+// Doesn't throw, but ignores private tags.
+shouldBe("Intl.NumberFormat.supportedLocalesOf('x-some-thing')", "[]");
+// Throws on problems with length, get, or toString.
+shouldThrow("Intl.NumberFormat.supportedLocalesOf(Object.create(null, { length: { get() { throw Error('a') } } }))", "'Error: a'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } }))", "'Error: b'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf([ { toString() { throw Error('c') } } ])", "'Error: c'");
+// Throws on bad tags.
+shouldThrow("Intl.NumberFormat.supportedLocalesOf([ 5 ])", "'TypeError: locale value must be a string or object'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('')", "'RangeError: invalid language tag: '");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('a')", "'RangeError: invalid language tag: a'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('abcdefghij')", "'RangeError: invalid language tag: abcdefghij'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('#$')", "'RangeError: invalid language tag: #$'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-@-abc')", "'RangeError: invalid language tag: en-@-abc'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-u')", "'RangeError: invalid language tag: en-u'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-u-kn-true-u-ko-true')", "'RangeError: invalid language tag: en-u-kn-true-u-ko-true'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-x')", "'RangeError: invalid language tag: en-x'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-*')", "'RangeError: invalid language tag: en-*'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('en-')", "'RangeError: invalid language tag: en-'");
+shouldThrow("Intl.NumberFormat.supportedLocalesOf('en--US')", "'RangeError: invalid language tag: en--US'");
 
 // 11.3 Properties of the Intl.NumberFormat Prototype Object
 

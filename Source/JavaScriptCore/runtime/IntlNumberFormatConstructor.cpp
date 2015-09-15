@@ -150,22 +150,16 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(E
     // 11.2.2 Intl.NumberFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let availableLocales be %NumberFormat%.[[availableLocales]].
-    // FIXME: available = IntlNumberFormatConstructor::getAvailableLocales()
+    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    const HashSet<String> availableLocales = globalObject->intlNumberFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    // FIXME: requested = CanonicalizeLocaleList(locales)
+    JSArray* requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).
-    // FIXME: return JSValue::encode(SupportedLocales(available, requested, options));
-
-    // Return empty array until properly implemented.
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
-    JSArray* supportedLocales = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
-    if (!supportedLocales)
-        return JSValue::encode(throwOutOfMemoryError(exec));
-
-    return JSValue::encode(supportedLocales);
+    return JSValue::encode(supportedLocales(exec, availableLocales, requestedLocales, exec->argument(1)));
 }
 
 void IntlNumberFormatConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

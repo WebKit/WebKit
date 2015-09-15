@@ -1,3 +1,17 @@
+2015-09-15  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement supportedLocalesOf on Intl Constructors
+        https://bugs.webkit.org/show_bug.cgi?id=147599
+
+        Reviewed by Benjamin Poulain.
+
+        * js/intl-collator-expected.txt: Added tests for supportedLocalesOf
+        * js/intl-datetimeformat-expected.txt: Added tests for supportedLocalesOf
+        * js/intl-numberformat-expected.txt: Added tests for supportedLocalesOf
+        * js/script-tests/intl-collator.js: Added tests for supportedLocalesOf
+        * js/script-tests/intl-datetimeformat.js: Added tests for supportedLocalesOf
+        * js/script-tests/intl-numberformat.js: Added tests for supportedLocalesOf
+
 2015-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed gardening.

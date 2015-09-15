@@ -55,7 +55,7 @@
  */
 #ifdef XP_CPLUSPLUS
 #   ifndef U_SHOW_CPLUSPLUS_API
-#       define U_SHOW_CPLUSPLUS_API 1
+#       define U_SHOW_CPLUSPLUS_API 0
 #   endif
 #else
 #   undef U_SHOW_CPLUSPLUS_API

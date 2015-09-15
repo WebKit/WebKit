@@ -18,6 +18,31 @@ PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').enumerable is f
 PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').configurable is false
 PASS Intl.Collator.supportedLocalesOf.length is 1
 PASS Intl.Collator.supportedLocalesOf() is an instance of Array
+PASS Intl.Collator.supportedLocalesOf.call(null, 'en') is [ 'en' ]
+PASS Intl.Collator.supportedLocalesOf.call({}, 'en') is [ 'en' ]
+PASS Intl.Collator.supportedLocalesOf.call(1, 'en') is [ 'en' ]
+PASS Intl.Collator.supportedLocalesOf(9) is []
+PASS Intl.Collator.supportedLocalesOf('en') is [ 'en' ]
+PASS Intl.Collator.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' }) is [ 'es', 'en', 'de' ]
+PASS Intl.Collator.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ]) is [ 'en', 'pt', 'es' ]
+PASS Intl.Collator.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED') is [ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]
+PASS Intl.Collator.supportedLocalesOf('no-bok') is [ 'nb' ]
+PASS Intl.Collator.supportedLocalesOf('x-some-thing') is []
+PASS Intl.Collator.supportedLocalesOf(Object.create(null, { length: { get() { throw Error('a') } } })) threw exception Error: a.
+PASS Intl.Collator.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } })) threw exception Error: b.
+PASS Intl.Collator.supportedLocalesOf([ { toString() { throw Error('c') } } ]) threw exception Error: c.
+PASS Intl.Collator.supportedLocalesOf([ 5 ]) threw exception TypeError: locale value must be a string or object.
+PASS Intl.Collator.supportedLocalesOf('') threw exception RangeError: invalid language tag: .
+PASS Intl.Collator.supportedLocalesOf('a') threw exception RangeError: invalid language tag: a.
+PASS Intl.Collator.supportedLocalesOf('abcdefghij') threw exception RangeError: invalid language tag: abcdefghij.
+PASS Intl.Collator.supportedLocalesOf('#$') threw exception RangeError: invalid language tag: #$.
+PASS Intl.Collator.supportedLocalesOf('en-@-abc') threw exception RangeError: invalid language tag: en-@-abc.
+PASS Intl.Collator.supportedLocalesOf('en-u') threw exception RangeError: invalid language tag: en-u.
+PASS Intl.Collator.supportedLocalesOf('en-u-kn-true-u-ko-true') threw exception RangeError: invalid language tag: en-u-kn-true-u-ko-true.
+PASS Intl.Collator.supportedLocalesOf('en-x') threw exception RangeError: invalid language tag: en-x.
+PASS Intl.Collator.supportedLocalesOf('en-*') threw exception RangeError: invalid language tag: en-*.
+PASS Intl.Collator.supportedLocalesOf('en-') threw exception RangeError: invalid language tag: en-.
+PASS Intl.Collator.supportedLocalesOf('en--US') threw exception RangeError: invalid language tag: en--US.
 PASS Intl.Collator.prototype.constructor is Intl.Collator
 PASS Intl.Collator.prototype.compare is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').get is an instance of Function

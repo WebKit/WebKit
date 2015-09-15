@@ -35,8 +35,43 @@ shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').confi
 // The value of the length property of the supportedLocalesOf method is 1.
 shouldBe("Intl.Collator.supportedLocalesOf.length", "1");
 
-// Returns SupportedLocales
+// Returns SupportedLocales.
 shouldBeType("Intl.Collator.supportedLocalesOf()", "Array");
+// Doesn't care about `this`.
+shouldBe("Intl.Collator.supportedLocalesOf.call(null, 'en')", "[ 'en' ]");
+shouldBe("Intl.Collator.supportedLocalesOf.call({}, 'en')", "[ 'en' ]");
+shouldBe("Intl.Collator.supportedLocalesOf.call(1, 'en')", "[ 'en' ]");
+// Ignores non-object, non-string list.
+shouldBe("Intl.Collator.supportedLocalesOf(9)", "[]");
+// Makes an array of tags.
+shouldBe("Intl.Collator.supportedLocalesOf('en')", "[ 'en' ]");
+// Handles array-like objects with holes.
+shouldBe("Intl.Collator.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' })", "[ 'es', 'en', 'de' ]");
+// Deduplicates tags.
+shouldBe("Intl.Collator.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ])", "[ 'en', 'pt', 'es' ]");
+// Canonicalizes tags.
+shouldBe("Intl.Collator.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED')", "[ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]");
+// Replaces outdated tags.
+shouldBe("Intl.Collator.supportedLocalesOf('no-bok')", "[ 'nb' ]");
+// Doesn't throw, but ignores private tags.
+shouldBe("Intl.Collator.supportedLocalesOf('x-some-thing')", "[]");
+// Throws on problems with length, get, or toString.
+shouldThrow("Intl.Collator.supportedLocalesOf(Object.create(null, { length: { get() { throw Error('a') } } }))", "'Error: a'");
+shouldThrow("Intl.Collator.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } }))", "'Error: b'");
+shouldThrow("Intl.Collator.supportedLocalesOf([ { toString() { throw Error('c') } } ])", "'Error: c'");
+// Throws on bad tags.
+shouldThrow("Intl.Collator.supportedLocalesOf([ 5 ])", "'TypeError: locale value must be a string or object'");
+shouldThrow("Intl.Collator.supportedLocalesOf('')", "'RangeError: invalid language tag: '");
+shouldThrow("Intl.Collator.supportedLocalesOf('a')", "'RangeError: invalid language tag: a'");
+shouldThrow("Intl.Collator.supportedLocalesOf('abcdefghij')", "'RangeError: invalid language tag: abcdefghij'");
+shouldThrow("Intl.Collator.supportedLocalesOf('#$')", "'RangeError: invalid language tag: #$'");
+shouldThrow("Intl.Collator.supportedLocalesOf('en-@-abc')", "'RangeError: invalid language tag: en-@-abc'");
+shouldThrow("Intl.Collator.supportedLocalesOf('en-u')", "'RangeError: invalid language tag: en-u'");
+shouldThrow("Intl.Collator.supportedLocalesOf('en-u-kn-true-u-ko-true')", "'RangeError: invalid language tag: en-u-kn-true-u-ko-true'");
+shouldThrow("Intl.Collator.supportedLocalesOf('en-x')", "'RangeError: invalid language tag: en-x'");
+shouldThrow("Intl.Collator.supportedLocalesOf('en-*')", "'RangeError: invalid language tag: en-*'");
+shouldThrow("Intl.Collator.supportedLocalesOf('en-')", "'RangeError: invalid language tag: en-'");
+shouldThrow("Intl.Collator.supportedLocalesOf('en--US')", "'RangeError: invalid language tag: en--US'");
 
 // 10.3 Properties of the Intl.Collator Prototype Object
 

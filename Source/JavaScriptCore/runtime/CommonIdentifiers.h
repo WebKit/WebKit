@@ -142,6 +142,7 @@
     macro(lastIndex) \
     macro(length) \
     macro(line) \
+    macro(localeMatcher) \
     macro(message) \
     macro(multiline) \
     macro(name) \

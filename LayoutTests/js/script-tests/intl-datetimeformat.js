@@ -37,6 +37,41 @@ shouldBe("Intl.DateTimeFormat.supportedLocalesOf.length", "1");
 
 // Returns SupportedLocales
 shouldBeType("Intl.DateTimeFormat.supportedLocalesOf()", "Array");
+// Doesn't care about `this`.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf.call(null, 'en')", "[ 'en' ]");
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf.call({}, 'en')", "[ 'en' ]");
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf.call(1, 'en')", "[ 'en' ]");
+// Ignores non-object, non-string list.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf(9)", "[]");
+// Makes an array of tags.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf('en')", "[ 'en' ]");
+// Handles array-like objects with holes.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' })", "[ 'es', 'en', 'de' ]");
+// Deduplicates tags.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ])", "[ 'en', 'pt', 'es' ]");
+// Canonicalizes tags.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED')", "[ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]");
+// Replaces outdated tags.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf('no-bok')", "[ 'nb' ]");
+// Doesn't throw, but ignores private tags.
+shouldBe("Intl.DateTimeFormat.supportedLocalesOf('x-some-thing')", "[]");
+// Throws on problems with length, get, or toString.
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf(Object.create(null, { length: { get() { throw Error('a') } } }))", "'Error: a'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } }))", "'Error: b'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf([ { toString() { throw Error('c') } } ])", "'Error: c'");
+// Throws on bad tags.
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf([ 5 ])", "'TypeError: locale value must be a string or object'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('')", "'RangeError: invalid language tag: '");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('a')", "'RangeError: invalid language tag: a'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('abcdefghij')", "'RangeError: invalid language tag: abcdefghij'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('#$')", "'RangeError: invalid language tag: #$'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('en-@-abc')", "'RangeError: invalid language tag: en-@-abc'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('en-u')", "'RangeError: invalid language tag: en-u'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('en-u-kn-true-u-ko-true')", "'RangeError: invalid language tag: en-u-kn-true-u-ko-true'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('en-x')", "'RangeError: invalid language tag: en-x'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('en-*')", "'RangeError: invalid language tag: en-*'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('en-')", "'RangeError: invalid language tag: en-'");
+shouldThrow("Intl.DateTimeFormat.supportedLocalesOf('en--US')", "'RangeError: invalid language tag: en--US'");
 
 // 12.3 Properties of the Intl.DateTimeFormat Prototype Object
 

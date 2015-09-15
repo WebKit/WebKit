@@ -150,25 +150,17 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecS
     // 10.2.2 Intl.Collator.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let requestedLocales be CanonicalizeLocaleList(locales).
-    // FIXME: requested = CanonicalizeLocaleList(locales);
+    JSArray* requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
 
     // 2. ReturnIfAbrupt(requestedLocales).
-    // if (exec->hadException())
-    //     return JSValue::encode(jsUndefined());
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
     // 3. Return SupportedLocales(%Collator%.[[availableLocales]], requestedLocales, options).
-    // FIXME: return JSValue::encode(SupportedLocales(available, requested, options));
-
-    // Return empty array until properly implemented.
-    VM& vm = exec->vm();
     JSGlobalObject* globalObject = exec->callee()->globalObject();
-    JSArray* supportedLocales = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
-    if (!supportedLocales)
-        return JSValue::encode(throwOutOfMemoryError(exec));
-
-    return JSValue::encode(supportedLocales);
+    return JSValue::encode(supportedLocales(exec, globalObject->intlCollatorAvailableLocales(), requestedLocales, exec->argument(1)));
 }
-    
+
 void IntlCollatorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     IntlCollatorConstructor* thisObject = jsCast<IntlCollatorConstructor*>(cell);
