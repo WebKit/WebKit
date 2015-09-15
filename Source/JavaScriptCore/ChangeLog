@@ -1,3 +1,14 @@
+2015-09-15  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r189774): CLoop doesn't build after r189774
+        https://bugs.webkit.org/show_bug.cgi?id=149171
+
+        Unreviewed build fix for the C Loop.
+
+        Added needed C Loop label opcodes.
+
+        * bytecode/BytecodeList.json:
+
 2015-09-15  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement supportedLocalesOf on Intl Constructors
