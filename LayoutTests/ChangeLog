@@ -1,3 +1,10 @@
+2015-09-15  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/win/TestExpectations:
+        Fix Windows tests after r189769.
+
 2015-09-14  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test http/tests/media/media-document-referer.html is flaky

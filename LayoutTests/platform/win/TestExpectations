@@ -3177,6 +3177,7 @@ fast/text/fallback-language-han.html [ Skip ]
 
 # Changing system language is not supported.
 fast/text/international/system-language [ Skip ]
+webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
