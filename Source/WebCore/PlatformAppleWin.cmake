@@ -49,6 +49,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/win/PlatformCAFiltersWin.cpp
     platform/graphics/ca/win/PlatformCALayerWin.cpp
     platform/graphics/ca/win/PlatformCALayerWinInternal.cpp
+    platform/graphics/ca/win/WebTiledBackingLayerWin.cpp
     platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp
 
     platform/graphics/cg/BitmapImageCG.cpp

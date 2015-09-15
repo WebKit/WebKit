@@ -32,8 +32,10 @@
 #include "GraphicsContext.h"
 #include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWinInternal.h"
+#include "TextRun.h"
 #include "TileController.h"
 #include "WebCoreHeaderDetection.h"
+#include "WebTiledBackingLayerWin.h"
 #include <QuartzCore/CoreAnimationCF.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/CurrentTime.h>
@@ -142,17 +144,20 @@ PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer
 #endif
 
     // Create the PlatformCALayerWinInternal object and point to it in the userdata.
-    PlatformCALayerWinInternal* intern = new PlatformCALayerWinInternal(this);
+    PlatformCALayerWinInternal* intern = nullptr;
+
+    if (usesTiledBackingLayer()) {
+        intern = new WebTiledBackingLayerWin(this);
+        TileController* tileController = reinterpret_cast<WebTiledBackingLayerWin*>(intern)->createTileController(this);
+        m_customSublayers = std::make_unique<PlatformCALayerList>(tileController->containerLayers());
+    } else
+        intern = new PlatformCALayerWinInternal(this);
+
     CACFLayerSetUserData(m_layer.get(), intern);
 
     // Set the display callback
     CACFLayerSetDisplayCallback(m_layer.get(), displayCallback);
     CACFLayerSetLayoutCallback(m_layer.get(), layoutSublayersProc);
-
-    if (usesTiledBackingLayer()) {
-        TileController* tileController = intern->createTileController(this);
-        m_customSublayers = std::make_unique<PlatformCALayerList>(tileController->containerLayers());
-    }
 }
 
 PlatformCALayerWin::~PlatformCALayerWin()
@@ -160,9 +165,12 @@ PlatformCALayerWin::~PlatformCALayerWin()
     // Toss all the kids
     removeAllSublayers();
 
-    // Get rid of the user data
     PlatformCALayerWinInternal* layerIntern = intern(this);
-    CACFLayerSetUserData(m_layer.get(), 0);
+    if (usesTiledBackingLayer())
+        reinterpret_cast<WebTiledBackingLayerWin*>(layerIntern)->invalidate();
+
+    // Get rid of the user data
+    CACFLayerSetUserData(m_layer.get(), nullptr);
 
     CACFLayerRemoveFromSuperlayer(m_layer.get());
 
@@ -358,12 +366,12 @@ void PlatformCALayerWin::setMask(PlatformCALayer* layer)
 
 bool PlatformCALayerWin::isOpaque() const
 {
-    return CACFLayerIsOpaque(m_layer.get());
+    return intern(this)->isOpaque();
 }
 
 void PlatformCALayerWin::setOpaque(bool value)
 {
-    CACFLayerSetOpaque(m_layer.get(), value);
+    intern(this)->setOpaque(value);
     setNeedsCommit();
 }
 
@@ -526,19 +534,13 @@ void PlatformCALayerWin::setBackgroundColor(const Color& value)
 
 void PlatformCALayerWin::setBorderWidth(float value)
 {
-    CACFLayerSetBorderWidth(m_layer.get(), value);
+    intern(this)->setBorderWidth(value);
     setNeedsCommit();
 }
 
 void PlatformCALayerWin::setBorderColor(const Color& value)
 {
-    CGFloat components[4];
-    value.getRGBA(components[0], components[1], components[2], components[3]);
-
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
-
-    CACFLayerSetBorderColor(m_layer.get(), color.get());
+    intern(this)->setBorderColor(value);
     setNeedsCommit();
 }
 
@@ -587,18 +589,13 @@ void PlatformCALayerWin::setEdgeAntialiasingMask(unsigned mask)
 
 float PlatformCALayerWin::contentsScale() const
 {
-#if HAVE(CACFLAYER_SETCONTENTSSCALE)
-    return CACFLayerGetContentsScale(m_layer.get());
-#else
-    return 1.0f;
-#endif
+    return intern(this)->contentsScale();
 }
 
 void PlatformCALayerWin::setContentsScale(float scaleFactor)
 {
-#if HAVE(CACFLAYER_SETCONTENTSSCALE)
-    CACFLayerSetContentsScale(m_layer.get(), scaleFactor);
-#endif
+    intern(this)->setContentsScale(scaleFactor);
+    setNeedsCommit();
 }
 
 float PlatformCALayerWin::cornerRadius() const
@@ -776,5 +773,26 @@ TiledBacking* PlatformCALayerWin::tiledBacking()
     if (!usesTiledBackingLayer())
         return nullptr;
 
-    return intern(this)->tiledBacking();
+    return reinterpret_cast<WebTiledBackingLayerWin*>(intern(this))->tiledBacking();
+}
+
+void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, const char* message, size_t length) const
+{
+    String text(message, length);
+
+    FontDescription desc;
+
+    NONCLIENTMETRICS metrics;
+    metrics.cbSize = sizeof(metrics);
+    SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
+    desc.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
+
+    desc.setComputedSize(18);
+
+    FontCascade font = FontCascade(desc, 0, 0);
+    font.update(nullptr);
+
+    GraphicsContext cg(context);
+    cg.setFillColor(Color::black, ColorSpaceDeviceRGB);
+    cg.drawText(font, TextRun(text), IntPoint(x, y));
 }

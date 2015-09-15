@@ -3033,9 +3033,6 @@
     <ClCompile Include="..\dom\ChildNodeList.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\ClassNodeList.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\ClientRect.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -3232,9 +3229,6 @@
       <Filter>dom</Filter>
     </ClCompile>
     <ClCompile Include="..\dom\Node.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dom\NodeFilter.cpp">
       <Filter>dom</Filter>
     </ClCompile>
     <ClCompile Include="..\dom\NodeFilterCondition.cpp">
@@ -7263,6 +7257,12 @@
     <ClCompile Include="..\page\DOMSecurityPolicy.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\DataURLDecoder.cpp" />
+    <ClCompile Include="..\dom\ClassCollection.cpp" />
+    <ClCompile Include="..\html\GenericCachedHTMLCollection.cpp" />
+    <ClCompile Include="..\platform\graphics\ca\win\WebTiledBackingLayerWin.cpp">
+      <Filter>platform\graphics\ca\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -10095,9 +10095,6 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\ChildNodeList.h">
-      <Filter>dom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dom\ClassNodeList.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\ClientRect.h">
@@ -15248,6 +15245,12 @@
     </ClInclude>
     <ClInclude Include="..\page\DOMSecurityPolicy.h">
       <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendRouter.h" />
+    <ClInclude Include="..\platform\network\DataURLDecoder.h" />
+    <ClInclude Include="..\dom\ClassCollection.h" />
+    <ClInclude Include="..\platform\graphics\ca\win\WebTiledBackingLayerWin.h">
+      <Filter>platform\graphics\ca\win</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
