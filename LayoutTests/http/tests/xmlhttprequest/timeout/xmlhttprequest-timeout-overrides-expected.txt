@@ -5,4 +5,5 @@ This test validates that the XHR2 timeout property behaves as expected in async 
 
 PASS XHR2 Timeout Property Tests 
 PASS XHR2 Timeout Property Tests 1 
+PASS XHR2 Timeout Property Tests 2 
 
