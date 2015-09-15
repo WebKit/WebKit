@@ -78,12 +78,12 @@ bool HTMLTextFormControlElement::childShouldCreateRenderer(const Node& child) co
 
 Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(ContainerNode& insertionPoint)
 {
-    HTMLFormControlElementWithState::insertedInto(insertionPoint);
+    InsertionNotificationRequest insertionNotificationRequest = HTMLFormControlElementWithState::insertedInto(insertionPoint);
     if (!insertionPoint.inDocument())
-        return InsertionDone;
+        return insertionNotificationRequest;
     String initialValue = value();
     setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? emptyString() : initialValue);
-    return InsertionDone;
+    return insertionNotificationRequest;
 }
 
 void HTMLTextFormControlElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection direction)

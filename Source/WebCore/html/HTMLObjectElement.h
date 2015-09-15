@@ -63,6 +63,7 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void finishedInsertingSubtree() override final;
     virtual void removedFrom(ContainerNode&) override;
 
     virtual void didMoveToNewDocument(Document* oldDocument) override;
