@@ -1,3 +1,20 @@
+2015-09-14  Chris Dumez  <cdumez@apple.com>
+
+        window.HTMLDetailsElement should exist
+        https://bugs.webkit.org/show_bug.cgi?id=149139
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline test now that HTMLDetailsElement is exposed on the global
+        Window object.
+
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2015-09-14  Brian Burg  <bburg@apple.com>
 
         Web Inspector: backend command promises are not rejected when a protocol error occurs

@@ -247,8 +247,8 @@ FAIL Interfaces for datalist assert_equals: Element datalist should have HTMLDat
 FAIL Interfaces for DATALIST assert_equals: Element DATALIST should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
 PASS Interfaces for output 
 PASS Interfaces for OUTPUT 
-FAIL Interfaces for details window[i] is not a function. (evaluating 'e instanceof window[i]')
-FAIL Interfaces for DETAILS window[i] is not a function. (evaluating 'e instanceof window[i]')
+PASS Interfaces for details 
+PASS Interfaces for DETAILS 
 FAIL Interfaces for command assert_equals: Element command should have HTMLCommandElement as its primary interface. expected "[object HTMLCommandElement]" but got "[object HTMLElement]"
 FAIL Interfaces for COMMAND assert_equals: Element COMMAND should have HTMLCommandElement as its primary interface. expected "[object HTMLCommandElement]" but got "[object HTMLElement]"
 PASS Interfaces for nextid 

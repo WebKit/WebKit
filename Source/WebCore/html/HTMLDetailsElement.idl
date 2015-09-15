@@ -18,7 +18,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=DETAILS_ELEMENT
 ] interface HTMLDetailsElement : HTMLElement {
     [Reflect] attribute boolean open;

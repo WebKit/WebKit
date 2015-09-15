@@ -1,7 +1,7 @@
 
 PASS HTML parsing should locate 2 details elements in this document 
 PASS HTML parsing should close an unclosed <p> before <details> 
-FAIL HTMLDetailsElement should be exposed for prototyping assert_true: expected true got false
-FAIL a dynamically created details element should be instanceof HTMLDetailsElement window.HTMLDetailsElement is not a function. (evaluating 'makeDetails() instanceof window.HTMLDetailsElement')
-FAIL a details element from the parser should be instanceof HTMLDetailsElement window.HTMLDetailsElement is not a function. (evaluating 'document.getElementById('one').getElementsByTagName('details')[0] instanceof window.HTMLDetailsElement')
+PASS HTMLDetailsElement should be exposed for prototyping 
+PASS a dynamically created details element should be instanceof HTMLDetailsElement 
+PASS a details element from the parser should be instanceof HTMLDetailsElement 
 
