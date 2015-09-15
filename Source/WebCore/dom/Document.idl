@@ -92,11 +92,11 @@
 
     // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-    [ObjCLegacyUnnamedParameters] NodeIterator createNodeIterator(Node root,
+    [ObjCLegacyUnnamedParameters, RaisesException] NodeIterator createNodeIterator(Node root,
         optional unsigned long whatToShow,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);
-    [ObjCLegacyUnnamedParameters] TreeWalker createTreeWalker(Node root,
+    [ObjCLegacyUnnamedParameters, RaisesException] TreeWalker createTreeWalker(Node root,
         optional unsigned long whatToShow,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);

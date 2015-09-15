@@ -5,8 +5,12 @@
 <script>
 description("Tests parameters of document.createTreeWalker() API.");
 
-debug("* No parameters");
+debug("No parameters");
 shouldThrow("document.createTreeWalker()", "'TypeError: Not enough arguments'");
+
+debug("")
+debug("Null root node");
+shouldThrow("document.createTreeWalker(null)", "'TypeError: Type error'");
 
 debug("");
 debug("Default parameters");

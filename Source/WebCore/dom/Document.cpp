@@ -1720,14 +1720,52 @@ Ref<Range> Document::createRange()
     return Range::create(*this);
 }
 
-RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences, ExceptionCode& ec)
 {
-    return NodeIterator::create(root, whatToShow, filter, expandEntityReferences);
+    if (!root) {
+        ec = TypeError;
+        return nullptr;
+    }
+    return NodeIterator::create(root, whatToShow, WTF::move(filter), expandEntityReferences);
 }
 
-RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, ExceptionCode& ec)
 {
-    return TreeWalker::create(root, whatToShow, filter, expandEntityReferences);
+    return createNodeIterator(root, whatToShow, WTF::move(filter), false, ec);
+}
+
+RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, ExceptionCode& ec)
+{
+    return createNodeIterator(root, whatToShow, nullptr, false, ec);
+}
+
+RefPtr<NodeIterator> Document::createNodeIterator(Node* root, ExceptionCode& ec)
+{
+    return createNodeIterator(root, 0xFFFFFFFF, nullptr, false, ec);
+}
+
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences, ExceptionCode& ec)
+{
+    if (!root) {
+        ec = TypeError;
+        return nullptr;
+    }
+    return TreeWalker::create(root, whatToShow, WTF::move(filter), expandEntityReferences);
+}
+
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, ExceptionCode& ec)
+{
+    return createTreeWalker(root, whatToShow, WTF::move(filter), false, ec);
+}
+
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, ExceptionCode& ec)
+{
+    return createTreeWalker(root, whatToShow, nullptr, false, ec);
+}
+
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, ExceptionCode& ec)
+{
+    return createTreeWalker(root, 0xFFFFFFFF, nullptr, false, ec);
 }
 
 void Document::scheduleForcedStyleRecalc()

@@ -37,9 +37,9 @@ namespace WebCore {
 
     class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
     public:
-        static Ref<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned long whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+        static Ref<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences)
         {
-            return adoptRef(*new TreeWalker(rootNode, whatToShow, filter, expandEntityReferences));
+            return adoptRef(*new TreeWalker(rootNode, whatToShow, WTF::move(filter), expandEntityReferences));
         }                            
 
         Node* currentNode() const { return m_current.get(); }
@@ -54,7 +54,7 @@ namespace WebCore {
         Node* nextNode();
 
     private:
-        TreeWalker(PassRefPtr<Node>, unsigned long whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+        TreeWalker(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool expandEntityReferences);
         
         Node* setCurrent(PassRefPtr<Node>);
 

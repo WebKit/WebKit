@@ -41,7 +41,7 @@ namespace WebCore {
         bool expandEntityReferences() const { return m_expandEntityReferences; }
 
     protected:
-        NodeIteratorBase(PassRefPtr<Node>, unsigned long whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+        NodeIteratorBase(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool expandEntityReferences);
         short acceptNode(Node*) const;
 
     private:

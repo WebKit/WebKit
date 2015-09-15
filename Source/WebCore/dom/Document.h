@@ -533,9 +533,15 @@ public:
 
     WEBCORE_EXPORT Ref<Range> createRange();
 
-    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned long whatToShow = 0xFFFFFFFF, PassRefPtr<NodeFilter> = nullptr, bool expandEntityReferences = false);
+    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool expandEntityReferences, ExceptionCode&);
+    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, ExceptionCode&);
+    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned long whatToShow, ExceptionCode&);
+    RefPtr<NodeIterator> createNodeIterator(Node* root, ExceptionCode&);
 
-    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned long whatToShow = 0xFFFFFFFF, PassRefPtr<NodeFilter> = nullptr, bool expandEntityReferences = false);
+    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool expandEntityReferences, ExceptionCode&);
+    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, ExceptionCode&);
+    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned long whatToShow, ExceptionCode&);
+    RefPtr<TreeWalker> createTreeWalker(Node* root, ExceptionCode&);
 
     // Special support for editing
     Ref<CSSStyleDeclaration> createCSSStyleDeclaration();

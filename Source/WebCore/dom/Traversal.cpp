@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-NodeIteratorBase::NodeIteratorBase(PassRefPtr<Node> rootNode, unsigned long whatToShow, PassRefPtr<NodeFilter> nodeFilter, bool expandEntityReferences)
+NodeIteratorBase::NodeIteratorBase(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& nodeFilter, bool expandEntityReferences)
     : m_root(rootNode)
     , m_whatToShow(whatToShow)
-    , m_filter(nodeFilter)
+    , m_filter(WTF::move(nodeFilter))
     , m_expandEntityReferences(expandEntityReferences)
 {
 }

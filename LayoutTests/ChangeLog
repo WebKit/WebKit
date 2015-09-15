@@ -1,5 +1,20 @@
 2015-09-14  Chris Dumez  <cdumez@apple.com>
 
+        Document.createNodeIterator(null) / Document.createTreeWalker(null) should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=149126
+        <rdar://problem/22564891>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing tests to add test coverage for this case.
+
+        * fast/dom/createNodeIterator-parameters-expected.txt:
+        * fast/dom/createNodeIterator-parameters.html:
+        * fast/dom/createTreeWalker-parameters-expected.txt:
+        * fast/dom/createTreeWalker-parameters.html:
+
+2015-09-14  Chris Dumez  <cdumez@apple.com>
+
         window.HTMLDetailsElement should exist
         https://bugs.webkit.org/show_bug.cgi?id=149139
 
