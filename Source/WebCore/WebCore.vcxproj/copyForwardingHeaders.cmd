@@ -22,6 +22,7 @@ echo Copying Forwarding Headers...
 @xcopy /y /d "%ProjectDir%..\Modules\gamepad\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\Modules\geolocation\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\Modules\indexeddb\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
+@xcopy /y /d "%ProjectDir%..\Modules\indexeddb\legacy\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\Modules\mediacontrols\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\Modules\mediasource\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\Modules\navigatorcontentutils\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
