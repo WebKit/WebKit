@@ -1,3 +1,10 @@
+2015-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline several W3C HTML tests on iOS after r189762.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+
 2015-09-14  David Hyatt  <hyatt@apple.com>
 
         2015-09-14  David Hyatt  <hyatt@apple.com>

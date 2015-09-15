@@ -553,6 +553,7 @@ CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'validity' on a
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'validationMessage' on a non-HTMLFieldSetElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'form' on a non-HTMLLegendElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'align' on a non-HTMLLegendElement object.
+CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'open' on a non-HTMLDetailsElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'compact' on a non-HTMLMenuElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'src' on a non-HTMLScriptElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'type' on a non-HTMLScriptElement object.
@@ -5089,12 +5090,16 @@ PASS ValidityState interface: document.createElement("input").validity must inhe
 PASS ValidityState interface: document.createElement("input").validity must inherit property "badInput" with the proper type (8) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "customError" with the proper type (9) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "valid" with the proper type (10) 
-FAIL HTMLDetailsElement interface: existence and properties of interface object assert_own_property: self does not have own property "HTMLDetailsElement" expected property "HTMLDetailsElement" missing
-FAIL HTMLDetailsElement interface object length assert_own_property: self does not have own property "HTMLDetailsElement" expected property "HTMLDetailsElement" missing
-FAIL HTMLDetailsElement interface: existence and properties of interface prototype object assert_own_property: self does not have own property "HTMLDetailsElement" expected property "HTMLDetailsElement" missing
-FAIL HTMLDetailsElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "HTMLDetailsElement" expected property "HTMLDetailsElement" missing
-FAIL HTMLDetailsElement interface: attribute open assert_own_property: self does not have own property "HTMLDetailsElement" expected property "HTMLDetailsElement" missing
-FAIL HTMLDetailsElement must be primary interface of document.createElement("details") assert_own_property: self does not have own property "HTMLDetailsElement" expected property "HTMLDetailsElement" missing
+FAIL HTMLDetailsElement interface: existence and properties of interface object assert_equals: prototype of self's property "HTMLDetailsElement" is not Function.prototype expected (function) function "function () {
+    [native code]
+}" but got (object) object "[object Object]"
+PASS HTMLDetailsElement interface object length 
+PASS HTMLDetailsElement interface: existence and properties of interface prototype object 
+FAIL HTMLDetailsElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDetailsElement.prototype.constructor is not writable expected true got false
+FAIL HTMLDetailsElement interface: attribute open assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS HTMLDetailsElement must be primary interface of document.createElement("details") 
 PASS Stringification of document.createElement("details") 
 PASS HTMLDetailsElement interface: document.createElement("details") must inherit property "open" with the proper type (0) 
 FAIL HTMLMenuElement interface: existence and properties of interface object assert_equals: prototype of self's property "HTMLMenuElement" is not Function.prototype expected (function) function "function () {
