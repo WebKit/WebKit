@@ -2815,6 +2815,3 @@ http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame.html
 
 # -webkit-flex off-by-one px
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-
-# WebKitTestRunner declarative language setting is broken for iOS
-webkit.org/b/149119 fast/text/international/system-language [ Skip ]

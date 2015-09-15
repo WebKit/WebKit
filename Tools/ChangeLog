@@ -1,3 +1,17 @@
+2015-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WebKitTestRunner declarative language setting is broken for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=149119
+
+        Unreviewed.
+
+        In all of the patches on webkit.org/b/189669, my patch to get this working on iOS was
+        lost in the final version which got committed. This simply implements the existing
+        OS X behavior on iOS.
+
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundleIOS.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2015-09-14  Dewei Zhu  <dewei_zhu@apple.com>
 
         Unreviewed, add myself to committers list.

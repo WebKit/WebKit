@@ -1,3 +1,12 @@
+2015-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WebKitTestRunner declarative language setting is broken for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=149119
+
+        Unreviewed.
+
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-14  Chris Dumez  <cdumez@apple.com>
 
         Document.createNodeIterator(null) / Document.createTreeWalker(null) should throw a TypeError

@@ -35,9 +35,14 @@ namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
-    NSDictionary *dict = [NSDictionary dictionary];
+    // Language was set up earlier in main(). Don't clobber it.
+    NSArray *languages = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] valueForKey:@"AppleLanguages"];
 
-    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
+    RetainPtr<NSMutableDictionary *> dict = adoptNS([[NSMutableDictionary alloc] init]);
+    if (languages)
+        [dict setObject:languages forKey:@"AppleLanguages"];
+
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict.get() forName:NSArgumentDomain];
 
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
