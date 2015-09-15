@@ -72,7 +72,6 @@ ImplementationNamespace=*
 ImplementedAs=*
 InitializedByEventConstructor
 InterfaceName=*
-IsIndex
 IsWeakCallback
 JSCustomDefineOwnProperty
 JSCustomDefineOwnPropertyOnPrototype

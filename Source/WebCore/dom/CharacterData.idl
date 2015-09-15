@@ -23,15 +23,15 @@ interface CharacterData : Node {
 
     readonly attribute unsigned long length;
     
-    [TreatReturnedNullStringAs=Null, ObjCLegacyUnnamedParameters, RaisesException] DOMString substringData([IsIndex] unsigned long offset, [IsIndex] unsigned long length);
+    [TreatReturnedNullStringAs=Null, ObjCLegacyUnnamedParameters, RaisesException] DOMString substringData(unsigned long offset, unsigned long length);
 
     void appendData(DOMString data);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void insertData([IsIndex] unsigned long offset, DOMString data);
+    [ObjCLegacyUnnamedParameters, RaisesException] void insertData(unsigned long offset, DOMString data);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void deleteData([IsIndex] unsigned long offset, [IsIndex] unsigned long length);
+    [ObjCLegacyUnnamedParameters, RaisesException] void deleteData(unsigned long offset, unsigned long length);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void replaceData([IsIndex] unsigned long offset, [IsIndex] unsigned long length, DOMString data);
+    [ObjCLegacyUnnamedParameters, RaisesException] void replaceData(unsigned long offset, unsigned long length, DOMString data);
 };
 
 CharacterData implements ChildNode;

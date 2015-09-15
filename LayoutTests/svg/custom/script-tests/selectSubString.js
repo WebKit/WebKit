@@ -10,7 +10,7 @@ svgText.appendChild(document.createTextNode("abc"));
 svgRoot.appendChild(svgText);
 
 shouldThrow("svgText.selectSubString(-1, 0)");
-shouldThrow("svgText.getSubStringLength(0, -1)");
+shouldBe("svgText.getSubStringLength(0, -1)", "60");
 shouldThrow("svgText.getSubStringLength(3, 0)");
 
 // cleanup

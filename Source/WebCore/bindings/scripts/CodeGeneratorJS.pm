@@ -3397,16 +3397,6 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name = $outer" . JSValueToNative($parameter, $inner, $function->signature->extendedAttributes->{"Conditional"}) . ";\n");
             }
 
-            # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
-            # But this needs to be done in the bindings, because the type is unsigned and the fact that it
-            # was negative will be lost by the time we're inside the DOM.
-            if ($parameter->extendedAttributes->{"IsIndex"}) {
-                push(@$outputArray, "    if ($name < 0) {\n");
-                push(@$outputArray, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
-                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-                push(@$outputArray, "    }\n");
-            }
-
             # Check if the type conversion succeeded.
             push(@$outputArray, "    if (UNLIKELY(exec->hadException()))\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
@@ -3810,11 +3800,6 @@ sub GetNativeTypeFromSignature
 {
     my $signature = shift;
     my $type = $signature->type;
-
-    if ($type eq "unsigned long" and $signature->extendedAttributes->{"IsIndex"}) {
-        # Special-case index arguments because we need to check that they aren't < 0.
-        return "int";
-    }
 
     return GetNativeType($type);
 }

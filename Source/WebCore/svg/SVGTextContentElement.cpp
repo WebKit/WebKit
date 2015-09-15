@@ -122,6 +122,7 @@ float SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchar
         return 0.0f;
     }
 
+    nchars = std::min(nchars, numberOfChars - charnum);
     return SVGTextQuery(renderer()).subStringLength(charnum, nchars);
 }
 
@@ -187,8 +188,7 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
         return;
     }
 
-    if (nchars > numberOfChars - charnum)
-        nchars = numberOfChars - charnum;
+    nchars = std::min(nchars, numberOfChars - charnum);
 
     ASSERT(document().frame());
 

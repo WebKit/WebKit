@@ -31,7 +31,7 @@
     MasqueradesAsUndefined
 ] interface TestEventTarget {
 
-    getter Node item([IsIndex] unsigned long index);
+    getter Node item(unsigned long index);
     getter Node (DOMString name);
 
     void addEventListener(DOMString type, 

@@ -10,7 +10,7 @@ PASS Text.substringData() with string offset
 PASS Text.substringData() with in-bounds count 
 PASS Text.substringData() with large count 
 PASS Text.substringData() with very large count 
-FAIL Text.substringData() with negative count IndexSizeError: DOM Exception 1
+PASS Text.substringData() with negative count 
 PASS Text.substringData() with non-ASCII data 
 PASS Text.substringData() with non-BMP data 
 PASS Comment.substringData() with too few arguments 
@@ -24,7 +24,7 @@ PASS Comment.substringData() with string offset
 PASS Comment.substringData() with in-bounds count 
 PASS Comment.substringData() with large count 
 PASS Comment.substringData() with very large count 
-FAIL Comment.substringData() with negative count IndexSizeError: DOM Exception 1
+PASS Comment.substringData() with negative count 
 PASS Comment.substringData() with non-ASCII data 
 PASS Comment.substringData() with non-BMP data 
 

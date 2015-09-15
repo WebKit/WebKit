@@ -1,3 +1,27 @@
+2015-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard [IsIndex] WebKit IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=149122
+        <rdar://problem/22547139>
+
+        Reviewed by Darin Adler.
+
+        * dom/html/level1/core/hc_characterdataindexsizeerrdeletedatacountnegative-expected.txt:
+        * dom/html/level1/core/hc_characterdataindexsizeerrreplacedatacountnegative-expected.txt:
+        * dom/html/level1/core/hc_characterdataindexsizeerrsubstringcountnegative-expected.txt:
+        * dom/xhtml/level1/core/hc_characterdataindexsizeerrdeletedatacountnegative-expected.txt:
+        * dom/xhtml/level1/core/hc_characterdataindexsizeerrreplacedatacountnegative-expected.txt:
+        * dom/xhtml/level1/core/hc_characterdataindexsizeerrsubstringcountnegative-expected.txt:
+        Rebaseline outdated DOM tests that are now failing.
+
+        * svg/custom/getSubStringLength-expected.txt:
+        * svg/custom/script-tests/getSubStringLength.js:
+        * svg/custom/script-tests/selectSubString.js:
+        * svg/custom/selectSubString-expected.txt:
+        Update existing SVG tests that were expecting an exception if the nchars
+        parameter in the SVGTextContentElement API is negative. I have verified
+        that Chrome and Firefox do not throw for these either.
+
 2015-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add tests for control characters being rendered visibly
