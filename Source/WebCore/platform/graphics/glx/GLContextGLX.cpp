@@ -226,7 +226,7 @@ cairo_device_t* GLContextGLX::cairoDevice()
     if (m_cairoDevice)
         return m_cairoDevice;
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(ACCELERATED_2D_CANVAS) && CAIRO_HAS_GLX_FUNCTIONS
     m_cairoDevice = cairo_glx_device_create(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_context.get());
 #endif
 
