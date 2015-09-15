@@ -65,7 +65,7 @@ COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginValues) == sizeof(LayoutUnit[4]), M
 COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginInfo) == sizeof(SameSizeAsMarginInfo), MarginInfo_should_stay_small);
 
 // Our MarginInfo state used when laying out block children.
-RenderBlockFlow::MarginInfo::MarginInfo(RenderBlockFlow& block, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding)
+RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding)
     : m_atBeforeSideOfBlock(true)
     , m_atAfterSideOfBlock(false)
     , m_hasMarginBeforeQuirk(false)
@@ -967,15 +967,22 @@ bool RenderBlockFlow::childrenPreventSelfCollapsing() const
 
 LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& marginInfo)
 {
-    bool childDiscardMarginBefore = mustDiscardMarginBeforeForChild(child);
-    bool childDiscardMarginAfter = mustDiscardMarginAfterForChild(child);
-    bool childIsSelfCollapsing = child.isSelfCollapsingBlock();
+    return collapseMarginsWithChildInfo(&child, child.previousSibling(), marginInfo);
+}
 
+LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, RenderObject* prevSibling, MarginInfo& marginInfo)
+{
+    bool childDiscardMarginBefore = child ? mustDiscardMarginBeforeForChild(*child) : false;
+    bool childDiscardMarginAfter = child ? mustDiscardMarginAfterForChild(*child) : false;
+    bool childIsSelfCollapsing = child ? child->isSelfCollapsingBlock() : false;
+    bool beforeQuirk = child ? hasMarginBeforeQuirk(*child) : false;
+    bool afterQuirk = child ? hasMarginAfterQuirk(*child) : false;
+    
     // The child discards the before margin when the the after margin has discard in the case of a self collapsing block.
     childDiscardMarginBefore = childDiscardMarginBefore || (childDiscardMarginAfter && childIsSelfCollapsing);
-
+    
     // Get the four margin values for the child and cache them.
-    const MarginValues childMargins = marginValuesForChild(child);
+    const MarginValues childMargins = child ? marginValuesForChild(*child) : MarginValues(0, 0, 0, 0);
 
     // Get our max pos and neg top margins.
     LayoutUnit posTop = childMargins.positiveMarginBefore();
@@ -988,34 +995,31 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
         negTop = std::max(negTop, childMargins.negativeMarginAfter());
     }
     
-    // See if the top margin is quirky. We only care if this child has
-    // margins that will collapse with us.
-    bool topQuirk = hasMarginBeforeQuirk(child);
-
     if (marginInfo.canCollapseWithMarginBefore()) {
         if (!childDiscardMarginBefore && !marginInfo.discardMargin()) {
             // This child is collapsing with the top of the
             // block. If it has larger margin values, then we need to update
             // our own maximal values.
-            if (!document().inQuirksMode() || !marginInfo.quirkContainer() || !topQuirk)
+            if (!document().inQuirksMode() || !marginInfo.quirkContainer() || !beforeQuirk)
                 setMaxMarginBeforeValues(std::max(posTop, maxPositiveMarginBefore()), std::max(negTop, maxNegativeMarginBefore()));
 
             // The minute any of the margins involved isn't a quirk, don't
             // collapse it away, even if the margin is smaller (www.webreference.com
             // has an example of this, a <dt> with 0.8em author-specified inside
             // a <dl> inside a <td>.
-            if (!marginInfo.determinedMarginBeforeQuirk() && !topQuirk && (posTop - negTop)) {
+            if (!marginInfo.determinedMarginBeforeQuirk() && !beforeQuirk && (posTop - negTop)) {
                 setHasMarginBeforeQuirk(false);
                 marginInfo.setDeterminedMarginBeforeQuirk(true);
             }
 
-            if (!marginInfo.determinedMarginBeforeQuirk() && topQuirk && !marginBefore())
+            if (!marginInfo.determinedMarginBeforeQuirk() && beforeQuirk && !marginBefore()) {
                 // We have no top margin and our top child has a quirky margin.
                 // We will pick up this quirky margin and pass it through.
                 // This deals with the <td><div><p> case.
                 // Don't do this for a block that split two inlines though. You do
                 // still apply margins in this case.
                 setHasMarginBeforeQuirk(true);
+            }
         } else
             // The before margin of the container will also discard all the margins it is collapsing with.
             setMustDiscardMarginBefore();
@@ -1028,18 +1032,18 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
     }
 
     if (marginInfo.quirkContainer() && marginInfo.atBeforeSideOfBlock() && (posTop - negTop))
-        marginInfo.setHasMarginBeforeQuirk(topQuirk);
+        marginInfo.setHasMarginBeforeQuirk(beforeQuirk);
 
     LayoutUnit beforeCollapseLogicalTop = logicalHeight();
     LayoutUnit logicalTop = beforeCollapseLogicalTop;
 
     LayoutUnit clearanceForSelfCollapsingBlock;
-    RenderObject* prev = child.previousSibling();
+    
     // If the child's previous sibling is a self-collapsing block that cleared a float then its top border edge has been set at the bottom border edge
     // of the float. Since we want to collapse the child's top margin with the self-collapsing block's top and bottom margins we need to adjust our parent's height to match the 
     // margin top of the self-collapsing block. If the resulting collapsed margin leaves the child still intruding into the float then we will want to clear it.
-    if (!marginInfo.canCollapseWithMarginBefore() && is<RenderBlockFlow>(prev) && downcast<RenderBlockFlow>(*prev).isSelfCollapsingBlock()) {
-        clearanceForSelfCollapsingBlock = downcast<RenderBlockFlow>(*prev).marginOffsetForSelfCollapsingBlock();
+    if (!marginInfo.canCollapseWithMarginBefore() && is<RenderBlockFlow>(prevSibling) && downcast<RenderBlockFlow>(*prevSibling).isSelfCollapsingBlock()) {
+        clearanceForSelfCollapsingBlock = downcast<RenderBlockFlow>(*prevSibling).marginOffsetForSelfCollapsingBlock();
         setLogicalHeight(logicalHeight() - clearanceForSelfCollapsingBlock);
     }
 
@@ -1067,13 +1071,13 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
                 logicalTop = logicalHeight() + collapsedBeforePos - collapsedBeforeNeg;
         }
     } else {
-        if (mustSeparateMarginBeforeForChild(child)) {
+        if (child && mustSeparateMarginBeforeForChild(*child)) {
             ASSERT(!marginInfo.discardMargin() || (marginInfo.discardMargin() && !marginInfo.margin()));
             // If we are at the before side of the block and we collapse, ignore the computed margin
             // and just add the child margin to the container height. This will correctly position
             // the child inside the container.
             LayoutUnit separateMargin = !marginInfo.canCollapseWithMarginBefore() ? marginInfo.margin() : LayoutUnit::fromPixel(0);
-            setLogicalHeight(logicalHeight() + separateMargin + marginBeforeForChild(child));
+            setLogicalHeight(logicalHeight() + separateMargin + marginBeforeForChild(*child));
             logicalTop = logicalHeight();
         } else if (!marginInfo.discardMargin() && (!marginInfo.atBeforeSideOfBlock()
             || (!marginInfo.canCollapseMarginBeforeWithChildren()
@@ -1093,7 +1097,7 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
             marginInfo.clearMargin();
 
         if (marginInfo.margin())
-            marginInfo.setHasMarginAfterQuirk(hasMarginAfterQuirk(child));
+            marginInfo.setHasMarginAfterQuirk(afterQuirk);
     }
     
     // If margins would pull us past the top of the next page, then we need to pull back and pretend like the margins
@@ -1106,10 +1110,10 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
         setLogicalHeight(logicalHeight() + (logicalTop - oldLogicalTop));
     }
 
-    if (is<RenderBlockFlow>(prev) && !prev->isFloatingOrOutOfFlowPositioned()) {
+    if (is<RenderBlockFlow>(prevSibling) && !prevSibling->isFloatingOrOutOfFlowPositioned()) {
         // If |child| is a self-collapsing block it may have collapsed into a previous sibling and although it hasn't reduced the height of the parent yet
         // any floats from the parent will now overhang.
-        RenderBlockFlow& block = downcast<RenderBlockFlow>(*prev);
+        RenderBlockFlow& block = downcast<RenderBlockFlow>(*prevSibling);
         LayoutUnit oldLogicalHeight = logicalHeight();
         setLogicalHeight(logicalTop);
         if (block.containsFloats() && !block.avoidsFloats() && (block.logicalTop() + block.lowestFloatLogicalBottom()) > logicalTop)
@@ -1120,8 +1124,8 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
         // into the margin area of the self-collapsing block then the float it clears is now intruding into |child|. Layout again so that we can look for
         // floats in the parent that overhang |child|'s new logical top.
         bool logicalTopIntrudesIntoFloat = clearanceForSelfCollapsingBlock > 0 && logicalTop < beforeCollapseLogicalTop;
-        if (logicalTopIntrudesIntoFloat && containsFloats() && !child.avoidsFloats() && lowestFloatLogicalBottom() > logicalTop)
-            child.setNeedsLayout();
+        if (child && logicalTopIntrudesIntoFloat && containsFloats() && !child->avoidsFloats() && lowestFloatLogicalBottom() > logicalTop)
+            child->setNeedsLayout();
     }
 
     return logicalTop;
@@ -1649,6 +1653,8 @@ static inline bool needsAppleMailPaginationQuirk(RootInlineBox& lineBox)
     
 void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, LayoutUnit& delta, bool& overflowsRegion, RenderFlowThread* flowThread)
 {
+    // FIXME: Ignore anonymous inline blocks. Handle the delta already having been set because of
+    // collapsing margins from a previous anonymous inline block.
     // FIXME: For now we paginate using line overflow. This ensures that lines don't overlap at all when we
     // put a strut between them for pagination purposes. However, this really isn't the desired rendering, since
     // the line on the top of the next page will appear too far down relative to the same kind of line at the top

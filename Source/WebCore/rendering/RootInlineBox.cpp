@@ -294,7 +294,9 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     
     maxHeight = std::max<LayoutUnit>(0, maxHeight); // FIXME: Is this really necessary?
 
-    setLineTopBottomPositions(lineTop, lineBottom, heightOfBlock, heightOfBlock + maxHeight);
+    LayoutUnit lineTopWithLeading = !hasAnonymousInlineBlock() ? heightOfBlock : lineTop;
+    LayoutUnit lineBottomWithLeading = !hasAnonymousInlineBlock() ? heightOfBlock + maxHeight : lineBottom;
+    setLineTopBottomPositions(lineTop, lineBottom, lineTopWithLeading, lineBottomWithLeading);
     setPaginatedLineWidth(blockFlow().availableLogicalWidthForContent(heightOfBlock));
 
     LayoutUnit annotationsAdjustment = beforeAnnotationsAdjustment();
@@ -866,7 +868,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
     // not to be included.
     if (box.renderer().isReplaced()) {
         if (hasAnonymousInlineBlock()) {
-            ascent = box.logicalHeight(); // Margins exist "outside" the line, since they have to collapse.
+            ascent = 0; // Margins exist "outside" the line, since they have to collapse.
             descent = 0;
             affectsAscent = true;
             affectsDescent = true;

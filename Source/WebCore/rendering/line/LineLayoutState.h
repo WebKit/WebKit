@@ -35,7 +35,7 @@
 #define LineLayoutState_h
 
 #include "LayoutRect.h"
-#include "RenderBox.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 
@@ -56,7 +56,7 @@ struct FloatWithRect {
 // during an entire linebox tree layout pass (aka layoutInlineChildren).
 class LineLayoutState {
 public:
-    LineLayoutState(bool fullLayout, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, RenderFlowThread* flowThread)
+    LineLayoutState(const RenderBlockFlow& blockFlow, bool fullLayout, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, RenderFlowThread* flowThread)
         : m_endLineLogicalTop(0)
         , m_endLine(0)
         , m_lastFloat(0)
@@ -65,6 +65,7 @@ public:
         , m_flowThread(flowThread)
         , m_repaintLogicalTop(repaintLogicalTop)
         , m_repaintLogicalBottom(repaintLogicalBottom)
+        , m_marginInfo(blockFlow, blockFlow.borderAndPaddingBefore(), blockFlow.borderAndPaddingAfter() + blockFlow.scrollbarLogicalHeight())
         , m_endLineMatched(false)
         , m_checkForFloatsFromLastLine(false)
         , m_isFullLayout(fullLayout)
@@ -119,6 +120,10 @@ public:
         m_repaintLogicalBottom = std::max(m_repaintLogicalBottom, box->logicalBottomVisualOverflow() + std::max<LayoutUnit>(paginationDelta, 0));
     }
 
+    RenderBlockFlow::MarginInfo& marginInfo() { return m_marginInfo; }
+    LayoutUnit& prevFloatBottomFromAnonymousInlineBlock() { return m_prevFloatBottomFromAnonymousInlineBlock; }
+    LayoutUnit& maxFloatBottomFromAnonymousInlineBlock() { return m_maxFloatBottomFromAnonymousInlineBlock; }
+
 private:
     LineInfo m_lineInfo;
     LayoutUnit m_endLineLogicalTop;
@@ -135,6 +140,10 @@ private:
     // FIXME: Should this be a range object instead of two ints?
     LayoutUnit& m_repaintLogicalTop;
     LayoutUnit& m_repaintLogicalBottom;
+
+    RenderBlockFlow::MarginInfo m_marginInfo;
+    LayoutUnit m_prevFloatBottomFromAnonymousInlineBlock;
+    LayoutUnit m_maxFloatBottomFromAnonymousInlineBlock;
 
     bool m_endLineMatched : 1;
     bool m_checkForFloatsFromLastLine : 1;

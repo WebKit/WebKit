@@ -28,6 +28,7 @@
 #include "Hyphenation.h"
 #include "LineBreaker.h"
 #include "LineInfo.h"
+#include "LineLayoutState.h"
 #include "LineWidth.h"
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
@@ -93,7 +94,7 @@ private:
 
 class BreakingContext {
 public:
-    BreakingContext(LineBreaker& lineBreaker, InlineBidiResolver& resolver, LineInfo& inLineInfo, LineWidth& lineWidth, RenderTextInfo& inRenderTextInfo, FloatingObject* inLastFloatFromPreviousLine, bool appliedStartWidth, RenderBlockFlow& block)
+    BreakingContext(LineBreaker& lineBreaker, InlineBidiResolver& resolver, LineInfo& inLineInfo, LineLayoutState& layoutState, LineWidth& lineWidth, RenderTextInfo& inRenderTextInfo, FloatingObject* inLastFloatFromPreviousLine, bool appliedStartWidth, RenderBlockFlow& block)
         : m_lineBreaker(lineBreaker)
         , m_resolver(resolver)
         , m_current(resolver.position())
@@ -111,6 +112,7 @@ public:
         , m_renderTextInfo(inRenderTextInfo)
         , m_lastFloatFromPreviousLine(inLastFloatFromPreviousLine)
         , m_width(lineWidth)
+        , m_lineLayoutState(layoutState)
         , m_currWS(NORMAL)
         , m_lastWS(NORMAL)
         , m_preservesNewline(false)
@@ -253,6 +255,8 @@ private:
     FloatingObject* m_lastFloatFromPreviousLine;
 
     LineWidth m_width;
+    
+    LineLayoutState& m_lineLayoutState;
 
     EWhiteSpace m_currWS;
     EWhiteSpace m_lastWS;
@@ -529,7 +533,8 @@ inline void BreakingContext::handleReplaced()
     }
     
     if (replacedBox.isAnonymousInlineBlock())
-        replacedBox.layoutIfNeeded();
+        m_block.layoutBlockChild(replacedBox, m_lineLayoutState.marginInfo(),
+            m_lineLayoutState.prevFloatBottomFromAnonymousInlineBlock(), m_lineLayoutState.maxFloatBottomFromAnonymousInlineBlock());
 
     if (m_ignoringSpaces)
         m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), 0));
