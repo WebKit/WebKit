@@ -1,3 +1,12 @@
+2015-09-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Remove outdated README under po directory
+        https://bugs.webkit.org/show_bug.cgi?id=149166
+
+        Reviewed by Martin Robinson.
+
+        * README: Removed.
+
 2015-09-13  Ankit Patel  <ankit@redhat.com>
 
         Webkit Gujarati Translations
