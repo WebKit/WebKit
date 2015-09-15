@@ -182,7 +182,7 @@ public:
     Node* pseudoAwareFirstChild() const;
     Node* pseudoAwareLastChild() const;
 
-    virtual URL baseURI() const;
+    URL baseURI() const;
     
     void getSubresourceURLs(ListHashSet<URL>&) const;
 

@@ -23,7 +23,9 @@
 [
     JSGenerateToNativeObject,
 ] interface SVGElement : Element {
+    // FIXME: the xmlbase attribute is no longer part of SVG2 and Chrome already dropped it.
     [TreatNullAs=NullString, SetterRaisesException] attribute DOMString xmlbase;
+
     readonly attribute SVGSVGElement ownerSVGElement;
     readonly attribute SVGElement viewportElement;
 
