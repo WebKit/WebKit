@@ -1,5 +1,28 @@
 2015-09-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Watch Expressions uncaught exceptions on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=149150
+
+        Reviewed by Brian Burg.
+
+        Instead of waiting 50ms to Resume, when the page navigates
+        Resume immediately. This ensures nobody is using a stale
+        activeCallFrame after the navigation.
+
+        Also clean up the manager a bit by removing some deletes.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.restoreBreakpointsSoon):
+        (WebInspector.DebuggerManager.prototype.reset):
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        (WebInspector.DebuggerManager.prototype.debuggerDidResume):
+        (WebInspector.DebuggerManager.prototype._mainResourceDidChange):
+        (WebInspector.DebuggerManager.prototype._didResumeInternal):
+        (WebInspector.DebuggerManager.prototype._associateBreakpointsWithSourceCode):
+        (WebInspector.DebuggerManager.prototype.debuggerDidResume.delayedWork): Deleted.
+
+2015-09-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Closing the final inspector tab should be allowed
         https://bugs.webkit.org/show_bug.cgi?id=149130
 

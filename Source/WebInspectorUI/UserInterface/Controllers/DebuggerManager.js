@@ -38,6 +38,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
         WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ActionsDidChange, this._breakpointEditablePropertyDidChange, this);
 
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
         window.addEventListener("pagehide", this._inspectorClosing.bind(this));
 
         this._allExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-exceptions", false);
@@ -76,7 +78,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             this._restoringBreakpoints = true;
             for (var cookie of this._breakpointsSetting.value)
                 this.addBreakpoint(new WebInspector.Breakpoint(cookie));
-            delete this._restoringBreakpoints;
+            this._restoringBreakpoints = false;
         }
 
         // Ensure that all managers learn about restored breakpoints,
@@ -443,7 +445,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
                 breakpoint.sourceCodeLocation.sourceCode = null;
         }
 
-        delete this._ignoreBreakpointDisplayLocationDidChangeEvent;
+        this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptsCleared);
 
@@ -457,7 +459,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         if (this._delayedResumeTimeout) {
             clearTimeout(this._delayedResumeTimeout);
-            delete this._delayedResumeTimeout;
+            this._delayedResumeTimeout = undefined;
         }
 
         var wasStillPaused = this._paused;
@@ -497,22 +499,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     {
         // Called from WebInspector.DebuggerObserver.
 
-        function delayedWork()
-        {
-            delete this._delayedResumeTimeout;
-
-            this._paused = false;
-            this._callFrames = null;
-            this._activeCallFrame = null;
-
-            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.Resumed);
-            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.CallFramesDidChange);
-            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange);
-        }
-
         // We delay clearing the state and firing events so the user interface does not flash
         // between brief steps or successive breakpoints.
-        this._delayedResumeTimeout = setTimeout(delayedWork.bind(this), 50);
+        this._delayedResumeTimeout = setTimeout(this._didResumeInternal.bind(this), 50);
     }
 
     playBreakpointActionSound(breakpointActionIdentifier)
@@ -810,6 +799,33 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         }
     }
 
+    _mainResourceDidChange(event)
+    {
+        if (!event.target.isMainFrame())
+            return;
+
+        this._didResumeInternal();
+    }
+
+    _didResumeInternal()
+    {
+        if (!this._activeCallFrame)
+            return;
+
+        if (this._delayedResumeTimeout) {
+            clearTimeout(this._delayedResumeTimeout);
+            this._delayedResumeTimeout = undefined;
+        }
+
+        this._paused = false;
+        this._callFrames = null;
+        this._activeCallFrame = null;
+
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.Resumed);
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.CallFramesDidChange);
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange);
+    }
+
     _updateBreakOnExceptionsState()
     {
         var state = "none";
@@ -871,7 +887,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             console.assert(breakpoint.sourceCodeLocation.sourceCode === sourceCode || breakpoint.sourceCodeLocation.sourceCode.url === sourceCode.url);
         }
 
-        delete this._ignoreBreakpointDisplayLocationDidChangeEvent;
+        this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
     }
 };
 
