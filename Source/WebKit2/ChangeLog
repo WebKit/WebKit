@@ -1,3 +1,25 @@
+2015-09-15  Brady Eidson  <beidson@apple.com>
+
+        Move most IDB object encoding/decoding from WebKit2 to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=149152
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBDatabaseMetadata>::encode): Deleted.
+        (IPC::ArgumentCoder<IDBDatabaseMetadata>::decode): Deleted.
+        (IPC::ArgumentCoder<IDBIndexMetadata>::encode): Deleted.
+        (IPC::ArgumentCoder<IDBIndexMetadata>::decode): Deleted.
+        (IPC::ArgumentCoder<IDBKeyData>::encode): Deleted.
+        (IPC::ArgumentCoder<IDBKeyData>::decode): Deleted.
+        (IPC::ArgumentCoder<IDBKeyPath>::encode): Deleted.
+        (IPC::ArgumentCoder<IDBKeyPath>::decode): Deleted.
+        (IPC::ArgumentCoder<IDBKeyRangeData>::encode): Deleted.
+        (IPC::ArgumentCoder<IDBKeyRangeData>::decode): Deleted.
+        (IPC::ArgumentCoder<IDBObjectStoreMetadata>::encode): Deleted.
+        (IPC::ArgumentCoder<IDBObjectStoreMetadata>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
 2015-09-14  Brady Eidson  <beidson@apple.com>
 
         Make the enum IDBKey::Type into a utility enum class.

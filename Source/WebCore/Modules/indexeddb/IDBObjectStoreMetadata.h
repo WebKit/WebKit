@@ -49,6 +49,9 @@ struct IDBObjectStoreMetadata {
     {
     }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBObjectStoreMetadata&);
+    
     String name;
     int64_t id;
     IDBKeyPath keyPath;
@@ -62,6 +65,36 @@ struct IDBObjectStoreMetadata {
 
     IDBObjectStoreMetadata isolatedCopy() const;
 };
+
+template<class Encoder>
+void IDBObjectStoreMetadata::encode(Encoder& encoder) const
+{
+    encoder << name << id << keyPath << autoIncrement << maxIndexId << indexes;
+}
+
+template<class Decoder>
+bool IDBObjectStoreMetadata::decode(Decoder& decoder, IDBObjectStoreMetadata& metadata)
+{
+    if (!decoder.decode(metadata.name))
+        return false;
+
+    if (!decoder.decode(metadata.id))
+        return false;
+
+    if (!decoder.decode(metadata.keyPath))
+        return false;
+
+    if (!decoder.decode(metadata.autoIncrement))
+        return false;
+
+    if (!decoder.decode(metadata.maxIndexId))
+        return false;
+
+    if (!decoder.decode(metadata.indexes))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

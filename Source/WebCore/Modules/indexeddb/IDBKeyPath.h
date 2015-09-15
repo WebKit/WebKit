@@ -77,6 +77,9 @@ public:
 
     IDBKeyPath isolatedCopy() const;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBKeyPath&);
+    
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;
     WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyPath&);
 
@@ -85,6 +88,58 @@ private:
     String m_string;
     Vector<String> m_array;
 };
+
+template<class Encoder>
+void IDBKeyPath::encode(Encoder& encoder) const
+{
+    encoder.encodeEnum(m_type);
+
+    switch (m_type) {
+    case IDBKeyPath::NullType:
+        break;
+    case IDBKeyPath::StringType:
+        encoder << m_string;
+        break;
+    case IDBKeyPath::ArrayType:
+        encoder << m_array;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+template<class Decoder>
+bool IDBKeyPath::decode(Decoder& decoder, IDBKeyPath& keyPath)
+{
+    IDBKeyPath::Type type;
+    if (!decoder.decodeEnum(type))
+        return false;
+
+    switch (type) {
+    case IDBKeyPath::NullType:
+        keyPath = IDBKeyPath();
+        return true;
+
+    case IDBKeyPath::StringType: {
+        String string;
+        if (!decoder.decode(string))
+            return false;
+
+        keyPath = IDBKeyPath(string);
+        return true;
+    }
+    case IDBKeyPath::ArrayType: {
+        Vector<String> array;
+        if (!decoder.decode(array))
+            return false;
+
+        keyPath = IDBKeyPath(array);
+        return true;
+    }
+    default:
+        return true;
+    }
+}
 
 } // namespace WebCore
 

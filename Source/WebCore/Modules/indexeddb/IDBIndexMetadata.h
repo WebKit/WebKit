@@ -50,6 +50,9 @@ struct IDBIndexMetadata {
         , multiEntry(multiEntry)
     {
     }
+    
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBIndexMetadata&);
 
     String name;
     int64_t id;
@@ -61,6 +64,33 @@ struct IDBIndexMetadata {
 
     static const int64_t InvalidId = -1;
 };
+
+template<class Encoder>
+void IDBIndexMetadata::encode(Encoder& encoder) const
+{
+    encoder << name << id << keyPath << unique << multiEntry;
+}
+
+template<class Decoder>
+bool IDBIndexMetadata::decode(Decoder& decoder, IDBIndexMetadata& metadata)
+{
+    if (!decoder.decode(metadata.name))
+        return false;
+
+    if (!decoder.decode(metadata.id))
+        return false;
+
+    if (!decoder.decode(metadata.keyPath))
+        return false;
+
+    if (!decoder.decode(metadata.unique))
+        return false;
+
+    if (!decoder.decode(metadata.multiEntry))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

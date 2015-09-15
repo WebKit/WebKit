@@ -61,6 +61,9 @@ struct IDBKeyRangeData {
 
     WEBCORE_EXPORT bool isExactlyOneKey() const;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBKeyRangeData&);
+
     bool isNull;
 
     IDBKeyData lowerKey;
@@ -69,6 +72,40 @@ struct IDBKeyRangeData {
     bool lowerOpen;
     bool upperOpen;
 };
+
+template<class Encoder>
+void IDBKeyRangeData::encode(Encoder& encoder) const
+{
+    encoder << isNull;
+    if (isNull)
+        return;
+
+    encoder << upperKey << lowerKey << upperOpen << lowerOpen;
+}
+
+template<class Decoder>
+bool IDBKeyRangeData::decode(Decoder& decoder, IDBKeyRangeData& keyRange)
+{
+    if (!decoder.decode(keyRange.isNull))
+        return false;
+
+    if (keyRange.isNull)
+        return true;
+
+    if (!decoder.decode(keyRange.upperKey))
+        return false;
+
+    if (!decoder.decode(keyRange.lowerKey))
+        return false;
+
+    if (!decoder.decode(keyRange.upperOpen))
+        return false;
+
+    if (!decoder.decode(keyRange.lowerOpen))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

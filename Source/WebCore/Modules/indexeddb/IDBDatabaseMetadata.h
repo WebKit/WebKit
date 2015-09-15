@@ -68,6 +68,9 @@ struct IDBDatabaseMetadata {
     {
     }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBDatabaseMetadata&);
+
     String name;
     int64_t id;
     uint64_t version;
@@ -78,6 +81,33 @@ struct IDBDatabaseMetadata {
 
     WEBCORE_EXPORT IDBDatabaseMetadata isolatedCopy() const;
 };
+
+template<class Encoder>
+void IDBDatabaseMetadata::encode(Encoder& encoder) const
+{
+    encoder << name << id << version << maxObjectStoreId << objectStores;
+}
+
+template<class Decoder>
+bool IDBDatabaseMetadata::decode(Decoder& decoder, IDBDatabaseMetadata& metadata)
+{
+    if (!decoder.decode(metadata.name))
+        return false;
+
+    if (!decoder.decode(metadata.id))
+        return false;
+
+    if (!decoder.decode(metadata.version))
+        return false;
+
+    if (!decoder.decode(metadata.maxObjectStoreId))
+        return false;
+
+    if (!decoder.decode(metadata.objectStores))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 
