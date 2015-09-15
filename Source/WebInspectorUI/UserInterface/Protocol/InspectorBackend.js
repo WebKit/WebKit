@@ -475,35 +475,35 @@ InspectorBackend.Command.prototype = {
         let commandArguments = Array.from(arguments);
         let callback = typeof commandArguments.lastValue === "function" ? commandArguments.pop() : null;
 
+        function deliverFailure(message) {
+            console.error(`Protocol Error: ${message}`);
+            if (callback)
+                setTimeout(callback.bind(null, message), 0);
+            else
+                return Promise.reject(new Error(message));
+        }
+
         let parameters = {};
         for (let parameter of instance.callSignature) {
             let parameterName = parameter["name"];
             let typeName = parameter["type"];
             let optionalFlag = parameter["optional"];
 
-            if (!commandArguments.length && !optionalFlag) {
-                console.error("Protocol Error: Invalid number of arguments for method '" + instance.qualifiedName + "' call. It must have the following arguments '" + JSON.stringify(instance.callSignature) + "'.");
-                return;
-            }
+            if (!commandArguments.length && !optionalFlag)
+                return deliverFailure(`Invalid number of arguments for command '${instance.qualifiedName}'.`);
 
             let value = commandArguments.shift();
             if (optionalFlag && value === undefined)
                 continue;
 
-            if (typeof value !== typeName) {
-                console.error("Protocol Error: Invalid type of argument '" + parameterName + "' for method '" + instance.qualifiedName + "' call. It must be '" + typeName + "' but it is '" + typeof value + "'.");
-                return;
-            }
+            if (typeof value !== typeName)
+                return deliverFailure(`Invalid type of argument '${parameterName}' for command '${instance.qualifiedName}' call. It must be '${typeName}' but it is '${typeof value}'.`);
 
             parameters[parameterName] = value;
         }
 
-        if (commandArguments.length === 1 && !callback) {
-            if (commandArguments[0] !== undefined) {
-                console.error("Protocol Error: Optional callback argument for method '" + instance.qualifiedName + "' call must be a function but its type is '" + typeof args[0] + "'.");
-                return;
-            }
-        }
+        if (!callback && commandArguments.length === 1 && commandArguments[0] !== undefined)
+            return deliverFailure(`Protocol Error: Optional callback argument for command '${instance.qualifiedName}' call must be a function but its type is '${typeof args[0]}'.`);
 
         if (callback)
             instance._backend._sendCommandToBackendWithCallback(instance, parameters, callback);
