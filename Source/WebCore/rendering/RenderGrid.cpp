@@ -1526,7 +1526,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
     return GridAxisStart;
 }
 
-LayoutUnit RenderGrid::rowPositionForChild(const RenderBox& child) const
+LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
 {
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
     LayoutUnit startOfRow = m_rowPositions[coordinate.rows.resolvedInitialPosition.toInt()];
@@ -1550,7 +1550,7 @@ LayoutUnit RenderGrid::rowPositionForChild(const RenderBox& child) const
 }
 
 
-LayoutUnit RenderGrid::columnPositionForChild(const RenderBox& child) const
+LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
 {
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
     LayoutUnit startOfColumn = m_columnPositions[coordinate.columns.resolvedInitialPosition.toInt()];
@@ -1575,14 +1575,17 @@ LayoutUnit RenderGrid::columnPositionForChild(const RenderBox& child) const
 
 LayoutPoint RenderGrid::findChildLogicalPosition(const RenderBox& child) const
 {
-    LayoutUnit columnPosition = columnPositionForChild(child);
+    LayoutUnit rowAxisOffset = rowAxisOffsetForChild(child);
     // We stored m_columnPositions's data ignoring the direction, hence we might need now
     // to translate positions from RTL to LTR, as it's more convenient for painting.
-    if (!style().isLeftToRightDirection())
-        columnPosition = (m_columnPositions[m_columnPositions.size() - 1] + borderAndPaddingLogicalLeft()) - columnPosition  - child.logicalWidth();
+    if (!style().isLeftToRightDirection()) {
+        LayoutUnit alignmentOffset =  m_columnPositions[0] - borderAndPaddingStart();
+        LayoutUnit rightGridEdgePosition = m_columnPositions[m_columnPositions.size() - 1] + alignmentOffset + borderAndPaddingLogicalLeft();
+        rowAxisOffset = rightGridEdgePosition - (rowAxisOffset + child.logicalWidth());
+    }
 
     // The grid items should be inside the grid container's border box, that's why they need to be shifted.
-    return LayoutPoint(columnPosition, rowPositionForChild(child));
+    return LayoutPoint(rowAxisOffset, columnAxisOffsetForChild(child));
 }
 
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)

@@ -120,8 +120,8 @@ private:
     LayoutUnit maxContentForChild(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
     GridAxisPosition columnAxisPositionForChild(const RenderBox&) const;
     GridAxisPosition rowAxisPositionForChild(const RenderBox&) const;
-    LayoutUnit rowPositionForChild(const RenderBox&) const;
-    LayoutUnit columnPositionForChild(const RenderBox&) const;
+    LayoutUnit columnAxisOffsetForChild(const RenderBox&) const;
+    LayoutUnit rowAxisOffsetForChild(const RenderBox&) const;
     LayoutPoint findChildLogicalPosition(const RenderBox&) const;
     GridCoordinate cachedGridCoordinate(const RenderBox&) const;
 
