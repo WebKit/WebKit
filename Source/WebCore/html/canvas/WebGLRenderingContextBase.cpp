@@ -2744,13 +2744,11 @@ void WebGLRenderingContextBase::linkProgram(WebGLProgram* program, ExceptionCode
     UNUSED_PARAM(ec);
     if (isContextLostOrPending() || !validateWebGLObject("linkProgram", program))
         return;
-    if (!isGLES2Compliant()) {
-        WebGLShader* vertexShader = program->getAttachedShader(GraphicsContext3D::VERTEX_SHADER);
-        WebGLShader* fragmentShader = program->getAttachedShader(GraphicsContext3D::FRAGMENT_SHADER);
-        if (!vertexShader || !vertexShader->isValid() || !fragmentShader || !fragmentShader->isValid() || !m_context->precisionsMatch(objectOrZero(vertexShader), objectOrZero(fragmentShader)) || !m_context->checkVaryingsPacking(objectOrZero(vertexShader), objectOrZero(fragmentShader))) {
-            program->setLinkStatus(false);
-            return;
-        }
+    WebGLShader* vertexShader = program->getAttachedShader(GraphicsContext3D::VERTEX_SHADER);
+    WebGLShader* fragmentShader = program->getAttachedShader(GraphicsContext3D::FRAGMENT_SHADER);
+    if (!vertexShader || !vertexShader->isValid() || !fragmentShader || !fragmentShader->isValid() || !m_context->precisionsMatch(objectOrZero(vertexShader), objectOrZero(fragmentShader)) || !m_context->checkVaryingsPacking(objectOrZero(vertexShader), objectOrZero(fragmentShader))) {
+        program->setLinkStatus(false);
+        return;
     }
 
     m_context->linkProgram(objectOrZero(program));
