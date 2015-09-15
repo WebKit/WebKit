@@ -85,6 +85,13 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
         WebInspector.tabBrowser.tabBar.removeEventListener(null, null, this);
     }
 
+    get supportsSplitContentBrowser()
+    {
+        // Showing the split console is problematic because some new tabs will cause it to
+        // disappear and not reappear, but others won't. Just prevent it from ever showing.
+        return false;
+    }
+
     // Private
 
     _createNewTab(tabType, event)
