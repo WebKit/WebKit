@@ -81,15 +81,15 @@ void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent(bool le
     m_hasThrottledProgressEvent = true;
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchReadyStateChangeEvent(PassRefPtr<Event> event, ProgressEventAction progressEventAction)
+void XMLHttpRequestProgressEventThrottle::dispatchReadyStateChangeEvent(RefPtr<Event>&& event, ProgressEventAction progressEventAction)
 {
     if (progressEventAction == FlushProgressEvent)
         flushProgressEvent();
 
-    dispatchEvent(event);
+    dispatchEvent(WTF::move(event));
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event)
+void XMLHttpRequestProgressEventThrottle::dispatchEvent(RefPtr<Event>&& event)
 {
     ASSERT(event);
     if (m_deferEvents) {
@@ -97,9 +97,9 @@ void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event)
             // Readystatechange events are state-less so avoid repeating two identical events in a row on resume.
             return;
         }
-        m_deferredEvents.append(event);
+        m_deferredEvents.append(WTF::move(event));
     } else
-        m_target->dispatchEvent(event);
+        m_target->dispatchEvent(WTF::move(event));
 }
 
 void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomicString& type)
@@ -153,7 +153,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents()
     // The progress event will be in the m_deferredEvents vector if the load was finished while suspended.
     // If not, just send the most up-to-date progress on resume.
     if (deferredProgressEvent)
-        dispatchEvent(deferredProgressEvent);
+        dispatchEvent(WTF::move(deferredProgressEvent));
 }
 
 void XMLHttpRequestProgressEventThrottle::fired()

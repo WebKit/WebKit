@@ -35,13 +35,13 @@ class Node;
 
 class NativeXPathNSResolver : public XPathNSResolver {
 public:
-    static Ref<NativeXPathNSResolver> create(PassRefPtr<Node> node) { return adoptRef(*new NativeXPathNSResolver(node)); }
+    static Ref<NativeXPathNSResolver> create(RefPtr<Node>&& node) { return adoptRef(*new NativeXPathNSResolver(WTF::move(node))); }
     virtual ~NativeXPathNSResolver();
 
     virtual String lookupNamespaceURI(const String& prefix);
 
 private:
-    explicit NativeXPathNSResolver(PassRefPtr<Node>);
+    explicit NativeXPathNSResolver(RefPtr<Node>&&);
     RefPtr<Node> m_node;
 };
 

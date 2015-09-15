@@ -28,7 +28,6 @@
 #define XMLHttpRequestProgressEventThrottle_h
 
 #include "Timer.h"
-#include "wtf/PassRefPtr.h"
 #include "wtf/Vector.h"
 #include <wtf/Forward.h>
 
@@ -50,7 +49,7 @@ public:
     virtual ~XMLHttpRequestProgressEventThrottle();
 
     void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
-    void dispatchReadyStateChangeEvent(PassRefPtr<Event>, ProgressEventAction = DoNotFlushProgressEvent);
+    void dispatchReadyStateChangeEvent(RefPtr<Event>&&, ProgressEventAction = DoNotFlushProgressEvent);
     void dispatchProgressEvent(const AtomicString&);
 
     void suspend();
@@ -62,7 +61,7 @@ private:
     virtual void fired();
     void dispatchDeferredEvents();
     void flushProgressEvent();
-    void dispatchEvent(PassRefPtr<Event>);
+    void dispatchEvent(RefPtr<Event>&&);
 
     bool hasEventToDispatch() const;
 

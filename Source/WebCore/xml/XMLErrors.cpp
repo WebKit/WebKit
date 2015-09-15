@@ -84,7 +84,7 @@ void XMLErrors::appendErrorMessage(const String& typeString, TextPosition positi
     m_errorMessages.append(message);
 }
 
-static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages)
+static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages)
 {
     RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), true);
 
@@ -108,7 +108,7 @@ static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, co
     reportElement->parserAppendChild(h3.get());
     h3->parserAppendChild(doc->createTextNode("Below is a rendering of the page up to the first error."));
 
-    return reportElement.release();
+    return reportElement;
 }
 
 void XMLErrors::insertErrorMessageBlock()

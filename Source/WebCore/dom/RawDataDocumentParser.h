@@ -56,7 +56,7 @@ private:
         ASSERT_NOT_REACHED();
     }
 
-    virtual void append(PassRefPtr<StringImpl>) override
+    virtual void append(RefPtr<StringImpl>&&) override
     {
         ASSERT_NOT_REACHED();
     }

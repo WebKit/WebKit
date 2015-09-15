@@ -109,23 +109,23 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     return result.releaseNonNull();
 }
 
-PassRefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
+RefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
 {
     if (!sourceNode)
-        return 0;
+        return nullptr;
 
     String resultMIMEType;
     String resultString;
     String resultEncoding;
     if (!transformToString(*sourceNode, resultMIMEType, resultString, resultEncoding))
-        return 0;
+        return nullptr;
     return createDocumentFromSource(resultString, resultEncoding, resultMIMEType, sourceNode, 0);
 }
 
-PassRefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Document* outputDoc)
+RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Document* outputDoc)
 {
     if (!sourceNode || !outputDoc)
-        return 0;
+        return nullptr;
 
     String resultMIMEType;
     String resultString;
@@ -136,7 +136,7 @@ PassRefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode
         resultMIMEType = "text/html";
 
     if (!transformToString(*sourceNode, resultMIMEType, resultString, resultEncoding))
-        return 0;
+        return nullptr;
     return createFragmentForTransformToFragment(resultString, resultMIMEType, outputDoc);
 }
 

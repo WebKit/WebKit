@@ -66,7 +66,7 @@ protected:
     explicit HTMLDocumentParser(HTMLDocument&);
 
     virtual void insert(const SegmentedString&) override final;
-    virtual void append(PassRefPtr<StringImpl>) override;
+    virtual void append(RefPtr<StringImpl>&&) override;
     virtual void finish() override;
 
     HTMLTreeBuilder& treeBuilder();

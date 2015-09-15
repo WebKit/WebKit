@@ -105,9 +105,9 @@ void XMLDocumentParser::insert(const SegmentedString&)
     ASSERT_NOT_REACHED();
 }
 
-void XMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
+void XMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
-    SegmentedString source(inputSource);
+    SegmentedString source(WTF::move(inputSource));
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform.append(source);
 

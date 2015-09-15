@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    virtual void append(PassRefPtr<StringImpl>) override;
+    virtual void append(RefPtr<StringImpl>&&) override;
     virtual void finish() override;
 
     // FIXME: Why do we need this?
@@ -339,9 +339,9 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     document()->processViewport("width=device-width", ViewportArguments::ViewportMeta);
 }
 
-void FTPDirectoryDocumentParser::append(PassRefPtr<StringImpl> inputSource)
+void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
-    String source(inputSource);
+    String source(WTF::move(inputSource));
 
     // Make sure we have the table element to append to by loading the template set in the pref, or
     // creating a very basic document with the appropriate table

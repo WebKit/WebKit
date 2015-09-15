@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-NativeXPathNSResolver::NativeXPathNSResolver(PassRefPtr<Node> node)
-    : m_node(node)
+NativeXPathNSResolver::NativeXPathNSResolver(RefPtr<Node>&& node)
+    : m_node(WTF::move(node))
 {
 }
 

@@ -44,18 +44,18 @@ public:
     static Ref<XSLTProcessor> create() { return adoptRef(*new XSLTProcessor); }
     ~XSLTProcessor();
 
-    void setXSLStyleSheet(PassRefPtr<XSLStyleSheet> styleSheet) { m_stylesheet = styleSheet; }
+    void setXSLStyleSheet(RefPtr<XSLStyleSheet>&& styleSheet) { m_stylesheet = WTF::move(styleSheet); }
     bool transformToString(Node& source, String& resultMIMEType, String& resultString, String& resultEncoding);
     Ref<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
     
     // DOM methods
-    void importStylesheet(PassRefPtr<Node> style)
+    void importStylesheet(RefPtr<Node>&& style)
     {
         if (style)
-            m_stylesheetRootNode = style;
+            m_stylesheetRootNode = WTF::move(style);
     }
-    PassRefPtr<DocumentFragment> transformToFragment(Node* source, Document* ouputDoc);
-    PassRefPtr<Document> transformToDocument(Node* source);
+    RefPtr<DocumentFragment> transformToFragment(Node* source, Document* ouputDoc);
+    RefPtr<Document> transformToDocument(Node* source);
     
     void setParameter(const String& namespaceURI, const String& localName, const String& value);
     String getParameter(const String& namespaceURI, const String& localName) const;
