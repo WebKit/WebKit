@@ -1613,7 +1613,6 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
     shadowRoot.setHost(this);
     shadowRoot.setParentTreeScope(&treeScope());
-    shadowRoot.distributor().didShadowBoundaryChange(this);
 
     NodeVector postInsertionNotificationTargets;
     ChildNodeInsertionNotifier(*this).notify(shadowRoot, postInsertionNotificationTargets);
@@ -1626,6 +1625,9 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     setNeedsStyleRecalc(ReconstructRenderTree);
 
     InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
+
+    if (shadowRoot.type() == ShadowRoot::UserAgentShadowRoot)
+        didAddUserAgentShadowRoot(&shadowRoot);
 }
 
 void Element::removeShadowRoot()
@@ -1644,8 +1646,6 @@ void Element::removeShadowRoot()
     oldRoot->setParentTreeScope(&document());
 
     ChildNodeRemovalNotifier(*this).notify(*oldRoot);
-
-    oldRoot->distributor().invalidateDistribution(this);
 }
 
 RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
@@ -1672,7 +1672,6 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
     if (!shadowRoot) {
         addShadowRoot(ShadowRoot::create(document(), ShadowRoot::UserAgentShadowRoot));
         shadowRoot = userAgentShadowRoot();
-        didAddUserAgentShadowRoot(shadowRoot);
     }
     return *shadowRoot;
 }
@@ -1795,8 +1794,10 @@ void Element::childrenChanged(const ChildChange& change)
         checkForSiblingStyleChanges(*this, checkType, change.previousSiblingElement, change.nextSiblingElement);
     }
 
-    if (ShadowRoot* shadowRoot = this->shadowRoot())
-        shadowRoot->invalidateDistribution();
+    if (ShadowRoot* shadowRoot = this->shadowRoot()) {
+        if (auto* distributor = shadowRoot->distributor())
+            distributor->invalidateDistribution(this);
+    }
 }
 
 void Element::removeAllEventListeners()

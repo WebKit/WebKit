@@ -75,6 +75,26 @@ private:
     bool m_hasDistribution;
 };
 
+class ShadowRootWithInsertionPoints : public ShadowRoot {
+public:
+    
+    static Ref<ShadowRootWithInsertionPoints> create(Document& document)
+    {
+        return adoptRef(*new ShadowRootWithInsertionPoints(document));
+    }
+    
+    virtual ContentDistributor* distributor() override { return &m_distributor; }
+    
+private:
+    ShadowRootWithInsertionPoints(Document& document)
+        : ShadowRoot(document, UserAgentShadowRoot)
+    { }
+
+    virtual void childrenChanged(const ChildChange&) override;
+
+    ContentDistributor m_distributor;
+};
+
 inline bool isActiveInsertionPoint(const Node* node)
 {
     return is<InsertionPoint>(node) && downcast<InsertionPoint>(*node).isActive();

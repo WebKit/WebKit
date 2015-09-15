@@ -500,6 +500,8 @@ protected:
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
 
+    void addShadowRoot(Ref<ShadowRoot>&&);
+
     static void mergeWithNextTextNode(Text& node, ExceptionCode&);
 
 private:
@@ -564,7 +566,6 @@ private:
     virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
-    void addShadowRoot(Ref<ShadowRoot>&&);
     void removeShadowRoot();
 
     bool rareDataStyleAffectedByEmpty() const;

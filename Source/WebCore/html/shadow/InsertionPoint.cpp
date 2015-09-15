@@ -76,8 +76,10 @@ bool InsertionPoint::rendererIsNeeded(const RenderStyle& style)
 void InsertionPoint::childrenChanged(const ChildChange& change)
 {
     HTMLElement::childrenChanged(change);
-    if (ShadowRoot* root = containingShadowRoot())
-        root->invalidateDistribution();
+    if (ShadowRoot* root = containingShadowRoot()) {
+        RELEASE_ASSERT(root->distributor());
+        root->distributor()->invalidateDistribution(root->host());
+    }
 }
 
 Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode& insertionPoint)
@@ -85,8 +87,9 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode& i
     HTMLElement::insertedInto(insertionPoint);
 
     if (ShadowRoot* root = containingShadowRoot()) {
-        root->distributor().didShadowBoundaryChange(root->host());
-        root->distributor().invalidateInsertionPointList();
+        RELEASE_ASSERT(root->distributor());
+        root->distributor()->didShadowBoundaryChange(root->host());
+        root->distributor()->invalidateInsertionPointList();
     }
 
     return InsertionDone;
@@ -99,8 +102,9 @@ void InsertionPoint::removedFrom(ContainerNode& insertionPoint)
         root = insertionPoint.containingShadowRoot();
 
     if (root && root->host()) {
-        root->invalidateDistribution();
-        root->distributor().invalidateInsertionPointList();
+        RELEASE_ASSERT(root->distributor());
+        root->distributor()->invalidateDistribution(root->host());
+        root->distributor()->invalidateInsertionPointList();
     }
 
     // Since this insertion point is no longer visible from the shadow subtree, it need to clean itself up.
@@ -154,9 +158,18 @@ InsertionPoint* findInsertionPointOf(const Node* projectedNode)
     if (ShadowRoot* shadowRoot = shadowRootOfParentForDistribution(projectedNode)) {
         if (ShadowRoot* root = projectedNode->containingShadowRoot())
             ContentDistributor::ensureDistribution(root);
-        return shadowRoot->distributor().findInsertionPointFor(projectedNode);
+        if (auto* distributor = shadowRoot->distributor())
+            return distributor->findInsertionPointFor(projectedNode);
     }
     return 0;
+}
+
+void ShadowRootWithInsertionPoints::childrenChanged(const ChildChange& change)
+{
+    ContainerNode::childrenChanged(change);
+    
+    if (!isOrphan())
+        m_distributor.invalidateDistribution(host());
 }
 
 } // namespace WebCore

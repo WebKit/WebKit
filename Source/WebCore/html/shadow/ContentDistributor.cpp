@@ -71,7 +71,9 @@ void ContentDistributor::distribute(Element* host)
 {
     ASSERT(needsDistribution());
     ASSERT(m_nodeToInsertionPoint.isEmpty());
-    ASSERT(!host->containingShadowRoot() || host->containingShadowRoot()->distributor().isValid());
+    ASSERT(!host->containingShadowRoot()
+        || !host->containingShadowRoot()->distributor()
+        || host->containingShadowRoot()->distributor()->isValid());
 
     m_validity = Valid;
 
@@ -128,13 +130,13 @@ void ContentDistributor::ensureDistribution(ShadowRoot* shadowRoot)
     Vector<ShadowRoot*, 8> shadowRoots;
     for (Element* current = shadowRoot->host(); current; current = current->shadowHost()) {
         ShadowRoot* currentRoot = current->shadowRoot();
-        if (!currentRoot->distributor().needsDistribution())
+        if (!currentRoot->distributor() || !currentRoot->distributor()->needsDistribution())
             break;
         shadowRoots.append(currentRoot);
     }
 
     for (size_t i = shadowRoots.size(); i > 0; --i)
-        shadowRoots[i - 1]->distributor().distribute(shadowRoots[i - 1]->host());
+        shadowRoots[i - 1]->distributor()->distribute(shadowRoots[i - 1]->host());
 }
 
 void ContentDistributor::invalidateDistribution(Element* host)

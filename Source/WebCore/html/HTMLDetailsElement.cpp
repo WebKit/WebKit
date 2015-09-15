@@ -23,6 +23,7 @@
 
 #if ENABLE(DETAILS_ELEMENT)
 #include "AXObjectCache.h"
+#include "ContentDistributor.h"
 #include "ElementIterator.h"
 #include "HTMLSummaryElement.h"
 #include "InsertionPoint.h"
@@ -101,7 +102,7 @@ Ref<DetailsSummaryElement> DetailsSummaryElement::create(Document& document)
 Ref<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document& document)
 {
     Ref<HTMLDetailsElement> details = adoptRef(*new HTMLDetailsElement(tagName, document));
-    details->ensureUserAgentShadowRoot();
+    details->addShadowRoot(ShadowRootWithInsertionPoints::create(document));
     return details;
 }
 

@@ -531,9 +531,6 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
     if (document().focusedElement() == this)
         updateFocusAppearance(true);
 
-    if (ShadowRoot* shadowRoot = shadowRootOfParentForDistribution(this))
-        shadowRoot->invalidateDistribution();
-
     setChangedSinceLastFormControlChangeEvent(false);
 
     addToRadioButtonGroup();

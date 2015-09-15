@@ -28,7 +28,6 @@
 #define ShadowRoot_h
 
 #include "ContainerNode.h"
-#include "ContentDistributor.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -37,7 +36,9 @@
 
 namespace WebCore {
 
-class ShadowRoot final : public DocumentFragment, public TreeScope {
+class ContentDistributor;
+
+class ShadowRoot : public DocumentFragment, public TreeScope {
 public:
     enum ShadowRootType {
         UserAgentShadowRoot = 0,
@@ -65,28 +66,25 @@ public:
 
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
-    ContentDistributor& distributor() { return m_distributor; }
-    void invalidateDistribution() { m_distributor.invalidateDistribution(m_host); }
-
     virtual void removeAllEventListeners() override;
 
-private:
+    virtual ContentDistributor* distributor() { return nullptr; }
+
+protected:
     ShadowRoot(Document&, ShadowRootType);
-
-    virtual bool childTypeAllowed(NodeType) const override;
-    virtual void childrenChanged(const ChildChange&) override;
-
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !m_host; }
+
+private:
+    virtual bool childTypeAllowed(NodeType) const override;
+
+    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     unsigned m_resetStyleInheritance : 1;
     unsigned m_type : 1;
 
     Element* m_host;
-
-    ContentDistributor m_distributor;
 };
 
 inline Element* ShadowRoot::activeElement() const

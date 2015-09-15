@@ -38,7 +38,6 @@ namespace WebCore {
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
-    ContentDistributor distributor;
     void* host;
 };
 
@@ -120,15 +119,6 @@ void ShadowRoot::setResetStyleInheritance(bool value)
         if (host())
             setNeedsStyleRecalc();
     }
-}
-
-void ShadowRoot::childrenChanged(const ChildChange& change)
-{
-    if (isOrphan())
-        return;
-
-    ContainerNode::childrenChanged(change);
-    invalidateDistribution();
 }
 
 Ref<Node> ShadowRoot::cloneNodeInternal(Document&, CloningOperation)
