@@ -53,7 +53,7 @@ Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode&
 {
     HTMLElement::insertedInto(insertionPoint);
     if (inDocument() && !isInShadowTree())
-        document().setTitleElement(m_title, this);
+        document().titleElementAdded(*this);
     return InsertionDone;
 }
 
@@ -61,19 +61,14 @@ void HTMLTitleElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint.inDocument() && !insertionPoint.isInShadowTree())
-        document().removeTitle(this);
+        document().titleElementRemoved(*this);
 }
 
 void HTMLTitleElement::childrenChanged(const ChildChange& change)
 {
     HTMLElement::childrenChanged(change);
-    m_title = textWithDirection();
-    if (inDocument()) {
-        if (!isInShadowTree())
-            document().setTitleElement(m_title, this);
-        else
-            document().removeTitle(this);
-    }
+    m_title = computedTextWithDirection();
+    document().titleElementTextChanged(*this);
 }
 
 String HTMLTitleElement::text() const
@@ -81,7 +76,7 @@ String HTMLTitleElement::text() const
     return TextNodeTraversal::contentsAsString(*this);
 }
 
-StringWithDirection HTMLTitleElement::textWithDirection()
+StringWithDirection HTMLTitleElement::computedTextWithDirection()
 {
     TextDirection direction = LTR;
     if (RenderStyle* computedStyle = this->computedStyle())
