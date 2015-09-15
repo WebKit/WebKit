@@ -507,20 +507,24 @@ WebInspector.isNewTabWithTypeAllowed = function(tabType)
     return true;
 };
 
-WebInspector.createNewTab = function(tabType, newTabContentViewToReplace)
+WebInspector.createNewTabWithType = function(tabType, options = {})
 {
     console.assert(this.isNewTabWithTypeAllowed(tabType));
 
-    var tabContentView = this._tabContentViewForType(tabType);
+    let {referencedView, shouldReplaceTab, shouldShowNewTab} = options;
+    console.assert(!referencedView || referencedView instanceof WebInspector.TabContentView, referencedView);
+    console.assert(!shouldReplaceTab || referencedView, "Must provide a reference view to replace a tab.");
 
-    if (newTabContentViewToReplace) {
-        var insertionIndex = this.tabBar.tabBarItems.indexOf(newTabContentViewToReplace.tabBarItem);
-        this.tabBrowser.closeTabForContentView(newTabContentViewToReplace, true);
-        this.tabBrowser.showTabForContentView(tabContentView, true, insertionIndex);
-        return;
-    }
+    let tabContentView = this._tabContentViewForType(tabType);
+    const suppressAnimations = true;
+    let insertionIndex = referencedView ? this.tabBar.tabBarItems.indexOf(referencedView.tabBarItem) : undefined;
+    this.tabBrowser.addTabForContentView(tabContentView, suppressAnimations, insertionIndex);
 
-    this.tabBrowser.showTabForContentView(tabContentView);
+    if (shouldReplaceTab)
+        this.tabBrowser.closeTabForContentView(referencedView, suppressAnimations);
+
+    if (shouldShowNewTab)
+        this.tabBrowser.showTabForContentView(tabContentView);
 };
 
 WebInspector.activateExtraDomains = function(domains)

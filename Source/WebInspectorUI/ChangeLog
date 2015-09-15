@@ -1,3 +1,30 @@
+2015-09-15  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: command-click in NewTabContentView should open new tab without switching to it
+        https://bugs.webkit.org/show_bug.cgi?id=149173
+
+        Reviewed by Joseph Pecoraro.
+
+        To allow a user to quickly restore tabs, it should be possible to command-click
+        all the tabs that are desired without going back through the [+] tab button.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.createNewTabWithType): Renamed.
+
+            Use an options object and split creating the tab from deleting the
+            replaced tab and showing the new tab. Add better error checking.
+
+        (WebInspector.createNewTab): Deleted.
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView):
+        (WebInspector.NewTabContentView.prototype._createNewTabWithType): Renamed.
+
+            If the meta key is pressed, don't switch to the new tab or remove this view
+            unless there are no more tabs that can be created beyond the current one.
+
+        (WebInspector.NewTabContentView.prototype._allowableTabTypes): Added.
+        (WebInspector.NewTabContentView.prototype._createNewTab): Deleted.
+
 2015-09-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Watch Expressions uncaught exceptions on page reload

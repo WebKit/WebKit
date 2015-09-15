@@ -50,7 +50,7 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
 
             var tabItemElement = document.createElement("div");
             tabItemElement.classList.add(WebInspector.NewTabContentView.TabItemStyleClassName);
-            tabItemElement.addEventListener("click", this._createNewTab.bind(this, info.type));
+            tabItemElement.addEventListener("click", this._createNewTabWithType.bind(this, info.type));
             tabItemElement[WebInspector.NewTabContentView.TypeSymbol] = info.type;
 
             var boxElement = tabItemElement.appendChild(document.createElement("div"));
@@ -93,22 +93,40 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
         return false;
     }
 
+    get tabItemElements()
+    {
+        return Array.from(this.element.querySelectorAll("." + WebInspector.NewTabContentView.TabItemStyleClassName));
+    }
+
     // Private
 
-    _createNewTab(tabType, event)
+    _createNewTabWithType(tabType, event)
     {
         if (!WebInspector.isNewTabWithTypeAllowed(tabType))
             return;
 
-        WebInspector.createNewTab(tabType, this);
+        const canCreateAdditionalTabs = this._allowableTabTypes().length > 1;
+        const options = {
+            referencedView: this,
+            shouldReplaceTab: !canCreateAdditionalTabs || !WebInspector.modifierKeys.metaKey,
+            shouldShowNewTab: !WebInspector.modifierKeys.metaKey
+        }
+        WebInspector.createNewTabWithType(tabType, options);
+    }
+
+    _allowableTabTypes()
+    {
+        let tabItemElements = this.tabItemElements;
+        let tabTypes = tabItemElements.map((tabItemElement) => tabItemElement[WebInspector.NewTabContentView.TypeSymbol]);
+        return tabTypes.filter((type) => WebInspector.isNewTabWithTypeAllowed(type));
     }
 
     _updateTabItems()
     {
-        var tabItemElements = Array.from(this.element.querySelectorAll("." + WebInspector.NewTabContentView.TabItemStyleClassName));
-        for (var tabItemElement of tabItemElements) {
-            var type = tabItemElement[WebInspector.NewTabContentView.TypeSymbol];
-            var allowed = WebInspector.isNewTabWithTypeAllowed(type);
+        let tabItemElements = this.tabItemElements;
+        for (let tabItemElement of tabItemElements) {
+            let type = tabItemElement[WebInspector.NewTabContentView.TypeSymbol];
+            let allowed = WebInspector.isNewTabWithTypeAllowed(type);
             tabItemElement.classList.toggle(WebInspector.NewTabContentView.DisabledStyleClassName, !allowed);
         }
     }
