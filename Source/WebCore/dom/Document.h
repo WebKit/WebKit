@@ -47,6 +47,7 @@
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
 #include "StyleResolveTree.h"
+#include "TextResourceDecoder.h"
 #include "Timer.h"
 #include "TreeScope.h"
 #include "UserActionElementSet.h"
@@ -401,9 +402,10 @@ public:
     String defaultCharset() const;
 
     String charset() const { return Document::encoding(); }
-    String characterSetForBindings() const;
+    String characterSetWithUTF8Fallback() const;
+    TextEncoding textEncoding() const;
 
-    AtomicString encoding() const;
+    AtomicString encoding() const { return textEncoding().domName(); }
 
     void setCharset(const String&);
 
@@ -1748,6 +1750,13 @@ inline void Document::notifyRemovePendingSheetIfNeeded()
 {
     if (m_needsNotifyRemoveAllPendingStylesheet)
         didRemoveAllPendingStylesheet();
+}
+
+inline TextEncoding Document::textEncoding() const
+{
+    if (auto* decoder = this->decoder())
+        return decoder->encoding();
+    return TextEncoding();
 }
 
 #if ENABLE(TEMPLATE_ELEMENT)

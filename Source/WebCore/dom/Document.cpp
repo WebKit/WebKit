@@ -149,7 +149,6 @@
 #include "StyleSheetList.h"
 #include "SubresourceLoader.h"
 #include "TextNodeTraversal.h"
-#include "TextResourceDecoder.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
 #include "VisitedLinkState.h"
@@ -1248,14 +1247,7 @@ void Document::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowedByClient
         setVisualUpdatesAllowed(true);
 }
 
-AtomicString Document::encoding() const
-{
-    if (TextResourceDecoder* d = decoder())
-        return d->encoding().domName();
-    return nullAtom;
-}
-
-String Document::characterSetForBindings() const
+String Document::characterSetWithUTF8Fallback() const
 {
     AtomicString name = encoding();
     if (!name.isNull())
