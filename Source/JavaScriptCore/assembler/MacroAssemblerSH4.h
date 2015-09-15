@@ -2403,6 +2403,11 @@ public:
         return Call(m_assembler.call(), Call::Linkable);
     }
 
+    Call nearTailCall()
+    {
+        return Call(m_assembler.jump(), Call::LinkableNearTail);
+    }
+
     Call nearCall()
     {
         return Call(m_assembler.call(), Call::LinkableNear);
@@ -2608,7 +2613,10 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        SH4Assembler::linkCall(code, call.m_label, function.value());
+        if (call.isFlagSet(Call::Tail))
+            SH4Assembler::linkJump(code, call.m_label, function.value());
+        else
+            SH4Assembler::linkCall(code, call.m_label, function.value());
     }
 
     static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)

@@ -1975,6 +1975,16 @@ public:
         return Call(m_assembler.label(), Call::LinkableNear);
     }
 
+    Call nearTailCall()
+    {
+        m_assembler.nop();
+        m_assembler.nop();
+        m_assembler.beq(MIPSRegisters::zero, MIPSRegisters::zero, 0);
+        m_assembler.nop();
+        insertRelaxationWords();
+        return Call(m_assembler.label(), Call::LinkableNearTail);
+    }
+
     Call call()
     {
         m_assembler.lui(MIPSRegisters::t9, 0);
@@ -2800,7 +2810,10 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        MIPSAssembler::linkCall(code, call.m_label, function.value());
+        if (call.isFlagSet(Call::Tail))
+            MIPSAssembler::linkJump(code, call.m_label, function.value());
+        else
+            MIPSAssembler::linkCall(code, call.m_label, function.value());
     }
 
     static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)

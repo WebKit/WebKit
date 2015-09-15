@@ -1,3 +1,231 @@
+2015-09-14  Basile Clement  <basile_clement@apple.com>
+
+        [ES6] Implement tail calls in the LLInt and Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=148661
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces two new opcodes, op_tail_call and
+        op_tail_call_varargs, to perform tail calls, and implements them in the
+        LLInt and baseline JIT. Their use prevents DFG and FTL compilation for
+        now. They are currently implemented by sliding the call frame and
+        masquerading as our own caller right before performing an actual call.
+
+        This required to change the operationLink family of operation to return
+        a SlowPathReturnType instead of a char* in order to distinguish between
+        exception cases and actual call cases. We introduce a new FrameAction
+        enum that indicates whether to reuse (non-exceptional tail call) or
+        keep the current call frame (non-tail call, and exceptional cases).
+
+        This is also a semantics change, since the Function.caller property is
+        now leaking tail calls. Since tail calls are only used in strict mode,
+        which poisons this property, the only way of seeing this semantics
+        change is when a sloppy function calls a strict function that then
+        tail-calls a sloppy function. Previously, the second sloppy function's
+        caller would have been the strict function (i.e. raises a TypeError
+        when the .caller attribute is accessed), while it is now the first
+        sloppy function. Tests have been updated to reflect that.
+
+        This also changes the assumptions we make about call frames. In order
+        to be relatively efficient, we want to be able to compute the frame
+        size based only on the argument count, which was not possible
+        previously. To enable this, we now enforce at the bytecode generator,
+        DFG and FTL level that any space reserved for a call frame is
+        stack-aligned, which allows to easily compute its size when performing
+        a tail call. In all the "special call cases" (calls from native code,
+        inlined cache calls, etc.), we are starting the frame at the current
+        stack pointer and thus will always have a stack-aligned frame size.
+
+        Finally, this patch adds a couple of tests to check that tail calls run
+        in constant stack space, as well as tests checking that tail calls are
+        recognized correctly. Those tests use the handy aforementioned leaking
+        of tail calls through Function.caller to detect tail calls. 
+
+        Given that this patch only implements tail calls for the LLInt and
+        Baseline JIT, tail calls are disabled by default.  Until changes are
+        landed for all tiers, tail call testing and use requires the
+        --enableTailCalls=true or equivalent.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbortReason.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Call::Call):
+        (JSC::AbstractMacroAssembler::repatchNearCall):
+        (JSC::AbstractMacroAssembler::repatchCompact):
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationNearCall::CodeLocationNearCall):
+        (JSC::CodeLocationNearCall::callMode):
+        (JSC::CodeLocationCommon::callAtOffset):
+        (JSC::CodeLocationCommon::nearCallAtOffset):
+        (JSC::CodeLocationCommon::dataLabelPtrAtOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::locationOf):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::nearTailCall):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::linkCall):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::nearCall):
+        (JSC::MacroAssemblerARM64::nearTailCall):
+        (JSC::MacroAssemblerARM64::ret):
+        (JSC::MacroAssemblerARM64::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::nearTailCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::linkCall):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::nearCall):
+        (JSC::MacroAssemblerMIPS::nearTailCall):
+        (JSC::MacroAssemblerMIPS::call):
+        (JSC::MacroAssemblerMIPS::linkCall):
+        (JSC::MacroAssemblerMIPS::repatchCall):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::call):
+        (JSC::MacroAssemblerSH4::nearTailCall):
+        (JSC::MacroAssemblerSH4::nearCall):
+        (JSC::MacroAssemblerSH4::linkCall):
+        (JSC::MacroAssemblerSH4::repatchCall):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::linkCall):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::breakpoint):
+        (JSC::MacroAssemblerX86Common::nearTailCall):
+        (JSC::MacroAssemblerX86Common::nearCall):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::linkCall):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::callTypeFor):
+        (JSC::CallLinkInfo::isVarargsCallType):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::specializationKind):
+        (JSC::CallLinkInfo::callModeFor):
+        (JSC::CallLinkInfo::callMode):
+        (JSC::CallLinkInfo::isTailCall):
+        (JSC::CallLinkInfo::isVarargs):
+        (JSC::CallLinkInfo::registerPreservationMode):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CallMode.cpp: Added.
+        (WTF::printInternal):
+        * bytecode/CallMode.h: Added.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCallInTailPosition):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        (JSC::LabelNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isCallBytecode):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_tail_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_tail_call_varargs):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_tail_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_tail_call_varargs):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_tail_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_tail_call_varargs):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_tail_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_tail_call_varargs):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitNakedTailCall):
+        (JSC::JIT::updateTopCallFrame):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/Repatch.cpp:
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::baselineGetterReturnThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/Options.h:
+        * tests/stress/mutual-tail-call-no-stack-overflow.js: Added.
+        (shouldThrow):
+        (sloppyCountdown.even):
+        (sloppyCountdown.odd):
+        (strictCountdown.even):
+        (strictCountdown.odd):
+        (strictCountdown):
+        (odd):
+        (even):
+        * tests/stress/tail-call-no-stack-overflow.js: Added.
+        (shouldThrow):
+        (strictLoop):
+        (strictLoopArityFixup1):
+        (strictLoopArityFixup2):
+        * tests/stress/tail-call-recognize.js: Added.
+        (callerMustBeRun):
+        (callerMustBeStrict):
+        (runTests):
+        * tests/stress/tail-call-varargs-no-stack-overflow.js: Added.
+        (shouldThrow):
+        (strictLoop):
+        * tests/stress/tail-calls-dont-overwrite-live-stack.js: Added.
+        (tail):
+        (obj.method):
+        (obj.get fromNative):
+        (getThis):
+
 2015-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt get/put inline caches shouldn't use tons of opcodes

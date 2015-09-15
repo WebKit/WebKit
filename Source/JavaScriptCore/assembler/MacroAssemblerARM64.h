@@ -2204,6 +2204,13 @@ public:
         return Call(m_assembler.label(), Call::LinkableNear);
     }
 
+    ALWAYS_INLINE Call nearTailCall()
+    {
+        AssemblerLabel label = m_assembler.label();
+        m_assembler.b();
+        return Call(label, Call::LinkableNearTail);
+    }
+
     ALWAYS_INLINE void ret()
     {
         m_assembler.ret();
@@ -2882,10 +2889,12 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        if (call.isFlagSet(Call::Near))
-            ARM64Assembler::linkCall(code, call.m_label, function.value());
-        else
+        if (!call.isFlagSet(Call::Near))
             ARM64Assembler::linkPointer(code, call.m_label.labelAtOffset(REPATCH_OFFSET_CALL_TO_POINTER), function.value());
+        else if (call.isFlagSet(Call::Tail))
+            ARM64Assembler::linkJump(code, call.m_label, function.value());
+        else
+            ARM64Assembler::linkCall(code, call.m_label, function.value());
     }
 
     CachedTempRegister m_dataMemoryTempRegister;

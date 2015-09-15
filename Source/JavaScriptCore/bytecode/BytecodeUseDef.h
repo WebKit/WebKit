@@ -191,7 +191,8 @@ void computeUsesForBytecodeOffset(
     }
     case op_has_structure_property:
     case op_construct_varargs:
-    case op_call_varargs: {
+    case op_call_varargs:
+    case op_tail_call_varargs: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
@@ -220,7 +221,8 @@ void computeUsesForBytecodeOffset(
     }
     case op_construct:
     case op_call_eval:
-    case op_call: {
+    case op_call:
+    case op_tail_call: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         int argCount = instruction[3].u.operand;
         int registerOffset = -instruction[4].u.operand;
@@ -311,9 +313,11 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_func_exp:
     case op_new_arrow_func_exp:
     case op_call_varargs:
+    case op_tail_call_varargs:
     case op_construct_varargs:
     case op_get_from_scope:
     case op_call:
+    case op_tail_call:
     case op_call_eval:
     case op_construct:
     case op_get_by_id:

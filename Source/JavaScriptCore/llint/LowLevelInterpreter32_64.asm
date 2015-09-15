@@ -602,13 +602,27 @@ macro functionArityCheck(doneLabel, slowPath)
 .proceedInline:
     loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], t1
     btiz t1, .continue
-
-    // Move frame up "t1 * 2" slots
-    lshiftp 1, t1
-    negi t1
-    move cfr, t3
     loadi PayloadOffset + ArgumentCount[cfr], t2
     addi CallFrameHeaderSlots, t2
+
+    // Check if there are some unaligned slots we can use
+    move t1, t3
+    andi StackAlignmentSlots - 1, t3
+    btiz t3, .noExtraSlot
+.fillExtraSlots:
+    move 0, t0
+    storei t0, PayloadOffset[cfr, t2, 8]
+    move UndefinedTag, t0
+    storei t0, TagOffset[cfr, t2, 8]
+    addi 1, t2
+    bsubinz 1, t3, .fillExtraSlots
+    andi ~(StackAlignmentSlots - 1), t1
+    btiz t1, .continue
+
+.noExtraSlot:
+    // Move frame up t1 slots
+    negi t1
+    move cfr, t3
 .copyLoop:
     loadi PayloadOffset[t3], t0
     storei t0, PayloadOffset[t3, t1, 8]
@@ -1764,7 +1778,7 @@ macro arrayProfileForCall()
 .done:
 end
 
-macro doCall(slowPath)
+macro doCall(slowPath, prepareCall)
     loadi 8[PC], t0
     loadi 20[PC], t1
     loadp LLIntCallLinkInfo::callee[t1], t2
@@ -1779,13 +1793,13 @@ macro doCall(slowPath)
     storei PC, ArgumentCount + TagOffset[cfr]
     storei t2, ArgumentCount + PayloadOffset[t3]
     storei CellTag, Callee + TagOffset[t3]
-    addp CallerFrameAndPCSize, t3
-    callTargetFunction(t1, t3)
+    move t3, sp
+    prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
+    callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
 
 .opCallSlow:
-    slowPathForCall(slowPath)
+    slowPathForCall(slowPath, prepareCall)
 end
-
 
 _llint_op_ret:
     traceExecution()

@@ -1403,6 +1403,11 @@ public:
         m_assembler.int3();
     }
 
+    Call nearTailCall()
+    {
+        return Call(m_assembler.jmp(), Call::LinkableNearTail);
+    }
+
     Call nearCall()
     {
         return Call(m_assembler.call(), Call::LinkableNear);

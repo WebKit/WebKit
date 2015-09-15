@@ -510,14 +510,27 @@ macro functionArityCheck(doneLabel, slowPath)
 .noError:
     loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], t1
     btiz t1, .continue
+    loadi PayloadOffset + ArgumentCount[cfr], t2
+    addi CallFrameHeaderSlots, t2
 
-    // Move frame up "t1 * 2" slots
-    lshiftp 1, t1
+    // Check if there are some unaligned slots we can use
+    move t1, t3
+    andi StackAlignmentSlots - 1, t3
+    btiz t3, .noExtraSlot
+    move ValueUndefined, t0
+.fillExtraSlots:
+    storeq t0, [cfr, t2, 8]
+    addi 1, t2
+    bsubinz 1, t3, .fillExtraSlots
+    andi ~(StackAlignmentSlots - 1), t1
+    btiz t1, .continue
+
+.noExtraSlot:
+    // Move frame up t1 slots
     negq t1
     move cfr, t3
     subp CalleeSaveSpaceAsVirtualRegisters * 8, t3
-    loadi PayloadOffset + ArgumentCount[cfr], t2
-    addi CallFrameHeaderSlots + CalleeSaveSpaceAsVirtualRegisters, t2
+    addi CalleeSaveSpaceAsVirtualRegisters, t2
 .copyLoop:
     loadq [t3], t0
     storeq t0, [t3, t1, 8]
@@ -1653,7 +1666,7 @@ macro arrayProfileForCall()
 .done:
 end
 
-macro doCall(slowPath)
+macro doCall(slowPath, prepareCall)
     loadisFromInstruction(2, t0)
     loadpFromInstruction(5, t1)
     loadp LLIntCallLinkInfo::callee[t1], t2
@@ -1667,13 +1680,13 @@ macro doCall(slowPath)
     loadisFromInstruction(3, t2)
     storei PC, ArgumentCount + TagOffset[cfr]
     storei t2, ArgumentCount + PayloadOffset[t3]
-    addp CallerFrameAndPCSize, t3
-    callTargetFunction(t1, t3)
+    move t3, sp
+    prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
+    callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
 
 .opCallSlow:
-    slowPathForCall(slowPath)
+    slowPathForCall(slowPath, prepareCall)
 end
-
 
 _llint_op_ret:
     traceExecution()
