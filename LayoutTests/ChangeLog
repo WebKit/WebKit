@@ -1,3 +1,11 @@
+2015-09-14  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed, EFL gardening on 15th Sep.
+
+        Mark tests of css1/box_properties to flaky and tests of editing, fast are set to timeout.
+
+        * platform/efl/TestExpectations:
+
 2015-09-14  Alexey Proskuryakov  <ap@apple.com>
 
         fast/events/frame-scroll-fake-mouse-move.html is flaky
