@@ -1157,7 +1157,6 @@ webkit.org/b/145170 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [
 webkit.org/b/145170 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure Pass ]
 
 webkit.org/b/145256 media/video-controller-child-rate.html [ Failure Pass ]
-webkit.org/b/145257 http/tests/media/media-document-referer.html [ Failure Pass ]
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
 
 webkit.org/b/145261 fast/workers/stress-js-execution.html [ Failure Pass ]
