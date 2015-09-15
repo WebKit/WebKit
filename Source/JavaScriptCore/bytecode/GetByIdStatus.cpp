@@ -119,7 +119,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     return result;
 }
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
     GetByIdStatus result = GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
@@ -130,7 +130,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJITLocker& locke
         return GetByIdStatus(result.makesCalls() ? GetByIdStatus::MakesCalls : GetByIdStatus::TakesSlowPath, true);
     return result;
 }
-#endif // ENABLE(JIT)
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
 GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(

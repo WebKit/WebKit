@@ -72,7 +72,7 @@ public:
     
     static GetByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, UniquedStringImpl* uid);
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
     static GetByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
 #endif
 

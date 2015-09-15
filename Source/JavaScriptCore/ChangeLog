@@ -1,3 +1,13 @@
+2015-09-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(DFG_JIT) build after r188696
+        https://bugs.webkit.org/show_bug.cgi?id=149158
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/GetByIdStatus.cpp:
+        * bytecode/GetByIdStatus.h:
+
 2015-09-15  Saam barati  <sbarati@apple.com>
 
         functions that use try/catch will allocate a top level JSLexicalEnvironment even when it is not necessary
