@@ -1,3 +1,45 @@
+2015-09-15  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement calls to JavaScript functions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149093
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements calls to JavaScript functions in WebAssembly.
+        WebAssembly functions can only call JavaScript functions that are
+        imported to their module via an object that is passed into
+        loadWebAssembly(). References to JavaScript functions are resolved at
+        the module's load time, just like asm.js.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionLoadWebAssembly):
+        * tests/stress/wasm-calls.js:
+        * tests/stress/wasm/calls.wasm:
+        * wasm/JSWASMModule.cpp:
+        (JSC::JSWASMModule::visitChildren):
+        * wasm/JSWASMModule.h:
+        (JSC::JSWASMModule::importedFunctions):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildCallImport):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseCallImport):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildCallInternal):
+        (JSC::WASMFunctionSyntaxChecker::buildCallImport):
+        (JSC::WASMFunctionSyntaxChecker::updateTempStackHeightForCall):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::WASMModuleParser):
+        (JSC::WASMModuleParser::parse):
+        (JSC::WASMModuleParser::parseModule):
+        (JSC::WASMModuleParser::parseFunctionImportSection):
+        (JSC::WASMModuleParser::getImportedValue):
+        (JSC::parseWebAssembly):
+        * wasm/WASMModuleParser.h:
+
 2015-09-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(DFG_JIT) build after r188696

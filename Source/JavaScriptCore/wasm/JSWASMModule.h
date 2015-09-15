@@ -87,6 +87,7 @@ public:
     Vector<unsigned>& functionStartOffsetsInSource() { return m_functionStartOffsetsInSource; }
     Vector<unsigned>& functionStackHeights() { return m_functionStackHeights; }
     Vector<GlobalVariable>& globalVariables() { return m_globalVariables; }
+    Vector<WriteBarrier<JSFunction>>& importedFunctions() { return m_importedFunctions; }
 
 private:
     JSWASMModule(VM& vm, Structure* structure)
@@ -108,6 +109,7 @@ private:
     Vector<unsigned> m_functionStartOffsetsInSource;
     Vector<unsigned> m_functionStackHeights;
     Vector<GlobalVariable> m_globalVariables;
+    Vector<WriteBarrier<JSFunction>> m_importedFunctions;
 };
 
 } // namespace JSC

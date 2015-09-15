@@ -654,6 +654,17 @@ public:
         return UNUSED;
     }
 
+    int buildCallImport(uint32_t functionImportIndex, int, const WASMSignature& signature, WASMExpressionType returnType)
+    {
+        boxArgumentsAndAdjustStackPointer(signature.arguments);
+
+        JSFunction* function = m_module->importedFunctions()[functionImportIndex].get();
+        move(TrustedImmPtr(function), GPRInfo::regT0);
+
+        callAndUnboxResult(returnType);
+        return UNUSED;
+    }
+
     void appendExpressionList(int&, int) { }
 
     void linkTarget(JumpTarget& target)

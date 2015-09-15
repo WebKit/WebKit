@@ -530,6 +530,8 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseGetGlobalExpressionI32(context);
         case WASMOpExpressionI32::CallInternal:
             return parseCallInternalExpressionI32(context);
+        case WASMOpExpressionI32::CallImport:
+            return parseCallImport(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::Negate:
         case WASMOpExpressionI32::BitNot:
         case WASMOpExpressionI32::CountLeadingZeros:
@@ -594,7 +596,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::Store32:
         case WASMOpExpressionI32::StoreWithOffset32:
         case WASMOpExpressionI32::CallIndirect:
-        case WASMOpExpressionI32::CallImport:
         case WASMOpExpressionI32::Conditional:
         case WASMOpExpressionI32::Comma:
         case WASMOpExpressionI32::FromF32:
@@ -877,6 +878,8 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseGetLocalExpressionF64(context);
         case WASMOpExpressionF64::GetGlobal:
             return parseGetGlobalExpressionF64(context);
+        case WASMOpExpressionF64::CallImport:
+            return parseCallImport(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::SetLocal:
         case WASMOpExpressionF64::SetGlobal:
         case WASMOpExpressionF64::Load:
@@ -885,7 +888,6 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::StoreWithOffset:
         case WASMOpExpressionF64::CallInternal:
         case WASMOpExpressionF64::CallIndirect:
-        case WASMOpExpressionF64::CallImport:
         case WASMOpExpressionF64::Conditional:
         case WASMOpExpressionF64::Comma:
         case WASMOpExpressionF64::FromS32:
@@ -1004,6 +1006,21 @@ ContextExpression WASMFunctionParser::parseCallInternal(Context& context, WASMEx
     ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
     PROPAGATE_ERROR();
     return context.buildCallInternal(functionIndex, argumentList, signature, returnType);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseCallImport(Context& context, WASMExpressionType returnType)
+{
+    uint32_t functionImportSignatureIndex;
+    READ_COMPACT_UINT32_OR_FAIL(functionImportSignatureIndex, "Cannot read the function import signature index.");
+    FAIL_IF_FALSE(functionImportSignatureIndex < m_module->functionImportSignatures().size(), "The function import signature index is incorrect.");
+    const WASMFunctionImportSignature& functionImportSignature = m_module->functionImportSignatures()[functionImportSignatureIndex];
+    const WASMSignature& signature = m_module->signatures()[functionImportSignature.signatureIndex];
+    FAIL_IF_FALSE(signature.returnType == returnType, "Wrong return type.");
+
+    ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
+    PROPAGATE_ERROR();
+    return context.buildCallImport(functionImportSignature.functionImportIndex, argumentList, signature, returnType);
 }
 
 } // namespace JSC

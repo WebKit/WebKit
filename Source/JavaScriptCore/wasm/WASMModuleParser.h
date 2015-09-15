@@ -42,30 +42,32 @@ class VM;
 
 class WASMModuleParser {
 public:
-    WASMModuleParser(VM&, JSGlobalObject*, const SourceCode&);
-    JSWASMModule* parse(String& errorMessage);
+    WASMModuleParser(VM&, JSGlobalObject*, const SourceCode&, JSObject* imports);
+    JSWASMModule* parse(ExecState*, String& errorMessage);
 
 private:
-    void parseModule();
+    void parseModule(ExecState*);
     void parseConstantPoolSection();
     void parseSignatureSection();
-    void parseFunctionImportSection();
+    void parseFunctionImportSection(ExecState*);
     void parseGlobalSection();
     void parseFunctionDeclarationSection();
     void parseFunctionPointerTableSection();
     void parseFunctionDefinitionSection();
     void parseFunctionDefinition(size_t functionIndex);
     void parseExportSection();
+    void getImportedValue(ExecState*, const String& importName, JSValue&);
 
     VM& m_vm;
     Strong<JSGlobalObject> m_globalObject;
     const SourceCode& m_source;
+    Strong<JSObject> m_imports;
     WASMReader m_reader;
     Strong<JSWASMModule> m_module;
     String m_errorMessage;
 };
 
-JS_EXPORT_PRIVATE JSWASMModule* parseWebAssembly(ExecState*, const SourceCode&, String& errorMessage);
+JS_EXPORT_PRIVATE JSWASMModule* parseWebAssembly(ExecState*, const SourceCode&, JSObject* imports, String& errorMessage);
 
 } // namespace JSC
 

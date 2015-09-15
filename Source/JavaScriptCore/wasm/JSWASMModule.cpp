@@ -48,6 +48,8 @@ void JSWASMModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     for (auto function : thisObject->m_functions)
         visitor.append(&function);
+    for (auto importedFunction : thisObject->m_importedFunctions)
+        visitor.append(&importedFunction);
 }
 
 } // namespace JSC
