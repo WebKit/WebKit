@@ -1,3 +1,17 @@
+2015-09-14  Brady Eidson  <beidson@apple.com>
+
+        Make the enum IDBKey::Type into a utility enum class.
+        https://bugs.webkit.org/show_bug.cgi?id=149149
+
+        Reviewed by Alex Christensen.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore):
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBKeyData>::encode):
+        (IPC::ArgumentCoder<IDBKeyData>::decode):
+
 2015-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKWebView scroll deceleration rate is not being set properly

@@ -37,7 +37,7 @@ class KeyedEncoder;
 
 struct IDBKeyData {
     IDBKeyData()
-        : type(IDBKey::InvalidType)
+        : type(KeyType::Invalid)
         , numberValue(0)
         , isNull(true)
     {
@@ -48,7 +48,7 @@ struct IDBKeyData {
     static IDBKeyData minimum()
     {
         IDBKeyData result;
-        result.type = IDBKey::MinType;
+        result.type = KeyType::Min;
         result.isNull = false;
         return result;
     }
@@ -56,7 +56,7 @@ struct IDBKeyData {
     static IDBKeyData maximum()
     {
         IDBKeyData result;
-        result.type = IDBKey::MaxType;
+        result.type = KeyType::Max;
         result.isNull = false;
         return result;
     }
@@ -83,7 +83,7 @@ struct IDBKeyData {
     WEBCORE_EXPORT String loggingString() const;
 #endif
 
-    IDBKey::Type type;
+    KeyType type;
     Vector<IDBKeyData> arrayValue;
     String stringValue;
     double numberValue;

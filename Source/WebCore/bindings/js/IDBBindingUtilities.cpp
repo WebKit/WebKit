@@ -84,9 +84,9 @@ static JSValue idbKeyToJSValue(ExecState* exec, JSDOMGlobalObject* globalObject,
     }
 
     switch (key->type()) {
-    case IDBKey::ArrayType:
+    case KeyType::Array:
         {
-            const IDBKey::KeyArray& inArray = key->array();
+            const Vector<RefPtr<IDBKey>>& inArray = key->array();
             size_t size = inArray.size();
             JSArray* outArray = constructEmptyArray(exec, 0, globalObject, size);
             for (size_t i = 0; i < size; ++i) {
@@ -95,15 +95,15 @@ static JSValue idbKeyToJSValue(ExecState* exec, JSDOMGlobalObject* globalObject,
             }
             return JSValue(outArray);
         }
-    case IDBKey::StringType:
+    case KeyType::String:
         return jsStringWithCache(exec, key->string());
-    case IDBKey::DateType:
+    case KeyType::Date:
         return jsDateOrNull(exec, key->date());
-    case IDBKey::NumberType:
+    case KeyType::Number:
         return jsNumber(key->number());
-    case IDBKey::MinType:
-    case IDBKey::MaxType:
-    case IDBKey::InvalidType:
+    case KeyType::Min:
+    case KeyType::Max:
+    case KeyType::Invalid:
         ASSERT_NOT_REACHED();
         return jsUndefined();
     }
@@ -134,7 +134,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(ExecState* exec, JSValue value, Vect
                 return nullptr;
             stack.append(array);
 
-            IDBKey::KeyArray subkeys;
+            Vector<RefPtr<IDBKey>> subkeys;
             for (size_t i = 0; i < length; i++) {
                 JSValue item = array->getIndex(exec, i);
                 RefPtr<IDBKey> subkey = createIDBKeyFromValue(exec, item, stack);
@@ -264,7 +264,7 @@ RefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(ExecState* exec, const Depr
     ASSERT(!keyPath.isNull());
 
     if (keyPath.type() == IDBKeyPath::ArrayType) {
-        IDBKey::KeyArray result;
+        Vector<RefPtr<IDBKey>> result;
         const Vector<String>& array = keyPath.array();
         for (size_t i = 0; i < array.size(); i++) {
             RefPtr<IDBKey> key = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, array[i]);
@@ -357,14 +357,14 @@ void generateIndexKeysForValue(ExecState* exec, const IDBIndexMetadata& indexMet
     if (!indexKey)
         return;
 
-    if (!indexMetadata.multiEntry || indexKey->type() != IDBKey::ArrayType) {
+    if (!indexMetadata.multiEntry || indexKey->type() != KeyType::Array) {
         if (!indexKey->isValid())
             return;
 
         indexKeys.append(IDBKeyData(indexKey.get()));
     } else {
         ASSERT(indexMetadata.multiEntry);
-        ASSERT(indexKey->type() == IDBKey::ArrayType);
+        ASSERT(indexKey->type() == KeyType::Array);
         indexKey = IDBKey::createMultiEntryArray(indexKey->array());
 
         if (!indexKey->isValid())

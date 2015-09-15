@@ -57,6 +57,17 @@ enum class VersionNullness {
     Null,
     NonNull,
 };
+    
+// In order of the least to the highest precedent in terms of sort order.
+enum KeyType {
+    Max = -1,
+    Invalid = 0,
+    Array,
+    String,
+    Date,
+    Number,
+    Min,
+};
 
 } // namespace IndexedDB
 

@@ -362,7 +362,7 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
             return nullptr;
         idbKey = IDBKey::createDate(date);
     } else if (type == arrayType) {
-        IDBKey::KeyArray keyArray;
+        Vector<RefPtr<IDBKey>> keyArray;
         RefPtr<InspectorArray> array;
         if (!key->getArray("array", array))
             return nullptr;

@@ -1905,21 +1905,21 @@ void ArgumentCoder<IDBKeyData>::encode(ArgumentEncoder& encoder, const IDBKeyDat
     encoder.encodeEnum(keyData.type);
 
     switch (keyData.type) {
-    case IDBKey::InvalidType:
+    case KeyType::Invalid:
         break;
-    case IDBKey::ArrayType:
+    case KeyType::Array:
         encoder << keyData.arrayValue;
         break;
-    case IDBKey::StringType:
+    case KeyType::String:
         encoder << keyData.stringValue;
         break;
-    case IDBKey::DateType:
-    case IDBKey::NumberType:
+    case KeyType::Date:
+    case KeyType::Number:
         encoder << keyData.numberValue;
         break;
-    case IDBKey::MaxType:
-    case IDBKey::MinType:
-        // MaxType and MinType are only used for comparison to other keys.
+    case KeyType::Max:
+    case KeyType::Min:
+        // KeyType::Max and KeyType::Min are only used for comparison to other keys.
         // They should never be sent across the wire.
         ASSERT_NOT_REACHED();
         break;
@@ -1938,24 +1938,24 @@ bool ArgumentCoder<IDBKeyData>::decode(ArgumentDecoder& decoder, IDBKeyData& key
         return false;
 
     switch (keyData.type) {
-    case IDBKey::InvalidType:
+    case KeyType::Invalid:
         break;
-    case IDBKey::ArrayType:
+    case KeyType::Array:
         if (!decoder.decode(keyData.arrayValue))
             return false;
         break;
-    case IDBKey::StringType:
+    case KeyType::String:
         if (!decoder.decode(keyData.stringValue))
             return false;
         break;
-    case IDBKey::DateType:
-    case IDBKey::NumberType:
+    case KeyType::Date:
+    case KeyType::Number:
         if (!decoder.decode(keyData.numberValue))
             return false;
         break;
-    case IDBKey::MaxType:
-    case IDBKey::MinType:
-        // MaxType and MinType are only used for comparison to other keys.
+    case KeyType::Max:
+    case KeyType::Min:
+        // KeyType::Max and KeyType::Min are only used for comparison to other keys.
         // They should never be sent across the wire.
         ASSERT_NOT_REACHED();
         decoder.markInvalid();
