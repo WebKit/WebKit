@@ -209,9 +209,9 @@ RefPtr<LegacyCursor> LegacyRequest::getResultCursor()
 {
     if (!m_result)
         return nullptr;
-    if (m_result->type() == IDBAny::IDBCursorType)
+    if (m_result->type() == IDBAny::Type::IDBCursor)
         return m_result->legacyCursor();
-    if (m_result->type() == IDBAny::IDBCursorWithValueType)
+    if (m_result->type() == IDBAny::Type::IDBCursorWithValue)
         return m_result->legacyCursorWithValue();
     return nullptr;
 }
@@ -340,9 +340,9 @@ void LegacyRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer)
 #ifndef NDEBUG
 static PassRefPtr<IDBObjectStore> effectiveObjectStore(LegacyAny* source)
 {
-    if (source->type() == IDBAny::IDBObjectStoreType)
+    if (source->type() == IDBAny::Type::IDBObjectStore)
         return source->idbObjectStore();
-    if (source->type() == IDBAny::IDBIndexType)
+    if (source->type() == IDBAny::Type::IDBIndex)
         return source->idbIndex()->objectStore();
 
     ASSERT_NOT_REACHED();

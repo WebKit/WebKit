@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class IDBConnectionManager;
 class IDBFactoryBackendInterface;
 
 class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {

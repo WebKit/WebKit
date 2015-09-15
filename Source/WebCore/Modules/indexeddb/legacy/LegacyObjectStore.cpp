@@ -310,7 +310,7 @@ private:
 
         RefPtr<LegacyAny> cursorAny = request->legacyResult(ASSERT_NO_EXCEPTION);
         RefPtr<LegacyCursorWithValue> cursor;
-        if (cursorAny->type() == IDBAny::IDBCursorWithValueType)
+        if (cursorAny->type() == IDBAny::Type::IDBCursorWithValue)
             cursor = cursorAny->legacyCursorWithValue();
 
         Vector<int64_t, 1> indexIds;

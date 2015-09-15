@@ -122,7 +122,7 @@ public:
             m_requestCallback->sendFailure("Could not get result in callback.");
             return;
         }
-        if (requestResult->type() != IDBAny::DOMStringListType) {
+        if (requestResult->type() != IDBAny::Type::DOMStringList) {
             m_requestCallback->sendFailure("Unexpected result type.");
             return;
         }
@@ -184,7 +184,7 @@ public:
             m_executableWithDatabase->requestCallback().sendFailure("Could not get result in callback.");
             return;
         }
-        if (requestResult->type() != IDBAny::IDBDatabaseType) {
+        if (requestResult->type() != IDBAny::Type::IDBDatabase) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
             return;
         }
@@ -439,11 +439,11 @@ public:
             m_requestCallback->sendFailure("Could not get result in callback.");
             return;
         }
-        if (requestResult->type() == IDBAny::ScriptValueType) {
+        if (requestResult->type() == IDBAny::Type::ScriptValue) {
             end(false);
             return;
         }
-        if (requestResult->type() != IDBAny::IDBCursorWithValueType) {
+        if (requestResult->type() != IDBAny::Type::IDBCursorWithValue) {
             m_requestCallback->sendFailure("Unexpected result type.");
             return;
         }

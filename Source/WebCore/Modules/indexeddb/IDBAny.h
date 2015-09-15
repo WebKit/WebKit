@@ -52,21 +52,21 @@ class IDBAny : public ScriptWrappable, public RefCounted<IDBAny> {
 public:
     virtual ~IDBAny() { }
 
-    enum Type {
-        UndefinedType = 0,
-        NullType,
-        DOMStringListType,
-        IDBCursorType,
-        IDBCursorWithValueType,
-        IDBDatabaseType,
-        IDBFactoryType,
-        IDBIndexType,
-        IDBObjectStoreType,
-        IDBTransactionType,
-        ScriptValueType,
-        IntegerType,
-        StringType,
-        KeyPathType,
+    enum class Type {
+        Undefined = 0,
+        Null,
+        DOMStringList,
+        IDBCursor,
+        IDBCursorWithValue,
+        IDBDatabase,
+        IDBFactory,
+        IDBIndex,
+        IDBObjectStore,
+        IDBTransaction,
+        ScriptValue,
+        Integer,
+        String,
+        KeyPath,
     };
 
     virtual Type type() const = 0;

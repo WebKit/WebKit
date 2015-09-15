@@ -59,7 +59,7 @@ LegacyCursor::LegacyCursor(PassRefPtr<IDBCursorBackend> backend, IndexedDB::Curs
 {
     ASSERT(m_backend);
     ASSERT(m_request);
-    ASSERT(m_source->type() == IDBAny::IDBObjectStoreType || m_source->type() == IDBAny::IDBIndexType);
+    ASSERT(m_source->type() == IDBAny::Type::IDBObjectStore || m_source->type() == IDBAny::Type::IDBIndex);
     ASSERT(m_transaction);
 }
 
@@ -266,7 +266,7 @@ void LegacyCursor::setValueReady(DOMRequestState* state, PassRefPtr<IDBKey> key,
 
 PassRefPtr<LegacyObjectStore> LegacyCursor::effectiveObjectStore()
 {
-    if (m_source->type() == IDBAny::IDBObjectStoreType)
+    if (m_source->type() == IDBAny::Type::IDBObjectStore)
         return m_source->legacyObjectStore();
     RefPtr<LegacyIndex> index = m_source->legacyIndex();
     return index->legacyObjectStore();
