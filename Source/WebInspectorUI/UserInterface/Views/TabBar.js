@@ -221,6 +221,10 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
         var hasMoreThanOneNormalTab = this._hasMoreThanOneNormalTab();
         this._element.classList.toggle("single-tab", !hasMoreThanOneNormalTab);
 
+        const shouldOpenDefaultTab = !tabBarItem.isDefaultTab && !this.hasNormalTab();
+        if (shouldOpenDefaultTab)
+            doNotAnimate = true;
+
         if (!hasMoreThanOneNormalTab || wasLastNormalTab || !doNotExpand) {
             if (!doNotAnimate) {
                 this._tabAnimatedClosedSinceMouseEnter = true;
@@ -229,6 +233,9 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
                 this.updateLayoutSoon();
 
             this.dispatchEventToListeners(WebInspector.TabBar.Event.TabBarItemRemoved, {tabBarItem});
+
+            if (shouldOpenDefaultTab)
+                this._openDefaultTab();
 
             return tabBarItem;
         }
@@ -290,6 +297,9 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
             this.updateLayoutSoon();
 
         this.dispatchEventToListeners(WebInspector.TabBar.Event.TabBarItemRemoved, {tabBarItem});
+
+        if (shouldOpenDefaultTab)
+            this._openDefaultTab();
 
         return tabBarItem;
     }
@@ -430,6 +440,11 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
         return this._element;
     }
 
+    hasNormalTab()
+    {
+        return this._tabBarItems.some((tab) => !tab.pinned);
+    }
+
     // Private
 
     _findTabBarItem(tabBarItemOrIndex)
@@ -457,6 +472,11 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
         }
 
         return false;
+    }
+
+    _openDefaultTab()
+    {
+        this.dispatchEventToListeners(WebInspector.TabBar.Event.OpenDefaultTab);
     }
 
     _recordTabBarItemSizesAndPositions()
@@ -608,8 +628,13 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
         const clickedMiddleButton = event.button === 1;
 
         var closeButtonElement = event.target.enclosingNodeOrSelfWithClass(WebInspector.TabBarItem.CloseButtonStyleClassName);
-        if (closeButtonElement || clickedMiddleButton)
+        if (closeButtonElement || clickedMiddleButton) {
+            // Disallow closing the default tab if it is the only tab.
+            if (tabBarItem.isDefaultTab && this._element.classList.contains("single-tab"))
+                return;
+
             this.removeTabBarItem(tabBarItem, false, true);
+        }
     }
 
     _handleMouseMoved(event)
@@ -755,5 +780,6 @@ WebInspector.TabBar.Event = {
     TabBarItemAdded: "tab-bar-tab-bar-item-added",
     TabBarItemRemoved: "tab-bar-tab-bar-item-removed",
     TabBarItemsReordered: "tab-bar-tab-bar-items-reordered",
-    NewTabItemClicked: "tab-bar-new-tab-item-clicked"
+    NewTabItemClicked: "tab-bar-new-tab-item-clicked",
+    OpenDefaultTab: "tab-bar-open-default-tab"
 };

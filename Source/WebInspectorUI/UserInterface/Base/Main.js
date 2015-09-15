@@ -212,6 +212,7 @@ WebInspector.contentLoaded = function()
 
     this.tabBar = new WebInspector.TabBar(document.getElementById("tab-bar"));
     this.tabBar.addEventListener(WebInspector.TabBar.Event.NewTabItemClicked, this._newTabItemClicked, this);
+    this.tabBar.addEventListener(WebInspector.TabBar.Event.OpenDefaultTab, this._openDefaultTab, this);
 
     var contentElement = document.getElementById("content");
     contentElement.setAttribute("role", "main");
@@ -371,6 +372,9 @@ WebInspector.contentLoaded = function()
     if (!this.tabBar.selectedTabBarItem)
         this.tabBar.selectedTabBarItem = 0;
 
+    if (!this.tabBar.hasNormalTab())
+        this.showNewTabTab();
+
     // Listen to the events after restoring the saved tabs to avoid recursion.
     this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._rememberOpenTabs, this);
     this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._rememberOpenTabs, this);
@@ -469,10 +473,21 @@ WebInspector._updateNewTabButtonState = function(event)
 
 WebInspector._newTabItemClicked = function(event)
 {
+    const shouldAnimate = true;
+    this.showNewTabTab(shouldAnimate);
+};
+
+WebInspector._openDefaultTab = function(event)
+{
+    this.showNewTabTab();
+};
+
+WebInspector.showNewTabTab = function(shouldAnimate)
+{
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.NewTabContentView);
     if (!tabContentView)
         tabContentView = new WebInspector.NewTabContentView;
-    this.tabBrowser.showTabForContentView(tabContentView);
+    this.tabBrowser.showTabForContentView(tabContentView, !shouldAnimate);
 };
 
 WebInspector.isNewTabWithTypeAllowed = function(tabType)

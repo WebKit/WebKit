@@ -1,3 +1,62 @@
+2015-09-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Closing the final inspector tab should be allowed
+        https://bugs.webkit.org/show_bug.cgi?id=149130
+
+        Reviewed by Brian Burg.
+
+        Previously we did not allow closing the last inspector tab. Now, we
+        will allow closing all inspector tabs, and when the last is closed,
+        present an unclosable New Tab tab, which would then be used to create
+        a new tab.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        If we have no tabs to restore, show the New Tab tab.
+
+        (WebInspector._openDefaultTab):
+        When the last tab is closed, the tab bar requests we open a default tab.
+        Open the New Tab tab.
+
+        (WebInspector.TabBar.prototype._handleClick):
+        Disallow closing the single default tab.
+
+        (WebInspector._newTabItemClicked):
+        (WebInspector.showNewTabTab):
+        Share logic for showing the New Tab tab.
+
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView):
+        Mark the new tab's tab bar item as the "default" tab bar item. It gets
+        special behavior when it is the single normal tab (cannot be closed).
+
+        * UserInterface/Views/TabBar.css:
+        (body:not(.window-inactive) .tab-bar > .item:hover > .close):
+        (body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .close):
+        (.tab-bar.single-tab > .item.default-tab > .close):
+        (body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-button):hover > .close): Deleted.
+        (.tab-bar > .item.hide-close-button > .close): Deleted.
+        Update styles to only disable the close button on the
+        "default-tab" when it is the "single-tab" open. Otherwise
+        always allow closing tabs.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype.removeTabBarItem):
+        (WebInspector.TabBar.prototype.hasNormalTab):
+        (WebInspector.TabBar.prototype._openDefaultTab):
+        When removing the last normal tab, send an event to open
+        the default tab.
+
+        * UserInterface/Views/TabBarItem.js:
+        (WebInspector.TabBarItem.prototype.get default):
+        (WebInspector.TabBarItem.prototype.get isDefaultTab):
+        (WebInspector.TabBarItem.prototype.set isDefaultTab):
+        (WebInspector.TabBarItem.prototype.get hideCloseButton): Deleted.
+        (WebInspector.TabBarItem.prototype.set hideCloseButton): Deleted.
+        Switch to marking a tab bar item as the default tab. This tab
+        will be allowed when it is the single remaining tab. Currently
+        the default tab is always the "New Tab" tab.
+
 2015-09-15  Brian Burg  <bburg@apple.com>
 
         Web Inspector: new tab content view should disallow split console

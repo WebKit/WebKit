@@ -160,12 +160,15 @@ body.window-inactive .tab-bar > .item.selected {
     transition-delay: 0, 50ms;
 }
 
-body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-button):hover > .close {
+body:not(.window-inactive) .tab-bar > .item:hover > .close {
     opacity: 0.6;
 }
 
-.tab-bar.single-tab > .item > .close,
-.tab-bar > .item.hide-close-button > .close {
+body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .close {
+    opacity: 0;
+}
+
+.tab-bar.single-tab > .item.default-tab > .close {
     pointer-events: none;
 }
 
@@ -262,12 +265,12 @@ body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-but
     display: none;
 }
 
-.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned, .hide-close-button):hover > .icon,
+.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned, .default-tab):hover > .icon,
 .tab-bar.hide-titles > .item.selected:hover > .icon {
     display: none;
 }
 
-.tab-bar.collapsed:not(.hide-titles) > .item:not(.hide-close-button):hover > .close,
+.tab-bar.collapsed:not(.hide-titles) > .item:not(.default-tab):hover > .close,
 .tab-bar.hide-titles > .item.selected:hover > .close {
     display: inline-block;
 }
