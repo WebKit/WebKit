@@ -2538,3 +2538,5 @@ fast/text/international/system-language [ Failure ]
 fast/text/international/system-language/system-font-punctuation.html [ Missing ]
 # This test relies on iOS-specific font fallback.
 fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+
+webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]

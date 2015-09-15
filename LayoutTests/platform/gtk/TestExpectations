@@ -2614,3 +2614,5 @@ media/controls [ Skip ]
 
 # Mocking the system language is not implemented in GTK.
 fast/text/international/system-language [ Failure ]
+
+webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]

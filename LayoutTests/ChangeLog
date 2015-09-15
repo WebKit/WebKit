@@ -1,5 +1,35 @@
 2015-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Add tests for control characters being rendered visibly
+        https://bugs.webkit.org/show_bug.cgi?id=149142
+
+        Reviewed by Alexey Proskuryakov.
+
+        According to [1] and [2], all browsers are migrating to rendering control characters. This patch
+        adds tests for this behavior. Because we do not implement the behavior yet [3], these tests are
+        marked as failing.
+
+        [1] http://logs.csswg.org/irc.w3.org/css/2015-02-08/#e520447
+        [2] https://lists.w3.org/Archives/Public/www-style/2015Sep/0076.html
+        [3] https://bugs.webkit.org/show_bug.cgi?id=149128
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+        * fast/text/control-characters/visible-control-characters-1-expected-mismatch.html: Added.
+        * fast/text/control-characters/visible-control-characters-1.html: Added.
+        * fast/text/control-characters/visible-control-characters-2-expected-mismatch.html: Added.
+        * fast/text/control-characters/visible-control-characters-2.html: Added.
+        * fast/text/control-characters/visible-control-characters-3-expected-mismatch.html: Added.
+        * fast/text/control-characters/visible-control-characters-3.html: Added.
+        * fast/text/control-characters/visible-control-characters-2-expected-mismatch.xhtml: Added.
+        * fast/text/control-characters/visible-control-characters-2.xhtml: Added.
+        * fast/text/control-characters/visible-control-characters-3-expected-mismatch.xhtml: Added.
+        * fast/text/control-characters/visible-control-characters-3.xhtml: Added.
+
+2015-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
         WebKitTestRunner declarative language setting is broken for iOS
         https://bugs.webkit.org/show_bug.cgi?id=149119
 

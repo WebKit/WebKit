@@ -1289,3 +1289,5 @@ webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validat
 [ Mavericks ] fast/text/international/system-language [ Pass Failure ImageOnlyFailure ]
 # Han quotes are not different on Mavericks nor Yosemite.
 [ Mavericks Yosemite ] fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
+
+webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
