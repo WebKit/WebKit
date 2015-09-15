@@ -571,8 +571,6 @@ public:
     StatementNode* createTryStatement(const JSTokenLocation& location, StatementNode* tryBlock, const Identifier* ident, StatementNode* catchBlock, StatementNode* finallyBlock, int startLine, int endLine, VariableEnvironment& catchEnvironment)
     {
         TryNode* result = new (m_parserArena) TryNode(location, tryBlock, *ident, catchBlock, catchEnvironment, finallyBlock);
-        if (catchBlock)
-            usesCatch();
         result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
         return result;
     }
@@ -878,7 +876,6 @@ private:
 
     void incConstants() { m_scope.m_numConstants++; }
     void usesThis() { m_scope.m_features |= ThisFeature; }
-    void usesCatch() { m_scope.m_features |= CatchFeature; }
     void usesArguments() { m_scope.m_features |= ArgumentsFeature; }
     void usesWith() { m_scope.m_features |= WithFeature; }
     void usesEval() 

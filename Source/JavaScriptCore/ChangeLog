@@ -1,3 +1,39 @@
+2015-09-15  Saam barati  <sbarati@apple.com>
+
+        functions that use try/catch will allocate a top level JSLexicalEnvironment even when it is not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=148169
+
+        Reviewed by Geoffrey Garen.
+
+        We used to do this before we had proper lexical scoping
+        in the bytecode generator. There is absolutely no reason
+        why need to allocate a top-level "var" activation when a
+        function/program uses a "catch" block.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::incConstants):
+        (JSC::ASTBuilder::usesThis):
+        (JSC::ASTBuilder::usesArguments):
+        (JSC::ASTBuilder::usesWith):
+        (JSC::ASTBuilder::usesEval):
+        (JSC::ASTBuilder::usesCatch): Deleted.
+        * parser/Nodes.h:
+        (JSC::ScopeNode::isStrictMode):
+        (JSC::ScopeNode::setUsesArguments):
+        (JSC::ScopeNode::usesThis):
+        (JSC::ScopeNode::needsActivation):
+        (JSC::ScopeNode::hasCapturedVariables):
+        (JSC::ScopeNode::captures):
+        (JSC::ScopeNode::needsActivationForMoreThanVariables): Deleted.
+        * parser/ParserModes.h:
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::usesEval):
+        (JSC::ScriptExecutable::usesArguments):
+        (JSC::ScriptExecutable::needsActivation):
+        (JSC::ScriptExecutable::isStrictMode):
+        (JSC::ScriptExecutable::ecmaMode):
+
 2015-09-15  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r189774): CLoop doesn't build after r189774
