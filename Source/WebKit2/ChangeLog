@@ -1,3 +1,21 @@
+2015-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKWebView scroll deceleration rate is not being set properly
+        https://bugs.webkit.org/show_bug.cgi?id=149145
+        <rdar://problem/22064071>
+
+        Reviewed by Simon Fraser.
+
+        We are not currently setting the web view's deceleration rate to the correct preferred value because we
+        are setting the decelerationRate property of the scrollView, which snaps input values to the closer of
+        two predefined UIKit constants, UIScrollViewDecelerationRateFast and UIScrollViewDecelerationRateNormal.
+        To fix this, we directly set the horizontal and vertical scroll deceleration factors to the preferred
+        value.
+
+        * UIProcess/API/Cocoa/WKWebView.mm: 
+        (-[WKWebView scrollViewWillBeginDragging:]): Directly set the scroll view's deceleration factor without
+                going through the decelerationRate property.
+
 2015-09-14  Dan Bernstein  <mitz@apple.com>
 
         Consolidate touch event code dealing with force.
