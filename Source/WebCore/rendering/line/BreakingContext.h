@@ -552,9 +552,9 @@ inline void BreakingContext::handleReplaced()
             m_ignoringSpaces = true;
         }
         if (downcast<RenderListMarker>(*m_current.renderer()).isInside())
-            m_width.addUncommittedWidth(replacedLogicalWidth);
+            m_width.addUncommittedReplacedWidth(replacedLogicalWidth);
     } else
-        m_width.addUncommittedWidth(replacedLogicalWidth);
+        m_width.addUncommittedReplacedWidth(replacedLogicalWidth);
     if (is<RenderRubyRun>(*m_current.renderer())) {
         m_width.applyOverhang(downcast<RenderRubyRun>(m_current.renderer()), m_lastObject, m_nextObject);
         downcast<RenderRubyRun>(m_current.renderer())->updatePriorContextFromCachedBreakIterator(m_renderTextInfo.lineBreakIterator);
@@ -741,7 +741,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == SPACE;
     // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
     // which is only possible if the word is the first thing on the line, that is, if |w| is zero.
-    bool breakWords = m_currentStyle->breakWords() && ((m_autoWrap && !m_width.committedWidth()) || m_currWS == PRE);
+    bool breakWords = m_currentStyle->breakWords() && ((m_autoWrap && !m_width.hasCommitted()) || m_currWS == PRE);
     bool midWordBreak = false;
     bool breakAll = m_currentStyle->wordBreak() == BreakAllWordBreak && m_autoWrap;
     bool keepAllWords = m_currentStyle->wordBreak() == KeepAllWordBreak;
@@ -858,7 +858,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
 
             applyWordSpacing = wordSpacing && m_currentCharacterIsSpace;
 
-            if (!m_width.committedWidth() && m_autoWrap && !m_width.fitsOnLine())
+            if (!m_width.hasCommitted() && m_autoWrap && !m_width.fitsOnLine())
                 m_width.fitBelowFloats(m_lineInfo.isFirstLine());
 
             if (m_autoWrap || breakWords) {
@@ -1086,7 +1086,7 @@ inline bool BreakingContext::canBreakAtThisPosition()
     bool canBreakHere = !m_currentCharacterIsSpace && textBeginsWithBreakablePosition(nextRenderText);
 
     // See if attempting to fit below floats creates more available width on the line.
-    if (!m_width.fitsOnLine() && !m_width.committedWidth())
+    if (!m_width.fitsOnLine() && !m_width.hasCommitted())
         m_width.fitBelowFloats(m_lineInfo.isFirstLine());
 
     bool canPlaceOnLine = m_width.fitsOnLine() || !m_autoWrapWasEverTrueOnLine;
@@ -1120,7 +1120,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
             m_atEnd = true;
             return;
         }
-    } else if (m_blockStyle.autoWrap() && !m_width.fitsOnLine() && !m_width.committedWidth()) {
+    } else if (m_blockStyle.autoWrap() && !m_width.fitsOnLine() && !m_width.hasCommitted()) {
         // If the container autowraps but the current child does not then we still need to ensure that it
         // wraps and moves below any floats.
         m_width.fitBelowFloats(m_lineInfo.isFirstLine());
