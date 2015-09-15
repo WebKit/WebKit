@@ -31,6 +31,8 @@
 #include "Logging.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
+#include <mutex>
+#include <sqlite3.h>
 #include <thread>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
@@ -57,6 +59,22 @@ SQLiteDatabase::SQLiteDatabase()
     , m_openErrorMessage()
     , m_lastChangesCount(0)
 {
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        // It should be safe to call this outside of std::call_once, since it is documented to be
+        // completely threadsafe. But in the past it was not safe, and the SQLite developers still
+        // aren't confident that it really is, and we still support ancient versions of SQLite. So
+        // std::call_once is used to stay on the safe side. See bug #143245.
+        int ret = sqlite3_initialize();
+        if (ret != SQLITE_OK) {
+#if SQLITE_VERSION_NUMBER >= 3007015
+            WTFLogAlways("Failed to initialize SQLite: %s", sqlite3_errstr(ret));
+#else
+            WTFLogAlways("Failed to initialize SQLite");
+#endif
+            CRASH();
+        }
+    });
 }
 
 SQLiteDatabase::~SQLiteDatabase()
