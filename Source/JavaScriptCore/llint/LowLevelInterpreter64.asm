@@ -275,7 +275,7 @@ _handleUncaughtException:
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
-    loadp VM::callFrameForThrow[t3], cfr
+    loadp VM::callFrameForCatch[t3], cfr
 
     loadp CallerFrame[cfr], cfr
     vmEntryRecord(cfr, t2)
@@ -1722,7 +1722,7 @@ _llint_op_catch:
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
-    loadp VM::callFrameForThrow[t3], cfr
+    loadp VM::callFrameForCatch[t3], cfr
     restoreStackPointerAfterCall()
 
     loadp CodeBlock[cfr], PB

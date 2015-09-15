@@ -500,7 +500,7 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
     restoreCalleeSavesFromVMCalleeSavesBuffer();
 
     move(TrustedImmPtr(m_vm), regT3);
-    load64(Address(regT3, VM::callFrameForThrowOffset()), callFrameRegister);
+    load64(Address(regT3, VM::callFrameForCatchOffset()), callFrameRegister);
 
     addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 

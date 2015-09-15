@@ -63,7 +63,7 @@ void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
     } else
         catchRoutine = LLInt::getCodePtr(handleUncaughtException);
     
-    vm->callFrameForThrow = callFrame;
+    vm->callFrameForCatch = callFrame;
     vm->targetMachinePCForThrow = catchRoutine;
     vm->targetInterpreterPCForThrow = catchPCForInterpreter;
     

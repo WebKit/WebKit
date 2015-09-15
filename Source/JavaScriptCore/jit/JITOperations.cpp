@@ -2009,7 +2009,7 @@ void JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExcepti
     JSValue exceptionValue = JSValue::decode(encodedExceptionValue);
     vm->throwException(exec, exceptionValue);
 
-    // Results stored out-of-band in vm.targetMachinePCForThrow & vm.callFrameForThrow
+    // Results stored out-of-band in vm.targetMachinePCForThrow & vm.callFrameForCatch
     genericUnwind(vm, exec);
 }
 

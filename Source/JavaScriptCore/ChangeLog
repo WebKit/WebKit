@@ -1,3 +1,32 @@
+2015-09-14  Saam barati  <sbarati@apple.com>
+
+        rename callFrameForThrow to callFrameForCatch
+        https://bugs.webkit.org/show_bug.cgi?id=149136
+
+        Reviewed by Michael Saboff.
+
+        We use "callFrameForThrow" to mean the call frame in
+        which we're catching the exception. The field name
+        should accurately represent its purpose by being
+        named "callFrameForCatch".
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.h:
+        (JSC::VM::exceptionOffset):
+        (JSC::VM::callFrameForCatchOffset):
+        (JSC::VM::targetMachinePCForThrowOffset):
+        (JSC::VM::callFrameForThrowOffset): Deleted.
+
 2015-09-14  Basile Clement  <basile_clement@apple.com>
 
         [ES6] Implement tail calls in the LLInt and Baseline JIT
