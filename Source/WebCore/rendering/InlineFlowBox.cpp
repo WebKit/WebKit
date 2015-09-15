@@ -69,6 +69,11 @@ void InlineFlowBox::setHasBadChildList()
 
 #endif
 
+RenderBlockFlow* InlineFlowBox::anonymousInlineBlock() const
+{
+    return m_hasAnonymousInlineBlock ? &downcast<RenderBlockFlow>(firstChild()->renderer()) : nullptr;
+}
+
 LayoutUnit InlineFlowBox::getFlowSpacingLogicalWidth()
 {
     LayoutUnit totalWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();

@@ -795,6 +795,19 @@ void RenderBlock::removeChild(RenderObject& oldChild)
     }
 }
 
+bool RenderBlock::childrenPreventSelfCollapsing() const
+{
+    // Whether or not we collapse is dependent on whether all our normal flow children
+    // are also self-collapsing.
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isFloatingOrOutOfFlowPositioned())
+            continue;
+        if (!child->isSelfCollapsingBlock())
+            return true;
+    }
+    return false;
+}
+
 bool RenderBlock::isSelfCollapsingBlock() const
 {
     // We are not self-collapsing if we
@@ -821,22 +834,9 @@ bool RenderBlock::isSelfCollapsingBlock() const
 
     // If the height is 0 or auto, then whether or not we are a self-collapsing block depends
     // on whether we have content that is all self-collapsing or not.
-    if (hasAutoHeight || ((logicalHeightLength.isFixed() || logicalHeightLength.isPercentOrCalculated()) && logicalHeightLength.isZero())) {
-        // If the block has inline children, see if we generated any line boxes.  If we have any
-        // line boxes, then we can't be self-collapsing, since we have content.
-        if (childrenInline())
-            return !hasLines();
-        
-        // Whether or not we collapse is dependent on whether all our normal flow children
-        // are also self-collapsing.
-        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-            if (child->isFloatingOrOutOfFlowPositioned())
-                continue;
-            if (!child->isSelfCollapsingBlock())
-                return false;
-        }
-        return true;
-    }
+    if (hasAutoHeight || ((logicalHeightLength.isFixed() || logicalHeightLength.isPercentOrCalculated()) && logicalHeightLength.isZero()))
+        return !childrenPreventSelfCollapsing();
+
     return false;
 }
 

@@ -413,7 +413,9 @@ private:
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild) override;
 
-    virtual bool isSelfCollapsingBlock() const override final;
+    virtual bool isSelfCollapsingBlock() const override;
+    virtual bool childrenPreventSelfCollapsing() const;
+    
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual bool hasLines() const { return false; }
 
