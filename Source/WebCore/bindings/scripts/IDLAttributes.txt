@@ -99,7 +99,6 @@ ObjCLegacyUnnamedParameters
 ObjCPolymorphic
 ObjCProtocol
 ObjCUseDefaultView
-OperationsNotDeletable
 OverrideBuiltins
 PassContext
 RaisesException
@@ -119,6 +118,7 @@ TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString
 TypedArray=*
 URL
+Unforgeable
 WindowEventHandler
 
 # PLATFORM(IOS)

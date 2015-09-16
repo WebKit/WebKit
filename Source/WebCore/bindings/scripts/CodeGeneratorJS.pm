@@ -673,6 +673,10 @@ sub AttributeShouldBeOnInstance
     return 1 if HasCustomGetter($attribute->signature->extendedAttributes);
     return 1 if HasCustomSetter($attribute->signature->extendedAttributes);
 
+    # [Unforgeable] attributes should be on the instance.
+    # https://heycam.github.io/webidl/#Unforgeable
+    return 1 if $attribute->signature->extendedAttributes->{"Unforgeable"} || $interface->extendedAttributes->{"Unforgeable"};
+
     # FIXME: Length is a tricky attribute to handle correctly as it is frequently tied to
     # objects which also have magic named attributes that can end up being named "length"
     # and so interfere with lookup ordering.  I'm not sure what the correct solution is
@@ -1335,7 +1339,13 @@ sub GenerateAttributesHashTable
         # As per Web IDL specification, constructor properties on the ECMAScript global object should be
         # configurable and should not be enumerable.
         my $is_global_constructor = $attribute->signature->type =~ /Constructor$/;
-        push(@specials, "DontDelete") unless ($attribute->signature->extendedAttributes->{"Deletable"} || $is_global_constructor);
+
+        # FIXME: Attributes should be configurable unless [Unforgeable] is specified.
+        # https://heycam.github.io/webidl/#es-attributes
+        push(@specials, "DontDelete") if (!$attribute->signature->extendedAttributes->{"Deletable"} && !$is_global_constructor)
+            || $attribute->signature->extendedAttributes->{"Unforgeable"}
+            || $interface->extendedAttributes->{"Unforgeable"};
+
         push(@specials, "DontEnum") if ($attribute->signature->extendedAttributes->{"NotEnumerable"} || $is_global_constructor);
         push(@specials, "ReadOnly") if IsReadonly($attribute);
         push(@specials, "CustomAccessor") unless $is_global_constructor;
@@ -1911,8 +1921,7 @@ sub GenerateImplementation
             push(@hashValue2, $functionLength);
 
             my @specials = ();
-            push(@specials, "DontDelete") if $interface->extendedAttributes->{"OperationsNotDeletable"}
-                || $function->signature->extendedAttributes->{"NotDeletable"};
+            push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"NotDeletable"};
             push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
             push(@specials, "JSC::Function");
             my $special = (@specials > 0) ? join(" | ", @specials) : "0";
@@ -1988,8 +1997,9 @@ sub GenerateImplementation
         push(@hashValue2, $functionLength);
 
         my @specials = ();
-        push(@specials, "DontDelete") if $interface->extendedAttributes->{"OperationsNotDeletable"}
-            || $function->signature->extendedAttributes->{"NotDeletable"};
+        push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"NotDeletable"}
+           || $function->signature->extendedAttributes->{"Unforgeable"}
+           || $interface->extendedAttributes->{"Unforgeable"};
         push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
         push(@specials, "JSC::Function");
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";

@@ -52,7 +52,7 @@
     [Replaceable] readonly attribute Navigator navigator;
     [Replaceable] readonly attribute Navigator clientInformation;
     readonly attribute Crypto crypto;
-    [DoNotCheckSecurity, CustomSetter] attribute Location location;
+    [DoNotCheckSecurity, CustomSetter, Unforgeable] attribute Location location;
     [Replaceable, CustomGetter] readonly attribute Event event;
 
     DOMSelection getSelection();
@@ -125,15 +125,15 @@
 
     // Self referential attributes
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow self;
-    [DoNotCheckSecurity] readonly attribute DOMWindow window;
+    [DoNotCheckSecurity, Unforgeable] readonly attribute DOMWindow window;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute  DOMWindow frames;
 
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow opener;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow parent;
-    [DoNotCheckSecurityOnGetter] readonly attribute DOMWindow top;
+    [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute DOMWindow top;
 
     // DOM Level 2 AbstractView Interface
-    readonly attribute Document document;
+    [Unforgeable] readonly attribute Document document;
 
     // CSSOM View Module
     MediaQueryList matchMedia(DOMString query);

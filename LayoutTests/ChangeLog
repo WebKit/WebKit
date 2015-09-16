@@ -1,3 +1,17 @@
+2015-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for [Unforgeable] IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=149147
+
+        Reviewed by Darin Adler.
+
+        New test that verifies that well-known [Unforgeable] attributes
+        are on the instance rather than the prototype and that they are
+        non-configurable.
+
+        * fast/dom/unforgeable-attributes-expected.txt: Added.
+        * fast/dom/unforgeable-attributes.html: Added.
+
 2015-09-16  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Glitch selecting long text.
