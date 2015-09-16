@@ -1,3 +1,11 @@
+2015-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Mark http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html as flaky, because it is.
+
+        It was already marked as flaky on mac-wk2.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2015-09-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: No VO typing feedback in some text fields

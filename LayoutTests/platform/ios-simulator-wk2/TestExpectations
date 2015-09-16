@@ -2050,3 +2050,5 @@ fast/dom/Geolocation/stopUpdatingForHiddenPage.html [ Skip ]
 http/tests/navigation/ping-cookie.html [ Skip ]
 webkit.org/b/148709 fast/events/wheelevent-basic.html [ Skip ]
 webkit.org/b/148709 fast/events/wheelevent-mousewheel-interaction.html [ Skip ]
+
+webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
