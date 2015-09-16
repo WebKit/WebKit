@@ -1,3 +1,17 @@
+2015-09-16  Brady Eidson  <beidson@apple.com>
+
+        Have window.indexedDB.deleteDatabase return an IDBOpenDBRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=149229
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * storage/indexeddb/modern/deletedatabase-null-name-exception-expected.txt: Added.
+        * storage/indexeddb/modern/deletedatabase-null-name-exception.html: Added.
+        * storage/indexeddb/modern/deletedatabase-request-expected.txt: Added.
+        * storage/indexeddb/modern/deletedatabase-request.html: Added.
+
 2015-09-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop dom/xhtml/level3/core/nodegetbaseuri03.xhtml test.

@@ -54,7 +54,7 @@ webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/co
 ########################################
 ### START OF (2) Failures without bug reports
 
-# IndexedDB is not yet enabled in Mac WK1
+# Legacy IndexedDB will never be enabled in Mac WK1.
 storage/indexeddb
 imported/w3c/indexeddb
 fast/history/page-cache-indexed-closed-db.html
@@ -68,8 +68,8 @@ crypto/subtle/rsa-indexeddb.html
 crypto/subtle/rsa-indexeddb-non-exportable.html
 inspector/indexeddb
 
-# But since it is disabled at runtime, we should make sure it is correctly disabled
-storage/indexeddb/properties-disabled-at-runtime.html [ Pass ]
+# But Modern IndexedDB is.
+storage/indexeddb/modern [ Pass ]
 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]

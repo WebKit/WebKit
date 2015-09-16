@@ -1908,6 +1908,12 @@
 		510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */; };
 		5103104F1BA8CC03003329C0 /* IDBFactoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5103104A1BA8C6A6003329C0 /* IDBFactoryImpl.cpp */; };
 		510310501BA8CC03003329C0 /* IDBFactoryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5103104B1BA8C6A6003329C0 /* IDBFactoryImpl.h */; };
+		5103105A1BA8DB56003329C0 /* IDBOpenDBRequestImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510310561BA8DB30003329C0 /* IDBOpenDBRequestImpl.cpp */; };
+		5103105B1BA8DB56003329C0 /* IDBOpenDBRequestImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 510310571BA8DB30003329C0 /* IDBOpenDBRequestImpl.h */; };
+		5103105C1BA8DB56003329C0 /* IDBRequestImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510310581BA8DB30003329C0 /* IDBRequestImpl.cpp */; };
+		5103105D1BA8DB56003329C0 /* IDBRequestImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 510310591BA8DB30003329C0 /* IDBRequestImpl.h */; };
+		510310601BA8E0E3003329C0 /* IDBDatabaseIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5103105F1BA8E090003329C0 /* IDBDatabaseIdentifier.h */; };
+		510310611BA8E10D003329C0 /* IDBDatabaseIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5103105E1BA8E090003329C0 /* IDBDatabaseIdentifier.cpp */; };
 		5103C2B11BA22D1A00E26337 /* LegacyAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B6E1BA0A76100F789CE /* LegacyAny.cpp */; };
 		5103C2B21BA2317400E26337 /* IDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B501B9F889B00F789CE /* IDBTransaction.cpp */; };
 		5103C2B31BA2324D00E26337 /* IDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B541B9F88E800F789CE /* IDBCursor.cpp */; };
@@ -9189,6 +9195,12 @@
 		510192D818B7D7AB007FC7A1 /* imageControlsMac.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = imageControlsMac.css; sourceTree = "<group>"; };
 		5103104A1BA8C6A6003329C0 /* IDBFactoryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactoryImpl.cpp; sourceTree = "<group>"; };
 		5103104B1BA8C6A6003329C0 /* IDBFactoryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryImpl.h; sourceTree = "<group>"; };
+		510310561BA8DB30003329C0 /* IDBOpenDBRequestImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBOpenDBRequestImpl.cpp; sourceTree = "<group>"; };
+		510310571BA8DB30003329C0 /* IDBOpenDBRequestImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBOpenDBRequestImpl.h; sourceTree = "<group>"; };
+		510310581BA8DB30003329C0 /* IDBRequestImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequestImpl.cpp; sourceTree = "<group>"; };
+		510310591BA8DB30003329C0 /* IDBRequestImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRequestImpl.h; sourceTree = "<group>"; };
+		5103105E1BA8E090003329C0 /* IDBDatabaseIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseIdentifier.cpp; sourceTree = "<group>"; };
+		5103105F1BA8E090003329C0 /* IDBDatabaseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseIdentifier.h; sourceTree = "<group>"; };
 		5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuContext.cpp; sourceTree = "<group>"; };
 		5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuContext.h; sourceTree = "<group>"; };
 		510A326E18318431003C5326 /* IDBServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBServerConnection.h; sourceTree = "<group>"; };
@@ -16535,6 +16547,10 @@
 		510310421BA8C64C003329C0 /* client */ = {
 			isa = PBXGroup;
 			children = (
+				510310561BA8DB30003329C0 /* IDBOpenDBRequestImpl.cpp */,
+				510310571BA8DB30003329C0 /* IDBOpenDBRequestImpl.h */,
+				510310581BA8DB30003329C0 /* IDBRequestImpl.cpp */,
+				510310591BA8DB30003329C0 /* IDBRequestImpl.h */,
 				5103104A1BA8C6A6003329C0 /* IDBFactoryImpl.cpp */,
 				5103104B1BA8C6A6003329C0 /* IDBFactoryImpl.h */,
 			);
@@ -18773,6 +18789,8 @@
 				51D71983181106DF0016DC51 /* IDBDatabaseError.h */,
 				51D71984181106DF0016DC51 /* IDBDatabaseException.cpp */,
 				51D71985181106DF0016DC51 /* IDBDatabaseException.h */,
+				5103105E1BA8E090003329C0 /* IDBDatabaseIdentifier.cpp */,
+				5103105F1BA8E090003329C0 /* IDBDatabaseIdentifier.h */,
 				5163117C1851242B00534647 /* IDBDatabaseMetadata.cpp */,
 				51C9611A183D2B8000D2002E /* IDBDatabaseMetadata.h */,
 				51D71986181106DF0016DC51 /* IDBEventDispatcher.cpp */,
@@ -24083,6 +24101,7 @@
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
+				510310601BA8E0E3003329C0 /* IDBDatabaseIdentifier.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */,
 				1A8F6BBF0DB55CDC001DB794 /* ApplicationCacheGroup.h in Headers */,
@@ -24437,6 +24456,7 @@
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */,
 				FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */,
 				BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */,
+				5103105D1BA8DB56003329C0 /* IDBRequestImpl.h in Headers */,
 				BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */,
 				9393E600151A99F200066F06 /* CSSImageSetValue.h in Headers */,
 				A80E6CFA0A1989CA007FB8C5 /* CSSImageValue.h in Headers */,
@@ -25701,6 +25721,7 @@
 				C6F420A316B7164E0052A9F2 /* JSMutationCallback.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */,
+				5103105B1BA8DB56003329C0 /* IDBOpenDBRequestImpl.h in Headers */,
 				C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */,
 				BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */,
 				A9D247F80D757E3400FDF959 /* JSNavigator.h in Headers */,
@@ -28768,6 +28789,7 @@
 				E14F1C4414B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp in Sources */,
 				A8DF3FCF097FA0FC0052981B /* HTMLFormControlsCollection.cpp in Sources */,
 				A81369D1097374F600D74463 /* HTMLFormElement.cpp in Sources */,
+				5103105C1BA8DB56003329C0 /* IDBRequestImpl.cpp in Sources */,
 				A871DE230A152AC800B12A68 /* HTMLFrameElement.cpp in Sources */,
 				14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */,
 				93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */,
@@ -29791,6 +29813,7 @@
 				078E090217D14CEE00420AA1 /* MediaStreamTrack.cpp in Sources */,
 				078E090317D14CEE00420AA1 /* MediaStreamTrackEvent.cpp in Sources */,
 				07FFDE68181AED420072D409 /* MediaStreamTrackPrivate.cpp in Sources */,
+				510310611BA8E10D003329C0 /* IDBDatabaseIdentifier.cpp in Sources */,
 				076306D217E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp in Sources */,
 				CD641EBF1819B36000EE4C41 /* MediaTimeAVFoundation.cpp in Sources */,
 				CD60C0C6193E87C7003C656B /* MediaTimeQTKit.mm in Sources */,
@@ -30829,6 +30852,7 @@
 				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
 				8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */,
+				5103105A1BA8DB56003329C0 /* IDBOpenDBRequestImpl.cpp in Sources */,
 				3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */,
 				1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */,
 				D7613A501474F13F00DB8606 /* WebKitNamedFlow.cpp in Sources */,

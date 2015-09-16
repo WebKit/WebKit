@@ -1,0 +1,3 @@
+ALERT: [object IDBOpenDBRequest]
+ALERT: Done
+This test calls deleteDatabase on window.indexedDB and verifies that an IDBOpenDBRequest object is returned.

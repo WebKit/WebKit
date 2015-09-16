@@ -28,8 +28,35 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ExceptionCode.h"
+#include "IDBDatabaseIdentifier.h"
+#include "IDBOpenDBRequestImpl.h"
+#include "Logging.h"
+#include "Page.h"
+#include "SchemeRegistry.h"
+#include "SecurityOrigin.h"
+
 namespace WebCore {
 namespace IDBClient {
+
+static bool shouldThrowSecurityException(ScriptExecutionContext* context)
+{
+    ASSERT(is<Document>(*context) || context->isWorkerGlobalScope());
+    if (is<Document>(*context)) {
+        Document& document = downcast<Document>(*context);
+        if (!document.frame())
+            return true;
+        if (!document.page())
+            return true;
+        if (document.page()->usesEphemeralSession() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document.securityOrigin()->protocol()))
+            return true;
+    }
+
+    if (!context->securityOrigin()->canAccessDatabase(context->topOrigin()))
+        return true;
+
+    return false;
+}
 
 Ref<IDBFactory> IDBFactory::create()
 {
@@ -41,24 +68,45 @@ IDBFactory::IDBFactory()
 
 }
 
-PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext*, ExceptionCode&)
+PassRefPtr<WebCore::IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext*, ExceptionCode&)
 {
     return nullptr;
 }
 
-PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, ExceptionCode&)
+PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, ExceptionCode&)
 {
     return nullptr;
 }
 
-PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, unsigned long long, ExceptionCode&)
+PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, unsigned long long, ExceptionCode&)
 {
     return nullptr;
 }
 
-PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext*, const String&, ExceptionCode&)
+PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    return nullptr;
+    LOG(IndexedDB, "IDBFactory::deleteDatabase");
+
+    if (name.isNull()) {
+        ec = TypeError;
+        return nullptr;
+    }
+    
+    if (shouldThrowSecurityException(context)) {
+        ec = SECURITY_ERR;
+        return nullptr;
+    }
+
+    ASSERT(context->securityOrigin());
+    ASSERT(context->topOrigin());
+    IDBDatabaseIdentifier databaseIdentifier(name, *context->securityOrigin(), *context->topOrigin());
+    if (!databaseIdentifier.isValid()) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    auto request = IDBOpenDBRequest::create(context);
+    return adoptRef(&request.leakRef());
 }
 
 short IDBFactory::cmp(ScriptExecutionContext*, const Deprecated::ScriptValue&, const Deprecated::ScriptValue&, ExceptionCode&)

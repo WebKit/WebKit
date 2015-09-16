@@ -1,0 +1,3 @@
+ALERT: TypeError: Not enough arguments
+ALERT: Done
+This test calls deleteDatabase on window.indexedDB with a null database name, making sure there is an exception.
