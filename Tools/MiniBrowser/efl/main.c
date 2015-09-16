@@ -189,7 +189,7 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_STORE_DEF_BOOL
             ('w', "web-security", "enable/disable web security.", EINA_TRUE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('S', "separate-process", "Create new window in separated web process.", EINA_TRUE),
+            ('S', "separate-process", "Create new window in separated web process.", EINA_FALSE),
         ECORE_GETOPT_VERSION
             ('V', "version"),
         ECORE_GETOPT_COPYRIGHT
