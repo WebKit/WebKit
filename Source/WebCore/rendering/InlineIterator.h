@@ -31,6 +31,21 @@
 
 namespace WebCore {
 
+struct BidiIsolatedRun {
+    BidiIsolatedRun(RenderObject& object, unsigned position, RenderElement& root, BidiRun& runToReplace)
+        : object(object)
+        , root(root)
+        , runToReplace(runToReplace)
+        , position(position)
+    {
+    }
+
+    RenderObject& object;
+    RenderElement& root;
+    BidiRun& runToReplace;
+    unsigned position;
+};
+
 // This class is used to RenderInline subtrees, stepping by character within the
 // text children. InlineIterator will use bidiNext to find the next RenderText
 // optionally notifying a BidiResolver every time it steps into/out of a RenderInline.
@@ -475,14 +490,14 @@ static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 
 // FIXME: This belongs on InlineBidiResolver, except it's a template specialization
 // of BidiResolver which knows nothing about RenderObjects.
-static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject& obj, unsigned pos)
+static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject& obj, unsigned pos, RenderElement& root)
 {
     BidiRun* isolatedRun = new BidiRun(pos, 0, obj, resolver.context(), resolver.dir());
     resolver.runs().addRun(isolatedRun);
     // FIXME: isolatedRuns() could be a hash of object->run and then we could cheaply
     // ASSERT here that we didn't create multiple objects for the same inline.
-    resolver.isolatedRuns().append(isolatedRun);
-    resolver.setMidpointForIsolatedRun(isolatedRun, resolver.midpointState().currentMidpoint());
+    resolver.setMidpointForIsolatedRun(*isolatedRun, resolver.midpointState().currentMidpoint());
+    resolver.isolatedRuns().append(BidiIsolatedRun(obj, pos, root, *isolatedRun));
 }
 
 class IsolateTracker {
@@ -507,7 +522,7 @@ public:
     void embed(UCharDirection, BidiEmbeddingSource) { }
     void commitExplicitEmbedding() { }
 
-    void addFakeRunIfNecessary(RenderObject& obj, unsigned pos, unsigned end, InlineBidiResolver& resolver)
+    void addFakeRunIfNecessary(RenderObject& obj, unsigned pos, unsigned end, RenderElement& root, InlineBidiResolver& resolver)
     {
         // We only need to add a fake run for a given isolated span once during each call to createBidiRunsForLine.
         // We'll be called for every span inside the isolated span so we just ignore subsequent calls.
@@ -518,7 +533,7 @@ public:
             // obj and pos together denote a single position in the inline, from which the parsing of the isolate will start.
             // We don't need to mark the end of the run because this is implicit: it is either endOfLine or the end of the
             // isolate, when we call createBidiRunsForLine it will stop at whichever comes first.
-            addPlaceholderRunForIsolatedInline(resolver, obj, pos);
+            addPlaceholderRunForIsolatedInline(resolver, obj, pos, root);
         }
         m_haveAddedFakeRunForRootIsolate = true;
         RenderBlockFlow::appendRunsForObject(nullptr, pos, end, obj, resolver);
@@ -541,7 +556,7 @@ inline void InlineBidiResolver::appendRunInternal()
         RenderObject* obj = m_sor.renderer();
         while (obj && obj != m_eor.renderer() && obj != endOfLine.renderer()) {
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *this);
+                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
             else
                 RenderBlockFlow::appendRunsForObject(&m_runs, start, obj->length(), *obj, *this);
             // FIXME: start/obj should be an InlineIterator instead of two separate variables.
@@ -557,7 +572,7 @@ inline void InlineBidiResolver::appendRunInternal()
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
             int end = obj->length() ? pos + 1 : 0;
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *this);
+                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
             else
                 RenderBlockFlow::appendRunsForObject(&m_runs, start, end, *obj, *this);
         }

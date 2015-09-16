@@ -257,8 +257,8 @@ public:
     // It's unclear if this is still needed.
     void markCurrentRunEmpty() { m_emptyRun = true; }
 
-    void setMidpointForIsolatedRun(Run*, unsigned);
-    unsigned midpointForIsolatedRun(Run*);
+    void setMidpointForIsolatedRun(Run&, unsigned);
+    unsigned midpointForIsolatedRun(Run&);
 
 protected:
     // FIXME: Instead of InlineBidiResolvers subclassing this method, we should
@@ -313,10 +313,10 @@ public:
 
     void incrementInternal();
     void appendRunInternal();
-    Vector<Run*>& isolatedRuns() { return m_isolatedRuns; }
+    Vector<IsolateRun>& isolatedRuns() { return m_isolatedRuns; }
 
 private:
-    Vector<Run*> m_isolatedRuns;
+    Vector<IsolateRun> m_isolatedRuns;
 };
 
 #ifndef NDEBUG
@@ -972,16 +972,16 @@ void BidiResolverBase<Iterator, Run, Subclass>::createBidiRunsForLine(const Iter
 }
 
 template <class Iterator, class Run, class Subclass>
-void BidiResolverBase<Iterator, Run, Subclass>::setMidpointForIsolatedRun(Run* run, unsigned midpoint)
+void BidiResolverBase<Iterator, Run, Subclass>::setMidpointForIsolatedRun(Run& run, unsigned midpoint)
 {
-    ASSERT(!m_midpointForIsolatedRun.contains(run));
-    m_midpointForIsolatedRun.add(run, midpoint);
+    ASSERT(!m_midpointForIsolatedRun.contains(&run));
+    m_midpointForIsolatedRun.add(&run, midpoint);
 }
 
 template<class Iterator, class Run, class Subclass>
-unsigned BidiResolverBase<Iterator, Run, Subclass>::midpointForIsolatedRun(Run* run)
+unsigned BidiResolverBase<Iterator, Run, Subclass>::midpointForIsolatedRun(Run& run)
 {
-    return m_midpointForIsolatedRun.take(run);
+    return m_midpointForIsolatedRun.take(&run);
 }
 
 } // namespace WebCore

@@ -1017,7 +1017,7 @@ static inline void notifyResolverToResumeInIsolate(InlineBidiResolver& resolver,
     }
 }
 
-static inline void setUpResolverToResumeInIsolate(InlineBidiResolver& resolver, InlineBidiResolver& topResolver, BidiRun* isolatedRun, RenderObject* root, RenderObject* startObject)
+static inline void setUpResolverToResumeInIsolate(InlineBidiResolver& resolver, InlineBidiResolver& topResolver, BidiRun& isolatedRun, RenderObject* root, RenderObject* startObject)
 {
     // Set up m_midpointState
     resolver.midpointState() = topResolver.midpointState();
@@ -1039,10 +1039,11 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
 
     while (!topResolver.isolatedRuns().isEmpty()) {
         // It does not matter which order we resolve the runs as long as we resolve them all.
-        BidiRun* isolatedRun = topResolver.isolatedRuns().last();
+        auto isolatedRun = WTF::move(topResolver.isolatedRuns().last());
         topResolver.isolatedRuns().removeLast();
+        currentRoot = &isolatedRun.root;
 
-        RenderObject& startObject = isolatedRun->renderer();
+        RenderObject& startObject = isolatedRun.object;
 
         // Only inlines make sense with unicode-bidi: isolate (blocks are already isolated).
         // FIXME: Because enterIsolate is not passed a RenderObject, we have to crawl up the
@@ -1056,19 +1057,19 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         EUnicodeBidi unicodeBidi = isolatedInline->style().unicodeBidi();
         TextDirection direction;
         if (unicodeBidi == Plaintext)
-            determineDirectionality(direction, InlineIterator(isolatedInline, &isolatedRun->renderer(), 0));
+            determineDirectionality(direction, InlineIterator(isolatedInline, &isolatedRun.object, 0));
         else {
             ASSERT(unicodeBidi == Isolate || unicodeBidi == IsolateOverride);
             direction = isolatedInline->style().direction();
         }
         isolatedResolver.setStatus(BidiStatus(direction, isOverride(unicodeBidi)));
 
-        setUpResolverToResumeInIsolate(isolatedResolver, topResolver, isolatedRun, isolatedInline, &startObject);
+        setUpResolverToResumeInIsolate(isolatedResolver, topResolver, isolatedRun.runToReplace, isolatedInline, &startObject);
 
         // The starting position is the beginning of the first run within the isolate that was identified
         // during the earlier call to createBidiRunsForLine. This can be but is not necessarily the
         // first run within the isolate.
-        InlineIterator iter = InlineIterator(isolatedInline, &startObject, isolatedRun->m_start);
+        InlineIterator iter = InlineIterator(isolatedInline, &startObject, isolatedRun.position);
         isolatedResolver.setPositionIgnoringNestedIsolates(iter);
 
         // We stop at the next end of line; we may re-enter this isolate in the next call to constructBidiRuns().
@@ -1080,16 +1081,15 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         // itself to be turned into an InlineBox. We can't remove it here without potentially losing track of
         // the logically last run.
         if (isolatedResolver.runs().runCount())
-            bidiRuns.replaceRunWithRuns(isolatedRun, isolatedResolver.runs());
+            bidiRuns.replaceRunWithRuns(&isolatedRun.runToReplace, isolatedResolver.runs());
 
         // If we encountered any nested isolate runs, just move them
         // to the top resolver's list for later processing.
-        if (!isolatedResolver.isolatedRuns().isEmpty()) {
-            topResolver.isolatedRuns().appendVector(isolatedResolver.isolatedRuns());
-            for (auto* run : isolatedResolver.isolatedRuns())
-                topResolver.setMidpointForIsolatedRun(run, isolatedResolver.midpointForIsolatedRun(run));
-            isolatedResolver.isolatedRuns().clear();
-            currentRoot = isolatedInline;
+        while (!isolatedResolver.isolatedRuns().isEmpty()) {
+            auto runWithContext = WTF::move(isolatedResolver.isolatedRuns().last());
+            isolatedResolver.isolatedRuns().removeLast();
+            topResolver.setMidpointForIsolatedRun(runWithContext.runToReplace, isolatedResolver.midpointForIsolatedRun(runWithContext.runToReplace));
+            topResolver.isolatedRuns().append(WTF::move(runWithContext));
         }
     }
 }
