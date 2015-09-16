@@ -1,3 +1,21 @@
+2015-09-15  Jinyoung Hur  <hur.ims@navercorp.com>
+
+        [WebGL] Only require that the stencil value and write masks have as many bits set as the stencil buffer is deep
+        https://bugs.webkit.org/show_bug.cgi?id=149174
+
+        Reviewed by Dean Jackson.
+
+        Copied the stencil mask related tests from the webgl/1.0.2/resources/webgl_test_files/conformance/state/gl-get-calls.html.
+
+        It seems that there is a difference in the way that glGetIntegerV returns an unsigned int type value among 
+        OpenGL implementatios. Some return the whole bits of value(e.g., 0xffffffff -> 0xffffffff), whereas some(e.g., ANGLE) 
+        return a max-int-clamped value(e.g., 0xffffffff -> 0x7fffffff).
+
+        It would be good to make this test independent on the OpenGL implementations.
+
+        * fast/canvas/webgl/gl-get-calls-expected.txt:
+        * fast/canvas/webgl/gl-get-calls.html:
+
 2015-09-15  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed gardening 16th Sep.

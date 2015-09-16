@@ -54,8 +54,8 @@ PASS context.getParameter(context.STENCIL_BACK_FUNC) is context.ALWAYS
 PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_FAIL) is context.KEEP
 PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_PASS) is context.KEEP
 PASS context.getParameter(context.STENCIL_BACK_REF) is 0
-PASS context.getParameter(context.STENCIL_BACK_VALUE_MASK) is 0xFFFFFFFF
-PASS context.getParameter(context.STENCIL_BACK_WRITEMASK) is 0xFFFFFFFF
+PASS context.getParameter(context.STENCIL_BACK_VALUE_MASK) & minimumRequiredStencilMask is minimumRequiredStencilMask
+PASS context.getParameter(context.STENCIL_BACK_WRITEMASK) & minimumRequiredStencilMask is minimumRequiredStencilMask
 PASS context.getParameter(context.STENCIL_BITS) >= 0 is true
 PASS context.getParameter(context.STENCIL_CLEAR_VALUE) is 0
 PASS context.getParameter(context.STENCIL_FAIL) is context.KEEP
@@ -64,8 +64,8 @@ PASS context.getParameter(context.STENCIL_PASS_DEPTH_FAIL) is context.KEEP
 PASS context.getParameter(context.STENCIL_PASS_DEPTH_PASS) is context.KEEP
 PASS context.getParameter(context.STENCIL_REF) is 0
 PASS context.getParameter(context.STENCIL_TEST) is false
-PASS context.getParameter(context.STENCIL_VALUE_MASK) is 0xFFFFFFFF
-PASS context.getParameter(context.STENCIL_WRITEMASK) is 0xFFFFFFFF
+PASS context.getParameter(context.STENCIL_VALUE_MASK) & minimumRequiredStencilMask is minimumRequiredStencilMask
+PASS context.getParameter(context.STENCIL_WRITEMASK) & minimumRequiredStencilMask is minimumRequiredStencilMask
 PASS context.getParameter(context.TEXTURE_BINDING_2D) is null
 PASS context.getParameter(context.TEXTURE_BINDING_CUBE_MAP) is null
 PASS context.getParameter(context.UNPACK_ALIGNMENT) is 4

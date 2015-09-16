@@ -17,6 +17,7 @@ description("This test ensures basic functionality of the underlying graphics li
 debug("");
 debug("Canvas.getContext");
 
+var minimumRequiredStencilMask = 0;
 var context = create3DContext(document.getElementById("canvas"));
 if (!context)
     testFailed("context does not exist");
@@ -81,8 +82,11 @@ else {
     shouldBe('context.getParameter(context.STENCIL_BACK_PASS_DEPTH_PASS)', 'context.KEEP');
     shouldBe('context.getParameter(context.STENCIL_BACK_REF)', '0');
 
-    shouldBe('context.getParameter(context.STENCIL_BACK_VALUE_MASK)', '0xFFFFFFFF');
-    shouldBe('context.getParameter(context.STENCIL_BACK_WRITEMASK)', '0xFFFFFFFF');
+    var stencilBits = context.getParameter(context.STENCIL_BITS);
+    minimumRequiredStencilMask = (1 << stencilBits) - 1;
+
+    shouldBe('context.getParameter(context.STENCIL_BACK_VALUE_MASK) & minimumRequiredStencilMask', 'minimumRequiredStencilMask');
+    shouldBe('context.getParameter(context.STENCIL_BACK_WRITEMASK) & minimumRequiredStencilMask', 'minimumRequiredStencilMask');
 
     // If EXT_packed_depth_stencil is supported, STENCIL_BITS > 0; otherwise, STENCIL_BITS == 0.
     shouldBe('context.getParameter(context.STENCIL_BITS) >= 0', 'true');
@@ -94,8 +98,8 @@ else {
     shouldBe('context.getParameter(context.STENCIL_REF)', '0');
     shouldBe('context.getParameter(context.STENCIL_TEST)', 'false');
 
-    shouldBe('context.getParameter(context.STENCIL_VALUE_MASK)', '0xFFFFFFFF');
-    shouldBe('context.getParameter(context.STENCIL_WRITEMASK)', '0xFFFFFFFF');
+    shouldBe('context.getParameter(context.STENCIL_VALUE_MASK) & minimumRequiredStencilMask', 'minimumRequiredStencilMask');
+    shouldBe('context.getParameter(context.STENCIL_WRITEMASK) & minimumRequiredStencilMask', 'minimumRequiredStencilMask');
 
     shouldBe('context.getParameter(context.TEXTURE_BINDING_2D)', 'null');
     shouldBe('context.getParameter(context.TEXTURE_BINDING_CUBE_MAP)', 'null');
