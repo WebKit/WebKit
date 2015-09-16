@@ -942,9 +942,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on iframe.con
     [native code]
 }" did not throw
 PASS Document interface: iframe.contentDocument must inherit property "createElement" with the proper type (13) 
-FAIL Document interface: calling createElement(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Document interface: calling createElement(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createElementNS" with the proper type (14) 
 FAIL Document interface: calling createElementNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -1266,9 +1264,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on document.i
     [native code]
 }" did not throw
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElement" with the proper type (13) 
-FAIL Document interface: calling createElement(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Document interface: calling createElement(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElementNS" with the proper type (14) 
 FAIL Document interface: calling createElementNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]

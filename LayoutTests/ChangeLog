@@ -1,3 +1,9 @@
+2015-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline W3C html/dom test for iOS after r189842.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
 2015-09-16  Alexey Proskuryakov  <ap@apple.com>
 
         More test result fixing after r189841.
