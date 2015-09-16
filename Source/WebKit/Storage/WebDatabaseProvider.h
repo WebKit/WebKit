@@ -35,6 +35,10 @@ public:
     static WebDatabaseProvider& singleton();
     virtual ~WebDatabaseProvider();
 
+#if ENABLE(INDEXED_DATABASE)
+    virtual bool supportsModernIDB() const override { return true; }
+#endif
+
 private:
     explicit WebDatabaseProvider();
 

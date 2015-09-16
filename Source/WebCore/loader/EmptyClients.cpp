@@ -48,6 +48,7 @@ namespace WebCore {
 class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
     virtual RefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend() { return nullptr; }
+    virtual bool supportsModernIDB() const { return false; }
 #endif
 };
 

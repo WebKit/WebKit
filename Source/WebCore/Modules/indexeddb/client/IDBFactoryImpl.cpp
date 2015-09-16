@@ -23,36 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProvider_h
-#define DatabaseProvider_h
+#include "config.h"
+#include "IDBFactoryImpl.h"
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
+namespace IDBClient {
 
-class IDBConnectionManager;
-class IDBFactoryBackendInterface;
+Ref<IDBFactory> IDBFactory::create()
+{
+    return adoptRef(*new IDBFactory);
+}
 
-class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {
-public:
-    virtual ~DatabaseProvider();
-
-#if ENABLE(INDEXED_DATABASE)
-    IDBFactoryBackendInterface* idbFactoryBackend();
-
-    virtual bool supportsModernIDB() const = 0;
-#endif
-
-private:
-#if ENABLE(INDEXED_DATABASE)
-    virtual RefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend() = 0;
-
-    bool m_didCreateIDBFactoryBackendInterface { false };
-    RefPtr<IDBFactoryBackendInterface> m_backendInterface;
-#endif
-};
+IDBFactory::IDBFactory()
+{
 
 }
 
-#endif // DatabaseProvider_h
+PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext*, ExceptionCode&)
+{
+    return nullptr;
+}
+
+PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, ExceptionCode&)
+{
+    return nullptr;
+}
+
+PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, unsigned long long, ExceptionCode&)
+{
+    return nullptr;
+}
+
+PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext*, const String&, ExceptionCode&)
+{
+    return nullptr;
+}
+
+short IDBFactory::cmp(ScriptExecutionContext*, const Deprecated::ScriptValue&, const Deprecated::ScriptValue&, ExceptionCode&)
+{
+    return 0;
+}
+
+} // namespace IDBClient
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)

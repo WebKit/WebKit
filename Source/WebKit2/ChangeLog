@@ -1,5 +1,14 @@
 2015-09-15  Brady Eidson  <beidson@apple.com>
 
+        Add empty IDBFactory implementation for Modern IDB.
+        https://bugs.webkit.org/show_bug.cgi?id=149191
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/Databases/WebDatabaseProvider.h:
+
+2015-09-15  Brady Eidson  <beidson@apple.com>
+
         Move most IDB object encoding/decoding from WebKit2 to WebCore.
         https://bugs.webkit.org/show_bug.cgi?id=149152
 

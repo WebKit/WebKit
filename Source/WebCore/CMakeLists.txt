@@ -10,6 +10,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/gamepad/deprecated"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/legacy"
     "${WEBCORE_DIR}/Modules/indieui"
     "${WEBCORE_DIR}/Modules/mediacontrols/"
@@ -863,6 +864,8 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBTransaction.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
+
+    Modules/indexeddb/client/IDBFactoryImpl.cpp
 
     Modules/indexeddb/legacy/IDBCursorBackend.cpp
     Modules/indexeddb/legacy/IDBCursorBackendOperations.cpp

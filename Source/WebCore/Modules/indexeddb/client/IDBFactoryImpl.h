@@ -23,36 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProvider_h
-#define DatabaseProvider_h
+#ifndef IDBFactoryImpl_h
+#define IDBFactoryImpl_h
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#if ENABLE(INDEXED_DATABASE)
+
+#include "IDBFactory.h"
 
 namespace WebCore {
+namespace IDBClient {
 
-class IDBConnectionManager;
-class IDBFactoryBackendInterface;
-
-class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {
+class IDBFactory : public WebCore::IDBFactory {
 public:
-    virtual ~DatabaseProvider();
+    static Ref<IDBFactory> create();
 
-#if ENABLE(INDEXED_DATABASE)
-    IDBFactoryBackendInterface* idbFactoryBackend();
+    virtual PassRefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) override final;
 
-    virtual bool supportsModernIDB() const = 0;
-#endif
+    virtual PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
+    virtual PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) override final;
+    virtual PassRefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
+
+    virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&) override final;
 
 private:
-#if ENABLE(INDEXED_DATABASE)
-    virtual RefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend() = 0;
-
-    bool m_didCreateIDBFactoryBackendInterface { false };
-    RefPtr<IDBFactoryBackendInterface> m_backendInterface;
-#endif
+    IDBFactory();
 };
 
-}
+} // namespace IDBClient
+} // namespace WebCore
 
-#endif // DatabaseProvider_h
+#endif // ENABLE(INDEXED_DATABASE)
+#endif // IDBFactoryImpl_h
