@@ -836,9 +836,7 @@ inline char* virtualForWithFunction(
 #if ENABLE(WEBASSEMBLY)
             if (!isCall(kind)) {
                 exec->vm().throwException(exec, createNotAConstructorError(exec, function));
-                return encodeResult(
-                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
-                    reinterpret_cast<void*>(KeepTheFrame));
+                return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
             }
 
             WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
