@@ -593,7 +593,6 @@ list(APPEND GObjectDOMBindingsStable_IDL_FILES
     dom/NodeList.idl
     dom/ProcessingInstruction.idl
     dom/Range.idl
-    dom/ShadowRoot.idl
     dom/Text.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
