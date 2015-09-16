@@ -1,7 +1,7 @@
 
 PASS Document.createElement 
 PASS createElement(undefined) 
-FAIL createElement(null) InvalidCharacterError: DOM Exception 5
+PASS createElement(null) 
 PASS createElement("foo") 
 PASS createElement("f1oo") 
 PASS createElement("foo1") 

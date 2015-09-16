@@ -18,9 +18,9 @@
             
             function runTest()
             {
-                iteratorRoot = document.createElement();
-                element = iteratorRoot.appendChild(document.createElement());
-                element.appendChild(document.createElement());
+                iteratorRoot = document.createElement('p');
+                element = iteratorRoot.appendChild(document.createElement('p'));
+                element.appendChild(document.createElement('p'));
   
                 iterator = document.createNodeIterator(iteratorRoot, -1);
                 iterator.nextNode(); iterator.nextNode(); iterator.nextNode();

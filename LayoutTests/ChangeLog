@@ -1,3 +1,19 @@
+2015-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Document.createElement(localName) does not handle correctly missing or null parameter
+        https://bugs.webkit.org/show_bug.cgi?id=149184
+        <rdar://problem/22565070>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing tests now that our behavior has changed.
+
+        * fast/dom/Document/createElementNS-namespace-err-expected.txt:
+        * fast/dom/Document/script-tests/createElementNS-namespace-err.js:
+        * fast/dom/dom-method-document-change.html:
+        * fast/dom/element-removed-while-inserting-parent-crash.html:
+        * fast/inspector-support/uncaught-dom3-exception-expected.txt:
+
 2015-09-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add ShadowRoot interface and Element.prototype.attachShadow

@@ -31,7 +31,7 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element documentElement;
 
-    [ReturnNewObject, RaisesException] Element createElement([TreatNullAs=NullString,Default=Undefined] optional DOMString tagName);
+    [ReturnNewObject, RaisesException] Element createElement(DOMString tagName);
     DocumentFragment   createDocumentFragment();
     [ReturnNewObject] Text createTextNode([Default=Undefined] optional DOMString data);
     [ReturnNewObject] Comment createComment([Default=Undefined] optional DOMString data);

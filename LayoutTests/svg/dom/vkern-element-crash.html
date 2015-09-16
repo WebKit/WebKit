@@ -17,15 +17,15 @@ gc = window.gc || function()
 
 window.onload = function()
 {   
-    element1 = document.body.appendChild(document.createElement());
+    element1 = document.body.appendChild(document.createElement(undefined));
     element1.id = "foo";
     
     parent = document.createElementNS("http://www.w3.org/2000/svg", "vkern");
-    element2 = parent.appendChild(document.createElement());
+    element2 = parent.appendChild(document.createElement(undefined));
     element2.id = "foo";
     document.body.appendChild(parent);
     
-    element3 = document.body.appendChild(document.createElement());
+    element3 = document.body.appendChild(document.createElement(undefined));
     element3.id = "foo";
     
     document.body.removeChild(element1);

@@ -1,5 +1,19 @@
 2015-09-15  Chris Dumez  <cdumez@apple.com>
 
+        Document.createElement(localName) does not handle correctly missing or null parameter
+        https://bugs.webkit.org/show_bug.cgi?id=149184
+        <rdar://problem/22565070>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2015-09-15  Chris Dumez  <cdumez@apple.com>
+
         new Event() without parameter should throw
         https://bugs.webkit.org/show_bug.cgi?id=149146
         <rdar://problem/22565070>

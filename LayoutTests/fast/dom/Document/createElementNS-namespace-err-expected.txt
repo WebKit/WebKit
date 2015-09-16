@@ -47,7 +47,7 @@ PASS createElementNS("http://www.w3.org/2000/xmlns/", "xmlns:test")
 PASS createElementNS("http://www.w3.org/XML/1998/namespace", "xml:test")
 PASS createElementNS("http://www.w3.org/XML/1998/namespace", "x:test")
 PASS createElement()
-PASS createElement(null); threw INVALID_CHARACTER_ERR
+PASS createElement(null)
 PASS createElement(""); threw INVALID_CHARACTER_ERR
 PASS createElement("<div>"); threw INVALID_CHARACTER_ERR
 PASS createElement("0div"); threw INVALID_CHARACTER_ERR
@@ -76,7 +76,7 @@ PASS createElement("xmlns:test")
 PASS createElement("SOAP-ENV:Body")
 XHTML createElement tests:
 PASS createElement()
-PASS createElement(null); threw INVALID_CHARACTER_ERR
+PASS createElement(null)
 PASS createElement(""); threw INVALID_CHARACTER_ERR
 PASS createElement("<div>"); threw INVALID_CHARACTER_ERR
 PASS createElement("0div"); threw INVALID_CHARACTER_ERR
@@ -105,7 +105,7 @@ PASS createElement("xmlns:test")
 PASS createElement("SOAP-ENV:Body")
 XML createElement tests:
 PASS createElement()
-PASS createElement(null); threw INVALID_CHARACTER_ERR
+PASS createElement(null)
 PASS createElement(""); threw INVALID_CHARACTER_ERR
 PASS createElement("<div>"); threw INVALID_CHARACTER_ERR
 PASS createElement("0div"); threw INVALID_CHARACTER_ERR

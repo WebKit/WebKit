@@ -443,7 +443,7 @@ FAIL Document interface: attribute documentElement assert_throws: getting proper
 FAIL Document interface: operation getElementsByTagName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL Document interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation createElement(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation createElement(DOMString) 
 FAIL Document interface: operation createElementNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 PASS Document interface: operation createDocumentFragment() 
 FAIL Document interface: operation createTextNode(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -507,9 +507,7 @@ FAIL Document interface: calling getElementsByClassName(DOMString) on xmlDoc wit
     [native code]
 }" did not throw
 PASS Document interface: xmlDoc must inherit property "createElement" with the proper type (13) 
-FAIL Document interface: calling createElement(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Document interface: calling createElement(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createElementNS" with the proper type (14) 
 FAIL Document interface: calling createElementNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]

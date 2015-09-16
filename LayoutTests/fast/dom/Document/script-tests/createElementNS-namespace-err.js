@@ -86,7 +86,7 @@ var allNSTests = [
 
 var allNoNSTests = [
    { args: [undefined] },
-   { args: [null], code: 5 },
+   { args: [null] },
    { args: [""], code: 5 },
    { args: ["<div>"], code: 5 },
    { args: ["0div"], code: 5 },
