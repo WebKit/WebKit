@@ -11,3 +11,6 @@ Disallow: /grid
 Disallow: /tgrid
 Disallow: /console
 Disallow: /results
+Disallow: /dashboard
+Disallow: /LeaksViewer
+Disallow: /TestFailures

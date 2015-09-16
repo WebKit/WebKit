@@ -1,3 +1,14 @@
+2015-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Add newer build.webkit.org pages to robots.txt
+        https://bugs.webkit.org/show_bug.cgi?id=149219
+
+        Reviewed by Darin Adler.
+
+        Indexing bot watcher's dashboard can't be good.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/robots.txt:
+
 2015-09-16  Alex Christensen  <achristensen@webkit.org>
 
         Rollout r189851 and 189853 because they didn’t actually fix the permissions issue
