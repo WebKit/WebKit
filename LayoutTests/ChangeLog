@@ -1,3 +1,16 @@
+2015-09-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Grid container's height should include scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=149210
+
+        Reviewed by Sergio Villar Senin.
+
+        Add test to check both height and width (which was already working as
+        expected) with margins, borders, paddings and scrollbars.
+
+        * fast/css-grid-layout/grid-container-margin-border-padding-scrollbar-expected.txt: Added.
+        * fast/css-grid-layout/grid-container-margin-border-padding-scrollbar.html: Added.
+
 2015-09-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r189841.

@@ -1203,7 +1203,7 @@ void RenderGrid::layoutGridItems()
         setLogicalHeight(logicalHeight() + row.baseSize());
 
     // min / max logical height is handled in updateLogicalHeight().
-    setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
+    setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
     if (hasLineIfEmpty()) {
         LayoutUnit minHeight = borderAndPaddingLogicalHeight()
             + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes)
