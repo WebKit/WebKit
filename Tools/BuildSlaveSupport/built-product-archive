@@ -175,7 +175,7 @@ def unzipArchive(directoryToExtractTo, configuration):
     elif sys.platform == 'win32':
         archive = zipfile.ZipFile(archiveFile, "r")
         archive.extractall(directoryToExtractTo)
-        for filename in archive.namelist()
+        for filename in archive.namelist():
             os.chmod(filename, 0555)
         archive.close()
 

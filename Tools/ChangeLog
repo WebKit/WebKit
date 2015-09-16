@@ -1,3 +1,11 @@
+2015-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix python syntax after r189851.
+
+        * BuildSlaveSupport/built-product-archive:
+        (unzipArchive):
+        For loops need a colon.
+
 2015-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows test bots after changing to non-cygwin build
