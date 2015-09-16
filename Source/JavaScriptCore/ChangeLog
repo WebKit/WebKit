@@ -1,3 +1,169 @@
+2015-09-16  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Implement tail calls in the LLInt and Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=148661
+
+        Fix for the breakage of Speedometer/Full.html (https://bugs.webkit.org/show_bug.cgi?id=149162).
+
+        Reviewed by Filip Pizlo.
+        Changed SetupVarargsFrame.cpp::emitSetVarargsFrame to align the callframe size to be a
+        multiple of stackAlignmentRegisters() in addition to the location of the new frame.
+
+        Fixed Reviewed by Filip Pizlo.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbortReason.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Call::Call):
+        (JSC::AbstractMacroAssembler::repatchNearCall):
+        (JSC::AbstractMacroAssembler::repatchCompact):
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationNearCall::CodeLocationNearCall):
+        (JSC::CodeLocationNearCall::callMode):
+        (JSC::CodeLocationCommon::callAtOffset):
+        (JSC::CodeLocationCommon::nearCallAtOffset):
+        (JSC::CodeLocationCommon::dataLabelPtrAtOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::locationOf):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::nearTailCall):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::linkCall):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::nearCall):
+        (JSC::MacroAssemblerARM64::nearTailCall):
+        (JSC::MacroAssemblerARM64::ret):
+        (JSC::MacroAssemblerARM64::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::nearTailCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::linkCall):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::nearCall):
+        (JSC::MacroAssemblerMIPS::nearTailCall):
+        (JSC::MacroAssemblerMIPS::call):
+        (JSC::MacroAssemblerMIPS::linkCall):
+        (JSC::MacroAssemblerMIPS::repatchCall):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::call):
+        (JSC::MacroAssemblerSH4::nearTailCall):
+        (JSC::MacroAssemblerSH4::nearCall):
+        (JSC::MacroAssemblerSH4::linkCall):
+        (JSC::MacroAssemblerSH4::repatchCall):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::linkCall):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::breakpoint):
+        (JSC::MacroAssemblerX86Common::nearTailCall):
+        (JSC::MacroAssemblerX86Common::nearCall):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::linkCall):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::callTypeFor):
+        (JSC::CallLinkInfo::isVarargsCallType):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::specializationKind):
+        (JSC::CallLinkInfo::callModeFor):
+        (JSC::CallLinkInfo::callMode):
+        (JSC::CallLinkInfo::isTailCall):
+        (JSC::CallLinkInfo::isVarargs):
+        (JSC::CallLinkInfo::registerPreservationMode):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCallInTailPosition):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        (JSC::LabelNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isCallBytecode):
+        (JSC::calleeFrameForVarargs):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_tail_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_tail_call_varargs):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_tail_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_tail_call_varargs):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_tail_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_tail_call_varargs):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_tail_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_tail_call_varargs):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitNakedTailCall):
+        (JSC::JIT::updateTopCallFrame):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/Repatch.cpp:
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetVarargsFrame):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::baselineGetterReturnThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        (JSC::CommonSlowPaths::opIn):
+
 2015-09-15  Michael Saboff  <msaboff@apple.com>
 
         Rollout r189774 and 189818.

@@ -162,6 +162,9 @@
     <ClCompile Include="..\bytecode\CallLinkStatus.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\CallMode.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\CodeBlock.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -2032,6 +2035,9 @@
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\CallLinkStatus.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\CallMode.h">
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\CallReturnOffsetToBytecodeOffset.h">

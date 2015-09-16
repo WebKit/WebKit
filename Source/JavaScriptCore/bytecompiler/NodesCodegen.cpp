@@ -678,6 +678,12 @@ CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argume
         m_argv[i] = generator.newTemporary();
         ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() - 1);
     }
+
+    // We need to ensure that the frame size is stack-aligned
+    while ((JSStack::CallFrameHeaderSize + m_argv.size()) % stackAlignmentRegisters()) {
+        m_argv.insert(0, generator.newTemporary());
+        m_padding++;
+    }
     
     while (stackOffset() % stackAlignmentRegisters()) {
         m_argv.insert(0, generator.newTemporary());
@@ -2786,7 +2792,7 @@ void LabelNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     ASSERT(!generator.breakTarget(m_name));
 
     LabelScopePtr scope = generator.newLabelScope(LabelScope::NamedLabel, &m_name);
-    generator.emitNode(dst, m_statement);
+    generator.emitNodeInTailPosition(dst, m_statement);
 
     generator.emitLabel(scope->breakTarget());
 }

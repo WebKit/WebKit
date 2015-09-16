@@ -1677,6 +1677,12 @@ public:
         return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
     }
 
+    ALWAYS_INLINE Call nearTailCall()
+    {
+        moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
+        return Call(m_assembler.bx(dataTempRegister), Call::LinkableNearTail);
+    }
+
     ALWAYS_INLINE Call call()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
@@ -2012,7 +2018,10 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        ARMv7Assembler::linkCall(code, call.m_label, function.value());
+        if (call.isFlagSet(Call::Tail))
+            ARMv7Assembler::linkJump(code, call.m_label, function.value());
+        else
+            ARMv7Assembler::linkCall(code, call.m_label, function.value());
     }
 
 #if ENABLE(MASM_PROBE)

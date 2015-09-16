@@ -361,7 +361,10 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        X86Assembler::linkCall(code, call.m_label, function.value());
+        if (call.isFlagSet(Call::Tail))
+            X86Assembler::linkJump(code, call.m_label, function.value());
+        else
+            X86Assembler::linkCall(code, call.m_label, function.value());
     }
 };
 

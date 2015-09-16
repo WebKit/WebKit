@@ -253,7 +253,7 @@ namespace JSC {
 
         void dumpRegisters(CallFrame*);
         
-        bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
+        bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval) || opcode == getOpcode(op_tail_call); }
 
         void enableSampler();
         int m_sampleEntryDepth;
@@ -277,6 +277,15 @@ namespace JSC {
 
     inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis)
     {
+#if 1
+        // We want the new frame to be allocated on a stack aligned offset with a stack
+        // aligned size. Align the size here.
+        argumentCountIncludingThis = WTF::roundUpToMultipleOf(
+            stackAlignmentRegisters(),
+            argumentCountIncludingThis + JSStack::CallFrameHeaderSize) - JSStack::CallFrameHeaderSize;
+
+        // Align the frame offset here.
+#endif
         unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(
             stackAlignmentRegisters(),
             numUsedStackSlots + argumentCountIncludingThis + JSStack::CallFrameHeaderSize);

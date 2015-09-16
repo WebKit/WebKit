@@ -609,7 +609,7 @@ void linkVirtualFor(
 {
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
-    
+
     if (shouldShowDisassemblyFor(callerCodeBlock))
         dataLog("Linking virtual call at ", *callerCodeBlock, " ", exec->callerFrame()->codeOrigin(), "\n");
     
@@ -680,7 +680,7 @@ void linkPolymorphicCall(
                 codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
             // If we cannot handle a callee, assume that it's better for this whole thing to be a
             // virtual call.
-            if (exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType() == CallLinkInfo::CallVarargs || callLinkInfo.callType() == CallLinkInfo::ConstructVarargs) {
+            if (exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()) {
                 linkVirtualFor(exec, callLinkInfo);
                 return;
             }
@@ -803,7 +803,11 @@ void linkPolymorphicCall(
                 CCallHelpers::TrustedImm32(1),
                 CCallHelpers::Address(fastCountsBaseGPR, caseIndex * sizeof(uint32_t)));
         }
-        calls[caseIndex].call = stubJit.nearCall();
+        if (callLinkInfo.isTailCall()) {
+            stubJit.prepareForTailCallSlow();
+            calls[caseIndex].call = stubJit.nearTailCall();
+        } else
+            calls[caseIndex].call = stubJit.nearCall();
         calls[caseIndex].codePtr = codePtr;
         done.append(stubJit.jump());
     }
