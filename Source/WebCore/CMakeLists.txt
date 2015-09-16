@@ -1089,7 +1089,6 @@ set(WebCore_SOURCES
     bindings/js/JSAudioTrackListCustom.cpp
     bindings/js/JSBiquadFilterNodeCustom.cpp
     bindings/js/JSBlobCustom.cpp
-    bindings/js/JSCDATASectionCustom.cpp
     bindings/js/JSCSSRuleCustom.cpp
     bindings/js/JSCSSRuleListCustom.cpp
     bindings/js/JSCSSStyleDeclarationCustom.cpp
@@ -1204,12 +1203,9 @@ set(WebCore_SOURCES
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
     bindings/js/JSSubtleCryptoCustom.cpp
-    bindings/js/JSTextCustom.cpp
     bindings/js/JSTextTrackCueCustom.cpp
     bindings/js/JSTextTrackCustom.cpp
     bindings/js/JSTextTrackListCustom.cpp
-    bindings/js/JSTouchCustom.cpp
-    bindings/js/JSTouchListCustom.cpp
     bindings/js/JSTrackCustom.cpp
     bindings/js/JSTrackEventCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp

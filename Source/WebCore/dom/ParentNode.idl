@@ -41,5 +41,5 @@
     // [Unscopeable] Element? query(DOMString relativeSelectors);
     // [NewObject, Unscopeable] Elements queryAll(DOMString relativeSelectors);
     [RaisesException] Element querySelector(DOMString selectors);
-    [RaisesException] NodeList querySelectorAll(DOMString selectors);
+    [RaisesException, NewObject] NodeList querySelectorAll(DOMString selectors);
 };

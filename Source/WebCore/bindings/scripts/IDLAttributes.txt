@@ -88,6 +88,7 @@ JSLegacyParent=*
 MasqueradesAsUndefined
 NamedConstructor=*
 NewImpurePropertyFiresWatchpoints
+NewObject
 NoInterfaceObject
 Nondeterministic
 NotEnumerable
@@ -107,7 +108,6 @@ Replaceable
 ReplaceableConstructor
 ReportExtraMemoryCost
 RequiresExistingAtomicString
-ReturnNewObject
 SetterRaisesException
 SkipVTableValidation
 StrictTypeChecking

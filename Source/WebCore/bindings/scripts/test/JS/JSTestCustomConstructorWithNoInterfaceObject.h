@@ -80,6 +80,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestCustomConstructo
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCustomConstructorWithNoInterfaceObject*);
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCustomConstructorWithNoInterfaceObject& impl) { return toJS(exec, globalObject, &impl); }
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestCustomConstructorWithNoInterfaceObject*);
 
 // Custom constructor
 JSC::EncodedJSValue JSC_HOST_CALL constructJSTestCustomConstructorWithNoInterfaceObject(JSC::ExecState*);

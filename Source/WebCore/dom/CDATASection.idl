@@ -17,6 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface CDATASection : Text {
+[
+    JSGenerateToJSObject
+] interface CDATASection : Text {
 };
 

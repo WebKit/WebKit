@@ -955,6 +955,13 @@ void JSTestInterfaceOwner::finalize(JSC::JSCell*& cell, void* context)
     uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestInterface>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)
 {
     if (!impl)

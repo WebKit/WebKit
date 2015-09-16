@@ -262,6 +262,14 @@ extern "C" { extern void (*const __identifier("??_7TestActiveDOMObject@WebCore@@
 extern "C" { extern void* _ZTVN7WebCore19TestActiveDOMObjectE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestActiveDOMObject* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestActiveDOMObject>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestActiveDOMObject* impl)
 {
     if (!impl)

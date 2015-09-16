@@ -195,6 +195,14 @@ extern "C" { extern void (*const __identifier("??_7attribute@WebCore@@6B@")[])()
 extern "C" { extern void* _ZTVN7WebCore9attributeE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSattribute>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute* impl)
 {
     if (!impl)

@@ -340,6 +340,14 @@ extern "C" { extern void (*const __identifier("??_7TestEventTarget@WebCore@@6B@"
 extern "C" { extern void* _ZTVN7WebCore15TestEventTargetE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestEventTarget>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget* impl)
 {
     if (!impl)

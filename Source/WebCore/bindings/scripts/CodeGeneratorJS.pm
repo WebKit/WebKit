@@ -509,15 +509,6 @@ sub GenerateImplementationContentHeader
     return @implContentHeader;
 }
 
-my %usesToJSNewlyCreated = (
-    "CDATASection" => 1,
-    "Element" => 1,
-    "Node" => 1,
-    "Text" => 1,
-    "Touch" => 1,
-    "TouchList" => 1
-);
-
 sub ShouldGenerateToJSDeclaration
 {
     my ($hasParent, $interface) = @_;
@@ -1215,11 +1206,10 @@ sub GenerateHeader
             push(@headerContent, $exportLabel."JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         }
         push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType& impl) { return toJS(exec, globalObject, &impl); }\n");
+
+        push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
     }
-    if ($usesToJSNewlyCreated{$interfaceName}) {
-        push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName*);\n");
-    }
-    
+
     push(@headerContent, "\n");
 
     # Add prototype declaration.
@@ -3064,7 +3054,21 @@ extern "C" { extern void (*const ${vtableRefWin}[])(); }
 extern "C" { extern void* ${vtableNameGnu}[]; }
 #endif
 #endif
+
 END
+
+        push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType* impl)\n");
+        push(@implContent, "{\n");
+push(@implContent, <<END);
+    if (!impl)
+        return jsNull();
+END
+        if ($svgPropertyType) {
+            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, impl);\n");
+        } else {
+            push(@implContent, "    return createNewWrapper<$className>(globalObject, impl);\n");
+        }
+        push(@implContent, "}\n\n");
 
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
@@ -4126,7 +4130,7 @@ sub NativeToJSValue
 
     return $value if $codeGenerator->IsSVGAnimatedType($type);
 
-    if ($signature->extendedAttributes->{"ReturnNewObject"}) {
+    if ($signature->extendedAttributes->{"NewObject"}) {
         return "toJSNewlyCreated(exec, $globalObject, WTF::getPtr($value))";
     }
 

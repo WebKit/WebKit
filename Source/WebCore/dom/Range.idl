@@ -53,11 +53,11 @@
     [ObjCLegacyUnnamedParameters, RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints([Default=Undefined] optional unsigned short how, Range sourceRange);
 
     [RaisesException] void deleteContents();
-    [RaisesException] DocumentFragment extractContents();
-    [RaisesException] DocumentFragment cloneContents();
+    [RaisesException, NewObject] DocumentFragment extractContents();
+    [RaisesException, NewObject] DocumentFragment cloneContents();
     [RaisesException] void insertNode(Node newNode);
     [RaisesException] void surroundContents(Node newParent);
-    Range cloneRange();
+    [NewObject] Range cloneRange();
     DOMString toString();
 
     void detach();

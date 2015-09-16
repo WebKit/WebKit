@@ -247,6 +247,14 @@ extern "C" { extern void (*const __identifier("??_7TestCustomNamedGetter@WebCore
 extern "C" { extern void* _ZTVN7WebCore21TestCustomNamedGetterE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNamedGetter* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestCustomNamedGetter>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNamedGetter* impl)
 {
     if (!impl)

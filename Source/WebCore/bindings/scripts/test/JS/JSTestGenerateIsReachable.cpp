@@ -174,6 +174,14 @@ extern "C" { extern void (*const __identifier("??_7TestGenerateIsReachable@WebCo
 extern "C" { extern void* _ZTVN7WebCore23TestGenerateIsReachableE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerateIsReachable* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestGenerateIsReachable>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerateIsReachable* impl)
 {
     if (!impl)

@@ -166,6 +166,13 @@ void JSreadonlyOwner::finalize(JSC::JSCell*& cell, void* context)
     uncacheWrapper(world, &wrapper.impl(), &wrapper);
 }
 
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSreadonly>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* impl)
 {
     if (!impl)

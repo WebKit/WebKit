@@ -199,6 +199,14 @@ extern "C" { extern void (*const __identifier("??_7TestMediaQueryListListener@We
 extern "C" { extern void* _ZTVN7WebCore26TestMediaQueryListListenerE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestMediaQueryListListener* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestMediaQueryListListener>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestMediaQueryListListener* impl)
 {
     if (!impl)

@@ -505,6 +505,14 @@ extern "C" { extern void (*const __identifier("??_7TestNondeterministic@WebCore@
 extern "C" { extern void* _ZTVN7WebCore20TestNondeterministicE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestNondeterministic>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic* impl)
 {
     if (!impl)

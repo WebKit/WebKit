@@ -30,10 +30,10 @@
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters, RaisesException] DocumentType createDocumentType([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString qualifiedName,
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString qualifiedName,
                                                    [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString publicId,
                                                    [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString systemId);
-    [ObjCLegacyUnnamedParameters, RaisesException] Document createDocument([TreatNullAs=NullString, Default=Undefined] optional DOMString namespaceURI, 
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] Document createDocument([TreatNullAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                            [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName, 
                                            [TreatNullAs=NullString, Default=Undefined] optional DocumentType doctype);
 
@@ -44,6 +44,6 @@
 
     // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-    HTMLDocument createHTMLDocument([Default=NullString] optional DOMString title);
+    [NewObject] HTMLDocument createHTMLDocument([Default=NullString] optional DOMString title);
 };
 

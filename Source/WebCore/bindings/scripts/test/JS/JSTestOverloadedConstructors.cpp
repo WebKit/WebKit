@@ -268,6 +268,14 @@ extern "C" { extern void (*const __identifier("??_7TestOverloadedConstructors@We
 extern "C" { extern void* _ZTVN7WebCore26TestOverloadedConstructorsE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverloadedConstructors* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestOverloadedConstructors>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverloadedConstructors* impl)
 {
     if (!impl)

@@ -34,7 +34,6 @@
 #include "JSAudioTrackCustom.cpp"
 #include "JSAudioTrackListCustom.cpp"
 #include "JSBlobCustom.cpp"
-#include "JSCDATASectionCustom.cpp"
 #if ENABLE(STREAMS_API)
 #include "JSCountQueuingStrategyCustom.cpp"
 #endif
@@ -133,12 +132,9 @@
 #include "JSStorageCustom.cpp"
 #include "JSStyleSheetCustom.cpp"
 #include "JSStyleSheetListCustom.cpp"
-#include "JSTextCustom.cpp"
 #include "JSTextTrackCueCustom.cpp"
 #include "JSTextTrackCustom.cpp"
 #include "JSTextTrackListCustom.cpp"
-#include "JSTouchCustom.cpp"
-#include "JSTouchListCustom.cpp"
 #include "JSTrackCustom.cpp"
 #include "JSTrackEventCustom.cpp"
 #include "JSTreeWalkerCustom.cpp"

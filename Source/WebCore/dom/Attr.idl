@@ -20,7 +20,8 @@
 
 [
     JSCustomMarkFunction,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    JSGenerateToJSObject
 ] interface Attr : Node {
 
     // DOM Level 1

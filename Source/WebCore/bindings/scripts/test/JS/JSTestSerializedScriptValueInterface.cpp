@@ -333,6 +333,14 @@ extern "C" { extern void (*const __identifier("??_7TestSerializedScriptValueInte
 extern "C" { extern void* _ZTVN7WebCore34TestSerializedScriptValueInterfaceE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestSerializedScriptValueInterface* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestSerializedScriptValueInterface>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestSerializedScriptValueInterface* impl)
 {
     if (!impl)

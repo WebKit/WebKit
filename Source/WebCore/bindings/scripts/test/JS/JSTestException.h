@@ -85,6 +85,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestException*)
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestException*);
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestException& impl) { return toJS(exec, globalObject, &impl); }
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestException*);
 
 
 } // namespace WebCore

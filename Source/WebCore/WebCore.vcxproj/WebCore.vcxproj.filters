@@ -4236,9 +4236,6 @@
     <ClCompile Include="..\bindings\js\JSCanvasRenderingContextCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSCDATASectionCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSCommandLineAPIHostCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -4447,9 +4444,6 @@
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSSVGPathSegCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\JSTextCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSTreeWalkerCustom.cpp">

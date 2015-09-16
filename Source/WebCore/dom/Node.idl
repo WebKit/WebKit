@@ -68,7 +68,7 @@
     [Custom, RaisesException] Node appendChild([CustomReturn] Node newChild);
 
     boolean            hasChildNodes();
-    Node               cloneNode([Default=Undefined] optional boolean deep);
+    [NewObject] Node cloneNode([Default=Undefined] optional boolean deep);
     void               normalize();
 
     // Introduced in DOM Level 2:

@@ -79,7 +79,32 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
         location->setHref(locationString, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* document)
+static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Document& document)
+{
+    JSObject* wrapper;
+    if (document.isHTMLDocument())
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, HTMLDocument, &document);
+    else if (document.isSVGDocument())
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, SVGDocument, &document);
+    else
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, Document, &document);
+
+    // Make sure the document is kept around by the window object, and works right with the
+    // back/forward cache.
+    if (!document.frame()) {
+        size_t nodeCount = 0;
+        for (Node* n = &document; n; n = NodeTraversal::next(*n))
+            ++nodeCount;
+
+        // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+        // https://bugs.webkit.org/show_bug.cgi?id=142595
+        state.heap()->deprecatedReportExtraMemory(nodeCount * sizeof(Node));
+    }
+
+    return wrapper;
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document* document)
 {
     if (!document)
         return jsNull();
@@ -89,33 +114,19 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
         return wrapper;
 
     if (DOMWindow* domWindow = document->domWindow()) {
-        globalObject = toJSDOMWindow(toJS(exec, domWindow));
+        globalObject = toJSDOMWindow(toJS(state, domWindow));
         // Creating a wrapper for domWindow might have created a wrapper for document as well.
         wrapper = getCachedWrapper(globalObject->world(), document);
         if (wrapper)
             return wrapper;
     }
 
-    if (document->isHTMLDocument())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, HTMLDocument, document);
-    else if (document->isSVGDocument())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGDocument, document);
-    else
-        wrapper = CREATE_DOM_WRAPPER(globalObject, Document, document);
+    return createNewDocumentWrapper(*state, *globalObject, *document);
+}
 
-    // Make sure the document is kept around by the window object, and works right with the
-    // back/forward cache.
-    if (!document->frame()) {
-        size_t nodeCount = 0;
-        for (Node* n = document; n; n = NodeTraversal::next(*n))
-            nodeCount++;
-        
-        // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
-        // https://bugs.webkit.org/show_bug.cgi?id=142595
-        exec->heap()->deprecatedReportExtraMemory(nodeCount * sizeof(Node));
-    }
-
-    return wrapper;
+JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Document* document)
+{
+    return document ? createNewDocumentWrapper(*state, *globalObject, *document) : jsNull();
 }
 
 JSValue JSDocument::prepend(ExecState* state)

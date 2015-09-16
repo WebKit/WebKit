@@ -31,15 +31,15 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element documentElement;
 
-    [ReturnNewObject, RaisesException] Element createElement(DOMString tagName);
-    DocumentFragment   createDocumentFragment();
-    [ReturnNewObject] Text createTextNode([Default=Undefined] optional DOMString data);
-    [ReturnNewObject] Comment createComment([Default=Undefined] optional DOMString data);
-    [ReturnNewObject, RaisesException] CDATASection createCDATASection([Default=Undefined] optional DOMString data);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] ProcessingInstruction createProcessingInstruction([Default=Undefined] optional DOMString target,
+    [NewObject, RaisesException] Element createElement(DOMString tagName);
+    [NewObject] DocumentFragment   createDocumentFragment();
+    [NewObject] Text createTextNode([Default=Undefined] optional DOMString data);
+    [NewObject] Comment createComment([Default=Undefined] optional DOMString data);
+    [NewObject, RaisesException] CDATASection createCDATASection([Default=Undefined] optional DOMString data);
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction([Default=Undefined] optional DOMString target,
                                                                                  [Default=Undefined] optional DOMString data);
-    [ReturnNewObject, RaisesException] Attr createAttribute([Default=Undefined] optional DOMString name);
-    [ReturnNewObject, RaisesException] EntityReference createEntityReference([Default=Undefined] optional DOMString name);
+    [NewObject, RaisesException] Attr createAttribute([Default=Undefined] optional DOMString name);
+    [NewObject, RaisesException] EntityReference createEntityReference([Default=Undefined] optional DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName([Default=Undefined] optional DOMString tagname);
@@ -49,11 +49,11 @@
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] Node importNode([Default=Undefined] optional Node importedNode,
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode([Default=Undefined] optional Node importedNode,
                     optional boolean deep);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] Element createElementNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                             [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] Attr createAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                                                           [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -84,19 +84,19 @@
 
     // DOM Level 2 Events (DocumentEvents interface)
 
-    [RaisesException] Event              createEvent([Default=Undefined] optional DOMString eventType);
+    [RaisesException, NewObject] Event              createEvent([Default=Undefined] optional DOMString eventType);
 
     // DOM Level 2 Tranversal and Range (DocumentRange interface)
 
-    Range              createRange();
+    [NewObject] Range              createRange();
 
     // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-    [ObjCLegacyUnnamedParameters, RaisesException] NodeIterator createNodeIterator(Node root,
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] NodeIterator createNodeIterator(Node root,
         optional unsigned long whatToShow,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);
-    [ObjCLegacyUnnamedParameters, RaisesException] TreeWalker createTreeWalker(Node root,
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] TreeWalker createTreeWalker(Node root,
         optional unsigned long whatToShow,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);
@@ -255,7 +255,7 @@
 #if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
 #include <WebKitAdditions/DocumentIOS.idl>
 #elif defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [ReturnNewObject, RaisesException] Touch createTouch([Default=Undefined] optional DOMWindow window,
+    [NewObject, RaisesException] Touch createTouch([Default=Undefined] optional DOMWindow window,
                                                      [Default=Undefined] optional EventTarget target,
                                                      [Default=Undefined] optional long identifier,
                                                      [Default=Undefined] optional long pageX,
@@ -266,7 +266,7 @@
                                                      [Default=Undefined] optional long webkitRadiusY,
                                                      [Default=Undefined] optional unrestricted float webkitRotationAngle,
                                                      [Default=Undefined] optional unrestricted float webkitForce);
-    [ReturnNewObject, Custom, RaisesException] TouchList createTouchList();
+    [NewObject, Custom, RaisesException] TouchList createTouchList();
 #endif
 
     // Page visibility API.

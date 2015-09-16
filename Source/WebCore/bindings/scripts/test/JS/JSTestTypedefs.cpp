@@ -742,6 +742,14 @@ extern "C" { extern void (*const __identifier("??_7TestTypedefs@WebCore@@6B@")[]
 extern "C" { extern void* _ZTVN7WebCore12TestTypedefsE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestTypedefs* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestTypedefs>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestTypedefs* impl)
 {
     if (!impl)

@@ -212,6 +212,14 @@ extern "C" { extern void (*const __identifier("??_7TestException@WebCore@@6B@")[
 extern "C" { extern void* _ZTVN7WebCore13TestExceptionE[]; }
 #endif
 #endif
+
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestException* impl)
+{
+    if (!impl)
+        return jsNull();
+    return createNewWrapper<JSTestException>(globalObject, impl);
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestException* impl)
 {
     if (!impl)

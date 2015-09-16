@@ -19,7 +19,8 @@
 
 [
     Constructor,
-    ConstructorCallWith=Document
+    ConstructorCallWith=Document,
+    JSGenerateToJSObject
 ] interface DocumentFragment : Node {
 };
 
