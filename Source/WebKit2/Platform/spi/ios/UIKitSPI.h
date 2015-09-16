@@ -757,6 +757,13 @@ typedef enum {
 
 @end
 
+@interface UIViewControllerPreviewAction : NSObject <NSCopying>
+@end
+
+@interface UIViewControllerPreviewAction ()
++ (instancetype)actionWithTitle:(NSString *)title handler:(void (^)(UIViewControllerPreviewAction *action, UIViewController *previewViewController))handler;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 @interface UIView (IPI)

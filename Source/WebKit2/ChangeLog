@@ -1,3 +1,14 @@
+2015-09-16  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Inline implementation of -[WKImagePreviewViewController previewActions]
+        https://bugs.webkit.org/show_bug.cgi?id=149224
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h: Declare UIViewControllerPreviewAction and its factory method.
+        * UIProcess/WKImagePreviewViewController.mm:
+        (-[WKImagePreviewViewController previewActions]): Moved here.
+
 2015-09-16  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Allow reading from SubmitDiagInfo.domains in Networking process

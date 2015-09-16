@@ -91,8 +91,21 @@ static CGSize _scaleSizeWithinSize(CGSize source, CGSize destination)
     return size;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKImagePreviewViewController.mm>
+#if HAVE(LINK_PREVIEW)
+- (NSArray <UIViewControllerPreviewAction *> *)previewActions
+{
+    NSMutableArray<UIViewControllerPreviewAction *> *previewActions = [NSMutableArray array];
+    for (_WKElementAction *imageAction in _imageActions.get()) {
+        UIViewControllerPreviewAction *previewAction = [UIViewControllerPreviewAction actionWithTitle:imageAction.title handler:^(UIViewControllerPreviewAction *action, UIViewController *previewViewController) {
+            if ([imageAction respondsToSelector:@selector(runActionWithElementInfo:)])
+                [imageAction runActionWithElementInfo:_activatedElementInfo.get()];
+        }];
+
+        [previewActions addObject:previewAction];
+    }
+
+    return previewActions;
+}
 #endif
 
 @end
