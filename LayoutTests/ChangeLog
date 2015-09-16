@@ -1,3 +1,18 @@
+2015-09-15  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Glitch selecting long text.
+        https://bugs.webkit.org/show_bug.cgi?id=149204
+        rdar://problem/22646472
+
+        Reviewed by Antti Koivisto.
+
+        When long text is split into multiple RenderText objects, we ignore renderer boundaries while
+        collecting wrapping positions (so that we don't end up wrapping unbreakable fragments at the end of each renderer).
+        This patch ensures that fragments with hypen character ignore renderer boundaries too.
+
+        * fast/text/multiple-renderers-with-hypen-on-boundary-expected.html: Added.
+        * fast/text/multiple-renderers-with-hypen-on-boundary.html: Added.
+
 2015-09-15  Chris Dumez  <cdumez@apple.com>
 
         Document.createElement(localName) does not handle correctly missing or null parameter

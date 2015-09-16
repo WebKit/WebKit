@@ -161,16 +161,15 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
     if (positionType == NonWhitespace)
         nextPosition = m_currentSegment->text.is8Bit() ? nextNonWhitespacePosition<LChar>(*m_currentSegment, currentPosition) : nextNonWhitespacePosition<UChar>(*m_currentSegment, currentPosition);
     else if (positionType == Breakable) {
-        // nextBreakablePosition returns the same position for certain characters such as hyphens. Call next again with modified position unless it's the end of the segment.
         nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition);
+        // nextBreakablePosition returns the same position for certain characters such as hyphens. Call next again with modified position unless it's the end of the segment.
+        if (nextPosition == currentPosition && nextPosition < m_currentSegment->end)
+            nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition + 1) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition + 1);
         // We need to know whether the word actually finishes at the end of this renderer or not.
         if (nextPosition == m_currentSegment->end) {
             const auto nextSegment = m_currentSegment + 1;
             if (nextSegment != m_flowContents.end() && !isHardLineBreak(nextSegment))
                 overlappingFragment = nextPosition < (nextSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*nextSegment, nextPosition) : nextBreakablePosition<UChar>(*nextSegment, nextPosition));
-        } else if (nextPosition == currentPosition) {
-            if (++nextPosition < m_currentSegment->end)
-                nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition + 1) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition + 1);
         }
     }
     width = 0;
