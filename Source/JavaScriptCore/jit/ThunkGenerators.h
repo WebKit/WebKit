@@ -34,11 +34,9 @@
 namespace JSC {
 
 class CallLinkInfo;
-class CCallHelpers;
 
 MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM*);
 
-MacroAssemblerCodeRef linkCallThunk(VM*, CallLinkInfo&, CodeSpecializationKind, RegisterPreservationMode);
 MacroAssemblerCodeRef linkCallThunkGenerator(VM*);
 MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM*);
 
@@ -48,7 +46,6 @@ MacroAssemblerCodeRef nativeCallGenerator(VM*);
 MacroAssemblerCodeRef nativeConstructGenerator(VM*);
 MacroAssemblerCodeRef nativeTailCallGenerator(VM*);
 MacroAssemblerCodeRef arityFixupGenerator(VM*);
-MacroAssemblerCodeRef unreachableGenerator(VM*);
 
 MacroAssemblerCodeRef baselineGetterReturnThunkGenerator(VM* vm);
 MacroAssemblerCodeRef baselineSetterReturnThunkGenerator(VM* vm);

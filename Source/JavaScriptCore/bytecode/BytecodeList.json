@@ -92,10 +92,8 @@
             { "name" : "op_new_func_exp", "length" : 4 },
             { "name" : "op_new_arrow_func_exp", "length" : 5 },
             { "name" : "op_call", "length" : 9 },
-            { "name" : "op_tail_call", "length" : 9 },
             { "name" : "op_call_eval", "length" : 9 },
             { "name" : "op_call_varargs", "length" : 9 },
-            { "name" : "op_tail_call_varargs", "length" : 9 },
             { "name" : "op_ret", "length" : 2 },
             { "name" : "op_construct", "length" : 9 },
             { "name" : "op_construct_varargs", "length" : 9 },
@@ -146,10 +144,7 @@
             { "name" : "llint_cloop_did_return_from_js_5" },
             { "name" : "llint_cloop_did_return_from_js_6" },
             { "name" : "llint_cloop_did_return_from_js_7" },
-            { "name" : "llint_cloop_did_return_from_js_8" },
-            { "name" : "llint_cloop_did_return_from_js_9" },
-            { "name" : "llint_cloop_did_return_from_js_10" },
-            { "name" : "llint_cloop_did_return_from_js_11" }
+            { "name" : "llint_cloop_did_return_from_js_8" }
         ]
     },
     {

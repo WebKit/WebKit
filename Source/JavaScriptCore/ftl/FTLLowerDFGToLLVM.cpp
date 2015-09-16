@@ -4329,29 +4329,24 @@ private:
 
     void compileCallOrConstruct()
     {
-        int numArgs = m_node->numChildren() - 1;
+        int numPassedArgs = m_node->numChildren() - 1;
+        int numArgs = numPassedArgs;
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(m_node, 0));
 
         unsigned stackmapID = m_stackmapIDs++;
-
-        unsigned frameSize = JSStack::CallFrameHeaderSize + numArgs;
-        unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
-        unsigned padding = alignedFrameSize - frameSize;
-
+        
         Vector<LValue> arguments;
         arguments.append(m_out.constInt64(stackmapID));
         arguments.append(m_out.constInt32(sizeOfCall()));
         arguments.append(constNull(m_out.ref8));
-        arguments.append(m_out.constInt32(1 + alignedFrameSize - JSStack::CallerFrameAndPCSize));
+        arguments.append(m_out.constInt32(1 + JSStack::CallFrameHeaderSize - JSStack::CallerFrameAndPCSize + numArgs));
         arguments.append(jsCallee); // callee -> %rax
         arguments.append(getUndef(m_out.int64)); // code block
         arguments.append(jsCallee); // callee -> stack
         arguments.append(m_out.constInt64(numArgs)); // argument count and zeros for the tag
-        for (int i = 0; i < numArgs; ++i)
+        for (int i = 0; i < numPassedArgs; ++i)
             arguments.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
-        for (unsigned i = 0; i < padding; ++i)
-            arguments.append(getUndef(m_out.int64));
         
         callPreflight();
         

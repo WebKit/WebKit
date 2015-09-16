@@ -32,8 +32,6 @@
 
 namespace JSC {
 
-enum NearCallMode { Regular, Tail };
-
 class CodeLocationInstruction;
 class CodeLocationLabel;
 class CodeLocationJump;
@@ -61,7 +59,7 @@ public:
     CodeLocationLabel labelAtOffset(int offset);
     CodeLocationJump jumpAtOffset(int offset);
     CodeLocationCall callAtOffset(int offset);
-    CodeLocationNearCall nearCallAtOffset(int offset, NearCallMode);
+    CodeLocationNearCall nearCallAtOffset(int offset);
     CodeLocationDataLabelPtr dataLabelPtrAtOffset(int offset);
     CodeLocationDataLabel32 dataLabel32AtOffset(int offset);
     CodeLocationDataLabelCompact dataLabelCompactAtOffset(int offset);
@@ -117,13 +115,10 @@ public:
 class CodeLocationNearCall : public CodeLocationCommon {
 public:
     CodeLocationNearCall() {}
-    explicit CodeLocationNearCall(MacroAssemblerCodePtr location, NearCallMode callMode)
-        : CodeLocationCommon(location), m_callMode(callMode) { }
-    explicit CodeLocationNearCall(void* location, NearCallMode callMode)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)), m_callMode(callMode) { }
-    NearCallMode callMode() { return m_callMode; }
-private:
-    NearCallMode m_callMode = NearCallMode::Regular;
+    explicit CodeLocationNearCall(MacroAssemblerCodePtr location)
+        : CodeLocationCommon(location) {}
+    explicit CodeLocationNearCall(void* location)
+        : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
 };
 
 class CodeLocationDataLabel32 : public CodeLocationCommon {
@@ -186,10 +181,10 @@ inline CodeLocationCall CodeLocationCommon::callAtOffset(int offset)
     return CodeLocationCall(reinterpret_cast<char*>(dataLocation()) + offset);
 }
 
-inline CodeLocationNearCall CodeLocationCommon::nearCallAtOffset(int offset, NearCallMode callMode)
+inline CodeLocationNearCall CodeLocationCommon::nearCallAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationNearCall(reinterpret_cast<char*>(dataLocation()) + offset, callMode);
+    return CodeLocationNearCall(reinterpret_cast<char*>(dataLocation()) + offset);
 }
 
 inline CodeLocationDataLabelPtr CodeLocationCommon::dataLabelPtrAtOffset(int offset)

@@ -26,7 +26,6 @@
 #ifndef CallLinkInfo_h
 #define CallLinkInfo_h
 
-#include "CallMode.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
 #include "JITWriteBarrier.h"
@@ -42,36 +41,19 @@ namespace JSC {
 
 class CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
 public:
-    enum CallType { None, Call, CallVarargs, Construct, ConstructVarargs, TailCall, TailCallVarargs };
+    enum CallType { None, Call, CallVarargs, Construct, ConstructVarargs };
     static CallType callTypeFor(OpcodeID opcodeID)
     {
         if (opcodeID == op_call || opcodeID == op_call_eval)
             return Call;
-        if (opcodeID == op_call_varargs)
-            return CallVarargs;
         if (opcodeID == op_construct)
             return Construct;
         if (opcodeID == op_construct_varargs)
             return ConstructVarargs;
-        if (opcodeID == op_tail_call)
-            return TailCall;
-        ASSERT(opcodeID == op_tail_call_varargs);
-        return TailCallVarargs;
+        ASSERT(opcodeID == op_call_varargs);
+        return CallVarargs;
     }
-
-    static bool isVarargsCallType(CallType callType)
-    {
-        switch (callType) {
-        case CallVarargs:
-        case ConstructVarargs:
-        case TailCallVarargs:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
+    
     CallLinkInfo()
         : m_registerPreservationMode(static_cast<unsigned>(RegisterPreservationNotRequired))
         , m_hasSeenShouldRepatch(false)
@@ -99,40 +81,6 @@ public:
     CodeSpecializationKind specializationKind() const
     {
         return specializationKindFor(static_cast<CallType>(m_callType));
-    }
-
-    static CallMode callModeFor(CallType callType)
-    {
-        switch (callType) {
-        case Call:
-        case CallVarargs:
-            return CallMode::Regular;
-        case TailCall:
-        case TailCallVarargs:
-            return CallMode::Tail;
-        case Construct:
-        case ConstructVarargs:
-            return CallMode::Construct;
-        case None:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    CallMode callMode() const
-    {
-        return callModeFor(static_cast<CallType>(m_callType));
-    }
-
-    bool isTailCall() const
-    {
-        return callMode() == CallMode::Tail;
-    }
-
-    bool isVarargs() const
-    {
-        return isVarargsCallType(static_cast<CallType>(m_callType));
     }
 
     RegisterPreservationMode registerPreservationMode() const

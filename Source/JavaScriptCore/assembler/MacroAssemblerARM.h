@@ -904,11 +904,6 @@ public:
         return Call(m_assembler.blx(ARMRegisters::S1), Call::LinkableNear);
     }
 
-    Call nearTailCall()
-    {
-        return Call(m_assembler.jmp(), Call::LinkableNearTail);
-    }
-
     Call call(RegisterID target)
     {
         return Call(m_assembler.blx(target), Call::None);
@@ -1493,10 +1488,7 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        if (call.isFlagSet(Call::Tail))
-            ARMAssembler::linkJump(code, call.m_label, function.value());
-        else
-            ARMAssembler::linkCall(code, call.m_label, function.value());
+        ARMAssembler::linkCall(code, call.m_label, function.value());
     }
 
 

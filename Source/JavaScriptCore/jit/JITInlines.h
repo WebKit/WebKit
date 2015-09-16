@@ -125,14 +125,6 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
     return nakedCall;
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr function)
-{
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
-    Call nakedCall = nearTailCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, function.executableAddress()));
-    return nakedCall;
-}
-
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);

@@ -1,3 +1,166 @@
+2015-09-15  Michael Saboff  <msaboff@apple.com>
+
+        Rollout r189774 and 189818.
+
+        Broke Speedometer/Full.html
+
+        Not reviewed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbortReason.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Call::Call):
+        (JSC::AbstractMacroAssembler::repatchNearCall):
+        (JSC::AbstractMacroAssembler::repatchCompact):
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationNearCall::CodeLocationNearCall):
+        (JSC::CodeLocationCommon::callAtOffset):
+        (JSC::CodeLocationCommon::nearCallAtOffset):
+        (JSC::CodeLocationCommon::dataLabelPtrAtOffset):
+        (JSC::CodeLocationNearCall::callMode): Deleted.
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::locationOf):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::linkCall):
+        (JSC::MacroAssemblerARM::nearTailCall): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::nearCall):
+        (JSC::MacroAssemblerARM64::ret):
+        (JSC::MacroAssemblerARM64::linkCall):
+        (JSC::MacroAssemblerARM64::nearTailCall): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::linkCall):
+        (JSC::MacroAssemblerARMv7::nearTailCall): Deleted.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::nearCall):
+        (JSC::MacroAssemblerMIPS::call):
+        (JSC::MacroAssemblerMIPS::linkCall):
+        (JSC::MacroAssemblerMIPS::repatchCall):
+        (JSC::MacroAssemblerMIPS::nearTailCall): Deleted.
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::call):
+        (JSC::MacroAssemblerSH4::nearCall):
+        (JSC::MacroAssemblerSH4::linkCall):
+        (JSC::MacroAssemblerSH4::repatchCall):
+        (JSC::MacroAssemblerSH4::nearTailCall): Deleted.
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::linkCall):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::breakpoint):
+        (JSC::MacroAssemblerX86Common::nearCall):
+        (JSC::MacroAssemblerX86Common::nearTailCall): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::linkCall):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::callTypeFor):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::specializationKind):
+        (JSC::CallLinkInfo::registerPreservationMode):
+        (JSC::CallLinkInfo::isVarargsCallType): Deleted.
+        (JSC::CallLinkInfo::callModeFor): Deleted.
+        (JSC::CallLinkInfo::callMode): Deleted.
+        (JSC::CallLinkInfo::isTailCall): Deleted.
+        (JSC::CallLinkInfo::isVarargs): Deleted.
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCallInTailPosition):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        (JSC::LabelNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isCallBytecode):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        (JSC::CCallHelpers::prepareForTailCallSlow): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        (JSC::JIT::emit_op_tail_call): Deleted.
+        (JSC::JIT::emit_op_tail_call_varargs): Deleted.
+        (JSC::JIT::emitSlow_op_tail_call): Deleted.
+        (JSC::JIT::emitSlow_op_tail_call_varargs): Deleted.
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emitSlow_op_tail_call): Deleted.
+        (JSC::JIT::emitSlow_op_tail_call_varargs): Deleted.
+        (JSC::JIT::emit_op_tail_call): Deleted.
+        (JSC::JIT::emit_op_tail_call_varargs): Deleted.
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::updateTopCallFrame):
+        (JSC::JIT::emitNakedTailCall): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/Repatch.cpp:
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::arityFixupGenerator):
+        (JSC::baselineGetterReturnThunkGenerator):
+        (JSC::unreachableGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        (JSC::CommonSlowPaths::opIn):
+        * tests/stress/mutual-tail-call-no-stack-overflow.js: Removed.
+        * tests/stress/tail-call-no-stack-overflow.js: Removed.
+        * tests/stress/tail-call-recognize.js: Removed.
+        * tests/stress/tail-call-varargs-no-stack-overflow.js: Removed.
+        * tests/stress/tail-calls-dont-overwrite-live-stack.js: Removed.
+
 2015-09-15  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement imported global variables in WebAssembly

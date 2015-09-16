@@ -58,7 +58,6 @@ enum AbortReason {
     DFGUnreachableBasicBlock                          = 220,
     DFGUnreasonableOSREntryJumpDestination            = 230,
     DFGVarargsThrowingPathDidNotThrow                 = 235,
-    JITDidReturnFromTailCall                          = 237,
     JITDivOperandsAreNotNumbers                       = 240,
     JITGetByValResultIsNotEmpty                       = 250,
     JITNotSupported                                   = 260,

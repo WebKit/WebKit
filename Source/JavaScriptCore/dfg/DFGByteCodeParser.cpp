@@ -741,10 +741,7 @@ private:
         SpeculatedType prediction)
     {
         addVarArgChild(callee);
-        size_t frameSize = JSStack::CallFrameHeaderSize + argCount;
-        size_t alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
-        size_t parameterSlots = alignedFrameSize - JSStack::CallerFrameAndPCSize;
-
+        size_t parameterSlots = JSStack::CallFrameHeaderSize - JSStack::CallerFrameAndPCSize + argCount;
         if (parameterSlots > m_parameterSlots)
             m_parameterSlots = parameterSlots;
 

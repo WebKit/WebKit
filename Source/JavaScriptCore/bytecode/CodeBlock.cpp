@@ -1248,18 +1248,13 @@ void CodeBlock::dumpBytecode(
             printCallOp(out, exec, location, it, "call", DumpCaches, hasPrintedProfiling, callLinkInfos);
             break;
         }
-        case op_tail_call: {
-            printCallOp(out, exec, location, it, "tail_call", DumpCaches, hasPrintedProfiling, callLinkInfos);
-            break;
-        }
         case op_call_eval: {
             printCallOp(out, exec, location, it, "call_eval", DontDumpCaches, hasPrintedProfiling, callLinkInfos);
             break;
         }
             
         case op_construct_varargs:
-        case op_call_varargs:
-        case op_tail_call_varargs: {
+        case op_call_varargs: {
             int result = (++it)->u.operand;
             int callee = (++it)->u.operand;
             int thisValue = (++it)->u.operand;
@@ -1267,7 +1262,7 @@ void CodeBlock::dumpBytecode(
             int firstFreeRegister = (++it)->u.operand;
             int varArgOffset = (++it)->u.operand;
             ++it;
-            printLocationAndOp(out, exec, location, it, opcode == op_call_varargs ? "call_varargs" : opcode == op_construct_varargs ? "construct_varargs" : "tail_call_varargs");
+            printLocationAndOp(out, exec, location, it, opcode == op_call_varargs ? "call_varargs" : "construct_varargs");
             out.printf("%s, %s, %s, %s, %d, %d", registerName(result).data(), registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister, varArgOffset);
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
@@ -1834,7 +1829,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
         case op_call_varargs:
-        case op_tail_call_varargs:
         case op_construct_varargs:
         case op_get_by_val: {
             int arrayProfileIndex = pc[opLength - 2].u.operand;
@@ -1884,7 +1878,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_call:
-        case op_tail_call:
         case op_call_eval: {
             ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);

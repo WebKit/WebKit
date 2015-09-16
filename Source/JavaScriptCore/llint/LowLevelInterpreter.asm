@@ -167,7 +167,6 @@ const JSEnvironmentRecord_variables = (sizeof JSEnvironmentRecord + SlotSize - 1
 const DirectArguments_storage = (sizeof DirectArguments + SlotSize - 1) & ~(SlotSize - 1)
 
 const StackAlignment = 16
-const StackAlignmentSlots = 2
 const StackAlignmentMask = StackAlignment - 1
 
 const CallerFrameAndPCSize = 2 * PtrSize
@@ -698,79 +697,36 @@ macro traceExecution()
     end
 end
 
-macro callTargetFunction(callee)
+macro callTargetFunction(callLinkInfo, calleeFramePtr)
+    move calleeFramePtr, sp
     if C_LOOP
-        cloopCallJSFunction callee
+        cloopCallJSFunction LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
     else
-        call callee
+        call LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
     end
     restoreStackPointerAfterCall()
     dispatchAfterCall()
 end
 
-macro prepareForRegularCall(callee, temp1, temp2, temp3)
-    addp CallerFrameAndPCSize, sp
-end
-
-# sp points to the new frame
-macro prepareForTailCall(callee, temp1, temp2, temp3)
-    restoreCalleeSavesUsedByLLInt()
-
-    loadi PayloadOffset + ArgumentCount[cfr], temp2
-    loadp CodeBlock[cfr], temp1
-    loadp CodeBlock::m_numParameters[temp1], temp1
-    bilteq temp1, temp2, .noArityFixup
-    move temp1, temp2
-
-.noArityFixup:
-    # We assume < 2^28 arguments
-    muli SlotSize, temp2
-    addi StackAlignment - 1 + CallFrameHeaderSize, temp2
-    andi ~StackAlignmentMask, temp2
-
-    move cfr, temp1
-    addp temp2, temp1
-
-    loadi PayloadOffset + ArgumentCount[sp], temp2
-    # We assume < 2^28 arguments
-    muli SlotSize, temp2
-    addi StackAlignment - 1 + CallFrameHeaderSize, temp2
-    andi ~StackAlignmentMask, temp2
-
-    if ARM or SH4 or ARM64 or C_LOOP or MIPS
-        addp 2 * PtrSize, sp
-        subi 2 * PtrSize, temp2
-        loadp PtrSize[cfr], lr
-    else
-        addp PtrSize, sp
-        subi PtrSize, temp2
-        loadp PtrSize[cfr], temp3
-        storep temp3, [sp]
-    end
-
-    subp temp2, temp1
-    loadp [cfr], cfr
-
-.copyLoop:
-    subi PtrSize, temp2
-    loadp [sp, temp2, 1], temp3
-    storep temp3, [temp1, temp2, 1]
-    btinz temp2, .copyLoop
-
-    move temp1, sp
-    jmp callee
-end
-
-macro slowPathForCall(slowPath, prepareCall)
+macro slowPathForCall(slowPath)
     callCallSlowPath(
         slowPath,
-        # Those are r0 and r1
-        macro (callee, calleeFramePtr)
-            btpz calleeFramePtr, .dontUpdateSP
-            move calleeFramePtr, sp
-            prepareCall(callee, t2, t3, t4)
+        macro (callee, calleeFrame)
+            btpz calleeFrame, .dontUpdateSP
+            if ARMv7
+                addp CallerFrameAndPCSize, calleeFrame, calleeFrame
+                move calleeFrame, sp
+            else
+                addp CallerFrameAndPCSize, calleeFrame, sp
+            end
         .dontUpdateSP:
-            callTargetFunction(callee)
+            if C_LOOP
+                cloopCallJSFunction callee
+            else
+                call callee
+            end
+            restoreStackPointerAfterCall()
+            dispatchAfterCall()
         end)
 end
 
@@ -1459,19 +1415,16 @@ _llint_op_new_arrow_func_exp:
 _llint_op_call:
     traceExecution()
     arrayProfileForCall()
-    doCall(_llint_slow_path_call, prepareForRegularCall)
+    doCall(_llint_slow_path_call)
 
-_llint_op_tail_call:
-    traceExecution()
-    arrayProfileForCall()
-    checkSwitchToJITForEpilogue()
-    doCall(_llint_slow_path_call, prepareForTailCall)
 
 _llint_op_construct:
     traceExecution()
-    doCall(_llint_slow_path_construct, prepareForRegularCall)
+    doCall(_llint_slow_path_construct)
 
-macro doCallVarargs(slowPath, prepareCall)
+
+_llint_op_call_varargs:
+    traceExecution()
     callSlowPath(_llint_slow_path_size_frame_for_varargs)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
@@ -1486,23 +1439,25 @@ macro doCallVarargs(slowPath, prepareCall)
             subp r1, CallerFrameAndPCSize, sp
         end
     end
-    slowPathForCall(slowPath, prepareCall)
-end
-
-_llint_op_call_varargs:
-    traceExecution()
-    doCallVarargs(_llint_slow_path_call_varargs, prepareForRegularCall)
-
-_llint_op_tail_call_varargs:
-    traceExecution()
-    checkSwitchToJITForEpilogue()
-    # We lie and perform the tail call instead of preparing it since we can't
-    # prepare the frame for a call opcode
-    doCallVarargs(_llint_slow_path_call_varargs, prepareForTailCall)
+    slowPathForCall(_llint_slow_path_call_varargs)
 
 _llint_op_construct_varargs:
     traceExecution()
-    doCallVarargs(_llint_slow_path_construct_varargs, prepareForRegularCall)
+    callSlowPath(_llint_slow_path_size_frame_for_varargs)
+    branchIfException(_llint_throw_from_slow_path_trampoline)
+    # calleeFrame in r1
+    if JSVALUE64
+        move r1, sp
+    else
+        # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
+        if ARMv7
+            subp r1, CallerFrameAndPCSize, t2
+            move t2, sp
+        else
+            subp r1, CallerFrameAndPCSize, sp
+        end
+    end
+    slowPathForCall(_llint_slow_path_construct_varargs)
 
 
 _llint_op_call_eval:
@@ -1541,7 +1496,7 @@ _llint_op_call_eval:
     # and a PC to call, and that PC may be a dummy thunk that just
     # returns the JS value that the eval returned.
     
-    slowPathForCall(_llint_slow_path_call_eval, prepareForRegularCall)
+    slowPathForCall(_llint_slow_path_call_eval)
 
 
 _llint_generic_return_point:

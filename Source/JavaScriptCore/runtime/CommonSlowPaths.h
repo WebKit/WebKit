@@ -59,14 +59,13 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializat
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();
     
     ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
-    int frameSize = argumentCountIncludingThis + JSStack::CallFrameHeaderSize;
-    int alignedFrameSizeForParameters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(),
-        newCodeBlock->numParameters() + JSStack::CallFrameHeaderSize);
-    int paddedStackSpace = alignedFrameSizeForParameters - frameSize;
+    int missingArgumentCount = newCodeBlock->numParameters() - argumentCountIncludingThis;
+    int neededStackSpace = missingArgumentCount + 1; // Allow space to save the original return PC.
+    int paddedStackSpace = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), neededStackSpace);
 
-    if (!stack->ensureCapacityFor(exec->registers() - paddedStackSpace % stackAlignmentRegisters()))
+    if (!stack->ensureCapacityFor(exec->registers() - paddedStackSpace))
         return -1;
-    return paddedStackSpace;
+    return paddedStackSpace / stackAlignmentRegisters();
 }
 
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)

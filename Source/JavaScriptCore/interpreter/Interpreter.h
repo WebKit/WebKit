@@ -253,7 +253,7 @@ namespace JSC {
 
         void dumpRegisters(CallFrame*);
         
-        bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval) || opcode == getOpcode(op_tail_call); }
+        bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
 
         void enableSampler();
         int m_sampleEntryDepth;

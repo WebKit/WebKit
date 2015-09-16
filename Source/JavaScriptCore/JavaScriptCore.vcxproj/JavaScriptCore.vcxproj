@@ -319,7 +319,6 @@
     <ClCompile Include="..\bytecode\CallEdge.cpp" />
     <ClCompile Include="..\bytecode\CallLinkInfo.cpp" />
     <ClCompile Include="..\bytecode\CallLinkStatus.cpp" />
-    <ClCompile Include="..\bytecode\CallMode.cpp" />
     <ClCompile Include="..\bytecode\CallVariant.cpp" />
     <ClCompile Include="..\bytecode\CodeBlock.cpp" />
     <ClCompile Include="..\bytecode\CodeBlockHash.cpp" />
@@ -1013,7 +1012,6 @@
     <ClInclude Include="..\bytecode\CallEdge.h" />
     <ClInclude Include="..\bytecode\CallLinkInfo.h" />
     <ClInclude Include="..\bytecode\CallLinkStatus.h" />
-    <ClInclude Include="..\bytecode\CallMode.h" />
     <ClInclude Include="..\bytecode\CallReturnOffsetToBytecodeOffset.h" />
     <ClInclude Include="..\bytecode\CallVariant.h" />
     <ClInclude Include="..\bytecode\CodeBlock.h" />
