@@ -1,3 +1,14 @@
+2015-09-16  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Unifiy WebKit2PlatformTouchPoint definition
+        https://bugs.webkit.org/show_bug.cgi?id=149221
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::touchEventType):
+        (WebKit::WebKit2PlatformTouchPoint::WebKit2PlatformTouchPoint):
+
 2015-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Web Process crash recovery no longer works

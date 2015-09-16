@@ -222,6 +222,7 @@ WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent& webEvent)
 #if ENABLE(TOUCH_EVENTS)
 
 #if PLATFORM(IOS)
+
 static WebCore::PlatformTouchPoint::TouchPhaseType touchEventType(const WebPlatformTouchPoint& webTouchPoint)
 {
     switch (webTouchPoint.phase()) {
@@ -238,17 +239,17 @@ static WebCore::PlatformTouchPoint::TouchPhaseType touchEventType(const WebPlatf
     }
 }
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-#include <WebKitAdditions/WebEventConversionIOS.cpp>
-#else
 class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:
 WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
-    : PlatformTouchPoint(webTouchPoint.identifier(), webTouchPoint.location(), touchEventType(webTouchPoint))
+    : PlatformTouchPoint(webTouchPoint.identifier(), webTouchPoint.location(), touchEventType(webTouchPoint)
+#if ENABLE(IOS_TOUCH_EVENTS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    , webTouchPoint.force()
+#endif
+    )
 {
 }
 };
-#endif // ENABLE(IOS_TOUCH_EVENTS)
 
 #else
 
