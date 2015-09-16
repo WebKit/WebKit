@@ -129,7 +129,6 @@ PassRefPtr<IDBOpenDBRequest> LegacyFactory::openInternal(ScriptExecutionContext*
 
 PassRefPtr<IDBOpenDBRequest> LegacyFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    WTFLogAlways("yah dude");
     LOG(StorageAPI, "LegacyFactory::deleteDatabase");
     if (name.isNull()) {
         ec = TypeError;
