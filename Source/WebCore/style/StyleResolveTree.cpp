@@ -820,7 +820,7 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
                 if (childElement.styleIsAffectedByPreviousSibling())
                     childElement.setNeedsStyleRecalc();
                 elementNeedingStyleRecalcAffectsNextSiblingElementStyle = childElement.affectsNextSiblingElementStyle();
-            } else if (childElement.styleChangeType() >= FullStyleChange)
+            } else if (childElement.needsStyleRecalc())
                 elementNeedingStyleRecalcAffectsNextSiblingElementStyle = childElement.affectsNextSiblingElementStyle();
             if (change >= Inherit || childElement.childNeedsStyleRecalc() || childElement.needsStyleRecalc()) {
                 parentPusher.push();

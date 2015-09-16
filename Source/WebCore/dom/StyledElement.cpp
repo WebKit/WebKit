@@ -214,9 +214,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, At
 
 void StyledElement::inlineStyleChanged()
 {
-    setNeedsStyleRecalc(InlineStyleChange);
-    ASSERT(elementData());
-    elementData()->setStyleAttributeIsDirty(true);
+    invalidateStyleAttribute();
     InspectorInstrumentation::didInvalidateStyleAttr(document(), *this);
 }
     

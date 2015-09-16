@@ -97,6 +97,7 @@ inline void StyledElement::invalidateStyleAttribute()
 {
     ASSERT(elementData());
     elementData()->setStyleAttributeIsDirty(true);
+    setNeedsStyleRecalc(InlineStyleChange);
 }
 
 inline const StyleProperties* StyledElement::presentationAttributeStyle()
