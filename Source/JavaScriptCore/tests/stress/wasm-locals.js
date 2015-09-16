@@ -16,7 +16,7 @@ function asmModule(global, env, buffer) {
         y = y | 0;
         var result = 0;
         result = (x + y) | 0;
-        return result;
+        return result | 0;
     }
 
     function add1(x) {

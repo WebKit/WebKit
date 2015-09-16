@@ -17,7 +17,7 @@ function asmModule(global, env, buffer) {
     var z = 0.0;
 
     function getX() {
-        return x;
+        return x | 0;
     }
 
     function getY() {

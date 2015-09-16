@@ -25,11 +25,12 @@ function asmModule(global, env, buffer) {
     "use asm";
 
     var clz32 = global.Math.clz32;
+    var imul = global.Math.imul;
     var abs = global.Math.abs;
 
     function negate(x) {
         x = x | 0;
-        return -x;
+        return (-x) | 0;
     }
 
     function add(x, y) {
@@ -47,7 +48,7 @@ function asmModule(global, env, buffer) {
     function multiply(x, y) {
         x = x | 0;
         y = y | 0;
-        return (x * y) | 0;
+        return imul(x, y) | 0;
     }
 
     function divide(x, y) {
@@ -112,7 +113,7 @@ function asmModule(global, env, buffer) {
     function logicalRightShift(x, y) {
         x = x | 0;
         y = y | 0;
-        return x >>> y;
+        return (x >>> y) | 0;
     }
 
     function countLeadingZeros(x) {
@@ -127,7 +128,7 @@ function asmModule(global, env, buffer) {
 
     function absolute(x) {
         x = x | 0;
-        return abs(x | 0);
+        return abs(x | 0) | 0;
     }
 
     return {

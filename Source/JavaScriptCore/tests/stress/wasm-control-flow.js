@@ -33,6 +33,7 @@ function asmModule(global, env, buffer) {
             return 1;
         else
             return 2;
+        return 0;
     }
 
     function ifElseFalse() {
@@ -41,22 +42,24 @@ function asmModule(global, env, buffer) {
             return 1;
         else
             return 2;
+        return 0;
     }
 
     function ifInIf() {
         var x = 0, y = 0;
         x = 1;
-        if (x == 0) {
-            if (y == 0)
+        if ((x | 0) == 0) {
+            if ((y | 0) == 0)
                 return 1;
             else
                 return 2;
         } else {
-            if (y == 0)
+            if ((y | 0) == 0)
                 return 3;
             else
                 return 4;
         }
+        return 0;
     }
 
     function whileLoop() {
@@ -65,31 +68,31 @@ function asmModule(global, env, buffer) {
             x = (x + 1) | 0;
             i = (i + 1) | 0;
         }
-        return x;
+        return x | 0;
     }
 
     function whileBreak() {
         var x = 0, i = 0;
         while (1) {
-            if (i == 2)
+            if ((i | 0) == 2)
                 break;
             x = (x + 1) | 0;
             i = (i + 1) | 0;
         }
-        return x;
+        return x | 0;
     }
 
     function whileContinue() {
         var x = 0, i = 0;
         while ((i | 0) < 5) {
-            if (i == 2) {
+            if ((i | 0) == 2) {
                 i = 3;
                 continue;
             }
             x = (x + 1) | 0;
             i = (i + 1) | 0;
         }
-        return x;
+        return x | 0;
     }
 
     function whileInWhile() {
@@ -102,7 +105,7 @@ function asmModule(global, env, buffer) {
             }
             i = (i + 1) | 0;
         }
-        return x;
+        return x | 0;
     }
 
     function doLoop() {
@@ -111,31 +114,31 @@ function asmModule(global, env, buffer) {
             x = (x + 1) | 0;
             i = (i + 1) | 0;
         } while ((i | 0) < 0);
-        return x;
+        return x | 0;
     }
 
     function doBreak() {
         var x = 0, i = 0;
         do {
-            if (i == 2)
+            if ((i | 0) == 2)
                 break;
             x = (x + 1) | 0;
             i = (i + 1) | 0;
         } while (1);
-        return x;
+        return x | 0;
     }
 
     function doContinue() {
         var x = 0, i = 0;
         do {
-            if (i == 2) {
+            if ((i | 0) == 2) {
                 i = 3;
                 continue;
             }
             x = (x + 1) | 0;
             i = (i + 1) | 0;
         } while ((i | 0) < 5);
-        return x;
+        return x | 0;
     }
 
     function labelBreak() {
@@ -145,19 +148,19 @@ function asmModule(global, env, buffer) {
             break label;
             x = 2;
         } while (0);
-        return x;
+        return x | 0;
     }
 
     function labelContinue() {
         var x = 0;
         label: do {
-            if (x == 1)
+            if ((x | 0) == 1)
                 break label;
             x = 1;
             continue label;
             x = 2;
         } while (0);
-        return x;
+        return x | 0;
     }
 
     function labelInLabelBreakInner() {
@@ -171,7 +174,7 @@ function asmModule(global, env, buffer) {
             } while (0);
             x = 4;
         } while (0);
-        return x;
+        return x | 0;
     }
 
     function labelInLabelBreakOuter() {
@@ -185,7 +188,7 @@ function asmModule(global, env, buffer) {
             } while (0);
             x = 4;
         } while (0);
-        return x;
+        return x | 0;
     }
 
     function whileInWhileBreakOuter() {
@@ -195,19 +198,19 @@ function asmModule(global, env, buffer) {
             j = 0;
             while ((j | 0) < 2) {
                 x = (x + 1) | 0;
-                if (x == 8)
+                if ((x | 0) == 8)
                     break label;
                 j = (j + 1) | 0;
             }
             i = (i + 1) | 0;
         }
-        return x;
+        return x | 0;
     }
 
     function switchCase(x) {
         x = x | 0;
         var y = 0;
-        switch (x) {
+        switch (x | 0) {
         case 0:
             y = 1;
             break;
@@ -218,13 +221,13 @@ function asmModule(global, env, buffer) {
             y = 3;
             break;
         }
-        return y;
+        return y | 0;
     }
 
     function switchFallThrough(x) {
         x = x | 0;
         var y = 0;
-        switch (x) {
+        switch (x | 0) {
         case 3:
             y = (y + 1000) | 0;
         case 2:
@@ -234,7 +237,7 @@ function asmModule(global, env, buffer) {
         default:
             y = (y + 1) | 0;
         }
-        return y;
+        return y | 0;
     }
 
     return {
