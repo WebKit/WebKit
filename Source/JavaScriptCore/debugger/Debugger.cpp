@@ -118,6 +118,7 @@ Debugger::Debugger(VM& vm, bool isInWorkerThread)
     , m_breakpointsActivated(true)
     , m_hasHandlerForExceptionCallback(false)
     , m_isInWorkerThread(isInWorkerThread)
+    , m_suppressAllPauses(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_reasonForPause(NotPaused)
     , m_pauseOnCallFrame(0)
@@ -583,6 +584,9 @@ void Debugger::updateCallFrameAndPauseIfNeeded(CallFrame* callFrame)
 void Debugger::pauseIfNeeded(CallFrame* callFrame)
 {
     if (m_isPaused)
+        return;
+
+    if (m_suppressAllPauses)
         return;
 
     JSGlobalObject* vmEntryGlobalObject = callFrame->vmEntryGlobalObject();

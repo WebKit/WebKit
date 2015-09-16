@@ -2983,11 +2983,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     if (!m_frame.page())
         return;
 
-    if (Page* page = m_frame.page()) {
-        if (m_frame.isMainFrame())
-            page->inspectorController().resume();
-    }
-
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_loadType = type;
     setState(FrameStateProvisional);

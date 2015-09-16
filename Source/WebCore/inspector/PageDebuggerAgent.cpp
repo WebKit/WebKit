@@ -147,4 +147,23 @@ void PageDebuggerAgent::didClearMainFrameWindowObject()
     didClearGlobalObject();
 }
 
+void PageDebuggerAgent::mainFrameStartedLoading()
+{
+    if (isPaused()) {
+        setSuppressAllPauses(true);
+        ErrorString unused;
+        resume(unused);
+    }
+}
+
+void PageDebuggerAgent::mainFrameStoppedLoading()
+{
+    setSuppressAllPauses(false);
+}
+
+void PageDebuggerAgent::mainFrameNavigated()
+{
+    setSuppressAllPauses(false);
+}
+
 } // namespace WebCore
