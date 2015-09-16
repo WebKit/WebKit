@@ -1,5 +1,11 @@
 2015-09-16  Alexey Proskuryakov  <ap@apple.com>
 
+        More test result fixing after r189841.
+
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
+2015-09-16  Alexey Proskuryakov  <ap@apple.com>
+
         Mark http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html as flaky, because it is.
 
         It was already marked as flaky on mac-wk2.
