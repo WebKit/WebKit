@@ -90,6 +90,8 @@ public:
     void zoomIn();
     void zoomOut();
 
+    void showLayerTree();
+
     float deviceScaleFactor() { return m_deviceScaleFactor; }
     void updateDeviceScaleFactor();
 

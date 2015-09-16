@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -320,6 +320,14 @@ CGRect CACFLayerTreeHost::bounds() const
     GetClientRect(m_window, &clientRect);
 
     return winRectToCGRect(clientRect);
+}
+
+String CACFLayerTreeHost::layerTreeAsString() const
+{
+    if (!m_rootLayer)
+        return emptyString();
+
+    return m_rootLayer->layerTreeAsString();
 }
 
 }

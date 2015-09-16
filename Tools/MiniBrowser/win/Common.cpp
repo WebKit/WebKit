@@ -90,7 +90,7 @@ TCHAR szWindowClass[MAX_LOADSTRING]; // the main window class name
 
 // Support moving the transparent window
 POINT s_windowPosition = { 100, 100 };
-SIZE s_windowSize = { 800, 400 };
+SIZE s_windowSize = { 500, 200 };
 
 // Forward declarations of functions included in this code module:
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -511,6 +511,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDM_ZOOM_OUT:
             if (gMiniBrowser)
                 gMiniBrowser->zoomOut();
+            break;
+        case IDM_SHOW_LAYER_TREE:
+            if (gMiniBrowser)
+                gMiniBrowser->showLayerTree();
             break;
         default:
             if (!ToggleMenuItem(hWnd, wmId))

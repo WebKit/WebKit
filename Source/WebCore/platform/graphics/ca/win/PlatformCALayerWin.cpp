@@ -40,6 +40,7 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -641,127 +642,248 @@ void PlatformCALayerWin::setShapePath(const Path&)
     // FIXME: implement.
 }
 
-#ifndef NDEBUG
-static void printIndent(int indent)
+static void printIndent(StringBuilder& builder, int indent)
 {
     for ( ; indent > 0; --indent)
-        fprintf(stderr, "  ");
+        builder.append("  ");
 }
 
-static void printTransform(const CATransform3D& transform)
+static void printTransform(StringBuilder& builder, const CATransform3D& transform)
 {
-    fprintf(stderr, "[%g %g %g %g; %g %g %g %g; %g %g %g %g; %g %g %g %g]",
-                    transform.m11, transform.m12, transform.m13, transform.m14, 
-                    transform.m21, transform.m22, transform.m23, transform.m24, 
-                    transform.m31, transform.m32, transform.m33, transform.m34, 
-                    transform.m41, transform.m42, transform.m43, transform.m44);
+    builder.append('[');
+    builder.appendNumber(transform.m11);
+    builder.append(' ');
+    builder.appendNumber(transform.m12);
+    builder.append(' ');
+    builder.appendNumber(transform.m13);
+    builder.append(' ');
+    builder.appendNumber(transform.m14);
+    builder.append("; ");
+    builder.appendNumber(transform.m21);
+    builder.append(' ');
+    builder.appendNumber(transform.m22);
+    builder.append(' ');
+    builder.appendNumber(transform.m23);
+    builder.append(' ');
+    builder.appendNumber(transform.m24);
+    builder.append("; ");
+    builder.appendNumber(transform.m31);
+    builder.append(' ');
+    builder.appendNumber(transform.m32);
+    builder.append(' ');
+    builder.appendNumber(transform.m33);
+    builder.append(' ');
+    builder.appendNumber(transform.m34);
+    builder.append("; ");
+    builder.appendNumber(transform.m41);
+    builder.append(' ');
+    builder.appendNumber(transform.m42);
+    builder.append(' ');
+    builder.appendNumber(transform.m43);
+    builder.append(' ');
+    builder.appendNumber(transform.m44);
+    builder.append(']');
 }
 
-static void printLayer(const PlatformCALayer* layer, int indent)
+static void printColor(StringBuilder& builder, int indent, const String& label, CGColorRef color)
+{
+    Color layerColor(color);
+    if (!layerColor.isValid())
+        return;
+
+    builder.append('\n');
+    printIndent(builder, indent);
+    builder.append('(');
+    builder.append(label);
+    builder.append(' ');
+    builder.append(layerColor.nameForRenderTreeAsText());
+    builder.append(')');
+}
+
+static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int indent)
 {
     FloatPoint3D layerPosition = layer->position();
     FloatPoint3D layerAnchorPoint = layer->anchorPoint();
     FloatRect layerBounds = layer->bounds();
-    printIndent(indent);
+    builder.append('\n');
+    printIndent(builder, indent);
 
-    char* layerTypeName = 0;
+    char* layerTypeName = nullptr;
     switch (layer->layerType()) {
     case PlatformCALayer::LayerTypeLayer: layerTypeName = "layer"; break;
     case PlatformCALayer::LayerTypeWebLayer: layerTypeName = "web-layer"; break;
+    case PlatformCALayer::LayerTypeSimpleLayer: layerTypeName = "simple-layer"; break;
     case PlatformCALayer::LayerTypeTransformLayer: layerTypeName = "transform-layer"; break;
     case PlatformCALayer::LayerTypeWebTiledLayer: layerTypeName = "web-tiled-layer"; break;
     case PlatformCALayer::LayerTypeTiledBackingLayer: layerTypeName = "tiled-backing-layer"; break;
+    case PlatformCALayer::LayerTypePageTiledBackingLayer: layerTypeName = "page-tiled-backing-layer"; break;
+    case PlatformCALayer::LayerTypeTiledBackingTileLayer: layerTypeName = "tiled-backing-tile-layer"; break;
     case PlatformCALayer::LayerTypeRootLayer: layerTypeName = "root-layer"; break;
+    case PlatformCALayer::LayerTypeAVPlayerLayer: layerTypeName = "avplayer-layer"; break;
+    case PlatformCALayer::LayerTypeWebGLLayer: layerTypeName = "webgl-layer"; break;
+    case PlatformCALayer::LayerTypeBackdropLayer: layerTypeName = "backdrop-layer"; break;
+    case PlatformCALayer::LayerTypeShapeLayer: layerTypeName = "shape-layer"; break;
+    case PlatformCALayer::LayerTypeLightSystemBackdropLayer: layerTypeName = "light-system-backdrop-layer"; break;
+    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer: layerTypeName = "dark-system-backdrop-layer"; break;
+    case PlatformCALayer::LayerTypeScrollingLayer: layerTypeName = "scrolling-layer"; break;
     case PlatformCALayer::LayerTypeCustom: layerTypeName = "custom-layer"; break;
     }
 
-    fprintf(stderr, "(%s [%g %g %g] [%g %g %g %g] [%g %g %g] superlayer=%p\n",
-        layerTypeName,
-        layerPosition.x(), layerPosition.y(), layerPosition.z(), 
-        layerBounds.x(), layerBounds.y(), layerBounds.width(), layerBounds.height(),
-        layerAnchorPoint.x(), layerAnchorPoint.y(), layerAnchorPoint.z(), layer->superlayer());
+    builder.append("(");
+    builder.append(layerTypeName);
+    builder.append(" [");
+    builder.appendNumber(layerPosition.x());
+    builder.append(' ');
+    builder.appendNumber(layerPosition.y());
+    builder.append(' ');
+    builder.appendNumber(layerPosition.z());
+    builder.append("] [");
+    builder.appendNumber(layerBounds.x());
+    builder.append(' ');
+    builder.appendNumber(layerBounds.y());
+    builder.append(' ');
+    builder.appendNumber(layerBounds.width());
+    builder.append(' ');
+    builder.appendNumber(layerBounds.height());
+    builder.append("] [");
+    builder.appendNumber(layerAnchorPoint.x());
+    builder.append(' ');
+    builder.appendNumber(layerAnchorPoint.y());
+    builder.append(' ');
+    builder.appendNumber(layerAnchorPoint.z());
+    builder.append("] superlayer=");
+    builder.appendNumber(reinterpret_cast<unsigned long long>(layer->superlayer()));
 
     // Print name if needed
     String layerName = CACFLayerGetName(layer->platformLayer());
     if (!layerName.isEmpty()) {
-        printIndent(indent + 1);
-        fprintf(stderr, "(name %s)\n", layerName.utf8().data());
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(name \"");
+        builder.append(layerName);
+        builder.append("\")");
     }
 
+    // Print borderWidth if needed
+    if (CGFloat borderWidth = CACFLayerGetBorderWidth(layer->platformLayer())) {
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(borderWidth ");
+        builder.appendNumber(borderWidth);
+        builder.append(')');
+    }
+
+    // Print backgroundColor if needed
+    printColor(builder, indent + 1, "backgroundColor", CACFLayerGetBackgroundColor(layer->platformLayer()));
+
+    // Print borderColor if needed
+    printColor(builder, indent + 1, "borderColor", CACFLayerGetBorderColor(layer->platformLayer()));
+
     // Print masksToBounds if needed
-    bool layerMasksToBounds = layer->masksToBounds();
-    if (layerMasksToBounds) {
-        printIndent(indent + 1);
-        fprintf(stderr, "(masksToBounds true)\n");
+    if (bool layerMasksToBounds = layer->masksToBounds()) {
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(masksToBounds true)");
     }
 
     // Print opacity if needed
     float layerOpacity = layer->opacity();
     if (layerOpacity != 1) {
-        printIndent(indent + 1);
-        fprintf(stderr, "(opacity %hf)\n", layerOpacity);
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(opacity ");
+        builder.appendNumber(layerOpacity);
+        builder.append(')');
     }
 
     // Print sublayerTransform if needed
     TransformationMatrix layerTransform = layer->sublayerTransform();
     if (!layerTransform.isIdentity()) {
-        printIndent(indent + 1);
-        fprintf(stderr, "(sublayerTransform ");
-        printTransform(layerTransform);
-        fprintf(stderr, ")\n");
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(sublayerTransform ");
+        printTransform(builder, layerTransform);
+        builder.append(')');
     }
 
     // Print transform if needed
     layerTransform = layer->transform();
     if (!layerTransform.isIdentity()) {
-        printIndent(indent + 1);
-        fprintf(stderr, "(transform ");
-        printTransform(layerTransform);
-        fprintf(stderr, ")\n");
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(transform ");
+        printTransform(builder, layerTransform);
+        builder.append(')');
     }
 
     // Print contents if needed
-    CFTypeRef layerContents = layer->contents();
-    if (layerContents) {
+    if (CFTypeRef layerContents = layer->contents()) {
         if (CFGetTypeID(layerContents) == CGImageGetTypeID()) {
             CGImageRef imageContents = static_cast<CGImageRef>(const_cast<void*>(layerContents));
-            printIndent(indent + 1);
-            fprintf(stderr, "(contents (image [%Iu %Iu]))\n",
-                CGImageGetWidth(imageContents), CGImageGetHeight(imageContents));
+            builder.append('\n');
+            printIndent(builder, indent + 1);
+            builder.append("(contents (image [");
+            builder.appendNumber(CGImageGetWidth(imageContents));
+            builder.append(' ');
+            builder.appendNumber(CGImageGetHeight(imageContents));
+            builder.append("]))");
+        }
+
+        if (CFGetTypeID(layerContents) == CABackingStoreGetTypeID()) {
+            CABackingStoreRef backingStore = static_cast<CABackingStoreRef>(const_cast<void*>(layerContents));
+            CGImageRef imageContents = CABackingStoreGetCGImage(backingStore);
+            builder.append('\n');
+            printIndent(builder, indent + 1);
+            builder.append("(contents (backing-store [");
+            builder.appendNumber(CGImageGetWidth(imageContents));
+            builder.append(' ');
+            builder.appendNumber(CGImageGetHeight(imageContents));
+            builder.append("]))");
         }
     }
 
     // Print sublayers if needed
     int n = intern(layer)->sublayerCount();
     if (n > 0) {
-        printIndent(indent + 1);
-        fprintf(stderr, "(sublayers\n");
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(sublayers");
 
         PlatformCALayerList sublayers;
         intern(layer)->getSublayers(sublayers);
         ASSERT(n == sublayers.size());
         for (int i = 0; i < n; ++i)
-            printLayer(sublayers[i].get(), indent + 2);
+            printLayer(builder, sublayers[i].get(), indent + 2);
 
-        printIndent(indent + 1);
-        fprintf(stderr, ")\n");
+        builder.append(')');
     }
 
-    printIndent(indent);
-    fprintf(stderr, ")\n");
+    builder.append(')');
 }
 
-void PlatformCALayerWin::printTree() const
+String PlatformCALayerWin::layerTreeAsString() const
 {
     // Print heading info
     CGRect rootBounds = bounds();
-    fprintf(stderr, "\n\n** Render tree at time %g (bounds %g, %g %gx%g) **\n\n", 
-        monotonicallyIncreasingTime(), rootBounds.origin.x, rootBounds.origin.y, rootBounds.size.width, rootBounds.size.height);
+
+    StringBuilder builder;
+    builder.append("\n\n** Render tree at time ");
+    builder.appendNumber(monotonicallyIncreasingTime());
+    builder.append(" (bounds ");
+    builder.appendNumber(rootBounds.origin.x);
+    builder.append(", ");
+    builder.appendNumber(rootBounds.origin.y);
+    builder.append(' ');
+    builder.appendNumber(rootBounds.size.width);
+    builder.append('x');
+    builder.appendNumber(rootBounds.size.height);
+    builder.append(") **\n\n");
 
     // Print layer tree from the root
-    printLayer(this, 0);
+    printLayer(builder, this, 0);
+
+    return builder.toString();
 }
-#endif // #ifndef NDEBUG
 
 PassRefPtr<PlatformCALayer> PlatformCALayerWin::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {

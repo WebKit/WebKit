@@ -320,3 +320,9 @@ interface IWebViewPrivate2 : IWebViewPrivate
         [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
         [in] WebUserContentInjectedFrames injectedFrames);
 }
+
+[ uuid(08C88359-76AA-48F2-BA27-820540E781E9) ]
+interface IWebViewPrivate3 : IWebViewPrivate2
+{
+    HRESULT layerTreeAsString([out] BSTR*);
+}

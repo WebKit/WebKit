@@ -2627,6 +2627,8 @@ HRESULT WebView::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
         *ppvObject = static_cast<IWebViewPrivate*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewPrivate2))
         *ppvObject = static_cast<IWebViewPrivate2*>(this);
+    else if (IsEqualGUID(riid, IID_IWebViewPrivate3))
+        *ppvObject = static_cast<IWebViewPrivate3*>(this);
     else if (IsEqualGUID(riid, IID_IWebIBActions))
         *ppvObject = static_cast<IWebIBActions*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewCSS))
@@ -7428,6 +7430,27 @@ HRESULT WebView::backingScaleFactor(_Out_ double* factor)
         return E_POINTER;
 
     *factor = deviceScaleFactor();
+
+    return S_OK;
+}
+
+HRESULT WebView::layerTreeAsString(_Deref_opt_out_ BSTR* treeBstr)
+{
+    if (!treeBstr)
+        return E_POINTER;
+
+    *treeBstr = nullptr;
+
+#if USE(CA)
+    if (!m_layerTreeHost)
+        return S_OK;
+
+    String tree = m_layerTreeHost->layerTreeAsString();
+
+    *treeBstr = BString(tree).release();
+    if (!*treeBstr && tree.length())
+        return E_OUTOFMEMORY;
+#endif
 
     return S_OK;
 }

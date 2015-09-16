@@ -486,6 +486,24 @@ void MiniBrowser::zoomOut()
     webActions->zoomPageOut(nullptr);
 }
 
+typedef _com_ptr_t<_com_IIID<IWebViewPrivate3, &__uuidof(IWebViewPrivate3)>> IWebViewPrivate3Ptr;
+
+void MiniBrowser::showLayerTree()
+{
+    IWebViewPrivate3Ptr webViewPrivate;
+    if (FAILED(m_webView->QueryInterface(IID_IWebViewPrivate3, reinterpret_cast<void**>(&webViewPrivate.GetInterfacePtr()))))
+        return;
+
+    OutputDebugString(L"CURRENT TREE:\n");
+
+    _bstr_t layerTreeBstr;
+    if (FAILED(webViewPrivate->layerTreeAsString(layerTreeBstr.GetAddress())))
+        OutputDebugString(L"    Failed to retrieve the layer tree.\n");
+    else
+        OutputDebugString(layerTreeBstr);
+    OutputDebugString(L"\n\n");
+}
+
 void MiniBrowser::generateFontForScaleFactor(float scaleFactor)
 {
     if (m_hURLBarFont)

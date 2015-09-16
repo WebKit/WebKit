@@ -151,7 +151,7 @@ public:
     virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, const char* text, size_t length) const override;
 
 #ifndef NDEBUG
-    virtual void printTree() const override;
+    virtual String layerTreeAsString() const override;
 #endif
 
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;

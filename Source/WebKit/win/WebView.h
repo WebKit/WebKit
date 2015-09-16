@@ -82,7 +82,7 @@ interface IDropTargetHelper;
 
 class WebView 
     : public IWebView
-    , public IWebViewPrivate2
+    , public IWebViewPrivate3
     , public IWebIBActions
     , public IWebViewCSS
     , public IWebViewEditing
@@ -389,6 +389,9 @@ public:
         unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserScriptInjectionTime, WebUserContentInjectedFrames);
     virtual HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
         unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserContentInjectedFrames);
+
+    // IWebViewPrivate3
+    HRESULT STDMETHODCALLTYPE layerTreeAsString(_Deref_opt_out_ BSTR*);
 
     // WebView
     bool shouldUseEmbeddedView(const WTF::String& mimeType) const;

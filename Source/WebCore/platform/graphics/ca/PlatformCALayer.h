@@ -234,9 +234,7 @@ public:
     virtual PlatformCALayer* rootLayer() const = 0;
     virtual void setNeedsLayout() = 0;
     virtual void setNeedsCommit() = 0;
-#ifndef NDEBUG
-    virtual void printTree() const = 0;
-#endif // NDEBUG
+    virtual String layerTreeAsString() const = 0;
 #endif // PLATFORM(WIN)
 
 #if PLATFORM(IOS)
