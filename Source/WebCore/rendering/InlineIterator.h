@@ -442,7 +442,7 @@ ALWAYS_INLINE UCharDirection InlineIterator::direction() const
 }
 
 template<>
-inline void InlineBidiResolver::increment()
+inline void InlineBidiResolver::incrementInternal()
 {
     m_current.increment(this);
 }
@@ -529,8 +529,8 @@ private:
     bool m_haveAddedFakeRunForRootIsolate;
 };
 
-template <>
-inline void InlineBidiResolver::appendRun()
+template<>
+inline void InlineBidiResolver::appendRunInternal()
 {
     if (!m_emptyRun && !m_eor.atEnd() && !m_reachedEndOfLine) {
         // Keep track of when we enter/leave "unicode-bidi: isolate" inlines.
