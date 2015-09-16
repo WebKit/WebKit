@@ -43,6 +43,8 @@
     (subpath "/Library/Frameworks")
     (subpath "/Library/Managed Preferences")
 
+    (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
+
     ;; System and user preferences
     (literal "/Library/Preferences/.GlobalPreferences.plist")
     (regex #"^/Library/Managed Preferences/[^/]+/com\.apple\.networkConnect\.plist$")

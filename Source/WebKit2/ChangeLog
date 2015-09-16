@@ -1,3 +1,13 @@
+2015-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Allow reading from SubmitDiagInfo.domains in Networking process
+        https://bugs.webkit.org/show_bug.cgi?id=149176
+        rdar://problem/22483680
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2015-09-16  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Unifiy WebKit2PlatformTouchPoint definition
