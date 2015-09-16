@@ -1,3 +1,13 @@
+2015-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/events/mouse-cursor-change.html is flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=149216
+
+        Reviewed by Darin Adler.
+
+        * fast/events/mouse-cursor-change.html: Increase the timeout. I don't see a way to make
+        this test 100% reliable, but this change makes it work in my local testing.
+
 2015-09-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline W3C html/dom test for iOS after r189842.
